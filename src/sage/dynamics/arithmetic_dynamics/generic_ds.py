@@ -18,14 +18,14 @@ AUTHORS:
 - Ben Hutz (July 2017): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Ben Hutz <bn4941@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 
@@ -165,7 +165,8 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
         if domain is not None:
-            if isinstance(domain, AffineSpace_generic) or isinstance(domain, AlgebraicScheme_subscheme_affine):
+            if isinstance(domain, (AffineSpace_generic,
+                                   AlgebraicScheme_subscheme_affine)):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
             if isinstance(domain, Berkovich_Cp):

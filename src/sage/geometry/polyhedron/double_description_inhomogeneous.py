@@ -7,7 +7,7 @@ double description method for cones
 H/V-representations of polyhedra. The latter works with cones
 only. This is sufficient to treat general polyhedra by the following
 construction: Any polyhedron can be embedded in one dimension higher
-in the hyperplane `(1,*,\dots,*)`. The cone over the embedded
+in the hyperplane `(1, *, \dots, *)`. The cone over the embedded
 polyhedron will be called the *homogenized cone* in the
 following. Conversely, intersecting the homogenized cone with the
 hyperplane `x_0=1` gives you back the original polyhedron.
@@ -268,13 +268,13 @@ class Hrep2Vrep(PivotedInequalities):
             return l1, L0 + [l - l[0] * l1 for l in L1]
 
     def _extract_Vrep(self, DD):
-        """
+        r"""
         Extract the V-representation from the extremal rays
         of the homogeneous cone.
 
         The V-representation is the intersection of the cone generated
         by the rays `R` and ``self._linear_subspace`` with the
-        hyperplane `(1,*,*,...,*)`.
+        hyperplane `(1, *, *, \ldots, *)`.
 
         INPUT:
 

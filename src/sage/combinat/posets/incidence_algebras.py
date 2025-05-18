@@ -11,6 +11,8 @@ Incidence Algebras
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
+from typing import Any
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -18,8 +20,6 @@ from sage.categories.algebras import Algebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.matrix_space import MatrixSpace
-
-from copy import copy
 
 
 class IncidenceAlgebra(CombinatorialFreeModule):
@@ -69,7 +69,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, map(tuple, P.relations()),
                                          prefix=prefix, category=cat)
 
-    def _repr_term(self, A):
+    def _repr_term(self, A) -> str:
         """
         Return a string representation of the term labeled by ``A``.
 
@@ -82,7 +82,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         """
         return self.prefix() + str(list(A))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -147,7 +147,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         """
         return self._poset
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of elements of ``self``.
 
@@ -278,7 +278,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
         return self.monomial(A)
 
     @lazy_attribute
-    def _linear_extension(self):
+    def _linear_extension(self) -> tuple:
         """
         Return a fixed linear extension of the defining poset of ``self``.
 
@@ -361,7 +361,7 @@ class IncidenceAlgebra(CombinatorialFreeModule):
             M.set_immutable()
             return M
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             """
             Return if ``self`` is a unit.
 
@@ -449,28 +449,28 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             sage: TestSuite(R).run()  # long time
         """
         self._ambient = I
-        EC = {}
+        EC: dict[Any, list] = {}
         P = self._ambient._poset
         if not P.is_finite():
             raise NotImplementedError("only implemented for finite posets")
         for i in self._ambient.basis().keys():
             S = P.subposet(P.interval(*i))
             added = False
-            for k in EC:
+            for k, ECk in EC.items():
                 if S._hasse_diagram.is_isomorphic(k._hasse_diagram):
-                    EC[k].append(i)
+                    ECk.append(i)
                     added = True
                     break
             if not added:
                 EC[S] = [i]
-        self._equiv_classes = map(sorted, EC.values())
-        self._equiv_classes = {cls[0]: cls for cls in self._equiv_classes}
+        equiv_classes = map(sorted, EC.values())
+        self._equiv_classes = {cls[0]: cls for cls in equiv_classes}
         cat = Algebras(I.base_ring()).FiniteDimensional().WithBasis()
         CombinatorialFreeModule.__init__(self, I.base_ring(),
                                          sorted(self._equiv_classes.keys()),
                                          prefix=prefix, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -499,7 +499,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
         """
         return self._ambient._poset
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of elements of ``self``.
 
@@ -747,7 +747,7 @@ class ReducedIncidenceAlgebra(CombinatorialFreeModule):
             """
             return self.parent().lift(self).to_matrix()
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             """
             Return if ``self`` is a unit.
 

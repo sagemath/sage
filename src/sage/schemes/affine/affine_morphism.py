@@ -42,12 +42,10 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import sys
-
-import sage.rings.abc
 
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
@@ -541,7 +539,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             Scheme endomorphism of Projective Space of dimension 1
              over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x0*x1 : 1/2*x0^2 + x0*x1 + 3/2*x1^2)
+                    (2*x0*x1 : x0^2 + 2*x0*x1 + 3*x1^2)
 
         ::
 
@@ -1158,13 +1156,11 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: H = End(A)
             sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])                         # needs sage.symbolic
             sage: f.reduce_base_field()                                                 # needs sage.symbolic
-            Scheme endomorphism of Affine Space of dimension 1 over Number
-            Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
-             with a = 1.442249570307409? + 1.414213562373095?*I
+            Scheme endomorphism of Affine Space of dimension 1 over Number Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17 with a = 1.442249570307409? - 1.414213562373095?*I
               Defn: Defined on coordinates by sending (x) to
                     ((-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2 - 772/269*a
-                    - 1092/269)*x^2 + (48/269*a^5 - 27/269*a^4 + 320/269*a^3 - 468/269*a^2
-                    + 1041/269*a + 1092/269))
+                    - 1092/269)*x^2 + (-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2
+                    - 1041/269*a - 1092/269))
 
         ::
 

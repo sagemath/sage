@@ -1074,7 +1074,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         else:
             try:
                 poly = parent._polynomial_ring(x)
-                self._poly = PolyDict(poly.dict(), None)
+                self._poly = PolyDict(poly.monomial_coefficients(), None)
             except TypeError:
                 # last chance: we first try to convert to the rational Tate series
                 if parent._integral:
@@ -1115,6 +1115,15 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: A.<x,y> = TateAlgebra(R)
             sage: A(78612, prec=3)  # indirect doctest
             ...100 + O(2^3 * <x, y>)
+
+        TESTS:
+
+        We check that :issue:`40046` is fixed::
+
+            sage: S.<x,y> = TateAlgebra(Qp(5), log_radii=(1,0))
+            sage: f = 5*x
+            sage: f.add_bigoh(1)
+            (5 + O(5^2))*x + O(5 * <x/5, y>)
         """
         self._is_normalized = True
         if self._prec is Infinity:
@@ -1124,9 +1133,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         for (e, c) in list(self._poly.__repn.items()):
             v = (<ETuple>self._parent._log_radii).dotprod(<ETuple>e)
             coeff = self._poly.__repn[e]
-            if coeff.precision_absolute() > self._prec - v:
-                coeff = coeff.add_bigoh(self._prec - v)
-            if coeff.valuation() >= self._prec - v:
+            if coeff.precision_absolute() > self._prec + v:
+                coeff = coeff.add_bigoh(self._prec + v)
+            if coeff.valuation() >= self._prec + v:
                 del self._poly.__repn[e]
             else:
                 self._poly.__repn[e] = coeff
@@ -2192,7 +2201,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         """
         return [ t.monomial() for t in self.terms() ]
 
-    def dict(self):
+    def monomial_coefficients(self):
         """
         Return a dictionary whose keys are the exponents and whose values
         are the corresponding coefficients of this series.
@@ -2202,11 +2211,18 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: R = Zp(2, prec=10, print_mode='digits')
             sage: A.<x,y> = TateAlgebra(R)
             sage: f = 2*x^2 + x
+            sage: f.monomial_coefficients()
+            {(1, 0): ...0000000001, (2, 0): ...00000000010}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {(1, 0): ...0000000001, (2, 0): ...00000000010}
         """
         self._normalize()
         return dict(self._poly.__repn)
+
+    dict = monomial_coefficients
 
     def coefficient(self, exponent):
         r"""
@@ -2364,7 +2380,9 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
                 return elt.lift_to_precision(prec)
             except PrecisionError:
                 return elt.lift_to_precision()
-        ans._poly = PolyDict({ e: lift_without_error(c) for (e,c) in self._poly.__repn.iteritems() }, None)
+        ans._poly = PolyDict({e: lift_without_error(c)
+                              for e, c in self._poly.__repn.items()},
+                             None)
         if prec is None:
             prec = self._parent.precision_cap()
         ans._prec = max(self._prec, prec)
@@ -2525,7 +2543,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\log(1+x)` converges on a smaller disk::
 
             sage: f.restriction(-1).log()
-            ...0000000001*x + ...000000000.1*x^3 + ...111111111*x^2 + ...
+            ...000000001*x + ...0000000.1*x^3 + ...111111*x^2 + ...
              + O(3^10 * <3*x, 3*y>)
 
         TESTS::
@@ -2683,7 +2701,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         However `\exp(x)` converges on a smaller disk::
 
             sage: f.restriction(-1).exp()
-            ...0000000001 + ...0000000001*x + ...111111111.2*x^3 + ...111111112*x^2
+            ...0000000001 + ...000000001*x + ...1111111.2*x^3 + ...111112*x^2
              + ... + O(3^10 * <3*x, 3*y>)
 
         TESTS::

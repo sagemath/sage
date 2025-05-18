@@ -117,7 +117,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             iM, denom = iM._clear_denom()
         return Morphism(self.parent().reversed(), iM)
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         """
         Return ``True`` if this morphism is an isogeny of abelian varieties.
 
@@ -405,9 +405,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             sage: t3(E11a0)
             Abelian subvariety of dimension 1 of J0(33)
             sage: t3(E11a0).decomposition()
-            [
-            Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33)
-            ]
+            [Simple abelian subvariety 11a(3,33) of dimension 1 of J0(33)]
             sage: t3(E11a0) == E11a1
             True
             sage: t2(E11a0) == E11a0

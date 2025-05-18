@@ -449,7 +449,7 @@ class RingClassField(SageObject):
         """
         c = self.__c
         if c == 1:
-            return ZZ(1)
+            return ZZ.one()
 
         # Let K_c be the ring class field.  We have by class field theory that
         #           Gal(K_c / H) = (O_K / c O_K)^* / ((Z/cZ)^* M),
@@ -1177,7 +1177,7 @@ class GaloisGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-7,5).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,5).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[0]
             Class field automorphism defined by x^2 + x*y + 44*y^2
@@ -1388,17 +1388,17 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         return "Complex conjugation automorphism of %s" % self.domain()
 
-##     def __mul__(self, right):
-##         """
-##         Return the composition of two automorphisms.
+#     def __mul__(self, right):
+#         """
+#         Return the composition of two automorphisms.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: ?
-##         """
-##         if self.parent() != right.__parent():
-##             raise TypeError, "automorphisms must be of the same class field"
-##         raise NotImplementedError
+#             sage: ?
+#         """
+#         if self.parent() != right.__parent():
+#             raise TypeError("automorphisms must be of the same class field")
+#         raise NotImplementedError
 
     def __invert__(self):
         """
@@ -1666,7 +1666,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-20,3).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-20,3).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[1].ideal()
             Fractional ideal (2, 1/2*sqrt_minus_20 + 1)
@@ -1679,7 +1679,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         f = self.quadratic_form()
         c = M.conductor()
         sqrtD = K.gen()
-        (A,B,C) = f
+        A, B, C = f
         if A % c == 0:
             A, C = C, A
         return K.fractional_ideal([A, (-B+c*sqrtD)/2])
@@ -1706,7 +1706,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 ##         """
 ##         if isinstance(z, HeegnerPointOnX0N):
 ##             if z.ring_class_field() != self.domain():
-##                 raise NotImplementedError, "class fields must be the same"
+##                 raise NotImplementedError("class fields must be the same")
 ##             # TODO -- check more compatibilities?
 ##             # TODO -- this is surely backwards -- something must be inverted?
 ##             f = z.quadratic_form() * self.quadratic_form()
@@ -3355,7 +3355,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         the discriminant below is strong confirmation -- but not proof
         -- that this polynomial is correct::
 
-            sage: f = P.numerical_approx(70)[0].algdep(6); f
+            sage: f = P.numerical_approx(70)[0].algebraic_dependency(6); f
             1225*x^6 + 1750*x^5 - 21675*x^4 - 380*x^3 + 110180*x^2 - 129720*x + 48771
             sage: f.discriminant().factor()
             2^6 * 3^2 * 5^11 * 7^4 * 13^2 * 19^6 * 199^2 * 719^2 * 26161^2
@@ -3460,7 +3460,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         if algorithm == 'lll':
             P = self.numerical_approx(prec)
-            f = P[0].algdep(n)
+            f = P[0].algebraic_dependency(n)
             if f.is_irreducible() and self._check_poly_discriminant(f):
                 return f.monic()
             else:
@@ -3543,7 +3543,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: z = P.point_exact(200, optimize=True)
             sage: z[1].charpoly()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
-            sage: f = P.numerical_approx(500)[1].algdep(12); f / f.leading_coefficient()
+            sage: f = P.numerical_approx(500)[1].algebraic_dependency(12); f / f.leading_coefficient()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
 
             sage: E = EllipticCurve('5077a')
@@ -4223,13 +4223,14 @@ class KolyvaginPoint(HeegnerPoint):
             if E.root_number() == -1:
                 return self._recognize_point_over_QQ(P, 2*self.index())
             else:
-                # root number +1.  We use algdep to recognize the x
+                # root number +1.  We use algebraic_dependency
+                # to recognize the x
                 # coordinate, stick it in the appropriate quadratic
                 # field, then make sure that we got the right
                 # embedding, and if not fix things so we do.
                 x = P[0]
                 C = x.parent()
-                f = x.algdep(2)
+                f = x.algebraic_dependency(2)
                 K = self.quadratic_field()
                 roots = [r[0] for r in f.roots(K)]
                 if not roots:
@@ -4283,7 +4284,7 @@ class KolyvaginPoint(HeegnerPoint):
             if not P:
                 # point at infinity
                 return Graphics()
-            return point((P[0].real(), P[1].real()),*args, **kwds)
+            return point((P[0].real(), P[1].real()), *args, **kwds)
         else:
             raise NotImplementedError
 
@@ -6414,7 +6415,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     Working out the details manually::
 
         sage: P = E.heegner_point(-47).numerical_approx(prec=200)
-        sage: f = algdep(P[0], 5); f
+        sage: f = algebraic_dependency(P[0], 5); f
         x^5 - x^4 + x^3 + x^2 - 2*x + 1
         sage: f.discriminant().factor()
         47^2

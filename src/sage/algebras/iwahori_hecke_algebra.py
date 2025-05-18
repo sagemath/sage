@@ -83,7 +83,7 @@ def normalized_laurent_polynomial(R, p):
         u + v^-1 + u^-1
     """
     try:
-        return R({k: R._base(c) for k, c in p.dict().items()})
+        return R({k: R._base(c) for k, c in p.monomial_coefficients().items()})
     except (AttributeError, TypeError):
         return R(p)
 
@@ -273,7 +273,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         sage: C=H.C()
         Traceback (most recent call last):
         ...
-        ValueError: The Kazhdan_Lusztig bases are defined only when -q_1*q_2 is a square
+        ValueError: the Kazhdan-Lusztig bases are defined only when -q_1*q_2 is a square
 
     We give an example in affine type::
 
@@ -766,7 +766,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 """
                 return False
 
-            def is_commutative(self):
+            def is_commutative(self) -> bool:
                 """
                 Return whether this Iwahori-Hecke algebra is commutative.
 
@@ -1703,12 +1703,12 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: R.<q1,q2> = QQ[]
                 sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix='x')
                 sage: sum(H.algebra_generators())^2
-                x[2,1] + x[1,2] + (q1+q2)*x[1] + (q1+q2)*x[2] + (-2*q1*q2)
+                x[2,1] + x[1,2] + (q1+q2)*x[1] + (q1+q2)*x[2] - 2*q1*q2
 
                 sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2).T(prefix='t')
                 sage: t1,t2 = H.algebra_generators()
                 sage: (t1-t2)^3
-                (q1^2-q1*q2+q2^2)*t[1] + (-q1^2+q1*q2-q2^2)*t[2]
+                (q1^2-q1*q2+q2^2)*t[1] - (q1^2-q1*q2+q2^2)*t[2]
 
                 sage: R.<q> = QQ[]
                 sage: H = IwahoriHeckeAlgebra("G2", q).T()
@@ -1790,7 +1790,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: C = H.C()
             """
             if IHAlgebra._root is None:
-                raise ValueError('The Kazhdan_Lusztig bases are defined '
+                raise ValueError('the Kazhdan-Lusztig bases are defined '
                                  'only when -q_1*q_2 is a square')
 
             if IHAlgebra._is_generic:

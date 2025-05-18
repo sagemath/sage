@@ -41,7 +41,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.rings.noncommutative_ideals import Ideal_nc
-from sage.libs.singular.function import lib, singular_function
+from sage.libs.singular.function import lib
 from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_letterplace, FreeAlgebra_letterplace_libsingular
 from sage.algebras.letterplace.free_algebra_element_letterplace cimport FreeAlgebraElement_letterplace
 from sage.rings.infinity import Infinity
@@ -49,8 +49,6 @@ from sage.rings.infinity import Infinity
 #####################
 # Define some singular functions
 lib("freegb.lib")
-singular_twostd = singular_function("twostd")
-poly_reduce = singular_function("NF")
 
 
 class LetterplaceIdeal(Ideal_nc):
@@ -102,11 +100,11 @@ class LetterplaceIdeal(Ideal_nc):
         sage: JR.groebner_basis(2)
         Traceback (most recent call last):
         ...
-        TypeError: This ideal is not two-sided. We can only compute two-sided Groebner bases
+        TypeError: Groebner bases exist only for two-sided ideals
         sage: JL.groebner_basis(2)
         Traceback (most recent call last):
         ...
-        TypeError: This ideal is not two-sided. We can only compute two-sided Groebner bases
+        TypeError: Groebner bases exist only for two-sided ideals
 
     Also, it is currently not possible to compute a Groebner basis when the base
     ring is not a field::
@@ -116,7 +114,7 @@ class LetterplaceIdeal(Ideal_nc):
         sage: J.groebner_basis(2)
         Traceback (most recent call last):
         ...
-        TypeError: Currently, we can only compute Groebner bases if the ring of coefficients is a field
+        NotImplementedError: currently, we can only compute Groebner bases if the ring of coefficients is a field
 
     The letterplace implementation of free algebras also provides integral degree weights
     for the generators, and we can compute Groebner bases for twosided graded homogeneous
@@ -208,7 +206,7 @@ class LetterplaceIdeal(Ideal_nc):
 
         Currently, we can only compute Groebner bases for twosided
         ideals, and the ring of coefficients must be a field. A
-        `TypeError` is raised if one of these conditions is violated.
+        :exc:`TypeError` is raised if one of these conditions is violated.
 
         .. NOTE::
 
@@ -282,9 +280,9 @@ class LetterplaceIdeal(Ideal_nc):
         if self.__uptodeg >= degbound:
             return self.__GB
         if not A.base().is_field():
-            raise TypeError("Currently, we can only compute Groebner bases if the ring of coefficients is a field")
+            raise NotImplementedError("currently, we can only compute Groebner bases if the ring of coefficients is a field")
         if self.side() != 'twosided':
-            raise TypeError("This ideal is not two-sided. We can only compute two-sided Groebner bases")
+            raise TypeError("Groebner bases exist only for two-sided ideals")
         if degbound == Infinity:
             while self.__uptodeg < Infinity:
                 test_bound = 2 * max([x._poly.degree()
@@ -321,6 +319,8 @@ class LetterplaceIdeal(Ideal_nc):
         to_L = P.hom(L.gens(), L, check=False)
         from_L = L.hom(P.gens(), P, check=False)
         I = L.ideal([to_L(x._poly) for x in self.__GB.gens()])
+        from sage.libs.singular.function import singular_function
+        singular_twostd = singular_function("twostd")
         gb = singular_twostd(I)
         out = [FreeAlgebraElement_letterplace(A, from_L(X), check=False)
                for X in gb]
@@ -398,6 +398,8 @@ class LetterplaceIdeal(Ideal_nc):
         bck = (libsingular_options['redTail'], libsingular_options['redSB'])
         libsingular_options['redTail'] = True
         libsingular_options['redSB'] = True
+        from sage.libs.singular.function import singular_function
+        poly_reduce = singular_function("NF")
         sI = poly_reduce(sI, gI, ring=C, attributes={gI: {"isSB": 1}})
         libsingular_options['redTail'] = bck[0]
         libsingular_options['redSB'] = bck[1]

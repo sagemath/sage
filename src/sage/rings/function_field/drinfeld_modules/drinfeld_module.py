@@ -37,14 +37,16 @@ from sage.misc.lazy_string import _LazyString
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
+
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
@@ -563,7 +565,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # duplicate. As a general comment, there are sanity checks both
         # here and in the category constructor, which is not ideal.
         # Check domain is Fq[T]
-        if not isinstance(function_ring, PolynomialRing_general):
+        if not isinstance(function_ring, PolynomialRing_generic):
             raise NotImplementedError('function ring must be a polynomial '
                                       'ring')
         function_ring_base = function_ring.base_ring()
@@ -620,9 +622,17 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             raise ValueError('generator must have positive degree')
 
         # Instantiate the appropriate class:
-        if base_field.is_finite():
+        backend = base_field.backend(force=True)
+        if backend.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
+        if isinstance(backend, FractionField_generic):
+            ring = backend.ring()
+            if (isinstance(ring, PolynomialRing_generic)
+            and ring.base_ring() is function_ring_base
+            and base_morphism(T) == ring.gen()):
+                from .charzero_drinfeld_module import DrinfeldModule_rational
+                return DrinfeldModule_rational(gen, category)
         if not category._characteristic:
             from .charzero_drinfeld_module import DrinfeldModule_charzero
             return DrinfeldModule_charzero(gen, category)
@@ -1854,7 +1864,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     def velu(self, isog):
         r"""
-        Return a new Drinfeld module such that input is an
+        Return a new Drinfeld module such that ``isog`` defines an
         isogeny to this module with domain ``self``; if no such isogeny
         exists, raise an exception.
 
@@ -2017,11 +2027,19 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: Ore polynomial does not define a morphism
+
+        Check that x = 0 (without specified codomain) gives the zero endomorphism::
+
+            sage: phi.hom(K.zero())
+            Endomorphism of Drinfeld module defined by ...
+              Defn: 0
         """
         # When `x` is in the function ring (or something that coerces to it):
         if self.function_ring().has_coerce_map_from(x.parent()):
             return self.Hom(self)(x)
         if codomain is None:
+            if x.is_zero():
+                return self.Hom(self)(0)
             try:
                 codomain = self.velu(x)
             except TypeError:

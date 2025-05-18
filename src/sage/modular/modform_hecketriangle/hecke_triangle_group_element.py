@@ -25,10 +25,10 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
 from sage.rings.cc import CC
 
-lazy_import('sage.rings.qqbar', 'AA')
-
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+
+lazy_import('sage.rings.qqbar', 'AA')
 
 
 # We want to simplify p after the coercion (pari bug for AA)
@@ -51,7 +51,7 @@ def coerce_AA(p):
     """
     el = AA(p)
     el.simplify()
-    #el.exactify()
+    # el.exactify()
 
     return el
 
@@ -221,13 +221,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         half = one / ZZ(2)
 
         while True:
-            a,b,c,d = M.list()
+            a, b, c, d = M.list()
             mshift = coerce_AA((4*a*c + b*d) / (4*c*c + d*d))
             m = (mshift / lam + half).floor()
             if m != zero:
                 res.append((one, m),)
                 M = T**(-m) * M
-                a,b,c,d = M.list()
+                a, b, c, d = M.list()
 
             abs_t = coerce_AA((4*a*a + b*b) / (4*c*c + d*d))
             if coerce_AA(abs_t) < 1:
@@ -452,7 +452,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 return "-1" if sgn < 0 else "1"
 
             Lstr = list(L)
-            for i,(v0,v1) in enumerate(Lstr):
+            for i, (v0, v1) in enumerate(Lstr):
                 if v0 == 0:
                     Lstr[i] = "S"
                 elif v1 == 1:
@@ -479,7 +479,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             if sgn < 0:
                 repr_str = repr_str[1:]
 
-            #if self != R.inverse().acton(self):
+            # if self != R.inverse().acton(self):
             if R.is_identity():
                 repr_str = "{}{}".format("-" if sgn < 0 else "", repr_str)
             else:
@@ -496,7 +496,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             (L, R, sgn) = self._block_decomposition_data()
 
             if self.is_elliptic():
-                L = [ L ]
+                L = [L]
 
             repr_str = ""
             begin = True
@@ -633,7 +633,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             if p == infinity:
                 # TODO: The choice of r doesn't matter?
                 r = ZZ.zero()
-            #elif self.is_elliptic():
+            # elif self.is_elliptic():
             #    r = ZZ(emb(p/lam).real().floor() + 1)
             else:
                 emb_res = emb(p/lam)
@@ -645,7 +645,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             cf_index += one
 
         preperiod_len = cf_dict[p]
-        #period_len = cf_index - preperiod_len
+        # period_len = cf_index - preperiod_len
 
         return (tuple(L[:preperiod_len]), tuple(L[preperiod_len:]))
 
@@ -807,7 +807,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 L = (one, one)
             else:
                 raise RuntimeError("There is something wrong in the method "
-                         "_primitive_block_decomposition_data. Please contact sage-devel@googlegroups.com")
+                                   "_primitive_block_decomposition_data. Please contact sage-devel@googlegroups.com")
 
             return (L, R)
 
@@ -835,11 +835,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         initial_ones = number_of_ones.pop(0)
         if not list_larger:
-            list_v1 = [-ZZ(1)]
-            list_vlarger = [ initial_ones + 2 ]
+            list_v1 = [-ZZ.one()]
+            list_vlarger = [initial_ones + 2]
         else:
-            list_v1 = [ v-2 for v in list_larger ]
-            list_vlarger = [ v+2 for v in number_of_ones ]
+            list_v1 = [v - 2 for v in list_larger]
+            list_vlarger = [v + 2 for v in number_of_ones]
             list_vlarger[-1] += initial_ones
 
         L = []
@@ -1363,14 +1363,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 for j in range(1, G.n()):
                     Uj *= U
                     if U_power == Uj:
-                        #L = [one, ZZ(j)]
+                        # L = [one, ZZ(j)]
                         break
                     elif U_power == -Uj:
-                        #L = [one, ZZ(-j)]
+                        # L = [one, ZZ(-j)]
                         break
                 else:
                     raise RuntimeError("There is a problem in the method "
-                    "'primitive_power'. Please contact sage-devel@googlegroups.com")
+                                       "'primitive_power'. Please contact sage-devel@googlegroups.com")
 
                 if abs(j) < G.n()/two:
                     return j
@@ -1514,7 +1514,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return sum(abs(v[1]) for v in L)
 
-    #@cached_method
+    # @cached_method
     def _block_decomposition_data(self):
         r"""
         Return a tuple ``(L, R, sgn)`` which describes the
@@ -1771,7 +1771,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
                 P = G.U()
             return ((P**L[1],), R, sgn)
         else:
-            return (tuple(G.V(v[0])**v[1] for v in L ), R, sgn)
+            return (tuple(G.V(v[0])**v[1] for v in L), R, sgn)
 
     def conjugacy_type(self, ignore_sign=True, primitive=False):
         r"""
@@ -2188,12 +2188,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: AA(G.V(3).discriminant())
             16.19566935808922?
         """
-
         return self.trace()**2 - 4
 
-    def is_translation(self, exclude_one=False):
+    def is_translation(self, exclude_one=False) -> bool:
         r"""
-        Return whether ``self`` is a translation. If ``exclude_one = True``,
+        Return whether ``self`` is a translation.
+
+        If ``exclude_one = True``,
         then the identity map is not considered as a translation.
 
         EXAMPLES::
@@ -2206,16 +2207,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: (-HeckeTriangleGroup(n=7).I()).is_translation(exclude_one=True)
             False
         """
-        a,b,c,d = self._matrix.list()
+        a, b, c, d = self._matrix.list()
 
         if not (c.is_zero() and a == d and (a.is_one() or (-a).is_one())):
             return False
-        elif exclude_one and b.is_zero():
-            return False
-        else:
-            return True
+        return not (exclude_one and b.is_zero())
 
-    def is_reflection(self):
+    def is_reflection(self) -> bool:
         r"""
         Return whether ``self`` is the usual reflection on the unit circle.
 
@@ -2229,7 +2227,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return self == self.parent().S() or self == -self.parent().S()
 
-    def is_hyperbolic(self):
+    def is_hyperbolic(self) -> bool:
         r"""
         Return whether ``self`` is a hyperbolic matrix.
 
@@ -2244,7 +2242,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return coerce_AA(self.discriminant()) > 0
 
-    def is_parabolic(self, exclude_one=False):
+    def is_parabolic(self, exclude_one=False) -> bool:
         r"""
         Return whether ``self`` is a parabolic matrix.
 
@@ -2269,7 +2267,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         return self.discriminant() == 0
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return whether ``self`` is the identity or minus the identity.
 
@@ -2287,7 +2285,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return False
 
-    def is_elliptic(self):
+    def is_elliptic(self) -> bool:
         r"""
         Return whether ``self`` is an elliptic matrix.
 
@@ -2302,7 +2300,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         """
         return coerce_AA(self.discriminant()) < 0
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
         Return whether ``self`` is primitive. We call an element
         primitive if (up to a sign and taking inverses) it generates
@@ -2361,9 +2359,12 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return abs(pow) <= 1
 
-    def is_reduced(self, require_primitive=True, require_hyperbolic=True):
+    def is_reduced(self, require_primitive=True,
+                   require_hyperbolic=True) -> bool:
         r"""
-        Return whether ``self`` is reduced. We call an element
+        Return whether ``self`` is reduced.
+
+        We call an element
         reduced if the associated lambda-CF is purely periodic.
 
         I.e. (in the hyperbolic case) if the associated hyperbolic
@@ -2427,9 +2428,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
         else:
             return self.continued_fraction()[0] == ()
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
-        Return whether ``self`` is simple. We call an element
+        Return whether ``self`` is simple.
+
+        We call an element
         simple if it is hyperbolic, primitive, has positive sign
         and if the associated hyperbolic fixed points satisfy:
         ``alpha' < 0 < alpha`` where ``alpha`` is the attracting
@@ -2488,10 +2491,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             return False
 
         # The last condition is/should be equivalent to:
-        a,b,c,d = self._matrix.list()
+        a, b, c, d = self._matrix.list()
         return (coerce_AA(a) > 0 and coerce_AA(b) > 0 and coerce_AA(c) > 0 and coerce_AA(d) > 0)
 
-    def is_hecke_symmetric(self):
+    def is_hecke_symmetric(self) -> bool:
         r"""
         Return whether the conjugacy class of the primitive part of
         ``self``, denoted by ``[gamma]`` is `Hecke-symmetric`:
@@ -2580,12 +2583,10 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: S = G.S()
             sage: U = G.U()
 
-            sage: def is_rpf(f, k=None):
+            sage: def is_rpf(f, k=None) -> bool:
             ....:     if not f + S.slash(f, k=k) == 0:
             ....:         return False
-            ....:     if not sum([(U^m).slash(f, k=k) for m in range(G.n())]) == 0:
-            ....:         return False
-            ....:     return True
+            ....:     return sum((U^m).slash(f, k=k) for m in range(G.n())) == 0
 
             sage: z = PolynomialRing(G.base_ring(), 'z').gen()
             sage: [is_rpf(1 - z^(-k), k=k) for k in range(-6, 6, 2)]  # long time
@@ -2675,7 +2676,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             if k % 2:
                 raise TypeError
         except TypeError:
-            raise ValueError("k={} must be an even integer!".format(k))
+            raise ValueError(f"k={k} must be an even integer!")
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         P = PolynomialRing(self.parent().base_ring(), 'z')
@@ -2683,14 +2684,14 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
         s = P.zero()
 
-        #L1 = []
+        # L1 = []
         for v in self.simple_elements():
-            a,b,c,d = v._matrix.list()
+            a, b, c, d = v._matrix.list()
             Q = c*z**2 + (d - a)*z - b
             s += Q**(-k/ZZ(2))
 
         for v in self.inverse().simple_elements():
-            a,b,c,d = v._matrix.list()
+            a, b, c, d = v._matrix.list()
             Q = c*z**2 + (d - a)*z - b
             s -= ZZ(-1)**(k/ZZ(2)) * Q**(-k/ZZ(2))
 
@@ -3049,7 +3050,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             else:
                 e = self.root_extension_field().gen()
 
-            a,b,c,d = self._matrix.list()
+            a, b, c, d = self._matrix.list()
 
             if order == "none":
                 sgn = ZZ(1)
@@ -3170,7 +3171,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             model = tau.model()
             tau = tau.to_model('UHP').coordinates()
 
-        a,b,c,d = self._matrix.list()
+        a, b, c, d = self._matrix.list()
 
         if tau == infinity:
             if c.is_zero():

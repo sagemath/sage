@@ -1,4 +1,4 @@
-sagelib sphinx sphinx_copybutton sphinx_inline_tabs pplpy_doc | $(SAGERUNTIME) maxima networkx scipy sympy matplotlib pillow mathjax mpmath ipykernel jupyter_client conway_polynomials tachyon ipywidgets sage_docbuild elliptic_curves furo fpylll graphs
+sagelib sphinx sphinx_copybutton sphinx_inline_tabs pplpy_doc | $(SAGERUNTIME) maxima networkx scipy sympy matplotlib pillow mathjax mpmath ipykernel jupyter_client conway_polynomials tachyon ipywidgets sage_docbuild elliptic_curves furo fpylll graphs typing_extensions
 
 # Building the documentation has many dependencies, because all
 # documented modules are imported and because we use matplotlib to

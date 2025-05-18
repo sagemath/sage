@@ -168,6 +168,7 @@ from sage.libs.flint.acb_hypgeom cimport *
 from sage.libs.flint.acb_elliptic cimport *
 from sage.libs.flint.acb_modular cimport *
 from sage.libs.flint.acb_poly cimport *
+from sage.libs.flint.acb_dirichlet cimport *
 from sage.libs.flint.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
 from sage.libs.flint.mag cimport (mag_init, mag_clear, mag_set_d,
         MAG_BITS, mag_zero, mag_set_ui_2exp_si,
@@ -492,7 +493,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         else:
             raise ValueError("only one generator")
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the tuple of generators of this complex ball field, i.e.
         ``(i,)``.
@@ -787,27 +788,28 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             ...
             ValueError: polynomial with interval coefficients, use multiplicities=False
 
-            sage: (x^4 - 1/3).roots(multiplicities=False) # indirect doctest
-            [[-0.759835685651593 +/- ...e-16] + [+/- ...e-16]*I,
-             [0.759835685651593 +/- ...e-16] + [+/- ...e-16]*I,
-             [+/- ...e-16] + [0.759835685651593 +/- ...e-16]*I,
-             [+/- ...e-16] + [-0.759835685651593 +/- ...e-16]*I]
+            sage: set((x^4 - 1/3).roots(multiplicities=False))  # indirect doctest
+            {[+/- 1.27e-16] + [-0.759835685651593 +/- 5.90e-16]*I,
+             [+/- 1.27e-16] + [0.759835685651593 +/- 5.90e-16]*I,
+             [-0.759835685651593 +/- 5.90e-16] + [+/- 1.27e-16]*I,
+             [0.759835685651593 +/- 5.90e-16] + [+/- 1.27e-16]*I}
 
-            sage: (x^4 - 1/3).roots(RBF, multiplicities=False)
-            [[-0.759835685651593 +/- ...e-16], [0.759835685651593 +/- ...e-16]]
+            sage: set((x^4 - 1/3).roots(RBF, multiplicities=False))
+            {[-0.759835685651593 +/- 5.90e-16], [0.759835685651593 +/- 5.90e-16]}
 
-            sage: (x^4 - 3).roots(RealBallField(100), multiplicities=False)
-            [[-1.316074012952492460819218901797 +/- ...e-34],
-             [1.316074012952492460819218901797 +/- ...e-34]]
+            sage: set((x^4 - 3).roots(RealBallField(100), multiplicities=False))
+            {[-1.316074012952492460819218901797 +/- 9.7e-34],
+             [1.316074012952492460819218901797 +/- 9.7e-34]}
 
-            sage: (x^4 - 3).roots(ComplexIntervalField(100), multiplicities=False)
+            sage: sorted((x^4 - 3).roots(ComplexIntervalField(100),
+            ....:                        multiplicities=False), key=repr)
             [-1.31607401295249246081921890180? + 0.?e-37*I,
-             1.31607401295249246081921890180? + 0.?e-37*I,
              0.?e-37 + 1.31607401295249246081921890180?*I,
-             0.?e-37 - 1.31607401295249246081921890180?*I]
+             0.?e-37 - 1.31607401295249246081921890180?*I,
+             1.31607401295249246081921890180? + 0.?e-37*I]
 
-            sage: (x^2 - i/3).roots(ComplexBallField(2), multiplicities=False)
-            [[+/- 0.409] + [+/- 0.409]*I, [+/- 0.409] + [+/- 0.409]*I]
+            sage: set((x^2 - i/3).roots(ComplexBallField(2), multiplicities=False))
+            {[+/- 0.409] + [+/- 0.409]*I, [+/- 0.409] + [+/- 0.409]*I}
 
             sage: ((x - 1)^2).roots(multiplicities=False)
             Traceback (most recent call last):
@@ -817,8 +819,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ((x - 1)^2).roots(multiplicities=False, proof=False)
             doctest:...
             UserWarning: roots may have been lost...
-            [[1.00000000000 +/- ...e-12] + [+/- ...e-11]*I,
-             [1.0000000000 +/- ...e-12] + [+/- ...e-12]*I]
+            [[1.000000000... +/- ...] + [+/- ...]*I,
+             [1.000000000... +/- ...] + [+/- ...]*I]
 
             sage: pol = x^7 - 2*(1000*x - 1)^2 # Mignotte polynomial
             sage: pol.roots(multiplicities=False)
@@ -843,7 +845,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ((x - 1)^2 + 2^(-70)*i/3).roots(RBF, multiplicities=False)
             Traceback (most recent call last):
             ...
-            ValueError: unable to determine which roots are real
+            ValueError: ...
 
         TESTS::
 
@@ -1184,13 +1186,10 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ComplexBallField(100).integral(lambda x, _: sin(x), RBF(0), RBF(1))
             [0.4596976941318602825990633926 +/- ...e-29]
 
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.1r)
-            sage: C = ComplexBallField(1000000)
-            sage: C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.1):
+            ....:     C = ComplexBallField(1000000)
+            ....:     C.integral(lambda x, _: x.cos() * x.sin(), 0, 1)
         """
         cdef IntegrationContext ctx = IntegrationContext()
         cdef acb_calc_integrate_opt_t arb_opts
@@ -1258,6 +1257,70 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         if ctx.exn_type is not None:
             raise ctx.exn_type, ctx.exn_obj, ctx.exn_tb
+
+        return res
+
+    def zeta_zeros(self, count, start=1):
+        r"""
+        Compute consecutive zeros of the Riemann zeta function.
+
+        INPUT:
+
+        - ``count`` -- positive integer; number of zeros to be computed, must fit in a machine integer
+
+        - ``start`` -- positive integer (default: 1); index of the first zero to be computed
+
+        OUTPUT:
+
+        A list of ``count`` consecutive zeros of the Riemann zeta function, starting from the ``start``-th zero.
+        Indexing starts at one, following usual mathematical notations.
+
+        EXAMPLES::
+
+            sage: CBF.zeta_zeros(10)
+            [0.5000000000000000 + [14.134725141734...]*I,
+            0.5000000000000000 + [21.0220396387715...]*I,
+            0.5000000000000000 + [25.010857580145...]*I,
+            0.5000000000000000 + [30.4248761258595...]*I,
+            0.5000000000000000 + [32.935061587739...]*I,
+            0.5000000000000000 + [37.586178158825...]*I,
+            0.5000000000000000 + [40.918719012147...]*I,
+            0.5000000000000000 + [43.32707328091...]*I,
+            0.5000000000000000 + [48.005150881167...]*I,
+            0.5000000000000000 + [49.773832477672...]*I]
+
+            sage: CBF.zeta_zeros(6, start=5)
+            [0.5000000000000000 + [32.935061587739...]*I,
+            0.5000000000000000 + [37.586178158825...]*I,
+            0.5000000000000000 + [40.918719012147...]*I,
+            0.5000000000000000 + [43.32707328091...]*I,
+            0.5000000000000000 + [48.005150881167...]*I,
+            0.5000000000000000 + [49.773832477672...]*I]
+        """
+        cdef fmpz_t _start
+        fmpz_init(_start)
+        fmpz_set_mpz(_start, (<Integer> Integer(start)).value)
+
+        cdef long _count = count
+        if _count < 1:
+            raise ValueError("count must be positive")
+
+        cdef acb_ptr ar = _acb_vec_init(_count)
+
+        sig_on()
+        acb_dirichlet_zeta_zeros(ar, _start, _count, self._prec)
+        sig_off()
+
+        res = []
+        cdef ComplexBall b
+        for i in range(_count):
+            b = ComplexBall.__new__(ComplexBall)
+            b._parent = self
+            acb_swap(b.value, &ar[i])
+            res.append(b)
+
+        _acb_vec_clear(ar, _count)
+        fmpz_clear(_start)
 
         return res
 
@@ -4199,14 +4262,14 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(1, 1).Ei()
-            [1.76462598556385 +/- ...e-15] + [2.38776985151052 +/- ...e-15]*I
+            sage: CBF(1, 1).Ei()  # abs tol 6e-15
+            [1.76462598556385 +/- 6.03e-15] + [2.38776985151052 +/- 4.23e-15]*I
             sage: CBF(0).Ei()
-            nan
+            nan...
 
         TESTS:
 
-            sage: CBF(Ei(I))  # abs tol 1e-16                                           # needs sage.symbolic
+            sage: CBF(Ei(I))  # abs tol 2e-15                                           # needs sage.symbolic
             [0.337403922900968 +/- 3.76e-16] + [2.51687939716208 +/- 2.01e-15]*I
         """
         cdef ComplexBall result = self._new()
@@ -4221,14 +4284,14 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(1, 1).Si()
-            [1.10422265823558 +/- ...e-15] + [0.88245380500792 +/- ...e-15]*I
+            sage: CBF(1, 1).Si()  # abs tol 3e-15
+            [1.10422265823558 +/- 2.48e-15] + [0.88245380500792 +/- 3.36e-15]*I
             sage: CBF(0).Si()
             0
 
         TESTS:
 
-            sage: CBF(Si(I))                                                            # needs sage.symbolic
+            sage: CBF(Si(I))  # abs tol 3e-15                                           # needs sage.symbolic
             [1.05725087537573 +/- 2.77e-15]*I
         """
         cdef ComplexBall result = self._new()
@@ -4245,14 +4308,14 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(1, 1).Ci()
-            [0.882172180555936 +/- ...e-16] + [0.287249133519956 +/- ...e-16]*I
+            sage: CBF(1, 1).Ci()  # abs tol 5e-16
+            [0.882172180555936 +/- 5.89e-16] + [0.287249133519956 +/- 3.37e-16]*I
             sage: CBF(0).Ci()
             nan + nan*I
 
         TESTS:
 
-            sage: CBF(Ci(I))  # abs tol 1e-17                                           # needs sage.symbolic
+            sage: CBF(Ci(I))  # abs tol 5e-16                                           # needs sage.symbolic
             [0.837866940980208 +/- 4.72e-16] + [1.570796326794897 +/- 5.54e-16]*I
         """
         cdef ComplexBall result = self._new()
@@ -4269,8 +4332,8 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(1, 1).Shi()
-            [0.88245380500792 +/- ...e-15] + [1.10422265823558 +/- ...e-15]*I
+            sage: CBF(1, 1).Shi()  # abs tol 3e-15
+            [0.88245380500792 +/- 3.36e-15] + [1.10422265823558 +/- 2.48e-15]*I
             sage: CBF(0).Shi()
             0
 
@@ -4293,14 +4356,14 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(1, 1).Chi()
-            [0.882172180555936 +/- ...e-16] + [1.28354719327494 +/- ...e-15]*I
+            sage: CBF(1, 1).Chi()  # abs tol 1e-15
+            [0.882172180555936 +/- 5.89e-16] + [1.28354719327494 +/- 1.01e-15]*I
             sage: CBF(0).Chi()
             nan + nan*I
 
         TESTS:
 
-            sage: CBF(Chi(I))  # abs tol 1e-16                                          # needs sage.symbolic
+            sage: CBF(Chi(I))  # abs tol 5e-16                                          # needs sage.symbolic
             [0.337403922900968 +/- 3.25e-16] + [1.570796326794897 +/- 5.54e-16]*I
         """
         cdef ComplexBall result = self._new()
@@ -4319,8 +4382,8 @@ cdef class ComplexBall(RingElement):
 
         EXAMPLES::
 
-            sage: CBF(1, 1).li()
-            [0.61391166922120 +/- ...e-15] + [2.05958421419258 +/- ...e-15]*I
+            sage: CBF(1, 1).li()  # abs tol 6e-15
+            [0.61391166922120 +/- 6.23e-15] + [2.05958421419258 +/- 5.59e-15]*I
             sage: CBF(0).li()
             0
             sage: CBF(0).li(offset=True)

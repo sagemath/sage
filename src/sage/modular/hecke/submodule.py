@@ -425,10 +425,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         EXAMPLES::
 
             sage: D = ModularSymbols(10,4).cuspidal_submodule().decomposition(); D
-            [
-            Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field,
-            Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field]
             sage: d = D[1].degeneracy_map(5); d
             Hecke module morphism defined by the matrix
             [   0    0   -1    1]
@@ -674,7 +672,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         return M
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an ambient space of modular symbols.
 
@@ -690,7 +688,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         """
         return self.free_module() == self.ambient_hecke_module().free_module()
 
-    def is_new(self, p=None):
+    def is_new(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-new. If `p` is None,
         returns ``True`` if it is new.
@@ -712,7 +710,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_new[p] = self.is_submodule(N)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-old. If `p` is ``None``,
         returns ``True`` if it is old.
@@ -737,7 +735,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_old[p] = self.is_submodule(O)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of V.
 
@@ -776,10 +774,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
             sage: S = M.cuspidal_submodule()
             sage: S.basis()
-            [
-            q + 252*q^3 - 2048*q^4 + 4830*q^5 + O(q^6),
-            q^2 - 24*q^4 + O(q^6)
-            ]
+            [q + 252*q^3 - 2048*q^4 + 4830*q^5 + O(q^6), q^2 - 24*q^4 + O(q^6)]
             sage: S.linear_combination_of_basis([3, 10])
             3*q + 10*q^2 + 756*q^3 - 6384*q^4 + 14490*q^5 + O(q^6)
         """

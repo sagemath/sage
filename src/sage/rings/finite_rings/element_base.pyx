@@ -22,7 +22,6 @@ from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.misc.superseded import deprecated_function_alias
 
 
 def is_FiniteFieldElement(x):
@@ -88,14 +87,13 @@ cdef class FiniteRingElement(CommutativeRingElement):
         gcd = n.gcd(q-1)
         if self.is_one():
             if gcd == 1:
-                if all: return [self]
-                else: return self
-            else:
-                nthroot = K.zeta(gcd)
-                return [nthroot**a for a in range(gcd)] if all else nthroot
+                return [self] if all else self
+            nthroot = K.zeta(gcd)
+            return [nthroot**a for a in range(gcd)] if all else nthroot
         if gcd == q-1:
-            if all: return []
-            else: raise ValueError("no nth root")
+            if all:
+                return []
+            raise ValueError("no nth root")
         gcd, alpha, _ = n.xgcd(q-1)  # gcd = alpha*n + beta*(q-1), so 1/n = alpha/gcd (mod q-1)
         if gcd == 1:
             return [self**alpha] if all else self**alpha
@@ -103,8 +101,9 @@ cdef class FiniteRingElement(CommutativeRingElement):
         n = gcd
         q1overn = (q-1)//n
         if self**q1overn != 1:
-            if all: return []
-            else: raise ValueError("no nth root")
+            if all:
+                return []
+            raise ValueError("no nth root")
         self = self**alpha
         if cunningham:
             from sage.rings.factorint import factor_cunningham
@@ -134,12 +133,11 @@ cdef class FiniteRingElement(CommutativeRingElement):
             if all:
                 nthroot = K.zeta(n)
                 L = [self]
-                for i in range(1,n):
+                for i in range(1, n):
                     self *= nthroot
                     L.append(self)
                 return L
-            else:
-                return self
+            return self
         else:
             raise ValueError("unknown algorithm")
 
@@ -202,7 +200,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             f = Cx([base_map(c) for c in f])
         return codomain(f(im_gens[0]))
 
-    def minpoly(self,var='x',algorithm='pari'):
+    def minpoly(self, var='x', algorithm='pari'):
         """
         Return the minimal polynomial of this element
         (over the corresponding prime subfield).
@@ -241,10 +239,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().minpoly('x').lift())
-        elif algorithm == 'matrix':
+
+        if algorithm == 'matrix':
             return self.matrix().minpoly(var)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
     # We have two names for the same method
     # for compatibility with sage.matrix
@@ -503,8 +502,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if self.parent().degree()>1:
             return self.polynomial()._latex_()
-        else:
-            return str(self)
+        return str(self)
 
     def __pari__(self, var=None):
         r"""
@@ -624,10 +622,11 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.parent().prime_subfield(), var)
             return R(self.__pari__().charpoly('x').lift())
-        elif algorithm == 'matrix':
+
+        if algorithm == 'matrix':
             return self.matrix().charpoly(var)
-        else:
-            raise ValueError("unknown algorithm '%s'" % algorithm)
+
+        raise ValueError("unknown algorithm '%s'" % algorithm)
 
     def norm(self):
         """
@@ -657,10 +656,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         f = self.charpoly('x')
         n = f[0]
-        if f.degree() % 2:
-            return -n
-        else:
-            return n
+        return -n if f.degree() % 2 else n
 
     def trace(self):
         """
@@ -822,7 +818,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         return self.square_root(extend=extend, all=all)
 
-    def nth_root(self, n, extend = False, all = False, algorithm=None, cunningham=False):
+    def nth_root(self, n, extend=False, all=False, algorithm=None, cunningham=False):
         r"""
         Return an `n`-th root of ``self``.
 
@@ -922,26 +918,28 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         """
         if self.is_zero():
             if n <= 0:
-                if all: return []
-                else: raise ValueError
-            if all: return [self]
-            else: return self
+                if all:
+                    return []
+                raise ValueError
+            return [self] if all else self
         if n < 0:
             self = ~self
             n = -n
         elif n == 0:
             if self == 1:
-                if all: return [a for a in self.parent().list() if a != 0]
-                else: return self
+                if all:
+                    return [a for a in self.parent().list() if a != 0]
+                return self
             else:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
         if extend:
             raise NotImplementedError
         n = Integer(n)
         return self._nth_root_common(n, all, algorithm, cunningham)
 
-    def pth_power(self, int k = 1):
+    def pth_power(self, int k=1):
         """
         Return the `(p^k)`-th power of self, where `p` is the
         characteristic of the field.
@@ -975,7 +973,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
     frobenius = pth_power
 
-    def pth_root(self, int k = 1):
+    def pth_root(self, int k=1):
         """
         Return the `(p^k)`-th root of self, where `p` is the characteristic
         of the field.
@@ -1103,8 +1101,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         if reverse:
             f = f.reverse(self.parent().degree() - 1)
         return f(p)
-
-    integer_representation = deprecated_function_alias(33941, to_integer)
 
     def to_bytes(self, byteorder='big'):
         r"""

@@ -509,12 +509,12 @@ def is_2_adic_genus(genus_symbol_quintuple_list) -> bool:
                 return False
         if s[1] == 2 and s[3] == 1:
             if s[2] % 8 in (1, 7):
-                if not s[4] in (0, 2, 6):
+                if s[4] not in (0, 2, 6):
                     return False
             if s[2] % 8 in (3, 5):
-                if not s[4] in (2, 4, 6):
+                if s[4] not in (2, 4, 6):
                     return False
-        if (s[1] - s[4]) % 2 == 1:
+        if (s[1] - s[4]) % 2:
             return False
         if s[3] == 0 and s[4] != 0:
             return False
@@ -942,9 +942,9 @@ def p_adic_symbol(A, p, val):
     return [[s[0]+m0] + s[1:] for s in sym + p_adic_symbol(A, p, val)]
 
 
-def is_even_matrix(A):
+def is_even_matrix(A) -> tuple[bool, int]:
     r"""
-    Determines if the integral symmetric matrix `A` is even
+    Determine if the integral symmetric matrix `A` is even
     (i.e. represents only even numbers).  If not, then it returns the
     index of an odd diagonal entry.  If it is even, then we return the
     index `-1`.
@@ -1914,7 +1914,7 @@ class Genus_Symbol_p_adic_ring:
         """
         return self._prime
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return if the underlying `p`-adic lattice is even.
 
@@ -2802,7 +2802,8 @@ class GenusSymbol_global_ring:
         signature_pair = (p1 + p2, n1 + n2)
 
         primes = [s.prime() for s in self.local_symbols()]
-        primes += [s.prime() for s in other.local_symbols() if not s.prime() in primes]
+        primes.extend(s.prime() for s in other.local_symbols()
+                      if s.prime() not in primes)
         primes.sort()
         local_symbols = []
         for p in primes:

@@ -845,7 +845,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         - Devise a mechanism so that pickling bases of symmetric
           functions pickles the coercions which have a cache.
     """
-
     def __init__(self, R):
         r"""
         Initialization of ``self``.
@@ -1322,6 +1321,19 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return jack.Jack( self, t=t )
 
+    def abreu_nigro(self, q='q'):
+        """
+        The Abreu-Nigro basis of the Symmetric Functions.
+
+        EXAMPLES::
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: SymmetricFunctions(q.parent()).abreu_nigro()
+            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in q over Integer Ring in the Abreu-Nigro basis
+        """
+        from sage.combinat.sf.abreu_nigro import SymmetricFunctionAlgebra_AbreuNigro
+        return SymmetricFunctionAlgebra_AbreuNigro(self, q)
+
     def zonal(self):
         """
         The zonal basis of the Symmetric Functions.
@@ -1604,7 +1616,7 @@ class SymmetricaConversionOnBasis:
 
             sage: Sym = SymmetricFunctions(QQ['x'])
             sage: p = Sym.p(); s = Sym.s()
-            sage: def t(x) : [(p,c)] = x; return [ (p,2*c), (p.conjugate(), c) ]
+            sage: def t(x) : [(p, c)] = x; return [ (p, 2*c), (p.conjugate(), c) ]
             sage: f = sage.combinat.sf.sf.SymmetricaConversionOnBasis(t, p, s)
             sage: f(Partition([3,1]))
             s[2, 1, 1] + 2*s[3, 1]

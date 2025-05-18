@@ -15,26 +15,24 @@ behavior.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-# Load configuration shared with sage.misc.sphinxify
-from sage.misc.sagedoc_conf import *
-
-import sys
+import importlib
 import os
 import re
-import importlib
+import sys
+
 import dateutil.parser
-import sphinx
-import sphinx.ext.intersphinx as intersphinx
+from IPython.lib.lexers import IPyLexer, IPythonConsoleLexer
 from sphinx import highlighting
+from sphinx.ext import intersphinx
 from sphinx.transforms import SphinxTransform
 from sphinx.util.docutils import SphinxDirective
-from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
-from sage.misc.sagedoc import extlinks
-from sage.env import SAGE_DOC_SRC, SAGE_DOC, PPLPY_DOCS, MATHJAX_DIR
-from sage.misc.latex_macros import sage_mathjax_macros
-from sage.features.sphinx import JupyterSphinx
-from sage.features.all import all_features
+
 import sage.version
+from sage.env import MATHJAX_DIR, PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
+from sage.features.sphinx import JupyterSphinx
+from sage.misc.latex_macros import sage_mathjax_macros
+from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
+from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
 
 # ---------------------
 # General configuration
@@ -377,8 +375,8 @@ copybutton_only_copy_prompt_lines = True
 
 # https://www.sphinx-doc.org/en/master/usage/extensions/linkcode.html
 def linkcode_resolve(domain, info):
-    import inspect
     from urllib.parse import quote
+
     from sage.misc.sageinspect import sage_getsourcelines
     if domain != 'py':
         return None
@@ -647,6 +645,11 @@ latex_elements['preamble'] = r"""
 \makeatother
 """
 
+# Enable "hard wrapping" long code lines (only applies if breaking
+# long codelines at spaces or other suitable places failed, typically
+# this is for long decimal expansions or possibly long string identifiers)
+latex_elements['sphinxsetup'] = "verbatimforcewraps=true"
+
 # Documents to append as an appendix to all manuals.
 # latex_appendices = []
 
@@ -669,6 +672,7 @@ for macro in sage_latex_macros():
     latex_elements['preamble'] += macro + '\n'
     # used when building html version
     pngmath_latex_preamble += macro + '\n'
+
 
 # ------------------------------------------
 # add custom context variables for templates
@@ -706,15 +710,17 @@ def add_page_context(app, pagename, templatename, context, doctree):
             # source files are generated.
             suffix = '.py' if importlib.import_module(pagename.replace('/','.')).__file__.endswith('.py') else '.pyx'
             context['page_source_suffix'] = suffix
-            context['theme_source_view_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
-            context['theme_source_edit_link'] = os.path.join(source_repository, f'edit/develop/src', '{filename}')
+            context['theme_source_view_link'] = os.path.join(source_repository, 'blob/develop/src', '{filename}')
+            context['theme_source_edit_link'] = os.path.join(source_repository, 'edit/develop/src', '{filename}')
 
 
 dangling_debug = False
 
+
 def debug_inf(app, message):
     if dangling_debug:
         app.info(message)
+
 
 def call_intersphinx(app, env, node, contnode):
     r"""
@@ -748,6 +754,7 @@ def call_intersphinx(app, env, node, contnode):
     else:
         debug_inf(app, "---- Intersphinx: %s not Found" % node['reftarget'])
     return res
+
 
 def find_sage_dangling_links(app, env, node, contnode):
     r"""
@@ -859,6 +866,7 @@ skip_picklability_check_modules = [
     '__builtin__',
 ]
 
+
 def check_nested_class_picklability(app, what, name, obj, skip, options):
     """
     Print a warning if pickling is broken for nested classes.
@@ -878,6 +886,7 @@ def check_nested_class_picklability(app, what, name, obj, skip, options):
                          'Please set the metaclass of the parent class to '
                          'sage.misc.nested_class.NestedClassMetaclass.' % (
                         v.__module__ + '.' + name + '.' + nm))
+
 
 def skip_member(app, what, name, obj, skip, options):
     """
@@ -954,16 +963,20 @@ class SagecodeTransform(SphinxTransform):
 
     def apply(self):
         if self.app.builder.tags.has('html') or self.app.builder.tags.has('inventory'):
-            for node in self.document.findall(nodes.literal_block):
+            for node in list(self.document.findall(nodes.literal_block)):
                 if node.get('language') is None and node.astext().startswith('sage:'):
-                    from docutils.nodes import container as Container, label as Label, literal_block as LiteralBlock, Text
+                    from docutils.nodes import Text
+                    from docutils.nodes import container as Container
+                    from docutils.nodes import label as Label
+                    from docutils.nodes import literal_block as LiteralBlock
                     from sphinx_inline_tabs._impl import TabContainer
                     parent = node.parent
                     index = parent.index(node)
                     prev_node = node.previous_sibling()
-                    if isinstance(node.previous_sibling(), TabContainer):
+                    if isinstance(prev_node, TabContainer):
                         # Make sure not to merge inline tabs for adjacent literal blocks
-                        parent.insert(index, Text(''))
+                        parent.insert(index, nodes.paragraph())
+                        prev_node = parent[index]
                         index += 1
                     parent.remove(node)
                     # Tab for Sage code
@@ -1015,7 +1028,7 @@ class SagecodeTransform(SphinxTransform):
                             prev_node['classes'].append('with-python-tab')
                     if SAGE_LIVE_DOC == 'yes':
                         # Tab for Jupyter-sphinx cell
-                        from jupyter_sphinx.ast import JupyterCellNode, CellInputNode
+                        from jupyter_sphinx.ast import CellInputNode, JupyterCellNode
                         source = node.rawsource
                         lines = []
                         for line in source.splitlines():
@@ -1092,13 +1105,3 @@ def setup(app):
         #   app.connect('missing-reference', missing_reference)
         app.connect('missing-reference', find_sage_dangling_links)
         app.connect('html-page-context', add_page_context)
-
-
-# Conditional content
-# https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#tags
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#conf-tags
-# https://github.com/readthedocs/readthedocs.org/issues/4603#issuecomment-1411594800
-def feature_tags():
-    for feature in all_features():
-        if feature.is_present():
-            yield 'feature_' + feature.name.replace('.', '_')

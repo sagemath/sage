@@ -36,7 +36,8 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial, _dict_to_list
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen cimport Gen as pari_gen
 
 from sage.rings.integer cimport smallInteger
 
@@ -628,41 +629,41 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     f = self.change_ring(ZZ)
 
-    P,(x,) = f.parent().objgens()
+    _, (x,) = f.parent().objgens()
 
     delta = f.degree()
 
     if epsilon is None:
         epsilon = beta/8
-    verbose("epsilon = %f"%epsilon, level=2)
+    verbose("epsilon = %f" % epsilon, level=2)
 
     m = max(beta**2/(delta * epsilon), 7*beta/delta).ceil()
-    verbose("m = %d"%m, level=2)
+    verbose("m = %d" % m, level=2)
 
     t = int( ( delta*m*(1/beta -1) ).floor() )
-    verbose("t = %d"%t, level=2)
+    verbose("t = %d" % t, level=2)
 
     if X is None:
         X = (0.5 * N**(beta**2/delta - epsilon)).ceil()
-    verbose("X = %s"%X, level=2)
+    verbose("X = %s" % X, level=2)
 
     # we could do this much faster, but this is a cheap step
     # compared to LLL
-    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta) ]
-    g.extend([x**i * f**m for i in range(t)]) # h
+    g  = [x**j * N**(m-i) * f**i for i in range(m) for j in range(delta)]
+    g.extend([x**i * f**m for i in range(t)])  # h
 
     B = Matrix(ZZ, len(g), delta*m + max(delta,t) )
     for i in range(B.nrows()):
         for j in range( g[i].degree()+1 ):
-            B[i,j] = g[i][j]*X**j
+            B[i, j] = g[i][j]*X**j
 
-    B =  B.LLL(**kwds)
+    B = B.LLL(**kwds)
 
-    f = sum([ZZ(B[0,i]//X**i)*x**i for i in range(B.ncols())])
+    f = sum([ZZ(B[0, i]//X**i)*x**i for i in range(B.ncols())])
     R = f.roots()
 
     ZmodN = self.base_ring()
-    roots = set([ZmodN(r) for r,m in R if abs(r) <= X])
+    roots = set(ZmodN(r) for r, m in R if abs(r) <= X)
     Nbeta = N**beta
     return [root for root in roots if N.gcd(ZZ(self(root))) >= Nbeta]
 
@@ -1848,7 +1849,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             return Polynomial.__call__(self, *args, **kwds)
         arg = args[0]
         cdef ntl_ZZ_p fx = ntl_ZZ_p(0, self.c), x = None
-        if isinstance(arg, int) or isinstance(arg, Integer):
+        if isinstance(arg, (int, Integer)):
             x = ntl_ZZ_p(arg, self.c)
         elif isinstance(arg, Element):
             if <void *>self._parent._base == <void *>(<Element>arg)._parent: # c++ pointer hack

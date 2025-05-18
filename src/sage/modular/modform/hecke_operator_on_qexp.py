@@ -26,6 +26,7 @@ lazy_import('sage.rings.number_field.number_field', 'CyclotomicField')
 from sage.modular.dirichlet import DirichletGroup, DirichletCharacter
 from .element import ModularFormElement
 
+
 def hecke_operator_on_qexp(f, n, k, eps=None,
                            prec=None, check=True, _return_list=False):
     r"""
@@ -87,7 +88,7 @@ def hecke_operator_on_qexp(f, n, k, eps=None,
         # ZZ can coerce to GF(p), but QQ can't.
         eps = DirichletGroup(1, base_ring=ZZ)[0]
     if check:
-        if not (isinstance(f, PowerSeries) or isinstance(f, ModularFormElement)):
+        if not isinstance(f, (PowerSeries, ModularFormElement)):
             raise TypeError("f (=%s) must be a power series or modular form" % f)
         if not isinstance(eps, DirichletCharacter):
             raise TypeError("eps (=%s) must be a Dirichlet character" % eps)
@@ -186,11 +187,8 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
         sage: sage.modular.modform.constructor.ModularForms_clear_cache()
         sage: ModularForms(1,12).q_expansion_basis()
-        [
-        q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
-        1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3
-          + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)
-        ]
+        [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
+         1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6)]
         sage: hecke_operator_on_basis(ModularForms(1,12).q_expansion_basis(), 3, 12)
         Traceback (most recent call last):
         ...

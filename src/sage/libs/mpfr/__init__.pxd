@@ -27,7 +27,7 @@ cdef extern from "mpfr.h":
     # int mpfr_set_f(mpfr_t rop, mpf_t op, mpfr_rnd_t rnd)
     int mpfr_set_ui_2exp(mpfr_t rop, unsigned long int op, mp_exp_t e, mpfr_rnd_t rnd)
     int mpfr_set_si_2exp(mpfr_t rop, long int op, mp_exp_t e, mpfr_rnd_t rnd)
-    int mpfr_set_str(mpfr_t rop,  char *s, int base, mpfr_rnd_t rnd)
+    int mpfr_set_str(mpfr_t rop,  const char *s, int base, mpfr_rnd_t rnd)
     int mpfr_strtofr(mpfr_t rop, char *nptr, char **endptr, int base, mpfr_rnd_t rnd)
     void mpfr_set_inf(mpfr_t x, int sign)
     void mpfr_set_nan(mpfr_t x)
@@ -43,7 +43,7 @@ cdef extern from "mpfr.h":
     int mpfr_init_set_z(mpfr_t rop, mpz_t op, mpfr_rnd_t rnd)
     int mpfr_init_set_q(mpfr_t rop, mpq_t op, mpfr_rnd_t rnd)
     # int mpfr_init_set_f(mpfr_t rop, mpf_t op, mpfr_rnd_t rnd)
-    int mpfr_init_set_str(mpfr_t x, char *s, int base, mpfr_rnd_t rnd)
+    int mpfr_init_set_str(mpfr_t x, const char *s, int base, mpfr_rnd_t rnd)
 
     # Conversion Functions
     double mpfr_get_d(mpfr_t op, mpfr_rnd_t rnd)

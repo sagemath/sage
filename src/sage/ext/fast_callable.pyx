@@ -475,10 +475,11 @@ def fast_callable(x, domain=None, vars=None,
             x = x.function(*vars)
 
         if vars is None:
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
-            if isinstance(x.parent(), PolynomialRing_general) or isinstance(x.parent(), MPolynomialRing_base):
-                vars = x.parent().variable_names()
+            P = x.parent()
+            if isinstance(P, (PolynomialRing_generic, MPolynomialRing_base)):
+                vars = P.variable_names()
             else:
                 # constant
                 vars = ()
@@ -512,10 +513,10 @@ def _builder_and_stream(vars, domain):
 
         sage: from sage.ext.fast_callable import _builder_and_stream
         sage: _builder_and_stream(["x", "y"], ZZ)
-        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+        (<class '...interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
         sage: _builder_and_stream(["x", "y"], RR)                                       # needs sage.rings.real_mpfr
-        (<class 'sage.ext.interpreters.wrapper_rr.Wrapper_rr'>,
+        (<class '...interpreters.wrapper_rr.Wrapper_rr'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
 
     Modularized test with sagemath-categories after :issue:`35095`, which has
@@ -526,7 +527,7 @@ def _builder_and_stream(vars, domain):
         sage: domain = RDF
         sage: from sage.structure.element import Element as domain
         sage: _builder_and_stream(["x", "y"], domain)
-        (<class 'sage.ext.interpreters.wrapper_el.Wrapper_el'>,
+        (<class '...interpreters.wrapper_el.Wrapper_el'>,
          <sage.ext.fast_callable.InstructionStream object at 0x...>)
     """
     if isinstance(domain, sage.rings.abc.RealField):
@@ -1804,7 +1805,7 @@ cpdef generate_code(Expression expr, InstructionStream stream):
         sage: instr_stream.instr('return')
         sage: v = Wrapper_py(instr_stream.get_current())
         sage: type(v)
-        <class 'sage.ext.interpreters.wrapper_py.Wrapper_py'>
+        <class '...interpreters.wrapper_py.Wrapper_py'>
         sage: v(7)
         8*pi + 56
 

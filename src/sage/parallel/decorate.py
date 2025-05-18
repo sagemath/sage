@@ -7,7 +7,6 @@ import types
 from sage.rings.integer import Integer
 
 from .reference import parallel_iter as p_iter_reference
-from .use_fork import p_iter_fork
 from . import multiprocessing_sage
 from sage.misc.instancedoc import instancedoc
 
@@ -51,7 +50,7 @@ def normalize_input(a):
         return ((a,), {})
 
 
-class Parallel():
+class Parallel:
     r"""
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
@@ -76,6 +75,7 @@ class Parallel():
             ncpus = compute_ncpus()
 
         if p_iter == 'fork':
+            from .use_fork import p_iter_fork
             self.p_iter = p_iter_fork(ncpus, **kwds)
         elif p_iter == 'multiprocessing':
             self.p_iter = multiprocessing_sage.pyprocessing(ncpus)
@@ -110,7 +110,7 @@ class Parallel():
             <sage.parallel.decorate.ParallelFunction object at ...>
 
             sage: P = sage.parallel.decorate.Parallel()
-            sage: def g(n,m): return n+m
+            sage: def g(n, m): return n+m
             sage: h = P(g)          # indirect doctest
             sage: list(h([(2,3)]))
             [(((2, 3), {}), 5)]
@@ -119,7 +119,7 @@ class Parallel():
 
 
 @instancedoc
-class ParallelFunction():
+class ParallelFunction:
     """
     Class which parallelizes a function or class method.
     This is typically accessed indirectly through
@@ -308,6 +308,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     - ``ncpus`` -- integer; maximal number of subprocesses to use at the same time
     - ``timeout`` -- number of seconds until each subprocess is killed (only supported
       by ``'fork'``; zero means not at all)
+    - ``reseed_rng``: reseed the rng (random number generator) in each subprocess
 
     .. warning::
 
@@ -358,7 +359,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     when calling the parallel function::
 
         sage: @parallel
-        ....: def f(a,b): return a*b
+        ....: def f(a, b): return a*b
         sage: for X, Y in sorted(list(f([(2,3),(3,5),(5,7)]))): print((X, Y))
         (((2, 3), {}), 6)
         (((3, 5), {}), 15)
@@ -398,6 +399,15 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
         sage: Foo.square_classmethod(3)
         9
 
+    By default, all subprocesses use the same random seed and therefore the same deterministic randomness.
+    For functions that should be randomized, we can reseed the random seed in each subprocess::
+
+        sage: @parallel(reseed_rng=True)
+        ....: def unif(n): return ZZ.random_element(x=0, y=n)
+        sage: set_random_seed(42)
+        sage: sorted(unif([1000]*3)) # random
+        [(((1000,), {}), 444), (((1000,), {}), 597), (((1000,), {}), 640)]
+
     .. warning::
 
        Currently, parallel methods do not work with the
@@ -422,7 +432,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 #   def f(...): ...
 ###################################################################
 
-class Fork():
+class Fork:
     """
     A ``fork`` decorator class.
     """
@@ -456,7 +466,7 @@ class Fork():
         EXAMPLES::
 
             sage: F = sage.parallel.decorate.Fork(timeout=3)
-            sage: def g(n,m): return n+m
+            sage: def g(n, m): return n+m
             sage: h = F(g)     # indirect doctest
             sage: h(2,3)
             5
@@ -516,8 +526,6 @@ def fork(f=None, timeout=0, verbose=False):
 
         sage: @fork(timeout=0.1, verbose=True)
         ....: def g(n, m): return factorial(n).ndigits() + m
-        sage: g(5, m=5)
-        8
         sage: g(10^7, m=5)
         Killing subprocess ... with input ((10000000,), {'m': 5}) which took too long
         'NO DATA (timed out)'

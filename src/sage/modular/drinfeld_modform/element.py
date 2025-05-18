@@ -25,6 +25,7 @@ from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 
+
 class DrinfeldModularFormsElement(ModuleElement):
     r"""
     Element class of rings of Drinfeld modular forms.
@@ -253,7 +254,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self.parent()._rank
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return ``True`` whether this graded Drinfeld form is the
         multiplicative identity.
@@ -270,7 +271,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self._polynomial.is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` whether this graded Drinfeld form is the
         additive identity.
@@ -292,7 +293,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return not bool(self)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether the graded form is homogeneous in the weight.
 

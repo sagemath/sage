@@ -109,9 +109,10 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
     Run Sage itself with various options::
 
         sage: # long time
+        sage: from sage.version import banner
         sage: (out, err, ret) = test_executable([
         ....:     "sage"], pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0
+        sage: out.find(banner) >= 0
         True
         sage: err
         ''
@@ -121,7 +122,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
         sage: # long time
         sage: (out, err, ret) = test_executable([
         ....:     "sage"], "3^33\n", pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0
+        sage: out.find(banner) >= 0
         True
         sage: out.find("5559060566555523") >= 0
         True
@@ -133,7 +134,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
         sage: # long time
         sage: (out, err, ret) = test_executable([
         ....:     "sage", "-q"], "3^33\n", pydebug_ignore_warnings=True)
-        sage: out.find(version()) >= 0
+        sage: out.find(banner) >= 0
         False
         sage: out.find("5559060566555523") >= 0
         True
@@ -205,7 +206,8 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
     Basic information about the Sage installation::
 
         sage: (out, err, ret) = test_executable(["sage", "-v"])
-        sage: out.find(version()) >= 0
+        sage: from sage.version import banner
+        sage: out.find(banner) >= 0
         True
         sage: err
         ''
@@ -776,4 +778,13 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
                 p.stderr.close()
             err.append(s)
 
-    return (''.join(out), ''.join(err), p.wait())
+    # In case out or err contains a quoted string, force the use of
+    # double quotes so that the output is enclosed in single
+    # quotes. This avoids some doctest failures with some versions of
+    # OS X and Xcode.
+    out = ''.join(out)
+    out = out.replace("'", '"')
+    err = ''.join(err)
+    err = err.replace("'", '"')
+
+    return (out, err, p.wait())

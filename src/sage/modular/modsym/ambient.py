@@ -1761,9 +1761,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                 else:
                     A._is_simple = True
                     D.append((A, n))
-        # The eisenstein part
-        for E in self.eisenstein_submodule().decomposition(anemic=True):
-            D.append((E, 1))
+        # The Eisenstein part
+        D.extend((E, 1) for E in
+                 self.eisenstein_submodule().decomposition(anemic=True))
 
         r = self.dimension()
         s = sum(A.rank() * mult for A, mult in D)
@@ -1775,7 +1775,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
 
     factor = factorization
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return ``True`` if this space is cuspidal, else ``False``.
 
@@ -1798,7 +1798,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             self.__is_cuspidal = (S.dimension() == self.dimension())
         return self.__is_cuspidal
 
-    def is_eisenstein(self):
+    @cached_method
+    def is_eisenstein(self) -> bool:
         r"""
         Return ``True`` if this space is Eisenstein, else ``False``.
 
@@ -1814,12 +1815,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: S.is_eisenstein()
             False
         """
-        try:
-            return self.__is_eisenstein
-        except AttributeError:
-            S = self.ambient_hecke_module().eisenstein_submodule()
-            self.__is_eisenstein = self.dimension() == S.dimension()
-        return self.__is_eisenstein
+        S = self.ambient_hecke_module().eisenstein_submodule()
+        return self.dimension() == S.dimension()
 
     def manin_symbols_basis(self):
         """

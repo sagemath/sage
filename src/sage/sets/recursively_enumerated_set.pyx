@@ -286,8 +286,9 @@ from collections import deque
 
 
 def RecursivelyEnumeratedSet(seeds, successors, structure=None,
-            enumeration=None, max_depth=float("inf"), post_process=None,
-            facade=None, category=None):
+                             enumeration=None, max_depth=float("inf"),
+                             post_process=None,
+                             facade=None, category=None):
     r"""
     Return a recursively enumerated set.
 
@@ -470,7 +471,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
             A recursively enumerated set (breadth first search)
         """
         assert enumeration in ['naive', 'depth', 'breadth'], \
-                    "unknown enumeration(={})".format(enumeration)
+            "unknown enumeration(={})".format(enumeration)
 
         self._seeds = seeds
         self.successors = successors
@@ -480,7 +481,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         if post_process is not None:
             self.post_process = post_process
         self._graded_component = None
-        Parent.__init__(self, facade=facade, category=EnumeratedSets().or_subcategory(category))
+        Parent.__init__(self, facade=facade,
+                        category=EnumeratedSets().or_subcategory(category))
 
     def __reduce__(self):
         r"""
@@ -1120,11 +1122,8 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             {0}
             sage: next(it)
             {-1, 1}
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.02); next(it)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.02): next(it)
             sage: next(it)
             Traceback (most recent call last):
             ...
@@ -1173,11 +1172,8 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             ....:    sleep(0.1r)
             ....:    return [a - 1, a + 1]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='symmetric')
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.45); C.graded_component(10)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.45): C.graded_component(10)
             sage: C.graded_component(1)
             {-1, 1}
             sage: C.graded_component(2)
@@ -1392,11 +1388,8 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
             ....:    sleep(0.1r)
             ....:    return [a + 1, a + I]
             sage: C = RecursivelyEnumeratedSet([0], f, structure='graded')
-            sage: from cysignals.alarm import alarm
-            sage: alarm(0.45); C.graded_component(10)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.45): C.graded_component(10)
             sage: C.graded_component(2)
             {2*I, I + 1, 2}
             sage: C.graded_component(3)
@@ -1532,10 +1525,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
     # (you ask the children for the last node you met). Setting
     # position on 0 results in a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
-    if algorithm == 'depth':
-        position = -1
-    else:
-        position = 0
+    position = -1 if algorithm == 'depth' else 0
 
     # Invariant:
     #  - for breadth first search: stack[i] contains an iterator over the nodes
@@ -1555,7 +1545,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
             continue
 
         yield node
-        stack.append( iter(children(node)) )
+        stack.append(iter(children(node)))
 
 
 class RecursivelyEnumeratedSet_forest(Parent):
@@ -1742,8 +1732,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
             sage: loads(dumps(S))
             An enumerated set with a forest structure
     """
-    def __init__(self, roots = None, children = None, post_process = None,
-                 algorithm = 'depth', facade = None, category=None):
+    def __init__(self, roots=None, children=None, post_process=None,
+                 algorithm='depth', facade=None, category=None):
         r"""
         TESTS::
 
@@ -1759,7 +1749,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
         if post_process is not None:
             self.post_process = post_process
         self._algorithm = algorithm
-        Parent.__init__(self, facade = facade, category = EnumeratedSets().or_subcategory(category))
+        Parent.__init__(self, facade=facade,
+                        category=EnumeratedSets().or_subcategory(category))
 
     __len__ = None
 
@@ -1833,7 +1824,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         """
         iter = search_forest_iterator(self.roots(),
                                       self.children,
-                                      algorithm = self._algorithm)
+                                      algorithm=self._algorithm)
         if hasattr(self, "post_process"):
             iter = _imap_and_filter_none(self.post_process, iter)
         return iter
@@ -2016,7 +2007,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         """
         stack = [iter(self.roots())]
         while stack:
-            position = randint(0,len(stack)-1)
+            position = randint(0, len(stack) - 1)
             try:
                 node = next(stack[position])
             except StopIteration:
@@ -2025,12 +2016,12 @@ class RecursivelyEnumeratedSet_forest(Parent):
 
             if node == elt:
                 return True
-            stack.append( iter(self.children(node)) )
+            stack.append(iter(self.children(node)))
         return False
 
-    def map_reduce(self, map_function = None,
-                   reduce_function = None,
-                   reduce_init = None):
+    def map_reduce(self, map_function=None,
+                   reduce_function=None,
+                   reduce_init=None):
         r"""
         Apply a Map/Reduce algorithm on ``self``.
 
@@ -2084,7 +2075,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         """
         import sage.parallel.map_reduce
         return sage.parallel.map_reduce.RESetMapReduce(
-            forest = self,
-            map_function = map_function,
-            reduce_function = reduce_function,
-            reduce_init = reduce_init).run()
+            forest=self,
+            map_function=map_function,
+            reduce_function=reduce_function,
+            reduce_init=reduce_init).run()

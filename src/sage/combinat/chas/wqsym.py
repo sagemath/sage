@@ -37,7 +37,6 @@ We check that the coercion `C \to M` goes through the `X` basis::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -238,8 +237,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             return self._coerce_map_via([target], R)
         return super()._coerce_map_from_(R)
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -986,12 +984,12 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             cur = {data[0]: 1}
             for B in data[1:]:
                 ret = {}
-                for A in cur:
+                for A, curA in cur.items():
                     for C in ShuffleProduct_overlapping(A, B, element_constructor=OSP, add=union):
                         if C in ret:
-                            ret[C] += cur[A]
+                            ret[C] += curA
                         else:
-                            ret[C] = cur[A]
+                            ret[C] = curA
                 cur = ret
 
             # Return the result in the X basis

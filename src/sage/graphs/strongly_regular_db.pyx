@@ -1068,25 +1068,25 @@ def is_polhill(int v, int k, int l, int mu):
     # We now define the P_{i,j}. see section 6.
 
     P = {}
-    P[0,1] = list(range((-1) + 1                  , 2**(s-2)+1))
-    P[1,1] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+1))
-    P[2,1] = list(range((-1) + 2**(s-1)+2         , 2**(s-1)+2**(s-2)+1))
-    P[3,1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
+    P[0, 1] = list(range((-1) + 1, 2**(s-2)+1))
+    P[1, 1] = list(range((-1) + 2**(s-2)+2, 2**(s-1)+1))
+    P[2, 1] = list(range((-1) + 2**(s-1)+2, 2**(s-1)+2**(s-2)+1))
+    P[3, 1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
 
-    P[0,2] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+2))
-    P[1,2] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    P[2,2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
-    P[3,2] = list(range((-1) + 2                  , 2**(s-2)+1))
+    P[0, 2] = list(range((-1) + 2**(s-2)+2, 2**(s-1)+2))
+    P[1, 2] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+2))
+    P[2, 2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
+    P[3, 2] = list(range((-1) + 2, 2**(s-2)+1))
 
-    P[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+3))
-    P[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
-    P[2,3] = list(range((-1) + 3                  , 2**(s-2)+2))
-    P[3,3] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+2))
+    P[0, 3] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+3))
+    P[1, 3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
+    P[2, 3] = list(range((-1) + 3, 2**(s-2)+2))
+    P[3, 3] = list(range((-1) + 2**(s-2)+3, 2**(s-1)+2))
 
-    P[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
-    P[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
-    P[2,4] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
-    P[3,4] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
+    P[0, 4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
+    P[1, 4] = list(range((-1) + 3, 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
+    P[2, 4] = list(range((-1) + 2**(s-2)+3, 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
+    P[3, 4] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
 
     R = {x: copy(P[x]) for x in P}
 
@@ -1100,10 +1100,10 @@ def is_polhill(int v, int k, int l, int mu):
 
     # We now define the R_{i,j}. see *end* of section 6.
 
-    R[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    R[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
-    R[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
-    R[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1]
+    R[0, 3] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+2))
+    R[1, 3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
+    R[0, 4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
+    R[1, 4] = list(range((-1) + 3, 2**(s-2)+1)) + [2**(s-1)+1]
 
     for x in R:
         R[x] = [K[i] for i in R[x]]
@@ -1840,7 +1840,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
 
-cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
+cpdef latin_squares_graph_parameters(int v, int k, int l, int mu):
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
@@ -2617,8 +2617,8 @@ def SRG_630_85_20_10():
     hs = HoffmanSingletonGraph()
     P = list(range(5)) + list(range(30, 35))  # a Petersen in hs
     mc = [0, 1, 5, 6, 12, 13, 16, 17, 22, 23, 29, 33, 39, 42, 47]
-    assert(hs.subgraph(mc).is_regular(k=0))  # a maximum coclique
-    assert(hs.subgraph(P).is_regular(k=3))
+    assert hs.subgraph(mc).is_regular(k=0)  # a maximum coclique
+    assert hs.subgraph(P).is_regular(k=3)
     h = hs.automorphism_group().stabilizer(mc, action='OnSets')
     l = h.orbit(tuple((x[0], x[1]) for x in hs.subgraph(P).matching()),
                 "OnSetsSets")
@@ -2784,7 +2784,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
     - ``v``, ``k``, ``l``, ``mu`` -- ``integers`` -- note that ``mu``, if unspecified, is
       automatically determined from ``v``, ``k``, ``l``
 
-    - ``existence`` -- boolean;``False``; instead of building the graph,
+    - ``existence`` -- boolean (default: ``False``); instead of building the graph,
       return:
 
         - ``True`` -- meaning that a `(v,k,\lambda,\mu)`-strongly regular graph
@@ -3295,11 +3295,11 @@ def _check_database():
         if _brouwer_database[params]['status'] != "impossible":
             raise RuntimeError("Brouwer's db does not seem to know that {} in unfeasible".format(params))
         comment = _brouwer_database[params]['comments']
-        if ('Krein'    in comment or
+        if ('Krein' in comment or
             'Absolute' in comment or
-            'Conf'     in comment or
-            'mu=1'     in comment or
-            '&mu;=2'   in comment):
+            'Conf' in comment or
+            'mu=1' in comment or
+            '&mu;=2' in comment):
             continue
         raise RuntimeError("We detected that {} was unfeasible, but maybe we should not have".format(params))
 

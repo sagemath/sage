@@ -539,7 +539,7 @@ class HyperbolicGeodesic(SageObject):
     def is_parallel(self, other):
         r"""
         Return ``True`` if the two given hyperbolic geodesics are either
-        ultra parallel or asymptotically parallel and``False`` otherwise.
+        ultra parallel or asymptotically parallel and ``False`` otherwise.
 
         INPUT:
 
@@ -1213,11 +1213,10 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [Boundary point in UHP -sqrt(65) + 9,
              Boundary point in UHP sqrt(65) + 9]
         """
-
         start = self._start.coordinates()
         end = self._end.coordinates()
-        [x1, x2] = [real(k) for k in [start, end]]
-        [y1, y2] = [imag(k) for k in [start, end]]
+        x1, x2 = real(start), real(end)
+        y1, y2 = imag(start), imag(end)
         M = self._model
         # infinity is the first endpoint, so the other ideal endpoint
         # is just the real part of the second coordinate
@@ -1854,9 +1853,9 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: g = HyperbolicPlane().UHP().get_geodesic(1, 1 + I)
             sage: h = HyperbolicPlane().UHP().get_geodesic(-sqrt(2), sqrt(2))
             sage: g.angle(h)
-            arccos(1/2*sqrt(2))
+            1/4*pi
             sage: h.angle(g)
-            arccos(1/2*sqrt(2))
+            1/4*pi
 
         Angle is unoriented, as opposed to oriented. ::
 
@@ -2046,8 +2045,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             Full MatrixSpace of 2 by 2 dense matrices over Complex Field
             with 53 bits of precision
         """
-
-        [s, e] = [k.coordinates() for k in self.complete().endpoints()]
+        s, e = [k.coordinates() for k in self.complete().endpoints()]
         B = HyperbolicGeodesicUHP._get_B(p)
         # outmat below will be returned after we normalize the determinant.
         outmat = B * HyperbolicGeodesicUHP._crossratio_matrix(s, p, e)

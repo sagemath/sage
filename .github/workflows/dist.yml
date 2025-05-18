@@ -10,7 +10,9 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
       - '[0-9]+.[0-9]+.rc[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
-
+  pull_request:
+    paths:
+      - '.github/workflows/dist.yml'
   workflow_dispatch:
     # Allow to run manually
 
@@ -80,24 +82,42 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install bootstrap prerequisites
+    
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.12
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-3.12-linux.yml
+
+      - name: Create source distribution
+        shell: bash -l {0}
+        run: |
+          conda install --yes python-build
+          python -m build --sdist --no-isolation --outdir dist .
+
+      - name: Old sagemath-standard
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
-      - name: make pypi-sdists
-        run: |
           ./bootstrap
           ./configure
           make pypi-sdists V=0
-          (mkdir dist && mv upstream/sage*.tar.gz dist/)
+          mv upstream/sage*.tar.gz dist/
           ls -l dist
+
       - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
+
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
@@ -119,10 +139,38 @@ jobs:
         with:
           name: dist
           path: dist
-      - uses: softprops/action-gh-release@v2
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          latest_release_tag=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases \
+          | jq -r 'sort_by(.created_at) | last(.[]).tag_name')
+          release_notes=$(curl -s \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
+            -d "{
+              \"tag_name\": \"${{ github.ref_name }}\",
+              \"previous_tag_name\": \"$latest_release_tag\"
+            }" | jq -r '.body')
+          # escape special characters for json
+          release_notes=$(jq -R -s '.' <<< "$release_notes")
+          curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d "{
+              \"tag_name\": \"${{ github.ref_name }}\",
+              \"prerelease\": ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }},
+              \"body\": $release_notes
+            }"
+      - name: Create release assets
+        uses: softprops/action-gh-release@v2
         with:
-          generate_release_notes: true
-          prerelease: ${{ contains(github.ref, 'beta') || contains(github.ref, 'rc') }}
           files: |
             dist/*
             upstream/*
@@ -133,7 +181,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install bootstrap prerequisites
@@ -188,7 +236,7 @@ jobs:
       #
       CIBW_ARCHS: ${{ matrix.arch }}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
-      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9, <3.13"
+      CIBW_PROJECT_REQUIRES_PYTHON: ">=3.11, <3.13"
       # Environment during wheel build
       CIBW_ENVIRONMENT: "PATH=$(pwd)/prefix/bin:$PATH CPATH=$(pwd)/prefix/include:$CPATH LIBRARY_PATH=$(pwd)/prefix/lib:$LIBRARY_PATH LD_LIBRARY_PATH=$(pwd)/prefix/lib:$LD_LIBRARY_PATH PKG_CONFIG_PATH=$(pwd)/prefix/share/pkgconfig:$PKG_CONFIG_PATH ACLOCAL_PATH=/usr/share/aclocal PIP_CONSTRAINT=$(pwd)/constraints.txt PIP_FIND_LINKS=file://$(pwd)/wheelhouse SAGE_NUM_THREADS=6"
       # Use 'build', not 'pip wheel'
@@ -247,10 +295,6 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*objects*
 
-      - name: sagemath-categories
-        run: |
-          "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*categories*
-
       - name: sagemath-bliss
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*bliss*
@@ -263,6 +307,13 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*mcqd*
 
+      - name: sagemath-tdlib
+        run: |
+          case "${{ matrix.arch }}" in
+              i686) ;;  # broken - boost-related
+              *) "${{ steps.python.outputs.python-path }}" -m cibuildwheel unpacked/sagemath*tdlib*
+          esac
+
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-${{ matrix.build }}-${{ matrix.arch }}-wheels
@@ -273,7 +324,7 @@ jobs:
     needs: build_wheels
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
 
       - uses: actions/download-artifact@v4

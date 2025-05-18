@@ -220,9 +220,9 @@ class FastCrystal(UniqueRepresentation, Parent):
             4
         """
         if self._cartan_type[0] == 'B':
-            [m1, m2] = [l1+l2, l1-l2]
+            m1, m2 = l1 + l2, l1 - l2
         else:
-            [m1, m2] = [l1, l2]
+            m1, m2 = l1, l2
         for b in range(m2,-1,-1):
             for a in range(m1,m2-1,-1):
                 for c in range(b,a+1):
@@ -271,7 +271,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         """
         return self._digraph
 
-    def cmp_elements(self, x,y):
+    def cmp_elements(self, x, y):
         r"""
         Return ``True`` if and only if there is a path from `x` to `y` in the
         crystal graph.
@@ -336,11 +336,11 @@ class FastCrystal(UniqueRepresentation, Parent):
             delpat = self.parent().delpat[self.value]
             if self.parent()._cartan_type[0] == 'A':
                 delpat = delpat + [0,]
-            [alpha1, alpha2] = self.parent().weight_lattice_realization().simple_roots()
+            alpha1, alpha2 = self.parent().weight_lattice_realization().simple_roots()
             hwv = sum(self.parent().shape[i]*self.parent().weight_lattice_realization().monomial(i) for i in range(2))
             return hwv - (delpat[0]+delpat[2])*alpha1 - (delpat[1]+delpat[3])*alpha2
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             EXAMPLES::
 

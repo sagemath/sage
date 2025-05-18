@@ -75,7 +75,7 @@ cpdef isqrt(n):
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
+cpdef from_man_exp(man, exp, long prec=0, str rnd='d'):
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
@@ -134,11 +134,15 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
         elif rnd == 'd':
             mpz_fdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'f':
-            if sign: mpz_cdiv_q_2exp(res.value, man.value, shift)
-            else:    mpz_fdiv_q_2exp(res.value, man.value, shift)
+            if sign:
+                mpz_cdiv_q_2exp(res.value, man.value, shift)
+            else:
+                mpz_fdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'c':
-            if sign: mpz_fdiv_q_2exp(res.value, man.value, shift)
-            else:    mpz_cdiv_q_2exp(res.value, man.value, shift)
+            if sign:
+                mpz_fdiv_q_2exp(res.value, man.value, shift)
+            else:
+                mpz_cdiv_q_2exp(res.value, man.value, shift)
         elif rnd == 'u':
             mpz_cdiv_q_2exp(res.value, man.value, shift)
         exp += shift

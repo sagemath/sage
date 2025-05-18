@@ -58,7 +58,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
         P = self.codomain()
         f = self.underlying_map()
         if P.is_sparse():
-            return P({a: f(b) for a, b in x.dict().iteritems()})
+            return P({a: f(b) for a, b in x.monomial_coefficients().items()})
         else:
             return P([f(b) for b in x])
 
@@ -88,7 +88,8 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
         P = self.codomain()
         f = self.underlying_map()
         if P.is_sparse():
-            return P({a: f(b) for a, b in x.dict().iteritems()}, *args, **kwds)
+            return P({a: f(b) for a, b in x.monomial_coefficients().items()},
+                     *args, **kwds)
         else:
             return P([f(b) for b in x], *args, **kwds)
 

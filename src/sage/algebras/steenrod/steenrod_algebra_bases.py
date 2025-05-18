@@ -351,7 +351,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     profile = kwds.get("profile", None)
     if (profile is not None and profile != () and profile != ((), ())
             and basis != 'milnor' and basis.find('pst') == -1):
-        raise ValueError("Profile functions may only be used with the Milnor or pst bases")
+        raise ValueError("profile functions may only be used with the Milnor or pst bases")
 
     # Milnor basis
     if basis_name == 'milnor':
@@ -373,7 +373,7 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
     elif not generic and basis == 'arnonc':
         return arnonC_basis(n)
     else:
-        raise ValueError("Unknown basis: %s at the prime %s" % (basis, p))
+        raise ValueError("unknown basis: %s at the prime %s" % (basis, p))
 
 
 # helper functions for producing bases
@@ -887,7 +887,7 @@ def atomic_basis(n, basis, **kwds):
                 deg = 2**s * (2**t - 1)
         return dict
 
-    def sorting_pair(s,t,basis):   # pair used for sorting the basis
+    def sorting_pair(s, t, basis):   # pair used for sorting the basis
         if basis.find('wood') >= 0 and basis.find('z') >= 0:
             return (-s-t,-s)
         elif basis.find('wood') >= 0 or basis.find('wall') >= 0 or \

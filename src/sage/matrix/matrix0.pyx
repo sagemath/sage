@@ -531,7 +531,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A.is_mutable()
             False
         """
-        return not(self._is_immutable)
+        return not self._is_immutable
 
     ###########################################################
     # Entry access
@@ -1019,7 +1019,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     if ind < 0 or ind >= ncols:
                         raise IndexError("matrix index out of range")
             elif isinstance(col_index, slice):
-                col_list =  list(range(*col_index.indices(ncols)))
+                col_list = list(range(*col_index.indices(ncols)))
             else:
                 if not PyIndex_Check(col_index):
                     raise TypeError("index must be an integer")
@@ -2977,7 +2977,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         self.permute_rows(row_permutation)
         self.permute_columns(column_permutation)
 
-    def with_permuted_rows_and_columns(self,row_permutation,column_permutation):
+    def with_permuted_rows_and_columns(self, row_permutation, column_permutation):
         r"""
         Return the matrix obtained from permuting the rows and
         columns of ``self`` by applying the permutation group
@@ -3792,7 +3792,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [1]
         """
         cdef list L = []
-        cdef int i
+        cdef Py_ssize_t i
 
         for i from 0 <= i < self._ncols:
             if i not in d:
@@ -3854,7 +3854,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         cdef dict d = {}
         cdef list queue = list(range(self._ncols))
-        cdef int l, sign, i
+        cdef int l
+        cdef Py_ssize_t sign, i
 
         if skew:
             # testing the diagonal entries to be zero
@@ -5140,9 +5141,9 @@ cdef class Matrix(sage.structure.element.Matrix):
             fac = o1.factor()
             S = sum((pi - 1) * pi**(ei - 1) for pi, ei in fac)
             if fac[0] == (2, 1):
-                impossible_order = not(S <= n + 1)
+                impossible_order = S > n + 1
             else:
-                impossible_order = not(S <= n)
+                impossible_order = S > n
             if impossible_order:
                 return Infinity
 

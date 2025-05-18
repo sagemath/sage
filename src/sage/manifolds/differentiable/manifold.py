@@ -451,8 +451,8 @@ from sage.rings.integer import Integer
 from sage.rings.real_mpfr import RR
 
 if TYPE_CHECKING:
-    from sage.manifolds.differentiable.diff_map import DiffMap
     from sage.manifolds.differentiable.diff_form import DiffForm
+    from sage.manifolds.differentiable.diff_map import DiffMap
     from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
     from sage.manifolds.differentiable.vectorfield_module import (
         VectorFieldFreeModule,
@@ -1097,8 +1097,9 @@ class DifferentiableManifold(TopologicalManifold):
             Differentiable real vector bundle E -> M of rank 2 over the base
              space 2-dimensional differentiable manifold M
         """
-        from sage.manifolds.differentiable.vector_bundle \
-                                               import DifferentiableVectorBundle
+        from sage.manifolds.differentiable.vector_bundle import (
+            DifferentiableVectorBundle,
+        )
         return DifferentiableVectorBundle(rank, name, self, field=field,
                                           latex_name=latex_name)
 
@@ -1366,8 +1367,10 @@ class DifferentiableManifold(TopologicalManifold):
             sage: M.is_manifestly_parallelizable()
             True
         """
-        from sage.manifolds.differentiable.vectorfield_module import \
-                                       VectorFieldModule, VectorFieldFreeModule
+        from sage.manifolds.differentiable.vectorfield_module import (
+            VectorFieldFreeModule,
+            VectorFieldModule,
+        )
         if dest_map is None:
             dest_map = self.identity_map()
         codomain = dest_map._codomain
@@ -2695,7 +2698,7 @@ class DifferentiableManifold(TopologicalManifold):
             [Coordinate frame (U, (∂/∂x,∂/∂y)),
              Coordinate frame (V, (∂/∂u,∂/∂v))]
         """
-        from .vectorframe import VectorFrame
+        from sage.manifolds.differentiable.vectorframe import VectorFrame
         chart_type = self._structure.chart
         if isinstance(orientation, chart_type):
             orientation = [orientation.frame()]
@@ -2985,7 +2988,9 @@ class DifferentiableManifold(TopologicalManifold):
             [1 2]
             [0 3]
         """
-        from sage.manifolds.differentiable.automorphismfield import AutomorphismFieldParal
+        from sage.manifolds.differentiable.automorphismfield import (
+            AutomorphismFieldParal,
+        )
         fmodule = frame1._fmodule
         if frame2._fmodule != fmodule:
             raise ValueError("the two frames are not defined on the same " +
@@ -3394,8 +3399,8 @@ class DifferentiableManifold(TopologicalManifold):
             :class:`~sage.manifolds.differentiable.tangent_space.TangentSpace`
             for more examples.
         """
-        from sage.manifolds.point import ManifoldPoint
         from sage.manifolds.differentiable.tangent_space import TangentSpace
+        from sage.manifolds.point import ManifoldPoint
         if not isinstance(point, ManifoldPoint):
             raise TypeError("{} is not a manifold point".format(point))
         if point not in self:
@@ -3725,7 +3730,9 @@ class DifferentiableManifold(TopologicalManifold):
         """
 
         from sage.manifolds.differentiable.examples.real_line import RealLine
-        from sage.manifolds.differentiable.manifold_homset import IntegratedAutoparallelCurveSet
+        from sage.manifolds.differentiable.manifold_homset import (
+            IntegratedAutoparallelCurveSet,
+        )
 
         if len(curve_param) != 3:
             raise ValueError("the argument 'curve_param' must be " +
@@ -3893,8 +3900,7 @@ class DifferentiableManifold(TopologicalManifold):
             :class:`~sage.manifolds.differentiable.affine_connection.AffineConnection`
             for more examples.
         """
-        from sage.manifolds.differentiable.affine_connection import \
-                                                               AffineConnection
+        from sage.manifolds.differentiable.affine_connection import AffineConnection
         return AffineConnection(self, name, latex_name)
 
     def metric(self, name: str, signature: Optional[int] = None,

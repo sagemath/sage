@@ -21,7 +21,8 @@ import sage.rings.padics.precision_error as precision_error
 from sage.rings.fraction_field_element import FractionFieldElement
 import copy
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen import Gen as pari_gen
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 
@@ -51,7 +52,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         Check that :issue:`13620` has been fixed::
 
             sage: f = R.zero()
-            sage: R(f.dict())
+            sage: R(f.monomial_coefficients())
             0
 
         Check that :issue:`29829` has been fixed::

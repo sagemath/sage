@@ -45,13 +45,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #******************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.cachefunc import cached_method
-from sage.structure.parent import Parent
-from sage.structure.element import AlgebraElement
 from sage.categories.algebras import Algebras
-from .characteristic_cohomology_class import (CharacteristicCohomologyClassRing,
-                                              CharacteristicCohomologyClassRingElement)
+from sage.manifolds.differentiable.characteristic_cohomology_class import (
+    CharacteristicCohomologyClassRing,
+    CharacteristicCohomologyClassRingElement,
+)
+from sage.misc.cachefunc import cached_method
+from sage.structure.element import AlgebraElement
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class DeRhamCohomologyClass(AlgebraElement):
     r"""
@@ -297,6 +300,7 @@ class DeRhamCohomologyClass(AlgebraElement):
             if self.representative() == other.representative():
                 return True
         raise NotImplementedError('comparison via exact forms is currently not supported')
+
 
 class DeRhamCohomologyRing(Parent, UniqueRepresentation):
     r"""

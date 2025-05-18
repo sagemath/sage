@@ -402,19 +402,19 @@ cdef class Lfunction:
     cdef void _init_fun(self, char *NAME, int what_type, dirichlet_coeff, long long Period, double q,  c_Complex w, int A, double *g, c_Complex *l, int n_poles, c_Complex *p, c_Complex *r) noexcept:
         raise NotImplementedError
 
-    cdef c_Complex _value(self,c_Complex s,int derivative) noexcept:
+    cdef c_Complex _value(self, c_Complex s, int derivative) noexcept:
         raise NotImplementedError
 
-    cdef c_Complex _hardy_z_function(self,c_Complex s) noexcept:
+    cdef c_Complex _hardy_z_function(self, c_Complex s) noexcept:
         raise NotImplementedError
 
     cdef int _compute_rank(self) noexcept:
         raise NotImplementedError
 
-    cdef double _typedN(self,double T) noexcept:
+    cdef double _typedN(self, double T) noexcept:
         raise NotImplementedError
 
-    cdef void _find_zeros_v(self,double T1, double T2, double stepsize, doublevec *result) noexcept:
+    cdef void _find_zeros_v(self, double T1, double T2, double stepsize, doublevec *result) noexcept:
         raise NotImplementedError
 
     cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
@@ -498,10 +498,10 @@ cdef class Lfunction_I(Lfunction):
         self.thisptr=new_c_Lfunction_I(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_ints(coeffs)
 
-    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
+    cdef inline c_Complex _value(self, c_Complex s, int derivative) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).value(s, derivative, "pure")
 
-    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
+    cdef inline c_Complex _hardy_z_function(self, c_Complex s) noexcept:
         return (<c_Lfunction_I *>(self.thisptr)).value(s, 0, "rotated pure")
 
     cdef int _compute_rank(self) noexcept:
@@ -635,10 +635,10 @@ cdef class Lfunction_D(Lfunction):
         self.thisptr=new_c_Lfunction_D(NAME, what_type,  N, coeffs, Period, q,  w,  A, g, l, n_poles, p, r)
         del_doubles(coeffs)
 
-    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
+    cdef inline c_Complex _value(self, c_Complex s, int derivative) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).value(s, derivative, "pure")
 
-    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
+    cdef inline c_Complex _hardy_z_function(self, c_Complex s) noexcept:
         return (<c_Lfunction_D *>(self.thisptr)).value(s, 0, "rotated pure")
 
     cdef inline int _compute_rank(self) noexcept:
@@ -650,7 +650,7 @@ cdef class Lfunction_D(Lfunction):
     cdef double _typedN(self, double T) noexcept:
         return (<c_Lfunction_D *>self.thisptr).N(T)
 
-    cdef int _find_zeros(self, long count, long start,double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
+    cdef int _find_zeros(self, long count, long start, double max_refine, int rank, const char* message_stamp, doublevec *result) noexcept:
         (<c_Lfunction_D *>self.thisptr).find_zeros(count, start, max_refine, rank, message_stamp, result)
 
     # debug tools
@@ -777,10 +777,10 @@ cdef class Lfunction_C:
 
         del_Complexes(coeffs)
 
-    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
+    cdef inline c_Complex _value(self, c_Complex s, int derivative) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, derivative, "pure")
 
-    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
+    cdef inline c_Complex _hardy_z_function(self, c_Complex s) noexcept:
         return (<c_Lfunction_C *>(self.thisptr)).value(s, 0,"rotated pure")
 
     cdef inline int _compute_rank(self) noexcept:
@@ -858,10 +858,10 @@ cdef class Lfunction_Zeta(Lfunction):
         self.thisptr = new_c_Lfunction_Zeta()
         self._repr = "The Riemann zeta function"
 
-    cdef inline c_Complex _value(self,c_Complex s,int derivative) noexcept:
+    cdef inline c_Complex _value(self, c_Complex s, int derivative) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, derivative, "pure")
 
-    cdef inline c_Complex _hardy_z_function(self,c_Complex s) noexcept:
+    cdef inline c_Complex _hardy_z_function(self, c_Complex s) noexcept:
         return (<c_Lfunction_Zeta *>(self.thisptr)).value(s, 0, "rotated pure")
 
     cdef inline int _compute_rank(self) noexcept:

@@ -21,7 +21,7 @@ design from this database, we include extra information:
 REFERENCES:
 
 .. [1] La Jolla Covering Repository,
-  https://ljcr.dmgordon.org/cover.html
+  https://dmgordon.org/cover
 
 .. [2] Daniel M. Gordon and Douglas R. Stinson, *Coverings*,
   Chapter 1 in: Charles J. Colbourn and Jeffrey H. Dinitz,
@@ -54,7 +54,6 @@ from sage.rings.rational import Rational
 from sage.arith.misc import binomial
 from sage.combinat.combination import Combinations
 from sage.combinat.designs.incidence_structures import IncidenceStructure
-from sage.cpython.string import bytes_to_str
 
 
 def schonheim(v, k, t):
@@ -516,15 +515,12 @@ def best_known_covering_design_www(v, k, t, verbose=False):
     k = int(k)
     t = int(t)
     param = "?v=%s&k=%s&t=%s" % (v, k, t)
-    url = "https://ljcr.dmgordon.org/cover/get_cover.php" + param
+    url = "https://ljcr.dmgordon.org/get_cover.php" + param
     if verbose:
         print("Looking up the bounds at %s" % url)
 
-    f = urlopen(url, context=default_context())
-    try:
-        s = bytes_to_str(f.read())
-    finally:
-        f.close()
+    with urlopen(url, context=default_context()) as f:
+        s = f.read().decode()
 
     if 'covering not in database' in s:  # not found
         str = "no (%d, %d, %d) covering design in database\n" % (v, k, t)

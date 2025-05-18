@@ -263,7 +263,7 @@ cdef class FractionFieldElement(FieldElement):
         """
         return self._denominator
 
-    def is_square(self,root=False):
+    def is_square(self, root=False):
         """
         Return whether or not ``self`` is a perfect square.
 
@@ -348,9 +348,9 @@ cdef class FractionFieldElement(FieldElement):
         This function hashes in a special way to ensure that generators of
         a ring `R` and generators of a fraction field of `R` have the same
         hash. This enables them to be used as keys interchangeably in a
-        dictionary (since ``==`` will claim them equal). This is particularly
-        useful for methods like ``subs`` on ``ParentWithGens`` if you are
-        passing a dictionary of substitutions.
+        dictionary (since ``==`` will claim them equal).
+
+        This is useful for substitution using dicts.
 
         EXAMPLES::
 
@@ -519,13 +519,15 @@ cdef class FractionFieldElement(FieldElement):
         """
         if self.is_zero():
             return "0"
-        s = "%s" % self._numerator
+        s = str(self._numerator)
         if self._denominator != 1:
-            denom_string = str( self._denominator )
+            denom_string = str(self._denominator)
             if self._denominator._is_atomic() and not ('*' in denom_string or '/' in denom_string):
-                s = "%s/%s"%(self._numerator._coeff_repr(no_space=False),denom_string)
+                s = "%s/%s" % (self._numerator._coeff_repr(no_space=False),
+                               denom_string)
             else:
-                s = "%s/(%s)"%(self._numerator._coeff_repr(no_space=False),denom_string)
+                s = "%s/(%s)" % (self._numerator._coeff_repr(no_space=False),
+                                 denom_string)
         return s
 
     def _latex_(self):
@@ -563,8 +565,8 @@ cdef class FractionFieldElement(FieldElement):
             return "0"
         if self._denominator == 1:
             return latex.latex(self._numerator)
-        return "\\frac{%s}{%s}"%(latex.latex(self._numerator),
-                                 latex.latex(self._denominator))
+        return "\\frac{%s}{%s}" % (latex.latex(self._numerator),
+                                   latex.latex(self._denominator))
 
     def _magma_init_(self, magma):
         """

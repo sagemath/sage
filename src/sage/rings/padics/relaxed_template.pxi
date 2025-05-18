@@ -1659,7 +1659,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             964*997^4 + 572*997^5 + 124*997^6 + ...
         """
         cdef long start
-        cdef long shift = long(s)
+        cdef long shift = s
         if shift:
             if (<RelaxedElement>self)._parent.is_field():
                 start = -maxordp

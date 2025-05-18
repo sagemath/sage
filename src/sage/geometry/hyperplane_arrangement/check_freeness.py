@@ -26,6 +26,7 @@ for details.
 from sage.matrix.constructor import matrix
 import sage.libs.singular.function_factory as fun_fact
 
+
 def less_generators(X):
     """
     Reduce the generator matrix of the module defined by ``X``.
@@ -62,6 +63,7 @@ def less_generators(X):
             return X
         Kd = set(range(X.nrows())).difference(K)
         X = X.matrix_from_rows(sorted(Kd))
+
 
 def construct_free_chain(A):
     """

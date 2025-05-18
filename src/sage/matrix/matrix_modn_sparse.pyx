@@ -178,7 +178,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef IntegerMod_int n
-        n =  IntegerMod_int.__new__(IntegerMod_int)
+        n = IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self._base_ring)
         n.ivalue = get_entry(&self.rows[i], j)
         return n
@@ -361,7 +361,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         cdef c_vector_modint* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i from 0 <= i < right._nrows:
             v = &(right.rows[i])
@@ -382,7 +382,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                     if v.positions[k] in c:
                         y = get_entry(&right.rows[v.positions[k]], j)
                         x = v.entries[k] * y
-                        s = (s + x)%self.p
+                        s = (s + x) % self.p
                 ans.set_unsafe_int(i, j, s)
                 #ans._matrix[i][j] = s
         return ans
@@ -429,7 +429,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         for c from 0 <= c < self._ncols:
             if do_verb and (c % fifth == 0 and c>0):
-                tm = verbose('on column %s of %s'%(c, self._ncols),
+                tm = verbose('on column %s of %s' % (c, self._ncols),
                              level = 2,
                              caller_name = 'matrix_modn_sparse echelon')
             #end if
@@ -560,7 +560,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [1 0 0]
             [0 0 0]
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         cdef c_vector_modint row
         cdef Matrix_modn_sparse B
 
@@ -594,7 +594,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [6 7 8]
             [3 4 5]
         """
-        cdef int i,k
+        cdef Py_ssize_t i,k
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -632,7 +632,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [5 4]
             [8 7]
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -795,7 +795,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             return Matrix2.rank(self)
 
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
     def determinant(self, algorithm=None):
         r"""
@@ -847,6 +847,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
+
         if self._nrows == 0:
             return self.base_ring().one()
 
@@ -859,9 +860,10 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             self.cache('rank', r)
             self.cache('det', d)
             return d
-        elif algorithm == 'generic':
+        
+        if algorithm == 'generic':
             d = Matrix_sparse.determinant(self)
             self.cache('det', d)
             return d
-        else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+
+        raise ValueError("no algorithm '%s'" % algorithm)

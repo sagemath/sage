@@ -11,17 +11,18 @@ EXAMPLES::
     sage: a = m.change_ring(GF(97))
     sage: D = a.decomposition()
     sage: D[:3]
-    [
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  0  0  1 96 96  1  0 95  1  1  1  1 95  2 96  0  0 96  0 96  0 96  2 96 96  0  1  0  2  1 95  0], True),
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  1 96 16 75 22 81  0  0 17 17 80 80  0  0 74 40  1 16 57 23 96 81  0 74 23  0 24  0  0 73  0  0], True),
-    (Vector space of degree 33 and dimension 1 over Finite Field of size 97
-    Basis matrix:
-    [ 0  1 96 90 90  7  7  0  0 91  6  6 91  0  0 91  0 13  7  0  6 84 90  0  6 91  0 90  0  0  7  0  0], True)
-    ]
+    [(Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  0  0  1 96 96  1  0 95  1  1  1  1 95  2 96  0  0 96  0 96  0 96  2 96 96  0  1  0  2  1 95  0],
+      True),
+     (Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  1 96 16 75 22 81  0  0 17 17 80 80  0  0 74 40  1 16 57 23 96 81  0 74 23  0 24  0  0 73  0  0],
+      True),
+     (Vector space of degree 33 and dimension 1 over Finite Field of size 97
+      Basis matrix:
+      [ 0  1 96 90 90  7  7  0  0 91  6  6 91  0  0 91  0 13  7  0  6 84 90  0  6 91  0 90  0  0  7  0  0],
+      True)]
     sage: len(D)
     9
 
@@ -70,6 +71,7 @@ AUTHORS:
 from sage.arith.misc import kronecker, next_prime
 from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.modular.arithgroup.all import Gamma0
 from sage.modular.hecke.module import HeckeModule_free_module
@@ -79,7 +81,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.richcmp import richcmp_method, richcmp
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 
 ZZy = PolynomialRing(ZZ, 'y')
@@ -487,6 +489,7 @@ class SupersingularModule(HeckeModule_free_module):
         """
         return ZZ**self.dimension()
 
+    @cached_method
     def dimension(self):
         r"""
         Return the dimension of the space of modular forms of weight 2
@@ -522,16 +525,10 @@ class SupersingularModule(HeckeModule_free_module):
 
         - Iftikhar Burhanuddin -- burhanud@usc.edu
         """
-        try:
-            return self.__dimension
-        except AttributeError:
-            pass
         if self.__level == 1:
             G = Gamma0(self.__prime)
-            self.__dimension = G.dimension_modular_forms(2)
-        else:
-            raise NotImplementedError
-        return self.__dimension
+            return G.dimension_modular_forms(2)
+        raise NotImplementedError
 
     rank = dimension
 
@@ -607,6 +604,7 @@ class SupersingularModule(HeckeModule_free_module):
         """
         return 2
 
+    @cached_method
     def supersingular_points(self):
         r"""
         Compute the supersingular j-invariants over the
@@ -647,10 +645,6 @@ class SupersingularModule(HeckeModule_free_module):
 
         - Iftikhar Burhanuddin -- burhanud@usc.edu
         """
-        try:
-            return (self._ss_points_dic, self._ss_points)
-        except AttributeError:
-            pass
         Fp2 = self.__finite_field
         level = self.__level
         prime = Fp2.characteristic()
