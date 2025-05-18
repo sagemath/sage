@@ -2616,7 +2616,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         sage: B1
         Braid group on 5 strands
         sage: B2 = BraidGroup(3)
-        sage: B1==B2
+        sage: B1 == B2
         False
         sage: B2 is BraidGroup(3)
         True
@@ -2788,7 +2788,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
                 x = self._standard_lift_Tietze(x)
         return self.element_class(self, x)
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of the braid group.
 
@@ -3565,10 +3565,13 @@ class BraidGroup_class(FiniteTypeArtinGroup):
                                                     for u in self.gens()])
         g0quotients = [hom1g * h for h in gquotients]
         res = []
+
         # the following closure is needed to attach a specific value of quo to
         # each function in the different morphisms
-        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i)
-                                             for i in a.Tietze())))
+        def fmap(tup):
+            return (lambda a: H(prod(tup[abs(i) - 1]**sign(i)
+                                     for i in a.Tietze())))
+
         for quo in g0quotients:
             tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
             fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))

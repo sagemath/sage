@@ -950,7 +950,7 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
             2
         """
         # This is just a copy of ExpectElement._add_ to fix the fact
-        # that the abtract method ModuleElement._add_ comes first in
+        # that the abstract method ModuleElement._add_ comes first in
         # the MRO.
         return self._operation("+", other)
 
@@ -1081,7 +1081,7 @@ class Gap(Gap_generic):
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
         #     intended for communication with a window manager (i.e. for xgap)
-        #     but that we also use to control GAP with pexepect
+        #     but that we also use to control GAP with pexpect
         # -T: disable interactive break loop when encountering errors
         # -E: disable readline support
         cmd += " -b -p -T -E"

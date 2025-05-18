@@ -2136,7 +2136,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         ::
 
             sage: # needs sage.rings.finite_rings
-            sage: A = random_matrix(GF(16007), 100, 100)
+            sage: while True:
+            ....:     A = random_matrix(GF(16007), 100, 100)
+            ....:     if A.rank() == 100:
+            ....:         break
             sage: B = copy(A)
             sage: A.rank()
             100

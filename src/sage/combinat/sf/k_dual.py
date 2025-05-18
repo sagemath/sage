@@ -352,10 +352,11 @@ class KBoundedQuotient(UniqueRepresentation, Parent):
             return self.a_realization().one()
         return self._AffineGrothendieckPolynomial(Partition(la),m)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
-        Return an element of the quotient ring of `k`-bounded symmetric functions. This
-        method is here to make the TestSuite run properly.
+        Return an element of the quotient ring of `k`-bounded symmetric functions.
+
+        This method is here to make the TestSuite run properly.
 
         EXAMPLES::
 

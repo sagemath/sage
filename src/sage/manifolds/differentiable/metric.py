@@ -1801,7 +1801,7 @@ class PseudoRiemannianMetric(TensorField):
         `n`-form associated with `g` (see :meth:`volume_form`) and the indices
         `k_1,\ldots, k_p` are raised with `g`.
 
-        Notice that the hodge star dual requires an orientable manifold
+        Notice that the Hodge star dual requires an orientable manifold
         with a preferred orientation, see
         :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.orientation`
         for details.

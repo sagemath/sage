@@ -300,7 +300,7 @@ class DeBruijnSequences(UniqueRepresentation, Parent):
         return ("De Bruijn sequences with arity %s and substring length %s"
                 % (self.k, self.n))
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return the lexicographically smallest De Bruijn sequence with the given
         parameters.

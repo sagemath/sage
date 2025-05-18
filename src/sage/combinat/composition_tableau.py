@@ -732,7 +732,7 @@ class CompositionTableaux_shape(CompositionTableaux):
         """
         return "Composition tableaux of shape %s and maximum entry %s" % (str(self.shape), str(self.max_entry))
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of :class:`CompositionTableaux_shape`.
 

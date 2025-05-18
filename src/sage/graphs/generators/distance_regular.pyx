@@ -853,7 +853,7 @@ def HermitianFormsGraph(const int n, const int r):
         sage: G.is_distance_regular(True)
         ([5, 4, None], [None, 1, 2])
         sage: G = graphs.HermitianFormsGraph(3, 3)      # not tested (2 min)
-        sage: G.order()                         # not tested (bacuase of the above)
+        sage: G.order()                         # not tested (because of the above)
         19683
 
     REFERENCES:
