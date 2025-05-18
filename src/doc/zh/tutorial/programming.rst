@@ -77,7 +77,7 @@ Cython 类似于 Python 和 C 语言。大多数 Python 结构，包括列表推
 
 为了创建你自己的编译 Sage 代码，请将文件命名为 ``.spyx`` 扩展名（而非 ``.sage``）。
 如果使用命令行界面，你可以像处理解释代码一样附加和加载编译代码（目前，Notebook 界面不支持附加和加载 Cython 代码）。
-实际编译是在“幕后”完成的，你无需进行任何显式操作。编译后的共享对象库存储在 ``$HOME/.sage/temp/hostname/pid/spyx`` 中。
+实际编译是在“后台”完成的，你无需进行任何显式操作。编译后的共享对象库存储在 ``$HOME/.sage/temp/hostname/pid/spyx`` 中。
 这些文件将在退出 Sage 时删除。
 
 Sage 预解析不适用于 spyx 文件，例如，``1/3`` 在 spyx 文件中结果为 0，
