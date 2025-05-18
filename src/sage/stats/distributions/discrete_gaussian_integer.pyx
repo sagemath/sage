@@ -344,10 +344,10 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
             -3
         """
         if sigma <= 0.0:
-            raise ValueError("sigma must be > 0.0 but got %f"%sigma)
+            raise ValueError("sigma must be > 0.0 but got %f" % sigma)
 
         if tau < 1:
-            raise ValueError("tau must be >= 1 but got %d"%tau)
+            raise ValueError("tau must be >= 1 but got %d" % tau)
 
         if algorithm is None:
             if sigma*tau <= DiscreteGaussianDistributionIntegerSampler.table_cutoff:
@@ -362,15 +362,15 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
         elif algorithm == "uniform+online":
             algorithm = DGS_DISC_GAUSS_UNIFORM_ONLINE
         elif algorithm == "uniform+logtable":
-            if (c%1):
+            if (c % 1):
                 raise ValueError("algorithm 'uniform+logtable' requires c%1 == 0")
             algorithm = DGS_DISC_GAUSS_UNIFORM_LOGTABLE
         elif algorithm == "sigma2+logtable":
-            if (c%1):
+            if (c % 1):
                 raise ValueError("algorithm 'uniform+logtable' requires c%1 == 0")
             algorithm = DGS_DISC_GAUSS_SIGMA2_LOGTABLE
         else:
-            raise ValueError("Algorithm '%s' not supported by class 'DiscreteGaussianDistributionIntegerSampler'"%(algorithm))
+            raise ValueError("Algorithm '%s' not supported by class 'DiscreteGaussianDistributionIntegerSampler'" % (algorithm))
 
         if precision == "mp":
             if not isinstance(sigma, RealNumber):
@@ -397,7 +397,7 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
             self.sigma = RR(sigma)
             self.c = RR(c)
         else:
-            raise ValueError("Parameter precision '%s' not supported."%precision)
+            raise ValueError(f"Parameter precision '{precision}' not supported")
 
         self.tau = Integer(tau)
         self.algorithm = algorithm_str

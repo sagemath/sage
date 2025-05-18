@@ -443,7 +443,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
     if not sum(vectors).is_zero():
         # The center of the input vectors shall be the origin.
         # If this is not the case, we scale them accordingly.
-        # This has the adventage that right kernel of ``vectors`` can be
+        # This has the advantage that right kernel of ``vectors`` can be
         # presented in the form ``[[1], [V]]``, where ``V`` are the points
         # in the dual point configuration.
         # (Dehomogenization is straightforward.)
@@ -470,7 +470,7 @@ def gale_transform_to_primal(vectors, base_ring=None, backend=None):
         x = pos_solutions.representative_point()
         if not all(y > 0 for y in x):
             raise ValueError("input vectors not totally cyclic")
-        vectors = tuple(vec*x[i] for i,vec in enumerate(vectors))
+        vectors = tuple(vec*x[i] for i, vec in enumerate(vectors))
 
     # The right kernel of ``vectors`` has a basis of the form ``[[1], [V]]``,
     # where ``V`` is the dehomogenized dual point configuration.
@@ -3278,12 +3278,12 @@ class Polytopes:
         convert = False
 
         # If the intervals are (a_1,b_1), ..., (a_dim, b_dim),
-        # then the inequalites correspond to
+        # then the inequalities correspond to
         # b_1,b_2,...,b_dim, a_1,a_2,...,a_dim
         # in that order.
 
         if intervals is None:
-            cp = itertools.product((-1,1), repeat=dim)
+            cp = itertools.product((-1, 1), repeat=dim)
 
             # An inequality -x_i       + 1 >= 0 for i <  dim
             # resp.          x_{dim-i} + 1 >= 0 for i >= dim
