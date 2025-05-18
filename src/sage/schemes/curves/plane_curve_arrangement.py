@@ -809,7 +809,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     def fundamental_group(self, simplified=True):
         r"""
         Return the fundamental group of the complement of the union
-        of an arragnement of projective plane curves
+        of an arrangement of projective plane curves
         in the projective plane.
 
         INPUT:
