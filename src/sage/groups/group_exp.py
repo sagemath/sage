@@ -5,15 +5,15 @@ AUTHORS:
 
 - Mark Shimozono (2013): initial version
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013 <mshimo at math.vt.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.functor import Functor
@@ -168,7 +168,10 @@ class GroupExp(Functor):
         """
         new_domain = self._apply_functor(f.domain())
         new_codomain = self._apply_functor(f.codomain())
-        new_f = lambda a: new_codomain(f(a.value))
+
+        def new_f(a):
+            return new_codomain(f(a.value))
+
         return SetMorphism(Hom(new_domain, new_codomain, Groups()), new_f)
 
 
@@ -254,7 +257,7 @@ class GroupExp_Class(UniqueRepresentation, Parent):
         sage: GroupExp()(QQ)
         Multiplicative form of Rational Field
     """
-    def __init__(self, G):
+    def __init__(self, G) -> None:
         r"""
 
         EXAMPLES::
@@ -267,7 +270,7 @@ class GroupExp_Class(UniqueRepresentation, Parent):
         self._G = G
         Parent.__init__(self, category=Groups())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string describing the multiplicative form of a commutative additive group.
 
@@ -307,7 +310,7 @@ class GroupExp_Class(UniqueRepresentation, Parent):
         """
         return GroupExpElement(self, self._G.zero())
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of the multiplicative group.
 

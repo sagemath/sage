@@ -24,6 +24,19 @@ def main() -> int:
         default=False,
         help="print additional information",
     )
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        action="store_true",
+        default=False,
+        help="do not display the banner",
+    )
+    parser.add_argument(
+        "--simple-prompt",
+        action="store_true",
+        default=False,
+        help="use simple prompt IPython mode",
+    )
 
     VersionCmd.extend_parser(parser)
     JupyterNotebookCmd.extend_parser(parser)

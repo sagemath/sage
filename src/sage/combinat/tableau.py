@@ -5730,7 +5730,7 @@ class Tableaux_all(Tableaux):
         """
         return "Tableaux"
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -5790,7 +5790,7 @@ class Tableaux_size(Tableaux):
         """
         return "Tableaux of size %s" % self.size
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -7398,7 +7398,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         """
         return RowStandardTableaux.__contains__(self, x) and sum(map(len, x)) == self._size
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 

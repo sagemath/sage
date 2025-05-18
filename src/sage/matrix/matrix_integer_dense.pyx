@@ -64,7 +64,7 @@ TESTS::
 from libc.stdint cimport int64_t
 from libc.string cimport strcpy, strlen
 
-from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 from sage.ext.stdsage cimport PY_NEW
 from cysignals.signals cimport sig_check, sig_on, sig_str, sig_off
 from cysignals.memory cimport sig_malloc, sig_free, check_allocarray
@@ -497,7 +497,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: matrix(ZZ,1,3,[1,193,15])._pickle() == (b'1 61 f', 0)   # indirect doctest
             True
         """
-        return str_to_bytes(self._export_as_string(32), 'ascii')
+        return self._export_as_string(32).encode('ascii')
 
     cpdef _export_as_string(self, int base=10):
         """
@@ -582,18 +582,18 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 self._unpickle_matrix_2x2_version0(data)
             else:
                 raise RuntimeError("invalid pickle data")
+
         else:
-            raise RuntimeError("unknown matrix version (=%s)" % version)
+            raise RuntimeError(f"unknown matrix version (={version})")
 
     cdef _unpickle_version0(self, data):
-        cdef Py_ssize_t i, j, n, k
+        cdef Py_ssize_t i, j, k
         data = data.split()
-        n = self._nrows * self._ncols
-        if len(data) != n:
+        if len(data) != self._nrows * self._ncols:
             raise RuntimeError("invalid pickle data")
         k = 0
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
+        for i in range(self._nrows):
+            for j in range(self._ncols):
                 s = data[k]
                 k += 1
                 if fmpz_set_str(fmpz_mat_entry(self._matrix, i, j), s, 32):

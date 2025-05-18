@@ -3317,6 +3317,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_edge(0, 7)
             sage: G.get_embedding() is None
             True
+
+        TESTS::
+
+            sage: G = Graph('A_', immutable=True)
+            sage: G.set_embedding({0: [1], 1: [0]})
+            sage: H = G.subgraph([0])
+            sage: H.get_embedding()
+            {0: []}
         """
         try:
             embedding = self._embedding
@@ -3324,12 +3332,11 @@ class GenericGraph(GenericGraph_pyx):
             embedding = None
         if embedding is not None:
             # remove vertices not anymore in the graph
-            to_remove = set(v for v in embedding if v not in self)
-            if to_remove:
-                for v in to_remove:
+            for v in list(embedding):
+                if v not in self:
                     del embedding[v]
-                for v in embedding:
-                    embedding[v] = [w for w in embedding[v] if w not in to_remove]
+            for v in embedding:
+                embedding[v] = [w for w in embedding[v] if w in self]
 
             # remove edges not anymore in the graph
             for u in embedding:
@@ -6881,11 +6888,11 @@ class GenericGraph(GenericGraph_pyx):
             return []
 
         # Which embedding should we use ?
-        if embedding is None:
-            # Is self._embedding available ?
-            if self._check_embedding_validity():
-                embedding = self._embedding
-            else:
+        if embedding is not None:
+            self._check_embedding_validity(embedding, boolean=False)
+        else:
+            embedding = self.get_embedding()
+            if embedding is None:
                 if self.is_planar(set_embedding=True):
                     embedding = self._embedding
                     self._embedding = None
@@ -6990,10 +6997,8 @@ class GenericGraph(GenericGraph_pyx):
             return len(self.faces(embedding))
 
         if embedding is None:
-            # Is self._embedding available ?
-            if self._check_embedding_validity():
-                embedding = self._embedding
-            else:
+            embedding = self.get_embedding()
+            if embedding is None:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
                     C = self.connected_components_number()
@@ -8405,6 +8410,9 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=False)[1].is_immutable()
             False
+            sage: # check that https://houseofgraphs.org/graphs/752 has circumference 6:
+            sage: Graph('EJ~w', immutable=True).longest_cycle().order()
+            6
         """
         self._scream_if_not_simple()
         G = self
@@ -8560,7 +8568,7 @@ class GenericGraph(GenericGraph_pyx):
                     hh = h.subgraph(vertices=c)
                     if total_weight(hh) > best_w:
                         best = hh
-                        best.name(name)
+                        best._name = name
                         best_w = total_weight(best)
 
                 # Add subtour elimination constraints
@@ -9299,7 +9307,7 @@ class GenericGraph(GenericGraph_pyx):
             return (0, None) if use_edge_labels else None
 
         tsp.delete_vertices(extra_vertices)
-        tsp.name("Hamiltonian path from {}".format(self.name()))
+        tsp._name = "Hamiltonian path from {}".format(self.name())
         if immutable:
             tsp = tsp.copy(immutable=True)
 
@@ -9574,7 +9582,7 @@ class GenericGraph(GenericGraph_pyx):
                                  (vv, uu, self.edge_label(vv, uu))]
                     answer = self.subgraph(edges=edges, immutable=self.is_immutable())
                     answer.set_pos(self.get_pos())
-                    answer.name("TSP from "+self.name())
+                    answer._name = "TSP from "+self.name()
                     return answer
             else:
                 if self.allows_multiple_edges() and len(self.edge_label(uu, vv)) > 1:
@@ -9584,7 +9592,7 @@ class GenericGraph(GenericGraph_pyx):
                         edges = self.edges(sort=True, key=weight)[:2]
                     answer = self.subgraph(edges=edges, immutable=self.is_immutable())
                     answer.set_pos(self.get_pos())
-                    answer.name("TSP from " + self.name())
+                    answer._name = "TSP from " + self.name()
                     return answer
 
             raise EmptySetError("the given graph is not Hamiltonian")
@@ -9733,7 +9741,7 @@ class GenericGraph(GenericGraph_pyx):
             # We can now return the TSP !
             answer = self.subgraph(edges=h.edges(sort=False), immutable=self.is_immutable())
             answer.set_pos(self.get_pos())
-            answer.name("TSP from "+g.name())
+            answer._name = "TSP from "+g.name()
             return answer
 
         #################################################
@@ -9805,7 +9813,7 @@ class GenericGraph(GenericGraph_pyx):
             f_val = p.get_values(f, convert=bool, tolerance=integrality_tolerance)
             tsp.add_vertices(g.vertex_iterator())
             tsp.set_pos(g.get_pos())
-            tsp.name("TSP from " + g.name())
+            tsp._name= "TSP from " + g.name()
             if g.is_directed():
                 tsp.add_edges((u, v, l) for u, v, l in g.edge_iterator() if f_val[u, v] == 1)
             else:
@@ -14479,7 +14487,7 @@ class GenericGraph(GenericGraph_pyx):
             G._pos3d = {v: pos3d[v] for v in G if v in pos3d}
         embedding = self.get_embedding()
         if embedding is not None:
-            G._embedding = {u: [v for v in embedding[u] if u in G] for u in G}
+            G._embedding = embedding
 
         if immutable is None:
             immutable = self.is_immutable()
@@ -24891,7 +24899,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: g = graphs.ChvatalGraph()
+            sage: g = graphs.ChvatalGraph().copy(immutable=True)
             sage: g.is_hamiltonian()                                                    # needs sage.numerical.mip
             True
 

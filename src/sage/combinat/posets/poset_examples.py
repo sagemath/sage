@@ -464,7 +464,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
     @staticmethod
     def DivisorLattice(n, facade=None):
-        """
+        r"""
         Return the divisor lattice of an integer.
 
         Elements of the lattice are divisors of `n`, and we have
@@ -539,7 +539,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
     @staticmethod
     def IntegerCompositions(n):
-        """
+        r"""
         Return the poset of integer compositions of the integer ``n``.
 
         A composition of a positive integer `n` is a list of positive

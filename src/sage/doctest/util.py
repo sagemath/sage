@@ -23,10 +23,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from os import times
 from time import time as walltime
-from os import sysconf, times
 from contextlib import contextmanager
-from cysignals.alarm import alarm, cancel_alarm, AlarmInterrupt
 
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
@@ -206,6 +205,8 @@ class Timer:
             raise OSError(f"unable to parse {path}") from e
 
         try:
+            from os import sysconf
+
             hertz = sysconf("SC_CLK_TCK")
         except (ValueError) as e:
             # ValueError: SC_CLK_TCK doesn't exist
@@ -869,6 +870,8 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         sage: data  # abs tol 0.01
         {'alarm_raised': False, 'elapsed': 0.0}
     """
+    from cysignals.alarm import alarm, cancel_alarm, AlarmInterrupt
+
     seconds = float(seconds)
     max_wait_after_interrupt = float(max_wait_after_interrupt)
     inaccuracy_tolerance = float(inaccuracy_tolerance)
