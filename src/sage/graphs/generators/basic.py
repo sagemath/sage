@@ -747,7 +747,7 @@ def CompleteMultipartiteGraph(L, immutable=False):
         ...
         ValueError: the sizes of the components must be positive integers
 
-    Check the bahavior of parameter ``immutable``::
+    Check the behaviour of parameter ``immutable``::
 
         sage: graphs.CompleteMultipartiteGraph([1], immutable=True).is_immutable()
         True
