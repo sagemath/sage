@@ -534,7 +534,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
     def weight_vectors(self):
         r"""
-        Return the weight vectors for each unique intesection of
+        Return the weight vectors for each unique intersection of
         components of ``self``.
 
         Weight vectors are a list of vectors associated with each
