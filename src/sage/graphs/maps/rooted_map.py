@@ -1,4 +1,8 @@
+"""Define the RootedMap class."""
+
+from sage.all import Permutation
 from sage.graphs.maps.labelled_map import LabelledMap
+from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 
 
 class RootedMap(LabelledMap):
@@ -29,10 +33,10 @@ class RootedMap(LabelledMap):
 
     def __init__(
         self,
-        labelledMap=None,
-        sigma=None,
-        alpha=None,
-        adj=None,
+        labelledMap: LabelledMap | None = None,
+        sigma: Permutation | None = None,
+        alpha: Permutation | None = None,
+        adj: list[tuple[int, ...]] | None = None,
         isAlreadyCanonical=False,
         trust=False,
     ):
@@ -75,7 +79,7 @@ class RootedMap(LabelledMap):
             canonicalRepresentant.sigma, canonicalRepresentant.alpha, trust=self._production
         )
 
-    def tetravalance(self):
+    def tetravalance(self) -> "RootedMap":
         """
         This method provides a bijection between rooted maps
         with m edges of genus g and face-bicolorable tetravalent
@@ -113,7 +117,7 @@ class RootedMap(LabelledMap):
             labelledMap=super().tetravalance(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def edgeMap(self):
+    def edgeMap(self) -> "RootedMap":
         """
         A method that return the edge map of this map
 
@@ -149,7 +153,7 @@ class RootedMap(LabelledMap):
             labelledMap=super().edgeMap(), isAlreadyCanonical=True, trust=self._production,
         )
 
-    def incidenceMap(self):
+    def incidenceMap(self) -> "RootedMap":
         """
         A method that return the incidence map of this map
 
@@ -185,7 +189,7 @@ class RootedMap(LabelledMap):
             labelledMap=super().incidenceMap(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def quadrangulation(self):
+    def quadrangulation(self) -> "RootedMap":
         """
         This function provides a bijection between rooted maps
         of genus g with m edges and bipartite rooted quadrangulations
@@ -222,7 +226,7 @@ class RootedMap(LabelledMap):
             labelledMap=super().quadrangulation(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def derivedMap(self):
+    def derivedMap(self) -> "RootedMap":
         """
         OUTPUT:
 
@@ -246,7 +250,7 @@ class RootedMap(LabelledMap):
             labelledMap=super().derivedMap(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def dual(self):
+    def dual(self) -> "RootedMap":
         """
         OUTPUT:
 
@@ -270,7 +274,7 @@ class RootedMap(LabelledMap):
 
         return RootedMap(labelledMap=super().dual(), trust=self._production)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return string representation of self
 
@@ -293,7 +297,7 @@ class RootedMap(LabelledMap):
             + str(self.alpha)
         )
 
-    def inverseQuadrangulation(self):
+    def inverseQuadrangulation(self) -> "RootedMap":
         """
         This function is the inverse of quadrangulation given that self
         is a bipartite rooted quadrangulation. It returns the only
@@ -323,7 +327,7 @@ class RootedMap(LabelledMap):
             trust=self._production,
         )
 
-    def relabel(self, tau):
+    def relabel(self, tau) -> "RootedMap":
         """
         This method, inherited from LabelledMap, is not applicable to
         RootedMap. It will simply return a copy of self.
@@ -345,7 +349,7 @@ class RootedMap(LabelledMap):
         """
         return RootedMap(labelledMap=self, isAlreadyCanonical=True, trust=self._production)
 
-    def schaefferTree(self, markedDemiEdge):
+    def schaefferTree(self, markedDemiEdge: int) -> "tuple[RootedMap, list[int]]":
         """
         The Schaeffer surjection from rooted bipartite quadrangulation of
         genus g with k faces and a marked node to a rooted one-face map
@@ -382,7 +386,7 @@ class RootedMap(LabelledMap):
         tree, labelled = super().schaefferTree(markedDemiEdge=markedDemiEdge)
         return RootedMap(labelledMap=tree, isAlreadyCanonical=True, trust=self._production), labelled
 
-    def inverseShaefferTree(self, labelled, returnMarkedDemiEdge=True):
+    def inverseShaefferTree(self, labelled: list[int], returnMarkedDemiEdge=True) -> "tuple[LabelledMap, LabelledMap, int, int] | tuple[LabelledMap, LabelledMap]":
         """
         This method is the inverse of schaefferTree. Given that self is a
         one-face map, it returns a quadruple (quadA, quadB, markedDemiEdgeA,
@@ -445,7 +449,7 @@ class RootedMap(LabelledMap):
             labelledMap=quadA, isAlreadyCanonical=True, trust=self._production
         ), RootedMap(labelledMap=quadB, isAlreadyCanonical=True, trust=self._production)
 
-    def copy(self):
+    def copy(self) -> "RootedMap":
         """
         OUTPUT:
 
@@ -467,7 +471,7 @@ class RootedMap(LabelledMap):
         return RootedMap(sigma=self.sigma, alpha=self.alpha, trust=self._production, isAlreadyCanonical=True)
 
     @property
-    def root(self):
+    def root(self) -> TopologicalDemiEdge:
         """
         OUTPUT:
             The TopologicalDemiEdge associated to the root

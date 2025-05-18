@@ -1,6 +1,9 @@
 """Define the TopologicalDemiEdge class, an abstraction meant to represent a demi-edge of a map in a more user-friendly way than raw indices."""
 
-# from sage.graphs.maps.labelled_map import LabelledMap
+from typing import TYPE_CHECKING, Self
+if TYPE_CHECKING:
+    from sage.graphs.maps.labelled_map import LabelledMap       # TYPE_CHECKING is always False at runtime, but True when when type checking
+                                                                # otherwise, we might get circular imports
 
 
 class TopologicalDemiEdge():
@@ -74,7 +77,7 @@ class TopologicalDemiEdge():
         return self.getMap()
 
     @property
-    def c(self) -> "TopologicalDemiEdge":
+    def c(self) -> Self:
         """
         The other TopologicalDemiEdge on the edge on which self is on (equivalent to alpha(self))
 
@@ -91,7 +94,7 @@ class TopologicalDemiEdge():
         return self.nextOnEdge()
 
     @property
-    def f(self) -> "TopologicalDemiEdge":
+    def f(self) -> Self:
         """
         The next TopologicalDemiEdge on the face on which self is on (equivalent to phi(self))
 
@@ -108,7 +111,7 @@ class TopologicalDemiEdge():
         return self.nextOnFace()
 
     @property
-    def n(self) -> "TopologicalDemiEdge":
+    def n(self) -> Self:
         """
         The next TopologicalDemiEdge on the node on which self is on (equivalent to sigma(self))
 
@@ -125,7 +128,7 @@ class TopologicalDemiEdge():
         return self.nextOnNode()
 
     @property
-    def pf(self) -> "TopologicalDemiEdge":
+    def pf(self) -> Self:
         """
         The previous TopologicalDemiEdge on the face on which self is on (equivalent to phi^-1(self))
 
@@ -142,7 +145,7 @@ class TopologicalDemiEdge():
         return self.prevOnFace()
 
     @property
-    def pn(self) -> "TopologicalDemiEdge":
+    def pn(self) -> Self:
         """
         The previous TopologicalDemiEdge on the node on which self is on (equivalent to sigma(self))
 
@@ -194,7 +197,7 @@ class TopologicalDemiEdge():
         self._checkValid()
         return self._lmap
 
-    def nextOnEdge(self) -> "TopologicalDemiEdge":
+    def nextOnEdge(self) -> Self:
         """
         Returns the other TopologicalDemiEdge on the edge on which self is on (equivalent to alpha(self))
 
@@ -212,7 +215,7 @@ class TopologicalDemiEdge():
 
         return self.map.getTopologicalDemiEdge(self.map.alpha(self.raw))
 
-    def nextOnFace(self) -> "TopologicalDemiEdge":
+    def nextOnFace(self) -> Self:
         """
         Return the next TopologicalDemiEdge on the face on which self is on (equivalent to phi(self)).
 
@@ -229,7 +232,7 @@ class TopologicalDemiEdge():
         self._checkValid()
         return self.map.getTopologicalDemiEdge(self.map.phi(self.raw))
 
-    def nextOnNode(self) -> "TopologicalDemiEdge":
+    def nextOnNode(self) -> Self:
         """
         Return the next TopologicalDemiEdge on the node on which self is on (equivalent to sigma(self))
 
@@ -246,7 +249,7 @@ class TopologicalDemiEdge():
         self._checkValid()
         return self.map.getTopologicalDemiEdge(self.map.sigma(self.raw))
 
-    def prevOnFace(self) -> "TopologicalDemiEdge":
+    def prevOnFace(self) -> Self:
         """
         Return the previous TopologicalDemiEdge on the face on which self is on (equivalent to phi^-1(self))
 
@@ -264,7 +267,7 @@ class TopologicalDemiEdge():
         return self.map.getTopologicalDemiEdge(
             self.map.phi.inverseApply(self.raw))
 
-    def prevOnNode(self) -> "TopologicalDemiEdge":
+    def prevOnNode(self) -> Self:
         """
         The previous TopologicalDemiEdge on the node on which self is on (equivalent to sigma(self))
 
@@ -282,7 +285,7 @@ class TopologicalDemiEdge():
         return self.map.getTopologicalDemiEdge(
             self.map.sigma.inverseApply(self.raw))
 
-    def face(self) -> list["TopologicalDemiEdge"]:
+    def face(self) -> list[Self]:
         """
         Return the list containing all the demi-edges on the same face as self.
 
@@ -305,7 +308,7 @@ class TopologicalDemiEdge():
             lst.append(self.map.getTopologicalDemiEdge(e))
         return lst
 
-    def node(self) -> list["TopologicalDemiEdge"]:
+    def node(self) -> list[Self]:
         """
         Return the list containing all the demi-edges on the same node as self.
 
@@ -330,7 +333,7 @@ class TopologicalDemiEdge():
 
         return lst
 
-    def isOnSameFace(self, otherTopologicalDemiEdge: "TopologicalDemiEdge") -> bool:
+    def isOnSameFace(self, otherTopologicalDemiEdge: Self) -> bool:
         """
         Return whether self and otherTopologicalDemiEdge are on the same face.
 
@@ -355,7 +358,7 @@ class TopologicalDemiEdge():
         return bool(self.map.areOnTheSameFace(
             self.raw, otherTopologicalDemiEdge.raw))
 
-    def isOnSameNode(self, otherTopologicalDemiEdge: "TopologicalDemiEdge") -> bool:
+    def isOnSameNode(self, otherTopologicalDemiEdge: Self) -> bool:
         """
         Return whether self and otherTopologicalDemiEdge are on the same node.
 
@@ -429,7 +432,7 @@ class TopologicalDemiEdge():
         """
         self._index = newIndex
 
-    def _swapIndex(self, otherTopologicalDemiEdge: "TopologicalDemiEdge") -> None:
+    def _swapIndex(self, otherTopologicalDemiEdge: Self) -> None:
         """
         Swap indexes with otherTopologicalDemiEdge.
 

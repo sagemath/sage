@@ -1,4 +1,7 @@
+"""Define some internal utils tools used in LabelledMap and MutableLabelledMap."""
+
 import numpy as np
+from sage.graphs.maps.map_permutation import MapPermutation
 
 
 class PermutationUtilsAbstractor:
@@ -8,7 +11,7 @@ class PermutationUtilsAbstractor:
     this class and is call RotatingUtilsAbstractor
     """
 
-    def __init__(self, permutation) -> None:
+    def __init__(self, permutation: MapPermutation) -> None:
         """
         Init the PermutationUtilsAbstractor
         INPUT:
@@ -38,7 +41,7 @@ class PermutationUtilsAbstractor:
             for i in c:
                 self._cycleIndexes[i] = j
 
-    def numberInCycle(self, index):
+    def numberInCycle(self, index: int) -> int:
         """
         INPUT:
         - ``index`` -- int
@@ -60,7 +63,7 @@ class PermutationUtilsAbstractor:
         """
         return self._cyclesLength[self._cycleIndexes[index]]
 
-    def sameCycle(self, i, j):
+    def sameCycle(self, i: int, j: int) -> bool:
         """
         INPUT:
         - ``i`` -- int
@@ -85,7 +88,7 @@ class PermutationUtilsAbstractor:
         """
         return bool(self._cycleIndexes[i] == self._cycleIndexes[j])
 
-    def numberOfCycles(self):
+    def numberOfCycles(self) -> int:
         """
         OUTPUT:
 
@@ -106,7 +109,7 @@ class PermutationUtilsAbstractor:
         """
         return self._numberOfCycles
 
-    def numberOfFixedPoint(self):
+    def numberOfFixedPoint(self) -> int:
         """
         OUTPUT:
 
@@ -126,7 +129,7 @@ class PermutationUtilsAbstractor:
         """
         return self._numberOfFixedPoint
 
-    def checkTwoInTheSameCycle(self, listIndexes):
+    def checkTwoInTheSameCycle(self, listIndexes: list[int]) -> bool:
         """
         INPUT:
         - ``listIndexes`` -- List[int]

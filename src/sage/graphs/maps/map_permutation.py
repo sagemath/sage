@@ -166,7 +166,7 @@ class MapPermutation:
         NOTE:
             O(n)
         """
-        return list(map(int, self._tab))
+        return [int(self(i)) for i in range(1, self.size() + 1)]
 
     def size(self) -> int:
         """
@@ -257,7 +257,7 @@ class MapPermutation:
         """
         return f"MapPermutation: {self.to_cycles()}"
 
-    def pretty_print(self) -> str:
+    def pretty_print(self) -> None:
         """
         Print self in a more pretty form
 

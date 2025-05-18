@@ -1,12 +1,13 @@
-from time import time
+"""Define the RotatingPermutation class, with fast mutable operations."""
+
 from sage.graphs.maps.cycle_utils_provider import CycleUtilsProvider
 from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
-from sage.all import Permutation, end
+from sage.all import Permutation
 from sage.graphs.maps.map_permutation import MapPermutation
+from typing import Any
 
 
 class RotatingPermutation(MapPermutation):
-
     """
     A class representing permutation where it is fast to:
     - delete (O(log(n))) element,
@@ -27,7 +28,7 @@ class RotatingPermutation(MapPermutation):
     then self(i) = i.
       """
 
-    def __init__(self, lst):
+    def __init__(self, lst: int | Permutation | list[int] | list[tuple[int, ...]]):
         """
         This function initiate the rotating permutation, lst can be  a Permutation or a list of int or list of tuple representing the cycle of
         the permutation or a MapPermutation or an integer representing the size of the permutation(in this case self will represent the identity permutation of size lst).
@@ -65,7 +66,7 @@ class RotatingPermutation(MapPermutation):
             if lst == int(lst) and lst > 0:
                 # If lst is an integer we just set our permutation to be the
                 # identity
-                self._n = lst
+                self._n = int(lst)
                 self._numCycles = self._n
                 self.provider = CycleUtilsProvider([])
                 return
@@ -186,7 +187,7 @@ class RotatingPermutation(MapPermutation):
         return self._n
 
     # OK
-    def deleteLastKIndex(self, k):
+    def deleteLastKIndex(self, k: int) -> None:
         """
         This function will delete the last k index from self
 
@@ -214,7 +215,7 @@ class RotatingPermutation(MapPermutation):
 
     # OK
 
-    def delete(self, index):
+    def delete(self, index: int) -> None:
         """
         This will delete index of the corresponding cycle note that after this operation if we note the original
         size of self as n, the which contained index will count one less element,
@@ -275,7 +276,7 @@ class RotatingPermutation(MapPermutation):
                 pass
 
     # OK
-    def inverseApply(self, i):
+    def inverseApply(self, i: int) -> int:
         """
         This function apply  the inverse self on i, we take as a convention i if i is an integer > self.size(), self.inverseApply(i) = i
 
@@ -304,7 +305,7 @@ class RotatingPermutation(MapPermutation):
             return i
     # OK
 
-    def checkTwoInTheSameCycle(self, listIndexes):
+    def checkTwoInTheSameCycle(self, listIndexes: list[int]) -> bool:
         """
         This function will return a boolean indicating if there is two index in listIndexes in the sameCycle
 
@@ -327,7 +328,7 @@ class RotatingPermutation(MapPermutation):
         return self.provider.checkTwoInTheSameCycle(listIndexes)
     # OK
 
-    def swapIndex(self, index, otherIndex):
+    def swapIndex(self, index: int, otherIndex: int) -> None:
         """
         This function swap the index role in the permutation
 
@@ -356,7 +357,7 @@ class RotatingPermutation(MapPermutation):
         self._permCycle[otherIndex].val = otherIndex
         self._permCycle[index].val = index
 
-    def cutDelete(self, startIndex, endIndex):
+    def cutDelete(self, startIndex: int, endIndex: int) -> None:
         """
         This will cut the cycle in two part startIndex...endIndex and the rest , and than will delete startIndex and endIndex
 
@@ -389,7 +390,7 @@ class RotatingPermutation(MapPermutation):
 
     # OK
 
-    def cutAdd(self, startIndex, endIndex, newIndexStart, newIndexEnd):
+    def cutAdd(self, startIndex: int, endIndex: int, newIndexStart: int, newIndexEnd: int) -> None:
         """
         This implement a special operation.In a nutshell it cut a cycle and add two index in each cycle,
         let denote A = startIndex, B = endIndex, C = newIndexStart, D = newIndexEnd and say the cycle is of the form F -> A -> S -> .. -> T -> B -> R -> ... -> F
@@ -467,7 +468,7 @@ class RotatingPermutation(MapPermutation):
         self.provider.addBefore(endIndex, newIndexStart)
 
     # OK
-    def labelToTheEnd(self, listIndexes):
+    def labelToTheEnd(self, listIndexes: int) -> dict[int, int]:
         """
         This is a helper function  it just move all of the element in listIndexes to the last indices
 
@@ -523,7 +524,7 @@ class RotatingPermutation(MapPermutation):
         return corresOut
     # OK
 
-    def bruteAddCycles(self, cycles):
+    def bruteAddCycles(self, cycles: list[tuple[int, ...]]) -> None:
         """
         Another helper function that add cyclein cycles, this one assumed is more dangerous than addCycles
         cause it assumed that the cycles are well formed thus the term brute
@@ -550,7 +551,7 @@ class RotatingPermutation(MapPermutation):
                 self.addAfterGeneral(c[i], c[i + 1])
 
     # OK
-    def addCycles(self, cycles):
+    def addCycles(self, cycles: list[tuple[int, ...]]) -> None:
         """
         Another helper function it will raise an error if element of the cycles
         are not > self.size() and <= self.size()+len(cycles), the cycle must be well formed
@@ -588,7 +589,7 @@ class RotatingPermutation(MapPermutation):
         self.bruteAddCycles(cycles)
 
     # OK
-    def isValidIndex(self, index):
+    def isValidIndex(self, index: int) -> bool:
         """
         Check if index is a integer > 0 and <=self.size()
         otherwise raise an Error
@@ -612,7 +613,7 @@ class RotatingPermutation(MapPermutation):
             raise ValueError(f"{index} isn't valid")
     # OK
 
-    def addAfterGeneral(self, index, otherIndex):
+    def addAfterGeneral(self, index: int, otherIndex: int) -> None:
         """
         This is a more general version of addAfter it only assumed that otherIndex is a fixed point
         and will add it after index in its cycle
@@ -654,7 +655,7 @@ class RotatingPermutation(MapPermutation):
         node.insertAfter(newNode)
 
     # OK
-    def addBeforeGeneral(self, index, otherIndex):
+    def addBeforeGeneral(self, index: int, otherIndex: int) -> None:
         """
         More general version of addBeforeit only assumed that otherIndex is a fixed point
         and will add it before index in its cycle
@@ -680,7 +681,7 @@ class RotatingPermutation(MapPermutation):
         self.addAfterGeneral(indexPrev, otherIndex)
 
     # OK
-    def mergeDelete(self, index, otherIndex):
+    def mergeDelete(self, index: int, otherIndex: int) -> None:
         """
         Assuming that index and otherIndex are not in the same cycle it will do the
         following first index and otherIndex will be sent to self.size() self.size()-1 they will be deleted and given
@@ -759,7 +760,7 @@ class RotatingPermutation(MapPermutation):
         self.provider.merge(beforeIndex, afterIndex)
 
     # OK
-    def getNode(self, index):
+    def getNode(self, index: int) -> CyclicChainedList:
         """
         This function will return the node associated to index
         and if it doesn't exit it will create one note that if index > self.size()
@@ -794,7 +795,7 @@ class RotatingPermutation(MapPermutation):
 
     # OK
 
-    def stretch(self, m):
+    def stretch(self, m: int) -> None:
         """
         This function will increase the size of the permutation by m,all the new index will
         be fixed point
@@ -820,7 +821,7 @@ class RotatingPermutation(MapPermutation):
         self._numCycles += m
     # OK
 
-    def addAfter(self, index):
+    def addAfter(self, index: int) -> None:
         """
         Let denote n=self.size() given that  n>=index>=1, this will increase the size of self by one and add
         the new element n+1 on the cycle of index after index.You should note that if index>self.size() this will raise an error.
@@ -862,7 +863,7 @@ class RotatingPermutation(MapPermutation):
         node.insertAfter(newNode)
     # OK
 
-    def addBefore(self, index):
+    def addBefore(self, index: int) -> None:
         """
         Let denote n=self.size() given that  n>=index>=1, this will increase the size of self by one and add
         the new element n+1 on the cycle of index before index.You should note that if index>self.size() this will raise an error.
@@ -894,7 +895,7 @@ class RotatingPermutation(MapPermutation):
 
     # OK
 
-    def numberInCycle(self, index):
+    def numberInCycle(self, index: int) -> int:
         """
         INPUT:
         - ``i`` -- int
@@ -918,7 +919,7 @@ class RotatingPermutation(MapPermutation):
         return self.provider.numberInCycle(index)
 
     # OK
-    def numberOfCycles(self):
+    def numberOfCycles(self) -> int:
         """
         OUTPUT:
             the number of cycle of self
@@ -938,7 +939,7 @@ class RotatingPermutation(MapPermutation):
         return self._numCycles
 
     # OK
-    def sameCycle(self, i, j):
+    def sameCycle(self, i: int, j: int) -> bool:
         """
         INPUT:
         -``i`` -- int ; a strictly positive integer
@@ -967,7 +968,7 @@ class RotatingPermutation(MapPermutation):
         return self.provider.sameCycle(i, j)
 
     # OK
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
 
         OUTPUT:
@@ -986,7 +987,7 @@ class RotatingPermutation(MapPermutation):
 
     # OK
 
-    def pretty_repr(self):
+    def pretty_repr(self) -> str:
         """
         OUTPUT:
             Return a string representation of self in a more pretty form
@@ -1001,7 +1002,7 @@ class RotatingPermutation(MapPermutation):
         return f"Rotating permutation: {self.to_cycles()}"
 
     # OK
-    def pretty_print(self):
+    def pretty_print(self) -> None:
         """
         Print self in a more pretty form
 
@@ -1016,7 +1017,7 @@ class RotatingPermutation(MapPermutation):
         print(self.pretty_repr())
 
     # OK
-    def to_cycles(self):
+    def to_cycles(self) -> list[tuple[int, ...]]:
         """
         This method calculate a list of tuple representing the cycle of self
 
@@ -1050,7 +1051,7 @@ class RotatingPermutation(MapPermutation):
         return cycles
 
     # OK
-    def inverse(self):
+    def inverse(self) -> "RotatingPermutation":
         """
         This function calculate  the inverse of self
 
@@ -1068,10 +1069,10 @@ class RotatingPermutation(MapPermutation):
             O(n),where n is the number of element of the permutation
         """
         cycles = self.to_cycles()
-        return MapPermutation([tuple(reversed(e)) for e in cycles])
+        return RotatingPermutation([tuple(reversed(e)) for e in cycles])
 
     # OK
-    def apply(self, i):
+    def apply(self, i: int) -> int:
         """
         This function apply self on i , we take as a convention i if i is an integer > self.size() , self.apply(i) = i
         INPUT:
@@ -1099,7 +1100,7 @@ class RotatingPermutation(MapPermutation):
 
     # OK
 
-    def number_of_fixed_points(self):
+    def number_of_fixed_points(self) -> int:
         """
         OUTPUT:
             the number of fixed point ( we only consider i such that i<=self.size())
@@ -1116,7 +1117,7 @@ class RotatingPermutation(MapPermutation):
         """
         return self._numberOfFixedPoint
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """
         INPUT:
         - ``other`` -- MapPermutation

@@ -1,9 +1,13 @@
+"""Define the internal class RotatingPermutationUtilsAbstractor."""
 
-from sage.graphs.maps.permutation_utils_abstractor import *
+from sage.graphs.maps.rotating_permutation import RotatingPermutation
+from sage.graphs.maps.permutation_utils_abstractor import PermutationUtilsAbstractor
 
 
 class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
-    def __init__(self, rpermutation) -> None:
+    """Internal class."""
+
+    def __init__(self, rpermutation: RotatingPermutation) -> None:
         """
         Init the RotatingPermutationUtilsAbstractor
 
@@ -23,7 +27,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         """
         self.rpermutation = rpermutation
 
-    def numberInCycle(self, index):
+    def numberInCycle(self, index: int) -> int:
         """
         INPUT:
         - ``index`` -- int
@@ -45,7 +49,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         """
         return self.rpermutation.numberInCycle(index)
 
-    def sameCycle(self, i, j):
+    def sameCycle(self, i: int, j: int) -> bool:
         """
         INPUT:
         - ``i`` -- int
@@ -59,7 +63,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         """
         return self.rpermutation.sameCycle(i, j)
 
-    def numberOfCycles(self):
+    def numberOfCycles(self) -> int:
         """
         OUTPUT:
             The number of cycles of the permutation
@@ -79,7 +83,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         return self.rpermutation.numberOfCycles()
 
-    def numberOfFixedPoint(self):
+    def numberOfFixedPoint(self) -> int:
         """
         OUTPUT:
             The number of fixed point of the permutation
@@ -99,7 +103,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         return self.rpermutation.number_of_fixed_points()
 
-    def checkTwoInTheSameCycle(self, listIndexes):
+    def checkTwoInTheSameCycle(self, listIndexes: list[int]) -> bool:
         """
         INPUT:
         - ``listIndexes`` -- List[int]

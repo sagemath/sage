@@ -2,7 +2,10 @@
 
 from sage.graphs.maps.map_error import NotImplementedError
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
-# from sage.graphs.maps.primitive_mutable_labelled_map import PrimitiveMutableLabelledMap
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from sage.graphs.maps.primitive_mutable_labelled_map import PrimitiveMutableLabelledMap        # see topological_demi_edge.py for explanations
 
 
 class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
@@ -71,7 +74,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         self._checkValid()
         return self._lmap
 
-    def delete(self, sameFace):
+    def delete(self, sameFace: bool) -> None:
         """
         This function delete self from self.map
 
@@ -101,7 +104,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         self.map.deleteEdge(self.raw, sameFace)
 
-    def link(self, otherTopoDemiEdge):
+    def link(self, otherTopoDemiEdge: "PrimitiveMutableTopologicalDemiEdge") -> tuple["PrimitiveMutableTopologicalDemiEdge","PrimitiveMutableTopologicalDemiEdge"]:
         """
         This will add an edge between the node of self to otherTopoDemiEdge(note that they
         need to be on the same node otherwise nothing is guaranteed), the edge will be added as follow ,
@@ -137,7 +140,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         return self.map.addEdge(self.raw, otherTopoDemiEdge.raw)
 
-    def addEdgeAfter(self):
+    def addEdgeAfter(self) -> "PrimitiveMutableTopologicalDemiEdge":
         """
         This method will create a new edge, such that it is added on the same node as self but after it in the
         trigonometric order
@@ -162,7 +165,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         self._checkValid()
         return self.map.addEdgeAfter(self.raw)
 
-    def addEdgeBefore(self):
+    def addEdgeBefore(self) -> "PrimitiveMutableTopologicalDemiEdge":
         """
         This method will create a new edge, such that it is added on the same node as self but before it
         in the trigonometric order
@@ -187,7 +190,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         return self.map.addEdgeBefore(self.raw)
 
-    def contract(self):
+    def contract(self) -> None:
         """
         Contract the edge bind to self , note that self cannot be on a loop
         i.e self and self.c cannot be on the same node otherwise nothing is guaranteed
@@ -229,7 +232,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         self._checkValid()
         self.map.contractEdge(self.raw)
 
-    def isOnSameFace(self, otherTopologicalDemiEdge):
+    def isOnSameFace(self, otherTopologicalDemiEdge: TopologicalDemiEdge) -> bool:
         """
         Not implemented for PrimitiveMutableTopologicalDemiEdge
 
@@ -246,7 +249,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         self._checkValid()
         raise NotImplementedError(self)
 
-    def isOnSameNode(self, otherTopologicalDemiEdge):
+    def isOnSameNode(self, otherTopologicalDemiEdge: TopologicalDemiEdge) -> bool:
         """
         Not implemented for PrimitiveMutableTopologicalDemiEdge
 
