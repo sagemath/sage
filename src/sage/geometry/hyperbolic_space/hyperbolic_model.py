@@ -1091,9 +1091,9 @@ class HyperbolicModelUHP(HyperbolicModel):
             sage: B.preserves_orientation()                                             # needs scipy
             False
         """
-        [a, b, c, d] = [RR.random_element() for k in range(4)]
+        a, b, c, d = [RR.random_element() for k in range(4)]
         while abs(a*d - b*c) < EPSILON:
-            [a, b, c, d] = [RR.random_element() for k in range(4)]
+            a, b, c, d = [RR.random_element() for k in range(4)]
         M = matrix(RDF, 2, [a, b, c, d])
         M = M / (M.det()).abs().sqrt()
         if M.det() > 0:

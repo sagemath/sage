@@ -796,7 +796,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
                 counts[1] += 1
                 if nf.polisirreducible():
                     counts[2] += 1
-                    [zk,d] = nf.nfbasis_d()
+                    zk, d = nf.nfbasis_d()
 
                     if d <= B:
                         if verbose:

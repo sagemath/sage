@@ -1384,7 +1384,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         else:
             _vars = str(self.gens())
 
-        order = self.term_order().singular_str()%dict(ngens=self.ngens())
+        order = self.term_order().singular_str() % dict(ngens=self.ngens())
 
         self.__singular, self.__minpoly = \
                 sage.rings.polynomial.polynomial_singular_interface._do_singular_init_(
@@ -4576,7 +4576,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 U = self._parent._base(F.unit()).factor()
                 return Factorization(list(U) + FF, unit=U.unit())
             except Exception:
-                raise NotImplementedError("Factorization of multivariate polynomials over %s is not implemented."%self._parent._base)
+                raise NotImplementedError("Factorization of multivariate polynomials over %s is not implemented." % self._parent._base)
 
         iv = NULL
         if _ring != currRing:

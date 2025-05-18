@@ -398,7 +398,7 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
         sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: [M,L,P] = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
+        sage: M, L, P = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
         sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
         sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
@@ -408,7 +408,7 @@ def slp(M1, pos_dict=None, B=None) -> tuple:
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
         sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
         ....:            4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: [M,L,P] = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
+        sage: M, L, P = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
         sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
         sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
@@ -479,7 +479,7 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None) -> tuple:
         sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
         ....:                                 [0, 1, 0, 1, 0, 1, 1,0,0],
         ....:                                 [0, 0, 1, 1, 1, 0, 1,0,0]])
-        sage: [M1,L,P] = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
+        sage: M1, L, P = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
         sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # needs sage.plot sage.rings.finite_rings
         sage: G.show(axes=False)                                                        # needs sage.plot sage.rings.finite_rings
 
@@ -759,7 +759,7 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
     """
     G = Graphics()
     # create lists of loops and parallel elements and simplify given matroid
-    [M, L, P] = slp(M1, pos_dict=pd, B=B1)
+    M, L, P = slp(M1, pos_dict=pd, B=B1)
     if B1 is None:
         B1 = list(M.basis())
     M._cached_info = M1._cached_info
