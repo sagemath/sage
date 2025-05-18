@@ -4997,7 +4997,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Compute the ``n`` multiplier spectra of this dynamical system.
 
-        This is the set of multipliers of all peroidic points of
+        This is the set of multipliers of all periodic points of
         period ``n`` included with the appropriate multiplicity.
         User can also specify to compute the formal ``n`` multiplier spectra
         instead which includes the multipliers of all formal periodic points
@@ -5413,7 +5413,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             \prod_{P \text{ period n}} ( w - c(P,t)),
 
-        where `c(P,t)` is the charateristic polynomial (variable `t`) of the
+        where `c(P,t)` is the characteristic polynomial (variable `t`) of the
         multiplier at `P`. Note that in dimension 1, only the coefficients
         of the constant term is returned.
 
@@ -6843,7 +6843,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
     def Lattes_to_curve(self, return_conjugation=False, check_lattes=False):
         r"""
         Finds a Short Weierstrass Model Elliptic curve of self
-        self assumed to be Lattes map and not in charateristic 2 or 3
+        self assumed to be Lattes map and not in characteristic 2 or 3
 
         INPUT:
 
