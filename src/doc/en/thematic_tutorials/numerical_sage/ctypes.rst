@@ -217,4 +217,4 @@ it must be a shared object library and all fortran arguments are
 passed by reference, that is as pointers or using byref. Also even
 though we used very simple data types, it is possible to deal with
 more complicated C structures. For this and more about ctypes see
-http://python.net/crew/theller/ctypes/
+https://docs.python.org/3/library/ctypes.html
