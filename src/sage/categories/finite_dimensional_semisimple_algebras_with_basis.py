@@ -68,6 +68,11 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
             Return a maximal list of central orthogonal
             idempotents of ``self``.
 
+            .. TODO::
+
+                The implementation assumes that the algebra
+                is split over its base field.
+
             *Central orthogonal idempotents* of an algebra `A`
             are idempotents `(e_1, \ldots, e_n)` in the center
             of `A` such that `e_i e_j = 0` whenever `i \neq j`.
@@ -214,6 +219,11 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                 Those idempotents form a maximal decomposition
                 of the identity into primitive orthogonal
                 idempotents.
+
+                .. TODO::
+
+                    The implementation assumes that the algebra
+                    is split over its base field.
 
                 OUTPUT: list of orthogonal idempotents of ``self``
 
