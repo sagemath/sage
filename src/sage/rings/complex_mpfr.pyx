@@ -619,7 +619,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             return self._generic_coerce_map(S)
         return self._coerce_map_via([CLF], S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -630,9 +630,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: ComplexField(15) # indirect doctest
             Complex Field with 15 bits of precision
         """
-        return "Complex Field with %s bits of precision"%self._prec
+        return "Complex Field with %s bits of precision" % self._prec
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
