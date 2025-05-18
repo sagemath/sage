@@ -413,7 +413,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         sage: normalize_profile(lambda n: 3, precision=4, truncation_type=0)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid profile
+        ValueError: invalid profile
         sage: normalize_profile(lambda n: 3, precision=4, truncation_type = Infinity)
         ((3, 3, 3), +Infinity)
 
@@ -457,7 +457,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         sage: normalize_profile([[0,0,0], [1,2,3,2,1]], p=11)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid profile
+        ValueError: invalid profile
     """
     from sage.rings.infinity import Infinity
     if truncation_type == 'zero':
@@ -500,7 +500,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         if is_valid_profile(new_profile, truncation_type, p):
             return new_profile, truncation_type
         else:
-            raise ValueError("Invalid profile")
+            raise ValueError("invalid profile")
     else: # p odd
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile
@@ -560,7 +560,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         if is_valid_profile(new_profile, truncation_type, p, generic=True):
             return new_profile, truncation_type
         else:
-            raise ValueError("Invalid profile")
+            raise ValueError("invalid profile")
 
 ######################################################
 # string representations for elements
