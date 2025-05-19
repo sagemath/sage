@@ -118,7 +118,7 @@ from sage.misc.verbose import verbose, get_verbose
 VectorSpace = None
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense
 from sage.structure.richcmp cimport rich_to_bool
-from sage.cpython.string cimport bytes_to_str, char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 from sage.cpython.string import FS_ENCODING
 
 cdef extern from "gd.h":
@@ -480,17 +480,17 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                 div_s[2*i] = c'+'
                 last_i = i
 
-        for i from 0 <= i < self._nrows:
+        for i in range(self._nrows):
             row_s = row = b'[' + empty_row + b']'
-            for j from 0 <= j < self._ncols:
-                row_s[1+2*j] = c'0' + mzd_read_bit(self._entries,i,j)
+            for j in range(self._ncols):
+                row_s[1+2*j] = c'0' + mzd_read_bit(self._entries, i, j)
             s.append(row)
 
         if self._subdivisions is not None:
             for i in reversed(row_div):
                 s.insert(i, row_divider)
 
-        return bytes_to_str(b"\n".join(s))
+        return (b"\n".join(s)).decode()
 
     def row(self, Py_ssize_t i, from_list=False):
         """
@@ -713,7 +713,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         Multiplication', see :func:`_multiply_m4rm`.
         """
         if get_verbose() >= 2:
-            verbose('matrix multiply of %s x %s matrix by %s x %s matrix'%(
+            verbose('matrix multiply of %s x %s matrix by %s x %s matrix' % (
                 self._nrows, self._ncols, right._nrows, right._ncols))
 
         return self._multiply_strassen(right, 0)
@@ -783,7 +783,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             raise ArithmeticError("left ncols must match right nrows")
 
         if get_verbose() >= 2:
-            verbose('m4rm multiply of %s x %s matrix by %s x %s matrix'%(
+            verbose('m4rm multiply of %s x %s matrix by %s x %s matrix' % (
                 self._nrows, self._ncols, right._nrows, right._ncols))
 
         cdef Matrix_mod2_dense ans
@@ -1180,7 +1180,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             # for debugging purposes only, it is slow
             self._echelon_in_place_classical()
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
     def _pivots(self):
         """
@@ -1306,7 +1306,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                 sig_on()
                 for i from 0 <= i < self._nrows:
                     for j from 0 <= j < num_per_row:
-                        k = rstate.c_random()%nc
+                        k = rstate.c_random() % nc
                         mzd_write_bit(self._entries, i, k, rstate.c_random() % 2)
                 sig_off()
 
@@ -1421,7 +1421,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             [1 0 0]
         """
         s = self.base_ring()._magma_init_(magma)
-        return 'Matrix(%s,%s,%s,StringToIntegerSequence("%s"))'%(
+        return 'Matrix(%s,%s,%s,StringToIntegerSequence("%s"))' % (
             s, self._nrows, self._ncols, self._export_as_string())
 
     def determinant(self):
@@ -1763,16 +1763,16 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         highc = col + ncols
 
         if row < 0:
-            raise TypeError("Expected row >= 0, but got %d instead."%row)
+            raise TypeError("Expected row >= 0, but got %d instead." % row)
 
         if col < 0:
-            raise TypeError("Expected col >= 0, but got %d instead."%col)
+            raise TypeError("Expected col >= 0, but got %d instead." % col)
 
         if highc > self._entries.ncols:
-            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead."%(highc, self._entries.ncols))
+            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead." % (highc, self._entries.ncols))
 
         if highr > self._entries.nrows:
-            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
+            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead." % (highr, self._entries.nrows))
 
         A = self.new_matrix(nrows = nrows, ncols = ncols)
         if ncols == 0 or nrows == 0:
@@ -1946,7 +1946,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         elif algorithm == 'm4ri':
             r = mzd_echelonize_m4ri(A, 0, 0)
         else:
-            raise ValueError("Algorithm '%s' unknown."%algorithm)
+            raise ValueError("Algorithm '%s' unknown." % algorithm)
         mzd_free(A)
         self.cache('rank', r)
         return r
@@ -2572,7 +2572,7 @@ def from_png(filename):
     fn.close()
 
     if type(filename) is not bytes:
-        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
+        filename = filename.encode(FS_ENCODING, 'surrogateescape')
 
     cdef FILE *f = fopen(filename, "rb")
     sig_on()
@@ -2613,13 +2613,13 @@ def to_png(Matrix_mod2_dense A, filename):
     cdef Py_ssize_t i,j, r,c
     r, c = A.nrows(), A.ncols()
     if r == 0 or c == 0:
-        raise TypeError("Cannot write image with dimensions %d x %d"%(c,r))
+        raise TypeError(f"cannot write image with dimensions {c} x {r}")
 
     fn = open(filename, "w") # check filename
     fn.close()
 
     if type(filename) is not bytes:
-        filename = str_to_bytes(filename, FS_ENCODING, 'surrogateescape')
+        filename = filename.encode(FS_ENCODING, 'surrogateescape')
 
     cdef gdImagePtr im = gdImageCreate(c, r)
     cdef FILE * out = fopen(filename, "wb")
@@ -2761,10 +2761,10 @@ def ple(Matrix_mod2_dense A, algorithm='standard', int param=0):
         _mzd_ple_naive(B._entries, p, q)
         sig_off()
     else:
-        raise ValueError("Algorithm '%s' unknown."%algorithm)
+        raise ValueError("Algorithm '%s' unknown." % algorithm)
 
     P = [p.values[i] for i in range(A.nrows())]
     Q = [q.values[i] for i in range(A.ncols())]
     mzp_free(p)
     mzp_free(q)
-    return B,P,Q
+    return B, P, Q

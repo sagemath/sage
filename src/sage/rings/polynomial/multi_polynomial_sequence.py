@@ -314,11 +314,12 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     except ImportError:
         BooleanMonomialMonoid = ()
 
-    def is_ring(r): return (isinstance(r, (MPolynomialRing_base,
-                                           BooleanMonomialMonoid,
-                                           InfinitePolynomialRing_sparse))
-                            or (isinstance(r, QuotientRing_nc)
-                                and isinstance(r.cover_ring(), MPolynomialRing_base)))
+    def is_ring(r):
+        return (isinstance(r, (MPolynomialRing_base,
+                               BooleanMonomialMonoid,
+                               InfinitePolynomialRing_sparse))
+                or (isinstance(r, QuotientRing_nc)
+                    and isinstance(r.cover_ring(), MPolynomialRing_base)))
 
     if is_ring(arg1):
         ring, gens = arg1, arg2
@@ -1101,7 +1102,7 @@ class PolynomialSequence_generic(Sequence_generic):
             # order the rows with TOP
             else:
                 R_monomials_useful = []
-                for i in range(degree,target_degree-self.minimal_degree()+1):
+                for i in range(degree, target_degree-self.minimal_degree()+1):
                     R_monomials_useful += R_monomials_of_degree[i]
                 R_monomials_useful.sort()
                 for mon in R_monomials_useful:
@@ -1461,6 +1462,7 @@ class PolynomialSequence_generic(Sequence_generic):
             return max(f.degree() for f in self)
         except ValueError:
             return -1  # empty sequence
+
     def minimal_degree(self):
         """
         Return the minimal degree of any polynomial in this sequence.
@@ -1777,7 +1779,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         else:
             # slower, more flexible solution
             if skip is None:
-                def skip(lm, tail): return False
+                def skip(lm, tail):
+                    return False
 
             while True:
                 linear = []
@@ -1997,7 +2000,9 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         eliminated_variables = {f.lex_lead() for f in reductors}
         leftover_variables = {x.lm() for x in R_origin.gens()} - solved_variables - eliminated_variables
 
-        def key_convert(x): return R_origin(x).lm()
+        def key_convert(x):
+            return R_origin(x).lm()
+
         if leftover_variables != set():
             partial_solutions = solutions
             solutions = []
