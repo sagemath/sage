@@ -1122,11 +1122,11 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         intarray = self.element_class(self, elt, check=False)
         return self.element_class(self, canonical_representative_of_orbit_of(self._sgs, intarray), check=False)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of ``self``.
 
-        Raises an :exc:`EmptySetError` when ``self`` is empty.
+        This raises an :exc:`EmptySetError` when ``self`` is empty.
 
         EXAMPLES::
 

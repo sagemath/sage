@@ -2,7 +2,6 @@
     // This settings file is not ignored by git.
     "files.exclude": {
         "**/__pycache__": true,
-        "src/**/*.cpp": true,
         "src/**/*.so": true
     },
     "search.exclude": {

@@ -1426,7 +1426,7 @@ def RandomTwoSphere(n):
     graph = RandomTriangulation(n)
 
     graph = graph.relabel(inplace=False)
-    triangles = [(u, v, w) for u, L in graph._embedding.items()
+    triangles = [(u, v, w) for u, L in graph.get_embedding().items()
                  for v, w in zip(L, L[1:] + [L[0]]) if u < v and u < w]
 
     return SimplicialComplex(triangles, maximality_check=False)

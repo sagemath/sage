@@ -14,12 +14,15 @@ class InteractiveShellCmd:
         """
         # Display startup banner. Do this before anything else to give the user
         # early feedback that Sage is starting.
-        from sage.misc.banner import banner
-
-        banner()
+        if not self.options.quiet:
+            from sage.misc.banner import banner
+            banner()
 
         from sage.repl.interpreter import SageTerminalApp
 
         app = SageTerminalApp.instance()
+        if self.options.simple_prompt:
+            app.config['InteractiveShell']['simple_prompt'] = True
+            app.config['InteractiveShell']['colors'] = 'nocolor'
         app.initialize([])
         return app.start()  # type: ignore

@@ -4076,7 +4076,7 @@ class ParallelogramPolyominoes_size(
         """
         return "Parallelogram polyominoes of size %s" % (self._size)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of a parallelogram polyomino of a given size.
 

@@ -356,9 +356,9 @@ REFERENCES:
 - :wikipedia:`Chebyshev_polynomials`
 - :wikipedia:`Legendre_polynomials`
 - :wikipedia:`Hermite_polynomials`
-- http://mathworld.wolfram.com/GegenbauerPolynomial.html
+- https://mathworld.wolfram.com/GegenbauerPolynomial.html
 - :wikipedia:`Jacobi_polynomials`
-- :wikipedia:`Laguerre_polynomia`
+- :wikipedia:`Laguerre_polynomials`
 - :wikipedia:`Associated_Legendre_polynomials`
 - :wikipedia:`Kravchuk_polynomials`
 - :wikipedia:`Meixner_polynomials`

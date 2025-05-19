@@ -359,7 +359,7 @@ class Giac(Expect):
 
     def _keyboard_interrupt(self):
         """
-        The pexepect interface for giac has a very poor support of keyboard interruptions.
+        The pexpect interface for giac has a very poor support of keyboard interruptions.
         """
         print("Interrupting %s..." % self)
         self._expect.sendline(chr(3))  # send ctrl-c

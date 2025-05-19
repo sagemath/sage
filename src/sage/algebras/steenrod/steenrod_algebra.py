@@ -2343,7 +2343,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
-            return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).P(*nums))
+            return self(SteenrodAlgebra(p=self.prime(),
+                                        generic=self._generic).P(*nums))
         while nums and nums[-1] == 0:
             nums = nums[:-1]
         if len(nums) == 0 or (len(nums) == 1 and nums[0] == 0):
@@ -2359,7 +2360,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         else:
             t = ((), nums)
         if self._check_profile_on_basis(t):
-            A = SteenrodAlgebra_generic(p=self.prime(),generic=self._generic)
+            A = SteenrodAlgebra_generic(p=self.prime(),
+                                        generic=self._generic)
             a = A.monomial(t)
             return self(a)
         raise ValueError("element not in this algebra")
@@ -2477,7 +2479,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                     return answer
                 raise ValueError("element not in this algebra")
 
-    def an_element(self):
+    def _an_element_(self):
         """
         An element of this Steenrod algebra.
 
@@ -2510,29 +2512,32 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return self.one()
 
         if basis == 'milnor' and not self._generic:
-            return self.monomial((2,1))
+            return self.monomial((2, 1))
         if basis == 'milnor' and self._generic:
-            return self.term(((1,3), (2,1)), GF(p)(p-1))
+            return self.term(((1, 3), (2, 1)), GF(p)(p - 1))
         if basis == 'serre-cartan' and not self._generic:
-            return self.monomial((4,2,1))
+            return self.monomial((4, 2, 1))
         if basis == 'serre-cartan' and self._generic:
-            return self.term((1,p,0,1,0), GF(p)(p-1))
+            return self.term((1, p, 0, 1, 0), GF(p)(p - 1))
         if basis == 'woody' or basis == 'woodz':
-            return self._from_dict({((3,0),): 1, ((1, 1), (1, 0)): 1}, coerce=True)
+            return self._from_dict({((3, 0),): 1,
+                                    ((1, 1), (1, 0)): 1}, coerce=True)
         if basis.find('wall') >= 0:
-            return self._from_dict({((1,1), (1,0)): 1, ((2, 2), (0, 0)): 1}, coerce=True)
+            return self._from_dict({((1, 1), (1, 0)): 1,
+                                    ((2, 2), (0, 0)): 1}, coerce=True)
         if basis.find('arnona') >= 0:
-            return self._from_dict({((3,3),): 1, ((1, 1), (2, 1)): 1}, coerce=True)
+            return self._from_dict({((3, 3),): 1,
+                                    ((1, 1), (2, 1)): 1}, coerce=True)
         if basis == 'arnonc':
             return self._from_dict({(8,): 1, (4, 4): 1}, coerce=True)
         if basis.find('pst') >= 0:
             if not self._generic:
                 return self.monomial(((3, 1),))
-            return self.term(((1,), (((1,1), 2),)), GF(p)(p-1))
+            return self.term(((1,), (((1, 1), 2),)), GF(p)(p - 1))
         if basis.find('comm') >= 0:
             if not self._generic:
                 return self.monomial(((1, 2),))
-            return self.term(((), (((1,2), 1),)), GF(p)(p-1))
+            return self.term(((), (((1, 2), 1),)), GF(p)(p - 1))
 
     def pst(self, s, t):
         r"""
@@ -2565,7 +2570,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
-            return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
+            return self(SteenrodAlgebra(p=self.prime(),
+                                        generic=self._generic).pst(s, t))
         if not isinstance(s, (Integer, int)) and s >= 0:
             raise ValueError("%s is not a nonnegative integer" % s)
         if not isinstance(t, (Integer, int)) and t > 0:
@@ -2765,7 +2771,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # check to see if equal to A(n) for some n.
             n = self.profile(1)
             if not self._generic and self._profile == AA(n-1, p=p)._profile:
-                return self.pst(i,1)
+                return self.pst(i, 1)
             if self._generic and self._profile == AA(n, p=p)._profile:
                 if i == 0:
                     return self.Q(0)

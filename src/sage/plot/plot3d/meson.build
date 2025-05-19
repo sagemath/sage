@@ -31,9 +31,9 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  dependencies = [py_dep, cysignals, gmp, numpy]
+  deps = [py_dep, cysignals, gmp, numpy]
   if name == 'parametric_surface'
-    dependencies += [interpreters_dep]
+    deps += [interpreters_dep]
   endif
   py.extension_module(
     name,
@@ -41,6 +41,6 @@ foreach name, pyx : extension_data
     subdir: 'sage/plot/plot3d',
     install: true,
     include_directories: [inc_cpython, inc_ext],
-    dependencies: dependencies,
+    dependencies: deps,
   )
 endforeach
