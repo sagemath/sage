@@ -192,7 +192,7 @@ SAGE_LOCAL_SPKG_INST = var("SAGE_LOCAL_SPKG_INST", join(SAGE_LOCAL, "var", "lib"
 SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "installed"))  # deprecated
 
 # source tree of the Sage distribution
-SAGE_ROOT = var("SAGE_ROOT")  # no fallback for SAGE_ROOT
+SAGE_ROOT = var("SAGE_ROOT") or None
 SAGE_SRC = var("SAGE_SRC", join(SAGE_ROOT, "src"), SAGE_LIB)
 SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
@@ -204,7 +204,11 @@ SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
 SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
-DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))
+if sys.platform == 'win32':
+    home_dir = os.environ.get("USERPROFILE")
+else:  # Unix-like systems (Linux, macOS, etc.)
+    home_dir = os.environ.get("HOME")
+DOT_SAGE = var("DOT_SAGE", join(home_dir, ".sage"))
 SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 
 # for sage_setup.setenv

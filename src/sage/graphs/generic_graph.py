@@ -243,7 +243,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
     :meth:`~GenericGraph.is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
-    :meth:`~GenericGraph.`is_edge_cut` | Check whether the input edges form an edge cut.
+    :meth:`~GenericGraph.is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`~GenericGraph.is_cut_vertex` | Check whether the input vertex is a cut-vertex.
     :meth:`~GenericGraph.is_vertex_cut` | Check whether the input vertices form a vertex cut.
     :meth:`~GenericGraph.edge_cut` | Return a minimum edge cut between vertices `s` and `t`
@@ -1220,6 +1220,63 @@ class GenericGraph(GenericGraph_pyx):
 
     # Formats
 
+    def _copy_attribute_from(self, other, attribute):
+        r"""
+        Helper method to copy in ``self`` an attribute from ``other``.
+
+        INPUT:
+
+        - ``other`` -- the (di)graph from which to copy attributes
+
+        - ``attribute`` -- string; the attribute to copy, for example
+          ``_assoc``, ``_embedding``, ``_pos``, etc.
+
+        EXAMPLES::
+
+            sage: G = graphs.CycleGraph(4)
+            sage: G.get_pos()
+            {0: (0.0, 1.0), 1: (-1.0, 0.0), 2: (0.0, -1.0), 3: (1.0, 0.0)}
+            sage: D = DiGraph(4)
+            sage: D._copy_attribute_from(G, '_pos')
+            sage: D.get_pos()
+            {0: (0.0, 1.0), 1: (-1.0, 0.0), 2: (0.0, -1.0), 3: (1.0, 0.0)}
+
+        TESTS::
+
+            sage: G = Graph([(0, 1)])
+            sage: D = DiGraph([(0, 1)])
+            sage: G.set_vertices({0: graphs.CycleGraph(3), 1: 'abc'})
+            sage: G.get_vertices()
+            {0: Cycle graph: Graph on 3 vertices, 1: 'abc'}
+            sage: D.get_vertices()
+            {0: None, 1: None}
+            sage: D._copy_attribute_from(G, '_assoc')
+            sage: D.get_vertices()
+            {0: Cycle graph: Graph on 3 vertices, 1: 'abc'}
+            sage: G.get_vertices()
+            {0: Cycle graph: Graph on 3 vertices, 1: 'abc'}
+            sage: G.get_embedding()
+            sage: G.genus()
+            0
+            sage: G.get_embedding()
+            {0: [1], 1: [0]}
+            sage: D._copy_attribute_from(G, '_embedding')
+            sage: D.get_embedding()
+            {0: [1], 1: [0]}
+        """
+        if hasattr(other, attribute):
+            copy_attr = {}
+            old_attr = getattr(other, attribute)
+            if isinstance(old_attr, dict):
+                for v, value in old_attr.items():
+                    try:
+                        copy_attr[v] = value.copy()
+                    except AttributeError:
+                        copy_attr[v] = copy(value)
+                setattr(self, attribute, copy_attr)
+            else:
+                setattr(self, attribute, copy(old_attr))
+
     def copy(self, weighted=None, data_structure=None, sparse=None, immutable=None, hash_labels=None):
         """
         Change the graph implementation.
@@ -1493,20 +1550,9 @@ class GenericGraph(GenericGraph_pyx):
                            weighted=weighted, hash_labels=hash_labels,
                            data_structure=data_structure)
 
-        attributes_to_copy = ('_assoc', '_embedding')
-        for attr in attributes_to_copy:
-            if hasattr(self, attr):
-                copy_attr = {}
-                old_attr = getattr(self, attr)
-                if isinstance(old_attr, dict):
-                    for v, value in old_attr.items():
-                        try:
-                            copy_attr[v] = value.copy()
-                        except AttributeError:
-                            copy_attr[v] = copy(value)
-                    setattr(G, attr, copy_attr)
-                else:
-                    setattr(G, attr, copy(old_attr))
+        # Copy attributes '_assoc' and '_embedding' if set
+        G._copy_attribute_from(self, '_assoc')
+        G._copy_attribute_from(self, '_embedding')
 
         return G
 
@@ -3271,6 +3317,14 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_edge(0, 7)
             sage: G.get_embedding() is None
             True
+
+        TESTS::
+
+            sage: G = Graph('A_', immutable=True)
+            sage: G.set_embedding({0: [1], 1: [0]})
+            sage: H = G.subgraph([0])
+            sage: H.get_embedding()
+            {0: []}
         """
         try:
             embedding = self._embedding
@@ -3278,12 +3332,11 @@ class GenericGraph(GenericGraph_pyx):
             embedding = None
         if embedding is not None:
             # remove vertices not anymore in the graph
-            to_remove = set(v for v in embedding if v not in self)
-            if to_remove:
-                for v in to_remove:
+            for v in list(embedding):
+                if v not in self:
                     del embedding[v]
-                for v in embedding:
-                    embedding[v] = [w for w in embedding[v] if w not in to_remove]
+            for v in embedding:
+                embedding[v] = [w for w in embedding[v] if w in self]
 
             # remove edges not anymore in the graph
             for u in embedding:
@@ -6835,11 +6888,11 @@ class GenericGraph(GenericGraph_pyx):
             return []
 
         # Which embedding should we use ?
-        if embedding is None:
-            # Is self._embedding available ?
-            if self._check_embedding_validity():
-                embedding = self._embedding
-            else:
+        if embedding is not None:
+            self._check_embedding_validity(embedding, boolean=False)
+        else:
+            embedding = self.get_embedding()
+            if embedding is None:
                 if self.is_planar(set_embedding=True):
                     embedding = self._embedding
                     self._embedding = None
@@ -6944,10 +6997,8 @@ class GenericGraph(GenericGraph_pyx):
             return len(self.faces(embedding))
 
         if embedding is None:
-            # Is self._embedding available ?
-            if self._check_embedding_validity():
-                embedding = self._embedding
-            else:
+            embedding = self.get_embedding()
+            if embedding is None:
                 if self.is_planar():
                     # We use Euler's formula: V-E+F-C=1
                     C = self.connected_components_number()
@@ -8359,6 +8410,9 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: D.longest_cycle(induced=False, use_edge_labels=True, immutable=False)[1].is_immutable()
             False
+            sage: # check that https://houseofgraphs.org/graphs/752 has circumference 6:
+            sage: Graph('EJ~w', immutable=True).longest_cycle().order()
+            6
         """
         self._scream_if_not_simple()
         G = self
@@ -8514,7 +8568,7 @@ class GenericGraph(GenericGraph_pyx):
                     hh = h.subgraph(vertices=c)
                     if total_weight(hh) > best_w:
                         best = hh
-                        best.name(name)
+                        best._name = name
                         best_w = total_weight(best)
 
                 # Add subtour elimination constraints
@@ -9253,7 +9307,7 @@ class GenericGraph(GenericGraph_pyx):
             return (0, None) if use_edge_labels else None
 
         tsp.delete_vertices(extra_vertices)
-        tsp.name("Hamiltonian path from {}".format(self.name()))
+        tsp._name = "Hamiltonian path from {}".format(self.name())
         if immutable:
             tsp = tsp.copy(immutable=True)
 
@@ -9528,7 +9582,7 @@ class GenericGraph(GenericGraph_pyx):
                                  (vv, uu, self.edge_label(vv, uu))]
                     answer = self.subgraph(edges=edges, immutable=self.is_immutable())
                     answer.set_pos(self.get_pos())
-                    answer.name("TSP from "+self.name())
+                    answer._name = "TSP from "+self.name()
                     return answer
             else:
                 if self.allows_multiple_edges() and len(self.edge_label(uu, vv)) > 1:
@@ -9538,7 +9592,7 @@ class GenericGraph(GenericGraph_pyx):
                         edges = self.edges(sort=True, key=weight)[:2]
                     answer = self.subgraph(edges=edges, immutable=self.is_immutable())
                     answer.set_pos(self.get_pos())
-                    answer.name("TSP from " + self.name())
+                    answer._name = "TSP from " + self.name()
                     return answer
 
             raise EmptySetError("the given graph is not Hamiltonian")
@@ -9687,7 +9741,7 @@ class GenericGraph(GenericGraph_pyx):
             # We can now return the TSP !
             answer = self.subgraph(edges=h.edges(sort=False), immutable=self.is_immutable())
             answer.set_pos(self.get_pos())
-            answer.name("TSP from "+g.name())
+            answer._name = "TSP from "+g.name()
             return answer
 
         #################################################
@@ -9759,7 +9813,7 @@ class GenericGraph(GenericGraph_pyx):
             f_val = p.get_values(f, convert=bool, tolerance=integrality_tolerance)
             tsp.add_vertices(g.vertex_iterator())
             tsp.set_pos(g.get_pos())
-            tsp.name("TSP from " + g.name())
+            tsp._name= "TSP from " + g.name()
             if g.is_directed():
                 tsp.add_edges((u, v, l) for u, v, l in g.edge_iterator() if f_val[u, v] == 1)
             else:
@@ -12041,7 +12095,7 @@ class GenericGraph(GenericGraph_pyx):
              2: Moebius-Kantor Graph: Graph on 16 vertices}
         """
         if verts is None:
-            verts = list(self)
+            verts = self
 
         if not hasattr(self, '_assoc'):
             return dict.fromkeys(verts, None)
@@ -14433,7 +14487,7 @@ class GenericGraph(GenericGraph_pyx):
             G._pos3d = {v: pos3d[v] for v in G if v in pos3d}
         embedding = self.get_embedding()
         if embedding is not None:
-            G._embedding = {u: [v for v in embedding[u] if u in G] for u in G}
+            G._embedding = embedding
 
         if immutable is None:
             immutable = self.is_immutable()
@@ -21010,6 +21064,8 @@ class GenericGraph(GenericGraph_pyx):
             ....:     print("option {} : {}".format(key, value))
             option by_component : Whether to do the spring layout by connected component -- boolean.
             option dim : The dimension of the layout -- 2 or 3.
+            option external_face : A list of the vertices of the external face of the graph, used for Tutte embedding layout.
+            option external_face_pos : A dictionary specifying the positions of the external face of the graph, used for Tutte embedding layout. If none specified, theexternal face is a regular polygon.
             option forest_roots : An iterable specifying which vertices to use as roots for the ``layout='forest'`` option. If no root is specified for a tree, then one is chosen close to the center of the tree. Ignored unless ``layout='forest'``.
             option heights : A dictionary mapping heights to the list of vertices at this height.
             option iterations : The number of times to execute the spring layout algorithm.
@@ -21641,6 +21697,94 @@ class GenericGraph(GenericGraph_pyx):
 
         return {key_to_vertex[key]: pos for key, pos in positions.items()}
 
+    def layout_tutte(self, external_face=None, external_face_pos=None, **options):
+        r"""
+        Compute graph layout based on a Tutte embedding.
+
+        The graph must be 3-connected and planar.
+
+        INPUT:
+
+        - ``external_face`` -- list (default: ``None``); the external face to
+          be made a polygon
+
+        - ``external_face_pos`` -- dictionary (default: ``None``); the positions
+          of the vertices of the external face. If ``None``, will automatically
+          generate a unit sided regular polygon.
+
+        - ``**options`` -- other parameters not used here
+
+        OUTPUT: a dictionary mapping vertices to positions
+
+        EXAMPLES::
+
+            sage: g = graphs.WheelGraph(n=7)
+            sage: g.plot(layout='tutte', external_face=[0,1,2])                        # needs sage.plot
+            Graphics object consisting of 20 graphics primitives
+            sage: g = graphs.CubeGraph(n=3, embedding=2)
+            sage: g.plot(layout='tutte', external_face=['101','111','001',
+            ....:       '011'], external_face_pos={'101':(1,0), '111':(0,0),
+            ....:       '001':(2,1), '011':(-1,1)})                                    # needs sage.plot
+            Graphics object consisting of 21 graphics primitives
+            sage: g = graphs.CompleteGraph(n=5)
+            sage: g.plot(layout='tutte', external_face=[0,1,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph must be planar
+            sage: g = graphs.CycleGraph(n=10)
+            sage: g.layout(layout='tutte', external_face=[0,1,2,3,4,5,6,7,8,9])
+            Traceback (most recent call last):
+            ...
+            ValueError: graph must be 3-connected
+        """
+        from sage.matrix.constructor import zero_matrix
+        from sage.rings.real_mpfr import RR
+
+        if (external_face is not None) and (len(external_face) < 3):
+            raise ValueError("external face must have at least 3 vertices")
+
+        if not self.is_planar(set_embedding=True):
+            raise ValueError("graph must be planar")
+
+        if not self.vertex_connectivity(k=3):
+            raise ValueError("graph must be 3-connected")
+
+        faces_edges = self.faces()
+        faces_vertices = [[edge[0] for edge in face] for face in faces_edges]
+        if external_face is None:
+            external_face = faces_vertices[0]
+        else:
+            # Check that external_face is a face and order it correctly
+            matching_face = next((f for f in faces_vertices if sorted(external_face) == sorted(f)), None)
+            if matching_face is None:
+                raise ValueError("external face must be a face of the graph")
+            external_face = matching_face
+
+        if external_face_pos is None:
+            pos = self._circle_embedding(external_face, return_dict=True)
+        else:
+            pos = external_face_pos.copy()
+
+        n = self.order()
+        M = zero_matrix(RR, n, n)
+        b = zero_matrix(RR, n, 2)
+
+        vertices_to_indices = {v: i for i, v in enumerate(self)}
+        for i, v in enumerate(self):
+            if v in pos:
+                M[i, i] = 1
+                b[i, 0] = pos[v][0]
+                b[i, 1] = pos[v][1]
+            else:
+                nv = self.neighbors(v)
+                for u in nv:
+                    j = vertices_to_indices[u]
+                    M[i, j] = -1
+                M[i, i] = len(nv)
+
+        sol = M.pseudoinverse()*b
+        return dict(zip(self, sol))
+
     def _layout_bounding_box(self, pos):
         """
         Return a bounding box around the specified positions.
@@ -21960,6 +22104,9 @@ class GenericGraph(GenericGraph_pyx):
             selected at random. Then the tree will be plotted in levels,
             depending on minimum distance for the root.
 
+          - ``'tutte'`` -- uses the Tutte embedding algorithm. The graph must be
+            a 3-connected, planar graph.
+
         - ``vertex_labels`` -- boolean (default: ``True``); whether to print
           vertex labels
 
@@ -22025,6 +22172,13 @@ class GenericGraph(GenericGraph_pyx):
           "down".  If "up" (resp., "down"), then the root of the tree will
           appear on the bottom (resp., top) and the tree will grow upwards
           (resp. downwards). Ignored unless ``layout='tree'``.
+
+        - ``external_face`` -- list of vertices (default: ``None``); the external face to be made a
+          in the Tutte layout. Ignored unless ``layout='tutte''``.
+
+        - ``external_face_pos`` -- dictionary (default: ``None``). If specified,
+          used as the positions for the external face in the Tutte layout.
+          Ignored unless ``layout='tutte'``.
 
         - ``save_pos`` -- boolean (default: ``False``); save position computed
           during plotting
@@ -24745,7 +24899,7 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS::
 
-            sage: g = graphs.ChvatalGraph()
+            sage: g = graphs.ChvatalGraph().copy(immutable=True)
             sage: g.is_hamiltonian()                                                    # needs sage.numerical.mip
             True
 
