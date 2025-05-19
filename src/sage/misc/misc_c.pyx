@@ -414,8 +414,8 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
 
     - ``L`` -- the terms (MUST be a tuple or list)
     - ``off`` -- offset in the list from which to start
-    - ``count`` -- how many terms in the sum. Must be positive
-    - ``cutoff`` -- the minimum count to recurse on. Must be at least 2
+    - ``count`` -- how many terms in the sum; must be positive
+    - ``cutoff`` -- the minimum count to recurse on; must be at least 2
 
     OUTPUT:
 
