@@ -1,0 +1,13 @@
+diff --git a/factory/variable.h b/factory/variable.h
+index 11739d4..bfbb168 100644
+--- a/factory/variable.h
++++ b/factory/variable.h
+@@ -8,7 +8,7 @@
+ #ifndef INCL_VARIABLE_H
+ #define INCL_VARIABLE_H
+ 
+-// #include "config.h"
++#include "config.h"
+ 
+ #ifndef NOSTREAMIO
+ # ifdef HAVE_IOSTREAM
