@@ -266,7 +266,7 @@ class F_algebra(CombinatorialFreeModule):
         sage: s = f2*f3+f5; s
         f5 + f2*f3
     """
-    def __init__(self, R, start=3):
+    def __init__(self, R, start=3) -> None:
         r"""
         Initialize ``self``.
 
@@ -460,7 +460,7 @@ class F_algebra(CombinatorialFreeModule):
         B *= ZZ(2)**(3 * i - 1) * ZZ(3)**i / ZZ(2 * i).factorial()
         return B * f2**i
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return a typical element.
 
@@ -473,7 +473,7 @@ class F_algebra(CombinatorialFreeModule):
         """
         return self("253") + 3 * self("235")
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return some typical elements.
 

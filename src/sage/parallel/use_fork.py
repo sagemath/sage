@@ -13,8 +13,11 @@ Parallel iterator built using the ``fork()`` system call
 # ****************************************************************************
 
 
+import sys
 from shutil import rmtree
-from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
+
+if sys.platform != 'win32':
+    from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
 from sage.interfaces.process import ContainChildren
 from sage.misc.timing import walltime
