@@ -1170,13 +1170,17 @@ class MatchingCoveredGraph(Graph):
         INPUT:
 
         - ``edges`` -- an iterable of edges, given either as ``(u, v)``
-          or ``(u, v, 'label')``
+          or ``(u, v, 'label')``. If an edge is provided in the format
+          ``(u, v)``, the label is set to ``None``.
 
         - ``loops`` -- boolean (default: ``False``); note that this shall
           always be set to either ``False`` or ``None`` (since matching covered
           graphs are free of loops), in which case all the loops
           ``(v, v, 'label')`` are removed from the iterator. If ``loops`` is
           set to ``True``, a :exc:`ValueError` is thrown.
+
+        - Please note that all the loops present in the iterator are ignored,
+          provided that ``loops`` is set to ``False`` or ``None``.
 
         OUTPUT:
 
@@ -1209,7 +1213,7 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(S)
             sage: F = [(0, 4), (2, 4), (4, 6), (4, 7)]
             sage: G.add_edges(F)
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True, sort_vertices=True)
             [(0, 1, None), (0, 3, None), (0, 4, None), (0, 6, None),
              (1, 2, None), (1, 4, None), (2, 4, None), (2, 5, None),
              (2, 7, None), (3, 4, None), (3, 6, None), (4, 5, None),
@@ -1224,7 +1228,7 @@ class MatchingCoveredGraph(Graph):
             sage: F = [(0, 9), (1, 8), (2, 9), (3, 8),
             ....:      (4, 9), (5, 8), (6, 9), (7, 8)]
             sage: G.add_edges(F)
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True, sort_vertices=True)
             [(0, 1, None), (0, 7, None), (0, 9, None), (1, 2, None),
              (1, 8, None), (2, 3, None), (2, 9, None), (3, 4, None),
              (3, 8, None), (4, 5, None), (4, 9, None), (5, 6, None),
@@ -1239,7 +1243,7 @@ class MatchingCoveredGraph(Graph):
             sage: F = {(0, 8, None), (1, 10), (4, 11, 'label'),
             ....:      (5, 9), (8, 9), (10, 11)}
             sage: G.add_edges(F)
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True, sort_vertices=True)
             [(0, 1, None), (0, 3, None), (0, 4, None), (0, 8, None),
              (1, 2, None), (1, 5, None), (1, 10, None), (2, 3, None),
              (2, 6, None), (3, 7, None), (4, 5, None), (4, 7, None),
@@ -1285,7 +1289,7 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(W)
             sage: F = [(0, 0), (1, 3), (2, 4)]
             sage: G.add_edges(edges=F, loops=False)
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True, sort_vertices=True)
             [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None),
              (0, 5, None), (1, 2, None), (1, 3, None), (1, 5, None),
              (2, 3, None), (2, 4, None), (3, 4, None), (4, 5, None)]
@@ -1294,7 +1298,7 @@ class MatchingCoveredGraph(Graph):
             Traceback (most recent call last):
             ...
             ValueError: loops are not allowed in matching covered graphs
-            sage: G.edges(sort=True)
+            sage: G.edges(sort=True, sort_vertices=True)
             [(0, 1, None), (0, 2, None), (0, 3, None), (0, 4, None),
              (0, 5, None), (1, 2, None), (1, 3, None), (1, 5, None),
              (2, 3, None), (2, 4, None), (3, 4, None), (4, 5, None)]
@@ -1321,8 +1325,22 @@ class MatchingCoveredGraph(Graph):
              (0, 6, None), (1, 2, None), (1, 2, None), (1, 4, None),
              (2, 5, None), (2, 7, None), (3, 4, None), (3, 6, None),
              (4, 5, None), (5, 7, None), (6, 7, None)]
+            sage: H = [(0, 1)] * 4
+            sage: G.add_edges(H)
+            sage: G.edge_label(0, 1)
+            [None, None, None, None, None, 'label']
 
         TESTS:
+
+        Providing with a non-iterable of edges::
+
+            sage: K2 = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K2)
+            sage: G.add_edges(1234)
+            Traceback (most recent call last):
+            ...
+            ValueError: expected an iterable of edges,
+            but got a non-iterable object
 
         Providing with an edge in ``edges`` that has 0 values to unpack::
 
@@ -1331,7 +1349,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.add_edges([()])
             Traceback (most recent call last):
             ...
-            ValueError: need more than 0 values to unpack
+            ValueError: need more than 1 value to unpack for edge: ()
 
         Providing with an edge in ``edges`` that has precisely one value to unpack::
 
@@ -1340,7 +1358,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.add_edges([(0, )])
             Traceback (most recent call last):
             ...
-            ValueError: need more than 1 value to unpack
+            ValueError: need more than 1 value to unpack for edge: (0,)
 
         Providing with an edge in ``edges`` that has more than 3 values to unpack::
 
@@ -1349,17 +1367,17 @@ class MatchingCoveredGraph(Graph):
             sage: G.add_edges([(0, 1, 2, 3, 4)])
             Traceback (most recent call last):
             ...
-            ValueError: too many values to unpack (expected 2)
+            ValueError: too many values to unpack (expected 2) for edge: (0, 1, 2, 3, 4)
 
         Providing with an edge of unknown data type::
 
             sage: M = graphs.MurtyGraph()
             sage: G = MatchingCoveredGraph(M)
-            sage: F = ['', 'edge', None, 1234]
+            sage: F = [None, 'edge', None]
             sage: G.add_edges(F)
             Traceback (most recent call last):
             ...
-            TypeError: input edges is of unknown type
+            TypeError: input edge None is of unknown type
         """
         if loops:
             raise ValueError('loops are not allowed in '
@@ -1368,34 +1386,45 @@ class MatchingCoveredGraph(Graph):
         if not edges:  # do nothing
             return
 
-        for edge in edges:
-            if isinstance(edge, tuple):
-                if len(edge) == 0:
-                    raise ValueError('need more than 0 values to unpack')
+        from collections.abc import Iterable
+        if not isinstance(edges, Iterable):
+            raise ValueError('expected an iterable of edges, '
+                             'but got a non-iterable object')
 
-                elif len(edge) == 1:
-                    raise ValueError('need more than 1 value to unpack')
+        links = []  # to extract the nonloop input edges
+        for edge in edges:
+            if hasattr(edge, '__len__'):
+                if len(edge) <= 1:
+                    raise ValueError('need more than 1 value to unpack '
+                                     f'for edge: {edge}')
 
                 elif len(edge) > 3:
-                    raise ValueError('too many values to unpack (expected 2)')
+                    raise ValueError('too many values to unpack (expected 2) '
+                                     f'for edge: {edge}')
 
             else:
-                raise TypeError('input edges is of unknown type')
+                raise TypeError(f'input edge {edge} is of unknown type')
 
-        # Remove potentially duplicated edges
-        edges = list(set(edges))
+            u, v, l = None, None, None
 
-        # Remove all the loops from edges
-        for edge in edges:
-            if edge[0] == edge[1]:
-                edges.remove(edge)
+            if len(edge) == 2:
+                u, v = edge
+
+            else:
+                u, v, l = edge
+
+            if u != v:
+                links.append((u, v, l))
+
+        # If each of the input edges is existent
+        if (self.allows_multiple_edges()
+            and all(self.has_edge(*edge) for edge in links)):
+            self._backend.add_edges(links, self._directed)
+            return
 
         # Check if all the incident vertices of the input edges are existent
-        new_vertices = list(set([x for u, v, *_ in edges for x in [u, v]]))
-
-        for vertex in new_vertices[:]:
-            if vertex in self:
-                new_vertices.remove(vertex)
+        new_vertices = {x for u, v, _ in links for x in (u, v)
+                        if x not in self}
 
         # Throw error if the no. of new vertices is odd
         if len(new_vertices) % 2:
@@ -1404,7 +1433,7 @@ class MatchingCoveredGraph(Graph):
 
         try:
             G = Graph(self, multiedges=self.allows_multiple_edges())
-            G.add_edges(edges=edges, loops=loops)
+            G.add_edges(edges=links, loops=loops)
 
             # Check if G has a vertex with at most 1 neighbor
             if any(len(G.neighbors(v)) <= 1 for v in G):
@@ -1419,14 +1448,14 @@ class MatchingCoveredGraph(Graph):
             else:
                 # Check if the existing perfect matching may be extended to a
                 # perfect matching of the new graph
-                edges_with_two_new_vertices = []
+                links_with_two_new_vertices = []
 
-                for edge in edges:
+                for edge in links:
                     if edge[0] in new_vertices and edge[1] in new_vertices:
-                        edges_with_two_new_vertices.append(edge)
+                        links_with_two_new_vertices.append(edge)
 
-                H = Graph(data=edges_with_two_new_vertices, format='list_of_edges')
-                M = Graph(self.get_matching()).union(Graph(H.matching()))
+                M = Graph(data=links_with_two_new_vertices, format='list_of_edges')
+                M.add_edges(self.get_matching())
 
                 # Check if M is a perfect matching of the resulting graph
                 if (G.order() != 2*M.size()):
