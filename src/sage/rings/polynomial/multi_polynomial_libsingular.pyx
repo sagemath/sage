@@ -4612,7 +4612,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         INPUT:
 
-        - ``I`` -- an ideal in ``self.parent()``, or tuple of generators of that ideal
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
 
         EXAMPLES::
 

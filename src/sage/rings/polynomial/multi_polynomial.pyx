@@ -1982,7 +1982,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``I`` -- an ideal in ``self.parent()``, or tuple of generators of that ideal
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
 
         EXAMPLES::
 
@@ -2903,8 +2903,8 @@ cdef class MPolynomial(CommutativePolynomial):
         INPUT:
 
         - ``y`` -- a polynomial in the same ring as ``self``
-        - ``m``, ``n`` -- polynomials or ideals in the same ring as ``self``. Ideals
-          may also be specified as a list/tuple of generators.
+        - ``m``, ``n`` -- polynomials or ideals in the same ring as ``self``; ideals
+          may also be specified as a list/tuple of generators
 
         EXAMPLES::
 
