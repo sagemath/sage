@@ -959,7 +959,7 @@ class OperationTable(SageObject):
             sage: T.translation()['y']
             (1,2)
         """
-        self._width, self._names, self._name_dict = self._name_maker(names)
+        self._width, self._names, self._names_ext, self._name_dict = self._name_maker(names)
 
     def matrix_of_variables(self):
         r"""
@@ -1048,10 +1048,7 @@ class OperationTable(SageObject):
                     # add text to the plot
                     tPos = (h, g)
                     tText = widenames[self._table[g][h]]
-                    fontsize = None
-                    if self._names_type == 'elements':
-                        fontsize = 'x-small'
-                    t = text(tText, tPos, rgbcolor=(0, 0, 0), fontsize=fontsize)
+                    t = text(tText, tPos, rgbcolor=(0, 0, 0), fontsize='x-small')
                     plot = plot + t
 
         # https://moyix.blogspot.com/2022/09/someones-been-messing-with-my-subnormals.html
