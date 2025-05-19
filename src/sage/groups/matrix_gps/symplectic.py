@@ -173,7 +173,7 @@ def Sp(n, R, var='a', invariant_form=None):
         raise ValueError('the degree must be even')
 
     if invariant_form is not None:
-        if ring.is_finite(): # Checking is the ring finite?
+        if ring.is_finite():
             raise NotImplementedError("invariant_form for finite groups is fixed by GAP")
 
         invariant_form = normalize_args_invariant_form(ring, degree, invariant_form)
