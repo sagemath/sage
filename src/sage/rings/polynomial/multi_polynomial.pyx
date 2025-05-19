@@ -2910,17 +2910,10 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x> = PolynomialRing(QQ, implementation="singular")
             sage: f = R(3)
-            sage: g = f.crt(5, x-1, x-2); g  # random (up to addition by multiples of (x-1)*(x-2))
+            sage: f.crt(5, x-1, x-2) % ((x-1)*(x-2))
             2*x + 1
-            sage: g(1)
-            3
-            sage: g(2)
-            5
-            sage: g = f.crt(5, R.ideal(x-1), [x-2])
-            sage: g(1)
-            3
-            sage: g(2)
-            5
+            sage: f.crt(5, R.ideal(x-1), [x-2]) % ((x-1)*(x-2))
+            2*x + 1
         """
         # could be moved up to ModuleElement as long as lift() is defined
         # the current definition of lift() requires ideal(), so maybe only RingElement
