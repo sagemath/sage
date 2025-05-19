@@ -1108,13 +1108,90 @@ cdef class RingHomomorphism(RingMap):
             sage: psi = A.hom([v*u, w*u, t], B)
             sage: psi.inverse_image(t^2) == z^2
             True
+
+        Check that the case in which the domain is a quotient ring
+        and codomain a finite field of same characteristic is handled correctly::
+
+            sage: F8.<a> = GF(2^3)
+            sage: PR.<y> = PolynomialRing(F8)
+            sage: IP = y^4 + a*y^3 + (a^2 + 1)*y + a^2 + 1
+            sage: assert IP.is_irreducible()
+            sage: Q.<w> = PR.quotient(IP)
+            sage: SF.<z> = IP.splitting_field()
+            sage: r = z^9 + z^7 + z^3 + z + 1
+            sage: assert IP.change_ring(SF)(r) == 0
+            sage: f = Q.hom([r,], SF)
+            sage: f.inverse_image(z)                # indirect doctest
+            w^3 + (a^2 + a + 1)*w^2 + (a^2 + 1)*w + a^2 + 1
         """
+        from sage.rings.finite_rings.finite_field_base import FiniteField
+        from sage.rings.quotient_ring import QuotientRing_nc
+        if isinstance(self.domain(), QuotientRing_nc) and isinstance(self.codomain(), FiniteField):
+            if self.domain().characteristic() == self.codomain().characteristic():
+                return self._preimage_from_linear_dependence(b)
         graph, from_B, to_A = self._graph_ideal()
         gens_A = graph.ring().gens()[-self.domain().ngens():]
         a = graph.reduce(from_B(b))
         if not all(x in gens_A for x in a.lm().variables()):
             raise ValueError(f"element {b} does not have preimage")
         return to_A(a)
+
+    @cached_method
+    def _preimage_from_linear_dependence(self, b):
+        r"""
+        Return an element `a` in self's domain such that ``self(a) = b``.
+
+        Return the preimage of ``b`` by solving a linear system
+        in the common prime subfield. This yields the unique
+        element in the domain that maps to ``b`` in the codomain.
+
+        An error is raised when the domain and codomain are not isomorphic.
+
+        INPUT:
+
+        - ``b`` -- an element in the codomain of this morphism
+
+        OUTPUT: an element `a` in the domain of this morphism such that ``self(a) = b``.
+
+        EXAMPLES::
+
+        This example illustrates the error message we get if the domain and codomain have different cardinality.
+        In that case, we certainly know the morphism is not an isomorphism::
+
+            sage: F4.<a> = GF(2^2, modulus=[1,1,1])
+            sage: PR.<y> = PolynomialRing(F4)
+            sage: IP = y^5 + y + 1
+            sage: assert not IP.is_irreducible()
+            sage: Q.<w> = PR.quotient(IP)
+            sage: SF.<z> = IP.splitting_field()
+            sage: r = IP.change_ring(SF).roots()[0][0]
+            sage: f = Q.hom([r,], SF)
+            sage: f._preimage_from_linear_dependence(z)
+            Traceback (most recent call last):
+            ...
+            ValueError: the cardinalities of the domain (=1024) and codomain (=64) should be equal
+        """
+        D = self.domain()
+        C = self.codomain()
+        if D.characteristic() != C.characteristic():
+            raise ValueError("the domain's and codomain's characteristic should be equal")
+        if (d_card := D.cardinality()) != (c_card := C.cardinality()):
+            raise ValueError(f"the cardinalities of the domain (={d_card}) and codomain (={c_card}) should be equal")
+        if C != b.parent():
+            raise TypeError(f"{b} fails to convert into the morphism's codomain {C}")
+        F1 = D.base_ring()
+        im_gen = self.im_gens()[0]
+        target = im_gen.parent().gen()
+        g = F1.gen()
+        ncoeffs = F1.degree()
+        from sage.modules.free_module_element import vector
+        A = [vector(g**j * im_gen**i) for i in range(D.degree()) for j in range(ncoeffs)]
+        from sage.matrix.constructor import Matrix
+        M = Matrix(A).T
+        T = vector(target)
+        s = M.solve_right(T)
+        P = D([F1(s[i:i+ncoeffs]) for i in range(0, len(s), ncoeffs)])
+        return self.parent().reversed()(P)(b)
 
     @cached_method
     def kernel(self):
@@ -1589,6 +1666,30 @@ cdef class RingHomomorphism(RingMap):
             True
             sage: f._graph_ideal()[0].groebner_basis.is_in_cache()                      # needs sage.libs.singular
             True
+
+        Check case where domain is quotient ring and codomain a finite field of same characteristic. Fixes (:issue:`39690`)::
+
+            sage: F4.<a> = GF(2^2, modulus=[1,1,1])
+            sage: PR.<y> = PolynomialRing(F4)
+            sage: IP = y^3 + y + 1
+            sage: assert IP.is_irreducible()
+            sage: Q.<w> = PR.quotient(IP)
+            sage: SF.<z> = IP.splitting_field()
+            sage: SF
+            Finite Field in z of size 2^6
+            sage: r = z^4 + z^2 + z + 1
+            sage: assert IP.change_ring(SF)(r) == 0
+            sage: f = Q.hom([r,], SF)
+            sage: f
+            Ring morphism:
+                From: Univariate Quotient Polynomial Ring in w over Finite Field in a of size 2^2 with modulus y^3 + y + 1
+                To:   Finite Field in z of size 2^6
+                Defn: w |--> z^4 + z^2 + z + 1
+            sage: f.inverse()                   # indirect doctest
+            Ring morphism:
+              From: Finite Field in z of size 2^6
+              To:   Univariate Quotient Polynomial Ring in w over Finite Field in a of size 2^2 with modulus y^3 + y + 1
+              Defn: z |--> (a + 1)*w^2 + a*w + 1
         """
         if not self.is_injective():
             raise ZeroDivisionError("ring homomorphism not injective")

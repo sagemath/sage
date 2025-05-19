@@ -3819,10 +3819,12 @@ def CRT_vectors(X, moduli):
     modulus = LCM_list(moduli)
     candidate = [sum(a[i] * X[i][j] for i in range(n)) % modulus
                  for j in range(len(X[0]))]
-    if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0 for i in range(n)
+    if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
+                          for i in range(n)
         for j in range(len(X[i]))):
             raise ValueError("solution does not exist")
     return candidate
+
 
 def binomial(x, m, **kwds):
     r"""
