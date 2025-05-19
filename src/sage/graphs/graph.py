@@ -5022,6 +5022,9 @@ class Graph(GenericGraph):
         The diameter is defined to be the maximum distance between two vertices.
         It is infinite if the graph is not connected.
 
+        The default algorithm is ``'iFUB'`` [CGILM2010]_ for unweighted graphs
+        and ``'DHV'`` [Dragan2018]_ for weighted graphs.
+
         For more information and examples on how to use input variables, see
         :meth:`~GenericGraph.shortest_paths` and
         :meth:`~Graph.eccentricity`
@@ -5112,6 +5115,12 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: algorithm 'iFUB' does not work on weighted graphs
+
+        Check that :issue:`40013` is fixed::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.diameter(by_weight=True)
+            2.0
         """
         if not self.order():
             raise ValueError("diameter is not defined for the empty graph")
@@ -5124,10 +5133,7 @@ class Graph(GenericGraph):
             weight_function = None
 
         if algorithm is None:
-            if by_weight:
-                algorithm = 'iFUB'
-            else:
-                algorithm = 'DHV'
+            algorithm = 'DHV' if by_weight else 'iFUB'
         elif algorithm == 'BFS':
             algorithm = 'standard'
 
@@ -5781,7 +5787,7 @@ class Graph(GenericGraph):
         """
         from sage.graphs.print_graphs import print_graph_eps
         pos = self.layout(**options)
-        [xmin, xmax, ymin, ymax] = self._layout_bounding_box(pos)
+        xmin, xmax, ymin, ymax = self._layout_bounding_box(pos)
         for v in pos:
             pos[v] = (1.8*(pos[v][0] - xmin)/(xmax - xmin) - 0.9, 1.8*(pos[v][1] - ymin)/(ymax - ymin) - 0.9)
         if filename[-4:] != '.eps':
@@ -8093,6 +8099,26 @@ class Graph(GenericGraph):
             sage: g.edge_connectivity() == min(t.edge_labels()) or not g.is_connected()
             True
 
+        If the graph has an edge whose removal increases the number of connected
+        components, the flow between the parts separated by this edge is one::
+
+            sage: g = Graph()
+            sage: g.add_clique([1, 2, 3, 4])
+            sage: g.add_clique([5, 6, 7, 8])
+            sage: g.add_edge(1, 5)
+            sage: t = g.gomory_hu_tree()
+            sage: t.edge_label(1, 5)
+            1
+            sage: g.flow(randint(1, 4), randint(5, 8)) == t.edge_label(1, 5)
+            True
+            sage: for u, v in g.edge_iterator(labels=False):
+            ....:     g.set_edge_label(u, v, 3)
+            sage: t = g.gomory_hu_tree()
+            sage: t.edge_label(1, 5)
+            3
+            sage: g.flow(randint(1, 4), randint(5, 8)) == t.edge_label(1, 5)
+            True
+
         TESTS:
 
         :issue:`16475`::
@@ -8124,11 +8150,22 @@ class Graph(GenericGraph):
 
         # We use a stack to avoid recursion. An element of the stack contains
         # the graph to be processed and the corresponding set of "real" vertices
-        # (as opposed to the fakes one introduced during the computations.
-        if self.is_connected():
+        # (as opposed to the fakes one introduced during the computations).
+        blocks = self.blocks_and_cut_vertices()[0]
+        if len(blocks) == 1 and len(blocks[0]) == self.order():
+            # The graph is biconnected
             stack = [(self, frozenset(self))]
         else:
-            stack = [(cc, frozenset(cc)) for cc in self.connected_components_subgraphs()]
+            stack = []
+            for block in blocks:
+                if len(block) == 2:
+                    # This block is a cut-edge. It corresponds to an edge of the
+                    # tree with capacity 1 if the label is None
+                    u, v = block
+                    label = self.edge_label(u, v)
+                    T.add_edge(u, v, 1 if label is None else label)
+                else:
+                    stack.append((self.subgraph(block), frozenset(block)))
 
         # We now iteratively decompose the graph to build the tree
         while stack:
@@ -9542,7 +9579,7 @@ class Graph(GenericGraph):
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
     chromatic_polynomial = LazyImport('sage.graphs.chrompoly', 'chromatic_polynomial', at_startup=True)
-    from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
+    rank_decomposition = LazyImport('sage.graphs.graph_decompositions.rankwidth', 'rank_decomposition', at_startup=True)
     from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
     from sage.graphs.graph_decompositions.tree_decomposition import treelength

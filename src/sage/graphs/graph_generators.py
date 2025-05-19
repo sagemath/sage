@@ -35,11 +35,11 @@ def __append_to_doc(methods):
                 "    :widths: 33, 33, 33\n"
                 "    :delim: |\n\n")
 
-    h = (len(methods)+2)//3
+    h = (len(methods) + 2) // 3
     # Reorders the list of methods for horizontal reading, the only one Sphinx understands
-    reordered_methods = [0]*3*h
+    reordered_methods = [0] * (3 * h)
     for i, m in enumerate(methods):
-        reordered_methods[3*(i % h) + (i//h)] = m
+        reordered_methods[3 * (i % h) + (i // h)] = m
     methods = reordered_methods
 
     # Adding the list to the __doc__ string
@@ -828,7 +828,7 @@ class GraphGenerators:
             if vertices is None:
                 raise NotImplementedError
             if (len(degree_sequence) != vertices or sum(degree_sequence) % 2
-                    or sum(degree_sequence) > vertices*(vertices - 1)):
+                    or sum(degree_sequence) > vertices * (vertices - 1)):
                 raise ValueError("Invalid degree sequence.")
             degree_sequence = sorted(degree_sequence)
             if augment == 'edges':
@@ -1103,7 +1103,7 @@ class GraphGenerators:
 
         EXAMPLES:
 
-        The generator can be used to construct biparrtite graphs for testing,
+        The generator can be used to construct bipartite graphs for testing,
         one at a time (usually inside a loop).  Or it can be used to
         create an entire list all at once if there is sufficient memory
         to contain it::
@@ -1480,7 +1480,7 @@ class GraphGenerators:
     def _read_planar_code(self, code_input, immutable=False):
         r"""
         Return a generator for the plane graphs in planar code format in
-        the file code_input (see [BM2016]_).
+        the binary file ``code_input`` (see [BM2016]_).
 
         A file with planar code starts with a header ``>>planar_code<<``.
         After the header each graph is stored in the following way :
@@ -1494,7 +1494,7 @@ class GraphGenerators:
 
         INPUT:
 
-        - ``code_input`` -- a file containing valid planar code data
+        - ``code_input`` -- a binary file containing valid planar code data
 
         - ``immutable`` -- boolean (default: ``False``); whether to return
           immutable or mutable graphs
@@ -1514,18 +1514,17 @@ class GraphGenerators:
 
         EXAMPLES:
 
-        The following example creates a small planar code file in memory and
-        reads it using the ``_read_planar_code`` method::
+        The following example creates a small planar code binary
+        file in memory and reads it using the ``_read_planar_code`` method::
 
-            sage: from io import StringIO
-            sage: code_input = StringIO('>>planar_code<<')
-            sage: _ = code_input.write('>>planar_code<<')
+            sage: from io import BytesIO
+            sage: code_input = BytesIO()
+            sage: n = code_input.write(b'>>planar_code<<')
             sage: for c in [4,2,3,4,0,1,4,3,0,1,2,4,0,1,3,2,0]:
-            ....:     _ = code_input.write('{:c}'.format(c))
-            sage: _ = code_input.seek(0)
+            ....:     n = code_input.write(bytes('{:c}'.format(c),'ascii'))
+            sage: n = code_input.seek(0)
             sage: gen = graphs._read_planar_code(code_input)
-            sage: l = list(gen)
-            sage: l
+            sage: l = list(gen); l
             [Graph on 4 vertices]
             sage: l[0].is_isomorphic(graphs.CompleteGraph(4))
             True
@@ -1534,10 +1533,33 @@ class GraphGenerators:
              2: [1, 4, 3],
              3: [1, 2, 4],
              4: [1, 3, 2]}
+
+        TESTS::
+
+            sage: from io import StringIO
+            sage: code_input = StringIO()
+            sage: n = code_input.write('>>planar_code<<')
+            sage: n = code_input.seek(0)
+            sage: list(graphs._read_planar_code(code_input))
+            Traceback (most recent call last):
+            ...
+            TypeError: not a binary file
+
+            sage: from io import BytesIO
+            sage: code_input = BytesIO()
+            sage: n = code_input.write(b'>>wrong header<<')
+            sage: n = code_input.seek(0)
+            sage: list(graphs._read_planar_code(code_input))
+            Traceback (most recent call last):
+            ...
+            TypeError: file has no valid planar code header
         """
         # start of code to read planar code
         header = code_input.read(15)
-        assert header == '>>planar_code<<', 'Not a valid planar code header'
+        if not isinstance(header, bytes):
+            raise TypeError('not a binary file')
+        if header != b'>>planar_code<<':
+            raise TypeError('file has no valid planar code header')
 
         # read graph per graph
         while True:
@@ -1690,10 +1712,7 @@ class GraphGenerators:
 
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
@@ -1781,10 +1800,7 @@ class GraphGenerators:
 
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
 
@@ -1969,14 +1985,11 @@ class GraphGenerators:
                                  options)
         sp = subprocess.Popen(command, shell=True,
                               stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE, close_fds=True,
-                              encoding='latin-1')
-
-        sp.stdout.reconfigure(newline='')
+                              stderr=subprocess.PIPE, close_fds=True)
 
         try:
             yield from graphs._read_planar_code(sp.stdout, immutable=immutable)
-        except AssertionError:
+        except (TypeError, AssertionError):
             raise AttributeError("invalid options '{}'".format(options))
 
     def planar_graphs(self, order, minimum_degree=None,
@@ -2179,7 +2192,7 @@ class GraphGenerators:
                     raise ValueError("the number of edges cannot be less than order - 1")
                 edges = '-e:{}'.format(maximum_edges)
         else:
-            if minimum_edges > 3*order - 6:
+            if minimum_edges > 3 * order - 6:
                 raise ValueError("the number of edges cannot be more than 3*order - 6")
             if maximum_edges is None:
                 edges = '-e{}:'.format(minimum_edges)
@@ -2941,7 +2954,7 @@ def canaug_traverse_vert(g, aut_gens, max_verts, property, dig=False, loops=Fals
         # in the case of graphs, there are n possibilities,
         # and in the case of digraphs, there are 2*n.
         if dig:
-            possibilities = 2*n
+            possibilities = 2 * n
         else:
             possibilities = n
         num_roots = 2**possibilities
