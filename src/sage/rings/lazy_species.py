@@ -63,6 +63,7 @@ EXAMPLES:
         1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
 
 """
+from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
@@ -775,6 +776,54 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         return g
 
     compositional_inverse = revert
+
+    def combinatorial_logarithm(self):
+        r"""
+        Return the combinatorial logarithm of ``self``.
+
+        This is the series reversion of the species of non-empty sets
+        applied to ``self - 1``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Sets().restrict(1).revert() - (1+X).combinatorial_logarithm()
+            O^7
+
+        This method is much faster, however::
+
+            sage: (1+X).combinatorial_logarithm().generating_series()[10]
+            -1/10
+        """
+        P = self.parent()
+        if P._arity != 1:
+            raise ValueError("arity must be equal to 1")
+        log = self.log()
+        P1 = P._laurent_poly_ring
+        M1 = P1._indices
+
+        def E(mu):
+            return M1.prod(M1(SymmetricGroup(a)) for a in mu)
+
+        def pi(mu):
+            return (-1)**(len(mu)-1) * multinomial(mu.to_exp()) / len(mu)
+
+        def coefficient(F, n):
+            if not n:
+                return 0
+            res = log[n].monomial_coefficients()
+            for k in divisors(n):
+                if k == 1:
+                    continue
+                for mu in Partitions(k):
+                    for N, g_N in F[n / k].monomial_coefficients().items():
+                        M = E(mu)(N)
+                        res[M] = res.get(M, 0) - pi(mu) * g_N
+            return P1._from_dict(res)
+
+        F = P.undefined()
+        F.define(P(lambda n: coefficient(F, n)))
+        return F
 
 
 class LazySpeciesElement_generating_series_mixin:
