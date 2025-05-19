@@ -16,6 +16,7 @@ class CycleUtilsProvider:
         Init the CycleUtilsProvider.
 
         INPUT:
+
         - ``cycles`` -- list[tuple[int, ...]] ; a list of cycles, each cycle is a list of index.
 
         EXAMPLES::
@@ -24,6 +25,7 @@ class CycleUtilsProvider:
             sage: provider = CycleUtilsProvider([(1,5),(7,8,9,11)])
 
         NOTE:
+
             O(nlog(n)) where n is the sum of size of the cycles
         """
         # It should contain only non fixed point index as key
@@ -51,6 +53,7 @@ class CycleUtilsProvider:
         Return the number of elements in the same cycle as index.
 
         INPUT:
+
         - ``index`` -- int
 
         EXAMPLES::
@@ -61,6 +64,7 @@ class CycleUtilsProvider:
             2
 
         NOTE:
+
             O(log(n))
         """
         if self.isFixedPoint(index):
@@ -75,8 +79,9 @@ class CycleUtilsProvider:
         Return a boolean indicating  whether if i and j are on the same cycle.
 
         INPUT:
-            - ``i`` -- int
-            - ``j`` -- int
+
+        - ``i`` -- int
+        - ``j`` -- int
 
         EXAMPLES::
 
@@ -88,6 +93,7 @@ class CycleUtilsProvider:
             True
 
         NOTE:
+
             O(log(n))
         """
         if self.isFixedPoint(i) or self.isFixedPoint(j):
@@ -105,6 +111,7 @@ class CycleUtilsProvider:
         Add otherIndex in the cycle of index after index.
 
         INPUT:
+
         - ``index`` -- int ;  ``otherIndex`` !=  ``index``
         - ``otherIndex`` -- int ;  ``otherIndex`` is a fixed point
 
@@ -117,6 +124,7 @@ class CycleUtilsProvider:
             [1, 33, 5]
 
         NOTE:
+
             O(log(n))
         """
         assert index != otherIndex
@@ -151,6 +159,7 @@ class CycleUtilsProvider:
         Return a boolean indicating whether there are two indexes in the given list in the same cycle.
 
         INPUT:
+
         - listIndexes -- list[int]
 
         EXAMPLES::
@@ -163,6 +172,7 @@ class CycleUtilsProvider:
             True
 
         NOTE:
+
             O(len(listIndexes)log(n))
         """
         mapIndexes = set(listIndexes)
@@ -193,6 +203,7 @@ class CycleUtilsProvider:
         Add otherIndex in the cycle of index before index.
 
         INPUT:
+
         - ``index`` -- int ; ``otherIndex`` != ``index``
         - ``otherIndex`` -- int ;  ``otherIndex`` is a fixed point
 
@@ -205,6 +216,7 @@ class CycleUtilsProvider:
             [33, 1, 5]
 
         NOTE:
+
             O(log(n))
         """
         assert index != otherIndex
@@ -237,6 +249,7 @@ class CycleUtilsProvider:
             sage: provider._safeIndex(12)
 
         NOTE:
+
             O(log(m))
             Used internally,because we don't have node for fixed point index , it may create a different logic for them
             this will temporarily create a node during this operations , the user must be careful that after having used
@@ -257,6 +270,7 @@ class CycleUtilsProvider:
         Swap the label of the node associated to index and otherIndex while keeping a relabelling of some sort.
 
         INPUT:
+
         - ``index`` -- int
         - ``otherIndex`` -- int
 
@@ -271,6 +285,7 @@ class CycleUtilsProvider:
             [7, 9, 8, 11]
 
         NOTE:
+
             O(log(n))
         """
         if index not in self.nodeMap and otherIndex not in self.nodeMap:
@@ -299,6 +314,7 @@ class CycleUtilsProvider:
         Return a list of all the indexes in the cycle of index.
 
         INPUT:
+
             - ``index`` -- int
 
         EXAMPLES::
@@ -309,6 +325,7 @@ class CycleUtilsProvider:
             [7, 8, 9, 11]
 
         NOTE:
+
             O(t+log(n)) where t is the size of the cycle of index
         """
         if self.isFixedPoint(index):
@@ -324,6 +341,7 @@ class CycleUtilsProvider:
         Make index a fixed point.
 
         INPUT:
+
             - ``index`` -- int
 
         EXAMPLES::
@@ -339,6 +357,7 @@ class CycleUtilsProvider:
             True
 
         NOTE:
+
             O(log(n))
         """
         if self.isFixedPoint(index):
@@ -365,6 +384,7 @@ class CycleUtilsProvider:
         Return a boolean indicating if index is a fixed point or not.
 
         INPUT:
+
         - ``index`` -- int
 
         EXAMPLES::
@@ -382,6 +402,7 @@ class CycleUtilsProvider:
             False
 
         NOTE:
+
             O(1)
         """
         return index not in self.nodeMap
@@ -393,7 +414,8 @@ class CycleUtilsProvider:
         Return the key associated to index in the splay tree corresponding to his cycle, while making sure that the node associated to index is the root of the tree.
 
         INPUT:
-            - ``index`` -- int ;  not a fixed point
+
+        - ``index`` -- int ;  not a fixed point
 
         EXAMPLES::
 
@@ -403,6 +425,7 @@ class CycleUtilsProvider:
             3
 
         NOTE:
+
             O(log(n))
         """
         if self.isFixedPoint(index):
@@ -419,7 +442,8 @@ class CycleUtilsProvider:
         index must not be a fixed point otherwise an error will be raised.
 
         INPUT:
-            - ``index`` -- int ; not a fixed point
+
+        - ``index`` -- int ; not a fixed point
 
         EXAMPLES::
 
@@ -429,8 +453,8 @@ class CycleUtilsProvider:
             True
 
         NOTE:
-            O(log(n))
 
+            O(log(n))
         """
         if self.isFixedPoint(index):
             raise ValueError(
@@ -444,6 +468,7 @@ class CycleUtilsProvider:
         Make index the min and the root of the splay tree, while keeping the same cycle topology.
 
         INPUT:
+
             - ``index`` -- int
 
         EXAMPLES::
@@ -457,8 +482,8 @@ class CycleUtilsProvider:
             True
 
         NOTE:
-            O(log(n))
 
+            O(log(n))
         """
         if self.isFixedPoint(index):
             return
@@ -480,6 +505,7 @@ class CycleUtilsProvider:
         Make index the max and the root of the splay tree, while keeping the same cycle topology.
 
         INPUT:
+
             - ``index`` -- int
 
         EXAMPLES::
@@ -493,6 +519,7 @@ class CycleUtilsProvider:
             True
 
         NOTE:
+
             O(log(n))
         """
         if self.isFixedPoint(index):
@@ -514,6 +541,7 @@ class CycleUtilsProvider:
         Merge the cycles of beforeIndex and afterIndex in the following manner: from C = ...->beforeIndex and D = afterIndex-> ..., it will change the cycles to ...->beforeIndex->afterIndex-> ....
 
         INPUT:
+
         - ``beforeIndex`` -- int ; not on the same cycle as afterIndex , otherwise an error will be raised
         - ``afterIndex`` -- int
 
@@ -526,6 +554,7 @@ class CycleUtilsProvider:
             [5, 42, 4242, 1, 8, 9, 11, 7]
 
         NOTE:
+
             O(log(n))
         """
         if self.sameCycle(beforeIndex, afterIndex):
@@ -552,8 +581,9 @@ class CycleUtilsProvider:
         and the rest.
 
         INPUT:
-            - ``beforeIndex`` -- int
-            - ``afterIndex`` -- int
+
+        - ``beforeIndex`` -- int
+        - ``afterIndex`` -- int
 
         EXAMPLES::
 
@@ -566,6 +596,7 @@ class CycleUtilsProvider:
             [5, 424242]
 
         NOTE:
+
             O(log(n))
         """
         if not self.sameCycle(startIndex, endIndex):

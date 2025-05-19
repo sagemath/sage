@@ -8,6 +8,7 @@ from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 class RootedMap(LabelledMap):
     """
     This class represents a rooted map,it inherits from LabelledMap.
+
     Attributes
     ----------
     sigma :  Permutation or MapPermutation
@@ -45,27 +46,26 @@ class RootedMap(LabelledMap):
         and sigma, or an adjacency list or a Label
 
         INPUT:
+
         - ``sigma`` -- Permutation | MapPermutation | None; Permutation ; Permutation that maps a half-edge
-        to the half-edge incident to it in anti-clockwise direction around
-        the vertex it belongs to.
+            to the half-edge incident to it in anti-clockwise direction around
+            the vertex it belongs to.
         - ``alpha`` -- Permutation | MapPermutation | None; Permutation that maps a half-edge
-        Fixed-point free involution whose cycles are given by the edges.
+            Fixed-point free involution whose cycles are given by the edges.
         - ``ajd``-- List[Tuple] | None ; and adjacency list be careful the order of the
-        node in your adjaceny will be used to choose the embedding
+            node in your adjaceny will be used to choose the embedding
         - ``isAlreadyCanonical`` -- bool ; A parameter that indicates sigma,alpha given are already in canonical form
-        i.e represent a the canonical representant of the rooted map
+            i.e represent a the canonical representant of the rooted map
         - ``trust`` -- bool ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
-        should be skipped when initializing the map. It makes initialization faster but can be dangerous because
-        if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
-        map's validity if you set this to true.
+            should be skipped when initializing the map. It makes initialization faster but can be dangerous because
+            if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
+            map's validity if you set this to true.
 
         EXAMPLES::
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
-
-
         """
 
         self._production = True
@@ -145,8 +145,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
-
         """
 
         return RootedMap(
@@ -178,11 +176,9 @@ class RootedMap(LabelledMap):
              (31, 33, 35, 32),
              (36, 39, 38, 37)]
 
-
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
 
         return RootedMap(
@@ -194,7 +190,6 @@ class RootedMap(LabelledMap):
         This function provides a bijection between rooted maps
         of genus g with m edges and bipartite rooted quadrangulations
         of genus g with m faces.
-
 
         OUTPUT:
 
@@ -220,7 +215,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(
             labelledMap=super().quadrangulation(), isAlreadyCanonical=True, trust=self._production
@@ -244,7 +238,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(
             labelledMap=super().derivedMap(), isAlreadyCanonical=True, trust=self._production
@@ -269,7 +262,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
 
         return RootedMap(labelledMap=super().dual(), trust=self._production)
@@ -278,7 +270,9 @@ class RootedMap(LabelledMap):
         r"""
         Return string representation of self
 
-        OUTPUT: The string representation of self
+        OUTPUT:
+
+            The string representation of self
 
         EXAMPLES::
 
@@ -287,7 +281,6 @@ class RootedMap(LabelledMap):
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m
             Rooted map | Sigma : [2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
-
         """
 
         return (
@@ -305,6 +298,7 @@ class RootedMap(LabelledMap):
         isn't a bipartite quadrangulation, it will raise an error.
 
         OUTPUT:
+
             The inverse of self from quadrangulation if self is a rooted
             bipartite quadrangulation; otherwise, raises an error.
 
@@ -319,7 +313,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(
             labelledMap=super().inverseQuadrangulation(),
@@ -333,9 +326,11 @@ class RootedMap(LabelledMap):
         RootedMap. It will simply return a copy of self.
 
         OUTPUT:
-        A copy of self
+
+            A copy of self
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
@@ -345,7 +340,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(labelledMap=self, isAlreadyCanonical=True, trust=self._production)
 
@@ -361,9 +355,11 @@ class RootedMap(LabelledMap):
         quadrangulation, this function will raise an error.
 
         INPUT:
+
         - ``markedDemiEdge`` -- int ; A demi-edge on the node which is marked.
 
         OUTPUT:
+
             A couple (tree,labelling),
             tree: A rooted tree corresponding to the above description.
             labelling:A list of labellings on the demi-edges of tree.
@@ -381,7 +377,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         tree, labelled = super().schaefferTree(markedDemiEdge=markedDemiEdge)
         return RootedMap(labelledMap=tree, isAlreadyCanonical=True, trust=self._production), labelled
@@ -396,12 +391,14 @@ class RootedMap(LabelledMap):
         If self isn't a one-face map, it will raise an error.
 
         INPUT:
+
         - ``labelled`` -- List[int] ; A list of size 2*m+1 such that for the demi-edge i,
-        labelled[i] is the label of its attached node.
+            labelled[i] is the label of its attached node.
         - ``returnMarkedDemiEdge`` -- bool ;  Whether or not to return marked demi-edges
-        (default is True).
+            (default is True).
 
         OUTPUT:
+
             (quadA, quadB, markedDemiEdgeA, markedDemiEdgeB) if
             returnMarkedDemiEdge=True; otherwise, (quadA, quadB).
 
@@ -421,8 +418,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
-
         """
         if returnMarkedDemiEdge:
             (
@@ -466,7 +461,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(sigma=self.sigma, alpha=self.alpha, trust=self._production, isAlreadyCanonical=True)
 
@@ -474,6 +468,7 @@ class RootedMap(LabelledMap):
     def root(self) -> TopologicalDemiEdge:
         """
         OUTPUT:
+
             The TopologicalDemiEdge associated to the root
 
         EXAMPLES::
@@ -487,6 +482,5 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(1)
-
         """
         return self.X(1)

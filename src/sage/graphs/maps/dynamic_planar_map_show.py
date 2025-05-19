@@ -27,6 +27,7 @@ class Vector2D:
         Initialize a 2D Vector with the given coordinates.
 
         INPUT:
+
         - ``x`` -- float (default: ``0.0``)
         - ``y`` -- float (default: ``0.0``)
 
@@ -97,6 +98,7 @@ class Vector2D:
             (3.98306363839769; 0.0)
 
         NOTE:
+
             This function helps avoid costly computation when directly updating x and y, by using fast float operations instead of computing symbolic sage expressions.
         """
         self.x = float(self.x)
@@ -121,6 +123,7 @@ class Vector2D:
         Return the dot product of self and other.
 
         INPUT:
+
         - ``other`` -- Vector2D
 
         EXAMPLES::
@@ -138,6 +141,7 @@ class Vector2D:
         Return the angle from self to other (counterclockwise) in the range [0, 2pi[.
 
         INPUT:
+
         - ``other`` -- Vector2D
 
         EXAMPLES::
@@ -206,12 +210,14 @@ def check_segments_intersecting(p1: Vector2D, q1: Vector2D, p2: Vector2D, q2: Ve
     Return True if the segment between the points [p1, q1] intersects the segment between points [p2, q2], False otherwise.
 
     INPUT:
+
     - ``p1`` -- Vector2D;
     - ``q1`` -- Vector2D;
     - ``p2`` -- Vector2D;
     - ``q2`` -- Vector2D;
 
     EXAMPLES::
+
         sage: from sage.graphs.maps.dynamic_planar_map_show import Vector2D, check_segments_intersecting
         sage: check_segments_intersecting(Vector2D(0, 0), Vector2D(5, 5), Vector2D(1, 3), Vector2D(3, -2))
         True
@@ -253,6 +259,7 @@ def check_polygon_intersecting(segments: list[tuple[Vector2D, Vector2D]]) -> boo
     Return True if the polygon defined by the given segments (list of pairs Vector2D) intersects itself (except in its vertices).
 
     INPUT:
+
     - ``segments`` -- list[(Vector2D, Vector2D)];
 
     EXAMPLES::
@@ -268,6 +275,7 @@ def check_polygon_intersecting(segments: list[tuple[Vector2D, Vector2D]]) -> boo
 
 
     NOTE:
+
         Complexity is O(n^2), where n is the number of segments; this could be improved to O(n log n) in a future implementation.
         Note that this function is only supposed to be used by DynamicPlanarMapShow.
     """
@@ -365,6 +373,7 @@ class DynamicPlanarMapShow:
         Initializes DynamicPlanarMapShow object.
 
         INPUT:
+
             - ``map`` -- LabelledMap: the map to show
             - ``break_down_num`` -- int: each cycle and multiedge will be split into this number of smaller edges to allow smoother visualization
 
@@ -524,6 +533,7 @@ class DynamicPlanarMapShow:
         Dynamically show the map in a new matplotlib figure.
 
         INPUT:
+
             - ``show_halfedges`` -- bool or "auto"; whether to show halfedges (if "auto", it will be set to True if nEdges <= 10)
             - ``plt_show`` -- bool; whether to call plt.show(). if False, user needs to call plt.ion() before start() to show the map in a non-blocking way.
             - ``frame_by_frame`` -- bool; if False, automatically advance until convergence is found (see the Note).
@@ -536,6 +546,7 @@ class DynamicPlanarMapShow:
             ...
 
         NOTE:
+
             Press Enter to pause or resume the computation, Space to compute a single frame if the animation is currently paused, and Q/Esc to quit.
             If you encounter the warning, ``UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown``, install PyQt6 using
             ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
@@ -705,6 +716,7 @@ class DynamicPlanarMapShow:
         Print the average time, in milliseconds, needed to compute each force and the correctness check.
 
         NOTE:
+
             Debug function, only used to estimate which methods should be optimized first. Called when the P key is hit.
         """
         if self.time_profile and self.frame > 0:

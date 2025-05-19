@@ -17,6 +17,7 @@ class CustomSwap (MapPermutation):
         Initialize the CustomSwap structure.
 
         INPUT:
+
         - ``lst`` -- list[tuple[int,int]]: a list of transpositions of the form [(a,b)], where a,b are integers >=1
 
         EXAMPLES::
@@ -26,6 +27,7 @@ class CustomSwap (MapPermutation):
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
         NOTE:
+
             O(1); note that as of now, only arguments of the form [(i,j)] (of length 1) are supported.
             This class is not intended to be used by the user.
         """
@@ -44,6 +46,7 @@ class CustomSwap (MapPermutation):
         Return whether self is structurally equal to the given Permutation.
 
         INPUT:
+
         - ``other`` -- Any
 
         EXAMPLES::
@@ -54,8 +57,8 @@ class CustomSwap (MapPermutation):
             True
 
         NOTE:
-            O(n), where n is the size of the permutation.
 
+            O(n), where n is the size of the permutation.
         """
         if isinstance(other, MapPermutation):
             return list(other) == list(self)
@@ -72,6 +75,7 @@ class CustomSwap (MapPermutation):
             12
 
         NOTE:
+
             O(1)
         """
         return self.b
@@ -81,6 +85,7 @@ class CustomSwap (MapPermutation):
         Return self(i).
 
         INPUT:
+
         - ``i`` -- int
 
         EXAMPLES::
@@ -90,6 +95,7 @@ class CustomSwap (MapPermutation):
             12
 
         NOTE:
+
             O(1)
         """
         if i != self.a and i != self.b:
@@ -101,6 +107,7 @@ class CustomSwap (MapPermutation):
         Return self^-1(i) (ie. j such that self(j) = i).
 
         INPUT:
+
         - ``i`` -- int
 
         EXAMPLES::
@@ -110,6 +117,7 @@ class CustomSwap (MapPermutation):
             12
 
         NOTE:
+
             O(1)
         """
         return self(i)
@@ -125,6 +133,7 @@ class CustomSwap (MapPermutation):
             10
 
         NOTE:
+
             O(1)
         """
         return self.b - (self.a != self.b)*2
@@ -140,6 +149,7 @@ class CustomSwap (MapPermutation):
             [(1,), (2,), (3,), (4,), (5,), (6,), (7,), (8, 12), (8,), (9,), (10,), (11,)]
 
         NOTE:
+
             O(n) where n is the size of the permutation
         """
         if self.a == self.b:
@@ -159,6 +169,7 @@ class CustomSwap (MapPermutation):
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
         NOTE:
+
             O(1)
         """
         return self

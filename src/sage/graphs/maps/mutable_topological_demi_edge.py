@@ -12,13 +12,12 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
     This class implement a splecial version of TopologicalDemiEdge used in MutableLabelledMap. Their specificity is that they have methods to modify the map: for instance, you can delete them, add edges, etc.
     """
 
-    _lmap: "MutableLabelledMap"
-
     def __init__(self, lmap: "MutableLabelledMap", index: int):
         """This class is an abstraction meant to represent the demi edge of a mutable map in a more user-friendly way
         than simple indexes. It is more related to the "topological structure" of the map than the raw index.
 
         INPUT:
+
         - ``lmap`` -- MutableLabelledMap: The map to which the demi-edge is bind
         - ``index`` -- int: The index associated to the demi-edge
 
@@ -30,8 +29,10 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(3)
 
         NOTE:
-            O(1)"""
-        
+
+            O(1)
+        """
+
         super().__init__(lmap, index)
 
     @property
@@ -48,11 +49,12 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
 
         NOTE:
+
             O(1)
         """
 
         return self.getMap()
-    
+
     def getMap(self) -> "MutableLabelledMap":
         """
         Returns the map to which self is bind.
@@ -66,6 +68,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -78,6 +81,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         saying that the self.map is connected thus make all the other method unsafe by default trust = False.
 
         INPUT:
+
         -``trust`` -- bool ; a parameter telling the function if it should trust the fact that the map will stay connected after
         deleting demiEdge default is False
 
@@ -97,6 +101,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             True
 
         NOTE:
+
             O(log(m)) if self is planar or trust = True otherwise O(m)
         """
         self._checkValid()
@@ -112,12 +117,12 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
         INPUT:
+
         - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge ; Another MutableTopologicalDemiEdge on the same facee as self
 
-
         OUTPUT:
-            topoDemiEdgeA,topoDemiEdgeB as described above
 
+            topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
 
@@ -134,6 +139,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             False
 
         NOTE:
+
             O(log(m))
         """
         self._checkValid()
@@ -146,8 +152,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         trigonometric order
 
         OUTPUT:
-            The MutableTopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
+            The MutableTopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
 
@@ -161,6 +167,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         NOTE:
+
             O(log(m))
         """
         self._checkValid()
@@ -172,6 +179,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         in the trigonometric order
 
         OUTPUT:
+
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
@@ -186,6 +194,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         NOTE:
+
             O(log(m))
         """
         self._checkValid()
@@ -201,8 +210,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will raise an error if the self.map isn't connected after the operation and trust is set to False.
 
         INPUT:
-        -- ``trust`` -- bool ; a parameter telling the method if it should trust the fact that the self.map will stay connected after
-        deleting self default is False
+
+        - ``trust`` -- bool ; a parameter telling the method if it should trust the fact that the self.map will stay connected after deleting self default is False
 
         EXAMPLES::
 
@@ -236,6 +245,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (18,)]
 
         NOTE:
+
             O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
         """
         self._checkValid()
@@ -259,6 +269,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 4, 7, 11, 16, 18, 13, 12, 15, 14, 2, 5, 17, 9, 8, 10, 6)]
 
         NOTE:
+
             O(log(m))
         """
         self._checkValid()
@@ -294,6 +305,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 2, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6), (4, 7, 11, 16, 18, 5)]
 
         NOTE:
+
             O(tlog(m)) where t is the number of edge on the face containing self
         """
         self._checkValid()
@@ -309,6 +321,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         to the copy of i.
 
         INPUT:
+
         -``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge: The otherTopoDemiEdge attached to the node on otherTopoDemiEdge.map which to draw the new edge
 
         OUTPUT:
@@ -354,6 +367,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             21
 
         NOTE:
+
             O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
             note that it is much more efficient than O(p+m) mainly when m>>p
         """
@@ -372,6 +386,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         won't modify otherTopoDemiEdge.map(if otherTopoDemiEdge.map isn't strictly the same object in memory as self.map).
 
         INPUT:
+
         - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge: Another TopologicalDemiEdge
 
         EXAMPLES::
@@ -399,6 +414,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             (20, 10)
 
         NOTE:
+
             O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
             note that it is much more efficient than O(p+m) mainly when m>>p
         """
@@ -414,6 +430,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         Merge the node attached to self and otherTopoDemiEdge, they need to be on the same face
 
         INPUT:
+
         - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge;the other TopologicalDemiEdge on the same face as self
 
         EXAMPLES::
@@ -451,6 +468,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (20,)]
 
         NOTE:
+
             O(log(m)) where m is the number of edge of self.map
         """
         self._checkValid()
@@ -458,4 +476,6 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         if self.map is not otherTopoDemiEdge.map:
             raise ValueError(
                 "Cannot mergeNode between two demi edge on different map")
+
         self.map.mergeNode(self.raw, otherTopoDemiEdge.raw)
+        return

@@ -3,7 +3,7 @@
 from typing import TYPE_CHECKING, Self
 if TYPE_CHECKING:
     from sage.graphs.maps.labelled_map import LabelledMap       # TYPE_CHECKING is always False at runtime, but True when when type checking
-                                                                # otherwise, we might get circular imports
+    # otherwise, we might get circular imports
 
 
 class TopologicalDemiEdge():
@@ -17,6 +17,7 @@ class TopologicalDemiEdge():
         than simple indexes. It is more related to the "topological structure" of the map than the raw index.
 
         INPUT:
+
         - ``lmap`` -- LabelledMap: The map to which the demi-edge is bind
         - ``index`` -- int: The index associated to the demi-edge
 
@@ -28,6 +29,7 @@ class TopologicalDemiEdge():
             X(3)
 
         NOTE:
+
             O(1)
         """
         self._lmap = lmap
@@ -53,6 +55,7 @@ class TopologicalDemiEdge():
             3
 
         NOTE:
+
             O(1)
         """
         return self.getIndex()
@@ -71,6 +74,7 @@ class TopologicalDemiEdge():
             Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
 
         NOTE:
+
             O(1)
         """
 
@@ -89,6 +93,7 @@ class TopologicalDemiEdge():
             X(4)
 
         NOTE:
+
             O(1)
         """
         return self.nextOnEdge()
@@ -106,6 +111,7 @@ class TopologicalDemiEdge():
             X(3)
 
         NOTE:
+
             O(1)
         """
         return self.nextOnFace()
@@ -123,6 +129,7 @@ class TopologicalDemiEdge():
             X(1)
 
         NOTE:
+
             O(1)
         """
         return self.nextOnNode()
@@ -140,6 +147,7 @@ class TopologicalDemiEdge():
             X(2)
 
         NOTE:
+
             O(1)
         """
         return self.prevOnFace()
@@ -157,6 +165,7 @@ class TopologicalDemiEdge():
             X(3)
 
         NOTE:
+
             O(1)
         """
         return self.prevOnNode()
@@ -174,6 +183,7 @@ class TopologicalDemiEdge():
             3
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -186,12 +196,12 @@ class TopologicalDemiEdge():
         EXAMPLES::
 
             sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
-
             sage: lm = LabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
             sage: TopologicalDemiEdge(lm, 3).getMap()
             Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -209,6 +219,7 @@ class TopologicalDemiEdge():
             X(4)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -227,6 +238,7 @@ class TopologicalDemiEdge():
             X(3)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -244,6 +256,7 @@ class TopologicalDemiEdge():
             X(1)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -261,6 +274,7 @@ class TopologicalDemiEdge():
             X(2)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -279,6 +293,7 @@ class TopologicalDemiEdge():
             X(3)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -300,6 +315,7 @@ class TopologicalDemiEdge():
             [X(1), X(3), X(2), X(5), X(4), X(7), X(11), X(16), X(18), X(13), X(12), X(15), X(14), X(19), X(20), X(17), X(9), X(8), X(10), X(6)]
 
         NOTE:
+
             O(k), where k is the number of demi-edges on the face
         """
         self._checkValid()
@@ -323,6 +339,7 @@ class TopologicalDemiEdge():
             [X(1), X(2), X(4)]
 
         NOTE:
+
             O(k), where k is the number of demi-edges on the node
         """
         self._checkValid()
@@ -338,6 +355,7 @@ class TopologicalDemiEdge():
         Return whether self and otherTopologicalDemiEdge are on the same face.
 
         INPUT:
+
         - ``otherTopologicalDemiEdge`` -- TopologicalDemiEdge: a demi-edge on the same map as self
 
         EXAMPLES::
@@ -352,6 +370,7 @@ class TopologicalDemiEdge():
             True
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -363,6 +382,7 @@ class TopologicalDemiEdge():
         Return whether self and otherTopologicalDemiEdge are on the same node.
 
         INPUT:
+
         - ``otherTopologicalDemiEdge`` -- TopologicalDemiEdge: a demi-edge on the same map as self
 
         EXAMPLES::
@@ -376,7 +396,8 @@ class TopologicalDemiEdge():
             sage: B.isOnSameNode(A)
             False
 
-    .. NOTE:
+        NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -393,7 +414,8 @@ class TopologicalDemiEdge():
             sage: from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
             sage: TopologicalDemiEdge(None,5)._invalidate()
 
-    .. NOTE:
+        NOTE:
+
             O(1)
         """
         self._isValid = False
@@ -415,6 +437,7 @@ class TopologicalDemiEdge():
         Change the index of self
 
         INPUT:
+
         - ``newIndex`` -- int
 
         EXAMPLES::
@@ -428,6 +451,7 @@ class TopologicalDemiEdge():
             X(22)
 
         NOTE:
+
             O(1)
         """
         self._index = newIndex
@@ -437,6 +461,7 @@ class TopologicalDemiEdge():
         Swap indexes with otherTopologicalDemiEdge.
 
         INPUT:
+
         - ``otherTopologicalDemiEdge`` -- TopologicalDemiEdge
 
         EXAMPLES::
@@ -451,6 +476,7 @@ class TopologicalDemiEdge():
             (X(10), X(5))
 
         NOTE:
+
             O(1)
         """
         tmp = self.raw

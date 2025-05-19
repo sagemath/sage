@@ -12,6 +12,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         Init the RotatingPermutationUtilsAbstractor
 
         INPUT:
+
         - ``permutation`` -- RotatingPermutation
 
 
@@ -23,6 +24,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rAbstractor = RotatingPermutationUtilsAbstractor(rperm)
 
         NOTE:
+
             O(1)
         """
         self.rpermutation = rpermutation
@@ -30,9 +32,11 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def numberInCycle(self, index: int) -> int:
         """
         INPUT:
+
         - ``index`` -- int
 
         OUTPUT:
+
             The size of the cycle containing index
 
         EXAMPLES::
@@ -45,6 +49,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             4
 
         NOTE:
+
             O(log(m)) where m is the size of the permutation
         """
         return self.rpermutation.numberInCycle(index)
@@ -52,13 +57,16 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def sameCycle(self, i: int, j: int) -> bool:
         """
         INPUT:
+
         - ``i`` -- int
         - ``j`` -- int
 
         OUTPUT:
+
             A boolean indicating if i and j are on the same cycle
 
         NOTE:
+
             O(log(m)) where m is the size of the permutation
         """
         return self.rpermutation.sameCycle(i, j)
@@ -66,6 +74,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def numberOfCycles(self) -> int:
         """
         OUTPUT:
+
             The number of cycles of the permutation
 
         EXAMPLES::
@@ -77,7 +86,8 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: rAbstractor.numberOfCycles()
             3
 
-        ..NOTE::
+        NOTE:
+
             O(1)
         """
 
@@ -86,6 +96,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def numberOfFixedPoint(self) -> int:
         """
         OUTPUT:
+
             The number of fixed point of the permutation
 
         EXAMPLES::
@@ -98,6 +109,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             1
 
         NOTE:
+
             O(1)
         """
 
@@ -106,9 +118,11 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
     def checkTwoInTheSameCycle(self, listIndexes: list[int]) -> bool:
         """
         INPUT:
+
         - ``listIndexes`` -- List[int]
 
         OUTPUT:
+
             A boolean indicating if there are two indices in listIndexes on the sameCycle
 
         EXAMPLES::
@@ -123,6 +137,7 @@ class RotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             False
 
         NOTE:
+
             O(len(listIndexes)log(m)) where m is the permutation size
         """
 

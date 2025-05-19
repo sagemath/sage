@@ -7,6 +7,7 @@ from sage.graphs.maps.rooted_map import RootedMap
 from sage.graphs.maps.primitive_mutable_labelled_map import PrimitiveMutableLabelledMap
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 
+
 class MapGenerator:
     """
     This class represents an abstraction containing
@@ -23,8 +24,7 @@ class MapGenerator:
 
         NOTE:
 
-        Complexity is O(1)
-
+            Complexity is O(1)
         """
         # Set it to true when in production
         # during debugging to False
@@ -33,6 +33,7 @@ class MapGenerator:
     def cube(self) -> RootedMap:
         """
         OUTPUT:
+
         Returns the standard cube map.
 
         EXAMPLES::
@@ -45,8 +46,7 @@ class MapGenerator:
 
         NOTE:
 
-        Complexity is O(1)
-
+            Complexity is O(1)
         """
         return RootedMap(
             adj=[
@@ -66,12 +66,14 @@ class MapGenerator:
         """
 
         INPUT:
+
          - ``n`` --  int ; ``n`` >=1
 
         OUTPUT:
-        Returns an arbitrary rooted map corresponding to the complete
-        graph with n nodes. The genus is guaranteed to be zero if the
-        graph is planar (i.e., n <= 4).
+
+            Returns an arbitrary rooted map corresponding to the complete
+            graph with n nodes. The genus is guaranteed to be zero if the
+            graph is planar (i.e., n <= 4).
 
         EXAMPLES::
 
@@ -82,7 +84,6 @@ class MapGenerator:
         NOTE:
 
             Complexity is O(n^2)
-
         """
         adj = list(tuple((j + i) % n + 1 for j in range(1, n))
                    for i in range(n))
@@ -99,18 +100,22 @@ class MapGenerator:
         Returns a random Dyck path of size n (uniform random generation).
 
         INPUT:
-            - ``n`` -- int; size of the path
-            - ``seed`` -- int | None; A random seed; if None is used, no random seed will be set.
+
+        - ``n`` -- int; size of the path
+        - ``seed`` -- int | None; A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
+
             A list of size 2*n with +1 for up and
             -1 for down steps in the Dyck path.
 
         EXAMPLES::
+
             sage: MapGenerator().getRandomDyckPath(10,seed=42)
             [1, -1, 1, -1, 1, 1, 1, 1, -1, -1, 1, -1, 1, 1, -1, -1, -1, 1, -1, -1]
 
         TESTS::
+
             sage: dyckPath = MapGenerator().getRandomDyckPath(50)
             sage: level = 0
             sage: for step in dyckPath:
@@ -122,7 +127,6 @@ class MapGenerator:
         NOTE:
 
             Complexity is O(n)
-
         """
         rng = random.Random()
         if seed is not None:
@@ -144,21 +148,22 @@ class MapGenerator:
     def getRandomPermutation(self, n: int, seed: int | None = None) -> MapPermutation:
         """
         INPUT:
-            - ``n`` -- int ; The size of the permutation.
-            - ``seed`` -- int|None ; A random seed; if None is used, no random seed will be set.
+
+        - ``n`` -- int ; The size of the permutation.
+        - ``seed`` -- int|None ; A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
+
             A random permutation of size n, as a MapPermutation
 
         EXAMPLES::
+
             sage: MapGenerator().getRandomPermutation(4,seed=42)
             [3, 2, 4, 1]
 
         NOTE:
 
             Complexity is O(n)
-
-
         """
         rng = random.Random()
         if seed is not None:
@@ -172,9 +177,11 @@ class MapGenerator:
         Checks whether the given Dyck path candidate is valid.
 
         INPUT:
-            - ``dyckPathCandidate`` -- List[int] ; A list representing a potential Dyck path.
+
+        - ``dyckPathCandidate`` -- List[int] ; A list representing a potential Dyck path.
 
         OUTPUT:
+
             A boolean indicating whether or not dyckPathCandidate is a
             correct Dyck path.
 
@@ -188,7 +195,6 @@ class MapGenerator:
         NOTE:
 
             Complexity is O(n)
-
         """
         if len(dyckPathCandidate) == 0 or len(dyckPathCandidate) % 2 == 1:
             return False
@@ -210,11 +216,12 @@ class MapGenerator:
 
         INPUT:
 
-            - ``dyckPath`` -- List[int] ; A list representing a Dyck path, with +1 for up and -1 for down.
-            - ``trust`` -- bool ; A boolean indicating whether to trust that we have a dyckPath
+        - ``dyckPath`` -- List[int] ; A list representing a Dyck path, with +1 for up and -1 for down.
+        - ``trust`` -- bool ; A boolean indicating whether to trust that we have a dyckPath
 
 
         OUTPUT:
+
             The corresponding rooted plane tree if dyckPath is valid;
             otherwise, raises an error.
 
@@ -231,7 +238,6 @@ class MapGenerator:
         NOTE:
 
             O(k), where k = len(dyckPath)
-
         """
         if not trust and not self.isValidDyckPath(dyckPath):
             raise ValueError("The given list isn't a Dyck path")
@@ -265,10 +271,12 @@ class MapGenerator:
         such that if u and v are adjacent f(u) and f(v) differs by at most one
 
         INPUT:
-            - ``tree`` - RootedMap ; The input rooted tree.
-            - ``seed`` - int | None ;  A random seed; if None is used, no random seed will be set.
+
+        - ``tree`` - RootedMap ; The input rooted tree.
+        - ``seed`` - int | None ;  A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
+
             A list of size 2*tree.m + 1 where labelling[i] (for i >= 1)
             represents the label of demi-edge i. The first value
             (labelling[0]) is set to -1 but has no meaning.
@@ -282,6 +290,7 @@ class MapGenerator:
 
 
         NOTE:
+
             O(m), where m is the number of edges in the tree.
         """
         rng = random.Random()
@@ -333,10 +342,12 @@ class MapGenerator:
         Generates a uniformly random rooted tree.
 
         INPUT:
-            - ``numberOfEdge`` -- int ; The number of edges in the tree.
-            - ``seed`` -- int | None ; A random seed; if None is used, no random seed will be set.
+
+        - ``numberOfEdge`` -- int ; The number of edges in the tree.
+        - ``seed`` -- int | None ; A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
+
             A randomly selected rooted tree with numberOfEdge edges.
 
         EXAMPLES::
@@ -345,6 +356,7 @@ class MapGenerator:
             Rooted map | Sigma : [2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
 
         NOTE:
+
             O(numberOfEdge)
         """
         return self.getTreeFromDyckPath(
@@ -356,10 +368,12 @@ class MapGenerator:
         Generates a uniformly random rooted tree along with a labelling.
 
         INPUT:
-            - ``numberOfEdge`` -- int ; The number of edges in the tree.
-            - ``seed`` -- int ; A random seed if None is used, no random seed will be set.
+
+        - ``numberOfEdge`` -- int ; The number of edges in the tree.
+        - ``seed`` -- int ; A random seed if None is used, no random seed will be set.
 
         OUTPUT:
+
             A tuple (tree, labelling) where:
             - tree : A randomly selected rooted tree with numberOfEdge edges.
             - labelling : A list of labels for the tree’s demi-edges.
@@ -391,6 +405,7 @@ class MapGenerator:
               -3])
 
         NOTE:
+
             O(numberOfEdge)
         """
         tree = self.getRandomTree(numberOfEdge, seed=seed)
@@ -402,10 +417,12 @@ class MapGenerator:
         specified number of faces.
 
         INPUT:
-            - ``numberOfFace`` -- int ; The number of faces in the quadrangulation.
-            - ``seed`` -- int | None ; A random seed; if None is used, no random seed will be set.
+
+        - ``numberOfFace`` -- int ; The number of faces in the quadrangulation.
+        - ``seed`` -- int | None ; A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
+
             A randomly selected rooted planar quadrangulation with
             numberOfFace faces.
 
@@ -424,6 +441,7 @@ class MapGenerator:
              (32, 40, 39, 33)]
 
         NOTE:
+
             O(numberOfFace)
         """
         tree, labelling = self.getRandomLabelledTree(numberOfFace, seed=seed)
@@ -445,10 +463,12 @@ class MapGenerator:
         number of edges.
 
         INPUT:
-            - ``numberOfEdge`` -- int; The number of edges in the rooted map.
-            - ``seed`` -- int | None; A random seed; if None is used, no random seed will be set.
+
+        - ``numberOfEdge`` -- int; The number of edges in the rooted map.
+        - ``seed`` -- int | None; A random seed; if None is used, no random seed will be set.
 
         OUTPUT:
+
             A randomly selected rooted planar map with numberOfEdge edges.
 
 
@@ -458,6 +478,7 @@ class MapGenerator:
             Rooted map | Sigma : [2, 3, 4, 1, 6, 7, 8, 10, 11, 5, 12, 14, 16, 9, 13, 18, 19, 17, 20, 15] Alpha : [2, 1, 5, 6, 3, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
 
         NOTE:
+
             O(numberOfEdge)
         """
         quad = self.getRandomPlanarQuadrangulation(numberOfEdge, seed=seed)
@@ -468,7 +489,7 @@ class MapGenerator:
         """
         INPUT:
 
-            - ``n`` -- int ; ``n``>=1
+        - ``n`` -- int ; ``n``>=1
 
         OUTPUT:
 
@@ -482,6 +503,7 @@ class MapGenerator:
             [1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
         NOTE:
+
             O(n)
         """
         rng = random.Random()
@@ -499,9 +521,11 @@ class MapGenerator:
     def checkPrefixCondition(self, bits: list[int]) -> bool:
         """
         INPUT:
-            - ``bits`` -- List[int] ; a list containing 0 and 1
+
+        - ``bits`` -- List[int] ; a list containing 0 and 1
 
         OUTPUT:
+
             A boolean indicating if for every prefix 3*n_1-n_0>-2 where n_1 is the number of 1 in the prefix
             and n_0 the number of 0 in the prefix
 
@@ -514,8 +538,8 @@ class MapGenerator:
             True
 
         NOTE:
-            O(len(bits))
 
+            O(len(bits))
         """
         current_sum = 0
         for j in range(len(bits)-1):
@@ -528,10 +552,12 @@ class MapGenerator:
     def cyclicShift(self, bits: list[int], shift: int) -> list[int]:
         """
         INPUT:
-            -``bits`` -- List[int]
-            - ``shift`` -- int ; a positive integer < len(shift)
+
+        -``bits`` -- List[int]
+        - ``shift`` -- int ; a positive integer < len(shift)
 
         OUTPUT:
+
             bits shifted by shift
 
         EXAMPLES::
@@ -550,18 +576,22 @@ class MapGenerator:
     def getRandomTwoLeafBitString(self, n: int, seed: int | None = None) -> list[int]:
         """
         INPUT:
-            - ``n`` -- int; ``n``>=1
+
+        - ``n`` -- int; ``n``>=1
 
         OUTPUT:
+
             A random two leaf bit string i.e  a sequence of size 4n-2 of 0 and 1 such
             that for every prefix 3*n_1-n_0>-2 where n_1 is the number of 1 in the prefix
             and n_0 the number of 0 in the prefix
 
         EXAMPLES::
+
             sage: MapGenerator().getRandomTwoLeafBitString(4,seed=42)
             [0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0]
 
         NOTE:
+
             O(n)
         """
         L = 4 * n - 2
@@ -619,16 +649,20 @@ class MapGenerator:
     def getRandomRootedTwoLeafTree(self, n: int, seed: int | None = None) -> RootedMap:
         """
         INPUT:
-            - ``n`` -- int; ``n``>=1
+
+        - ``n`` -- int; ``n``>=1
 
         OUTPUT:
+
             A randomly generated rooted on one leaf two leaf tree
 
         EXAMPLES::
+
             sage: MapGenerator().getRandomRootedTwoLeafTree(4,seed=42)
             Rooted map | Sigma : [1, 3, 4, 6, 5, 2, 9, 10, 11, 13, 7, 12, 16, 18, 15, 8, 17, 20, 19, 14, 21, 22] Alpha : [2, 1, 5, 7, 3, 8, 4, 6, 12, 14, 15, 9, 17, 10, 11, 19, 13, 21, 16, 22, 18, 20]
 
         NOTE:
+
             O(n)
         """
         b = self.getRandomTwoLeafBitString(n, seed=seed)
@@ -638,10 +672,12 @@ class MapGenerator:
     def rootedTwoLeafTreeFromBit(self, b: list[int]) -> RootedMap:
         """
         INPUT:
-            - ``b`` -- LabelledMap; a two leaf bit string
-        OUTPUT:
-            The two leaf tree (a tree where each internal node has 2 leaf) associated to b rooted at a leaf
 
+            - ``b`` -- LabelledMap; a two leaf bit string
+
+        OUTPUT:
+
+            The two leaf tree (a tree where each internal node has 2 leaf) associated to b rooted at a leaf
 
         EXAMPLES::
 
@@ -651,6 +687,7 @@ class MapGenerator:
             Rooted map | Sigma : [1, 3, 4, 6, 5, 2, 9, 10, 11, 13, 7, 12, 16, 18, 15, 8, 17, 20, 19, 14, 21, 22] Alpha : [2, 1, 5, 7, 3, 8, 4, 6, 12, 14, 15, 9, 17, 10, 11, 19, 13, 21, 16, 22, 18, 20]
 
         NOTE:
+
             O(len(b))
         """
         n = (len(b)+2)//4
@@ -731,10 +768,12 @@ class MapGenerator:
     def randomTreeToTriangulation(self, tree: RootedMap, seed: int | None = None) -> RootedMap:
         """
         INPUT:
-            - ``tree`` -- LabelledMap ; A two leaf tree rooted tree rooted at a leaf
-        OUTPUT:
-            A triangulation between the two associated to the tree with equal probability
 
+        - ``tree`` -- LabelledMap ; A two leaf tree rooted tree rooted at a leaf
+
+        OUTPUT:
+
+            A triangulation between the two associated to the tree with equal probability
 
         EXAMPLES::
 
@@ -745,6 +784,7 @@ class MapGenerator:
             True
 
         NOTE:
+
             O(n) where n is the size of the tree
         """
         def isOnInnerEdge(Z: TopologicalDemiEdge) -> bool:
@@ -837,17 +877,21 @@ class MapGenerator:
     def getRandomTriangulation(self, n: int, seed: int | None = None) -> RootedMap:
         """
         INPUT:
-            - ``n`` --  int ; ``n`` >=1
+
+        - ``n`` --  int ; ``n`` >=1
 
         OUTPUT:
+
             A random rooted triangulation of size n (i.e with 2n faces, 3n edge and  n+2 node)
             uniformly
 
         EXAMPLES::
+
             sage: MapGenerator().getRandomTriangulation(22,seed=42).isTriangulation()
             True
 
         NOTE:
+
             O(n)
         """
         return self.randomTreeToTriangulation(self.getRandomRootedTwoLeafTree(n, seed=seed), seed=seed)

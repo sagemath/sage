@@ -15,13 +15,12 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
     ,add between them etc.
     """
 
-    _lmap: "PrimitiveMutableLabelledMap"
-    
     def __init__(self, lmap: "PrimitiveMutableLabelledMap", index: int):
         """This class is an abstraction meant to represent the demi edge of a mutable map in a more user-friendly way
         than simple indexes. It is more related to the "topological structure" of the map than the raw index.
 
         INPUT:
+
         - ``lmap`` -- PrimitiveMutableLabelledMap: The map to which the demi-edge is bind
         - ``index`` -- int: The index associated to the demi-edge
 
@@ -33,10 +32,11 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(3)
 
         NOTE:
+
             O(1)"""
-        
+
         super().__init__(lmap, index)
-        
+
     @property
     def map(self) -> "PrimitiveMutableLabelledMap":
         """
@@ -51,11 +51,12 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
 
         NOTE:
+
             O(1)
         """
 
         return self.getMap()
-    
+
     def getMap(self) -> "PrimitiveMutableLabelledMap":
         """
         Returns the map to which self is bind.
@@ -69,6 +70,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -79,8 +81,8 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         This function delete self from self.map
 
         INPUT:
-        - ``sameFace`` -- bool ; a boolean indicating if self and self.c are on the same face or not
 
+        - ``sameFace`` -- bool ; a boolean indicating if self and self.c are on the same face or not
 
         EXAMPLES::
 
@@ -98,13 +100,14 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             True
 
         NOTE:
+
             O(1),If this break the connectivity, no error will be raised and the map won't be stable anymore
         """
         self._checkValid()
 
         self.map.deleteEdge(self.raw, sameFace)
 
-    def link(self, otherTopoDemiEdge: "PrimitiveMutableTopologicalDemiEdge") -> tuple["PrimitiveMutableTopologicalDemiEdge","PrimitiveMutableTopologicalDemiEdge"]:
+    def link(self, otherTopoDemiEdge: "PrimitiveMutableTopologicalDemiEdge") -> tuple["PrimitiveMutableTopologicalDemiEdge", "PrimitiveMutableTopologicalDemiEdge"]:
         """
         This will add an edge between the node of self to otherTopoDemiEdge(note that they
         need to be on the same node otherwise nothing is guaranteed), the edge will be added as follow ,
@@ -113,9 +116,11 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
         INPUT:
+
         - ``otherTopoDemiEdge`` -- PrimitiveMutableTopologicalDemiEdge ; Another PrimitiveMutableTopologicalDemiEdge on the same face as self
 
         OUTPUT:
+
             topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
@@ -134,6 +139,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
              (4, 7, 11, 16, 18, 21, 5)]
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -146,6 +152,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         trigonometric order
 
         OUTPUT:
+
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
@@ -160,6 +167,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -171,9 +179,11 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
         in the trigonometric order
 
         OUTPUT:
+
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(sigma=sigma,alpha=alpha)
@@ -184,6 +194,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -227,6 +238,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
              (18,)]
 
         NOTE:
+
             O(1)
         """
         self._checkValid()
@@ -244,7 +256,6 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             ....:     print("OK")
             ....:
             OK
-
         """
         self._checkValid()
         raise NotImplementedError(self)
@@ -261,7 +272,6 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             ....:     print("OK")
             ....:
             OK
-
         """
         self._checkValid()
         raise NotImplementedError(self)
