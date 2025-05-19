@@ -4823,6 +4823,9 @@ REFERENCES:
              preprint, 2018. available at
              http://www.lamfa.u-picardie.fr/marin/arts/GQ.pdf
 
+.. [Marin2018] Ivan Marin, *Artin groups and Yokonuma-Hecke algebras*,
+               Int. Math. Res. Not. IMRN, **2018** No. 13, (2018) pp. 4022-4062.
+
 .. [Mas1994] James L. Massey,
            *SAFER K-64: A byte-oriented block-ciphering algorithm*; in
            FSE’93, Volume 809 of LNCS, pages 1-17.
