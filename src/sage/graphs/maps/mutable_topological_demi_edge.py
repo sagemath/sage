@@ -1,22 +1,87 @@
+"""Define the MutableTopologicalDemiEdge class, an abstraction an abstraction meant to represent a demi-edge of a map in a more user-friendly way than raw indices used in MutableLabelledMap."""
+
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
-from sage.graphs.maps.map_decorator import CheckValid
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from sage.graphs.maps.mutable_labelled_map import MutableLabelledMap        # see topological_demi_edge.py for explanations
 
 
 class MutableTopologicalDemiEdge(TopologicalDemiEdge):
     """
-    This class implement a splecial version of TopologicalDemiEdge used in MutableLabelledMap
-    their specificity is that they have method to modify the map for instance you can delete them
-    ,add between them etc.
+    This class implement a splecial version of TopologicalDemiEdge used in MutableLabelledMap. Their specificity is that they have methods to modify the map: for instance, you can delete them, add edges, etc.
     """
 
-    @CheckValid
-    def delete(self, trust=False):
+    def __init__(self, lmap: "MutableLabelledMap", index: int):
+        """This class is an abstraction meant to represent the demi edge of a mutable map in a more user-friendly way
+        than simple indexes. It is more related to the "topological structure" of the map than the raw index.
+
+        INPUT:
+
+        - ``lmap`` -- MutableLabelledMap: The map to which the demi-edge is bind
+        - ``index`` -- int: The index associated to the demi-edge
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.mutable_topological_demi_edge import MutableTopologicalDemiEdge
+            sage: lm = MutableLabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
+            sage: MutableTopologicalDemiEdge(lm, 3)
+            X(3)
+
+        NOTE:
+
+            O(1)
+        """
+
+        super().__init__(lmap, index)
+
+    @property
+    def map(self) -> "MutableLabelledMap":
+        """
+        The map to which self is bind.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.mutable_topological_demi_edge import MutableTopologicalDemiEdge
+
+            sage: lm = LabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
+            sage: MutableTopologicalDemiEdge(lm, 3).map
+            Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
+
+        NOTE:
+
+            O(1)
+        """
+
+        return self.getMap()
+
+    def getMap(self) -> "MutableLabelledMap":
+        """
+        Returns the map to which self is bind.
+
+        EXAMPLES::
+
+            sage: from sage.graphs.maps.mutable_topological_demi_edge import MutableTopologicalDemiEdge
+
+            sage: lm = LabelledMap(Permutation([(1,3), (2,), (4,)]), Permutation([(1,2), (3,4)]))
+            sage: MutableTopologicalDemiEdge(lm, 3).getMap()
+            Labelled map | Sigma : [3, 2, 1, 4], Alpha : [2, 1, 4, 3]
+
+        NOTE:
+
+            O(1)
+        """
+        self._checkValid()
+        return self._lmap
+
+    def delete(self, trust=False) -> None:
         """
         This function delete self from self.map in case of planar map it is efficient O(log(m)) otherwise O(m) for higher genus
         map if trust = False. If trust = True as a parameter it is always of complexity O(log(m)), but it can break the invariant
         saying that the self.map is connected thus make all the other method unsafe by default trust = False.
 
         INPUT:
+
         -``trust`` -- bool ; a parameter telling the function if it should trust the fact that the map will stay connected after
         deleting demiEdge default is False
 
@@ -36,13 +101,14 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             True
 
         NOTE:
+
             O(log(m)) if self is planar or trust = True otherwise O(m)
         """
+        self._checkValid()
 
         self.map.deleteEdge(self.raw, trust=trust)
 
-    @CheckValid
-    def link(self, otherTopoDemiEdge):
+    def link(self, otherTopoDemiEdge: "MutableTopologicalDemiEdge") -> "tuple[MutableTopologicalDemiEdge, MutableTopologicalDemiEdge]":
         """
         This will add an edge between the node of self to otherTopoDemiEdge(note that they
         need to be on the same node otherwise this will raise an error), the edge will be added as follow ,
@@ -51,12 +117,12 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will return two MutableLabelledMap topoDemiEdgeA,topoDemiEdgeB corresponding to the new demi edge A and B
 
         INPUT:
+
         - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge ; Another MutableTopologicalDemiEdge on the same facee as self
 
-
         OUTPUT:
-            topoDemiEdgeA,topoDemiEdgeB as described above
 
+            topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
 
@@ -73,20 +139,21 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             False
 
         NOTE:
+
             O(log(m))
         """
+        self._checkValid()
 
         return self.map.addEdge(self.raw, otherTopoDemiEdge.raw)
 
-    @CheckValid
-    def addEdgeAfter(self):
+    def addEdgeAfter(self) -> "MutableTopologicalDemiEdge":
         """
         This method will create a new edge, such that it is added on the same node as self but after it in the
         trigonometric order
 
         OUTPUT:
-            The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
+            The MutableTopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
 
@@ -100,17 +167,19 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         NOTE:
+
             O(log(m))
         """
+        self._checkValid()
         return self.map.addEdgeAfter(self.raw)
 
-    @CheckValid
-    def addEdgeBefore(self):
+    def addEdgeBefore(self) -> "MutableTopologicalDemiEdge":
         """
         This method will create a new edge, such that it is added on the same node as self but before it
         in the trigonometric order
 
         OUTPUT:
+
             The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
@@ -125,13 +194,14 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             X(24)
 
         NOTE:
+
             O(log(m))
         """
+        self._checkValid()
 
         return self.map.addEdgeBefore(self.raw)
 
-    @CheckValid
-    def deleteNode(self, trust=False):
+    def deleteNode(self, trust=False) -> None:
         """
         This method will delete the node attached to self, when trust = False (default) it is efficient in case of planar map O(deg(node)*log(m))
         but for higher genus map it is of complexity O(m+deg(node)*log(m)) where m is the number of edge in self.map.
@@ -140,8 +210,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         It will raise an error if the self.map isn't connected after the operation and trust is set to False.
 
         INPUT:
-        -- ``trust`` -- bool ; a parameter telling the method if it should trust the fact that the self.map will stay connected after
-        deleting self default is False
+
+        - ``trust`` -- bool ; a parameter telling the method if it should trust the fact that the self.map will stay connected after deleting self default is False
 
         EXAMPLES::
 
@@ -175,13 +245,14 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (18,)]
 
         NOTE:
+
             O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
         """
+        self._checkValid()
 
         self.map.deleteNode(self.raw, trust=trust)
 
-    @CheckValid
-    def contract(self):
+    def contract(self) -> None:
         """
         Contract the edge bind to self
 
@@ -198,12 +269,13 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 4, 7, 11, 16, 18, 13, 12, 15, 14, 2, 5, 17, 9, 8, 10, 6)]
 
         NOTE:
+
             O(log(m))
         """
+        self._checkValid()
         self.map.contractEdge(self.raw)
 
-    @CheckValid
-    def contractFace(self):
+    def contractFace(self) -> None:
         """
         Contract the face on which self is in
 
@@ -233,12 +305,13 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             [(1, 3, 2, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6), (4, 7, 11, 16, 18, 5)]
 
         NOTE:
+
             O(tlog(m)) where t is the number of edge on the face containing self
         """
+        self._checkValid()
         self.map.contractFace(self.raw)
 
-    @CheckValid
-    def mergeMap(self, otherTopoDemiEdge):
+    def mergeMap(self, otherTopoDemiEdge: "MutableTopologicalDemiEdge") -> "tuple[MutableTopologicalDemiEdge, list[MutableTopologicalDemiEdge]]":
         """
         This will merge in self.map without modifying otherTopoDemiEdge.map(if otherTopoDemiEdge.map isn't the same object as self.map),
         what we mean by merging is the following draw an edge between the two map.
@@ -248,6 +321,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         to the copy of i.
 
         INPUT:
+
         -``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge: The otherTopoDemiEdge attached to the node on otherTopoDemiEdge.map which to draw the new edge
 
         OUTPUT:
@@ -293,15 +367,16 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             21
 
         NOTE:
+
             O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
             note that it is much more efficient than O(p+m) mainly when m>>p
         """
+        self._checkValid()
 
         return self.map.merge(
             self.raw, otherTopoDemiEdge.map, otherTopoDemiEdge.raw)
 
-    @CheckValid
-    def copyOn(self, otherTopoDemiEdge):
+    def copyOn(self, otherTopoDemiEdge: "MutableTopologicalDemiEdge") -> "tuple[MutableTopologicalDemiEdge, list[MutableTopologicalDemiEdge]]":
         """
         Given that self is such that it is attached to a node of degree one (otherwise this function will raise
         an error),this function will attach self before otherTopoDemiEdge and then copy otherTopoDemiEdge.map from this point on,
@@ -311,6 +386,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
         won't modify otherTopoDemiEdge.map(if otherTopoDemiEdge.map isn't strictly the same object in memory as self.map).
 
         INPUT:
+
         - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge: Another TopologicalDemiEdge
 
         EXAMPLES::
@@ -338,22 +414,24 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
             (20, 10)
 
         NOTE:
+
             O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
             note that it is much more efficient than O(p+m) mainly when m>>p
         """
+        self._checkValid()
         if self.map.numberInTheSameNode(self.raw) > 1:
             raise ValueError(
                 "Self isn't attached to a node of degree one cannot copyOn")
         return self.map.copyOnDemiEdge(
             self.raw, otherTopoDemiEdge.map, otherTopoDemiEdge.raw)
 
-    @CheckValid
-    def mergeNode(self, otherTopoDemiEdge):
+    def mergeNode(self, otherTopoDemiEdge: "MutableTopologicalDemiEdge") -> None:
         """
         Merge the node attached to self and otherTopoDemiEdge, they need to be on the same face
 
         INPUT:
-        - ``otherTopoDemiEdge`` -- MutableLabelledMap;the other TopologicalDemiEdge on the same face as self
+
+        - ``otherTopoDemiEdge`` -- MutableTopologicalDemiEdge;the other TopologicalDemiEdge on the same face as self
 
         EXAMPLES::
 
@@ -390,65 +468,14 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
              (20,)]
 
         NOTE:
+
             O(log(m)) where m is the number of edge of self.map
         """
+        self._checkValid()
 
-        if self.map != otherTopoDemiEdge.map:
+        if self.map is not otherTopoDemiEdge.map:
             raise ValueError(
                 "Cannot mergeNode between two demi edge on different map")
+
         self.map.mergeNode(self.raw, otherTopoDemiEdge.raw)
-
-    @CheckValid
-    def isOnSameFace(self, otherTopologicalDemiEdge):
-        """
-        INPUT:
-        -- `` otherTopologicalDemiEdge``  -- MutableTopologicalDemiEdge ;a MutableTopologicalDemiEdge on the same map as self
-
-        OUTPUT:
-            A boolean indicating if they are on the same face
-
-        EXAMPLES::
-
-            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
-            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
-            sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
-            sage: A = mm.X(1)
-            sage: B = mm.X(17)
-            sage: A.isOnSameFace(B)
-            True
-            sage: A.isOnSameNode(B)
-            False
-
-        NOTE:
-            O(log(m)) where m is the number of edge of self.map
-        """
-        return self.map.areOnTheSameFace(
-            self.raw, otherTopologicalDemiEdge.raw)
-
-    @CheckValid
-    def isOnSameNode(self, otherTopologicalDemiEdge):
-        """
-        INPUT:
-        - ``otherTopologicalDemiEdge`` -- MutableTopologicalDemiEdge ; A MutableTopologicalDemiEdge on the same map as self
-
-        OUTPUT:
-            A boolean indicating if they are on the same node
-
-        EXAMPLES::
-
-            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
-            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
-            sage: mm  = MutableLabelledMap(sigma = sigma,alpha=alpha)
-            sage: A = mm.X(1)
-            sage: B = mm.X(17)
-            sage: A.isOnSameFace(B)
-            True
-            sage: A.isOnSameNode(B)
-            False
-
-        NOTE:
-            O(log(m)) where m is the number of edge of self.map
-        """
-
-        return self.map.areOnTheSameNode(
-            self.raw, otherTopologicalDemiEdge.raw)
+        return

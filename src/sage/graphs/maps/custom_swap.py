@@ -1,18 +1,24 @@
-from sage.graphs.maps.map_permutation import *
+"""
+Defines the internal CustomSwap class.
+
+The CustomSwap class allows fast creation of permutations from a
+list of transpositions.
+"""
+
+from typing import Any
+from sage.graphs.maps.map_permutation import MapPermutation
 
 
 class CustomSwap (MapPermutation):
-    """
-    A custom class that permit to Initializes faster simple transposition permutation.
-    """
+    """An internal class which allows to initialize permutations from a list of transpositions."""
 
-    def __init__(self, lst) -> None:
+    def __init__(self, lst: list[tuple[int, int]]):
         """
-
-        Initialize the CustomSwap.
+        Initialize the CustomSwap structure.
 
         INPUT:
-        - ``lst`` -- List[Tuples] ; a list of the form [(a,b)] where a,b are integer a,b>=1.
+
+        - ``lst`` -- list[tuple[int,int]]: a list of transpositions of the form [(a,b)], where a,b are integers >=1
 
         EXAMPLES::
 
@@ -21,7 +27,9 @@ class CustomSwap (MapPermutation):
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
         NOTE:
-            O(1)
+
+            O(1); note that as of now, only arguments of the form [(i,j)] (of length 1) are supported.
+            This class is not intended to be used by the user.
         """
         try:
             assert len(lst) == 1
@@ -33,12 +41,13 @@ class CustomSwap (MapPermutation):
         except BaseException:
             raise
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """
-        A boolean indicating if self equal other structurally.
+        Return whether self is structurally equal to the given Permutation.
 
         INPUT:
-        - ``other`` -- MapPermutation
+
+        - ``other`` -- Any
 
         EXAMPLES::
 
@@ -49,16 +58,15 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(n) where n is the size of the permutation.
-
+            O(n), where n is the size of the permutation.
         """
         if isinstance(other, MapPermutation):
             return list(other) == list(self)
         return False
 
-    def size(self):
+    def size(self) -> int:
         """
-        The size of self.
+        Return the size of self.
 
         EXAMPLES::
 
@@ -67,15 +75,17 @@ class CustomSwap (MapPermutation):
             12
 
         NOTE:
+
             O(1)
         """
         return self.b
 
-    def apply(self, i):
+    def apply(self, i: int) -> int:
         """
-        Apply self on i.
+        Return self(i).
 
         INPUT:
+
         - ``i`` -- int
 
         EXAMPLES::
@@ -85,17 +95,19 @@ class CustomSwap (MapPermutation):
             12
 
         NOTE:
+
             O(1)
         """
         if i != self.a and i != self.b:
             return i
         return self.a + self.b - i
 
-    def inverseApply(self, i):
+    def inverseApply(self, i: int) -> int:
         """
-        Returns j such that self(j) = i
+        Return self^-1(i) (ie. j such that self(j) = i).
 
         INPUT:
+
         - ``i`` -- int
 
         EXAMPLES::
@@ -105,13 +117,14 @@ class CustomSwap (MapPermutation):
             12
 
         NOTE:
+
             O(1)
         """
         return self(i)
 
-    def number_of_fixed_points(self):
+    def number_of_fixed_points(self) -> int:
         """
-        The number of fixed point ( we only consider i such that i<=self.size())
+        Return the number of fixed point (only considering those lower than self.size()).
 
         EXAMPLES::
 
@@ -120,14 +133,14 @@ class CustomSwap (MapPermutation):
             10
 
         NOTE:
+
             O(1)
         """
-
         return self.b - (self.a != self.b)*2
 
-    def to_cycles(self):
+    def to_cycles(self) -> list[tuple[int, ...]]:
         """
-        A list of tuple representing the cycle decomposition of self.
+        Return a list of tuple representing the cycle decomposition of self.
 
         EXAMPLES::
 
@@ -136,6 +149,7 @@ class CustomSwap (MapPermutation):
             [(1,), (2,), (3,), (4,), (5,), (6,), (7,), (8, 12), (8,), (9,), (10,), (11,)]
 
         NOTE:
+
             O(n) where n is the size of the permutation
         """
         if self.a == self.b:
@@ -146,8 +160,7 @@ class CustomSwap (MapPermutation):
 
     def inverse(self):
         """
-        OUTPUT:
-            The inverse of self
+        Return the inverse of self.
 
         EXAMPLES::
 
@@ -156,6 +169,7 @@ class CustomSwap (MapPermutation):
             [1, 2, 3, 4, 5, 6, 7, 12, 9, 10, 11, 8]
 
         NOTE:
+
             O(1)
         """
         return self

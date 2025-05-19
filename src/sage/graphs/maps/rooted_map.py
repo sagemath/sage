@@ -1,9 +1,14 @@
+"""Define the RootedMap class."""
+
+from sage.all import Permutation
 from sage.graphs.maps.labelled_map import LabelledMap
+from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 
 
 class RootedMap(LabelledMap):
     """
     This class represents a rooted map,it inherits from LabelledMap.
+
     Attributes
     ----------
     sigma :  Permutation or MapPermutation
@@ -29,10 +34,10 @@ class RootedMap(LabelledMap):
 
     def __init__(
         self,
-        labelledMap=None,
-        sigma=None,
-        alpha=None,
-        adj=None,
+        labelledMap: LabelledMap | None = None,
+        sigma: Permutation | None = None,
+        alpha: Permutation | None = None,
+        adj: list[tuple[int, ...]] | None = None,
         isAlreadyCanonical=False,
         trust=False,
     ):
@@ -41,27 +46,26 @@ class RootedMap(LabelledMap):
         and sigma, or an adjacency list or a Label
 
         INPUT:
+
         - ``sigma`` -- Permutation | MapPermutation | None; Permutation ; Permutation that maps a half-edge
-        to the half-edge incident to it in anti-clockwise direction around
-        the vertex it belongs to.
+            to the half-edge incident to it in anti-clockwise direction around
+            the vertex it belongs to.
         - ``alpha`` -- Permutation | MapPermutation | None; Permutation that maps a half-edge
-        Fixed-point free involution whose cycles are given by the edges.
+            Fixed-point free involution whose cycles are given by the edges.
         - ``ajd``-- List[Tuple] | None ; and adjacency list be careful the order of the
-        node in your adjaceny will be used to choose the embedding
+            node in your adjaceny will be used to choose the embedding
         - ``isAlreadyCanonical`` -- bool ; A parameter that indicates sigma,alpha given are already in canonical form
-        i.e represent a the canonical representant of the rooted map
+            i.e represent a the canonical representant of the rooted map
         - ``trust`` -- bool ; A parameter that indicates whether the validity check (i.e., whether the map is connex, etc.)
-        should be skipped when initializing the map. It makes initialization faster but can be dangerous because
-        if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
-        map's validity if you set this to true.
+            should be skipped when initializing the map. It makes initialization faster but can be dangerous because
+            if the map isn't well-formed, all the other methods become unsafe. You should be absolutely sure of your
+            map's validity if you set this to true.
 
         EXAMPLES::
 
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
-
-
         """
 
         self._production = True
@@ -75,7 +79,7 @@ class RootedMap(LabelledMap):
             canonicalRepresentant.sigma, canonicalRepresentant.alpha, trust=self._production
         )
 
-    def tetravalance(self):
+    def tetravalance(self) -> "RootedMap":
         """
         This method provides a bijection between rooted maps
         with m edges of genus g and face-bicolorable tetravalent
@@ -113,7 +117,7 @@ class RootedMap(LabelledMap):
             labelledMap=super().tetravalance(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def edgeMap(self):
+    def edgeMap(self) -> "RootedMap":
         """
         A method that return the edge map of this map
 
@@ -141,15 +145,13 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
-
         """
 
         return RootedMap(
             labelledMap=super().edgeMap(), isAlreadyCanonical=True, trust=self._production,
         )
 
-    def incidenceMap(self):
+    def incidenceMap(self) -> "RootedMap":
         """
         A method that return the incidence map of this map
 
@@ -174,23 +176,20 @@ class RootedMap(LabelledMap):
              (31, 33, 35, 32),
              (36, 39, 38, 37)]
 
-
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
 
         return RootedMap(
             labelledMap=super().incidenceMap(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def quadrangulation(self):
+    def quadrangulation(self) -> "RootedMap":
         """
         This function provides a bijection between rooted maps
         of genus g with m edges and bipartite rooted quadrangulations
         of genus g with m faces.
-
 
         OUTPUT:
 
@@ -216,13 +215,12 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(
             labelledMap=super().quadrangulation(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def derivedMap(self):
+    def derivedMap(self) -> "RootedMap":
         """
         OUTPUT:
 
@@ -240,13 +238,12 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(
             labelledMap=super().derivedMap(), isAlreadyCanonical=True, trust=self._production
         )
 
-    def dual(self):
+    def dual(self) -> "RootedMap":
         """
         OUTPUT:
 
@@ -265,16 +262,17 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
 
         return RootedMap(labelledMap=super().dual(), trust=self._production)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return string representation of self
 
-        OUTPUT: The string representation of self
+        OUTPUT:
+
+            The string representation of self
 
         EXAMPLES::
 
@@ -283,7 +281,6 @@ class RootedMap(LabelledMap):
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
             sage: m
             Rooted map | Sigma : [2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20] Alpha : [3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19]
-
         """
 
         return (
@@ -293,7 +290,7 @@ class RootedMap(LabelledMap):
             + str(self.alpha)
         )
 
-    def inverseQuadrangulation(self):
+    def inverseQuadrangulation(self) -> "RootedMap":
         """
         This function is the inverse of quadrangulation given that self
         is a bipartite rooted quadrangulation. It returns the only
@@ -301,6 +298,7 @@ class RootedMap(LabelledMap):
         isn't a bipartite quadrangulation, it will raise an error.
 
         OUTPUT:
+
             The inverse of self from quadrangulation if self is a rooted
             bipartite quadrangulation; otherwise, raises an error.
 
@@ -315,7 +313,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(
             labelledMap=super().inverseQuadrangulation(),
@@ -323,15 +320,17 @@ class RootedMap(LabelledMap):
             trust=self._production,
         )
 
-    def relabel(self, tau):
+    def relabel(self, tau) -> "RootedMap":
         """
         This method, inherited from LabelledMap, is not applicable to
         RootedMap. It will simply return a copy of self.
 
         OUTPUT:
-        A copy of self
+
+            A copy of self
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: m = RootedMap(alpha = alpha,sigma=sigma)
@@ -341,11 +340,10 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(labelledMap=self, isAlreadyCanonical=True, trust=self._production)
 
-    def schaefferTree(self, markedDemiEdge):
+    def schaefferTree(self, markedDemiEdge: int) -> "tuple[RootedMap, list[int]]":
         """
         The Schaeffer surjection from rooted bipartite quadrangulation of
         genus g with k faces and a marked node to a rooted one-face map
@@ -357,9 +355,11 @@ class RootedMap(LabelledMap):
         quadrangulation, this function will raise an error.
 
         INPUT:
+
         - ``markedDemiEdge`` -- int ; A demi-edge on the node which is marked.
 
         OUTPUT:
+
             A couple (tree,labelling),
             tree: A rooted tree corresponding to the above description.
             labelling:A list of labellings on the demi-edges of tree.
@@ -377,12 +377,11 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         tree, labelled = super().schaefferTree(markedDemiEdge=markedDemiEdge)
         return RootedMap(labelledMap=tree, isAlreadyCanonical=True, trust=self._production), labelled
 
-    def inverseShaefferTree(self, labelled, returnMarkedDemiEdge=True):
+    def inverseShaefferTree(self, labelled: list[int], returnMarkedDemiEdge=True) -> "tuple[LabelledMap, LabelledMap, int, int] | tuple[LabelledMap, LabelledMap]":
         """
         This method is the inverse of schaefferTree. Given that self is a
         one-face map, it returns a quadruple (quadA, quadB, markedDemiEdgeA,
@@ -392,12 +391,14 @@ class RootedMap(LabelledMap):
         If self isn't a one-face map, it will raise an error.
 
         INPUT:
+
         - ``labelled`` -- List[int] ; A list of size 2*m+1 such that for the demi-edge i,
-        labelled[i] is the label of its attached node.
+            labelled[i] is the label of its attached node.
         - ``returnMarkedDemiEdge`` -- bool ;  Whether or not to return marked demi-edges
-        (default is True).
+            (default is True).
 
         OUTPUT:
+
             (quadA, quadB, markedDemiEdgeA, markedDemiEdgeB) if
             returnMarkedDemiEdge=True; otherwise, (quadA, quadB).
 
@@ -417,8 +418,6 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
-
         """
         if returnMarkedDemiEdge:
             (
@@ -445,7 +444,7 @@ class RootedMap(LabelledMap):
             labelledMap=quadA, isAlreadyCanonical=True, trust=self._production
         ), RootedMap(labelledMap=quadB, isAlreadyCanonical=True, trust=self._production)
 
-    def copy(self):
+    def copy(self) -> "RootedMap":
         """
         OUTPUT:
 
@@ -462,14 +461,14 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(m), where m is the number of edges.
-
         """
         return RootedMap(sigma=self.sigma, alpha=self.alpha, trust=self._production, isAlreadyCanonical=True)
 
     @property
-    def root(self):
+    def root(self) -> TopologicalDemiEdge:
         """
         OUTPUT:
+
             The TopologicalDemiEdge associated to the root
 
         EXAMPLES::
@@ -483,6 +482,5 @@ class RootedMap(LabelledMap):
         NOTE:
 
             Complexity is O(1)
-
         """
         return self.X(1)

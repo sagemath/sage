@@ -1,3 +1,6 @@
+"""Define the internal CyclicChainedList class."""
+
+
 class CyclicChainedList:
     """
     This is an internal class representing cyclic chained list node used in the class RotatingPermutation.
@@ -6,11 +9,11 @@ class CyclicChainedList:
     the basic implemented methods are guaranteed to not alter this invariant.
     """
 
-    def __init__(self, val) -> None:
+    def __init__(self, val: int):
         """
         INPUT:
 
-        - val -- the value contained in the node
+        - ``val`` -- int; the value contained in the node
 
         EXAMPLES::
 
@@ -61,10 +64,9 @@ class CyclicChainedList:
 
         return [node.val for node in cycleNode]
 
-    def insertAfter(self, otherNode):
+    def insertAfter(self, otherNode: "CyclicChainedList") -> None:
         """
-        This function will insert otherNode after self i.e if self is in a cycle  A->self->A where  A is the rest of the cycle and that otherNode is
-        in a cycle of the form otherNode ->R ->otherNode where R represent the rest of the cycle this function will fuse them into a cycle
+        This function will insert otherNode after self i.e if self is in a cycle  A->self->A where  A is the rest of the cycle and that otherNode is in a cycle of the form otherNode ->R ->otherNode where R represent the rest of the cycle this function will fuse them into a cycle
         of the form A->self->otherNode->R->A
 
         INPUT:
@@ -91,7 +93,7 @@ class CyclicChainedList:
         oldPrevOther.nxt = oldNxt
         oldNxt.prev = oldPrevOther
 
-    def insertBefore(self, otherNode):
+    def insertBefore(self, otherNode: "CyclicChainedList") -> None:
         """
         This function will insert otherNode before self i.e if self is in a cycle  A->self->A where  A is the rest of the cycle and that otherNode is
         in a cycle of the form otherNode ->R ->otherNode where R represent the rest of the cycle this function will fuse them into a cycle
@@ -117,7 +119,7 @@ class CyclicChainedList:
         """
         self.prev.insertAfter(otherNode)
 
-    def remove(self):
+    def remove(self) -> None:
         """
         If ``self`` is not an isolated node (i.e such that self.prev = self.nxt = self) it will remove self from the where it is present
         otherwise it will not do anything

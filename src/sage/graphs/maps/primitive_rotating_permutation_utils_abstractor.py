@@ -1,9 +1,16 @@
-from sage.graphs.maps.permutation_utils_abstractor import *
+"""Define internal tools used in PrimitiveRotatingPermutation"""
+
+
+from sage.graphs.maps.permutation_utils_abstractor import PermutationUtilsAbstractor
 from sage.graphs.maps.map_error import NotImplementedError
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from sage.graphs.maps.primitive_rotating_permutation import PrimitiveRotatingPermutation
 
 
 class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
-    def __init__(self, rpermutation) -> None:
+    def __init__(self, rpermutation: "PrimitiveRotatingPermutation") -> None:
         """
         Init the PrimitiveRotatingPermutationUtilsAbstractor
 
@@ -15,15 +22,14 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             sage: tAbstr = PrimitiveRotatingPermutationUtilsAbstractor(rperm)
 
         NOTE:
-            O(1)
 
+            O(1)
         """
         self.rpermutation = rpermutation
 
-    def numberInCycle(self, index):
+    def numberInCycle(self, index: int) -> int:
         """
         Not implemented for PrimitiveRotatingPermutationUtilsAbstractor
-
 
         EXAMPLES::
 
@@ -37,11 +43,10 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             ....:     print("OK")
             ....:
             OK
-
         """
         raise NotImplementedError(self)
 
-    def sameCycle(self, i, j):
+    def sameCycle(self, i: int, j: int) -> bool:
         """
         Not implemented for PrimitiveRotatingPermutationUtilsAbstractor
 
@@ -57,16 +62,14 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             ....:     print("OK")
             ....:
             OK
-
         """
         raise NotImplementedError(self)
 
-    def numberOfCycles(self):
+    def numberOfCycles(self) -> int:
         """
         OUTPUT:
 
             The number of cycles of the permutation
-
 
         EXAMPLES::
 
@@ -78,13 +81,15 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             3
 
         NOTE:
+
             O(1)
         """
         return self.rpermutation.numberOfCycles()
 
-    def numberOfFixedPoint(self):
+    def numberOfFixedPoint(self) -> int:
         """
         OUTPUT:
+
             The number of fixed point of the permutation
 
         EXAMPLES::
@@ -97,11 +102,12 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             1
 
         NOTE:
+
             O(1)
         """
         return self.rpermutation.number_of_fixed_points()
 
-    def checkTwoInTheSameCycle(self, listIndexes):
+    def checkTwoInTheSameCycle(self, listIndexes: list[int]) -> bool:
         """
         Not implemented for PrimitiveRotatingPermutationUtilsAbstractor
 
@@ -117,6 +123,5 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             ....:     print("OK")
             ....:
             OK
-
         """
         raise NotImplementedError(self)

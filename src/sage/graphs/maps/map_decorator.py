@@ -1,11 +1,16 @@
+"""Define the internal CheckValid function."""
+
+from typing import Type
 
 
-def CheckValid(cls):
+def CheckValid(cls: Type) -> Type:
     """
     INPUT:
+
         -``cls`` ; a class
 
     OUTPUT:
+
         The same class but with a check before each method
 
     EXAMPLES::
@@ -16,6 +21,7 @@ def CheckValid(cls):
         <class 'sage.graphs.maps.topological_demi_edge.TopologicalDemiEdge'>
 
     NOTE:
+
         Used internally
     """
     originalMethods = {name: method for name,

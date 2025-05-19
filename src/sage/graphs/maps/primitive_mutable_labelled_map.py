@@ -43,17 +43,17 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
     def __init__(
         self,
-        sigma: Permutation = None,
-        alpha: Permutation = None,
-        adj=None,
-        lmap=None
+        sigma: Permutation | None = None,
+        alpha: Permutation | None = None,
+        adj: list[tuple[int, ...]] | None = None,
+        lmap: LabelledMap | None = None
     ):
         r"""
         Init the PrimitiveMutableLabelledMap
 
         INPUT:
 
-        - ``sigma`` -- Permutation ; Permutation ; Permutation that maps a half-edge
+        - ``sigma`` -- Permutation ; Permutation that maps a half-edge
           to the half-edge incident to it in anti-clockwise direction around
           the vertex it belongs to.
         - ``alpha`` -- Permutation ; Permutation that maps a half-edge
@@ -69,6 +69,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
 
         NOTE:
+
             O(m) where m is the size of the map
         """
 
@@ -89,7 +90,52 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             self.topologicalMap[e] = PrimitiveMutableTopologicalDemiEdge(
                 self, e)
 
-    def addEdge(self, startDemiEdge, endDemiEdge):
+    def X(self, demiEdge: int) -> PrimitiveMutableTopologicalDemiEdge:
+        """
+        Return the PrimitiveMutableTopologicalDemiEdge associated to demiEdge.
+
+        INPUT:
+
+            - ``demiEdge`` -- int ; an index associated to a demiEdge
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = MutableLabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.X(1)
+            X(1)
+
+        NOTE:
+
+            Complexity is O(1)
+        """
+        return self.getTopologicalDemiEdge(demiEdge)
+
+    def getTopologicalDemiEdge(self, demiEdge: int) -> PrimitiveMutableTopologicalDemiEdge:
+        """
+        The PrimitiveMutableTopologicalDemiEdge associated to demiEdge
+
+        INPUT:
+
+            - ``demiEdge`` -- int ; An index associated to a demiEdge
+
+        EXAMPLES::
+
+            sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
+            sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
+            sage: m = MutableLabelledMap(alpha = alpha,sigma=sigma)
+            sage: m.getTopologicalDemiEdge(1)
+            X(1)
+
+        NOTE:
+
+            Complexity is O(1)
+        """
+
+        return self.topologicalMap[demiEdge]
+
+    def addEdge(self, startDemiEdge: int, endDemiEdge: int) -> tuple[PrimitiveMutableTopologicalDemiEdge, PrimitiveMutableTopologicalDemiEdge]:
         """
         This will add an edge between the node of startDemiEdge to endDemiEdge, the edge will be added as follow ,
         let denote (A,B) the demi edges composing this new edge A will be on the same node as startDemiEdge but before it
@@ -99,10 +145,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         WARNING: Nothing is guaranteed if startDemiEdge and endDemiEdge are not on the same face
 
         INPUT:
+
         - ``startDemiEdge`` -- int ; A demi edge of self
         - ``endDemiEdge`` -- int : A demi edge of self
 
         OUTPUT:
+
             topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
@@ -119,6 +167,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
              (2, 5, 4, 21, 3)]
 
         NOTE:
+
             O(1)
         """
 
@@ -147,12 +196,13 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         return self.X(newIndexStart), self.X(newIndexEnd)
 
-    def _swapTopologicalDemiEdgeValue(self, demiEdge, otherDemiEdge):
+    def _swapTopologicalDemiEdgeValue(self, demiEdge: int, otherDemiEdge: int) -> None:
         """
         This will change the index of the topologica demi edge associate to the demi edge of label demi edge to otherDemiEdge
         and same thing but swapping the role or demiEdge and otherDemiEdge
 
         INPUT:
+
         - ``demiEdge``  -- int
         - ``otherDemiEdge`` -- int
 
@@ -169,7 +219,8 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             sage: A,B
             (X(2), X(1))
 
-        NOTE::
+        NOTE:
+
             O(1)
         """
 
@@ -179,11 +230,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         self.topologicalMap[demiEdge] = otherTopoDemiEdge
         self.topologicalMap[otherDemiEdge] = topoDemiEdge
 
-    def simpleSwap(self, demiEdge, otherDemiEdge):
+    def simpleSwap(self, demiEdge: int, otherDemiEdge: int) -> None:
         """
         This function relabel demiEdge into otherDemiEdge and otherDemiEdge into demiEdge
 
         INPUT:
+
         - ``demiEdge`` -- int
         - ``otherDemiEdge`` -- int
 
@@ -201,6 +253,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(2), X(1))
 
         NOTE:
+
             O(1))
         """
 
@@ -210,7 +263,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         self.alpha.swapIndex(demiEdge, otherDemiEdge)
         self.sigma.swapIndex(demiEdge, otherDemiEdge)
 
-    def labelToTheEnd(self, listIndexes):
+    def labelToTheEnd(self, listIndexes: list[int]) -> None:
         """
         This function relabel the indexes in listIndexes to take
         if there is say k indexes in listIndexes (and they are valid) it
@@ -232,6 +285,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 18, 2, 19, 4, 20, 11, 16, 3, 13, 12, 15, 14, 5, 7, 17, 9, 8, 10, 6)]
 
         NOTE:
+
             O(k) where k = len(listIndexes)
         """
 
@@ -246,11 +300,11 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             if index in corres:
                 self._swapTopologicalDemiEdgeValue(index, corres[index])
 
-    def _BruteDeleteEdge(self, demiEdge, sameFace):
+    def _BruteDeleteEdge(self, demiEdge: int, sameFace: int) -> None:
         """
         INPUT:
-        - ``demiEdge`` -- int; demi edge on  the edge to delete
 
+        - ``demiEdge`` -- int; demi edge on  the edge to delete
 
         EXAMPLES::
 
@@ -269,6 +323,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
         NOTE:
+
             O(1)
         """
 
@@ -301,9 +356,10 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             # Note that this case only happen in genus > 0
             self.phi.cutDelete(demiEdge, otherDemiEdge)
 
-    def deleteEdge(self, demiEdge, sameFace):
+    def deleteEdge(self, demiEdge: int, sameFace: bool) -> None:
         """
         INPUT:
+
         - ``demiEdge`` -- int; a demi edge corresponding to the edge to delete
         - ``sameFace``-- bool ;  a boolean indicating if demiEdge and alpha(demiEdge) are on the same face or not
 
@@ -322,12 +378,13 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14, 19, 20, 17, 9, 8, 10, 6)]
 
         NOTE:
+
             O(1)
         """
 
         self._BruteDeleteEdge(demiEdge, sameFace=sameFace)
 
-    def _addEdgeToAlpha(self):
+    def _addEdgeToAlpha(self) -> None:
         """
         Add one edge compose of demi edges self.size() and self.size()+1 to alpha toward the end
 
@@ -343,18 +400,19 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             Primitive Rotating permutation: [(1, 3), (2, 5), (4, 6), (7, 9), (8, 10), (11, 13), (12, 15), (14, 17), (16, 18), (19, 20), (21, 22)]
 
         NOTE:
+
             O(1)
         """
         self.alpha.stretch(2)
         self.alpha.addAfterGeneral(self.alpha.size(), self.alpha.size() - 1)
 
-    def _addTopologicalDemiEdge(self, demiEdge):
+    def _addTopologicalDemiEdge(self, demiEdge: int) -> None:
         """
         Add a new MutableTopologicalDemiEdge to self with index associated to demiEdge
 
         INPUT:
-        - ``demiEdge`` -- int
 
+        - ``demiEdge`` -- int
 
         EXAMPLES::
 
@@ -372,18 +430,19 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             X(42)
 
         NOTE:
+
             O(1)
         """
         self.topologicalMap[demiEdge] = PrimitiveMutableTopologicalDemiEdge(
             self, demiEdge)
 
-    def _removeTopologicalDemiEdge(self, topoDemiEdge):
+    def _removeTopologicalDemiEdge(self, topoDemiEdge: PrimitiveMutableTopologicalDemiEdge) -> None:
         """
         Remove and make invalid topoDemiEdge
 
         INPUT:
-        - ``topoDemiEdge`` -- PrimitiveMutableTopologicalDemiEdge
 
+        - ``topoDemiEdge`` -- PrimitiveMutableTopologicalDemiEdge
 
         EXAMPLES::
 
@@ -400,18 +459,20 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             NOT TOPO
 
         NOTE:
+
             O(1)
         """
 
         self.topologicalMap.pop(topoDemiEdge.raw)
         topoDemiEdge._invalidate()
 
-    def addEdgeAfter(self, demiEdge):
+    def addEdgeAfter(self, demiEdge: int) -> PrimitiveMutableTopologicalDemiEdge:
         """
         This function will create an new edge attached to the same node as demi edge such that it is after
         demiEdge in the trigonometric order.
 
         INPUT:
+
         - ``demiEdge`` -- int
 
         EXAMPLES::
@@ -430,6 +491,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(21), X(23))
 
         NOTE:
+
             O(1)
         """
 
@@ -453,12 +515,13 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         return self.X(otherNewDemiEdge)
 
-    def addEdgeBefore(self, demiEdge):
+    def addEdgeBefore(self, demiEdge: int) -> PrimitiveMutableTopologicalDemiEdge:
         """
         This function will create an new edge attached to the same node as demi edge such that it is before
         demiEdge in the trigonometric order.
 
         INPUT:
+
         -``demiEdge`` -- int
 
         EXAMPLES::
@@ -477,15 +540,17 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             (X(21), X(23))
 
         NOTE:
+
             O(1)
         """
 
         return self.addEdgeAfter(self.sigma.inverseApply(demiEdge))
 
-    def copy(self):
+    def copy(self) -> "PrimitiveMutableLabelledMap":
         """
         OUTPUT:
-        Returns: A copy of self
+
+        Returns A copy of self
 
         EXAMPLES::
 
@@ -496,11 +561,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             True
 
         NOTE:
+
             O(m)
         """
-        return PrimitiveMutableLabelledMap(sigma=self.sigma, alpha=self.alpha)
+        return PrimitiveMutableLabelledMap(sigma=Permutation(self.sigma.to_list()), alpha=Permutation(self.alpha.to_list()))
 
-    def contractEdge(self, demiEdge):
+    def contractEdge(self, demiEdge: int) -> None:
         """
         Contract in self the edge corresponding to demiEdge.
         WARNING: For this version you demiEdge cannot be on a loop anyway because
@@ -519,6 +585,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             [(1, 3, 17, 9, 8, 10, 6, 2, 5, 4, 7, 11, 16, 18, 13, 12, 15, 14)]
 
         NOTE:
+
             O(1)
         """
 
@@ -537,11 +604,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         self.phi.deleteLastKIndex(2)
         self.alpha.deleteLastKIndex(2)
 
-    def areOnTheSameNode(self, demiEdgeA, demiEdgeB):
+    def areOnTheSameNode(self, demiEdgeA: int, demiEdgeB: int) -> bool:
         """
         Not implemented for PrimitiveMutableLabelledMap
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
@@ -554,11 +622,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         """
         raise NotImplementedError(self)
 
-    def areOnTheSameFace(self, demiEdgeA, demiEdgeB):
+    def areOnTheSameFace(self, demiEdgeA: int, demiEdgeB: int) -> bool:
         """
         Not implemented for PrimitiveMutableLabelledMap
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
@@ -568,15 +637,15 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:    print("OK")
             ....:
             OK
-
         """
         raise NotImplementedError(self)
 
-    def numberInTheSameFace(self, demiEdge):
+    def numberInTheSameFace(self, demiEdge: int) -> int:
         """
         Not implemented for PrimitiveMutableLabelledMap
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
@@ -586,15 +655,15 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:    print("OK")
             ....:
             OK
-
         """
         raise NotImplementedError(self)
 
-    def numberInTheSameNode(self, demiEdge):
+    def numberInTheSameNode(self, demiEdge: int) -> int:
         """
         Not implemented for PrimitiveMutableLabelledMap
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
@@ -609,11 +678,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         """
         raise NotImplementedError(self)
 
-    def checkTwoInTheSameFace(self, listDemiEdges):
+    def checkTwoInTheSameFace(self, listDemiEdges: list[int]) -> bool:
         """
         Not implemented for PrimitiveMutableLabelledMap
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)
@@ -626,11 +696,12 @@ class PrimitiveMutableLabelledMap(LabelledMap):
         """
         raise NotImplementedError(self)
 
-    def checkTwoInTheSameNode(self, listDemiEdges):
+    def checkTwoInTheSameNode(self, listDemiEdges: list[int]) -> bool:
         """
         Not implemented for PrimitiveMutableLabelledMap
 
         EXAMPLES::
+
             sage: alpha = Permutation([3, 5, 1, 6, 2, 4, 9, 10, 7, 8, 13, 15, 11, 17, 12, 18, 14, 16, 20, 19])
             sage: sigma = Permutation([2, 4, 3, 1, 5, 7, 8, 6, 11, 10, 12, 14, 16, 9, 15, 13, 19, 18, 17, 20])
             sage: mm = PrimitiveMutableLabelledMap(alpha=alpha,sigma=sigma)

@@ -1,18 +1,19 @@
+"""Define the MapExample class, meant to show how to use the maps library."""
+
 from sage.all import Permutation
+from sage.graphs.maps.labelled_map import LabelledMap
 from sage.graphs.maps.mutable_labelled_map import MutableLabelledMap
+from sage.graphs.maps.rooted_map import RootedMap
 from sage.graphs.maps.map_generator import MapGenerator
 from sage.graphs.maps.banner import bannerExampleStart, bannerExampleEnd, mapBanner
 from sage.graphs.maps.dynamic_planar_map_show import DynamicPlanarMapShow
 
 
 class MapExample:
-    """
-    Class to represents example of use of the library.
-    """
+    """Class to represents example of use of the library."""
 
     def __init__(self) -> None:
         """
-
         Init the MapExample object.
 
         EXAMPLES::
@@ -20,13 +21,11 @@ class MapExample:
             sage: from sage.graphs.maps.example import MapExample
             sage: MapExample()
             MapExample
-
         """
         pass
 
     def __repr__(self) -> str:
         """
-
         Return the string representation of self.
 
         EXAMPLES::
@@ -34,24 +33,22 @@ class MapExample:
             sage: from sage.graphs.maps.example import MapExample
             sage: MapExample()
             MapExample
-
         """
 
         return "MapExample"
 
-    def run(self, false_run=False):
+    def run(self, false_run=False) -> None:
         """
         Run the example.
 
         INPUT:
 
-            - ``false_run`` -- bool ; indicate if it is a false run default False
+        - ``false_run`` -- bool ; indicate if it is a false run default False
 
         EXAMPLES::
 
             sage: from sage.graphs.maps.example import MapExample
             sage: MapExample().run(false_run=True)
-
         """
         if false_run:
             return
@@ -74,20 +71,20 @@ class MapExample:
         print(bannerExampleEnd)
 
     @staticmethod
-    def showExample(name, myMap, false_run=False):
+    def showExample(name: str, myMap: LabelledMap, false_run=False) -> None:
         """
         show the example.
 
         INPUT:
-            - ``name`` -- str ; the name of the example
-            - ``myMap`` -- LabelledMap ; the map used as example
-            - ``false_run`` -- bool ; indicate if it is a false run default False
+
+        - ``name`` -- str ; the name of the example
+        - ``myMap`` -- LabelledMap ; the map used as example
+        - ``false_run`` -- bool ; indicate if it is a false run default False
 
         EXAMPLES::
 
             sage: from sage.graphs.maps.example import MapExample
             sage: MapExample.showExample("A X",MapExample.exampleX(2),false_run=True)
-
         """
 
         if false_run:
@@ -123,11 +120,12 @@ class MapExample:
 
         print("="*100)
 
-    def exampleRandomRootedTree(self, m, seed=None):
+    def exampleRandomRootedTree(self, m: int, seed: int | None = None) -> RootedMap:
         """
         Random rooted tree of size m.
 
         INPUT:
+
         - ``m`` -- int ; the size of the tree
         - ``seed`` int | None ;  the seed to use for the random number generator default None
 
@@ -138,13 +136,14 @@ class MapExample:
             Rooted map | Sigma : [1, 3, 4, 2, 5, 6] Alpha : [2, 1, 5, 6, 3, 4]
 
         NOTE:
+
             O(m)
         """
         mapGenerator = MapGenerator()
 
         return mapGenerator.getRandomTree(m, seed=seed)
 
-    def exampleRandomRootedMap(self, m, seed=None):
+    def exampleRandomRootedMap(self, m: int, seed=None) -> RootedMap:
         """
         Random rooted planar map of size m.
 
@@ -161,18 +160,19 @@ class MapExample:
             Rooted map | Sigma : [1, 3, 4, 5, 6, 2] Alpha : [2, 1, 4, 3, 6, 5]
 
         NOTE:
+
             O(m)
         """
         mapGenerator = MapGenerator()
 
         return mapGenerator.getRandomPlanarMap(m, seed=seed)
 
-    def exampleSimpleGone(self, n):
+    def exampleSimpleGone(self, n: int) -> MutableLabelledMap:
         """
-
         A n gone.
 
         INPUT:
+
         - ``n`` -- int ; the size of the n-gone
 
         EXAMPLES::
@@ -182,6 +182,7 @@ class MapExample:
             Labelled map | Sigma : [3, 6, 1, 5, 4, 2], Alpha : [2, 1, 4, 3, 6, 5]
 
         NOTE:
+
             O(nlog(n))
         """
 
@@ -199,13 +200,13 @@ class MapExample:
         return myMap
 
     @staticmethod
-    def exampleX(n):
+    def exampleX(n: int) -> LabelledMap:
         """
         A x with each segment of the x containing n edges
 
         INPUT:
-        - ``n`` -- int ; The number of segment in each  segment of the x
 
+        - ``n`` -- int ; The number of segment in each  segment of the x
 
         EXAMPLES::
 
@@ -214,6 +215,7 @@ class MapExample:
             Labelled map | Sigma : [3, 2, 9, 5, 4, 7, 6, 8, 15, 11, 10, 13, 12, 14, 1, 17, 16, 19, 18, 20], Alpha : [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19]
 
         NOTE:
+
             O(nlog(n))
         """
         sigma = Permutation([(1,), (2,)])
@@ -230,12 +232,13 @@ class MapExample:
 
         return myMap
 
-    def exampleRepeatingPolygon(self, n, p):
+    def exampleRepeatingPolygon(self, n: int, p: int) -> LabelledMap:
         """
 
         A repeated  n-gone p times link by edge.
 
         INPUT:
+
         - ``n`` -- int ; the number of side of the n-gone
         - ``p``-- int ; the number of time to repeat the n-gone
 
@@ -246,8 +249,8 @@ class MapExample:
             Labelled map | Sigma : [3, 2, 9, 5, 4, 7, 6, 8, 15, 11, 10, 13, 12, 14, 1, 17, 16, 19, 18, 20], Alpha : [2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15, 18, 17, 20, 19]
 
         NOTE:
-            O(pn(log(n)+log(p)))
 
+            O(pn(log(n)+log(p)))
         """
 
         # First draw a n-gone
