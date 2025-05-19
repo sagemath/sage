@@ -140,9 +140,7 @@ This base class provides a lot more methods than a general parent::
      'ngens',
      'one',
      'order',
-     'zero',
-     'zeta',
-     'zeta_order']
+     'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
 be complemented later.
