@@ -73,7 +73,7 @@ Test hashing::
 from libc.string cimport strcpy, strlen
 
 from sage.categories.rings import Rings
-from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 from sage.ext.stdsage cimport PY_NEW
@@ -374,13 +374,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 s = data[k]
                 k += 1
                 if '/' in s:
-                    num, den = [str_to_bytes(n) for n in s.split('/')]
+                    num, den = (n.encode() for n in s.split('/'))
                     if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32) or \
                        fmpz_set_str(fmpq_mat_entry_den(self._matrix, i, j), den, 32):
                         raise RuntimeError("invalid pickle data")
                 else:
-                    s = str_to_bytes(s)
-                    if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), s, 32):
+                    num = s.encode()
+                    if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32):
                         raise RuntimeError("invalid pickle data")
                     fmpz_one(fmpq_mat_entry_den(self._matrix, i, j))
 

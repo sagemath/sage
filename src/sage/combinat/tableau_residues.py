@@ -746,7 +746,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         return '{}-residue sequences with multicharge {}'.format(self._quantum_characteristic,
                                                                  self._multicharge)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of ``self``.
 
