@@ -1,6 +1,6 @@
 """Define the PrimitiveMutableTopologicalDemiEdge class, an abstraction meant to represent a demi-edge of a map in a more user-friendly way than raw indices used in MutableLabelledMap."""
 
-from sage.graphs.maps.map_error import NotImplementedError
+from sage.graphs.maps.map_error import NotImplementedErrorWithClassMessage
 from sage.graphs.maps.topological_demi_edge import TopologicalDemiEdge
 
 from typing import TYPE_CHECKING
@@ -33,7 +33,8 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)"""
+        O(1)
+        """
 
         super().__init__(lmap, index)
 
@@ -52,7 +53,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self.getMap()
@@ -71,7 +72,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self._lmap
@@ -101,7 +102,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1),If this break the connectivity, no error will be raised and the map won't be stable anymore
+        O(1),If this break the connectivity, no error will be raised and the map won't be stable anymore
         """
         self._checkValid()
 
@@ -121,7 +122,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            topoDemiEdgeA,topoDemiEdgeB as described above
+        topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
 
@@ -140,7 +141,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
 
@@ -153,7 +154,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
+        The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
 
@@ -168,7 +169,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self.map.addEdgeAfter(self.raw)
@@ -180,7 +181,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
+        The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
 
@@ -195,7 +196,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
 
@@ -239,7 +240,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         self.map.contractEdge(self.raw)
@@ -258,7 +259,7 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             OK
         """
         self._checkValid()
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def isOnSameNode(self, otherTopologicalDemiEdge: TopologicalDemiEdge) -> bool:
         """
@@ -274,4 +275,4 @@ class PrimitiveMutableTopologicalDemiEdge(TopologicalDemiEdge):
             OK
         """
         self._checkValid()
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)

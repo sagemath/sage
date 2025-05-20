@@ -28,7 +28,7 @@ class PermutationUtilsAbstractor:
 
         NOTE:
 
-            O(n) where n is the size of permutation
+        O(n) where n is the size of permutation
         """
         cycles = permutation.to_cycles()
 
@@ -52,7 +52,7 @@ class PermutationUtilsAbstractor:
 
         OUTPUT:
 
-            The size of the cycle containing index
+        The size of the cycle containing index
 
         EXAMPLES::
 
@@ -65,7 +65,7 @@ class PermutationUtilsAbstractor:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._cyclesLength[self._cycleIndexes[index]]
 
@@ -78,7 +78,7 @@ class PermutationUtilsAbstractor:
 
         OUTPUT:
 
-            A boolean indicating if i and j are on the same cycle
+        A boolean indicating if i and j are on the same cycle
 
         EXAMPLES::
 
@@ -93,7 +93,7 @@ class PermutationUtilsAbstractor:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return bool(self._cycleIndexes[i] == self._cycleIndexes[j])
 
@@ -101,8 +101,7 @@ class PermutationUtilsAbstractor:
         """
         OUTPUT:
 
-            The number of cycles of the permutation
-
+        The number of cycles of the permutation
 
         EXAMPLES::
 
@@ -115,7 +114,7 @@ class PermutationUtilsAbstractor:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._numberOfCycles
 
@@ -123,7 +122,7 @@ class PermutationUtilsAbstractor:
         """
         OUTPUT:
 
-            The number of fixed point of the permutation
+        The number of fixed point of the permutation
 
         EXAMPLES::
 
@@ -136,7 +135,7 @@ class PermutationUtilsAbstractor:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._numberOfFixedPoint
 
@@ -147,7 +146,8 @@ class PermutationUtilsAbstractor:
         - ``listIndexes`` -- List[int]
 
         OUTPUT:
-            A boolean indicating if there are two indices in listIndexes on the sameCycle
+
+        A boolean indicating if there are two indices in listIndexes on the sameCycle
 
         EXAMPLES::
 
@@ -162,7 +162,7 @@ class PermutationUtilsAbstractor:
 
         NOTE:
 
-            O(len(listIndexes))
+        O(len(listIndexes))
         """
         checkSet = set()
         for i in listIndexes:

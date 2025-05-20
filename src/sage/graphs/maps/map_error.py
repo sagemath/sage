@@ -37,7 +37,7 @@ class InvalidSwapPermutationArgumentError(Exception):
         super().__init__("Invalid argument for swap permutation")
 
 
-class NotImplementedError(Exception):
+class NotImplementedErrorWithClassMessage(Exception):
     """
 
     This class represent a not implemented error.
@@ -55,31 +55,9 @@ class NotImplementedError(Exception):
 
         EXAMPLES::
 
-            sage: from sage.graphs.maps.map_error import NotImplementedError
-            sage: NotImplementedError(2)
-            NotImplementedError("This  method isn't implemented for the class <class 'sage.rings.integer.Integer'> ")
+            sage: from sage.graphs.maps.map_error import NotImplementedErrorWithClassMessage
+            sage: NotImplementedErrorWithClassMessage(2)
+            NotImplementedErrorWithClassMessage("This  method isn't implemented for the class <class 'sage.rings.integer.Integer'> ")
         """
         super().__init__(
             f"This  method isn't implemented for the class {x.__class__} ")
-
-
-class TODOError(Exception):
-    """
-
-    This class represent a TODO error
-
-    """
-
-    def __init__(self):
-        """
-
-        Initialise the TODO error.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.maps.map_error import TODOError
-            sage: TODOError()
-            TODOError('Todo')
-        """
-        super().__init__(
-            "Todo")

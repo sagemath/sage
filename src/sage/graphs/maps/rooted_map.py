@@ -110,7 +110,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
 
         return RootedMap(
@@ -144,7 +144,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
 
         return RootedMap(
@@ -178,7 +178,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
 
         return RootedMap(
@@ -214,7 +214,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         return RootedMap(
             labelledMap=super().quadrangulation(), isAlreadyCanonical=True, trust=self._production
@@ -237,7 +237,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         return RootedMap(
             labelledMap=super().derivedMap(), isAlreadyCanonical=True, trust=self._production
@@ -261,7 +261,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
 
         return RootedMap(labelledMap=super().dual(), trust=self._production)
@@ -272,7 +272,7 @@ class RootedMap(LabelledMap):
 
         OUTPUT:
 
-            The string representation of self
+        The string representation of self
 
         EXAMPLES::
 
@@ -299,8 +299,8 @@ class RootedMap(LabelledMap):
 
         OUTPUT:
 
-            The inverse of self from quadrangulation if self is a rooted
-            bipartite quadrangulation; otherwise, raises an error.
+        The inverse of self from quadrangulation if self is a rooted
+        bipartite quadrangulation; otherwise, raises an error.
 
         EXAMPLES::
 
@@ -312,7 +312,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         return RootedMap(
             labelledMap=super().inverseQuadrangulation(),
@@ -327,7 +327,7 @@ class RootedMap(LabelledMap):
 
         OUTPUT:
 
-            A copy of self
+        A copy of self
 
         EXAMPLES::
 
@@ -339,7 +339,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         return RootedMap(labelledMap=self, isAlreadyCanonical=True, trust=self._production)
 
@@ -360,9 +360,9 @@ class RootedMap(LabelledMap):
 
         OUTPUT:
 
-            A couple (tree,labelling),
-            tree: A rooted tree corresponding to the above description.
-            labelling:A list of labellings on the demi-edges of tree.
+        A couple (tree,labelling),
+        tree: A rooted tree corresponding to the above description.
+        labelling:A list of labellings on the demi-edges of tree.
 
         EXAMPLES::
 
@@ -376,7 +376,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         tree, labelled = super().schaefferTree(markedDemiEdge=markedDemiEdge)
         return RootedMap(labelledMap=tree, isAlreadyCanonical=True, trust=self._production), labelled
@@ -399,8 +399,8 @@ class RootedMap(LabelledMap):
 
         OUTPUT:
 
-            (quadA, quadB, markedDemiEdgeA, markedDemiEdgeB) if
-            returnMarkedDemiEdge=True; otherwise, (quadA, quadB).
+        (quadA, quadB, markedDemiEdgeA, markedDemiEdgeB) if
+        returnMarkedDemiEdge=True; otherwise, (quadA, quadB).
 
         EXAMPLES::
 
@@ -417,7 +417,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         if returnMarkedDemiEdge:
             (
@@ -448,7 +448,7 @@ class RootedMap(LabelledMap):
         """
         OUTPUT:
 
-            A copy of self
+        A copy of self
 
         EXAMPLES::
 
@@ -460,7 +460,7 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(m), where m is the number of edges.
+        Complexity is O(m), where m is the number of edges.
         """
         return RootedMap(sigma=self.sigma, alpha=self.alpha, trust=self._production, isAlreadyCanonical=True)
 
@@ -469,7 +469,7 @@ class RootedMap(LabelledMap):
         """
         OUTPUT:
 
-            The TopologicalDemiEdge associated to the root
+        The TopologicalDemiEdge associated to the root
 
         EXAMPLES::
 
@@ -481,6 +481,6 @@ class RootedMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(1)
+        Complexity is O(1)
         """
         return self.X(1)

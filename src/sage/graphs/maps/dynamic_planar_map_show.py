@@ -99,7 +99,7 @@ class Vector2D:
 
         NOTE:
 
-            This function helps avoid costly computation when directly updating x and y, by using fast float operations instead of computing symbolic sage expressions.
+        This function helps avoid costly computation when directly updating x and y, by using fast float operations instead of computing symbolic sage expressions.
         """
         self.x = float(self.x)
         self.y = float(self.y)
@@ -276,8 +276,8 @@ def check_polygon_intersecting(segments: list[tuple[Vector2D, Vector2D]]) -> boo
 
     NOTE:
 
-        Complexity is O(n^2), where n is the number of segments; this could be improved to O(n log n) in a future implementation.
-        Note that this function is only supposed to be used by DynamicPlanarMapShow.
+    Complexity is O(n^2), where n is the number of segments; this could be improved to O(n log n) in a future implementation.
+    Note that this function is only supposed to be used by DynamicPlanarMapShow.
     """
 
     # TODO: do this on O(n log n) instead of O(N^2)!
@@ -547,9 +547,9 @@ class DynamicPlanarMapShow:
 
         NOTE:
 
-            Press Enter to pause or resume the computation, Space to compute a single frame if the animation is currently paused, and Q/Esc to quit.
-            If you encounter the warning, ``UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown``, install PyQt6 using
-            ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
+        Press Enter to pause or resume the computation, Space to compute a single frame if the animation is currently paused, and Q/Esc to quit.
+        If you encounter the warning, ``UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown``, install PyQt6 using
+        ``sage -pip install PyQt6`` (this warning can be displayed when calling ``dyn_show.start()``, hence the ``...`` in the example).
         """
         # initialize the matplotlib figure
         if show_halfedges == "auto":
@@ -717,7 +717,7 @@ class DynamicPlanarMapShow:
 
         NOTE:
 
-            Debug function, only used to estimate which methods should be optimized first. Called when the P key is hit.
+        Debug function, only used to estimate which methods should be optimized first. Called when the P key is hit.
         """
         if self.time_profile and self.frame > 0:
             print("Average correctness check time:", int(

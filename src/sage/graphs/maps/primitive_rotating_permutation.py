@@ -1,7 +1,7 @@
 from sage.graphs.maps.cyclic_chained_list import CyclicChainedList
 from sage.all import Permutation
 from sage.graphs.maps.map_permutation import MapPermutation
-from sage.graphs.maps.map_error import NotImplementedError
+from sage.graphs.maps.map_error import NotImplementedErrorWithClassMessage
 from typing import Any
 
 
@@ -32,7 +32,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(n) where n is the size of the permutation
+        O(n) where n is the size of the permutation
         """
         if isinstance(lst, Permutation) or isinstance(lst, MapPermutation):
             self.__init__(list(lst))
@@ -145,7 +145,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            The size of the permutation
+        The size of the permutation
 
         EXAMPLES::
 
@@ -156,7 +156,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self._n
@@ -182,7 +182,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(k)
+        O(k)
         """
 
         if k > self.size():
@@ -217,7 +217,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
+        O(1),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
         """
 
         if self.size() == 1:
@@ -267,7 +267,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            j such that self(j) = i
+        j such that self(j) = i
 
         EXAMPLES::
 
@@ -278,7 +278,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if i != int(i) or i <= 0:
@@ -311,7 +311,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         nodeIndex = self.getNode(index)
@@ -342,7 +342,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         assert startIndex != endIndex
@@ -380,7 +380,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if newIndexEnd == newIndexStart:
@@ -436,8 +436,8 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A map giving a correspondence between the old index and the new
-            if it was changed.
+        A map giving a correspondence between the old index and the new
+        if it was changed.
 
         EXAMPLES::
 
@@ -452,7 +452,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(len(listIndexes))
+        O(len(listIndexes))
         """
 
         for index in listIndexes:
@@ -506,7 +506,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(len(cycles))
+        O(len(cycles))
         """
 
         for c in cycles:
@@ -533,7 +533,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(len(cycles))
+        O(len(cycles))
         """
 
         testSet = set()
@@ -575,7 +575,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if index <= 0 or index != int(index) or index > self.size():
@@ -604,7 +604,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         self.isValidIndex(index)
@@ -649,7 +649,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         self.isValidIndex(index)
@@ -683,7 +683,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         backUpNumberOfFixedPoint = self.number_of_fixed_points()
@@ -748,7 +748,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            The node associated to index
+        The node associated to index
 
         EXAMPLES::
 
@@ -759,7 +759,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if index != int(index) or index <= 0 or index > self.size():
@@ -796,7 +796,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         self._n += m
@@ -825,7 +825,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if index != int(index) or index <= 0 or index > self.size():
@@ -868,7 +868,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if index != int(index) or index <= 0 or index > self.size():
@@ -895,14 +895,14 @@ class PrimitiveRotatingPermutation(MapPermutation):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     # OK
     def numberOfCycles(self) -> int:
         """
         OUTPUT:
 
-            the number of cycle of self
+        the number of cycle of self
 
         EXAMPLES::
 
@@ -915,7 +915,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self._numCycles
@@ -937,7 +937,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
             OK
         """
 
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     # OK
 
@@ -964,7 +964,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            Return a string representation of self in a more pretty form
+        Return a string representation of self in a more pretty form
 
         EXAMPLES::
 
@@ -998,7 +998,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            - lst a list of tuples representing the cycles of self given in increasing order of their minimum elements
+        - lst a list of tuples representing the cycles of self given in increasing order of their minimum elements
 
         EXAMPLES::
 
@@ -1009,7 +1009,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(n),where n is the number of element of self
+        O(n),where n is the number of element of self
         """
 
         seen = [False for i in range(self.size() + 1)]
@@ -1035,7 +1035,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            - The inverse of self
+        - The inverse of self
 
         EXAMPLES::
 
@@ -1046,7 +1046,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(n),where n is the number of element of the permutation
+        O(n),where n is the number of element of the permutation
         """
 
         cycles = self.to_cycles()
@@ -1063,7 +1063,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            self(i)
+        self(i)
 
         EXAMPLES::
 
@@ -1074,7 +1074,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if i != int(i) or i <= 0:
@@ -1090,7 +1090,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            the number of fixed point ( we only consider i such that i<=self.size())
+        the number of fixed point ( we only consider i such that i<=self.size())
 
         EXAMPLES::
 
@@ -1101,7 +1101,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._numberOfFixedPoint
 
@@ -1113,7 +1113,7 @@ class PrimitiveRotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A boolean indicating if self and other are equal
+        A boolean indicating if self and other are equal
 
         EXAMPLES::
 

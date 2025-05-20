@@ -51,9 +51,9 @@ class CyclicChainedList:
             sage: node.getValList()
             [3, 4]
 
-        .. NOTE::
+        NOTE:
 
-            O(1)
+        O(1)
         """
         cycleNode = []
         cycleNode.append(self)
@@ -82,9 +82,9 @@ class CyclicChainedList:
             sage: node.getValList()
             [3, 4]
 
-        .. NOTE::
+        NOTE:
 
-            O(1)
+        O(1)
         """
         oldNxt = self.nxt
         oldPrevOther = otherNode.prev
@@ -113,9 +113,9 @@ class CyclicChainedList:
             sage: node.getValList()
             [3, 4, 5]
 
-        .. NOTE::
+        NOTE:
 
-            O(1)
+        O(1)
         """
         self.prev.insertAfter(otherNode)
 
@@ -137,9 +137,9 @@ class CyclicChainedList:
             sage: node.getValList()
             [3, 5]
 
-        .. NOTE::
+        NOTE:
 
-            O(1)
+        O(1)
         """
         if self.prev == self:
             return

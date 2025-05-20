@@ -26,7 +26,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(nlog(n)) where n is the sum of size of the cycles
+        O(nlog(n)) where n is the sum of size of the cycles
         """
         # It should contain only non fixed point index as key
         self.nodeMap: dict[int, SplayNode] = {}
@@ -65,7 +65,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(index):
             return 1
@@ -94,7 +94,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(i) or self.isFixedPoint(j):
             return False
@@ -125,7 +125,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         assert index != otherIndex
         if not self.isFixedPoint(otherIndex):
@@ -173,7 +173,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(len(listIndexes)log(n))
+        O(len(listIndexes)log(n))
         """
         mapIndexes = set(listIndexes)
         for e in list(mapIndexes):
@@ -217,7 +217,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         assert index != otherIndex
         if not self.isFixedPoint(otherIndex):
@@ -250,10 +250,10 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(m))
-            Used internally,because we don't have node for fixed point index , it may create a different logic for them
-            this will temporarily create a node during this operations , the user must be careful that after having used
-            this temporary node , that it is deleted from node map or isn't anymore a fixed point.
+        O(log(m))
+        Used internally,because we don't have node for fixed point index , it may create a different logic for them
+        this will temporarily create a node during this operations , the user must be careful that after having used
+        this temporary node , that it is deleted from node map or isn't anymore a fixed point.
         """
         if not self.isFixedPoint(index):
             return
@@ -286,7 +286,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if index not in self.nodeMap and otherIndex not in self.nodeMap:
             return
@@ -326,7 +326,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(t+log(n)) where t is the size of the cycle of index
+        O(t+log(n)) where t is the size of the cycle of index
         """
         if self.isFixedPoint(index):
             return [index]
@@ -358,7 +358,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(index):
             return
@@ -403,7 +403,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return index not in self.nodeMap
 
@@ -426,7 +426,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(index):
             raise ValueError(
@@ -454,7 +454,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(index):
             raise ValueError(
@@ -483,7 +483,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(index):
             return
@@ -520,7 +520,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.isFixedPoint(index):
             return
@@ -555,7 +555,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.sameCycle(beforeIndex, afterIndex):
             raise ValueError(
@@ -597,7 +597,7 @@ class CycleUtilsProvider:
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if not self.sameCycle(startIndex, endIndex):
             raise ValueError(

@@ -47,7 +47,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(nlog(n)) where n is the size of the permutation
+        O(nlog(n)) where n is the size of the permutation
         """
         if isinstance(lst, Permutation) or isinstance(lst, MapPermutation):
             self.__init__(list(lst))
@@ -150,7 +150,7 @@ class RotatingPermutation(MapPermutation):
                     self._numCycles += 1
                     self._numberOfFixedPoint += cnt == 1
         except ValueError as e:
-            raise
+            raise e
         except BaseException:
             raise ValueError("Invalid argument: The argument given must be Permutation or MapPermutation or a non empty list of integers representing the permutation or a non empty list of tuples representing the cycles of the permutations or a positive integer.")
         self._n = mx
@@ -168,7 +168,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(n)
+        O(n)
         """
         return [self(i) for i in range(1, self.size() + 1)]
 
@@ -177,7 +177,7 @@ class RotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            The size of the permutation
+        The size of the permutation
 
         EXAMPLES::
 
@@ -188,7 +188,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._n
 
@@ -213,7 +213,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(klog(n)) where n is the size of self
+        O(klog(n)) where n is the size of self
         """
         if k > self.size():
             raise ValueError(
@@ -247,7 +247,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n)),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
+        O(log(n)),index must be an strictly positive integer and self.size() >= 2 otherwise an error will be raised
         """
         if self.size() == 1:
             raise ValueError(
@@ -296,7 +296,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            j such that self(j) = i
+        j such that self(j) = i
 
 
         EXAMPLES::
@@ -308,7 +308,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if i != int(i) or i <= 0:
             raise ValueError("{i} isn't a positive integer")
@@ -328,7 +328,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A boolean indicating if two indexes in listIndexes are in the same cycle
+        A boolean indicating if two indexes in listIndexes are in the same cycle
 
         EXAMPLES::
 
@@ -339,7 +339,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(plog(n)) where p = len(listIndexes) and n is the size
+        O(plog(n)) where p = len(listIndexes) and n is the size
         """
         return self.provider.checkTwoInTheSameCycle(listIndexes)
     # OK
@@ -365,7 +365,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n)), where n is the size of self
+        O(log(n)), where n is the size of self
         """
         self.provider.swapIndex(index, otherIndex)
         nodeIndex = self.getNode(index)
@@ -396,7 +396,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(m))
+        O(log(m))
         """
 
         assert startIndex != endIndex
@@ -435,7 +435,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if newIndexEnd == newIndexStart:
             raise ValueError(
@@ -500,8 +500,8 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A map giving a correspondence between the old index and the new
-            if it was changed.
+        A map giving a correspondence between the old index and the new
+        if it was changed.
 
         EXAMPLES::
 
@@ -516,7 +516,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(len(listIndexes)*log(n)) where n is the size of the permutation
+        O(len(listIndexes)*log(n)) where n is the size of the permutation
         """
         for index in listIndexes:
             if index != int(index) or index <= 0 or index > self.size():
@@ -569,7 +569,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(len(cycles)*log(n))
+        O(len(cycles)*log(n))
         """
         for c in cycles:
             for i in range(len(c) - 1):
@@ -595,7 +595,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(len(cycles)*log(n))
+        O(len(cycles)*log(n))
         """
 
         testSet = set()
@@ -637,7 +637,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if index <= 0 or index != int(index) or index > self.size():
             raise ValueError(f"{index} isn't valid")
@@ -710,7 +710,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n)), where n is the size of the permutation
+        O(log(n)), where n is the size of the permutation
         """
         self.isValidIndex(index)
         indexPrev = self.inverseApply(index)
@@ -741,7 +741,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if self.sameCycle(index, otherIndex):
             raise ValueError("Cannot merge delete two index on the sameCycle")
@@ -809,7 +809,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            The node associated to index
+        The node associated to index
 
         EXAMPLES::
 
@@ -820,7 +820,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if index != int(index) or index <= 0 or index > self.size():
             raise ValueError(
@@ -856,7 +856,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._n += m
         self._numberOfFixedPoint += m
@@ -884,7 +884,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n)), where n is the size of self
+        O(log(n)), where n is the size of self
         """
         if index != int(index) or index <= 0 or index > self.size():
             raise ValueError(
@@ -928,7 +928,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n)), where n is the size of self
+        O(log(n)), where n is the size of self
         """
         if index != int(index) or index <= 0 or index > self.size():
             raise ValueError(
@@ -949,8 +949,8 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            -A integer representing the number of element in the same cycle as index note that
-            if index > self.size() it will return 1(which is coherent with the convention that self(i) = i)
+        -A integer representing the number of element in the same cycle as index note that
+        if index > self.size() it will return 1(which is coherent with the convention that self(i) = i)
 
         EXAMPLES::
 
@@ -963,7 +963,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         return self.provider.numberInCycle(index)
 
@@ -972,7 +972,7 @@ class RotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            the number of cycle of self
+        the number of cycle of self
 
         EXAMPLES::
 
@@ -985,7 +985,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._numCycles
 
@@ -999,7 +999,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A boolean indicating whether of not i and j are on the same cycle of self
+        A boolean indicating whether of not i and j are on the same cycle of self
 
         EXAMPLES::
 
@@ -1014,7 +1014,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(log(n))
+        O(log(n))
         """
         if i <= 0 or j <= 0 or i != int(i) or j != int(j):
             raise ValueError("{i} or {j} isn't a strictly positive integer")
@@ -1044,7 +1044,7 @@ class RotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            Return a string representation of self in a more pretty form
+        Return a string representation of self in a more pretty form
 
         EXAMPLES::
 
@@ -1076,7 +1076,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            - lst a list of tuples representing the cycles of self given in increasing order of their minimum elements
+        - lst a list of tuples representing the cycles of self given in increasing order of their minimum elements
 
         EXAMPLES::
 
@@ -1087,7 +1087,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(n),where n is the number of element of self
+        O(n),where n is the number of element of self
         """
         seen = [False for i in range(self.size() + 1)]
         cycles = []
@@ -1112,7 +1112,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            - The inverse of self
+        - The inverse of self
 
         EXAMPLES::
 
@@ -1123,7 +1123,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(n),where n is the number of element of the permutation
+        O(n),where n is the number of element of the permutation
         """
         cycles = self.to_cycles()
         return RotatingPermutation([tuple(reversed(e)) for e in cycles])
@@ -1139,7 +1139,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            self(i)
+        self(i)
 
         EXAMPLES::
 
@@ -1150,7 +1150,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if i != int(i) or i <= 0:
             raise ValueError("{i} isn't a positive integer")
@@ -1165,7 +1165,7 @@ class RotatingPermutation(MapPermutation):
         """
         OUTPUT:
 
-            the number of fixed point ( we only consider i such that i<=self.size())
+        the number of fixed point ( we only consider i such that i<=self.size())
 
         EXAMPLES::
 
@@ -1176,7 +1176,7 @@ class RotatingPermutation(MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self._numberOfFixedPoint
 
@@ -1188,7 +1188,7 @@ class RotatingPermutation(MapPermutation):
 
         OUTPUT:
 
-            A boolean indicating if self and other are equal
+        A boolean indicating if self and other are equal
 
         EXAMPLES::
 

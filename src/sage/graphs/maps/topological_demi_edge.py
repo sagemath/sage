@@ -30,7 +30,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._lmap = lmap
         self._index = index
@@ -56,7 +56,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.getIndex()
 
@@ -75,7 +75,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self.getMap()
@@ -94,7 +94,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.nextOnEdge()
 
@@ -112,7 +112,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.nextOnFace()
 
@@ -130,7 +130,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.nextOnNode()
 
@@ -148,7 +148,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.prevOnFace()
 
@@ -166,7 +166,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.prevOnNode()
 
@@ -184,7 +184,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self._index
@@ -202,7 +202,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self._lmap
@@ -220,7 +220,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
 
@@ -239,7 +239,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self.map.getTopologicalDemiEdge(self.map.phi(self.raw))
@@ -257,7 +257,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self.map.getTopologicalDemiEdge(self.map.sigma(self.raw))
@@ -275,7 +275,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self.map.getTopologicalDemiEdge(
@@ -294,7 +294,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self.map.getTopologicalDemiEdge(
@@ -316,7 +316,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(k), where k is the number of demi-edges on the face
+        O(k), where k is the number of demi-edges on the face
         """
         self._checkValid()
         lst = []
@@ -340,7 +340,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(k), where k is the number of demi-edges on the node
+        O(k), where k is the number of demi-edges on the node
         """
         self._checkValid()
 
@@ -371,7 +371,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return bool(self.map.areOnTheSameFace(
@@ -398,7 +398,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
 
@@ -416,7 +416,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._isValid = False
 
@@ -452,7 +452,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._index = newIndex
 
@@ -477,7 +477,7 @@ class TopologicalDemiEdge():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         tmp = self.raw
         self._setIndex(otherTopologicalDemiEdge.raw)

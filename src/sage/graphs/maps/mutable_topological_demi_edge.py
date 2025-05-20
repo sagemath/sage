@@ -30,7 +30,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         super().__init__(lmap, index)
@@ -50,7 +50,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self.getMap()
@@ -69,7 +69,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self._checkValid()
         return self._lmap
@@ -102,7 +102,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(log(m)) if self is planar or trust = True otherwise O(m)
+        O(log(m)) if self is planar or trust = True otherwise O(m)
         """
         self._checkValid()
 
@@ -122,7 +122,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            topoDemiEdgeA,topoDemiEdgeB as described above
+        topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
 
@@ -140,7 +140,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(log(m))
+        O(log(m))
         """
         self._checkValid()
 
@@ -153,7 +153,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            The MutableTopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
+        The MutableTopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
 
@@ -168,7 +168,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(log(m))
+        O(log(m))
         """
         self._checkValid()
         return self.map.addEdgeAfter(self.raw)
@@ -180,7 +180,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
+        The TopologicalDemiEdge associate to demi edge of the new edge which is on the newly added node
 
         EXAMPLES::
 
@@ -195,7 +195,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(log(m))
+        O(log(m))
         """
         self._checkValid()
 
@@ -246,7 +246,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
+        O(deg(node)*log(m)) if self.map is planar and O(m+deg(node)*log(m)) otherwise
         """
         self._checkValid()
 
@@ -270,7 +270,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(log(m))
+        O(log(m))
         """
         self._checkValid()
         self.map.contractEdge(self.raw)
@@ -306,7 +306,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(tlog(m)) where t is the number of edge on the face containing self
+        O(tlog(m)) where t is the number of edge on the face containing self
         """
         self._checkValid()
         self.map.contractFace(self.raw)
@@ -326,12 +326,12 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         OUTPUT:
 
-            newTopoDemiEdge:
-                A MutableTopologicalDemiEdge such that it corresponds to a new demi edge attached
-                after demiEdge.
+        newTopoDemiEdge:
+        A MutableTopologicalDemiEdge such that it corresponds to a new demi edge attached
+        after demiEdge.
 
-            topoDemiEdgeList:
-                A list of MutableTopologicalDemiEdge corresponding to the description above
+        topoDemiEdgeList:
+        A list of MutableTopologicalDemiEdge corresponding to the description above
 
         EXAMPLES::
 
@@ -368,8 +368,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
-            note that it is much more efficient than O(p+m) mainly when m>>p
+        O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
+        note that it is much more efficient than O(p+m) mainly when m>>p
         """
         self._checkValid()
 
@@ -415,8 +415,8 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
-            note that it is much more efficient than O(p+m) mainly when m>>p
+        O(p(log(m)+log(p))) where p = otherTopoDemiEdge.map.m and m is the number of edge of self.map,
+        note that it is much more efficient than O(p+m) mainly when m>>p
         """
         self._checkValid()
         if self.map.numberInTheSameNode(self.raw) > 1:
@@ -469,7 +469,7 @@ class MutableTopologicalDemiEdge(TopologicalDemiEdge):
 
         NOTE:
 
-            O(log(m)) where m is the number of edge of self.map
+        O(log(m)) where m is the number of edge of self.map
         """
         self._checkValid()
 

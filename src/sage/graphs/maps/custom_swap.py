@@ -28,8 +28,8 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(1); note that as of now, only arguments of the form [(i,j)] (of length 1) are supported.
-            This class is not intended to be used by the user.
+        O(1); note that as of now, only arguments of the form [(i,j)] (of length 1) are supported.
+        This class is not intended to be used by the user.
         """
         try:
             assert len(lst) == 1
@@ -58,7 +58,7 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(n), where n is the size of the permutation.
+        O(n), where n is the size of the permutation.
         """
         if isinstance(other, MapPermutation):
             return list(other) == list(self)
@@ -76,7 +76,7 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.b
 
@@ -96,7 +96,7 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if i != self.a and i != self.b:
             return i
@@ -118,7 +118,7 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self(i)
 
@@ -134,7 +134,7 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.b - (self.a != self.b)*2
 
@@ -150,7 +150,7 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(n) where n is the size of the permutation
+        O(n) where n is the size of the permutation
         """
         if self.a == self.b:
             return [(i,) for i in range(1, self.b + 1)]
@@ -170,6 +170,6 @@ class CustomSwap (MapPermutation):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self

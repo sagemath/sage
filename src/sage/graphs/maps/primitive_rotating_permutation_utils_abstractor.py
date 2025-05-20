@@ -2,7 +2,7 @@
 
 
 from sage.graphs.maps.permutation_utils_abstractor import PermutationUtilsAbstractor
-from sage.graphs.maps.map_error import NotImplementedError
+from sage.graphs.maps.map_error import NotImplementedErrorWithClassMessage
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -23,7 +23,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self.rpermutation = rpermutation
 
@@ -44,7 +44,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def sameCycle(self, i: int, j: int) -> bool:
         """
@@ -63,13 +63,13 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def numberOfCycles(self) -> int:
         """
         OUTPUT:
 
-            The number of cycles of the permutation
+        The number of cycles of the permutation
 
         EXAMPLES::
 
@@ -82,7 +82,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.rpermutation.numberOfCycles()
 
@@ -90,7 +90,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
         """
         OUTPUT:
 
-            The number of fixed point of the permutation
+        The number of fixed point of the permutation
 
         EXAMPLES::
 
@@ -103,7 +103,7 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.rpermutation.number_of_fixed_points()
 
@@ -124,4 +124,4 @@ class PrimitiveRotatingPermutationUtilsAbstractor(PermutationUtilsAbstractor):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)

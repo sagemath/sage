@@ -1,7 +1,7 @@
 
 from sage.all import Permutation  # Import sage library
 from sage.graphs.maps.labelled_map import LabelledMap
-from sage.graphs.maps.map_error import NotImplementedError
+from sage.graphs.maps.map_error import NotImplementedErrorWithClassMessage
 from sage.graphs.maps.primitive_mutable_topological_demi_edge import (
     PrimitiveMutableTopologicalDemiEdge,
 )
@@ -21,15 +21,15 @@ class PrimitiveMutableLabelledMap(LabelledMap):
     Attributes
     ----------
     sigma :  Permutation or MapPermutation
-        Permutation that maps a half-edge to the half-edge incident to
-        it in a anti-clockwise direction around the vertex it belongs to.
+    Permutation that maps a half-edge to the half-edge incident to
+    it in a anti-clockwise direction around the vertex it belongs to.
 
     alpha : Permutation or MapPermutation
-        Fixed-point free involution whose cycles are given by the edges.
+    Fixed-point free involution whose cycles are given by the edges.
 
     phi: Permutation or MapPermutation
-        Permutation that maps a half-edges to the half-edge next to it
-        in his face in the clockwise orde.
+    Permutation that maps a half-edges to the half-edge next to it
+    in his face in the clockwise orde.
 
     m: The number of edge of the map
 
@@ -70,7 +70,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(m) where m is the size of the map
+        O(m) where m is the size of the map
         """
 
         if isinstance(lmap, LabelledMap):
@@ -108,7 +108,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(1)
+        Complexity is O(1)
         """
         return self.getTopologicalDemiEdge(demiEdge)
 
@@ -130,7 +130,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            Complexity is O(1)
+        Complexity is O(1)
         """
 
         return self.topologicalMap[demiEdge]
@@ -151,7 +151,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         OUTPUT:
 
-            topoDemiEdgeA,topoDemiEdgeB as described above
+        topoDemiEdgeA,topoDemiEdgeB as described above
 
         EXAMPLES::
 
@@ -168,7 +168,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         # This will go before endDemiEdge
@@ -221,7 +221,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         topoDemiEdge = self.X(demiEdge)
@@ -254,7 +254,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1))
+        O(1))
         """
 
         self._swapTopologicalDemiEdgeValue(demiEdge, otherDemiEdge)
@@ -286,7 +286,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(k) where k = len(listIndexes)
+        O(k) where k = len(listIndexes)
         """
 
         for i in listIndexes:
@@ -324,7 +324,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         otherDemiEdge = self.alpha(demiEdge)
@@ -379,7 +379,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         self._BruteDeleteEdge(demiEdge, sameFace=sameFace)
@@ -401,7 +401,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self.alpha.stretch(2)
         self.alpha.addAfterGeneral(self.alpha.size(), self.alpha.size() - 1)
@@ -431,7 +431,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self.topologicalMap[demiEdge] = PrimitiveMutableTopologicalDemiEdge(
             self, demiEdge)
@@ -460,7 +460,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         self.topologicalMap.pop(topoDemiEdge.raw)
@@ -492,7 +492,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         newDemiEdge = self.q + 1
@@ -541,7 +541,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self.addEdgeAfter(self.sigma.inverseApply(demiEdge))
@@ -562,7 +562,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(m)
+        O(m)
         """
         return PrimitiveMutableLabelledMap(sigma=Permutation(self.sigma.to_list()), alpha=Permutation(self.alpha.to_list()))
 
@@ -586,7 +586,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if self.m == 1:
@@ -620,7 +620,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def areOnTheSameFace(self, demiEdgeA: int, demiEdgeB: int) -> bool:
         """
@@ -638,7 +638,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def numberInTheSameFace(self, demiEdge: int) -> int:
         """
@@ -656,7 +656,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def numberInTheSameNode(self, demiEdge: int) -> int:
         """
@@ -676,7 +676,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
 
 
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def checkTwoInTheSameFace(self, listDemiEdges: list[int]) -> bool:
         """
@@ -694,7 +694,7 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)
 
     def checkTwoInTheSameNode(self, listDemiEdges: list[int]) -> bool:
         """
@@ -712,4 +712,4 @@ class PrimitiveMutableLabelledMap(LabelledMap):
             ....:
             OK
         """
-        raise NotImplementedError(self)
+        raise NotImplementedErrorWithClassMessage(self)

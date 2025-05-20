@@ -29,7 +29,7 @@ def swapRight(node: "SplayNode", otherNode: "SplayNode") -> None:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     tmp = node.right
     node.right = otherNode.right
@@ -68,7 +68,7 @@ def swapLeft(node: "SplayNode", otherNode: "SplayNode") -> None:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     tmp = node.left
     node.left = otherNode.left
@@ -106,7 +106,7 @@ def SwapNonTopologicalExceptIndex(node: "SplayNode", otherNode: "SplayNode") -> 
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     # Value
     tmp = node.value
@@ -151,7 +151,7 @@ def makeParentKnow(node: "SplayNode") -> None:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     if node.parent is None:
         return
@@ -191,7 +191,7 @@ def swapNodeButNotIndex(node: "SplayNode", otherNode: "SplayNode") -> None:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     # OK
     if node == otherNode:
@@ -256,7 +256,7 @@ def numberOfElement(node: "SplayNode") -> int:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     return 0 if node is None else node.cnt
 
@@ -280,7 +280,7 @@ def valueToTheLeft(parentValue: int, value: int) -> bool:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     return parentValue > value
 
@@ -304,7 +304,7 @@ def valueToTheRight(parentValue: int, value: int) -> bool:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     return parentValue < value
 
@@ -331,7 +331,7 @@ def isLeftChild(parentNode: "SplayNode", node: "SplayNode") -> bool:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
 
     return valueToTheLeft(parentNode.value, node.value + node.offset)
@@ -359,7 +359,7 @@ def isRightChild(parentNode: "SplayNode", node: "SplayNode") -> bool:
 
     NOTE:
 
-        O(1)
+    O(1)
     """
     return valueToTheRight(parentNode.value, node.value + node.offset)
 
@@ -388,7 +388,7 @@ class SplayNode:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         # The value contained in the node.
@@ -429,7 +429,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
         oldRoot = self.getRoot()
         if oldRoot != self:
@@ -450,7 +450,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
         # It is guaranteed after calling this function that self is the root
 
@@ -476,7 +476,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n) (don't forget to splay self to guarantee the amortized complexity)
+        O(log n) (don't forget to splay self to guarantee the amortized complexity)
         """
         node = self
         while not node.isRoot():
@@ -500,7 +500,7 @@ class SplayNode:
 
         NOTE:
 
-            O(n); note that this function is written recursively, hence if the recursion limit is too small, this method may crash
+        O(n); note that this function is written recursively, hence if the recursion limit is too small, this method may crash
         """
 
         if self.isEmpty():
@@ -530,7 +530,7 @@ class SplayNode:
 
         NOTE:
 
-            O(n)
+        O(n)
         """
         if self.isEmpty():
             return []
@@ -558,7 +558,7 @@ class SplayNode:
 
         NOTE:
 
-            O(n)
+        O(n)
         """
         if self.isEmpty():
             return []
@@ -582,7 +582,7 @@ class SplayNode:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         return self.value is None
@@ -603,7 +603,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n); (don't forget to splay self to guarantee the amortized complexity)
+        O(log n); (don't forget to splay self to guarantee the amortized complexity)
         """
 
         if self.isEmpty():
@@ -643,7 +643,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n); (don't forget to splay self to guarantee the amortized complexity)
+        O(log n); (don't forget to splay self to guarantee the amortized complexity)
         """
         if self.isEmpty():
             return self, 0
@@ -687,7 +687,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n)(don't forget to splay on the returned node)
+        O(log n)(don't forget to splay on the returned node)
         """
         if self.isEmpty():
             self.value = newValue
@@ -741,7 +741,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n); not intended to be called by user; you should splay on node after calling it.
+        O(log n); not intended to be called by user; you should splay on node after calling it.
         """
 
         node = self
@@ -767,7 +767,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n); should splay on node to guarantee amortized log complexity
+        O(log n); should splay on node to guarantee amortized log complexity
         """
         if self.isEmpty():
             return self, 0
@@ -801,7 +801,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n); splay on node to guarantee amortized log time
+        O(log n); splay on node to guarantee amortized log time
         """
         minimum = self
         offset = self.offset
@@ -833,7 +833,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n); splay on the node returned to keep the amortized complexity
+        O(log n); splay on the node returned to keep the amortized complexity
         """
         if self.isEmpty():
             return self
@@ -920,7 +920,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log n),splay on the returned node to guarantee log amortized time
+        O(log n),splay on the returned node to guarantee log amortized time
         """
         maximum = self
         offset = self.offset
@@ -942,7 +942,7 @@ class SplayNode:
 
         NOTE:
 
-            O(n); written recursively, hence if the recursion limit is too low this method may crash
+        O(n); written recursively, hence if the recursion limit is too low this method may crash
         """
         if self.isEmpty():
             return None, None
@@ -970,7 +970,7 @@ class SplayNode:
 
         NOTE:
 
-            O(n); written recursively, hence if the recursion limit is too low this method it may crash
+        O(n); written recursively, hence if the recursion limit is too low this method it may crash
         """
         self._isBst()
 
@@ -997,7 +997,7 @@ class SplayNode:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if self.isEmpty():
             return self
@@ -1067,7 +1067,7 @@ class SplayNode:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if self.isEmpty():
             return self
@@ -1130,7 +1130,7 @@ class SplayNode:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return self.parent is None
 
@@ -1154,7 +1154,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log m)
+        O(log m)
         """
         offset = self.offset
         node = self
@@ -1182,7 +1182,7 @@ class SplayNode:
 
         NOTE:
 
-            O(log m); note that this method is unsafe, mainly because it doesn't update the splayTree attribute of the root. Use ``SafeSplay`` instead.
+        O(log m); note that this method is unsafe, mainly because it doesn't update the splayTree attribute of the root. Use ``SafeSplay`` instead.
         """
         while not self.isRoot():
             parent = self.parent
@@ -1235,7 +1235,7 @@ class SplayTree():
 
         NOTE:
 
-            O(n * log(max(n,m))), where n is the length of lst and m is the number of element in the subtree of root
+        O(n * log(max(n,m))), where n is the length of lst and m is the number of element in the subtree of root
         """
 
         self.root = root
@@ -1264,7 +1264,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log m), where m is the size of the tree of root; not intended to be used by the user
+        O(log m), where m is the size of the tree of root; not intended to be used by the user
         """
         if not root.isRoot():
             raise ValueError("The argument must be the root of his tree")
@@ -1291,7 +1291,8 @@ class SplayTree():
             [42, 43, 44]
 
         NOTE:
-            O(1)
+
+        O(1)
         """
         self.checkValid()
         self.root.offset += toAdd
@@ -1308,7 +1309,7 @@ class SplayTree():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if self.valid:
             return
@@ -1337,7 +1338,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n), where n is the size of self
+        O(log n), where n is the size of self
         """
         self.checkValid()
         if self.isEmpty():
@@ -1382,7 +1383,7 @@ class SplayTree():
 
         NOTE:
 
-            O(n)
+        O(n)
         """
         self.checkValid()
         return self.root.sortedList()
@@ -1416,7 +1417,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n + log m), where n is the size of self and m is the size of otherSplayTree
+        O(log n + log m), where n is the size of self and m is the size of otherSplayTree
         """
         self.checkValid()
 
@@ -1456,7 +1457,7 @@ class SplayTree():
 
         NOTE:
 
-            O(n), where n = self.size(). Written recursively, hence if the recursion limit is too small, this method may crash.
+        O(n), where n = self.size(). Written recursively, hence if the recursion limit is too small, this method may crash.
         """
         self.checkValid()
         return self.root.height()
@@ -1474,7 +1475,7 @@ class SplayTree():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self.checkValid()
         return self.root.isEmpty()
@@ -1492,7 +1493,7 @@ class SplayTree():
 
         NOTE:
 
-            O(n), where n = self.size(). Written recursively, hence if the recursion limit is too small, this method may crash.
+        O(n), where n = self.size(). Written recursively, hence if the recursion limit is too small, this method may crash.
         """
 
         self.checkValid()
@@ -1515,7 +1516,7 @@ class SplayTree():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self.checkValid()
         return self.root.isRoot()
@@ -1538,7 +1539,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
         self.checkValid()
         if self.isEmpty():
@@ -1574,7 +1575,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
 
         self.checkValid()
@@ -1602,7 +1603,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
         self.checkValid()
         self.changeRoot(self.root.delete(value)._splay())
@@ -1620,7 +1621,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
         self.checkValid()
         if self.isEmpty():
@@ -1643,7 +1644,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
 
         self.checkValid()
@@ -1672,7 +1673,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
 
         self.checkValid()
@@ -1702,7 +1703,7 @@ class SplayTree():
 
         NOTE:
 
-            O(m * log(n+m)) where n = self.size() and m = len(lst)
+        O(m * log(n+m)) where n = self.size() and m = len(lst)
         """
 
         self.checkValid()
@@ -1729,7 +1730,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
 
         self.checkValid()
@@ -1761,7 +1762,7 @@ class SplayTree():
 
         NOTE:
 
-            O(log n)
+        O(log n)
         """
 
         self.checkValid()
@@ -1788,7 +1789,7 @@ class SplayTree():
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         self.checkValid()
         return self.root.cnt

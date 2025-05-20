@@ -7,11 +7,11 @@ def CheckValid(cls: Type) -> Type:
     """
     INPUT:
 
-        -``cls`` ; a class
+    -``cls`` ; a class
 
     OUTPUT:
 
-        The same class but with a check before each method
+    The same class but with a check before each method
 
     EXAMPLES::
 
@@ -22,7 +22,7 @@ def CheckValid(cls: Type) -> Type:
 
     NOTE:
 
-        Used internally
+    Used internally
     """
     originalMethods = {name: method for name,
                        method in cls.__dict__.items() if callable(method)}

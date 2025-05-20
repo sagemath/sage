@@ -1,7 +1,6 @@
 from typing import Any
 from sage.all import Permutation
 from sage.graphs.maps.map_error import InvalidMapPermutationArgumentError
-from sage.rings.integer import Integer
 import numpy as np
 
 
@@ -29,7 +28,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(n) where n is the size of the permutation
+        O(n) where n is the size of the permutation
         """
 
         def isInt(x) -> bool:
@@ -68,7 +67,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(m),Used internally not intended to be used by the user
+        O(m),Used internally not intended to be used by the user
         """
         cnt = max(map(max, lst))
         self._tab = np.arange(1, cnt+1, dtype=int)
@@ -106,7 +105,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(n),Used internally not intended to be used by the user
+        O(n),Used internally not intended to be used by the user
         """
         self._tab = np.arange(1, n+1)
         self._rtab = np.arange(1, n+1)
@@ -125,7 +124,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(n),Used internally not intended to be used by the user
+        O(n),Used internally not intended to be used by the user
         """
 
         self._init_from_list(list(perm), trust=trust)
@@ -147,7 +146,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(m),Used internally not intended to be used by the user
+        O(m),Used internally not intended to be used by the user
         """
         self._tab = np.array(list)
         self._rtab = np.zeros(len(list), dtype=int)
@@ -169,7 +168,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(n)
+        O(n)
         """
         return [int(self(i)) for i in range(1, self.size() + 1)]
 
@@ -177,7 +176,7 @@ class MapPermutation:
         """
         OUTPUT:
 
-            The size of self
+        The size of self
 
         EXAMPLES::
 
@@ -187,7 +186,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         return len(self._tab)
 
@@ -199,7 +198,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            self(i)
+        self(i)
 
         EXAMPLES::
 
@@ -209,7 +208,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
         if i > self.size():
             return i
@@ -223,7 +222,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            j such that self(j) = i
+        j such that self(j) = i
 
         EXAMPLES::
 
@@ -233,7 +232,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(1)
+        O(1)
         """
 
         if i > self.size():
@@ -244,7 +243,7 @@ class MapPermutation:
         """
         OUTPUT:
 
-            The string representation of self
+        The string representation of self
 
         EXAMPLES::
 
@@ -259,7 +258,7 @@ class MapPermutation:
         """
         OUTPUT:
 
-            A more pretty string representation of self
+        A more pretty string representation of self
 
         EXAMPLES::
 
@@ -286,11 +285,11 @@ class MapPermutation:
         """
         OUTPUT:
 
-            A list of tuple representing the cycle decomposition of self
+        A list of tuple representing the cycle decomposition of self
 
         NOTE:
 
-            O(n)
+        O(n)
         """
         check = np.zeros(self.size()+1)
         cycles = []
@@ -313,7 +312,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            - The inverse of self
+        - The inverse of self
 
         EXAMPLES::
 
@@ -323,7 +322,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(n),where n is the number of element of the permutation
+        O(n),where n is the number of element of the permutation
         """
         return MapPermutation(list(self._rtab))
 
@@ -331,7 +330,7 @@ class MapPermutation:
         """
         OUTPUT:
 
-            self(i)
+        self(i)
 
         EXAMPLES::
 
@@ -349,7 +348,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            id th item
+        id th item
 
         EXAMPLES::
 
@@ -364,7 +363,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            self, with self.index to 0
+        self, with self.index to 0
 
         EXAMPLES::
 
@@ -380,7 +379,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            The next value in during an iteration or raise StopIteration
+        The next value in during an iteration or raise StopIteration
 
         EXAMPLES::
 
@@ -401,7 +400,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            The size of self
+        The size of self
 
         EXAMPLES::
 
@@ -419,7 +418,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            A boolean indicating other and self are equal
+        A boolean indicating other and self are equal
 
         EXAMPLES::
 
@@ -442,7 +441,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            -A MapPermutation of size max(rperm.size(),self.size()) representing the composition self*rperm
+        -A MapPermutation of size max(rperm.size(),self.size()) representing the composition self*rperm
 
         EXAMPLES::
 
@@ -454,7 +453,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(max(n,t)) ,where n is the size of self and t the size of rperm
+        O(max(n,t)) ,where n is the size of self and t the size of rperm
         """
         outSize = max(self.size(), rperm.size())
 
@@ -466,7 +465,7 @@ class MapPermutation:
         """
         OUTPUT:
 
-            The number of fixed point ( we only consider i such that i<=self.size())
+        The number of fixed point ( we only consider i such that i<=self.size())
 
         EXAMPLES::
 
@@ -476,7 +475,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(n) where n is the size of self
+        O(n) where n is the size of self
         """
         return np.sum(self._tab == np.arange(1, self.size()+1))
 
@@ -490,7 +489,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            -A MapPermutation of size max(lperm.size(),self.size()) representing the composition lperm*self
+        -A MapPermutation of size max(lperm.size(),self.size()) representing the composition lperm*self
 
         EXAMPLES::
 
@@ -502,7 +501,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(max(n,t)),where n is the size of self and t the size of lperm
+        O(max(n,t)),where n is the size of self and t the size of lperm
         """
         return lperm.left_action_product(self)
 
@@ -516,7 +515,7 @@ class MapPermutation:
 
         OUTPUT:
 
-            -A MapPermutation of size max(b.size(),self.size()) representing the composition self*b
+        -A MapPermutation of size max(b.size(),self.size()) representing the composition self*b
 
         EXAMPLES::
 
@@ -528,7 +527,7 @@ class MapPermutation:
 
         NOTE:
 
-            O(max(n,t)),where n is the size of self and t the size of  b
+        O(max(n,t)),where n is the size of self and t the size of  b
         """
 
         return self.left_action_product(b)

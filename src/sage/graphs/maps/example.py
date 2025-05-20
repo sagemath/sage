@@ -5,7 +5,6 @@ from sage.graphs.maps.labelled_map import LabelledMap
 from sage.graphs.maps.mutable_labelled_map import MutableLabelledMap
 from sage.graphs.maps.rooted_map import RootedMap
 from sage.graphs.maps.map_generator import MapGenerator
-from sage.graphs.maps.banner import bannerExampleStart, bannerExampleEnd, mapBanner
 from sage.graphs.maps.dynamic_planar_map_show import DynamicPlanarMapShow
 
 
@@ -52,7 +51,6 @@ class MapExample:
         """
         if false_run:
             return
-        print(bannerExampleStart)
         print("Starting to show some examples in action")
         self.showExample("Random rooted tree of with 4 edge",
                          self.exampleRandomRootedTree(4))
@@ -66,9 +64,6 @@ class MapExample:
 
         self.showExample("3 triangle linked together",
                          self.exampleRepeatingPolygon(3, 3))
-        print(mapBanner)
-        print("Image : https://igor-kortchemski.perso.math.cnrs.fr/hdr.pdf")
-        print(bannerExampleEnd)
 
     @staticmethod
     def showExample(name: str, myMap: LabelledMap, false_run=False) -> None:
@@ -137,7 +132,7 @@ class MapExample:
 
         NOTE:
 
-            O(m)
+        O(m)
         """
         mapGenerator = MapGenerator()
 
@@ -161,7 +156,7 @@ class MapExample:
 
         NOTE:
 
-            O(m)
+        O(m)
         """
         mapGenerator = MapGenerator()
 
@@ -183,7 +178,7 @@ class MapExample:
 
         NOTE:
 
-            O(nlog(n))
+        O(nlog(n))
         """
 
         sigma = Permutation([(1,), (2,)])
@@ -216,7 +211,7 @@ class MapExample:
 
         NOTE:
 
-            O(nlog(n))
+        O(nlog(n))
         """
         sigma = Permutation([(1,), (2,)])
         alpha = Permutation([(1, 2)])
@@ -250,7 +245,7 @@ class MapExample:
 
         NOTE:
 
-            O(pn(log(n)+log(p)))
+        O(pn(log(n)+log(p)))
         """
 
         # First draw a n-gone
