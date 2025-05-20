@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu', 'macos']
+        os: ['ubuntu', 'macos', 'windows']
         python: ['3.11', '3.12']
         tests: ['all']
         editable:
@@ -38,6 +38,9 @@ jobs:
           - os: 'ubuntu'
             python: 3.12
             editable: true
+            tests: 'all'
+          - os: windows
+            python: '3.13'
             tests: 'all'
 
     steps:
@@ -66,6 +69,17 @@ jobs:
           path: ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-conda-${{ hashFiles('environment-3.11-linux.yml') }}
+      
+      - name: Setup MSVC environment
+        if: runner.os == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Remove Git link.exe
+        if: runner.os == 'windows'
+        # It conflicts with the vs linker 
+        # So we delete it, following the advice on https://github.com/ilammy/msvc-dev-cmd?tab=readme-ov-file#name-conflicts-with-shell-bash 
+        run: rm -f "C:/Program Files/Git/usr/bin/link.exe"
+        shell: bash
 
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
@@ -76,12 +90,14 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python }}
-          miniforge-version: latest
+          # Disabled for now due to
+          # https://github.com/conda-incubator/setup-miniconda/issues/379
+          # miniforge-version: latest
           use-mamba: true
           channels: conda-forge
           channel-priority: true
           activate-environment: sage-dev
-          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || startsWith(matrix.os, 'ubuntu') && 'linux' || 'win' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}
@@ -92,9 +108,15 @@ jobs:
       - name: Build
         shell: bash -l {0}
         run: |
-          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          export CC="ccache $CC"
-          export CXX="ccache $CXX"
+          if [[ "$RUNNER_OS" != "Windows" ]]; then
+            export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+            export CC="ccache $CC"
+            export CXX="ccache $CXX"
+          else
+            export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
+            export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
+          fi
+
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
           pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
@@ -104,7 +126,7 @@ jobs:
         shell: bash -l {0}
         if: matrix.tests == 'all'
         run: |
-          python3 tools/update-meson.py
+          python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
             git add --intent-to-add .  # also show newly created files in git diff
             git status
