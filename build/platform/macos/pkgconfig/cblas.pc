@@ -1,0 +1,6 @@
+Name: blas 
+Description: Apple blas
+Version: 42.0
+URL: https://apple.com
+Cflags:
+Libs: -framework Accelerate
