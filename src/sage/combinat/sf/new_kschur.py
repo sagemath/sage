@@ -481,7 +481,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             return matrix([[other(self[row]).coefficient(col) for col in Q]
                            for row in P])
 
-        def an_element(self):
+        def _an_element_(self):
             r"""
             Return an element of ``self``.
 

@@ -20,7 +20,7 @@ from functools import reduce
 
 from sage.misc.lazy_import import lazy_import
 from sage.symbolic.ring import SR
-from sage.structure.element import Expression
+from sage.structure.element import Expression, InfinityElement
 from sage.functions.log import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
@@ -212,7 +212,7 @@ class Converter:
             return self.relation(ex, operator)
         elif isinstance(operator, FDerivativeOperator):
             return self.derivative(ex, operator)
-        elif operator == tuple:
+        elif operator is tuple:
             return self.tuple(ex)
         else:
             return self.composition(ex, operator)
@@ -708,7 +708,7 @@ class FriCASConverter(InterfaceInit):
             sage: asin(pi)._fricas_()                                           # optional - fricas
             asin(%pi)
 
-            sage: I._fricas_().domainOf()                                   # optional - fricas
+            sage: I._fricas_().domainOf()                                       # optional - fricas
             Complex(Integer...)
 
             sage: SR(I)._fricas_().domainOf()                                   # optional - fricas
@@ -725,6 +725,11 @@ class FriCASConverter(InterfaceInit):
             sage: (ex^2)._fricas_()                                             # optional - fricas
                        +-+
             (4 + 2 %i)\|2  + 5 + 4 %i
+
+        Check that :issue:`40101` is fixed::
+
+            sage: SR(-oo)._fricas_().domainOf()                                 # optional - fricas
+            OrderedCompletion(Integer)
         """
         try:
             result = getattr(obj, self.name_init)()
@@ -735,6 +740,9 @@ class FriCASConverter(InterfaceInit):
                 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
                 if isinstance(obj, NumberFieldElement_gaussian):
                     return "((%s)::EXPR COMPLEX INT)" % result
+            elif isinstance(obj, InfinityElement):
+                # in this case, we leave the decision about the domain best to FriCAS
+                return result
         return "((%s)::EXPR INT)" % result
 
     def symbol(self, ex):
