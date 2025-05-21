@@ -482,11 +482,11 @@ class OperationTable(SageObject):
                         except (KeyError, ValueError):
                             failed = True
                     if failed:
-                        if not elements is None and not self._closed:
+                        if elements is not None and not self._closed:
                             # if the result is not necessarily among elements
                             try:
                                 coerced = S(result)
-                                if not coerced in self._elts_ext:
+                                if coerced not in self._elts_ext:
                                     self._elts_ext.append(coerced)
                                 r = self._elts_ext.index(coerced) + self._n
                             except Exception:
@@ -601,11 +601,10 @@ class OperationTable(SageObject):
                 name_list.append(estr)
             for e in self._elts_ext:
                 estr = repr(e)
-                if len(estr) > width:
-                    width = len(estr)
+                width = max(len(estr), width)
                 name_list_ext.append(estr)
         elif isinstance(names, list):
-            if not names is None and not self._closed:
+            if names is not None and not self._closed:
                 raise ValueError('names argument cannot be used together with closed=False')
             if len(names) != self._n:
                 raise ValueError('list of element names must be the same size as the set, %s != %s' % (
