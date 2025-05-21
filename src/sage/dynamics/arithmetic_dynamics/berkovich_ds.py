@@ -513,7 +513,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
     @staticmethod
     def __classcall_private__(cls, dynamical_system, domain=None):
         """
-        Return the approapriate dynamical system on projective Berkovich space over ``Cp``.
+        Return the appropriate dynamical system on projective Berkovich space over ``Cp``.
 
         EXAMPLES::
 
