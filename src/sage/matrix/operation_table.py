@@ -344,7 +344,7 @@ class OperationTable(SageObject):
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
-        ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed
+        ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed. Maybe try closed=False?
 
     Unusable functions should be recognized as such::
 
@@ -534,7 +534,7 @@ class OperationTable(SageObject):
             sage: from sage.matrix.operation_table import OperationTable
             sage: G = SymmetricGroup(3)
             sage: T = OperationTable(G, operator.mul)
-            sage: w, l, d = T._name_maker('letters')
+            sage: w, l, lx, d = T._name_maker('letters')
             sage: w
             1
             sage: l[0]
