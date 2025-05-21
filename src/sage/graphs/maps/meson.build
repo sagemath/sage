@@ -1,6 +1,5 @@
 py.install_sources(
   'all.py',
-  'banner.py',
   'custom_swap.py',
   'cycle_utils_provider.py',
   'cyclic_chained_list.py',
