@@ -32,6 +32,7 @@ AUTHORS:
 """
 
 from itertools import accumulate, chain, product
+from collections import defaultdict
 
 from sage.arith.misc import divisors
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
@@ -59,6 +60,7 @@ from sage.modules.free_module_element import vector
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
 from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.sets.set import Set
@@ -432,6 +434,82 @@ class AtomicSpeciesElement(WithEqualityById,
         if self._mc == n:
             for rep in libgap.RightTransversal(S, self._dis):
                 yield tuple(S(rep)._act_on_list_on_position(l))
+
+    def __call__(self, *args):
+        r"""
+        Substitute `M_1,\ldots, M_k` into ``self``.
+
+        ``self`` must not be a singleton.  The arguments must all
+        have the same parent and must all be molecular.  The number
+        of arguments must be equal to the arity of ``self``.
+
+        The result is an atomic species, whose parent has the
+        same variable names as the arguments.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import AtomicSpecies, MolecularSpecies
+            sage: A = AtomicSpecies("X")
+            sage: M = MolecularSpecies("X")
+            sage: Xmol = M(SymmetricGroup(1))
+            sage: E2atom = M(SymmetricGroup(2))
+            sage: E2mol = M(SymmetricGroup(2))
+            sage: E2atom(Xmol)
+            E_2
+            sage: E2atom(E2mol)
+            E_2(E_2)
+
+        A multisort example::
+
+            sage: A = AtomicSpecies("X")
+            sage: M2 = MolecularSpecies("X, Y")
+            sage: C3 = A(CyclicPermutationGroup(3))
+            sage: X = M2(SymmetricGroup(1), {0: [1]})
+            sage: Y = M2(SymmetricGroup(1), {1: [1]})
+            sage: C3(X*Y)
+            {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
+
+        """
+        if sum(self._mc) == 1:
+            raise ValueError("self must not be a singleton")
+        if len(args) != self.parent()._arity:
+            raise ValueError("number of args must match arity of self")
+        if len(set(arg.parent() for arg in args)) > 1:
+            raise ValueError("all args must have the same parent")
+        if not all(isinstance(arg, MolecularSpecies.Element) for arg in args):
+            raise ValueError("all args must be molecular species")
+
+        Mlist = [None] * sum(self.grade())
+        G = self._dis
+        dompart = self._dompart
+        for i, v in enumerate(dompart):
+            for k in v:
+                Mlist[k - 1] = args[i]
+        starts = list(accumulate([sum(M.grade()) for M in Mlist],
+                                 initial=0))
+
+        # gens from self
+        gens = []
+        for gen in G.gens():
+            newgen = []
+            for cyc in gen.cycle_tuples():
+                for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1):
+                    newgen.append(tuple([k + starts[i - 1] for i in cyc]))
+            gens.append(newgen)
+
+        # gens from M_i and dompart
+        P = args[0].parent()
+        pi = {i: [] for i in range(P._arity)}
+        for start, M in zip(starts, Mlist):
+            K, K_dompart = M.permutation_group()
+            for i, v in enumerate(K_dompart):
+                pi[i].extend([start + k for k in v])
+            for gen in K.gens():
+                gens.append([tuple([start + k for k in cyc])
+                             for cyc in gen.cycle_tuples()])
+
+        H = PermutationGroup(gens, domain=range(1, starts[-1] + 1))
+        return P._indices(H, pi, check=False)
 
 
 class AtomicSpecies(UniqueRepresentation, Parent):
@@ -1032,6 +1110,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             sage: M((X, a, 'left'), {0: X.base_set()}, check=False)
             E_4*E_2(E_2)
 
+        Create a molecular species from a ``dict`` of :class:`AtomicSpecies`::
+
+            sage: from sage.rings.species import AtomicSpecies
+            sage: A = AtomicSpecies("X, Y")
+            sage: M = MolecularSpecies("X, Y")
+            sage: M({a: 1 for a in A.subset(3)})
+            E_3(X)*C_3(X)*E_3(Y)*C_3(Y)
+
         TESTS::
 
             sage: M = MolecularSpecies(["X", "Y"])
@@ -1091,6 +1177,14 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a molecular species")
+
+        if isinstance(G, dict):
+            if check:
+                if not all(A.parent() == self._indices for A in G):
+                    raise ValueError(f"all keys of the dict {G} must be {self._indices}")
+                if not all(isinstance(e, Integer) for e in G.values()):
+                    raise ValueError(f"all values of the dict {G} must be Integers")
+            return self.element_class(self, G)
 
         if isinstance(G, tuple):
             if len(G) == 2:
@@ -1522,6 +1616,10 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: E2 = M(SymmetricGroup(2))
                 sage: E2(X)
                 E_2
+                sage: E2(X^2)
+                E_2(X^2)
+                sage: (X^2)(E2^3)
+                E_2^6
                 sage: X(E2)
                 E_2
                 sage: E2(E2)
@@ -1575,36 +1673,16 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             # TODO: the case that G in F(G) has a constant part and F
             # is a polynomial species is not yet covered - see
             # section 4.3 of [ALL2002]_
-            Mlist = [None] * sum(self.grade())
-            G, dompart = self.permutation_group()
-            for i, v in enumerate(dompart):
-                for k in v:
-                    Mlist[k - 1] = args[i]
-            starts = list(accumulate([sum(M.grade()) for M in Mlist],
-                                     initial=0))
-
-            # gens from self
-            gens = []
-            for gen in G.gens():
-                newgen = []
-                for cyc in gen.cycle_tuples():
-                    for k in range(1, sum(Mlist[cyc[0] - 1].grade()) + 1):
-                        newgen.append(tuple([k + starts[i - 1] for i in cyc]))
-                gens.append(newgen)
-
-            # gens from M_i and dompart
             P = args[0].parent()
-            pi = {i: [] for i in range(P._arity)}
-            for start, M in zip(starts, Mlist):
-                K, K_dompart = M.permutation_group()
-                for i, v in enumerate(K_dompart):
-                    pi[i].extend([start + k for k in v])
-                for gen in K.gens():
-                    gens.append([tuple([start + k for k in cyc])
-                                 for cyc in gen.cycle_tuples()])
 
-            return P(PermutationGroup(gens, domain=range(1, starts[-1] + 1)),
-                     pi, check=False)
+            atoms = defaultdict(ZZ)
+            for A, e in self.dict().items():
+                if sum(A._mc) > 1:
+                    atoms[A(*args)] += e
+                else:
+                    for B, f in args[A._mc.index(1)].dict().items():
+                        atoms[B] += e * f
+            return P(atoms)
 
         def structures(self, *labels):
             r"""

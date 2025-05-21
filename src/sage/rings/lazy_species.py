@@ -801,14 +801,17 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         log = self.log()
         P1 = P._laurent_poly_ring
         M1 = P1._indices
+        A1 = M1._indices
 
         def E(mu):
-            return M1.prod(M1(SymmetricGroup(a)) for a in mu)
+            return M1({A1(SymmetricGroup(e)): a
+                       for e, a in enumerate(mu.to_exp(), 1) if a})
 
         def pi(mu):
             return (-1)**(len(mu)-1) * multinomial(mu.to_exp()) / len(mu)
 
-        def coefficient(F, n):
+        F = P.undefined()
+        def coefficient(n):
             if not n:
                 return 0
             res = log[n].monomial_coefficients()
@@ -821,8 +824,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                         res[M] = res.get(M, 0) - pi(mu) * g_N
             return P1._from_dict(res)
 
-        F = P.undefined()
-        F.define(P(lambda n: coefficient(F, n)))
+        F.define(P(coefficient))
         return F
 
 
