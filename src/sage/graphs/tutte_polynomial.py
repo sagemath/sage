@@ -662,7 +662,7 @@ def _tutte_polynomial_internal(G, x, y, edge_selector, cache=None):
     ##################################
 
     # Theorem 4: from Haggard, Pearce, and Royle Note that the formula
-    # at http://homepages.ecs.vuw.ac.nz/~djp/files/TOMS10.pdf is
+    # at https://web.archive.org/web/20110401195911/http://homepages.ecs.vuw.ac.nz/~djp/files/TOMS10.pdf is
     # slightly incorrect.  The initial sum should only go to n-2
     # instead of n (allowing for the last part of the recursion).
     # Additionally, the first operand of the final product should be

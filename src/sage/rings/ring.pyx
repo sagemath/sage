@@ -469,54 +469,6 @@ cdef class Ring(ParentWithGens):
             return x
         return self._one_element
 
-    def is_field(self, proof=True):
-        """
-        Return ``True`` if this ring is a field.
-
-        INPUT:
-
-        - ``proof`` -- boolean (default: ``True``); determines what to do in
-          unknown cases
-
-        ALGORITHM:
-
-        If the parameter ``proof`` is set to ``True``, the returned value is
-        correct but the method might throw an error.  Otherwise, if it is set
-        to ``False``, the method returns ``True`` if it can establish that
-        ``self`` is a field and ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: QQ.is_field()
-            True
-            sage: GF(9, 'a').is_field()                                                 # needs sage.rings.finite_rings
-            True
-            sage: ZZ.is_field()
-            False
-            sage: QQ['x'].is_field()
-            False
-            sage: Frac(QQ['x']).is_field()
-            True
-
-        This illustrates the use of the ``proof`` parameter::
-
-            sage: R.<a,b> = QQ[]
-            sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
-            sage: S.is_field(proof=True)                                                # needs sage.libs.singular
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-            sage: S.is_field(proof=False)                                               # needs sage.libs.singular
-            False
-        """
-        if self.is_zero():
-            return False
-
-        if proof:
-            raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
-        else:
-            return False
-
     def order(self):
         """
         The number of elements of ``self``.
@@ -531,110 +483,6 @@ cdef class Ring(ParentWithGens):
         if self.is_zero():
             return 1
         raise NotImplementedError
-
-    def zeta(self, n=2, all=False):
-        """
-        Return a primitive ``n``-th root of unity in ``self`` if there
-        is one, or raise a :exc:`ValueError` otherwise.
-
-        INPUT:
-
-        - ``n`` -- positive integer
-
-        - ``all`` -- boolean (default: ``False``); whether to return
-          a list of all primitive `n`-th roots of unity. If ``True``, raise a
-          :exc:`ValueError` if ``self`` is not an integral domain.
-
-        OUTPUT: element of ``self`` of finite order
-
-        EXAMPLES::
-
-            sage: QQ.zeta()
-            -1
-            sage: QQ.zeta(1)
-            1
-            sage: CyclotomicField(6).zeta(6)                                            # needs sage.rings.number_field
-            zeta6
-            sage: CyclotomicField(3).zeta(3)                                            # needs sage.rings.number_field
-            zeta3
-            sage: CyclotomicField(3).zeta(3).multiplicative_order()                     # needs sage.rings.number_field
-            3
-
-            sage: # needs sage.rings.finite_rings
-            sage: a = GF(7).zeta(); a
-            3
-            sage: a.multiplicative_order()
-            6
-            sage: a = GF(49,'z').zeta(); a
-            z
-            sage: a.multiplicative_order()
-            48
-            sage: a = GF(49,'z').zeta(2); a
-            6
-            sage: a.multiplicative_order()
-            2
-
-            sage: QQ.zeta(3)
-            Traceback (most recent call last):
-            ...
-            ValueError: no n-th root of unity in rational field
-            sage: Zp(7, prec=8).zeta()                                                  # needs sage.rings.padics
-            3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + 6*7^6 + 2*7^7 + O(7^8)
-
-        TESTS::
-
-            sage: from sage.rings.ring import Ring
-            sage: Ring.zeta(QQ, 1)
-            1
-            sage: Ring.zeta(QQ, 2)
-            -1
-            sage: Ring.zeta(QQ, 3)                                                      # needs sage.libs.pari
-            Traceback (most recent call last):
-            ...
-            ValueError: no 3rd root of unity in Rational Field
-            sage: IntegerModRing(8).zeta(2, all = True)
-            Traceback (most recent call last):
-            ...
-            ValueError: ring is not an integral domain
-        """
-        if all and not self.is_integral_domain():
-            raise ValueError("ring is not an integral domain")
-        if n == 2:
-            if all:
-                return [self(-1)]
-            else:
-                return self(-1)
-        elif n == 1:
-            if all:
-                return [self(1)]
-            else:
-                return self(1)
-        else:
-            f = self['x'].cyclotomic_polynomial(n)
-            if all:
-                return [-P[0] for P, e in f.factor() if P.degree() == 1]
-            for P, e in f.factor():
-                if P.degree() == 1:
-                    return -P[0]
-            from sage.rings.integer_ring import ZZ
-            raise ValueError("no %s root of unity in %r" % (ZZ(n).ordinal_str(), self))
-
-    def zeta_order(self):
-        """
-        Return the order of the distinguished root of unity in ``self``.
-
-        EXAMPLES::
-
-            sage: CyclotomicField(19).zeta_order()                                      # needs sage.rings.number_field
-            38
-            sage: GF(19).zeta_order()
-            18
-            sage: GF(5^3,'a').zeta_order()                                              # needs sage.rings.finite_rings
-            124
-            sage: Zp(7, prec=8).zeta_order()                                            # needs sage.rings.padics
-            6
-        """
-        return self.zeta().multiplicative_order()
 
     @cached_method
     def epsilon(self):
@@ -947,17 +795,6 @@ cdef class Field(CommutativeRing):
             True
         """
         return self
-
-    def is_field(self, proof=True):
-        """
-        Return ``True`` since this is a field.
-
-        EXAMPLES::
-
-            sage: Frac(ZZ['x,y']).is_field()
-            True
-        """
-        return True
 
     def algebraic_closure(self):
         """
