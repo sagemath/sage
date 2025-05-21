@@ -2862,6 +2862,42 @@ class LazyModuleElement(Element):
         phi = P.jacobi_theta(w=w, a=a, b=b)
         return phi(self)
 
+    def polylogarithm(self, s):
+        """
+        Return the polylogarithm in ``s`` evaluated at ``self``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: z.polylogarithm(-2)
+            z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
+            sage: (z + z^2).polylogarithm(3)
+            z + 9/8*z^2 + 31/108*z^3 + 145/576*z^4 + 3269/18000*z^5 + 421/2400*z^6
+             + 213859/1234800*z^7 + O(z^8)
+
+            sage: L.<z> = LazyPowerSeriesRing(SR)
+            sage: s = SR.var('s')
+            sage: z.polylogarithm(s)
+            z + 1/(2^s)*z^2 + 1/(3^s)*z^3 + 1/(4^s)*z^4 + 1/(5^s)*z^5
+             + 1/(6^s)*z^6 + 1/(7^s)*z^7 + O(z^8)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+        phi = P.polylogarithm(s=s)
+        return phi(self)
+
+    def dilogarithm(self):
+        """
+        Return the dilogarithm evaluated at ``self``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: z.dilogarithm()
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+        """
+        return self.polylogarithm(2)
+
     # === powers ===
 
     def __pow__(self, n):
