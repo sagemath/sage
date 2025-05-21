@@ -23,6 +23,7 @@ jobs:
           - fedora:41
           - fedora:42
           - ghcr.io/void-linux/void-glibc-full
+          - archlinux
     container:
       image: ${{ matrix.container }}
 
