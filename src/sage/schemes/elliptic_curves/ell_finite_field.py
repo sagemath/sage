@@ -1121,7 +1121,9 @@ class EllipticCurve_finite_field(EllipticCurve_field):
           If ``algorithm`` is set to anything else, this argument is ignored.
 
         OUTPUT: a pair of points generating `E[n]` when it is isomorphic to `(\Z
-        / n\Z)^2`; otherwise raises an error
+        / n\Z)^2`; otherwise raises an error. The result is cached separately
+        for each algorithm and outputs may differ between algorithms and between
+        runs.
 
         EXAMPLES::
 
@@ -1161,6 +1163,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
              : 60*z11^10 + 91*z11^9 + 89*z11^8 + 7*z11^7 + 63*z11^6
              + 55*z11^5 + 23*z11^4 + 17*z11^3 + 90*z11^2 + 91*z11 + 68
              : 1)
+            sage: (P, Q) == E.torsion_basis(23)
+            True
 
         ::
 
@@ -1189,10 +1193,12 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
         if algorithm == "random_sampling":
-            return self._torsion_basis_from_random_sampling(n,
-                                                            num_random_trials=num_random_trials)
+            if not hasattr(self, "_torsion_basis_random_sampling"):
+                self._torsion_basis_random_sampling = self._torsion_basis_from_random_sampling(n, num_random_trials=num_random_trials)
+            return self._torsion_basis_random_sampling
 
         if algorithm == "abelian_group":
+            # this is always cached as .abelian_group is cached
             return self._torsion_basis_from_abelian_group(n)
 
         raise ValueError("only algorithms 'random_sampling' and 'abelian_group' supported")
