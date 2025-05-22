@@ -2108,7 +2108,7 @@ class Link(SageObject):
         if base_ring:
             ring = base_ring
             from sage.misc.superseded import deprecation
-            deprecation(40199, "base_ring is deprecated, use argument ring instead.")
+            deprecation(40149, "base_ring is deprecated, use argument ring instead.")
 
         ch = ring.characteristic()
         integral = False
