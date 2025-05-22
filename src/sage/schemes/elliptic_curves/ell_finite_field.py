@@ -1109,13 +1109,13 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         - ``algorithm`` -- (optional) string:
 
           - ``"random_sampling"`` -- samples random points and check they
-            generate `E[n]`.
+            generate `E[n]`
 
           - ``"abelian_group"`` -- use :meth:`abelian_group` and
-            :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
+            :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`
 
         OUTPUT: a pair of points generating `E[n]` when it is isomorphic to `(\Z
-        / n\Z)^2`, else error.
+        / n\Z)^2`; otherwise raises an error
 
         EXAMPLES::
 
@@ -1177,7 +1177,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         point by `|E| / n`. Other random points `Q` of order `n` are generated,
         and `e_n(P, Q)` is checked to generate `\mu_n`.
 
-        When ``algorithm'' is set to "abelian_group", this method currently uses
+        When ``algorithm`` is set to "abelian_group", this method currently uses
         :meth:`abelian_group` and
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
