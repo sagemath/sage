@@ -2776,7 +2776,7 @@ class GraphGenerators:
     NKStarGraph = staticmethod(families.NKStarGraph)
     NStarGraph = staticmethod(families.NStarGraph)
     OddGraph = staticmethod(families.OddGraph)
-    P2ForbiddenMinors = staticmethod(families.p2_forbidden_minors)
+    p2_forbidden_minors = staticmethod(families.p2_forbidden_minors)
     PaleyGraph = staticmethod(families.PaleyGraph)
     PasechnikGraph = staticmethod(families.PasechnikGraph)
     petersen_family = staticmethod(families.petersen_family)

@@ -9514,20 +9514,27 @@ class Graph(GenericGraph):
         return G
 
     @doc_index("Graph properties")
-    def is_projective_planar(self):
+    def is_projective_planar(self, map_flag=False):
         r"""
         Check whether ``self`` is projective planar.
 
         A graph is projective planar if it can be embedded in the projective
         plane.  The approach is to check that the graph does not contain any
         of the known forbidden minors.
-        WARNING: This functions always returns a truthy value.
+
+
+        TESTS::
+
+        sage: len(graphs. p2_forbidden_minors())
+        35
+
 
         OUTPUT:
 
-        Returns True if the graph is projective planar, or if the graph is not
-        projective planar, a dictionary from :meth:`~Graph.minor`:: indicating
-        one of the forbidden graph minors.
+        Return True if the graph is projective planar and False if not.  If the
+        parameter map_flag is True and the graph is not projective planar, then
+        the method returns False and a map from :meth:`~Graph.minor`
+        indicating one of the forbidden graph minors.
 
         EXAMPLES:
 
@@ -9551,12 +9558,12 @@ class Graph(GenericGraph):
             - :meth:`~Graph.minor`
         """
 
-        from sage.graphs.graph_generators import GraphGenerators
+        from sage.graphs.generators.families import p2_forbidden_minors
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
         return_map = None
 
-        for forbidden_minor in GraphGenerators.P2ForbiddenMinors():
+        for forbidden_minor in p2_forbidden_minors():
             # Can't be a minor if it has more vertices or edges than G
 
             if (forbidden_minor.num_verts() > num_verts_G
@@ -9566,7 +9573,10 @@ class Graph(GenericGraph):
             try:
                 return_map = self.minor(forbidden_minor)
                 if return_map is not None:
-                    return return_map
+                    if map_flag:
+                        return False, return_map
+                    else:
+                        return False
 
             # If G has no H minor, then G.minor(H) throws a ValueError
             except ValueError:
