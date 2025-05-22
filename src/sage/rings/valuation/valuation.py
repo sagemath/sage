@@ -56,7 +56,7 @@ send more than just zero to infinity::
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT
-
+from sage.rings.infinity import infinity
 from sage.misc.cachefunc import cached_method
 
 
@@ -248,6 +248,65 @@ class DiscretePseudoValuation(Morphism):
         if isinstance(other, ScaledValuation_generic):
             return other <= self
         raise NotImplementedError("Operator not implemented for this valuation")
+    
+    def reduce_to_unit(self, f):
+        r"""
+        Reduce the unit part of an element after shifting it to valuation 0.
+
+        Given an element `f`, this method returns the reduction of `f * u`, where
+        `u` is an element with valuation `-v(f)`, ensuring the result has valuation 0.
+
+        INPUT:
+        - ``f`` -- an element of the domain
+
+        OUTPUT:
+        The reduction of `f * u`, where `u` is an element with valuation `-v(f)`.
+
+        EXAMPLES:
+        For a Gauss valuation on a polynomial ring::
+
+            sage: R.<x> = QQ[]
+            sage: v = GaussValuation(R, QQ.valuation(2))
+            sage: f = 2*x
+            sage: v.reduce_to_unit(f)
+            x
+            sage: f = 4*x^2
+            sage: v.reduce_to_unit(f)
+            x^2
+            sage: f = 1
+            sage: v.reduce_to_unit(f)
+            1
+            sage: f = 2
+            sage: v.reduce_to_unit(f)
+            1
+            sage: f = x^2 + 2*x + 4
+            sage: v.reduce_to_unit(f)
+            x^2 + x
+
+        For a p-adic valuation::
+
+            sage: R = Zp(5)
+            sage: v = R.valuation()
+            sage: f = R(25)
+            sage: v.reduce_to_unit(f)
+            1
+            sage: f = R(7)
+            sage: v.reduce_to_unit(f)
+            2
+
+        The zero element raises an error::
+
+            sage: v.reduce_to_unit(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: Cannot compute unit part for zero element
+
+        """
+        s = self(f)
+        if s == infinity:
+            raise ValueError("Cannot compute unit part for zero element")
+        u = self.equivalence_unit(-s)
+        return self.reduce(f * u)
 
     # Remove the default implementation of Map.__reduce__ that does not play
     # nice with factories (a factory, does not override Map.__reduce__ because

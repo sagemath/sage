@@ -343,7 +343,10 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             f = f.truncate(degree_bound + 1)
 
         try:
-            return f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
+            if f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())!= 0:
+                return f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
+            else:
+                raise ValueError("Cannot reduce element with finite valuation; use reduce_to_unit instead")
         except Exception:
             if check and not all(v >= 0 for v in self.valuations(f)):
                 raise ValueError("reduction not defined for non-integral elements and %r is not integral over %r" % (f, self))
@@ -810,20 +813,3 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         else:
             return self._base_valuation.upper_bound(coefficients[-1])
 
-    def reduce_to_unit(self, f):
-        r"""
-            Reduce the unit part of an element.
-
-            Given an element `f`, this method returns the reduction of `f` after shifting it to have valuation 0.
-
-            Parameters:
-            f -- an element of the domain
-
-            Returns:
-            The reduction of `f * u`, where `u` is an element with valuation `-v(f)`.
-        """
-        s = self(f)
-        if s == infinity:
-            return self.reduce(f)  # f is zero
-        u = self.equivalence_unit(-s)
-        return self.reduce(f * u)
