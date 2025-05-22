@@ -851,10 +851,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 MP = P.module()
                 for b in QP.basis():
                     yi = QP.lift(b)
-                    adj = matrix([MP.coordinate_vector(yi.bracket(P.lift(b)).to_vector())
-                                  for b in P.basis()]).transpose()
+                    brackets = [yi.bracket(P.lift(b)) for b in P.basis()]
+                    adj = matrix([MP.coordinate_vector(elt.to_vector())
+                                  for elt in brackets]).transpose()
                     if adj.rank() < s:
-                        J = L.ideal([yi.bracket(p) for p in P.basis()])
+                        J = L.ideal(brackets)
                         QJ = L.quotient(J)
                         M = L.ideal([QJ.lift(b) for b in QJ.nilradical_basis()]
                                     + list(J.basis()))
@@ -2692,7 +2693,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
                     sage: I = L.ideal(Y)
                     sage: I.basis()
-                    Family (Y, 3*Z)
+                    Finite family {'Y': Y, 'Z': 3*Z}
                     sage: I.reduce(3*Z)
                     0
                     sage: I.reduce(Y + 14*Z)
@@ -2702,13 +2703,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (:issue:`40137`)::
 
                     sage: L.<a,b,c,d> = LieAlgebra(QQ, {('a','b'): {'c': 1, 'd':1}, ('a','c'): {'b':1}})
-                    sage: A = L.ideal([b,c,d])
+                    sage: A = L.ideal([b, c, d])
                     sage: B = L.ideal([c+d])
                     sage: [B.reduce(v) for v in A.basis()]
+                    [0, c, -c]
                     sage: A.basis()
-                    Family (b, c, d)
+                    Finite family {'b': b, 'c': c, 'd': d}
                     sage: B.basis()
-                    Family (b, c + d)
+                    Finite family {'b': b, 'd': c + d}
                     sage: all(B.reduce(v).parent() is A for v in A.basis())
                     True
                 """

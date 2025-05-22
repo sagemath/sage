@@ -160,7 +160,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         sage: L.<c,b,a> = LieAlgebra(QQ, abelian=True)
         sage: I2 = L.ideal([a+b, a+c], order=sorted)
         sage: I2.basis()
-        Family (b + a, c + a)
+        Finite family {'b': b + a, 'c': c + a}
         sage: Q = L.quotient(I2)
         sage: Q.basis()
         Finite family {'a': a}
@@ -174,8 +174,8 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         sage: TestSuite(K).run()
     """
     @staticmethod
-    def __classcall_private__(cls, ambient, I, names=None,
-                              index_set=None, category=None):
+    def __classcall_private__(cls, ambient, I, names=None, index_set=None,
+                              index_set_mapping=None, category=None):
         r"""
         Normalize input to ensure a unique representation.
 
@@ -220,12 +220,15 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         I_supp = [X.leading_support() for X in I.leading_monomials()]
         inv = ambient.basis().inverse_family()
         IA = I.ambient()
-        sorted_indices = [IA(X).leading_support(key=I._order) for X in ambient.basis()]
-        index_set = [i for i in sorted_indices if i not in I_supp]
+        B = ambient.basis()
+        if index_set_mapping is None:
+            index_set_mapping = [(IA(B[k]).leading_support(key=I._order), k) for k in B.keys()]
+        if index_set is None:
+            index_set = [i[0] for i in index_set_mapping if i[0] not in I_supp]
 
         if names is None:
             try:
-                amb_names = dict(zip(sorted_indices, ambient.variable_names()))
+                amb_names = dict(zip([i[1] for i in index_set_mapping], ambient.variable_names()))
                 names = [amb_names[i] for i in index_set]
             except (ValueError, KeyError):
                 # ambient has not assigned variable names
@@ -238,16 +241,16 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
                 names = ['%s_%d' % (names, k + 1)
                          for k in range(len(index_set))]
         names, index_set = standardize_names_index_set(names, index_set)
+        index_set_mapping = tuple([i for i in index_set_mapping if i[0] not in I_supp])
 
         cat = LieAlgebras(ambient.base_ring()).FiniteDimensional().WithBasis()
         if ambient in LieAlgebras(ambient.base_ring()).Nilpotent():
             cat = cat.Nilpotent()
         category = cat.Subquotients().or_subcategory(category)
-
         return super().__classcall__(cls, ambient, I, names, index_set,
-                                     category=category)
+                                     index_set_mapping, category=category)
 
-    def __init__(self, L, I, names, index_set, category=None):
+    def __init__(self, L, I, names, index_set, index_set_mapping, category=None):
         r"""
         Initialize ``self``.
 
@@ -262,8 +265,9 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         """
         B = L.basis()
         IA = I.ambient()
-        sm = L.module().submodule_with_basis([I.reduce(X).to_vector() for X in B
-                                              if IA(X).leading_support(key=I._order) in index_set])
+        self._index_set_mapping = dict(index_set_mapping)
+        sm = L.module().submodule_with_basis([I.reduce(B[k]).to_vector()
+                                              for k in self._index_set_mapping.values()])
         SB = [L.from_vector(b) for b in sm.basis()]
 
         # compute and normalize structural coefficients for the quotient
@@ -375,7 +379,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         """
         L = self.ambient()
         B = L.basis()
-        return L.sum(ck * B[ik] for ik, ck in X)
+        return L.sum(ck * B[self._index_set_mapping[ik]] for ik, ck in X)
 
     def retract(self, X):
         r"""
