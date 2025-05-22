@@ -128,13 +128,10 @@ This base class provides a lot more methods than a general parent::
      'fraction_field',
      'gen',
      'gens',
-     'is_field',
      'ngens',
      'one',
      'order',
-     'zero',
-     'zeta',
-     'zeta_order']
+     'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
 be complemented later.

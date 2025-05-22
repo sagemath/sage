@@ -26,3 +26,4 @@ gcc
 g++
 # Needed if we download some packages from a https upstream URL
 ca-certificates
+patch
