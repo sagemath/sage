@@ -809,6 +809,5 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if not coefficients:
             from sage.rings.infinity import infinity
             return infinity
-        else:
-            return self._base_valuation.upper_bound(coefficients[-1])
+        return self._base_valuation.upper_bound(coefficients[-1])
 
