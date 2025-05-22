@@ -15035,16 +15035,24 @@ class GenericGraph(GenericGraph_pyx):
                     yield self.subgraph(g, edges=[(G_to_g[u], G_to_g[v])
                                                   for u, v in G.edge_iterator(labels=False)])
 
-    def subgraph_decompositions(self, G, induced=False):
+    def subgraph_decompositions(self, H, induced=False):
         r"""
-        Return an iterator over decompositions of the graph into isometric copies of
-        another graph.
+        Return an iterator over the `H`-decompositions of a graph.
+
+        For a graph `G`, we say a collection of graphs `H_1,\dots,H_m` is a
+        *decomposition* of `G`, if `G` is an edge-disjoint union of
+        `H_1,\dots,H_m`. See :arxiv:`2308.11613`.
+
+        For graphs `G` and `H`, an `H`-*decomposition* of `G` is a
+        partition of the edges of `G` into subgraphs isomorphic to `H`.
+        See :arxiv:`1401.3665`.
 
         INPUT:
 
-        - ``G`` -- graph
+        - ``H`` -- the graph whose copies we are looking for in ``self``
         - ``induced`` -- boolean (default: ``False``); whether or not to
-          consider only the induced copies of ``G`` in ``self``
+          consider only the isometric copies of ``H`` which are induced
+          subgraphs of the graph ``self``
 
         OUTPUT:
 
@@ -15070,10 +15078,17 @@ class GenericGraph(GenericGraph_pyx):
              [(1, 2), (1, 3), (1, 5)],
              [(2, 5), (3, 5), (4, 5)]]
 
-        It as no claw-decomposition if we restrict to claws that are
+        It has no claw-decomposition if we restrict to claws that are
         induced subraphs::
 
             sage: list(G2.subgraph_decompositions(claw, induced=True))
+            []
+
+        It has no claw-decomposition if the number of edges of the graph is
+        not a multiple of the number of edges of the claw (3)::
+
+            sage: G = Graph([(0, 1), (0, 2), (0, 3), (0, 4)])
+            sage: list(G.subgraph_decompositions(claw))
             []
 
         Works for digraphs::
@@ -15101,7 +15116,7 @@ class GenericGraph(GenericGraph_pyx):
 
         The graph ``G`` needs to be a simple graph::
 
-            sage: G = DiGraph([(0,1), (0,1), (1,2), (1,2), (2,3), (3,4)], 
+            sage: G = DiGraph([(0,1), (0,1), (1,2), (1,2), (2,3), (3,4)],
             ....:             format='list_of_edges', multiedges=True)
             sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
             sage: list(G.subgraph_decompositions(H))
@@ -15112,15 +15127,19 @@ class GenericGraph(GenericGraph_pyx):
             but in the meantime if you want to use it please disallow
             multiedges using allow_multiple_edges().
         """
+        # number of edges of H must divide the number of edges of self
+        if self.num_edges() % H.num_edges():
+            return
+
         from sage.combinat.matrices.dancing_links import dlx_solver
 
         edges = list(self.edges(labels=False))
         edge_to_column_id = {edge:i for i,edge in enumerate(edges)}
 
         rows = set()
-        for g in self.subgraph_search_iterator(G, induced=induced, return_graphs=True):
-            g_edges = g.edges(labels=False)
-            L = sorted(edge_to_column_id[edge] for edge in g_edges)
+        for h in self.subgraph_search_iterator(H, induced=induced, return_graphs=True):
+            h_edges = h.edges(labels=False)
+            L = sorted(edge_to_column_id[edge] for edge in h_edges)
             rows.add(tuple(L))
         rows = list(list(row) for row in rows)
         dlx = dlx_solver(rows)
