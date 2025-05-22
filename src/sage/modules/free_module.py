@@ -6582,7 +6582,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
     - ``echelonize`` -- (default: ``False``) if ``True``, ``basis`` will be
       echelonized and the result will be used as the default basis of the
-      constructed submodule;
+      constructed submodule; if ``False``, ``basis`` will be not be 
+      echelonized during construction but will instead be echelonized on-demand
 
     - ``echelonized_basis`` -- (default: ``None``) if not ``None``, must be
       the echelonized basis spanning the same submodule as ``basis``
@@ -6681,6 +6682,11 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             except TypeError:
                 raise TypeError("each element of basis must be in "
                                 "the ambient vector space")
+            
+        # This is original basis converted to ambient module/vector space.
+        # Without this, the echelon form computation simply fails!
+        # Even multiplication may end up failing.
+        self.__converted_basis = basis
 
         MAT = sage.matrix.matrix_space.MatrixSpace(
             R_coord, len(basis), ambient.degree(), sparse=ambient.is_sparse())
@@ -6688,17 +6694,14 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         A = MAT(basis)
 
         # Rank computation is expected to be fast unlike echelon form computation
+        # TODO: Avoid rank computation during module construction
         rank = A.rank()
-        if echelonize and not already_echelonized:
-            matrix = self._echelonize(ambient, basis)
-            assert rank == matrix.nrows()
-            basis = matrix.rows()
 
         # Adapted from Module_free_ambient.__init__
         from sage.categories.modules_with_basis import ModulesWithBasis
         modules_category = ModulesWithBasis(R.category()).FiniteDimensional()
         try:
-            if R.is_finite() or len(basis) == 0:
+            if R.is_finite() or rank == 0:
                 modules_category = modules_category.Enumerated().Finite()
         except (ValueError, TypeError, AttributeError, NotImplementedError):
             pass
@@ -6708,24 +6711,28 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         FreeModule_generic_pid.__init__(self, base_ring=R, coordinate_ring=R_coord,
                                         rank=rank, degree=ambient.degree(),
                                         sparse=ambient.is_sparse(), category=category)
+
+        MAT_ECH = sage.matrix.matrix_space.MatrixSpace(
+            R_coord, rank, ambient.degree(), sparse=ambient.is_sparse())
+
+        if echelonize and not already_echelonized:
+            matrix = self._echelonize(ambient, basis)
+            assert rank == matrix.nrows()
+            basis = matrix.rows()
+
         C = self.element_class
         w = [C(self, x.list(), coerce=False, copy=False) for x in basis]
         self.__basis = basis_seq(self, w)
-        
-        # This is needed but for what reason or why it fails without this, I am not sure!
-        # Essentially this is original basis converted to ambient module/vector space.
-        # Without this, the echelon form computation simply fails! Even multiplication may
-        # end up failing.
-        self.__converted_basis = basis
 
         if echelonize or already_echelonized:
             self._echelonized_basis = self.__basis
+            self._echelonized_basis_matrix = MAT_ECH(self._echelonized_basis)
         elif echelonized_basis is not None:
             w = [C(self, x.list(), coerce=False, copy=False) for x in echelonized_basis]
             self._echelonized_basis = basis_seq(self, w)
+            self._echelonized_basis_matrix = MAT_ECH(self._echelonized_basis)
 
-            # Validating span of echelonized basis is compute intensive and therefore
-            # will be avoided
+            # TODO: Validate span of echelonized basis with provided basis
             if check and len(self._echelonized_basis) != rank:
                 raise ValueError("The given echelonized basis vectors are not correct.")
 
