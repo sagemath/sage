@@ -2624,7 +2624,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         return self(coefficients=coeff, valuation=0)
 
-    def polylogarithm(self, s):
+    def polylog(self, s):
         r"""
         Return the polylogarithm at ``s`` as an element in ``self``.
 
@@ -2637,28 +2637,28 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: L.polylogarithm(1)
+            sage: L.polylog(1)
             z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
             sage: -log(1 - z)
             z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
-            sage: L.polylogarithm(2)
+            sage: L.polylog(2)
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
             sage: (-log(1-z) / z).integral()
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + O(z^7)
-            sage: L.polylogarithm(0)
+            sage: L.polylog(0)
             z + z^2 + z^3 + O(z^4)
-            sage: L.polylogarithm(-1)
+            sage: L.polylog(-1)
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + O(z^8)
             sage: z / (1-z)^2
             z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + O(z^8)
-            sage: L.polylogarithm(-2)
+            sage: L.polylog(-2)
             z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
             sage: z * (1 + z) / (1 - z)^3
             z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
 
         We can compute the Eulerian numbers::
 
-            sage: [L.polylogarithm(-n) * (1-z)^(n+1) for n in range(1, 6)]
+            sage: [L.polylog(-n) * (1-z)^(n+1) for n in range(1, 6)]
             [z + O(z^8),
              z + z^2 + O(z^8),
              z + 4*z^2 + z^3 + O(z^8),
@@ -2675,22 +2675,20 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         R = self.base_ring()
         return self(coefficients=lambda n: R(n) ** -s, valuation=1)
 
-    polylog = polylogarithm
-
-    def dilogarithm(self):
+    def dilog(self):
         r"""
         Return the dilogarithm as an element in ``self``.
 
         .. SEEALSO::
 
-            :meth:`polylogarithm`
+            :meth:`polylog`
 
         EXAMPLES::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ)
-            sage: L.dilogarithm()
+            sage: L.dilog()
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
-            sage: L.polylogarithm(2)
+            sage: L.polylog(2)
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
 
             sage: L.<x> = LazyLaurentSeriesRing(SR)
@@ -2701,9 +2699,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         - :wikipedia:`Dilogarithm`
         """
-        return self.polylogarithm(2)
-
-    dilog = dilogarithm
+        return self.polylog(2)
 
 ######################################################################
 
