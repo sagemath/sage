@@ -742,7 +742,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
     Class for the set of fully commutative (FC) elements of a Coxeter system.
 
     Coxeter systems with finitely many FC elements, or *FC-finite* Coxeter
-    systems, are classfied by Stembridge in [Ste1996]_. They fall into seven
+    systems, are classified by Stembridge in [Ste1996]_. They fall into seven
     families, namely the groups of types `A_n, B_n, D_n, E_n, F_n, H_n` and
     `I_2(m)`.
 
@@ -757,9 +757,9 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
     The class of fully commutative elements in the Coxeter group constructed
     from ``data``. This will belong to the category of enumerated sets. If the
     Coxeter data corresponds to a Cartan type, the category is further refined
-    to either finite enumerated sets or infinite enumerated sets depending on i
-    whether the Coxeter group is FC-finite; the refinement is not carried out if
-    ``data`` is a Coxeter matrix not corresponding to a Cartan type.
+    to either finite enumerated sets or infinite enumerated sets depending on
+    whether the Coxeter group is FC-finite; the refinement is not carried out
+    if ``data`` is a Coxeter matrix not corresponding to a Cartan type.
 
     .. TODO::
 

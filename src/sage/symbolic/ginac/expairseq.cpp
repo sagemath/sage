@@ -1432,7 +1432,7 @@ bool expairseq::is_canonical() const
 		return true;
 	
 #if EXPAIRSEQ_USE_HASHTAB
-	if (hashtabsize > 0) return 1; // not canoncalized
+	if (hashtabsize > 0) return 1; // not canonicalized
 #endif // EXPAIRSEQ_USE_HASHTAB
 	
 	auto it = seq.begin(), itend = seq.end();

@@ -996,7 +996,7 @@ class GenericGraph(GenericGraph_pyx):
           the same cluster subgraph are drawn together, with the entire
           drawing of the cluster contained within a bounding rectangle.
 
-        Additionnal keywords arguments are forwarded to
+        Additional keywords arguments are forwarded to
         :meth:`sage.graphs.graph_latex.GraphLatex.set_option`.
 
         The following inputs define the preamble of the latex standalone

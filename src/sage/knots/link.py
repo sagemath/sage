@@ -3156,7 +3156,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the
+        - ``n`` -- the number of colors to consider (if omitted the
           value of the determinant of ``self`` will be taken)
 
         OUTPUT: a matrix over the residue class ring of integers modulo ``n``
@@ -3211,7 +3211,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the
+        - ``n`` -- the number of colors to consider (if omitted the
           value of the determinant of ``self`` will be taken)
 
         EXAMPLES:
@@ -3264,7 +3264,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the value
+        - ``n`` -- the number of colors to consider (if omitted the value
           of the determinant of ``self`` will be taken). Note that there
           are no colorings if n is coprime to the determinant of ``self``
 
@@ -3324,13 +3324,14 @@ class Link(SageObject):
 
     def coloring_maps(self, n=None, finitely_presented=False):
         r"""
-        Return the `n`-coloring maps of ``self``. These are group
-        homomorphisms from the fundamental group of ``self`` to the
-        `n`-th dihedral group.
+        Return the `n`-coloring maps of ``self``.
+
+        These are group homomorphisms from the fundamental group of
+        ``self`` to the `n`-th dihedral group.
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the value
+        - ``n`` -- the number of colors to consider (if omitted the value
           of the determinant of ``self`` will be taken). Note that there
           are no coloring maps if n is coprime to the determinant of ``self``
 
@@ -4481,7 +4482,7 @@ class Link(SageObject):
                 if proves[k]:
                     l += match_lists[k]
         else:
-            # for multi-component links there could regularily be more than one
+            # for multi-component links there could regularly be more than one
             # matching entry
             for k in match_lists.keys():
                 l += match_lists[k]

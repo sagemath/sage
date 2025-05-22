@@ -83,7 +83,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
 
     OUTPUT: a quadratic form with the specified invariants
 
-    Let `(a_1, \ldots, a_n)` be the gram marix of a regular quadratic space.
+    Let `(a_1, \ldots, a_n)` be the Gram matrix of a regular quadratic space.
     Then Cassel's Hasse invariant is defined as
 
     .. MATH::

@@ -1478,7 +1478,7 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "R[write to console]" in got:
-            # Supress R warnings
+            # suppress R warnings
             r_warning_regex = re.compile(r'R\[write to console\]:.*')
             got = r_warning_regex.sub('', got)
             did_fixup = True
