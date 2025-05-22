@@ -2874,6 +2874,8 @@ class LazyModuleElement(Element):
             sage: (z + z^2).polylogarithm(3)
             z + 9/8*z^2 + 31/108*z^3 + 145/576*z^4 + 3269/18000*z^5 + 421/2400*z^6
              + 213859/1234800*z^7 + O(z^8)
+            sage: polylog(3, z)
+            z + 1/8*z^2 + 1/27*z^3 + 1/64*z^4 + 1/125*z^5 + 1/216*z^6 + 1/343*z^7 + O(z^8)
 
             sage: L.<z> = LazyPowerSeriesRing(SR)
             sage: s = SR.var('s')
@@ -2886,6 +2888,8 @@ class LazyModuleElement(Element):
         phi = P.polylogarithm(s=s)
         return phi(self)
 
+    polylog = polylogarithm
+
     def dilogarithm(self):
         """
         Return the dilogarithm evaluated at ``self``.
@@ -2895,8 +2899,12 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: z.dilogarithm()
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+            sage: dilog(z)
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
         """
-        return self.polylogarithm(2)
+        return self.polylog(2)
+
+    dilog = dilogarithm
 
     # === powers ===
 

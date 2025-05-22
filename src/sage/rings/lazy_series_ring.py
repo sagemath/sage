@@ -2670,6 +2670,8 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             return self.element_class(self, coeff_stream)
         return self(coefficients=lambda n: n ** -s, valuation=1)
 
+    polylog = polylogarithm
+
     def dilogarithm(self):
         """
         Return the dilogarithm as an element in ``self``.
@@ -2688,6 +2690,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         """
         return self.polylogarithm(2)
 
+    dilog = dilogarithm
 
 ######################################################################
 
@@ -4277,6 +4280,8 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         if self._arity != 1:
             raise ValueError("must has arity 1")
         return self(coefficients=lambda n: z ** n)
+
+    polylog = polylogarithm
 
 def _skip_leading_zeros(iterator):
     """
