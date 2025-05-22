@@ -2863,7 +2863,7 @@ class LazyModuleElement(Element):
         return phi(self)
 
     def polylogarithm(self, s):
-        """
+        r"""
         Return the polylogarithm in ``s`` evaluated at ``self``.
 
         EXAMPLES::
@@ -2882,6 +2882,10 @@ class LazyModuleElement(Element):
             sage: z.polylogarithm(s)
             z + 1/(2^s)*z^2 + 1/(3^s)*z^3 + 1/(4^s)*z^4 + 1/(5^s)*z^5
              + 1/(6^s)*z^6 + 1/(7^s)*z^7 + O(z^8)
+
+        REFERENCES:
+
+        - :wikipedia:`Polylogarithm`
         """
         from .lazy_series_ring import LazyLaurentSeriesRing
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
@@ -2891,7 +2895,7 @@ class LazyModuleElement(Element):
     polylog = polylogarithm
 
     def dilogarithm(self):
-        """
+        r"""
         Return the dilogarithm evaluated at ``self``.
 
         EXAMPLES::
@@ -2901,6 +2905,17 @@ class LazyModuleElement(Element):
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
             sage: dilog(z)
             z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+
+        We check some dilogarithm identites::
+
+            sage: dilog(z) + dilog(-z)
+            1/2*z^2 + 1/8*z^4 + 1/18*z^6 + O(z^8)
+            sage: dilog(z^2) / 2
+            1/2*z^2 + 1/8*z^4 + 1/18*z^6 + 1/32*z^8 + O(z^9)
+
+        REFERENCES:
+
+        - :wikipedia:`Dilogarithm`
         """
         return self.polylog(2)
 
