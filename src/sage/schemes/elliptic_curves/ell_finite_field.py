@@ -1170,6 +1170,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: E = EllipticCurve(GF(p), [a4, a6])
             sage: P, Q = E.torsion_basis(210)
             sage: P.weil_pairing(Q, 210).multiplicative_order()
+            210
 
         .. SEEALSO::
 
