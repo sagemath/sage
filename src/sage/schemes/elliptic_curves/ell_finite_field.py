@@ -1097,7 +1097,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
-    def torsion_basis(self, n, algorithm="random_sampling"):
+    def torsion_basis(self, n, algorithm="random_sampling",
+                      num_random_trials=100):
         r"""
         Return a basis of the `n`-torsion subgroup of this elliptic curve,
         assuming it is fully rational.
@@ -1113,6 +1114,11 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
           - ``"abelian_group"`` -- use :meth:`abelian_group` and
             :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`
+
+        - ``num_random_trials`` -- integer; if ``algorithm`` is set to
+          ``"random_sampling"``, then ``num_random_trials`` iterations (see
+          ALGORITHM below for details) are performed before returning an error.
+          If ``algorithm`` is set to anything else, this argument is ignored.
 
         OUTPUT: a pair of points generating `E[n]` when it is isomorphic to `(\Z
         / n\Z)^2`; otherwise raises an error
@@ -1182,7 +1188,8 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
         """
         if algorithm == "random_sampling":
-            return self._torsion_basis_from_random_sampling(n)
+            return self._torsion_basis_from_random_sampling(n,
+                                                            num_random_trials=num_random_trials)
 
         if algorithm == "abelian_group":
             return self._torsion_basis_from_abelian_group(n)
@@ -1195,7 +1202,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             raise ValueError(f'curve does not have full rational {n}-torsion')
         return tuple(P.element() for P in T.gens())
 
-    def _torsion_basis_from_random_sampling(self, n):
+    def _torsion_basis_from_random_sampling(self, n, num_random_trials):
         ordE = self.order()
         ordE_n_part = ordE.prime_to_m_part(n)
         n_pf = n.prime_factors()
@@ -1203,7 +1210,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         # Notice that P is uniformly random in E[n]
         # If E[n] ≅ (Z/nZ)^2 then Prob[ord(P) < n] >= Prob[ord(P1) < n & ord(P2) < n]
         # = (phi(n) / n)^2 >= 1 / 4
-        for _ in range(100):
+        for _ in range(num_random_trials):
             P = ordE_n_part * self.random_point()
             P_ord = generic.order_from_multiple(P, ordE, plist=n_pf)
             if P_ord % n != 0:
@@ -1213,7 +1220,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         else:
             raise ValueError(f'curve does not have full rational {n}-torsion')
 
-        for _ in range(100):
+        for _ in range(num_random_trials):
             Q = ordE_n_part * self.random_point()
             Q_ord = generic.order_from_multiple(Q, ordE, plist=n_pf)
             if Q_ord % n != 0:
