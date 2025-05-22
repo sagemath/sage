@@ -6457,7 +6457,7 @@ REFERENCES:
               :arxiv:`0809.3413v3`.
 
 .. [RouSuthZur2022] Jeremy Rouse, Andrew V. Sutherland, David Zureick-Brown.
-                    `\ell`-*adic images of Galois for elliptic curves over* `\Q` (and an appendix with John Voight).
+                    `\ell`-*adic images of Galois for elliptic curves over* `\QQ` (and an appendix with John Voight).
                     Forum of Mathematics, Sigma , Volume 10 , 2022.
                     :doi: `10.1017/fms.2022.38`.
                     :arxiv:`2106.11141`.
