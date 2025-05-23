@@ -667,6 +667,13 @@ class FreeQuadraticModule_generic_pid(free_module.FreeModule_generic_pid,
         Of course the input basis vectors must be linearly independent::
 
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
+            Traceback (most recent call last):
+            ...
+            ValueError: The given basis vectors must be linearly independent.
+
+        The input vectors need not be linearly independent when ``check`` is set to ``False``::
+
+            sage: W.span_of_basis([ [1,2,0], [2,4,0] ], check=False)
             Free module of degree 3 and rank 1 over Integer Ring
             User basis matrix:
             [1 2 0]
@@ -800,6 +807,13 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
         :exc:`ValueError` exception is raised::
 
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
+            Traceback (most recent call last):
+            ...
+            ValueError: The given basis vectors must be linearly independent.
+
+        The basis vectors can be linearly dependent when ``check`` is set to ``False``::
+
+            sage: W.span_of_basis([[2,2,2], [3,3,3]], check=False)
             Vector space of degree 3 and dimension 1 over Finite Field of size 7
             User basis matrix:
             [2 2 2]
