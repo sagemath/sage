@@ -39,17 +39,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Optional
-from platformdirs import site_data_dir, user_data_dir
-import sage
-import platform
 import os
 import socket
+import subprocess
 import sys
 import sysconfig
-from . import version
-import subprocess
+from typing import Optional
 
+from platformdirs import site_data_dir, user_data_dir
+
+from sage import version
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
@@ -411,8 +410,9 @@ def cython_aliases(required_modules=None, optional_modules=None):
         ....: ''')
         435
     """
-    import pkgconfig
     import itertools
+
+    import pkgconfig
 
     if required_modules is None:
         required_modules = default_required_modules
@@ -530,7 +530,7 @@ def sage_data_paths(data_name: str) -> set[str]:
             SAGE_SHARE,
         }
         paths.add(user_data_dir("sagemath"))
-        paths.add(site_data_dir())
+        paths.add(user_data_dir())
         paths.add(site_data_dir("sagemath"))
         paths.add(site_data_dir())
     else:
