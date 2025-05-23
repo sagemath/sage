@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([regina], [SAGE_PYTHON_PACKAGE_CHECK([regina])])
