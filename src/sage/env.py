@@ -40,6 +40,7 @@ AUTHORS:
 # ****************************************************************************
 
 from typing import Optional
+from platformdirs import site_data_dir, user_data_dir
 import sage
 import platform
 import os
@@ -54,7 +55,7 @@ import subprocess
 SAGE_ENV = dict()
 
 
-def join(*args):
+def join(*args) -> str | None:
     """
     Join paths like ``os.path.join`` except that the result is ``None``
     if any of the components is ``None``.
@@ -215,13 +216,9 @@ SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
-# colon-separated search path for databases.
-SAGE_DATA_PATH = var("SAGE_DATA_PATH",
-                     os.pathsep.join(filter(None, [
-                         join(DOT_SAGE, "db"),
-                         join(SAGE_SHARE, "sagemath"),
-                         SAGE_SHARE,
-                         ])))
+# colon-separated search path for databases
+# should not be used directly; instead use sage_data_paths
+SAGE_DATA_PATH = var("SAGE_DATA_PATH")
 
 # database directories, the default is to search in SAGE_DATA_PATH
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
@@ -515,3 +512,28 @@ def cython_aliases(required_modules=None, optional_modules=None):
     aliases["OPENMP_CXXFLAGS"] = OPENMP_CXXFLAGS.split()
 
     return aliases
+
+def sage_data_paths(data_name: str) -> set[str]:
+    r"""
+    Search paths for database ``data_name``.
+
+    EXAMPLES::
+
+        sage: from sage.env import sage_data_paths
+        sage: sage_data_paths("cremona")
+        {'.../cremona'}
+    """
+    if not SAGE_DATA_PATH:
+        paths = {
+            join(DOT_SAGE, "db"),
+            join(SAGE_SHARE, "sagemath"),
+            SAGE_SHARE,
+        }
+        paths.add(user_data_dir("sagemath"))
+        paths.add(site_data_dir())
+        paths.add(site_data_dir("sagemath"))
+        paths.add(site_data_dir())
+    else:
+        paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
+
+    return {os.path.join(path, data_name) for path in paths if path}
