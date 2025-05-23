@@ -715,9 +715,8 @@ class BQFClassGroupQuotientMorphism(Morphism):
             raise TypeError('G needs to be a BQFClassGroup')
         if not isinstance(H, BQFClassGroup):
             raise TypeError('H needs to be a BQFClassGroup')
-        try:
-            self.f = ZZ((G.discriminant() / H.discriminant()).sqrt(extend=False)).factor()
-        except ValueError:
+        f2 = ZZ(G.discriminant() / H.discriminant())
+        if not f2.is_square():
             raise ValueError('morphism only defined when disc(G) = f^2 * disc(H)')
         super().__init__(G, H)
 
