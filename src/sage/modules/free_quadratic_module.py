@@ -667,6 +667,9 @@ class FreeQuadraticModule_generic_pid(free_module.FreeModule_generic_pid,
         Of course the input basis vectors must be linearly independent::
 
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
+            Free module of degree 3 and rank 1 over Integer Ring
+            User basis matrix:
+            [1 2 0]
             [2 4 0]
         """
         return FreeQuadraticModule_submodule_with_basis_pid(
@@ -797,6 +800,9 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
         :exc:`ValueError` exception is raised::
 
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
+            Vector space of degree 3 and dimension 1 over Finite Field of size 7
+            User basis matrix:
+            [2 2 2]
             [3 3 3]
         """
         return FreeQuadraticModule_submodule_with_basis_field(
