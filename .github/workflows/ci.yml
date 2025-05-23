@@ -36,6 +36,11 @@ jobs:
             # node-based actions require libstdc++.so.6
             xbps-install -Sy libstdc++ bash git
           fi
+          if [ "${{ matrix.container }}" = "archlinux" ]; then
+            # The archlinux container is configured to not install docs by default
+            # but we need the maxima help to be in place
+            sed -i '/^NoExtract/d' /etc/pacman.conf
+          fi
 
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
