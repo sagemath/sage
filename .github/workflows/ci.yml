@@ -54,7 +54,11 @@ jobs:
       - name: Set up Python
         run: |
           uv python install
-          uv venv
+          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-glibc-full" ] || [ "${{ matrix.container }}" = "archlinux" ]; then
+            uv venv --system-site-packages
+          else
+            uv venv
+          fi
           . .venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV
 
