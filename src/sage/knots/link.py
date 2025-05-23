@@ -388,6 +388,49 @@ class Link(SageObject):
         self._mirror = None  # set on invocation of :meth:`mirror_image`
         self._reverse = None  # set on invocation of :meth:`reverse`
 
+        from sage.features.regina import Regina
+        self._regina = Regina()
+
+    @cached_method
+    def regina_link(self, use_pd=True):
+        r"""
+        Return ``self`` as in instance of the Regina link class.
+        This method requires the optional package Regina to be present.
+
+        INPUT:
+
+        - ``use_pd`` -- boolean (default ``True``). If set ``False`` the
+          Regina link is constructed from the oriented Gauss code of ``self``.
+          Otherwise the ``PD`` code is used.
+
+        EXAMPLES::
+
+            sage: K = Knot([[[1,-2,3,-1,2,-3]],[1,1,1]])
+            sage: K.regina_link().pd()                    # optional regina
+            'PD[X[2, 6, 3, 5], X[4, 2, 5, 1], X[6, 4, 1, 3]]'
+            sage: K.regina_link(use_pd=False).pd()        # optional regina
+            'PD[X[1, 5, 2, 4], X[3, 1, 4, 6], X[5, 3, 6, 2]]'
+        """
+        self._regina.require()
+        from regina import Link as ReginaLink
+        if use_pd:
+            return ReginaLink.fromPD(self.pd_code())
+        else:
+            res = ''
+            ori = {-1:'>', 1:'<'}
+            sig = {-1:'-', 1:'+'}
+            gauss_code, orientation = self.oriented_gauss_code()
+            gauss_code = flatten(gauss_code)
+            last_index = len(gauss_code)-1
+            for i in gauss_code:
+                a = abs(i)
+                s = sig[sign(i)]
+                o = ori[sign(i)*orientation[a-1]]
+                res += '%s%s%s' %(s, o, a)
+                if gauss_code.index(i) < last_index:
+                    res += ' '
+            return ReginaLink.fromOrientedGauss(res)
+
     def arcs(self, presentation='pd'):
         r"""
         Return the arcs of ``self``.
