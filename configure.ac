@@ -17,6 +17,23 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+# Check for systems where Meson build is recommended
+AC_ARG_ENABLE([meson-check],
+  [AS_HELP_STRING([--disable-meson-check],
+    [do not fail the build if running on systems where Meson is preferred (default: enabled)])],
+  [enable_meson_check=$enableval],
+  [enable_meson_check=yes])
+
+if test "x$enable_meson_check" != "xno"; then
+  AC_MSG_CHECKING([for Arch Linux])
+  if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
+    AC_MSG_RESULT([yes])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+  else
+    AC_MSG_RESULT([no])
+  fi
+fi
+
 dnl If you are going to update this, please stick the recommended layout
 dnl in the autoconf manual - i.e.
 
