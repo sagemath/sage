@@ -2520,7 +2520,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
              + 108810*q^15 + O(q^16)
             sage: LHS[:30] == RHS[:30]
             True
-            
+
             sage: LHS = (th3 / th4).derivative(); LHS
             4 + 16*q + 48*q^2 + 128*q^3 + 280*q^4 + 576*q^5 + 1120*q^6 + 2048*q^7
              + 3636*q^8 + 6240*q^9 + 10384*q^10 + 16896*q^11 + 26936*q^12
