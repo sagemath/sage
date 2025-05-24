@@ -114,7 +114,7 @@ if test "$enable_meson_check" != no; then
     AC_MSG_RESULT([yes])
     AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
   else
-    AC_MSG_ERROR([no])
+    AC_MSG_RESULT([no])
   fi
 fi
 
