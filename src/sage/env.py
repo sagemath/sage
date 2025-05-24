@@ -513,9 +513,13 @@ def cython_aliases(required_modules=None, optional_modules=None):
 
     return aliases
 
-def sage_data_paths(data_name: str) -> set[str]:
+
+def sage_data_paths(name: str | None) -> set[str]:
     r"""
-    Search paths for database ``data_name``.
+    Search paths for general data files.
+
+    If specified, the subdirectory ``name`` is appended to the
+    directories. Otherwise, the directories are returned as is.
 
     EXAMPLES::
 
@@ -536,4 +540,6 @@ def sage_data_paths(data_name: str) -> set[str]:
     else:
         paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
 
-    return {os.path.join(path, data_name) for path in paths if path}
+    if name is None:
+        return {path for path in paths if path}
+    return {os.path.join(path, name) for path in paths if path}
