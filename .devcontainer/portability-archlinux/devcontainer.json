@@ -1,11 +1,14 @@
 // See https://aka.ms/devcontainer.json for format details.
 {
     "name": "archlinux",
-    "image": "archlinux",
+    //"image": "archlinux",
+    "dockerFile": "Dockerfile",
     "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
     "features": {
-        "ghcr.io/devcontainers/features/git": {},
-        "ghcr.io/devcontainers/features/python:1": {},
+        // Git feature is not compatible with Arch Linux, so we install it manually in the Dockerfile 
+        // https://github.com/devcontainers/features/issues/824
+        //"ghcr.io/devcontainers/features/git": {},
+        //"ghcr.io/devcontainers/features/python:1": {},
         "../uv": {
 			"version": "latest"
 		}
