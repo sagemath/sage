@@ -1,7 +1,8 @@
-iml = cc.find_library('iml')
+iml = cc.find_library('iml', required: not is_windows, disabler: true)
 
 
 py.install_sources(
+  '__init__.py',
   'action.pxd',
   'all.py',
   'all__sagemath_meataxe.py',
@@ -96,17 +97,17 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  dependencies = [py_dep, cysignals, gmp, numpy]
+  deps = [py_dep, cysignals, gmp, numpy]
   if name == 'matrix_gfpn_dense'
-    dependencies += [mtx]
+    deps += [mtx]
   elif name == 'matrix_gap'
-    dependencies += [gap]
+    deps += [gap]
   elif name == 'misc_mpfr'
-    dependencies += [mpfr]
+    deps += [mpfr]
   elif name == 'matrix_complex_ball_dense'
-    dependencies += [mpfi]
-  elif name == 'misc_flint' or name == 'matrix_rational_sparse'
-    dependencies += [flint]
+    deps += [flint, mpfi]
+  elif name == 'misc_flint' or name == 'matrix_rational_sparse' or name == 'change_ring'
+    deps += [flint]
   endif
 
   py.extension_module(
@@ -122,7 +123,7 @@ foreach name, pyx : extension_data
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: dependencies,
+    dependencies: deps,
   )
 endforeach
 
@@ -140,12 +141,24 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  override_options = ['cython_language=cpp']
+  if name in [
+    'matrix_integer_dense',
+    'matrix_integer_sparse',
+    'matrix_modn_dense_float',
+    'matrix_modn_dense_double',
+    'matrix_modn_sparse',
+  ]
+    # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
+    override_options += ['cpp_std=c++11']
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/matrix',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: override_options,
     include_directories: [
       inc_cpython,
       inc_ext,

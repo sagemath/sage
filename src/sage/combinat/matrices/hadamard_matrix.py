@@ -90,7 +90,6 @@ from sage.combinat.designs.difference_family import (get_fixed_relative_differen
                                                      skew_supplementary_difference_set,
                                                      complementary_difference_sets)
 from sage.combinat.t_sequences import T_sequences_smallcases
-from sage.cpython.string import bytes_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import (block_matrix,
@@ -1503,7 +1502,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
-    - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
 
     OUTPUT:
@@ -1964,7 +1963,7 @@ def hadamard_matrix_www(url_file, comments=False):
     rws = []
     url = "http://neilsloane.com/hadamard/" + url_file
     with urlopen(url) as f:
-        s = [bytes_to_str(line) for line in f.readlines()]
+        s = [line.decode() for line in f.readlines()]
     for i in range(n):
         line = s[i]
         rws.append([1 if line[j] == "+" else -1 for j in range(n)])

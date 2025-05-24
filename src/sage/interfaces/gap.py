@@ -670,6 +670,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
             Restarting Gap and trying again
             sage: a
             3
+
+        Checks for :issue:`39906`::
+
+            sage: gap("a"*200)
+            Traceback (most recent call last):
+            ...
+            TypeError: Gap terminated unexpectedly while reading in a large line:
+            Gap produced error output
+            Error, Variable: 'aaaa...aaaa' must have a value executing Read("...");
         """
         expect_eof = self._quit_string() in line
 
@@ -728,7 +737,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 else:
                     return ''
             else:
-                raise RuntimeError(exc)
+                raise exc
 
         except KeyboardInterrupt:
             self._keyboard_interrupt()
@@ -941,7 +950,7 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
             2
         """
         # This is just a copy of ExpectElement._add_ to fix the fact
-        # that the abtract method ModuleElement._add_ comes first in
+        # that the abstract method ModuleElement._add_ comes first in
         # the MRO.
         return self._operation("+", other)
 
@@ -1072,7 +1081,7 @@ class Gap(Gap_generic):
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
         #     intended for communication with a window manager (i.e. for xgap)
-        #     but that we also use to control GAP with pexepect
+        #     but that we also use to control GAP with pexpect
         # -T: disable interactive break loop when encountering errors
         # -E: disable readline support
         cmd += " -b -p -T -E"

@@ -7,12 +7,12 @@ AUTHORS:
 - Travis Scrimshaw (2014-10-08): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from copy import copy

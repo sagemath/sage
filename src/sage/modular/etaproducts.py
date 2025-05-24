@@ -31,6 +31,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 from __future__ import annotations
+from typing import Any
 
 from sage.arith.misc import divisors, prime_divisors, euler_phi, is_square, gcd
 from sage.categories.groups import Groups
@@ -52,7 +53,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 import weakref
 
-_cache = {}
+_cache: dict[int, Any] = {}
 
 
 def EtaGroup(level):
@@ -107,10 +108,10 @@ class EtaGroupElement(Element):
 
         if rdict == 1:
             rdict = {}
+
         # Check Ligozat criteria
         sumR = sumDR = sumNoverDr = 0
         prod = 1
-
         for d in list(rdict):
             if N % d:
                 raise ValueError("%s does not divide %s" % (d, N))
@@ -120,7 +121,7 @@ class EtaGroupElement(Element):
                 continue
             sumR += rdict[d]
             sumDR += rdict[d] * d
-            sumNoverDr += rdict[d] * N / d
+            sumNoverDr += rdict[d] * (N // d)
             prod *= (N // d)**rdict[d]
 
         if sumR != 0:
@@ -202,7 +203,7 @@ class EtaGroupElement(Element):
         """
         return not self._rdict
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare ``self`` to ``other``.
 
@@ -556,7 +557,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             good_vects.append((vect * 24 / gcd(nf, 24)).list())
         for v in good_vects:
             v.append(-sum(list(v)))
-        dicts = []
+        dicts: list[dict] = []
         for v in good_vects:
             dicts.append({})
             for i in range(s):
@@ -1036,7 +1037,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
     if verbose:
         print("Trying all coefficients from q^%s to q^%s inclusive" % (-pole_at_infinity, -pole_at_infinity + qexp_terms - 1))
 
-    rows = [[] for _ in range(qexp_terms)]
+    rows: list[list] = [[] for _ in range(qexp_terms)]
     for i in indices:
         func = (eta1**i[0] * eta2**i[1]).qexp(qexp_terms)
         for j in range(qexp_terms):

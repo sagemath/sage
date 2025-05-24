@@ -634,10 +634,8 @@ class RationalField(Singleton, number_field_base.NumberField):
         EXAMPLES::
 
             sage: QQ.automorphisms()
-            [
-            Ring endomorphism of Rational Field
-              Defn: 1 |--> 1
-            ]
+            [Ring endomorphism of Rational Field
+               Defn: 1 |--> 1]
         """
         return Sequence([self.hom(1, self)], cr=True, immutable=False,
                         check=False)
@@ -891,7 +889,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         # Compute the map phi of Hilbert symbols at all the primes
         # in S and S'
         # For technical reasons, a Hilbert symbol of -1 is
-        # respresented as 1 and a Hilbert symbol of 1
+        # represented as 1 and a Hilbert symbol of 1
         # is represented as 0
         def phi(x):
             v = [(1-hilbert_symbol(x, b, p))//2 for p in P]
@@ -918,7 +916,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             assert phi(a) == v, "oops"
         return a
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of generators of `\QQ`, which is only ``(1,)``.
 

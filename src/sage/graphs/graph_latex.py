@@ -1201,7 +1201,7 @@ class GraphLatex(SageObject):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not (type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and (p not in label_places):
+                        if not (isinstance(p, (float, RealLiteral)) and (0 <= p <= 1)) and (p not in label_places):
                             raise ValueError('%s option for %s needs to be a number between 0.0 and 1.0 or a place (like "above"), not %s' % (name, key, p))
             elif name == 'loop_placements':
                 if not isinstance(value, dict):

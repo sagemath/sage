@@ -67,9 +67,8 @@ Sage uses the following environment variables when it runs:
 
 - See
   https://docs.python.org/3/using/cmdline.html#environment-variables
-  for more variables used by Python (not an exhaustive list). With
-  Python 3.11 or later, a brief summary can also be obtained by
-  running `python3 --help-env`.
+  for more variables used by Python (not an exhaustive list). 
+  A brief summary can also be obtained by running `python3 --help-env`.
 
 Using a Jupyter Notebook remotely
 ---------------------------------
@@ -169,7 +168,7 @@ By default, SageMath installs itself as a Jupyter kernel in the same
 environment as the SageMath installation. This is the most convenient way to
 use SageMath in a Jupyter notebook. To check if the Sage kernel is
 available, start a Jupyter notebook and look for the kernel named
-``sagemath`` in the list of available kernels.
+``SageMath <x.y.z>`` in the list of available kernels.
 Alternatively, you can use the following command to check which kernels are
 available:
 
@@ -180,11 +179,10 @@ available:
       python3     <path to env>/share/jupyter/kernels/python3
       sagemath    <path to env>/share/jupyter/kernels/sagemath
 
-.. note::
-
-    The kernel is not automatically available if you have installed SageMath 
-    in editable mode (``pip install -e``). In that case, it is recommended
-    to reinstall SageMath in a non-editable way.
+In case the Sage kernel is not listed, you can check if the file ``kernel.json``
+is present in ``<path to env>/share/jupyter/kernels/sagemath``. 
+If it is not there, you can create it using ``jupyter kernelspec install``
+as described below.
 
 You may already have a global installation of Jupyter. For added
 convenience, it is possible to link your installation of SageMath into

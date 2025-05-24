@@ -82,7 +82,7 @@ class FormalPolyhedraModule(CombinatorialFreeModule):
         """
         if isinstance(basis, list):
             basis = tuple(basis)
-        if isinstance(basis, tuple): #To make sure it only check for finite input
+        if isinstance(basis, tuple):  # To make sure it only checks for finite input
             from sage.geometry.polyhedron.base import Polyhedron_base
             for P in basis:
                 if not isinstance(P, Polyhedron_base):

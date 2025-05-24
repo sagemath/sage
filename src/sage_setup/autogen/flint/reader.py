@@ -176,11 +176,16 @@ class Extractor:
         line = self.lines[self.i]
         if line.startswith('.. function::'):
             self.add_declaration()
-            if line[13] != ' ':
+            line_rest = line.removeprefix('.. function::')
+            if not line_rest.startswith(' '):
                 print('Warning: no space {}'.format(line))
-            self.signatures.append(line[13:].strip())
             self.state = self.FUNCTION_DECLARATION
             self.i += 1
+            signature = line_rest.strip()
+            while signature.endswith('\\'):
+                signature = signature.removesuffix('\\').strip() + ' ' + self.lines[self.i].strip()
+                self.i += 1
+            self.signatures.append(signature)
         elif line.startswith('.. macro::'):
             self.add_declaration()
             if line[10] != ' ':

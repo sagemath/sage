@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'airy.py',
   'all.py',
   'bessel.py',

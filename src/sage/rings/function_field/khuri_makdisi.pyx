@@ -871,13 +871,31 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
             sage: p2 = G.point(pl2 - b)
             sage: -(-p1) == p1  # indirect doctest
             True
+
+        Check that :issue:`39148` is fixed::
+
+            sage: # long time
+            sage: k.<x> = FunctionField(GF(17)); t = polygen(k)
+            sage: F.<y> = k.extension(t^4 + (14*x + 14)*t^3 + 9*t^2 + (10*x^2 + 15*x + 8)*t
+            ....:  + 7*x^3 + 15*x^2 + 6*x + 16)
+            sage: infty1, infty2 = F.places_infinite()
+            sage: O = F.maximal_order()
+            sage: P = O.ideal((x + 1, y + 7)).divisor()
+            sage: D1 = 3*infty2 + infty1 - 4*P
+            sage: D2 = F.divisor_group().zero()
+            sage: J = F.jacobian(model='km-small', base_div=4*P)
+            sage: J(D1) + J(D2) == J(D1)
+            True
         """
         cdef int d0 = self.d0
         cdef int g = self.g
         cdef Matrix w1, w2, w3, w4
 
         w1 = self.mu_image(self.wV2, wd, self.mu_mat23, 4*d0 - g + 1)
-        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat23, d0)
+        # The row space of w2 represents H^0(O(2D_0 - D)), whose dimension is
+        # at least d0 - g + 1, and hence the codimension is at most d0. Thus,
+        # we cannot provide an expected_codim argument for mu_preimage.
+        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat23)
         # efficient than
         #   wf = matrix(w2[0])
         #   w3 = self.mu_image(wf, self.wV4, self.mu_mat24, 4*d0 - g + 1)

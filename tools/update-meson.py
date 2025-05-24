@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "meson",
+# ]
+# ///
+# See README.md for more details
 
 import argparse
 import os
@@ -86,9 +93,6 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
         to_append: list[StringNode] = []
         for file in python_files:
             file_name = file.name
-            if file_name == "__init__.py":
-                # We don't want to add __init__.py files
-                continue
             if file_name in src_list:
                 continue
             token = Token("string", target.filename, 0, 0, 0, None, file_name)
@@ -291,7 +295,7 @@ meson_format(
         inplace=True,
         recursive=True,
         output=None,
-        configuration=None,
+        configuration=options.sourcedir / "meson.format",
         editor_config=None,
     )
 )

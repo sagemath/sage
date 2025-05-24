@@ -673,7 +673,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             r = Matrix_sparse.rank(self)
             self.cache("rank", r)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         return r
 

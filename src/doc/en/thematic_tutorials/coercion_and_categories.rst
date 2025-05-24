@@ -123,24 +123,15 @@ This base class provides a lot more methods than a general parent::
      'algebraic_closure',
      'an_embedding',
      'base_extend',
-     'divides',
      'epsilon',
      'extension',
      'fraction_field',
      'gen',
      'gens',
-     'integral_closure',
-     'is_commutative',
-     'is_field',
-     'krull_dimension',
      'ngens',
      'one',
      'order',
-     'prime_subfield',
-     'random_element',
-     'zero',
-     'zeta',
-     'zeta_order']
+     'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
 be complemented later.

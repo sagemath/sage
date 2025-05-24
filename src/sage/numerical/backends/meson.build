@@ -1,7 +1,8 @@
 # Cannot be found via pkg-config
-glpk = cc.find_library('glpk')
+glpk = cc.find_library('glpk', required: not is_windows, disabler: true)
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_polyhedra.py',
   'cvxopt_backend_test.py',

@@ -48,7 +48,7 @@ from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
 from libc.stdint cimport uintptr_t
 
-from sage.libs.m4ri cimport *
+from sage.libs.m4ri cimport mzd_add, mzd_copy, mzd_cmp, mzd_free, mzd_init, mzd_set_ui, mzd_read_bit, mzd_row, mzd_write_bit, m4ri_word
 
 cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
     cdef _new_c(self):
@@ -418,7 +418,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         cdef IntegerMod_int n
         cdef Vector_mod2_dense r = right
         cdef m4ri_word tmp = 0
-        n =  IntegerMod_int.__new__(IntegerMod_int)
+        n = IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self.base_ring())
         n.ivalue = 0
         cdef m4ri_word *lrow = mzd_row(self._entries, 0)
@@ -515,7 +515,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         K = self.base_ring()
         z = K.zero()
         o = K.one()
-        cdef list switch = [z,o]
+        cdef list switch = [z, o]
         for i in range(d):
             v[i] = switch[mzd_read_bit(self._entries, 0, i)]
         return v

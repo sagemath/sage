@@ -411,6 +411,21 @@ Classes and methods
 """
 
 cdef extern from "stdlib.h":
+    # Provide equivalent functions for Windows.
+    """
+    #ifdef _WIN32
+    #include <stdlib.h>
+    static inline void srandom(unsigned int seed)
+    {
+        srand(seed);
+    }
+
+    static inline long int random(void)
+    {
+        return rand();
+    }
+    #endif
+    """
     long c_libc_random "random"()
     void c_libc_srandom "srandom"(unsigned int seed)
 
@@ -790,7 +805,7 @@ cdef class randstate:
         """
         global _pari_seed_randstate
         if _pari_seed_randstate is not self:
-            from sage.libs.pari.all import pari
+            from sage.libs.pari import pari
 
             if self._pari_saved_seed is not None:
                 seed = self._pari_saved_seed

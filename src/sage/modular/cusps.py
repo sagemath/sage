@@ -26,7 +26,9 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import Singleton
 from sage.modular.modsym.p1list import lift_to_sl2z_llong
 from sage.rings.infinity import Infinity, InfinityRing
@@ -40,7 +42,8 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
 
 try:
-    from sage.libs.pari.all import pari, pari_gen
+    from sage.libs.pari import pari
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -195,7 +198,7 @@ class Cusp(Element):
                     self.__a = r.numer()
                     self.__b = r.denom()
                 except (ValueError, TypeError):
-                    raise TypeError("unable to convert %r to a cusp" % a)
+                    raise TypeError(f"unable to convert {a} to a cusp")
             else:
                 try:
                     r = QQ(a)
@@ -315,7 +318,7 @@ class Cusp(Element):
             o = right._rational_()
         return richcmp(s, o, op)
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -364,6 +367,7 @@ class Cusp(Element):
         """
         return self.__b
 
+    @cached_method
     def _rational_(self):
         """
         Coerce to a rational number.
@@ -379,15 +383,9 @@ class Cusp(Element):
             sage: Cusp(11,2)._rational_()
             11/2
         """
-        try:
-            return self.__rational
-        except AttributeError:
-            pass
-
         if not self.__b:
             raise TypeError("cusp %s is not a rational number" % self)
-        self.__rational = self.__a / self.__b
-        return self.__rational
+        return self.__a / self.__b
 
     def _integer_(self, ZZ=None):
         """
@@ -468,7 +466,8 @@ class Cusp(Element):
         """
         return Cusp(-self.__a, self.__b)
 
-    def is_gamma0_equiv(self, other, N, transformation=None):
+    def is_gamma0_equiv(self, other, N,
+                        transformation=None) -> bool | tuple[bool, Any]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_0(N)` via linear fractional transformations.
@@ -649,7 +648,7 @@ class Cusp(Element):
                 A = A % (u2 * v1 * M)
             return (True, A)
 
-    def is_gamma1_equiv(self, other, N):
+    def is_gamma1_equiv(self, other, N) -> tuple[bool, int]:
         r"""
         Return whether ``self`` and ``other`` are equivalent modulo the action of
         `\Gamma_1(N)` via linear fractional transformations.
@@ -704,7 +703,7 @@ class Cusp(Element):
             return True, -1
         return False, 0
 
-    def is_gamma_h_equiv(self, other, G):
+    def is_gamma_h_equiv(self, other, G) -> tuple[bool, int]:
         r"""
         Return a pair ``(b, t)``, where ``b`` is ``True`` or ``False`` as
         ``self`` and ``other`` are equivalent under the action of `G`, and `t`

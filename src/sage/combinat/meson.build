@@ -1,5 +1,6 @@
 py.install_sources(
   'SJT.py',
+  '__init__.py',
   'abstract_tree.py',
   'affine_permutation.py',
   'algebraic_combinatorics.py',
@@ -86,6 +87,7 @@ py.install_sources(
   'ranker.py',
   'recognizable_series.py',
   'regular_sequence.py',
+  'regular_sequence_bounded.py',
   'restricted_growth.py',
   'ribbon.py',
   'ribbon_shaped_tableau.py',

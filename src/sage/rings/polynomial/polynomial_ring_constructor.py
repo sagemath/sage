@@ -621,6 +621,12 @@ def PolynomialRing(base_ring, *args, **kwds):
         ....:                        '_test_distributivity', '_test_prod'])
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
+
+    We verify that multivariate polynomial rings over ``InfinityRing`` from
+    :issue:`34675` are fixed::
+
+        sage: PolynomialRing(InfinityRing, 2, 'x')
+        Multivariate Polynomial Ring in x0, x1 over The Infinity Ring
     """
     from sage.rings.semirings.tropical_semiring import TropicalSemiring
     if base_ring not in Rings() and not isinstance(base_ring, TropicalSemiring):
@@ -798,7 +804,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
             from sage.rings.semirings.tropical_polynomial import TropicalPolynomialSemiring
             constructor = TropicalPolynomialSemiring
         elif base_ring not in _CommutativeRings:
-            constructor = polynomial_ring.PolynomialRing_general
+            constructor = polynomial_ring.PolynomialRing_generic
         elif base_ring in _CompleteDiscreteValuationRings:
             constructor = polynomial_ring.PolynomialRing_cdvr
         elif base_ring in _CompleteDiscreteValuationFields:

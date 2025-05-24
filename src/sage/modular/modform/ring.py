@@ -24,6 +24,7 @@ AUTHORS:
 from random import shuffle
 
 from sage.categories.graded_algebras import GradedAlgebras
+from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
@@ -89,11 +90,9 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
         [          0           1           0      195660    12080128]
         [          0           0           1         -48        1080]
         sage: ModularForms(1, 24).q_echelon_basis(prec=5)
-        [
-        1 + 52416000*q^3 + 39007332000*q^4 + O(q^5),
-        q + 195660*q^3 + 12080128*q^4 + O(q^5),
-        q^2 - 48*q^3 + 1080*q^4 + O(q^5)
-        ]
+        [1 + 52416000*q^3 + 39007332000*q^4 + O(q^5),
+         q + 195660*q^3 + 12080128*q^4 + O(q^5),
+         q^2 - 48*q^3 + 1080*q^4 + O(q^5)]
 
     Test the alternative randomized algorithm::
 
@@ -1212,6 +1211,45 @@ class ModularFormsRing(Parent):
 
         R = G[0][1].parent()
         return [R(list(x), prec=prec) for x in W.gens()]
+
+    def _to_matrix(self, gens=None, prec=None):
+        r"""
+        Return a matrix corresponding to the `q`-expansion of the generators to the given precision.
+
+        INPUT:
+
+        - ``gens`` -- (default: ``None``) a list of generators. If not provided,
+          the list returned by :meth:`ModularFormsRing.gen_forms`
+          is used instead.
+        - ``prec`` -- (default: ``None``) precision to compute up to, or the Sturm
+          bound if not provided.
+
+        OUTPUT: A matrix.
+
+        TESTS::
+
+            sage: M = ModularFormsRing(1)
+            sage: E4 = M.0; E6 = M.1
+            sage: gens = [E4^3, E6^2]; gens
+            [1 + 720*q + 179280*q^2 + 16954560*q^3 + 396974160*q^4 + 4632858720*q^5 + O(q^6),
+             1 - 1008*q + 220752*q^2 + 16519104*q^3 + 399517776*q^4 + 4624512480*q^5 + O(q^6)]
+            sage: M._to_matrix(gens)
+            [    1   720]
+            [    1 -1008]
+            sage: M._to_matrix(gens, 6)
+            [          1         720      179280    16954560   396974160  4632858720 34413301440]
+            [          1       -1008      220752    16519104   399517776  4624512480 34423752384]
+        """
+        if gens is None:
+            gens = self.gen_forms()
+
+        if prec is None:
+            # we don't default to prec=6 because this is an internal function
+            # and is usually used to write other forms as a linear combination
+            # of generators, in which case using the Sturm bound is more reasonable
+            prec = max(gen.group().sturm_bound(gen.weight()) for gen in gens)
+
+        return Matrix(gen.coefficients(range(prec + 1)) for gen in gens)
 
 
 # Deprecated functions
