@@ -27,7 +27,7 @@ jobs:
       matrix:
         os: ['ubuntu', 'macos', 'windows']
         python: ['3.11', '3.12']
-        tests: ['all']
+        tests: ['short']
         editable:
           ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
         include:
@@ -41,15 +41,15 @@ jobs:
           - os: 'ubuntu'
             python: 3.12
             editable: true
-            tests: 'all'
+            tests: 'short'
           - os: windows
             python: '3.13'
-            tests: 'all'
+            tests: 'short'
         exclude:
-          # Exclude 'all' since we already have 'long'
+          # Exclude 'short' since we already have 'long'
           - os: 'ubuntu'
             python: '3.12'
-            tests: 'all'
+            tests: 'short'
 
     steps:
       - uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
         # this step must be after build, because meson.build creates a number of __init__.py files
         # that is needed to make tools/update-meson.py run correctly
         shell: bash -l {0}
-        if: matrix.tests == 'all'
+        if: matrix.tests == 'short'
         run: |
           python tools/update-meson.py
           if ! ./tools/test-git-no-uncommitted-changes; then
@@ -162,7 +162,7 @@ jobs:
               coverage xml
               coverage report
             else
-              ./sage -t ${{ (matrix.tests == 'all' && '--all')  || '--new' }} -p4 --format github
+              ./sage -t ${{ (matrix.tests == 'short' && '--all')  || '--new' }} -p4 --format github
             fi
           fi
 
