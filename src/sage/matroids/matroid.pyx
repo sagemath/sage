@@ -1,3 +1,4 @@
+# cython: binding=False
 r"""
 The abstract Matroid class
 

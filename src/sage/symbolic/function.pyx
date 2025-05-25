@@ -1,3 +1,4 @@
+# cython: binding=False
 r"""
 Classes for symbolic functions
 
