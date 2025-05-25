@@ -4279,7 +4279,7 @@ class Stream_truncated(Stream_unary):
             3
         """
         super().__init__(series, series._is_sparse, False)
-        assert isinstance(series, Stream_inexact)
+        assert isinstance(series, (Stream_inexact, Stream_uninitialized))
         # We share self._series._cache but not self._series._approximate order
         # self._approximate_order cannot be updated by self._series.__getitem__
         self._cache = series._cache

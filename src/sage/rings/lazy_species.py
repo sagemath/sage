@@ -469,7 +469,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Check that structures and generating series are consistent.
 
-        We check all structures on 3 labels.
+        We check all structures on at most 3 labels.
 
         TESTS::
 
@@ -479,22 +479,23 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: XY = L(P(PermutationGroup([], domain=[1, 2, 3]), {0: [1], 1: [2, 3]}))
             sage: XY._test_structures()
         """
-        n = 3
         P = self.parent()
         if P._arity == 1:
-            labels = list(range(n))
-            s = list(self.structures(labels))
-            assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
-            coeff = self.generating_series()[n]
-            assert len(s) / factorial(n) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
-        else:
-            label_shapes = IntegerVectors(n, length=P._arity)
-            for shape in label_shapes:
-                labels = [list(range(k)) for k in shape]
-                s = list(self.structures(*labels))
+            for n in range(4):
+                labels = list(range(n))
+                s = list(self.structures(labels))
                 assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
-                coeff = self.generating_series()[n].coefficient(list(shape))
-                assert len(s) / ZZ.prod(factorial(k) for k in shape) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
+                coeff = self.generating_series()[n]
+                assert len(s) / factorial(n) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
+        else:
+            for n in range(4):
+                label_shapes = IntegerVectors(n, length=P._arity)
+                for shape in label_shapes:
+                    labels = [list(range(k)) for k in shape]
+                    s = list(self.structures(*labels))
+                    assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
+                    coeff = self.generating_series()[n].coefficient(list(shape))
+                    assert len(s) / ZZ.prod(factorial(k) for k in shape) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
 
     def isotypes(self, *shape):
         r"""
@@ -547,6 +548,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Check that isotypes and generating series are consistent.
 
+        We check all structures on at most 3 labels.
+
         TESTS::
 
             sage: from sage.rings.species import PolynomialSpecies
@@ -555,20 +558,21 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
             sage: XY._test_isotypes()
         """
-        n = 3
         P = self.parent()
         if P._arity == 1:
-            s = list(self.isotypes(n))
-            assert len(s) == len(set(s)), f"isotypes for {n} are {s}, which is not a set"
-            coeff = self.isotype_generating_series()[n]
-            assert len(s) == coeff, f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}"
+            for n in range(4):
+                s = list(self.isotypes(n))
+                assert len(s) == len(set(s)), f"isotypes for {n} are {s}, which is not a set"
+                coeff = self.isotype_generating_series()[n]
+                assert len(s) == coeff, f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}"
         else:
-            shapes = IntegerVectors(n, length=P._arity)
-            for shape in shapes:
-                s = list(self.isotypes(*shape))
-                assert len(s) == len(set(s)), f"isotypes for {shape} are {s}, which is not a set"
-                coeff = self.isotype_generating_series()[n].coefficient(list(shape))
-                assert len(s) == coeff, f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}"
+            for n in range(4):
+                shapes = IntegerVectors(n, length=P._arity)
+                for shape in shapes:
+                    s = list(self.isotypes(*shape))
+                    assert len(s) == len(set(s)), f"isotypes for {shape} are {s}, which is not a set"
+                    coeff = self.isotype_generating_series()[n].coefficient(list(shape))
+                    assert len(s) == coeff, f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}"
 
     def polynomial(self, degree=None, names=None):
         r"""
@@ -863,6 +867,24 @@ class SumSpeciesElement(LazySpeciesElement):
         yield from self._left.structures(*labels)
         yield from self._right.structures(*labels)
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: F = L.Sets() + L.SetPartitions()
+            sage: F.generating_series()
+            2 + 2*X + 3/2*X^2 + X^3 + 2/3*X^4 + 53/120*X^5 + 17/60*X^6 + O(X^7)
+
+        TESTS::
+
+            sage: F.generating_series()[20]
+            3978781402721/187146308321280000
+        """
+        return self._left.generating_series() + self._right.generating_series()
+
 
 class ProductSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
@@ -910,6 +932,20 @@ class ProductSpeciesElement(LazySpeciesElement):
         for d in itertools.product(*[dissections(u) for u in labels]):
             yield from itertools.product(self._left.structures(*[U for U, _ in d]),
                                          self._right.structures(*[V for _, V in d]))
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: F = E*E
+            sage: F.generating_series()
+            1 + 2*X + 2*X^2 + 4/3*X^3 + 2/3*X^4 + 4/15*X^5 + 4/45*X^6 + O(X^7)
+        """
+        return self._left.generating_series() * self._right.generating_series()
 
 
 class CompositionSpeciesElement(LazySpeciesElement):
@@ -1065,6 +1101,20 @@ class CompositionSpeciesElement(LazySpeciesElement):
                 G_s = [G[i].structures(*split_set(C)) for i in range(m) for C in chi_inv[i]]
                 yield from itertools.product(F_s, itertools.product(*G_s))
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: F = E(E.restrict(1))
+            sage: F.generating_series()
+            1 + X + X^2 + 5/6*X^3 + 5/8*X^4 + 13/30*X^5 + 203/720*X^6 + O(X^7)
+        """
+        return self._left.generating_series()(*[G.generating_series() for G in self._args])
+
 
 class LazySpecies(LazyCompletionGradedAlgebra):
     """
@@ -1162,6 +1212,57 @@ class SetSpecies(LazySpeciesElement):
         labels = _label_sets(self.parent()._arity, [labels])
         yield labels[0]
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of the
+        species of sets.
+
+        This is the exponential.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Sets().generating_series()
+            1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L.gen().exp()
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of the species of
+        sets.
+
+        This is the geometric series.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: L.Sets().isotype_generating_series()
+            1 + X + X^2 + O(X^3)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(constant=1)
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series of the species of sets.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Sets().cycle_index_series()
+            h[] + h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + O^7
+        """
+        P = self.parent()
+        h = SymmetricFunctions(P.base_ring().fraction_field()).h()
+        L = LazySymmetricFunctions(h)
+        return L(lambda n: h[n])
+
 
 class CycleSpecies(LazySpeciesElement):
     def __init__(self, parent):
@@ -1197,6 +1298,42 @@ class CycleSpecies(LazySpeciesElement):
         labels = _label_sets(self.parent()._arity, [labels])
         # TODO: CyclicPermutations should yield hashable objects, not lists
         yield from map(tuple, CyclicPermutations(labels[0]))
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of the
+        species of cycles.
+
+        This is `-log(1-x)`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.Cycles().generating_series()
+            X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + 1/7*X^7 + O(X^8)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return -(L.one()-L.gen()).log()
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of the species of
+        cycles.
+
+        This is `x/(1-x)`.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: L.Cycles().isotype_generating_series()
+            X + X^2 + X^3 + O(X^4)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(constant=1, valuation=1)
 
 
 class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElement):
@@ -1277,7 +1414,7 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
         return L(coefficient)
 
 
-class SetPartitionSpecies(LazySpeciesElement):
+class SetPartitionSpecies(CompositionSpeciesElement):
     def __init__(self, parent):
         r"""
         Initialize the species of set partitions.
@@ -1287,10 +1424,16 @@ class SetPartitionSpecies(LazySpeciesElement):
             sage: P.<X> = LazySpecies(QQ)
             sage: p = P.SetPartitions()
             sage: TestSuite(p).run(skip=['_test_category', '_test_pickling'])
+
+            sage: p.generating_series()[20]
+            263898766507/12412765347840000
+
+            sage: SetPartitions(20).cardinality()/factorial(20)
+            263898766507/12412765347840000
         """
         E = parent.Sets()
         E1 = parent.Sets().restrict(1)
-        super().__init__(parent, E(E1)._coeff_stream)
+        super().__init__(E, E1)
 
     def isotypes(self, labels):
         r"""
@@ -1393,3 +1536,18 @@ class RestrictedSpeciesElement(LazySpeciesElement):
         if ((self._min is None or self._min <= n)
             and (self._max is None or n <= self._max)):
             yield from self._F.structures(*labels)
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: E.restrict(1, 5).generating_series()
+            X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5
+            sage: E.restrict(1).generating_series()
+            X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + 1/5040*X^7 + O(X^8)
+        """
+        return self._F.generating_series().restrict(self._min, self._max)
