@@ -228,12 +228,12 @@ ignore = [
 no-build-isolation-package = ["sagemath"]
 
 [tool.coverage.run]
-concurrency = "multiprocessing,thread"
+concurrency = ["multiprocessing", "thread"]
 disable_warnings = [
   "module-not-measured",
   "no-data-collected",
 ]
-source = "sage"
+source = ["src/sage"]
 
 [tool.coverage.report]
 ignore_errors = true
