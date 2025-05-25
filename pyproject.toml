@@ -233,6 +233,7 @@ disable_warnings = [
   "module-not-measured",
   "no-data-collected",
 ]
+parallel = true
 source = ["src/sage"]
 
 [tool.coverage.report]
