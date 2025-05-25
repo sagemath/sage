@@ -2237,7 +2237,7 @@ class DocTestWorker(multiprocessing.Process):
         # doctest, this "queue" will contain only 1 element.
         self.result_queue = multiprocessing.Manager().Queue(1)
 
-        print(f"create queue for worker ({source.path=})")
+        print(f"create queue for worker ({source.path=} {self.result_queue=})")
 
         # Temporary file for stdout/stderr of the child process.
         # Normally, this isn't used in the master process except to
@@ -2408,7 +2408,7 @@ class DocTestWorker(multiprocessing.Process):
             subprocess.
         """
         try:
-            print(f"read from result_queue {self.source.path=} {self.result_queue.qsize()}")
+            print(f"read from result_queue {self.source.path=} {self.result_queue=} {self.result_queue.qsize()}")
             self.result = self.result_queue.get(block=False)
         except Empty:
             self.result = (0, DictAsObject({'err': 'noresult'}))
@@ -2638,7 +2638,14 @@ class DocTestTask:
             result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
-            print(f"put to result_queue {self.source.path=} {result_queue.qsize()}")
+            size=result_queue.qsize()
+            print(f"put to result_queue {self.source.path=} {result_queue=} {size}")
+            if size==1:
+                try:
+                    result=result_queue.get(block=False)
+                    print(f"!! extra item {result}")
+                except:
+                    print(f"!! get failed")
             result_queue.put(result, False)
 
         return result
