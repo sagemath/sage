@@ -156,7 +156,7 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             # Ignore errors on Windows, for now
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
-            else
+          else
             if [[ "${{ matrix.tests }}" == "long" ]]; then
               coverage run src/bin/sage-runtests --force-lib --long -p4 --format github src/sage
               coverage xml
