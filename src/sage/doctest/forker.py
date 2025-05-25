@@ -515,6 +515,7 @@ class SageSpoofInOut(SageObject):
 
 
 from collections import namedtuple
+
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
@@ -1488,8 +1489,9 @@ class SageDocTestRunner(doctest.DocTestRunner):
                         print(src)
                         if ex.want:
                             print(doctest._indent(ex.want[:-1]))
-                    from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
+
+                    from sage.repl.configuration import sage_ipython_config
                     cfg = sage_ipython_config.default()
                     cfg.InteractiveShell.enable_tip = False
                     # Currently this doesn't work: prompts only work in pty
@@ -2403,7 +2405,7 @@ class DocTestWorker(multiprocessing.Process):
             subprocess.
         """
         try:
-            self.result = self.result_queue.get(block=False)
+            self.result = self.result_queue.get(block=True, timeout=10)
         except Empty:
             self.result = (0, DictAsObject({'err': 'noresult'}))
         del self.result_queue
@@ -2632,7 +2634,7 @@ class DocTestTask:
             result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
-            result_queue.put(result, False)
+            result_queue.put(result, block=True, timeout=10)
 
         return result
 
