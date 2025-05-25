@@ -3123,7 +3123,7 @@ def petersen_family(generate=False):
 
 def p2_forbidden_minors():
     r"""
-    Returns an array containing the 35 minimal forbidden excluded minors
+    Return an array containing the 35 minimal forbidden excluded minors
     of the projective plane.
 
     We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,

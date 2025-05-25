@@ -9514,7 +9514,7 @@ class Graph(GenericGraph):
         return G
 
     @doc_index("Graph properties")
-    def is_projective_planar(self, map_flag=False):
+    def is_projective_planar(self, return_map=False):
         r"""
         Check whether ``self`` is projective planar.
 
@@ -9522,12 +9522,16 @@ class Graph(GenericGraph):
         plane.  The approach is to check that the graph does not contain any
         of the known forbidden minors.
 
-
         TESTS::
 
         sage: len(graphs. p2_forbidden_minors())
         35
 
+        INPUT
+
+        - ``return_map`` -- boolean (default: ``False``); whether to return
+          a map indicating one of the forbidden graph minors if in fact the
+          graph is not projective planar, or only True/False.
 
         OUTPUT:
 
@@ -9544,7 +9548,7 @@ class Graph(GenericGraph):
             sage: P.is_projective_planar()
             True
 
-        #. `K_{4,4}` has a projective plane crossing number of 2. One of the
+        `K_{4,4}` has a projective plane crossing number of 2. One of the
            minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
            dictionary from :meth:`~Graph.minor`::
 
@@ -9561,7 +9565,7 @@ class Graph(GenericGraph):
         from sage.graphs.generators.families import p2_forbidden_minors
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
-        return_map = None
+        map_minor = None
 
         for forbidden_minor in p2_forbidden_minors():
             # Can't be a minor if it has more vertices or edges than G
@@ -9571,10 +9575,10 @@ class Graph(GenericGraph):
                 continue
 
             try:
-                return_map = self.minor(forbidden_minor)
-                if return_map is not None:
-                    if map_flag:
-                        return False, return_map
+                map_minor = self.minor(forbidden_minor)
+                if map_minor is not None:
+                    if return_map:
+                        return False, map_minor
                     else:
                         return False
 
