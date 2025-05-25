@@ -226,3 +226,15 @@ ignore = [
 [tool.uv]
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)
 no-build-isolation-package = ["sagemath"]
+
+[tool.coverage.run]
+concurrency = "multiprocessing,thread"
+disable_warnings = [
+  "module-not-measured",
+  "no-data-collected",
+]
+source = "sage"
+
+[tool.coverage.report]
+ignore_errors = true
+skip_empty = true

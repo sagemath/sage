@@ -34,6 +34,9 @@ jobs:
           - os: 'ubuntu'
             python: '3.12'
             tests: 'new'
+          - os: 'ubuntu'
+            python: '3.12'
+            tests: 'long'
           # one additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
             python: 3.12
@@ -41,6 +44,11 @@ jobs:
             tests: 'all'
           - os: windows
             python: '3.13'
+            tests: 'all'
+        exclude:
+          # Exclude 'all' since we already have 'long'
+          - os: 'ubuntu'
+            python: '3.12'
             tests: 'all'
 
     steps:
@@ -148,9 +156,21 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             # Ignore errors on Windows, for now
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
-          else
-            ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+            else
+            if [[ "${{ matrix.tests }}" == "long" ]]; then
+              coverage run src/bin/sage-runtests --force-lib --long -p4 --format github
+              coverage xml
+              coverage report
+            else
+              ./sage -t ${{ (matrix.tests == 'all' && '--all')  || '--new' }} -p4 --format github
+            fi
           fi
+
+      - name: Upload coverage to codecov
+        if: matrix.tests == 'long'
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
 
       - name: Check that all modules can be imported
         shell: bash -l {0}
