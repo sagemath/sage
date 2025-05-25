@@ -2043,6 +2043,7 @@ class DocTestDispatcher(SageObject):
                             baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
+                            print(f"creating a worker ({source.path=})")
                             w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
                             if not self.controller.options.only_errors:
@@ -2236,6 +2237,8 @@ class DocTestWorker(multiprocessing.Process):
         # doctest, this "queue" will contain only 1 element.
         self.result_queue = multiprocessing.Manager().Queue(1)
 
+        print(f"create queue for worker ({source.path=})")
+
         # Temporary file for stdout/stderr of the child process.
         # Normally, this isn't used in the master process except to
         # debug timeouts/crashes.
@@ -2405,7 +2408,8 @@ class DocTestWorker(multiprocessing.Process):
             subprocess.
         """
         try:
-            self.result = self.result_queue.get(block=True, timeout=10)
+            print(f"read from result_queue {self.source.path=} {self.result_queue.qsize()}")
+            self.result = self.result_queue.get(block=False)
         except Empty:
             self.result = (0, DictAsObject({'err': 'noresult'}))
         del self.result_queue
@@ -2634,7 +2638,8 @@ class DocTestTask:
             result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
-            result_queue.put(result, block=True, timeout=10)
+            print(f"put to result_queue {self.source.path=} {self.result_queue.qsize()}")
+            result_queue.put(result, False)
 
         return result
 
