@@ -305,6 +305,11 @@ builddir-*
 build-install
 build/cp*
 
+# Meson subprojects
+/subprojects/*
+!/subprojects/*.wrap
+!/subprojects/packagefiles
+
 # Meson temporary files
 subprojects/wrapdb.json
 subprojects/maxima-5.47.0

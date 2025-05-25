@@ -16,13 +16,13 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.matrix.constructor import matrix, identity_matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 
 from math import sqrt, floor, ceil
 
 
-def plane_inequality(v):
+def plane_inequality(v) -> list:
     """
     Return the inequality for points on the same side as the origin
     with respect to the plane through ``v`` normal to ``v``.
@@ -124,7 +124,7 @@ def jacobi(M):
     return matrix(q)
 
 
-def diamond_cut(V, GM, C, verbose=False):
+def diamond_cut(V, GM, C, verbose=False) -> Polyhedron:
     r"""
     Perform diamond cutting on polyhedron ``V`` with basis matrix ``GM``
     and squared radius ``C``.
@@ -137,7 +137,8 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``C`` -- square of the radius to use in cutting algorithm
 
-    - ``verbose`` -- boolean (default: ``False``); whether to print debug information
+    - ``verbose`` -- boolean (default: ``False``); whether to print
+      debug information
 
     OUTPUT: a :class:`Polyhedron` instance
 
@@ -199,7 +200,7 @@ def diamond_cut(V, GM, C, verbose=False):
     inequalities = []
     while True:
         if verbose:
-            print("Dimension: {}".format(i))
+            print(f"Dimension: {i}")
         if new_dimension:
             Z = sqrt(T[i] / q[i][i])
             if verbose:
@@ -212,7 +213,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
         x[i] += 1
         if verbose:
-            print("x: {}".format(x))
+            print(f"x: {x}")
         if x[i] > L[i]:
             i += 1
         elif i > 0:
@@ -249,7 +250,7 @@ def diamond_cut(V, GM, C, verbose=False):
     return V
 
 
-def calculate_voronoi_cell(basis, radius=None, verbose=False):
+def calculate_voronoi_cell(basis, radius=None, verbose=False) -> Polyhedron:
     """
     Calculate the Voronoi cell of the lattice defined by basis.
 
@@ -289,7 +290,8 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         sage: L = IntegerLattice([v])
         sage: C = L.voronoi_cell()
         sage: C.Hrepresentation()
-        (An inequality (-2, -2, 2) x + 3 >= 0, An inequality (2, 2, -2) x + 3 >= 0)
+        (An inequality (-2, -2, 2) x + 3 >= 0,
+         An inequality (2, 2, -2) x + 3 >= 0)
         sage: C.Vrepresentation()
         (A line in the direction (0, 1, 1),
          A line in the direction (1, 0, 1),
@@ -299,7 +301,8 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
     Verify that :issue:`37086` is fixed::
 
         sage: from sage.modules.free_module_integer import IntegerLattice
-        sage: l  = [7, 0, -1, -2, -1, -2, 7, -2, 0, 0, -2, 0, 7, -2, 0, -1, -2, -1, 7, 0 , -1, -1, 0, -2, 7]
+        sage: l  = [7, 0, -1, -2, -1, -2, 7, -2, 0, 0, -2,
+        ....:       0, 7, -2, 0, -1, -2, -1, 7, 0 , -1, -1, 0, -2, 7]
         sage: M = matrix(5, 5, l)
         sage: C = IntegerLattice(M).voronoi_cell()
         sage: C
@@ -313,15 +316,15 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         # Convert the basis matrix to use RDF numbers for efficiency when we
         # calculate the triangular matrix of the QR decomposition.
         from sage.rings.real_double import RDF
-        tranposed_RDF_matrix = (basis.transpose()).change_ring(RDF)
-        R = tranposed_RDF_matrix.QR()[1]
+        transposed_RDF_matrix = (basis.transpose()).change_ring(RDF)
+        R = transposed_RDF_matrix.QR()[1]
         # The length of the vector formed by the diagonal entries of R is an
         # upper bound for twice the covering radius, so it is an upper bound
         # on the length of the lattice vectors that need to be considered for
         # diamond cutting. However, the value of the `radius` keyword is
         # actually a squared length, so there is no square root in the
         # following formula.
-        radius = sum(R[i,i]**2 for i in range(dim[0]))
+        radius = sum(R[i, i]**2 for i in range(dim[0]))
         # We then divide by 4 as we will divide the basis by 2 later on.
         radius = ceil(radius / 4)
     artificial_length = None
@@ -336,13 +339,14 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         from sage.rings.real_double import RDF
         # Convert the basis matrix to use RDF numbers for efficiency when we
         # perform the QR decomposition.
-        tranposed_RDF_matrix = (additional_vectors.transpose()).change_ring(RDF)
-        R = tranposed_RDF_matrix.QR()[1]
+        transposed_RDF_matrix = additional_vectors.transpose().change_ring(RDF)
+        R = transposed_RDF_matrix.QR()[1]
         # Since R is triangular, its smallest diagonal entry provides a
         # lower bound on the length of the shortest nonzero vector in the
         # lattice spanned by the artificial points. We square it because
         # value of `radius` is a squared length.
-        shortest_vector_lower_bound = min(R[i,i]**2 for i in range(dim[1] - dim[0]))
+        shortest_vector_lower_bound = min(R[i, i]**2
+                                          for i in range(dim[1] - dim[0]))
         # We will multiply our artificial points by the following scalar in
         # order to make sure the squared length of the shortest
         # nonzero vector is greater than radius, even after the vectors
