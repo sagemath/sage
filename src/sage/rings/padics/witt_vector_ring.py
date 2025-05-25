@@ -21,9 +21,8 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
 from itertools import product
+from typing import Iterator
 
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
@@ -42,15 +41,14 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.ring import CommutativeRing
+from sage.structure.parent import Parent
 from sage.sets.primes import Primes
 from sage.structure.unique_representation import UniqueRepresentation
 
 
 def fast_char_p_power(x, n, p=None):
     r"""
-    Return `x^n` assuming that `x` lives in a ring of
-    characteristic `p`.
+    Return `x^n` assuming that `x` lives in a ring of characteristic `p`.
 
     If `x` is not an element of a ring of characteristic `p`,
     this throws an error.
@@ -120,7 +118,7 @@ def fast_char_p_power(x, n, p=None):
     return xn
 
 
-class WittVectorRing(CommutativeRing, UniqueRepresentation):
+class WittVectorRing(Parent, UniqueRepresentation):
     r"""
     Return the appropriate `p`-typical truncated Witt vector ring.
 
@@ -263,14 +261,13 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         return child.__classcall__(child, coefficient_ring, prec, p)
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
-        Initialises ``self``.
+        Initialise ``self``.
 
         EXAMPLES::
 
-            sage: W = WittVectorRing(PolynomialRing(GF(5), 't'), prec=4)
-            sage: W
+            sage: W = WittVectorRing(PolynomialRing(GF(5), 't'), prec=4); W
             Ring of truncated 5-typical Witt vectors of length 4 over Univariate Polynomial Ring in t over Finite Field of size 5
             sage: type(W)
             <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
@@ -281,9 +278,10 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         self._prec = prec
         self._prime = prime
 
-        CommutativeRing.__init__(self, self)
+        Parent.__init__(self, base=coefficient_ring,
+                        category=CommutativeRings())
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         Iterator for truncated Witt vector rings.
 
@@ -347,7 +345,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         if (isinstance(S, WittVectorRing)
             and S.precision() >= self._prec and S.prime() == self._prime
             and self._coefficient_ring.has_coerce_map_from(
-                     S.coefficient_ring())):
+                S.coefficient_ring())):
             return (any(isinstance(S, rng) for rng in self._always_coerce)
                     or (S.precision() != self._prec
                         or S.coefficient_ring() is not self._coefficient_ring)
@@ -358,7 +356,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     def _generate_sum_and_product_polynomials(self, coefficient_ring, prec, p):
         """
-        Generates the sum and product polynomials defining the ring laws of
+        Generate the sum and product polynomials defining the ring laws of
         truncated Witt vectors for the ``standard`` algorithm.
 
         EXAMPLES::
@@ -421,7 +419,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 
@@ -439,7 +437,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         return "W_{%s}\\left(%s\\right)" % (latex(self._prec),
                                             latex(self._coefficient_ring))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the ring.
 
@@ -498,7 +496,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         """
         return self._coefficient_ring
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether ``self`` is a finite ring.
 
@@ -572,7 +570,9 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     def random_element(self, *args, **kwds):
         """
-        Return a random truncated Witt vector. Extra arguments are passed to
+        Return a random truncated Witt vector.
+
+        Extra arguments are passed to
         the random generator of the coefficient ring.
 
         EXAMPLES::
@@ -621,8 +621,9 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
     def teichmuller_lift(self, x):
         """
-        Return the Teichmüller lift of ``x`` in ``self``. This lift is
-        sometimes known as the multiplicative lift of ``x``.
+        Return the Teichmüller lift of ``x`` in ``self``.
+
+        This lift is sometimes known as the multiplicative lift of ``x``.
 
         EXAMPLES::
 
@@ -656,9 +657,9 @@ class WittVectorRing_finotti(WittVectorRing):
     """
     Element = WittVector_finotti
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
-        Initialises ``self``.
+        Initialise ``self``.
 
         EXAMPLES::
 
@@ -798,9 +799,9 @@ class WittVectorRing_phantom(WittVectorRing):
     """
     Element = WittVector_phantom
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
-        Initialises ``self``.
+        Initialise ``self``.
 
         EXAMPLES::
 
@@ -859,9 +860,9 @@ class WittVectorRing_pinvertible(WittVectorRing):
     """
     Element = WittVector_pinvertible
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
-        Initialises ``self``.
+        Initialise ``self``.
 
         EXAMPLES::
 
@@ -901,9 +902,9 @@ class WittVectorRing_standard(WittVectorRing):
     """
     Element = WittVector_standard
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
-        Initialises ``self``.
+        Initialise ``self``.
 
         EXAMPLES::
 
