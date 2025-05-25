@@ -2638,7 +2638,7 @@ class DocTestTask:
             result = (0, DictAsObject({'err': exc_info[0], 'tb': tb}))
 
         if result_queue is not None:
-            print(f"put to result_queue {self.source.path=} {self.result_queue.qsize()}")
+            print(f"put to result_queue {self.source.path=} {result_queue.qsize()}")
             result_queue.put(result, False)
 
         return result

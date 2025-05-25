@@ -9552,3 +9552,4 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
             DS = self.change_ring(R)
             return DS.all_periodic_points(**kwds)  #ensures that the correct method is run, in case user switches to infinite fields
         return _all_periodic_points(DS)
+
