@@ -2639,29 +2639,8 @@ class DocTestTask:
 
         if result_queue is not None:
             size=result_queue.qsize()
-            for i in range(10):
-                print(f"put to result_queue {self.source.path=} {result_queue=} {size}", flush=True)
-                if size==1:
-                    try:
-                        result=result_queue.get(block=False)
-                        print(f"!! extra item {result}", flush=True)
-                    except:
-                        import traceback
-                        traceback.print_exc()
-                        print(f"!! get failed", flush=True)
-                try:
-                    result_queue.put(result, False)
-                    break
-                except:
-                    import traceback
-                    traceback.print_exc()
-                    import time
-                    time.sleep(1)
-                    if i==9:
-                        raise
-                    else:
-                        print(f"!! put failed", flush=True)
-
+            print(f"put to result_queue {self.source.path=} {result_queue=} {size}", flush=True)
+            result_queue.put(result, False)
         return result
 
     def _run(self, runner, options, results):
