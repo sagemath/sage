@@ -380,11 +380,10 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: L = LazySpecies(ZZ, "X")
             sage: E = L(SymmetricGroup)
-            sage: F = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
-            sage: list((E+F).structures([1,2,3]))
-            [(E_3, ((1, 2, 3),)), (E_3, ((1, 2, 3),))]
+            sage: list((E+E).structures([1,2,3]))
+            [((E_3, ((1, 2, 3),)), 'left'), ((E_3, ((1, 2, 3),)), 'right')]
         """
         return SumSpeciesElement(self, other)
 
@@ -852,16 +851,16 @@ class SumSpeciesElement(LazySpeciesElement):
             sage: L = LazySpecies(QQ, "X")
             sage: F = L.Sets() + L.SetPartitions()
             sage: list(F.structures([1,2,3]))
-            [(1, 2, 3),
-             {{1, 2, 3}},
-             {{1, 2}, {3}},
-             {{1, 3}, {2}},
-             {{1}, {2, 3}},
-             {{1}, {2}, {3}}]
+            [((1, 2, 3), 'left'),
+             ({{1, 2, 3}}, 'right'),
+             ({{1, 2}, {3}}, 'right'),
+             ({{1, 3}, {2}}, 'right'),
+             ({{1}, {2, 3}}, 'right'),
+             ({{1}, {2}, {3}}, 'right')]
         """
         labels = _label_sets(self.parent()._arity, labels)
-        yield from self._left.structures(*labels)
-        yield from self._right.structures(*labels)
+        yield from ((s, 'left') for s in self._left.structures(*labels))
+        yield from ((s, 'right') for s in self._right.structures(*labels))
 
 
 class ProductSpeciesElement(LazySpeciesElement):
