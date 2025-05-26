@@ -2127,12 +2127,17 @@ class Link(SageObject):
                 H = kh[h][d]
                 gens = {g: g.order() for g in H.gens()}
                 if integral:
-                    for tor in gens.values():
-                        l = len([g for g in gens if gens[g] == tor])
-                        if tor is infinity:
-                            coeff[(h, d, 0)] = l
+                    tor_count = {}
+                    for g, tor in gens.items():
+                        if tor in tor_count:
+                            tor_count[tor] += 1
                         else:
-                            coeff[(h, d, tor)] = l
+                            tor_count[tor] = 1
+                    for tor, ell in tor_count.items():
+                        if tor is infinity:
+                            coeff[(h, d, 0)] = ell
+                        else:
+                            coeff[(h, d, tor)] = ell
                 else:
                     coeff[(h, d)] = len(gens)
         return L(coeff)
