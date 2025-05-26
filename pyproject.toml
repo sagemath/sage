@@ -26,7 +26,7 @@ setup = ['--default-library=static']
 
 [project]
 authors = [
-  { name = "The Sage Developers", email = "sage-support@googlegroups.com" },
+  { email = "sage-support@googlegroups.com", name = "The Sage Developers" },
 ]
 classifiers = [
   "Development Status :: 6 - Mature",
