@@ -9522,11 +9522,6 @@ class Graph(GenericGraph):
         plane.  The approach is to check that the graph does not contain any
         of the known forbidden minors.
 
-        TESTS::
-
-        sage: len(graphs. p2_forbidden_minors())
-        35
-
         INPUT
 
         - ``return_map`` -- boolean (default: ``False``); whether to return
@@ -9560,12 +9555,17 @@ class Graph(GenericGraph):
         .. SEEALSO::
 
             - :meth:`~Graph.minor`
+
+        TESTS::
+
+        sage: len(graphs. p2_forbidden_minors())
+        35
         """
 
         from sage.graphs.generators.families import p2_forbidden_minors
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
-        map_minor = None
+        minor_map = None
 
         for forbidden_minor in p2_forbidden_minors():
             # Can't be a minor if it has more vertices or edges than G
@@ -9575,10 +9575,10 @@ class Graph(GenericGraph):
                 continue
 
             try:
-                map_minor = self.minor(forbidden_minor)
-                if map_minor is not None:
+                minor_map = self.minor(forbidden_minor)
+                if minor_map is not None:
                     if return_map:
-                        return False, map_minor
+                        return False, minor_map
                     else:
                         return False
 
