@@ -1256,6 +1256,11 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
             sage: L.<X> = LazySpecies(QQ)
             sage: L.Graphs().cycle_index_series().truncate(4)
             p[] + p[1] + (p[1,1]+p[2]) + (4/3*p[1,1,1]+2*p[2,1]+2/3*p[3])
+
+        Check that the number of isomorphism types is computed quickly::
+
+            sage: L.Graphs().isotype_generating_series()[20]
+            645490122795799841856164638490742749440
         """
         P = self.parent()
         p = SymmetricFunctions(P.base_ring().fraction_field()).p()
