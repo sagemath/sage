@@ -374,6 +374,9 @@ class Link(SageObject):
             sage: K = Knot(code); K.alexander_polynomial()
             t^-1 - 1 + t
         """
+        from sage.features.snappy import SnapPy
+        self._snappy = SnapPy()
+
         if isinstance(data, list):
             # either oriented Gauss or PD code
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
@@ -399,30 +402,38 @@ class Link(SageObject):
                 self._pd_code = None
                 self._braid = None
 
-        else:
-            if isinstance(data, Braid):
-                # Remove all unused strands
-                support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
-                d = {}
-                for i, s in enumerate(support):
-                    d[s] = i + 1
-                    d[-s] = -i - 1
-                if not support:
-                    B = BraidGroup(2)
-                else:
-                    B = BraidGroup(len(support))
-                self._braid = B([d[x] for x in data.Tietze()])
-                self._oriented_gauss_code = None
-                self._pd_code = None
-
+        elif isinstance(data, Braid):
+            # Remove all unused strands
+            support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
+            d = {}
+            for i, s in enumerate(support):
+                d[s] = i + 1
+                d[-s] = -i - 1
+            if not support:
+                B = BraidGroup(2)
             else:
+                B = BraidGroup(len(support))
+            self._braid = B([d[x] for x in data.Tietze()])
+            self._oriented_gauss_code = None
+            self._pd_code = None
+
+        else:
+            # construct from instances of external packages
+            from_external = False
+            if self._snappy.is_present():
+                from snappy import Link as SnapPyLink
+                if isinstance(data, SnapPyLink):
+                    L = data.sage_link()
+                    self._pd_code = L._pd_code
+                    self._braid = L._braid
+                    self._oriented_gauss_code = L._oriented_gauss_code
+                    from_external = True
+
+            if not from_external:
                 raise ValueError("invalid input: data must be either a list or a braid")
 
         self._mirror = None  # set on invocation of :meth:`mirror_image`
         self._reverse = None  # set on invocation of :meth:`reverse`
-
-        from sage.features.snappy import SnapPy
-        self._snappy = SnapPy()
 
     @cached_method
     def snappy_link(self, use_braid=False):
@@ -438,11 +449,16 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # optional snappy
             sage: K = Knot([[[1,-2,3,-1,2,-3]],[1,1,1]])
-            sage: K.snappy_link().PD_code()                # optional - snappy
+            sage: Ksp = K.snappy_link(); Ksp.PD_code()
             [(3, 1, 4, 0), (1, 5, 2, 4), (5, 3, 0, 2)]
-            sage: K.snappy_link(use_braid=True).PD_code()  # optional - snappy
+            sage: K.is_isotopic(Link(Ksp))
+            True
+            sage: Ksb = K.snappy_link(use_braid=True); Ksb.PD_code()
             [(1, 5, 2, 4), (5, 3, 0, 2), (3, 1, 4, 0)]
+            sage: K.is_isotopic(Link(Ksb))
+            True
         """
         self._snappy.require()
         from snappy import Link as SnapPyLink
