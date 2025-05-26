@@ -71,7 +71,10 @@ Build Procedure
 
    .. code-block:: bash
 
-      python3 -m installer dist/sagemath-*.whl
+      python -m installer --destdir="<pkgdir>" dist/sagemath-*.whl
+
+   where `<pkgdir>` is the directory where you want to install the package
+   (usually a temporary directory for packaging).
 
 4. **Test the Build**:
 
@@ -95,5 +98,5 @@ has a convention for Python packages.
 Example Downstream Packages
 ===========================
 
-- `Arch Linux <https://aur.archlinux.org/packages/sagemath-git>`_
+- `Arch Linux <https://archlinux.org/packages/extra/x86_64/sagemath>`_
 
