@@ -61,8 +61,8 @@ EXAMPLES:
         sage: B = G(2*Ep.revert() - X)
         sage: B.truncate(6)
         1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
-
 """
+
 from sage.functions.other import binomial, factorial
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
@@ -98,11 +98,11 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer, the sum of the parts
-    - ``d`` -- a nonnegative integer, the total weight
-    - ``weight_multiplicities`` -- an iterable,
+    - ``n`` -- nonnegative integer; the sum of the parts
+    - ``d`` -- nonnegative integer; the total weight
+    - ``weight_multiplicities`` -- iterable;
       ``weight_multiplicities[i]`` is the number of positions with
-      weight `i+1`.
+      weight ``i+1``
 
     .. TODO::
 
@@ -130,7 +130,6 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
          [2, 0, 0, 1],
          [1, 1, 0, 1],
          [0, 2, 0, 1]]
-
     """
     # the empty composition exists if and only if n == d == 0
     if not n:
@@ -149,10 +148,11 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
         pass
     if _w0 > d:
         return
+    from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
     for s in range(n + 1):
         for c in weighted_compositions(n - s, d - s * (_w0 + 1), weight_multiplicities, _w0=_w0+1):
             m = weight_multiplicities[_w0]
-            for v in map(list, IntegerVectors(s, length=m)):
+            for v in IntegerListsBackend_invlex(s, length=m)._iter():
                 yield v + c
 
 
@@ -188,7 +188,8 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
          ([0, 3], [0, 1])]
     """
     k = len(n_vec)
-    for d_vec in IntegerVectors(d, length=k):
+    from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
+    for d_vec in IntegerListsBackend_invlex(d, length=k)._iter():
         yield from itertools.product(*map(weighted_compositions,
                                           n_vec, d_vec,
                                           weight_multiplicities_vec))
@@ -385,7 +386,6 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             [(E_3, ((1, 2, 3),))]
             sage: list((E+F).structures([1,2,3]))
             [(E_3, ((1, 2, 3),)), (E_3, ((1, 2, 3),))]
-
         """
         return SumSpeciesElement(self, other)
 
@@ -572,13 +572,13 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
     def polynomial(self, degree=None, names=None):
         r"""
-        Return ``self`` as a polynomial if ``self`` is actually so.
+        Return ``self`` as a polynomial if ``self`` is actually so or up to
+        specified degree.
 
         INPUT:
 
-        - ``degree`` -- ``None`` or an integer
-        - ``names`` -- names of the variables; if it is ``None``, the name of
-          the variables of the series is used
+        - ``degree`` -- (optional) integer
+        - ``names`` -- (default: name of the variables of the series) names of the variables
 
         OUTPUT:
 
@@ -590,7 +590,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: E.polynomial(3)
             1 + X + E_2 + E_3
         """
@@ -613,6 +613,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
     def __call__(self, *args):
         """
+        Evaluate ``self`` at ``*args``.
 
         EXAMPLES::
 
@@ -824,7 +825,7 @@ class LazySpeciesElement_generating_series_mixin:
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
-        return L(lambda n: cis[n].coefficient(Partition([1]*n)))
+        return L(lambda n: cis[n].coefficient(_Partitions([1]*n)))
 
 
 class SumSpeciesElement(LazySpeciesElement):
@@ -1309,7 +1310,7 @@ class SetPartitionSpecies(LazySpeciesElement):
             [[3], [2, 1], [1, 1, 1]]
         """
         if labels in ZZ:
-            yield from Partitions(labels)
+            yield from _Partitions(labels)
 
     def structures(self, labels):
         r"""
