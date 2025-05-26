@@ -42,3 +42,8 @@ jobs:
     - name: Validate docstring markup as RST
       if: (success() || failure()) && steps.deps.outcome == 'success'
       run: uv run --frozen --only-group lint -- flake8 --select=RST src/sage/ --config src/tox.ini
+    
+    - name: TOML format check with taplo
+      uses: docker://tamasfe/taplo:0.10.0
+      with:
+        args: format --check pyproject.toml .taplo.toml 
