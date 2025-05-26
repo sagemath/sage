@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Extension of rings
 

@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Elements lying in extension of rings
 
