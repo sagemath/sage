@@ -79,7 +79,7 @@ from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.combinat.partition import Partitions, Partition
+from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
@@ -1309,7 +1309,7 @@ class SetPartitionSpecies(LazySpeciesElement):
             [[3], [2, 1], [1, 1, 1]]
         """
         if labels in ZZ:
-            yield from _Partitions(labels)
+            yield from Partitions(labels)
 
     def structures(self, labels):
         r"""
