@@ -2029,7 +2029,7 @@ class KnotInfoBase(Enum):
             deprecation(40149, "base_ring is deprecated, use argument ring instead.")
 
         ch = ring.characteristic()
-        integral = ch == 0 and not ring.is_field()
+        integral = (ch == 0) and (not ring.is_field())
         if not self.is_knot():
             # KnotJob calculated results only available for knots
             if ch == 0 and ring.is_field():
