@@ -2064,12 +2064,14 @@ class Link(SageObject):
           correspond to the degree of Khovanov homology
         - ``torsion`` -- (default: ``'T'``) additional variable to indicate
           the torsion of the integral homology group corresponding to the
-          monomial. Monomials without it correspond to torsion free ``ring``
-          modules.  If it appears its exponents stands for the modulus of
-          the torsion. Here we follow the conventions used on
-          `KnotInfo <https://knotinfo.math.indiana.edu/descriptions/khovanov_unreduced_integral_polynomial.html>`__
+          monomial; monomials without it correspond to torsion free ``ring``
+          modules; if it appears its exponents stands for the modulus of
+          the torsion
         - ``ring`` -- (default: ``ZZ``) the ring of the homology. This will
           be transferred to :meth:`khovanov_homology`
+
+        Here we follow the conventions used in
+        `KnotInfo <https://knotinfo.math.indiana.edu/descriptions/khovanov_unreduced_integral_polynomial.html>`__
 
         OUTPUT:
 
