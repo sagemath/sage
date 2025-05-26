@@ -1899,14 +1899,14 @@ class KnotInfoBase(Enum):
 
         INPUT:
 
-        - ``var1`` -- (default: ``'q'``) the first variable. Its exponents
+        - ``var1`` -- (default: ``'q'``) the first variable; its exponents
           correspond to the height of Khovanov homology
-        - ``var2`` -- (default: ``'t'``) the second variable. Its exponents
+        - ``var2`` -- (default: ``'t'``) the second variable; its exponents
           correspond to the degree of Khovanov homology
         - ``torsion`` -- (default: ``'T'``) additional variable to indicate
           the torsion of the integral homology group corresponding to the
-          monomial. Monomials without it correspond to torsion free ``ring``
-          modules.  If it appears its exponents stands for the modulus of
+          monomial; monomials without it correspond to torsion free ``ring``
+          modules; if it appears, its exponents stands for the modulus of
           the torsion
         - ``ring`` -- (default: ``ZZ`` for knots and ``QQ`` for proper links)
           the ring for the homology
