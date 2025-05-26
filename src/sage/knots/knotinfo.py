@@ -1972,7 +1972,7 @@ class KnotInfoBase(Enum):
             sage: K8kr == K8ko                                         # optional database_knotinfo
             False
 
-        Caution:
+        Caution::
 
             sage: Kk2 = K.khovanov_polynomial(ring=GF(2))
             Traceback (most recent call last):
