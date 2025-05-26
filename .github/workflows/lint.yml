@@ -46,4 +46,4 @@ jobs:
     - name: TOML format check with taplo
       uses: docker://tamasfe/taplo:0.10.0
       with:
-        args: format --check pyproject.toml .taplo.toml 
+        args: format --check --diff pyproject.toml .taplo.toml 
