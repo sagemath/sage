@@ -203,7 +203,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
     Compute the molecular expansion of `E(-X)`::
 
         sage: L = LazySpecies(ZZ, "X")
-        sage: E = L(lambda n: SymmetricGroup(n))
+        sage: E = L(SymmetricGroup)
         sage: E_inv = 1 / E
         sage: E_inv
         1 + (-X) + (-E_2+X^2) + (-E_3+2*X*E_2-X^3)
@@ -227,11 +227,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: E.isotype_generating_series()
             1 + X + X^2 + X^3 + X^4 + X^5 + X^6 + O(X^7)
 
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L(CyclicPermutationGroup, valuation=1)
             sage: E(C).isotype_generating_series()
             1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
 
@@ -273,7 +273,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E.generating_series()
             1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
 
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L.Cycles()
             sage: C.generating_series()
             X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
 
@@ -320,7 +320,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             h[] + h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + O^7
 
             sage: s = SymmetricFunctions(QQ).s()
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L.Cycles()
             sage: s(C.cycle_index_series()[5])
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
 
@@ -379,8 +379,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
-            sage: F = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
+            sage: F = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
             sage: list((E+F).structures([1,2,3]))
@@ -395,7 +395,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: sorted((E^2).structures([1,2,3]))
             [((1, ()), (E_3, ((1, 2, 3),))),
              ((X, ((1,),)), (E_2, ((2, 3),))),
@@ -422,11 +422,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
 
-            sage: P = L(lambda n: CyclicPermutationGroup(n))
+            sage: P = L(CyclicPermutationGroup, valuation=1)
             sage: list(P.structures([1,2,3]))
             [(C_3, ((1, 2, 3),)), (C_3, ((1, 3, 2),))]
 
@@ -505,11 +505,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: list(E.isotypes(3))
             [(E_3,)]
 
-            sage: P = L(lambda n: CyclicPermutationGroup(n))
+            sage: P = L(CyclicPermutationGroup, valuation=1)
             sage: list(P.isotypes(3))
             [(C_3,)]
 
@@ -636,7 +636,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: A[5]
             X*E_4 + X^2*E_3 + 3*X^3*E_2 + X*E_2(X^2) + 3*X^5
 
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L.Cycles()
             sage: F = E(C(A))
             sage: [sum(F[n].monomial_coefficients().values()) for n in range(1, 7)]
             [1, 3, 7, 19, 47, 130]
@@ -646,8 +646,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: R.<q> = QQ[]
             sage: L = LazySpecies(R, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
-            sage: E1 = L(lambda n: SymmetricGroup(n) if n else 0)
+            sage: E = L.Sets()
+            sage: E1 = E.restrict(1)
             sage: E(q*E1)[4]
             (q^4+q)*E_4 + q^2*E_2(E_2) + q^2*X*E_3 + q^3*E_2^2
 
