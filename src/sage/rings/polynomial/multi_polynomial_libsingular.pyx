@@ -4200,7 +4200,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             NotImplementedError: Division of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.
             sage: R.<x,y,z> = GF((2^29-3)^2)[]
             sage: ((x+y)^3+x+z)//(x+y)
-            x^2 + 2*x*y + y^2
+            x^2 + 2*x*y + y^2 + 1
             sage: R.<x,y,z> = Zmod(7^2)[]
             sage: ((x+y)^3+x+z)//(x+y)
             Traceback (most recent call last):
