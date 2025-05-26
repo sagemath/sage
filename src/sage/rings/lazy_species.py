@@ -14,53 +14,52 @@ AUTHORS:
 
 EXAMPLES:
 
-    We can reproduce the molecular expansions from Appendix B in
-    [GL2011]_ with little effort.  The molecular expansion of the
-    species of point determining graphs can be computed as the
-    species of graphs composed with the compositional inverse of the
-    species of non-empty sets.::
+We can reproduce the molecular expansions from Appendix B in
+[GL2011]_ with little effort.  The molecular expansion of the
+species of point determining graphs can be computed as the
+species of graphs composed with the compositional inverse of the
+species of non-empty sets::
 
-        sage: L.<X> = LazySpecies(QQ)
-        sage: E = L.Sets()
-        sage: Ep = E.restrict(1)
-        sage: G = L.Graphs()
+    sage: L.<X> = LazySpecies(QQ)
+    sage: E = L.Sets()
+    sage: Ep = E.restrict(1)
+    sage: G = L.Graphs()
 
-    The molecular decomposition begins with::
+The molecular decomposition begins with::
 
-        sage: P = G(Ep.revert())
-        sage: P.truncate(6)
-        1 + X + E_2 + (E_3+X*E_2) + (E_4+X*E_3+E_2(E_2)+X^2*E_2+E_2(X^2))
-        + (E_5+E_2*E_3+X*E_4+X*E_2^2+X^2*E_3+2*X*E_2(E_2)+P_5+5*X*E_2(X^2)+3*X^3*E_2)
+    sage: P = G(Ep.revert())
+    sage: P.truncate(6)
+    1 + X + E_2 + (E_3+X*E_2) + (E_4+X*E_3+E_2(E_2)+X^2*E_2+E_2(X^2))
+    + (E_5+E_2*E_3+X*E_4+X*E_2^2+X^2*E_3+2*X*E_2(E_2)+P_5+5*X*E_2(X^2)+3*X^3*E_2)
 
-    Note that [GL2011]_ write `D_5` instead of `P_5`, and there is
-    apparently a misprint: `X*E_2(E_2) + 4 X^3 E_2` should be `2 X
-    E_2(E_2) + 3 X^3 E_2`.
+Note that [GL2011]_ write `D_5` instead of `P_5`, and there is
+apparently a misprint: `X*E_2(E_2) + 4 X^3 E_2` should be `2 X
+E_2(E_2) + 3 X^3 E_2`.
 
-    To compute the molecular decomposition of the species of
-    connected graphs with no endpoints, we use Equation (3.3) in
-    [GL2011]_.  Before that we need to define the species of
-    connected graphs::
+To compute the molecular decomposition of the species of
+connected graphs with no endpoints, we use Equation (3.3) in
+[GL2011]_.  Before that we need to define the species of
+connected graphs::
 
-        sage: Gc = Ep.revert()(G-1)
-        sage: E_2 = L(SymmetricGroup(2))
-        sage: Mc = Gc(X*E(-X)) + E_2(-X)
-        sage: E(Mc).truncate(5)
-        1 + X + E_2 + 2*E_3 + (2*E_4+E_2(E_2)+E_2^2+X*E_3)
+    sage: Gc = Ep.revert()(G-1)
+    sage: E_2 = L(SymmetricGroup(2))
+    sage: Mc = Gc(X*E(-X)) + E_2(-X)
+    sage: E(Mc).truncate(5)
+    1 + X + E_2 + 2*E_3 + (2*E_4+E_2(E_2)+E_2^2+X*E_3)
 
-    Note that [GL2011]_ apparently contains a misprint: `2 X E_3`
-    should be `X E_3 + E_2^2`.  Indeed, the graphs on four vertices
-    without endpoints are the complete graph and the empty graph, the
-    square, the diamond graph and the triangle with an extra isolated
-    vertex.
+Note that [GL2011]_ apparently contains a misprint: `2 X E_3`
+should be `X E_3 + E_2^2`.  Indeed, the graphs on four vertices
+without endpoints are the complete graph and the empty graph, the
+square, the diamond graph and the triangle with an extra isolated
+vertex.
 
+To compute the molecular decomposition of the species of
+bi-point-determining graphs we use Corollary (4.6) in
+[GL2011]_::
 
-    To compute the molecular decomposition of the species of
-    bi-point-determining graphs we use Corollary (4.6) in
-    [GL2011]_::
-
-        sage: B = G(2*Ep.revert() - X)
-        sage: B.truncate(6)
-        1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
+    sage: B = G(2*Ep.revert() - X)
+    sage: B.truncate(6)
+    1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
 """
 
 from sage.functions.other import binomial, factorial
