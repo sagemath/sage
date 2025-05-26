@@ -2956,8 +2956,7 @@ class DiGraph(GenericGraph):
                        (rooted or neighbor not in starting_vertices or path[0] <= neighbor):
                         heappush(heap_queue, (length + weight_function(e), path + [neighbor]))
 
-    def _all_simple_cycles_iterator_edge(self, edge, starting_vertices=None,
-                                         rooted=False, max_length=None,
+    def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
                                          remove_acyclic_edges=True,
                                          weight_function=None, by_weight=False,
                                          check_weight=True, report_weight=False):
@@ -2968,16 +2967,6 @@ class DiGraph(GenericGraph):
         INPUT:
 
         - ``edge`` -- the starting edge of the cycle.
-
-        - ``starting_vertices`` -- iterable (default: ``None``); vertices from
-          which the cycles must start. If ``None``, then all vertices of the
-          graph can be starting points. This argument is necessary if ``rooted``
-          is set to ``True``.
-
-        - ``rooted`` -- boolean (default: ``False``); if set to False, then
-          cycles differing only by their starting vertex are considered the same
-          (e.g. ``['a', 'b', 'c', 'a']`` and ``['b', 'c', 'a',
-          'b']``). Otherwise, all cycles are enumerated.
 
         - ``max_length`` -- nonnegative integer (default: ``None``); the
           maximum length of the enumerated paths. If set to ``None``, then all
@@ -3033,11 +3022,6 @@ class DiGraph(GenericGraph):
             ...
             ValueError: negative weight is not allowed
         """
-        if starting_vertices is None:
-            starting_vertices = [edge[0]]
-        if edge[0] not in starting_vertices:
-            raise ValueError("the tail of edge must be one of the starting vertices")
-
         # First we remove vertices and edges that are not part of any cycle
         if remove_acyclic_edges:
             sccs = self.strongly_connected_components()
@@ -3051,13 +3035,6 @@ class DiGraph(GenericGraph):
             h = copy(self)
         # delete edge
         h.delete_edge(edge)
-        # delete vertices unnecessary for enumearting cycles
-        if not rooted:
-            for v in starting_vertices:
-                if v < edge[0]:
-                    h.delete_vertex(v)
-                    if v == edge[1]:
-                        return
 
         by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                                weight_function=weight_function,
@@ -3081,12 +3058,7 @@ class DiGraph(GenericGraph):
         if max_length is None:
             from sage.rings.infinity import Infinity
             max_length = Infinity
-        while True:
-            try:
-                length, path = next(it)
-            except StopIteration:
-                break
-
+        for length, path in it:
             if length + edge_weight > max_length:
                 break
 
@@ -3256,6 +3228,16 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: negative weight is not allowed
+
+        The algorithm ``'B'`` is available only when `simple=True`::
+
+            sage: g = DiGraph()
+            sage: g.add_edges([('a', 'b', 1), ('b', 'a', 1)])
+            sage: next(g.all_cycles_iterator(algorithm='B', simple=False))
+            ....:
+            Traceback (most recent call last):
+            ...
+            ValueError: The algorithm 'B' is available only when simple=True.
         """
         if starting_vertices is None:
             starting_vertices = self
@@ -3298,20 +3280,24 @@ class DiGraph(GenericGraph):
         elif algorithm == 'B':
             if not simple:
                 raise ValueError("The algorithm 'B' is available only when simple=True.")
-            def simple_cycle_iter(e):
-                return h._all_simple_cycles_iterator_edge(e,
-                                                          starting_vertices=starting_vertices,
-                                                          rooted=rooted,
-                                                          max_length=max_length,
-                                                          remove_acyclic_edges=False,
-                                                          weight_function=weight_function,
-                                                          by_weight=by_weight,
-                                                          check_weight=check_weight,
-                                                          report_weight=True)
+            def simple_cycle_iter(hh, e):
+                return hh._all_simple_cycles_iterator_edge(e,
+                                                           max_length=max_length,
+                                                           remove_acyclic_edges=False,
+                                                           weight_function=weight_function,
+                                                           by_weight=by_weight,
+                                                           check_weight=check_weight,
+                                                           report_weight=True)
+            SCCS = h.strongly_connected_components_subgraphs()
             iterators = dict()
-            for s in starting_vertices:
-                for e in h.outgoing_edge_iterator(s):
-                    iterators[e] = simple_cycle_iter(e)
+            while SCCS:
+                hh = SCCS.pop()
+                if not hh.size():
+                    continue
+                e = next(hh.edge_iterator())
+                iterators[e] = simple_cycle_iter(hh, e)
+                hh.delete_edge(e)
+                SCCS.extend(hh.strongly_connected_components_subgraphs())
         else:
             raise ValueError(f"The algorithm {algorithm} is not valid. \
                                Use the algorithm 'A' or 'B'.")
