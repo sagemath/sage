@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Static sparse graph backend
 
@@ -36,6 +35,7 @@ Classes and methods
 -------------------
 """
 
+cimport cython
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
@@ -1546,6 +1546,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         (<StaticSparseCGraph> self._cg).del_vertex(v)
 
 
+@cython.binding(True)
 def _run_it_on_static_instead(f):
     r"""
     A decorator function to force the (Di)Graph functions to compute from a
