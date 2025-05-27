@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Elements lying in extension of rings
 
@@ -18,6 +17,7 @@ AUTHOR:
 # ***************************************************************************
 
 
+cimport cython
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.getattr cimport AttributeErrorMessage
 from sage.cpython.getattr import dir_with_other_class
@@ -97,6 +97,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         return self._parent, (self._backend,)
 
+    @cython.binding(True)
     def __getattr__(self, name):
         """
         If the parent of this element was created with ``import_methods = True``,
