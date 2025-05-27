@@ -3024,13 +3024,14 @@ class DiGraph(GenericGraph):
         """
         # First we remove vertices and edges that are not part of any cycle
         if remove_acyclic_edges:
-            sccs = self.strongly_connected_components()
-            d = {}
-            for id, component in enumerate(sccs):
-                for v in component:
-                    d[v] = id
-            h = copy(self)
-            h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+            h = None
+            for component in self.strongly_connected_components_subgraphs():
+                if component.has_edge(edge):
+                    h = component
+            if h is None:
+                # edge connects two strongly connected components, so
+                # no simple cycle starting with edge does not exist.
+                return
         else:
             h = copy(self)
         # delete edge
