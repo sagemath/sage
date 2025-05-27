@@ -275,7 +275,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: C = L.Cycles()
             sage: C.generating_series()
-            X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
+            X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + 1/7*X^7 + O(X^8)
 
             sage: L2.<X, Y> = LazySpecies(QQ)
             sage: E(X + Y).generating_series()
@@ -291,7 +291,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             + (1/4*X^4+X^3*Y+3/2*X^2*Y^2+X*Y^3+1/4*Y^4)
             + (1/5*X^5+X^4*Y+2*X^3*Y^2+2*X^2*Y^3+X*Y^4+1/5*Y^5)
             + (1/6*X^6+X^5*Y+5/2*X^4*Y^2+10/3*X^3*Y^3+5/2*X^2*Y^4+X*Y^5+1/6*Y^6)
-            + O(X,Y)^7
+            + (1/7*X^7+X^6*Y+3*X^5*Y^2+5*X^4*Y^3+5*X^3*Y^4+3*X^2*Y^5+X*Y^6+1/7*Y^7)
+            + O(X,Y)^8
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
@@ -808,7 +809,14 @@ class LazySpeciesElement_generating_series_mixin:
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
-        return L(lambda n: sum(cis[n].coefficients()))
+        if P._arity == 1:
+            def coefficient(n):
+                return sum(cis[n].coefficients())
+        else:
+            def coefficient(n):
+                return sum(c * P.base_ring().prod(v ** d.size() for v, d in zip(L.gens(), M))
+                           for M, c in cis[n].monomial_coefficients().items())
+        return L(coefficient)
 
     def generating_series(self):
         r"""
@@ -884,6 +892,24 @@ class SumSpeciesElement(LazySpeciesElement):
         """
         return self._left.generating_series() + self._right.generating_series()
 
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: F = L.Sets() + L.SetPartitions()
+            sage: F.isotype_generating_series()
+            2 + 2*X + 3*X^2 + 4*X^3 + 6*X^4 + 8*X^5 + 12*X^6 + O(X^7)
+
+        TESTS::
+
+            sage: F.isotype_generating_series()[20]
+            628
+        """
+        return self._left.isotype_generating_series() + self._right.isotype_generating_series()
+
 
 class ProductSpeciesElement(LazySpeciesElement):
     def __init__(self, left, right):
@@ -946,8 +972,23 @@ class ProductSpeciesElement(LazySpeciesElement):
         """
         return self._left.generating_series() * self._right.generating_series()
 
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
 
-class CompositionSpeciesElement(LazySpeciesElement):
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: F = E*E
+            sage: F.isotype_generating_series()
+            1 + 2*X + 3*X^2 + 4*X^3 + 5*X^4 + 6*X^5 + 7*X^6 + O(X^7)
+        """
+        return self._left.isotype_generating_series() * self._right.isotype_generating_series()
+
+
+class CompositionSpeciesElement(LazySpeciesElement_generating_series_mixin,
+                                LazySpeciesElement):
     def __init__(self, left, *args):
         r"""
         Initialize the composition of species.
@@ -1113,6 +1154,20 @@ class CompositionSpeciesElement(LazySpeciesElement):
             1 + X + X^2 + 5/6*X^3 + 5/8*X^4 + 13/30*X^5 + 203/720*X^6 + O(X^7)
         """
         return self._left.generating_series()(*[G.generating_series() for G in self._args])
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: F = E(E.restrict(1))
+            sage: F.cycle_index_series()[5]
+            h[2, 2, 1] - h[3, 1, 1] + 3*h[3, 2] + 2*h[4, 1] + 2*h[5]
+        """
+        return self._left.cycle_index_series()(*[G.cycle_index_series() for G in self._args])
 
 
 class LazySpecies(LazyCompletionGradedAlgebra):
@@ -1432,8 +1487,14 @@ class SetPartitionSpecies(CompositionSpeciesElement):
             sage: p.generating_series()[20]
             263898766507/12412765347840000
 
-            sage: SetPartitions(20).cardinality()/factorial(20)
+            sage: SetPartitions(20).cardinality() / factorial(20)
             263898766507/12412765347840000
+
+            sage: p.isotype_generating_series()[20]
+            627
+
+            sage: Partitions(20).cardinality()
+            627
         """
         E = parent.Sets()
         E1 = parent.Sets().restrict(1)
@@ -1472,6 +1533,38 @@ class SetPartitionSpecies(CompositionSpeciesElement):
         """
         labels = _label_sets(self.parent()._arity, [labels])
         yield from SetPartitions(labels[0])
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(ZZ, "X")
+            sage: P = L.SetPartitions()
+            sage: P.generating_series()
+            1 + X + X^2 + 5/6*X^3 + 5/8*X^4 + 13/30*X^5 + 203/720*X^6 + O(X^7)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(lambda n: SetPartitions(n).cardinality() / factorial(n))
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(ZZ, "X")
+            sage: P = L.SetPartitions()
+            sage: P.isotype_generating_series()
+            1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
+        """
+        P = self.parent()
+        L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
+                                P._laurent_poly_ring._indices._indices.variable_names())
+        return L(lambda n: Partitions(n).cardinality())
 
 
 class RestrictedSpeciesElement(LazySpeciesElement):
@@ -1555,3 +1648,35 @@ class RestrictedSpeciesElement(LazySpeciesElement):
             X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + 1/5040*X^7 + O(X^8)
         """
         return self._F.generating_series().restrict(self._min, self._max)
+
+    def isotype_generating_series(self):
+        r"""
+        Return the isotype generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: E.restrict(1, 5).isotype_generating_series()
+            X + X^2 + X^3 + X^4 + X^5
+
+            sage: E.restrict(1).isotype_generating_series()
+            X + X^2 + X^3 + O(X^4)
+        """
+        return self._F.isotype_generating_series().restrict(self._min, self._max)
+
+    def cycle_index_series(self):
+        r"""
+        Return the cycle index series for this species.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
+            sage: E.restrict(1, 5).cycle_index_series()
+            h[1] + h[2] + h[3] + h[4] + h[5]
+
+            sage: E.restrict(1).cycle_index_series()
+            h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + h[7] + O^8
+        """
+        return self._F.cycle_index_series().restrict(self._min, self._max)
