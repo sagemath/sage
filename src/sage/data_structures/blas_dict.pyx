@@ -350,7 +350,8 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
         if not result and a == 1:
             result = D.copy()
         else:
-            iaxpy(a, D, result, remove_zeros=False)
+            iaxpy(a, D, result, remove_zeros=False, 
+                  factor_on_left=factor_on_left)
 
     return remove_zeros(result)
 
