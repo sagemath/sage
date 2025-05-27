@@ -366,7 +366,7 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         try:
             # Try the normal coercion first
             return ElementWrapper.__mul__(left, right)
-        except TypeError as e:
+        except TypeError:
             pass
 
         try:
