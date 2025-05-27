@@ -629,7 +629,7 @@ class OperationTable(SageObject):
                 name_list_ext.append(estr)
         elif isinstance(names, list):
             if names is not None and not self._closed:
-                raise ValueError('names argument cannot be used together with closed=False')
+                raise ValueError('custom names cannot be used together with closed=False')
             if len(names) != self._n:
                 raise ValueError('list of element names must be the same size as the set, %s != %s' % (
                     len(names), self._n))
@@ -710,7 +710,9 @@ class OperationTable(SageObject):
         except ValueError:
             raise IndexError(
                 'invalid indices of operation table: (%s, %s)' % (g, h))
-        return self._elts[self._table[row][col]]
+        r = self._table[row][col]
+        return self._elts[r] if r < self._n else self._elts_ext[r - self._n]
+
 
     def __eq__(self, other):
         r"""
@@ -737,7 +739,7 @@ class OperationTable(SageObject):
             sage: P == P, P == Q, P == R, P == S
             (True, True, False, False)
         """
-        return (self._elts == other._elts) and (self._operation == other._operation)
+        return (self._elts == other._elts) and (self._elts_ext == other._elts_ext) and (self._operation == other._operation)
 
     def __ne__(self, other):
         """
