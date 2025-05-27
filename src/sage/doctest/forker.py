@@ -2234,7 +2234,7 @@ class DocTestWorker(multiprocessing.Process):
 
         # Create Queue for the result. Since we're running only one
         # doctest, this "queue" will contain only 1 element.
-        self.result_queue = multiprocessing.Queue(1)
+        self.result_queue = multiprocessing.Manager().Queue(1)
 
         # Temporary file for stdout/stderr of the child process.
         # Normally, this isn't used in the master process except to
