@@ -275,14 +275,17 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
             sage: TestSuite(W).run()
         """
-        self._coefficient_ring = coefficient_ring
+        cring = coefficient_ring
+        self._coefficient_ring = cring
         self._prec = prec
         self._prime = prime
 
-        if self._coefficient_ring in IntegralDomains():
+        if (cring.characteristic() > 0 and prec == 1
+                and cring in IntegralDomains()):
             cat = IntegralDomains()
         else:
             cat = CommutativeRings()
+
         Parent.__init__(self, base=ZZ, category=cat)
 
     def __iter__(self) -> Iterator:
@@ -815,7 +818,7 @@ class WittVectorRing_phantom(WittVectorRing):
             sage: type(W)
             <class 'sage.rings.padics.witt_vector_ring.WittVectorRing_phantom_with_category'>
 
-            sage: TestSuite(W).run(skip="_test_fraction_field")
+            sage: TestSuite(W).run()
         """
         if not (coefficient_ring.characteristic() == prime
                 and (coefficient_ring in Fields().Finite()
