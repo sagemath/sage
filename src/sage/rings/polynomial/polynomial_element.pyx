@@ -2836,11 +2836,21 @@ cdef class Polynomial(CommutativePolynomial):
             except TypeError:
                 pass
 
+        # Try to coerce denominator in numerator parent...
         if isinstance(right, Polynomial):
             R = (<Polynomial>right)._parent
             try:
                 x = R.coerce(left)
                 return x.__truediv__(right)
+            except TypeError:
+                pass
+
+        # ...and numerator in denominator parent
+        if isinstance(left, Polynomial):
+            R = (<Polynomial>left)._parent
+            try:
+                x = R.coerce(right)
+                return left.__truediv__(x)
             except TypeError:
                 pass
 
