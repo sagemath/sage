@@ -30,15 +30,13 @@ else
   # ecl does not have any problems with Maxima, so nothing needs to be set here:
   conf_data.set('SAGE_MAXIMA_FAS', '')
 endif
-braiding = dependency('libbraiding', required: false)
-if not braiding.found()
-  # Fallback since pkg-config support was only added in v1.3.1
-  braiding = cc.find_library(
-    'braiding',
-    required: not is_windows,
-    disabler: true,
-  )
-endif
+
+braiding = dependency(
+  'libbraiding',
+  version: '>=1.3.1',
+  required: false,
+  disabler: true,
+)
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
   version: '>=7.6.4',
