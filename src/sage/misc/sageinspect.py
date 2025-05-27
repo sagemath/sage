@@ -204,7 +204,7 @@ def isclassinstance(obj):
             not (isinstance(obj.__class__.__module__, str) and
                  obj.__class__.__module__.startswith('_cython_')) and
             # In Cython 3.1, they have 'member_descriptor' type
-            not 'cython_function_or_method' in str(obj.__class__.__module__))
+            'cython_function_or_method' not in str(obj.__class__.__module__))
 
 
 # Parse strings of form "File: sage/rings/rational.pyx (starting at line 1080)"
