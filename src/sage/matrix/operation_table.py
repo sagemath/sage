@@ -65,6 +65,12 @@ class OperationTable(SageObject):
       can also be a subset which is closed under the operation, useful
       perhaps when the set is infinite.
 
+    - ``closed`` -- (default: ``True``) Only has an effect if the ``elements``
+      argument is passed and indicates whether the ``elements`` are closed under
+      ``operation``. When set to False the operation table is generated even if
+      the result of the operation is not in the list ``elements``, otherwise a
+      ``ValueError`` is raised.
+
     OUTPUT:
 
     An object with methods that abstracts multiplication tables,
@@ -340,11 +346,27 @@ class OperationTable(SageObject):
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce (1,3,2,4) into Cyclic group of order 4 as a permutation group
+
+    When the argument ``elements`` is given by default they are assumed to be closed under ``operation``.
+    In case they are not closed the argument ``closed=False`` can be used to tell that it is not a problem
+    if the result of the operation is not among ``elements`` as long as it can be coerced into ``S``. ::
+
+        sage: # needs sage.groups
         sage: elts[2] = '(1,2,3,4)'
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
         ValueError: (1,3)(2,4)*(1,2,3,4)=(1,4,3,2), and so the set is not closed. Maybe try closed=False?
+        sage: OperationTable(H, operator.mul, names='elements', elements=elts, closed=False)
+                *          () (1,3)(2,4)  (1,2,3,4)
+                  +---------------------------------
+                ()|         () (1,3)(2,4)  (1,2,3,4)
+        (1,3)(2,4)| (1,3)(2,4)         ()  (1,4,3,2)
+         (1,2,3,4)|  (1,2,3,4)  (1,4,3,2) (1,3)(2,4)
+
+    When ``closed=False`` is passed together with ``elements`` that are not closed under ``operation`` then
+    new names are introduced for the elements not contained in ``elements``, but they will only appear in the
+    table as results, i.e. they will not be appended to the list of operands.
 
     Unusable functions should be recognized as such::
 
@@ -520,6 +542,8 @@ class OperationTable(SageObject):
           version of the table.
         - ``name_list`` -- list of strings naming the elements, in the
           same order as given by the :meth:`list` method
+        - ``name_list_ext`` -- list of strings naming the elements that are
+          not in the list of elements if passed
         - ``name_dict`` -- dictionary giving the correspondence between the
           strings and the actual elements.  So the keys are the strings and
           the values are the elements of the structure.
