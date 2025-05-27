@@ -341,6 +341,12 @@ class Link(SageObject):
             sage: K = Knot(code); K.alexander_polynomial()
             t^-1 - 1 + t
         """
+        from sage.features.regina import Regina
+        self._regina = Regina()
+
+        self._mirror = None  # set on invocation of :meth:`mirror_image`
+        self._reverse = None  # set on invocation of :meth:`reverse`
+
         if isinstance(data, list):
             # either oriented Gauss or PD code
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
@@ -366,30 +372,34 @@ class Link(SageObject):
                 self._pd_code = None
                 self._braid = None
 
-        else:
-            if isinstance(data, Braid):
-                # Remove all unused strands
-                support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
-                d = {}
-                for i, s in enumerate(support):
-                    d[s] = i + 1
-                    d[-s] = -i - 1
-                if not support:
-                    B = BraidGroup(2)
-                else:
-                    B = BraidGroup(len(support))
-                self._braid = B([d[x] for x in data.Tietze()])
-                self._oriented_gauss_code = None
-                self._pd_code = None
-
+        elif isinstance(data, Braid):
+            # Remove all unused strands
+            support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
+            d = {}
+            for i, s in enumerate(support):
+                d[s] = i + 1
+                d[-s] = -i - 1
+            if not support:
+                B = BraidGroup(2)
             else:
+                B = BraidGroup(len(support))
+            self._braid = B([d[x] for x in data.Tietze()])
+            self._oriented_gauss_code = None
+            self._pd_code = None
+
+        else:
+            # construct from instances of external packages
+            from_external = False
+            if self._regina.is_present():
+                from regina import Link as ReginaLink
+                if isinstance(data, ReginaLink):
+                    self._pd_code = data.pdData()
+                    self._braid = None
+                    self._oriented_gauss_code = None
+                    from_external = True
+
+            if not from_external:
                 raise ValueError("invalid input: data must be either a list or a braid")
-
-        self._mirror = None  # set on invocation of :meth:`mirror_image`
-        self._reverse = None  # set on invocation of :meth:`reverse`
-
-        from sage.features.regina import Regina
-        self._regina = Regina()
 
     @cached_method
     def regina_link(self, use_pd=True):
@@ -406,15 +416,28 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Knot([[[1,-2,3,-1,2,-3]],[1,1,1]])
-            sage: K.regina_link().pd()                    # optional regina
-            'PD[X[2, 6, 3, 5], X[4, 2, 5, 1], X[6, 4, 1, 3]]'
-            sage: K.regina_link(use_pd=False).pd()        # optional regina
-            'PD[X[1, 5, 2, 4], X[3, 1, 4, 6], X[5, 3, 6, 2]]'
+            sage: Krp = K.regina_link(); Krp.pdData()
+            [[2, 6, 3, 5], [4, 2, 5, 1], [6, 4, 1, 3]]
+            sage: K == Krp
+            False
+            sage: K.is_isotopic(Link(Krp))
+            True
+            sage: Krg = K.regina_link(use_pd=False); Krg.pdData()
+            [[1, 5, 2, 4], [3, 1, 4, 6], [5, 3, 6, 2]]
+            sage: K == Krg
+            False
+            sage: K.is_isotopic(Link(Krg))
+            True
         """
         self._regina.require()
         from regina import Link as ReginaLink
         if use_pd:
-            return ReginaLink.fromPD(self.pd_code())
+            # reduce arc numbers
+            pd = self.pd_code()
+            segments = list(set(flatten(pd)))
+            red = {i: segments.index(i) + 1 for i in segments}
+            pd_red = [[red[i] for i in cr] for cr in pd]
+            return ReginaLink.fromPD(pd_red)
         else:
             res = ''
             ori = {-1:'>', 1:'<'}
