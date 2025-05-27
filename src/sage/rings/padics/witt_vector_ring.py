@@ -280,8 +280,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
         self._prec = prec
         self._prime = prime
 
-        if (cring.characteristic() > 0 and prec == 1
-                and cring in IntegralDomains()):
+        if prec == 1 and cring in IntegralDomains():
             cat = IntegralDomains()
         else:
             cat = CommutativeRings()
