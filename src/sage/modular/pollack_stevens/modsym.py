@@ -116,7 +116,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
 
 class PSModSymAction(Action):
-    def __init__(self, actor, MSspace):
+    def __init__(self, actor, MSspace) -> None:
         r"""
         Create the action.
 
@@ -148,7 +148,7 @@ class PSModSymAction(Action):
 
 
 class PSModularSymbolElement(ModuleElement):
-    def __init__(self, map_data, parent, construct=False):
+    def __init__(self, map_data, parent, construct=False) -> None:
         r"""
         Initialize a modular symbol.
 
@@ -163,7 +163,7 @@ class PSModularSymbolElement(ModuleElement):
         else:
             self._map = ManinMap(parent._coefficients, parent._source, map_data)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of the symbol.
 
@@ -564,7 +564,7 @@ class PSModularSymbolElement(ModuleElement):
         return min([val.diagonal_valuation(p) for val in self._map])
 
     @cached_method
-    def is_Tq_eigensymbol(self, q, p=None, M=None):
+    def is_Tq_eigensymbol(self, q, p=None, M=None) -> bool:
         r"""
         Determine if ``self`` is an eigenvector for `T_q` modulo `p^M`.
 

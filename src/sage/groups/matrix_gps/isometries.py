@@ -92,7 +92,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
                  gens, invariant_bilinear_form,
                  category=None, check=True,
                  invariant_submodule=None,
-                 invariant_quotient_module=None):
+                 invariant_quotient_module=None) -> None:
         r"""
         Create this orthogonal group from the input.
 
@@ -131,7 +131,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
                                                   gap_group,
                                                   category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this matrix group.
 
@@ -288,7 +288,7 @@ class GroupActionOnSubmodule(Action):
         Echelon basis matrix:
         [0 1]
     """
-    def __init__(self, MatrixGroup, submodule, is_left=False):
+    def __init__(self, MatrixGroup, submodule, is_left=False) -> None:
         r"""
         Initialize the action.
 
@@ -375,7 +375,7 @@ class GroupActionOnQuotientModule(Action):
         sage: (x*g).parent()
         Finitely generated module V/W over Integer Ring with invariants (6)
     """
-    def __init__(self, MatrixGroup, quotient_module, is_left=False):
+    def __init__(self, MatrixGroup, quotient_module, is_left=False) -> None:
         r"""
         Initialize the action.
 

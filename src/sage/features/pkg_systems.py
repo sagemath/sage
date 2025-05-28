@@ -25,7 +25,7 @@ class PackageSystem(Feature):
         sage: PackageSystem('conda')
         Feature('conda')
     """
-    def _is_present(self):
+    def _is_present(self) -> bool:
         r"""
         Test whether ``self`` appears in the list of available package systems.
 
@@ -112,7 +112,7 @@ class SagePackageSystem(PackageSystem):
         """
         return PackageSystem.__classcall__(cls, "sage_spkg")
 
-    def _is_present(self):
+    def _is_present(self) -> bool:
         r"""
         Test whether ``sage-spkg`` is available.
 
@@ -177,7 +177,7 @@ class PipPackageSystem(PackageSystem):
         """
         return PackageSystem.__classcall__(cls, "pip")
 
-    def _is_present(self):
+    def _is_present(self) -> bool:
         r"""
         Test whether ``pip`` is available.
 

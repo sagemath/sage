@@ -41,7 +41,7 @@ class gosper_iterator:
     Iterable for the partial quotients of `(a*x+b)/(c*x+d)`, where `a, b, c, d`
     are integers, and `x` is a continued fraction.
     """
-    def __init__(self, a, b, c, d, x):
+    def __init__(self, a, b, c, d, x) -> None:
         """
         Construct the class.
 

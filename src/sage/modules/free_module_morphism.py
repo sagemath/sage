@@ -73,7 +73,7 @@ def is_FreeModuleMorphism(x):
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
-    def __init__(self, parent, A, side='left'):
+    def __init__(self, parent, A, side='left') -> None:
         """
         INPUT:
 
@@ -738,7 +738,7 @@ class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
         ...
         ValueError: basis element must be a unit
     """
-    def __init__(self, parent, basis=None):
+    def __init__(self, parent, basis=None) -> None:
         """
         TESTS::
 
@@ -795,7 +795,7 @@ class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
         ...
         ValueError: basis element must be a unit
     """
-    def __init__(self, parent, basis=None):
+    def __init__(self, parent, basis=None) -> None:
         """
         TESTS::
 

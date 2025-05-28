@@ -45,7 +45,7 @@ class KRTToRCBijectionAbstract:
     This class should never be created directly.
     """
 
-    def __init__(self, tp_krt):
+    def __init__(self, tp_krt) -> None:
         """
         Initialize the bijection by obtaining the important information from
         the KR tableaux.
@@ -302,7 +302,7 @@ class RCToKRTBijectionAbstract:
     This class should never be created directly.
     """
 
-    def __init__(self, RC_element):
+    def __init__(self, RC_element) -> None:
         """
         Initialize the bijection helper.
 

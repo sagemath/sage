@@ -60,7 +60,7 @@ class Encoder(SageObject):
     - [Nie]_
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         Initialize mandatory parameters for an :class:`Encoder` object.
 
@@ -94,7 +94,7 @@ class Encoder(SageObject):
         """
         self._code = code
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test inequality of ``self`` and ``other``.
 

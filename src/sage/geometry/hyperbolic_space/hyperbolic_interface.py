@@ -86,7 +86,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
     - ``KM`` -- Klein disk
     - ``HM`` -- hyperboloid model
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -98,7 +98,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
         Parent.__init__(self, category=Sets().Metric().WithRealizations())
         self.a_realization() # We create a realization so at least one is known
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -138,7 +138,7 @@ class HyperbolicModels(Category_realization_of_parent):
     r"""
     The category of hyperbolic models of hyperbolic space.
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the hyperbolic models of hyperbolic space.
 
@@ -156,7 +156,7 @@ class HyperbolicModels(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 

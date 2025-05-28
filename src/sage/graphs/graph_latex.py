@@ -552,7 +552,7 @@ class GraphLatex(SageObject):
                             'rankdir': 'down',
                             'subgraph_clusters': []}
 
-    def __init__(self, graph, **options):
+    def __init__(self, graph, **options) -> None:
         r"""
         Return a GraphLatex object, which holds all the parameters needed for
         creating a LaTeX string that will be rendered as a picture of the graph.
@@ -593,7 +593,7 @@ class GraphLatex(SageObject):
             return False
         return self._options == other._options
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of a
         :class:`sage.graphs.graph_latex.GraphLatex` object which includes the

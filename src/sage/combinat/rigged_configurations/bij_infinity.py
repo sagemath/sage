@@ -51,7 +51,7 @@ class FromTableauIsomorphism(Morphism):
     rigged configuration model.
     """
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return the type of morphism of ``self``.
 
@@ -123,7 +123,7 @@ class FromRCIsomorphism(Morphism):
     to the tableau model.
     """
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return the type of morphism of ``self``.
 

@@ -49,7 +49,7 @@ class pAdicRelativeBaseringInjection(Morphism):
           From: 5-adic Unramified Extension Field in a defined by x^3 + 3*x + 3
           To:   5-adic Eisenstein Extension Field in w defined by x^3 + 15*a*x - 5*a^2 - 5 over its base field
     """
-    def __init__(self, R, S):
+    def __init__(self, R, S) -> None:
         """
         Initialization.
 
@@ -140,7 +140,7 @@ class pAdicRelativeBaseringSection(Morphism):
           From: 2-adic Eisenstein Extension Field in w defined by x^4 + 2*a*x^2 - 16*x - 6 over its base field
           To:   2-adic Unramified Extension Field in a defined by x^10 + x^6 + x^5 + x^3 + x^2 + x + 1
     """
-    def __init__(self, S, R):
+    def __init__(self, S, R) -> None:
         """
         Initialization.
 
@@ -210,7 +210,7 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
         sage: w^4 + 2*a*w^2 - 16*w - 6*a == 0
         True
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation) -> None:
         """
         Initialization.
 
@@ -248,7 +248,7 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
         sage: w^4 + 2*a*w^2 - 16*w - 6*a == 0
         True
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation) -> None:
         """
         Initialization.
 
@@ -286,7 +286,7 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
         sage: w^4 + 2*a*w^2 - 16*w - 6*a == 0
         True
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation) -> None:
         """
         Initialization.
 
@@ -324,7 +324,7 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
         sage: w^4 + 2*a*w^2 - 16*w - 6*a == 0
         True
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation) -> None:
         """
         Initialization.
 
@@ -364,7 +364,7 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
         sage: w^4 + 2*a*w^2 - 16*w - 6*a == 0
         True
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation) -> None:
         """
         Initialization.
 
@@ -402,7 +402,7 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
         sage: w^4 + 2*a*w^2 - 16*w - 6*a == 0
         True
     """
-    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, approx_modulus, prec, print_mode, shift_seed, names, implementation) -> None:
         """
         Initialization.
 

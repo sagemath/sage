@@ -483,7 +483,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         :meth:`~sage.categories.crystals.Crystals.ParentMethods.subcrystal`.
     """
 
-    def __init__(self, crystals, generators, cartan_type):
+    def __init__(self, crystals, generators, cartan_type) -> None:
         """
         EXAMPLES::
 
@@ -499,7 +499,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         self._cartan_type = cartan_type
         self.module_generators = tuple([self(*x) for x in generators])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -525,7 +525,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         Merge this into :class:`TensorProductOfCrystals`.
     """
 
-    def __init__(self, crystals, **options):
+    def __init__(self, crystals, **options) -> None:
         """
         TESTS::
 
@@ -552,7 +552,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         self.cartesian_product = cartesian_product(self.crystals)
         self.module_generators = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -970,7 +970,7 @@ class CrystalOfTableaux(CrystalOfWords):
         T.shapes = spin_shapes
         return T
 
-    def __init__(self, cartan_type, shapes):
+    def __init__(self, cartan_type, shapes) -> None:
         """
         Construct the crystal of all tableaux of the given shapes.
 
@@ -1072,7 +1072,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
     - ``shape`` -- a shape
     """
 
-    def __init__(self, cartan_type, shape):
+    def __init__(self, cartan_type, shape) -> None:
         """
         Initialize ``self``.
 
@@ -1094,7 +1094,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
         mg = self.element_class(self, list=data)
         self.module_generators = (mg,)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

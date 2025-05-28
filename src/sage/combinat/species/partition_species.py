@@ -27,7 +27,7 @@ from functools import reduce
 
 
 class PartitionSpeciesStructure(GenericSpeciesStructure):
-    def __init__(self, parent, labels, list):
+    def __init__(self, parent, labels, list) -> None:
         """
         EXAMPLES::
 
@@ -42,7 +42,7 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
         list.sort(key=lambda block:(-len(block), block))
         GenericSpeciesStructure.__init__(self, parent, labels, list)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -144,7 +144,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         """
         return super().__classcall__(cls, *args, **kwds)
 
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Return the species of partitions.
 

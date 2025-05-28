@@ -165,7 +165,7 @@ from sage.combinat.backtrack import GenericBacktracker
 
 
 class CrystalBacktracker(GenericBacktracker):
-    def __init__(self, crystal, index_set=None):
+    def __init__(self, crystal, index_set=None) -> None:
         r"""
         Time complexity: `O(nF)` amortized for each produced
         element, where `n` is the size of the index set, and `F` is

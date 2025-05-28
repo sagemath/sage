@@ -579,7 +579,7 @@ class TreeNode:
         sage: tn3.depth
         2
     """
-    def __init__(self, parent=None, children=None, label=None):
+    def __init__(self, parent=None, children=None, label=None) -> None:
         """
         INPUT:
 

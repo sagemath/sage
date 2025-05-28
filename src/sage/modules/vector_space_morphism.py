@@ -815,7 +815,7 @@ def is_VectorSpaceMorphism(x) -> bool:
 
 class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
 
-    def __init__(self, homspace, A, side='left'):
+    def __init__(self, homspace, A, side='left') -> None:
         r"""
         Create a linear transformation, a morphism between vector spaces.
 

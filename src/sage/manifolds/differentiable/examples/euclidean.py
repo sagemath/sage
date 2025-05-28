@@ -728,7 +728,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                  coordinates='Cartesian', symbols=None, metric_name='g',
                  metric_latex_name=None, start_index=1, base_manifold=None,
                  category=None, init_coord_methods=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a Euclidean space.
 
@@ -800,7 +800,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
             self._init_coordinates = init_coord_methods
         self._init_coordinates[coordinates](symbols)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1165,7 +1165,7 @@ class EuclideanPlane(EuclideanSpace):
     """
     def __init__(self, name=None, latex_name=None, coordinates='Cartesian',
                  symbols=None, metric_name='g', metric_latex_name=None,
-                 start_index=1, base_manifold=None, category=None, unique_tag=None):
+                 start_index=1, base_manifold=None, category=None, unique_tag=None) -> None:
         r"""
         Construct a Euclidean plane.
 
@@ -1202,7 +1202,7 @@ class EuclideanPlane(EuclideanSpace):
             # to the orthonormal polar frame
             self.set_default_frame(self.polar_frame())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1686,7 +1686,7 @@ class Euclidean3dimSpace(EuclideanSpace):
     """
     def __init__(self, name=None, latex_name=None, coordinates='Cartesian',
                  symbols=None, metric_name='g', metric_latex_name=None,
-                 start_index=1, base_manifold=None, category=None, unique_tag=None):
+                 start_index=1, base_manifold=None, category=None, unique_tag=None) -> None:
         r"""
         Construct a Euclidean 3-space.
 
@@ -1732,7 +1732,7 @@ class Euclidean3dimSpace(EuclideanSpace):
             # it to the orthonormal cylindrical frame
             self.set_default_frame(self.cylindrical_frame())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

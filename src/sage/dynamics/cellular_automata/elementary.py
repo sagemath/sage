@@ -253,7 +253,7 @@ class ElementaryCellularAutomata(SageObject):
 
     :wikipedia:`Elementary_cellular_automaton`
     """
-    def __init__(self, rule, width=None, initial_state=None, boundary=(0, 0)):
+    def __init__(self, rule, width=None, initial_state=None, boundary=(0, 0)) -> None:
         """
         Initialize ``self``.
 
@@ -326,7 +326,7 @@ class ElementaryCellularAutomata(SageObject):
                 and self._states[0] == other._states[0]
                 and self._bdry == other._bdry)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check non equality.
 
@@ -412,7 +412,7 @@ class ElementaryCellularAutomata(SageObject):
     # Output functions
     # ----------------
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

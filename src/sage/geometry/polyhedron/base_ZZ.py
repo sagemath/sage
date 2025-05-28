@@ -543,7 +543,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
                                     Vrep_minimal=True, Hrep_minimal=True, pref_rep=pref_rep)
 
     @cached_method
-    def is_reflexive(self):
+    def is_reflexive(self) -> bool:
         r"""
         A lattice polytope is reflexive if it contains the origin in its interior
         and its polar with respect to the origin is a lattice polytope.
@@ -827,7 +827,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             raise NotImplementedError('only implemented for bounded polygons')
         summands = []
 
-        def is_known_summand(poly):
+        def is_known_summand(poly) -> bool:
             for summand in summands:
                 try:
                     poly.find_translation(summand)

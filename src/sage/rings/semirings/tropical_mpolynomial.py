@@ -732,7 +732,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         sage: f * R.one() == f
         True
     """
-    def __init__(self, base_semiring, n, names, order):
+    def __init__(self, base_semiring, n, names, order) -> None:
         r"""
         Initialize ``self``.
 
@@ -844,7 +844,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         exponent = [0] * self.ngens()
         return self.element_class(self, {tuple(exponent): self.base().zero()})
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

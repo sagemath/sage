@@ -64,7 +64,7 @@ def RIFtol(*args):
             from warnings import warn
             warn("RealIntervalField not available, ignoring all tolerance specifications in doctests")
 
-            def fake_RIFtol(*args):
+            def fake_RIFtol(*args) -> int:
                 return 0
             _RIFtol = fake_RIFtol
         else:

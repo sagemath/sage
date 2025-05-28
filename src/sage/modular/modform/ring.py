@@ -193,7 +193,7 @@ class ModularFormsRing(Parent):
 
     Element = GradedModularFormElement
 
-    def __init__(self, group, base_ring=QQ):
+    def __init__(self, group, base_ring=QQ) -> None:
         r"""
         INPUT:
 
@@ -590,7 +590,7 @@ class ModularFormsRing(Parent):
         """
         return self.element_class(self, {0: self.base_ring().one()})
 
-    def _coerce_map_from_(self, M):
+    def _coerce_map_from_(self, M) -> bool:
         r"""
         Return ``True`` if there is a coercion map from ``M`` to this
         ring.
@@ -637,7 +637,7 @@ class ModularFormsRing(Parent):
         return richcmp((self.group(), self.base_ring()),
                        (other.group(), other.base_ring()), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

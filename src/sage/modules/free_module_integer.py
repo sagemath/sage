@@ -221,7 +221,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
     """
     def __init__(self, ambient, basis, check=True, echelonize=False,
                  echelonized_basis=None, already_echelonized=False,
-                 lll_reduce=True):
+                 lll_reduce=True) -> None:
         r"""
         Construct a new submodule of `\ZZ^n` with a distinguished basis.
 

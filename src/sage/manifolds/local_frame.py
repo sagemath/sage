@@ -253,7 +253,7 @@ class LocalCoFrame(FreeModuleCoBasis):
         (0, 0, 1)
     """
     def __init__(self, frame, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None):
+                 latex_indices=None) -> None:
         r"""
         Construct a local coframe, dual to a given local frame.
 
@@ -598,7 +598,7 @@ class LocalFrame(FreeModuleBasis):
                                      latex_symbol_dual=latex_symbol_dual)
 
     def __init__(self, section_module, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None, symbol_dual=None, latex_symbol_dual=None):
+                 latex_indices=None, symbol_dual=None, latex_symbol_dual=None) -> None:
         r"""
         Construct a local frame on a vector bundle.
 
@@ -1322,7 +1322,7 @@ class TrivializationCoFrame(LocalCoFrame):
         (0, 0, 1)
     """
     def __init__(self, triv_frame, symbol, latex_symbol=None,
-                 indices=None, latex_indices=None):
+                 indices=None, latex_indices=None) -> None:
         r"""
         Construct a local coframe from a local trivialization.
 
@@ -1401,7 +1401,7 @@ class TrivializationFrame(LocalFrame):
     # The following class attribute must be redefined by any derived class:
     _cobasis_class = TrivializationCoFrame
 
-    def __init__(self, trivialization):
+    def __init__(self, trivialization) -> None:
         r"""
         Construct a trivialization frame.
 

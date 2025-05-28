@@ -325,7 +325,7 @@ class OpenInterval(DifferentiableManifold):
 
     def __init__(self, lower, upper, ambient_interval=None,
                  name=None, latex_name=None,
-                 coordinate=None, names=None, start_index=0):
+                 coordinate=None, names=None, start_index=0) -> None:
         r"""
         Construct an open interval.
 
@@ -863,7 +863,7 @@ class RealLine(OpenInterval):
                                      names=names, start_index=start_index)
 
     def __init__(self, name=unicode_mathbbR, latex_name=r'\Bold{R}',
-                 coordinate=None, names=None, start_index=0):
+                 coordinate=None, names=None, start_index=0) -> None:
         r"""
         Construct the real line manifold.
 

@@ -21,7 +21,7 @@ See :class:`LoggingBackendFactory` for more information.
 from sage.numerical.backends.generic_backend import GenericBackend
 
 
-def _format_function_call(fn_name, *v, **k):
+def _format_function_call(fn_name, *v, **k) -> str:
     """
     Return a Python function call as a string.
 
@@ -117,7 +117,7 @@ class LoggingBackend(GenericBackend):
     """
 
     def __init__(self, backend, printing=True, doctest=None, test_method=None,
-                 base_ring=None):
+                 base_ring=None) -> None:
         """
         See :class:`LoggingBackendFactory` for documentation.
 

@@ -31,7 +31,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
-    def __init__(self, w1, w2, check=True):
+    def __init__(self, w1, w2, check=True) -> None:
         r"""
         The shuffle product of the two words ``w1`` and ``w2``.
 
@@ -91,7 +91,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         self._check = bool(check)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -102,7 +102,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         """
         return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -230,7 +230,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
 
 
 class ShuffleProduct_shifted(ShuffleProduct_w1w2):
-    def __init__(self, w1, w2, check=True):
+    def __init__(self, w1, w2, check=True) -> None:
         """
         Shifted shuffle product of ``w1`` with ``w2``.
 
@@ -265,7 +265,7 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
         shifted_w2 = w1.parent()([x + shift for x in w2], check=check)
         ShuffleProduct_w1w2.__init__(self, w1, shifted_w2, check)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

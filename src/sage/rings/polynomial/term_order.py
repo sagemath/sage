@@ -568,7 +568,7 @@ class TermOrder(SageObject):
         else:
             self.__dict__.update(dict)
 
-    def __init__(self, name='lex', n=0, force=False):
+    def __init__(self, name='lex', n=0, force=False) -> None:
         """
         Construct a new term order object.
 
@@ -1961,7 +1961,7 @@ class TermOrder(SageObject):
             and self._matrix == other._matrix
             and self._singular_ringorder_column == other._singular_ringorder_column)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are not equal.
 
@@ -1998,7 +1998,7 @@ class TermOrder(SageObject):
         else:
             return self
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of this term order, i.e. the number of
         variables it covers. This may be zero for indefinitely many
@@ -2142,7 +2142,7 @@ class TermOrder(SageObject):
         """
         return self._name == 'block'
 
-    def is_weighted_degree_order(self):
+    def is_weighted_degree_order(self) -> bool:
         """
         Return ``True`` if ``self`` is a weighted degree term order.
 

@@ -344,7 +344,7 @@ class Chart(UniqueRepresentation, SageObject):
         calc_method=None,
         periods=None,
         coord_restrictions=None,
-    ):
+    ) -> None:
         r"""
         Construct a chart.
 
@@ -536,7 +536,7 @@ class Chart(UniqueRepresentation, SageObject):
 
         return normalize(coord_restrictions)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 
@@ -1898,7 +1898,7 @@ class RealChart(Chart):
         bounds=None,
         periods=None,
         coord_restrictions=None,
-    ):
+    ) -> None:
         r"""
         Construct a chart on a real topological manifold.
 
@@ -2707,7 +2707,7 @@ class RealChart(Chart):
                 list_of_clause.append(((fl, fr, lt),))
 
         # final call
-        def evaluate_fast_callable(*coordinates):
+        def evaluate_fast_callable(*coordinates) -> bool:
             for clause in list_of_clause:
                 temp = False
                 for fl, fr, op in clause:
@@ -3456,7 +3456,7 @@ class CoordChange(SageObject):
         v = x - y
     """
 
-    def __init__(self, chart1, chart2, *transformations):
+    def __init__(self, chart1, chart2, *transformations) -> None:
         r"""
         Construct a transition map.
 
@@ -3491,7 +3491,7 @@ class CoordChange(SageObject):
             for sdom in domain.open_supersets():
                 sdom._coord_changes[(chart1, chart2)] = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the transition map.
 
@@ -3560,7 +3560,7 @@ class CoordChange(SageObject):
             and (self._transf == other._transf)
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Non-equality operator.
 

@@ -141,7 +141,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         True
     """
     def __init__(self, group, weight, sign, base_ring,
-                 character=None, custom_init=None, category=None):
+                 character=None, custom_init=None, category=None) -> None:
         """
         Initialize a space of modular symbols.
 
@@ -1094,7 +1094,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         A = MS(rows)
         return hom(A, "Heilbronn operator(%s,%s)" % (H, t))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this Modular Symbols space.
 
@@ -1107,7 +1107,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         return "Modular Symbols space of dimension %s and weight %s for %s with sign %s and character %s over %s" % (
             self.dimension(), self.weight(), self.group(), self.sign(), self.character()._repr_short_(), self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex representation of this Modular Symbols space.
 
@@ -2510,7 +2510,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         sage: ModularSymbols(36,4).dimension()
         36
     """
-    def __init__(self, N, k, sign, F, custom_init=None, category=None):
+    def __init__(self, N, k, sign, F, custom_init=None, category=None) -> None:
         r"""
         Initialize a space of modular symbols of weight `k` for
         `\Gamma_0(N)`, over `\QQ`.
@@ -2824,7 +2824,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         sage: ModularSymbols(Gamma0(12),2)
         Modular Symbols space of dimension 5 for Gamma_0(12) of weight 2 with sign 0 over Rational Field
     """
-    def __init__(self, N, sign, F, custom_init=None, category=None):
+    def __init__(self, N, sign, F, custom_init=None, category=None) -> None:
         """
         Initialize a space of modular symbols.
 
@@ -3085,7 +3085,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
         Modular Symbols space of dimension 8 for Gamma_1(7) of weight 3 with sign 0 over Rational Field
     """
 
-    def __init__(self, level, weight, sign, F, custom_init=None, category=None):
+    def __init__(self, level, weight, sign, F, custom_init=None, category=None) -> None:
         r"""
         Initialize a space of modular symbols for Gamma1(N).
 
@@ -3147,7 +3147,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
 
         return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this space.
 
@@ -3300,7 +3300,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
 
 
 class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
-    def __init__(self, group, weight, sign, F, custom_init=None, category=None):
+    def __init__(self, group, weight, sign, F, custom_init=None, category=None) -> None:
         r"""
         Initialize a space of modular symbols for `\Gamma_H(N)`.
 
@@ -3338,7 +3338,7 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
         """
         return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this space.
 
@@ -3447,7 +3447,7 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
 
 
 class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
-    def __init__(self, eps, weight, sign, base_ring, custom_init=None, category=None):
+    def __init__(self, eps, weight, sign, base_ring, custom_init=None, category=None) -> None:
         """
         Space of modular symbols with given weight, character, base ring and
         sign.

@@ -1638,7 +1638,7 @@ class Sigma:
         sage: sigma(mpz(100), mpz(4))
         106811523
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A description of this class, which computes the sum of the
         `k`-th powers of the divisors of `n`.
@@ -3135,7 +3135,7 @@ class Euler_Phi:
 
     - Alex Clemesha (2006-01-10): some examples
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string describing this class.
 
@@ -4693,7 +4693,7 @@ class Moebius:
         from sage.libs.pari import pari
         return ZZ(pari(n).moebius())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a description of this function.
 

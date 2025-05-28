@@ -47,7 +47,7 @@ class DiscreteValuationCodomain(UniqueRepresentation, Parent):
 
         sage: TestSuite(C).run() # long time
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -86,7 +86,7 @@ class DiscreteValuationCodomain(UniqueRepresentation, Parent):
             raise ValueError("must be a rational number or infinity")
         return QQ.coerce(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation.
 
@@ -149,7 +149,7 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
         generator = QQ.coerce(generator).abs()
         return super().__classcall__(cls, generator)
 
-    def __init__(self, generator):
+    def __init__(self, generator) -> None:
         r"""
         TESTS::
 
@@ -195,7 +195,7 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
 
         raise ValueError("`{0}` is not in {1}.".format(x, self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation for this group.
 
@@ -456,7 +456,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, tuple(simplified_generators))
 
-    def __init__(self, generators):
+    def __init__(self, generators) -> None:
         r"""
         TESTS::
 
@@ -557,7 +557,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
 
         raise ValueError("`{0}` is not in {1}.".format(x, self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation for this semigroup.
 
@@ -670,7 +670,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
         return len(self._generators) == 0
 
     @cached_method
-    def is_group(self):
+    def is_group(self) -> bool:
         r"""
         Return whether this semigroup is a group.
 

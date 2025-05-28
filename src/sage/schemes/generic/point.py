@@ -22,7 +22,7 @@ class SchemePoint(Element):
     Base class for points on a scheme, either topological or defined
     by a morphism.
     """
-    def __init__(self, S, parent=None):
+    def __init__(self, S, parent=None) -> None:
         """
         INPUT:
 
@@ -54,7 +54,7 @@ class SchemePoint(Element):
         """
         return self.__S
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this generic scheme point.
 
@@ -86,7 +86,7 @@ class SchemeTopologicalPoint(SchemePoint):
     """
     Base class for topological points on schemes.
     """
-    def __init__(self, S):
+    def __init__(self, S) -> None:
         """
         INPUT:
 
@@ -109,7 +109,7 @@ class SchemeTopologicalPoint(SchemePoint):
 
 
 class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
-    def __init__(self, u, x):
+    def __init__(self, u, x) -> None:
         """
         INPUT:
 
@@ -121,7 +121,7 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
         self.__u = u
         self.__x = x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s" % (
             self.scheme(), self.embedding_of_affine_open().domain(),
             self.point_on_affine())
@@ -146,7 +146,7 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
 
 
 class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
-    def __init__(self, S, P, check=False):
+    def __init__(self, S, P, check=False) -> None:
         """
         INPUT:
 
@@ -190,7 +190,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         SchemeTopologicalPoint.__init__(self, S)
         self.__P = P
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this scheme point.
 

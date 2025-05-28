@@ -432,7 +432,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
     ``cartan_type``.
     """
 
-    def __init__(self, cartan_type, r, s, dual=None):
+    def __init__(self, cartan_type, r, s, dual=None) -> None:
         r"""
         Initialize a generic Kirillov-Reshetikhin crystal.
 
@@ -458,7 +458,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
         AffineCrystalFromClassical.__init__(self, cartan_type, self.classical_decomposition(),
                                             KirillovReshetikhinCrystals())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -687,7 +687,7 @@ class KirillovReshetikhinCrystalFromPromotion(KirillovReshetikhinGenericCrystal,
     - ``dynkin_diagram_automorphism``
     """
 
-    def __init__(self, cartan_type, r, s):
+    def __init__(self, cartan_type, r, s) -> None:
         r"""
         TESTS::
 
@@ -1885,7 +1885,7 @@ class KR_type_box(KirillovReshetikhinGenericCrystal, AffineCrystalFromClassical)
         [[-1]]
     """
 
-    def __init__(self, cartan_type, r, s):
+    def __init__(self, cartan_type, r, s) -> None:
         r"""
         Initialize a Kirillov-Reshetikhin crystal ``self``.
 
@@ -3240,7 +3240,7 @@ class KR_type_D_tri1(KirillovReshetikhinGenericCrystal):
     the coordinate representation.
     """
 
-    def __init__(self, ct, s):
+    def __init__(self, ct, s) -> None:
         r"""
         Initialize ``self``.
 
@@ -3507,7 +3507,7 @@ class KR_type_E7(KirillovReshetikhinGenericCrystal):
     The Kirillov-Reshetikhin crystal `B^{7,s}` of type `E_7^{(1)}`.
     """
 
-    def __init__(self, ct, r, s):
+    def __init__(self, ct, r, s) -> None:
         r"""
         Initialize ``self``.
 
@@ -3750,7 +3750,7 @@ class PMDiagram(CombinatorialObject):
         True
     """
 
-    def __init__(self, pm_diagram, from_shapes=None):
+    def __init__(self, pm_diagram, from_shapes=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -4031,7 +4031,7 @@ class AmbientRetractMap(Map):
     """
 
     def __init__(self, base, ambient, pdict_inv, index_set,
-                 similarity_factor_domain=None, automorphism=None):
+                 similarity_factor_domain=None, automorphism=None) -> None:
         """
         Initialize ``self``.
 
@@ -4054,7 +4054,7 @@ class AmbientRetractMap(Map):
         self._similarity_factor_domain = similarity_factor_domain
         self._index_set = index_set
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return a string describing ``self``.
 
@@ -4109,7 +4109,7 @@ class CrystalDiagramAutomorphism(CrystalMorphism):
     - ``cache`` -- boolean (default: ``True``); cache the result
     """
 
-    def __init__(self, C, on_hw, index_set=None, automorphism=None, cache=True):
+    def __init__(self, C, on_hw, index_set=None, automorphism=None, cache=True) -> None:
         """
         Construct the promotion operator.
 

@@ -106,7 +106,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         x |-> [ 0 -1  0] x + [1]
               [-1  0  0]     [1]
     """
-    def __init__(self, parent, A, b=0, convert=True, check=True):
+    def __init__(self, parent, A, b=0, convert=True, check=True) -> None:
         r"""
         Create element of an affine group.
 

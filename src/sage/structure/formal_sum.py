@@ -84,7 +84,7 @@ class FormalSum(ModuleElement):
     """
     A formal sum over a ring.
     """
-    def __init__(self, x, parent=None, check=True, reduce=True):
+    def __init__(self, x, parent=None, check=True, reduce=True) -> None:
         """
         INPUT:
 
@@ -177,7 +177,7 @@ class FormalSum(ModuleElement):
         """
         return self._data[n]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -356,7 +356,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         return UniqueRepresentation.__classcall__(cls, base_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -401,7 +401,7 @@ class FormalSums(UniqueRepresentation, Module):
             return self.element_class([(self.base_ring()(1), x)],
                                       check=False, reduce=False, parent=self)
 
-    def _coerce_map_from_(self, X):
+    def _coerce_map_from_(self, X) -> bool:
         r"""
         Return whether there is a coercion from ``X``.
 

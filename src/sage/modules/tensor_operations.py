@@ -170,7 +170,7 @@ class VectorCollection(FreeModule_ambient_field):
         sage: r.is_immutable()
         True
     """
-    def __init__(self, vector_collection, base_ring, dim):
+    def __init__(self, vector_collection, base_ring, dim) -> None:
         """
         EXAMPLES::
 
@@ -259,7 +259,7 @@ class TensorOperation(VectorCollection):
         sage: R_tensor_S.vectors()
         ((1, 0), (-1, 0), (1, 2), (-1, -2))
     """
-    def __init__(self, vector_collections, operation='product'):
+    def __init__(self, vector_collections, operation='product') -> None:
         """
         EXAMPLES::
 

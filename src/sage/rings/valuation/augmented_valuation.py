@@ -283,7 +283,7 @@ class AugmentedValuation_base(InductiveValuation):
         sage: TestSuite(w).run()    # long time
         sage: TestSuite(ww).run()   # long time
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         TESTS::
 
@@ -409,7 +409,7 @@ class AugmentedValuation_base(InductiveValuation):
         ret = ret * self._base_valuation.element_with_valuation(s)
         return self.simplify(ret, error=error)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -604,7 +604,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         return self.element_with_valuation(self.value_group()._generator)
 
-    def is_gauss_valuation(self):
+    def is_gauss_valuation(self) -> bool:
         r"""
         Return whether this valuation is a Gauss valuation.
 
@@ -674,7 +674,7 @@ class AugmentedValuation_base(InductiveValuation):
 
         return super()._ge_(other)
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return whether this valuation is trivial, i.e., zero outside of zero.
 
@@ -764,7 +764,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         return self._base_valuation._relative_size(f)
 
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains `-\infty`.
 
@@ -813,7 +813,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         sage: v = GaussValuation(R, valuations.TrivialValuation(QQ))
         sage: w = v.augmentation(x, 1)
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         TESTS::
 
@@ -1112,7 +1112,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x^2 + x + 1, 1)
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         TESTS::
 
@@ -1584,7 +1584,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
         sage: v = GaussValuation(S)
         sage: w = v.augmentation(x^2 + x + u, 1/2)
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         EXAMPLES::
 
@@ -1891,7 +1891,7 @@ class FinalFiniteAugmentedValuation(FiniteAugmentedValuation, FinalAugmentedValu
         sage: v = GaussValuation(R, valuations.TrivialValuation(QQ))
         sage: w = v.augmentation(x, 1)
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         TESTS::
 
@@ -1917,7 +1917,7 @@ class NonFinalFiniteAugmentedValuation(FiniteAugmentedValuation, NonFinalAugment
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x, 1)
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         TESTS::
 
@@ -1944,7 +1944,7 @@ class InfiniteAugmentedValuation(FinalAugmentedValuation, InfiniteInductiveValua
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x, infinity)
     """
-    def __init__(self, parent, v, phi, mu):
+    def __init__(self, parent, v, phi, mu) -> None:
         r"""
         TESTS::
 

@@ -321,7 +321,7 @@ class MatchingGame(SageObject):
         sage: g.solve()
         {1: -1, 2: -2, 3: -3}
     """
-    def __init__(self, generator, revr=None):
+    def __init__(self, generator, revr=None) -> None:
         r"""
         Initialize a matching game and check the inputs.
 
@@ -947,7 +947,7 @@ class Player:
     These instances are used when initiating players and to keep track of
     whether or not partners have a preference.
     """
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         r"""
         TESTS::
 
@@ -976,7 +976,7 @@ class Player:
         """
         return hash(self._name)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 

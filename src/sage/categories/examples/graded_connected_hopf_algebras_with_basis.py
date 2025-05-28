@@ -34,7 +34,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
 
     where `\tau(x\otimes y) = y\otimes x`.
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         EXAMPLES::
 
@@ -79,7 +79,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         """
         return i
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Representation of the graded connected Hopf algebra.
 

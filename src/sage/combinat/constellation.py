@@ -188,7 +188,7 @@ class Constellation_class(Element):
     such that the product `g_0 g_1 ... g_k` is the identity.
     """
 
-    def __init__(self, parent, g, connected, mutable, check):
+    def __init__(self, parent, g, connected, mutable, check) -> None:
         r"""
         TESTS::
 
@@ -921,7 +921,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
     """
     Element = Constellation_class
 
-    def __init__(self, length, degree, sym=None, connected=True):
+    def __init__(self, length, degree, sym=None, connected=True) -> None:
         """
         TESTS::
 
@@ -955,7 +955,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
         """
         return self._connected and self._length == 1 and self._degree > 1
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
@@ -1272,7 +1272,7 @@ class Constellations_p(UniqueRepresentation, Parent):
         1
     """
 
-    def __init__(self, profile, domain=None, connected=True):
+    def __init__(self, profile, domain=None, connected=True) -> None:
         r"""
         OPTIONS:
 

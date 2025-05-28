@@ -59,7 +59,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     - ``_basis_name`` -- the name of the basis (must match one
       of the names that the basis can be constructed from `WQSym`)
     """
-    def __init__(self, alg, graded=True):
+    def __init__(self, alg, graded=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -463,7 +463,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         - Dendriform structure.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -475,7 +475,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         category = HopfAlgebras(R).Graded().Connected()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -708,7 +708,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "X"
         _basis_name = "Characteristic"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -904,7 +904,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "C"
         _basis_name = "Cone"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1053,7 +1053,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "Q"
         _basis_name = "Q"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1435,7 +1435,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "Phi"
         _basis_name = "Phi"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1893,7 +1893,7 @@ class WQSymBases(Category_realization_of_parent):
     r"""
     The category of bases of `WQSym`.
     """
-    def __init__(self, base, graded):
+    def __init__(self, base, graded) -> None:
         r"""
         Initialize ``self``.
 
@@ -1913,7 +1913,7 @@ class WQSymBases(Category_realization_of_parent):
         self._graded = graded
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1969,7 +1969,7 @@ class WQSymBases(Category_realization_of_parent):
                 cat.Connected()]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `WQSym`.
 
@@ -2029,7 +2029,7 @@ class WQSymBases(Category_realization_of_parent):
             except TypeError:
                 raise ValueError("cannot convert %s into an element of %s" % (p, self._indices))
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return whether ``self`` is a field.
 

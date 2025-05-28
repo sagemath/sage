@@ -178,7 +178,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     ####################################################################
 
     @lazy_attribute
-    def _have_established_geometrically_trivial(self):
+    def _have_established_geometrically_trivial(self) -> bool:
         r"""
         Initialize the flag which determines whether or not we have
         already established if the geometric endomorphism ring is
@@ -207,7 +207,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return False
 
     @lazy_attribute
-    def _have_established_geometrically_field(self):
+    def _have_established_geometrically_field(self) -> bool:
         r"""
         Initialize the flag which determines whether or not we have
         already established if the geometric endomorphism ring is
@@ -235,7 +235,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         """
         return False
 
-    def geometric_endomorphism_algebra_is_field(self, B=200, proof=False):
+    def geometric_endomorphism_algebra_is_field(self, B=200, proof=False) -> bool:
         r"""
         Return whether the geometric endomorphism algebra is a field.
 
@@ -308,7 +308,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             raise NotImplementedError("Rigorous computation of lower bounds of endomorphism algebras has not yet been implemented.")
         return False
 
-    def geometric_endomorphism_ring_is_ZZ(self, B=200, proof=False):
+    def geometric_endomorphism_ring_is_ZZ(self, B=200, proof=False) -> bool:
         r"""
         Return whether the geometric endomorphism ring of ``self`` is the
         integer ring `\ZZ`.

@@ -166,7 +166,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             raise NotImplementedError()
         return [self((0,1,0))] + [self((x, 0, 1)) for x in f.roots(multiplicities=False)]
 
-    def is_in_weierstrass_disc(self, P):
+    def is_in_weierstrass_disc(self, P) -> bool:
         """
         Check if `P` is in a Weierstrass disc.
 

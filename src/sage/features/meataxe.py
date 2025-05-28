@@ -29,7 +29,7 @@ class Meataxe(JoinFeature):
         sage: Meataxe().is_present()  # optional - meataxe
         FeatureTestResult('meataxe', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

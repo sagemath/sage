@@ -64,7 +64,7 @@ class sage_interactive(interactive):
           y: Text(value='hello', description='y')
           z: Dropdown(description='z', options=('one', 'two', 'three'), value=None)
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         See :class:`ipywidgets.widgets.interaction.interactive`.
 
@@ -114,7 +114,7 @@ class sage_interactive(interactive):
                 if isinstance(widget, ToggleButtons):
                     widget.on_msg(self.update)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Textual representation of this interactive function.
 

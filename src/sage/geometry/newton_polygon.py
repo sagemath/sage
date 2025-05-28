@@ -30,7 +30,7 @@ class NewtonPolygon_element(Element):
     """
     Class for infinite Newton polygons with last slope.
     """
-    def __init__(self, polyhedron, parent):
+    def __init__(self, polyhedron, parent) -> None:
         """
         Initialize a Newton polygon.
 

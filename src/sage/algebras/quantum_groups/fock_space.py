@@ -338,7 +338,7 @@ class FockSpace(Parent, UniqueRepresentation):
             return FockSpaceTruncated(n, truncated, q, base_ring)
         return super().__classcall__(cls, n, multicharge, q, base_ring)
 
-    def __init__(self, n, multicharge, q, base_ring):
+    def __init__(self, n, multicharge, q, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -357,7 +357,7 @@ class FockSpace(Parent, UniqueRepresentation):
         Parent.__init__(self, base=base_ring, category=cat)
         self._realizations = [self.natural(), self.A(), self.G()]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -373,7 +373,7 @@ class FockSpace(Parent, UniqueRepresentation):
         return "Fock space of rank {} of multicharge {} over {}".format(
             self._n, self._multicharge, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -557,7 +557,7 @@ class FockSpace(Parent, UniqueRepresentation):
             sage: x.e(2)
             |3, 1> + q*|2, 1, 1>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             """
             Initialize ``self``.
 
@@ -1062,7 +1062,7 @@ class FockSpace(Parent, UniqueRepresentation):
              + q^2*|[], [4]> + q^3*|[], [3, 1]> + q^3*|[], [2, 1, 1]>
              + q^4*|[], [1, 1, 1, 1]>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 
@@ -1291,7 +1291,7 @@ class FockSpace(Parent, UniqueRepresentation):
              + q^2*|[], [4]> + q^3*|[], [3, 1]> + q^3*|[], [2, 1, 1]>
              + q^4*|[], [1, 1, 1, 1]>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 
@@ -1390,7 +1390,7 @@ class FockSpaceBases(Category_realization_of_parent):
     r"""
     The category of bases of a (truncated) Fock space.
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of a Fock space.
 
@@ -1407,7 +1407,7 @@ class FockSpaceBases(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1439,7 +1439,7 @@ class FockSpaceBases(Category_realization_of_parent):
         return [ModulesWithBasis(self.base().base_ring()), Realizations(self.base())]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Text representation of this basis of Fock space.
 
@@ -1678,7 +1678,7 @@ class FockSpaceTruncated(FockSpace):
         q = base_ring(q)
         return super().__classcall__(cls, n, k, q, base_ring)
 
-    def __init__(self, n, k, q, base_ring):
+    def __init__(self, n, k, q, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -1691,7 +1691,7 @@ class FockSpaceTruncated(FockSpace):
         self._k = k
         FockSpace.__init__(self, n, (M(0),), q, base_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1731,7 +1731,7 @@ class FockSpaceTruncated(FockSpace):
             sage: u3.f(0,3,2,1,1)
             0
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 
@@ -1851,7 +1851,7 @@ class FockSpaceTruncated(FockSpace):
             sage: G._G_to_fock_basis(Partition([12,9]), 'LLT')
             |12, 9> + q*|12, 4, 4, 1> + q*|8, 8, 5> + q^2*|8, 8, 4, 1>
         """
-        def __init__(self, F, algorithm='GW'):
+        def __init__(self, F, algorithm='GW') -> None:
             r"""
             Initialize ``self``.
 
@@ -2124,7 +2124,7 @@ class FockSpaceTruncated(FockSpace):
             sage: F(G[7])
             |7> + q*|3, 3, 1>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 

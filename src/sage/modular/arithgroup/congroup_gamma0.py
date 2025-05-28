@@ -114,7 +114,7 @@ class Gamma0_class(GammaH_class):
           of weight 2 with sign 1 over Rational Field
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
 
@@ -147,7 +147,7 @@ class Gamma0_class(GammaH_class):
         #
         # GammaH_class.__init__(self, level, [int(x) for x in IntegerModRing(level).unit_gens()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -169,7 +169,7 @@ class Gamma0_class(GammaH_class):
         """
         return Gamma0_constructor, (self.level(),)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 

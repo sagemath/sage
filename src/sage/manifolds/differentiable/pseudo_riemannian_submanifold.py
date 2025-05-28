@@ -305,7 +305,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
     def __init__(self, n, name, ambient=None, metric_name=None,
                  signature=None, base_manifold=None, diff_degree=infinity,
                  latex_name=None, metric_latex_name=None, start_index=0,
-                 category=None, unique_tag=None):
+                 category=None, unique_tag=None) -> None:
         r"""
         Construct a pseudo-Riemannian submanifold.
 

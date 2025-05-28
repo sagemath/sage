@@ -62,7 +62,7 @@ class HallLittlewood(UniqueRepresentation):
         Hall-Littlewood polynomials over Fraction Field of Univariate Polynomial Ring in t over Rational Field
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string representing the family of Hall-Littlewood symmetric function bases.
 
@@ -93,7 +93,7 @@ class HallLittlewood(UniqueRepresentation):
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(t))
 
-    def __init__(self, Sym, t):
+    def __init__(self, Sym, t) -> None:
         """
         Initialize ``self``.
 
@@ -352,7 +352,7 @@ class HallLittlewood(UniqueRepresentation):
 
 
 class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
-    def __init__(self, hall_littlewood):
+    def __init__(self, hall_littlewood) -> None:
         r"""
         A class with methods for working with Hall-Littlewood symmetric functions which
         are common to all bases.
@@ -692,7 +692,7 @@ class HallLittlewood_p(HallLittlewood_generic):
     class Element(HallLittlewood_generic.Element):
         pass
 
-    def __init__(self, hall_littlewood):
+    def __init__(self, hall_littlewood) -> None:
         r"""
         A class with methods for working with the Hall-Littlewood `P` basis.
 
@@ -822,7 +822,7 @@ class HallLittlewood_q(HallLittlewood_generic):
     class Element(HallLittlewood_generic.Element):
         pass
 
-    def __init__(self, hall_littlewood):
+    def __init__(self, hall_littlewood) -> None:
         r"""
         The `Q` basis is defined as a normalization of the `P` basis.
 
@@ -908,7 +908,7 @@ class HallLittlewood_qp(HallLittlewood_generic):
     class Element(HallLittlewood_generic.Element):
         pass
 
-    def __init__(self, hall_littlewood):
+    def __init__(self, hall_littlewood) -> None:
         r"""
         The Hall-Littlewood `Qp` basis is calculated through the symmetrica
         library (see the function :meth:`HallLittlewood_qp._to_s`).

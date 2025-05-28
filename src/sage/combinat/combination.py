@@ -207,7 +207,7 @@ def Combinations(mset, k=None, *, as_tuples=False):
 
 
 class Combinations_mset(Parent):
-    def __init__(self, mset, as_tuples=False):
+    def __init__(self, mset, as_tuples=False) -> None:
         """
         TESTS::
 
@@ -359,7 +359,7 @@ class Combinations_set(Combinations_mset):
 
 
 class Combinations_msetk(Parent):
-    def __init__(self, mset, k, as_tuples=False):
+    def __init__(self, mset, k, as_tuples=False) -> None:
         """
         TESTS::
 

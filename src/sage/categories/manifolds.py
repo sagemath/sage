@@ -38,7 +38,7 @@ class Manifolds(Category_over_base_ring):
 
         sage: TestSuite(C).run(skip='_test_category_over_bases')                        # needs sage.rings.real_mpfr
     """
-    def __init__(self, base, name=None):
+    def __init__(self, base, name=None) -> None:
         r"""
         Initialize ``self``.
 

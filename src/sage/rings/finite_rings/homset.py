@@ -138,7 +138,7 @@ class FiniteFieldHomset(RingHomset_generic):
             return FiniteFieldHomomorphism_generic(self, x.im_gens())
         raise TypeError
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -196,7 +196,7 @@ class FiniteFieldHomset(RingHomset_generic):
         self.__order = n
         return n
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of elements of ``self``.
 

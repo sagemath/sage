@@ -290,7 +290,7 @@ class Standalone(SageObject):
     """
     def __init__(self, content, document_class_options=None,
                  standalone_config=None, usepackage=None, macros=None,
-                 use_sage_preamble=False):
+                 use_sage_preamble=False) -> None:
         r"""
         See :class:`Standalone` for full information.
 
@@ -480,7 +480,7 @@ class Standalone(SageObject):
                 buf = OutputBuffer.from_file(filename)
                 return output_container(buf)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the complete string of the standalone document class file.
 
@@ -1360,7 +1360,7 @@ class TikzPicture(Standalone):
         sage: _ = t.pdf(view=False)                     # long time (2s), optional - latex
     """
     def __init__(self, content, standalone_config=None, usepackage=None,
-            usetikzlibrary=None, macros=None, use_sage_preamble=False):
+            usetikzlibrary=None, macros=None, use_sage_preamble=False) -> None:
         r"""
         See :class:`TikzPicture` for full information.
 

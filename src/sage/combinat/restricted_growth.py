@@ -25,7 +25,7 @@ import copy
 
 
 class RestrictedGrowthArrays(UniqueRepresentation, Parent):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 

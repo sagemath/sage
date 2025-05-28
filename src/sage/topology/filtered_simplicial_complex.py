@@ -114,7 +114,7 @@ class FilteredSimplicialComplex(SageObject):
         Filtered complex on vertex set (0, 1, 2) and with simplices
          ((0,) : 0), ((1,) : 0), ((2,) : 1), ((0, 1) : 2.27000000000000)
     """
-    def __init__(self, simplices=[], verbose=False):
+    def __init__(self, simplices=[], verbose=False) -> None:
         """
         Initialize ``self``.
 
@@ -168,7 +168,7 @@ class FilteredSimplicialComplex(SageObject):
                 and self._vertices == other._vertices
                 and self._filtration_dict == other._filtration_dict)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check inequality.
 

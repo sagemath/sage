@@ -28,7 +28,7 @@ from sage.env import (
 
 class SageKernelSpec:
 
-    def __init__(self, prefix=None):
+    def __init__(self, prefix=None) -> None:
         """
         Utility to manage SageMath kernels and extensions.
 
@@ -77,7 +77,7 @@ class SageKernelSpec:
         mkdir_p(self.kernel_dir)
 
     @classmethod
-    def identifier(cls):
+    def identifier(cls) -> str:
         """
         Internal identifier for the SageMath kernel.
 
@@ -271,7 +271,7 @@ class SageKernelSpec:
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
 
 
-def have_prerequisites(debug=True):
+def have_prerequisites(debug=True) -> bool:
     """
     Check that we have all prerequisites to run the Jupyter notebook.
 

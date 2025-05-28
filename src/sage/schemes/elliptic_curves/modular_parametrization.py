@@ -70,7 +70,7 @@ class ModularParameterization:
            to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20
               over Rational Field
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         EXAMPLES::
 
@@ -97,7 +97,7 @@ class ModularParameterization:
         """
         return self._E
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -126,7 +126,7 @@ class ModularParameterization:
 
         return self._E == other._E
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

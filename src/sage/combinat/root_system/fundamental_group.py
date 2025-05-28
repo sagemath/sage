@@ -205,7 +205,7 @@ def FundamentalGroupOfExtendedAffineWeylGroup(cartan_type, prefix='pi',
 
 
 class FundamentalGroupElement(MultiplicativeGroupElement):
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         r"""
         This should not be called directly.
 
@@ -348,7 +348,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
     """
     Element = FundamentalGroupElement
 
-    def __init__(self, cartan_type, prefix, finite=True):
+    def __init__(self, cartan_type, prefix, finite=True) -> None:
         r"""
 
         EXAMPLES::
@@ -467,7 +467,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         """
         return self._cartan_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A string representing ``self``.
 
@@ -634,7 +634,7 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
     """
     Element = FundamentalGroupGLElement
 
-    def __init__(self, cartan_type, prefix='pi'):
+    def __init__(self, cartan_type, prefix='pi') -> None:
         r"""
 
         EXAMPLES::
@@ -679,7 +679,7 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         """
         return self(x.value() + y.value())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representing the fundamental group.
 

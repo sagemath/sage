@@ -345,7 +345,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name):
+    def __init__(self, base_field, length, default_encoder_name, default_decoder_name) -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -957,7 +957,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             return GCD(S0)
         return 1
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         r"""
         Test  whether the code is projective.
 
@@ -1320,7 +1320,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         p = self.base_ring().characteristic()
         return self == self.galois_closure(GF(p))
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a string representation in Magma of this linear code.
 
@@ -2260,7 +2260,7 @@ class LinearCode(AbstractLinearCode):
     - David Joyner (11-2005)
     - Charles Prior (03-2016): :issue:`20198`, LinearCode from a code
     """
-    def __init__(self, generator, d=None):
+    def __init__(self, generator, d=None) -> None:
         r"""
         See the docstring for :meth:`LinearCode`.
 
@@ -2350,7 +2350,7 @@ class LinearCode(AbstractLinearCode):
         G = self.generator_matrix()
         return hash((Str, G))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         See the docstring for :meth:`LinearCode`.
 
@@ -2368,7 +2368,7 @@ class LinearCode(AbstractLinearCode):
         else:
             return "[%s, %s] linear code over %s" % (self.length(), self.dimension(), R)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2426,7 +2426,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
     - ``code`` -- the associated :class:`LinearCode` of this encoder
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -2453,7 +2453,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
         return isinstance(other, LinearCodeGeneratorMatrixEncoder)\
             and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2467,7 +2467,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
         """
         return "Generator matrix-based encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2634,7 +2634,7 @@ class LinearCodeSyndromeDecoder(Decoder):
     informative.
     """
 
-    def __init__(self, code, maximum_error_weight=None):
+    def __init__(self, code, maximum_error_weight=None) -> None:
         r"""
         TESTS:
 
@@ -2703,7 +2703,7 @@ class LinearCodeSyndromeDecoder(Decoder):
         """
         return hash((self.code(), self.maximum_error_weight()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2717,7 +2717,7 @@ class LinearCodeSyndromeDecoder(Decoder):
         """
         return "Syndrome decoder for %s handling errors of weight up to %s" % (self.code(), self.maximum_error_weight())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2957,7 +2957,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
     - ``code`` -- a code associated to this decoder
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -2998,7 +2998,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
         """
         return "Nearest neighbor decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

@@ -201,7 +201,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
 
-    def __init__(self, A, X, category=None):
+    def __init__(self, A, X, category=None) -> None:
         """
         Initialize.
 
@@ -217,7 +217,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         Curve_generic.__init__(self, A, X, category=category)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -607,7 +607,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
          defined by y^2*z - x*z^2 - z^3
     """
 
-    def __init__(self, A, f, category=None):
+    def __init__(self, A, f, category=None) -> None:
         """
         Initialize.
 
@@ -623,7 +623,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         super().__init__(A, [f], category=category)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -1523,7 +1523,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                         pts.append(pt)
         return phi
 
-    def is_transverse(self, C, P):
+    def is_transverse(self, C, P) -> bool:
         r"""
         Return whether the intersection of this curve with the curve ``C`` at the point ``P`` is transverse.
 
@@ -1582,7 +1582,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
     """
     _point = ProjectiveCurvePoint_field
 
-    def __init__(self, A, X, category=None):
+    def __init__(self, A, X, category=None) -> None:
         """
         Initialize.
 
@@ -2280,7 +2280,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
     _point = IntegralProjectiveCurvePoint
     _closed_point = IntegralProjectiveCurveClosedPoint
 
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         """
         Initialize.
 

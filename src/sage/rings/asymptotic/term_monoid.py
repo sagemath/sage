@@ -354,7 +354,7 @@ class GenericTerm(MultiplicativeGroupElement):
         False
     """
 
-    def __init__(self, parent, growth):
+    def __init__(self, parent, growth) -> None:
         r"""
         See :class:`GenericTerm` for more information.
 
@@ -612,7 +612,7 @@ class GenericTerm(MultiplicativeGroupElement):
 
         return self.parent()._create_element_in_extension_(g, new_coefficient)
 
-    def can_absorb(self, other):
+    def can_absorb(self, other) -> bool:
         r"""
         Check whether this asymptotic term is able to absorb
         the asymptotic term ``other``.
@@ -1045,7 +1045,7 @@ class GenericTerm(MultiplicativeGroupElement):
         """
         return self.growth == other.growth
 
-    def is_constant(self):
+    def is_constant(self) -> bool:
         r"""
         Return whether this term is an (exact) constant.
 
@@ -1077,7 +1077,7 @@ class GenericTerm(MultiplicativeGroupElement):
         """
         return False
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return whether this term is an exact term.
 
@@ -1416,7 +1416,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         return super().__classcall__(
             cls, term_monoid_factory, growth_group, coefficient_ring, category)
 
-    def __init__(self, term_monoid_factory, growth_group, coefficient_ring, category):
+    def __init__(self, term_monoid_factory, growth_group, coefficient_ring, category) -> None:
         r"""
         See :class:`GenericTermMonoid` for more information.
 
@@ -1588,7 +1588,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
             return self
         return self.term_monoid_factory(self, growth_group, coefficient_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this generic term monoid.
 
@@ -1608,7 +1608,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         return 'GenericTerm Monoid %s with (implicit) coefficients in %s' % \
             (self.growth_group._repr_short_(), self.coefficient_ring)
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Return whether ``S`` coerces into this term monoid.
 
@@ -2969,7 +2969,7 @@ class OTermMonoid(GenericTermMonoid):
         else:
             return super()._coerce_map_from_(S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this `O`-term monoid.
 
@@ -3015,7 +3015,7 @@ class TermWithCoefficient(GenericTerm):
         Term with coefficient 3/8 and growth x^3
     """
 
-    def __init__(self, parent, growth, coefficient):
+    def __init__(self, parent, growth, coefficient) -> None:
         r"""
         See :class:`TermWithCoefficient` for more information.
 
@@ -3105,7 +3105,7 @@ class TermWithCoefficient(GenericTerm):
         kwds.update({'coefficient': self.coefficient})
         return cls, kwds
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this term with coefficient.
 
@@ -3402,7 +3402,7 @@ class TermWithCoefficientMonoid(GenericTermMonoid):
     # enable the category framework for elements
     Element = TermWithCoefficient
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this TermWithCoefficient Monoid.
 
@@ -3987,7 +3987,7 @@ class ExactTerm(TermWithCoefficient):
         """
         return self.growth.is_lt_one()
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return whether this term is an exact term.
 
@@ -4280,7 +4280,7 @@ class ExactTermMonoid(TermWithCoefficientMonoid):
             except KeyError:
                 pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this exact term monoid.
 
@@ -4353,7 +4353,7 @@ class BTerm(TermWithCoefficient):
         sage: T(x^3*y^2, coefficient=42, valid_from={'x': 10, 'y': 20})
         B(42*x^3*y^2, x >= 10, y >= 20)
     """
-    def __init__(self, parent, growth, valid_from, **kwds):
+    def __init__(self, parent, growth, valid_from, **kwds) -> None:
         r"""
         See :class:`BTerm` for more information.
 
@@ -4456,7 +4456,7 @@ class BTerm(TermWithCoefficient):
         kwds.update({'valid_from': self.valid_from})
         return cls, kwds
 
-    def _repr_(self, latex=False):
+    def _repr_(self, latex=False) -> str:
         r"""
         A representation string for this B-term.
 
@@ -4689,7 +4689,7 @@ class BTermMonoid(TermWithCoefficientMonoid):
     # enable the category framework for elements
     Element = BTerm
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this B term monoid.
 
@@ -5044,7 +5044,7 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
     def __init__(self, name,
                  exact_term_monoid_class=None,
                  O_term_monoid_class=None,
-                 B_term_monoid_class=None):
+                 B_term_monoid_class=None) -> None:
         r"""
         See :class:`TermMonoidFactory` for more information.
 
@@ -5178,7 +5178,7 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
         term_class, growth_group, coefficient_ring = key
         return term_class(self, growth_group, coefficient_ring, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this term monoid factory.
 

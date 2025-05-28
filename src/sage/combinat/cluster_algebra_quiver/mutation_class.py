@@ -467,7 +467,7 @@ def _dig6_to_matrix( dig6 ):
     return _edge_list_to_matrix(dg.edges(sort=True), list(range(dg.order())), [])
 
 
-def _dg_is_sink_source( dg, v ):
+def _dg_is_sink_source( dg, v ) -> bool:
     """
     Return ``True`` iff the digraph dg has a sink or a source at vertex `v`.
 
@@ -540,7 +540,7 @@ def _graph_without_edge_labels(dg, vertices):
     return edge_partition, edge_labels
 
 
-def _has_two_cycles( dg ):
+def _has_two_cycles( dg ) -> bool:
     """
     Return ``True`` if the input digraph has a 2-cycle and ``False`` otherwise.
 
@@ -560,7 +560,7 @@ def _has_two_cycles( dg ):
     return False
 
 
-def _is_valid_digraph_edge_set( edges, frozen=0 ):
+def _is_valid_digraph_edge_set( edges, frozen=0 ) -> bool:
     """
     Return ``True`` if the input data is the edge set of a digraph for a quiver
     (no loops, no 2-cycles, edge-labels of the specified format), and return

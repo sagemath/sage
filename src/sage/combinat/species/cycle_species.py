@@ -20,7 +20,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class CycleSpeciesStructure(GenericSpeciesStructure):
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -115,7 +115,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         return super().__classcall__(cls, *args, **kwds)
 
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Return the species of cycles.
 
@@ -199,7 +199,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             return self._weight * base_ring.one() / n
         return base_ring.zero()
 
-    def _order(self):
+    def _order(self) -> int:
         """
         Return the order of the generating series.
 

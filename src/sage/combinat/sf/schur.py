@@ -31,7 +31,7 @@ lazy_import('sage.libs.lrcalc', 'lrcalc')
 
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class for methods related to the Schur symmetric function basis.
 
@@ -224,7 +224,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
         return self.zero()
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Used in converting this ring to the corresponding ring in MAGMA.
 

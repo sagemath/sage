@@ -215,7 +215,7 @@ class RingMap:
         RuntimeError: Operands come from different manager.
     """
 
-    def __init__(self, to_ring, from_ring):
+    def __init__(self, to_ring, from_ring) -> None:
         r"""
         Initialize map by two given rings.
 

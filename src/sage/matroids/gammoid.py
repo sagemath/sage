@@ -87,7 +87,7 @@ class Gammoid(Matroid):
         Gammoid of rank 2 on 3 elements
     """
 
-    def __init__(self, D, roots, groundset=None):
+    def __init__(self, D, roots, groundset=None) -> None:
         """
         See the class definition for full documentation.
 
@@ -258,7 +258,7 @@ class Gammoid(Matroid):
         # The roots are implied by self._D
         return (self._D == other._D and self._groundset == other._groundset)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

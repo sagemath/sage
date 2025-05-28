@@ -342,7 +342,7 @@ class ParametrizedSurface3D(SageObject):
         ....:     + line3d(g2, color='red') + line3d(g3, color='red')).show()
     """
 
-    def __init__(self, equation, variables, name=None):
+    def __init__(self, equation, variables, name=None) -> None:
         r"""
         See ``ParametrizedSurface3D`` for full documentation.
 

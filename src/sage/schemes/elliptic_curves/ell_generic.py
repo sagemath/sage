@@ -123,7 +123,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs, category=None):
+    def __init__(self, K, ainvs, category=None) -> None:
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -336,7 +336,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         s = s.replace("+ -","- ")
         return s
 
-    def _pari_init_(self):
+    def _pari_init_(self) -> str:
         """
         Internal function. Return a string to initialize this elliptic
         curve in the PARI system.
@@ -350,7 +350,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         return 'ellinit([%s])' % (','.join(x._pari_init_()
                                            for x in self.ainvs()))
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Internal function. Return a string to initialize this elliptic
         curve in the Magma subsystem.
@@ -464,7 +464,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         x, y = SR.var('x, y')
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
-    def __contains__(self, P):
+    def __contains__(self, P) -> bool:
         """
         Return ``True`` if and only if P is a point on the elliptic curve.
 
@@ -2858,7 +2858,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         return sorted(wm.WeierstrassIsomorphism(self, urst, other)
                       for urst in wm._isomorphisms(self, other))
 
-    def is_isomorphic(self, other, field=None):
+    def is_isomorphic(self, other, field=None) -> bool:
         """
         Return whether or not ``self`` is isomorphic to ``other``.
 

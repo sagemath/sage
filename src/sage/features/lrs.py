@@ -33,7 +33,7 @@ class Lrs(Executable):
         sage: Lrs().is_present()  # optional - lrslib
         FeatureTestResult('lrs', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -92,7 +92,7 @@ class LrsNash(Executable):
         sage: LrsNash().is_present()  # optional - lrslib
         FeatureTestResult('lrsnash', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -148,7 +148,7 @@ class Lrslib(JoinFeature):
         sage: Lrslib().is_present()  # optional - lrslib
         FeatureTestResult('lrslib', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

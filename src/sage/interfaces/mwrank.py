@@ -148,7 +148,7 @@ class Mwrank_class(Expect):
     """
     Interface to the Mwrank interpreter.
     """
-    def __init__(self, options='', server=None, server_tmpdir=None):
+    def __init__(self, options='', server=None, server_tmpdir=None) -> None:
         """
         INPUT:
 

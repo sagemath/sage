@@ -193,7 +193,7 @@ class OrderedSetPartition(ClonableArray,
         P = OrderedSetPartitions(set(x for p in parts for x in p))
         return P.element_class(P, parts, check=check)
 
-    def __init__(self, parent, s, check=True):
+    def __init__(self, parent, s, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -455,7 +455,7 @@ class OrderedSetPartition(ClonableArray,
         return FiniteEnumeratedSet([par(sum((list(i) for i in C), []))
                                     for C in product(*[OrderedSetPartitions(X) for X in self])])
 
-    def is_finer(self, co2):
+    def is_finer(self, co2) -> bool:
         """
         Return ``True`` if the ordered set partition ``self`` is finer
         than the ordered set partition ``co2``; otherwise, return ``False``.
@@ -674,7 +674,7 @@ class OrderedSetPartition(ClonableArray,
         return FiniteEnumeratedSet([par(sum((list(P) for P in C), []))
                                     for C in product(*[[buo(X, comp) for comp in Compositions(len(X))] for X in self])])
 
-    def is_strongly_finer(self, co2):
+    def is_strongly_finer(self, co2) -> bool:
         r"""
         Return ``True`` if the ordered set partition ``self`` is strongly
         finer than the ordered set partition ``co2``; otherwise, return
@@ -952,7 +952,7 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
             raise ValueError("c must be a composition of %s" % len(s))
         return OrderedSetPartitions_scomp(s, Composition(c))
 
-    def __init__(self, s):
+    def __init__(self, s) -> None:
         """
         Initialize ``self``.
 
@@ -982,7 +982,7 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
 
     Element = OrderedSetPartition
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1065,7 +1065,7 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
     Class of ordered partitions of a set `S`.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1129,7 +1129,7 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
 
 
 class OrderedSetPartitions_sn(OrderedSetPartitions):
-    def __init__(self, s, n):
+    def __init__(self, s, n) -> None:
         """
         TESTS::
 
@@ -1140,7 +1140,7 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
         OrderedSetPartitions.__init__(self, s)
         self.n = n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1154,7 +1154,7 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
         """
         return OrderedSetPartitions.__contains__(self, x) and len(x) == self.n
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -1207,7 +1207,7 @@ class OrderedSetPartitions_sn(OrderedSetPartitions):
 
 
 class OrderedSetPartitions_scomp(OrderedSetPartitions):
-    def __init__(self, s, comp):
+    def __init__(self, s, comp) -> None:
         """
         TESTS::
 
@@ -1218,7 +1218,7 @@ class OrderedSetPartitions_scomp(OrderedSetPartitions):
         OrderedSetPartitions.__init__(self, s)
         self.c = Composition(comp)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -1227,7 +1227,7 @@ class OrderedSetPartitions_scomp(OrderedSetPartitions):
         """
         return "Ordered set partitions of %s into parts of size %s" % (Set(self._set), self.c)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1360,7 +1360,7 @@ def multiset_permutation_to_ordered_set_partition(l, m):
     return p
 
 
-def multiset_permutation_next_lex(l):
+def multiset_permutation_next_lex(l) -> int:
     r"""
     Return the next multiset permutation after ``l``.
 
@@ -1414,7 +1414,7 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
     `n \in \ZZ_{\geq 0}`.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1475,7 +1475,7 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
             raise ValueError("cannot convert %s into an element of %s" % (s, self))
         return self.element_class(self, list(s))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1531,7 +1531,7 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
             return X._set == frozenset(range(1, len(X._set) + 1))
         return super()._coerce_map_from_(X)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

@@ -77,7 +77,7 @@ class SimplifiedDES(SageObject):
         True
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         A simplified variant of the Data Encryption Standard (DES).
 
@@ -255,7 +255,7 @@ class SimplifiedDES(SageObject):
                  (self._sbox0 == other._sbox0) and
                  (self._sbox1 == other._sbox1) )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string representation of this Simplified DES.
 

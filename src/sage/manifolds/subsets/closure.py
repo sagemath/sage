@@ -57,7 +57,7 @@ class ManifoldSubsetClosure(ManifoldSubset):
         True
     """
 
-    def __init__(self, subset, name=None, latex_name=None):
+    def __init__(self, subset, name=None, latex_name=None) -> None:
         r"""
         Initialize a :class:`ManifoldSubsetClosure` instance.
 
@@ -94,7 +94,7 @@ class ManifoldSubsetClosure(ManifoldSubset):
                             for superset in subset.supersets()
                             if superset.is_closed())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 
@@ -109,7 +109,7 @@ class ManifoldSubsetClosure(ManifoldSubset):
         """
         return "Topological closure {} of the {}".format(self._name, self._subset)
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return if ``self`` is a closed set.
 

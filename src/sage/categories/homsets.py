@@ -198,7 +198,7 @@ class HomsetsOf(HomsetsCategory):
     """
     _base_category_class = (Category,)
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -327,7 +327,7 @@ class Homsets(Category_singleton):
             return [Monoids()]
 
         class ParentMethods:
-            def is_endomorphism_set(self):
+            def is_endomorphism_set(self) -> bool:
                 """
                 Return ``True`` as ``self`` is in the category
                 of ``Endsets``.
@@ -342,7 +342,7 @@ class Homsets(Category_singleton):
                 return True
 
     class ParentMethods:
-        def is_endomorphism_set(self):
+        def is_endomorphism_set(self) -> bool:
             """
             Return ``True`` if the domain and codomain of ``self`` are the same
             object.

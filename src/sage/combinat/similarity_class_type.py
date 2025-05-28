@@ -421,7 +421,7 @@ class PrimarySimilarityClassType(Element,
         P = PrimarySimilarityClassTypes(par.size()*deg)
         return P(deg, par)
 
-    def __init__(self, parent, deg, par):
+    def __init__(self, parent, deg, par) -> None:
         """
         Initialize ``self``.
 
@@ -434,7 +434,7 @@ class PrimarySimilarityClassType(Element,
         self._par = par
         Element.__init__(self, parent)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -678,7 +678,7 @@ class PrimarySimilarityClassTypes(UniqueRepresentation, Parent):
             raise ValueError("min must be a PrimarySimilarityClassType")
         return super().__classcall__(cls, n, min)
 
-    def __init__(self, n, min):
+    def __init__(self, n, min) -> None:
         r"""
         Initialize ``self``.
 
@@ -820,7 +820,7 @@ class SimilarityClassType(CombinatorialElement):
             T = SimilarityClassTypes(n)
             return T(tau)
 
-    def __init__(self, parent, tau):
+    def __init__(self, parent, tau) -> None:
         """
         Initialize ``self``.
 
@@ -1141,7 +1141,7 @@ class SimilarityClassTypes(UniqueRepresentation, Parent):
             raise ValueError("min must be a PrimarySimilarityClassType")
         return super().__classcall__(cls, n, min)
 
-    def __init__(self, n, min):
+    def __init__(self, n, min) -> None:
         r"""
         Initialize ``self``.
 

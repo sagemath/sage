@@ -86,7 +86,7 @@ class Submodule_free_ambient(Module_free_ambient):
           To:   Ambient free module of rank 2 over the integral domain
         Multivariate Polynomial Ring in x, y, z over Rational Field
     """
-    def __init__(self, ambient, gens, check=True, already_echelonized=False):
+    def __init__(self, ambient, gens, check=True, already_echelonized=False) -> None:
         r"""
         Initialize.
 

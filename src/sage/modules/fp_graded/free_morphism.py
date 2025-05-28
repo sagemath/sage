@@ -69,7 +69,7 @@ class FreeGradedModuleMorphism(FPModuleMorphism):
         ValueError: ill-defined homomorphism: degrees do not match
     """
 
-    def __init__(self, parent, values):
+    def __init__(self, parent, values) -> None:
         r"""
         Initialize ``self``.
 

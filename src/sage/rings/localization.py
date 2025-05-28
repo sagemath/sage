@@ -271,7 +271,7 @@ class LocalizationElement(IntegralDomainElement):
          localized at (x, y*z - x)
     """
 
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         Python constructor for the element class for localizations of integral domains.
 
@@ -669,7 +669,7 @@ class Localization(Parent, UniqueRepresentation):
 
     Element = LocalizationElement
 
-    def __init__(self, base_ring, extra_units, names=None, normalize=True, category=None, warning=True):
+    def __init__(self, base_ring, extra_units, names=None, normalize=True, category=None, warning=True) -> None:
         """
         Python constructor of Localization.
 
@@ -714,7 +714,7 @@ class Localization(Parent, UniqueRepresentation):
         self._fraction_field = base_ring.fraction_field()
         self._populate_coercion_lists_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         How to print ``self``.
 

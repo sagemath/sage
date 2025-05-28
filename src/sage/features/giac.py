@@ -16,7 +16,7 @@ class Giac(Executable):
         sage: Giac().is_present()  # needs giac
         FeatureTestResult('giac', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

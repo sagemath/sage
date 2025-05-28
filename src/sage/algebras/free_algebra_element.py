@@ -56,7 +56,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         sage: y * x < x * y
         False
     """
-    def __init__(self, A, x):
+    def __init__(self, A, x) -> None:
         """
         Create the element ``x`` of the FreeAlgebra ``A``.
 

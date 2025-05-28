@@ -179,7 +179,7 @@ class FiniteGCAlgebra(CombinatorialFreeModule):
                                      category=category, **kwargs)
 
     def __init__(self, base, names, degrees, max_degree,
-                 category=None, **kwargs):
+                 category=None, **kwargs) -> None:
         r"""
         Construct a commutative graded algebra with finite degree.
 

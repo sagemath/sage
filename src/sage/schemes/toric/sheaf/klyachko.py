@@ -136,7 +136,7 @@ def Bundle(toric_variety, multi_filtration, check=True):
 @richcmp_method
 class KlyachkoBundle_class(SageObject):
 
-    def __init__(self, toric_variety, multi_filtration, check=True):
+    def __init__(self, toric_variety, multi_filtration, check=True) -> None:
         r"""
         A toric bundle using Klyachko's representation.
 

@@ -20,7 +20,7 @@ class SymmetricGroupConjugacyClassMixin:
     Mixin class which contains methods for conjugacy classes of
     the symmetric group.
     """
-    def __init__(self, domain, part):
+    def __init__(self, domain, part) -> None:
         """
         Initialize ``self``.
 
@@ -37,7 +37,7 @@ class SymmetricGroupConjugacyClassMixin:
         self._domain = domain
         self._set = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -68,7 +68,7 @@ class SymmetricGroupConjugacyClassMixin:
             return False
         return self._part == other._part
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -105,7 +105,7 @@ class SymmetricGroupConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyC
     - ``group`` -- the symmetric group
     - ``part`` -- a partition or an element of ``group``
     """
-    def __init__(self, group, part):
+    def __init__(self, group, part) -> None:
         """
         Initialize ``self``.
 
@@ -181,7 +181,7 @@ class PermutationsConjugacyClass(SymmetricGroupConjugacyClassMixin, ConjugacyCla
     - ``P`` -- the permutations of `n`
     - ``part`` -- a partition or an element of ``P``
     """
-    def __init__(self, P, part):
+    def __init__(self, P, part) -> None:
         """
         Initialize ``self``.
 

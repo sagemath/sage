@@ -76,7 +76,7 @@ class FreeMonoid(FreeSemigroup):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a','b','c','d')) -> None:
         r"""
         The free monoid.
 
@@ -96,7 +96,7 @@ class FreeMonoid(FreeSemigroup):
         self.alphabet = alphabet
         Parent.__init__(self, category=Monoids())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

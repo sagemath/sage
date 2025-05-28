@@ -3544,7 +3544,7 @@ def truncate_to_prec(poly, R, absprec):
     return R[poly.variable_name()]([R(a, absprec=absprec) for a in poly.list()]) # Is this quite right?  We don't want flat necessarily...
 
 
-def krasner_check(poly, prec):
+def krasner_check(poly, prec) -> bool:
     r"""
     Return ``True`` iff ``poly`` determines a unique isomorphism class of
     extensions at precision ``prec``.
@@ -3562,7 +3562,7 @@ def krasner_check(poly, prec):
     return True  # This needs to be implemented
 
 
-def is_eisenstein(poly):
+def is_eisenstein(poly) -> bool:
     r"""
     Return ``True`` iff this monic polynomial is Eisenstein.
 
@@ -3592,7 +3592,7 @@ def is_eisenstein(poly):
     return True
 
 
-def is_unramified(poly):
+def is_unramified(poly) -> bool:
     r"""
     Return ``True`` iff this monic polynomial is unramified.
 

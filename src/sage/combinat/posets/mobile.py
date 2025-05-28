@@ -84,7 +84,7 @@ class MobilePoset(FinitePoset):
                 raise ValueError("invalid ribbon")
             self._ribbon = ribbon
 
-    def _is_valid_ribbon(self, ribbon):
+    def _is_valid_ribbon(self, ribbon) -> bool:
         r"""
         Return ``True`` if a ribbon has at most one anchor, no vertex has two
         or more anchors, and every hanging poset is d-complete.

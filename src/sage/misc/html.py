@@ -157,7 +157,7 @@ class MathJaxExpr:
         sage: MathJaxExpr("a^{2}") + MathJaxExpr("x^{-1}")
         a^{2}x^{-1}
     """
-    def __init__(self, y):
+    def __init__(self, y) -> None:
         """
         Initialize a MathJax expression.
 
@@ -176,7 +176,7 @@ class MathJaxExpr:
         """
         self.__y = y
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Print representation.
 
@@ -381,7 +381,7 @@ class MathJax:
 
 class HTMLFragmentFactory(SageObject):
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 

@@ -201,7 +201,7 @@ class Associahedron_class_base:
                     return typ1(parent, Vrep, Hrep, **kwds)
             raise ValueError("could not determine a parent class")
 
-    def __init__(self, parent, Vrep, Hrep, cartan_type=None, **kwds):
+    def __init__(self, parent, Vrep, Hrep, cartan_type=None, **kwds) -> None:
         r"""
         Initialize an associahedron.
 

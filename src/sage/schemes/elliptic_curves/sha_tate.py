@@ -137,7 +137,7 @@ class Sha(SageObject):
         sage: S.an_padic(5,prec=4)  # very long time
         1 + O(5^3)
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         The Tate-Shafarevich group associated to an elliptic curve.
 
@@ -175,7 +175,7 @@ class Sha(SageObject):
             return False
         return self.E == other.E
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -188,7 +188,7 @@ class Sha(SageObject):
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of the Tate-Shafarevich group.
 

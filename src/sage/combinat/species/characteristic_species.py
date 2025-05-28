@@ -24,7 +24,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class CharacteristicSpeciesStructure(GenericSpeciesStructure):
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -92,7 +92,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
 
 
 class CharacteristicSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
-    def __init__(self, n, min=None, max=None, weight=None):
+    def __init__(self, n, min=None, max=None, weight=None) -> None:
         """
         Return the characteristic species of order `n`.
 
@@ -233,7 +233,7 @@ CharacteristicSpecies_class = CharacteristicSpecies
 
 
 class EmptySetSpecies(CharacteristicSpecies):
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Return the empty set species.
 
@@ -277,7 +277,7 @@ EmptySetSpecies_class = EmptySetSpecies._cached_constructor = EmptySetSpecies
 
 
 class SingletonSpecies(CharacteristicSpecies):
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Return the species of singletons.
 

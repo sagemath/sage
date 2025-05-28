@@ -76,7 +76,7 @@ class UnionOfIntervals:
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
         introduced by :issue:`13125`; see :issue:`16063`.
     """
-    def __init__(self, endpoints):
+    def __init__(self, endpoints) -> None:
         r"""
         An union of intervals is initialized by giving an increasing list
         of endpoints, the first of which may be `-\infty` and the last of
@@ -135,7 +135,7 @@ class UnionOfIntervals:
         """
         return list(zip(self._endpoints[::2], self._endpoints[1::2]))
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return whether ``self`` is empty.
 
@@ -419,7 +419,7 @@ class UnionOfIntervals:
         """
         return left.intersection([left, right])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is in the UnionOfIntervals.
 
@@ -443,7 +443,7 @@ class UnionOfIntervals:
         """
         return x in self._endpoints or bisect.bisect_left(self._endpoints, x) % 2 == 1
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -456,7 +456,7 @@ class UnionOfIntervals:
         """
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this UnionOfIntervals.
 
@@ -765,7 +765,7 @@ class EllipticCurveCanonicalHeight:
          Elliptic Curve defined by y^2 = x^3 + 1 over Rational Field
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Initialize the class with an elliptic curve.
 
@@ -814,7 +814,7 @@ class EllipticCurveCanonicalHeight:
         else:
             raise ValueError("EllipticCurveCanonicalHeight class can only be created from an elliptic curve")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation.
 
@@ -1652,7 +1652,7 @@ class EllipticCurveCanonicalHeight:
                 vals[i,j] = abs(ff((i+.5)/N + (j+.5)*tau/N))
         return vals
 
-    def complex_intersection_is_empty(self, Bk, v, verbose=False, use_half=True):
+    def complex_intersection_is_empty(self, Bk, v, verbose=False, use_half=True) -> bool:
         r"""
         Return ``True`` iff an intersection of `T_n^{(v)}` sets is empty.
 
@@ -1745,7 +1745,7 @@ class EllipticCurveCanonicalHeight:
             B = RIF(B)
             leaning_right = tau.real() / tau.imag() >= 0
 
-            def check_line(z):
+            def check_line(z) -> bool:
                 wpz = wp(z)
                 if wpz > B:
                     return True
@@ -1773,7 +1773,7 @@ class EllipticCurveCanonicalHeight:
 
         return False
 
-    def test_mu(self, mu, N, verbose=True):
+    def test_mu(self, mu, N, verbose=True) -> bool:
         r"""
         Return ``True`` if we can prove that `\mu` is a lower bound.
 

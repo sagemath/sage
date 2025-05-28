@@ -77,7 +77,7 @@ class FlatteningMorphism(Morphism):
         sage: f(p).parent()
         Multivariate Polynomial Ring in x, y, s, t, X over Rational Field
     """
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         """
         The Python constructor.
 
@@ -311,7 +311,7 @@ class UnflatteningMorphism(Morphism):
                 over Multivariate Polynomial Ring in a, b over Rational Field
     """
 
-    def __init__(self, domain, codomain):
+    def __init__(self, domain, codomain) -> None:
         """
         The Python constructor.
 
@@ -461,7 +461,7 @@ class SpecializationMorphism(Morphism):
         2*v*c*y^4 + c*y^2*z^2 + y^2
     """
 
-    def __init__(self, domain, D):
+    def __init__(self, domain, D) -> None:
         """
         The Python constructor.
 
@@ -664,7 +664,7 @@ class FractionSpecializationMorphism(Morphism):
     """
     A specialization morphism for fraction fields over (stacked) polynomial rings
     """
-    def __init__(self, domain, D):
+    def __init__(self, domain, D) -> None:
         """
         Initialize the morphism with a domain and dictionary of specializations.
 

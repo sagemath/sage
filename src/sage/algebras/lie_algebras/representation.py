@@ -31,7 +31,7 @@ class Representation_abstract:
 
     - ``lie_algebra`` -- a Lie algebra
     """
-    def __init__(self, lie_algebra):
+    def __init__(self, lie_algebra) -> None:
         r"""
         Initialize ``self``.
 
@@ -56,7 +56,7 @@ class Representation_abstract:
         """
         return self._lie_algebra
 
-    def side(self):
+    def side(self) -> str:
         r"""
         Return that ``self`` is a left representation.
 
@@ -288,7 +288,7 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
         return super(cls, RepresentationByMorphism).__classcall__(cls, lie_algebra,
              f, index_set, on_basis, category=C, **kwargs)
 
-    def __init__(self, lie_algebra, f, index_set, on_basis, category, **kwargs):
+    def __init__(self, lie_algebra, f, index_set, on_basis, category, **kwargs) -> None:
         r"""
         Initialize ``self``.
 
@@ -419,7 +419,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
     - :wikipedia:`Trivial_representation`
     """
-    def __init__(self, lie_algebra, **kwargs):
+    def __init__(self, lie_algebra, **kwargs) -> None:
         r"""
         Initialize ``self``.
 
@@ -434,7 +434,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
         Representation_abstract.__init__(self, lie_algebra)
         CombinatorialFreeModule.__init__(self, R, ['v'], prefix='T', category=cat, **kwargs)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -540,7 +540,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
 
     - [BEdG2009]_
     """
-    def __init__(self, L, minimal=False):
+    def __init__(self, L, minimal=False) -> None:
         r"""
         Initialize ``self``.
 
@@ -630,7 +630,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
                 sm = s._monomial
                 return tuple([sm[i] if i in sm else 0 for i in I])
 
-            def test_ideal(m, X):
+            def test_ideal(m, X) -> bool:
                 elt = self._pbw.element_class(self._pbw, {monoid(list(zip(I, m))): one})
                 for g in pbw_gens:
                     gelt = g * elt
@@ -652,7 +652,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         Representation_abstract.__init__(self, L)
         CombinatorialFreeModule.__init__(self, L.base_ring(), indices, prefix='F', bracket=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -820,7 +820,7 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
         sage: F.dimension()
         243
     """
-    def __init__(self, L):
+    def __init__(self, L) -> None:
         r"""
         Initialize ``self``.
 
@@ -870,7 +870,7 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
         Representation_abstract.__init__(self, L)
         CombinatorialFreeModule.__init__(self, R, indices, prefix='', bracket=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -883,7 +883,7 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
         """
         return "Faithful representation with p-multiplicities {} of {}".format(self.p_exponents(), self._lie_algebra)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

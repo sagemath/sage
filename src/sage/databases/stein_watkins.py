@@ -141,13 +141,13 @@ from sage.env import SAGE_SHARE
 
 
 class SteinWatkinsIsogenyClass:
-    def __init__(self, conductor):
+    def __init__(self, conductor) -> None:
         self.conductor = conductor
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Stein-Watkins isogeny class of conductor %s" % self.conductor
 
-    def __len__(self):
+    def __len__(self) -> int:
         try:
             return len(self.curves)
         except AttributeError:
@@ -176,7 +176,7 @@ class SteinWatkinsAllData:
     Class for iterating through one of the Stein-Watkins database files
     for all conductors.
     """
-    def __init__(self, num):
+    def __init__(self, num) -> None:
         num = int(num)
         self.num = num
         if num < 0:
@@ -186,7 +186,7 @@ class SteinWatkinsAllData:
         self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'a.%s.bz2' % name)
         self._iter = iter(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -310,7 +310,7 @@ class SteinWatkinsAllData:
 
 
 class SteinWatkinsPrimeData(SteinWatkinsAllData):
-    def __init__(self, num):
+    def __init__(self, num) -> None:
         num = int(num)
         self.num = num
         if num < 0:
@@ -320,7 +320,7 @@ class SteinWatkinsPrimeData(SteinWatkinsAllData):
         self._file = os.path.join(SAGE_SHARE, 'stein_watkins', 'p.%s.bz2' % name)
         self._iter = iter(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

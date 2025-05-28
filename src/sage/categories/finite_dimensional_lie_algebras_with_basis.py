@@ -1526,7 +1526,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             # TODO: boolean handling of empty family
             # return not self.structure_coefficients()
 
-        def is_solvable(self):
+        def is_solvable(self) -> bool:
             r"""
             Return if ``self`` is a solvable Lie algebra.
 
@@ -1549,7 +1549,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return not self.derived_series()[-1].dimension()
 
-        def is_nilpotent(self):
+        def is_nilpotent(self) -> bool:
             r"""
             Return if ``self`` is a nilpotent Lie algebra.
 
@@ -1565,7 +1565,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return not self.lower_central_series()[-1].dimension()
 
-        def is_semisimple(self):
+        def is_semisimple(self) -> bool:
             """
             Return if ``self`` if a semisimple Lie algebra.
 

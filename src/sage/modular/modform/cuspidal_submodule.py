@@ -49,7 +49,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
     """
     Base class for cuspidal submodules of ambient spaces of modular forms.
     """
-    def __init__(self, ambient_space):
+    def __init__(self, ambient_space) -> None:
         """
         The cuspidal submodule of an ambient space of modular forms.
 

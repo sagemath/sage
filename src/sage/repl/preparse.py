@@ -332,7 +332,7 @@ def in_quote() -> bool:
 class QuoteStack:
     """The preserved state of parsing in :func:`strip_string_literals`."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Create a new, empty QuoteStack.
 
@@ -346,7 +346,7 @@ class QuoteStack:
         self._single_quote_safe = True
         self._double_quote_safe = True
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of frames currently on the stack.
 
@@ -363,7 +363,7 @@ class QuoteStack:
         """
         return len(self._stack)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of the stack's contents.
 
@@ -480,7 +480,7 @@ class QuoteStackFrame(SimpleNamespace):
     """
 
     def __init__(self, delim, raw=False, f_string=False, braces=0, parens=0, brackets=0,
-                 fmt_spec=False, nested_fmt_spec=False):
+                 fmt_spec=False, nested_fmt_spec=False) -> None:
         """
         Create a new QuoteStackFrame.
 

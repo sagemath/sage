@@ -57,7 +57,7 @@ class PoorManMap(SageObject):
         sage: i == g*h
         True
     """
-    def __init__(self, function, domain=None, codomain=None, name=None):
+    def __init__(self, function, domain=None, codomain=None, name=None) -> None:
         """
         TESTS::
 
@@ -142,7 +142,7 @@ class PoorManMap(SageObject):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this map is not equal to ``other``.
 

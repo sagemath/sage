@@ -110,7 +110,7 @@ class Mupad(ExtraTabCompletion, Expect):
     """
     Interface to the MuPAD interpreter.
     """
-    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
+    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None) -> None:
         """
         Create an instance of the MuPAD interpreter.
 
@@ -154,7 +154,7 @@ class Mupad(ExtraTabCompletion, Expect):
         """
         return reduce_load_mupad, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         EXAMPLES::
 
@@ -170,7 +170,7 @@ class Mupad(ExtraTabCompletion, Expect):
         """
         return 'read("%s")' % filename
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -179,7 +179,7 @@ class Mupad(ExtraTabCompletion, Expect):
         """
         return 'quit'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing MuPAD on your computer.
 
@@ -332,7 +332,7 @@ command-line version of MuPAD.
         """
         return MupadElement
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -341,7 +341,7 @@ command-line version of MuPAD.
         """
         return '='
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -350,7 +350,7 @@ command-line version of MuPAD.
         """
         return ":="
 
-    def _continuation_prompt(self):
+    def _continuation_prompt(self) -> str:
         """
         EXAMPLES::
 
@@ -604,7 +604,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         s = P._eval_line('generate::TeX(%s)' % self.name())
         return s.replace('\\\\', '\\').strip().strip('"')
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         The analogue in MuPAD of Python's len is the method nops.
 

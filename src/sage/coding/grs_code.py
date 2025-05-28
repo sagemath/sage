@@ -141,7 +141,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, evaluation_points, dimension, column_multipliers=None):
+    def __init__(self, evaluation_points, dimension, column_multipliers=None) -> None:
         r"""
         TESTS:
 
@@ -281,7 +281,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
                      tuple(self.evaluation_points()),
                      tuple(self.column_multipliers())))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -302,7 +302,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
                "Generalized " if self.is_generalized() else "",
                self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -368,7 +368,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         """
         return self._column_multipliers
 
-    def is_generalized(self):
+    def is_generalized(self) -> bool:
         r"""
         Return whether ``self`` is a Generalized Reed-Solomon code or
         a regular Reed-Solomon code.
@@ -693,7 +693,7 @@ class GRSEvaluationVectorEncoder(Encoder):
         Evaluation vector-style encoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -725,7 +725,7 @@ class GRSEvaluationVectorEncoder(Encoder):
         return isinstance(other, GRSEvaluationVectorEncoder) \
             and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -740,7 +740,7 @@ class GRSEvaluationVectorEncoder(Encoder):
         """
         return "Evaluation vector-style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -842,7 +842,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
         Univariate Polynomial Ring in y over Finite Field of size 59
     """
 
-    def __init__(self, code, polynomial_ring=None):
+    def __init__(self, code, polynomial_ring=None) -> None:
         r"""
         TESTS:
 
@@ -910,7 +910,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
                 and self.code() == other.code()
                 and self.polynomial_ring() == other.polynomial_ring())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -925,7 +925,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
         """
         return "Evaluation polynomial-style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1113,7 +1113,7 @@ class GRSBerlekampWelchDecoder(Decoder):
         Berlekamp-Welch decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -1150,7 +1150,7 @@ class GRSBerlekampWelchDecoder(Decoder):
                 and self.code() == other.code()
                 and self.input_space() == other.input_space())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1165,7 +1165,7 @@ class GRSBerlekampWelchDecoder(Decoder):
         """
         return "Berlekamp-Welch decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1417,7 +1417,7 @@ class GRSGaoDecoder(Decoder):
         Gao decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -1470,7 +1470,7 @@ class GRSGaoDecoder(Decoder):
         """
         return hash((self.code(), self.input_space()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1485,7 +1485,7 @@ class GRSGaoDecoder(Decoder):
         """
         return "Gao decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1807,7 +1807,7 @@ class GRSErrorErasureDecoder(Decoder):
         Error-Erasure decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -1859,7 +1859,7 @@ class GRSErrorErasureDecoder(Decoder):
         """
         return "Error-Erasure decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -2037,7 +2037,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         Key equation decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS::
 
@@ -2084,7 +2084,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             and self.code() == other.code()\
             and self.input_space() == other.input_space()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2099,7 +2099,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         """
         return "Key equation decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

@@ -35,7 +35,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
     Maximal orders of extensions of function fields.
     """
 
-    def __init__(self, field, ideal_class=FunctionFieldIdeal_polymod):
+    def __init__(self, field, ideal_class=FunctionFieldIdeal_polymod) -> None:
         """
         Initialize.
 
@@ -728,7 +728,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
         sage: L.maximal_order_infinite()                                                # needs sage.rings.finite_rings
         Maximal infinite order of Function field in y defined by y^2 + y + (x^2 + 1)/x
     """
-    def __init__(self, field, category=None):
+    def __init__(self, field, category=None) -> None:
         """
         Initialize.
 
@@ -1134,7 +1134,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
         Maximal order of Function field in y defined by y^4 + x*y + 4*x + 1
     """
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize.
 

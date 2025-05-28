@@ -360,7 +360,7 @@ from itertools import product
 import operator
 
 
-def test_relation_maxima(relation):
+def test_relation_maxima(relation) -> bool:
     """
     Return ``True`` if this (in)equality is definitely true. Return ``False``
     if it is false or the algorithm for testing (in)equality is inconclusive.

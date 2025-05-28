@@ -112,7 +112,7 @@ class TensorProductOfKirillovReshetikhinTableauxElement(TensorProductOfRegularCr
         [[2], [3]] (X) [[1]] (X) [[-1]] (X) [[1]]
     """
 
-    def __init__(self, parent, list=[[]], **options):
+    def __init__(self, parent, list=[[]], **options) -> None:
         r"""
         Construct a TensorProductOfKirillovReshetikhinTableauxElement.
 

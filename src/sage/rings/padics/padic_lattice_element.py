@@ -107,7 +107,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         sage: x
         1 + O(2^10)
     """
-    def __init__(self, parent, x, prec=None, dx=[], dx_mode='linear_combination', valuation=None, check=True, reduce=True):
+    def __init__(self, parent, x, prec=None, dx=[], dx_mode='linear_combination', valuation=None, check=True, reduce=True) -> None:
         r"""
         TESTS::
 
@@ -1277,7 +1277,7 @@ class pAdicLatticeCapElement(pAdicLatticeElement):
         self._precision._new_element(self, dx, bigoh=prec, dx_mode=dx_mode, capped=capped)
         return prec
 
-    def _is_exact_zero(self):
+    def _is_exact_zero(self) -> bool:
         r"""
         Return ``True`` if this element is exactly zero.
 

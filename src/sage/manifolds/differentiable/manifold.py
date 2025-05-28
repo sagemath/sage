@@ -637,7 +637,7 @@ class DifferentiableManifold(TopologicalManifold):
     """
     def __init__(self, n, name, field, structure, base_manifold=None,
                  diff_degree=infinity, latex_name=None, start_index=0,
-                 category=None, unique_tag=None):
+                 category=None, unique_tag=None) -> None:
         r"""
         Construct a differentiable manifold.
 

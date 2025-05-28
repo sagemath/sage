@@ -667,7 +667,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             ident = 'A000000'[:-len(ident)] + ident
         return super().__classcall__(cls, ident)
 
-    def __init__(self, ident):
+    def __init__(self, ident) -> None:
         r"""
         Initialize an OEIS sequence.
 
@@ -1241,7 +1241,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         fields = ['S', 'T', 'U']
         return to_tuple(" ".join(flatten([self._field(a) for a in fields])))[:number]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Print the sequence number and a short summary of this sequence.
 
@@ -1930,7 +1930,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             return sorted(table)
         return sorted(prog for la, prog in table if la == language)
 
-    def test_compile_sage_code(self):
+    def test_compile_sage_code(self) -> bool:
         """
         Try to compile the extracted sage code, if there is any.
 
@@ -1983,7 +1983,7 @@ class FancyTuple(tuple):
         sage: t[2]
         'two'
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print the tuple with one value per line, where each line
         begins with the index of the value in ``self``.

@@ -27,7 +27,7 @@ class Phitigra(PythonModule):
         sage: Phitigra().is_present()                     # optional - phitigra
         FeatureTestResult('phitigra', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

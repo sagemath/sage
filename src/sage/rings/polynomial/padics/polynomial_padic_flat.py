@@ -16,7 +16,7 @@ import sage.rings.padics.misc
 
 
 class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
-    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False, absprec=None):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False, absprec=None) -> None:
         """
         TESTS:
 

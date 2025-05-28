@@ -82,7 +82,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, laurent_series)
 
-    def __init__(self, laurent_series):
+    def __init__(self, laurent_series) -> None:
         """
         Generic class for Puiseux series rings.
 

@@ -180,7 +180,7 @@ class AffineGroup(UniqueRepresentation, Group):
                 ring = FiniteField(ring, var)
         return super().__classcall__(cls, degree, ring)
 
-    def __init__(self, degree, ring):
+    def __init__(self, degree, ring) -> None:
         """
         Initialize ``self``.
 
@@ -263,7 +263,7 @@ class AffineGroup(UniqueRepresentation, Group):
         if not A.is_invertible():
             raise TypeError('A must be invertible')
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -276,7 +276,7 @@ class AffineGroup(UniqueRepresentation, Group):
         return "\\mathrm{Aff}_{%s}(%s)" % (self.degree(),
                                            self.base_ring()._latex_())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

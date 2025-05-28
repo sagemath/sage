@@ -29,7 +29,7 @@ class cu2(Executable):
         sage: cu2().is_present()  # optional - rubiks
         FeatureTestResult('cu2', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -51,7 +51,7 @@ class size222(Executable):
         sage: size222().is_present()  # optional - rubiks
         FeatureTestResult('size222', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -73,7 +73,7 @@ class optimal(Executable):
         sage: optimal().is_present()  # optional - rubiks
         FeatureTestResult('optimal', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -95,7 +95,7 @@ class mcube(Executable):
         sage: mcube().is_present()  # optional - rubiks
         FeatureTestResult('mcube', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -117,7 +117,7 @@ class dikcube(Executable):
         sage: dikcube().is_present()  # optional - rubiks
         FeatureTestResult('dikcube', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -139,7 +139,7 @@ class cubex(Executable):
         sage: cubex().is_present()  # optional - rubiks
         FeatureTestResult('cubex', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -163,7 +163,7 @@ class Rubiks(JoinFeature):
         sage: Rubiks().is_present()  # optional - rubiks
         FeatureTestResult('rubiks', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

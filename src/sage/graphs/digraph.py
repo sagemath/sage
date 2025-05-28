@@ -524,7 +524,7 @@ class DiGraph(GenericGraph):
                  weighted=None, data_structure='sparse',
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False, hash_labels=None):
+                 sparse=True, immutable=False, hash_labels=None) -> None:
         """
         TESTS::
 
@@ -911,7 +911,7 @@ class DiGraph(GenericGraph):
 
     # Attributes
 
-    def is_directed(self):
+    def is_directed(self) -> bool:
         """
         Since digraph is directed, return ``True``.
 
@@ -3826,7 +3826,7 @@ class DiGraph(GenericGraph):
 
         return Polyhedron(ieqs=ineqs, eqns=eqs, backend=backend)
 
-    def is_tournament(self):
+    def is_tournament(self) -> bool:
         r"""
         Check whether the digraph is a tournament.
 

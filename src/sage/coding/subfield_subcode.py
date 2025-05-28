@@ -51,7 +51,7 @@ class SubfieldSubcode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, original_code, subfield, embedding=None):
+    def __init__(self, original_code, subfield, embedding=None) -> None:
         r"""
         TESTS:
 
@@ -111,7 +111,7 @@ class SubfieldSubcode(AbstractLinearCode):
                 and self.original_code() == other.original_code()\
                 and self.embedding() == other.embedding()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -125,7 +125,7 @@ class SubfieldSubcode(AbstractLinearCode):
         return "Subfield subcode of %s down to GF(%s)"\
                 % (self.original_code(), self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -283,7 +283,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
          through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder=None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs) -> None:
         r"""
         TESTS:
 
@@ -314,7 +314,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         self._decoder_type.remove("dynamic")
         self._decoder_type = self._original_decoder.decoder_type()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -328,7 +328,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

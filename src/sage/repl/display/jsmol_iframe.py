@@ -90,7 +90,7 @@ OUTER_HTML_TEMPLATE = """
 
 class JSMolHtml(SageObject):
 
-    def __init__(self, jmol, path_to_jsmol=None, width='100%', height='100%'):
+    def __init__(self, jmol, path_to_jsmol=None, width='100%', height='100%') -> None:
         """
         INPUT:
 
@@ -196,7 +196,7 @@ class JSMolHtml(SageObject):
         script += [r"].join('\n');"]
         return '\n'.join(script)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return as string representation.
 

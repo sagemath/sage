@@ -288,7 +288,7 @@ class CyclicCode(AbstractLinearCode):
     _registered_decoders = {}
 
     def __init__(self, generator_pol=None, length=None, code=None, check=True,
-                 D=None, field=None, primitive_root=None):
+                 D=None, field=None, primitive_root=None) -> None:
         r"""
         TESTS:
 
@@ -462,7 +462,7 @@ class CyclicCode(AbstractLinearCode):
                                  "of powers and the length and the field, or "
                                  "a generator polynomial and the code length")
 
-    def __contains__(self, word):
+    def __contains__(self, word) -> bool:
         r"""
         Return ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
 
@@ -510,7 +510,7 @@ class CyclicCode(AbstractLinearCode):
                     self.length() == other.length() and
                     self.generator_polynomial() == R(other.generator_polynomial()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -527,7 +527,7 @@ class CyclicCode(AbstractLinearCode):
                 % (self.length(), self.dimension(),
                    self.base_field().cardinality()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -836,7 +836,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -871,7 +871,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         return (isinstance(other, CyclicCodePolynomialEncoder) and
                 self.code() == other.code())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -887,7 +887,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         """
         return "Polynomial-style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1005,7 +1005,7 @@ class CyclicCodeVectorEncoder(Encoder):
         Vector-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
 
         EXAMPLES::
@@ -1041,7 +1041,7 @@ class CyclicCodeVectorEncoder(Encoder):
         return (isinstance(other, CyclicCodeVectorEncoder) and
                 self.code() == other.code())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1057,7 +1057,7 @@ class CyclicCodeVectorEncoder(Encoder):
         """
         return "Vector-style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1198,7 +1198,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         sage: D
         Decoder through the surrounding BCH code of the [15, 10] Cyclic Code over GF(16)
     """
-    def __init__(self, code, **kwargs):
+    def __init__(self, code, **kwargs) -> None:
         r"""
 
         EXAMPLES::
@@ -1229,7 +1229,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
                 self.code() == other.code() and
                 self.bch_decoder() == other.bch_decoder())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1243,7 +1243,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         return ("Decoder through the surrounding BCH code of the %s" %
                 self.code())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

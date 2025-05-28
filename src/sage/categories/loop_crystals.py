@@ -1176,7 +1176,7 @@ class LocalEnergyFunction(Map):
 
     [KKMMNN1992]_
     """
-    def __init__(self, B, Bp, normalization=0):
+    def __init__(self, B, Bp, normalization=0) -> None:
         """
         Initialize ``self``.
 
@@ -1209,7 +1209,7 @@ class LocalEnergyFunction(Map):
         from sage.categories.homset import Hom
         Map.__init__(self, Hom(T, ZZ))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -91,7 +91,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         sage: TA.algebra_generators()
         Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
     """
-    def __init__(self, M, prefix='T', category=None, **options):
+    def __init__(self, M, prefix='T', category=None, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -114,7 +114,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         # the following is not the best option, but it's better than nothing.
         self._print_options['tensor_symbol'] = options.get('tensor_symbol', tensor.symbol)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -604,7 +604,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
     #   since this should be applied after all of the module functors
     rank = 20
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         """
         Initialize ``self``.
 
@@ -616,7 +616,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
         """
         ConstructionFunctor.__init__(self, Modules(base), Algebras(base))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

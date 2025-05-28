@@ -441,7 +441,7 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
 
     _cdd_executable = 'cddexec_gmp'
 
-    def __init__(self, parent, Vrep, Hrep, **kwds):
+    def __init__(self, parent, Vrep, Hrep, **kwds) -> None:
         """
         The Python constructor.
 

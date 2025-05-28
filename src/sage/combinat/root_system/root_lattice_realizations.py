@@ -1167,7 +1167,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                     if len(set(multilist)) == len(chain):
                         multichains.append(tuple([chain[i] for i in multilist]))
 
-            def is_saturated_chain(chain):
+            def is_saturated_chain(chain) -> bool:
                 for i in range(1, m + 1):
                     for j in range(1, m - i + 1):
                         for alpha in chain[i - 1]:
@@ -3834,7 +3834,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             return self.to_dominant_chamber(index_set=index_set,positive=positive,reduced_word=True)[1]
 
-        def is_dominant(self, index_set=None, positive=True):
+        def is_dominant(self, index_set=None, positive=True) -> bool:
             r"""
             Return whether ``self`` is dominant.
 
@@ -3897,7 +3897,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             return all(self.inner_product(alphacheck[i]) in NN
                        for i in self.parent().index_set())
 
-        def is_verma_dominant(self, positive=True):
+        def is_verma_dominant(self, positive=True) -> bool:
             r"""
             Return if ``self`` is Verma dominant.
 
@@ -4413,7 +4413,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             rho = self.parent().rho()
             return (self + rho).weyl_action(w, inverse=inverse) - rho
 
-        def is_parabolic_root(self, index_set):
+        def is_parabolic_root(self, index_set) -> bool:
             r"""
             Return whether ``root`` is in the parabolic subsystem with Dynkin nodes ``index_set``.
 

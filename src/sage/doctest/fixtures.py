@@ -137,7 +137,7 @@ def reproducible_repr(val):
 
 class AttributeAccessTracerHelper:
 
-    def __init__(self, delegate, prefix="  ", reads=True):
+    def __init__(self, delegate, prefix="  ", reads=True) -> None:
         r"""
         Helper to print proxied access to attributes.
 
@@ -250,7 +250,7 @@ class AttributeAccessTracerHelper:
 
 class AttributeAccessTracerProxy:
 
-    def __init__(self, delegate, **kwds):
+    def __init__(self, delegate, **kwds) -> None:
         r"""
         Proxy object which prints all attribute and method access to an object.
 
@@ -323,7 +323,7 @@ class AttributeAccessTracerProxy:
         helper = object.__getattribute__(self, "helper")
         return helper.get(name)
 
-    def __setattr__(self, name, val):
+    def __setattr__(self, name, val) -> None:
         r"""
         Write an attribute to the wrapped delegate object.
 

@@ -61,7 +61,7 @@ class UniqueFactorizationDomains(Category_singleton):
         """
         return None
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -117,7 +117,7 @@ class UniqueFactorizationDomains(Category_singleton):
         return Category_contains_method_by_parent_class(cls())
 
     class ParentMethods:
-        def is_unique_factorization_domain(self, proof=True):
+        def is_unique_factorization_domain(self, proof=True) -> bool:
             """
             Return ``True``, since this in an object of the category of unique factorization domains.
 

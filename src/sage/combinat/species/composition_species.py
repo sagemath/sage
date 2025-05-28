@@ -22,7 +22,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class CompositionSpeciesStructure(GenericSpeciesStructure):
-    def __init__(self, parent, labels, pi, f, gs):
+    def __init__(self, parent, labels, pi, f, gs) -> None:
         """
         TESTS::
 
@@ -35,7 +35,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
         self._partition = pi
         GenericSpeciesStructure.__init__(self, parent, labels, [f, gs])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -97,7 +97,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
 
 class CompositionSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
-    def __init__(self, F, G, min=None, max=None, weight=None):
+    def __init__(self, F, G, min=None, max=None, weight=None) -> None:
         """
         Return the composition of two species.
 

@@ -33,7 +33,7 @@ from sage.rings.infinity import infinity
 
 
 class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebra_multiplicative):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class for methods for the elementary basis of the symmetric functions.
 
@@ -98,7 +98,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Used in converting this ring to the corresponding ring in MAGMA.
 

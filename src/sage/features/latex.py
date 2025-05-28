@@ -32,7 +32,7 @@ class LaTeX(Executable):
         sage: latex().is_present()             # optional - latex
         FeatureTestResult('latex', True)
     """
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         r"""
         TESTS::
 
@@ -113,7 +113,7 @@ class latex(LaTeX):
         sage: latex().is_present()             # optional - latex
         FeatureTestResult('latex', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -134,7 +134,7 @@ class pdflatex(LaTeX):
         sage: pdflatex().is_present()             # optional - pdflatex
         FeatureTestResult('pdflatex', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -155,7 +155,7 @@ class xelatex(LaTeX):
         sage: xelatex().is_present()             # optional - xelatex
         FeatureTestResult('xelatex', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -176,7 +176,7 @@ class lualatex(LaTeX):
         sage: lualatex().is_present()             # optional - lualatex
         FeatureTestResult('lualatex', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -197,7 +197,7 @@ class dvips(Executable):
         sage: dvips().is_present()             # optional - dvips
         FeatureTestResult('dvips', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -219,7 +219,7 @@ class TeXFile(StaticFile):
         sage: TeXFile('x', 'x.tex').is_present()  # optional - latex
         FeatureTestResult('x', True)
     """
-    def __init__(self, name, filename, **kwds):
+    def __init__(self, name, filename, **kwds) -> None:
         r"""
         Initialize.
 

@@ -144,7 +144,7 @@ class DoubleCosetReduction(SageObject):
     - Marc Masdeu
     """
 
-    def __init__(self, Y, x, extrapow=0):
+    def __init__(self, Y, x, extrapow=0) -> None:
         r"""
         Initialize and compute the reduction as a double coset.
 
@@ -180,7 +180,7 @@ class DoubleCosetReduction(SageObject):
         self._t_prec = -1
         self._igamma_prec = -1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -195,7 +195,7 @@ class DoubleCosetReduction(SageObject):
         return "Double coset data (%s, %s, %s)" % (self.sign(),
                                                    list(self.gamma), self.label)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``self == other``.
 
@@ -228,7 +228,7 @@ class DoubleCosetReduction(SageObject):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``self != other``.
 
@@ -420,7 +420,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     - Marc Masdeu (2012-02-20)
     """
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         """
         Initialize a BruhatTitsTree object for a given prime `p`.
 
@@ -1123,7 +1123,7 @@ class Vertex(SageObject):
     - Marc Masdeu (2012-02-20)
     """
     def __init__(self, p, label, rep, leaving_edges=None,
-                 entering_edges=None, determinant=None, valuation=None):
+                 entering_edges=None, determinant=None, valuation=None) -> None:
         """
         This initializes a structure to represent vertices of
         quotients of the Bruhat-Tits tree. It is useful to enrich the
@@ -1154,7 +1154,7 @@ class Vertex(SageObject):
         self.leaving_edges = leaving_edges
         self.entering_edges = entering_edges
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -1166,7 +1166,7 @@ class Vertex(SageObject):
         """
         return "Vertex of Bruhat-Tits tree for p = %s" % (self.p)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``self == other``.
 
@@ -1191,7 +1191,7 @@ class Vertex(SageObject):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``self != other``.
 
@@ -1250,7 +1250,7 @@ class Edge(SageObject):
     - Marc Masdeu (2012-02-20)
     """
     def __init__(self, p, label, rep, origin, target, links=None,
-                 opposite=None, determinant=None, valuation=None):
+                 opposite=None, determinant=None, valuation=None) -> None:
         """
         Representation for edges of quotients of the Bruhat-Tits
         tree. It is useful to enrich the representation of an edge as
@@ -1283,7 +1283,7 @@ class Edge(SageObject):
         self.valuation = valuation
         self.parity = valuation % 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -1295,7 +1295,7 @@ class Edge(SageObject):
         """
         return "Edge of Bruhat-Tits tree for p =  %s" % (self.p)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``self == other``.
 
@@ -1330,7 +1330,7 @@ class Edge(SageObject):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``self != other``.
 
@@ -1421,7 +1421,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                                      seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
-                 use_magma=False, seed=None, magma_session=None):
+                 use_magma=False, seed=None, magma_session=None) -> None:
         """
         Compute the quotient of the Bruhat-Tits tree by an arithmetic
         quaternionic group.
@@ -1528,7 +1528,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     __hash__ = _cache_key
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -1539,7 +1539,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         """
         return "Quotient of the Bruhat Tits tree of GL_2(QQ_%s) with discriminant %s and level %s" % (self.prime(), self.Nminus().factor(), self.Nplus().factor())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Compare ``self`` with ``other``.
 
@@ -1560,7 +1560,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` with ``other``.
 
@@ -1573,7 +1573,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         """
         return not self.__eq__(other)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 

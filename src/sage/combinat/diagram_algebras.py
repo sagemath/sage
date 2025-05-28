@@ -323,7 +323,7 @@ class AbstractPartitionDiagram(AbstractSetPartition):
         ValueError: {{1, 2}, {3, 4}} does not represent two rows of vertices of order 2
     """
 
-    def __init__(self, parent, d, check=True):
+    def __init__(self, parent, d, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -982,7 +982,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         """
         return super()._repr_()
 
-    def _repr_compact(self):
+    def _repr_compact(self) -> str:
         """
         Return a compact string representation of ``self``.
 
@@ -1167,7 +1167,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
     """
     Element = AbstractPartitionDiagram
 
-    def __init__(self, order, category=None):
+    def __init__(self, order, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1209,7 +1209,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
                                  + list(range(ZZ(-ZZ(1)/ZZ(2) - order),0)))
         self._set = base_set
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -1309,7 +1309,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
         for i in self._diagram_func.__func__(self.order):
             yield self.element_class(self, i, check=False)
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         r"""
         TESTS::
 
@@ -1484,7 +1484,7 @@ class BrauerDiagrams(AbstractPartitionDiagrams):
     _name = "Brauer"
     _diagram_func = brauer_diagrams
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         r"""
         TESTS::
 
@@ -1697,7 +1697,7 @@ class TemperleyLiebDiagrams(AbstractPartitionDiagrams):
         else:
             return catalan_number(ZZ(self.order - 1/2))
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         r"""
         TESTS::
 
@@ -1775,7 +1775,7 @@ class PlanarDiagrams(AbstractPartitionDiagrams):
         """
         return catalan_number(2*self.order)
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         r"""
         TESTS::
 
@@ -1823,7 +1823,7 @@ class IdealDiagrams(AbstractPartitionDiagrams):
     _name = "Ideal"
     _diagram_func = ideal_diagrams
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         r"""
         TESTS::
 
@@ -1874,7 +1874,7 @@ class DiagramAlgebra(CombinatorialFreeModule):
          P{{-2}, {-1}, {1}, {2}}]
     """
 
-    def __init__(self, k, q, base_ring, prefix, diagrams, category=None):
+    def __init__(self, k, q, base_ring, prefix, diagrams, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -2530,7 +2530,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     # The following is the basic constructor method for the class.
     # The purpose of the "prefix" is to label the basis elements
-    def __init__(self, k, q, base_ring, prefix):
+    def __init__(self, k, q, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -2601,7 +2601,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         return super()._element_constructor_(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3298,7 +3298,7 @@ class OrbitBasis(DiagramAlgebra):
             alg = PartitionAlgebra(k, q, R)
         return super().__classcall__(cls, alg)
 
-    def __init__(self, alg):
+    def __init__(self, alg) -> None:
         """
         Initialize ``self``.
 
@@ -3317,7 +3317,7 @@ class OrbitBasis(DiagramAlgebra):
         self._fill = True
         self._alg = alg
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3607,7 +3607,7 @@ class SubPartitionAlgebra(DiagramBasis):
     by a subset of the diagrams.
     """
 
-    def __init__(self, k, q, base_ring, prefix, diagrams, category=None):
+    def __init__(self, k, q, base_ring, prefix, diagrams, category=None) -> None:
         """
         Initialize ``self`` by adding a coercion to the ambient space.
 
@@ -3770,7 +3770,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
             base_ring = q.parent()
         return super().__classcall__(cls, k, q, base_ring, prefix)
 
-    def __init__(self, k, q, base_ring, prefix):
+    def __init__(self, k, q, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -3784,7 +3784,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     options = BrauerDiagram.options
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3897,7 +3897,7 @@ class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
     r"""
     Half diagrams for the Temperley-Lieb algebra cell modules.
     """
-    def __init__(self, order, defects):
+    def __init__(self, order, defects) -> None:
         r"""
         Initialize ``self``.
 
@@ -3913,7 +3913,7 @@ class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
         if (self._order - self._defects) % 2:
             raise ValueError("the number of non-defects must be even")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -3943,7 +3943,7 @@ class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
                 offset += len(D) + 1
             yield self.element_class(self, ret)
 
-    def __contains__(self, obj):
+    def __contains__(self, obj) -> bool:
         r"""
         Check containment.
 
@@ -4253,7 +4253,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
             base_ring = q.parent()
         return super().__classcall__(cls, k, q, base_ring, prefix)
 
-    def __init__(self, k, q, base_ring, prefix):
+    def __init__(self, k, q, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -4269,7 +4269,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         cat = AssociativeAlgebras(base_ring.category()).Unital().FiniteDimensional().WithBasis().Cellular()
         SubPartitionAlgebra.__init__(self, k, q, base_ring, prefix, TemperleyLiebDiagrams(k), category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -4570,7 +4570,7 @@ class PlanarAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
             base_ring = q.parent()
         return super().__classcall__(cls, k, q, base_ring, prefix)
 
-    def __init__(self, k, q, base_ring, prefix):
+    def __init__(self, k, q, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -4659,7 +4659,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
             base_ring = q.parent()
         return super().__classcall__(cls, k, q, base_ring, prefix)
 
-    def __init__(self, k, q, base_ring, prefix):
+    def __init__(self, k, q, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -4673,7 +4673,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
         SubPartitionAlgebra.__init__(self, k, q, base_ring, prefix,
                                      IdealDiagrams(k), category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -5125,7 +5125,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 
     - [MR1998]_
     """
-    def __init__(self, PA, y):
+    def __init__(self, PA, y) -> None:
         r"""
         Initialize ``self``.
 
@@ -5209,7 +5209,7 @@ class PottsRepresentation(CombinatorialFreeModule):
             self._symgp = SymmetricGroup([i for i in range(1, self._d+1) if i != self._y])
         self._sga = self._symgp.algebra(R)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -5577,7 +5577,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 #########################################################################
 
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     r"""
     Return ``True`` if the diagram corresponding to the set partition ``sp``
     is planar; otherwise, return ``False``.

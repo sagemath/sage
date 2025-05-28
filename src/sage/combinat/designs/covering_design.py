@@ -181,7 +181,7 @@ class CoveringDesign(SageObject):
     """
 
     def __init__(self, v=0, k=0, t=0, size=0, points=None, blocks=None,
-                 low_bd=0, method='', creator='', timestamp=''):
+                 low_bd=0, method='', creator='', timestamp='') -> None:
         """
         EXAMPLES::
 
@@ -213,7 +213,7 @@ class CoveringDesign(SageObject):
             blocks = []
         self.__incidence_structure = IncidenceStructure(points, blocks)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the representation of this covering design.
 
@@ -240,7 +240,7 @@ class CoveringDesign(SageObject):
             repr += 'Submitted on: %s\n' % (self.__timestamp)
         return repr[:-1]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return the string for this covering design.
 
@@ -277,7 +277,7 @@ class CoveringDesign(SageObject):
         return repr + '\n'.join('  '.join(str(k) for k in block) for block in
                                 self.__incidence_structure.blocks())
 
-    def is_covering(self):
+    def is_covering(self) -> bool:
         """
         Check all `t`-sets are in fact covered by the blocks of ``self``.
 

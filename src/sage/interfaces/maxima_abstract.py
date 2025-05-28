@@ -94,7 +94,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         True
     """
 
-    def __init__(self, name='maxima_abstract'):
+    def __init__(self, name='maxima_abstract') -> None:
         r"""
         Create an instance of an abstract interface to Maxima.
         See ``MaximaAbstract`` for full documentation.
@@ -434,7 +434,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     # Overriding default values
     ###
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         r"""
         Return the assign symbol in Maxima.
 
@@ -451,7 +451,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return ":"
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the true symbol in Maxima.
 
@@ -466,7 +466,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return 'true'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the false symbol in Maxima.
 
@@ -481,7 +481,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return 'false'
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality symbol in Maxima.
 
@@ -498,7 +498,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return '='
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         """
         Return the inequality symbol in Maxima.
 
@@ -1083,7 +1083,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     """
     _cached_repr = True
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Printing an object explicitly gives ASCII art.
 
@@ -1101,7 +1101,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         return self.display2d(onscreen=False)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Convert ``self`` into a boolean.
 
@@ -1254,7 +1254,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         return R(self._sage_())
 
-    def __complex__(self):
+    def __complex__(self) -> complex:
         """
         Return a complex number equivalent to this Maxima object.
 
@@ -1548,7 +1548,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
     integrate = integral
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         Return floating point version of this Maxima element.
 
@@ -1568,7 +1568,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         except ValueError:
             raise TypeError("unable to coerce '%s' to float" % repr(self))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of a list.
 
@@ -1912,7 +1912,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         e^cos(x)
     """
 
-    def __init__(self, parent, name, defn, args, latex):
+    def __init__(self, parent, name, defn, args, latex) -> None:
         """
         Create a Maxima function.
         See ``MaximaAbstractElementFunction`` for full documentation.

@@ -146,7 +146,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
 
     Element = AutomorphismField
 
-    def __init__(self, vector_field_module):
+    def __init__(self, vector_field_module) -> None:
         r"""
         See :class:`AutomorphismfieldGroup` for documentation and examples.
 
@@ -314,7 +314,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
 
     #### End of monoid methods ####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -582,7 +582,7 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
 
     Element = AutomorphismFieldParal
 
-    def __init__(self, vector_field_module):
+    def __init__(self, vector_field_module) -> None:
         r"""
         See :class:`AutomorphismfieldParalGroup` for documentation and
         examples.

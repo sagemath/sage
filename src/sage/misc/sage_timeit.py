@@ -57,7 +57,7 @@ class SageTimeitResult:
         sage: SageTimeitResult( (1, 2, 3, 4, 's') )
         <repr(<sage.misc.sage_timeit.SageTimeitResult at 0x...>) failed: TypeError: * wants int>
     """
-    def __init__(self, stats, series=None):
+    def __init__(self, stats, series=None) -> None:
         r"""
         Construction of a timing result.
 
@@ -76,7 +76,7 @@ class SageTimeitResult:
         self.stats = stats
         self.series = series if not None else []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation.
 

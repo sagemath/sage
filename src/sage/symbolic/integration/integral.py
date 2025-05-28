@@ -39,7 +39,7 @@ available_integrators['libgiac'] = external.libgiac_integrator
 
 
 class IndefiniteIntegral(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Class to represent an indefinite integral.
 
@@ -167,7 +167,7 @@ class IndefiniteIntegral(BuiltinFunction):
         else:
             return f.derivative(diff_param).integral(x)
 
-    def _print_latex_(self, f, x):
+    def _print_latex_(self, f, x) -> str:
         r"""
         EXAMPLES::
 
@@ -194,7 +194,7 @@ indefinite_integral = IndefiniteIntegral()
 
 
 class DefiniteIntegral(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The symbolic function representing a definite integral.
 
@@ -341,7 +341,7 @@ class DefiniteIntegral(BuiltinFunction):
             ans -= f.subs(x == a) * a.diff(diff_param)
         return ans
 
-    def _print_latex_(self, f, x, a, b):
+    def _print_latex_(self, f, x, a, b) -> str:
         r"""
         Convert this integral to LaTeX notation.
 

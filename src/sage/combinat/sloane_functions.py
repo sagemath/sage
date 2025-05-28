@@ -146,7 +146,7 @@ class SloaneSequence(SageObject):
     Base class for a Sloane integer sequence.
     """
 
-    def __init__(self, offset=1):
+    def __init__(self, offset=1) -> None:
         r"""
         A sequence starting at offset (=1 by default).
 
@@ -185,7 +185,7 @@ class SloaneSequence(SageObject):
             return False
         return repr(self) == repr(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         EXAMPLES::
 
@@ -329,7 +329,7 @@ class SloaneSequence(SageObject):
 
 # This one should be here!
 class A000001(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of groups of order `n`.
 
@@ -365,7 +365,7 @@ class A000001(SloaneSequence):
         self._small = [1, 1, 1, 2, 1, 2, 1, 5, 2, 2, 1, 5, 1, 2, 1, 14, 1, 5, 1, 5, 2, 2, 1, 15, 2, 2, 5, 4, 1, 4, 1, 51, 1, 2, 1, 14, 1, 2, 2, 14, 1, 6, 1, 4, 2, 2, 1, 52, 2, 5]
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -394,7 +394,7 @@ class A000001(SloaneSequence):
 
 
 class A000027(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The natural numbers. Also called the whole numbers, the counting
         numbers or the positive integers.
@@ -430,7 +430,7 @@ class A000027(SloaneSequence):
 # is this a good idea to have a link for all sequences? Jaap
     link = "http://oeis.org/classic/A000027"
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -450,7 +450,7 @@ class A000027(SloaneSequence):
 
 
 class A000004(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The zero sequence.
 
@@ -475,7 +475,7 @@ class A000004(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -495,7 +495,7 @@ class A000004(SloaneSequence):
 
 
 class A000005(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sequence `tau(n)`, which is the number of divisors of `n`.
 
@@ -534,7 +534,7 @@ class A000005(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -554,7 +554,7 @@ class A000005(SloaneSequence):
 
 
 class A000008(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of ways of making change for n cents using coins
         of 1, 2, 5, 10 cents.
@@ -584,7 +584,7 @@ class A000008(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -605,7 +605,7 @@ class A000008(SloaneSequence):
 
 
 class A000009(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of partitions of `n` into odd parts.
 
@@ -636,7 +636,7 @@ class A000009(SloaneSequence):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -701,7 +701,7 @@ class A000009(SloaneSequence):
 
 
 class A000796(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Decimal expansion of `\pi`.
 
@@ -735,7 +735,7 @@ class A000796(SloaneSequence):
         SloaneSequence.__init__(self, offset=1)
         self._b = []
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -804,7 +804,7 @@ class A000796(SloaneSequence):
 
 
 class A003418(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Least common multiple (or lcm) of `\{1, 2, \ldots, n\}`.
 
@@ -837,7 +837,7 @@ class A003418(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -857,7 +857,7 @@ class A003418(SloaneSequence):
 
 
 class A007318(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Pascal's triangle read by rows:
         `C(n,k) = \binom{n}{k} = \frac {n!} {(k!(n-k)!)}`,
@@ -891,7 +891,7 @@ class A007318(SloaneSequence):
 
     keyword = ["nonn", "tabl", "nice", "easy", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -916,7 +916,7 @@ class A007318(SloaneSequence):
 
 
 class A008275(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Triangle of Stirling numbers of first kind, `s(n,k)`,
         `n \ge 1`, `1 \le k \le n`.
@@ -959,7 +959,7 @@ class A008275(SloaneSequence):
 
     keyword = ["sign", "tabl", "nice", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -996,7 +996,7 @@ class A008275(SloaneSequence):
 
 
 class A008277(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Triangle of Stirling numbers of 2nd kind, `S2(n,k)`,
         `n \ge 1`, `1 \le k \le n`.
@@ -1036,7 +1036,7 @@ class A008277(SloaneSequence):
 
     keyword = ["nonn", "tabl", "nice", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1071,7 +1071,7 @@ class A008277(SloaneSequence):
 
 
 class A049310(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Triangle of coefficients of Chebyshev's `S(n,x)`:
         `U(n, \frac x 2)` polynomials (exponents in increasing
@@ -1108,7 +1108,7 @@ class A049310(SloaneSequence):
 
     keyword = ["sign", "tabl", "nice", "easy", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1136,7 +1136,7 @@ class A049310(SloaneSequence):
 
 
 class A000010(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The integer sequence A000010 is Euler's totient function.
 
@@ -1178,7 +1178,7 @@ class A000010(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1200,7 +1200,7 @@ class A000010(SloaneSequence):
 
 
 class A000007(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The characteristic function of 0: `a(n) = 0^n`.
 
@@ -1229,7 +1229,7 @@ class A000007(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1249,7 +1249,7 @@ class A000007(SloaneSequence):
 
 
 class A005843(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The even numbers: `a(n) = 2n`.
 
@@ -1282,7 +1282,7 @@ class A005843(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1302,7 +1302,7 @@ class A005843(SloaneSequence):
 
 
 class A000035(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         A simple periodic sequence.
 
@@ -1335,7 +1335,7 @@ class A000035(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1355,7 +1355,7 @@ class A000035(SloaneSequence):
 
 
 class A000169(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of labeled rooted trees with `n` nodes:
         `n^{(n-1)}`.
@@ -1389,7 +1389,7 @@ class A000169(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1409,7 +1409,7 @@ class A000169(SloaneSequence):
 
 
 class A000272(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of labeled rooted trees on `n` nodes: `n^{(n-2)}`.
 
@@ -1440,7 +1440,7 @@ class A000272(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1462,7 +1462,7 @@ class A000272(SloaneSequence):
 
 
 class A000312(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of labeled mappings from `n` points to themselves
         (endofunctions): `n^n`.
@@ -1496,7 +1496,7 @@ class A000312(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1519,7 +1519,7 @@ class A000312(SloaneSequence):
 
 
 class A001477(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The nonnegative integers.
 
@@ -1552,7 +1552,7 @@ class A001477(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1572,7 +1572,7 @@ class A001477(SloaneSequence):
 
 
 class A004526(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The nonnegative integers repeated.
 
@@ -1603,7 +1603,7 @@ class A004526(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1623,7 +1623,7 @@ class A004526(SloaneSequence):
 
 
 class A000326(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Pentagonal numbers: `n(3n-1)/2`.
 
@@ -1658,7 +1658,7 @@ class A000326(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1678,7 +1678,7 @@ class A000326(SloaneSequence):
 
 
 class A002378(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Oblong (or pronic, or heteromecic) numbers: `n(n+1)`.
 
@@ -1711,7 +1711,7 @@ class A002378(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1731,7 +1731,7 @@ class A002378(SloaneSequence):
 
 
 class A002620(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Quarter-squares: floor(n/2)\*ceiling(n/2). Equivalently,
         `\lfloor n^2/4 \rfloor`.
@@ -1763,7 +1763,7 @@ class A002620(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1783,7 +1783,7 @@ class A002620(SloaneSequence):
 
 
 class A005408(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The odd numbers a(n) = 2n + 1.
 
@@ -1816,7 +1816,7 @@ class A005408(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1836,7 +1836,7 @@ class A005408(SloaneSequence):
 
 
 class A000012(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The all 1s sequence.
 
@@ -1863,7 +1863,7 @@ class A000012(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1883,7 +1883,7 @@ class A000012(SloaneSequence):
 
 
 class A000120(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         1s-counting sequence: number of 1s in binary expansion of `n`.
 
@@ -1912,7 +1912,7 @@ class A000120(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1943,7 +1943,7 @@ class A000120(SloaneSequence):
 
 
 class A010060(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Thue-Morse sequence.
 
@@ -1979,7 +1979,7 @@ class A010060(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1999,7 +1999,7 @@ class A010060(SloaneSequence):
 
 
 class A000069(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Odious numbers: odd number of 1s in binary expansion.
 
@@ -2026,7 +2026,7 @@ class A000069(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2046,7 +2046,7 @@ class A000069(SloaneSequence):
 
 
 class A001969(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Evil numbers: even number of 1s in binary expansion.
 
@@ -2077,7 +2077,7 @@ class A001969(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2097,7 +2097,7 @@ class A001969(SloaneSequence):
 
 
 class A000290(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The squares: `a(n) = n^2`.
 
@@ -2128,7 +2128,7 @@ class A000290(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2148,7 +2148,7 @@ class A000290(SloaneSequence):
 
 
 class A000225(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `2^n - 1`.
 
@@ -2179,7 +2179,7 @@ class A000225(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2199,7 +2199,7 @@ class A000225(SloaneSequence):
 
 
 class A000015(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Smallest prime power `\geq n` (where `1` is considered a prime
         power).
@@ -2237,7 +2237,7 @@ class A000015(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2260,7 +2260,7 @@ class A000015(SloaneSequence):
 
 
 class A000016(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Sloane's A000016.
 
@@ -2295,7 +2295,7 @@ class A000016(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2318,7 +2318,7 @@ class A000016(SloaneSequence):
 
 
 class A000032(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Lucas numbers (beginning at 2): `L(n) = L(n-1) + L(n-2)`.
 
@@ -2353,7 +2353,7 @@ class A000032(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2381,7 +2381,7 @@ class A000032(SloaneSequence):
 
 
 class A004086(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Read n backwards (referred to as `R(n)` in many
         sequences).
@@ -2415,7 +2415,7 @@ class A004086(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2436,7 +2436,7 @@ class A004086(SloaneSequence):
 
 
 class A002113(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Palindromes in base 10.
 
@@ -2467,7 +2467,7 @@ class A002113(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2528,7 +2528,7 @@ class A002113(SloaneSequence):
 
 
 class A000030(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initial digit of `n`.
 
@@ -2563,7 +2563,7 @@ class A000030(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2587,7 +2587,7 @@ class A000030(SloaneSequence):
 
 # Theme: primes and factoring
 class A000040(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The prime numbers.
 
@@ -2620,7 +2620,7 @@ class A000040(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2640,7 +2640,7 @@ class A000040(SloaneSequence):
 
 
 class A002808(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The composite numbers: numbers `n` of the form `xy`
         for `x > 1` and `y > 1`.
@@ -2674,7 +2674,7 @@ class A002808(SloaneSequence):
         self._b = [4]
         self._n = 5
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2728,7 +2728,7 @@ class A002808(SloaneSequence):
 
 
 class A018252(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The nonprime numbers, starting with 1.
 
@@ -2761,7 +2761,7 @@ class A018252(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2783,7 +2783,7 @@ class A018252(SloaneSequence):
 
 
 class A000043(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Primes `p` such that `2^p - 1` is prime.
         `2^p - 1` is then called a Mersenne prime.
@@ -2817,7 +2817,7 @@ class A000043(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2843,7 +2843,7 @@ class A000043(SloaneSequence):
 
 
 class A000668(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Mersenne primes (of form `2^p - 1` where `p` is a
         prime).
@@ -2886,7 +2886,7 @@ class A000668(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2915,7 +2915,7 @@ class A000668(SloaneSequence):
 
 
 class A000396(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Perfect numbers: equal to sum of proper divisors.
 
@@ -2948,7 +2948,7 @@ class A000396(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2969,7 +2969,7 @@ class A000396(SloaneSequence):
 
 
 class A005100(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Deficient numbers: `\sigma(n) < 2n`.
 
@@ -3004,7 +3004,7 @@ class A005100(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3058,7 +3058,7 @@ class A005100(SloaneSequence):
 
 
 class A005101(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Abundant numbers (sum of divisors of `n` exceeds
         `2n`).
@@ -3094,7 +3094,7 @@ class A005101(SloaneSequence):
         self._b = [12]
         self._n = 18
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3148,7 +3148,7 @@ class A005101(SloaneSequence):
 
 
 class A002110(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Primorial numbers (first definition): product of first `n`
         primes. Sometimes written `p\#`.
@@ -3180,7 +3180,7 @@ class A002110(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3200,7 +3200,7 @@ class A002110(SloaneSequence):
 
 
 class A000720(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `pi(n)`, the number of primes `\le n`. Sometimes
         called `PrimePi(n)`.
@@ -3234,7 +3234,7 @@ class A000720(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3254,7 +3254,7 @@ class A000720(SloaneSequence):
 
 
 class A064553(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(1) = 1`, `a(prime(i)) = i + 1` for
         `i > 0` and `a(u \cdot v) = a(u) \cdot a(v)` for
@@ -3289,7 +3289,7 @@ class A064553(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3309,7 +3309,7 @@ class A064553(SloaneSequence):
 
 
 class A001055(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of ways of factoring `n` with all factors 1.
 
@@ -3342,7 +3342,7 @@ class A001055(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3390,7 +3390,7 @@ class A001055(SloaneSequence):
 
 
 class A006530(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Largest prime dividing `n` (with `a(1)=1`).
 
@@ -3425,7 +3425,7 @@ class A006530(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3447,7 +3447,7 @@ class A006530(SloaneSequence):
 
 
 class A000961(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Prime powers.
 
@@ -3480,7 +3480,7 @@ class A000961(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3534,7 +3534,7 @@ class A000961(SloaneSequence):
 
 
 class A005117(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Square-free numbers.
 
@@ -3567,7 +3567,7 @@ class A005117(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3622,7 +3622,7 @@ class A005117(SloaneSequence):
 
 
 class A020639(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Least prime dividing `n` with `a(1)=1`.
 
@@ -3655,7 +3655,7 @@ class A020639(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3709,7 +3709,7 @@ class A020639(SloaneSequence):
 
 
 class A000041(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n)` = number of partitions of `n` (the partition
         numbers).
@@ -3741,7 +3741,7 @@ class A000041(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3762,7 +3762,7 @@ class A000041(SloaneSequence):
 
 
 class A000045(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Sequence of Fibonacci numbers, offset 0,4.
 
@@ -3803,7 +3803,7 @@ class A000045(SloaneSequence):
         self._b = []
         self._precompute()  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3867,7 +3867,7 @@ class A000045(SloaneSequence):
 
 
 class A000108(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Catalan numbers:
         `C_n = \frac{\binom{2n}{n}}{n+1} = \frac{(2n)!}{n!(n+1)!}`.
@@ -3901,7 +3901,7 @@ class A000108(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3921,7 +3921,7 @@ class A000108(SloaneSequence):
 
 
 class A001006(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Motzkin numbers: number of ways of drawing any number of
         nonintersecting chords among `n` points on a circle.
@@ -3953,7 +3953,7 @@ class A001006(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3973,7 +3973,7 @@ class A001006(SloaneSequence):
 
 
 class A000079(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Powers of 2: `a(n) = 2^n`.
 
@@ -4004,7 +4004,7 @@ class A000079(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4024,7 +4024,7 @@ class A000079(SloaneSequence):
 
 
 class A000578(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The cubes: `a(n) = n^3`.
 
@@ -4057,7 +4057,7 @@ class A000578(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4077,7 +4077,7 @@ class A000578(SloaneSequence):
 
 
 class A000244(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Powers of 3: `a(n) = 3^n`.
 
@@ -4110,7 +4110,7 @@ class A000244(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4130,7 +4130,7 @@ class A000244(SloaneSequence):
 
 
 class A000302(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Powers of 4: `a(n) = 4^n`.
 
@@ -4161,7 +4161,7 @@ class A000302(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4181,7 +4181,7 @@ class A000302(SloaneSequence):
 
 
 class A000583(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Fourth powers: `a(n) = n^4`.
 
@@ -4214,7 +4214,7 @@ class A000583(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4234,7 +4234,7 @@ class A000583(SloaneSequence):
 
 
 class A000142(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Factorial numbers: `n! = 1 \cdot 2 \cdot 3 \cdots n`.
 
@@ -4266,7 +4266,7 @@ class A000142(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4286,7 +4286,7 @@ class A000142(SloaneSequence):
 
 
 class A000085(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of self-inverse permutations on `n` letters, also
         known as involutions; number of Young tableaux with `n`
@@ -4319,7 +4319,7 @@ class A000085(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4340,7 +4340,7 @@ class A000085(SloaneSequence):
 
 
 class A001189(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of degree-n permutations of order exactly 2.
 
@@ -4373,7 +4373,7 @@ class A001189(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4393,7 +4393,7 @@ class A001189(SloaneSequence):
 
 
 class A000670(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of preferential arrangements of `n` labeled
         elements; or number of weak orders on `n` labeled
@@ -4426,7 +4426,7 @@ class A000670(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4450,7 +4450,7 @@ class A000670(SloaneSequence):
 
 
 class A006318(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Large Schroeder numbers.
 
@@ -4481,7 +4481,7 @@ class A006318(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4504,7 +4504,7 @@ class A006318(SloaneSequence):
 
 
 class A000165(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Double factorial numbers: `(2n)!! = 2^n*n!`.
 
@@ -4535,7 +4535,7 @@ class A000165(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4555,7 +4555,7 @@ class A000165(SloaneSequence):
 
 
 class A001147(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Double factorial numbers:
         `(2n-1)!! = 1 \cdot 3 \cdot 5 \cdots (2n-1)`.
@@ -4587,7 +4587,7 @@ class A001147(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4607,7 +4607,7 @@ class A001147(SloaneSequence):
 
 
 class A006882(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Double factorials `n!!`: `a(n)=n \cdot a(n-2)`.
 
@@ -4640,7 +4640,7 @@ class A006882(SloaneSequence):
         self._b = []
         self._precompute(2)  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4707,7 +4707,7 @@ class A006882(SloaneSequence):
 
 
 class A000984(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Central binomial coefficients:
         `\binom{2n}{n} = \frac {(2n)!} {(n!)^2}`.
@@ -4737,7 +4737,7 @@ class A000984(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4757,7 +4757,7 @@ class A000984(SloaneSequence):
 
 
 class A001405(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Central binomial coefficients:
         `\binom{n}{\lfloor \frac {n}{ 2} \rfloor}`.
@@ -4787,7 +4787,7 @@ class A001405(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4807,7 +4807,7 @@ class A001405(SloaneSequence):
 
 
 class A000292(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Tetrahedral (or pyramidal) numbers:
         `\binom{n+2}{3} = n(n+1)(n+2)/6`.
@@ -4837,7 +4837,7 @@ class A000292(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4857,7 +4857,7 @@ class A000292(SloaneSequence):
 
 
 class A000330(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Square pyramidal numbers"
         `0^2 + 1^2 \cdots n^2 = n(n+1)(2n+1)/6`.
@@ -4891,7 +4891,7 @@ class A000330(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4971,7 +4971,7 @@ class ExtremesOfPermanentsSequence(SloaneSequence):
 
 
 class A000153(ExtremesOfPermanentsSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n) = n*a(n-1) + (n-2)*a(n-2)`, with `a(0) = 0`,
         `a(1) = 1`.
@@ -5011,7 +5011,7 @@ class A000153(ExtremesOfPermanentsSequence):
         self._a0a1d = (0, 1, 2)
         self._precompute(2)  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5022,7 +5022,7 @@ class A000153(ExtremesOfPermanentsSequence):
 
 
 class A000255(ExtremesOfPermanentsSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n) = n*a(n-1) + (n-1)*a(n-2)`, with `a(0) = 1`,
         `a(1) = 1`.
@@ -5064,7 +5064,7 @@ class A000255(ExtremesOfPermanentsSequence):
         self._a0a1d = (1, 1, 1)
         self._precompute(2)  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5075,7 +5075,7 @@ class A000255(ExtremesOfPermanentsSequence):
 
 
 class A000261(ExtremesOfPermanentsSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n) = n*a(n-1) + (n-3)*a(n-2)`, with `a(1) = 1`,
         `a(2) = 1`.
@@ -5122,7 +5122,7 @@ class A000261(ExtremesOfPermanentsSequence):
         self._b = []
         self._k = self.offset + 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5133,7 +5133,7 @@ class A000261(ExtremesOfPermanentsSequence):
 
 
 class A001909(ExtremesOfPermanentsSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n) = n*a(n-1) + (n-4)*a(n-2)`, with `a(2) = 0`,
         `a(3) = 1`.
@@ -5180,7 +5180,7 @@ class A001909(ExtremesOfPermanentsSequence):
         self._b = []
         self._k = self.offset + 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5191,7 +5191,7 @@ class A001909(ExtremesOfPermanentsSequence):
 
 
 class A001910(ExtremesOfPermanentsSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n) = n*a(n-1) + (n-5)*a(n-2)`, with `a(3) = 0`,
         `a(4) = 1`.
@@ -5238,7 +5238,7 @@ class A001910(ExtremesOfPermanentsSequence):
         self._b = []
         self._k = self.offset + 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5271,7 +5271,7 @@ class ExtremesOfPermanentsSequence2(ExtremesOfPermanentsSequence):
 
 
 class A090010(ExtremesOfPermanentsSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Permanent of (0,1)-matrix of size `n \times (n+d)` with
         `d=6` and `n` zeros not on a line.
@@ -5323,7 +5323,7 @@ class A090010(ExtremesOfPermanentsSequence2):
         self._k = self.offset + 1
         self._b = []
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5334,7 +5334,7 @@ class A090010(ExtremesOfPermanentsSequence2):
 
 
 class A055790(ExtremesOfPermanentsSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n) = n*a(n-1) + (n-2)*a(n-2) [a(0) = 0, a(1) = 2]`.
 
@@ -5384,7 +5384,7 @@ class A055790(ExtremesOfPermanentsSequence2):
         self._precompute(2)
         self._k1 = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5395,7 +5395,7 @@ class A055790(ExtremesOfPermanentsSequence2):
 
 
 class A090012(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Permanent of (0,1)-matrix of size `n \times (n+d)` with
         `d=2` and `n-1` zeros not on a line.
@@ -5445,7 +5445,7 @@ class A090012(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5467,7 +5467,7 @@ class A090012(SloaneSequence):
 
 
 class A090013(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Permanent of (0,1)-matrix of size `n \times (n+d)` with
         `d=3` and `n-1` zeros not on a line.
@@ -5516,7 +5516,7 @@ class A090013(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5538,7 +5538,7 @@ class A090013(SloaneSequence):
 
 
 class A090014(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Permanent of (0,1)-matrix of size `n \times (n+d)` with
         `d=4` and `n-1` zeros not on a line.
@@ -5587,7 +5587,7 @@ class A090014(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5609,7 +5609,7 @@ class A090014(SloaneSequence):
 
 
 class A090015(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Permanent of (0,1)-matrix of size `n \times (n+d)` with
         `d=5` and `n-1` zeros not on a line.
@@ -5658,7 +5658,7 @@ class A090015(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5680,7 +5680,7 @@ class A090015(SloaneSequence):
 
 
 class A090016(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Permanent of (0,1)-matrix of size `n \times (n+d)` with
         `d=6` and `n-1` zeros not on a line.
@@ -5731,7 +5731,7 @@ class A090016(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5753,7 +5753,7 @@ class A090016(SloaneSequence):
 
 
 class A000166(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Subfactorial or rencontres numbers, or derangements: number of
         permutations of `n` elements with no fixed points.
@@ -5792,7 +5792,7 @@ class A000166(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5812,7 +5812,7 @@ class A000166(SloaneSequence):
 
 
 class A000203(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sequence `\sigma(n)`, where `\sigma(n)` is the
         sum of the divisors of `n`. Also called
@@ -5852,7 +5852,7 @@ class A000203(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5872,7 +5872,7 @@ class A000203(SloaneSequence):
 
 
 class A001157(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sequence `\sigma_2(n)`, sum of squares of divisors of
         `n`.
@@ -5906,7 +5906,7 @@ class A001157(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5926,7 +5926,7 @@ class A001157(SloaneSequence):
 
 
 class A008683(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Möbius function `\mu(n)`.
 
@@ -5957,7 +5957,7 @@ class A008683(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5977,7 +5977,7 @@ class A008683(SloaneSequence):
 
 
 class A000204(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Lucas numbers (beginning with 1): `L(n) = L(n-1) + L(n-2)`
         with `L(1) = 1`, `L(2) = 3`.
@@ -6015,7 +6015,7 @@ class A000204(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6039,7 +6039,7 @@ class A000204(SloaneSequence):
 
 
 class A000217(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Triangular numbers: `a(n) = \binom{n+1}{2} = n(n+1)/2`.
 
@@ -6070,7 +6070,7 @@ class A000217(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6090,7 +6090,7 @@ class A000217(SloaneSequence):
 
 
 class A000124(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Central polygonal numbers (the Lazy Caterer's sequence):
         `n(n+1)/2 + 1`.
@@ -6125,7 +6125,7 @@ class A000124(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6145,7 +6145,7 @@ class A000124(SloaneSequence):
 
 
 class A002275(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Repunits: `\frac {(10^n - 1)}{9}`. Often denoted by
         `R_n`.
@@ -6177,7 +6177,7 @@ class A002275(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6261,7 +6261,7 @@ class RecurrenceSequence(SloaneSequence):
 
 
 class A001110(RecurrenceSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Numbers that are both triangular and square:
         `a(n) = 34a(n-1) - a(n-2) + 2`.
@@ -6298,7 +6298,7 @@ class A001110(RecurrenceSequence):
 
     link = "http://oeis.org/classic/A001110"
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6323,7 +6323,7 @@ class A001110(RecurrenceSequence):
 
 
 class A051959(RecurrenceSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Linear second order recurrence. A051959.
 
@@ -6357,7 +6357,7 @@ class A051959(RecurrenceSequence):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6382,7 +6382,7 @@ class A051959(RecurrenceSequence):
 
 
 class A001221(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of different prime divisors of `n`.
 
@@ -6421,7 +6421,7 @@ class A001221(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6441,7 +6441,7 @@ class A001221(SloaneSequence):
 
 
 class A001222(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of prime divisors of `n` (counted with
         multiplicity).
@@ -6481,7 +6481,7 @@ class A001222(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6538,7 +6538,7 @@ class A046660(SloaneSequence):
         - Jaap Spies (2007-01-19)
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6558,7 +6558,7 @@ class A046660(SloaneSequence):
 
 
 class A001227(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of odd divisors of `n`.
 
@@ -6599,7 +6599,7 @@ class A001227(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6619,7 +6619,7 @@ class A001227(SloaneSequence):
 
 
 class A001358(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Products of two primes.
 
@@ -6655,7 +6655,7 @@ class A001358(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6716,7 +6716,7 @@ class A001358(SloaneSequence):
 
 
 class A001694(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         This function returns the `n`-th Powerful Number:
 
@@ -6757,7 +6757,7 @@ class A001694(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6871,7 +6871,7 @@ class A001694(SloaneSequence):
 
 
 class A001836(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Numbers `n` such that `\phi(2n-1) < \phi(2n)`,
         where `\phi` is Euler's totient function.
@@ -6914,7 +6914,7 @@ class A001836(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7041,7 +7041,7 @@ class RecurrenceSequence2(SloaneSequence):
 
 
 class A001906(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `F(2n) =` bisection of Fibonacci sequence:
         `a(n)=3a(n-1)-a(n-2)`.
@@ -7076,7 +7076,7 @@ class A001906(RecurrenceSequence2):
         self._b = []
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7087,7 +7087,7 @@ class A001906(RecurrenceSequence2):
 
 
 class A001333(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Numerators of continued fraction convergents to `\sqrt 2`.
 
@@ -7125,7 +7125,7 @@ class A001333(RecurrenceSequence2):
         self._params = (1,1,2,1)
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7136,7 +7136,7 @@ class A001333(RecurrenceSequence2):
 
 
 class A001045(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Jacobsthal sequence: `a(n) = a(n-1) + 2a(n-2)`,
         `a(0) = 0` and `a(1) = 1`.
@@ -7171,7 +7171,7 @@ class A001045(RecurrenceSequence2):
         self._b = []
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7182,7 +7182,7 @@ class A001045(RecurrenceSequence2):
 
 
 class A000129(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Pell numbers: `a(0) = 0`, `a(1) = 1`; for
         `n > 1`, `a(n) = 2a(n-1) + a(n-2)`.
@@ -7220,7 +7220,7 @@ class A000129(RecurrenceSequence2):
         self._params = (0,1,2,1)
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7231,7 +7231,7 @@ class A000129(RecurrenceSequence2):
 
 
 class A001109(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         `a(n)^2` is a triangular number:
         `a(n) = 6*a(n-1) - a(n-2)` with `a(0)=0`,
@@ -7271,7 +7271,7 @@ class A001109(RecurrenceSequence2):
         self._b = []
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7282,7 +7282,7 @@ class A001109(RecurrenceSequence2):
 
 
 class A015521(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Linear 2nd order recurrence, `a(0)=0`, `a(1)=1` and
         `a(n) = 3 a(n-1) + 4 a(n-2)`.
@@ -7317,7 +7317,7 @@ class A015521(RecurrenceSequence2):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7328,7 +7328,7 @@ class A015521(RecurrenceSequence2):
 
 
 class A015523(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Linear 2nd order recurrence, `a(0)=0`, `a(1)=1` and
         `a(n) = 3 a(n-1) + 5 a(n-2)`.
@@ -7363,7 +7363,7 @@ class A015523(RecurrenceSequence2):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7374,7 +7374,7 @@ class A015523(RecurrenceSequence2):
 
 
 class A015530(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Linear 2nd order recurrence, `a(0)=0`, `a(1)=1` and
         `a(n) = 4 a(n-1) + 3 a(n-2)`.
@@ -7411,7 +7411,7 @@ class A015530(RecurrenceSequence2):
         self._params = (0,1,4,3)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7422,7 +7422,7 @@ class A015530(RecurrenceSequence2):
 
 
 class A015531(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Linear 2nd order recurrence, `a(0)=0`, `a(1)=1` and
         `a(n) = 4 a(n-1) + 5 a(n-2)`.
@@ -7461,7 +7461,7 @@ class A015531(RecurrenceSequence2):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7472,7 +7472,7 @@ class A015531(RecurrenceSequence2):
 
 
 class A015551(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Linear 2nd order recurrence, `a(0)=0`, `a(1)=1` and
         `a(n) = 6 a(n-1) + 5 a(n-2)`.
@@ -7511,7 +7511,7 @@ class A015551(RecurrenceSequence2):
         self._params = (0,1,6,5)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7547,7 +7547,7 @@ class A015551(RecurrenceSequence2):
 
 
 class A082411(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Second-order linear recurrence sequence with
         `a(n) = a(n-1) + a(n-2)`.
@@ -7587,7 +7587,7 @@ class A082411(RecurrenceSequence2):
         self._params = (407389224418,76343678551,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7598,7 +7598,7 @@ class A082411(RecurrenceSequence2):
 
 
 class A083103(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Second-order linear recurrence sequence with
         `a(n) = a(n-1) + a(n-2)`.
@@ -7644,7 +7644,7 @@ class A083103(RecurrenceSequence2):
         self._params = (1786772701928802632268715130455793,1059683225053915111058165141686995,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7655,7 +7655,7 @@ class A083103(RecurrenceSequence2):
 
 
 class A083104(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Second-order linear recurrence sequence with
         `a(n) = a(n-1) + a(n-2)`.
@@ -7693,7 +7693,7 @@ class A083104(RecurrenceSequence2):
         self._params = (331635635998274737472200656430763,1510028911088401971189590305498785,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7704,7 +7704,7 @@ class A083104(RecurrenceSequence2):
 
 
 class A083105(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Second-order linear recurrence sequence with
         `a(n) = a(n-1) + a(n-2)`.
@@ -7748,7 +7748,7 @@ class A083105(RecurrenceSequence2):
         self._params = (62638280004239857,49463435743205655,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7759,7 +7759,7 @@ class A083105(RecurrenceSequence2):
 
 
 class A083216(RecurrenceSequence2):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Second-order linear recurrence sequence with
         `a(n) = a(n-1) + a(n-2)`.
@@ -7800,7 +7800,7 @@ class A083216(RecurrenceSequence2):
         self._params = (20615674205555510, 3794765361567513,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7811,7 +7811,7 @@ class A083216(RecurrenceSequence2):
 
 
 class A061084(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Fibonacci-type sequence based on subtraction: `a(0) = 1`,
         `a(1) = 2` and `a(n) = a(n-2)-a(n-1)`.
@@ -7847,7 +7847,7 @@ class A061084(SloaneSequence):
 
     keyword = ["sign", "easy","nice"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7895,7 +7895,7 @@ def recur_gen3(a0, a1, a2, a3, a4, a5):
 
 
 class A000213(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3). Starting with
         1, 1, 1, ...
@@ -7929,7 +7929,7 @@ class A000213(SloaneSequence):
         self._b = []
         self._precompute()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7977,7 +7977,7 @@ class A000213(SloaneSequence):
 
 
 class A000073(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Tribonacci numbers: a(n) = a(n-1) + a(n-2) + a(n-3). Starting with
         0, 0, 1, ...
@@ -8011,7 +8011,7 @@ class A000073(SloaneSequence):
         self._b = []
         self._precompute()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8140,7 +8140,7 @@ class A079922(SloaneSequence):
         - Jaap Spies (2007-01-14)
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8208,7 +8208,7 @@ class A079923(SloaneSequence):
         - Jaap Spies (2007-01-17)
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8273,7 +8273,7 @@ class A109814(SloaneSequence):
     - Jaap Spies (2007-01-13)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -8290,7 +8290,7 @@ class A109814(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8319,7 +8319,7 @@ class A109814(SloaneSequence):
 
 
 class A111774(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Sequence of numbers of the third kind, i.e., numbers that can be
         written as a sum of at least three consecutive positive integers.
@@ -8366,7 +8366,7 @@ class A111774(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8463,7 +8463,7 @@ class A111774(SloaneSequence):
 
 
 class A111775(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Number of ways `n` can be written as a sum of at least
         three consecutive integers.
@@ -8526,7 +8526,7 @@ class A111775(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8552,7 +8552,7 @@ class A111775(SloaneSequence):
 
 
 class A111787(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         This function returns the `n`-th number of Sloane's
         sequence A111787
@@ -8603,7 +8603,7 @@ class A111787(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8628,7 +8628,7 @@ class A111787(SloaneSequence):
 
 
 class ExponentialNumbers(SloaneSequence):
-    def __init__(self, a):
+    def __init__(self, a) -> None:
         r"""
         A sequence of Exponential numbers.
 
@@ -8641,7 +8641,7 @@ class ExponentialNumbers(SloaneSequence):
         SloaneSequence.__init__(self, offset=0)
         self.a = a
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8668,7 +8668,7 @@ class ExponentialNumbers(SloaneSequence):
 
 
 class A000110(ExponentialNumbers):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sequence of Bell numbers.
 
@@ -8708,7 +8708,7 @@ class A000110(ExponentialNumbers):
         """
         ExponentialNumbers.__init__(self, a=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8719,7 +8719,7 @@ class A000110(ExponentialNumbers):
 
 
 class A000587(ExponentialNumbers):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sequence of Uppuluri-Carpenter numbers.
 
@@ -8760,7 +8760,7 @@ class A000587(ExponentialNumbers):
         """
         ExponentialNumbers.__init__(self, a=-1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8776,7 +8776,7 @@ class A000587(ExponentialNumbers):
 
 
 class A000100(SloaneSequence):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         INPUT:
 
@@ -8807,7 +8807,7 @@ class A000100(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

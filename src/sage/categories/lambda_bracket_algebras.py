@@ -71,7 +71,7 @@ class LambdaBracketAlgebras(Category_over_base_ring):
         """
         return [Modules(self.base_ring())]
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         The name of the objects of this category.
 

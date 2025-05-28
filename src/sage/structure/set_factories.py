@@ -432,7 +432,7 @@ class SetFactoryPolicy(UniqueRepresentation, SageObject):
         This class is a base class for policies, one should not try
         to create instances.
     """
-    def __init__(self, factory):
+    def __init__(self, factory) -> None:
         r"""
         TESTS::
 
@@ -573,7 +573,7 @@ class SelfParentPolicy(SetFactoryPolicy):
         sage: isinstance(el, Foo)
         True
     """
-    def __init__(self, factory, Element):
+    def __init__(self, factory, Element) -> None:
         r"""
         TESTS::
 
@@ -606,7 +606,7 @@ class SelfParentPolicy(SetFactoryPolicy):
         """
         return self.self_element_constructor_attributes(self._Element)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -638,7 +638,7 @@ class TopMostParentPolicy(SetFactoryPolicy):
         sage: P = XYPairs(); P.policy()
         Set factory policy for <class 'sage.structure.set_factories_example.XYPair'> with parent AllPairs[=Factory for XY pairs(())]
     """
-    def __init__(self, factory, top_constraints, Element):
+    def __init__(self, factory, top_constraints, Element) -> None:
         """
         TESTS::
 
@@ -682,7 +682,7 @@ class TopMostParentPolicy(SetFactoryPolicy):
             return self.facade_element_constructor_attributes(
                 factory(*self._top_constraints, policy=self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -741,7 +741,7 @@ class FacadeParentPolicy(SetFactoryPolicy):
         sage: type(el) is P.element_class
         True
     """
-    def __init__(self, factory, parent):
+    def __init__(self, factory, parent) -> None:
         r"""
         TESTS::
 
@@ -780,7 +780,7 @@ class FacadeParentPolicy(SetFactoryPolicy):
         return self.facade_element_constructor_attributes(
             self._parent_for._parent_for)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -816,7 +816,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
         sage: type(el)
         <... 'tuple'>
     """
-    def __init__(self, factory, constructor):
+    def __init__(self, factory, constructor) -> None:
         """
         TESTS::
 
@@ -849,7 +849,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
         return {'_element_constructor_': self._constructor,
                 '_parent_for': None}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -888,7 +888,7 @@ class ParentWithSetFactory(Parent):
         sage: P.category()
         Category of facade finite enumerated sets
     """
-    def __init__(self, constraints, policy, category=None):
+    def __init__(self, constraints, policy, category=None) -> None:
         r"""
         TESTS::
 
@@ -1083,7 +1083,7 @@ class ParentWithSetFactory(Parent):
             ValueError: Wrong second coordinate
         """
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Default implementation for ``__contains__``.
 

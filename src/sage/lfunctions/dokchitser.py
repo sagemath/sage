@@ -197,7 +197,7 @@ class Dokchitser(SageObject):
 
     def __init__(self, conductor, gammaV, weight, eps,
                  poles=None, residues='automatic', prec=53,
-                 init=None):
+                 init=None) -> None:
         """
         Initialization of Dokchitser calculator EXAMPLES::
 
@@ -224,11 +224,11 @@ class Dokchitser(SageObject):
             del D['_Dokchitser__gp']
         return reduce_load_dokchitser, (D, )
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Dokchitser L-series of conductor %s and weight %s" % (
             self.conductor, self.weight)
 
-    def __del__(self):
+    def __del__(self) -> None:
         self._teardown_gp(self.__instance)
 
     def gp(self):
@@ -446,7 +446,7 @@ class Dokchitser(SageObject):
             if self.__gp is None:
                 self._instantiate_gp()
 
-            def repl(m):
+            def repl(m) -> str:
                 return '%s%s_%d%s' % (m.group(1), m.group(2), self.__instance,
                                       m.group(3))
 

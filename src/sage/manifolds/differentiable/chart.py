@@ -273,7 +273,7 @@ class DiffChart(Chart):
         :class:`~sage.manifolds.differentiable.chart.RealDiffChart` for charts
         on differentiable manifolds over `\RR`.
     """
-    def __init__(self, domain, coordinates, calc_method=None, periods=None, coord_restrictions=None):
+    def __init__(self, domain, coordinates, calc_method=None, periods=None, coord_restrictions=None) -> None:
         r"""
         Construct a chart.
 
@@ -963,7 +963,7 @@ class RealDiffChart(DiffChart, RealChart):
     :meth:`~sage.manifolds.chart.RealChart.plot`.
     """
     def __init__(self, domain, coordinates, calc_method=None,
-                 bounds=None, periods=None, coord_restrictions=None):
+                 bounds=None, periods=None, coord_restrictions=None) -> None:
         r"""
         Construct a chart on a real differentiable manifold.
 
@@ -1117,7 +1117,7 @@ class DiffCoordChange(CoordChange):
         u = x + y
         v = x - y
     """
-    def __init__(self, chart1, chart2, *transformations):
+    def __init__(self, chart1, chart2, *transformations) -> None:
         r"""
         Construct a transition map.
 

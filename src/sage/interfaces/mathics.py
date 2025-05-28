@@ -468,7 +468,7 @@ class Mathics(Interface):
                  maxread=None,
                  logfile=None,
                  init_list_length=1024,
-                 seed=None):
+                 seed=None) -> None:
         r"""
         Python constructor.
 
@@ -520,7 +520,7 @@ class Mathics(Interface):
             from sympy import Symbol
             Symbol._sage_ = _mathics_sympysage_symbol
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         EXAMPLES::
 
@@ -535,7 +535,7 @@ class Mathics(Interface):
         """
         return '<<"%s"' % filename
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing mathics on your computer.
 
@@ -607,7 +607,7 @@ optional Sage package Mathics installed.
         """
         return self.eval(var)
 
-    def _function_call_string(self, function, args, kwds):
+    def _function_call_string(self, function, args, kwds) -> str:
         """
         Return the string used to make function calls.
 
@@ -618,7 +618,7 @@ optional Sage package Mathics installed.
         """
         return "{}[{}]".format(function, ",".join(args))
 
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         r"""
         EXAMPLES::
 
@@ -627,7 +627,7 @@ optional Sage package Mathics installed.
         """
         return "{"
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         r"""
         EXAMPLES::
 
@@ -636,7 +636,7 @@ optional Sage package Mathics installed.
         """
         return "}"
 
-    def _left_func_delim(self):
+    def _left_func_delim(self) -> str:
         r"""
         EXAMPLES::
 
@@ -645,7 +645,7 @@ optional Sage package Mathics installed.
         """
         return "["
 
-    def _right_func_delim(self):
+    def _right_func_delim(self) -> str:
         r"""
         EXAMPLES::
 
@@ -669,7 +669,7 @@ optional Sage package Mathics installed.
         """
         self.eval('SetDirectory["%s"]' % dir)
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         r"""
         EXAMPLES::
 
@@ -678,7 +678,7 @@ optional Sage package Mathics installed.
         """
         return 'True'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         r"""
         EXAMPLES::
 
@@ -687,7 +687,7 @@ optional Sage package Mathics installed.
         """
         return 'False'
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         r"""
         EXAMPLES::
 
@@ -696,7 +696,7 @@ optional Sage package Mathics installed.
         """
         return '=='
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         r"""
         EXAMPLES::
 
@@ -705,7 +705,7 @@ optional Sage package Mathics installed.
         """
         return ':='
 
-    def _exponent_symbol(self):
+    def _exponent_symbol(self) -> str:
         r"""
         Return the symbol used to denote the exponent of a number in
         Mathics.
@@ -918,7 +918,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
                 return expr.__getattribute__(attrname)
         return InterfaceFunctionElement(self, attrname)
 
-    def __float__(self, precision=16):
+    def __float__(self, precision=16) -> float:
         r"""
         EXAMPLES::
 
@@ -1080,7 +1080,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
                 return p
         return s
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the object's length, evaluated by mathics.
 
@@ -1220,7 +1220,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             return rich_to_bool(op, 0)
         return NotImplemented
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether this Mathics element is not identical to ``False``.
 

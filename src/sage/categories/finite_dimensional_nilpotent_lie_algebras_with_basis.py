@@ -154,7 +154,7 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
                 self._step = len(self.lower_central_series(submodule=True)) - 1
             return self._step
 
-        def is_nilpotent(self):
+        def is_nilpotent(self) -> bool:
             r"""
             Return ``True`` since ``self`` is nilpotent.
 

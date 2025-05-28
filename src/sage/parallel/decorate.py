@@ -55,7 +55,7 @@ class Parallel:
     Create a ``parallel``-decorated function.
     This is the object created by :func:`parallel`.
     """
-    def __init__(self, p_iter='fork', ncpus=None, **kwds):
+    def __init__(self, p_iter='fork', ncpus=None, **kwds) -> None:
         """
         EXAMPLES::
 
@@ -125,7 +125,7 @@ class ParallelFunction:
     This is typically accessed indirectly through
     :meth:`Parallel.__call__`.
     """
-    def __init__(self, parallel, func):
+    def __init__(self, parallel, func) -> None:
         """
         .. NOTE::
 
@@ -436,7 +436,7 @@ class Fork:
     """
     A ``fork`` decorator class.
     """
-    def __init__(self, timeout=0, verbose=False):
+    def __init__(self, timeout=0, verbose=False) -> None:
         """
         INPUT:
 

@@ -103,7 +103,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         ...
         TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
     """
-    def __init__(self, parent, A, name='', side='left'):
+    def __init__(self, parent, A, name='', side='left') -> None:
         """
         INPUT:
 
@@ -152,7 +152,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
             return self.__name
         self.__name = new
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

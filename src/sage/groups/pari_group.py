@@ -13,7 +13,7 @@ lazy_import('sage.groups.perm_gps.permgroup_named', 'TransitiveGroup')
 
 
 class PariGroup:
-    def __init__(self, x, degree):
+    def __init__(self, x, degree) -> None:
         """
         EXAMPLES::
 
@@ -27,7 +27,7 @@ class PariGroup:
         self.__x = pari(x)
         self.__degree = Integer(degree)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of this group.
 
@@ -57,7 +57,7 @@ class PariGroup:
         return (isinstance(other, PariGroup) and
             (self.__x, self.__degree) == (other.__x, other.__degree))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test inequality.
 

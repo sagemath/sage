@@ -146,7 +146,7 @@ class RiggedConfigurationElement(ClonableArray):
                     0[ ]0
     """
 
-    def __init__(self, parent, rigged_partitions=[], **options):
+    def __init__(self, parent, rigged_partitions=[], **options) -> None:
         r"""
         Construct a rigged configuration element.
 
@@ -1246,7 +1246,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
         True
     """
 
-    def __init__(self, parent, rigged_partitions=[], **options):
+    def __init__(self, parent, rigged_partitions=[], **options) -> None:
         r"""
         Construct a rigged configuration element.
 

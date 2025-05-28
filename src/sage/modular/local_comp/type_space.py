@@ -158,7 +158,7 @@ class TypeSpace(SageObject):
     # Basic initialisation and data-access functions
     #################################################
 
-    def __init__(self, f, p, base_extend=True):
+    def __init__(self, f, p, base_extend=True) -> None:
         r"""
         EXAMPLES::
 
@@ -183,7 +183,7 @@ class TypeSpace(SageObject):
         self._unipmat = mat.change_ring(R).restrict(T).transpose() / ZZ(p ** (self.u() * (f.weight() - 2)))
         self.t_space = amb.base_extend(R).submodule(T, check=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

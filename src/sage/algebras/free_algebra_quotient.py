@@ -94,7 +94,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Parent):
 
     Element = FreeAlgebraQuotientElement
 
-    def __init__(self, A, mons, mats, names):
+    def __init__(self, A, mons, mats, names) -> None:
         """
         Return a quotient algebra defined via the action of a free algebra
         A on a (finitely generated) free module.

@@ -53,7 +53,7 @@ class DIMACS(SatSolver):
 
     command = ""
 
-    def __init__(self, command=None, filename=None, verbosity=0, **kwds):
+    def __init__(self, command=None, filename=None, verbosity=0, **kwds) -> None:
         """
         Construct a new generic DIMACS solver.
 
@@ -98,7 +98,7 @@ class DIMACS(SatSolver):
         self._var = 0
         self._lit = 0
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -108,7 +108,7 @@ class DIMACS(SatSolver):
         """
         return "DIMACS Solver: '%s'" % (self._command)
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         TESTS::
 

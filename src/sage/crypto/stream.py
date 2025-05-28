@@ -30,7 +30,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
     """
     Linear feedback shift register cryptosystem class
     """
-    def __init__(self, field=None):
+    def __init__(self, field=None) -> None:
         """
         Create a linear feedback shift cryptosystem.
 
@@ -84,7 +84,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
             raise TypeError("The length of IS (= %s) must equal the degree of poly (= %s)" % (IS, poly))
         return LFSRCipher(self, poly, IS)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this LFSR cryptosystem.
 
@@ -107,7 +107,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
     """
     Shrinking generator cryptosystem class
     """
-    def __init__(self, field=None):
+    def __init__(self, field=None) -> None:
         """
         Create a shrinking generator cryptosystem.
 
@@ -148,7 +148,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
             raise TypeError("The key (= (%s,%s)) must be a tuple of two LFSR ciphers." % key)
         return ShrinkingGeneratorCipher(self, e1, e2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this shrinking generator
         cryptosystem.

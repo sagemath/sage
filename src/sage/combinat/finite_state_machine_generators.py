@@ -1215,7 +1215,7 @@ class TransducerGenerators:
         """
         from sage.functions.log import log
 
-        def is_scalar(expression):
+        def is_scalar(expression) -> bool:
             return var not in expression.variables()
 
         def convert_output(output):

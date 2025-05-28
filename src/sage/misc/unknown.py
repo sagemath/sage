@@ -120,7 +120,7 @@ class UnknownClass(UniqueRepresentation):
 
         sage: TestSuite(Unknown).run()
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -129,7 +129,7 @@ class UnknownClass(UniqueRepresentation):
         """
         return "Unknown"
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         When evaluated in a boolean context ``Unknown`` raises a :exc:`UnknownError`.
 

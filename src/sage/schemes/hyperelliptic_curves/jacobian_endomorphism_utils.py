@@ -100,7 +100,7 @@ lazy_import('sage.interfaces.genus2reduction', ['genus2reduction', 'Genus2reduct
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
 
-def satisfies_coefficient_condition(g, p):
+def satisfies_coefficient_condition(g, p) -> bool:
     """
     This is the coefficient condition in the definition of Omega_K'
     on page 912 of the published version of paper.
@@ -243,7 +243,7 @@ def get_is_geom_field(f, C, bad_primes, B=200):
     return (False, False)
 
 
-def is_geom_trivial_when_field(C, bad_primes, B=200):
+def is_geom_trivial_when_field(C, bad_primes, B=200) -> bool:
     r"""
     Determine if the geometric endomorphism ring is trivial assuming the
     geometric endomorphism algebra is a field.

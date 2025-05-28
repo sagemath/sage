@@ -820,7 +820,7 @@ class GraphGenerators:
             return
 
         if property is None:
-            def property(x):
+            def property(x) -> bool:
                 return True
 
         if degree_sequence is not None:
@@ -850,7 +850,7 @@ class GraphGenerators:
             def extra_property(x):
                 return x.size() == size
         else:
-            def extra_property(x):
+            def extra_property(x) -> bool:
                 return True
 
         if augment == 'vertices':
@@ -1451,7 +1451,7 @@ class GraphGenerators:
         if matrix_function is None:
             matrix_function = lambda g: g.adjacency_matrix()
 
-        def prop(x):
+        def prop(x) -> bool:
             return True
 
         from sage.graphs.graph_generators import graphs as graph_gen

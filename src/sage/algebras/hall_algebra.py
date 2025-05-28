@@ -211,7 +211,7 @@ class HallAlgebra(CombinatorialFreeModule):
         sage: e(H[1,1,1])
         (q^-3)*e[3]
     """
-    def __init__(self, base_ring, q, prefix='H'):
+    def __init__(self, base_ring, q, prefix='H') -> None:
         """
         Initialize ``self``.
 
@@ -255,7 +255,7 @@ class HallAlgebra(CombinatorialFreeModule):
         M.register_as_coercion()
         (~M).register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -562,7 +562,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         H[4, 1] + 7*H[3, 2] + 37*H[3, 1, 1] + 136*H[2, 2, 1]
          + 1495*H[2, 1, 1, 1] + 62920*H[1, 1, 1, 1, 1]
     """
-    def __init__(self, base_ring, q, prefix='I'):
+    def __init__(self, base_ring, q, prefix='I') -> None:
         """
         Initialize ``self``.
 
@@ -623,7 +623,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         H = HallAlgebra(self.base_ring(), self._q)
         return reduce(lambda cur,r: cur * H.monomial(Partition([1]*r)), a, H.one())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

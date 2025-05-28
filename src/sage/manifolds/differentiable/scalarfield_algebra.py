@@ -372,7 +372,7 @@ class DiffScalarFieldAlgebra(ScalarFieldAlgebra):
 
     Element = DiffScalarField
 
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         Construct an algebra of differentiable scalar fields.
 

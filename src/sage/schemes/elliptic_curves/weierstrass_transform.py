@@ -55,7 +55,7 @@ from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
 class WeierstrassTransformation(SchemeMorphism_polynomial):
 
-    def __init__(self, domain, codomain, defining_polynomials, post_multiplication):
+    def __init__(self, domain, codomain, defining_polynomials, post_multiplication) -> None:
         r"""
         A morphism of a genus-one curve to/from the Weierstrass form.
 

@@ -76,14 +76,14 @@ class SingNot:
         sage: SingNot("acb") == SingNot("bca")
         False
     """
-    def __init__(self, s):
+    def __init__(self, s) -> None:
         self.rep = s
         self.canonical = (s[0] + "".join(sorted(s[1:]))).lower()
 
     def __eq__(self, other):
         return isinstance(other, SingNot) and other.canonical == self.canonical
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.rep
 
     def __hash__(self):
@@ -98,7 +98,7 @@ class OptimalSolver:
     """
     Interface to Michael Reid's optimal Rubik's Cube solver.
     """
-    def __init__(self, verbose=False, wait=True):
+    def __init__(self, verbose=False, wait=True) -> None:
         self.verbose = verbose
         self.start()
         if wait:

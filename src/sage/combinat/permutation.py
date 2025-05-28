@@ -6235,7 +6235,7 @@ class Permutations_nk(Permutations):
     Length-`k` partial permutations of `\{1, 2, \ldots, n\}`.
     """
 
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         TESTS::
 
@@ -6400,7 +6400,7 @@ class Permutations_mset(Permutations):
         """
         return super().__classcall__(cls, tuple(mset))
 
-    def __init__(self, mset):
+    def __init__(self, mset) -> None:
         """
         TESTS::
 
@@ -6761,7 +6761,7 @@ class Permutations_set(Permutations):
         """
         return super().__classcall__(cls, tuple(s))
 
-    def __init__(self, s):
+    def __init__(self, s) -> None:
         """
         TESTS::
 
@@ -6888,7 +6888,7 @@ class Permutations_msetk(Permutations_mset):
         """
         return super().__classcall__(cls, tuple(mset), k)
 
-    def __init__(self, mset, k):
+    def __init__(self, mset, k) -> None:
         """
         TESTS::
 
@@ -6898,7 +6898,7 @@ class Permutations_msetk(Permutations_mset):
         Permutations_mset.__init__(self, mset)
         self._k = k
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -6922,7 +6922,7 @@ class Permutations_msetk(Permutations_mset):
                 return False
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6980,7 +6980,7 @@ class Permutations_setk(Permutations_set):
         """
         return super().__classcall__(cls, tuple(s), k)
 
-    def __init__(self, s, k):
+    def __init__(self, s, k) -> None:
         """
         TESTS::
 
@@ -6990,7 +6990,7 @@ class Permutations_setk(Permutations_set):
         Permutations_set.__init__(self, s)
         self._k = k
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -7009,7 +7009,7 @@ class Permutations_setk(Permutations_set):
         s = list(self._set)
         return all(i in s for i in x) and len(set(x)) == len(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7125,7 +7125,7 @@ class Arrangements_msetk(Arrangements, Permutations_msetk):
     Arrangements of length `k` of a multiset `M`.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7140,7 +7140,7 @@ class Arrangements_setk(Arrangements, Permutations_setk):
     Arrangements of length `k` of a set `S`.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7158,7 +7158,7 @@ class StandardPermutations_all(Permutations):
     All standard permutations.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -7168,7 +7168,7 @@ class StandardPermutations_all(Permutations):
         cat = InfiniteEnumeratedSets() & SetsWithGrading()
         Permutations.__init__(self, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7177,7 +7177,7 @@ class StandardPermutations_all(Permutations):
         """
         return "Standard permutations"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7248,7 +7248,7 @@ class StandardPermutations_n_abstract(Permutations):
         ``__contains__`` method.
     """
 
-    def __init__(self, n, category=None):
+    def __init__(self, n, category=None) -> None:
         """
         TESTS:
 
@@ -7313,7 +7313,7 @@ class StandardPermutations_n_abstract(Permutations):
             x = list(x) + list(range(len(x) + 1, self.n + 1))
         return self.element_class(self, x, check=check)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7342,7 +7342,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         conventions.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -7356,7 +7356,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         cat = FiniteWeylGroups().Irreducible() & FinitePermutationGroups()
         StandardPermutations_n_abstract.__init__(self, n, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7860,7 +7860,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         return self.element_class(self, data, check=False)
 
     class Element(Permutation):
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             r"""
             Check if ``i`` is a left descent of ``self``.
 
@@ -8515,7 +8515,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
         """
         return super().__classcall__(cls, tuple(sorted(d)), n)
 
-    def __init__(self, d, n):
+    def __init__(self, d, n) -> None:
         r"""
         The class of all permutations of `\{1, 2, ..., n\}`
         with set of descent positions `d` (where the descent positions
@@ -8531,7 +8531,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
         StandardPermutations_n_abstract.__init__(self, n)
         self._d = d
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8745,7 +8745,7 @@ class StandardPermutations_recoilsfiner(Permutations):
         """
         return super().__classcall__(cls, Composition(recoils))
 
-    def __init__(self, recoils):
+    def __init__(self, recoils) -> None:
         """
         TESTS::
 
@@ -8755,7 +8755,7 @@ class StandardPermutations_recoilsfiner(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8813,7 +8813,7 @@ class StandardPermutations_recoilsfatter(Permutations):
         """
         return super().__classcall__(cls, Composition(recoils))
 
-    def __init__(self, recoils):
+    def __init__(self, recoils) -> None:
         """
         TESTS::
 
@@ -8823,7 +8823,7 @@ class StandardPermutations_recoilsfatter(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8888,7 +8888,7 @@ class StandardPermutations_recoils(Permutations):
         """
         return super().__classcall__(cls, Composition(recoils))
 
-    def __init__(self, recoils):
+    def __init__(self, recoils) -> None:
         """
         TESTS::
 
@@ -8898,7 +8898,7 @@ class StandardPermutations_recoils(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9040,7 +9040,7 @@ class StandardPermutations_bruhat_smaller(Permutations):
         """
         return super().__classcall__(cls, Permutation(p))
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         """
         TESTS::
 
@@ -9050,7 +9050,7 @@ class StandardPermutations_bruhat_smaller(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.p = p
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9098,7 +9098,7 @@ class StandardPermutations_bruhat_greater(Permutations):
         """
         return super().__classcall__(cls, Permutation(p))
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         """
         TESTS::
 
@@ -9108,7 +9108,7 @@ class StandardPermutations_bruhat_greater(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.p = p
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9135,7 +9135,7 @@ class StandardPermutations_bruhat_greater(Permutations):
         return iter(transitive_ideal(lambda x: x.bruhat_succ(), self.p))
 
 
-def bruhat_lequal(p1, p2):
+def bruhat_lequal(p1, p2) -> bool:
     r"""
     Return ``True`` if ``p1`` is less than ``p2`` in the Bruhat order.
 
@@ -9316,7 +9316,7 @@ class CyclicPermutations(Permutations_mset):
         """
         return super().__classcall__(cls, tuple(mset))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9432,7 +9432,7 @@ class CyclicPermutationsOfPartition(Permutations):
         partition = tuple(map(tuple, partition))
         return super().__classcall__(cls, partition)
 
-    def __init__(self, partition):
+    def __init__(self, partition) -> None:
         """
         TESTS::
 
@@ -9462,7 +9462,7 @@ class CyclicPermutationsOfPartition(Permutations):
             if [sorted(_) for _ in self] != [sorted(_) for _ in self.parent().partition]:
                 raise ValueError("Invalid cyclic permutation of the partition" % self.parent().partition)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9564,7 +9564,7 @@ class StandardPermutations_all_avoiding(StandardPermutations_all):
         a = tuple(map(Permutation, a))
         return super().__classcall__(cls, a)
 
-    def __init__(self, a):
+    def __init__(self, a) -> None:
         """
         TESTS::
 
@@ -9586,7 +9586,7 @@ class StandardPermutations_all_avoiding(StandardPermutations_all):
         """
         return self._a
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -9595,7 +9595,7 @@ class StandardPermutations_all_avoiding(StandardPermutations_all):
         """
         return f"Standard permutations avoiding {list(self._a)}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -9660,7 +9660,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
         a = tuple(map(Permutation, a))
         return super().__classcall__(cls, n, a)
 
-    def __init__(self, n, a):
+    def __init__(self, n, a) -> None:
         """
         EXAMPLES::
 
@@ -9684,7 +9684,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
         """
         return self._a
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -9702,7 +9702,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
         x = Permutations()(x)
         return all(x.avoids(p) for p in self._a)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -9739,7 +9739,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
 
 
 class StandardPermutations_avoiding_12(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -9771,7 +9771,7 @@ class StandardPermutations_avoiding_12(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_21(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -9803,7 +9803,7 @@ class StandardPermutations_avoiding_21(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_132(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -9880,7 +9880,7 @@ class StandardPermutations_avoiding_132(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_123(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -9952,7 +9952,7 @@ class StandardPermutations_avoiding_123(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_321(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -9984,7 +9984,7 @@ class StandardPermutations_avoiding_321(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_231(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -10016,7 +10016,7 @@ class StandardPermutations_avoiding_231(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_312(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -10048,7 +10048,7 @@ class StandardPermutations_avoiding_312(StandardPermutations_avoiding_generic):
 
 
 class StandardPermutations_avoiding_213(StandardPermutations_avoiding_generic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -10080,7 +10080,7 @@ class StandardPermutations_avoiding_213(StandardPermutations_avoiding_generic):
 
 
 class PatternAvoider(GenericBacktracker):
-    def __init__(self, parent, patterns):
+    def __init__(self, parent, patterns) -> None:
         """
         EXAMPLES::
 

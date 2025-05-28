@@ -187,7 +187,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
           y,
           x
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         """
         Initialize.
 
@@ -1236,7 +1236,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 return self.__dehomogenization[n]
 
     @cached_method
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         r"""
         Return ``True`` if this map is a morphism.
 

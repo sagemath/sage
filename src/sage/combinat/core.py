@@ -77,7 +77,7 @@ class Core(CombinatorialElement):
         l = sum(part.k_boundary(k).row_lengths())
         return Cores(k, l)(part)
 
-    def __init__(self, parent, core):
+    def __init__(self, parent, core) -> None:
         """
         TESTS::
 
@@ -625,7 +625,7 @@ class Cores_length(UniqueRepresentation, Parent):
     The class of `k`-cores of length `n`.
     """
 
-    def __init__(self, k, n):
+    def __init__(self, k, n) -> None:
         """
         TESTS::
 
@@ -636,7 +636,7 @@ class Cores_length(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -690,7 +690,7 @@ class Cores_size(UniqueRepresentation, Parent):
     The class of `k`-cores of size `n`.
     """
 
-    def __init__(self, k, n):
+    def __init__(self, k, n) -> None:
         """
         TESTS::
 
@@ -701,7 +701,7 @@ class Cores_size(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

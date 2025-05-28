@@ -74,7 +74,7 @@ class LinearExpression(ModuleElement):
         sage: a - LZ([2, -1, 3], 1)
         10*x + 5/3*y - 4*z - 3
     """
-    def __init__(self, parent, coefficients, constant, check=True):
+    def __init__(self, parent, coefficients, constant, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -185,7 +185,7 @@ class LinearExpression(ModuleElement):
             d['b'] = self._const
         return d
 
-    def _repr_vector(self, variable='x'):
+    def _repr_vector(self, variable='x') -> str:
         """
         Return a string representation.
 
@@ -461,7 +461,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
     """
     Element = LinearExpression
 
-    def __init__(self, base_ring, names=tuple()):
+    def __init__(self, base_ring, names=tuple()) -> None:
         """
         Initialize ``self``.
 
@@ -732,7 +732,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             pass
         return super()._coerce_map_from_(P)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

@@ -193,7 +193,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         return super().__classcall__(cls, universe, *predicates,
                                      names=names, category=category)
 
-    def __init__(self, universe, *predicates, names=None, category=None):
+    def __init__(self, universe, *predicates, names=None, category=None) -> None:
         r"""
         TESTS::
 

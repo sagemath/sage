@@ -154,7 +154,7 @@ class SemistandardPathTableau(PathTableau):
         """
         return SemistandardPathTableaux()(st, check=check)
 
-    def __init__(self, parent, st, check=True):
+    def __init__(self, parent, st, check=True) -> None:
         r"""
         Initialize a semistandard tableau.
 

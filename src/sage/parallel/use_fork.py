@@ -47,7 +47,7 @@ class WorkerData:
         sage: W.starttime  # random
         1499330252.463206
     """
-    def __init__(self, input_value, starttime=None, failure=""):
+    def __init__(self, input_value, starttime=None, failure="") -> None:
         r"""
         See the class documentation for description of the inputs.
 
@@ -88,7 +88,7 @@ class p_iter_fork:
         sage: X.verbose
         False
     """
-    def __init__(self, ncpus, timeout=0, verbose=False, reset_interfaces=True, reseed_rng=False):
+    def __init__(self, ncpus, timeout=0, verbose=False, reset_interfaces=True, reseed_rng=False) -> None:
         """
         Create a ``fork()``-based parallel iterator.
 

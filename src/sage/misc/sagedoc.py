@@ -1458,7 +1458,7 @@ class _sage_doc:
         sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]                         # needs sage.modules
         '...Full MatrixSpace of 3 by 3 sparse matrices...'
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

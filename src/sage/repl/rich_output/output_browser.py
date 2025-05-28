@@ -15,7 +15,7 @@ latex_re = re.compile(r'<html>(?P<mathstart>\\\[|\\\()(?P<latex>.*)(?P<mathend>\
 
 class OutputHtml(OutputBase):
 
-    def __init__(self, html):
+    def __init__(self, html) -> None:
         """
         HTML Output.
 
@@ -85,7 +85,7 @@ class OutputHtml(OutputBase):
         """
         print(self.html.get_unicode())
 
-    def with_html_tag(self):
+    def with_html_tag(self) -> str:
         r"""
         Return the HTML code surrounded by ``<html>`` tag.
 

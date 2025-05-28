@@ -54,7 +54,7 @@ lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 
 class JacobianHomset_divisor_classes(SchemeHomset_points):
-    def __init__(self, Y, X, **kwds):
+    def __init__(self, Y, X, **kwds) -> None:
         R = X.base_ring()
         S = Y.coordinate_ring()
         SchemeHomset_points.__init__(self, Y, X, **kwds)

@@ -35,7 +35,7 @@ class Algebras(AlgebrasCategory):
 
     class ParentMethods:
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             EXAMPLES::
 

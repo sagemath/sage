@@ -311,7 +311,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         var_names = ['A', 'B', 'C', '\\alpha', '\\beta', '\\gamma']
         return ''.join(exp(l, e) for l, e in zip(var_names, t))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -791,7 +791,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity):
     the images of the generators.
     """
     def __init__(self, domain, on_generators, position=0, codomain=None,
-                 category=None):
+                 category=None) -> None:
         """
         Given a map on the multiplicative basis of a free algebra, this method
         returns the algebra morphism that is the linear extension of its image

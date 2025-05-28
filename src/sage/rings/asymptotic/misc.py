@@ -697,7 +697,7 @@ def bidirectional_merge_sorted(A, B, key=None):
     return (resultA, resultB)
 
 
-def log_string(element, base=None):
+def log_string(element, base=None) -> str:
     r"""
     Return a representation of the log of the given element to the
     given base.
@@ -771,7 +771,7 @@ class NotImplementedOZero(NotImplementedError):
     which is raised when the result is O(0) which means 0
     for sufficiently large values of the variable.
     """
-    def __init__(self, asymptotic_ring=None, var=None, exact_part=0):
+    def __init__(self, asymptotic_ring=None, var=None, exact_part=0) -> None:
         r"""
         INPUT:
 
@@ -835,7 +835,7 @@ class NotImplementedBZero(NotImplementedError):
     which is raised when the result is B(0) which means 0
     for sufficiently large values of the variable.
     """
-    def __init__(self, asymptotic_ring=None, var=None, exact_part=0):
+    def __init__(self, asymptotic_ring=None, var=None, exact_part=0) -> None:
         r"""
         INPUT:
 
@@ -1070,7 +1070,7 @@ class Locals(dict):
             except KeyError:
                 raise ke
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         r"""
         Set an item.
 

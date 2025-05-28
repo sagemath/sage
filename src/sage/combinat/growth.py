@@ -647,7 +647,7 @@ class GrowthDiagram(SageObject):
         1  0
     """
 
-    def __init__(self, rule, filling=None, shape=None, labels=None):
+    def __init__(self, rule, filling=None, shape=None, labels=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1134,7 +1134,7 @@ class GrowthDiagram(SageObject):
                 self._mu == other._mu and
                 self._filling == other._filling)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if the growth diagram ``other`` does not have the
         same shape and the same filling as ``self``.
@@ -2369,7 +2369,7 @@ class RuleLLMS(Rule):
     zero_edge = None  # to prevent confusion with the edge labelled with content 0
     has_multiple_edges = True
 
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         r"""
         Initialize ``self``.
 
@@ -3469,7 +3469,7 @@ class RuleYoungFibonacci(Rule):
         """
         return sum(v)
 
-    def is_P_edge(self, v, w):
+    def is_P_edge(self, v, w) -> bool:
         r"""
         Return whether ``(v, w)`` is a `P`-edge of ``self``.
 

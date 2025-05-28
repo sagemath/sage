@@ -138,7 +138,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
+    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming') -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -280,7 +280,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         # the worst case does only one system solving.
         return all(c in self for c in other.gens())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test inequality of ``self`` and ``other``.
 
@@ -490,7 +490,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.parity_check_matrix()*r
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         Return ``True`` if `v` can be coerced into ``self``.
         Otherwise, return ``False``.
@@ -665,7 +665,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.encoder("Systematic").systematic_positions()
 
-    def is_information_set(self, positions):
+    def is_information_set(self, positions) -> bool:
         """
         Return whether the given positions form an information set.
 
@@ -880,7 +880,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self, g):
+    def is_permutation_automorphism(self, g) -> bool:
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.
@@ -1116,7 +1116,7 @@ class LinearCodeSystematicEncoder(Encoder):
         if LinearCodeSystematicEncoder is the default encoder
     """
 
-    def __init__(self, code, systematic_positions=None):
+    def __init__(self, code, systematic_positions=None) -> None:
         r"""
         EXAMPLES::
 
@@ -1161,7 +1161,7 @@ class LinearCodeSystematicEncoder(Encoder):
                 and self.code() == other.code()\
                 and self.systematic_positions() == other.systematic_positions()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1175,7 +1175,7 @@ class LinearCodeSystematicEncoder(Encoder):
         """
         return "Systematic encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

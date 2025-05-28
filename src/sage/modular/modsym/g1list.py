@@ -38,7 +38,7 @@ class G1list(SageObject):
         sage: loads(dumps(L)) == L
         True
     """
-    def __init__(self, N):
+    def __init__(self, N) -> None:
         """
         EXAMPLES::
 
@@ -76,7 +76,7 @@ class G1list(SageObject):
         """
         return self.__list[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of the underlying list.
 
@@ -87,7 +87,7 @@ class G1list(SageObject):
         """
         return len(self.__list)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of ``self``.
 
@@ -140,7 +140,7 @@ class _G1list_old_pickle(G1list):
     no input to the class on the initial ``__init__`` call, and the
     new class pickles, we need to have ``__setstate__`` handle it.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         For unpickling old pickles.
 

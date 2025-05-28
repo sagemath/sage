@@ -124,7 +124,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, X, phi, inverse)
 
-    def __init__(self, X, phi, inverse):
+    def __init__(self, X, phi, inverse) -> None:
         """
         Initialize ``self``.
 
@@ -174,7 +174,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
 
         self.module_generators = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -218,7 +218,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
         except (TypeError, ValueError, AttributeError):
             raise TypeError("unable to convert {!r} to {}".format(x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 
@@ -431,7 +431,7 @@ class InducedFromCrystal(UniqueRepresentation, Parent):
         sage: I = crystals.Induced(C, psi, psi_inv, from_crystal=True)
     """
 
-    def __init__(self, X, phi, inverse):
+    def __init__(self, X, phi, inverse) -> None:
         """
         Initialize ``self``.
 
@@ -476,7 +476,7 @@ class InducedFromCrystal(UniqueRepresentation, Parent):
         self.module_generators = tuple(self.element_class(self, phi(mg))
                                        for mg in X.module_generators)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -518,7 +518,7 @@ class InducedFromCrystal(UniqueRepresentation, Parent):
         except (TypeError, ValueError, AttributeError):
             raise TypeError("unable to convert {!r} to {}".format(x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 

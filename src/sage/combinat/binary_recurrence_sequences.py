@@ -105,7 +105,7 @@ class BinaryRecurrenceSequence(SageObject):
         With initial conditions: u_0 = 2, and u_1 = 1
     """
 
-    def __init__(self, b, c, u0=0, u1=1):
+    def __init__(self, b, c, u0=0, u1=1) -> None:
         """
         See :class:`BinaryRecurrenceSequence` for full documentation.
 
@@ -962,7 +962,7 @@ def _next_good_prime(p, R, qq, patience, qqold):
         return False
 
 
-def _is_p_power_mod(a, p, N):
+def _is_p_power_mod(a, p, N) -> bool:
     """
     Determine if ``a`` is a ``p`` th power modulo ``N``.
 

@@ -66,7 +66,7 @@ class ImageSubobject(Parent):
         ...
         ValueError: The map <built-in function abs> from Integer Ring is not injective: 1
     """
-    def __init__(self, map, domain_subset, *, category=None, is_injective=None, inverse=None):
+    def __init__(self, map, domain_subset, *, category=None, is_injective=None, inverse=None) -> None:
         """
         Initialize ``self``.
 
@@ -162,7 +162,7 @@ class ImageSubobject(Parent):
         return (self._map == other._map
                 and self._domain_subset == other._domain_subset)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         EXAMPLES::
 

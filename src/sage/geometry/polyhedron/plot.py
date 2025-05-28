@@ -158,7 +158,7 @@ class ProjectionFuncStereographic:
         sage: ppoints[5]
         (-0.0918273..., -0.036375...)
     """
-    def __init__(self, projection_point):
+    def __init__(self, projection_point) -> None:
         """
         Create a stereographic projection function.
 
@@ -251,7 +251,7 @@ class ProjectionFuncSchlegel:
         sage: proj([0,0,0,0])[0]
         1.0
     """
-    def __init__(self, facet, projection_point):
+    def __init__(self, facet, projection_point) -> None:
         """
         Initialize the projection.
 
@@ -329,7 +329,7 @@ class Projection(SageObject):
     polyhedron.
     """
 
-    def __init__(self, polyhedron, proj=projection_func_identity):
+    def __init__(self, polyhedron, proj=projection_func_identity) -> None:
         """
         Initialize the projection of a Polyhedron() object.
 

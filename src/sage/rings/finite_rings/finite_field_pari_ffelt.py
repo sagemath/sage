@@ -98,7 +98,7 @@ class FiniteField_pari_ffelt(FiniteField):
         sage: loads(K.dumps()) == K
         True
     """
-    def __init__(self, p, modulus, name=None):
+    def __init__(self, p, modulus, name=None) -> None:
         """
         Create a finite field of characteristic `p` defined by the
         polynomial ``modulus``, with distinguished generator called

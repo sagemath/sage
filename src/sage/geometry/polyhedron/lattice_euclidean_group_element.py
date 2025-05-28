@@ -46,7 +46,7 @@ class LatticePolytopeNoEmbeddingError(LatticePolytopeError):
 ########################################################################
 class LatticeEuclideanGroupElement(SageObject):
 
-    def __init__(self, A, b):
+    def __init__(self, A, b) -> None:
         """
         An element of the lattice Euclidean group.
 

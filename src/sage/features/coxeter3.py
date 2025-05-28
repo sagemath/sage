@@ -28,7 +28,7 @@ class Coxeter3(JoinFeature):
         sage: from sage.features.coxeter3 import Coxeter3
         sage: Coxeter3().require()  # optional - coxeter3
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

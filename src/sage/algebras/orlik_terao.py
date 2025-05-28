@@ -121,7 +121,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             ordering = sorted(M.groundset())
         return super().__classcall__(cls, R, M, tuple(ordering))
 
-    def __init__(self, R, M, ordering=None):
+    def __init__(self, R, M, ordering=None) -> None:
         """
         Initialize ``self``.
 
@@ -186,7 +186,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return (-len(x), sorted(x))
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -199,7 +199,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return "OT{{{}}}".format(', '.join(str(t) for t in sorted(m)))
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -219,7 +219,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         from sage.sets.set import Set
         return "e_{{{}}}".format(latex(Set(sorted(m))))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -614,7 +614,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         sage: [OTG.lift(b) for b in OTG.basis()]
         [OT{}, OT{0} + OT{1} + OT{2} + OT{3} + OT{4} + OT{5}]
     """
-    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
+    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs) -> None:
         r"""
         Initialize ``self``.
 

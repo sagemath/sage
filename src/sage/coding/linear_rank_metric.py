@@ -357,7 +357,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
     _registered_decoders = {}
 
     def __init__(self, base_field, sub_field, length, default_encoder_name,
-            default_decoder_name, basis=None):
+            default_decoder_name, basis=None) -> None:
         r"""
         Initialize mandatory parameters that every linear rank metric code has.
 
@@ -727,7 +727,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         (1, 1, 0)
     """
 
-    def __init__(self, generator, sub_field=None, basis=None):
+    def __init__(self, generator, sub_field=None, basis=None) -> None:
         r"""
         See the docstring for :meth:`LinearRankMetricCode`.
 
@@ -780,7 +780,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         super().__init__(base_field, sub_field, self._length,
                          "GeneratorMatrix", "NearestNeighbor", basis)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -798,7 +798,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         else:
             return "[%s, %s] linear rank metric code over %s/%s" % (self.length(), self.dimension(), R, S)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -849,7 +849,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
     This decoder will decode to the nearest codeword found.
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
 
         INPUT:
@@ -882,7 +882,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
         return isinstance(other, LinearRankMetricCodeNearestNeighborDecoder)\
                 and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -896,7 +896,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
         """
         return "Nearest neighbor decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

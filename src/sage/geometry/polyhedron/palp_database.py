@@ -93,7 +93,7 @@ class PALPreader(SageObject):
         <class 'sage.geometry.point_collection.PointCollection'>
     """
 
-    def __init__(self, dim, data_basename=None, output='Polyhedron'):
+    def __init__(self, dim, data_basename=None, output='Polyhedron') -> None:
         """
         The Python constructor.
 
@@ -400,7 +400,7 @@ class Reflexive4dHodge(PALPreader):
         (A vertex at (-1, -1, -1, -1), A vertex at (0, 0, 0, 1),
          A vertex at (0, 0, 1, 0), A vertex at (0, 1, 0, 0), A vertex at (1, 0, 0, 0))
     """
-    def __init__(self, h11, h21, data_basename=None, **kwds):
+    def __init__(self, h11, h21, data_basename=None, **kwds) -> None:
         """
         The Python constructor.
 

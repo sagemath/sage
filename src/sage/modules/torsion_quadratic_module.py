@@ -276,7 +276,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             raise ValueError("the modulus_qf must divide (V, W)")
         return super().__classcall__(cls, V, W, gens, modulus, modulus_qf)
 
-    def __init__(self, V, W, gens, modulus, modulus_qf):
+    def __init__(self, V, W, gens, modulus, modulus_qf) -> None:
         r"""
         Initialize ``self``.
 

@@ -95,7 +95,7 @@ class OreModuleElement(FreeModuleElement_generic_dense):
         """
         return False
 
-    def __setitem__(self, i, v):
+    def __setitem__(self, i, v) -> None:
         r"""
         Always raise an error since elements in Ore modules are
         all immutable.

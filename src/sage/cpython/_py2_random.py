@@ -64,7 +64,7 @@ class Random(_random.Random):
 
     VERSION = 3     # used by getstate/setstate
 
-    def __init__(self, x=None):
+    def __init__(self, x=None) -> None:
         """Initialize an instance.
 
         Optional argument x controls seeding, as for Random.seed().

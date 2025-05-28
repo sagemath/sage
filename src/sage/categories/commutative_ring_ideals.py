@@ -26,7 +26,7 @@ class CommutativeRingIdeals(Category_ideal):
         sage: C
         Category of commutative ring ideals in Integer Ring
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 

@@ -33,7 +33,7 @@ class CSDP(Executable):
         sage: CSDP().is_present()  # optional - csdp
         FeatureTestResult('csdp', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

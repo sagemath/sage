@@ -48,7 +48,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
     """
     Abstract base class for all bases of a free Lie algebra.
     """
-    def __init__(self, lie, basis_name):
+    def __init__(self, lie, basis_name) -> None:
         """
         Initialize ``self``.
 
@@ -68,7 +68,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
                             names=lie._names, index_set=lie._indices,
                             category=FreeLieAlgebraBases(lie))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -366,7 +366,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
         names, index_set = standardize_names_index_set(names, index_set)
         return super().__classcall__(cls, R, names, index_set)
 
-    def __init__(self, R, names, index_set):
+    def __init__(self, R, names, index_set) -> None:
         """
         Initialize ``self``.
 
@@ -380,7 +380,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
         Parent.__init__(self, base=R, names=names,
                         category=LieAlgebras(R).WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -473,7 +473,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
         :class:`~sage.algebras.lie_algebras.lie_algebra_element.GradedLieBracket`
         (in degree `> 1`).
         """
-        def __init__(self, lie):
+        def __init__(self, lie) -> None:
             r"""
             EXAMPLES::
 
@@ -678,7 +678,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             sage: y.bracket(z)
             -[z, y]
         """
-        def __init__(self, lie):
+        def __init__(self, lie) -> None:
             r"""
             EXAMPLES::
 
@@ -890,7 +890,7 @@ class FreeLieAlgebraBases(Category_realization_of_parent):
     r"""
     The category of bases of a free Lie algebra.
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of a free Lie algebra.
 
@@ -908,7 +908,7 @@ class FreeLieAlgebraBases(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 

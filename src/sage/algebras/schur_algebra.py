@@ -205,7 +205,7 @@ class SchurAlgebra(CombinatorialFreeModule):
     - [Gr2007]_
     - :wikipedia:`Schur_algebra`
     """
-    def __init__(self, R, n, r):
+    def __init__(self, R, n, r) -> None:
         """
         Initialize ``self``.
 
@@ -412,7 +412,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
         ....:      for bT in T.basis() for bA in A.basis() for p in P)
         True
     """
-    def __init__(self, R, n, r):
+    def __init__(self, R, n, r) -> None:
         """
         Initialize ``self``.
 

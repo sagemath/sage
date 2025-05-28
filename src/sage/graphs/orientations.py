@@ -594,7 +594,7 @@ def acyclic_orientations(G):
 
         return edge_labels
 
-    def is_upset_of_poset(Poset, subset, keys):
+    def is_upset_of_poset(Poset, subset, keys) -> bool:
         for (u, v) in subset:
             for (w, x) in keys:
                 if (Poset[(u, v), (w, x)] == 1 and (w, x) not in subset):
@@ -1180,7 +1180,7 @@ def minimum_outdegree_orientation(G, use_edge_labels=False, solver=None, verbose
             label = G.edge_label(e[0], e[1])
             return label if label in RR else 1
     else:
-        def weight(e):
+        def weight(e) -> int:
             return 1
 
     from sage.numerical.mip import MixedIntegerLinearProgram

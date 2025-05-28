@@ -198,7 +198,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names=None):
+    def __init__(self, R, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -707,7 +707,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             raise TypeError('not able to convert this to this algebra')
         # Ok, not a pre-Lie algebra element (or should not be viewed as one).
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         Return ``True`` if there is a coercion from ``R`` into ``self``
         and ``False`` otherwise.
@@ -895,7 +895,7 @@ class PreLieFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, vars):
+    def __init__(self, vars) -> None:
         """
         EXAMPLES::
 

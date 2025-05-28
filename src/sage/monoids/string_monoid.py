@@ -29,7 +29,7 @@ class StringMonoid_class(FreeMonoid):
     A free string monoid on `n` generators.
     """
 
-    def __init__(self, n, alphabet=()):
+    def __init__(self, n, alphabet=()) -> None:
         r"""
         Create free binary string monoid on `n` generators.
 
@@ -54,7 +54,7 @@ class StringMonoid_class(FreeMonoid):
         FreeMonoid.__init__(self, n)
         self._alphabet = alphabet
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, StringMonoidElement) and x.parent() == self
 
     def alphabet(self):
@@ -122,7 +122,7 @@ class BinaryStringMonoid(StringMonoid_class):
     The free binary string monoid on generators `\{ 0, 1 \}`.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Create free binary string monoid on generators `\{ 0, 1 \}`.
 
@@ -160,7 +160,7 @@ class BinaryStringMonoid(StringMonoid_class):
         """
         StringMonoid_class.__init__(self, 2, ['0', '1'])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Free binary string monoid"
 
     def __call__(self, x, check=True):
@@ -258,7 +258,7 @@ class OctalStringMonoid(StringMonoid_class):
     The free octal string monoid on generators `\{ 0, 1, \dots, 7 \}`.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Create free octal string monoid on generators `\{ 0, 1, \dots, 7 \}`.
 
@@ -280,7 +280,7 @@ class OctalStringMonoid(StringMonoid_class):
         """
         StringMonoid_class.__init__(self, 8, [str(i) for i in range(8)])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Free octal string monoid"
 
     def __call__(self, x, check=True):
@@ -322,7 +322,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
     `\{ 0, 1, \dots, 9, a, b, c, d, e, f \}`.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Create free hexadecimal string monoid on generators
         `\{ 0, 1, \dots, 9, a, b, c, d, e, f \}`.
@@ -348,7 +348,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
         alph = '0123456789abcdef'
         StringMonoid_class.__init__(self, 16, [alph[i] for i in range(16)])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Free hexadecimal string monoid"
 
     def __call__(self, x, check=True):
@@ -434,7 +434,7 @@ class Radix64StringMonoid(StringMonoid_class):
     The free radix 64 string monoid on 64 generators.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Create free radix 64 string monoid on 64 generators.
 
@@ -457,7 +457,7 @@ class Radix64StringMonoid(StringMonoid_class):
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
         StringMonoid_class.__init__(self, 64, [alph[i] for i in range(64)])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Free radix 64 string monoid"
 
     def __call__(self, x, check=True):
@@ -512,7 +512,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         ABCDEFGHIJKLMNOPQRSTUVWXYZ
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Create free alphabetic string monoid on generators A-Z.
 
@@ -564,7 +564,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
         StringMonoid_class.__init__(self, 26, [alph[i] for i in range(26)])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Free alphabetic string monoid on A-Z"
 
     def __call__(self, x, check=True):

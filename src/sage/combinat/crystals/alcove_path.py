@@ -283,7 +283,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         return super().__classcall__(cls, starting_weight,
                                      highest_weight_crystal)
 
-    def __init__(self, starting_weight, highest_weight_crystal):
+    def __init__(self, starting_weight, highest_weight_crystal) -> None:
         r"""
         Initialize ``self``.
 
@@ -484,7 +484,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         """
         return iter(self.value)
 
-    def is_admissible(self):
+    def is_admissible(self) -> bool:
         r"""
         Diagnostic test to check if ``self`` is a valid element of the crystal.
 
@@ -1154,7 +1154,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -1183,7 +1183,7 @@ class InfinityCrystalOfAlcovePaths(UniqueRepresentation, Parent):
         return "Infinity crystal of alcove paths of type {}".format(self._cartan_type)
 
     class Element(ElementWrapper):
-        def __init__(self, parent, elt, shift):
+        def __init__(self, parent, elt, shift) -> None:
             """
             Initialize ``self``.
 
@@ -1464,7 +1464,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, starting_weight)
 
-    def __init__(self, weight):
+    def __init__(self, weight) -> None:
         r"""
         Initialize ``self``.
 
@@ -1483,7 +1483,7 @@ class RootsWithHeight(UniqueRepresentation, Parent):
         self._weight_lattice = self._root_system.weight_lattice()
         self.weight = weight
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1633,7 +1633,7 @@ class RootsWithHeightElement(Element):
         (alpha[1] + alpha[2], 1)
     """
 
-    def __init__(self, parent, root, height):
+    def __init__(self, parent, root, height) -> None:
         r"""
         Initialize ``self``.
 
@@ -1667,7 +1667,7 @@ class RootsWithHeightElement(Element):
         self.root = root
         self.height = height
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1754,7 +1754,7 @@ RootsWithHeight.Element = RootsWithHeightElement
 #####################################################################
 
 
-def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
+def _test_some_specific_examples(clss=CrystalOfAlcovePaths) -> bool:
     r"""
     Test against some specific (finite type) examples.
 
@@ -1893,7 +1893,7 @@ def _test_some_specific_examples(clss=CrystalOfAlcovePaths):
     return True
 
 
-def compare_graphs(g1, g2, node1, node2):
+def compare_graphs(g1, g2, node1, node2) -> bool:
     r"""
     Compare two edge-labeled :class:`graphs <DiGraph>` obtained from
     ``Crystal.digraph()``, starting from the root nodes of each graph.

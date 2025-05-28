@@ -338,7 +338,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
 
     Element = FreeModuleTensor
 
-    def __init__(self, fmodule, tensor_type, name=None, latex_name=None, category=None):
+    def __init__(self, fmodule, tensor_type, name=None, latex_name=None, category=None) -> None:
         r"""
         TESTS::
 

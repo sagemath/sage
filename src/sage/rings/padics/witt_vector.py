@@ -50,7 +50,7 @@ class WittVector(CommutativeRingElement):
 
         sage: TestSuite(w).run()
     """
-    def __init__(self, parent, vec=None):
+    def __init__(self, parent, vec=None) -> None:
         """
         Common class for all kinds of Witt vectors.
 
@@ -191,7 +191,7 @@ class WittVector(CommutativeRingElement):
 
         return P(inv_vec)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of ``self``.
 
@@ -404,7 +404,7 @@ class WittVector_phantom(WittVector):
         sage: u[1]
         1
     """
-    def __init__(self, parent, vec=None, phantom=None):
+    def __init__(self, parent, vec=None, phantom=None) -> None:
         """
         Initialises ``self`` from the data.
 

@@ -228,7 +228,7 @@ class UnitGroup(AbelianGroupWithValues_class):
     # derive from AbelianGroupElement and coerce into
     # NumberFieldElement_absolute.
 
-    def __init__(self, number_field, proof=True, S=None):
+    def __init__(self, number_field, proof=True, S=None) -> None:
         """
         Create a unit group of a number field.
 
@@ -437,7 +437,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         """
         return self.ngens()-1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this unit group.
 

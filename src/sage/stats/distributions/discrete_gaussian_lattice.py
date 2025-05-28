@@ -406,7 +406,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         """
         return vector(ZZ, [DiscreteGaussianDistributionIntegerSampler(self.r, c=vi)() for vi in v])
 
-    def __init__(self, B, sigma=1, c=0, r=None, precision=None, sigma_basis=False):
+    def __init__(self, B, sigma=1, c=0, r=None, precision=None, sigma_basis=False) -> None:
         r"""
         Construct a discrete Gaussian sampler over the lattice `\Lambda(B)`
         with parameter ``sigma`` and center `c`.
@@ -790,7 +790,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
         self._c = c
         self._precompute_data()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 

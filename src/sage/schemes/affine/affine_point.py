@@ -53,7 +53,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
         sage: A(1, 2)
         (1, 2)
     """
-    def __init__(self, X, v, check=True):
+    def __init__(self, X, v, check=True) -> None:
         """
         The Python constructor.
 

@@ -66,7 +66,7 @@ class SuperModulesWithBasis(SuperModulesCategory):
             return self.degree_on_basis(m) % 2
 
     class ElementMethods:
-        def is_super_homogeneous(self):
+        def is_super_homogeneous(self) -> bool:
             r"""
             Return whether this element is homogeneous, in the sense
             of a super module (i.e., is even or odd).

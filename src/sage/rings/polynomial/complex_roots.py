@@ -91,7 +91,7 @@ def interval_roots(p, rts, prec):
     return irts
 
 
-def intervals_disjoint(intvs):
+def intervals_disjoint(intvs) -> bool:
     """
     Given a list of complex intervals, check whether they are pairwise
     disjoint.
@@ -118,13 +118,13 @@ def intervals_disjoint(intvs):
     column = []
     prev_real = None
 
-    def column_disjoint():
+    def column_disjoint() -> bool:
         column.sort()
 
         row = []
         prev_imag = None
 
-        def row_disjoint():
+        def row_disjoint() -> bool:
             for a in range(len(row)):
                 for b in range(a+1, len(row)):
                     if row[a].overlaps(row[b]):

@@ -99,7 +99,7 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
 
 class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
 
-    def __init__(self, base_ring, dim, filtrations, check=True):
+    def __init__(self, base_ring, dim, filtrations, check=True) -> None:
         """
         Python constructor.
 
@@ -479,7 +479,7 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             return False
         return self._filt == other._filt
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return whether ``self`` is not equal to ``other``.
 

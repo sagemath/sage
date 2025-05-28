@@ -212,7 +212,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
 
         return cls._from_matrix(data, coxeter_type, index_set, coxeter_type_check)
 
-    def __init__(self, parent, data, coxeter_type, index_set):
+    def __init__(self, parent, data, coxeter_type, index_set) -> None:
         """
         Initialize ``self``.
 
@@ -741,7 +741,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return isinstance(other, CoxeterMatrix) and self._matrix == other._matrix
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return if ``self`` and ``other`` are not equal.
 

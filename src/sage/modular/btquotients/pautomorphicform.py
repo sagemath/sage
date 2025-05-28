@@ -183,7 +183,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
     - Cameron Franc (2012-02-20)
     - Marc Masdeu
     """
-    def __init__(self, _parent, vec):
+    def __init__(self, _parent, vec) -> None:
         """
         Create a harmonic cocycle element.
 
@@ -299,7 +299,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
             return b
         return not b
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string describing the cocycle.
 
@@ -692,7 +692,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
                                      basis_matrix,
                                      base_field)
 
-    def __init__(self, X, k, prec=None, basis_matrix=None, base_field=None):
+    def __init__(self, X, k, prec=None, basis_matrix=None, base_field=None) -> None:
         """
         Compute the space of harmonic cocycles.
 
@@ -885,7 +885,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         """
         return self.rank() == 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         This returns the representation of ``self`` as a string.
 
@@ -930,7 +930,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         """
         return self.basis()[0]
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Can coerce from other BruhatTitsHarmonicCocycles or from
         pAdicAutomorphicForms, also from 0.
@@ -979,7 +979,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
                 self._X == other._X and
                 self._k == other._k)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test whether two BruhatTitsHarmonicCocycle spaces are not equal.
 
@@ -1506,7 +1506,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
     - Cameron Franc (2012-02-20)
     - Marc Masdeu
     """
-    def __init__(self, parent, vec):
+    def __init__(self, parent, vec) -> None:
         """
         Create a pAdicAutomorphicFormElement.
 
@@ -1597,7 +1597,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
             return b
         return not b
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Tell whether the form is zero or not.
 
@@ -1691,7 +1691,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         return self.parent()([a * self._value[e]
                               for e in range(self._num_generators)])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         This returns the representation of ``self`` as a string.
 
@@ -2178,7 +2178,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                                      overconvergent)
 
     def __init__(self, domain, U, prec=None, t=None, R=None,
-                 overconvergent=False):
+                 overconvergent=False) -> None:
         """
         Create a space of `p`-automorphic forms.
 
@@ -2284,7 +2284,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 self._source == other._source and
                 self._U == other._U)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test whether two pAdicAutomorphicForm spaces are not equal.
 
@@ -2334,7 +2334,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         s += ' with values in ' + str(self._U)
         return s
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Can coerce from other BruhatTitsHarmonicCocycles or from pAdicAutomorphicForms.
 

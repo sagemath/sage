@@ -73,7 +73,7 @@ class ShuffleProduct_abstract(Parent):
     Abstract base class for shuffle products.
     """
 
-    def __init__(self, l1, l2, element_constructor=None):
+    def __init__(self, l1, l2, element_constructor=None) -> None:
         """
         Initialize ``self``.
 
@@ -138,7 +138,7 @@ class ShuffleProduct_abstract(Parent):
             return False
         return self._l1 == other._l1 and self._l2 == other._l2
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -155,7 +155,7 @@ class ShuffleProduct_abstract(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check containment.
 
@@ -197,7 +197,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
          [6, 2, 3]]
     """
 
-    def __init__(self, l1, l2, element_constructor=None):
+    def __init__(self, l1, l2, element_constructor=None) -> None:
         """
         Construct the set of all possible shuffle products of two sets of iterables.
 
@@ -234,7 +234,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
                 pass
         ShuffleProduct_abstract.__init__(self, list(l1), list(l2), element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -334,7 +334,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
         ['de']
     """
 
-    def __init__(self, l1, l2, element_constructor=None):
+    def __init__(self, l1, l2, element_constructor=None) -> None:
         """
         Construct the shuffle product of two iterable.
 
@@ -365,7 +365,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
                 pass
         ShuffleProduct_abstract.__init__(self, list(l1), list(l2), element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -476,7 +476,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
             l2 = iter(self._l2)
             yield EC([next(l2) if l[k] else next(l1) for k in range(mn)])
 
-    def __contains__(self, iterable):
+    def __contains__(self, iterable) -> bool:
         """
         TESTS::
 
@@ -555,7 +555,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
          word: 9,2,10]
     """
 
-    def __init__(self, w1, w2, r, element_constructor=None, add=operator.add):
+    def __init__(self, w1, w2, r, element_constructor=None, add=operator.add) -> None:
         """
         Initialize ``self``.
 
@@ -581,7 +581,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
                     pass
         ShuffleProduct_abstract.__init__(self, w1, w2, element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -765,7 +765,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
          [{1, 2, 3}, {3, 4, 5, 6}]]
     """
 
-    def __init__(self, w1, w2, element_constructor=None, add=operator.add):
+    def __init__(self, w1, w2, element_constructor=None, add=operator.add) -> None:
         """
         Initialize ``self``.
 
@@ -790,7 +790,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
                     pass
         ShuffleProduct_abstract.__init__(self, w1, w2, element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

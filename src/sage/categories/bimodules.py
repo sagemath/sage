@@ -38,7 +38,7 @@ class Bimodules(CategoryWithParameters):
         [Category of left modules over Rational Field, Category of right modules over Integer Ring]
     """
 
-    def __init__(self, left_base, right_base, name=None):
+    def __init__(self, left_base, right_base, name=None) -> None:
         """
         The ``name`` parameter is ignored.
 
@@ -119,7 +119,7 @@ class Bimodules(CategoryWithParameters):
         from sage.rings.real_mpfr import RR
         return cls(QQ, RR)
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

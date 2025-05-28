@@ -222,7 +222,7 @@ class ExtPowerFreeModule(FiniteRankFreeModule_abstract):
 
     Element = AlternatingContrTensor
 
-    def __init__(self, fmodule, degree, name=None, latex_name=None):
+    def __init__(self, fmodule, degree, name=None, latex_name=None) -> None:
         r"""
         TESTS::
 
@@ -599,7 +599,7 @@ class ExtPowerDualFreeModule(FiniteRankFreeModule_abstract):
 
     Element = FreeModuleAltForm
 
-    def __init__(self, fmodule, degree, name=None, latex_name=None):
+    def __init__(self, fmodule, degree, name=None, latex_name=None) -> None:
         r"""
         TESTS::
 

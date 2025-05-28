@@ -148,7 +148,7 @@ class BackendIPythonCommandline(BackendIPython):
         from sage.repl.rich_output.preferences import DisplayPreferences
         return DisplayPreferences(supplemental_plot='never')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -300,7 +300,7 @@ class BackendIPythonCommandline(BackendIPython):
         formatdata, metadata = self.displayhook(plain_text, rich_output)
         print(formatdata['text/plain'])
 
-    def launch_viewer(self, image_file, plain_text):
+    def launch_viewer(self, image_file, plain_text) -> str:
         """
         Launch external viewer for the graphics file.
 
@@ -335,7 +335,7 @@ class BackendIPythonCommandline(BackendIPython):
                       .format(command, image_file))
         return 'Launched {0} viewer for {1}'.format(ext, plain_text)
 
-    def launch_jmol(self, output_jmol, plain_text):
+    def launch_jmol(self, output_jmol, plain_text) -> str:
         """
         Launch the stand-alone jmol viewer.
 
@@ -371,7 +371,7 @@ class BackendIPythonCommandline(BackendIPython):
                       .format(jmol_cmd, launch_script))
         return 'Launched jmol viewer for {0}'.format(plain_text)
 
-    def is_in_terminal(self):
+    def is_in_terminal(self) -> bool:
         """
         Test whether the UI is meant to run in a terminal.
 
@@ -390,7 +390,7 @@ class BackendIPythonCommandline(BackendIPython):
         """
         return True
 
-    def threejs_offline_scripts(self):
+    def threejs_offline_scripts(self) -> str:
         """
         Three.js script for the IPython command line.
 
@@ -434,7 +434,7 @@ class BackendIPythonNotebook(BackendIPython):
         IPython notebook
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of the backend.
 
@@ -570,7 +570,7 @@ class BackendIPythonNotebook(BackendIPython):
         else:
             raise TypeError('rich_output type not supported')
 
-    def threejs_offline_scripts(self):
+    def threejs_offline_scripts(self) -> str:
         """
         Three.js script for the IPython notebook.
 

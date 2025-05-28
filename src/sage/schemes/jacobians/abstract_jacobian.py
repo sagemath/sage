@@ -84,7 +84,7 @@ class Jacobian_generic(Scheme):
         sage: J = Jacobian(C); J
         Jacobian of Projective Plane Curve over Rational Field defined by x^3 + y^3 + z^3
     """
-    def __init__(self, C, category=None):
+    def __init__(self, C, category=None) -> None:
         """
         Initialize.
 
@@ -167,7 +167,7 @@ class Jacobian_generic(Scheme):
             return NotImplemented
         return richcmp(self.curve(), J.curve(), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this Jacobian.
 

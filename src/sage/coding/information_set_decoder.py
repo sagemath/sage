@@ -47,7 +47,7 @@ from sage.structure.sage_object import SageObject
 from .decoder import Decoder
 
 
-def _format_decoding_interval(decoding_interval):
+def _format_decoding_interval(decoding_interval) -> str:
     r"""
     Format the decoding interval of an ISD decoder when calling ``_repr_`` or
     ``_latex_``.
@@ -117,7 +117,7 @@ class InformationSetAlgorithm(SageObject):
          decoding up to 4 errors
     """
 
-    def __init__(self, code, decoding_interval, algorithm_name, parameters=None):
+    def __init__(self, code, decoding_interval, algorithm_name, parameters=None) -> None:
         r"""
         TESTS::
 
@@ -318,7 +318,7 @@ class InformationSetAlgorithm(SageObject):
         """
         return hash(str(self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this ISD algorithm.
 
@@ -332,7 +332,7 @@ class InformationSetAlgorithm(SageObject):
         """
         return "ISD Algorithm ({}) for {} decoding {} errors ".format(self._algorithm_name, self.code(), _format_decoding_interval(self.decoding_interval()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of this ISD algorithm.
 
@@ -398,7 +398,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
          decoding between 2 and 3 errors
     """
-    def __init__(self, code, decoding_interval, search_size=None):
+    def __init__(self, code, decoding_interval, search_size=None) -> None:
         r"""
         TESTS:
 
@@ -759,7 +759,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
          decoding up to 2 errors
     """
-    def __init__(self, code, number_errors, algorithm=None, **kwargs):
+    def __init__(self, code, number_errors, algorithm=None, **kwargs) -> None:
         r"""
         TESTS:
 
@@ -999,7 +999,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         """
         return self._number_errors
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this decoding algorithm.
 
@@ -1012,7 +1012,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         """
         return "Information-set decoder ({}) for {} decoding {} errors ".format(self.algorithm().name(), self.code(), _format_decoding_interval(self.decoding_interval()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of this decoding algorithm.
 

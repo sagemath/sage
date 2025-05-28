@@ -213,11 +213,11 @@ class BoundClass(functools.partial):
     """
     __doc__ = None  # See warning above
 
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         super().__init__()
         self.__doc__ = self.func.__doc__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS:
 

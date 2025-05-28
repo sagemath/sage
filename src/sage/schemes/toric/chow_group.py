@@ -158,7 +158,7 @@ class ChowCycle(FGP_Element):
         sage: A( Cone([(1,0)]) )
         ( 0 | 1 | 0 )
     """
-    def __init__(self, parent, v, check=True):
+    def __init__(self, parent, v, check=True) -> None:
         r"""
         Construct a :class:`ChowCycle`.
 
@@ -596,7 +596,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
     """
     Element = ChowCycle
 
-    def __init__(self, toric_variety, base_ring, check):
+    def __init__(self, toric_variety, base_ring, check) -> None:
         r"""
         EXAMPLES::
 
@@ -1047,7 +1047,7 @@ class ChowGroup_degree_class(SageObject):
         <class 'sage.schemes.toric.chow_group.ChowGroup_degree_class'>
     """
 
-    def __init__(self, A, d):
+    def __init__(self, A, d) -> None:
         r"""
         Construct a :class:`ChowGroup_degree_class`.
 

@@ -305,7 +305,7 @@ class MPowerSeries(PowerSeries):
         True
     """
 
-    def __init__(self, parent, x=0, prec=infinity, is_gen=False, check=False):
+    def __init__(self, parent, x=0, prec=infinity, is_gen=False, check=False) -> None:
         """
         Input ``x`` can be an :class:`MPowerSeries`, or an element of
 
@@ -592,7 +592,7 @@ class MPowerSeries(PowerSeries):
         """
         return self._go_to_fg(self._bg_value)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -610,7 +610,7 @@ class MPowerSeries(PowerSeries):
                  'gens':', '.join(str(g) for g in self.parent().gens()),
                  'prec':self._prec}
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return latex representation of this multivariate power series.
 
@@ -1464,7 +1464,7 @@ class MPowerSeries(PowerSeries):
                 if self._bg_value.list()[a] != 0:
                     return a
 
-    def is_nilpotent(self):
+    def is_nilpotent(self) -> bool:
         """
         Return ``True`` if ``self`` is nilpotent. This occurs if
 
@@ -2155,7 +2155,7 @@ class MO:
         sage: w^2
         1 + 2*a + O(a, b, c)^2
     """
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         """
         Initialize ``self``.
 

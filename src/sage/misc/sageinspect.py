@@ -348,7 +348,7 @@ class BlockFinder:
     This is the Python library's :class:`inspect.BlockFinder` modified
     to recognize Cython definitions.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.indent = 0
         self.islambda = False
         self.started = False
@@ -683,7 +683,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
                 out = out or next
             return out
 
-    def visit_Compare(self, node):
+    def visit_Compare(self, node) -> bool:
         """
         Visit a Python AST :class:`ast.Compare` node.
 

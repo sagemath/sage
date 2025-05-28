@@ -523,7 +523,7 @@ class TopologicalManifold(ManifoldSubset):
 
     def __init__(self, n, name, field, structure, base_manifold=None,
                  latex_name=None, start_index=0, category=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a topological manifold.
 
@@ -610,7 +610,7 @@ class TopologicalManifold(ManifoldSubset):
         #   (to be changed by set_calculus_method)
         self._calculus_method = 'SR'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the manifold.
 
@@ -757,7 +757,7 @@ class TopologicalManifold(ManifoldSubset):
         return self.element_class(self, coords=coords, chart=chart,
                                   check_coords=False)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check whether a point is contained in the manifold.
 
@@ -1614,7 +1614,7 @@ class TopologicalManifold(ManifoldSubset):
                                      names=names, calc_method=calc_method,
                                      coord_restrictions=coord_restrictions)
 
-    def is_open(self):
+    def is_open(self) -> bool:
         """
         Return if ``self`` is an open set.
 

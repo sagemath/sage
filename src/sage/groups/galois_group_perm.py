@@ -59,7 +59,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         """
         return NotImplemented
 
-    def __init__(self, field, algorithm=None, names=None, gc_numbering=False):
+    def __init__(self, field, algorithm=None, names=None, gc_numbering=False) -> None:
         r"""
         EXAMPLES::
 

@@ -137,7 +137,7 @@ class HyperbolicGeodesic(SageObject):
     # "Private" Methods #
     #####################
 
-    def __init__(self, model, start, end, **graphics_options):
+    def __init__(self, model, start, end, **graphics_options) -> None:
         r"""
         See :class:`HyperbolicGeodesic` for full documentation.
 
@@ -238,7 +238,7 @@ class HyperbolicGeodesic(SageObject):
                 self._start == other._start and
                 self._end == other._end)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test unequality of ``self`` and ``other``.
 
@@ -536,7 +536,7 @@ class HyperbolicGeodesic(SageObject):
         B = other.reflection_involution()
         return (A * B).classification() == 'hyperbolic'
 
-    def is_parallel(self, other):
+    def is_parallel(self, other) -> bool:
         r"""
         Return ``True`` if the two given hyperbolic geodesics are either
         ultra parallel or asymptotically parallel and ``False`` otherwise.

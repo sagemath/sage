@@ -90,7 +90,7 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
 
     - [Harako2020]_
     """
-    def __init__(self, R, g):
+    def __init__(self, R, g) -> None:
         r"""
         Initialize ``self``.
 
@@ -174,7 +174,7 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
             return "a{}".format(unicode_subscript(i)) if i <= g else "b{}".format(unicode_subscript(i-g))
         return unicode_art("·".join(label(i) for i in reversed(m)))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

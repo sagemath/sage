@@ -2389,7 +2389,7 @@ class RightQuantumWord:
          q*cp_1*ap_1 + q^2*bp_1*cm_0*am_0*bm_2
          reduced from ap_1*cp_1 + q^3*bm_2*bp_1*am_0*cm_0
     """
-    def __init__(self, words):
+    def __init__(self, words) -> None:
         r"""
         Initialize ``self``.
 

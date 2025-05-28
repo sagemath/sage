@@ -37,7 +37,7 @@ lazy_import('mpmath', 'zeta', as_='_mpmath_zeta')
 
 
 class Function_zeta(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Riemann zeta function at s with s a real or complex number.
 
@@ -162,7 +162,7 @@ zeta = Function_zeta()
 
 
 class Function_stieltjes(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Stieltjes constant of index ``n``.
 
@@ -220,7 +220,7 @@ stieltjes = Function_stieltjes()
 
 
 class Function_HurwitzZeta(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -342,7 +342,7 @@ def hurwitz_zeta(s, x, **kwargs):
 
 
 class Function_zetaderiv(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Derivatives of the Riemann zeta function.
 
@@ -512,7 +512,7 @@ class DickmanRho(BuiltinFunction):
       Solutions to some Classical Differential-Difference Equations."
       Mathematics of Computation, Vol. 53, No. 187 (1989).
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Construct an object to represent Dickman's rho function.
 

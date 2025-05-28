@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from sage.misc.latex import LatexExpr
 
 
-def is_atomic(expr, sep=['+', '-']):
+def is_atomic(expr, sep=['+', '-']) -> bool:
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 
@@ -293,7 +293,7 @@ class FormattedExpansion(SageObject):
         sage: latex(f)
         \frac{x}{2}
     """
-    def __init__(self, txt=None, latex=None):
+    def __init__(self, txt=None, latex=None) -> None:
         r"""
         TESTS::
 

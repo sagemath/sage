@@ -242,7 +242,7 @@ class EnumeratedSets(CategoryWithAxiom):
             else:
                 raise NotImplementedError("iterator called but not implemented")
 
-        def is_empty(self):
+        def is_empty(self) -> bool:
             r"""
             Return whether this set is empty.
 
@@ -481,7 +481,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 raise ValueError("infinite list")
             return self.unrank(i)
 
-        def __len__(self):
+        def __len__(self) -> int:
             """
             Return the number of elements of ``self``.
 

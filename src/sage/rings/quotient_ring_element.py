@@ -82,7 +82,7 @@ class QuotientRingElement(RingElement):
         sage: (a^3 + b^2).lift()
         -x*y^2 + y^2
     """
-    def __init__(self, parent, rep, reduce=True):
+    def __init__(self, parent, rep, reduce=True) -> None:
         """
         An element of a quotient ring `R/I`.  See
         ``QuotientRingElement`` for full documentation.
@@ -136,7 +136,7 @@ class QuotientRingElement(RingElement):
         """
         return self.__rep
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if quotient ring element is nonzero in the
         quotient ring `R/I`, by determining whether the element
@@ -158,7 +158,7 @@ class QuotientRingElement(RingElement):
         """
         return self.__rep not in self.parent().defining_ideal()
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         Return ``True`` if ``self`` is a unit in the quotient ring.
 
@@ -491,7 +491,7 @@ class QuotientRingElement(RingElement):
         """
         return self.lift()._im_gens_(codomain, im_gens, base_map=base_map)
 
-    def __int__(self):
+    def __int__(self) -> int:
         """
         Try to convert ``self`` (an element of `R/I`) to an integer by
         converting its lift in `R` to an integer.  Return a TypeError
@@ -599,7 +599,7 @@ class QuotientRingElement(RingElement):
             return self.parent().one()/self
         return self.__class__(self.parent(), inv)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -845,7 +845,7 @@ class QuotientRingElement(RingElement):
                 raise ImportError("could not import singular")
         return self.__rep._singular_(singular)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return the Magma representation of this quotient ring element.
 

@@ -156,7 +156,7 @@ class SubwordComplexFacet(Simplex, Element):
 
     # standard functions
 
-    def __init__(self, parent, positions, facet_test=True):
+    def __init__(self, parent, positions, facet_test=True) -> None:
         r"""
         Initialize a facet of the subword complex ``parent``.
 
@@ -1085,7 +1085,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         Q = tuple(Q)
         return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
-    def __init__(self, Q, w, algorithm='inductive'):
+    def __init__(self, Q, w, algorithm='inductive') -> None:
         r"""
         Initialize the subword complex `\mathcal{SC}(Q,w)`.
 
@@ -1174,7 +1174,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         else:
             self._facets_dict = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1225,7 +1225,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     Element = SubwordComplexFacet
 
-    def __contains__(self, F):
+    def __contains__(self, F) -> bool:
         r"""
         Test if ``self`` contains a given iterable ``F``.
 
@@ -1472,7 +1472,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         w = W.demazure_product(self._Q)
         return w == self._pi
 
-    def is_ball(self):
+    def is_ball(self) -> bool:
         r"""
         Return ``True`` if the subword complex ``self`` is a ball.
 
@@ -1499,7 +1499,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         return not self.is_sphere()
 
-    def is_pure(self):
+    def is_pure(self) -> bool:
         r"""
         Return ``True`` since all subword complexes are pure.
 
@@ -1569,7 +1569,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         return M.rank() == max(M.ncols(), M.nrows())
 
     @cached_method
-    def is_double_root_free(self):
+    def is_double_root_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` is double-root-free.
 

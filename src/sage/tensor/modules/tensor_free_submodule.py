@@ -97,7 +97,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         T^{\{2,3\}}(M) \otimes T^{\{6,7\}}(M^*) \otimes \mathrm{Sym}^{\{0,1\}}(M) \otimes \mathrm{ASym}^{\{4,5\}}(M^*)
     """
     def __init__(self, fmodule, tensor_type, name=None, latex_name=None,
-                 sym=None, antisym=None, *, category=None, ambient=None):
+                 sym=None, antisym=None, *, category=None, ambient=None) -> None:
         r"""
         TESTS::
 
@@ -216,7 +216,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         tensor = self.ambient()._element_constructor_(sym=self._sym, antisym=self._antisym)
         return tensor._new_comp(frame)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -231,7 +231,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         return "Free module of {}type-({},{}) tensors on the {}{}".format(
             prefix.lower(), self._tensor_type[0], self._tensor_type[1], self._fmodule, suffix)
 
-    def _is_symmetry_coarsening_of(self, coarser_comp, finer_comp):
+    def _is_symmetry_coarsening_of(self, coarser_comp, finer_comp) -> bool:
         r"""
         Return whether ``coarser_comp`` has coarser symmetry than ``finer_comp``.
 
@@ -287,7 +287,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
             except AttributeError:
                 return [], []
 
-        def is_coarsening_of(self_sym_list, other_sym_list):
+        def is_coarsening_of(self_sym_list, other_sym_list) -> bool:
             # Use the union-find data structure
             S = DisjointSet(self_tensor_type[0] + self_tensor_type[1])
             for index_set in self_sym_list:

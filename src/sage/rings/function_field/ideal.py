@@ -119,7 +119,7 @@ class FunctionFieldIdeal(Element):
         sage: O.ideal(x^3 + 1)
         Ideal (x^3 + 1) of Maximal order of Rational function field in x over Finite Field of size 7
     """
-    def __init__(self, ring):
+    def __init__(self, ring) -> None:
         """
         Initialize.
 
@@ -134,7 +134,7 @@ class FunctionFieldIdeal(Element):
         Element.__init__(self, ring.ideal_monoid())
         self._ring = ring
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Return a string representation of this ideal that doesn't
         include the name of the ambient ring.
@@ -154,7 +154,7 @@ class FunctionFieldIdeal(Element):
 
         return "(%s)" % (', '.join([repr(g) for g in self.gens_reduced()]), )
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this ideal.
 
@@ -607,7 +607,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         sage: I^2
         Ideal (x^3 + 1, (-x^3 - 1)*y) of Order in Function field in y defined by y^2 - x^3 - 1
     """
-    def __init__(self, ring, module):
+    def __init__(self, ring, module) -> None:
         """
         Initialize.
 
@@ -631,7 +631,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         # module generators are still ideal generators
         Ideal_generic.__init__(self, ring, self._gens, coerce=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 
@@ -912,7 +912,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         sage: O.ideal(y)
         Ideal (x^3 + 1, -y) of Order in Function field in y defined by y^2 - x^3 - 1
     """
-    def __init__(self, ring, module):
+    def __init__(self, ring, module) -> None:
         """
         Initialize.
 
@@ -937,7 +937,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         # module generators are still ideal generators
         Ideal_generic.__init__(self, ring, self._gens, coerce=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in this ideal.
 
@@ -977,7 +977,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         """
         return hash((self._ring,self._module))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test equality of this ideal with the ``other`` ideal.
 
@@ -1055,7 +1055,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
         Monoid of ideals of Maximal order of Rational function field in x over Finite Field of size 2
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize the ideal monoid.
 
@@ -1072,7 +1072,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
         self.__R = R
         self._populate_coercion_lists_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the ideal monoid.
 

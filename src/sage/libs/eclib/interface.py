@@ -86,7 +86,7 @@ class mwrank_EllipticCurve(SageObject):
         ArithmeticError: Invariants (= 0,0,0,0,0) do not describe an elliptic curve.
     """
 
-    def __init__(self, ainvs, verbose=False):
+    def __init__(self, ainvs, verbose=False) -> None:
         r"""
         Create the mwrank elliptic curve with invariants
         ``ainvs``, which is a list of 5 or less *integers* `a_1`,
@@ -235,7 +235,7 @@ class mwrank_EllipticCurve(SageObject):
         """
         return self.__curve.isogeny_class(verbose)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this mwrank elliptic curve.
 
@@ -787,7 +787,7 @@ class mwrank_MordellWeil(SageObject):
         Subgroup of Mordell-Weil group: [[-3:0:1], [-2:3:1], [-14:25:8], [-1:3:1], [0:2:1], [2:13:8], [1:0:1], [2:0:1], [18:7:8], [3:3:1], [4:6:1], [36:69:64], [68:-25:64], [12:35:27]]
     """
 
-    def __init__(self, curve, verbose=True, pp=1, maxr=999):
+    def __init__(self, curve, verbose=True, pp=1, maxr=999) -> None:
         r"""
         Constructor for the :class:`mwrank_MordellWeil` class.
 
@@ -825,7 +825,7 @@ class mwrank_MordellWeil(SageObject):
         """
         return mwrank_MordellWeil, (self.__curve, self.__verbose, self.__pp, self.__maxr)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of this Mordell-Weil subgroup.
 

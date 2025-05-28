@@ -517,7 +517,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         return super().__classcall__(self, p=p, basis=std_basis, profile=std_profile,
                                      truncation_type=std_type, generic=std_generic)
 
-    def __init__(self, p=2, basis='milnor', **kwds):
+    def __init__(self, p=2, basis='milnor', **kwds) -> None:
         r"""
         INPUT:
 
@@ -744,7 +744,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                   or (profile[1] and min(profile[1]) == 1)))
                 or (trunc < Infinity))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Printed representation of the Steenrod algebra.
 
@@ -799,7 +799,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return "sub-Hopf algebra of %smod %d Steenrod algebra, %s basis, profile function %s" % (genprefix, self.prime(), self._basis_name, pro_str)
         return "%smod %d Steenrod algebra, %s basis" % (genprefix, self.prime(), self._basis_name)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of the Steenrod algebra.
 
@@ -2133,7 +2133,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return a.change_basis(self.basis_name())
         raise ValueError("element does not lie in this Steenrod algebra")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``self`` contains `x`.
 
@@ -3176,7 +3176,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             return self.parent().prefix()
 
-        def is_homogeneous(self):
+        def is_homogeneous(self) -> bool:
             """
             Return ``True`` iff this element is homogeneous.
 
@@ -3523,7 +3523,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 excesses = [excess_odd(mono) for mono in a.support()]
             return min(excesses)
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             r"""
             Return ``True`` if element has a nonzero scalar multiple of
             `P(0)` as a summand, ``False`` otherwise.
@@ -3545,7 +3545,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             return self.parent().one() in self.monomials()
 
-        def is_nilpotent(self):
+        def is_nilpotent(self) -> bool:
             """
             Return ``True`` if element is not a unit, ``False`` otherwise.
 

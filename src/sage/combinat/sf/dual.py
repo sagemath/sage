@@ -43,7 +43,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             prefix = 'd_'+dual_basis.prefix()
         return super().__classcall__(cls, dual_basis, scalar, scalar_name, basis_name, prefix)
 
-    def __init__(self, dual_basis, scalar, scalar_name, basis_name, prefix):
+    def __init__(self, dual_basis, scalar, scalar_name, basis_name, prefix) -> None:
         r"""
         Generic dual basis of a basis of symmetric functions.
 
@@ -574,7 +574,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         - ``dual`` -- self as an element of the dual basis
         """
 
-        def __init__(self, A, dictionary=None, dual=None):
+        def __init__(self, A, dictionary=None, dual=None) -> None:
             """
             Create an element of a dual basis.
 
@@ -926,7 +926,7 @@ class DualBasisFunctor(SymmetricFunctionsFunctor):
         sage: w.dual_basis().construction()
         (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
     """
-    def __init__(self, basis):
+    def __init__(self, basis) -> None:
         r"""
         Initialize the functor.
 

@@ -375,7 +375,7 @@ class Simplex(SageObject):
         TypeError: unhashable type: 'list'
     """
 
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         Define a simplex.  See :class:`Simplex` for full documentation.
 
@@ -446,7 +446,7 @@ class Simplex(SageObject):
         """
         return self.__set.issubset(other.__set)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` iff ``x`` is a vertex of this simplex.
 
@@ -721,7 +721,7 @@ class Simplex(SageObject):
             return False
         return set(self) == set(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this simplex is not equal to ``other``.
 
@@ -962,7 +962,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                  name_check=False,
                  is_mutable=True,
                  is_immutable=False,
-                 category=None):
+                 category=None) -> None:
         """
         Define a simplicial complex.  See ``SimplicialComplex`` for more
         documentation.
@@ -1189,7 +1189,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return isinstance(right, SimplicialComplex) and set(self._facets) == set(right._facets)
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Return ``True`` if ``self`` and ``right`` are not equal.
 
@@ -1256,7 +1256,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         except TypeError:
             return self.facets()[0]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is a simplex which is contained in this complex.
 
@@ -4555,7 +4555,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._is_immutable = True
         self._facets = tuple(self._facets)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         """
         Return ``True`` if mutable.
 

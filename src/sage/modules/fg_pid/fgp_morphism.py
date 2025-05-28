@@ -70,7 +70,7 @@ class FGP_Morphism(Morphism):
         sage: loads(dumps(phi)) == phi
         True
     """
-    def __init__(self, parent, phi, check=True):
+    def __init__(self, parent, phi, check=True) -> None:
         """
         A morphism between finitely generated modules over a PID.
 
@@ -119,7 +119,7 @@ class FGP_Morphism(Morphism):
                     raise ValueError("phi must send optimized submodule of M.W() into N.W()")
         self._phi = phi
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -496,7 +496,7 @@ class FGP_Homset_class(Homset):
     """
     Element = FGP_Morphism
 
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         """
         EXAMPLES::
 

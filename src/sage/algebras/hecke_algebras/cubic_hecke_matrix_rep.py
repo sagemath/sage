@@ -657,7 +657,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
                  dimension,
                  cubic_hecke_algebra,
                  representation_type,
-                 subdivide):
+                 subdivide) -> None:
         r"""
         Initialize ``self``.
 

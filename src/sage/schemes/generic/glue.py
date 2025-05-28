@@ -45,7 +45,7 @@ class GluedScheme(Scheme):
           Y: Spectrum of Univariate Polynomial Ring in y over Rational Field
           U: Spectrum of Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x*y - 1)
     """
-    def __init__(self, f, g, check=True):
+    def __init__(self, f, g, check=True) -> None:
         if check:
             if not isinstance(f, SchemeMorphism):
                 raise TypeError("f (=%s) must be a scheme morphism" % f)
@@ -76,6 +76,6 @@ class GluedScheme(Scheme):
         """
         return self.__f, self.__g
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Scheme obtained by gluing X and Y along U, where\n  X: %s\n  Y: %s\n  U: %s" % (
             self.__f.codomain(), self.__g.codomain(), self.__f.domain())

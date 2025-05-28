@@ -53,7 +53,7 @@ from sage.symbolic.ring import SR
 
 
 class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_generic_dense):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the vector.
 
@@ -75,7 +75,7 @@ class Vector_callable_symbolic_dense(free_module_element.FreeModuleElement_gener
             args = ", ".join(map(str, args))
             return "(%s) |--> %s" % (args, repr_x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of the vector.
 

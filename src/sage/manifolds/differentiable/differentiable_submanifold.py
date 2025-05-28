@@ -162,7 +162,7 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
     def __init__(self, n, name, field, structure, ambient=None,
                  base_manifold=None, diff_degree=infinity,
                  latex_name=None, start_index=0, category=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a submanifold of a differentiable manifold.
 

@@ -2,7 +2,7 @@ from sage.cli.options import CliOptions
 
 
 class InteractiveShellCmd:
-    def __init__(self, options: CliOptions):
+    def __init__(self, options: CliOptions) -> None:
         r"""
         Initialize the command.
         """

@@ -304,7 +304,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         return cls.__classcall__(cls, base_ring, rank, group, has_type,
                                  tuple(names))
 
-    def __init__(self, base_ring, rank, group, has_type, names):
+    def __init__(self, base_ring, rank, group, has_type, names) -> None:
         r"""
         Initialize the ``DrinfeldModularForms`` class.
 
@@ -355,7 +355,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self._poly_ring.an_element())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

@@ -41,7 +41,7 @@ class ImageManifoldSubset(ManifoldSubset):
 
     def __init__(
         self, map, inverse=None, name=None, latex_name=None, domain_subset=None
-    ):
+    ) -> None:
         r"""
         Construct a manifold subset that is the image of a continuous map.
 
@@ -73,7 +73,7 @@ class ImageManifoldSubset(ManifoldSubset):
             name = map_name + '_' + domain_subset._name
         ManifoldSubset.__init__(self, base_manifold, name, latex_name=latex_name)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 
@@ -124,7 +124,7 @@ class ImageManifoldSubset(ManifoldSubset):
         """
         return self._map(self._domain_subset.an_element())
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check whether ``point`` is contained in ``self``.
 

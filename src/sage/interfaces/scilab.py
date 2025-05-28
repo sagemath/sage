@@ -218,7 +218,7 @@ class Scilab(Expect):
     """
     def __init__(self, maxread=None, script_subdirectory=None,
                  logfile=None, server=None, server_tmpdir=None,
-                 seed=None):
+                 seed=None) -> None:
         """
         Initialize the Scilab class.
 
@@ -273,7 +273,7 @@ class Scilab(Expect):
         self._seed = seed
         return seed
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit the pexpect interface.
 
@@ -284,7 +284,7 @@ class Scilab(Expect):
         """
         return 'quit;'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing Scilab.
 
@@ -457,7 +457,7 @@ class ScilabElement(ExpectElement):
             index = str(n)
         return self.parent()('%s(%s)' % (self._name, index))
 
-    def __setitem__(self, n, value):
+    def __setitem__(self, n, value) -> None:
         """
         Set an element of a matrix.
 

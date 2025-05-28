@@ -79,7 +79,7 @@ class PieriFactors(UniqueRepresentation, Parent):
     - [Pon2010]_
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
@@ -90,7 +90,7 @@ class PieriFactors(UniqueRepresentation, Parent):
         """
         return "Pieri factors for %s" % self.W
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         r"""
         Test for containment.
 
@@ -394,7 +394,7 @@ class PieriFactors_type_A(PieriFactors_finite_type):
     elements.
     """
 
-    def __init__(self, W):
+    def __init__(self, W) -> None:
         r"""
         EXAMPLES::
 
@@ -426,7 +426,7 @@ class PieriFactors_type_A(PieriFactors_finite_type):
         """
         return [self.W.from_reduced_word(range(self.W.cartan_type().n, 0, -1))]
 
-    def stanley_symm_poly_weight(self, w):
+    def stanley_symm_poly_weight(self, w) -> int:
         r"""
         EXAMPLES::
 
@@ -447,7 +447,7 @@ class PieriFactors_type_B(PieriFactors_finite_type):
     under the usual embedding.
     """
 
-    def __init__(self, W):
+    def __init__(self, W) -> None:
         r"""
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         max_length = min(len(max_support), max_length, len(W.index_set()) - 1)
         return super().__classcall__(cls, W, min_length, max_length, min_support, max_support)
 
-    def __init__(self, W, min_length, max_length, min_support, max_support):
+    def __init__(self, W, min_length, max_length, min_support, max_support) -> None:
         r"""
         INPUT:
 
@@ -659,7 +659,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             return
         return super()._test_maximal_elements(**options)
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         r"""
         Return whether ``w`` is in ``self``.
 
@@ -799,7 +799,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
                                  l - len(self._min_support)):
                 yield self[self._min_support.union(extra)]
 
-    def stanley_symm_poly_weight(self, w):
+    def stanley_symm_poly_weight(self, w) -> int:
         r"""
         Weight used in computing (affine) Stanley symmetric polynomials
         for affine type A.
@@ -831,7 +831,7 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
          [2, 1, 0, 1, 2, 3], [2, 3, 2, 1, 0, 1], [3, 2, 1, 0, 1, 2]]
     """
 
-    def __init__(self, W):
+    def __init__(self, W) -> None:
         r"""
         TESTS::
 
@@ -918,7 +918,7 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
         True
     """
 
-    def __init__(self, W):
+    def __init__(self, W) -> None:
         r"""
 
         TESTS::
@@ -1032,7 +1032,7 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
          [5, 4, 3, 2, 1, 0, 2, 3]]
     """
 
-    def __init__(self, W):
+    def __init__(self, W) -> None:
         r"""
         TESTS::
 

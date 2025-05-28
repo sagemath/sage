@@ -67,7 +67,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         """
         return super(IndexedMonoid, cls).__classcall__(cls, center)
 
-    def __init__(self, center, indices=None):
+    def __init__(self, center, indices=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -99,7 +99,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         self._gen_degrees = {}
         self._cur_num_gens = 0
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -114,7 +114,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         """
         return "Basis indices of {}".format(self._center)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -383,7 +383,7 @@ class SimpleLieCenterIndices(CenterIndices):
     For more information, see
     :class:`~sage.algebras.lie_algebras.center_uea.CenterIndices`.
     """
-    def __init__(self, center):
+    def __init__(self, center) -> None:
         r"""
         Initialize ``self``.
 
@@ -499,7 +499,7 @@ class CenterUEA(CombinatorialFreeModule):
         sage: all(v * g == g * v for g in U.algebra_generators() for v in elts)
         True
     """
-    def __init__(self, g, UEA):
+    def __init__(self, g, UEA) -> None:
         r"""
         Initialize ``self``.
 
@@ -552,7 +552,7 @@ class CenterUEA(CombinatorialFreeModule):
         """
         return "Center of " + repr(self._envelop_alg)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

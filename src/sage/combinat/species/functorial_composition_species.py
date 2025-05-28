@@ -24,7 +24,7 @@ class FunctorialCompositionStructure(GenericSpeciesStructure):
 
 
 class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
-    def __init__(self, F, G, min=None, max=None, weight=None):
+    def __init__(self, F, G, min=None, max=None, weight=None) -> None:
         """
         Return the functorial composition of two species.
 

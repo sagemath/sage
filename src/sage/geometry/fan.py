@@ -1034,7 +1034,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
         (0,)
     """
 
-    def __init__(self, ambient, ambient_ray_indices):
+    def __init__(self, ambient, ambient_ray_indices) -> None:
         r"""
         See :class:`Cone_of_Fan` for documentation.
 
@@ -1185,7 +1185,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
     """
 
     def __init__(self, cones, rays, lattice,
-                 is_complete=None, virtual_rays=None):
+                 is_complete=None, virtual_rays=None) -> None:
         r"""
         See :class:`RationalPolyhedralFan` for documentation.
 
@@ -1327,7 +1327,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         else:
             return NotImplemented
 
-    def __contains__(self, cone):
+    def __contains__(self, cone) -> bool:
         r"""
         Check if ``cone`` is equivalent to a cone of the fan.
 

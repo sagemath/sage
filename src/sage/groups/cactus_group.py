@@ -69,7 +69,7 @@ class CactusGroup(UniqueRepresentation, Group):
         ....:     for p in range(1, 6) for q in range(p+1, 6))
         True
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -167,7 +167,7 @@ class CactusGroup(UniqueRepresentation, Group):
         from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
         return CoxeterGroup(CoxeterMatrix(self._WG), base_ring=QQ)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -178,7 +178,7 @@ class CactusGroup(UniqueRepresentation, Group):
         """
         return "Cactus Group with {} fruit".format(self._n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -548,7 +548,7 @@ class CactusGroup(UniqueRepresentation, Group):
         """
         An element of a cactus group.
         """
-        def __init__(self, parent, data):
+        def __init__(self, parent, data) -> None:
             """
             Initialize ``self``.
 
@@ -872,7 +872,7 @@ class PureCactusGroup(KernelSubgroup):
         1 \longrightarrow PJ_n \longrightarrow J_n \longrightarrow S_n
         \longrightarrow 1.
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -888,7 +888,7 @@ class PureCactusGroup(KernelSubgroup):
         S = SymmetricGroup(n)
         KernelSubgroup.__init__(self, S.coerce_map_from(J))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -899,7 +899,7 @@ class PureCactusGroup(KernelSubgroup):
         """
         return "Pure Cactus Group with {} fruit".format(self.n())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

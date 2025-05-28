@@ -35,7 +35,7 @@ class NumberFieldHomset(RingHomset_generic):
 
     Element = NumberFieldHomomorphism_im_gens
 
-    def __init__(self, R, S, category=None):
+    def __init__(self, R, S, category=None) -> None:
         """
         TESTS:
 
@@ -143,7 +143,7 @@ class NumberFieldHomset(RingHomset_generic):
             raise EmptySetError("There is no morphism from {} to {}".format(
                 self.domain(), self.codomain()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this homset.
 

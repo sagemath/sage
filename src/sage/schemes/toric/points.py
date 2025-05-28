@@ -46,7 +46,7 @@ from sage.parallel.decorate import Parallel
 
 class InfinitePointEnumerator:
 
-    def __init__(self, fan, ring):
+    def __init__(self, fan, ring) -> None:
         """
         Point enumerator for infinite fields.
 
@@ -106,7 +106,7 @@ class InfinitePointEnumerator:
 
 class NaiveFinitePointEnumerator:
 
-    def __init__(self, fan, ring):
+    def __init__(self, fan, ring) -> None:
         """
         The naive point enumerator.
 
@@ -755,7 +755,7 @@ class FiniteFieldPointEnumerator(NaiveFinitePointEnumerator):
 
 class NaiveSubschemePointEnumerator:
 
-    def __init__(self, polynomials, ambient):
+    def __init__(self, polynomials, ambient) -> None:
         """
         Point enumerator for algebraic subschemes of toric varieties.
 

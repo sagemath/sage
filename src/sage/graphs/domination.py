@@ -68,7 +68,7 @@ from copy import copy
 from sage.rings.integer import Integer
 
 
-def is_dominating(G, dom, focus=None):
+def is_dominating(G, dom, focus=None) -> bool:
     r"""
     Check whether ``dom`` is a dominating set of ``G``.
 

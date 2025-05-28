@@ -204,7 +204,7 @@ class LieConformalAlgebraWithStructureCoefficients(
 
     def __init__(self, R, s_coeff, index_set=None, central_elements=None,
                  category=None, element_class=None, prefix=None, names=None,
-                 latex_names=None, parity=None, **kwds):
+                 latex_names=None, parity=None, **kwds) -> None:
         """
         Initialize ``self``.
 

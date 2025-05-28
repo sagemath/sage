@@ -222,7 +222,7 @@ class KleberTreeNode(Element):
     - ``parent_node`` -- (default: ``None``) the parent node of this node
     """
 
-    def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None):
+    def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None) -> None:
         r"""
         Initialize the tree node.
 
@@ -409,7 +409,7 @@ class KleberTreeNode(Element):
 
         return richcmp(self.weight, rhs.weight, op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -611,7 +611,7 @@ class KleberTree(UniqueRepresentation, Parent):
             classical = CartanType(classical)
         return super().__classcall__(cls, cartan_type, B, classical)
 
-    def __init__(self, cartan_type, B, classical_ct):
+    def __init__(self, cartan_type, B, classical_ct) -> None:
         r"""
         Construct a Kleber tree.
 
@@ -902,7 +902,7 @@ class KleberTree(UniqueRepresentation, Parent):
                                      Q._from_dict(rd, remove_zeros=False),
                                      node)
 
-    def _prune(self, new_child, depth):
+    def _prune(self, new_child, depth) -> bool:
         r"""
         Return ``True`` if we are to prune the tree at ``new_child``.
 
@@ -987,7 +987,7 @@ class KleberTree(UniqueRepresentation, Parent):
 
     __iter__ = breadth_first_iter
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a text representation of this Kleber tree.
 
@@ -1159,7 +1159,7 @@ class VirtualKleberTree(KleberTree):
             raise ValueError("use KleberTree for simply-laced types")
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         """
         Initialize ``self``.
 
@@ -1179,7 +1179,7 @@ class VirtualKleberTree(KleberTree):
 
         KleberTree.__init__(self, cartan_type, virtual_dims, classical_ct)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a text representation of this Kleber tree.
 
@@ -1191,7 +1191,7 @@ class VirtualKleberTree(KleberTree):
         """
         return "Virtual Kleber tree of Cartan type %s and B = %s" % (repr(self._cartan_type), self.base_dims)
 
-    def _prune(self, new_child, depth):
+    def _prune(self, new_child, depth) -> bool:
         r"""
         Return ``True`` if we are to prune the tree at ``new_child``.
 
@@ -1352,7 +1352,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
         B = tuple(map(tuple, B))
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         """
         Initialize ``self``.
 
@@ -1391,7 +1391,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
         """
         return KleberTree.__iter__(self)
 
-    def _prune(self, new_child, depth):
+    def _prune(self, new_child, depth) -> bool:
         r"""
         Return ``True`` if we are to prune the tree at ``new_child``.
 

@@ -82,7 +82,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -95,7 +95,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -118,7 +118,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         """
         return self(47) # if speed is needed, call: self.element_class(47)
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -167,7 +167,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         sage: P = Sets().example("inherits")
         sage: P = Sets().example("wrapper")
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -175,7 +175,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -271,7 +271,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         return res
 
     class Element(Element):
-        def is_prime(self):
+        def is_prime(self) -> bool:
             """
             Return whether ``self`` is a prime number.
 
@@ -381,7 +381,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         sage: P = Sets().example("wrapper")
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -394,7 +394,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         super().__init__()
         self._populate_coercion_lists_(embedding=IntegerRing())
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -420,7 +420,7 @@ class PrimeNumbers_Inherits(PrimeNumbers_Abstract):
         return self.element_class(self, p)
 
     class Element(IntegerWrapper, PrimeNumbers_Abstract.Element):
-        def __init__(self, parent, p):
+        def __init__(self, parent, p) -> None:
             """
             TESTS::
 
@@ -483,7 +483,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
 
         sage: TestSuite(P).run()
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -503,7 +503,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
         self._populate_coercion_lists_(embedding=self.mor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -512,7 +512,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         """
         return "Set of prime numbers (wrapper implementation)"
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 
@@ -658,7 +658,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -666,7 +666,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -675,7 +675,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         return "Set of prime numbers (facade implementation)"
 
-    def __contains__(self, p):
+    def __contains__(self, p) -> bool:
         """
         TESTS::
 

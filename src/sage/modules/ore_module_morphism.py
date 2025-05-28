@@ -273,7 +273,7 @@ class OreModuleMorphism(Morphism):
     r"""
     Generic class for morphism between Ore modules.
     """
-    def __init__(self, parent, im_gens, check=True):
+    def __init__(self, parent, im_gens, check=True) -> None:
         r"""
         Initialize this Ore module.
 
@@ -362,7 +362,7 @@ class OreModuleMorphism(Morphism):
                 if self._call_(x.image()) != self._call_(x).image():
                     raise ValueError("does not define a morphism of Ore modules")
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string with the type of this morphism.
 

@@ -157,7 +157,7 @@ class MinMax_base(BuiltinFunction):
 
 
 class MaxSymbolic(MinMax_base):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Symbolic `\max` function.
 
@@ -252,7 +252,7 @@ max_symbolic = MaxSymbolic()
 
 
 class MinSymbolic(MinMax_base):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Symbolic `\min` function.
 

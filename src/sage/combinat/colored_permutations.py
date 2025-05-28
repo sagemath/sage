@@ -32,7 +32,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
     A colored permutation.
     """
 
-    def __init__(self, parent, colors, perm):
+    def __init__(self, parent, colors, perm) -> None:
         """
         Initialize ``self``.
 
@@ -86,7 +86,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
                          for c, x in zip(self._colors, self._perm))
         return ret + "]"
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of the one line form of ``self``.
 
@@ -154,7 +154,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
                 and self._colors == other._colors
                 and self._perm == other._perm)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check inequality.
 
@@ -471,7 +471,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
             return ColoredPermutations(m, n)
         return super().__classcall__(cls, m, p, n)
 
-    def __init__(self, m, p, n):
+    def __init__(self, m, p, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -516,7 +516,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
                 category = category.WellGenerated()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1211,7 +1211,7 @@ class ColoredPermutations(ShephardToddFamilyGroup):
     - :wikipedia:`Generalized_symmetric_group`
     - :wikipedia:`Complex_reflection_group`
     """
-    def __init__(self, m, n):
+    def __init__(self, m, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -1226,7 +1226,7 @@ class ColoredPermutations(ShephardToddFamilyGroup):
         """
         ShephardToddFamilyGroup.__init__(self, m, 1, n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1642,7 +1642,7 @@ class SignedPermutations(ColoredPermutations):
 
     - :wikipedia:`Hyperoctahedral_group`
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -1653,7 +1653,7 @@ class SignedPermutations(ColoredPermutations):
         """
         ColoredPermutations.__init__(self, 2, n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

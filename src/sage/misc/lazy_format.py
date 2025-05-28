@@ -100,7 +100,7 @@ class LazyFormat(str):
         self._args = args
         return self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

@@ -64,7 +64,7 @@ class DrinfeldModuleMorphismAction(Action):
           To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (z^2 + 4*z + 3)*t + z
           Defn: t + 2
     """
-    def __init__(self, A, H, is_left, op):
+    def __init__(self, A, H, is_left, op) -> None:
         r"""
         Initialize this action.
 
@@ -233,7 +233,7 @@ class DrinfeldModuleHomset(Homset):
     """
     Element = DrinfeldModuleMorphism
 
-    def __init__(self, X, Y, category=None, check=True):
+    def __init__(self, X, Y, category=None, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -280,7 +280,7 @@ class DrinfeldModuleHomset(Homset):
         if X is Y:
             self.register_coercion(A)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the homset.
 
@@ -300,7 +300,7 @@ class DrinfeldModuleHomset(Homset):
                f'\\text{{{{ }}to{{ }}(gen){{ }}}}'\
                f'{latex(self.codomain().gen())}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the homset.
 
@@ -318,7 +318,7 @@ class DrinfeldModuleHomset(Homset):
         return f'Set of Drinfeld module morphisms from (gen) '\
                f'{self.domain().gen()} to (gen) {self.codomain().gen()}'
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if the input defines a morphism in the homset.
 

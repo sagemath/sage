@@ -94,10 +94,10 @@ def sortkey(K):
 
 
 class JonesDatabase:
-    def __init__(self):
+    def __init__(self) -> None:
         self.root = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "John Jones's table of number fields with bounded ramification and degree <= 6"
 
     def _load(self, path, filename):

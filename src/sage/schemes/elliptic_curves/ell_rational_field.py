@@ -151,7 +151,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         sage: EllipticCurve('462.f3')
         Elliptic Curve defined by y^2 + x*y = x^3 - 363*x + 1305 over Rational Field
     """
-    def __init__(self, ainvs, **kwds):
+    def __init__(self, ainvs, **kwds) -> None:
         r"""
         Constructor for the EllipticCurve_rational_field class.
 
@@ -4412,7 +4412,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         else:
             return Integer(e.ellrootno(p))
 
-    def has_cm(self):
+    def has_cm(self) -> bool:
         r"""
         Return whether or not this curve has a CM `j`-invariant.
 
@@ -4936,7 +4936,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 i += 1
             return isogs
 
-    def is_isogenous(self, other, proof=True, maxp=200):
+    def is_isogenous(self, other, proof=True, maxp=200) -> bool:
         r"""
         Return whether or not ``self`` is isogenous to other.
 

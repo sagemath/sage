@@ -44,7 +44,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
       of the names that the basis can be constructed from FQSym
     """
 
-    def __init__(self, alg):
+    def __init__(self, alg) -> None:
         r"""
         Initialize ``self``.
 
@@ -351,7 +351,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
     - [GriRei18]_
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -893,7 +893,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "M"
         _basis_name = "Monomial"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1227,7 +1227,7 @@ class FQSymBases(Category_realization_of_parent):
     The category of graded bases of `FQSym` indexed by permutations.
     """
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of an `FQSym`.
 
@@ -1245,7 +1245,7 @@ class FQSymBases(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1281,7 +1281,7 @@ class FQSymBases(Category_realization_of_parent):
                 ]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `FQSym`.
 
@@ -1338,7 +1338,7 @@ class FQSymBases(Category_realization_of_parent):
             else:
                 return Family(Permutations(degree), self.monomial)
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return whether this `FQSym` is a field.
 

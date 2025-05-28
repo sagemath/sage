@@ -520,7 +520,7 @@ def frame_labels(lower_left, upper_right,
     def nd(a):
         return int(log(a) / log10)
 
-    def fmt_string(a):
+    def fmt_string(a) -> str:
         b = a / 2.0
         if b >= 1:
             return "%.1f"
@@ -892,7 +892,7 @@ class Point(PrimitiveObject):
         sage: point3d((4,3,2),size=2,color='red',opacity=.5)
         Graphics3d Object
     """
-    def __init__(self, center, size=1, **kwds):
+    def __init__(self, center, size=1, **kwds) -> None:
         """
         Create the graphics primitive :class:`Point` in 3-D.
 
@@ -925,7 +925,7 @@ class Point(PrimitiveObject):
         """
         return self.loc, self.loc
 
-    def tachyon_repr(self, render_params):
+    def tachyon_repr(self, render_params) -> str:
         """
         Return representation of the point suitable for plotting
         using the Tachyon ray tracer.
@@ -1075,7 +1075,7 @@ class Line(PrimitiveObject):
         Graphics3d Object
     """
     def __init__(self, points, thickness=5, corner_cutoff=0.5,
-                 arrow_head=False, **kwds):
+                 arrow_head=False, **kwds) -> None:
         """
         Create the graphics primitive :class:`Line` in 3-D.
 

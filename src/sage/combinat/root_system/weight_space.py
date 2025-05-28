@@ -158,7 +158,7 @@ class WeightSpace(CombinatorialFreeModule):
         """
         return super().__classcall__(cls, root_system, base_ring, extended)
 
-    def __init__(self, root_system, base_ring, extended):
+    def __init__(self, root_system, base_ring, extended) -> None:
         """
         TESTS::
 

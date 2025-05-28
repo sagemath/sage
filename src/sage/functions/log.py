@@ -165,7 +165,7 @@ class Function_exp(GinacFunction):
         sage: exp(-x).subs(x=-oo)                                                       # needs sage.symbolic
         +Infinity
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -246,7 +246,7 @@ class Function_log1(GinacFunction):
         sage: polylog(QQbar(sqrt(2)),3)                                                 # needs sage.rings.number_field sage.symbolic
         polylog(1.414213562373095?, 3)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -282,7 +282,7 @@ class Function_log2(GinacFunction):
         sage: logb(int(7), 2)                                                           # needs sage.symbolic
         log(7)/log(2)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -299,7 +299,7 @@ logb = Function_log2()
 
 
 class Function_polylog(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The polylog function
         `\text{Li}_s(z) = \sum_{k=1}^{\infty} z^k / k^s`.
@@ -406,7 +406,7 @@ class Function_polylog(GinacFunction):
                                  matlab='polylog',
                                  sympy='polylog'))
 
-    def _maxima_init_evaled_(self, *args):
+    def _maxima_init_evaled_(self, *args) -> str:
         """
         EXAMPLES:
 
@@ -447,7 +447,7 @@ polylog = Function_polylog()
 
 
 class Function_dilog(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The dilogarithm function
         `\text{Li}_2(z) = \sum_{k=1}^{\infty} z^k / k^2`.
@@ -644,7 +644,7 @@ class Function_lambert_w(BuiltinFunction):
         (0.33036612476168054, 3.667800782666048e-15)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         See the docstring for :meth:`Function_lambert_w`.
 
@@ -841,7 +841,7 @@ class Function_lambert_w(BuiltinFunction):
 
         return lambert_w(n, z) / (z * lambert_w(n, z) + z)
 
-    def _maxima_init_evaled_(self, n, z):
+    def _maxima_init_evaled_(self, n, z) -> str:
         """
         EXAMPLES:
 
@@ -870,7 +870,7 @@ class Function_lambert_w(BuiltinFunction):
         else:
             return "generalized_lambert_w(%s,%s)" % (n, maxima_z)
 
-    def _print_(self, n, z):
+    def _print_(self, n, z) -> str:
         """
         Custom _print_ method to avoid printing the branch number if
         it is zero.
@@ -887,7 +887,7 @@ class Function_lambert_w(BuiltinFunction):
         else:
             return "lambert_w(%s, %s)" % (n, z)
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         Custom _print_latex_ method to avoid printing the branch
         number if it is zero.
@@ -914,7 +914,7 @@ lambert_w = Function_lambert_w()
 
 
 class Function_exp_polar(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Representation of a complex number in a polar form.
 
@@ -1099,7 +1099,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         harmonic_number(x)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1190,7 +1190,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         return zeta(m) - hurwitz_zeta(m, z + 1)
 
-    def _maxima_init_evaled_(self, n, z):
+    def _maxima_init_evaled_(self, n, z) -> str:
         """
         EXAMPLES::
 
@@ -1239,7 +1239,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         else:
             return m * (zeta(m + 1) - harmonic_number(n, m + 1))
 
-    def _print_(self, z, m):
+    def _print_(self, z, m) -> str:
         """
         EXAMPLES::
 
@@ -1253,7 +1253,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         else:
             return "harmonic_number(%s, %s)" % (z, m)
 
-    def _print_latex_(self, z, m):
+    def _print_latex_(self, z, m) -> str:
         """
         EXAMPLES::
 
@@ -1289,7 +1289,7 @@ class _Function_swap_harmonic(BuiltinFunction):
         sage: max_to_sr(c.ecl())
         harmonic_number(x, 2)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         BuiltinFunction.__init__(self, "_swap_harmonic", nargs=2)
 
     def _eval_(self, a, b, **kwds):
@@ -1318,7 +1318,7 @@ class Function_harmonic_number(BuiltinFunction):
     This class exists as callback for ``harmonic_number`` returned by Maxima.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1387,7 +1387,7 @@ class Function_harmonic_number(BuiltinFunction):
         """
         return zeta(2) - harmonic_number(z, 2)
 
-    def _print_latex_(self, z):
+    def _print_latex_(self, z) -> str:
         """
         EXAMPLES::
 

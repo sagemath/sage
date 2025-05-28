@@ -185,7 +185,7 @@ class Function_erf(BuiltinFunction):
         -20.8294614276146 + 8.68731827147016*I
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         See docstring for :meth:`Function_erf`.
 
@@ -322,7 +322,7 @@ class Function_erfi(BuiltinFunction):
 
         \operatorname{erfi}(x) = -i \operatorname{erf}(ix).
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize ``self``.
 
@@ -421,7 +421,7 @@ class Function_erfc(BuiltinFunction):
             sage: erfc(x)._fricas_()                                            # optional - fricas, needs sage.symbolic
             - erf(x) + 1
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -503,7 +503,7 @@ class Function_erfinv(BuiltinFunction):
 
         \operatorname{erfinv}(x) = \operatorname{erf}^{-1}(x).
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize ``self``.
 
@@ -588,7 +588,7 @@ register_unpickle_override('sage.functions.other', 'Function_erf', Function_erf)
 # Fresnel integrals        #
 ############################
 class Function_Fresnel_sin(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sine Fresnel integral.
 
@@ -686,7 +686,7 @@ fresnel_sin = Function_Fresnel_sin()
 
 
 class Function_Fresnel_cos(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The cosine Fresnel integral.
 

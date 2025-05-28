@@ -228,7 +228,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
     def __init__(self, n, name, ambient=None, metric_name=None, signature=None,
                  base_manifold=None, diff_degree=infinity, latex_name=None,
                  metric_latex_name=None, start_index=0, category=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a degenerate submanifold.
 
@@ -1348,7 +1348,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             pc).expr(chart)/self._dim for chart in self.top_charts()})
         return self._mean_curvature[screen._name]
 
-    def is_tangent(self, v):
+    def is_tangent(self, v) -> bool:
         r"""
         Determine whether a vector field on the ambient manifold along ``self``
         is tangent to ``self`` or not.
@@ -1474,7 +1474,7 @@ class Screen(VectorFieldModule):
 
     """
 
-    def __init__(self, submanifold, name, screen, rad, latex_name=None):
+    def __init__(self, submanifold, name, screen, rad, latex_name=None) -> None:
         r"""
 
         TESTS::

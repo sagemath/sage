@@ -37,7 +37,7 @@ from sage.structure.sage_object import SageObject
 
 class OutputBuffer(SageObject):
 
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         """
         Data stored either in memory or as a file.
 
@@ -147,7 +147,7 @@ class OutputBuffer(SageObject):
         except PermissionError:
             pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

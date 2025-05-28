@@ -51,7 +51,7 @@ class CWComplexes(Category_singleton):
         """
         return [Sets().Topological()]
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

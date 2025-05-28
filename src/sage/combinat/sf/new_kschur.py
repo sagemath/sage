@@ -66,7 +66,7 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         3-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field in the 3-Schur basis
     """
 
-    def __init__(self, Sym, k, t='t'):
+    def __init__(self, Sym, k, t='t') -> None:
         r"""
         The class modeling the abstract vector space of `k`-Schur
         functions.
@@ -274,7 +274,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
     The category of bases for the `k`-bounded subspace of symmetric functions.
     """
 
-    def __init__(self, base, t='t'):
+    def __init__(self, base, t='t') -> None:
         """
         Initialization of the bases of the `k`-bounded subspace.
 
@@ -975,7 +975,7 @@ class kSchur(CombinatorialFreeModule):
         1
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         TESTS::
 
@@ -1177,7 +1177,7 @@ class kSchur(CombinatorialFreeModule):
 
 
 class kSplit(CombinatorialFreeModule):
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         The `k`-split basis of the space of `k`-bounded-symmetric functions.
 
@@ -1345,7 +1345,7 @@ class kHomogeneous(CombinatorialFreeModule):
         h[2]
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         TESTS::
 
@@ -1414,7 +1414,7 @@ class K_kSchur(CombinatorialFreeModule):
         Compositio Math. 146 (2010), 811-852.
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         TESTS::
 

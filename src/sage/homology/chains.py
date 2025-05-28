@@ -27,7 +27,7 @@ from sage.structure.element import coercion_model
 
 class CellComplexReference:
 
-    def __init__(self, cell_complex, degree, cells=None):
+    def __init__(self, cell_complex, degree, cells=None) -> None:
         """
         Auxiliary base class for chains and cochains.
 
@@ -124,7 +124,7 @@ class Chains(CellComplexReference, CombinatorialFreeModule):
         sage: c.eval(z)
         6
     """
-    def __init__(self, cell_complex, degree, cells=None, base_ring=None):
+    def __init__(self, cell_complex, degree, cells=None, base_ring=None) -> None:
         """
         EXAMPLES::
 
@@ -351,7 +351,7 @@ class Cochains(CellComplexReference, CombinatorialFreeModule):
         sage: c.eval(z)
         6
     """
-    def __init__(self, cell_complex, degree, cells=None, base_ring=None):
+    def __init__(self, cell_complex, degree, cells=None, base_ring=None) -> None:
         """
         EXAMPLES::
 

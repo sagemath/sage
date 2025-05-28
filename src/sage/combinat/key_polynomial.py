@@ -426,7 +426,7 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
             # if R is not a polynomial ring, we know it is self.base_ring()
             return cls.__classcall__(cls, R=R, k=k)
 
-    def __init__(self, R=None, k=None, poly_ring=None):
+    def __init__(self, R=None, k=None, poly_ring=None) -> None:
         r"""
         Initialize ``self``.
 

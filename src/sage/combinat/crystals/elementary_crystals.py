@@ -90,7 +90,7 @@ class AbstractSingleCrystalElement(Element):
     Abstract base class for elements in crystals with a single element.
     """
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         r"""
         EXAMPLES::
 
@@ -115,7 +115,7 @@ class AbstractSingleCrystalElement(Element):
         """
         return hash(self.parent())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         EXAMPLES::
 
@@ -143,7 +143,7 @@ class AbstractSingleCrystalElement(Element):
             return self.parent() is other.parent()
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         EXAMPLES::
 
@@ -262,7 +262,7 @@ class TCrystal(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type, weight)
 
-    def __init__(self, cartan_type, weight):
+    def __init__(self, cartan_type, weight) -> None:
         r"""
         Initialize ``self``.
 
@@ -281,7 +281,7 @@ class TCrystal(UniqueRepresentation, Parent):
         Parent.__init__(self, category=category)
         self.module_generators = (self.element_class(self),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -519,7 +519,7 @@ class RCrystal(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type, weight, dual)
 
-    def __init__(self, cartan_type, weight, dual):
+    def __init__(self, cartan_type, weight, dual) -> None:
         r"""
         Initialize ``self``.
 
@@ -539,7 +539,7 @@ class RCrystal(UniqueRepresentation, Parent):
         Parent.__init__(self, category=category)
         self.module_generators = (self.element_class(self),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -795,7 +795,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             raise ValueError('i must an element of the index set')
         return super().__classcall__(cls, cartan_type, i)
 
-    def __init__(self, cartan_type, i):
+    def __init__(self, cartan_type, i) -> None:
         r"""
         Initialize ``self``.
 
@@ -809,7 +809,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         self._cartan_type = cartan_type
         self.module_generators = (self.element_class(self, 0),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -859,7 +859,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         Element of a `B_i` crystal.
         """
 
-        def __init__(self, parent, m):
+        def __init__(self, parent, m) -> None:
             r"""
             EXAMPLES::
 
@@ -922,7 +922,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
                 return self.parent() is other.parent() and self._m == other._m
             return False
 
-        def __ne__(self, other):
+        def __ne__(self, other) -> bool:
             r"""
             EXAMPLES::
 
@@ -934,7 +934,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             """
             return not self == other
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a LaTeX representation of ``self``.
 
@@ -1098,7 +1098,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
                 P = cartan_type.root_system().weight_lattice()
         return super().__classcall__(cls, cartan_type, P)
 
-    def __init__(self, cartan_type, P):
+    def __init__(self, cartan_type, P) -> None:
         r"""
         Initialize ``self``.
 
@@ -1116,7 +1116,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
         Parent.__init__(self, category=category)
         self.module_generators = (self.element_class(self),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1178,7 +1178,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
         Element of a component crystal.
         """
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             EXAMPLES::
 
@@ -1189,7 +1189,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             """
             return 'c'
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a LaTeX representation of ``self``.
 
@@ -1202,7 +1202,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             """
             return "{c}"
 
-        def epsilon(self, i):
+        def epsilon(self, i) -> int:
             r"""
             Return `\varepsilon_i` of ``self``, which is `0` for all `i`.
 
@@ -1219,7 +1219,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
             """
             return 0
 
-        def phi(self, i):
+        def phi(self, i) -> int:
             r"""
             Return `\varphi_i` of ``self``, which is `0` for all `i`.
 

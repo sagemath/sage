@@ -642,7 +642,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
     """
 
     def __init__(self, Delta_polar, fan, coordinate_points, point_to_ray,
-                 coordinate_names, coordinate_name_indices, base_field):
+                 coordinate_names, coordinate_name_indices, base_field) -> None:
         r"""
         See :class:`CPRFanoToricVariety_field` for documentation.
 
@@ -664,7 +664,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         super().__init__(fan, coordinate_names,
                          coordinate_name_indices, base_field)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -678,7 +678,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         """
         return r"\mathbb{P}_{%s}" % latex(self.Delta())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1285,7 +1285,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
     more elaborate example.
     """
     def __init__(self, P_Delta, monomial_points=None, coefficient_names=None,
-                 coefficient_name_indices=None, coefficients=None):
+                 coefficient_name_indices=None, coefficients=None) -> None:
         r"""
         See :meth:`CPRFanoToricVariety_field.anticanonical_hypersurface` for
         documentation.
@@ -1402,7 +1402,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
     """
     def __init__(self, P_Delta, nef_partition,
                  monomial_points='all', coefficient_names=None,
-                 coefficient_name_indices=None, coefficients=None):
+                 coefficient_name_indices=None, coefficients=None) -> None:
         r"""
         See :meth:`CPRFanoToricVariety_field.nef_complete_intersection` for
         documentation.

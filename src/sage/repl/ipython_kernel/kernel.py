@@ -46,7 +46,7 @@ class SageKernel(IPythonKernel):
 
     shell_class = Type(SageZMQInteractiveShell)
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         """
         The Sage Jupyter Kernel.
 
@@ -108,13 +108,13 @@ class SageKernel(IPythonKernel):
         from sage.features.sagemath import sagemath_doc_html
 
         if SAGE_DOC_SERVER_URL:
-            def doc_url(path):
+            def doc_url(path) -> str:
                 return f'{SAGE_DOC_SERVER_URL}/{path}'
         elif sagemath_doc_html().is_present() and int(port):
-            def doc_url(path):
+            def doc_url(path) -> str:
                 return f'http://127.0.0.1:{port}/{path}'
         else:
-            def doc_url(path):
+            def doc_url(path) -> str:
                 return f'https://doc.sagemath.org/{path}'
 
         return [

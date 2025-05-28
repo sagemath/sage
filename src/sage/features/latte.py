@@ -27,7 +27,7 @@ class Latte_count(Executable):
     r"""
     Feature for the executable ``count`` from :ref:`LattE integrale <spkg_latte_int>`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -44,7 +44,7 @@ class Latte_integrate(Executable):
     r"""
     Feature for the executable ``integrate`` from :ref:`LattE integrale <spkg_latte_int>`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -68,7 +68,7 @@ class Latte(JoinFeature):
         sage: Latte().is_present()  # optional - latte_int
         FeatureTestResult('latte_int', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

@@ -297,7 +297,7 @@ def _standard_tags() -> frozenset[str]:
                      if feature._spkg_type() == 'standard')
 
 
-def _tag_group(tag):
+def _tag_group(tag) -> str:
     r"""
     Classify a doctest tag as belonging to one of 4 groups.
 
@@ -638,7 +638,7 @@ def get_source(example):
     return getattr(example, 'sage_source', example.source)
 
 
-def reduce_hex(fingerprints):
+def reduce_hex(fingerprints) -> str:
     """
     Return a symmetric function of the arguments as hex strings.
 
@@ -682,7 +682,7 @@ class OriginalSource:
         ....:     ex.source
         'doctest_var = 42; doctest_var^2\n'
     """
-    def __init__(self, example):
+    def __init__(self, example) -> None:
         """
         Swaps out the source for the sage_source of a doctest example.
 
@@ -756,7 +756,7 @@ class SageDocTestParser(doctest.DocTestParser):
     optionals: dict[str, int]
     probed_tags: Union[bool, set[str]]
 
-    def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
+    def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()) -> None:
         r"""
         INPUT:
 
@@ -815,7 +815,7 @@ class SageDocTestParser(doctest.DocTestParser):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 

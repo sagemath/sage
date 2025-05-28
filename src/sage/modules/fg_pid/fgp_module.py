@@ -336,7 +336,7 @@ class FGP_Module_class(Module):
     # module. Should be overridden in derived classes.
     Element = FGP_Element
 
-    def __init__(self, V, W, check=True):
+    def __init__(self, V, W, check=True) -> None:
         """
         INPUT:
 
@@ -470,7 +470,7 @@ class FGP_Module_class(Module):
         raise ValueError("Scalar multiplication of a module is only " +
                          "defined for an element of the base ring.")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this module.
 
@@ -529,7 +529,7 @@ class FGP_Module_class(Module):
             return False
         return self._V == other._V and self._W == other._W
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff ``self`` is not equal to ``other``.
 
@@ -675,7 +675,7 @@ class FGP_Module_class(Module):
             raise TypeError(msg)
         return self.element_class(self, self._V(x))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return true if ``x`` is contained in ``self``.
 

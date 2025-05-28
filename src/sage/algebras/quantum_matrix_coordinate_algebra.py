@@ -62,7 +62,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
         return super().__classcall__(cls,
                                      q=q, bar=bar, R=q.parent(), **kwds)
 
-    def __init__(self, gp_indices, n, q, bar, R, category, indices_key=None):
+    def __init__(self, gp_indices, n, q, bar, R, category, indices_key=None) -> None:
         """
         Initialize ``self``.
 
@@ -506,7 +506,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
                                      q=q, bar=bar,
                                      R=R)
 
-    def __init__(self, m, n, q, bar, R):
+    def __init__(self, m, n, q, bar, R) -> None:
         """
         Initialize ``self``.
 
@@ -558,7 +558,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         txt = "Quantized coordinate algebra of M({}, {}) with q={} over {}"
         return txt.format(self._m, self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -741,7 +741,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
         """
         return super().__classcall__(cls, n=n, q=q, bar=bar, R=R)
 
-    def __init__(self, n, q, bar, R):
+    def __init__(self, n, q, bar, R) -> None:
         """
         Initialize ``self``.
 
@@ -776,7 +776,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
         txt = "Quantized coordinate algebra of GL({}) with q={} over {}"
         return txt.format(self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

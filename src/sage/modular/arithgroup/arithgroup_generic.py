@@ -144,7 +144,7 @@ class ArithmeticSubgroup(Group):
             return x
         raise TypeError("matrix %s is not an element of %s" % (x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Test if x is an element of this group.
 

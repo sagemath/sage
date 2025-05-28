@@ -72,7 +72,7 @@ def _nonperiodic_autocorrelation(sequences, j):
     return result
 
 
-def is_skew(seq, verbose=False):
+def is_skew(seq, verbose=False) -> bool:
     r"""
     Check if the given sequence is skew.
 
@@ -164,7 +164,7 @@ def is_symmetric(seq, verbose=False) -> bool:
     return True
 
 
-def is_T_sequences_set(sequences, verbose=False):
+def is_T_sequences_set(sequences, verbose=False) -> bool:
     r"""
     Check if a family of sequences is composed of T-sequences.
 
@@ -626,7 +626,7 @@ def base_sequences_construction(turyn_type_seqs, check=True):
     return [A, B, C, D]
 
 
-def is_base_sequences_tuple(base_sequences, verbose=False):
+def is_base_sequences_tuple(base_sequences, verbose=False) -> bool:
     r"""Check if the given sequences are base sequences.
 
     Four (-1, +1) sequences `A, B, C, D` of length `n+p, n+p, n, n` are called

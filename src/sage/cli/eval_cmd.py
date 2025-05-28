@@ -26,7 +26,7 @@ class EvalCmd:
             help="execute the given command as sage code",
         )
 
-    def __init__(self, options: CliOptions):
+    def __init__(self, options: CliOptions) -> None:
         r"""
         Initialize the command.
         """

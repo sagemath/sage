@@ -220,7 +220,7 @@ class Huffman(SageObject):
         True
     """
 
-    def __init__(self, source):
+    def __init__(self, source) -> None:
         r"""
         Constructor for Huffman.
 

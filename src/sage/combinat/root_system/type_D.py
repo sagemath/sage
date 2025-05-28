@@ -122,7 +122,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, Ca
 
 
 class CartanType(CartanType_standard_finite, CartanType_simply_laced):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -165,7 +165,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
         if n >= 3:
             self._add_abstract_superclass(CartanType_simple)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 
@@ -178,7 +178,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced):
 
     AmbientSpace = AmbientSpace
 
-    def is_atomic(self):
+    def is_atomic(self) -> bool:
         """
         Implement :meth:`CartanType_abstract.is_atomic`.
 

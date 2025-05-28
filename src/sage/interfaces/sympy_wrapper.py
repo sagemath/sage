@@ -107,7 +107,7 @@ class SageSet(Set):
         return self._sage_().is_finite()
 
     @property
-    def is_iterable(self):
+    def is_iterable(self) -> bool:
         r"""
         Return whether the set ``self`` is iterable.
 
@@ -163,7 +163,7 @@ class SageSet(Set):
             return None
         return element in self._sage_()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the cardinality of the finite set ``self``.
 
@@ -177,7 +177,7 @@ class SageSet(Set):
         """
         return len(self._sage_())
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return the print representation of ``self``.
 

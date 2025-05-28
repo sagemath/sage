@@ -608,7 +608,7 @@ class Homset(Set_generic):
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, X, Y, category=None, base=None, check=True):
+    def __init__(self, X, Y, category=None, base=None, check=True) -> None:
         r"""
         TESTS::
 
@@ -734,7 +734,7 @@ class Homset(Set_generic):
         """
         return Hom, (self._domain, self._codomain, self.__category, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1095,7 +1095,7 @@ class Homset(Set_generic):
                 and self._codomain == other._codomain
                 and self.__category == other.__category)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check for not-equality of ``self`` and ``other``.
 
@@ -1114,7 +1114,7 @@ class Homset(Set_generic):
         """
         return not (self == other)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether the parent of the argument is ``self``.
 
@@ -1265,7 +1265,7 @@ class Homset(Set_generic):
 
 # Really needed???
 class HomsetWithBase(Homset):
-    def __init__(self, X, Y, category=None, check=True, base=None):
+    def __init__(self, X, Y, category=None, check=True, base=None) -> None:
         r"""
         TESTS::
 

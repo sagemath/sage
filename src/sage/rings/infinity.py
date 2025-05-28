@@ -485,7 +485,7 @@ class AnInfinity:
         """
         return self * ~other
 
-    def __float__(self):
+    def __float__(self) -> float:
         r"""
         Generate a floating-point infinity.
 
@@ -565,7 +565,7 @@ class AnInfinity:
 
 class UnsignedInfinityRing_class(Singleton, Parent):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -759,7 +759,7 @@ UnsignedInfinityRing = UnsignedInfinityRing_class()
 
 
 class LessThanInfinity(_uniq, RingElement):
-    def __init__(self, parent=UnsignedInfinityRing):
+    def __init__(self, parent=UnsignedInfinityRing) -> None:
         """
         Initialize ``self``.
 
@@ -892,7 +892,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
     _sign = 0
     _sign_char = ''
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1007,7 +1007,7 @@ class SignError(ArithmeticError):
 
 
 class InfinityRing_class(Singleton, CommutativeRing):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1303,7 +1303,7 @@ class InfinityRing_class(Singleton, CommutativeRing):
 
 class FiniteNumber(RingElement):
 
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         Initialize ``self``.
 
@@ -1569,7 +1569,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
     _sign = -1
     _sign_char = '-'
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1668,7 +1668,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
     _sign = 1
     _sign_char = '+'
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 

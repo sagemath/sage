@@ -360,7 +360,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         r"""
         Initialize the RiggedConfigurations class.
 
@@ -451,7 +451,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         convention = dict(link_to=(tableau.Tableaux.options,'convention'))
         notation = dict(alt_name='convention')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1095,7 +1095,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
         B = tuple(map(tuple, B))
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, dims):
+    def __init__(self, cartan_type, dims) -> None:
         """
         Initialize ``self``.
 

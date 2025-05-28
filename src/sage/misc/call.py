@@ -21,7 +21,7 @@ Attribute and method calling
 
 
 class AttrCallObject:
-    def __init__(self, name, args, kwds):
+    def __init__(self, name, args, kwds) -> None:
         """
         TESTS::
 
@@ -51,7 +51,7 @@ class AttrCallObject:
         """
         return getattr(x, self.name)(*(self.args + args), **self.kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of this object.
 
@@ -89,7 +89,7 @@ class AttrCallObject:
         """
         return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Equality testing.
 

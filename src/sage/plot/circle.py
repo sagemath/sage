@@ -57,7 +57,7 @@ class Circle(GraphicPrimitive):
 
         sage: C = circle((2,3), 5)
     """
-    def __init__(self, x, y, r, options):
+    def __init__(self, x, y, r, options) -> None:
         """
         Initialize base class Circle.
 
@@ -123,7 +123,7 @@ class Circle(GraphicPrimitive):
                 "respectively.",
                 'clip': 'Whether or not to clip the circle.'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of Circle primitive.
 

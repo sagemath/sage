@@ -115,7 +115,7 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
 
 class YangBaxterGraph_generic(SageObject):
-    def __init__(self, root, operators):
+    def __init__(self, root, operators) -> None:
         r"""
         A class to model the Yang-Baxter graph defined by ``root`` and
         ``operators``.
@@ -276,7 +276,7 @@ class YangBaxterGraph_generic(SageObject):
         """
         return self._digraph.vertex_iterator()
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of vertices in ``self``.
 
@@ -547,7 +547,7 @@ class YangBaxterGraph_generic(SageObject):
 # *********** Yang-Baxter Graphs defined by a partition ***********
 
 class YangBaxterGraph_partition(YangBaxterGraph_generic):
-    def __init__(self, partition):
+    def __init__(self, partition) -> None:
         r"""
         A class to model the Yang-Baxter graph of a partition.
 
@@ -754,7 +754,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
 
 
 class SwapOperator(SageObject):
-    def __init__(self, i):
+    def __init__(self, i) -> None:
         r"""
         The operator that swaps the items in positions ``i`` and ``i+1``.
 

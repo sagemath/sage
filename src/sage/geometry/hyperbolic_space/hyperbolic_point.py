@@ -185,7 +185,7 @@ class HyperbolicPoint(Element):
         ...
         NotImplementedError: boundary points are not implemented in the HM model
     """
-    def __init__(self, model, coordinates, is_boundary, check=True, **graphics_options):
+    def __init__(self, model, coordinates, is_boundary, check=True, **graphics_options) -> None:
         r"""
         See ``HyperbolicPoint`` for full documentation.
 

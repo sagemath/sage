@@ -30,7 +30,7 @@ class Triangle:
     """
     A graphical triangle class.
     """
-    def __init__(self, a, b, c, color=0):
+    def __init__(self, a, b, c, color=0) -> None:
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space.
 
@@ -49,7 +49,7 @@ class Triangle:
         self._c = c
         self._color = color
 
-    def str(self):
+    def str(self) -> str:
         """
         Return a string representation of an instance of the Triangle
         class of the form
@@ -101,7 +101,7 @@ class SmoothTriangle(Triangle):
     """
     A class for smoothed triangles.
     """
-    def __init__(self, a, b, c, da, db, dc, color=0):
+    def __init__(self, a, b, c, da, db, dc, color=0) -> None:
         """
         a, b, c : triples (x,y,z) representing corners on a triangle in 3-space
         da, db, dc : triples (dx,dy,dz) representing the normal vector at each point a,b,c
@@ -121,7 +121,7 @@ class SmoothTriangle(Triangle):
         self._dc = dc
         self._color = color
 
-    def str(self):
+    def str(self) -> str:
         """
         Return a string representation of the SmoothTriangle of the form.
 
@@ -241,7 +241,7 @@ class TrianglePlot:
         return "".join(o.str() for o in self._objects)
 
     def __init__(self, triangle_factory, f, min_x__max_x, min_y__max_y, g=None,
-                 min_depth=4, max_depth=8, num_colors=None, max_bend=.3):
+                 min_depth=4, max_depth=8, num_colors=None, max_bend=.3) -> None:
         """
 
         TESTS::
@@ -568,7 +568,7 @@ class PlotBlock:
     """
     A container class to hold information about spatial blocks.
     """
-    def __init__(self, left, left_c, top, top_c, right, right_c, bottom, bottom_c):
+    def __init__(self, left, left_c, top, top_c, right, right_c, bottom, bottom_c) -> None:
         """
 
         TESTS::

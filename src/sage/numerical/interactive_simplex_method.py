@@ -634,7 +634,7 @@ class InteractiveLPProblem(SageObject):
 
     def __init__(self, A, b, c, x='x',
                  constraint_type='<=', variable_type='', problem_type='max',
-                 base_ring=None, is_primal=True, objective_constant_term=0):
+                 base_ring=None, is_primal=True, objective_constant_term=0) -> None:
         r"""
         See :class:`InteractiveLPProblem` for documentation.
 
@@ -790,7 +790,7 @@ class InteractiveLPProblem(SageObject):
         lines.append(r"\end{array}")
         return "\n".join(lines)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1188,7 +1188,7 @@ class InteractiveLPProblem(SageObject):
             eqns = [[R(_) for _ in eqn] for eqn in eqns]
         return Polyhedron(ieqs=ieqs, eqns=eqns, base_ring=R)
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         r"""
         Check if ``self`` is bounded.
 
@@ -1914,7 +1914,7 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
     def __init__(self, A, b, c, x='x', problem_type='max',
                  slack_variables=None, auxiliary_variable=None,
                  base_ring=None, is_primal=True, objective_name=None,
-                 objective_constant_term=0):
+                 objective_constant_term=0) -> None:
         r"""
         See :class:`InteractiveLPProblemStandardForm` for documentation.
 
@@ -2656,7 +2656,7 @@ class LPAbstractDictionary(SageObject):
     and :class:`LPRevisedDictionary` for useful extensions.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize internal fields for entering and leaving variables.
 
@@ -2728,7 +2728,7 @@ class LPAbstractDictionary(SageObject):
         else:
             raise ValueError("direction must be either primal or dual")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -3775,7 +3775,7 @@ class LPDictionary(LPAbstractDictionary):
 
     def __init__(self, A, b, c, objective_value,
                  basic_variables, nonbasic_variables,
-                 objective_name):
+                 objective_name) -> None:
         r"""
         See :class:`LPDictionary` for documentation.
 
@@ -4386,7 +4386,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
     dictionary entries.
     """
 
-    def __init__(self, problem, basic_variables):
+    def __init__(self, problem, basic_variables) -> None:
         r"""
         See :class:`LPRevisedDictionary` for documentation.
 

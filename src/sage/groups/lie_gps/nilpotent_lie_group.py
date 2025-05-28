@@ -209,7 +209,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         exp(0)
     """
 
-    def __init__(self, L, name, **kwds):
+    def __init__(self, L, name, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -256,7 +256,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         bch = L_SR.bch(L_SR.from_vector(a), L_SR.from_vector(b), L.step())
         self._group_law = vector(SR, (zk.expand() for zk in bch.to_vector()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -850,7 +850,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             exp(X + Y + 1/2*Z)
         """
 
-        def __init__(self, parent, **kwds):
+        def __init__(self, parent, **kwds) -> None:
             r"""
             Initialize ``self``.
 
@@ -906,7 +906,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             return G.point([gk.expand() for gk in G._group_law.subs(sd)],
                            chart=G._Exp1)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return a string representation of ``self``.
 

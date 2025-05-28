@@ -23,7 +23,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
     Groupes et Algèbres de Lie, Ch. 4,5,6 (planche VIII).
     """
 
-    def __init__(self, root_system, base_ring):
+    def __init__(self, root_system, base_ring) -> None:
         r"""
         Initialize the ambient lattice for the root system of type `F_4`.
 
@@ -202,7 +202,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanTy
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -231,7 +231,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         CartanType_standard_finite.__init__(self, "F", 4)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -246,7 +246,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     AmbientSpace = AmbientSpace
 
-    def coxeter_number(self):
+    def coxeter_number(self) -> int:
         """
         Return the Coxeter number associated with ``self``.
 
@@ -257,7 +257,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         return 12
 
-    def dual_coxeter_number(self):
+    def dual_coxeter_number(self) -> int:
         """
         Return the dual Coxeter number associated with ``self``.
 

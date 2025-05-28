@@ -2712,7 +2712,7 @@ class CoxeterGroups(Category_singleton):
             return self == other
 
         @cached_in_parent_method
-        def weak_le(self, other, side='right'):
+        def weak_le(self, other, side='right') -> bool:
             r"""
             Perform the comparison between ``self`` and ``other`` in
             weak (Bruhat) order.
@@ -2870,7 +2870,7 @@ class CoxeterGroups(Category_singleton):
                     i = 0
             return sorting_word
 
-        def is_coxeter_sortable(self, c, sorting_word=None):
+        def is_coxeter_sortable(self, c, sorting_word=None) -> bool:
             r"""
             Return whether ``self`` is ``c``-sortable.
 

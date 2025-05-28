@@ -1048,7 +1048,7 @@ class Units(ExtraTabCompletion):
         sage: units.power
         Collection of units of power: cheval_vapeur horsepower watt
     """
-    def __init__(self, data, name=''):
+    def __init__(self, data, name='') -> None:
         """
         EXAMPLES::
 
@@ -1109,7 +1109,7 @@ class Units(ExtraTabCompletion):
             return False
         return (self.__name, self.__data) == (other.__name, other.__data)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -1182,7 +1182,7 @@ class Units(ExtraTabCompletion):
         self.__units[name] = U
         return U
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of this collection of units.
 

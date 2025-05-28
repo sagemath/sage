@@ -17,7 +17,7 @@ class Glucose(Executable):
         sage: Glucose().is_present()                  # optional - glucose
         FeatureTestResult('glucose', True)
     """
-    def __init__(self, executable="glucose"):
+    def __init__(self, executable="glucose") -> None:
         r"""
         TESTS::
 
@@ -40,7 +40,7 @@ class Kissat(Executable):
         sage: Kissat().is_present()                             # optional - kissat
         FeatureTestResult('kissat', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -62,7 +62,7 @@ class Pycosat(PythonModule):
         sage: Pycosat().is_present()                  # optional - pycosat
         FeatureTestResult('pycosat', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -84,7 +84,7 @@ class Pycryptosat(PythonModule):
         sage: Pycryptosat().is_present()              # optional - pycryptosat
         FeatureTestResult('pycryptosat', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

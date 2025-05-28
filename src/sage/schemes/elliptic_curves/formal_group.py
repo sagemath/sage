@@ -23,7 +23,7 @@ class EllipticCurveFormalGroup(SageObject):
     r"""
     The formal group associated to an elliptic curve.
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         """
         EXAMPLES::
 
@@ -53,7 +53,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         return self.__E == other.__E
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -67,7 +67,7 @@ class EllipticCurveFormalGroup(SageObject):
         """
         return not (self == other)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

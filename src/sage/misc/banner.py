@@ -186,7 +186,7 @@ def version_dict():
 
 
 def require_version(major, minor=0, tiny=0, prerelease=False,
-                    print_message=False):
+                    print_message=False) -> bool:
     """
     Return ``True`` if Sage version is at least ``major.minor.tiny``.
 

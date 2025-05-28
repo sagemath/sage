@@ -859,7 +859,7 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
     """
     def __init__(self, parent, on_gens, cartan_type=None,
                  virtualization=None, scaling_factors=None,
-                 gens=None, check=True):
+                 gens=None, check=True) -> None:
         """
         Construct a crystal morphism.
 
@@ -962,7 +962,7 @@ class HighestWeightCrystalHomset(CrystalHomset):
         See :class:`sage.categories.crystals.CrystalHomset` for more
         information.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         """
         Initialize ``self``.
 

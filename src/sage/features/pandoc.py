@@ -26,7 +26,7 @@ class Pandoc(Executable):
         sage: Pandoc().is_present()  # optional - pandoc
         FeatureTestResult('pandoc', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

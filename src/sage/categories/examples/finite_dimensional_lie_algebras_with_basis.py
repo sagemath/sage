@@ -80,7 +80,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             n = M.dimension()
         return super().__classcall__(cls, R, n=n, M=M, ambient=ambient)
 
-    def __init__(self, R, n=None, M=None, ambient=None):
+    def __init__(self, R, n=None, M=None, ambient=None) -> None:
         """
         EXAMPLES::
 
@@ -377,7 +377,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                       for b in self.basis()])
 
     class Element(BaseExample.Element):
-        def __init__(self, parent, value):
+        def __init__(self, parent, value) -> None:
             """
             Initialize ``self``.
 

@@ -5,10 +5,12 @@ AUTHOR:
 
 - Martin Albrecht
 """
+from types import TracebackType
+from typing import Optional, Type
 
 
 class LibSingularGBDefaultContext:
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -68,7 +70,7 @@ class LibSingularGBDefaultContext:
         self.libsingular_option_context.opt['deg_bound'] = 0
         self.libsingular_option_context.opt['mult_bound'] = 0
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         """
         EXAMPLES::
 

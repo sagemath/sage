@@ -285,7 +285,7 @@ DEFAULT_PLOT_OPTIONS = {
 
 
 class GraphPlot(SageObject):
-    def __init__(self, graph, options):
+    def __init__(self, graph, options) -> None:
         """
         Return a ``GraphPlot`` object, which stores all the parameters needed
         for plotting (Di)Graphs.
@@ -335,7 +335,7 @@ class GraphPlot(SageObject):
         self.set_vertices()
         self.set_edges()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of a ``GraphPlot`` object.
 

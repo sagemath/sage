@@ -412,7 +412,7 @@ def gamma_list_to_cyclotomic(galist):
 class HypergeometricData:
     _gauss_table = {}
 
-    def __init__(self, cyclotomic=None, alpha_beta=None, gamma_list=None):
+    def __init__(self, cyclotomic=None, alpha_beta=None, gamma_list=None) -> None:
         r"""
         Creation of hypergeometric motives.
 

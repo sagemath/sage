@@ -46,7 +46,7 @@ class MVPolytope(PBWCrystalElement):
         sage: animate(frames).show(delay=60) # optional -- ImageMagick # long time
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -358,7 +358,7 @@ class MVPolytopes(PBWCrystal):
     - [Kam2010]_
     """
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -373,7 +373,7 @@ class MVPolytopes(PBWCrystal):
                                "P": self.weight_lattice_realization(),
                                "circle_size": 0.1}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -457,7 +457,7 @@ class Kash(Expect):
                  restart_on_ctrlc=True,
                  logfile=None,
                  server=None,
-                 server_tmpdir=None):
+                 server_tmpdir=None) -> None:
         """
         INPUT:
 
@@ -501,7 +501,7 @@ class Kash(Expect):
         """
         pass
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         return 'Read("%s");' % filename
 
     def _eval_line_using_file(self, line):
@@ -524,7 +524,7 @@ class Kash(Expect):
     def __reduce__(self):
         return reduce_load_Kash, tuple([])
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         return 'quit;'
 
     def _start(self):
@@ -644,16 +644,16 @@ class Kash(Expect):
     def _contains(self, v1, v2):
         return self.eval('%s in %s' % (v1, v2)) == "TRUE"
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         return ":="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         return "="
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         return "TRUE"
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         return "FALSE"
 
     def function_call(self, function, args=None, kwds=None):
@@ -671,7 +671,7 @@ class Kash(Expect):
                                         for key, value in kwds.items()])
         return self.new(s)
 
-    def _function_call_string(self, function, args, kwds):
+    def _function_call_string(self, function, args, kwds) -> str:
         """
         Return the string used to make function calls.
 
@@ -700,11 +700,11 @@ class KashElement(ExpectElement):
         other._check_valid()
         return self.parent()('%s mod %s' % (self._name, other._name))
 
-    def __len__(self):
+    def __len__(self) -> int:
         self._check_valid()
         return int(self.parent().eval('Length(%s)' % self.name()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this Kash element is not 0 or FALSE.
 
@@ -781,7 +781,7 @@ class KashElement(ExpectElement):
 
 
 class KashDocumentation(list):
-    def __repr__(self):
+    def __repr__(self) -> str:
         if len(self) == 0:
             return "No matches."
         return '\n'.join(self)

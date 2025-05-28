@@ -7,7 +7,7 @@ from sage.symbolic.function import GinacFunction
 
 
 class Function_sin(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sine function.
 
@@ -136,7 +136,7 @@ sin = Function_sin()
 
 
 class Function_cos(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The cosine function.
 
@@ -204,7 +204,7 @@ cos = Function_cos()
 
 
 class Function_tan(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The tangent function.
 
@@ -270,7 +270,7 @@ tan = Function_tan()
 
 
 class Function_cot(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The cotangent function.
 
@@ -371,7 +371,7 @@ cot = Function_cot()
 
 
 class Function_sec(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The secant function.
 
@@ -445,7 +445,7 @@ sec = Function_sec()
 
 
 class Function_csc(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The cosecant function.
 
@@ -523,7 +523,7 @@ csc = Function_csc()
 ###################################
 
 class Function_arcsin(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The arcsine function.
 
@@ -587,7 +587,7 @@ arcsin = asin = Function_arcsin()
 
 
 class Function_arccos(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The arccosine function.
 
@@ -656,7 +656,7 @@ arccos = acos = Function_arccos()
 
 
 class Function_arctan(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The arctangent function.
 
@@ -730,7 +730,7 @@ arctan = atan = Function_arctan()
 
 
 class Function_arccot(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The arccotangent function.
 
@@ -795,7 +795,7 @@ arccot = acot = Function_arccot()
 
 
 class Function_arccsc(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The arccosecant function.
 
@@ -856,7 +856,7 @@ arccsc = acsc = Function_arccsc()
 
 
 class Function_arcsec(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The arcsecant function.
 
@@ -919,7 +919,7 @@ arcsec = asec = Function_arcsec()
 
 
 class Function_arctan2(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The modified arctangent function.
 

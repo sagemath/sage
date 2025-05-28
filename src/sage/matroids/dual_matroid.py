@@ -81,7 +81,7 @@ class DualMatroid(Matroid):
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}'
     """
 
-    def __init__(self, matroid):
+    def __init__(self, matroid) -> None:
         """
         See the class definition for documentation.
 
@@ -446,7 +446,7 @@ class DualMatroid(Matroid):
             return False
         return self._matroid == other._matroid
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

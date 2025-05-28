@@ -6,7 +6,7 @@ class Python:
     Allow for evaluating a chunk of code without any preparsing.
     """
 
-    def eval(self, x, globals, locals=None):
+    def eval(self, x, globals, locals=None) -> str:
         r"""
         Evaluate x with given globals; locals is completely ignored.
 

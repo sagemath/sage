@@ -315,7 +315,7 @@ class LiE(ExtraTabCompletion, Expect):
     def __init__(self,
                  maxread=None, script_subdirectory=None,
                  logfile=None,
-                 server=None):
+                 server=None) -> None:
         """
         EXAMPLES::
 

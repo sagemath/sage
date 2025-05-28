@@ -263,7 +263,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
     Element = FreeModuleAutomorphism
 
-    def __init__(self, fmodule):
+    def __init__(self, fmodule) -> None:
         r"""
         See :class:`FreeModuleLinearGroup` for documentation and examples.
 
@@ -515,7 +515,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
     #### End of monoid methods ####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

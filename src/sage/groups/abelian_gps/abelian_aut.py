@@ -103,7 +103,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         sage: G = AbelianGroupGap([2,3,4,5])
         sage: f = G.aut().an_element()
     """
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         """
         The Python constructor.
 
@@ -235,7 +235,7 @@ class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
     """
     Element = AbelianGroupAutomorphism
 
-    def __init__(self, domain, gap_group, category, ambient=None):
+    def __init__(self, domain, gap_group, category, ambient=None) -> None:
         """
         Constructor.
 
@@ -433,7 +433,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
     """
     Element = AbelianGroupAutomorphism
 
-    def __init__(self, AbelianGroupGap):
+    def __init__(self, AbelianGroupGap) -> None:
         """
         Constructor.
 
@@ -457,7 +457,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
                                                    category=category,
                                                    ambient=None)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -499,7 +499,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
     """
     Element = AbelianGroupAutomorphism
 
-    def __init__(self, ambient, generators):
+    def __init__(self, ambient, generators) -> None:
         """
         Constructor.
 
@@ -523,7 +523,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
                                                    ambient=ambient)
         self._covering_matrix_ring = ambient._covering_matrix_ring
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         The string representation of ``self``.
 

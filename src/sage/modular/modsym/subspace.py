@@ -33,7 +33,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
     # Special Methods
     ################################
     def __init__(self, ambient_hecke_module, submodule,
-                 dual_free_module=None, check=False):
+                 dual_free_module=None, check=False) -> None:
         """
         INPUT:
 
@@ -74,7 +74,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
                                     A.character(), A.sign(), A.base_ring())
         hecke.HeckeSubmodule.__init__(self, A, submodule, dual_free_module=dual_free_module, check=check)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

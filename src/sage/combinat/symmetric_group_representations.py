@@ -303,7 +303,7 @@ class SymmetricGroupRepresentation_generic_class(Element):
     """
     _default_ring = None
 
-    def __init__(self, parent, partition):
+    def __init__(self, parent, partition) -> None:
         r"""
         An irreducible representation of the symmetric group corresponding
         to ``partition``.
@@ -379,7 +379,7 @@ class SymmetricGroupRepresentation_generic_class(Element):
             return False
         return (self._ring, self._partition) == (other._ring, other._partition)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for inequality.
 
@@ -504,7 +504,7 @@ class SymmetricGroupRepresentations_class(UniqueRepresentation,Parent):
     representations of the symmetric group.
     """
 
-    def __init__(self, n, ring=None, cache_matrices=True):
+    def __init__(self, n, ring=None, cache_matrices=True) -> None:
         r"""
         Irreducible representations of the symmetric group.
 
@@ -765,7 +765,7 @@ class YoungRepresentation_generic(SymmetricGroupRepresentation_generic_class):
 
 
 class YoungRepresentation_Seminormal(YoungRepresentation_generic):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -800,7 +800,7 @@ class YoungRepresentations_Seminormal(SymmetricGroupRepresentations_class):
 
     Element = YoungRepresentation_Seminormal
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -816,7 +816,7 @@ class YoungRepresentations_Seminormal(SymmetricGroupRepresentations_class):
 
 
 class YoungRepresentation_Orthogonal(YoungRepresentation_generic):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -851,7 +851,7 @@ class YoungRepresentations_Orthogonal(SymmetricGroupRepresentations_class):
 
     Element = YoungRepresentation_Orthogonal
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -867,7 +867,7 @@ class YoungRepresentations_Orthogonal(SymmetricGroupRepresentations_class):
 
 
 class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1025,7 +1025,7 @@ class SpechtRepresentations(SymmetricGroupRepresentations_class):
 
     Element = SpechtRepresentation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1052,7 +1052,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
     Cholesky decomposition of the unique solution `U` to the equation
     `\rho(g)^T U \rho(g) = U` for all `g` in `G`.
     """
-    def __init__(self, parent, partition):
+    def __init__(self, parent, partition) -> None:
         r"""
         Initialize ``self``.
 
@@ -1083,7 +1083,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
             self._specht = Permutations(sum(partition)).algebra(parent._ring).specht_module(partition)
         super().__init__(parent, partition)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1217,7 +1217,7 @@ class UnitaryRepresentations(SymmetricGroupRepresentations_class):
 
     Element = UnitaryRepresentation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1349,7 +1349,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             raise ValueError(f"{shape} is not a partition of {SGA.n}")
         return super().__classcall__(cls, SGA, shape)
 
-    def __init__(self, SGA, shape):
+    def __init__(self, SGA, shape) -> None:
         r"""
         Initialize ``self``.
 
@@ -1393,7 +1393,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         cat = CommutativeRings().Quotients() & Algebras(SGA.base_ring()).Graded().WithBasis().FiniteDimensional()
         QuotientRing_generic.__init__(self, R, I, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1405,7 +1405,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         """
         return "Garsia-Procesi module of shape {} over {}".format(self._shape, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

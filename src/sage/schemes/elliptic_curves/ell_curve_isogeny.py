@@ -105,7 +105,7 @@ from sage.schemes.elliptic_curves.weierstrass_morphism \
 #
 
 
-def _isogeny_determine_algorithm(E, kernel):
+def _isogeny_determine_algorithm(E, kernel) -> str:
     r"""
     Helper function to infer the algorithm to be used from the
     parameters passed to the various isogeny functions.
@@ -991,7 +991,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     # Python Special Functions
     #
 
-    def __init__(self, E, kernel, codomain=None, degree=None, model=None, check=True):
+    def __init__(self, E, kernel, codomain=None, degree=None, model=None, check=True) -> None:
         r"""
         Constructor for ``EllipticCurveIsogeny`` class.
 
@@ -1433,7 +1433,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     # Sage Special Functions
     #
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return basic information about the isogeny as a string.
 
@@ -1451,7 +1451,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         """
         return f'Isogeny of degree {self._degree} from {self._domain} to {self._codomain}'
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the rational maps of the isogeny as a LaTeX string.
 

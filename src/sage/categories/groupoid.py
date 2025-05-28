@@ -32,7 +32,7 @@ class Groupoid(CategoryWithParameters):
         Groupoid with underlying set Dihedral group of order 6 as a permutation group
     """
 
-    def __init__(self, G=None):
+    def __init__(self, G=None) -> None:
         """
         TESTS::
 
@@ -46,7 +46,7 @@ class Groupoid(CategoryWithParameters):
             G = SymmetricGroup(8)
         self.__G = G
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

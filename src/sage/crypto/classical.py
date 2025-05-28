@@ -252,7 +252,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
     - [Sti2006]_
     """
 
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         r"""
         See ``AffineCryptosystem`` for full documentation.
 
@@ -352,7 +352,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
         except Exception:
             raise ValueError("(a, b) = (%s, %s) is outside the range of acceptable values for a key of this affine cryptosystem." % (a, b))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -1319,7 +1319,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S, m):
+    def __init__(self, S, m) -> None:
         r"""
         See ``HillCryptosystem`` for full documentation.
 
@@ -1385,7 +1385,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
                 raise TypeError("A (= %s) must specify a square matrix of degree %s." % (A, m))
         return HillCipher(self, A)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1783,7 +1783,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         ValueError: K (=-2) is outside the range of acceptable values for a key of this shift cryptosystem.
     """
 
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         r"""
         See ``ShiftCryptosystem`` for full documentation.
 
@@ -1912,7 +1912,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         else:
             raise ValueError("K (=%s) is outside the range of acceptable values for a key of this shift cryptosystem." % K)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -3002,7 +3002,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S):
+    def __init__(self, S) -> None:
         """
         See ``SubstitutionCryptosystem`` for full documentation.
 
@@ -3045,7 +3045,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
             raise TypeError("K (= %s) must be a string in the key space." % K)
         return SubstitutionCipher(self, K)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3230,7 +3230,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S, n):
+    def __init__(self, S, n) -> None:
         """
         See ``TranspositionCryptosystem`` for full documentation.
 
@@ -3275,7 +3275,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
             raise TypeError("K (= %s) must be a permutation or list specifying a permutation." % K)
         return TranspositionCipher(self, K)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3470,7 +3470,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S, n):
+    def __init__(self, S, n) -> None:
         """
         See ``VigenereCryptosystem`` for full documentation.
 
@@ -3519,7 +3519,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
             raise TypeError("K (= %s) must specify a string of length %s." % (K, m))
         return VigenereCipher(self, K)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

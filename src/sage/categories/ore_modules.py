@@ -44,7 +44,7 @@ class OreModules(Category_over_base_ring):
             ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
         return cls.__classcall__(cls, ore)
 
-    def __init__(self, ore):
+    def __init__(self, ore) -> None:
         r"""
         Initialize this category.
 
@@ -94,7 +94,7 @@ class OreModules(Category_over_base_ring):
         """
         return [Modules(self.base())]
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         r"""
         Return a string representation naming the objects
         in this category.

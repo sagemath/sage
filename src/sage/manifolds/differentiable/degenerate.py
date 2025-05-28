@@ -109,7 +109,7 @@ class DegenerateManifold(DifferentiableManifold):
     def __init__(self, n, name, metric_name=None, signature=None,
                  base_manifold=None, diff_degree=infinity, latex_name=None,
                  metric_latex_name=None, start_index=0, category=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a degenerate manifold.
 
@@ -428,7 +428,7 @@ class TangentTensor(TensorFieldParal):
             sage: T2(xi.along(Phi)).display()
             sqrt(u^2 + v^2) ∂/∂t
     """
-    def __init__(self, tensor, embedding, screen=None):
+    def __init__(self, tensor, embedding, screen=None) -> None:
         r"""
 
         TESTS::

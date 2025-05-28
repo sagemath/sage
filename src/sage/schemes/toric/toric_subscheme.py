@@ -76,7 +76,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
     # construct instances of the derived class
     # AlgebraicScheme_subscheme_affine_toric instead.
 
-    def __init__(self, toric_variety, polynomials):
+    def __init__(self, toric_variety, polynomials) -> None:
         r"""
         See :class:`AlgebraicScheme_subscheme_toric` for documentation.
 
@@ -585,7 +585,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
                            for i in range(npatches))
         return self._smooth
 
-    def is_nondegenerate(self):
+    def is_nondegenerate(self) -> bool:
         r"""
         Check if ``self`` is nondegenerate.
 
@@ -766,7 +766,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
           x^3 + y^3
     """
 
-    def __init__(self, toric_variety, polynomials):
+    def __init__(self, toric_variety, polynomials) -> None:
         r"""
         See :class:`AlgebraicScheme_subscheme_toric` for documentation.
 

@@ -207,7 +207,7 @@ class HomologyFunctor(Functor):
           From: Z
           To:   Z
     """
-    def __init__(self, domain, n=None):
+    def __init__(self, domain, n=None) -> None:
         r"""
         Construct the homology functor.
 

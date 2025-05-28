@@ -41,7 +41,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         ct = CartanType(cartan_type)
         return super().__classcall__(cls, ct, *args, **options)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         TESTS::
 
@@ -62,7 +62,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         self._coxgroup = get_CoxGroup(cartan_type)
         self._cartan_type = cartan_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -424,7 +424,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
         wrapped_class = CoxGroupElement
 
-        def __init__(self, parent, x):
+        def __init__(self, parent, x) -> None:
             """
             TESTS::
 
@@ -556,7 +556,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return self.__class__(self.parent(), self.value * y.value)
 
-        def __len__(self):
+        def __len__(self) -> int:
             """
             EXAMPLES::
 
@@ -605,7 +605,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return self.value.poincare_polynomial()
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
             Return whether ``i`` is a right descent of this element.
 
@@ -619,7 +619,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return i in self.value.right_descents()
 
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             """
             Return ``True`` if ``i`` is a left descent of this element.
 

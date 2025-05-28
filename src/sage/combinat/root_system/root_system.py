@@ -314,7 +314,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         """
         return super().__classcall__(cls, CartanType(cartan_type), as_dual_of)
 
-    def __init__(self, cartan_type, as_dual_of=None):
+    def __init__(self, cartan_type, as_dual_of=None) -> None:
         """
         TESTS::
 
@@ -364,7 +364,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         if self.ambient_space() is not None:
             TestSuite(self.ambient_space()).run(**options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

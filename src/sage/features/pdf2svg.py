@@ -25,7 +25,7 @@ class pdf2svg(Executable):
         sage: pdf2svg().is_present()             # optional - pdf2svg
         FeatureTestResult('pdf2svg', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

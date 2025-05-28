@@ -176,7 +176,7 @@ class Crystals(Category_singleton):
 
         # TODO: This could be moved to sets
         @cached_method
-        def is_embedding(self):
+        def is_embedding(self) -> bool:
             """
             Check if ``self`` is an injective crystal morphism.
 
@@ -211,7 +211,7 @@ class Crystals(Category_singleton):
             return True
 
         @cached_method
-        def is_strict(self):
+        def is_strict(self) -> bool:
             """
             Check if ``self`` is a strict crystal morphism.
 
@@ -1842,7 +1842,7 @@ class CrystalMorphism(Morphism):
       for the weight, `\varepsilon` and `\varphi`
     """
     def __init__(self, parent, cartan_type=None,
-                 virtualization=None, scaling_factors=None):
+                 virtualization=None, scaling_factors=None) -> None:
         """
         Initialize ``self``.
 
@@ -1872,7 +1872,7 @@ class CrystalMorphism(Morphism):
 
         Morphism.__init__(self, parent)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Used internally in printing this morphism.
 
@@ -1938,7 +1938,7 @@ class CrystalMorphism(Morphism):
     #   we can't overwrite it with the category
     # TODO: This could be moved to sets
     @cached_method
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Check if ``self`` is a surjective crystal morphism.
 
@@ -2055,7 +2055,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
     """
     def __init__(self, parent, on_gens, cartan_type=None,
                  virtualization=None, scaling_factors=None,
-                 gens=None, check=True):
+                 gens=None, check=True) -> None:
         """
         Construct a virtual crystal morphism.
 
@@ -2497,7 +2497,7 @@ class CrystalHomset(Homset):
         [[-2]] |--> [[-2, -2]]
         [[-1]] |--> [[-1, -1]]
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -2513,7 +2513,7 @@ class CrystalHomset(Homset):
         # TODO: Should we make one of the types of morphisms into the self.Element?
         Homset.__init__(self, X, Y, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

@@ -122,7 +122,7 @@ class SubSimplicialSet(SimplicialSet_finite, UniqueRepresentation):
                 L.append((x, tuple(data[x])))
         return super().__classcall__(self, tuple(L), ambient)
 
-    def __init__(self, data, ambient=None):
+    def __init__(self, data, ambient=None) -> None:
         r"""
         Return a finite simplicial set as a subsimplicial set of another
         simplicial set.
@@ -241,7 +241,7 @@ class PullbackOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
             return super().__classcall__(self, tuple(maps))
         return super().__classcall__(self)
 
-    def __init__(self, maps=None):
+    def __init__(self, maps=None) -> None:
         r"""
         Return the pullback obtained from the morphisms ``maps``.
 
@@ -429,7 +429,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
             return super().__classcall__(self, tuple(maps))
         return super().__classcall__(self)
 
-    def __init__(self, maps=None):
+    def __init__(self, maps=None) -> None:
         r"""
         Return the pullback obtained from the morphisms ``maps``.
 
@@ -778,7 +778,7 @@ class ProductOfSimplicialSets(PullbackOfSimplicialSets, Factors):
             return super().__classcall__(cls, factors=tuple(factors))
         return super().__classcall__(cls)
 
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the product of simplicial sets.
 
@@ -1013,7 +1013,7 @@ class ProductOfSimplicialSets_finite(ProductOfSimplicialSets, PullbackOfSimplici
     wedge as a subcomplex. See :meth:`projection_map`,
     :meth:`wedge_as_subset`, and :meth:`fat_wedge_as_subset`
     """
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the product of finite simplicial sets.
 
@@ -1152,7 +1152,7 @@ class PushoutOfSimplicialSets(SimplicialSet_arbitrary, UniqueRepresentation):
                                          vertex_name=vertex_name)
         return super().__classcall__(cls, vertex_name=vertex_name)
 
-    def __init__(self, maps=None, vertex_name=None):
+    def __init__(self, maps=None, vertex_name=None) -> None:
         r"""
         Return the pushout obtained from the morphisms ``maps``.
 
@@ -1419,7 +1419,7 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
                                          vertex_name=vertex_name)
         return super().__classcall__(cls, vertex_name=vertex_name)
 
-    def __init__(self, maps=None, vertex_name=None):
+    def __init__(self, maps=None, vertex_name=None) -> None:
         r"""
         Return the pushout obtained from the morphisms ``maps``.
 
@@ -1689,7 +1689,7 @@ class PushoutOfSimplicialSets_finite(PushoutOfSimplicialSets, SimplicialSet_fini
 
 
 class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
-    def __init__(self, inclusion, vertex_name='*'):
+    def __init__(self, inclusion, vertex_name='*') -> None:
         r"""
         Return the quotient of a simplicial set by a subsimplicial set.
 
@@ -1827,7 +1827,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         self._n_skeleton = (n, ans)
         return ans
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1839,7 +1839,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         """
         return 'Quotient: ({}/{})'.format(self.ambient(), self.subcomplex())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 
@@ -1863,7 +1863,7 @@ class QuotientOfSimplicialSet_finite(QuotientOfSimplicialSet,
     When the simplicial sets involved are finite, there is a
     :meth:`quotient_map` method available.
     """
-    def __init__(self, inclusion, vertex_name='*'):
+    def __init__(self, inclusion, vertex_name='*') -> None:
         r"""
         Return the quotient of a simplicial set by a subsimplicial set.
 
@@ -1931,7 +1931,7 @@ class SmashProductOfSimplicialSets_finite(QuotientOfSimplicialSet_finite,
             return super().__classcall__(cls, factors=tuple(factors))
         return super().__classcall__(cls)
 
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the smash product of finite pointed simplicial sets.
 
@@ -2007,7 +2007,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             return super().__classcall__(cls, factors=tuple(factors))
         return super().__classcall__(cls)
 
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the wedge sum of pointed simplicial sets.
 
@@ -2102,7 +2102,7 @@ class WedgeOfSimplicialSets_finite(WedgeOfSimplicialSets, PushoutOfSimplicialSet
     """
     The wedge sum of finite pointed simplicial sets.
     """
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the wedge sum of finite pointed simplicial sets.
 
@@ -2204,7 +2204,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
             return super().__classcall__(cls, factors=tuple(factors))
         return super().__classcall__(cls)
 
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the disjoint union of simplicial sets.
 
@@ -2313,7 +2313,7 @@ class DisjointUnionOfSimplicialSets_finite(DisjointUnionOfSimplicialSets,
     """
     The disjoint union of finite simplicial sets.
     """
-    def __init__(self, factors=None):
+    def __init__(self, factors=None) -> None:
         r"""
         Return the disjoint union of finite simplicial sets.
 
@@ -2366,7 +2366,7 @@ class DisjointUnionOfSimplicialSets_finite(DisjointUnionOfSimplicialSets,
 
 
 class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Return the unreduced cone on a finite simplicial set.
 
@@ -2437,7 +2437,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         self._basepoint = ans.base_point()
         return ans
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2448,7 +2448,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         """
         return 'Cone of {}'.format(self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 
@@ -2461,7 +2461,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
 
 
 class ConeOfSimplicialSet_finite(ConeOfSimplicialSet, SimplicialSet_finite):
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Return the unreduced cone on a finite simplicial set.
 
@@ -2555,7 +2555,7 @@ class ConeOfSimplicialSet_finite(ConeOfSimplicialSet, SimplicialSet_finite):
 
 
 class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Return the reduced cone on a simplicial set.
 
@@ -2627,7 +2627,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
         self._n_skeleton = (n, ans)
         return ans
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2639,7 +2639,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
         """
         return 'Reduced cone of {}'.format(self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 
@@ -2653,7 +2653,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
 
 class ReducedConeOfSimplicialSet_finite(ReducedConeOfSimplicialSet,
                                         QuotientOfSimplicialSet_finite):
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Return the reduced cone on a simplicial set.
 
@@ -2722,7 +2722,7 @@ class ReducedConeOfSimplicialSet_finite(ReducedConeOfSimplicialSet,
 
 
 class SuspensionOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Return the (reduced) suspension of a simplicial set.
 
@@ -2915,7 +2915,7 @@ class SuspensionOfSimplicialSet_finite(SuspensionOfSimplicialSet,
 
     See :class:`SuspensionOfSimplicialSet` for more information.
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         INPUT:
 

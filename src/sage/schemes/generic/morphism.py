@@ -156,7 +156,7 @@ class SchemeMorphism(Element):
         Category of homsets of schemes
     """
 
-    def __init__(self, parent, codomain=None):
+    def __init__(self, parent, codomain=None) -> None:
         """
         The Python constructor.
 
@@ -298,7 +298,7 @@ class SchemeMorphism(Element):
         """
         raise NotImplementedError
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of ``self``.
 
@@ -679,7 +679,7 @@ class SchemeMorphism_id(SchemeMorphism):
         Scheme endomorphism of Spectrum of Integer Ring
           Defn: Identity map
     """
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         The Python constructor.
 
@@ -693,7 +693,7 @@ class SchemeMorphism_id(SchemeMorphism):
         """
         SchemeMorphism.__init__(self, X.Hom(X))
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return a string representation of the definition of ``self``.
 
@@ -722,7 +722,7 @@ class SchemeMorphism_structure_map(SchemeMorphism):
         Scheme endomorphism of Spectrum of Integer Ring
           Defn: Structure map
     """
-    def __init__(self, parent, codomain=None):
+    def __init__(self, parent, codomain=None) -> None:
         """
         The Python constructor.
 
@@ -741,7 +741,7 @@ class SchemeMorphism_structure_map(SchemeMorphism):
         if self.domain().base_scheme() != self._codomain:
             raise ValueError("parent must have codomain equal the base scheme of domain.")
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return a string representation of the definition of ``self``.
 
@@ -793,7 +793,7 @@ class SchemeMorphism_spec(SchemeMorphism):
           To:   Rational Field
           Defn: x |--> 7
     """
-    def __init__(self, parent, phi, check=True):
+    def __init__(self, parent, phi, check=True) -> None:
         """
         The Python constructor.
 
@@ -853,7 +853,7 @@ class SchemeMorphism_spec(SchemeMorphism):
         S = self.ring_homomorphism().inverse_image(x.prime_ideal())
         return self._codomain(S)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of ``self``.
 
@@ -962,7 +962,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         TypeError: polys (=[e^x, e^y]) must be elements of Multivariate
         Polynomial Ring in x, y over Rational Field
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         """
         The Python constructor.
 
@@ -1002,7 +1002,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
         SchemeMorphism.__init__(self, parent)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Check equality of ``self`` and ``other``.
 
@@ -1205,7 +1205,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         P = [f(x._coords) for f in self.defining_polynomials()]
         return self._codomain.point(P,check)
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         Return a string representation of the definition of ``self``.
 
@@ -1741,7 +1741,7 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
         Scheme endomorphism of Spectrum of Integer Ring
           Defn: Identity map
     """
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         Initialize.
 
@@ -1860,7 +1860,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         return self._coords
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of coordinates.
 

@@ -169,7 +169,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
         ##########################################################################
         # Lattice morphisms
 
-        def is_lattice_morphism(self, f, codomain):
+        def is_lattice_morphism(self, f, codomain) -> bool:
             r"""
             Return whether ``f`` is a morphism of posets from ``self``
             to ``codomain``.

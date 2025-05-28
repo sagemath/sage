@@ -264,7 +264,7 @@ class MatrixGroup_base(Group):
         else:
             return self._ambient
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -327,7 +327,7 @@ class MatrixGroup_base(Group):
             return True
         return super()._repr_option(key)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -433,7 +433,7 @@ class MatrixGroup_generic(MatrixGroup_base):
 
     Element = MatrixGroupElement_generic
 
-    def __init__(self, degree, base_ring, category=None):
+    def __init__(self, degree, base_ring, category=None) -> None:
         """
         Base class for matrix groups over generic base rings.
 

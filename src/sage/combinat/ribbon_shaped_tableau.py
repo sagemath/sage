@@ -102,7 +102,7 @@ class RibbonShapedTableau(SkewTableau):
             return StandardRibbonShapedTableaux()(r)
         raise TypeError("r must be a list of positive integers")
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         """
         Initialize ``self``.
 
@@ -193,7 +193,7 @@ class RibbonShapedTableaux(SkewTableaux):
         # Otherwise arg0 takes the place of the category in pickling
         return super().__classcall__(cls, **kwds)
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -207,7 +207,7 @@ class RibbonShapedTableaux(SkewTableaux):
 
         SkewTableaux.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -264,7 +264,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         # Otherwise arg0 takes the place of the category in pickling
         return super().__classcall__(cls, **kwds)
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -279,7 +279,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
 
         StandardSkewTableaux.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -405,7 +405,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         """
         return super(StandardRibbonShapedTableaux, cls).__classcall__(cls, tuple(shape))
 
-    def __init__(self, shape):
+    def __init__(self, shape) -> None:
         """
         TESTS::
 
@@ -415,7 +415,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         self.shape = shape
         StandardRibbonShapedTableaux.__init__(self, FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

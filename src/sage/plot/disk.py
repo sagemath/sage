@@ -64,7 +64,7 @@ class Disk(GraphicPrimitive):
         sage: disk((2,3), 2, (0,pi/2))
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, point, r, angle, options):
+    def __init__(self, point, r, angle, options) -> None:
         """
         Initialize base class ``Disk``.
 
@@ -137,7 +137,7 @@ class Disk(GraphicPrimitive):
                 'hue': 'The color given as a hue.',
                 'zorder': 'The layer level in which to draw'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of ``Disk`` primitive.
 

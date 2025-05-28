@@ -396,7 +396,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     """
     Element = PolynomialQuotientRingElement
 
-    def __init__(self, ring, polynomial, name=None, category=None):
+    def __init__(self, ring, polynomial, name=None, category=None) -> None:
         """
         TESTS::
 
@@ -695,7 +695,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         return (self.polynomial_ring() == other.polynomial_ring() and
                 self.modulus() == other.modulus())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -769,7 +769,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         self.__singular = S("ideal(fetch(%s,%s))" % (Rpoly.name(),modulus.name()),"qring")
         return self.__singular
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Univariate Quotient Polynomial Ring in %s over %s with modulus %s" % (
             self.variable_name(), self.base_ring(), self.modulus())
 
@@ -1197,7 +1197,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         """
         return self.__polynomial
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of this quotient ring over the base
         ring. This function always returns 1.
@@ -2291,7 +2291,7 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeR
         sage: loads(xbar.dumps()) == xbar
         True
     """
-    def __init__(self, ring, polynomial, name=None, category=None):
+    def __init__(self, ring, polynomial, name=None, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -2429,7 +2429,7 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         sage: loads(xbar.dumps()) == xbar
         True
     """
-    def __init__(self, ring, polynomial, name=None, category=None):
+    def __init__(self, ring, polynomial, name=None, category=None) -> None:
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
 
     def base_field(self):

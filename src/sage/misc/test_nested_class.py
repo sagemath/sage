@@ -54,7 +54,7 @@ from sage.misc.nested_class import NestedClassMetaclass
 
 
 class TestParent1(Parent):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -69,7 +69,7 @@ class TestParent1(Parent):
 
 
 class TestParent2(Parent, metaclass=NestedClassMetaclass):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -87,7 +87,7 @@ class TestParent2(Parent, metaclass=NestedClassMetaclass):
 
 class TestParent3(UniqueRepresentation, Parent):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -102,7 +102,7 @@ class TestParent3(UniqueRepresentation, Parent):
 
 
 class TestParent4(Parent, metaclass=ClasscallMetaclass):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

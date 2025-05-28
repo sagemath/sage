@@ -136,7 +136,7 @@ class ClusterSeed(SageObject):
         A seed for a cluster algebra of rank 4 of type ['D', 4]
     """
 
-    def __init__(self, data, frozen=None, is_principal=False, user_labels=None, user_labels_prefix='x'):
+    def __init__(self, data, frozen=None, is_principal=False, user_labels=None, user_labels_prefix='x') -> None:
         r"""
         Initialize the ClusterSeed ``self`` with the following range of possible attributes:
 
@@ -4828,7 +4828,7 @@ def SetToPath(T):
     return ans
 
 
-def is_LeeLiZel_allowable(T, n, m, b, c):
+def is_LeeLiZel_allowable(T, n, m, b, c) -> bool:
     """
     Check if the subset `T` contributes to the computation of the greedy element `x[m,n]` in the rank two `(b,c)`-cluster algebra.
 
@@ -5137,7 +5137,7 @@ class ClusterVariable(FractionFieldElement):
         (x0*x2 + 1)/x1 alpha[2]
         (x0*x2 + x1 + 1)/(x1*x2) alpha[2] + alpha[3]
     """
-    def __init__(self, parent, numerator, denominator, coerce=True, reduce=True, mutation_type=None, variable_type=None, xdim=0):
+    def __init__(self, parent, numerator, denominator, coerce=True, reduce=True, mutation_type=None, variable_type=None, xdim=0) -> None:
         r"""
         Initialize a cluster variable in the same way that elements in the field of rational functions are initialized.
 

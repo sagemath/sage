@@ -11,7 +11,7 @@ class FourTi2Executable(Executable):
     r"""
     A :class:`~sage.features.Feature` for the :ref:`4ti2 <spkg_4ti2>` executables.
     """
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         r"""
         TESTS::
 
@@ -36,7 +36,7 @@ class FourTi2(JoinFeature):
         sage: FourTi2().is_present()  # optional - 4ti2
         FeatureTestResult('4ti2', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

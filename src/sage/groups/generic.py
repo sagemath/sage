@@ -294,7 +294,7 @@ class multiples:
         3 to the power 3 = 27
         3 to the power 4 = 81
     """
-    def __init__(self, P, n, P0=None, indexed=False, operation='+', op=None):
+    def __init__(self, P, n, P0=None, indexed=False, operation='+', op=None) -> None:
         """
         Create a multiples iterator.
 
@@ -1713,7 +1713,7 @@ def structure_description(G, latex=False):
     """
     import re
 
-    def correct_dihedral_degree(match):
+    def correct_dihedral_degree(match) -> str:
         return "%sD%d" % (match.group(1), int(match.group(2)) // 2)
 
     description = str(G._gap_().StructureDescription())

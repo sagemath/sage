@@ -53,7 +53,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
          [x - y     z]
          [  y*z   x*z]
     """
-    def __init__(self, module, sub):
+    def __init__(self, module, sub) -> None:
         """
         Create this quotient module of ``module`` by a submodule ``sub``.
 
@@ -86,7 +86,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
 
         Module_free_ambient.__init__(self, base_ring, degree=degree, sparse=sparse)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this quotient module.
 
@@ -388,7 +388,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         sage: type(loads(dumps(U)) )
         <class 'sage.modules.quotient_module.FreeModule_ambient_field_quotient_with_category'>
     """
-    def __init__(self, domain, sub, quotient_matrix, lift_matrix, inner_product_matrix=None):
+    def __init__(self, domain, sub, quotient_matrix, lift_matrix, inner_product_matrix=None) -> None:
         """
         Create this quotient space, from the given domain, submodule,
         and quotient_matrix.
@@ -437,7 +437,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         self.__quo_map.register_as_coercion()
         self.__lift_map = self.Hom(domain)(lift_matrix)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the rather verbose string representation of this quotient space V/W.
 

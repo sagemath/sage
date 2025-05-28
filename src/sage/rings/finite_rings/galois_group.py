@@ -60,7 +60,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
     """
     Element = GaloisGroup_GFElement
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         r"""
         Create a Galois group.
 
@@ -70,7 +70,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
         """
         GaloisGroup_cyc.__init__(self, field, (field.degree(),), gen_names='Frob')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this Galois group.
 

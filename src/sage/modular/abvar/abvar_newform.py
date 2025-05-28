@@ -30,7 +30,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
     """
     A modular abelian variety attached to a specific newform.
     """
-    def __init__(self, f, internal_name=False):
+    def __init__(self, f, internal_name=False) -> None:
         """
         Create the modular abelian variety `A_f` attached to the
         newform `f`.

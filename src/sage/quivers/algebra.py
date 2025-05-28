@@ -131,7 +131,7 @@ class PathAlgebra(CombinatorialFreeModule):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, k, P, order='negdegrevlex'):
+    def __init__(self, k, P, order='negdegrevlex') -> None:
         """
         Create a :class:`PathAlgebra` object.
 
@@ -406,7 +406,7 @@ class PathAlgebra(CombinatorialFreeModule):
             return True
         return self._base.has_coerce_map_from(other)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Default string representation.
 

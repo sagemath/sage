@@ -160,7 +160,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
             raise ValueError("the support of seq is not the index set")
         return super().__classcall__(cls, cartan_type, seq)
 
-    def __init__(self, cartan_type, seq):
+    def __init__(self, cartan_type, seq) -> None:
         """
         Initialize ``self``.
 
@@ -180,7 +180,7 @@ class InfinityCrystalAsPolyhedralRealization(TensorProductOfCrystals):
         self._tp = [C.module_generators[0] for C in self.crystals]
         self.module_generators = (self.element_class(self, self._tp),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

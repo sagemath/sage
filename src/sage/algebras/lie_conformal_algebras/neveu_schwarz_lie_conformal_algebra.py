@@ -50,7 +50,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.degree()
         3/2
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -72,7 +72,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
         GradedLieConformalAlgebra.__init__(self, R, nsdict, names=('L', 'G'),
                     central_elements=('C',), weights=weights, parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie Conformal algebra.
 

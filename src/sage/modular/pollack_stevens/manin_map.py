@@ -187,7 +187,7 @@ class ManinMap:
         sage: f(M2Z([1,0,0,1]))
         (1 + O(11^2), 2 + O(11))
     """
-    def __init__(self, codomain, manin_relations, defining_data, check=True):
+    def __init__(self, codomain, manin_relations, defining_data, check=True) -> None:
         """
         INPUT:
 
@@ -481,7 +481,7 @@ class ManinMap:
             D[ky] = val * right
         return self.__class__(self._codomain, self._manin, D, check=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of ``self``.
 

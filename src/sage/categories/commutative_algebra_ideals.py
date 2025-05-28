@@ -28,7 +28,7 @@ class CommutativeAlgebraIdeals(Category_ideal):
         Category of commutative algebra ideals in
          Univariate Polynomial Ring in x over Rational Field
     """
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         """
         EXAMPLES::
 

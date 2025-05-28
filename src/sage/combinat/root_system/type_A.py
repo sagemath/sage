@@ -179,7 +179,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -211,7 +211,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
         assert n >= 0
         CartanType_standard_finite.__init__(self, "A", n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

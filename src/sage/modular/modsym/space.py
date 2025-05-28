@@ -78,7 +78,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
     Element = ModularSymbolsElement
 
-    def __init__(self, group, weight, character, sign, base_ring, category=None):
+    def __init__(self, group, weight, character, sign, base_ring, category=None) -> None:
         """
         Create a space of modular symbols.
 
@@ -2352,7 +2352,7 @@ class PeriodMapping(SageObject):
     To be used via the derived classes :class:`RationalPeriodMapping` and
     :class:`IntegralPeriodMapping`.
     """
-    def __init__(self, modsym, A):
+    def __init__(self, modsym, A) -> None:
         r"""
         Standard initialisation function.
 
@@ -2444,7 +2444,7 @@ class PeriodMapping(SageObject):
 
 
 class RationalPeriodMapping(PeriodMapping):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -2457,7 +2457,7 @@ class RationalPeriodMapping(PeriodMapping):
 
 
 class IntegralPeriodMapping(PeriodMapping):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

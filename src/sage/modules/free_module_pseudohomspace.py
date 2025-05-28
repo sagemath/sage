@@ -93,7 +93,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
                 raise ValueError("the domain does not coerce into the codomain")
         return cls.__classcall__(cls, domain, codomain, ore)
 
-    def __init__(self, domain, codomain, ore):
+    def __init__(self, domain, codomain, ore) -> None:
         r"""
         Initialize this pseudohom space.
 
@@ -165,7 +165,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             twist = self._derivation
         return FreeModulePseudoHomspace, (self.domain(), self.codomain(), twist)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Returns a string representation of this pseudomorphism space.
 

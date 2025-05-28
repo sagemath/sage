@@ -110,7 +110,7 @@ def is_ModularAbelianVariety(x) -> bool:
 @richcmp_method
 class ModularAbelianVariety_abstract(Parent):
     def __init__(self, groups, base_field, is_simple=None, newform_level=None,
-                 isogeny_number=None, number=None, check=True):
+                 isogeny_number=None, number=None, check=True) -> None:
         """
         Abstract base class for modular abelian varieties.
 
@@ -575,7 +575,7 @@ class ModularAbelianVariety_abstract(Parent):
         """
         return [S.newform(names=names) for S in self.decomposition()]
 
-    def newform_label(self):
+    def newform_label(self) -> str:
         """
         Return the label [level][isogeny class][group] of the newform
         `f` such that this abelian variety is isogenous to the newform
@@ -813,7 +813,7 @@ class ModularAbelianVariety_abstract(Parent):
         else:
             return homspace.Homspace(self, B, cat)
 
-    def in_same_ambient_variety(self, other):
+    def in_same_ambient_variety(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are abelian subvarieties of
         the same ambient product Jacobian.
@@ -3888,7 +3888,7 @@ class ModularAbelianVariety_abstract(Parent):
 
 class ModularAbelianVariety(ModularAbelianVariety_abstract):
     def __init__(self, groups, lattice=None, base_field=QQ, is_simple=None, newform_level=None,
-                 isogeny_number=None, number=None, check=True):
+                 isogeny_number=None, number=None, check=True) -> None:
         r"""
         Create a modular abelian variety with given level and base field.
 
@@ -4480,7 +4480,7 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
 class ModularAbelianVariety_modsym(ModularAbelianVariety_modsym_abstract):
 
     def __init__(self, modsym, lattice=None, newform_level=None,
-                 is_simple=None, isogeny_number=None, number=None, check=True):
+                 is_simple=None, isogeny_number=None, number=None, check=True) -> None:
         """
         Modular abelian variety that corresponds to a Hecke stable space of
         cuspidal modular symbols.

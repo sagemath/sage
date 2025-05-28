@@ -52,7 +52,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 import sage.rings.infinity
 
 
-def has_finite_length(obj):
+def has_finite_length(obj) -> bool:
     """
     Return ``True`` if ``obj`` is known to have finite length.
 
@@ -468,7 +468,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         (False, False)
     """
 
-    def __init__(self, X, category=None):
+    def __init__(self, X, category=None) -> None:
         """
         Create a Set_object.
 
@@ -602,7 +602,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
                 pass
         return self._an_element_from_iterator()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if `x` is in ``self``.
 
@@ -700,7 +700,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
         return super().cardinality()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return boolean representing emptiness of the set.
 
@@ -849,7 +849,7 @@ class Set_object_enumerated(Set_object):
     """
     A finite enumerated set.
     """
-    def __init__(self, X, category=None):
+    def __init__(self, X, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -880,7 +880,7 @@ class Set_object_enumerated(Set_object):
             # TODO: this very slow!
             return choice(self.list())
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``True`` as this is a finite set.
 
@@ -903,7 +903,7 @@ class Set_object_enumerated(Set_object):
         from sage.rings.integer import Integer
         return Integer(len(self.set()))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -1300,7 +1300,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
             Y = Set(Y)
         return type.__call__(cls, X, Y, *args, **kwds)
 
-    def __init__(self, X, Y, op, latex_op, category=None):
+    def __init__(self, X, Y, op, latex_op, category=None) -> None:
         r"""
         Initialization.
 
@@ -1319,7 +1319,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         self._latex_op = latex_op
         Set_object.__init__(self, self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this set.
 
@@ -1371,7 +1371,7 @@ class Set_object_union(Set_object_binary):
     """
     A formal union of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1466,7 +1466,7 @@ class Set_object_union(Set_object_binary):
         yield from self._X
         yield from self._Y
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is an element of ``self``.
 
@@ -1520,7 +1520,7 @@ class Set_object_union(Set_object_binary):
         sympy_init()
         return Union(self._X._sympy_(), self._Y._sympy_())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this set is not empty.
 
@@ -1557,7 +1557,7 @@ class Set_object_intersection(Set_object_binary):
     """
     Formal intersection of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1597,7 +1597,7 @@ class Set_object_intersection(Set_object_binary):
             category = category.Enumerated()
         Set_object_binary.__init__(self, X, Y, "intersection", "\\cap", category=category)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return whether this set is finite.
 
@@ -1687,7 +1687,7 @@ class Set_object_intersection(Set_object_binary):
             if x in Y:
                 yield x
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``self`` contains ``x``.
 
@@ -1739,7 +1739,7 @@ class Set_object_difference(Set_object_binary):
     """
     Formal difference of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1768,7 +1768,7 @@ class Set_object_difference(Set_object_binary):
             category = category.Infinite()
         Set_object_binary.__init__(self, X, Y, "difference", "-", category=category)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return whether this set is finite.
 
@@ -1861,7 +1861,7 @@ class Set_object_difference(Set_object_binary):
             if x not in self._Y:
                 yield x
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``self`` contains ``x``.
 
@@ -1919,7 +1919,7 @@ class Set_object_symmetric_difference(Set_object_binary):
     """
     Formal symmetric difference of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -2032,7 +2032,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             if y not in self._X:
                 yield y
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``self`` contains ``x``.
 

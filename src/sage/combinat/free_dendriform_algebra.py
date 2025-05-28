@@ -154,7 +154,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names=None):
+    def __init__(self, R, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -676,7 +676,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             raise TypeError('not able to coerce this in this algebra')
         # Ok, not a dendriform algebra element (or should not be viewed as one).
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         Return ``True`` if there is a coercion from ``R`` into ``self``
         and ``False`` otherwise.
@@ -794,7 +794,7 @@ class DendriformFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, vars):
+    def __init__(self, vars) -> None:
         """
         EXAMPLES::
 
@@ -862,7 +862,7 @@ class DendriformFunctor(ConstructionFunctor):
             return False
         return self.vars == other.vars
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         EXAMPLES::
 

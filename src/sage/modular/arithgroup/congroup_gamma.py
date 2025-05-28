@@ -66,7 +66,7 @@ class Gamma_class(CongruenceSubgroup):
     r"""
     The principal congruence subgroup `\Gamma(N)`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -77,7 +77,7 @@ class Gamma_class(CongruenceSubgroup):
         """
         return "Congruence Subgroup Gamma(%s)" % self.level()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 
@@ -178,7 +178,7 @@ class Gamma_class(CongruenceSubgroup):
             return ZZ(3)
         return prod([p**(2*e) - p**(2*e-2) for (p,e) in n.factor()])//2
 
-    def nirregcusps(self):
+    def nirregcusps(self) -> int:
         r"""
         Return the number of irregular cusps of ``self``. For principal
         congruence subgroups this is always 0.
@@ -277,7 +277,7 @@ class Gamma_class(CongruenceSubgroup):
 
         return ((u1,v1) == (u2 % N, v2 % N)) or ((u1,v1) == (-u2 % N, -v2 % N))
 
-    def nu3(self):
+    def nu3(self) -> int:
         r"""
         Return the number of elliptic points of order 3 for this arithmetic
         subgroup. Since this subgroup is `\Gamma(N)` for `N \ge 2`, there are

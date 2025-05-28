@@ -151,7 +151,7 @@ class QSystem(CombinatorialFreeModule):
             raise ValueError("the Cartan type must be of twisted type")
         return super().__classcall__(cls, base_ring, cartan_type, level, twisted)
 
-    def __init__(self, base_ring, cartan_type, level, twisted):
+    def __init__(self, base_ring, cartan_type, level, twisted) -> None:
         """
         Initialize ``self``.
 
@@ -180,7 +180,7 @@ class QSystem(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, basis,
                                          prefix='Q', category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

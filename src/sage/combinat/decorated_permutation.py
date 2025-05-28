@@ -75,7 +75,7 @@ class DecoratedPermutation(ClonableArray,
         pi = list(pi)
         return DecoratedPermutations(len(pi))(pi)
 
-    def __init__(self, parent, pi, check=True):
+    def __init__(self, parent, pi, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -149,7 +149,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         16
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -161,7 +161,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         self._n = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -172,7 +172,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         """
         return "Decorated permutations of size %s" % self._n
 
-    def __contains__(self, pi):
+    def __contains__(self, pi) -> bool:
         """
         Check if ``pi`` is in ``self``.
 

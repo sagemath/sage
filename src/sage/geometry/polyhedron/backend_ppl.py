@@ -39,7 +39,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
     _backend_object_name = "ppl_polyhedron"
     _is_mutable = True
 
-    def __init__(self, parent, Vrep, Hrep, ppl_polyhedron=None, mutable=False, **kwds):
+    def __init__(self, parent, Vrep, Hrep, ppl_polyhedron=None, mutable=False, **kwds) -> None:
         """
         Initialize the polyhedron.
 

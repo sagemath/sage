@@ -86,7 +86,7 @@ class FiniteField_ntl_gf2e(FiniteField):
         True
     """
 
-    def __init__(self, q, names='a', modulus=None, repr='poly'):
+    def __init__(self, q, names='a', modulus=None, repr='poly') -> None:
         """
         Initialize ``self``.
 

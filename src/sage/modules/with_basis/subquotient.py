@@ -82,7 +82,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
         category = default_category.or_subcategory(category, join=True)
         return super().__classcall__(cls, submodule, category)
 
-    def __init__(self, submodule, category, *args, **opts):
+    def __init__(self, submodule, category, *args, **opts) -> None:
         r"""
         Initialize this quotient of a module with basis by a submodule.
 
@@ -224,7 +224,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
                                      *args, **opts)
 
     def __init__(self, basis, support_order, ambient, unitriangular, category,
-                 *args, **opts):
+                 *args, **opts) -> None:
         r"""
         Initialization.
 

@@ -136,7 +136,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         # we return check=True to ensure only one cached instance
         return super().__classcall__(cls, ambient_space=ambient_space, basis=basis, check=True)
 
-    def __init__(self, ambient_space, basis, check):
+    def __init__(self, ambient_space, basis, check) -> None:
         r"""
         Return the Submodule of (Hecke) forms in ``ambient_space`` for the
         given ``basis``.
@@ -216,7 +216,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         # self._analytic_type=self.AT(["quasi", "mero"])
         self._analytic_type = ambient_space._analytic_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

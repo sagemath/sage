@@ -177,7 +177,7 @@ class TopologicalSubmanifold(TopologicalManifold):
     """
     def __init__(self, n, name, field, structure, ambient=None,
                  base_manifold=None, latex_name=None, start_index=0,
-                 category=None, unique_tag=None):
+                 category=None, unique_tag=None) -> None:
         r"""
         Construct a submanifold of a topological manifold.
 

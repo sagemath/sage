@@ -28,7 +28,7 @@ class NautyExecutable(Executable):
         sage: NautyExecutable('converseg').is_present()                                 # needs nauty
         FeatureTestResult('nauty_converseg', True)
     """
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         r"""
         TESTS::
 
@@ -53,7 +53,7 @@ class Nauty(JoinFeature):
         sage: Nauty().is_present()                                                      # needs nauty
         FeatureTestResult('nauty', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

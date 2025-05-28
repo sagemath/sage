@@ -27,7 +27,7 @@ class AffineCipher(SymmetricKeyCipher):
     as the latter provides a convenient user interface.
     """
 
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         r"""
         Create an affine cipher.
 
@@ -137,7 +137,7 @@ class AffineCipher(SymmetricKeyCipher):
         # to a secret key.
         return D([ A.index(A[Mod(a*i + b, N).lift()]) for i in I ])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this affine cipher.
 
@@ -157,7 +157,7 @@ class HillCipher(SymmetricKeyCipher):
     """
     Hill cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a Hill cipher.
 
@@ -208,7 +208,7 @@ class HillCipher(SymmetricKeyCipher):
             C += (v * A).list()
         return S([ k.lift() for k in C ])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this Hill cipher.
 
@@ -243,7 +243,7 @@ class ShiftCipher(SymmetricKeyCipher):
     as the latter provides a convenient user interface.
     """
 
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         r"""
         Create a shift cipher.
 
@@ -354,7 +354,7 @@ class ShiftCipher(SymmetricKeyCipher):
         # the result as a string encoded in the alphabet A.
         return dom([ A.index(A[Mod(i + K, N).lift()]) for i in I ])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this shift cipher.
 
@@ -380,7 +380,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
     """
     Substitution cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a substitution cipher.
 
@@ -420,7 +420,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
         Mstr = str(M)
         return S([ I[A.index(Mstr[i])] for i in range(len(Mstr)) ])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this substitution cipher.
 
@@ -454,7 +454,7 @@ class TranspositionCipher(SymmetricKeyCipher):
     """
     Transition cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a transposition cipher.
 
@@ -525,7 +525,7 @@ class VigenereCipher(SymmetricKeyCipher):
     """
     Vigenere cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a Vigenere cipher.
 

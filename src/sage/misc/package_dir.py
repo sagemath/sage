@@ -50,7 +50,7 @@ class SourceDistributionFilter:
         sage: sage.misc.package_dir.__file__ in F
         False
     """
-    def __init__(self, include_distributions=None, exclude_distributions=None):
+    def __init__(self, include_distributions=None, exclude_distributions=None) -> None:
         r"""
         TESTS:
 
@@ -66,7 +66,7 @@ class SourceDistributionFilter:
             exclude_distributions = ()
         self._exclude_distributions = exclude_distributions
 
-    def __contains__(self, filename):
+    def __contains__(self, filename) -> bool:
         r"""
         TESTS:
 
@@ -238,7 +238,7 @@ def update_distribution(src_file, distribution, *, verbose=False):
                 f.write(line + '\n')
 
 
-def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
+def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None) -> bool:
     r"""
     Return whether ``path`` is a directory that contains a Python package.
 
@@ -453,7 +453,7 @@ def walk_packages(path=None, prefix='', onerror=None):
                 continue
             yield name, ispkg
 
-    def seen(p, m={}):
+    def seen(p, m={}) -> bool:
         if p in m:
             return True
         m[p] = True
@@ -481,7 +481,7 @@ def walk_packages(path=None, prefix='', onerror=None):
                 yield from walk_packages(path, info.name + '.', onerror)
 
 
-def _all_filename(distribution):
+def _all_filename(distribution) -> str:
     if not distribution:
         return 'all.py'
     return f"all__{distribution.replace('-', '_')}.py"

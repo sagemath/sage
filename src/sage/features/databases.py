@@ -58,7 +58,7 @@ class DatabaseCremona(StaticFile):
         sage: DatabaseCremona().is_present()                                    # optional - database_cremona_ellcurve
         FeatureTestResult('database_cremona_ellcurve', True)
     """
-    def __init__(self, name='cremona', spkg='database_cremona_ellcurve', type='optional'):
+    def __init__(self, name='cremona', spkg='database_cremona_ellcurve', type='optional') -> None:
         r"""
         TESTS::
 
@@ -97,7 +97,7 @@ class DatabaseEllcurves(StaticFile):
         sage: bool(DatabaseEllcurves().is_present())  # optional - database_ellcurves
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -127,7 +127,7 @@ class DatabaseGraphs(StaticFile):
         sage: bool(DatabaseGraphs().is_present())  # optional - database_graphs
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -157,7 +157,7 @@ class DatabaseJones(StaticFile):
         sage: bool(DatabaseJones().is_present())  # optional - database_jones_numfield
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -187,7 +187,7 @@ class DatabaseKnotInfo(PythonModule):
         sage: DatabaseKnotInfo().is_present()  # optional - database_knotinfo
         FeatureTestResult('database_knotinfo', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -213,7 +213,7 @@ class DatabaseMatroids(PythonModule):
 
     [Mat2012]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -239,7 +239,7 @@ class DatabaseCubicHecke(PythonModule):
         sage: DatabaseCubicHecke().is_present()  # optional - database_cubic_hecke
         FeatureTestResult('database_cubic_hecke', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -264,7 +264,7 @@ class DatabaseReflexivePolytopes(StaticFile):
         sage: bool(DatabaseReflexivePolytopes('polytopes_db_4d').is_present())  # optional - polytopes_db_4d
         True
     """
-    def __init__(self, name='polytopes_db'):
+    def __init__(self, name='polytopes_db') -> None:
         """
         TESTS::
 

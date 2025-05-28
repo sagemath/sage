@@ -83,7 +83,7 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
         Category of H-graded super finitely generated Lie conformal algebras with basis over Algebraic Field
     """
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
-                 index_set=None):
+                 index_set=None) -> None:
         """
         Initialize ``self``.
 

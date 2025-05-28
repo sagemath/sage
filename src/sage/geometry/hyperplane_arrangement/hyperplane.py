@@ -149,7 +149,7 @@ class Hyperplane(LinearExpression):
         sage: x + 0 == x + ambient(0)    # because coercion requires them
         True
     """
-    def __init__(self, parent, coefficients, constant):
+    def __init__(self, parent, coefficients, constant) -> None:
         """
         Initialize ``self``.
 
@@ -162,7 +162,7 @@ class Hyperplane(LinearExpression):
         """
         super().__init__(parent, coefficients, constant)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -176,7 +176,7 @@ class Hyperplane(LinearExpression):
         """
         return 'Hyperplane {0}'.format(self._repr_linear())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation.
 
@@ -249,7 +249,7 @@ class Hyperplane(LinearExpression):
                 max_value = values[i]
         return max_pos
 
-    def __contains__(self, q):
+    def __contains__(self, q) -> bool:
         r"""
         Test whether the point ``q`` is in the hyperplane.
 
@@ -691,7 +691,7 @@ class AmbientVectorSpace(LinearExpressionModule):
 
     Element = Hyperplane
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

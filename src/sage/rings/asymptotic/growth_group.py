@@ -315,7 +315,7 @@ class Variable(CachedRepresentation, SageObject):
         sage: v = Variable('(e^(n*log(n)))', ignore=('e',)); repr(v), v.variable_names()
         ('e^(n*log(n))', ('n',))
     """
-    def __init__(self, var, repr=None, latex_name=None, ignore=None):
+    def __init__(self, var, repr=None, latex_name=None, ignore=None) -> None:
         r"""
         See :class:`Variable` for details.
 
@@ -418,7 +418,7 @@ class Variable(CachedRepresentation, SageObject):
         """
         return self.var_repr == other.var_repr and self.var_bases == other.var_bases
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this variable does not equal ``other``.
 
@@ -635,7 +635,7 @@ class PartialConversionValueError(ValueError):
     The remaining argument passed on to
     :python:`ValueError<library/exceptions.html#exceptions.ValueError>`.
     """
-    def __init__(self, element, *args, **kwds):
+    def __init__(self, element, *args, **kwds) -> None:
         r"""
         See :exc:`PartialConversionValueError` for more information.
 
@@ -673,7 +673,7 @@ class PartialConversionElement(SageObject):
     elements of
     :mod:`cartesian products of growth groups <sage.rings.asymptotic.growth_group_cartesian>`.
     """
-    def __init__(self, growth_group, raw_element):
+    def __init__(self, growth_group, raw_element) -> None:
         r"""
         See :class:`PartialConversionElement` for more information.
 
@@ -686,7 +686,7 @@ class PartialConversionElement(SageObject):
         self.growth_group = growth_group
         self.raw_element = raw_element
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this partial conversion element.
 
@@ -1113,7 +1113,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         True
     """
 
-    def __init__(self, parent, raw_element):
+    def __init__(self, parent, raw_element) -> None:
         r"""
         See :class:`GenericGrowthElement` for more information.
 
@@ -1177,7 +1177,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         """
         pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this generic element.
 
@@ -1753,7 +1753,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         else:
             return None
 
-    def __init__(self, base, var, category):
+    def __init__(self, base, var, category) -> None:
         r"""
         See :class:`GenericGrowthGroup` for more information.
 
@@ -1826,7 +1826,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         self._var_ = var
         super().__init__(category=category, base=base)
 
-    def _repr_short_(self):
+    def _repr_short_(self) -> str:
         r"""
         A short representation string of this abstract growth group.
 
@@ -1848,7 +1848,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             vars = ', ' + vars
         return 'Generic(%s%s)' % (parent_to_repr_short(self.base()), vars)
 
-    def _repr_(self, condense=False):
+    def _repr_(self, condense=False) -> str:
         r"""
         A representations string of this growth group.
 
@@ -2243,7 +2243,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         """
         raise NotImplementedError('only implemented in concrete realizations')
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Return whether ``S`` coerces into this growth group.
 
@@ -2574,7 +2574,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
     rank = 13
 
-    def __init__(self, var, domain):
+    def __init__(self, var, domain) -> None:
         r"""
         See :class:`AbstractGrowthGroupFunctor` for details.
 
@@ -2594,7 +2594,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         self.var = var
         super().__init__(domain, Monoids() & Posets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this functor.
 
@@ -2653,7 +2653,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         """
         return type(self) is type(other) and self.var == other.var
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this functor is not equal to ``other``.
 
@@ -2688,7 +2688,7 @@ class DecreasingGrowthElementError(ValueError):
     The remaining arguments are passed on to
     :python:`ValueError<library/exceptions.html#exceptions.ValueError>`.
     """
-    def __init__(self, element, *args, **kwds):
+    def __init__(self, element, *args, **kwds) -> None:
         r"""
         See :exc:`DecreasingGrowthElementError` for more information.
 
@@ -3708,7 +3708,7 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
     _functor_name = 'MonomialGrowthGroup'
 
-    def __init__(self, var):
+    def __init__(self, var) -> None:
         r"""
         See :class:`MonomialGrowthGroupFunctor` for details.
 
@@ -4196,7 +4196,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         ('Inverse', 'Inverse', False),
         ('Commutative', 'Commutative', False)]
 
-    def __init__(self, base, *args, **kwds):
+    def __init__(self, base, *args, **kwds) -> None:
         r"""
         See :class:`ExponentialGrowthGroup` for more information.
 
@@ -4712,7 +4712,7 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
     _functor_name = 'ExponentialGrowthGroup'
 
-    def __init__(self, var):
+    def __init__(self, var) -> None:
         r"""
         See :class:`ExponentialGrowthGroupFunctor` for details.
 
@@ -4750,7 +4750,7 @@ class GenericNonGrowthElement(GenericGrowthElement):
     An element of :class:`GenericNonGrowthGroup`.
     """
 
-    def _lt_(self, other):
+    def _lt_(self, other) -> bool:
         r"""
         Return ``False`` as elements are not comparable.
 

@@ -37,7 +37,7 @@ class HeisenbergAlgebra_abstract(IndexedGenerators):
     """
     The common methods for the (non-matrix) Heisenberg algebras.
     """
-    def __init__(self, I):
+    def __init__(self, I) -> None:
         """
         Initialize ``self``.
 
@@ -200,7 +200,7 @@ class HeisenbergAlgebra_fd:
     """
     Common methods for finite-dimensional Heisenberg algebras.
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -391,7 +391,7 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
 
         sage: L = lie_algebras.Heisenberg(QQ, 2)
     """
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         """
         Initialize ``self``.
 
@@ -410,7 +410,7 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
             category=LieAlgebras(R).Nilpotent().FiniteDimensional().WithBasis())
         HeisenbergAlgebra_abstract.__init__(self, names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -430,7 +430,7 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
     other words, this is the Heisenberg algebra of rank `\infty`. See
     :class:`HeisenbergAlgebra` for more information.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -448,7 +448,7 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
         LieAlgebraWithGenerators.__init__(self, R, index_set=S, category=cat)
         HeisenbergAlgebra_abstract.__init__(self, S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -691,7 +691,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         Finite family {'z': [0 1]
         [0 0]}
     """
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         """
         Initialize ``self``.
 
@@ -712,7 +712,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         LieAlgebraFromAssociative.__init__(self, MS, p + q + z, names=names,
                                            index_set=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

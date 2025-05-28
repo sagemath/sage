@@ -24,7 +24,7 @@ class FormsElement(FormsRingElement):
     (Hecke) modular forms.
     """
 
-    def __init__(self, parent, rat):
+    def __init__(self, parent, rat) -> None:
         r"""
         An element of a space of (Hecke) modular forms.
 

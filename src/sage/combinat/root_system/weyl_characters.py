@@ -111,7 +111,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
                 prefix = repr(ct)
         return super().__classcall__(cls, ct, base_ring=base_ring, prefix=prefix, style=style, k=k, conjugate=conjugate, cyclotomic_order=cyclotomic_order, fusion_labels=fusion_labels, inject_variables=inject_variables)
 
-    def __init__(self, ct, base_ring=ZZ, prefix=None, style='lattice', k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False):
+    def __init__(self, ct, base_ring=ZZ, prefix=None, style='lattice', k=None, conjugate=False, cyclotomic_order=None, fusion_labels=None, inject_variables=False) -> None:
         """
         EXAMPLES::
 
@@ -395,7 +395,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         category = Algebras(self.base_ring())
         return SetMorphism(Hom(self.ambient(), self, category), self._retract)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1756,7 +1756,7 @@ class WeightRing(CombinatorialFreeModule):
         """
         return super().__classcall__(cls, parent, prefix=prefix)
 
-    def __init__(self, parent, prefix):
+    def __init__(self, parent, prefix) -> None:
         """
         EXAMPLES::
 
@@ -1794,7 +1794,7 @@ class WeightRing(CombinatorialFreeModule):
         category = AlgebrasWithBasis(self._base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, self._base_ring, self._space, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

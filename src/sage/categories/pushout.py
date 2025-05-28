@@ -183,7 +183,7 @@ class ConstructionFunctor(Functor):
         else:
             return other * self
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Equality here means that they are mathematically equivalent, though they may have
         specific implementation data. This method will usually be overloaded in subclasses.
@@ -202,7 +202,7 @@ class ConstructionFunctor(Functor):
         """
         return type(self) is type(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -280,7 +280,7 @@ class ConstructionFunctor(Functor):
         else:
             return None
 
-    def commutes(self, other):
+    def commutes(self, other) -> bool:
         """
         Determine whether ``self`` commutes with another construction functor.
 
@@ -441,7 +441,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
           over Fraction Field of Univariate Polynomial Ring in t
            over Finite Field of size 2 (using GF2X)
     """
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         """
         TESTS::
 
@@ -518,7 +518,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         else:
             return type(self) is type(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -611,7 +611,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
     """
     rank = -100
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -669,7 +669,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
                 return True
         return c
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -825,7 +825,7 @@ class PolynomialFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, var, multi_variate=False, sparse=False, implementation=None):
+    def __init__(self, var, multi_variate=False, sparse=False, implementation=None) -> None:
         """
         TESTS::
 
@@ -914,7 +914,7 @@ class PolynomialFunctor(ConstructionFunctor):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -963,7 +963,7 @@ class PolynomialFunctor(ConstructionFunctor):
         else:
             return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1001,7 +1001,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
 
     rank = 9
 
-    def __init__(self, vars, term_order):
+    def __init__(self, vars, term_order) -> None:
         """
         EXAMPLES::
 
@@ -1058,7 +1058,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1158,7 +1158,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         else:
             return [MultiPolynomialFunctor((x,), self.term_order) for x in reversed(self.vars)]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1262,7 +1262,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
     # has rank 10. So, do fine tuning...
     rank = 9.5
 
-    def __init__(self, gens, order, implementation):
+    def __init__(self, gens, order, implementation) -> None:
         """
         TESTS::
 
@@ -1310,7 +1310,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
         )
         return InfinitePolynomialRing(R, self._gens, order=self._order, implementation=self._imple)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1336,7 +1336,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
                     self._imple == other._imple)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1575,7 +1575,7 @@ class MatrixFunctor(ConstructionFunctor):
     """
     rank = 10
 
-    def __init__(self, nrows, ncols, is_sparse=False):
+    def __init__(self, nrows, ncols, is_sparse=False) -> None:
         """
         TESTS::
 
@@ -1638,7 +1638,7 @@ class MatrixFunctor(ConstructionFunctor):
             return (self.nrows == other.nrows and self.ncols == other.ncols)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1715,7 +1715,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, var, multi_variate=False):
+    def __init__(self, var, multi_variate=False) -> None:
         """
         INPUT:
 
@@ -1792,7 +1792,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             return self.var == other.var
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1859,7 +1859,7 @@ class VectorFunctor(ConstructionFunctor):
     # This coincides with the rank of the matrix construction functor, but this is OK since they cannot both be applied in any order
 
     def __init__(self, n=None, is_sparse=False, inner_product_matrix=None, *,
-                 with_basis='standard', basis_keys=None, name_mapping=None, latex_name_mapping=None):
+                 with_basis='standard', basis_keys=None, name_mapping=None, latex_name_mapping=None) -> None:
         """
         INPUT:
 
@@ -2003,7 +2003,7 @@ class VectorFunctor(ConstructionFunctor):
                     self.latex_name_mapping == other.latex_name_mapping)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2182,7 +2182,7 @@ class SubspaceFunctor(ConstructionFunctor):
     # map into the original, not vice versa.
     coercion_reversed = True
 
-    def __init__(self, basis):
+    def __init__(self, basis) -> None:
         """
         INPUT:
 
@@ -2305,7 +2305,7 @@ class SubspaceFunctor(ConstructionFunctor):
             return tuple(other.basis) == tuple(R(x) for x in self.basis)
         return c
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2415,7 +2415,7 @@ class FractionField(ConstructionFunctor):
     """
     rank = 5
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -2490,7 +2490,7 @@ class CompletionFunctor(ConstructionFunctor):
     _real_types = ['Interval', 'Ball', 'MPFR', 'RDF', 'RLF', 'RR']
     _dvr_types = [None, 'fixed-mod', 'floating-point', 'capped-abs', 'capped-rel', 'lattice-cap', 'lattice-float', 'relaxed']
 
-    def __init__(self, p, prec, extras=None):
+    def __init__(self, p, prec, extras=None) -> None:
         """
         INPUT:
 
@@ -2549,7 +2549,7 @@ class CompletionFunctor(ConstructionFunctor):
                 if self.type not in self._dvr_types:
                     raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2630,7 +2630,7 @@ class CompletionFunctor(ConstructionFunctor):
             return self.p == other.p
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2840,7 +2840,7 @@ class QuotientFunctor(ConstructionFunctor):
     rank = 4.5
 
     def __init__(self, I, names=None, as_field=False, domain=None,
-                 codomain=None, **kwds):
+                 codomain=None, **kwds) -> None:
         """
         INPUT:
 
@@ -2972,7 +2972,7 @@ class QuotientFunctor(ConstructionFunctor):
                 self.names == other.names and
                 self.I == other.I)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -3150,7 +3150,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
     def __init__(self, polys, names, embeddings=None, structures=None,
                  cyclotomic=None, precs=None, implementations=None,
-                 *, residue=None, latex_names=None, **kwds):
+                 *, residue=None, latex_names=None, **kwds) -> None:
         """
         INPUT:
 
@@ -3382,7 +3382,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                 self.precs == other.precs and
                 self.latex_names == other.latex_names)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -3632,7 +3632,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
     """
     rank = 3
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -3694,7 +3694,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
 
     rank = 10
 
-    def __init__(self, gens, domain):
+    def __init__(self, gens, domain) -> None:
         """
         EXAMPLES::
 
@@ -3707,7 +3707,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
         self._gens = tuple(gens)
         self._domain = domain
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3855,7 +3855,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
          of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
     """
     def __init__(self, S, action=operator.mul, side='left',
-                 other_action=None, other_side='left'):
+                 other_action=None, other_side='left') -> None:
         """
         EXAMPLES::
 
@@ -3935,7 +3935,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
     """
     rank = 100
 
-    def __init__(self, box):
+    def __init__(self, box) -> None:
         """
         TESTS::
 
@@ -3983,7 +3983,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
 
         return self.box == other.box
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

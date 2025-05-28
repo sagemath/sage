@@ -12,7 +12,7 @@ from .cartan_type import CartanType_standard_untwisted_affine, CartanType_simply
 
 
 class CartanType(CartanType_standard_untwisted_affine):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -54,7 +54,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         if n >= 2:
             self._add_abstract_superclass(CartanType_simply_laced)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 

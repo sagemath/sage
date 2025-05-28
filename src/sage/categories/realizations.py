@@ -135,7 +135,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     as well as the name for that category.
     """
-    def __init__(self, parent_with_realization):
+    def __init__(self, parent_with_realization) -> None:
         """
         TESTS::
 
@@ -180,7 +180,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
         import re
         return re.sub(".[A-Z]", lambda s: s.group()[0]+" "+s.group()[1], self.__class__.__base__.__name__.split(".")[-1]).lower()
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         Return the name of the objects of this category.
 

@@ -356,7 +356,7 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
             raise TypeError(str(ds_data) + " does not define a 'DynamicalSemigroup' object")
         return DynamicalSemigroup_projective(ds_data)
 
-    def __init__(self, systems):
+    def __init__(self, systems) -> None:
         r"""
         The Python constructor.
 

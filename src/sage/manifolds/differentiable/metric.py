@@ -338,7 +338,7 @@ class PseudoRiemannianMetric(TensorField):
                        '_schouten', '_cotton', '_cotton_york')
 
     def __init__(self, vector_field_module, name, signature=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a metric.
 
@@ -2076,7 +2076,7 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
          - (x + 1)/(x^2*y^2 + x^2 - 1) ∂/∂y⊗∂/∂y
     """
     def __init__(self, vector_field_module, name, signature=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a metric on a parallelizable manifold.
 
@@ -2588,7 +2588,7 @@ class DegenerateMetric(TensorField):
     """
 
     def __init__(self, vector_field_module, name, signature=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a metric.
 
@@ -2895,7 +2895,7 @@ class DegenerateMetricParal(DegenerateMetric, TensorFieldParal):
     """
 
     def __init__(self, vector_field_module, name, signature=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a metric.
 

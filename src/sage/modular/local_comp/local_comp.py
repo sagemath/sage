@@ -118,7 +118,7 @@ class LocalComponentBase(SageObject):
     Base class for local components of newforms. Not to be directly instantiated; use the :func:`~LocalComponent` constructor function.
     """
 
-    def __init__(self, newform, prime, twist_factor):
+    def __init__(self, newform, prime, twist_factor) -> None:
         r"""
         Standard initialisation function.
 
@@ -165,7 +165,7 @@ class LocalComponentBase(SageObject):
         """
         pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -294,7 +294,7 @@ class LocalComponentBase(SageObject):
                 and self.newform() == other.newform()
                 and self.twist_factor() == other.twist_factor())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if ``self != other``.
 
@@ -353,7 +353,7 @@ class PrincipalSeries(PrimitiveLocalComponent):
     :class:`~UnramifiedPrincipalSeries` and :class:`~PrimitivePrincipalSeries`.
     """
 
-    def species(self):
+    def species(self) -> str:
         r"""
         The species of this local component, which is either 'Principal
         Series', 'Special' or 'Supercuspidal'.
@@ -515,7 +515,7 @@ class PrimitiveSpecial(PrimitiveLocalComponent):
         sage: TestSuite(Pi).run()
     """
 
-    def species(self):
+    def species(self) -> str:
         r"""
         The species of this local component, which is either 'Principal
         Series', 'Special' or 'Supercuspidal'.
@@ -603,7 +603,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
         sage: TestSuite(Pi).run()
     """
 
-    def species(self):
+    def species(self) -> str:
         r"""
         The species of this local component, which is either 'Principal
         Series', 'Special' or 'Supercuspidal'.
@@ -953,7 +953,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
     component and a character to twist by.
     """
 
-    def __init__(self, newform, prime, twist_factor, min_twist, chi):
+    def __init__(self, newform, prime, twist_factor, min_twist, chi) -> None:
         r"""
         EXAMPLES::
 

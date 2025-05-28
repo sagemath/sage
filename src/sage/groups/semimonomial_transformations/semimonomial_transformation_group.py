@@ -120,7 +120,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
     """
     Element = SemimonomialTransformation
 
-    def __init__(self, R, len):
+    def __init__(self, R, len) -> None:
         r"""
         Initialization.
 
@@ -415,7 +415,7 @@ class SemimonomialActionVec(Action):
     (The indexing of vectors is `0`-based here, so
     `\psi = (\psi_0, \psi_1, \ldots, \psi_{n-1})`.)
     """
-    def __init__(self, G, V, check=True):
+    def __init__(self, G, V, check=True) -> None:
         r"""
         Initialization.
 
@@ -467,7 +467,7 @@ class SemimonomialActionMat(Action):
     See :class:`~sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialActionVec`
     for the definition of the action on the row vectors of such a matrix.
     """
-    def __init__(self, G, M, check=True):
+    def __init__(self, G, M, check=True) -> None:
         r"""
         Initialization.
 

@@ -31,7 +31,7 @@ class GSets(Category):
 
     TODO: should this derive from Category_over_base?
     """
-    def __init__(self, G):
+    def __init__(self, G) -> None:
         """
         TESTS::
 
@@ -41,7 +41,7 @@ class GSets(Category):
         Category.__init__(self)
         self.__G = G
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

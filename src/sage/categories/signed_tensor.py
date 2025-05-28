@@ -58,7 +58,7 @@ class SignedTensorProductFunctor(CovariantFunctorialConstruction):
     symbol = " # "
     unicode_symbol = f" {unicode_otimes} "
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

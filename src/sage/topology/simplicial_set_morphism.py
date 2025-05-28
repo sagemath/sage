@@ -297,7 +297,7 @@ class SimplicialSetHomset(Homset):
                 # Not a valid morphism.
                 pass
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 
@@ -314,7 +314,7 @@ class SimplicialSetHomset(Homset):
 
 class SimplicialSetMorphism(Morphism):
     def __init__(self, data=None, domain=None, codomain=None,
-                 constant=None, identity=False, check=True):
+                 constant=None, identity=False, check=True) -> None:
         r"""
         Return a morphism of simplicial sets.
 
@@ -580,7 +580,7 @@ class SimplicialSetMorphism(Morphism):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         The negation of ``__eq__``.
 
@@ -794,7 +794,7 @@ class SimplicialSetMorphism(Morphism):
         """
         return self._is_identity or self.image() == self.codomain()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if this map is injective.
 
@@ -872,7 +872,7 @@ class SimplicialSetMorphism(Morphism):
         return (self.domain().is_pointed() and self.codomain().is_pointed()
                 and self(self.domain().base_point()) == self.codomain().base_point())
 
-    def is_constant(self):
+    def is_constant(self) -> bool:
         """
         Return ``True`` if this morphism is a constant map.
 
@@ -1410,7 +1410,7 @@ class SimplicialSetMorphism(Morphism):
 
         return InducedHomologyMorphism(self, base_ring, cohomology)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -1421,7 +1421,7 @@ class SimplicialSetMorphism(Morphism):
         """
         return "Simplicial set"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         EXAMPLES::
 
@@ -1449,7 +1449,7 @@ class SimplicialSetMorphism(Morphism):
         keys = sorted(d.keys())
         return "{} --> {}".format(keys, [d[x] for x in keys])
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 

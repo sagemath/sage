@@ -49,7 +49,7 @@ COUNT = 5
 
 
 class DLXMatrix:
-    def __init__(self, ones, initialsolution=None):
+    def __init__(self, ones, initialsolution=None) -> None:
         """
         Solve the Exact Cover problem by using the Dancing Links algorithm
         described by Knuth.

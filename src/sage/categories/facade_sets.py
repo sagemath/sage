@@ -136,7 +136,7 @@ class FacadeSets(CategoryWithAxiom):
             except AttributeError:
                 raise NotImplementedError("this parent did not specify which parents it is a facade for")
 
-        def is_parent_of(self, element):
+        def is_parent_of(self, element) -> bool:
             """
             Return whether ``self`` is the parent of ``element``.
 
@@ -181,7 +181,7 @@ class FacadeSets(CategoryWithAxiom):
             from sage.structure.element import parent
             return parent(element) in parents
 
-        def __contains__(self, element):
+        def __contains__(self, element) -> bool:
             """
             Membership testing.
 

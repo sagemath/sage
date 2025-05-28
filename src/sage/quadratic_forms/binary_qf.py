@@ -97,7 +97,7 @@ class BinaryQF(SageObject):
         sage: BinaryQF(1, 0, 1)
         x^2 + y^2
     """
-    def __init__(self, a, b=None, c=None):
+    def __init__(self, a, b=None, c=None) -> None:
         r"""
         Create a binary quadratic form `ax^2 + bxy + cy^2`.
 
@@ -155,7 +155,7 @@ class BinaryQF(SageObject):
             raise TypeError('binary quadratic form must be given by a quadratic homogeneous bivariate integer polynomial or its coefficients')
         self._poly = None
 
-    def _pari_init_(self):
+    def _pari_init_(self) -> str:
         """
         Convert this quadratic form to PARI.
 
@@ -367,7 +367,7 @@ class BinaryQF(SageObject):
             return False
         return (self._a, self._b, self._c) == (right._a, right._b, right._c)
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Return ``True`` if ``self`` and ``right`` are not identical.
 

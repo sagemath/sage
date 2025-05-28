@@ -144,7 +144,7 @@ class MixedFormAlgebra(Parent, UniqueRepresentation):
     """
     Element = MixedForm
 
-    def __init__(self, vector_field_module):
+    def __init__(self, vector_field_module) -> None:
         r"""
         Construct a graded algebra of mixed forms.
 

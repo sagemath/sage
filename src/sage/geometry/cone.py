@@ -796,7 +796,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
     - collection of given integral rays.
     """
 
-    def __init__(self, rays, lattice):
+    def __init__(self, rays, lattice) -> None:
         r"""
         See :class:`IntegralRayCollection` for documentation.
 
@@ -1451,7 +1451,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
     """
 
     def __init__(self, rays=None, lattice=None,
-                 ambient=None, ambient_ray_indices=None, PPL=None):
+                 ambient=None, ambient_ray_indices=None, PPL=None) -> None:
         r"""
         See :class:`ConvexRationalPolyhedralCone` for documentation.
 
@@ -1549,7 +1549,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
         return self._PPL_C_Polyhedron
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -1600,7 +1600,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         state.pop("_face_lattice", None)
         return state
 
-    def _contains(self, point, region='whole cone'):
+    def _contains(self, point, region='whole cone') -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -1927,7 +1927,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         else:
             return NotImplemented
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -3288,7 +3288,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             return False
         return self.rays().matrix().elementary_divisors() == [1] * self.nrays()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return whether ``self`` is the empty set.
 
@@ -4438,12 +4438,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         if self.is_strictly_convex():
 
-            def not_in_linear_subspace(x):
+            def not_in_linear_subspace(x) -> bool:
                 return True
         else:
             linear_subspace = self.linear_subspace()
 
-            def not_in_linear_subspace(x):
+            def not_in_linear_subspace(x) -> bool:
                 # "x in linear_subspace" does not work, due to absence
                 # of coercion maps as of Github issue #10513.
                 try:

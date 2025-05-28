@@ -252,7 +252,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     """
 
     def __init__(self, t=None, index_set=None, odd_isotropic_roots=[],
-                 **options):
+                 **options) -> None:
         """
         Initialize ``self``.
 
@@ -683,7 +683,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
             return self._cartan_type.is_irreducible()
         return self.connected_components_number() == 1
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Implement :meth:`CartanType_abstract.is_crystallographic`.
 

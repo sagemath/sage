@@ -24,7 +24,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
     This class illustrates a minimal implementation of a Hopf algebra with basis.
     """
 
-    def __init__(self, R, G):
+    def __init__(self, R, G) -> None:
         """
         EXAMPLES::
 
@@ -38,7 +38,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, G,
                                          category=HopfAlgebrasWithBasis(R))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

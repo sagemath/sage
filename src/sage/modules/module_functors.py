@@ -78,7 +78,7 @@ class QuotientModuleFunctor(ConstructionFunctor):
     """
     rank = 5  # ranking of functor, not rank of module
 
-    def __init__(self, relations):
+    def __init__(self, relations) -> None:
         """
         Initialization of ``self``.
 
@@ -144,7 +144,7 @@ class QuotientModuleFunctor(ConstructionFunctor):
             return False
         return self._relations == other._relations
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Check whether ``self`` is not equal to ``other``.
 

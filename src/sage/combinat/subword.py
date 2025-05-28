@@ -163,7 +163,7 @@ class Subwords_w(Parent):
     Subwords of a given word.
     """
 
-    def __init__(self, w, element_constructor):
+    def __init__(self, w, element_constructor) -> None:
         """
         TESTS::
 
@@ -320,7 +320,7 @@ class Subwords_wk(Subwords_w):
     Subwords with fixed length of a given word.
     """
 
-    def __init__(self, w, k, element_constructor):
+    def __init__(self, w, k, element_constructor) -> None:
         """
         TESTS::
 

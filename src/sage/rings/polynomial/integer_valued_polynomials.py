@@ -75,7 +75,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         ...
         TypeError: argument R must be a commutative ring
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -456,7 +456,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
             sage: 1 - S[2] * S[2] / 2
             S[0] - 1/2*S[2] + 3*S[3] - 3*S[4]
         """
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             Initialize ``self``.
 

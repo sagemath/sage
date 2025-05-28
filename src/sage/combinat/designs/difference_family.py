@@ -129,7 +129,7 @@ def block_stabilizer(G, B):
     return S
 
 
-def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
+def is_difference_family(G, D, v=None, k=None, l=None, verbose=False) -> bool:
     r"""
     Check whether ``D`` forms a difference family in the group ``G``.
 
@@ -1274,7 +1274,7 @@ def turyn_1965_3x3xK(k=4):
     return G, [[G(v + k) for l, k in zip(L, K) for v in l]]
 
 
-def _is_periodic_sequence(seq, period):
+def _is_periodic_sequence(seq, period) -> bool:
     r"""
     Check if the sequence is periodic with correct period.
 
@@ -1563,7 +1563,7 @@ def relative_difference_set_from_homomorphism(q, N, d, check=True, return_group=
     return second_diff_set
 
 
-def is_relative_difference_set(R, G, H, params, verbose=False):
+def is_relative_difference_set(R, G, H, params, verbose=False) -> bool:
     r"""
     Check if ``R`` is a difference set of ``G`` relative to ``H``, with the given parameters.
 
@@ -1640,7 +1640,7 @@ def is_relative_difference_set(R, G, H, params, verbose=False):
     return True
 
 
-def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=False):
+def is_supplementary_difference_set(Ks, v=None, lmbda=None, G=None, verbose=False) -> bool:
     r"""
     Check that the sets in ``Ks`` are `n-\{v; k_1, ..., k_n; \lambda \}` supplementary
     difference sets over group ``G`` of order ``v``.
@@ -1997,7 +1997,7 @@ def get_fixed_relative_difference_set(G, rel_diff_set, as_elements=False):
     return s3
 
 
-def is_fixed_relative_difference_set(R, q):
+def is_fixed_relative_difference_set(R, q) -> bool:
     r"""
     Check if the relative difference set ``R`` is fixed by ``q``.
 
@@ -3034,7 +3034,7 @@ def supplementary_difference_set_hadamard(n, existence=False, check=True):
     return G, [S1, S2, S3, S4]
 
 
-def _is_skew_set(G, S):
+def _is_skew_set(G, S) -> bool:
     r"""
     Check if ``S`` is a skew set over the group ``G``.
 
@@ -3068,7 +3068,7 @@ def _is_skew_set(G, S):
     return True
 
 
-def are_complementary_difference_sets(G, A, B, verbose=False):
+def are_complementary_difference_sets(G, A, B, verbose=False) -> bool:
     r"""
     Check if ``A`` and ``B`` are complementary difference sets over the group ``G``.
 

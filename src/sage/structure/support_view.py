@@ -49,7 +49,7 @@ class SupportView(MappingView, Sequence, Set):
         3
     """
 
-    def __init__(self, mapping, *, zero=None):
+    def __init__(self, mapping, *, zero=None) -> None:
         r"""
         TESTS::
 
@@ -61,7 +61,7 @@ class SupportView(MappingView, Sequence, Set):
         self._mapping = mapping
         self._zero = zero
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         TESTS::
 
@@ -120,7 +120,7 @@ class SupportView(MappingView, Sequence, Set):
                 if value != zero:
                     yield key
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         r"""
         TESTS::
 

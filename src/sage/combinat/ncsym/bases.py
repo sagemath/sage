@@ -83,7 +83,7 @@ class NCSymOrNCSymDualBases(Category_realization_of_parent):
                 GradedHopfAlgebrasWithBasis(R),
                 GradedHopfAlgebras(R).Realizations()]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -354,7 +354,7 @@ class NCSymBases(Category_realization_of_parent):
         """
         return [NCSymOrNCSymDualBases(self.base())]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -738,7 +738,7 @@ class MultiplicativeNCSymBases(Category_realization_of_parent):
         """
         return [NCSymBases(self.base())]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -839,7 +839,7 @@ class NCSymDualBases(Category_realization_of_parent):
         """
         return [NCSymOrNCSymDualBases(self.base())]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

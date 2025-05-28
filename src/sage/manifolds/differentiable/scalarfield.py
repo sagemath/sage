@@ -621,7 +621,7 @@ class DiffScalarField(ScalarField):
         sage: TestSuite(zer).run()
     """
     def __init__(self, parent, coord_expression=None, chart=None, name=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a scalar field.
 

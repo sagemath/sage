@@ -46,7 +46,7 @@ class Ellipse(GraphicPrimitive):
         sage: Ellipse(0, 0, 2, 1, pi/4, {})
         Ellipse centered at (0.0, 0.0) with radii (2.0, 1.0) and angle 0.78539816339...
     """
-    def __init__(self, x, y, r1, r2, angle, options):
+    def __init__(self, x, y, r1, r2, angle, options) -> None:
         """
         Initialize base class ``Ellipse``.
 
@@ -160,7 +160,7 @@ class Ellipse(GraphicPrimitive):
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively."}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of ``Ellipse`` primitive.
 

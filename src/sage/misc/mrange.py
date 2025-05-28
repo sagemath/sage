@@ -318,11 +318,11 @@ class xmrange_iter:
 
     - Joel B. Mohler
     """
-    def __init__(self, iter_list, typ=list):
+    def __init__(self, iter_list, typ=list) -> None:
         self.iter_list = iter_list
         self.typ = typ
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.typ == list:
             return 'xmrange_iter(%s)' % self.iter_list
         else:
@@ -331,7 +331,7 @@ class xmrange_iter:
     def __iter__(self):
         return _xmrange_iter(self.iter_list, self.typ)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the cardinality of this iterator as an int.
 
@@ -571,17 +571,17 @@ class xmrange:
 
     - William Stein
     """
-    def __init__(self, sizes, typ=list):
+    def __init__(self, sizes, typ=list) -> None:
         self.sizes = [int(x) for x in sizes]
         self.typ = typ
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.typ == list:
             return 'xmrange(%s)' % self.sizes
         else:
             return 'xmrange(%s, %s)' % (self.sizes, self.typ)
 
-    def __len__(self):
+    def __len__(self) -> int:
         sizes = self.sizes
         n = len(sizes)
         if n == 0:

@@ -785,7 +785,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_ring, nrows,
                                      ncols, sparse, matrix_cls, **kwds)
 
-    def __init__(self, base_ring, nrows, ncols, sparse, implementation):
+    def __init__(self, base_ring, nrows, ncols, sparse, implementation) -> None:
         r"""
         INPUT:
 
@@ -973,7 +973,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         """
         return self._base.is_exact()
 
-    def _has_default_implementation(self):
+    def _has_default_implementation(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -1008,7 +1008,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 self.__is_sparse, self.Element)
 
     @lazy_attribute
-    def _copy_zero(self):
+    def _copy_zero(self) -> bool:
         """
         Is it faster to copy a zero matrix or is it faster to create a
         new matrix from scratch?
@@ -1533,7 +1533,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return self.__nrows > 1
         return super()._repr_option(key)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of a MatrixSpace.
 
@@ -1546,7 +1546,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return "\\mathrm{Mat}_{%s\\times %s}(%s)" % (self.nrows(), self.ncols(),
                                                      latex.latex(self.base_ring()))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return number of elements of this matrix space if it fits in
         an int; raise a :exc:`TypeError` if there are infinitely many
@@ -2090,7 +2090,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             A[i, i] = entries[i]
         return A
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return whether matrices in ``self`` are dense.
 
@@ -2569,7 +2569,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         yield self.an_element()
         yield from self.gens()
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         EXAMPLES: We first coerce a square matrix.
 
@@ -2588,7 +2588,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return 'MatrixAlgebra(%s,%s)' % (K.name(), self.__nrows)
         return 'RMatrixSpace(%s,%s,%s)' % (K.name(), self.__nrows, self.__ncols)
 
-    def _polymake_init_(self):
+    def _polymake_init_(self) -> str:
         r"""
         Return the polymake representation of the matrix space.
 

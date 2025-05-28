@@ -575,7 +575,7 @@ class SageMagics(Magics):
 
 class SageCustomizations:
 
-    def __init__(self, shell=None):
+    def __init__(self, shell=None) -> None:
         """
         Initialize the Sage plugin.
         """

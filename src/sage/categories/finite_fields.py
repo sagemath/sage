@@ -64,7 +64,7 @@ class FiniteFields(CategoryWithAxiom):
         """
         return [EnumeratedSets().Finite()]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -94,7 +94,7 @@ class FiniteFields(CategoryWithAxiom):
         # TODO: local dvr ring?
 
     class ParentMethods:
-        def is_perfect(self):
+        def is_perfect(self) -> bool:
             r"""
             Return whether this field is perfect, i.e., every element has a `p`-th
             root. Always returns ``True`` since finite fields are perfect.

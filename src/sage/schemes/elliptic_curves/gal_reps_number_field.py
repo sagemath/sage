@@ -86,7 +86,7 @@ class GaloisRepresentation(SageObject):
          over Number Field in a with defining polynomial x^2 + 1
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         See ``GaloisRepresentation`` for documentation.
 
@@ -105,7 +105,7 @@ class GaloisRepresentation(SageObject):
         """
         self.E = E
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of the class.
 
@@ -225,7 +225,7 @@ class GaloisRepresentation(SageObject):
             return [0]
         return _non_surjective(self.E, A)
 
-    def is_surjective(self, p, A=100):
+    def is_surjective(self, p, A=100) -> bool:
         r"""
         Return ``True`` if the mod-p representation is (provably)
         surjective onto `Aut(E[p]) = GL_2(\GF{p})`.  Return

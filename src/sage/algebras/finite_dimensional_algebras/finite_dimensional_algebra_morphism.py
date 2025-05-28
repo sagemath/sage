@@ -57,7 +57,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
     .. TODO:: An example illustrating unitary flag.
     """
-    def __init__(self, parent, f, check=True, unitary=True):
+    def __init__(self, parent, f, check=True, unitary=True) -> None:
         """
         TESTS::
 
@@ -80,7 +80,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
                                   or self(A.one()) != B.one()):
             raise ValueError("homomorphism does not respect unit elements")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -134,7 +134,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
                 and self.parent() == other.parent()
                 and self._matrix == other._matrix)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check not equals.
 

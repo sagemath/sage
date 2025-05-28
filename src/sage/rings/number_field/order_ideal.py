@@ -111,7 +111,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
     r"""
     An ideal of a not necessarily maximal order in a number field.
     """
-    def __init__(self, O, gens, *, coerce=True):
+    def __init__(self, O, gens, *, coerce=True) -> None:
         r"""
         Ideals of not necessarily maximal orders.
 
@@ -181,7 +181,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
             return NotImplemented
         return richcmp(self._module, other._module, op)
 
-    def _contains_(self, x):
+    def _contains_(self, x) -> bool:
         r"""
         Test whether this ideal contains a given element.
 
@@ -351,7 +351,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
     r"""
     An ideal of a not necessarily maximal order in a *quadratic* number field.
     """
-    def __init__(self, O, gens, *, coerce=True):
+    def __init__(self, O, gens, *, coerce=True) -> None:
         r"""
         Ideals of *quadratic* orders are implemented by a specialized
         class because they have some extra features not present in
@@ -456,7 +456,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
             alpha = 0
         return tuple(map(O, (N, alpha)))
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Determine whether or not this ideal is principal.
 

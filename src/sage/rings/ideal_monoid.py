@@ -47,7 +47,7 @@ class IdealMonoid_c(Parent):
 
     Element = ideal.Ideal_generic  # this doesn't seem to do anything
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         Initialize ``self``.
 
@@ -75,7 +75,7 @@ class IdealMonoid_c(Parent):
                         category=cat)
         self._populate_coercion_lists_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -176,7 +176,7 @@ class IdealMonoid_c(Parent):
         else:
             return self.ring() == other.ring()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Check whether ``self`` is not equal to ``other``.
 

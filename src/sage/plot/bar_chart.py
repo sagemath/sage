@@ -38,7 +38,7 @@ class BarChart(GraphicPrimitive):
         sage: type(g)
         <class 'sage.plot.bar_chart.BarChart'>
     """
-    def __init__(self, ind, datalist, options):
+    def __init__(self, ind, datalist, options) -> None:
         """
         Initialize a ``BarChart`` primitive.
 
@@ -86,7 +86,7 @@ class BarChart(GraphicPrimitive):
                 'width': 'The width of the bars',
                 'zorder': 'The layer level in which to draw'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return text representation of this bar chart graphics primitive.
 

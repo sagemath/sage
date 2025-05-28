@@ -22,7 +22,7 @@ from sage.repl.rich_output.buffer import OutputBuffer
 
 class OutputSceneJmol(OutputBase):
 
-    def __init__(self, scene_zip, preview_png):
+    def __init__(self, scene_zip, preview_png) -> None:
         """
         JMol Scene.
 
@@ -110,7 +110,7 @@ class OutputSceneJmol(OutputBase):
 
 class OutputSceneCanvas3d(OutputBase):
 
-    def __init__(self, canvas3d):
+    def __init__(self, canvas3d) -> None:
         """
         Canvas3d Scene.
 
@@ -153,7 +153,7 @@ class OutputSceneCanvas3d(OutputBase):
 
 class OutputSceneThreejs(OutputBase):
 
-    def __init__(self, html):
+    def __init__(self, html) -> None:
         """
         Three.js Scene.
 
@@ -172,7 +172,7 @@ class OutputSceneThreejs(OutputBase):
 
 class OutputSceneWavefront(OutputBase):
 
-    def __init__(self, obj, mtl):
+    def __init__(self, obj, mtl) -> None:
         """
         Wavefront `*.obj` Scene.
 

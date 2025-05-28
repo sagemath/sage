@@ -29,7 +29,7 @@ class FriCAS(Executable):
     """
     MINIMUM_VERSION = "1.3.8"
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

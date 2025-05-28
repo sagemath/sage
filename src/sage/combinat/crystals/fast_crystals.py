@@ -119,7 +119,7 @@ class FastCrystal(UniqueRepresentation, Parent):
         shape = shape + (0,)*(2-len(shape))
         return super().__classcall__(cls, cartan_type, shape, format)
 
-    def __init__(self, ct, shape, format):
+    def __init__(self, ct, shape, format) -> None:
         """
         EXAMPLES::
 
@@ -301,7 +301,7 @@ class FastCrystal(UniqueRepresentation, Parent):
             return 0
 
     class Element(Element):
-        def __init__(self, parent, value, format):
+        def __init__(self, parent, value, format) -> None:
             """
             EXAMPLES::
 

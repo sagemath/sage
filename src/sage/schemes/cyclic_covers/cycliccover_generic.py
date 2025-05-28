@@ -42,7 +42,7 @@ from sage.schemes.curves.affine_curve import AffinePlaneCurve
 
 
 class CyclicCover_generic(AffinePlaneCurve):
-    def __init__(self, AA, r, f, names=None):
+    def __init__(self, AA, r, f, names=None) -> None:
         """
         Cyclic covers over a general ring.
 
@@ -128,7 +128,7 @@ class CyclicCover_generic(AffinePlaneCurve):
 
     base_extend = change_ring
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of cyclic covers.
 
@@ -179,7 +179,7 @@ class CyclicCover_generic(AffinePlaneCurve):
             and (self._f == other._f)
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test of not equality.
 
@@ -267,7 +267,7 @@ class CyclicCover_generic(AffinePlaneCurve):
             P = PolynomialRing(K, var)
             return P(self._f)
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return if this curve is singular or not.
 
@@ -290,7 +290,7 @@ class CyclicCover_generic(AffinePlaneCurve):
         else:
             return not self._f.is_squarefree()
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return if this curve is smooth or not.
 

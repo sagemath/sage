@@ -1134,7 +1134,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
                 tester = self._tester(**options)
                 tester.assertEqual(self.number_of_simple_reflections(), self.rank())
 
-            def is_well_generated(self):
+            def is_well_generated(self) -> bool:
                 r"""
                 Return ``True`` as ``self`` is well-generated.
 

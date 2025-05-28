@@ -121,7 +121,7 @@ class AbstractLanguage(Parent):
     simply disappear or become a common base class for all languages. In the
     latter case, its name would possibly change to ``Language``.
     """
-    def __init__(self, alphabet=None, category=None):
+    def __init__(self, alphabet=None, category=None) -> None:
         r"""
         INPUT:
 
@@ -340,7 +340,7 @@ class FiniteWords(AbstractLanguage):
         sage: TestSuite(FiniteWords(['a'])).run()
     """
 
-    def __init__(self, alphabet=None, category=None):
+    def __init__(self, alphabet=None, category=None) -> None:
         """
         INPUT:
 
@@ -369,7 +369,7 @@ class FiniteWords(AbstractLanguage):
             category = category.Finite()
         super().__init__(alphabet, category)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return ``False``, because the empty word is in the set.
 
@@ -1631,7 +1631,7 @@ class InfiniteWords(AbstractLanguage):
             self._check(w)
         return w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1674,7 +1674,7 @@ class InfiniteWords(AbstractLanguage):
 
 
 class FiniteOrInfiniteWords(AbstractLanguage):
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         INPUT:
 
@@ -2114,7 +2114,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         else:
             raise ValueError("invalid argument length (={!r})".format(length))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2130,7 +2130,7 @@ class Words_n(Parent):
     r"""
     The set of words of fixed length on a given alphabet.
     """
-    def __init__(self, words, n):
+    def __init__(self, words, n) -> None:
         r"""
         INPUT:
 
@@ -2283,7 +2283,7 @@ class Words_n(Parent):
         """
         return self._words.random_element(length=self._n, *args, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2295,7 +2295,7 @@ class Words_n(Parent):
             return "Words over {} of length {}".format(self.alphabet(), self._n)
         return "Words of length {} over {}".format(self._n, self.alphabet())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

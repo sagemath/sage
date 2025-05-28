@@ -47,7 +47,7 @@ class CryptoMiniSat(SatSolver):
         sage: from sage.sat.solvers.cryptominisat import CryptoMiniSat
         sage: solver = CryptoMiniSat()                                  # optional - pycryptosat
     """
-    def __init__(self, verbosity=0, confl_limit=None, threads=None):
+    def __init__(self, verbosity=0, confl_limit=None, threads=None) -> None:
         r"""
         Construct a new CryptoMiniSat instance.
 
@@ -199,7 +199,7 @@ class CryptoMiniSat(SatSolver):
         else:
             return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 

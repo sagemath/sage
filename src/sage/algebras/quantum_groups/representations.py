@@ -56,7 +56,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
             q = R.gen()
         return super().__classcall__(cls, R, C, q)
 
-    def __init__(self, R, C, q):
+    def __init__(self, R, C, q) -> None:
         """
         Initialize ``self``.
 
@@ -140,7 +140,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
     and
     :class:`~sage.algebras.quantum_groups.representation.MinusculeRepresentation`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -158,7 +158,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
             mg = self.basis().keys().module_generators[0]
         return "V({})".format(mg.weight())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -300,7 +300,7 @@ class AdjointRepresentation(CyclicRepresentation):
 
     - [OS2018]_
     """
-    def __init__(self, R, C, q):
+    def __init__(self, R, C, q) -> None:
         """
         Initialize ``self``.
 

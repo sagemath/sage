@@ -221,7 +221,7 @@ class Yangian(CombinatorialFreeModule):
                                      variable_name=variable_name,
                                      filtration=filtration)
 
-    def __init__(self, base_ring, n, variable_name, filtration):
+    def __init__(self, base_ring, n, variable_name, filtration) -> None:
         r"""
         Initialize ``self``.
 
@@ -250,7 +250,7 @@ class Yangian(CombinatorialFreeModule):
                                          sorting_key=Yangian._term_key,
                                          prefix=variable_name, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -263,7 +263,7 @@ class Yangian(CombinatorialFreeModule):
         """
         return "Yangian of gl({}) in the {} filtration over {}".format(self._n, self._filtration, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -650,7 +650,7 @@ class YangianLevel(Yangian):
         t(1)[1,2]*t(1)[1,3]*t(3)[2,1] + t(1)[1,2]*t(3)[2,3]
          - t(1)[1,3]*t(3)[1,1] + t(1)[1,3]*t(3)[2,2] - t(3)[1,3]
     """
-    def __init__(self, base_ring, n, level, variable_name, filtration):
+    def __init__(self, base_ring, n, level, variable_name, filtration) -> None:
         """
         Initialize ``self``.
 
@@ -673,7 +673,7 @@ class YangianLevel(Yangian):
         CombinatorialFreeModule.__init__(self, base_ring, basis_keys,
                                          prefix=variable_name, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -685,7 +685,7 @@ class YangianLevel(Yangian):
         return "Yangian of level {} of gl({}) in the {} filtration over {}".format(
                         self._level, self._n, self._filtration, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -950,7 +950,7 @@ class GradedYangianNatural(GradedYangianBase):
 
     - ``Y`` -- a Yangian with the natural filtration
     """
-    def __init__(self, Y):
+    def __init__(self, Y) -> None:
         """
         Initialize ``self``.
 
@@ -995,7 +995,7 @@ class GradedYangianLoop(GradedYangianBase):
 
     - ``Y`` -- a Yangian with the loop filtration
     """
-    def __init__(self, Y):
+    def __init__(self, Y) -> None:
         """
         Initialize ``self``.
 

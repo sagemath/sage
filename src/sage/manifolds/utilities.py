@@ -902,7 +902,7 @@ class ExpressionNice(Expression):
         sage: latex(ExpressionNice(fun))
         f\left(x, y\right) \left(\frac{\partial\,f}{\partial y}\right)^{2}
     """
-    def __init__(self, ex):
+    def __init__(self, ex) -> None:
         r"""
         Initialize ``self``.
 

@@ -58,7 +58,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         [1, 7, 14, 64]
     """
 
-    def dimension(self):
+    def dimension(self) -> int:
         """
         EXAMPLES::
 
@@ -114,7 +114,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanTy
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -143,7 +143,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         CartanType_standard_finite.__init__(self, "G", 2)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -158,7 +158,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
 
     AmbientSpace = AmbientSpace
 
-    def coxeter_number(self):
+    def coxeter_number(self) -> int:
         """
         Return the Coxeter number associated with ``self``.
 
@@ -169,7 +169,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         return 6
 
-    def dual_coxeter_number(self):
+    def dual_coxeter_number(self) -> int:
         """
         Return the dual Coxeter number associated with ``self``.
 

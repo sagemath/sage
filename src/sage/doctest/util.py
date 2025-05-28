@@ -28,7 +28,7 @@ from time import time as walltime
 from contextlib import contextmanager
 
 
-def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
+def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False) -> str:
     """
     EXAMPLES::
 
@@ -374,7 +374,7 @@ class Timer:
         object.cputime = self.cputime
         object.walltime = self.walltime
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation is from the dictionary.
 
@@ -386,7 +386,7 @@ class Timer:
         """
         return str(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         String representation is from the dictionary.
 
@@ -415,7 +415,7 @@ class Timer:
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -464,7 +464,7 @@ class RecordingDict(dict):
 
         sage: TestSuite(D).run()
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Initialization arguments are the same as for a normal dictionary.
 
@@ -520,7 +520,7 @@ class RecordingDict(dict):
             self.got.add(name)
         return dict.__getitem__(self, name)
 
-    def __setitem__(self, name, value):
+    def __setitem__(self, name, value) -> None:
         """
         EXAMPLES::
 
@@ -533,7 +533,7 @@ class RecordingDict(dict):
         self.set.add(name)
         dict.__setitem__(self, name, value)
 
-    def __delitem__(self, name):
+    def __delitem__(self, name) -> None:
         """
         EXAMPLES::
 
@@ -639,7 +639,7 @@ class NestedName:
 
         sage: TestSuite(qname).run()
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         """
         INPUT:
 
@@ -654,7 +654,7 @@ class NestedName:
         """
         self.all = [base]
 
-    def __setitem__(self, index, value):
+    def __setitem__(self, index, value) -> None:
         """
         Set the value at a given indentation level.
 
@@ -681,7 +681,7 @@ class NestedName:
             self.all.append(None)
         self.all[index+1:] = [value]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return a .-separated string giving the full name.
 
@@ -696,7 +696,7 @@ class NestedName:
         """
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a .-separated string giving the full name.
 
@@ -733,7 +733,7 @@ class NestedName:
             return False
         return self.all == other.all
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 

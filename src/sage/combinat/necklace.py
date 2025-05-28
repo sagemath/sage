@@ -91,7 +91,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             content = Composition(content)
         return super().__classcall__(cls, content)
 
-    def __init__(self, content):
+    def __init__(self, content) -> None:
         r"""
         Initialize ``self``.
 

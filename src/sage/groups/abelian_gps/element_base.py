@@ -54,7 +54,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         True
     """
 
-    def __init__(self, parent, exponents):
+    def __init__(self, parent, exponents) -> None:
         """
         Create an element.
 

@@ -28,7 +28,7 @@ class symengine_py(JoinFeature):
         sage: symengine_py().is_present()                    # optional - symengine_py
         FeatureTestResult('symengine_py', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

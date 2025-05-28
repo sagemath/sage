@@ -46,7 +46,7 @@ class BezierPath(GraphicPrimitive_xydata):
          P = bezier_path([[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]], linestyle='dashed')
          sphinx_plot(P)
     """
-    def __init__(self, path, options):
+    def __init__(self, path, options) -> None:
         """
         Return a graphics primitive of a path of Bezier curves.
 
@@ -192,7 +192,7 @@ class BezierPath(GraphicPrimitive_xydata):
         options.update(kwds)
         return bezier3d([[(x,y,0) for x,y in self.path[i]] for i in range(len(self.path))], **options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return text representation of this Bezier path graphics primitive.
 

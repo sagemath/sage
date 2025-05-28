@@ -29,7 +29,7 @@ class OreFunction(AlgebraElement):
     r"""
     An element in a Ore function field.
     """
-    def __init__(self, parent, numerator, denominator=None, simplify=True):
+    def __init__(self, parent, numerator, denominator=None, simplify=True) -> None:
         r"""
         Initialize this element.
 
@@ -722,7 +722,7 @@ class OreFunctionBaseringInjection(Morphism):
 
     This class is needed by the coercion system.
     """
-    def __init__(self, domain, codomain):
+    def __init__(self, domain, codomain) -> None:
         r"""
         Initialize this morphism.
 

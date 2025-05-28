@@ -149,7 +149,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         return BinaryTrees_all()
 
-    def __init__(self, parent, children=None, check=True):
+    def __init__(self, parent, children=None, check=True) -> None:
         r"""
         TESTS::
 
@@ -674,7 +674,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         resu = [l] + [u for t in self for u in t._sort_key()]
         return tuple(resu)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return whether ``self`` is empty.
 
@@ -4066,7 +4066,7 @@ def from_tamari_sorting_tuple(key):
 
 class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -4091,7 +4091,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             self, Family(NonNegativeIntegers(), BinaryTrees_size),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -4100,7 +4100,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
         """
         return "Binary trees"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -4178,7 +4178,7 @@ class BinaryTrees_size(BinaryTrees):
         sage: for i in range(6): TestSuite(BinaryTrees_size(i)).run()
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         """
         TESTS::
 
@@ -4193,7 +4193,7 @@ class BinaryTrees_size(BinaryTrees):
                          category=FiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -4202,7 +4202,7 @@ class BinaryTrees_size(BinaryTrees):
         """
         return "Binary trees of size %s" % (self._size)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -4319,7 +4319,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
     All full binary trees.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -4344,7 +4344,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             self, Family(NonNegativeIntegers(), _full_construction),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -4353,7 +4353,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
         """
         return "Full binary trees"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -4417,7 +4417,7 @@ class FullBinaryTrees_size(BinaryTrees):
     Full binary trees of a fixed size (number of nodes).
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         r"""
         TESTS::
 
@@ -4429,7 +4429,7 @@ class FullBinaryTrees_size(BinaryTrees):
                          category=FiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -4438,7 +4438,7 @@ class FullBinaryTrees_size(BinaryTrees):
         """
         return "Full binary trees of size %s" % self._size
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         TESTS::
 
@@ -5160,7 +5160,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
     labels constraints.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

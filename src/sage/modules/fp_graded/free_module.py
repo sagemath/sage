@@ -389,7 +389,7 @@ class FreeGradedModule(CombinatorialFreeModule):
                                      category=category, names=names,
                                      prefix=prefix, **kwds)
 
-    def __init__(self, algebra, generator_degrees, category, names=None, **kwds):
+    def __init__(self, algebra, generator_degrees, category, names=None, **kwds) -> None:
         r"""
         Create a finitely generated free graded module over a connected graded
         algebra.
@@ -463,7 +463,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         return type(self).__base__(algebra, self.generator_degrees(),
                                    prefix=self.prefix(), names=self._names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Construct a string representation of ``self``.
 
@@ -940,7 +940,7 @@ class FreeGradedModule(CombinatorialFreeModule):
         return FreeGradedModule(algebra=self.base_ring(),
                                 generator_degrees=degs)
 
-    def has_relations(self):
+    def has_relations(self) -> bool:
         r"""
         Return ``False`` as this has no relations.
 

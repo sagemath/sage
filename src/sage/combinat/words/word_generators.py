@@ -140,7 +140,7 @@ class LowerChristoffelWord(FiniteWord_list):
         word: 01
     """
 
-    def __init__(self, p, q, alphabet=(0, 1), algorithm='cf'):
+    def __init__(self, p, q, alphabet=(0, 1), algorithm='cf') -> None:
         r"""
         INPUT:
 

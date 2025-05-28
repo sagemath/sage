@@ -184,7 +184,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         j = Hom(relations_module, generator_module)(rels)
         return super().__classcall__(cls, j, names=names)
 
-    def __init__(self, j, names):
+    def __init__(self, j, names) -> None:
         r"""
         Create a finitely presented module over a connected graded algebra.
 
@@ -453,7 +453,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         return self._from_dict({b: c for (c, b) in zip(x, self._indices) if c},
                                remove_zeros=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Construct a string representation of ``self``.
 

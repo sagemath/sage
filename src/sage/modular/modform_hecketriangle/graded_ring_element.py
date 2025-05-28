@@ -72,7 +72,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         return super().__classcall__(cls, parent, rat)
 
-    def __init__(self, parent, rat):
+    def __init__(self, parent, rat) -> None:
         r"""
         Element of a FormsRing ``parent`` corresponding to the rational
         function ``rat`` evaluated at ``x=f_rho``, ``y=f_i``, ``z=E2``

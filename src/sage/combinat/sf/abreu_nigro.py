@@ -183,7 +183,7 @@ class SymmetricFunctionAlgebra_AbreuNigro(multiplicative.SymmetricFunctionAlgebr
         q = Sym.base_ring()(q)
         return super().__classcall__(cls, Sym, q)
 
-    def __init__(self, Sym, q):
+    def __init__(self, Sym, q) -> None:
         r"""
         Initialize ``self``.
 

@@ -76,7 +76,7 @@ class QuasiMeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation)
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) quasi meromorphic modular forms
         for the given ``group`` and ``base_ring``.
@@ -139,7 +139,7 @@ class QuasiWeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) quasi weakly holomorphic modular forms
         for the given ``group`` and ``base_ring``.
@@ -199,7 +199,7 @@ class QuasiModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) quasi modular forms
         for the given ``group`` and ``base_ring``.
@@ -259,7 +259,7 @@ class QuasiCuspFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) quasi cusp forms
         for the given ``group`` and ``base_ring``.
@@ -319,7 +319,7 @@ class MeromorphicModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) meromorphic modular forms
         for the given ``group`` and ``base_ring``.
@@ -379,7 +379,7 @@ class WeakModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) weakly holomorphic modular forms
         for the given ``group`` and ``base_ring``.
@@ -438,7 +438,7 @@ class ModularFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) modular forms
         for the given ``group`` and ``base_ring``.
@@ -498,7 +498,7 @@ class CuspFormsRing(FormsRing_abstract, UniqueRepresentation):
         (group, base_ring, red_hom, n) = canonical_parameters(group, base_ring, red_hom, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, red_hom=red_hom, n=n)
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Return the graded ring of (Hecke) cusp forms
         for the given ``group`` and ``base_ring``.

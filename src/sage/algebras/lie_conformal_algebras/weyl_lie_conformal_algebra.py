@@ -121,7 +121,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
         [0 0 1]
     """
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
-                 index_set=None):
+                 index_set=None) -> None:
         """
         Initialize ``self``.
 
@@ -174,7 +174,7 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
                          central_elements=('K',))
         self._gram_matrix = gram_matrix
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 

@@ -46,7 +46,7 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
       by using :meth:`degree_on_basis` which returns the sum of exponents
       of the monomial
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         EXAMPLES::
 
@@ -80,7 +80,7 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
         """
         return (-len(x), x.to_word_list())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

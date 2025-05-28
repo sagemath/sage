@@ -81,7 +81,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         ct = CartanType(cartan_type)
         return super().__classcall__(cls, ct, *args, **options)
 
-    def __init__(self, cartan_type, classical_crystal, category=None):
+    def __init__(self, cartan_type, classical_crystal, category=None) -> None:
         """
         Input is an affine Cartan type ``cartan_type``, a classical crystal
         ``classical_crystal``, and automorphism and its inverse
@@ -120,7 +120,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
                                   for gen in self.classical_crystal.module_generators]
         self.element_class._latex_ = lambda x: x.lift()._latex_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -231,7 +231,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
         else:  # Should do sanity checks!  (Including check for inconsistent parent.)
             return self.retract(self.classical_crystal(*value, **options))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Check whether `x` is an element of ``self``.
 
@@ -564,7 +564,7 @@ class AffineCrystalFromClassicalAndPromotion(AffineCrystalFromClassical):
         [[[2]], [[1]], [[3]]]
     """
 
-    def __init__(self, cartan_type, classical_crystal, p_automorphism, p_inverse_automorphism, dynkin_node, category=None):
+    def __init__(self, cartan_type, classical_crystal, p_automorphism, p_inverse_automorphism, dynkin_node, category=None) -> None:
         """
         Input is an affine Cartan type ``cartan_type``, a classical crystal
         ``classical_crystal``, and promotion automorphism and its inverse

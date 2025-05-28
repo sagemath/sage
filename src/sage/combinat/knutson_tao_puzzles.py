@@ -246,7 +246,7 @@ class NablaPiece(PuzzlePiece):
         c\a/b
     """
 
-    def __init__(self, north, south_east, south_west):
+    def __init__(self, north, south_east, south_west) -> None:
         r"""
         INPUT:
 
@@ -364,7 +364,7 @@ class DeltaPiece(PuzzlePiece):
         b/a\c
     """
 
-    def __init__(self, south, north_west, north_east):
+    def __init__(self, south, north_west, north_east) -> None:
         r"""
         INPUT:
 
@@ -487,7 +487,7 @@ class RhombusPiece(PuzzlePiece):
         2/\3  6\/5
     """
 
-    def __init__(self, north_piece, south_piece):
+    def __init__(self, north_piece, south_piece) -> None:
         r"""
         EXAMPLES::
 
@@ -644,7 +644,7 @@ class PuzzlePieces:
         1/\1  10\/0, 1/\1  1\/1, 10/\1  0\/0, 10/\1  1\/10]
     """
 
-    def __init__(self, forbidden_border_labels=None):
+    def __init__(self, forbidden_border_labels=None) -> None:
         r"""
         INPUT:
 
@@ -1064,7 +1064,7 @@ class PuzzleFilling:
     Create partial puzzles and provides methods to build puzzles from them.
     """
 
-    def __init__(self, north_west_labels, north_east_labels):
+    def __init__(self, north_west_labels, north_east_labels) -> None:
         r"""
         TESTS::
 
@@ -1300,7 +1300,7 @@ class PuzzleFilling:
                     z *= -1
         return z
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 
@@ -1920,7 +1920,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
           (5, 5): 2(1)/1\2}]
     """
 
-    def __init__(self, puzzle_pieces):
+    def __init__(self, puzzle_pieces) -> None:
         r"""
         Knutson-Tao puzzle solver.
 

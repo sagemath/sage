@@ -18,7 +18,7 @@ from sage.misc.cachefunc import cached_method
 
 
 class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
-    def __init__(self, M, base_ring):
+    def __init__(self, M, base_ring) -> None:
         """
         Ambient space of modular forms over a ring other than QQ.
 

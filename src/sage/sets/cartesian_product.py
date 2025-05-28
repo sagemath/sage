@@ -51,7 +51,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     .. automethod:: CartesianProduct._cartesian_product_of_elements
     """
-    def __init__(self, sets, category, flatten=False):
+    def __init__(self, sets, category, flatten=False) -> None:
         r"""
         INPUT:
 
@@ -134,7 +134,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         x = tuple(c(xx) for c, xx in zip(self._sets, x))
         return self.element_class(self, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -143,7 +143,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         """
         return "The Cartesian product of %s" % (self._sets,)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -347,7 +347,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
             """
             return iter(self.value)
 
-        def __len__(self):
+        def __len__(self) -> int:
             r"""
             Return the number of factors in the cartesian product from which ``self`` comes.
 

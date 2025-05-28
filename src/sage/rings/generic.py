@@ -88,7 +88,7 @@ class ProductTree:
          (32589158477190044730, 70746471270782959),
          (2305567963945518424753102147331756070,)]
     """
-    def __init__(self, leaves):
+    def __init__(self, leaves) -> None:
         r"""
         Initialize a product tree having the given ring elements
         as its leaves.
@@ -105,7 +105,7 @@ class ProductTree:
             V = tuple(prod(V[i:i+2]) for i in range(0,len(V),2))
             self.layers.append(V)
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of leaves of this product tree.
 
@@ -304,7 +304,7 @@ def prod_with_derivative(pairs):
         (442943981574522759, 104645261461514994)
     """
     class _aux:
-        def __init__(self, f, df):
+        def __init__(self, f, df) -> None:
             self.f, self.df = f, df
 
         def __mul__(self, other):

@@ -217,7 +217,7 @@ class PollackStevensModularSymbolspace(Module):
         sage: M = PollackStevensModularSymbols(Gamma0(2), coefficients=D, sign=1); M.sign()
         1
     """
-    def __init__(self, group, coefficients, sign=0):
+    def __init__(self, group, coefficients, sign=0) -> None:
         r"""
         INPUT:
 

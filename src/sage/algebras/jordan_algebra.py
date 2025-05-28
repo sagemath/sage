@@ -240,7 +240,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
     r"""
     A (special) Jordan algebra `A^+` from an associative algebra `A`.
     """
-    def __init__(self, A, names=None):
+    def __init__(self, A, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -268,7 +268,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -381,7 +381,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
         """
         An element of a special Jordan algebra.
         """
-        def __init__(self, parent, x):
+        def __init__(self, parent, x) -> None:
             """
             Initialize ``self``.
 
@@ -461,7 +461,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 return False
             return self._x == other._x
 
-        def __ne__(self, other):
+        def __ne__(self, other) -> bool:
             """
             Check inequality.
 
@@ -604,7 +604,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
     r"""
     A Jordan algebra given by a symmetric bilinear form `m`.
     """
-    def __init__(self, R, form, names=None):
+    def __init__(self, R, form, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -619,7 +619,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         cat = MagmaticAlgebras(R).Commutative().Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -808,7 +808,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         """
         An element of a Jordan algebra defined by a symmetric bilinear form.
         """
-        def __init__(self, parent, s, v):
+        def __init__(self, parent, s, v) -> None:
             """
             Initialize ``self``.
 
@@ -822,7 +822,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             self._v = v
             AlgebraElement.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -835,7 +835,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             """
             return "{} + {}".format(self._s, self._v)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -891,7 +891,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
                 return False
             return self._s == other._s and self._v == other._v
 
-        def __ne__(self, other):
+        def __ne__(self, other) -> bool:
             """
             Check inequality.
 
@@ -1150,7 +1150,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
     - :wikipedia:`Hurwitz's_theorem_(composition_algebras)#Applications_to_Jordan_algebras`
     - `<https://math.ucr.edu/home/baez/octonions/octonions.pdf>`_
     """
-    def __init__(self, O):
+    def __init__(self, O) -> None:
         r"""
         Initialize ``self``.
 
@@ -1190,7 +1190,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
         cat = MagmaticAlgebras(R).Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1463,7 +1463,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
         r"""
         An element of an exceptional Jordan algebra.
         """
-        def __init__(self, parent, data):
+        def __init__(self, parent, data) -> None:
             """
             Initialize ``self``.
 

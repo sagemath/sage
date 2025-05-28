@@ -32,7 +32,7 @@ class Plantri(Executable):
         sage: Plantri().is_present()  # optional - plantri
         FeatureTestResult('plantri', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -79,7 +79,7 @@ class Buckygen(Executable):
         sage: Buckygen().is_present()  # optional - buckygen
         FeatureTestResult('buckygen', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -127,7 +127,7 @@ class Benzene(Executable):
         sage: Benzene().is_present()  # optional - benzene
         FeatureTestResult('benzene', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

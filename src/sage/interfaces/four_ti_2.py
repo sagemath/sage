@@ -47,7 +47,7 @@ class FourTi2:
 
     Each 4ti2 command is exposed as a method of this class.
     """
-    def __init__(self, directory=None):
+    def __init__(self, directory=None) -> None:
         r"""
         Initialize this object.
 

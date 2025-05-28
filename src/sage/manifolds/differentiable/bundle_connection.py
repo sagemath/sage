@@ -236,7 +236,7 @@ class BundleConnection(SageObject, Mutability):
         [True, True, True, True]
     """
 
-    def __init__(self, vbundle, name, latex_name=None):
+    def __init__(self, vbundle, name, latex_name=None) -> None:
         r"""
         Construct a bundle connection.
 
@@ -346,7 +346,7 @@ class BundleConnection(SageObject, Mutability):
         """
         self._curvature_forms.clear()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Comparison (equality) operator.
 
@@ -396,7 +396,7 @@ class BundleConnection(SageObject, Mutability):
                     return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 
@@ -1129,7 +1129,7 @@ class BundleConnection(SageObject, Mutability):
         form = self.connection_form(indices[0], indices[1], frame=frame)
         return form
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the components of ``self`` corresponding to the given indices.
 

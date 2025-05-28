@@ -295,7 +295,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             True
         """
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return whether ``self`` is crystallographic.
 
@@ -315,7 +315,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
         return False
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether ``self`` is simply laced.
 
@@ -434,7 +434,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         """
         return super().__classcall__(cls, CartanType(cartan_type))
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 

@@ -401,7 +401,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
 
 class FilteredVectorSpace_class(FreeModule_ambient_field):
 
-    def __init__(self, base_ring, dim, generators, filtration, check=True):
+    def __init__(self, base_ring, dim, generators, filtration, check=True) -> None:
         r"""
         A descending filtration of a vector space.
 
@@ -764,7 +764,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             filtration[d] = tuple(indices)
         return generators, filtration
 
-    def _repr_field_name(self):
+    def _repr_field_name(self) -> str:
         """
         Return an abbreviated field name as string.
 
@@ -891,7 +891,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             s += ' in ' + self._repr_vector_space(self.degree())
         return s
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return whether ``self`` is equal to ``other``.
 
@@ -940,7 +940,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return whether ``self`` is not equal to ``other``.
 

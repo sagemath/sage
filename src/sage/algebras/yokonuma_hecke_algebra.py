@@ -66,7 +66,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             return YokonumaHeckeAlgebraWeyl(d, n, q, R)
         return YokonumaHeckeAlgebraGL(d, n, q, R)
 
-    def __init__(self, d, W, q, R, indices, category=None):
+    def __init__(self, d, W, q, R, indices, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -262,7 +262,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
     - [ERH2015]_
     - [JPdA15]_
     """
-    def __init__(self, d, n, q, R):
+    def __init__(self, d, n, q, R) -> None:
         """
         Initialize ``self``.
 
@@ -279,7 +279,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         indices = list(itertools.product(C, W))
         YokonumaHeckeAlgebra.__init__(self, d, W, q, R, indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -292,7 +292,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
         return "Yokonuma-Hecke algebra of rank {} and order {} with q={} over {}".format(
             self._d, self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -667,7 +667,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
 
     - [Marin2018]_
     """
-    def __init__(self, d, ct, q, R):
+    def __init__(self, d, ct, q, R) -> None:
         r"""
         Initialize ``self``.
 
@@ -688,7 +688,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
         indices = cartesian_product([self._Q, W])
         YokonumaHeckeAlgebra.__init__(self, d, W, q, R, indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -701,7 +701,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
         return "Yokonuma-Hecke algebra of rank {} for {} with q={} over {}".format(
             self._d, self._cartan_type, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

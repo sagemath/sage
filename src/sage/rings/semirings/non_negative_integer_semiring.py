@@ -60,7 +60,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         sage: x+3
         18
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -93,7 +93,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         """
         return Family([NN(0), NN(1)])
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 

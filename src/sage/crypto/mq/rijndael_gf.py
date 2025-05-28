@@ -436,7 +436,7 @@ from sage.misc.sageinspect import sage_getargspec
 
 class RijndaelGF(SageObject):
 
-    def __init__(self, Nb, Nk, state_chr='a', key_chr='k'):
+    def __init__(self, Nb, Nk, state_chr='a', key_chr='k') -> None:
         r"""
         An algebraically generalized version of the AES cipher.
 
@@ -616,7 +616,7 @@ class RijndaelGF(SageObject):
             raise ValueError("keyword 'algorithm' must be either 'encrypt' "
                              "or 'decrypt'")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -2146,7 +2146,7 @@ class RijndaelGF(SageObject):
 
     class Round_Component_Poly_Constr(SageObject):
 
-        def __init__(self, polynomial_constr, rgf, round_component_name=None):
+        def __init__(self, polynomial_constr, rgf, round_component_name=None) -> None:
             r"""
             An object which constructs polynomials representing round
             component functions of a RijndaelGF object.
@@ -2318,7 +2318,7 @@ class RijndaelGF(SageObject):
                 raise ValueError(msg)
             return self._polynomial_constr(row, col, algorithm, **kwargs)
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             r"""
             Return a string representation of this object.
 

@@ -16,7 +16,7 @@ from sage.categories.covariant_functorial_construction import RegressiveCovarian
 
 
 class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_over_base_ring):
-    def __init__(self, base_category):
+    def __init__(self, base_category) -> None:
         """
         EXAMPLES::
 
@@ -47,7 +47,7 @@ class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_ov
 
     _functor_category = "Graded"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

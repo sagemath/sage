@@ -26,7 +26,7 @@ class PalpExecutable(Executable):
 
     - ``suff`` -- string or ``None``
     """
-    def __init__(self, palpprog, suff=None):
+    def __init__(self, palpprog, suff=None) -> None:
         r"""
         TESTS::
 
@@ -48,7 +48,7 @@ class Palp(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of :ref:`PALP <spkg_palp>`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

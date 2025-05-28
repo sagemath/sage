@@ -58,7 +58,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
     _registered_decoders = {}
 
     def __init__(self, base_field, length, dimension, sub_field=None,
-            twisting_homomorphism=None, evaluation_points=None):
+            twisting_homomorphism=None, evaluation_points=None) -> None:
         r"""
         Representation of a Gabidulin Code.
 
@@ -215,7 +215,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
         self._evaluation_points = evaluation_points
         self._dimension = dimension
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -390,7 +390,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
 
 class GabidulinVectorEvaluationEncoder(Encoder):
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         """
         This method constructs the vector evaluation encoder for
         Gabidulin Codes.
@@ -428,7 +428,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
             raise ValueError("code has to be a Gabidulin code")
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -442,7 +442,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
         """
         return "Vector evaluation style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -564,7 +564,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
          [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         INPUT:
 
@@ -584,7 +584,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
             raise ValueError("code has to be a Gabidulin code")
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -598,7 +598,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         """
         return "Polynomial evaluation style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -773,7 +773,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
 class GabidulinGaoDecoder(Decoder):
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         Gao style decoder for Gabidulin Codes.
 
@@ -810,7 +810,7 @@ class GabidulinGaoDecoder(Decoder):
             raise ValueError("code has to be a Gabidulin code")
         super().__init__(code, code.ambient_space(), "PolynomialEvaluation")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -824,7 +824,7 @@ class GabidulinGaoDecoder(Decoder):
         """
         return "Gao decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

@@ -37,7 +37,7 @@ class Text(GraphicPrimitive):
 
         sphinx_plot(text("I like Fibonacci",(3,5)))
     """
-    def __init__(self, string, point, options):
+    def __init__(self, string, point, options) -> None:
         """
         Initialize base class Text.
 
@@ -74,7 +74,7 @@ class Text(GraphicPrimitive):
         from sage.plot.plot import minmax_data
         return minmax_data([self.x], [self.y], dict=True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of Text primitive.
 

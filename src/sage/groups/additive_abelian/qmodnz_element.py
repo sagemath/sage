@@ -46,7 +46,7 @@ class QmodnZ_Element(AdditiveGroupElement):
         sage: G(400/19)
         39/19
     """
-    def __init__(self, parent, x, construct=False):
+    def __init__(self, parent, x, construct=False) -> None:
         r"""
         Create an element of `\Q/n\Z`.
 

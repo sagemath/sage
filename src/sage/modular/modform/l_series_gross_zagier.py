@@ -10,7 +10,7 @@ from sage.modular.dirichlet import kronecker_character
 
 class GrossZagierLseries(SageObject):
 
-    def __init__(self, E, A, prec=53):
+    def __init__(self, E, A, prec=53) -> None:
         r"""
         Class for the Gross-Zagier `L`-series.
 

@@ -80,7 +80,7 @@ lazy_import('sage.symbolic.ring', 'SR')
 
 
 class PiecewiseFunction(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Piecewise function.
 
@@ -258,7 +258,7 @@ class PiecewiseFunction(BuiltinFunction):
             sage: piecewise.in_operands(1+sin(0*f))
             False
         """
-        def is_piecewise(ex):
+        def is_piecewise(ex) -> bool:
             if ex.operator() is piecewise:
                 return True
             for op in ex.operands():
@@ -416,7 +416,7 @@ class PiecewiseFunction(BuiltinFunction):
                 intervals += list(domain)
             return RealSet(*intervals)
 
-        def __len__(self, parameters, variable):
+        def __len__(self, parameters, variable) -> int:
             """
             Return the number of "pieces".
 
@@ -1464,7 +1464,7 @@ class PiecewiseFunction(BuiltinFunction):
                     for domain, func in parameters]
             return pw(*args)
 
-        def _giac_init_(self, parameters, variable):
+        def _giac_init_(self, parameters, variable) -> str:
             """
             Convert this piecewise expression to its Giac equivalent.
 

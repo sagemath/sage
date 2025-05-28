@@ -214,7 +214,7 @@ class Triangulation(Element):
         :meth:`~sage.geometry.triangulation.point_configuration.PointConfiguration.triangulations`
         to triangulate point configurations.
     """
-    def __init__(self, triangulation, parent, check=True):
+    def __init__(self, triangulation, parent, check=True) -> None:
         """
         The constructor of a ``Triangulation`` object.
 
@@ -355,7 +355,7 @@ class Triangulation(Element):
         """
         return self._triangulation[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of the triangulation.
 

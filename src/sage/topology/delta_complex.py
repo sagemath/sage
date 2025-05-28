@@ -239,7 +239,7 @@ class DeltaComplex(GenericCellComplex):
     Type ``delta_complexes.`` and then hit the :kbd:`Tab` key to get the
     full list.
     """
-    def __init__(self, data=None, check_validity=True):
+    def __init__(self, data=None, check_validity=True) -> None:
         r"""
         Define a `\Delta`-complex.  See :class:`DeltaComplex` for more
         documentation.
@@ -499,7 +499,7 @@ class DeltaComplex(GenericCellComplex):
         """
         return self._cells_dict == right._cells_dict
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` and ``other`` are not equal.
 
@@ -1410,7 +1410,7 @@ class DeltaComplex(GenericCellComplex):
             mapping[n-1] = faces_dict
         return mapping
 
-    def _is_glued(self, idx=-1, dim=None):
+    def _is_glued(self, idx=-1, dim=None) -> bool:
         r"""
         Return ``True`` if there is any gluing along the boundary of a
         top-dimensional simplex in this `\Delta`-complex.

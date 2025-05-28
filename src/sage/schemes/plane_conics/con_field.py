@@ -58,7 +58,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         sage: K = FractionField(PolynomialRing(QQ, 't'))
         sage: Conic([K(1), 1, -1])._test_pickling()
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 
@@ -77,7 +77,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
 
         self._rational_point = None
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return ``'Projective Conic'``, which is the first part of the
         plain text representation of this object as output by
@@ -766,7 +766,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             return self.defining_polynomial()([e, c, b]) != 0
         return self.determinant() != 0
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Internal function. Returns a string to initialize this
         conic in the Magma subsystem.

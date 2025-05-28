@@ -334,7 +334,7 @@ class Function_Bessel_J(BuiltinFunction):
 
     - [AS-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_J`.
 
@@ -441,7 +441,7 @@ class Function_Bessel_J(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         """
         Custom ``_print_latex_`` method.
 
@@ -557,7 +557,7 @@ class Function_Bessel_Y(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_Y`.
 
@@ -660,7 +660,7 @@ class Function_Bessel_Y(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         """
         Custom ``_print_latex_`` method.
 
@@ -770,7 +770,7 @@ class Function_Bessel_I(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_I`.
 
@@ -854,7 +854,7 @@ class Function_Bessel_I(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         """
         Custom ``_print_latex_`` method.
 
@@ -973,7 +973,7 @@ class Function_Bessel_K(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_K`.
 
@@ -1051,7 +1051,7 @@ class Function_Bessel_K(BuiltinFunction):
         else:
             raise NotImplementedError('derivative with respect to order')
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         """
         Custom ``_print_latex_`` method.
 
@@ -1268,7 +1268,7 @@ class Function_Struve_H(BuiltinFunction):
 
     - [WP-Struve]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1345,7 +1345,7 @@ class Function_Struve_H(BuiltinFunction):
         from .other import sqrt
         return (z**a / (sqrt(pi) * 2**a * gamma(a + Integer(3) / Integer(2))) - struve_H(a + 1, z) + struve_H(a - 1, z)) / 2
 
-    def _print_latex_(self, a, z):
+    def _print_latex_(self, a, z) -> str:
         """
         EXAMPLES::
 
@@ -1383,7 +1383,7 @@ class Function_Struve_L(BuiltinFunction):
 
     - [WP-Struve]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1459,7 +1459,7 @@ class Function_Struve_L(BuiltinFunction):
         from .other import sqrt
         return (z**a / (sqrt(pi) * 2**a * gamma(a + Integer(3) / Integer(2))) - struve_L(a + 1, z) + struve_L(a - 1, z)) / 2
 
-    def _print_latex_(self, a, z):
+    def _print_latex_(self, a, z) -> str:
         """
         EXAMPLES::
 
@@ -1499,7 +1499,7 @@ class Function_Hankel1(BuiltinFunction):
 
     - [AS-Bessel]_ see 9.1.6
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1524,7 +1524,7 @@ class Function_Hankel1(BuiltinFunction):
         """
         return _mpmath_utils_call(_mpmath_hankel1, nu, z, parent=parent)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1533,7 +1533,7 @@ class Function_Hankel1(BuiltinFunction):
         """
         return r'H_{\nu}^{(1)}'
 
-    def _print_latex_(self, nu, z):
+    def _print_latex_(self, nu, z) -> str:
         r"""
         TESTS::
 
@@ -1586,7 +1586,7 @@ class Function_Hankel2(BuiltinFunction):
 
     - [AS-Bessel]_ see 9.1.6
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1611,7 +1611,7 @@ class Function_Hankel2(BuiltinFunction):
         """
         return _mpmath_utils_call(_mpmath_hankel2, nu, z, parent=parent)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1620,7 +1620,7 @@ class Function_Hankel2(BuiltinFunction):
         """
         return r'H_{\nu}^{(2)}'
 
-    def _print_latex_(self, nu, z):
+    def _print_latex_(self, nu, z) -> str:
         r"""
         TESTS::
 
@@ -1685,7 +1685,7 @@ class SphericalBesselJ(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1710,7 +1710,7 @@ class SphericalBesselJ(BuiltinFunction):
         return _mpmath_utils_call(spherical_bessel_f, 'besselj', n, z,
                                  parent=parent)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1719,7 +1719,7 @@ class SphericalBesselJ(BuiltinFunction):
         """
         return r'j_n'
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         TESTS::
 
@@ -1784,7 +1784,7 @@ class SphericalBesselY(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1809,7 +1809,7 @@ class SphericalBesselY(BuiltinFunction):
         return _mpmath_utils_call(spherical_bessel_f, 'bessely', n, z,
                                  parent=parent)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1818,7 +1818,7 @@ class SphericalBesselY(BuiltinFunction):
         """
         return r'y_n'
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         TESTS::
 
@@ -1883,7 +1883,7 @@ class SphericalHankel1(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1907,7 +1907,7 @@ class SphericalHankel1(BuiltinFunction):
         return _mpmath_utils_call(spherical_bessel_f, 'hankel1', n, z,
                                  parent=parent)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1916,7 +1916,7 @@ class SphericalHankel1(BuiltinFunction):
         """
         return r'h_n^{(1)}'
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         TESTS::
 
@@ -1985,7 +1985,7 @@ class SphericalHankel2(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -2008,7 +2008,7 @@ class SphericalHankel2(BuiltinFunction):
         return _mpmath_utils_call(spherical_bessel_f, 'hankel2', n, z,
                                   parent=parent)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -2017,7 +2017,7 @@ class SphericalHankel2(BuiltinFunction):
         """
         return r'h_n^{(2)}'
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         TESTS::
 

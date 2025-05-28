@@ -124,7 +124,7 @@ class PolyhedronFace(ConvexSet_closed):
         sage: TestSuite(face).run()
     """
 
-    def __init__(self, polyhedron, V_indices, H_indices):
+    def __init__(self, polyhedron, V_indices, H_indices) -> None:
         r"""
         The constructor.
 
@@ -699,7 +699,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         return self.as_polyhedron().is_relatively_open()
 
-    def is_compact(self):
+    def is_compact(self) -> bool:
         r"""
         Return whether ``self`` is compact.
 
@@ -769,7 +769,7 @@ class PolyhedronFace(ConvexSet_closed):
         """
         yield from self.as_polyhedron().some_elements()
 
-    def contains(self, point):
+    def contains(self, point) -> bool:
         """
         Test whether the polyhedron contains the given ``point``.
 

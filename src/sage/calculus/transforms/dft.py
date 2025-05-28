@@ -99,7 +99,7 @@ class IndexedSequence(SageObject):
       containing the same number of elements as ``self``, which is a
       list of elements taken from a field
     """
-    def __init__(self, L, index_object):
+    def __init__(self, L, index_object) -> None:
         r"""
         Initialize ``self``.
 
@@ -592,7 +592,7 @@ class IndexedSequence(SageObject):
         S1 = [S[i] * other for i in range(len(self.index_object()))]
         return IndexedSequence(S1, self.index_object())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Implement boolean equals.
 

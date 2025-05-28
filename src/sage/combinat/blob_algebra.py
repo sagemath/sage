@@ -45,7 +45,7 @@ class BlobDiagram(Element):
     propagating strand or to the left of it and not nested.
     """
 
-    def __init__(self, parent, marked, unmarked):
+    def __init__(self, parent, marked, unmarked) -> None:
         r"""
         Initialize ``self``.
 
@@ -60,7 +60,7 @@ class BlobDiagram(Element):
         self.marked = tuple(sorted([tuple(sorted(pair)) for pair in marked]))
         self.unmarked = tuple(sorted([tuple(sorted(pair)) for pair in unmarked]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -154,7 +154,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
     The set of all blob diagrams.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -168,7 +168,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
         self._TL_diagrams = TemperleyLiebDiagrams(n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -240,7 +240,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             raise ValueError("not a blob diagram of order {}".format(self._n))
         return ret
 
-    def __contains__(self, X):
+    def __contains__(self, X) -> bool:
         r"""
         Check if ``X`` is contained in ``self``.
 
@@ -434,7 +434,7 @@ class BlobAlgebra(CombinatorialFreeModule):
         q3 = base_ring(q3)
         return super().__classcall__(cls, k, q1, q2, q3, base_ring, prefix)
 
-    def __init__(self, k, q1, q2, q3, base_ring, prefix):
+    def __init__(self, k, q1, q2, q3, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -529,14 +529,14 @@ class BlobAlgebra(CombinatorialFreeModule):
             \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
             \end{tikzpicture}
         """
-        def edge_options(P):
+        def edge_options(P) -> str:
             if P[1] < P[0]:
                 P = [P[1], P[0]]
             if tuple(P) in diagram.marked:
                 return 'blue,very thick'
             return ''
 
-        def edge_additions(P):
+        def edge_additions(P) -> str:
             if P[1] < P[0]:
                 P = [P[1], P[0]]
             if tuple(P) in diagram.marked:

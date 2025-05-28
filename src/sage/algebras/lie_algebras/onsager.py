@@ -111,7 +111,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
     - [Onsager1944]_
     - [DG1982]_
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -126,7 +126,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
         LieAlgebraWithGenerators.__init__(self, R, index_set=self._indices,
                                           names=('A0', 'A1'), category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -137,7 +137,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
         """
         return "Onsager algebra over {}".format(self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -150,7 +150,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
         from sage.misc.latex import latex
         return "\\mathcal{{O}}_{{{}}}".format(latex(self.base_ring()))
 
-    def _repr_generator(self, m):
+    def _repr_generator(self, m) -> str:
         """
         Return a string representation of the generator indexed by ``m``.
 
@@ -166,7 +166,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
             return 'A[{}]'.format(m[1])
         return 'G[{}]'.format(m[1])
 
-    def _latex_generator(self, m):
+    def _latex_generator(self, m) -> str:
         r"""
         Return a LaTeX representation of the generator indexed by ``m``.
 
@@ -388,7 +388,7 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
 
     - [BK2017]_
     """
-    def __init__(self, g, q, c):
+    def __init__(self, g, q, c) -> None:
         """
         Initialize ``self``.
 
@@ -471,7 +471,7 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
         """
         return (-len(x), [self._basis_key(l) for l in x.to_word_list()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -485,7 +485,7 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
         return "{}-Onsager algebra with c={} over {}".format(self._q, self._c,
                                                              self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1032,7 +1032,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         ....:     for k in range(-4,4) for m in range(-4,4))
         True
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         Initialize ``self``.
 
@@ -1053,7 +1053,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         IndexedGenerators.__init__(self, I)
         InfinitelyGeneratedLieAlgebra.__init__(self, R, index_set=I, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1064,7 +1064,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         """
         return "Alternating central extension of the Onsager algebra over {}".format(self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1077,7 +1077,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         from sage.misc.latex import latex
         return "\\mathcal{{O}}_{{{}}}".format(latex(self.base_ring()))
 
-    def _repr_generator(self, m):
+    def _repr_generator(self, m) -> str:
         """
         Return a string representation of the generator indexed by ``m``.
 
@@ -1093,7 +1093,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
             return 'A[{}]'.format(m[1])
         return 'B[{}]'.format(m[1])
 
-    def _latex_generator(self, m):
+    def _latex_generator(self, m) -> str:
         r"""
         Return a LaTeX representation of the generator indexed by ``m``.
 

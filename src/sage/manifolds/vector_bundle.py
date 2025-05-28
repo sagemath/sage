@@ -191,7 +191,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         True
     """
     def __init__(self, rank, name, base_space, field='real',
-                 latex_name=None, category=None, unique_tag=None):
+                 latex_name=None, category=None, unique_tag=None) -> None:
         r"""
         Construct a topological vector bundle.
 
@@ -528,7 +528,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         """
         return list(self._atlas) # Make a (shallow) copy
 
-    def is_manifestly_trivial(self):
+    def is_manifestly_trivial(self) -> bool:
         r"""
         Return ``True`` if ``self`` is manifestly a trivial bundle, i.e. there
         exists a frame or a trivialization defined on the whole base space.

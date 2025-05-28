@@ -37,7 +37,7 @@ class VectorBundles(Category_over_base_ring):
 
         sage: TestSuite(C).run(skip='_test_category_over_bases')
     """
-    def __init__(self, base_space, base_field, name=None):
+    def __init__(self, base_space, base_field, name=None) -> None:
         r"""
         Initialize ``self``.
 

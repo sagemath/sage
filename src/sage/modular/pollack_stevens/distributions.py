@@ -262,7 +262,7 @@ class OverconvergentDistributions_abstract(Module):
     """
     def __init__(self, k, p=None, prec_cap=None, base=None, character=None,
                  adjuster=None, act_on_left=False, dettwist=None,
-                 act_padic=False, implementation=None):
+                 act_padic=False, implementation=None) -> None:
         """
         See ``OverconvergentDistributions_abstract`` for full documentation.
 
@@ -638,7 +638,7 @@ class OverconvergentDistributions_abstract(Module):
 class Symk_class(OverconvergentDistributions_abstract):
 
     def __init__(self, k, base, character, adjuster, act_on_left, dettwist,
-                 act_padic, implementation):
+                 act_padic, implementation) -> None:
         r"""
         EXAMPLES::
 

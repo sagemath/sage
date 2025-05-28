@@ -1105,7 +1105,7 @@ def polygonal_number(s, n):
 
 
 class CombinatorialObject(SageObject):
-    def __init__(self, l, copy=True):
+    def __init__(self, l, copy=True) -> None:
         """
         CombinatorialObject provides a thin wrapper around a list. The main
         differences are that __setitem__ is disabled so that
@@ -1176,7 +1176,7 @@ class CombinatorialObject(SageObject):
             self._list = l
         self._hash = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -1451,7 +1451,7 @@ class CombinatorialObject(SageObject):
         """
         return iter(self._list)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         """
         EXAMPLES::
 
@@ -1520,7 +1520,7 @@ class CombinatorialElement(CombinatorialObject, Element,
         17
     """
 
-    def __init__(self, parent, *args, **kwds):
+    def __init__(self, parent, *args, **kwds) -> None:
         """
         Initialize this ``CombinatorialElement`` with a parent and a
         list.

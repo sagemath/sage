@@ -179,7 +179,7 @@ class SymmetricIdeal(Ideal_generic):
         False
     """
 
-    def __init__(self, ring, gens, coerce=True):
+    def __init__(self, ring, gens, coerce=True) -> None:
         """
         INPUT:
 
@@ -201,7 +201,7 @@ class SymmetricIdeal(Ideal_generic):
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -212,7 +212,7 @@ class SymmetricIdeal(Ideal_generic):
         """
         return f"Symmetric Ideal {self._repr_short()} of {self.ring()}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

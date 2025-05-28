@@ -20,7 +20,7 @@ Abstract base class for commutative algebras
 from sage.categories.commutative_algebras import CommutativeAlgebras
 
 
-def is_CommutativeAlgebra(x):
+def is_CommutativeAlgebra(x) -> bool:
     """
     Check to see if ``x`` is in the category of ``CommutativeAlgebras``.
 

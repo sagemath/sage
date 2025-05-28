@@ -190,7 +190,7 @@ class Schemes_over_base(Category_over_base):
         """
         return [Schemes()]
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -217,7 +217,7 @@ class AbelianVarieties(Schemes_over_base):
         ...
         ValueError: category of abelian varieties is only defined over fields
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Constructor for the ``AbelianVarieties`` category.
 
@@ -257,7 +257,7 @@ class AbelianVarieties(Schemes_over_base):
         """
         return [Schemes(self.base_scheme()), CommutativeAdditiveGroups()]
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -320,7 +320,7 @@ class Jacobians(Schemes_over_base):
 
         sage: TestSuite(Jacobians(QQ)).run()
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Constructor of this category.
 
@@ -363,7 +363,7 @@ class Jacobians(Schemes_over_base):
         """
         return [AbelianVarieties(self.base_scheme())]
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         Return the string representation of this category.
 

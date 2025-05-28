@@ -135,7 +135,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         True
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Construct the Blum-Goldwasser public-key encryption scheme.
 
@@ -181,7 +181,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
         """
         return repr(self) == repr(other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A string representation of this Blum-Goldwasser public-key encryption
         scheme.

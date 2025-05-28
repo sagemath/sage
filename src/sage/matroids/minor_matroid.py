@@ -125,7 +125,7 @@ class MinorMatroid(Matroid):
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
     """
 
-    def __init__(self, matroid, contractions=None, deletions=None):
+    def __init__(self, matroid, contractions=None, deletions=None) -> None:
         """
         See the class docstring for documentation.
 
@@ -424,7 +424,7 @@ class MinorMatroid(Matroid):
             return False
         return (self._contractions == other._contractions) and (self._deletions == other._deletions) and (self._matroid == other._matroid)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

@@ -101,7 +101,7 @@ class FiniteField_givaro(FiniteField):
         sage: GF(1009, impl='givaro', modulus='conway').modulus()
         x + 998
     """
-    def __init__(self, q, name='a', modulus=None, repr='poly', cache=False):
+    def __init__(self, q, name='a', modulus=None, repr='poly', cache=False) -> None:
         """
         Initialize ``self``.
 

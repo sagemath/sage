@@ -191,7 +191,7 @@ class MutablePosetShell(SageObject):
 
         :class:`MutablePoset`
     """
-    def __init__(self, poset, element):
+    def __init__(self, poset, element) -> None:
         r"""
         See :class:`MutablePosetShell` for details.
 
@@ -350,7 +350,7 @@ class MutablePosetShell(SageObject):
             return self._predecessors_
         return self._successors_
 
-    def is_special(self):
+    def is_special(self) -> bool:
         r"""
         Return whether this shell contains either the null-element, i.e., the
         element smaller than any possible other element or the
@@ -376,7 +376,7 @@ class MutablePosetShell(SageObject):
         """
         return self.element is None
 
-    def is_null(self):
+    def is_null(self) -> bool:
         r"""
         Return whether this shell contains the null-element, i.e., the element
         smaller than any possible other element.
@@ -401,7 +401,7 @@ class MutablePosetShell(SageObject):
         """
         return self.element is None and not self.predecessors()
 
-    def is_oo(self):
+    def is_oo(self) -> bool:
         r"""
         Return whether this shell contains the infinity-element, i.e., the element
         larger than any possible other element.
@@ -1326,7 +1326,7 @@ class MutablePoset(SageObject):
 
         :class:`MutablePosetShell`.
     """
-    def __init__(self, data=None, key=None, merge=None, can_merge=None):
+    def __init__(self, data=None, key=None, merge=None, can_merge=None) -> None:
         r"""
         See :class:`MutablePoset` for details.
 
@@ -1417,7 +1417,7 @@ class MutablePoset(SageObject):
         self._oo_.predecessors().add(self._null_)
         self._shells_ = {}
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of elements contained in this poset.
 
@@ -1995,7 +1995,7 @@ class MutablePoset(SageObject):
 
     _repr_ = repr
 
-    def contains(self, key):
+    def contains(self, key) -> bool:
         r"""
         Test whether ``key`` is encapsulated by one of the poset's elements.
 

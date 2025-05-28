@@ -366,7 +366,7 @@ class IntegratedCurve(DifferentiableCurve):
     def __init__(self, parent, equations_rhs, velocities,
                  curve_parameter, initial_tangent_vector, chart=None,
                  name=None, latex_name=None, verbose=False,
-                 across_charts=False):
+                 across_charts=False) -> None:
         r"""
         Construct a curve defined by a system of second order
         differential equations in the coordinate functions.
@@ -3386,7 +3386,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
     def __init__(self, parent, affine_connection, curve_parameter,
                  initial_tangent_vector, chart=None, name=None,
-                 latex_name=None, verbose=False, across_charts=False):
+                 latex_name=None, verbose=False, across_charts=False) -> None:
         r"""
         Construct an autoparallel curve with respect to the given affine
         connection with the given initial tangent vector.
@@ -3809,7 +3809,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
     def __init__(self, parent, metric, curve_parameter,
                  initial_tangent_vector, chart=None, name=None,
-                 latex_name=None, verbose=False, across_charts=False):
+                 latex_name=None, verbose=False, across_charts=False) -> None:
         r"""
         Construct a geodesic curve with respect to the given metric with the
         given initial tangent vector.

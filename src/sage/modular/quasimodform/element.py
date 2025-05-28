@@ -95,7 +95,7 @@ class QuasiModularFormsElement(ModuleElement):
         sage: F.polynomial()
         -512*E2^4*E2_1^3 + E2^4*E3_0^2 + 48*E2^4*E3_1^2 + E3_0
     """
-    def __init__(self, parent, polynomial):
+    def __init__(self, parent, polynomial) -> None:
         r"""
         INPUT:
 
@@ -284,7 +284,7 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return self.__class__(self.parent(), c * self._polynomial)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return whether ``self`` is nonzero.
 

@@ -411,7 +411,7 @@ class SchemeMorphism_point_toric_field(SchemeMorphism_point, Morphism):
         [1 : 2 : 3 : 4]
     """
     # Mimicking affine/projective classes
-    def __init__(self, X, coordinates, check=True):
+    def __init__(self, X, coordinates, check=True) -> None:
         r"""
         See :class:`SchemeMorphism_point_toric_field` for documentation.
 
@@ -483,7 +483,7 @@ class SchemeMorphism_polynomial_toric_variety(SchemeMorphism_polynomial, Morphis
                 [s : s : x : y]
     """
 
-    def __init__(self, parent, polynomials, check=True):
+    def __init__(self, parent, polynomials, check=True) -> None:
         r"""
         See :class:`SchemeMorphism_polynomial_toric_variety` for documentation.
 
@@ -579,7 +579,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         sage: V.embedding_morphism()._defining_cone
         1-d cone of Rational polyhedral fan in 2-d lattice N
     """
-    def __init__(self, parent, defining_cone, ray_map):
+    def __init__(self, parent, defining_cone, ray_map) -> None:
         """
         The Python constructor.
 
@@ -832,7 +832,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
                 to Rational polyhedral fan in 1-d lattice N.
     """
 
-    def __init__(self, parent, fan_morphism, check=True):
+    def __init__(self, parent, fan_morphism, check=True) -> None:
         r"""
         See :class:`SchemeMorphism_polynomial_toric_variety` for documentation.
 
@@ -1578,7 +1578,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         prim = fm.primitive_preimage_cones(codomain_cone)
         n = len(prim)
 
-        def is_union_in_fan(self, c0, c1):
+        def is_union_in_fan(self, c0, c1) -> bool:
             indices = c0.ambient_ray_indices() + c1.ambient_ray_indices()
             try:
                 fm.domain_fan().cone_containing(*indices)
@@ -1648,7 +1648,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         <class 'sage.schemes.toric.morphism.SchemeMorphism_fan_fiber_component_toric_variety'>
     """
 
-    def __init__(self, toric_morphism, defining_cone):
+    def __init__(self, toric_morphism, defining_cone) -> None:
         """
         The Python constructor.
 
@@ -1680,7 +1680,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         parent = fc.Hom(toric_morphism.domain())
         SchemeMorphism.__init__(self, parent)
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         Return a string representation of the definition of ``self``.
 

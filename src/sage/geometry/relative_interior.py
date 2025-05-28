@@ -36,7 +36,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         Relative interior of 3-d cone in 3-d lattice N
     """
 
-    def __init__(self, polyhedron):
+    def __init__(self, polyhedron) -> None:
         r"""
         Initialize ``self``.
 
@@ -67,7 +67,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         """
         return hash(self._polyhedron) ^ 1789
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Return whether ``self`` contains ``point``.
 
@@ -214,7 +214,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         """
         return self._polyhedron
 
-    def is_universe(self):
+    def is_universe(self) -> bool:
         r"""
         Return whether ``self`` is the whole ambient space.
 
@@ -234,7 +234,7 @@ class RelativeInterior(ConvexSet_relatively_open):
         assert not self._polyhedron.is_universe()
         return False
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return whether ``self`` is closed.
 
@@ -337,7 +337,7 @@ class RelativeInterior(ConvexSet_relatively_open):
             return False
         return self._polyhedron == other._polyhedron
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` and ``other``.
 

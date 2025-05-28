@@ -61,7 +61,7 @@ class CompoundSymbol(SageObject):
     def __init__(self, character, top, extension, bottom,
                  middle=None,
                  middle_top=None, middle_bottom=None,
-                 top_2=None, bottom_2=None):
+                 top_2=None, bottom_2=None) -> None:
         """
         A multi-character (ascii/unicode art) symbol.
 
@@ -115,7 +115,7 @@ class CompoundSymbol(SageObject):
         self.top_2 = top_2 or top
         self.bottom_2 = bottom_2 or bottom
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 

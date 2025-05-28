@@ -86,7 +86,7 @@ class pAdicLseries(SageObject):
         13 + 9*19 + 18*19^2 + O(19^3)
     """
 
-    def __init__(self, symb, gamma=None, quadratic_twist=1, precision=None):
+    def __init__(self, symb, gamma=None, quadratic_twist=1, precision=None) -> None:
         r"""
         Initialize the class.
 
@@ -185,7 +185,7 @@ class pAdicLseries(SageObject):
                 self._gamma == other._gamma and
                 self._precision == other._precision)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` and ``other``.
 
@@ -246,7 +246,7 @@ class pAdicLseries(SageObject):
         """
         return self._quadratic_twist
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation.
 

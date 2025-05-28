@@ -149,7 +149,7 @@ class Channel(SageObject):
     - ``output_space`` -- the space of the transmitted words
     """
 
-    def __init__(self, input_space, output_space):
+    def __init__(self, input_space, output_space) -> None:
         r"""
         Initialize parameters for a Channel object.
 
@@ -321,7 +321,7 @@ class StaticErrorRateChannel(Channel):
         of input and output space Vector space of dimension 40 over Finite Field of size 59
     """
 
-    def __init__(self, space, number_errors):
+    def __init__(self, space, number_errors) -> None:
         r"""
         TESTS:
 
@@ -343,7 +343,7 @@ class StaticErrorRateChannel(Channel):
             raise ValueError("There might be more errors than the dimension of the input space")
         self._number_errors = number_errors
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -359,7 +359,7 @@ class StaticErrorRateChannel(Channel):
         return "Static error rate channel creating %s errors, of input and output space %s"\
                     % (format_interval(no_err), self.input_space())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -479,7 +479,7 @@ class ErrorErasureChannel(Channel):
         Vector space of dimension 40 over Finite Field of size 2)
     """
 
-    def __init__(self, space, number_errors, number_erasures):
+    def __init__(self, space, number_errors, number_erasures) -> None:
         r"""
         TESTS:
 
@@ -510,7 +510,7 @@ class ErrorErasureChannel(Channel):
         self._number_errors = number_errors
         self._number_erasures = number_erasures
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -529,7 +529,7 @@ class ErrorErasureChannel(Channel):
         return "Error-and-erasure channel creating %s errors and %s erasures of input space %s and output space %s"\
                 % (format_interval(no_err), format_interval(no_era), self.input_space(), self.output_space())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -671,7 +671,7 @@ class QarySymmetricChannel(Channel):
           Vector space of dimension 50 over Finite Field of size 59
     """
 
-    def __init__(self, space, epsilon):
+    def __init__(self, space, epsilon) -> None:
         r"""
         TESTS:
 
@@ -701,7 +701,7 @@ class QarySymmetricChannel(Channel):
         except Exception:
             raise ValueError("space has to be of the form Sigma^n, where Sigma has a random_element() method")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -716,7 +716,7 @@ class QarySymmetricChannel(Channel):
         return "q-ary symmetric channel with error probability %s, of input and output space %s"\
                     % (self.error_probability(), self.input_space())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

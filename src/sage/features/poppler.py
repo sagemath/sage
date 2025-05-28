@@ -44,7 +44,7 @@ class pdftocairo(Executable):
         sage: pdftocairo().is_present()             # optional: pdftocairo
         FeatureTestResult('pdftocairo', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

@@ -185,7 +185,7 @@ class Composition(CombinatorialElement):
 
         return Compositions()(co)
 
-    def __init__(self, parent, lst):
+    def __init__(self, parent, lst) -> None:
         """
         Initialize ``self``.
 
@@ -1750,7 +1750,7 @@ class Compositions(UniqueRepresentation, Parent):
                         kwargs['min_length'] = len(inner)
                 return IntegerListsLex(n, **kwargs)
 
-    def __init__(self, is_infinite=False, category=None):
+    def __init__(self, is_infinite=False, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -1953,7 +1953,7 @@ class Compositions_all(Compositions):
     Class of all compositions.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -2057,7 +2057,7 @@ class Compositions_n(Compositions):
         """
         return super().__classcall__(cls, Integer(n))
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 

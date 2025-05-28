@@ -150,7 +150,7 @@ class pAdicLseries(SageObject):
         sage: lp == loads(dumps(lp))
         True
     """
-    def __init__(self, E, p, implementation='eclib', normalize='L_ratio'):
+    def __init__(self, E, p, implementation='eclib', normalize='L_ratio') -> None:
         r"""
         INPUT:
 
@@ -980,7 +980,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
 
     power_series = series
 
-    def is_ordinary(self):
+    def is_ordinary(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this `L`-function is attached
         to is ordinary.
@@ -993,7 +993,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
         """
         return True
 
-    def is_supersingular(self):
+    def is_supersingular(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this L function is attached
         to is supersingular.
@@ -1320,7 +1320,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
     power_series = series
 
-    def is_ordinary(self):
+    def is_ordinary(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this `L`-function is attached
         to is ordinary.
@@ -1333,7 +1333,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         """
         return False
 
-    def is_supersingular(self):
+    def is_supersingular(self) -> bool:
         r"""
         Return ``True`` if the elliptic curve that this L function is attached
         to is supersingular.

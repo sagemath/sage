@@ -51,7 +51,7 @@ class func_persist:
     Put ``@func_persist`` right before your function
     definition to cache values it computes to disk.
     """
-    def __init__(self, f, dir='func_persist'):
+    def __init__(self, f, dir='func_persist') -> None:
         self.__func = f
         self.__dir = dir
         os.makedirs(dir, exist_ok=True)

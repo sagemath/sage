@@ -49,7 +49,7 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         sage: TestSuite(M).run()
     """
-    def __init__(self, alphabet=('a', 'b', 'c', 'd')):
+    def __init__(self, alphabet=('a', 'b', 'c', 'd')) -> None:
         r"""
         The free magma.
 
@@ -78,7 +78,7 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         Parent.__init__(self, category=Magmas().FinitelyGenerated().Infinite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

@@ -127,7 +127,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanTy
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -167,7 +167,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         if n == 1:
             self._add_abstract_superclass(CartanType_simply_laced)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 

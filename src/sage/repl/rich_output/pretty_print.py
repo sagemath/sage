@@ -60,7 +60,7 @@ from sage.repl.rich_output import get_display_manager
 
 class SequencePrettyPrinter(SageObject):
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         Pretty Printer for Multiple Arguments.
 

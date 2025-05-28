@@ -45,7 +45,7 @@ def is_QuarticCurve(C):
 class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
     # DRK: Note that we should check whether the curve is
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return the representation of ``self``.
 
@@ -58,7 +58,7 @@ class QuarticCurve_generic(projective_curve.ProjectivePlaneCurve):
         """
         return "Quartic"
 
-    def genus(self):
+    def genus(self) -> int:
         """
         Return the genus of ``self``.
 

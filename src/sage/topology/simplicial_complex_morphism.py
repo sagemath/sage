@@ -143,7 +143,7 @@ class SimplicialComplexMorphism(Morphism):
     """
     An element of this class is a morphism of simplicial complexes.
     """
-    def __init__(self, f, X, Y):
+    def __init__(self, f, X, Y) -> None:
         """
         Input is a dictionary ``f``, the domain ``X``, and the codomain ``Y``.
 
@@ -181,7 +181,7 @@ class SimplicialComplexMorphism(Morphism):
         self._vertex_dictionary = f
         Morphism.__init__(self, Hom(X, Y, SimplicialComplexes()))
 
-    def __eq__(self, x):
+    def __eq__(self, x) -> bool:
         """
         Return ``True`` if and only if ``self == x``.
 
@@ -291,7 +291,7 @@ class SimplicialComplexMorphism(Morphism):
         else:
             return Simplex(set(fx))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -529,7 +529,7 @@ class SimplicialComplexMorphism(Morphism):
         """
         return self.codomain() == self.image()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` if and only if ``self`` is injective.
 

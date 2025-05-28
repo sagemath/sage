@@ -170,7 +170,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
             return QuantumCliffordAlgebraRootUnity(n, k, q, F)
         return QuantumCliffordAlgebraGeneric(n, k, q, F)
 
-    def __init__(self, n, k, q, F, psi, indices):
+    def __init__(self, n, k, q, F, psi, indices) -> None:
         r"""
         Initialize ``self``.
 
@@ -190,7 +190,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, F, indices, category=cat)
         self._assign_names(self.algebra_generators().keys())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -203,7 +203,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         return "Quantum Clifford algebra of rank {} and twist {} with q={} over {}".format(
             self._n, self._k, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -357,7 +357,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
     When `k = 2`, we recover the original definition given by Hayashi in
     [Hayashi1990]_. The `k = 1` version was used in [Kwon2014]_.
     """
-    def __init__(self, n, k, q, F):
+    def __init__(self, n, k, q, F) -> None:
         r"""
         Initialize ``self``.
 
@@ -653,7 +653,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         (\psi_a \psi^*_a)^2 & = \psi_a \psi^*_a \omega_a^k.
         \end{aligned}
     """
-    def __init__(self, n, k, q, F):
+    def __init__(self, n, k, q, F) -> None:
         r"""
         Initialize ``self``.
 
@@ -701,7 +701,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         """
         p, v = m
 
-        def ppr(i):
+        def ppr(i) -> str:
             val = p[i]
             if val == -1:
                 return 'psid%s' % i
@@ -742,7 +742,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         """
         p, v = m
 
-        def ppr(i):
+        def ppr(i) -> str:
             val = p[i]
             if val == -1:
                 return '\\psi^{\\dagger}_{%s}' % i

@@ -169,7 +169,7 @@ import sage.geometry.abc
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -536,7 +536,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
 
     def __init__(self, points=None, compute_vertices=None,
                  ambient=None, ambient_vertex_indices=None,
-                 ambient_facet_indices=None):
+                 ambient_facet_indices=None) -> None:
         r"""
         Construct a lattice polytope.
 
@@ -591,7 +591,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             raise NotImplementedError
         return sib.name('LatticePolytope')(sib(self._vertices), compute_vertices=False)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -845,7 +845,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         raise NotImplementedError("use nef_partitions(hodge_numbers=True)!")
 
-    def _contains(self, point, region='whole polytope'):
+    def _contains(self, point, region='whole polytope') -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -4271,7 +4271,7 @@ class NefPartition(SageObject, Hashable):
          Nef-partition {0, 1, 2, 3, 4} ⊔ {5} (projection)]
     """
 
-    def __init__(self, data, Delta_polar, check=True):
+    def __init__(self, data, Delta_polar, check=True) -> None:
         r"""
         See :class:`NefPartition` for documentation.
 
@@ -4349,7 +4349,7 @@ class NefPartition(SageObject, Hashable):
             self._hash = hash(self._vertex_to_part) + hash(self._Delta_polar)
             return self._hash
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` with ``other``.
 

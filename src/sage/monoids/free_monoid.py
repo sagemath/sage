@@ -174,7 +174,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     Element = FreeMonoidElement
 
-    def __init__(self, n, names=None):
+    def __init__(self, n, names=None) -> None:
         """
         Return a free monoid on `n` generators or with the generators
         indexed by a set `I`.
@@ -199,7 +199,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         self.__ngens = int(n)
         Monoid_class.__init__(self, names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return f"Free monoid on {self.__ngens} generators {self.gens()}"
 
     def _element_constructor_(self, x, check=True):
@@ -271,7 +271,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
         raise TypeError("argument x (= %s) is of the wrong type" % x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return isinstance(x, FreeMonoidElement) and x.parent() == self
 
     def gen(self, i=0):

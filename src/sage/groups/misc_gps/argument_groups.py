@@ -64,7 +64,7 @@ class AbstractArgument(MultiplicativeGroupElement):
     - ``normalize`` -- boolean (default: ``True``)
     """
 
-    def __init__(self, parent, element, normalize=True):
+    def __init__(self, parent, element, normalize=True) -> None:
         r"""
         See :class:`AbstractArgument` for more information.
 
@@ -348,7 +348,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
             category = Groups().Commutative()
         return category
 
-    def __init__(self, base, category):
+    def __init__(self, base, category) -> None:
         r"""
         See :class:`AbstractArgumentGroup` for more information.
 
@@ -432,7 +432,7 @@ class UnitCirclePoint(AbstractArgument):
         """
         return self._element_
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this point on the unit circle.
 
@@ -631,7 +631,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
     Element = UnitCirclePoint
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this unit circle group.
 
@@ -643,7 +643,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
         """
         return 'Unit Circle Group with Exponents in {} modulo ZZ'.format(self.base())
 
-    def _repr_short_(self):
+    def _repr_short_(self) -> str:
         r"""
         Return a short representation string of this unit circle group.
 
@@ -995,7 +995,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
         category = cls._determine_category_(category)
         return super(AbstractArgumentGroup, cls).__classcall__(cls, category)
 
-    def __init__(self, category):
+    def __init__(self, category) -> None:
         r"""
         See :class:`RootsOfUnityGroup` for more information.
 
@@ -1008,7 +1008,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
         from sage.rings.rational_field import QQ
         super().__init__(base=QQ, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this roots of unity group.
 
@@ -1020,7 +1020,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
         """
         return 'Group of Roots of Unity'
 
-    def _repr_short_(self):
+    def _repr_short_(self) -> str:
         r"""
         Return a short representation string of this roots of unity group.
 
@@ -1046,7 +1046,7 @@ class ArgumentByElement(AbstractArgument):
     - ``normalize`` -- boolean (default: ``True``)
     """
 
-    def __init__(self, parent, element, normalize=True):
+    def __init__(self, parent, element, normalize=True) -> None:
         r"""
         See :class:`ArgumentByElement` for more information.
 
@@ -1082,7 +1082,7 @@ class ArgumentByElement(AbstractArgument):
         """
         return element
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this argument by element.
 
@@ -1219,7 +1219,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
     Element = ArgumentByElement
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this argument by element group.
 
@@ -1347,7 +1347,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
             parent = ArgumentByElementGroup(element.parent())
         return parent(element)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         Return whether ``R`` coerces into this argument by element group.
 
@@ -1383,7 +1383,7 @@ class Sign(AbstractArgument):
     - ``normalize`` -- boolean (default: ``True``)
     """
 
-    def __init__(self, parent, element, normalize=True):
+    def __init__(self, parent, element, normalize=True) -> None:
         r"""
         See :class:`Sign` for more information.
 
@@ -1615,7 +1615,7 @@ class SignGroup(AbstractArgumentGroup):
         return super(AbstractArgumentGroup, cls).__classcall__(
             cls, category)
 
-    def __init__(self, category):
+    def __init__(self, category) -> None:
         r"""
         See :class:`SignGroup` for more information.
 
@@ -1628,7 +1628,7 @@ class SignGroup(AbstractArgumentGroup):
         """
         super().__init__(base=int, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of the sign group.
 
@@ -1640,7 +1640,7 @@ class SignGroup(AbstractArgumentGroup):
         """
         return 'Sign Group'
 
-    def _repr_short_(self):
+    def _repr_short_(self) -> str:
         r"""
         Return a short representation string of this sign group.
 

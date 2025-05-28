@@ -32,7 +32,7 @@ class KeyExchangeScheme(SageObject):
     """
 
     @experimental(37305)
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Create a ``KeyExchangeScheme`` instance.
 

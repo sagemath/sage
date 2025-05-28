@@ -281,7 +281,7 @@ class Link(SageObject):
         Implement methods to creating new links from previously created links.
     """
 
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         r"""
         Initialize ``self``.
 
@@ -587,7 +587,7 @@ class Link(SageObject):
         """
         return hash(self.braid())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Check inequality.
 

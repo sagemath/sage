@@ -105,7 +105,7 @@ class BCHCode(CyclicCode):
     """
 
     def __init__(self, base_field, length, designed_distance,
-                 primitive_root=None, offset=1, jump_size=1, b=0):
+                 primitive_root=None, offset=1, jump_size=1, b=0) -> None:
         """
         TESTS:
 
@@ -158,7 +158,7 @@ class BCHCode(CyclicCode):
                 self.offset() == other.offset() and
                 self.primitive_root() == other.primitive_root())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -172,7 +172,7 @@ class BCHCode(CyclicCode):
                 % (self.length(), self.dimension(),
                    self.base_field().cardinality(), self.designed_distance()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -271,7 +271,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
     - ``**kwargs`` -- all extra arguments are forwarded to the GRS decoder
     """
 
-    def __init__(self, code, grs_decoder='KeyEquationSyndrome', **kwargs):
+    def __init__(self, code, grs_decoder='KeyEquationSyndrome', **kwargs) -> None:
         r"""
 
         EXAMPLES::
@@ -286,7 +286,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
         self._decoder_type = copy(self._grs_decoder.decoder_type())
         super().__init__(code, code.ambient_space(), "Vector")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -299,7 +299,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
         """
         return "Decoder through the underlying GRS code of %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

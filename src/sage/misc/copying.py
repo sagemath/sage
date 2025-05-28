@@ -10,10 +10,10 @@ class License:
     def __call__(self):
         pager.pager()(str(self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Type license() to see the full license text."
 
-    def __str__(self):
+    def __str__(self) -> str:
         with open(os.path.join(SAGE_ROOT, 'COPYING.txt')) as f:
             return f.read()
 

@@ -93,7 +93,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             return NotImplemented
         return richcmp(self.pari_hnf().sage(), other.pari_hnf().sage(), op)
 
-    def _contains_(self, x):
+    def _contains_(self, x) -> bool:
         """
         Return ``True`` if `x` is an element of this ideal.
 
@@ -618,7 +618,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         d = self.absolute_ideal().integral_split()[1]
         return (d*self, d)
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal of a relative number field is prime.
 

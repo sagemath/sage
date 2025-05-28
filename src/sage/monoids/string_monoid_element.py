@@ -92,7 +92,7 @@ class StringMonoidElement(FreeMonoidElement):
     Element of a free string monoid.
     """
 
-    def __init__(self, S, x, check=True):
+    def __init__(self, S, x, check=True) -> None:
         """
         Create the element ``x`` of the StringMonoid ``S``.
 
@@ -217,7 +217,7 @@ class StringMonoidElement(FreeMonoidElement):
         z._element_list = self._element_list * n
         return z
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of products that occur in this monoid element.
         For example, the length of the identity is 0, and the length

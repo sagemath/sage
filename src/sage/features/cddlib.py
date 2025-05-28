@@ -26,7 +26,7 @@ class CddExecutable(Executable):
         sage: CddExecutable().is_present()
         FeatureTestResult('cddexec_gmp', True)
     """
-    def __init__(self, name='cddexec_gmp'):
+    def __init__(self, name='cddexec_gmp') -> None:
         r"""
         TESTS::
 

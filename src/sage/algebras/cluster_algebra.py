@@ -652,7 +652,7 @@ class ClusterAlgebraSeed(SageObject):
         :meth:`__eq__` is no longer guaranteed to give correct answers.
         Use at your own risk.
     """
-    def __init__(self, B, C, G, parent, **kwargs):
+    def __init__(self, B, C, G, parent, **kwargs) -> None:
         r"""
         Initialize ``self``.
 
@@ -1348,7 +1348,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
 
         return super().__classcall__(self, B0, **kwargs)
 
-    def __init__(self, B, **kwargs):
+    def __init__(self, B, **kwargs) -> None:
         """
         Initialize ``self``.
 

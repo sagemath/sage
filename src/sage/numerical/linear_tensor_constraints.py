@@ -150,7 +150,7 @@ class LinearTensorConstraint(Element):
         (1.0, 2.0)*x_0 + (2.0, 4.0)*x_1 <= (-5.0, -5.0) + (2.0, 3.0)*x_2
     """
 
-    def __init__(self, parent, lhs, rhs, equality):
+    def __init__(self, parent, lhs, rhs, equality) -> None:
         r"""
         Constructor for ``LinearTensorConstraint``.
 
@@ -185,7 +185,7 @@ class LinearTensorConstraint(Element):
         """
         return self._equality
 
-    def is_less_or_equal(self):
+    def is_less_or_equal(self) -> bool:
         """
         Whether the constraint is a chained less-or_equal inequality.
 
@@ -321,7 +321,7 @@ class LinearTensorConstraintsParent_class(Parent):
     """
     Element = LinearTensorConstraint
 
-    def __init__(self, linear_tensor_parent):
+    def __init__(self, linear_tensor_parent) -> None:
         """
         The Python constructor.
 
@@ -377,7 +377,7 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         return self._LF
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

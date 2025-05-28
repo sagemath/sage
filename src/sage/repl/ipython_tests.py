@@ -159,7 +159,7 @@ Test that there are no warnings being ignored internally::
 '''
 
 
-def dummy(argument, optional=None):
+def dummy(argument, optional=None) -> str:
     """
     Dummy Docstring Title.
 

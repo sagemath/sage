@@ -46,7 +46,7 @@ from sage.cpython.getattr import raw_getattr
 
 class KBoundedQuotient(UniqueRepresentation, Parent):
 
-    def __init__(self, Sym, k, t='t'):
+    def __init__(self, Sym, k, t='t') -> None:
         r"""
         Initialization of the ring of Symmetric functions modulo the ideal of monomial
         symmetric functions which are indexed by partitions whose first part is greater
@@ -453,7 +453,7 @@ class KBoundedQuotientBases(Category_realization_of_parent):
     The category of bases for the `k`-bounded subspace of symmetric functions.
     """
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         """
         Initialization of the bases of the `k`-bounded subspace.
 
@@ -871,7 +871,7 @@ class KBoundedQuotientBasis(CombinatorialFreeModule):
     Abstract base class for the bases of the `k`-bounded quotient.
     """
 
-    def __init__(self, kBoundedRing, prefix):
+    def __init__(self, kBoundedRing, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -913,7 +913,7 @@ class kMonomial(KBoundedQuotientBasis):
     part less than or equal to `k`.
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         Initialize the ring which is the `k`-Bounded monomial quotient basis.
 
@@ -1028,7 +1028,7 @@ class kbounded_HallLittlewoodP(KBoundedQuotientBasis):
     part less than or equal to `k`.
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         Initialize the ring which is the `k`-Bounded Hall-Littlewood P quotient basis.
 
@@ -1224,7 +1224,7 @@ class DualkSchurFunctions(KBoundedQuotientBasis):
         k-Schur functions and affine Schubert calculus.
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         Initialize the ring which is the dual `k`-Schur function basis.
 
@@ -1343,7 +1343,7 @@ class AffineSchurFunctions(KBoundedQuotientBasis):
         Math. Soc., 21 (2008), 259-281.
     """
 
-    def __init__(self, kBoundedRing):
+    def __init__(self, kBoundedRing) -> None:
         r"""
         Initialize the ring which is the `k`-Bounded affine Schur quotient basis.
 

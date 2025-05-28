@@ -124,7 +124,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         sage: len(G)
         3
     """
-    def __init__(self, graphics_list):
+    def __init__(self, graphics_list) -> None:
         r"""
         Initialize the attributes common to all MultiGraphics objects.
 
@@ -232,7 +232,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         return self._glist[i]
 
-    def __setitem__(self, i, g):
+    def __setitem__(self, i, g) -> None:
         r"""
         Set the ``i``-th element of the list of graphics composing ``self``.
 
@@ -252,7 +252,7 @@ class MultiGraphics(WithEqualityById, SageObject):
         """
         self._glist[i] = g
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Total number of Graphics objects composing ``self``.
 
@@ -699,7 +699,7 @@ class MultiGraphics(WithEqualityById, SageObject):
     #
     # Methods to reimplement in derived classes:
     #
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1062,7 +1062,7 @@ class GraphicsArray(MultiGraphics):
         G[0] = g4
         sphinx_plot(G)
     """
-    def __init__(self, array):
+    def __init__(self, array) -> None:
         r"""
         Construct a ``GraphicsArray``.
 
@@ -1141,7 +1141,7 @@ class GraphicsArray(MultiGraphics):
         # not used. It is required only by the method inset(); it is then
         # initialized by the method position().
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         String representation of the graphics array.
 

@@ -68,7 +68,7 @@ class RandomVariable_generic(Parent):
     """
     A random variable.
     """
-    def __init__(self, X, RR):
+    def __init__(self, X, RR) -> None:
         if not isinstance(X, ProbabilitySpace_generic):
             raise TypeError("Argument X (= %s) must be a probability space" % X)
         Parent.__init__(self, X)
@@ -91,7 +91,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
     """
     A random variable on a discrete probability space.
     """
-    def __init__(self, X, f, codomain=None, check=False):
+    def __init__(self, X, f, codomain=None, check=False) -> None:
         r"""
         Create free binary string monoid on `n` generators.
 
@@ -125,7 +125,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
             #    raise IndexError("Argument x (= %s) is not a valid domain element." % x)
             return RR(0)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         F = pformat(self._function)
         return "Discrete random variable defined by %s" % F
 
@@ -308,7 +308,7 @@ class ProbabilitySpace_generic(RandomVariable_generic):
     r"""
     A probability space.
     """
-    def __init__(self, domain, RR):
+    def __init__(self, domain, RR) -> None:
         """
         A generic probability space on given domain space and codomain
         ring.
@@ -328,7 +328,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
     r"""
     The discrete probability space
     """
-    def __init__(self, X, P, codomain=None, check=False):
+    def __init__(self, X, P, codomain=None, check=False) -> None:
         r"""
         Create the discrete probability space with probabilities on the
         space X given by the dictionary P with values in the field
@@ -377,7 +377,7 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
         ProbabilitySpace_generic.__init__(self, X, codomain)
         DiscreteRandomVariable.__init__(self, self, P, codomain, check)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

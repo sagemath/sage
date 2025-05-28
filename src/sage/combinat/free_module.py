@@ -370,7 +370,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                                            inherit=True)
 
     def __init__(self, R, basis_keys=None, element_class=None, category=None,
-                 prefix=None, names=None, **kwds):
+                 prefix=None, names=None, **kwds) -> None:
         r"""
         TESTS::
 
@@ -618,7 +618,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
     # Accepting anything that can be converted is an option, but that would
     # be expensive. So far, x in self if x.parent() == self
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1372,7 +1372,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             options['category'] = options['category'].FiniteDimensional()
         return super(CombinatorialFreeModule.Tensor, cls).__classcall__(cls, modules, **options)
 
-    def __init__(self, modules, **options):
+    def __init__(self, modules, **options) -> None:
         """
         TESTS::
 
@@ -1698,7 +1698,7 @@ class CartesianProductWithFlattening:
     A class for Cartesian product constructor, with partial flattening
     """
 
-    def __init__(self, flatten):
+    def __init__(self, flatten) -> None:
         """
         INPUT:
 
@@ -1796,7 +1796,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             return CartesianProduct(modules, category, **options)
         return super().__classcall__(cls, modules, category=category, **options)
 
-    def __init__(self, modules, **options):
+    def __init__(self, modules, **options) -> None:
         r"""
         TESTS::
 

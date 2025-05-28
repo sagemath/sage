@@ -486,7 +486,7 @@ class Bijectionist(SageObject):
     def __init__(self, A, B, tau=None, alpha_beta=tuple(), P=None,
                  pi_rho=tuple(), phi_psi=tuple(), Q=None,
                  elements_distributions=tuple(),
-                 value_restrictions=tuple(), solver=None, key=None):
+                 value_restrictions=tuple(), solver=None, key=None) -> None:
         """
         Initialize the bijectionist.
 
@@ -2459,7 +2459,7 @@ class _BijectionistMILP:
     This class is used to manage the MILP, add constraints, solve the
     problem and check for uniqueness of solution values.
     """
-    def __init__(self, bijectionist: Bijectionist, solutions=None):
+    def __init__(self, bijectionist: Bijectionist, solutions=None) -> None:
         r"""
         Initialize the mixed integer linear program.
 
@@ -2725,7 +2725,7 @@ class _BijectionistMILP:
                                  name='veto')
         self._solution_cache.append(solution)
 
-    def _is_solution(self, constraint, values):
+    def _is_solution(self, constraint, values) -> bool:
         r"""
         Evaluate the given function at the given values.
 

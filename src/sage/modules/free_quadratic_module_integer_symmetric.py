@@ -644,7 +644,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         [1 0]
     """
     def __init__(self, ambient, basis, inner_product_matrix,
-                 check=True, already_echelonized=False):
+                 check=True, already_echelonized=False) -> None:
         r"""
         Create the integral lattice spanned by ``basis`` in the ambient space.
 

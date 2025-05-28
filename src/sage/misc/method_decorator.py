@@ -9,7 +9,7 @@ from sage.structure.sage_object import SageObject
 
 
 class MethodDecorator(SageObject):
-    def __init__(self, f):
+    def __init__(self, f) -> None:
         """
         EXAMPLES::
 

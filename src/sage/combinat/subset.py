@@ -200,7 +200,7 @@ class Subsets_s(Parent):
     # (see also below the failed test in __init__)
     element_class = Set_object_enumerated
 
-    def __init__(self, s):
+    def __init__(self, s) -> None:
         """
         TESTS::
 
@@ -269,7 +269,7 @@ class Subsets_s(Parent):
             return False
         return self._s == other._s
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -299,7 +299,7 @@ class Subsets_s(Parent):
         """
         return hash(self._s)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -308,7 +308,7 @@ class Subsets_s(Parent):
         """
         return "Subsets of {}".format(self._s)
 
-    def __contains__(self, value):
+    def __contains__(self, value) -> bool:
         """
         TESTS::
 
@@ -585,7 +585,7 @@ class Subsets_sk(Subsets_s):
         ValueError: {0} not in Subsets of {0, 1, 2, 5, 7} of size 3
     """
 
-    def __init__(self, s, k):
+    def __init__(self, s, k) -> None:
         """
         TESTS::
 
@@ -615,7 +615,7 @@ class Subsets_sk(Subsets_s):
         """
         return Subsets_s._repr_(self) + " of size {}".format(self._k)
 
-    def __contains__(self, value):
+    def __contains__(self, value) -> bool:
         """
         TESTS::
 
@@ -644,7 +644,7 @@ class Subsets_sk(Subsets_s):
             return False
         return self._s == other._s and self._k == other._k
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -946,7 +946,7 @@ class SubMultiset_s(Parent):
     # directly element_class as list
     element_class = list
 
-    def __init__(self, s):
+    def __init__(self, s) -> None:
         """
         Construct the combinatorial class of the sub multisets of s.
 
@@ -974,7 +974,7 @@ class SubMultiset_s(Parent):
             self._l = s
             self._d, self._keys = list_to_dict(s)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -996,7 +996,7 @@ class SubMultiset_s(Parent):
             return False
         return self._d == other._d
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -1007,7 +1007,7 @@ class SubMultiset_s(Parent):
         """
         return not self == other
 
-    def __contains__(self, s):
+    def __contains__(self, s) -> bool:
         """
         TESTS::
 
@@ -1186,7 +1186,7 @@ class SubMultiset_sk(SubMultiset_s):
         [[1, 2], [1, 3], [2, 3], [3, 3]]
     """
 
-    def __init__(self, s, k):
+    def __init__(self, s, k) -> None:
         """
         TESTS::
 
@@ -1255,7 +1255,7 @@ class SubMultiset_sk(SubMultiset_s):
         """
         return Integer(sum(1 for _ in self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1265,7 +1265,7 @@ class SubMultiset_sk(SubMultiset_s):
         """
         return "{} of size {}".format(SubMultiset_s._repr_(self), self._k)
 
-    def __contains__(self, s):
+    def __contains__(self, s) -> bool:
         """
         TESTS::
 
@@ -1341,7 +1341,7 @@ class SubsetsSorted(Subsets_s):
     """
     element_class = tuple
 
-    def __contains__(self, value):
+    def __contains__(self, value) -> bool:
         """
         TESTS::
 

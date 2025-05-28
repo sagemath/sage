@@ -113,7 +113,7 @@ class QmodnZ(Parent, UniqueRepresentation):
         else:
             return "Q/(%s)Z" % self.n
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Coercion from a parent ``S``.
 

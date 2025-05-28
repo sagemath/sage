@@ -11,7 +11,7 @@ class Block:
     <var_name>(start_index,...,start_index+size-1), it is the preferred
     block type for simple one-dimensional variable sets
     """
-    def __init__(self, var_name, size, start_index=0, reverse=False):
+    def __init__(self, var_name, size, start_index=0, reverse=False) -> None:
         indices = range(start_index, start_index + size)
         if reverse:
             indices = reversed(indices)
@@ -27,7 +27,7 @@ class Block:
     def __getitem__(self, i):
         return self.names[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.size
 
     def register(self, start, context):
@@ -49,7 +49,7 @@ class AlternatingBlock:
     a(0),b(0),a(1),b(1),a(2),b(2)
     """
     def __init__(self, var_names, size_per_variable, start_index=0,
-                 reverse=False):
+                 reverse=False) -> None:
         self.var_names = var_names
         self.size_per_variable = size_per_variable
         self.reverse = reverse
@@ -62,7 +62,7 @@ class AlternatingBlock:
         self.index2pos = {v: k for k, v in enumerate(indices)}
         self.names = names
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.size_per_variable * len(self.var_names)
 
     def __iter__(self):
@@ -75,7 +75,7 @@ class AlternatingBlock:
         def gen_var_func(var_pos):
 
             class var_factory:
-                def __init__(self, ring, index2pos, size):
+                def __init__(self, ring, index2pos, size) -> None:
                     self.ring = ring
                     self.index2pos = index2pos
                     self.size = size
@@ -105,7 +105,7 @@ def shift(f, i):
 
 class AdderBlock(AlternatingBlock):
     def __init__(self, adder_bits, sums='s', carries='c', input1='a',
-                 input2='b', start_index=0):
+                 input2='b', start_index=0) -> None:
         AlternatingBlock.__init__(self, (sums, carries, input1, input2),
                                   adder_bits, start_index=start_index,
                                   reverse=True)
@@ -164,7 +164,7 @@ class HigherOrderBlock:
     start_index_tuple + a, where a is a multi-index with nonnegative components
     """
     def __init__(self, var_name, size_tuple, start_index_tuple=None,
-                 reverse=False):
+                 reverse=False) -> None:
         if start_index_tuple is None:
             start_index_tuple = len(size_tuple) * (0, )
         cart = [()]
@@ -187,7 +187,7 @@ class HigherOrderBlock:
     def __iter__(self):
         return iter(self.names)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.names)
 
     def register(self, start, context):
@@ -200,7 +200,7 @@ class HigherOrderBlock:
 class InOutBlock:
     def __init__(self, out_size, in_size, output='out', input='in',
                  in_start_index=0, out_start_index=0,
-                 out_reverse=False, in_reverse=False):
+                 out_reverse=False, in_reverse=False) -> None:
         self.output = Block(var_name=output, start_index=out_start_index,
                             size=out_size, reverse=out_reverse)
         self.input = Block(var_name=input, start_index=in_start_index,
@@ -217,7 +217,7 @@ class InOutBlock:
             return self.output[i]
         return self.input[i - len(self.output)]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.output) + len(self.input)
 
     def register(self, start, context):
@@ -230,7 +230,7 @@ class InOutBlock:
 
 class MultiBlock:
     def __init__(self, sizes=None, var_names=["v"],
-                 start_indices=[], reverses=None):
+                 start_indices=[], reverses=None) -> None:
         if reverses is None:
             reverses = []
         if sizes is None:
@@ -252,7 +252,7 @@ class MultiBlock:
         return next(islice(chain(*self.blocks), i, i + 1))
         # sum([bl.names for bl in self.blocks])[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return sum(len(bl) for bl in self.blocks)
 
     def register(self, start, context):
@@ -269,7 +269,7 @@ class MultiBlock:
 class PrefixedDictProxy:
     """docstring for PrefixedDictProxy"""
 
-    def __init__(self, wrapped, prefix):
+    def __init__(self, wrapped, prefix) -> None:
         super().__init__()
         self.wrapped = wrapped
         self.prefix = prefix
@@ -281,12 +281,12 @@ class PrefixedDictProxy:
             print(self.prefix, k, list(self.wrapped))
             raise KeyError
 
-    def __setitem__(self, k, v):
+    def __setitem__(self, k, v) -> None:
         self.wrapped[self.prefix + k] = v
 
 
 class MacroBlock:
-    def __init__(self, prefix):
+    def __init__(self, prefix) -> None:
 
         self.prefix = prefix
         self.blocks = []
@@ -305,7 +305,7 @@ class MacroBlock:
     def __getitem__(self, i):
         return self.prefix + "_" + next(islice(chain(*self.blocks), i, i + 1))
 
-    def __len__(self):
+    def __len__(self) -> int:
         return sum(len(bl) for bl in self.blocks)
 
     def resolve(self, localname):
@@ -332,12 +332,12 @@ class MacroBlock:
 
 
 class IfThen:
-    def __init__(self, ifpart, thenpart, supposed_to_be_valid=True):
+    def __init__(self, ifpart, thenpart, supposed_to_be_valid=True) -> None:
         self.ifpart = [Polynomial(p) for p in ifpart]
         self.thenpart = [Polynomial(p) for p in thenpart]
         self.supposedToBeValid = supposed_to_be_valid
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ("If(AND(" + ", ".join(f"{p} == 0" for p in self.ifpart) +
                 ")), THEN " + ", ".join(f"{p} == 0" for p in self.thenpart))
 

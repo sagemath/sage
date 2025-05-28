@@ -1947,7 +1947,7 @@ class DiGraphGenerators:
             def extra_property(x):
                 return x.size() == size
         else:
-            def extra_property(x):
+            def extra_property(x) -> bool:
                 return True
         if augment == 'vertices':
             if vertices is None:

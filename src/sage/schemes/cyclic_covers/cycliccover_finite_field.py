@@ -109,7 +109,7 @@ def _N0_nodenominators(p, g, n):
 
 
 class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
-    def __init__(self, AA, r, f, names=None, verbose=0):
+    def __init__(self, AA, r, f, names=None, verbose=0) -> None:
         """
         EXAMPLES::
 

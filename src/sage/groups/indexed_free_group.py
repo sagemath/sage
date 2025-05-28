@@ -151,7 +151,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
         sage: G
         Free group indexed by {'a', 'b', 'c', 'd', 'e'}
     """
-    def __init__(self, indices, prefix, category=None, **kwds):
+    def __init__(self, indices, prefix, category=None, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -165,7 +165,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
         category = Groups().or_subcategory(category)
         IndexedGroup.__init__(self, indices, prefix, category, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -209,7 +209,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
             return self.element_class(self, ((x,1),))
 
     class Element(IndexedFreeMonoidElement):
-        def __len__(self):
+        def __len__(self) -> int:
             """
             Return the length of ``self``.
 
@@ -312,7 +312,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
         sage: G
         Free abelian group indexed by {'a', 'b', 'c', 'd', 'e'}
     """
-    def __init__(self, indices, prefix, category=None, **kwds):
+    def __init__(self, indices, prefix, category=None, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -326,7 +326,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
         category = Groups().or_subcategory(category)
         IndexedGroup.__init__(self, indices, prefix, category, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

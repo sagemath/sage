@@ -99,7 +99,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
         sage: x == loads(dumps(x))
         True
     """
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         """
         INPUT:
 

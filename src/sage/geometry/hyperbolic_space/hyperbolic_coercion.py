@@ -34,7 +34,7 @@ class HyperbolicModelCoercion(Morphism):
     """
     Abstract base class for morphisms between the hyperbolic models.
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return the type of morphism.
 

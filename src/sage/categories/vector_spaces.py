@@ -72,7 +72,7 @@ class VectorSpaces(Category_module):
                                  " got {}".format(K))
         return super().__classcall__(cls, K)
 
-    def __init__(self, K):
+    def __init__(self, K) -> None:
         """
         EXAMPLES::
 
@@ -184,7 +184,7 @@ class VectorSpaces(Category_module):
 
         _call_ = ModulesWithBasis.__dict__["_call_"]
 
-        def is_abelian(self):
+        def is_abelian(self) -> bool:
             """
             Return whether this category is abelian.
 

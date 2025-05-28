@@ -49,7 +49,7 @@ class IndexedMonoidElement(MonoidElement):
     the result of :meth:`_sorted_items` (which for abelian free monoids is
     influenced by the order on the indexing set).
     """
-    def __init__(self, F, x):
+    def __init__(self, F, x) -> None:
         """
         Create the element ``x`` of an indexed free abelian monoid ``F``.
 
@@ -388,7 +388,7 @@ class IndexedFreeMonoidElement(IndexedMonoidElement):
     """
     An element of an indexed free abelian monoid.
     """
-    def __init__(self, F, x):
+    def __init__(self, F, x) -> None:
         """
         Create the element ``x`` of an indexed free abelian monoid ``F``.
 
@@ -463,7 +463,7 @@ class IndexedFreeMonoidElement(IndexedMonoidElement):
         ret += rhs
         return self.__class__(self.parent(), tuple(ret))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of ``self``.
 
@@ -486,7 +486,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
     """
     An element of an indexed free abelian monoid.
     """
-    def __init__(self, F, x):
+    def __init__(self, F, x) -> None:
         """
         Create the element ``x`` of an indexed free abelian monoid ``F``.
 
@@ -643,7 +643,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
         other = m._monomial
         return all(k in other and v <= other[k] for k, v in self._monomial.items())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of ``self``.
 
@@ -723,7 +723,7 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
         return super().__classcall__(cls, indices, prefix,
                                      names=names, **kwds)
 
-    def __init__(self, indices, prefix, category=None, names=None, **kwds):
+    def __init__(self, indices, prefix, category=None, names=None, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -886,7 +886,7 @@ class IndexedFreeMonoid(IndexedMonoid):
         sage: F.gen(2) * F.gen(12)
         X|2>*X|12>
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -972,7 +972,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         Implement a subclass when the index sets is finite that utilizes
         vectors or the polydict monomials with the index order fixed.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

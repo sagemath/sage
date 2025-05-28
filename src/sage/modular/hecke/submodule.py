@@ -53,7 +53,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
     """
     Submodule of a Hecke module.
     """
-    def __init__(self, ambient, submodule, dual_free_module=None, check=True):
+    def __init__(self, ambient, submodule, dual_free_module=None, check=True) -> None:
         r"""
         Initialise a submodule of an ambient Hecke module.
 
@@ -108,7 +108,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
                 raise ArithmeticError("dual_free_module must have the same rank as submodule")
             self.dual_free_module.set_cache(dual_free_module)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

@@ -163,7 +163,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
 
     - :wikipedia:`Filtered_algebra#Associated_graded_algebra`
     """
-    def __init__(self, A, category=None):
+    def __init__(self, A, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -196,7 +196,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         phi = self.module_morphism(diagonal=lambda x: base_one, codomain=A)
         self._A.register_conversion(phi)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

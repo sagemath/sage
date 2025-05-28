@@ -276,7 +276,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         raise NotImplementedError
         #return super(KirillovReshetikhinTableaux, cls).__classcall__(cls, ct, r, s)
 
-    def __init__(self, cartan_type, r, s):
+    def __init__(self, cartan_type, r, s) -> None:
         r"""
         Initialize ``self``.
 
@@ -299,7 +299,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type.classical())
         self.module_generators = self._build_module_generators()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1058,7 +1058,7 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
     :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`.
     """
 
-    def __init__(self, parent, list, **options):
+    def __init__(self, parent, list, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -1804,7 +1804,7 @@ class KRTableauxTypeFromRC(KirillovReshetikhinTableaux):
         :meth:`classical_decomposition` does not work.
     """
 
-    def __init__(self, cartan_type, r, s):
+    def __init__(self, cartan_type, r, s) -> None:
         r"""
         Initialize ``self``.
 

@@ -128,7 +128,7 @@ class AlternatingSignMatrix(Element,
             raise ValueError("the alternating sign matrices must be square")
         return AlternatingSignMatrices(asm.nrows())(asm, check=check)
 
-    def __init__(self, parent, asm):
+    def __init__(self, parent, asm) -> None:
         """
         Initialize ``self``.
 
@@ -653,7 +653,7 @@ class AlternatingSignMatrix(Element,
         P = self.parent()
         return [P.from_height_function(hfun) for hfun in cyc]
 
-    def ASM_compatible(self, B):
+    def ASM_compatible(self, B) -> bool:
         r"""
         Return ``True`` if ``self`` and ``B`` are compatible alternating sign
         matrices in the sense of [EKLP1992]_. (If ``self`` is of size `n`, ``B``
@@ -1046,7 +1046,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         Category of facade finite enumerated lattice posets
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -1059,7 +1059,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         self._matrix_space = MatrixSpace(ZZ, n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1084,7 +1084,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         return self._matrix_space._repr_option(key)
 
-    def __contains__(self, asm):
+    def __contains__(self, asm) -> bool:
         """
         Check if ``asm`` is in ``self``.
 
@@ -1656,7 +1656,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         True
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -1670,7 +1670,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         """
         GelfandTsetlinPatternsTopRow.__init__(self, tuple(reversed(range(1, n+1))), True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
@@ -1824,7 +1824,7 @@ class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
 
 
 class ContreTableaux_n(ContreTableaux):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -1835,7 +1835,7 @@ class ContreTableaux_n(ContreTableaux):
         """
         self.n = n
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -1984,7 +1984,7 @@ class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
 
 
 class TruncatedStaircases_nlastcolumn(TruncatedStaircases):
-    def __init__(self, n, last_column):
+    def __init__(self, n, last_column) -> None:
         """
         TESTS::
 
@@ -1996,7 +1996,7 @@ class TruncatedStaircases_nlastcolumn(TruncatedStaircases):
         self.n = n
         self.last_column = last_column
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

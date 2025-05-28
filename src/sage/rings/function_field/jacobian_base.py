@@ -197,7 +197,7 @@ class JacobianGroupFunctor(ConstructionFunctor):
     """
     rank = 20
 
-    def __init__(self, base_field, field):
+    def __init__(self, base_field, field) -> None:
         """
         Initialize.
 
@@ -289,7 +289,7 @@ class JacobianGroup_base(Parent):
     """
     _embedding_map_class = None
 
-    def __init__(self, parent, function_field, base_div):
+    def __init__(self, parent, function_field, base_div) -> None:
         """
         Initialize.
 
@@ -308,7 +308,7 @@ class JacobianGroup_base(Parent):
         self._genus = parent._function_field.genus()  # equals function_field.genus()
         self._base_div = base_div
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -586,7 +586,7 @@ class Jacobian_base(Parent):
         sage: F.jacobian()
         Jacobian of Function field in y defined by y^2 + y + (x^2 + 1)/x (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds):
+    def __init__(self, function_field, base_div, **kwds) -> None:
         """
         Initialize.
 
@@ -606,7 +606,7 @@ class Jacobian_base(Parent):
                          base=function_field.constant_base_field(),
                          facade=True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

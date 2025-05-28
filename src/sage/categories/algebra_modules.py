@@ -33,7 +33,7 @@ class AlgebraModules(Category_module):
     and use cases for potential generalizations to the non commutative
     case are welcome.
     """
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         """
         EXAMPLES::
 

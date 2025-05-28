@@ -177,7 +177,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Lambda[0] + 2*Lambda[3] - 4*delta: 15 195 1539 9186 45804 200073 789201 2866560 9723582 31120281 94724550 275919741
     """
 
-    def __init__(self, Lam):
+    def __init__(self, Lam) -> None:
         """
         Initialize ``self``.
 
@@ -312,7 +312,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         return sum(self._ac)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -324,7 +324,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         return "Integrable representation of %s with highest weight %s" % (self._cartan_type, self._Lam)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

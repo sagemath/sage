@@ -41,7 +41,7 @@ class FiniteSets(CategoryWithAxiom):
 
     class ParentMethods:
 
-        def is_finite(self):
+        def is_finite(self) -> bool:
             """
             Return ``True`` since ``self`` is finite.
 

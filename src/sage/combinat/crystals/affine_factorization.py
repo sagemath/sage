@@ -123,7 +123,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             w = w0*(w1.inverse())
         return super().__classcall__(cls, w, n, x)
 
-    def __init__(self, w, n, x=None):
+    def __init__(self, w, n, x=None) -> None:
         r"""
         EXAMPLES::
 
@@ -174,7 +174,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             raise ValueError("x cannot be in reduced word of {}".format(w))
         self.x = x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

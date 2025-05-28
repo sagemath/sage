@@ -806,7 +806,7 @@ def extract_ones_data(H, pivots):
         return None, None, None, onecol, onerow, non_onecol, non_onerow
 
 
-def is_in_hnf_form(H, pivots):
+def is_in_hnf_form(H, pivots) -> bool:
     """
     Return whether the matrix ``H`` is in Hermite normal form
     with given pivot columns.

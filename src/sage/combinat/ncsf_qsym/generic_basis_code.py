@@ -44,7 +44,7 @@ from sage.categories.realizations import RealizationsCategory
 
 class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         r"""
         Return the name of the objects of this category.
 
@@ -82,7 +82,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
     class ParentMethods:
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             TESTS::
 
@@ -989,7 +989,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
     A class for algebra morphism defined on a free algebra from the image of the generators
     """
 
-    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False):
+    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False) -> None:
         """
         Given a map on the multiplicative basis of a free algebra, this method
         returns the algebra morphism that is the linear extension of its image
@@ -1102,7 +1102,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
                 and self._is_module_with_basis_over_same_base_ring
                     == other._is_module_with_basis_over_same_base_ring)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check equality.
 

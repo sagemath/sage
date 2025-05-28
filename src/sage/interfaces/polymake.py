@@ -123,7 +123,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         sage: p.F_VECTOR                                    # optional - jupymake
         20 94 148 74
     """
-    def __init__(self, seed=None):
+    def __init__(self, seed=None) -> None:
         """
         TESTS::
 
@@ -379,7 +379,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         self.eval('use Scalar::Util qw(reftype);')
         self.eval('use Scalar::Util qw(blessed);')
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         TESTS::
 
@@ -388,7 +388,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         return "="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         TESTS::
 
@@ -397,7 +397,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         return "=="
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         TESTS::
 
@@ -1012,7 +1012,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
             return rich_to_bool(op, 1)
         return NotImplemented
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether this polymake element is equal to ``True``.
 
@@ -1384,7 +1384,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
         for i in range(len(self)):
             yield self[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -1654,7 +1654,7 @@ class PolymakeFunctionElement(InterfaceFunctionElement):
         sage: c.contains(V)
         true
     """
-    def __init__(self, obj, name, memberfunction=False):
+    def __init__(self, obj, name, memberfunction=False) -> None:
         """
         INPUT:
 
@@ -1678,7 +1678,7 @@ class PolymakeFunctionElement(InterfaceFunctionElement):
         self._name = name
         self._is_memberfunc = memberfunction
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1830,7 +1830,7 @@ class PolymakeJuPyMake(PolymakeAbstract):
          20 40 29 9
     """
 
-    def __init__(self, seed=None, verbose=False):
+    def __init__(self, seed=None, verbose=False) -> None:
         """
         Initialize ``self``.
 

@@ -99,7 +99,7 @@ class DocTestDefaults(SageObject):
                         optional='sage,optional', random_seed=None,
                         stats_path='.../timings2.json')
     """
-    def __init__(self, runtest_default=False, **kwds):
+    def __init__(self, runtest_default=False, **kwds) -> None:
         """
         Edit these parameters after creating an instance.
 
@@ -205,7 +205,7 @@ class DocTestDefaults(SageObject):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -220,7 +220,7 @@ class DocTestDefaults(SageObject):
         return not (self == other)
 
 
-def skipdir(dirname):
+def skipdir(dirname) -> bool:
     """
     Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
@@ -362,7 +362,7 @@ class Logger:
         hello world
         'hello world\n'
     """
-    def __init__(self, *files):
+    def __init__(self, *files) -> None:
         r"""
         Initialize the logger for writing to all files in ``files``.
 
@@ -405,7 +405,7 @@ class DocTestController(SageObject):
 
     After creating it with appropriate options, call the :meth:`run` method to run the doctests.
     """
-    def __init__(self, options, args):
+    def __init__(self, options, args) -> None:
         """
         Initialization.
 
@@ -587,7 +587,7 @@ class DocTestController(SageObject):
             randstate.set_random_seed()
             self.options.random_seed = randstate.initial_seed()
 
-    def __del__(self):
+    def __del__(self) -> None:
         if getattr(self, 'logfile', None) is not None:
             self.logfile.close()
 
@@ -666,7 +666,7 @@ class DocTestController(SageObject):
         expected = 12800.0       # Core i7 Quad-Core 2014
         return sum(success) / expected
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 

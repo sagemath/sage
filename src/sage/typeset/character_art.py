@@ -37,7 +37,7 @@ MAX_WIDTH = None
 
 class CharacterArt(SageObject):
 
-    def __init__(self, lines=[], breakpoints=[], baseline=None):
+    def __init__(self, lines=[], breakpoints=[], baseline=None) -> None:
         r"""
         Abstract base class for character art.
 
@@ -155,7 +155,7 @@ class CharacterArt(SageObject):
             return self._split_repr_(hsize)
         return '\n'.join(self._matrix)
 
-    def __format__(self, fmt):
+    def __format__(self, fmt) -> str:
         r"""
         Format ``self``.
 
@@ -305,7 +305,7 @@ class CharacterArt(SageObject):
             """
             Iterator with support for prepending of elements.
             """
-            def __init__(self, stack):
+            def __init__(self, stack) -> None:
                 self._stack = [iter(elems) for elems in stack]
 
             def prepend(self, elems):

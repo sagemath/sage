@@ -60,7 +60,7 @@ from sage.env import SAGE_ECMBIN
 
 class ECM(SageObject):
 
-    def __init__(self, B1=10, B2=None, **kwds):
+    def __init__(self, B1=10, B2=None, **kwds) -> None:
         r"""
         Create an interface to the GMP-ECM elliptic curve method
         factorization program.

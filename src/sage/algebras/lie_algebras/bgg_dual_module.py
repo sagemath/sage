@@ -98,7 +98,7 @@ class BGGDualModule(CombinatorialFreeModule):
 
     - [Humphreys08]_
     """
-    def __init__(self, module):
+    def __init__(self, module) -> None:
         r"""
         Initialize ``self``.
 
@@ -456,7 +456,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
         """
         return super(IndexedMonoid, cls).__classcall__(cls, simple, prefix=prefix, **kwds)
 
-    def __init__(self, simple, prefix, category=None, **kwds):
+    def __init__(self, simple, prefix, category=None, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -589,7 +589,7 @@ class SimpleModuleIndices(IndexedFreeAbelianMonoid):
             self._construct_next_level()
         return self._weight_space_bases.get(mu, [])
 
-    def __contains__(self, m):
+    def __contains__(self, m) -> bool:
         r"""
         Check if ``m`` is contained in ``self``.
 
@@ -811,7 +811,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
             return FiniteDimensionalSimpleModule(g, weight, *args, **kwds)
         return super().__classcall__(cls, g, weight, *args, **kwds)
 
-    def __init__(self, g, weight, prefix='f', basis_key=None, **kwds):
+    def __init__(self, g, weight, prefix='f', basis_key=None, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -842,7 +842,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, indices, category=category,
                                          **self._ambient.print_options())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -856,7 +856,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         """
         return "Simple module with highest weight {} of {}".format(self._weight, self._g)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

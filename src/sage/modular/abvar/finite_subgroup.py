@@ -143,7 +143,7 @@ class FiniteSubgroup(Module):
 
     Element = TorsionPoint
 
-    def __init__(self, abvar, field_of_definition=QQ):
+    def __init__(self, abvar, field_of_definition=QQ) -> None:
         """
         Initialize ``self``.
 
@@ -524,7 +524,7 @@ class FiniteSubgroup(Module):
         """
         return self.__field_of_definition
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this finite subgroup.
 
@@ -543,7 +543,7 @@ class FiniteSubgroup(Module):
             field = str(K)
         return "Finite subgroup %sover %s of %s" % (self._invariants_repr(), field, self.__abvar)
 
-    def _invariants_repr(self):
+    def _invariants_repr(self) -> str:
         """
         The string representation of the 'invariants' part of this group.
 
@@ -693,7 +693,7 @@ class FiniteSubgroup(Module):
         x = self.lattice()(x, check=check)
         return self.element_class(self, x, check=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is contained in this finite subgroup.
 
@@ -837,7 +837,7 @@ class FiniteSubgroup(Module):
 
 
 class FiniteSubgroup_lattice(FiniteSubgroup):
-    def __init__(self, abvar, lattice, field_of_definition=None, check=True):
+    def __init__(self, abvar, lattice, field_of_definition=None, check=True) -> None:
         """
         A finite subgroup of a modular abelian variety that is defined by a
         given lattice.

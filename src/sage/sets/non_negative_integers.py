@@ -69,7 +69,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
     ``NonNegativeIntegers``.
     """
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         TESTS::
 
@@ -84,7 +84,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         Parent.__init__(self, facade=ZZ,
                         category=InfiniteEnumeratedSets().or_subcategory(category))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -93,7 +93,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         return "Non negative integers"
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         """
         EXAMPLES::
 

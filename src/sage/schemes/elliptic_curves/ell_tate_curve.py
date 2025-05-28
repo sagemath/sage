@@ -75,7 +75,7 @@ class TateCurve(SageObject):
 
     REFERENCES: [Sil1994]_
     """
-    def __init__(self, E, p):
+    def __init__(self, E, p) -> None:
         r"""
         INPUT:
 
@@ -118,7 +118,7 @@ class TateCurve(SageObject):
 
         return richcmp((self._E, self._p), (other._E, other._p), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return print representation.
 

@@ -2335,7 +2335,7 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
     # points in possible_targets, check all arrangements of those
     # possible target points and if any of them define a conjugation
     # which sends f to g, return True
-    def find_conjugations_subset(tuples):
+    def find_conjugations_subset(tuples) -> bool:
         for tup in tuples:
             target_set = []
             for i in range(len(tup)):
@@ -2362,7 +2362,7 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
     # given a list of tuples which specify indices of possible target points
     # in possible_targets, check all possible target points
     # and if any of them define a conjugation which sends f to g, return True
-    def find_conjugations_arrangement(tuples):
+    def find_conjugations_arrangement(tuples) -> bool:
         for tup in tuples:
             current_target = []
             for i in range(len(tup)):

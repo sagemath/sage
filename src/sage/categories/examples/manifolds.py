@@ -34,7 +34,7 @@ class Plane(UniqueRepresentation, Parent):
         sage: TestSuite(M).run()
     """
 
-    def __init__(self, n=3, base_ring=None):
+    def __init__(self, n=3, base_ring=None) -> None:
         r"""
         EXAMPLES::
 
@@ -49,7 +49,7 @@ class Plane(UniqueRepresentation, Parent):
         self._n = n
         Parent.__init__(self, base=base_ring, category=Manifolds(base_ring))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

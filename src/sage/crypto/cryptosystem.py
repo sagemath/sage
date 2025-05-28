@@ -104,7 +104,7 @@ class Cryptosystem(Set_generic):
         Vigenere cryptosystem on Free radix 64 string monoid of period 7
     """
     def __init__(self, plaintext_space, ciphertext_space, key_space,
-                 block_length=1, period=None):
+                 block_length=1, period=None) -> None:
         r"""
         Create a ``Cryptosystem`` object. See the class ``Cryptosystem``
         for detailed documentation.

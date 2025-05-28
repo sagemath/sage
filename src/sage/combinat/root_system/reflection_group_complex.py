@@ -226,7 +226,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         :func:`ReflectionGroup`
     """
 
-    def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None):
+    def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None) -> None:
         r"""
         TESTS::
 
@@ -351,7 +351,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
                 type_str += str(W_type["rank"])
         return type_str
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -2037,7 +2037,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
 
 class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -2127,7 +2127,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
                        for ev in self.reflection_eigenvalues(is_class_representative=is_class_representative))
 
         #@cached_in_parent_method
-        def is_regular(self, h, is_class_representative=False):
+        def is_regular(self, h, is_class_representative=False) -> bool:
             r"""
             Return whether ``self`` is regular.
 

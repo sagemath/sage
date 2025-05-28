@@ -70,7 +70,7 @@ class ShardPosetElement(tuple):
         """
         return tuple.__new__(cls, p)
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         r"""
         INPUT:
 
@@ -96,7 +96,7 @@ class ShardPosetElement(tuple):
         self.dpg = G.transitive_closure()
         self.spg = G.transitive_reduction()
 
-    def __le__(self, other):
+    def __le__(self, other) -> bool:
         """
         Comparison between two elements of the poset.
 

@@ -277,7 +277,7 @@ def list_of_subfunctions(root, only_local_functions=True):
         else:
             return inspect.isclass(root) or f is not gen_rest_table_index
 
-    def can_import(f):
+    def can_import(f) -> bool:
         # poke it to provoke a lazy import to resolve
         try:
             hasattr(f, 'xyz')

@@ -244,7 +244,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
 
 class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
-    def __init__(self, R, W, category):
+    def __init__(self, R, W, category) -> None:
         """
         TESTS::
 
@@ -312,7 +312,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         from sage.combinat.specht_module import SymmetricGroupRepresentation
         self._representation_mixin_class = SymmetricGroupRepresentation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3177,7 +3177,7 @@ def e_ik(itab, ktab, star=0):
     return res
 
 
-def seminormal_test(n):
+def seminormal_test(n) -> bool:
     """
     Run a variety of tests to verify that the construction of the
     seminormal basis works as desired. The numbers appearing are
@@ -3230,7 +3230,7 @@ class SGACellularBasis(CellularBasis):
     r"""
     A cellular basis of the symmetric group algebra.
     """
-    def __init__(self, SGA):
+    def __init__(self, SGA) -> None:
         r"""
         Initialize ``self``.
 
@@ -3486,7 +3486,7 @@ def HeckeAlgebraSymmetricGroupT(R, n, q=None):
 
 
 class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
-    def __init__(self, R, n, q=None):
+    def __init__(self, R, n, q=None) -> None:
         """
         TESTS::
 
@@ -3574,7 +3574,7 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
 
 class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
 
-    def __init__(self, R, n, q=None):
+    def __init__(self, R, n, q=None) -> None:
         """
         TESTS::
 

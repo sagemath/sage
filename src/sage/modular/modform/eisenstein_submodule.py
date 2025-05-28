@@ -23,7 +23,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
     """
     The Eisenstein submodule of an ambient space of modular forms.
     """
-    def __init__(self, ambient_space):
+    def __init__(self, ambient_space) -> None:
         """
         Return the Eisenstein submodule of the given space.
 
@@ -46,7 +46,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
                         already_echelonized=True)
         submodule.ModularFormsSubmodule.__init__(self, ambient_space, S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

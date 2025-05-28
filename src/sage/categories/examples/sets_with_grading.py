@@ -25,7 +25,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         sage: E.graded_component(100)
         {100}
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -34,7 +34,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         Parent.__init__(self, category=SetsWithGrading().Infinite(),
                         facade=IntegerRing())
 
-    def an_element(self):
+    def an_element(self) -> int:
         r"""
         Return 0.
 
@@ -45,7 +45,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         return 0
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

@@ -106,7 +106,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a','b','c','d')) -> None:
         r"""
         A left regular band.
 
@@ -122,7 +122,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
         Parent.__init__(self,
                         category=Semigroups().Finite().FinitelyGenerated())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

@@ -2308,7 +2308,7 @@ def dummy_pochhammer(*args):
 #
 #######################################################
 
-def _laplace_latex_(self, *args):
+def _laplace_latex_(self, *args) -> str:
     r"""
     Return LaTeX expression for Laplace transform of a symbolic function.
 
@@ -2326,7 +2326,7 @@ def _laplace_latex_(self, *args):
     return "\\mathcal{L}\\left(%s\\right)" % (', '.join(latex(x) for x in args))
 
 
-def _inverse_laplace_latex_(self, *args):
+def _inverse_laplace_latex_(self, *args) -> str:
     r"""
     Return LaTeX expression for inverse Laplace transform
     of a symbolic function.

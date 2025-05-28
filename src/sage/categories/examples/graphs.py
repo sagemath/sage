@@ -33,7 +33,7 @@ class Cycle(UniqueRepresentation, Parent):
 
         sage: TestSuite(C).run()
     """
-    def __init__(self, n=5):
+    def __init__(self, n=5) -> None:
         r"""
         EXAMPLES::
 
@@ -48,7 +48,7 @@ class Cycle(UniqueRepresentation, Parent):
         self._n = n
         Parent.__init__(self, category=Graphs())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -99,7 +99,7 @@ class Cycle(UniqueRepresentation, Parent):
         return [self( (i, (i+1) % self._n) ) for i in range(self._n)]
 
     class Element(ElementWrapper):
-        def dimension(self):
+        def dimension(self) -> int:
             """
             Return the dimension of ``self``.
 

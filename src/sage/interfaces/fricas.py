@@ -283,7 +283,7 @@ class FriCAS(ExtraTabCompletion, Expect):
     """
     def __init__(self, name='fricas', command=None,
                  script_subdirectory=None, logfile=None,
-                 server=None, server_tmpdir=None):
+                 server=None, server_tmpdir=None) -> None:
         """
         Create an instance of the FriCAS interpreter.
 
@@ -355,7 +355,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         # register translations between SymbolicRing and FriCAS Expression
         self._register_symbols()
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing FriCAS on your computer.
 
@@ -371,7 +371,7 @@ package within SageMath, or install FriCAS separately, see
 http://fricas.sourceforge.net.
 """
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit FriCAS.
 
@@ -473,7 +473,7 @@ http://fricas.sourceforge.net.
                 sage.misc.persist.save(v, self._COMMANDS_CACHE)
             return names
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         """
         Return the FriCAS command to read the file ``filename``.
 
@@ -820,7 +820,7 @@ http://fricas.sourceforge.net.
         """
         return self.get_string('sageprint((%s)::InputForm)' % str(var))
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the symbol used for setting a variable in FriCAS.
 
@@ -834,7 +834,7 @@ http://fricas.sourceforge.net.
         """
         return ":="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality testing logical symbol in FriCAS.
 
@@ -853,7 +853,7 @@ http://fricas.sourceforge.net.
         """
         return "="
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the string used for ``True`` in FriCAS.
 
@@ -864,7 +864,7 @@ http://fricas.sourceforge.net.
         """
         return "true"
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the string used for ``False`` in FriCAS.
 
@@ -875,7 +875,7 @@ http://fricas.sourceforge.net.
         """
         return "false"
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         """
         Return the string used for False in FriCAS.
 
@@ -886,7 +886,7 @@ http://fricas.sourceforge.net.
         """
         return '~='
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1014,7 +1014,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
     .. automethod:: _sage_
     """
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of a list.
 
@@ -1111,7 +1111,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return P.new("elt(%s,last)" % (self._name))
         return P.new("elt(%s,%s)" % (self._name, n + 1))
 
-    def __int__(self):
+    def __int__(self) -> int:
         """
         TESTS::
 
@@ -1134,7 +1134,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         P = self._check_valid()
         return P.new(self._name + "::Boolean").sage()
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Check whether the expression is different from zero.
 
@@ -1146,7 +1146,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         P = self._check_valid()
         return not P.new("zero?(%s)" % self._name).sage()
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         TESTS::
 
@@ -2068,7 +2068,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
 @instancedoc
 class FriCASFunctionElement(FunctionElement):
-    def __init__(self, object, name):
+    def __init__(self, object, name) -> None:
         """
         Make FriCAS operation names valid python function identifiers.
 
@@ -2091,7 +2091,7 @@ class FriCASFunctionElement(FunctionElement):
 
 @instancedoc
 class FriCASExpectFunction(ExpectFunction):
-    def __init__(self, parent, name):
+    def __init__(self, parent, name) -> None:
         """
         Translate the pythonized function identifier back to a FriCAS
         operation name.

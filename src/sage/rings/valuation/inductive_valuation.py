@@ -538,7 +538,7 @@ class FiniteInductiveValuation(InductiveValuation, DiscreteValuation):
         sage: R.<x> = QQ[]
         sage: v = GaussValuation(R, valuations.TrivialValuation(QQ))
     """
-    def __init__(self, parent, phi):
+    def __init__(self, parent, phi) -> None:
         r"""
         TESTS::
 
@@ -585,7 +585,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         sage: v = GaussValuation(S)
         sage: v = v.augmentation(x^2 + x + u, 1)
     """
-    def __init__(self, parent, phi):
+    def __init__(self, parent, phi) -> None:
         r"""
         TESTS::
 
@@ -1631,7 +1631,7 @@ class InfiniteInductiveValuation(FinalInductiveValuation, InfiniteDiscretePseudo
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x^2 + x + 1, infinity)
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 

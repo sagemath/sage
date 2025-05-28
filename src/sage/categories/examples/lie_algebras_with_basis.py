@@ -25,7 +25,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
     This class illustrates a minimal implementation of a Lie algebra with
     a distinguished basis.
     """
-    def __init__(self, R, gens):
+    def __init__(self, R, gens) -> None:
         """
         EXAMPLES::
 
@@ -47,7 +47,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
         """
         return IndexedPolynomialRing(self.base_ring(), self._indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -118,7 +118,7 @@ class IndexedPolynomialRing(CombinatorialFreeModule):
         for the example of the abelian Lie algebra. This should be
         factored out into a more complete class.
     """
-    def __init__(self, R, indices, **kwds):
+    def __init__(self, R, indices, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -138,7 +138,7 @@ class IndexedPolynomialRing(CombinatorialFreeModule):
         M = IndexedFreeAbelianMonoid(indices, bracket='')
         CombinatorialFreeModule.__init__(self, R, M, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

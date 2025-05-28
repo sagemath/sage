@@ -203,7 +203,7 @@ class ModularSymbol(SageObject):
         """
         return self._base_ring
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of modular symbols.
 
@@ -223,7 +223,7 @@ class ModularSymbol(SageObject):
 
 
 class ModularSymbolECLIB(ModularSymbol):
-    def __init__(self, E, sign, nap=1000):
+    def __init__(self, E, sign, nap=1000) -> None:
         r"""Modular symbols attached to `E` using ``eclib``.
 
         Note that the normalization used within ``eclib`` differs from the
@@ -377,7 +377,7 @@ class ModularSymbolECLIB(ModularSymbol):
 
 
 class ModularSymbolSage(ModularSymbol):
-    def __init__(self, E, sign, normalize='L_ratio'):
+    def __init__(self, E, sign, normalize='L_ratio') -> None:
         """Modular symbols attached to `E` using ``sage``.
 
         INPUT:

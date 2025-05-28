@@ -27,7 +27,7 @@ class JuPyMake(JoinFeature):
         sage: JuPyMake().is_present()  # optional - jupymake
         FeatureTestResult('jupymake', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

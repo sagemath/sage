@@ -51,7 +51,7 @@ class ExtendedCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, C):
+    def __init__(self, C) -> None:
         r"""
         TESTS:
 
@@ -85,7 +85,7 @@ class ExtendedCode(AbstractLinearCode):
         return isinstance(other, ExtendedCode)\
                 and self.original_code() == other.original_code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -98,7 +98,7 @@ class ExtendedCode(AbstractLinearCode):
         """
         return "Extension of %s" % self.original_code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -190,7 +190,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
     - ``code`` -- the associated code of ``self``
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -205,7 +205,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
 
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -219,7 +219,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
         """
         return "Matrix-based Encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -304,7 +304,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
          through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder=None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs) -> None:
         r"""
         TESTS:
 
@@ -335,7 +335,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         super().__init__(code, code.ambient_space(),
                          self._original_decoder.connected_encoder())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -349,7 +349,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

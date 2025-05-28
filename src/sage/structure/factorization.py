@@ -221,7 +221,7 @@ class Factorization(SageObject):
         ...
         TypeError: no conversion of this rational to integer
     """
-    def __init__(self, x, unit=None, cr=False, sort=True, simplify=True):
+    def __init__(self, x, unit=None, cr=False, sort=True, simplify=True) -> None:
         """
         Create a :class:`Factorization` object.
 
@@ -345,7 +345,7 @@ class Factorization(SageObject):
         """
         return self.__x[i]
 
-    def __setitem__(self, i, v):
+    def __setitem__(self, i, v) -> None:
         """
         Set the `i`-th factor of ``self``.
 
@@ -364,7 +364,7 @@ class Factorization(SageObject):
         """
         raise TypeError("'Factorization' object does not support item assignment")
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of prime factors of ``self``, not counting
         the unit part.

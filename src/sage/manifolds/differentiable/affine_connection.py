@@ -364,7 +364,7 @@ class AffineConnection(SageObject):
         sage: nab_copy.is_immutable()
         False
     """
-    def __init__(self, domain, name, latex_name=None):
+    def __init__(self, domain, name, latex_name=None) -> None:
         r"""
         Construct an affine connection.
 
@@ -475,7 +475,7 @@ class AffineConnection(SageObject):
         self._torsion_forms.clear()
         self._curvature_forms.clear()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Comparison (equality) operator.
 
@@ -532,7 +532,7 @@ class AffineConnection(SageObject):
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 
@@ -980,7 +980,7 @@ class AffineConnection(SageObject):
         """
         return self._is_immutable
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``True`` if this object is mutable, i.e. its coefficients can
         be changed, and ``False`` if it is not.
@@ -1114,7 +1114,7 @@ class AffineConnection(SageObject):
                 frame = self._domain._def_frame
         return self.coef(frame)[args]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the connection coefficient w.r.t. some frame corresponding to the
         given indices.

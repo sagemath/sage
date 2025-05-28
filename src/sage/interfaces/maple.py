@@ -264,7 +264,7 @@ class Maple(ExtraTabCompletion, Expect):
     Maple (and get the result back as a string).
     """
     def __init__(self, maxread=None, script_subdirectory=None, server=None,
-            server_tmpdir=None, logfile=None, ulimit=None):
+            server_tmpdir=None, logfile=None, ulimit=None) -> None:
         """
         Create an instance of the Maple interpreter.
 
@@ -348,7 +348,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         return reduce_load_Maple, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         Return the string used to read filename into Maple.
 
@@ -369,7 +369,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         return f'read "{filename}"'
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -389,7 +389,7 @@ class Maple(ExtraTabCompletion, Expect):
         """
         return 'quit'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing Maple on your computer.
 
@@ -678,7 +678,7 @@ connection to a server running Maple; for hints, type
         """
         return MapleFunctionElement
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the symbol used for equality testing in Maple.
 
@@ -692,7 +692,7 @@ connection to a server running Maple; for hints, type
         """
         return '='
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the symbol used for truth in Maple.
 
@@ -708,7 +708,7 @@ connection to a server running Maple; for hints, type
         """
         return 'true'
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the symbol used for assignment in Maple.
 
@@ -919,7 +919,7 @@ class MapleFunctionElement(FunctionElement):
 @instancedoc
 class MapleElement(ExtraTabCompletion, ExpectElement):
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         Return a floating point version of ``self``.
 

@@ -281,7 +281,7 @@ class DiffForm(TensorField):
         sage: s.display(eV)
         f*a = u**2*v/2 du - u**3/2 dv
     """
-    def __init__(self, vector_field_module, degree, name=None, latex_name=None):
+    def __init__(self, vector_field_module, degree, name=None, latex_name=None) -> None:
         r"""
         Construct a differential form.
 
@@ -1242,7 +1242,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
         no symmetry;  no antisymmetry
     """
     def __init__(self, vector_field_module: VectorFieldModule, degree: int, name: Optional[str] = None,
-                 latex_name: Optional[str] = None):
+                 latex_name: Optional[str] = None) -> None:
         r"""
         Construct a differential form.
 

@@ -103,7 +103,7 @@ class GradedLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
     """
     def __init__(self, R, s_coeff, index_set=None, central_elements=None,
                  category=None, prefix=None, names=None, latex_names=None,
-                 parity=None, weights=None, **kwds):
+                 parity=None, weights=None, **kwds) -> None:
         """
         Initialize ``self``.
 

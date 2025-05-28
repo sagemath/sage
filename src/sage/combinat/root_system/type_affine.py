@@ -133,7 +133,7 @@ class AmbientSpace(CombinatorialFreeModule):
         classical = cartan_type.classical()
         return cartan_type.classical().root_system().ambient_space().smallest_base_ring(classical)
 
-    def __init__(self, root_system, base_ring):
+    def __init__(self, root_system, base_ring) -> None:
         r"""
         EXAMPLES::
 
@@ -219,7 +219,7 @@ class AmbientSpace(CombinatorialFreeModule):
         else:
             return self.classical().monomial(i)
 
-    def is_extended(self):
+    def is_extended(self) -> bool:
         r"""
         Return whether this is a realization of the extended weight lattice: yes!
 

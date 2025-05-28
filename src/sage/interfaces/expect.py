@@ -62,6 +62,8 @@ from sage.misc.object_multiplexer import Multiplex
 from sage.misc.instancedoc import instancedoc
 
 from sage.cpython.string import str_to_bytes, bytes_to_str
+from types import TracebackType
+from typing import Optional, Type
 
 BAD_SESSION = -2
 
@@ -110,7 +112,7 @@ class gc_disabled:
         self._enabled = gc.isenabled()
         gc.disable()
 
-    def __exit__(self, ty, val, tb):
+    def __exit__(self, ty: Optional[Type[BaseException]], val: Optional[BaseException], tb: Optional[TracebackType]) -> bool:
         if self._enabled:
             gc.enable()
         return False
@@ -127,7 +129,7 @@ class Expect(Interface):
                  verbose_start=False, init_code=[], max_startup_time=None,
                  logfile=None, eval_using_file_cutoff=0,
                  do_cleaner=True, remote_cleaner=False, path=None,
-                 terminal_echo=True):
+                 terminal_echo=True) -> None:
 
         Interface.__init__(self, name)
 
@@ -292,7 +294,7 @@ class Expect(Interface):
         self.__so_far = ''
         E.sendline(cmd)
 
-    def is_running(self):
+    def is_running(self) -> bool:
         """
         Return ``True`` if ``self`` is currently running.
         """
@@ -329,7 +331,7 @@ class Expect(Interface):
     def is_remote(self):
         return self.__is_remote
 
-    def is_local(self):
+    def is_local(self) -> bool:
         return not self.__is_remote
 
     def user_dir(self):
@@ -378,7 +380,7 @@ class Expect(Interface):
             self._start()
         return self._expect.pid
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         r"""
         Hints for installing needed slave program on your computer.
 
@@ -386,7 +388,7 @@ class Expect(Interface):
         """
         return ''
 
-    def _install_hints_ssh(self):
+    def _install_hints_ssh(self) -> str:
         r"""
         Hints for installing passwordless authentication on your
         computer...
@@ -407,7 +409,7 @@ In many cases, the server that can actually run "slave" is not accessible from t
 If that is your case, get help with _install_hints_ssh_through_gate().
 """
 
-    def _install_hints_ssh_through_gate(self):
+    def _install_hints_ssh_through_gate(self) -> str:
         r"""
         Hints for installing passwordless authentication through a gate
         """
@@ -687,7 +689,7 @@ If this all works, you can then make calls like:
             pass
         self._reset_expect()
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string which will be used to quit the application.
 
@@ -1077,7 +1079,7 @@ If this all works, you can then make calls like:
             self._expect.expect(self._prompt)
             raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
-    def interrupt(self, tries=5, timeout=2.0, quit_on_fail=True):
+    def interrupt(self, tries=5, timeout=2.0, quit_on_fail=True) -> bool:
         E = self._expect
         if E is None:
             return True
@@ -1500,7 +1502,7 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
     """
     Expect element.
     """
-    def __init__(self, parent, value, is_name=False, name=None):
+    def __init__(self, parent, value, is_name=False, name=None) -> None:
         RingElement.__init__(self, parent)
         self._create = value
         if parent is None:
@@ -1552,7 +1554,7 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
             raise ValueError("The session in which this object was defined is no longer running.")
         return P
 
-    def __del__(self):
+    def __del__(self) -> None:
         try:
             self._check_valid()
         except ValueError:
@@ -1575,7 +1577,7 @@ class StdOutContext:
     A context in which all communication between Sage and a subprocess
     interfaced via pexpect is printed to stdout.
     """
-    def __init__(self, interface, silent=False, stdout=None):
+    def __init__(self, interface, silent=False, stdout=None) -> None:
         """
         Construct a new context in which all communication between Sage
         and a subprocess interfaced via pexpect is printed to stdout.
@@ -1626,7 +1628,7 @@ class StdOutContext:
             self.interface._expect.logfile = Multiplex(stdout)
         return self.interface
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         r"""
         EXAMPLES::
 

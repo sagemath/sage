@@ -34,7 +34,7 @@ from sage.rings.infinity import infinity
 
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class of methods specific to the homogeneous basis of
         symmetric functions.
@@ -125,7 +125,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Used in converting this ring to the corresponding ring in MAGMA.
 

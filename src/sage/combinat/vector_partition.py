@@ -127,7 +127,7 @@ class VectorPartition(CombinatorialElement):
         P = VectorPartitions(vec)
         return P(vecpar)
 
-    def __init__(self, parent, vecpar):
+    def __init__(self, parent, vecpar) -> None:
         """
         Initialize ``self``.
 
@@ -268,7 +268,7 @@ class VectorPartitions(UniqueRepresentation, Parent):
             parts[part_index] = tuple(parts[part_index])
         return super().__classcall__(cls, tuple(vec), tuple(min), tuple(parts), distinct, is_repeatable)
 
-    def __init__(self, vec, min=None, parts=None, distinct=False, is_repeatable=None):
+    def __init__(self, vec, min=None, parts=None, distinct=False, is_repeatable=None) -> None:
         r"""
         Initialize ``self``.
 

@@ -115,7 +115,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
          y^2 + i*x*y + (i+1)*y = x^3 + (i-1)*x^2 + (24*i+15)*x + (14*i+35)
          over Number Field in i with defining polynomial x^2 + 1
     """
-    def __init__(self, K, ainvs):
+    def __init__(self, K, ainvs) -> None:
         r"""
         EXAMPLES:
 
@@ -3544,7 +3544,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return ZZ.zero()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         """
         Return whether or not this curve has a CM `j`-invariant.
 

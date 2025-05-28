@@ -21,7 +21,7 @@ class Cipher(Element):
     """
     Cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a cipher.
         """
@@ -31,7 +31,7 @@ class Cipher(Element):
     def __eq__(self, right):
         return type(self) is type(right) and self.parent() == right.parent() and self._key == right._key
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this cipher.
 
@@ -58,7 +58,7 @@ class SymmetricKeyCipher(Cipher):
     """
     Symmetric key cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a symmetric cipher.
         """
@@ -69,7 +69,7 @@ class PublicKeyCipher(Cipher):
     """
     Public key cipher class
     """
-    def __init__(self, parent, key, public=True):
+    def __init__(self, parent, key, public=True) -> None:
         """
         Create a public key cipher.
         """

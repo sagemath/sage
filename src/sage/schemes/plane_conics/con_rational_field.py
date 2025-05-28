@@ -57,7 +57,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         sage: Conic([2, 1, -1])._test_pickling()
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 

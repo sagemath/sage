@@ -243,7 +243,7 @@ class NuDyckWord(CombinatorialElement):
 
         raise ValueError("invalid nu-Dyck word")
 
-    def __init__(self, parent, dw, latex_options=None):
+    def __init__(self, parent, dw, latex_options=None) -> None:
         """
         Initialize a nu-Dyck word.
 
@@ -286,7 +286,7 @@ class NuDyckWord(CombinatorialElement):
             return False
         return self._path == other._path and self._nu == other._nu
 
-    def __neq__(self, other):
+    def __neq__(self, other) -> bool:
         """
         Return if two paths are not equal.
 
@@ -1156,7 +1156,7 @@ class NuDyckWords(Parent):
 
     Element = NuDyckWord
 
-    def __init__(self, nu=()):
+    def __init__(self, nu=()) -> None:
         """
         Intialize ``self``.
 
@@ -1296,7 +1296,7 @@ class NuDyckWords(Parent):
             return False
         return self._nu == other._nu
 
-    def __neq__(self, other):
+    def __neq__(self, other) -> bool:
         """
         Return inequality.
 

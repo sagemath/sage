@@ -453,7 +453,7 @@ class Category(UniqueRepresentation, SageObject):
             cls = cls.__base__
         return super().__classcall__(cls, *args, **options)
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize this category.
 
@@ -594,7 +594,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         raise NotImplementedError
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the print representation of this category.
 
@@ -605,7 +605,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         return "Category of {}".format(self._repr_object_names())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of this category.
 
@@ -679,7 +679,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         return issubclass(category.parent_class, self.parent_class)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing.
 
@@ -3034,7 +3034,7 @@ class JoinCategory(CategoryWithParameters):
     .. automethod:: Category._without_axioms
     """
 
-    def __init__(self, super_categories, **kwds):
+    def __init__(self, super_categories, **kwds) -> None:
         """
         Initialize this JoinCategory.
 

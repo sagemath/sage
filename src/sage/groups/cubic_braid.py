@@ -247,7 +247,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         sage: ele1 == ele2
         True
     """
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -725,7 +725,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         names = tuple(normalize_names(n, names))
         return super().__classcall__(cls, names, cbg_type=cbg_type)
 
-    def __init__(self, names, cbg_type=None):
+    def __init__(self, names, cbg_type=None) -> None:
         r"""
         Python constructor.
 
@@ -802,7 +802,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -1983,7 +1983,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
 
     cardinality = order
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return if ``self`` is a finite group or not.
 

@@ -71,7 +71,7 @@ class MatrixPlot(GraphicPrimitive):
         sage: matrix_plot([[mod(i,5)^j for i in range(5)] for j in range(1,6)])
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xy_data_array, xrange, yrange, options):
+    def __init__(self, xy_data_array, xrange, yrange, options) -> None:
         """
         Initialize base class MatrixPlot.
 
@@ -152,7 +152,7 @@ class MatrixPlot(GraphicPrimitive):
                 'subdivisions': "If True, draw subdivisions of the matrix",
                 'subdivision_options': "Options (boundaries and style) of the subdivisions"}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of MatrixPlot primitive.
 

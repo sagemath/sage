@@ -662,7 +662,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             """
             return self.m_cambrian_lattice(c=c, m=1, on_roots=on_roots)
 
-        def is_real(self):
+        def is_real(self) -> bool:
             """
             Return ``True`` since ``self`` is a real reflection group.
 
@@ -1083,7 +1083,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
             G.add_edges([v, vp] for v in R for vp in self.coxeter_knuth_neighbor(v))
             return G
 
-        def is_coxeter_element(self):
+        def is_coxeter_element(self) -> bool:
             r"""
             Return whether this is a Coxeter element.
 

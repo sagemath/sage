@@ -209,7 +209,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
             return DualInfinityQueerCrystalOfTableaux(cartan_type)
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -224,7 +224,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type)
         self.module_generators = (self.module_generator(),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -655,7 +655,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -669,7 +669,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type)
         self.module_generators = (self.module_generator(),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

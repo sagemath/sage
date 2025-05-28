@@ -406,7 +406,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
         # We fallback to generic implementation
         return cls.__classcall__(cls, base_ring, morphism, derivation, names, sparse)
 
-    def __init__(self, base_ring, morphism, derivation, name, sparse, category=None):
+    def __init__(self, base_ring, morphism, derivation, name, sparse, category=None) -> None:
         r"""
         Initialize ``self``.
 

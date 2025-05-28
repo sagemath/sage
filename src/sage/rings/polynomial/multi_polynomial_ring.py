@@ -108,7 +108,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
     from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict as Element_hidden
     # should be just Element, once polynomial use new coercion framework
 
-    def __init__(self, base_ring, n, names, order):
+    def __init__(self, base_ring, n, names, order) -> None:
         from sage.rings.polynomial.polynomial_singular_interface import can_convert_to_singular
         order = TermOrder(order, n)
         # MPolynomialRing_base.__init__() normally initialises the base ring,
@@ -149,7 +149,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                 (other.base_ring(), other.ngens(),
                  other.variable_names(), other.term_order()))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -935,7 +935,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
 
 
 class MPolynomialRing_polydict_domain(MPolynomialRing_polydict):
-    def __init__(self, base_ring, n, names, order):
+    def __init__(self, base_ring, n, names, order) -> None:
         order = TermOrder(order, n)
         MPolynomialRing_polydict.__init__(self, base_ring, n, names, order)
 

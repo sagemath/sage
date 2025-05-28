@@ -87,7 +87,7 @@ class SchemeHomset_points_spec(SchemeHomset_generic):
         """
         return super()._element_constructor_(*args, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of a homset.
 

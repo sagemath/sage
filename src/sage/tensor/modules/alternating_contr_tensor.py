@@ -178,7 +178,7 @@ class AlternatingContrTensor(FreeModuleTensor):
         sage: s.display(e)
         b∧b = 0
     """
-    def __init__(self, fmodule, degree, name=None, latex_name=None):
+    def __init__(self, fmodule, degree, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 

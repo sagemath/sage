@@ -39,7 +39,7 @@ class Test:
     Modular symbol testing class.
     """
     def __init__(self, levels=20, weights=4, onlyg0=False, onlyg1=False,
-                 onlychar=False):
+                 onlychar=False) -> None:
         """
         Create a modular symbol testing object.
 
@@ -77,7 +77,7 @@ class Test:
         self.onlyg1 = onlyg1
         self.onlychar = onlychar
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of ``self``.
 

@@ -59,7 +59,7 @@ def is_FreeAlgebraQuotientElement(x):
 
 
 class FreeAlgebraQuotientElement(AlgebraElement):
-    def __init__(self, A, x):
+    def __init__(self, A, x) -> None:
         """
         Create the element x of the FreeAlgebraQuotient A.
 

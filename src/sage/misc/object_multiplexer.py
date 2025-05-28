@@ -26,7 +26,7 @@ class MultiplexFunction:
     A simple wrapper object for functions that are called on a list of
     objects.
     """
-    def __init__(self, multiplexer, name):
+    def __init__(self, multiplexer, name) -> None:
         """
         EXAMPLES::
 
@@ -62,7 +62,7 @@ class Multiplex:
     new object implies that the same function is called on all
     children.
     """
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         """
         EXAMPLES::
 

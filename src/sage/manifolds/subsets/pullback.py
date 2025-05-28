@@ -552,7 +552,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
 
         raise NotImplementedError
 
-    def __init__(self, map, codomain_subset, inverse, name, latex_name):
+    def __init__(self, map, codomain_subset, inverse, name, latex_name) -> None:
         r"""
         Construct a manifold subset that is a pullback.
 
@@ -675,7 +675,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             if p in self:
                 yield p
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check whether ``point`` is contained in ``self``.
 

@@ -243,7 +243,7 @@ class Hypergeometric(BuiltinFunction):
 
     where `(x)_n` is the rising factorial.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize class.
 
@@ -306,7 +306,7 @@ class Hypergeometric(BuiltinFunction):
                                         SR._force_pyobject(b),
                                         z, **kwargs)
 
-    def _print_latex_(self, a, b, z):
+    def _print_latex_(self, a, b, z) -> str:
         r"""
         TESTS::
 
@@ -553,7 +553,7 @@ class Hypergeometric(BuiltinFunction):
                     return self.is_termwise_finite()
             return False
 
-        def is_absolutely_convergent(self, a, b, z):
+        def is_absolutely_convergent(self, a, b, z) -> bool:
             r"""
             Determine whether ``self`` converges absolutely as an infinite
             series. ``False`` is returned if not all terms are finite.
@@ -972,7 +972,7 @@ class Hypergeometric_M(BuiltinFunction):
         sage: hypergeometric_M(1, 1/2, x).simplify_hypergeometric()
         (-I*sqrt(pi)*x*erf(I*sqrt(-x))*e^x + sqrt(-x))/sqrt(-x)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1087,7 +1087,7 @@ class Hypergeometric_U(BuiltinFunction):
         sage: hypergeometric_U(1, 3, x).simplify_hypergeometric()                       # needs sage.symbolic
         (x + 1)/x^2
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

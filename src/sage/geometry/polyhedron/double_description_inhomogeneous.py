@@ -64,7 +64,7 @@ VERIFY_RESULT = True
 
 class PivotedInequalities(SageObject):
 
-    def __init__(self, base_ring, dim):
+    def __init__(self, base_ring, dim) -> None:
         """
         Base class for inequalities that may contain linear subspaces.
 
@@ -146,7 +146,7 @@ class PivotedInequalities(SageObject):
 
 class Hrep2Vrep(PivotedInequalities):
 
-    def __init__(self, base_ring, dim, inequalities, equations):
+    def __init__(self, base_ring, dim, inequalities, equations) -> None:
         """
         Convert H-representation to a minimal V-representation.
 
@@ -376,7 +376,7 @@ class Hrep2Vrep(PivotedInequalities):
 
 class Vrep2Hrep(PivotedInequalities):
 
-    def __init__(self, base_ring, dim, vertices, rays, lines):
+    def __init__(self, base_ring, dim, vertices, rays, lines) -> None:
         """
         Convert V-representation to a minimal H-representation.
 

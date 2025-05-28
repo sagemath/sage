@@ -5,7 +5,7 @@ from .statistics import used_vars_set
 
 
 class CNFEncoder:
-    def __init__(self, r, random_seed=16):
+    def __init__(self, r, random_seed=16) -> None:
         self.random_generator = Random(random_seed)
         self.one_set = r.one().set()
         self.empty_set = r.zero().set()
@@ -60,7 +60,7 @@ class CNFEncoder:
             l = choose(rest)
             l_variables = set(l.variables())
 
-            def get_val(var):
+            def get_val(var) -> int:
                 if var in l_variables:
                     return 1
                 return 0

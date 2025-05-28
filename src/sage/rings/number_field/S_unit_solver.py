@@ -404,7 +404,7 @@ def Yu_a1_kappa1_c1(p, dK, ep):
     return a1, kappa1, c1
 
 
-def Yu_condition_115(K, v):
+def Yu_condition_115(K, v) -> bool:
     r"""
     Return ``True`` or ``False``, as the number field ``K`` and the finite place ``v`` satisfy condition (1.15) of [Yu2007]_.
 
@@ -2066,7 +2066,7 @@ def construct_comp_exp_vec(rfv_to_ev_dict, q):
     return comp_exp_vec_dict
 
 
-def drop_vector(ev, p, q, complement_ev_dict):
+def drop_vector(ev, p, q, complement_ev_dict) -> bool:
     r"""
     Determine if the exponent vector, ``ev``, may be removed from the complement dictionary during construction.
     This will occur if ``ev`` is not compatible with an exponent vector mod `q-1`.

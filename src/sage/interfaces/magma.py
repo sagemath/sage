@@ -227,6 +227,8 @@ import sage.misc.sage_eval
 import sage.interfaces.abc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from types import TracebackType
+from typing import Optional, Type
 
 PROMPT = ">>>"
 
@@ -306,7 +308,7 @@ class Magma(ExtraTabCompletion, Expect):
     """
     def __init__(self, script_subdirectory=None,
                  logfile=None, server=None, server_tmpdir=None,
-                 user_config=False, seed=None, command=None):
+                 user_config=False, seed=None, command=None) -> None:
         """
         INPUT:
 
@@ -823,7 +825,7 @@ class Magma(ExtraTabCompletion, Expect):
             s = s[z.end()+1:]
         return a
 
-    def _with_names(self, s, names):
+    def _with_names(self, s, names) -> str:
         """
         Return s but wrapped by a call to SageCreateWithNames. This is just
         a very simple convenience function so that code is cleaner.
@@ -1061,7 +1063,7 @@ class Magma(ExtraTabCompletion, Expect):
             self.__seq += 1
             return '_sage_[%s]' % self.__seq
 
-    def _next_ref_name(self):
+    def _next_ref_name(self) -> str:
         """
         Return the next reference name. This is used internally to deal
         with Magma objects that would be deallocated before they are used
@@ -1261,7 +1263,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     # Usually "Sequences" are what you want in Magma, not "lists".
     # It's very painful using the interface without this.
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         """
         Return the left sequence delimiter in Magma.
 
@@ -1275,7 +1277,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return "["
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         """
         Return the right sequence delimiter in Magma.
 
@@ -1289,7 +1291,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return "]"
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the assignment symbol in Magma.
 
@@ -1300,7 +1302,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return ":="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality testing logical symbol in Magma.
 
@@ -1311,7 +1313,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return 'eq'
 
-    def _lessthan_symbol(self):
+    def _lessthan_symbol(self) -> str:
         """
         Return the less than testing logical symbol in Magma.
 
@@ -1322,7 +1324,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return ' lt '
 
-    def _greaterthan_symbol(self):
+    def _greaterthan_symbol(self) -> str:
         """
         Return the greater than testing logical symbol in Magma.
 
@@ -1335,7 +1337,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     # For efficiency purposes, you should definitely override these
     # in your derived class.
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the string representation of "truth" in Magma.
 
@@ -1346,7 +1348,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return 'true'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the string representation of "false" in Magma.
 
@@ -2266,7 +2268,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         for i in range(1, len(z) + 1):
             yield z[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return cardinality of this Magma element.
 
@@ -2565,7 +2567,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         return self.parent()('%s div %s' % (self.name(), x.name()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if ``self`` is nonzero according to Magma.
 
@@ -2769,7 +2771,7 @@ class MagmaGBLogPrettyPrinter:
     )
     pol_curr = re.compile("^Number of pair polynomials\\: (\\d+), at (\\d+) column\\(s\\), .*")
 
-    def __init__(self, verbosity=1, style='magma'):
+    def __init__(self, verbosity=1, style='magma') -> None:
         """
         Construct a new Magma Groebner Basis log pretty printer.
 
@@ -2939,7 +2941,7 @@ class MagmaGBDefaultContext:
     Context to force preservation of verbosity options for Magma's
     Groebner basis computation.
     """
-    def __init__(self, magma=None):
+    def __init__(self, magma=None) -> None:
         """
         INPUT:
 
@@ -2970,7 +2972,7 @@ class MagmaGBDefaultContext:
         self.groebner_basis_verbose = self.magma.GetVerbose('Groebner')
         self.magma.SetVerbose('Groebner', 0)
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         """
         EXAMPLES::
 

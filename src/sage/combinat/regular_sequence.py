@@ -172,7 +172,7 @@ class DegeneratedSequenceError(RuntimeError):
 
 
 class RegularSequence(RecognizableSeries):
-    def __init__(self, parent, mu, left=None, right=None):
+    def __init__(self, parent, mu, left=None, right=None) -> None:
         r"""
         A `k`-regular sequence.
 
@@ -1462,7 +1462,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
                                       **kwds)
         return (k,) + nargs
 
-    def __init__(self, k, *args, **kwds):
+    def __init__(self, k, *args, **kwds) -> None:
         r"""
         See :class:`RegularSequenceRing` for details.
 
@@ -1508,7 +1508,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         return _pickle_RegularSequenceRing, \
             (self.k, self.coefficient_ring(), self.category())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this `k`-regular sequence space.
 
@@ -2440,7 +2440,7 @@ class RecurrenceParser:
     to construct a :class:`RegularSequence`.
     """
 
-    def __init__(self, k, coefficient_ring):
+    def __init__(self, k, coefficient_ring) -> None:
         r"""
         See :class:`RecurrenceParser`.
 

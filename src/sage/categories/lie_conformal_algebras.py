@@ -230,7 +230,7 @@ class LieConformalAlgebras(Category_over_base_ring):
         )
         return VirasoroLieConformalAlgebra(self.base_ring())
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         The name of the objects of this category.
 
@@ -313,7 +313,7 @@ class LieConformalAlgebras(Category_over_base_ring):
 
     class ElementMethods:
 
-        def is_even_odd(self):
+        def is_even_odd(self) -> int:
             """
             Return ``0`` if this element is *even* and ``1`` if it is
             *odd*.

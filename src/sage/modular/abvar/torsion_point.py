@@ -46,7 +46,7 @@ class TorsionPoint(ModuleElement):
         sage: type(G.0)
         <class 'sage.modular.abvar.finite_subgroup.FiniteSubgroup_lattice_with_category.element_class'>
     """
-    def __init__(self, parent, element, check=True):
+    def __init__(self, parent, element, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -93,7 +93,7 @@ class TorsionPoint(ModuleElement):
         """
         return self.__element
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

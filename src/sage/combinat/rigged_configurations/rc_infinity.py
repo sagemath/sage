@@ -149,7 +149,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         r"""
         Initialize ``self``.
 
@@ -175,7 +175,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
     options = RiggedConfigurations.options
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -323,7 +323,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
     Rigged configurations for `\mathcal{B}(\infty)` in non-simply-laced types.
     """
 
-    def __init__(self, vct):
+    def __init__(self, vct) -> None:
         """
         Initialize ``self``.
 

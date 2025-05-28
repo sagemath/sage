@@ -74,7 +74,7 @@ class HeckeAlgebraElement(AlgebraElement):
     r"""
     Base class for elements of Hecke algebras.
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         Create an element of a Hecke algebra.
 
@@ -415,7 +415,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
     r"""
     An element of the Hecke algebra represented by a matrix.
     """
-    def __init__(self, parent, A):
+    def __init__(self, parent, A) -> None:
         r"""
         Initialise an element from a matrix. This *must* be over the base ring
         of ``self`` and have the right size.
@@ -478,7 +478,7 @@ class HeckeAlgebraElement_matrix(HeckeAlgebraElement):
 
         return richcmp(self.__matrix, other.__matrix, op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -543,7 +543,7 @@ class DiamondBracketOperator(HeckeAlgebraElement_matrix):
     N\ZZ` (which need not be a unit, although if it is not, the operator will
     be zero).
     """
-    def __init__(self, parent, d):
+    def __init__(self, parent, d) -> None:
         r"""
         Standard init function.
 
@@ -572,7 +572,7 @@ class DiamondBracketOperator(HeckeAlgebraElement_matrix):
         A = parent.diamond_bracket_matrix(d)
         HeckeAlgebraElement_matrix.__init__(self, parent, A)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -581,7 +581,7 @@ class DiamondBracketOperator(HeckeAlgebraElement_matrix):
         """
         return "Diamond bracket operator <%s> on %s" % (self.__d, self.domain())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -596,7 +596,7 @@ class HeckeOperator(HeckeAlgebraElement):
     The Hecke operator `T_n` for some `n` (which need not be coprime to the
     level). The matrix is not computed until it is needed.
     """
-    def __init__(self, parent, n):
+    def __init__(self, parent, n) -> None:
         """
         EXAMPLES::
 
@@ -653,7 +653,7 @@ class HeckeOperator(HeckeAlgebraElement):
             return rich_to_bool(op, 0)
         return richcmp(self.matrix(), other.matrix(), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -664,7 +664,7 @@ class HeckeOperator(HeckeAlgebraElement):
         """
         return "Hecke operator T_%s on %s" % (self.__n, self.domain())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of ``self``.
 

@@ -174,7 +174,7 @@ class _Coordinates:
     - ``indep_vars`` -- list of independent variables (the parameters will be
       substituted for these)
     """
-    def __init__(self, dep_var, indep_vars):
+    def __init__(self, dep_var, indep_vars) -> None:
         """
         Initialize.
 
@@ -363,7 +363,7 @@ class _Coordinates:
                                  'indep_var_dummies': indep_var_dummies})
             return [subs_func(m) for m in transformation]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Print out a coordinate system.
 
@@ -433,7 +433,7 @@ class _ArbitraryCoordinates(_Coordinates):
     """
     _name = "Arbitrary Coordinates"
 
-    def __init__(self, custom_trans, dep_var, indep_vars):
+    def __init__(self, custom_trans, dep_var, indep_vars) -> None:
         """
         Initialize an arbitrary coordinate system.
 

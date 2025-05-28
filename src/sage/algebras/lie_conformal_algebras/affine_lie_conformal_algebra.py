@@ -81,7 +81,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
     The Affine Lie conformal algebra associated with the finite
     dimensional simple Lie algebra of Cartan type ``ct``.
     """
-    def __init__(self, R, ct, names=None, prefix=None, bracket=None):
+    def __init__(self, R, ct, names=None, prefix=None, bracket=None) -> None:
         """
         Initialize ``self``.
 

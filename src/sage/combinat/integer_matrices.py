@@ -77,7 +77,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         column_sums = Composition(column_sums)
         return super().__classcall__(cls, row_sums, column_sums)
 
-    def __init__(self, row_sums, column_sums):
+    def __init__(self, row_sums, column_sums) -> None:
         r"""
         Constructor of this class; for documentation, see
         :class:`IntegerMatrices`.
@@ -98,7 +98,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         self._col_sums = column_sums
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -136,7 +136,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         for x in integer_matrices_generator(self._row_sums, self._col_sums):
             yield matrix(ZZ, x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Test if ``x`` is an element of ``self``.
 

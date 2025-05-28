@@ -247,7 +247,7 @@ class GroupSemidirectProduct(CartesianProduct):
     """
 
     def __init__(self, G, H, twist=None, act_to_right=True, prefix0=None,
-                 prefix1=None, print_tuple=False, category=Groups()):
+                 prefix1=None, print_tuple=False, category=Groups()) -> None:
         r"""
 
         EXAMPLES::
@@ -305,7 +305,7 @@ class GroupSemidirectProduct(CartesianProduct):
         """
         return self._act_to_right
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A string representing the semidirect product group.
 

@@ -63,7 +63,7 @@ class DensityPlot(GraphicPrimitive):
         sage: density_plot(x^2 - y^3 + 10*sin(x*y), (x,-4,4), (y,-4,4), plot_points=121, cmap='hsv')
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xy_data_array, xrange, yrange, options):
+    def __init__(self, xy_data_array, xrange, yrange, options) -> None:
         """
         Initialize base class ``DensityPlot``.
 
@@ -116,7 +116,7 @@ class DensityPlot(GraphicPrimitive):
                        for available colormap names.""",
                 'interpolation': 'What interpolation method to use'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of DensityrPlot primitive.
 

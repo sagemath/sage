@@ -430,7 +430,7 @@ def from_fraction_field(L, x):
 
 
 class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
@@ -455,7 +455,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
     Element = LaurentPolynomial_univariate
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -588,7 +588,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
 
 class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
@@ -610,7 +610,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
     Element = LazyImport('sage.rings.polynomial.laurent_polynomial_mpair', 'LaurentPolynomial_mpair')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

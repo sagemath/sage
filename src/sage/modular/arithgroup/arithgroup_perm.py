@@ -541,7 +541,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check that ``self`` is not equal to ``other``.
 
@@ -579,7 +579,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
         return hash((tuple(self.relabel(inplace=False)._S2),
                      tuple(self.relabel(inplace=False)._S3)))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1019,7 +1019,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
 
         return (l_cycle_length, r_cycle_length)
 
-    def _contains_sl2(self, a, b, c, d):
+    def _contains_sl2(self, a, b, c, d) -> bool:
         r"""
         Test whether ``[a,b;c,d]`` is in the group or not.
 
@@ -1586,7 +1586,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         <class 'sage.modular.arithgroup.arithgroup_perm.OddArithmeticSubgroup_Permutation_with_category'>
     """
 
-    def __init__(self, S2, S3, L, R, canonical_labels=False):
+    def __init__(self, S2, S3, L, R, canonical_labels=False) -> None:
         r"""
         TESTS::
 
@@ -1906,7 +1906,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         sage: G.genus()
         0
     """
-    def __init__(self, S2, S3, L, R, canonical_labels=False):
+    def __init__(self, S2, S3, L, R, canonical_labels=False) -> None:
         r"""
         TESTS::
 

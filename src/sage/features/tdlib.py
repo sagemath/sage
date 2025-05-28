@@ -21,7 +21,7 @@ class Tdlib(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing the presence of the SageMath interface to the :ref:`tdlib <spkg_tdlib>` library.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

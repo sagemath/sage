@@ -99,7 +99,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
     """
     A space of modular forms with character.
     """
-    def __init__(self, character, weight=2, base_ring=None, eis_only=False):
+    def __init__(self, character, weight=2, base_ring=None, eis_only=False) -> None:
         """
         Create an ambient modular forms space with character.
 
@@ -137,7 +137,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         base_ring = character.base_ring()
         ModularFormsAmbient.__init__(self, group, weight, base_ring, character, eis_only)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this space with character.
 

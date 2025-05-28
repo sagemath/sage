@@ -715,7 +715,7 @@ class CartanMatrix(Base, CartanType_abstract,
             return CartanMatrix(self._cartan_type.dual())
         return CartanMatrix(self.transpose())
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Implement :meth:`CartanType_abstract.is_simply_laced()`.
 
@@ -837,7 +837,7 @@ class CartanMatrix(Base, CartanType_abstract,
         return self._cartan_type.is_affine()
 
     @cached_method
-    def is_hyperbolic(self, compact=False):
+    def is_hyperbolic(self, compact=False) -> bool:
         """
         Return if ``True`` if ``self`` is a (compact) hyperbolic type
         or ``False`` otherwise.
@@ -903,7 +903,7 @@ class CartanMatrix(Base, CartanType_abstract,
         return sum(1 for x in self.eigenvalues() if x < 0) == 1
 
     @cached_method
-    def is_indefinite(self):
+    def is_indefinite(self) -> bool:
         """
         Return if ``self`` is an indefinite type or ``False`` otherwise.
 
@@ -1052,7 +1052,7 @@ class CartanMatrix(Base, CartanType_abstract,
         return tuple(CartanMatrix(subg._matrix_().rows()) for subg in subgraphs)
 
 
-def is_borcherds_cartan_matrix(M):
+def is_borcherds_cartan_matrix(M) -> bool:
     """
     Return ``True`` if ``M`` is an even, integral Borcherds-Cartan matrix.
     For a definition of such a matrix, see :class:`CartanMatrix`.

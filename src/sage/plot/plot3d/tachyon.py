@@ -379,7 +379,7 @@ class Tachyon(WithEqualityById, SageObject):
                  projection='PERSPECTIVE',
                  focallength='',
                  aperture='',
-                 frustum=''):
+                 frustum='') -> None:
         r"""
         Create an instance of the Tachyon class.
 
@@ -618,7 +618,7 @@ class Tachyon(WithEqualityById, SageObject):
         dm = get_display_manager()
         dm.display_immediately(self, **kwds)
 
-    def _res(self):
+    def _res(self) -> str:
         r"""
         An internal function that writes the tachyon string for the
         resolution (x and y size of the image).
@@ -666,7 +666,7 @@ class Tachyon(WithEqualityById, SageObject):
            end_camera"""
         return camera_out
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the complete tachyon scene file as a string.
 
@@ -1086,7 +1086,7 @@ class Light:
         sage: q._center
         (1.0, 1.0, 1.0)
     """
-    def __init__(self, center, radius, color):
+    def __init__(self, center, radius, color) -> None:
         r"""
         Store the center, radius and color.
 
@@ -1103,7 +1103,7 @@ class Light:
         r, g, b = color
         self._color = (float(r), float(g), float(b))
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the tachyon string defining the light source.
 
@@ -1126,7 +1126,7 @@ class Light:
 class Texfunc:
 
     def __init__(self, ttype=0, center=(0, 0, 0), rotate=(0, 0, 0),
-                 scale=(1, 1, 1), imagefile=''):
+                 scale=(1, 1, 1), imagefile='') -> None:
         r"""
         Create a texture function.
 
@@ -1146,7 +1146,7 @@ class Texfunc:
         self._scale = (float(x), float(y), float(z))
         self._imagefile = imagefile
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for this texture function.
 
@@ -1190,7 +1190,7 @@ class Texture:
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
                  color=(1.0, 0.0, 0.5), texfunc=0,
-                 phong=0, phongsize=0, phongtype='PLASTIC', imagefile=''):
+                 phong=0, phongsize=0, phongtype='PLASTIC', imagefile='') -> None:
         r"""
         Store texture information.
 
@@ -1233,7 +1233,7 @@ class Texture:
                        color, self._texfunc, self._phong, self._phongsize,
                        self._phongtype, self._imagefile)
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for this texture.
 
@@ -1264,7 +1264,7 @@ class Sphere:
     r"""
     A class for creating spheres in tachyon.
     """
-    def __init__(self, center, radius, texture):
+    def __init__(self, center, radius, texture) -> None:
         r"""
         Store the center, radius, and texture information in a class.
 
@@ -1282,7 +1282,7 @@ class Sphere:
         self._radius = float(radius)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for the sphere.
 
@@ -1304,7 +1304,7 @@ class Ring:
     r"""
     An annulus of zero thickness.
     """
-    def __init__(self, center, normal, inner, outer, texture):
+    def __init__(self, center, normal, inner, outer, texture) -> None:
         r"""
         Create a ring with the given center, normal, inner radius,
         outer radius, and texture.
@@ -1324,7 +1324,7 @@ class Ring:
         self._outer = float(outer)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the ring.
 
@@ -1347,7 +1347,7 @@ class FractalLandscape:
 
     Does not seem very useful at the moment, but perhaps will be improved in the future.
     """
-    def __init__(self, res, scale, center, texture):
+    def __init__(self, res, scale, center, texture) -> None:
         r"""
         Create a fractal landscape in tachyon.
 
@@ -1366,7 +1366,7 @@ class FractalLandscape:
         self._center = (float(x), float(y), float(z))
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the fractal landscape.
 
@@ -1387,7 +1387,7 @@ class Cylinder:
     r"""
     An infinite cylinder.
     """
-    def __init__(self, center, axis, radius, texture):
+    def __init__(self, center, axis, radius, texture) -> None:
         r"""
         Create a cylinder with the given parameters.
 
@@ -1406,7 +1406,7 @@ class Cylinder:
         self._radius = float(radius)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the cylinder.
 
@@ -1427,7 +1427,7 @@ class Plane:
     r"""
     An infinite plane.
     """
-    def __init__(self, center, normal, texture):
+    def __init__(self, center, normal, texture) -> None:
         r"""
         Create the plane object.
 
@@ -1444,7 +1444,7 @@ class Plane:
         self._normal = (float(x), float(y), float(z))
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the plane.
 
@@ -1464,7 +1464,7 @@ class FCylinder:
     r"""
     A finite cylinder.
     """
-    def __init__(self, base, apex, radius, texture):
+    def __init__(self, base, apex, radius, texture) -> None:
         r"""
         Create a finite cylinder object.
 
@@ -1482,7 +1482,7 @@ class FCylinder:
         self._radius = float(radius)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the finite cylinder.
 
@@ -1502,7 +1502,7 @@ class Axis_aligned_box:
     r"""
     Box with axis-aligned edges with the given min and max coordinates.
     """
-    def __init__(self, min_p, max_p, texture):
+    def __init__(self, min_p, max_p, texture) -> None:
         r"""
         Create the axis-aligned box object.
 
@@ -1519,7 +1519,7 @@ class Axis_aligned_box:
         self._max_p = (float(x), float(y), float(z))
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the axis-aligned box.
 
@@ -1539,7 +1539,7 @@ class TachyonTriangle(Triangle):
     r"""
     Basic triangle class.
     """
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for a triangle.
 
@@ -1560,7 +1560,7 @@ class TachyonSmoothTriangle(SmoothTriangle):
     r"""
     A triangle along with a normal vector, which is used for smoothing.
     """
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for a smoothed triangle.
 
@@ -1582,7 +1582,7 @@ class TachyonTriangleFactory(TriangleFactory):
     r"""
     A class to produce triangles of various rendering types.
     """
-    def __init__(self, tach, tex):
+    def __init__(self, tach, tex) -> None:
         r"""
         Initialize with tachyon instance and texture.
 
@@ -1671,7 +1671,7 @@ class ParametricPlot:
         return "".join(o.str() for o in self._objects)
 
     def __init__(self, f, t_0, t_f, tex, r=.1, cylinders=True,
-                 min_depth=4, max_depth=8, e_rel=.01, e_abs=.01):
+                 min_depth=4, max_depth=8, e_rel=.01, e_abs=.01) -> None:
         r"""
         Create the parametric plotting class.
 
@@ -1727,7 +1727,7 @@ class ParametricPlot:
                 self._objects.append(FCylinder(f_0, f_f, self._r, self._tex))
             self._objects.append(Sphere(f_f, self._r, self._tex))
 
-    def tol(self, est, val):
+    def tol(self, est, val) -> bool:
         r"""
         Check relative, then absolute tolerance.
 

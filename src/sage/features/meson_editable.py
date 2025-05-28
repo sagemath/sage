@@ -15,7 +15,7 @@ class MesonEditable(Feature):
         sage: MesonEditable()
         Feature('meson_editable')
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

@@ -41,7 +41,7 @@ def filter_newstyle_options(func, **options):
     return filtered
 
 
-def want_interpolation_gb(G):
+def want_interpolation_gb(G) -> bool:
     if not G or G[0].ring().get_order_code() != OrderCode.lp or len(G) != 1:
         return False
     p = Polynomial(G[0])
@@ -115,7 +115,7 @@ def linear_algebra_heuristic(d):
     d = copy(d)
     I = d["I"]
 
-    def want_la():
+    def want_la() -> bool:
         if not I:
             return False
         n_used_vars = None
@@ -165,7 +165,7 @@ class HeuristicalFunction:
             complete_dict = self.heuristicFunction(complete_dict)
         return self.f(**complete_dict)
 
-    def __init__(self, f, heuristic_function):
+    def __init__(self, f, heuristic_function) -> None:
         self.argnames, self.varargs, self.varopts, self.defaults = getargspec(f)[:4]
         if hasattr(f, "options"):
             self.options = f.options

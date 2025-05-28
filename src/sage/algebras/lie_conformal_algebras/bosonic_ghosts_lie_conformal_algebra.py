@@ -79,7 +79,7 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         Category of H-graded finitely generated Lie conformal algebras with basis over Algebraic Real Field
     """
 
-    def __init__(self, R, ngens=2, names=None, index_set=None):
+    def __init__(self, R, ngens=2, names=None, index_set=None) -> None:
         """
         Initialize ``self``.
 

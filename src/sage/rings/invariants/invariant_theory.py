@@ -311,7 +311,7 @@ class FormsBase(SageObject):
         <sage.rings.invariants.invariant_theory.FormsBase object at ...>
     """
 
-    def __init__(self, n, homogeneous, ring, variables):
+    def __init__(self, n, homogeneous, ring, variables) -> None:
         """
         The Python constructor.
 
@@ -508,7 +508,7 @@ class AlgebraicForm(FormsBase):
         ValueError: polynomial is not homogeneous
     """
 
-    def __init__(self, n, d, polynomial, *args, **kwds):
+    def __init__(self, n, d, polynomial, *args, **kwds) -> None:
         """
         The Python constructor.
 
@@ -958,7 +958,7 @@ class QuadraticForm(AlgebraicForm):
         Ternary quadratic with coefficients (a, b, c, d, e, f)
     """
 
-    def __init__(self, n, d, polynomial, *args):
+    def __init__(self, n, d, polynomial, *args) -> None:
         """
         The Python constructor.
 
@@ -1321,7 +1321,7 @@ class BinaryQuartic(AlgebraicForm):
         sage: TestSuite(quartic).run()
     """
 
-    def __init__(self, n, d, polynomial, *args):
+    def __init__(self, n, d, polynomial, *args) -> None:
         """
         The Python constructor.
 
@@ -1633,7 +1633,7 @@ class BinaryQuintic(AlgebraicForm):
         + 2*a0*a5)*x*y + (3/50*a3^2 - 4/25*a2*a4 + 2/5*a1*a5)*y^2
     """
 
-    def __init__(self, n, d, polynomial, *args):
+    def __init__(self, n, d, polynomial, *args) -> None:
         """
         The Python constructor.
 
@@ -2500,7 +2500,7 @@ class TernaryQuadratic(QuadraticForm):
         sage: TestSuite(quadratic).run()
     """
 
-    def __init__(self, n, d, polynomial, *args):
+    def __init__(self, n, d, polynomial, *args) -> None:
         """
         The Python constructor.
 
@@ -2672,7 +2672,7 @@ class TernaryCubic(AlgebraicForm):
         sage: TestSuite(cubic).run()
     """
 
-    def __init__(self, n, d, polynomial, *args):
+    def __init__(self, n, d, polynomial, *args) -> None:
         """
         The Python constructor.
 
@@ -3069,7 +3069,7 @@ class SeveralAlgebraicForms(FormsBase):
         sage: pq = SeveralAlgebraicForms([p, q])
     """
 
-    def __init__(self, forms):
+    def __init__(self, forms) -> None:
         """
         The Python constructor.
 
@@ -3977,7 +3977,7 @@ class InvariantTheoryFactory:
         x^6*y^3 - x^3*y^6 - x^6*z^3 + y^6*z^3 + x^3*z^6 - y^3*z^6
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation.
 

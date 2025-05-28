@@ -713,7 +713,7 @@ class AdditiveMagmas(Category_singleton):
                 # TODO: add a test that actually exercise this default implementation
                 return self(0)
 
-            def is_empty(self):
+            def is_empty(self) -> bool:
                 r"""
                 Return whether this set is empty.
 
@@ -766,7 +766,7 @@ class AdditiveMagmas(Category_singleton):
             #     return self == self.parent().zero()
 
             @abstract_method
-            def __bool__(self):
+            def __bool__(self) -> bool:
                 """
                 Return whether ``self`` is not zero.
 

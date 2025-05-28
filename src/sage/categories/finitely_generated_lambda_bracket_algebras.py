@@ -100,7 +100,7 @@ class FinitelyGeneratedLambdaBracketAlgebras(CategoryWithAxiom_over_base_ring):
             Category of H-graded finitely generated Lie conformal algebras
              over Algebraic Field
         """
-        def _repr_object_names(self):
+        def _repr_object_names(self) -> str:
             """
             The names of the objects of ``self``.
 

@@ -117,7 +117,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         return UniqueRepresentation.__classcall__(cls, max_crossing_number,
                                                   prefix=prefix, **kwds)
 
-    def __init__(self, max_crossing_number, category=None, prefix=None, **kwds):
+    def __init__(self, max_crossing_number, category=None, prefix=None, **kwds) -> None:
         r"""
         Initialize ``self`` with generators belonging to prime knots with
         at most ``max_crossing_number`` crossings.
@@ -206,7 +206,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
             self._indices = FiniteEnumeratedSet(self._index_dict)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

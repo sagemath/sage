@@ -24,19 +24,19 @@ method _mathml_(self) that returns its MathML representation.
 # *****************************************************************************
 
 
-def list_function(x):
+def list_function(x) -> str:
     return 'MATHML version of the list %s' % (x,)
 
 
-def tuple_function(x):
+def tuple_function(x) -> str:
     return 'MATHML version of the tuple %s' % (x,)
 
 
-def bool_function(x):
+def bool_function(x) -> str:
     return 'MATHML version of %s' % (x,)
 
 
-def str_function(x):
+def str_function(x) -> str:
     return 'MATHML version of the string %s' % (x,)
 
 
@@ -54,7 +54,7 @@ mathml_table = {
 
 
 class MathML(str):
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
 

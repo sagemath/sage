@@ -22,7 +22,7 @@ class WordDatatype_callable(WordDatatype):
     r"""
     Datatype for a word defined by a callable.
     """
-    def __init__(self, parent, callable, length=None):
+    def __init__(self, parent, callable, length=None) -> None:
         r"""
         INPUT:
 
@@ -318,7 +318,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
     r"""
     Datatype for a word defined by a callable.
     """
-    def __init__(self, parent, callable, length=None):
+    def __init__(self, parent, callable, length=None) -> None:
         r"""
         INPUT:
 
@@ -584,7 +584,7 @@ class WordDatatype_callable_with_caching(WordDatatype_callable):
 
 class WordDatatype_iter(WordDatatype):
     # NOTE: The constructor callable should do all the slicing (see islice)
-    def __init__(self, parent, iter, length=None):
+    def __init__(self, parent, iter, length=None) -> None:
         r"""
         INPUT:
 
@@ -917,7 +917,7 @@ class WordDatatype_iter(WordDatatype):
 
 
 class WordDatatype_iter_with_caching(WordDatatype_iter):
-    def __init__(self, parent, iter, length=None):
+    def __init__(self, parent, iter, length=None) -> None:
         r"""
         INPUT:
 

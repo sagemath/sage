@@ -2885,7 +2885,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
                  (X._zeta is not None and
                   self.base_ring()(X._zeta) in self._zeta_powers)))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of elements of this Dirichlet group.
 

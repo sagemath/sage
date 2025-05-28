@@ -361,7 +361,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
     Element = ScalarField
 
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         Construct an algebra of scalar fields.
 
@@ -533,7 +533,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
     #### End of methods required for any Parent
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

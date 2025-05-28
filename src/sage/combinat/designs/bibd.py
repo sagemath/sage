@@ -1431,7 +1431,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
       modified in place (each block is sorted, and the whole list is
       sorted). Your ``blocks`` object will become the instance's internal data.
     """
-    def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True, **kwds):
+    def __init__(self, points, blocks, K=None, lambd=1, check=True, copy=True, **kwds) -> None:
         r"""
         Constructor.
 
@@ -1457,7 +1457,7 @@ class PairwiseBalancedDesign(GroupDivisibleDesign):
                                       copy=copy,
                                       **kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string describing the PBD.
 
@@ -1499,7 +1499,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
         sage: b=designs.balanced_incomplete_block_design(9,3); b
         (9,3,1)-Balanced Incomplete Block Design
     """
-    def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True, **kwds):
+    def __init__(self, points, blocks, k=None, lambd=1, check=True, copy=True, **kwds) -> None:
         r"""
         Constructor.
 
@@ -1517,7 +1517,7 @@ class BalancedIncompleteBlockDesign(PairwiseBalancedDesign):
                                         copy=copy,
                                         **kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string to describe ``self``.
 

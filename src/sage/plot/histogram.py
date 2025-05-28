@@ -39,7 +39,7 @@ class Histogram(GraphicPrimitive):
         sage: g = Histogram([[1,3,2,0], [4,4,3,3]], {}); g
         Histogram defined by 2 data lists
     """
-    def __init__(self, datalist, options):
+    def __init__(self, datalist, options) -> None:
         """
         Initialize a ``Histogram`` primitive along with
         its options.
@@ -166,7 +166,7 @@ class Histogram(GraphicPrimitive):
                 'stacked': '(True or False) If True, multiple data are stacked on top of each other.',
                 'label': 'A string label for each data list given.'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return text representation of this histogram graphics primitive.
 

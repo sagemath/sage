@@ -98,7 +98,7 @@ class FunctionFieldDifferential(ModuleElement):
         sage: y.differential()                                                          # needs sage.rings.function_field
         ((21/4*x/(x^7 + 27/4))*y^2 + ((3/2*x^7 + 9/4)/(x^8 + 27/4*x))*y + 7/2*x^4/(x^7 + 27/4)) d(x)
     """
-    def __init__(self, parent, f, t=None):
+    def __init__(self, parent, f, t=None) -> None:
         """
         Initialize the differential `fdt`.
 
@@ -600,7 +600,7 @@ class DifferentialsSpace(UniqueRepresentation, Parent):
     """
     Element = FunctionFieldDifferential
 
-    def __init__(self, field, category=None):
+    def __init__(self, field, category=None) -> None:
         """
         Initialize the space of differentials of the function field.
 
@@ -627,7 +627,7 @@ class DifferentialsSpace(UniqueRepresentation, Parent):
         self._gen_base_differential = F.gen()
         self._gen_derivative_inv = ~der(F.gen())  # used for fast computation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the space of differentials.
 
@@ -790,7 +790,7 @@ class DifferentialsSpaceInclusion(Morphism):
         s += "\n  To:   {}".format(self.codomain())
         return s
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True``, since the inclusion morphism is injective.
 

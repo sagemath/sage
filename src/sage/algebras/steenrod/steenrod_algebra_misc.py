@@ -183,7 +183,7 @@ def get_basis_name(basis, p, generic=None):
 # profile functions
 
 
-def is_valid_profile(profile, truncation_type, p=2, generic=None):
+def is_valid_profile(profile, truncation_type, p=2, generic=None) -> bool:
     r"""
     Return ``True`` if ``profile``, together with ``truncation_type``, is a valid
     profile at the prime `p`.
