@@ -122,7 +122,7 @@ from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
                               MaximaAbstractElement, MaximaAbstractFunctionElement,
                               MaximaAbstractElementFunction)
 from sage.misc.instancedoc import instancedoc
-from sage.env import MAXIMA_FAS
+from sage.env import MAXIMA_FAS, MAXIMA_SHARE
 
 import sage.rings.real_double
 import sage.symbolic.expression
@@ -210,6 +210,12 @@ ecl_eval(r"""(defparameter *dev-null* (make-two-way-stream
 ecl_eval("(setf original-standard-output *standard-output*)")
 ecl_eval("(setf *standard-output* *dev-null*)")
 # ecl_eval("(setf *error-output* *dev-null*)")
+
+# Add search paths
+if MAXIMA_SHARE:
+    import_packages = "{affine,algebra,algebra/charsets,algebra/solver,amatrix,bernstein,calculus,cobyla,cobyla/ex,cobyla/lisp,colnew,colnew/ex1,colnew/ex2,colnew/ex3,colnew/ex4,colnew/lisp,combinatorics,contrib,contrib/Eulix,contrib/Grobner,contrib/Zeilberger,contrib/alt-display,contrib/altsimp,contrib/binsplit,contrib/bitwise,contrib/boolsimp,contrib/coma,contrib/diffequations,contrib/diffequations/tests,contrib/elliptic_curves,contrib/elliptic_curves/figures,contrib/format,contrib/fresnel,contrib/gentran,contrib/gentran/man,contrib/gentran/test,contrib/gf,contrib/integration,contrib/levin,contrib/lurkmathml,contrib/maxima-odesolve,contrib/maximaMathML,contrib/mcclim,contrib/noninteractive,contrib/odes,contrib/operatingsystem,contrib/prim,contrib/rand,contrib/rkf45,contrib/sarag,contrib/smath,contrib/state,contrib/symplectic_ode,contrib/trigtools,contrib/unicodedata,contrib/unit,contrib/vector3d,descriptive,diff_form,diff_form/tests,diffequations,distrib,draw,dynamics,ezunits,fftpack5,fftpack5/lisp,finance,fourier_elim,fractals,graphs,hompack,hompack/lisp,hypergeometric,integequations,integer_sequence,integration,lapack,lapack/blas,lapack/lapack,lbfgs,linearalgebra,logic,lsquares,macro,matrix,minpack,minpack/lisp,misc,mnewton,multiadditive,nelder_mead,numeric,numericalio,odepack,odepack/src,orthopoly,pdiff,physics,pslq,pytranslate,quantum,simplex,simplex/Tests,simplification,solve_rat_ineq,solve_rec,sound,stats,stringproc,sym,tensor,tensor/tracefree-code,test_batch_encodings,to_poly_solve,translators,translators/m2mj,trigonometry,utils,vector,z_transform}"
+    ecl_eval(f'#$file_search_maxima: append(file_search_maxima, ["{MAXIMA_SHARE}/###.{{mac,mc,wxm}}", "{MAXIMA_SHARE}/{import_packages}/###.{{mac,mc,wxm}}"])$')
+    ecl_eval(f'#$file_search_lisp: append(file_search_lisp, ["{MAXIMA_SHARE}/###.{{fas,lisp,lsp}}", "{MAXIMA_SHARE}/{import_packages}/###.{{fas,lisp,lsp}}"])$')
 
 # Default options set in Maxima
 # display2d -- no ascii art output
