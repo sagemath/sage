@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
+
 from sage.matroids.oriented_matroids.covector_oriented_matroid import CovectorOrientedMatroid
 
 
@@ -62,6 +63,12 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         """
         Return a ``RealHyperplaneArrangementOrientedMatroid`` object.
 
+        INPUT:
+
+        - ``data`` -- a :class:`HyperplaneArrangementElement` element.
+        - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+          provided, we grab the data from the hyperplane arrangement
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -102,6 +109,11 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         """
         Return whether or not the arrangement is an oriented matroid.
 
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) additional information
+          on why the oriented matroid is/not valid
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -120,7 +132,7 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
                 error_info = {
                     'msg': "hyperplane arrangement must be central",
                     'elt': None
-                    }
+                }
                 return (
                     False,
                     error_info
@@ -147,9 +159,13 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
         """
         return self._arrangement
 
-    def deletion(self, hyperplanes):
+    def deletion(self, change_set):
         """
         Return the hyperplane arrangement oriented matroid with hyperplanes removed.
+
+        INPUT:
+
+        - ``change_set`` - hyperplane or list of hyperplanes to take deletion of
 
         EXAMPLES::
 
@@ -175,9 +191,9 @@ class RealHyperplaneArrangementOrientedMatroid(CovectorOrientedMatroid):
             (Hyperplane t0 - t1 + 0*t2 + 0, Hyperplane t0 + 0*t1 - t2 + 0)
         """
         A = self.arrangement()
-        if isinstance(hyperplanes, list) or isinstance(hyperplanes, tuple):
-            for h in hyperplanes:
+        if isinstance(change_set, list) or isinstance(change_set, tuple):
+            for h in change_set:
                 A = A.deletion(h)
         else:
-            A = A.deletion(hyperplanes)
+            A = A.deletion(change_set)
         return RealHyperplaneArrangementOrientedMatroid(A)

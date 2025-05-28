@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
+
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
@@ -73,6 +74,13 @@ class VectorOrientedMatroid(OrientedMatroid):
         """
         Return a ``VectorOrientedMatroid`` object.
 
+        INPUT:
+
+        - ``data`` -- a tuple containing :class:`SignedSubsetElement` elements or
+          data that can be used to construct :class:`SignedSubsetElement` elements
+        - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+          provided, we grab the data from the signed subsets
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -91,7 +99,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                 # Use the appropriate element
                 vectors.append(
                     SignedSubsetElement(self, data=d, groundset=groundset)
-                    )
+                )
 
         # If our groundset is none, make sure the groundsets are the same for
         # all elements
@@ -112,6 +120,11 @@ class VectorOrientedMatroid(OrientedMatroid):
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our vectors satisfy the vector axioms.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) additional information
+          on why the oriented matroid is/not valid
 
         EXAMPLES::
 
@@ -173,7 +186,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                     error_info = {
                         'msg': "every element needs an opposite",
                         'elt': X
-                        }
+                    }
                     return (False, error_info)
                 return False
         if not zero_found:
@@ -181,7 +194,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                 error_info = {
                     'msg': "empty set is required",
                     'elt': None
-                    }
+                }
                 return (False, error_info)
             return False
 
@@ -193,7 +206,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                         error_info = {
                             'msg': "composition must be in vectors",
                             'elt': (X, Y)
-                            }
+                        }
                         return (False, error_info)
                     return False
                 # Axiom 4: Vector elimination
@@ -222,7 +235,7 @@ class VectorOrientedMatroid(OrientedMatroid):
                             error_info = {
                                 'msg': "vector elimination failed",
                                 'elt': (X, Y)
-                                }
+                            }
                             return (False, error_info)
                         return False
 

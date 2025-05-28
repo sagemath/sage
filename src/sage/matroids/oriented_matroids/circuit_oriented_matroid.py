@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
+
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
@@ -81,6 +82,13 @@ class CircuitOrientedMatroid(OrientedMatroid):
         """
         Return a ``CircuitOrientedMatroid`` object.
 
+        INPUT:
+
+        - ``data`` -- a tuple containing :class:`SignedSubsetElement` elements or
+          data that can be used to construct :class:`SignedSubsetElement` elements
+        - ``groundset`` -- (default: ``None``) the groundset for the data; if not
+          provided, we grab the data from the signed subsets
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -123,6 +131,11 @@ class CircuitOrientedMatroid(OrientedMatroid):
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our circuits satisfy the circuit axioms.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) additional information
+          on why the oriented matroid is/not valid
 
         EXAMPLES::
 
@@ -187,7 +200,7 @@ class CircuitOrientedMatroid(OrientedMatroid):
                     error_info = {
                         'msg': "empty set not allowed",
                         'elt': X
-                        }
+                    }
                     return (False, error_info)
                 return False
             # Axiom 2: (symmetry) Make sure negative exists
@@ -196,18 +209,18 @@ class CircuitOrientedMatroid(OrientedMatroid):
                     error_info = {
                         'msg': "every element needs an opposite",
                         'elt': X
-                        }
+                    }
                     return (False, error_info)
                 return False
             for Y in circuits:
                 # Axiom 3: (incomparability) supports must not be contained
                 if X.support().issubset(Y.support()):
-                    if X != Y and X != -Y:
+                    if X not in (Y, -Y):
                         if certificate:
                             error_info = {
                                 'msg': "only same/opposites can have same support",
                                 'elt': (X, Y)
-                                }
+                            }
                             return (
                                 False,
                                 error_info
@@ -231,8 +244,8 @@ class CircuitOrientedMatroid(OrientedMatroid):
                             if certificate:
                                 error_info = {
                                     'msg': "weak elimination failed",
-                                    'elt': (X, Y)
-                                    }
+                                    'elt': (X, Y),
+                                }
                                 return (False, error_info)
                             return False
         if certificate:

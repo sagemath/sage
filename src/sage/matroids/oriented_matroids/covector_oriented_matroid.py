@@ -19,6 +19,7 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
+
 from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
 from sage.matroids.oriented_matroids.signed_subset_element import SignedSubsetElement
 
@@ -128,7 +129,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
         except TypeError:
             rep = "Covector oriented matroid of rank 0"
         return rep
-
+    
     def is_valid(self, certificate=False) -> bool | tuple[bool, dict]:
         """
         Return whether our covectors satisfy the covector axioms.
@@ -193,7 +194,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
                     error_info = {
                         'msg': "every element needs an opposite",
                         'elt': X
-                        }
+                    }
                     return (False, error_info)
                 return False
 
@@ -202,7 +203,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
                 error_info = {
                     'msg': "all zero covector is required",
                     'elt': None
-                    }
+                }
                 return (False, error_info)
             return False
 
@@ -214,7 +215,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
                         error_info = {
                             'msg': "composition must be in vectors",
                             'elt': (X, Y)
-                            }
+                        }
                         return (False, error_info)
                     return False
                 # Axiom 4: Weak elimination axiom
@@ -236,7 +237,7 @@ class CovectorOrientedMatroid(OrientedMatroid):
                             error_info = {
                                 'msg': "weak elimination failed",
                                 'elt': (X, Y)
-                                }
+                            }
                             return (False, error_info)
                         return False
 

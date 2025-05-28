@@ -54,17 +54,18 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
-from sage.misc.classcall_metaclass import ClasscallMetaclass
-from sage.structure.sage_object import SageObject
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.structure.global_options import GlobalOptions
+
+import copy
 
 from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangementElement
 from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.graphs.digraph import DiGraph
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.structure.element import Matrix
-import copy
+from sage.structure.global_options import GlobalOptions
+from sage.structure.sage_object import SageObject
 
 
 class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
@@ -186,6 +187,34 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         Depending on the data provided, this method will return an oriented
         matroid of the appropriate type.
+
+        INPUT:
+
+        - ``data`` -- (default: ``None``) the data that defines the oriented
+          matroid; it can be one of the following:
+
+          + Objects
+
+            + Hyperplane arrangement
+            + Point configuration
+            + Digraph
+            + Matrix (not yet implemented)
+
+          + A list or tuple of
+
+            + :class:`SignedSubsetElement`
+            + A tuple with positive, negative, and zero sets.
+
+        - ``groundset`` -- (default: ``None``) the groundset of the oriented
+          matroid
+
+        - ``key`` -- (default: ``None``) the representation of the oriented
+          matroid; can be one of the following:
+
+          + ``'covector'`` - uses covector axioms with covectors
+          + ``'vector'`` - uses vector axioms with signed subsets
+          + ``'circuit'`` - uses circuit axioms with signed subsets
+          + ``None`` - try and guess key
 
         EXAMPLES::
 
@@ -334,29 +363,33 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         # In the following cases, deep_tupler is used since we are using
         # UniqueRepresentation Which doesn't allow us to have non-hashable things.
         if key == "covector":
-            from sage.matroids.oriented_matroids.covector_oriented_matroid \
-                import CovectorOrientedMatroid
+            from sage.matroids.oriented_matroids.covector_oriented_matroid import (
+                CovectorOrientedMatroid,
+            )
             data = deep_tupler(data)
             if groundset is not None:
                 groundset = deep_tupler(groundset)
             OM = CovectorOrientedMatroid(data, groundset=groundset)
         elif key == "circuit":
-            from sage.matroids.oriented_matroids.circuit_oriented_matroid \
-                import CircuitOrientedMatroid
+            from sage.matroids.oriented_matroids.circuit_oriented_matroid import (
+                CircuitOrientedMatroid,
+            )
             data = deep_tupler(data)
             if groundset is not None:
                 groundset = deep_tupler(groundset)
             OM = CircuitOrientedMatroid(data, groundset=groundset)
         elif key == "vector":
-            from sage.matroids.oriented_matroids.vector_oriented_matroid \
-                import VectorOrientedMatroid
+            from sage.matroids.oriented_matroids.vector_oriented_matroid import (
+                VectorOrientedMatroid,
+            )
             data = deep_tupler(data)
             if groundset is not None:
                 groundset = deep_tupler(groundset)
             OM = VectorOrientedMatroid(data, groundset=groundset)
         elif key == "real_hyperplane_arrangement":
-            from sage.matroids.oriented_matroids.real_hyperplane_arrangement_oriented_matroid \
-                import RealHyperplaneArrangementOrientedMatroid
+            from sage.matroids.oriented_matroids.real_hyperplane_arrangement_oriented_matroid import (
+                RealHyperplaneArrangementOrientedMatroid,
+            )
             A = copy.copy(data)
             if groundset is None:
                 groundset = deep_tupler(A.hyperplanes())
@@ -370,9 +403,13 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         return OM
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return whether two oriented matroids are equal.
+
+        INPUT:
+
+        - ``other`` - :class:`OrientedMatroid` to check against ``self``
 
         EXAMPLES::
 
@@ -386,7 +423,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
             return self.elements() == other.elements()
         return False
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return hashed string of oriented matroid.
 
@@ -402,9 +439,13 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         fsgs = frozenset(self._groundset)
         return hash((fsgs, fse))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Determine if ``x`` may be viewed as belonging to ``self``.
+
+        INPUT:
+
+        - ``x`` - to see if :class:`SignedSubsetElement` is in ``self``
 
         EXAMPLES::
 
@@ -432,6 +473,10 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
     def __call__(self, x):
         r"""
         Return ``x`` as an element of ``self``.
+
+        INPUT:
+
+        - ``x`` - to call :class:`SignedSubsetElement` from ``self``
 
         EXAMPLES::
 
@@ -464,6 +509,11 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         Given a set of objects, this method tests against
         a provided set of axioms for a given representation
         to ensure that we actually do have an oriented matroid.
+
+        INPUT:
+
+        - ``certificate`` -- (default: ``False``) additional information
+          on why the oriented matroid is/not valid
 
         EXAMPLES::
 
@@ -657,6 +707,11 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         Return an oriented matroid of type specified.
 
+        INPUT:
+
+        - ``new_type`` -- (default: ``None``) new oriented matroid type. Should be
+          same as ``key``.
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -772,6 +827,11 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         the if and only if `S(X,Y) = \emptyset` and
         `\underline{Y} \subseteq \underline{X}`.
 
+        INPUT:
+
+        - ``facade`` -- (default: ``False``) a boolean on whether the face poset
+          should have a facade
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -798,6 +858,11 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         The *(big) face lattice* is the (big) face poset with a top element
         added.
+
+        INPUT:
+
+        - ``facade`` -- (default: ``False``) a boolean on whether the face lattice
+          should have a facade
 
         EXAMPLES::
 
@@ -850,6 +915,12 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         from the base tope: `X \leq Y` if and only if
         `S(B, X) \subseteq S(B, Y)`.
 
+        INPUT:
+
+        - ``base_tope`` -- the tope which should act as the distinguished base
+        - ``facade`` -- (default: ``False``) a boolean on whether the tope poset
+          should have a facade
+
         EXAMPLES::
 
             sage: from sage.matroids.oriented_matroids.oriented_matroid import OrientedMatroid
@@ -870,7 +941,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 
         return Poset((els, rels), cover_relations=False, facade=facade)
 
-    def is_simplicial(self):
+    def is_simplicial(self) -> bool:
         r"""
         Return if the oriented matroid is simplicial.
 
@@ -890,7 +961,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         """
         return all(t.is_simplicial() for t in self.topes())
 
-    def is_acyclic(self):
+    def is_acyclic(self) -> bool:
         r"""
         Return if oriented matroid is acyclic.
 
@@ -920,6 +991,11 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         .. MATH::
 
             \mathcal{C} \backslash A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C}\right\}.
+
+        INPUT:
+
+        - ``change_set`` -- element or list of elements from ground set
+          to for the deletion with respect to that element
 
         EXAMPLES::
 
@@ -968,6 +1044,11 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
         .. MATH::
 
             \mathcal{C} / A = \left\{ X\mid_{E \backslash A} : X \in \mathcal{C} \text{ and} A \subseteq X^0 \right\}.
+
+        INPUT:
+
+        - ``change_set`` -- element or list of elements from ground set
+          to for the restriction with respect to that element
 
         EXAMPLES::
 
@@ -1037,13 +1118,18 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 loops.append(j)
         return loops
 
-    def are_parallel(self, e, f):
+    def are_parallel(self, e, f) -> bool:
         r"""
         Return whether two elements in groundset are parallel.
 
         Two elements in the groundset `e, f \in E` are parallel if they
         are not loops and for all `X \in \mathcal{C}`, `X(e) = 0`
         implies `X(f) = 0`. See Lemma 4.1.10 [BLSWZ1999]_ .
+
+        INPUT:
+
+        - ``e`` -- first element to compare
+        - ``f`` -- second element to compare
 
         EXAMPLES::
 
@@ -1065,7 +1151,7 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 return False
         return True
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return if the oriented matroid is simple.
 
@@ -1093,12 +1179,16 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
                 return False
         return True
 
-    def is_dual_with(self, other):
+    def is_dual_with(self, other) -> bool:
         r"""
         Return if ``self`` is dual to ``other``.
 
         Two oriented matroids are dual if the circuits of one are pairwise
         orthogonal to the circuits of the other.
+
+        INPUT:
+
+        - ``other`` -- :class:`OrientedMatroid` to compare with
 
         EXAMPLES::
 
@@ -1124,6 +1214,10 @@ class OrientedMatroid(SageObject, metaclass=ClasscallMetaclass):
 def deep_tupler(obj):
     r"""
     Change a (nested) list or set into a (nested) tuple to be hashable.
+
+    INPUT:
+
+    - ``obj`` -- nested list/tuple
 
     EXAMPLES::
 
