@@ -3021,6 +3021,21 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: negative weight is not allowed
+
+        TESTS:
+
+        A graph with a loop::
+
+            sage: g = DiGraph(loops=True)
+            sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'a'), ('c', 'c')])
+            sage: it = g._all_simple_cycles_iterator_edge(('a', 'b'), remove_acyclic_edges=True)
+            sage: next(it)
+            ['a', 'b', 'c', 'a']
+            sage: g = DiGraph(loops=True)
+            sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'c')])
+            sage: it = g._all_simple_cycles_iterator_edge(('c', 'c'), remove_acyclic_edges=True)
+            sage: next(it)
+            ['c', 'c']
         """
         # First we remove vertices and edges that are not part of any cycle
         if remove_acyclic_edges:
@@ -3030,7 +3045,7 @@ class DiGraph(GenericGraph):
                     h = component
             if h is None:
                 # edge connects two strongly connected components, so
-                # no simple cycle starting with edge does not exist.
+                # no simple cycle starting with edge exists.
                 return
         else:
             h = copy(self)
