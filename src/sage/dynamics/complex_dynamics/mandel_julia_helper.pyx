@@ -58,11 +58,105 @@ def _color_to_RGB(color):
         color = [int(255.0 * k) for k in Color(color)]
     return tuple(color)
 
+def _parse_base_color(base_color, color_num):
+    """
+    Parse the base_color for a given filled Julia set or Mandelbrot set into a_n
+    list of colors. This allows base_color to be a string, Color, a list of
+    colors, or a Colormap.
+
+    EXAMPLES::
+
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import _parse_base_color
+        sage: l = _parse_base_color('steelblue', 30)
+        sage: len(l)
+        30
+        sage: l = _parse_base_color(['black', 'white'], 20)
+        sage: len(l)
+        20
+        sage: l = _parse_base_color([[0, 0, 0], [1, 1, 1]], 22)
+        sage: len(l)
+        22
+        sage: l = _parse_base_color([(0, 0, 0), (1, 1, 1)], 11)
+        sage: len(l)
+        11
+        sage: l = _parse_base_color(((0, 0, 0), (1, 1, 1)), 16)
+        sage: len(l)
+        16
+        sage: l = _parse_base_color([[0, 0, 0], [255, 255, 255]], 5)
+        sage: len(l)
+        5
+        sage: import matplotlib as mpl
+        sage: cmap = mpl.colormaps['plasma']
+        sage: l = _parse_base_color(cmap, 34)
+        sage: len(l)
+        34
+    """
+    # Given a list of colors get a list of evenly spaced colors of size
+    # color_num.
+
+    # If we are only given one color we interpolate between that color and
+    # white.
+
+    if isinstance(base_color, str):
+        base_color = Color(base_color)
+
+    if isinstance(base_color, Color):
+        base_color = [base_color.rgb(), Color('white').rgb()]
+
+    #If we have a tuple just convert to a list.
+    if isinstance(base_color, tuple):
+        base_color = list(base_color)
+
+    if isinstance(base_color, list):
+        if len(base_color) == 0:
+            raise ValueError("base_color cannot be empty")
+        # If any of our list elements are strings we convert them to rgb values
+        for i, color in enumerate(base_color):
+            if isinstance(color, str):
+                base_color[i] = Color(color).rgb()
+        # If we are given a list of numbers we convert to numbers between 0-1
+        # and then put it into a list.
+        if not isinstance(base_color[0], list) and not isinstance(base_color[0], tuple):
+            if any([i > 1 for i in base_color]):
+                base_color = [i / 255 for i in base_color]
+            base_color = [base_color]
+        if len(base_color) == 1:
+            base_color.append(Color('white').rgb())
+        # We then convert all colors to be between 0-1.
+        for i, color in enumerate(base_color):
+            if any([j > 1 for j in color]):
+                base_color[i] = [j / 255 for j in color]
+
+        # If we have a list of colors we transform it into a
+        # LinearSegmentedColormap.
+        from matplotlib.colors import LinearSegmentedColormap
+        base_color = LinearSegmentedColormap.from_list('base_color', base_color)
+
+    # Then once we have a Colormap split it up into a list of colors of size
+    # color_num.
+    from matplotlib.colors import Colormap
+    color_list = []
+    if isinstance(base_color, Colormap):
+        import matplotlib as mpl
+        import numpy as np
+        base_color = base_color(np.linspace(0, 1, color_num))
+        for i, color in enumerate(base_color):
+            color = color.tolist()
+            color.pop()
+            color = tuple([int(k*255) for k in color])
+            color_list.append(color)
+    else:
+        # We make sure that we have recieved something that we can turn into
+        # a list of colors.
+        raise ValueError("base_color must be a Color, list, tuple, or Colormap")
+
+    return color_list
 
 cpdef fast_mandelbrot_plot(double x_center, double y_center,
                            double image_width, long max_iteration,
                            long pixel_count,
-                           long level_sep, long color_num, base_color):
+                           long level_sep, long color_num, base_color,
+                           set_color):
     r"""
     Plot the Mandelbrot set in the complex plane for the map `Q_c(z) = z^2 + c`.
 
@@ -75,7 +169,7 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
     If for any `k < N`, `|Q_{c}^{k}(0)| > 2`, we stop the iteration and assign
     a color to the point `c` based on how quickly `0` escaped to infinity under
     iteration of `Q_c`. If `|Q_{c}^{i}(0)| \leq 2` for all `i \leq N`, we assume
-    `c` is in the Mandelbrot set and assign the point `c` the color black.
+    `c` is in the Mandelbrot set and assign the point `c` the color ``set_color``.
 
     INPUT:
 
@@ -95,7 +189,15 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
 
     - ``color_num`` -- long; number of colors used to plot image
 
-    - ``base_color`` -- list; RGB color used to determine the coloring of set
+    - ``base_color`` -- RGB color; list of colors used to determine the coloring
+      of everything outside the Mandelbrot set. The first colour in the list
+      colors the points further away from the Mandelbrot set. The last
+      colour in the list colors the points right next to the Mandelbrot set. If
+      only one colour is provided a list of that colour and the colour
+      ``'white'`` will be created. Can also be specified as a colormap
+
+    - ``set_color`` -- RGB color; color used for the points inside the
+      Mandelbrot set
 
     OUTPUT: 24-bit RGB image of the Mandelbrot set in the complex plane
 
@@ -104,13 +206,13 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
     Plot the Mandelbrot set with the center point `-1 + 0i`::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot
-        sage: fast_mandelbrot_plot(-1, 0, 4, 500, 600, 1, 20, [40, 40, 40])
+        sage: fast_mandelbrot_plot(-1, 0, 4, 500, 600, 1, 20, [40, 40, 40], 'black')
         600x600px 24-bit RGB image
 
     We can focus on smaller parts of the set by adjusting image_width::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot
-        sage: fast_mandelbrot_plot(-1.11, 0.2283, 1/128, 2000, 500, 1, 500, [40, 100, 100])
+        sage: fast_mandelbrot_plot(-1.11, 0.2283, 1/128, 2000, 500, 1, 500, [40, 100, 100], 'black')
         500x500px 24-bit RGB image
     """
 
@@ -123,19 +225,12 @@ cpdef fast_mandelbrot_plot(double x_center, double y_center,
     image_width = abs(image_width)
 
     # Initialize an image to the color black and access the pixels
-    M = Image("RGB", (pixel_count, pixel_count), 'black')
+    M = Image("RGB", (pixel_count, pixel_count), set_color)
     pixel = M.pixels()
 
-    # Take the given base color and create a list of evenly spaced
-    # colors between the given base color and white. The number of
-    # colors in the list depends on the variable color_num.
-    base_color = _color_to_RGB(base_color)
-    color_list = []
-    for i in range(color_num):
-        sig_check()
-        color = [base_color[j] + i * (255 - base_color[j]) // color_num
-                 for j in range(3)]
-        color_list.append(tuple(color))
+    # We use the function _parse_base_color to convert whatever our base_color
+    # is into a list of colors we can use.
+    color_list = _parse_base_color(base_color, color_num)
 
     # First, we determine the complex coordinates of the point in the top left
     # corner of the image. Then, we loop through each pixel in the image and
@@ -417,9 +512,10 @@ cpdef fast_julia_plot(double c_real, double c_imag,
                       double image_width=4,
                       long max_iteration=500, long pixel_count=500,
                       long level_sep=2,
-                      long color_num=40, base_color=[50, 50, 50]):
+                      long color_num=40, base_color='steelblue',
+                      set_color='black'):
     r"""
-    Plot the Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
+    Plot the filled Julia set for a given `c` value in the complex plane for the map `Q_c(z) = z^2 + c`.
 
     INPUT:
 
@@ -449,17 +545,25 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     - ``color_num`` -- long (default: ``40``); number of colors used
       to plot image
 
-    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
-      used to determine the coloring of set
+    - ``base_color`` -- RGB color (default: ``'steelblue'``); list of colors
+      used to determine the coloring of everything outside the filled Julia set.
+      The first colour in the list colors the points further away from the
+      filled Julia set. The last colour in the list colors the points right next
+      to the filled Julia set. If only one colour is provided a list of that
+      colour and the colour ``'white'`` will be created. Can also be specified
+      as a colormap
 
-    OUTPUT: 24-bit RGB image of the Julia set in the complex plane
+    - ``set_color`` -- RGB color (default: ``'black'``); color used for the
+      points inside the filled Julia set
+
+    OUTPUT: 24-bit RGB image of the filled Julia set in the complex plane
 
     EXAMPLES:
 
-    Plot the Julia set for `c=-1+0i`::
+    Plot the filled Julia set for `c=-1+0i`::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_julia_plot
-        sage: fast_julia_plot(-1, 0, 0, 0, 4, 500, 200, 1, 20, [40, 40, 40])
+        sage: fast_julia_plot(-1, 0, 0, 0, 4, 500, 200, 1, 20, [40, 40, 40], 'white')
         200x200px 24-bit RGB image
     """
 
@@ -476,19 +580,12 @@ cpdef fast_julia_plot(double c_real, double c_imag,
     escape_radius_squared = ((1.0 + sqrt(1.0 + 4.0*sqrt(c_real**2 + c_imag**2))))**2/4.0
 
     # Initialize an image to the color black and access the pixels
-    J = Image("RGB", (pixel_count, pixel_count), 'black')
+    J = Image("RGB", (pixel_count, pixel_count), set_color)
     Jp = J.pixels()
 
-    # Take the given base color and create a list of evenly spaced
-    # colors between the given base color and white. The number of
-    # colors in the list depends on the variable color_num.
-    base_color = _color_to_RGB(base_color)
-    color_list = []
-    for i in range(color_num):
-        sig_check()
-        color = [base_color[j] + i * (255 - base_color[j]) // color_num
-                 for j in range(3)]
-        color_list.append(tuple(color))
+    # We use the function _parse_base_color to convert whatever our base_color
+    # is into a list of colors we can use.
+    color_list = _parse_base_color(base_color, color_num)
 
     # First, we determine the complex coordinates of the point in the top left
     # corner of the image. Then, we loop through each pixel in the image and
@@ -517,7 +614,7 @@ cpdef fast_julia_plot(double c_real, double c_imag,
             # If the point escapes to infinity, assign the point a color
             # based on how fast it escapes. The more iterations it takes for
             # a point to escape to infinity, the lighter its color will be.
-            # Otherwise, assume the point is in the Julia set and leave
+            # Otherwise, assume the point is in the filled Julia set and leave
             # it black.
             if iteration != max_iteration:
                 # Assign each point a level based on its number of iterations.
@@ -535,9 +632,10 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
                    double y_center=0, double image_width=4,
                    long max_iteration=500,
                    long pixel_count=500, long level_sep=2, long color_num=40,
-                   base_color=[50, 50, 50], point_color=[255, 0, 0]):
+                   base_color='steelblue', point_color=[255, 0, 0],
+                   set_color='black'):
     r"""
-    Helper function that returns the image of a Julia set for a given
+    Helper function that returns the image of a filled Julia set for a given
     `c` value side by side with the Mandelbrot set with a point denoting
     the `c` value.
 
@@ -569,31 +667,39 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
     - ``color_num`` -- long (default: ``40``); number of colors used
       to plot image
 
-    - ``base_color`` -- RGB color (default: ``[50, 50, 50]``); color
-      used to determine the coloring of set
+    - ``base_color`` -- RGB color (default: ``'steelblue'``); list of colors
+      used to determine the coloring of everything outside the filled Julia set.
+      The first colour in the list colors the points further away from the
+      filled Julia set. The last colour in the list colors the points right next
+      to the filled Julia set. If only one colour is provided a list of that
+      colour and the colour ``'white'`` will be created. Can also be specified
+      as a colormap
 
     - ``point_color`` -- RGB color (default: ``[255, 0, 0]``); color
       of the point `c` in the Mandelbrot set
+
+    - ``set_color`` -- RGB color (default: ``'black'``); color used for the
+      points inside the filled Julia set
 
     OUTPUT: 24-bit RGB image of the Julia and Mandelbrot sets in the complex plane
 
     EXAMPLES:
 
-    Plot the Julia set for `c=-1+0i`::
+    Plot the filled Julia set for `c=-1+0i`::
 
         sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import julia_helper
-        sage: julia_helper(-1, 0, 0, 0, 4, 500, 200, 1, 20, [40, 40, 40], [255, 0, 0])
+        sage: julia_helper(-1, 0, 0, 0, 4, 500, 200, 1, 20, [40, 40, 40], [255, 0, 0], 'white')
         401x200px 24-bit RGB image
     """
     cdef int i, j
 
-    # Initialize the Julia set
+    # Initialize the filled Julia set
     J = fast_julia_plot(c_real, c_imag, x_center, y_center, image_width,
                         max_iteration, pixel_count, level_sep,
-                        color_num, base_color)
+                        color_num, base_color, set_color)
     Jp = J.pixels()
 
-    # Initialize the image with Julia set on left side
+    # Initialize the image with filled Julia set on left side
     # Add white border between images
     G = Image("RGB", (2*pixel_count+1, pixel_count), 'white')
     Gp = G.pixels()
@@ -602,7 +708,7 @@ cpdef julia_helper(double c_real, double c_imag, double x_center=0,
             Gp[i, j] = Jp[i, j]
 
     # Plot the Mandelbrot set on the right side
-    M = fast_mandelbrot_plot(-1, 0, 4, 500, pixel_count, 1, 30, base_color)
+    M = fast_mandelbrot_plot(-1, 0, 4, 500, pixel_count, 1, 30, base_color, set_color)
     Mp = M.pixels()
     for i in range(pixel_count+1, 2*pixel_count):
         for j in range(pixel_count):
@@ -627,7 +733,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
                             double y_center=0, image_width=4,
                             int max_iteration=50, int pixel_count=500,
                             int level_sep=1, int color_num=30,
-                            base_color=Color('red')):
+                            base_color=Color('red'), set_color='black'):
     r"""
     Plot the Mandelbrot set in the complex plane for a family of polynomial maps.
 
@@ -655,7 +761,15 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
 
     - ``color_num`` -- long, number of colors used to plot image
 
-    - ``base_color`` -- list; RGB color used to determine the coloring of set
+    - ``base_color`` -- RGB color; list of colors used to determine the coloring
+      of everything outside the Mandelbrot set. The first colour in the list
+      colors the points further away from the Mandelbrot set. The last
+      colour in the list colors the points right next to the Mandelbrot set. If
+      only one colour is provided a list of that colour and the colour
+      ``'white'`` will be created. Can also be specified as a colormap
+
+    - ``set_color`` -- RGB color; color used for the points inside the
+      Mandelbrot set
 
     OUTPUT: 24-bit RGB image of a Mandelbrot set in the complex plane
 
@@ -728,22 +842,12 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
     image_width = abs(image_width)
 
     # Initialize an image to the color black and access the pixels
-    M = Image("RGB", (pixel_count, pixel_count), 'black')
+    M = Image("RGB", (pixel_count, pixel_count), set_color)
     pixel = M.pixels()
 
-    # Take the given base color and create a list of evenly spaced
-    # colors between the given base color and white. The number of
-    # colors in the list depends on the variable color_num.
-    if isinstance(base_color, Color):
-        # Convert Color to RGB list
-        base_color = [int(k*255) for k in base_color]
-    color_list = []
-    for i in range(color_num):
-        sig_check()
-        color_list.append(copy(base_color))
-        for j in range(3):
-            color_list[i][j] += i * (255 - color_list[i][j]) // color_num
-        color_list[i] = tuple(color_list[i])
+    # We use the function _parse_base_color to convert whatever our base_color
+    # is into a list of colors we can use.
+    color_list = _parse_base_color(base_color, color_num)
 
     # Split function into real and imaginary parts
     R = PolynomialRing(CC, [variable, parameter])
@@ -927,7 +1031,7 @@ cpdef polynomial_mandelbrot(f, parameter=None, double x_center=0,
 cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
                     int max_iteration=50, int pixel_count=500,
                     int level_sep=1, int color_num=30,
-                    base_color=[50, 50, 50]):
+                    base_color='steelblue', set_color='black'):
     r"""
     Plot Julia sets for general polynomials.
 
@@ -963,19 +1067,9 @@ cpdef general_julia(f, double x_center=0, double y_center=0, image_width=4,
     M = Image("RGB", (pixel_count, pixel_count), 'black')
     pixel = M.pixels()
 
-    # Take the given base color and create a list of evenly spaced
-    # colors between the given base color and white. The number of
-    # colors in the list depends on the variable color_num.
-    if isinstance(base_color, Color):
-        # Convert Color to RGB list
-        base_color = [int(k*255) for k in base_color]
-    color_list = []
-    for i in range(color_num):
-        sig_check()
-        color_list.append(copy(base_color))
-        for j in range(3):
-            color_list[i][j] += i * (255 - color_list[i][j]) // color_num
-        color_list[i] = tuple(color_list[i])
+    # We use the function _parse_base_color to convert whatever our base_color
+    # is into a list of colors we can use.
+    color_list = _parse_base_color(base_color, color_num)
 
     z = f.variables()[0]
     f_fast = fast_callable(f, vars=[z], domain=CDF)
