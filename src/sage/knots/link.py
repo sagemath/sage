@@ -4738,3 +4738,58 @@ class Link(SageObject):
                 return True
 
         raise NotImplementedError('comparison not possible!')
+
+    def simplify(self, exhaustive=True, height=1, threads=1):
+        r"""
+        Return an isotopic Link with less crossings or ``None`` if the
+        calculation was not successful.
+
+        INPUT:
+
+          - ``exhaustive`` -- boolean (default ``True``) if set to
+            ``False`` a faster but less successful algorithm is
+            used; this does not apply to multicomponent links (here
+            ``exhaustive=False`` is automatically set)
+          - ``height`` -- integer (default ``1``) the maximum number
+            of additional crossings to allow beyond the number of
+            crossings originally present in this diagram, or a
+            negative number if this should not be bounded; this
+            does not apply if `exhaustive=False``
+            argument is not applied if ``exhaustive=False``
+          - ``threads`` -- integer (default ``1``) the number of
+            threads to use. If this is 1 or smaller then the
+            routine will run single-threaded; this
+            does not apply if `exhaustive=False``
+
+        .. NOTE::
+
+            This method is taken from the Regina methods ``simplifyExhaustive``
+            (for knots) and ``intelligentSimplify`` (for multi-component links
+            or if the option ``exhaustive=False`` is set) and therefore needs
+            the optional package ``regina``. More information on the usage of
+            the method can be found
+            `here <https://regina-normal.github.io/engine-docs/classregina_1_1Link.html#a60fe044c436e5e1a8861de2ccb106e1c>`__.
+
+        OUTPUT: an instance of class :class:`Link` or ``None``
+
+        EXAMMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: U = Link(B((-1, 2, 3, -2, 1, 3))); U
+            Link with 2 components represented by 6 crossings
+            sage: U.simplify()                       # optional regina
+            Link with 1 component represented by 0 crossings
+            sage: K = Knots().from_table(10, 24)
+            sage: K2 = Knot(K.braid()); K2
+            Knot represented by 12 crossings
+            sage: K2.simplify()                      # optional regina
+            Knot represented by 11 crossings
+        """
+        rL = self.regina_link()
+        if self.is_knot() and exhaustive:
+            res = rL.simplifyExhaustive(height=height, threads=threads)
+        else:
+            res = rL.intelligentSimplify()
+        if res:
+            return self.__class__(rL)
+        return None
