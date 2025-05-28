@@ -153,7 +153,7 @@ class ElementWithLabel:
             return False
         return self.element == other.element and self.label == other.label
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Two labeled elements are not equal if and only if first or second
         constituents are not equal.

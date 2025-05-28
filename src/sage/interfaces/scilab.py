@@ -273,7 +273,7 @@ class Scilab(Expect):
         self._seed = seed
         return seed
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit the pexpect interface.
 
@@ -284,7 +284,7 @@ class Scilab(Expect):
         """
         return 'quit;'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing Scilab.
 

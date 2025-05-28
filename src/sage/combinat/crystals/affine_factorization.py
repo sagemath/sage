@@ -174,7 +174,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             raise ValueError("x cannot be in reduced word of {}".format(w))
         self.x = x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

@@ -2220,7 +2220,7 @@ class OAMainFunctions:
         return orthogonal_array(k,n,t,existence=True)
 
     @staticmethod
-    def is_available(k, n, t=2):
+    def is_available(k, n, t=2) -> bool:
         r"""
         Return whether Sage can build an `OA(k,n)`.
 

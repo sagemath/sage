@@ -98,7 +98,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
         Parent.__init__(self, category=Sets().Metric().WithRealizations())
         self.a_realization() # We create a realization so at least one is known
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -156,7 +156,7 @@ class HyperbolicModels(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 

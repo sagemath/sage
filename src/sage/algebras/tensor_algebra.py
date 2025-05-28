@@ -114,7 +114,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         # the following is not the best option, but it's better than nothing.
         self._print_options['tensor_symbol'] = options.get('tensor_symbol', tensor.symbol)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -616,7 +616,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
         """
         ConstructionFunctor.__init__(self, Modules(base), Algebras(base))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

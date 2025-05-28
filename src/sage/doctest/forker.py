@@ -2422,7 +2422,7 @@ class DocTestWorker(multiprocessing.Process):
 
         del self.outtmpfile
 
-    def kill(self):
+    def kill(self) -> bool:
         """
         Kill this worker.  Return ``True`` if the signal(s) are sent
         successfully or ``False`` if the worker process no longer exists.

@@ -276,7 +276,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         return self._upper_closed
 
-    def lower_open(self):
+    def lower_open(self) -> bool:
         """
         Return whether the interval is closed at the upper bound.
 
@@ -297,7 +297,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
         """
         return not self._lower_closed
 
-    def upper_open(self):
+    def upper_open(self) -> bool:
         """
         Return whether the interval is closed at the upper bound.
 
@@ -2300,7 +2300,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         intervals = tuple(RealSet._scan_to_intervals(scan, lambda i: i == 1))
         return RealSet(*intervals, normalized=True)
 
-    def contains(self, x):
+    def contains(self, x) -> bool:
         """
         Return whether `x` is contained in the set.
 
@@ -2607,7 +2607,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     is_disjoint_from = deprecated_function_alias(31927, is_disjoint)
 
     @staticmethod
-    def are_pairwise_disjoint(*real_set_collection):
+    def are_pairwise_disjoint(*real_set_collection) -> bool:
         """
         Test whether the real sets are pairwise disjoint.
 

@@ -129,7 +129,7 @@ class PosetElement(Element):
         return have_same_parent(self, other) \
             and self.vertex == other.vertex
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 

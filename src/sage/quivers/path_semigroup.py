@@ -192,7 +192,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             cat = cat.join([cat, Semigroups()])
         Parent.__init__(self, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 

@@ -536,7 +536,7 @@ class Magmas(Category_singleton):
                 if hasattr(one, "is_mutable"):
                     tester.assertFalse(one.is_mutable())
 
-            def is_empty(self):
+            def is_empty(self) -> bool:
                 r"""
                 Return whether ``self`` is empty.
 

@@ -1578,7 +1578,7 @@ class SchemeMorphism_fan_toric_variety_dominant(SchemeMorphism_fan_toric_variety
         prim = fm.primitive_preimage_cones(codomain_cone)
         n = len(prim)
 
-        def is_union_in_fan(self, c0, c1):
+        def is_union_in_fan(self, c0, c1) -> bool:
             indices = c0.ambient_ray_indices() + c1.ambient_ray_indices()
             try:
                 fm.domain_fan().cone_containing(*indices)
@@ -1680,7 +1680,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
         parent = fc.Hom(toric_morphism.domain())
         SchemeMorphism.__init__(self, parent)
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         Return a string representation of the definition of ``self``.
 

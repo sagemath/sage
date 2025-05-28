@@ -146,7 +146,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicModels
         Parent.__init__(self, category=HyperbolicModels(space))
 
-    def _repr_(self):  # Abstract
+    def _repr_(self) -> str:  # Abstract
         """
         Return a string representation of ``self``.
 
@@ -234,7 +234,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
         """
         return self._isometry_group_is_projective
 
-    def point_in_model(self, p):
+    def point_in_model(self, p) -> bool:
         r"""
         Return ``True`` if the point ``p`` is in the interior of the
         given model and ``False`` otherwise.
@@ -272,7 +272,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             error_string = "{0} is not a valid point in the {1} model"
             raise ValueError(error_string.format(p, self._short_name))
 
-    def boundary_point_in_model(self, p):  # Abstract
+    def boundary_point_in_model(self, p) -> bool:  # Abstract
         r"""
         Return ``True`` if the point is on the ideal boundary of hyperbolic
         space and ``False`` otherwise.
@@ -307,7 +307,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
             error_string = "{0} is not a valid boundary point in the {1} model"
             raise ValueError(error_string.format(p, self._short_name))
 
-    def isometry_in_model(self, A):  # Abstract
+    def isometry_in_model(self, A) -> bool:  # Abstract
         r"""
         Return ``True`` if the input matrix represents an isometry of the
         given model and ``False`` otherwise.
@@ -1449,7 +1449,7 @@ class HyperbolicModelHM(HyperbolicModel):
             return p.is_boundary()
         return len(p) == 3 and bool(abs(p[0]**2 + p[1]**2 - p[2]**2 + 1) < EPSILON)
 
-    def boundary_point_in_model(self, p):
+    def boundary_point_in_model(self, p) -> bool:
         r"""
         Return ``False`` since the Hyperboloid model has no boundary points.
 

@@ -190,7 +190,7 @@ class ChainHomotopy(Morphism):
         self._g = g
         Morphism.__init__(self, Hom(domain, codomain))
 
-    def is_algebraic_gradient_vector_field(self):
+    def is_algebraic_gradient_vector_field(self) -> bool:
         r"""
         An algebraic gradient vector field is a linear map
         `H: C \to C` such that `H H = 0`.
@@ -242,7 +242,7 @@ class ChainHomotopy(Morphism):
                     return False
         return True
 
-    def is_homology_gradient_vector_field(self):
+    def is_homology_gradient_vector_field(self) -> bool:
         r"""
         A homology gradient vector field is an algebraic gradient vector
         field `H: C \to C` (i.e., a chain homotopy satisfying `H

@@ -79,7 +79,7 @@ class DoublyLinkedList:
             self.next_value == other.next_value and
             self.prev_value == other.prev_value)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         TESTS::
 

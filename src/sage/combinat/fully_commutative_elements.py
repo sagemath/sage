@@ -378,7 +378,7 @@ class FullyCommutativeElement(NormalizedClonableList):
                 return i
         return None
 
-    def has_descent(self, s, side='left'):
+    def has_descent(self, s, side='left') -> bool:
         r"""
         Determine if ``s`` is a descent on the appropriate side of ``self``.
 
@@ -955,7 +955,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
 
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

@@ -336,7 +336,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
         else:
             self._sgs = [list(x) for x in list(sgs)]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -668,7 +668,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         else:
             self._sgs = [list(x) for x in list(sgs)]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

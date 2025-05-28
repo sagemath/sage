@@ -44,7 +44,7 @@ from sage.plot.colors import colors, Color
 uniq_c = 0
 
 
-def _new_global_texture_id():
+def _new_global_texture_id() -> str:
     """
     Generate a new unique id for a texture.
 
@@ -321,7 +321,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
             specular = parse_color(specular, color)
         self.specular = specular
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the Texture object.
 
@@ -338,7 +338,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         else:
             return f"Texture({self.id}, {self.hex_rgb()})"
 
-    def hex_rgb(self):
+    def hex_rgb(self) -> str:
         """
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
                                    diffuse=diffuse, specular=specular,
                                    opacity=self.opacity, color=self.color)
 
-    def x3d_str(self):
+    def x3d_str(self) -> str:
         r"""
         Convert Texture object to string suitable for x3d.
 
@@ -426,7 +426,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
                                illumination=(2 if sum(self.specular) > 0 else 1),
                                shininess=self.shininess, opacity=self.opacity)
 
-    def jmol_str(self, obj):
+    def jmol_str(self, obj) -> str:
         r"""
         Convert Texture object to string suitable for Jmol applet.
 

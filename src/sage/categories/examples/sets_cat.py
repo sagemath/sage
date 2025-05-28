@@ -95,7 +95,7 @@ class PrimeNumbers(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -175,7 +175,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -271,7 +271,7 @@ class PrimeNumbers_Abstract(UniqueRepresentation, Parent):
         return res
 
     class Element(Element):
-        def is_prime(self):
+        def is_prime(self) -> bool:
             """
             Return whether ``self`` is a prime number.
 
@@ -503,7 +503,7 @@ class PrimeNumbers_Wrapper(PrimeNumbers_Abstract):
         self.mor = Hom(self, IntegerRing())(lambda z: z.value)
         self._populate_coercion_lists_(embedding=self.mor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -666,7 +666,7 @@ class PrimeNumbers_Facade(PrimeNumbers_Abstract):
         """
         Parent.__init__(self, facade=IntegerRing(), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

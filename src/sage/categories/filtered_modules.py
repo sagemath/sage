@@ -58,7 +58,7 @@ class FilteredModulesCategory(RegressiveCovariantConstructionCategory, Category_
 
     _functor_category = "Filtered"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

@@ -635,7 +635,7 @@ def multinomial_odd(list, p):
 # Adem relations, Serre-Cartan basis, admissible sequences
 
 
-def binomial_mod2(n, k):
+def binomial_mod2(n, k) -> int:
     r"""
     The binomial coefficient `\binom{n}{k}`, computed mod 2.
 

@@ -91,7 +91,7 @@ class GlobalVariableContext:
         self._old_value = libgap.get_global(self._variable)
         libgap.set_global(self._variable, self._new_value)
 
-    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]):
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]) -> bool:
         """
         Called when exiting the with-block.
 

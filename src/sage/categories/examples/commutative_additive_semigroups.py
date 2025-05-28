@@ -87,7 +87,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         self.alphabet = alphabet
         Parent.__init__(self, category=CommutativeAdditiveSemigroups())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

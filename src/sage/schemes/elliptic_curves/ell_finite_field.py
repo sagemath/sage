@@ -1321,7 +1321,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return is_j_supersingular(self.j_invariant(), proof=proof)
 
-    def is_ordinary(self, proof=True):
+    def is_ordinary(self, proof=True) -> bool:
         r"""
         Return ``True`` if this elliptic curve is ordinary, else ``False``.
 

@@ -4012,7 +4012,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             i += 1
         return pcf
 
-    def is_dynamical_belyi_map(self):
+    def is_dynamical_belyi_map(self) -> bool:
         r"""
         Return if this dynamical system is a dynamical Belyi map.
 
@@ -6683,7 +6683,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r_vals = sorted([val for val in r.values() if val != 1])
         return r_vals == [0, 2, 2]
 
-    def is_Lattes(self):
+    def is_Lattes(self) -> bool:
         r"""
         Check if ``self`` is a Lattes map.
 
@@ -8419,7 +8419,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         source, possible_targets = tup
         return is_conjugate_helper(f, g, num_cpus, source, possible_targets)
 
-    def is_polynomial(self):
+    def is_polynomial(self) -> bool:
         r"""
         Check to see if the dynamical system has a totally ramified
         fixed point.
@@ -9132,7 +9132,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
                                               SchemeMorphism_polynomial_projective_space_finite_field):
 
-    def is_postcritically_finite(self, **kwds):
+    def is_postcritically_finite(self, **kwds) -> bool:
         r"""
         Every point is postcritically finite in a finite field.
 

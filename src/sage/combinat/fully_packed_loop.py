@@ -1279,7 +1279,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         for X in SixVertexModel(self._n, boundary_conditions='ice'):
             yield self.element_class(self, X)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

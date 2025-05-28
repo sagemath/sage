@@ -1052,7 +1052,7 @@ class PlotOptions:
             return i
         return None
 
-    def thickness(self, i):
+    def thickness(self, i) -> int:
         r"""
         Return the thickness to be used for lines indexed by `i`.
 
@@ -1173,7 +1173,7 @@ class PlotOptions:
         else:
             return x
 
-    def empty(self, *args):
+    def empty(self, *args) -> int:
         r"""
         Return an empty plot.
 

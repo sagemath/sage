@@ -830,7 +830,7 @@ class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
         """
         IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -877,7 +877,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
         else:
             IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1015,7 +1015,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
         else:
             IntegerVectors.__init__(self, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1245,7 +1245,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             for rest in integer_vectors_nk_fast_iter(nbar, self.k - 1):
                 yield self.element_class(self, [n] + rest, check=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1423,7 +1423,7 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
         self.comp = comp
         IntegerVectors.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1574,7 +1574,7 @@ class IntegerVectorsConstraints(IntegerVectors):
             return self.n == rhs.n and self.k == rhs.k and self.constraints == rhs.constraints
         return False
 
-    def __ne__(self, rhs):
+    def __ne__(self, rhs) -> bool:
         """
         EXAMPLES::
 

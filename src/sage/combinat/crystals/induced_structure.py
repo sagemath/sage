@@ -174,7 +174,7 @@ class InducedCrystal(UniqueRepresentation, Parent):
 
         self.module_generators = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -476,7 +476,7 @@ class InducedFromCrystal(UniqueRepresentation, Parent):
         self.module_generators = tuple(self.element_class(self, phi(mg))
                                        for mg in X.module_generators)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

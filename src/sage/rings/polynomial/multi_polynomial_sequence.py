@@ -1195,7 +1195,7 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         return singular.ideal(list(self))
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return Magma ideal representation of the ideal spanned by this
         system.
@@ -1779,7 +1779,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         else:
             # slower, more flexible solution
             if skip is None:
-                def skip(lm, tail):
+                def skip(lm, tail) -> bool:
                     return False
 
             while True:

@@ -1467,7 +1467,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
             else:
                 self.module_generators = (self.element_class(self, [[]]*self._level),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1695,7 +1695,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
         self._multicharge = tuple(self._I(m) for m in multicharge)
         self._convention = convention
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

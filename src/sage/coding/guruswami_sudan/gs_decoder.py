@@ -636,7 +636,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
             raise ValueError("Please provide a method or one of the allowed strings for root_finder")
         super().__init__(code, code.ambient_space(), "EvaluationPolynomial")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -649,7 +649,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         """
         return "Guruswami-Sudan decoder for %s decoding %s errors with parameters %s" % (self.code(), self.decoding_radius(), (self.multiplicity(), self.list_size()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

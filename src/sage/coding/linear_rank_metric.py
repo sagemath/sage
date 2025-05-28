@@ -780,7 +780,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         super().__init__(base_field, sub_field, self._length,
                          "GeneratorMatrix", "NearestNeighbor", basis)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -798,7 +798,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         else:
             return "[%s, %s] linear rank metric code over %s/%s" % (self.length(), self.dimension(), R, S)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -882,7 +882,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
         return isinstance(other, LinearRankMetricCodeNearestNeighborDecoder)\
                 and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -896,7 +896,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
         """
         return "Nearest neighbor decoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

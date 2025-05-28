@@ -142,7 +142,7 @@ class PoorManMap(SageObject):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this map is not equal to ``other``.
 

@@ -108,7 +108,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
                     from sage.rings.padics.relative_ramified_FM import pAdicCoercion_FM_frac_field as coerce_map
             return coerce_map(R, self)
 
-    def _extension_type(self):
+    def _extension_type(self) -> str:
         """
         Return the type (``Unramified``, ``Eisenstein``) of this
         extension as a string, if any.
@@ -269,7 +269,7 @@ class pAdicExtensionGeneric(pAdicGeneric):
                 self.precision_cap() == other.precision_cap() and
                 self._printer.richcmp_modes(other._printer, op_EQ))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test inequality.
 
@@ -683,7 +683,7 @@ class pAdicModuleIsomorphism(Map):
         sage: isinstance(fr, pAdicModuleIsomorphism)
         True
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -694,7 +694,7 @@ class pAdicModuleIsomorphism(Map):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -705,7 +705,7 @@ class pAdicModuleIsomorphism(Map):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 

@@ -451,7 +451,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
         convention = dict(link_to=(tableau.Tableaux.options,'convention'))
         notation = dict(alt_name='convention')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

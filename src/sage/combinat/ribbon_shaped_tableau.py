@@ -207,7 +207,7 @@ class RibbonShapedTableaux(SkewTableaux):
 
         SkewTableaux.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -279,7 +279,7 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
 
         StandardSkewTableaux.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -415,7 +415,7 @@ class StandardRibbonShapedTableaux_shape(StandardRibbonShapedTableaux):
         self.shape = shape
         StandardRibbonShapedTableaux.__init__(self, FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

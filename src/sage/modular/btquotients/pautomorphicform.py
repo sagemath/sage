@@ -299,7 +299,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
             return b
         return not b
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string describing the cocycle.
 
@@ -885,7 +885,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         """
         return self.rank() == 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         This returns the representation of ``self`` as a string.
 
@@ -930,7 +930,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         """
         return self.basis()[0]
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Can coerce from other BruhatTitsHarmonicCocycles or from
         pAdicAutomorphicForms, also from 0.
@@ -979,7 +979,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
                 self._X == other._X and
                 self._k == other._k)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test whether two BruhatTitsHarmonicCocycle spaces are not equal.
 
@@ -1691,7 +1691,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
         return self.parent()([a * self._value[e]
                               for e in range(self._num_generators)])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         This returns the representation of ``self`` as a string.
 
@@ -2284,7 +2284,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                 self._source == other._source and
                 self._U == other._U)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test whether two pAdicAutomorphicForm spaces are not equal.
 
@@ -2334,7 +2334,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         s += ' with values in ' + str(self._U)
         return s
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Can coerce from other BruhatTitsHarmonicCocycles or from pAdicAutomorphicForms.
 

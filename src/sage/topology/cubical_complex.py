@@ -652,7 +652,7 @@ class Cube(SageObject):
         """
         return tuple(self) == tuple(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this cube is not equal to ``other``.
 
@@ -983,7 +983,7 @@ class CubicalComplex(GenericCellComplex):
         """
         return self.maximal_cells() == other.maximal_cells()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` and ``other`` are not equal.
 

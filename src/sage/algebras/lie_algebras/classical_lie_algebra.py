@@ -460,7 +460,7 @@ class gl(MatrixLieAlgebraFromAssociative):
                                                  index_set=index_set,
                                                  category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -578,7 +578,7 @@ class sl(ClassicalMatrixLieAlgebra):
         self._n = n
         ClassicalMatrixLieAlgebra.__init__(self, R, CartanType(['A', n-1]), e, f, h)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -697,7 +697,7 @@ class so(ClassicalMatrixLieAlgebra):
              for i in range(m-1)] + h
         ClassicalMatrixLieAlgebra.__init__(self, R, ct, e, f, h)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -813,7 +813,7 @@ class sp(ClassicalMatrixLieAlgebra):
         h.append(MS({(n-1,n-1):one, (2*n-1,2*n-1):-one})) # -1 for indexing
         ClassicalMatrixLieAlgebra.__init__(self, R, CartanType(['C', n]), e, f, h)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -883,7 +883,7 @@ class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
             h = [e[i] * f[i] - f[i] * e[i] for i in range(len(e))]
         ClassicalMatrixLieAlgebra.__init__(self, R, cartan_type, e, f, h, sparse=sparse)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1841,7 +1841,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
         return s_coeffs
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1852,7 +1852,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         """
         return "Lie algebra of {} in the Chevalley basis".format(self._cartan_type)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

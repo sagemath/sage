@@ -44,7 +44,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         assert n >= 1
         CartanType_standard_finite.__init__(self, "I", n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -55,7 +55,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         """
         return "I_2({})".format(self.n)
 
-    def rank(self):
+    def rank(self) -> int:
         """
         Type `I_2(p)` is of rank 2.
 

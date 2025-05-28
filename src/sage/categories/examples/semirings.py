@@ -88,7 +88,7 @@ class Ternary(Element):
             return False
         return self._n == other._n
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -168,7 +168,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Semirings())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation.
 

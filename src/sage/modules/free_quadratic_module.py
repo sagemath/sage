@@ -1326,7 +1326,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
                 "Inner product matrix:\n%r" % self.inner_product_matrix()
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this free module.
 

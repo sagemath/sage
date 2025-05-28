@@ -335,7 +335,7 @@ class GraphPlot(SageObject):
         self.set_vertices()
         self.set_edges()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of a ``GraphPlot`` object.
 

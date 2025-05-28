@@ -685,7 +685,7 @@ class Partition(CombinatorialElement):
 
         return UnicodeArt(txt, baseline=0)
 
-    def _repr_list(self):
+    def _repr_list(self) -> str:
         """
         Return a string representation of ``self`` as a list.
 
@@ -1605,7 +1605,7 @@ class Partition(CombinatorialElement):
             raise ValueError('we only talk about k-reducible / k-irreducible for k-bounded partitions')
         return self.has_k_rectangle(k)
 
-    def is_k_irreducible(self, k):
+    def is_k_irreducible(self, k) -> bool:
         r"""
         Return ``True`` if the partition ``self`` is ``k``-irreducible.
 
@@ -4518,7 +4518,7 @@ class Partition(CombinatorialElement):
         from .partition_tuple import PartitionTuple
         return PartitionTuple(result)  # tuple(map(Partition, result))
 
-    def is_core(self, k):
+    def is_core(self, k) -> bool:
         r"""
         Return ``True`` if the Partition ``self`` is a ``k``-core.
 
@@ -6595,7 +6595,7 @@ class Partitions_all(Partitions):
             return self
         return Partitions(size, **kwargs)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -6962,7 +6962,7 @@ class Partitions_all_bounded(Partitions):
         """
         return x in _Partitions and (not x or x[0] <= self.k)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7451,7 +7451,7 @@ class Partitions_nk(Partitions):
             return not self.k
         return len(x) == next(i for i, e in enumerate(reversed(x), self.k) if e)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -7695,7 +7695,7 @@ class Partitions_parts_in(Partitions):
                 x.pop()
         return all(p in self.parts for p in x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8015,7 +8015,7 @@ class Partitions_starting(Partitions):
         self.n = n
         self._starting = starting_partition
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -8141,7 +8141,7 @@ class Partitions_ending(Partitions):
         self._ending = ending_partition
         self._ending_size_is_not_same = (n != sum(self._ending))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -8249,7 +8249,7 @@ class PartitionsInBox(Partitions):
         self.h = h
         self.w = w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -8570,7 +8570,7 @@ class RegularPartitions_all(RegularPartitions):
         """
         RegularPartitions.__init__(self, ell, bool(ell > 1))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8667,7 +8667,7 @@ class RegularPartitions_truncated(RegularPartitions):
                 and (not x or not x[0] or
                      len(x) <= next(i for i, e in enumerate(reversed(x), self._max_len) if e)))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8790,7 +8790,7 @@ class RegularPartitions_bounded(RegularPartitions):
         return (RegularPartitions.__contains__(self, x)
                 and (not x or x[0] <= self.k))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8853,7 +8853,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         RegularPartitions.__init__(self, ell)
         Partitions_n.__init__(self, n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9352,7 +9352,7 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
         self.n = n
         self.k = k
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -9440,7 +9440,7 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
         self.n = n
         self.k = k
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -9622,7 +9622,7 @@ class RestrictedPartitions_all(RestrictedPartitions_generic):
         """
         RestrictedPartitions_generic.__init__(self, ell, True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9677,7 +9677,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
         RestrictedPartitions_generic.__init__(self, ell)
         Partitions_n.__init__(self, n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

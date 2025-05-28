@@ -400,7 +400,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         self._hidden = False
 
-    def is_hidden(self):
+    def is_hidden(self) -> bool:
         r"""
         Return whether ``self`` is present but currently hidden.
 

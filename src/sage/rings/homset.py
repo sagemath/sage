@@ -88,7 +88,7 @@ class RingHomset_generic(HomsetWithBase):
             category = _Rings
         HomsetWithBase.__init__(self, R, S, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

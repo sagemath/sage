@@ -225,7 +225,7 @@ class GaloisRepresentation(SageObject):
             return [0]
         return _non_surjective(self.E, A)
 
-    def is_surjective(self, p, A=100):
+    def is_surjective(self, p, A=100) -> bool:
         r"""
         Return ``True`` if the mod-p representation is (provably)
         surjective onto `Aut(E[p]) = GL_2(\GF{p})`.  Return

@@ -46,7 +46,7 @@ class PermutationGroupMorphism(Morphism):
     r"""
     A set-theoretic map between PermutationGroups.
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return the type of this morphism.
 
@@ -279,7 +279,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
         PermutationGroupMorphism.__init__(self, G, H)
         self._images = [H(img) for img in gens]
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return the definition of this morphism.
 

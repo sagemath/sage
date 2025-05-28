@@ -111,7 +111,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         self._cartan_type = CartanType(['A', n])
         self.module_generators = [self(1)]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

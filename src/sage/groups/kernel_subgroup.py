@@ -52,7 +52,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
             cat = cat.Enumerated()
         Parent.__init__(self, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

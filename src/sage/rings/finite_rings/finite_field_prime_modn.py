@@ -196,7 +196,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         """
         return self.__char
 
-    def is_prime_field(self):
+    def is_prime_field(self) -> bool:
         """
         Return ``True`` since this is a prime field.
 

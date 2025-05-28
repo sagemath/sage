@@ -207,7 +207,7 @@ class Lisp(Expect):
         E.expect(s)
         E.expect(self._prompt)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -234,7 +234,7 @@ class Lisp(Expect):
         """
         return LispFunction
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -289,7 +289,7 @@ class Lisp(Expect):
         """
         lisp_console()
 
-    def version(self):
+    def version(self) -> str:
         """
         Return the version of Lisp being used.
 
@@ -322,7 +322,7 @@ class Lisp(Expect):
         """
         return LispFunctionElement
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -331,7 +331,7 @@ class Lisp(Expect):
         """
         return 'T'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         EXAMPLES::
 

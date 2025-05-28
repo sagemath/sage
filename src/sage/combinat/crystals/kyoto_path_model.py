@@ -261,7 +261,7 @@ class KyotoPathModel(TensorProductOfCrystals):
                                for B in crystals]
         self.module_generators = (self.element_class(self, [self._phi_dicts[0][weight]]),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

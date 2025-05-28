@@ -212,7 +212,7 @@ class SymmetricIdeal(Ideal_generic):
         """
         return f"Symmetric Ideal {self._repr_short()} of {self.ring()}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

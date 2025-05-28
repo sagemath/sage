@@ -122,7 +122,7 @@ class GolayCode(AbstractLinearCode):
                 and self.base_field() == other.base_field() \
                 and self.length() == other.length()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -138,7 +138,7 @@ class GolayCode(AbstractLinearCode):
         return "[%s, %s, %s] %s Golay code over GF(%s)" % (n, self.dimension(),
             self.minimum_distance(), ext, self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -178,7 +178,7 @@ class GolayCode(AbstractLinearCode):
             return self
         return super().dual_code()
 
-    def minimum_distance(self):
+    def minimum_distance(self) -> int:
         r"""
         Return the minimum distance of ``self``.
 
@@ -201,7 +201,7 @@ class GolayCode(AbstractLinearCode):
         elif n == 11:
             return 5
 
-    def covering_radius(self):
+    def covering_radius(self) -> int:
         r"""
         Return the covering radius of ``self``.
 

@@ -185,7 +185,7 @@ class Superincreasing(SageObject):
         """
         return self._seq == other._seq
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Comparing ``self`` to ``other``.
 
@@ -328,7 +328,7 @@ class Superincreasing(SageObject):
         else:
             return latex(self._seq)
 
-    def is_superincreasing(self, seq=None):
+    def is_superincreasing(self, seq=None) -> bool:
         r"""
         Determine whether or not ``seq`` is super-increasing.
 

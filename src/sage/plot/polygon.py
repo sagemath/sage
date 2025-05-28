@@ -83,7 +83,7 @@ class Polygon(GraphicPrimitive_xydata):
         self.ydata = ydata
         GraphicPrimitive_xydata.__init__(self, options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of Polygon primitive.
 

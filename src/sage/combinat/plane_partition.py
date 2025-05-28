@@ -628,13 +628,13 @@ class PlanePartition(ClonableArray,
 
         ret = "\\begin{tikzpicture}\n"
 
-        def add_topside(i, j, k):
+        def add_topside(i, j, k) -> str:
             return "\\draw[fill={},shift={{(210:{})}},shift={{(-30:{})}},shift={{(90:{})}}]\n(0,0)--(-30:1)--(0,-1)--(210:1)--(0,0);\n".format(colors[0], i, j, k)
 
-        def add_leftside(j, k, i):
+        def add_leftside(j, k, i) -> str:
             return "\\draw[fill={},shift={{(210:{})}},shift={{(-30:{})}},shift={{(90:{})}}]\n(0,0)--(0,1)--(30:1)--(-30:1)--(0,0);\n".format(colors[1], i, j, k)
 
-        def add_rightside(k, i, j):
+        def add_rightside(k, i, j) -> str:
             return "\\draw[fill={},shift={{(210:{})}},shift={{(-30:{})}},shift={{(90:{})}}]\n(0,0)--(210:1)--(150:1)--(0,1)--(0,0);\n".format(colors[2], i, j, k)
         funcs = [add_topside, add_rightside, add_leftside]
         tableaux = [self.z_tableau(), self.y_tableau(), self.x_tableau()]

@@ -2672,7 +2672,7 @@ class EmptyOldstyleClass:
         """
         return "EmptyOldstyleClass"
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Produce a predictable hash value for EmptyOldstyleClass.
 

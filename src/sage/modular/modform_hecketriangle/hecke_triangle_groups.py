@@ -110,7 +110,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         FinitelyGeneratedMatrixGroup_generic.__init__(self, ZZ(2), self._base_ring, [S, T])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -122,7 +122,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         """
         return f"Hecke triangle group for n = {self._n}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 

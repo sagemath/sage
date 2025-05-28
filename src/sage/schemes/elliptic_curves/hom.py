@@ -78,7 +78,7 @@ class EllipticCurveHom(Morphism):
             self._codomain._fetch_cached_order(self._domain)
             self._domain._fetch_cached_order(self._codomain)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a textual representation of what kind of morphism
         this is. Used by :meth:`Morphism._repr_`.
@@ -917,7 +917,7 @@ class EllipticCurveHom(Morphism):
             return False
         return self.separable_degree().is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Check whether this elliptic-curve morphism is the zero map.
 

@@ -291,7 +291,7 @@ class FiniteDimensionalHighestWeightCrystal_TypeE(TensorProductOfCrystals):
         Parent.__init__(self, category=ClassicalCrystals())
         self.module_generators = [self.module_generator()]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -117,7 +117,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
         self._prec = prec
         self._series_ring = PowerSeriesRing(QQ, 'q', default_prec=self._prec)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

@@ -110,7 +110,7 @@ class FunctionFieldPlace(Element):
         """
         return hash((self.function_field(), self._prime))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 
@@ -351,7 +351,7 @@ class PlaceSet(UniqueRepresentation, Parent):
 
         self._field = field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the place.
 

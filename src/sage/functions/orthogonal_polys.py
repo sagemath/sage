@@ -688,7 +688,7 @@ class Func_chebyshev_T(ChebyshevFunction):
                                                     sympy='chebyshevt',
                                                     giac='tchebyshev1'))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -697,7 +697,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         """
         return r"T_n"
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         TESTS::
 
@@ -1008,7 +1008,7 @@ class Func_chebyshev_U(ChebyshevFunction):
                                                     sympy='chebyshevu',
                                                     giac='tchebyshev2'))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1017,7 +1017,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         """
         return r"U_n"
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         TESTS::
 

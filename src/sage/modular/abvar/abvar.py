@@ -575,7 +575,7 @@ class ModularAbelianVariety_abstract(Parent):
         """
         return [S.newform(names=names) for S in self.decomposition()]
 
-    def newform_label(self):
+    def newform_label(self) -> str:
         """
         Return the label [level][isogeny class][group] of the newform
         `f` such that this abelian variety is isogenous to the newform
@@ -813,7 +813,7 @@ class ModularAbelianVariety_abstract(Parent):
         else:
             return homspace.Homspace(self, B, cat)
 
-    def in_same_ambient_variety(self, other):
+    def in_same_ambient_variety(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are abelian subvarieties of
         the same ambient product Jacobian.

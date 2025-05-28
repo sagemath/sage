@@ -199,7 +199,7 @@ class QuiverHomSpace(Homset):
         """
         return self()
 
-    def _coerce_map_from_(self, other):
+    def _coerce_map_from_(self, other) -> bool:
         r"""
         A coercion exists if and only if ``other`` is also a
         :class:`QuiverHomSpace` and there is a coercion from the
@@ -345,7 +345,7 @@ class QuiverHomSpace(Homset):
         except (TypeError, ValueError):
             return super().__call__(*data, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Default string representation.
 

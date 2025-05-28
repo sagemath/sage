@@ -355,7 +355,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         # register translations between SymbolicRing and FriCAS Expression
         self._register_symbols()
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing FriCAS on your computer.
 
@@ -371,7 +371,7 @@ package within SageMath, or install FriCAS separately, see
 http://fricas.sourceforge.net.
 """
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit FriCAS.
 
@@ -473,7 +473,7 @@ http://fricas.sourceforge.net.
                 sage.misc.persist.save(v, self._COMMANDS_CACHE)
             return names
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         """
         Return the FriCAS command to read the file ``filename``.
 
@@ -820,7 +820,7 @@ http://fricas.sourceforge.net.
         """
         return self.get_string('sageprint((%s)::InputForm)' % str(var))
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the symbol used for setting a variable in FriCAS.
 
@@ -834,7 +834,7 @@ http://fricas.sourceforge.net.
         """
         return ":="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality testing logical symbol in FriCAS.
 
@@ -853,7 +853,7 @@ http://fricas.sourceforge.net.
         """
         return "="
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the string used for ``True`` in FriCAS.
 
@@ -864,7 +864,7 @@ http://fricas.sourceforge.net.
         """
         return "true"
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the string used for ``False`` in FriCAS.
 
@@ -875,7 +875,7 @@ http://fricas.sourceforge.net.
         """
         return "false"
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         """
         Return the string used for False in FriCAS.
 
@@ -886,7 +886,7 @@ http://fricas.sourceforge.net.
         """
         return '~='
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

@@ -232,7 +232,7 @@ class MSymbol(SageObject):
         """
         return "M-symbol (%s: %s) of level %s" % (self.__c, self.__d, self.__N)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of ``self``.
 

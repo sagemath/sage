@@ -627,7 +627,7 @@ class DifferentialsSpace(UniqueRepresentation, Parent):
         self._gen_base_differential = F.gen()
         self._gen_derivative_inv = ~der(F.gen())  # used for fast computation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the space of differentials.
 
@@ -790,7 +790,7 @@ class DifferentialsSpaceInclusion(Morphism):
         s += "\n  To:   {}".format(self.codomain())
         return s
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True``, since the inclusion morphism is injective.
 

@@ -587,7 +587,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         raise AttributeError("%s has no attribute %s" % (type(self), attr))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -628,7 +628,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
             return self._base
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Two generators are considered equal if they agree on all parameters
         passed to them during construction.
@@ -651,7 +651,7 @@ class SR_generic(MPolynomialSystemGenerator):
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return whether ``self`` is not equal to ``other``.
 

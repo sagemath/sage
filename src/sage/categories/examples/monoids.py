@@ -96,7 +96,7 @@ class FreeMonoid(FreeSemigroup):
         self.alphabet = alphabet
         Parent.__init__(self, category=Monoids())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

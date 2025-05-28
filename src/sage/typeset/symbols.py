@@ -115,7 +115,7 @@ class CompoundSymbol(SageObject):
         self.top_2 = top_2 or top
         self.bottom_2 = bottom_2 or bottom
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 

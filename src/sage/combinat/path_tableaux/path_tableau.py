@@ -557,7 +557,7 @@ class CylindricalDiagram(SageObject):
         """
         return isinstance(other, CylindricalDiagram) and self.diagram == other.diagram
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check inequality.
 

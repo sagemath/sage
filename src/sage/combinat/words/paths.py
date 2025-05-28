@@ -458,7 +458,7 @@ class WordPaths_all(FiniteWords):
                                  self.vector_space() == other.vector_space() and
                                  self.letters_to_steps() == other.letters_to_steps())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 

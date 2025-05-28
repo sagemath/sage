@@ -1161,7 +1161,7 @@ class NormalFormGame(SageObject, MutableMapping):
                     g[strategy_profile][i] = sgn * Decimal(float(self.utilities[strategy_profile][i]))
         return g
 
-    def is_constant_sum(self):
+    def is_constant_sum(self) -> bool:
         r"""
         Check if the game is constant sum.
 
@@ -2036,7 +2036,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         return sorted(equilibria)
 
-    def _row_cond_dominance(self, p1_sup, p2_sup, matrix):
+    def _row_cond_dominance(self, p1_sup, p2_sup, matrix) -> bool:
         r"""
         Check if any row strategies of a sub matrix defined
         by a given pair of supports are conditionally dominated.
@@ -2164,7 +2164,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
         return result
 
-    def _is_NE(self, a, b, p1_support, p2_support, M1, M2):
+    def _is_NE(self, a, b, p1_support, p2_support, M1, M2) -> bool:
         r"""
         For vectors that obey indifference for a given support pair,
         checks if it corresponds to a Nash equilibria (support is obeyed and

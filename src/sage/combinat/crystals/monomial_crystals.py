@@ -240,7 +240,7 @@ class NakajimaMonomial(Element):
             return self._Y == other._Y
         return self._Y == other
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         EXAMPLES::
 
@@ -255,7 +255,7 @@ class NakajimaMonomial(Element):
         """
         return not self == other
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         r"""
         EXAMPLES::
 
@@ -916,7 +916,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
                     del Y[k]
         return self.element_class(self, Y, A)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1226,7 +1226,7 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         gen = {(i,0): c for i,c in La}
         self.module_generators = (self.element_class(self, gen, {}),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

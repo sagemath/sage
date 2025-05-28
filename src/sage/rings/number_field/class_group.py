@@ -84,7 +84,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             element = parent._ideal_log(ideal)
         AbelianGroupWithValuesElement.__init__(self, parent, element, ideal)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this fractional ideal class.
 
@@ -382,7 +382,7 @@ class SFractionalIdealClass(FractionalIdealClass):
         2
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the `S`-ideal class of this fractional ideal.
 

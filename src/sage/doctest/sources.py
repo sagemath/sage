@@ -176,7 +176,7 @@ class DocTestSource:
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -1338,7 +1338,7 @@ class TexSource(SourceLanguage):
             return False
         return bool(begin_verb.match(line) or begin_lstli.match(line))
 
-    def ending_docstring(self, line, check_skip=True):
+    def ending_docstring(self, line, check_skip=True) -> bool:
         r"""
         Determines whether the input line ends a docstring.
 

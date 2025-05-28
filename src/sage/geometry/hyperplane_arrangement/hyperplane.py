@@ -162,7 +162,7 @@ class Hyperplane(LinearExpression):
         """
         super().__init__(parent, coefficients, constant)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -176,7 +176,7 @@ class Hyperplane(LinearExpression):
         """
         return 'Hyperplane {0}'.format(self._repr_linear())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation.
 
@@ -691,7 +691,7 @@ class AmbientVectorSpace(LinearExpressionModule):
 
     Element = Hyperplane
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

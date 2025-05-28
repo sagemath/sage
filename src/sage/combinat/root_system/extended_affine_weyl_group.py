@@ -774,7 +774,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         """
         return self._cartan_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A string representing ``self``.
 

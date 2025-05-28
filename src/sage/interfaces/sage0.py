@@ -259,7 +259,7 @@ class Sage(ExtraTabCompletion, Expect):
         """
         return reduce_load_Sage, tuple([])
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -452,7 +452,7 @@ class SageElement(ExpectElement):
         """
         return None
 
-    def _repr_option(self, option):
+    def _repr_option(self, option) -> bool:
         """
         Disable repr option.
 

@@ -175,7 +175,7 @@ class Sha(SageObject):
             return False
         return self.E == other.E
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

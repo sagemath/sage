@@ -118,7 +118,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
         self._base_ring = base_ring
         super().__init__(domain, codomain)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -131,7 +131,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
         """
         return 'Spec functor from {} to {}'.format(self.domain(), self.codomain())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 

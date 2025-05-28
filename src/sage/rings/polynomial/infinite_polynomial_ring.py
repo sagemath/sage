@@ -444,7 +444,7 @@ class InfiniteGenDict:
             return self._D == other._D
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -754,7 +754,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         """
         return "Infinite polynomial ring in {} over {}".format(", ".join(self._names), self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1098,7 +1098,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
     # Basic Ring Properties
     # -- some stuff that is useful for quotient rings etc.
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``False``, since polynomial rings in infinitely many
         variables are never Noetherian rings.
@@ -1128,7 +1128,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         """
         return False
 
-    def is_field(self, *args, **kwds):
+    def is_field(self, *args, **kwds) -> bool:
         """
         Return ``False`` since Infinite Polynomial Rings are never fields.
 
@@ -1418,7 +1418,7 @@ class InfinitePolynomialGen(SageObject):
             return False
         return (self._name, self._parent) == (other._name, other._parent)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

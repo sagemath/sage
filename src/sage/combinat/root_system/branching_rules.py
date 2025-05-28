@@ -1063,7 +1063,7 @@ class BranchingRule(SageObject):
         except Exception:
             return self._f(x.to_vector())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Two branching rules with the same source and target Cartan types are
         considered equal if they are the same as mappings from the weight
@@ -1113,7 +1113,7 @@ class BranchingRule(SageObject):
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test inequality.
 

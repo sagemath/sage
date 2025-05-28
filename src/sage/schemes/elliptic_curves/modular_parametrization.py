@@ -126,7 +126,7 @@ class ModularParameterization:
 
         return self._E == other._E
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

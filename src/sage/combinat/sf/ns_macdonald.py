@@ -332,7 +332,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
                 res.append(((i, j), (ii, jj)))
         return res
 
-    def is_non_attacking(self):
+    def is_non_attacking(self) -> bool:
         """
         Return ``True`` if ``self`` is non-attacking.
 

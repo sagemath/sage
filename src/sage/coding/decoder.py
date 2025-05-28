@@ -200,7 +200,7 @@ class Decoder(SageObject):
         Str = str(C)
         return hash((C, Str)) ^ hash(Str) ^ hash(C)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test inequality of ``self`` and ``other``.
 

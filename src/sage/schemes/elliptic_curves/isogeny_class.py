@@ -178,7 +178,7 @@ class IsogenyClass_EC(SageObject):
             self._hash = hash(tuple(sorted(E.a_invariants() for E in self.curves)))
             return self._hash
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         The string representation of this isogeny class.
 

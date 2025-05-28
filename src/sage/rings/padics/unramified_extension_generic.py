@@ -54,7 +54,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         self._res_field = GF(self.prime_pow.pow_Integer_Integer(poly.degree()), name=names[1], modulus=poly.change_ring(poly.base_ring().residue_field()))
 
-    def _extension_type(self):
+    def _extension_type(self) -> str:
         """
         Return the type (``Unramified``, ``Eisenstein``) of this
         extension as a string, if any.
@@ -135,7 +135,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
         else:
             raise NotImplementedError
 
-    def discriminant(self, K=None):
+    def discriminant(self, K=None) -> int:
         """
         Return the discriminant of ``self`` over the subring `K`.
 
@@ -174,7 +174,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     #def is_abelian(self):
     #    return True
 
-    def is_galois(self, K=None):
+    def is_galois(self, K=None) -> bool:
         """
         Return ``True`` if this extension is Galois.
 

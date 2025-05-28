@@ -598,7 +598,7 @@ class RecognizableSeries(ModuleElement):
             fs = str
             times = '*'
 
-        def summand(w, c):
+        def summand(w, c) -> str:
             if c == 1:
                 return '[{w}]'.format(w=fs(w))
             return '{c}{times}[{w}]'.format(c=fr(c), times=times, w=fs(w))
@@ -917,7 +917,7 @@ class RecognizableSeries(ModuleElement):
         """
         return hash((self.mu, self.left, self.right))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return whether this recognizable series is equal to ``other``.
 
@@ -969,7 +969,7 @@ class RecognizableSeries(ModuleElement):
         except (TypeError, ValueError):
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this recognizable series is not equal to ``other``.
 
@@ -1824,7 +1824,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         """
         return self._minimize_results_
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this recognizable sequence
         space.

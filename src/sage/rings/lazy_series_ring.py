@@ -1958,7 +1958,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         Parent.__init__(self, base=base_ring, names=names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2003,7 +2003,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         coeff_stream = Stream_exact([R.one()], constant=R.zero(), order=1)
         return self.element_class(self, coeff_stream)
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of ``self``.
 
@@ -2530,7 +2530,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         return (CompletionFunctor(self._names, infinity),
                 self._laurent_poly_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Taylor series ring.
 
@@ -3221,7 +3221,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         self._laurent_poly_ring = basis
         self._internal_poly_ring = PolynomialRing(self._laurent_poly_ring, "DUMMY_VARIABLE", sparse=sparse)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the lazy symmetric functions ring.
 
@@ -3698,7 +3698,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         Parent.__init__(self, base=base_ring, names=names,
                         category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Dirichlet series ring.
 
@@ -3726,7 +3726,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         coeff_stream = Stream_exact([R.one()], constant=R.zero(), order=1)
         return self.element_class(self, coeff_stream)
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         """
         Return ``True`` if a coercion from ``S`` exists.
 

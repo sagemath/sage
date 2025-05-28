@@ -641,7 +641,7 @@ class LatinSquare:
 
         return None
 
-    def is_partial_latin_square(self):
+    def is_partial_latin_square(self) -> bool:
         """
         ``self`` is a partial latin square if it is an n by n matrix, and each
         symbol in [0, 1, ..., n-1] appears at most once in each row, and at
@@ -702,7 +702,7 @@ class LatinSquare:
 
         return True
 
-    def is_latin_square(self):
+    def is_latin_square(self) -> bool:
         """
         ``self`` is a latin square if it is an n by n matrix, and each symbol
         in [0, 1, ..., n-1] appears exactly once in each row, and exactly
@@ -1276,7 +1276,7 @@ class LatinSquare:
             if nr_to_find is not None and nr_found >= nr_to_find:
                 return
 
-    def contained_in(self, Q):
+    def contained_in(self, Q) -> bool:
         r"""
         Return ``True`` if ``self`` is a subset of `Q`.
 
@@ -2653,7 +2653,7 @@ def bitrade_from_group(a, b, c, G):
     return tau_to_bitrade(t1, t2, t3)
 
 
-def is_disjoint(T1, T2):
+def is_disjoint(T1, T2) -> bool:
     """
     The partial latin squares T1 and T2 are disjoint if T1[r, c] !=
     T2[r, c] or T1[r, c] == T2[r, c] == -1 for each cell [r, c].
@@ -2684,7 +2684,7 @@ def is_disjoint(T1, T2):
     return True
 
 
-def is_same_shape(T1, T2):
+def is_same_shape(T1, T2) -> bool:
     """
     Two partial latin squares T1, T2 have the same shape if T1[r, c] =
     0 if and only if T2[r, c] = 0.
@@ -2711,7 +2711,7 @@ def is_same_shape(T1, T2):
     return True
 
 
-def is_row_and_col_balanced(T1, T2):
+def is_row_and_col_balanced(T1, T2) -> bool:
     """
     Partial latin squares T1 and T2 are balanced if the symbols
     appearing in row r of T1 are the same as the symbols appearing in

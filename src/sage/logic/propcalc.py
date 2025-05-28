@@ -259,7 +259,7 @@ def get_formulas(*statements):
     return formulas
 
 
-def consistent(*formulas):
+def consistent(*formulas) -> bool:
     r"""
     Determine if the formulas are logically consistent.
 

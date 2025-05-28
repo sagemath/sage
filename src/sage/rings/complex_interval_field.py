@@ -243,7 +243,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         from sage.categories.pushout import AlgebraicClosureFunctor
         return (AlgebraicClosureFunctor(), self.real_field())
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         The complex interval field is not exact.
 
@@ -282,7 +282,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return ComplexIntervalField(prec)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a string representation of ``self`` in the Magma language.
 
@@ -400,7 +400,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return hash((self.__class__, self._prec))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test whether ``self`` is not equal to ``other``.
 
@@ -534,7 +534,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         return self._coerce_map_via( (self.real_field(),), S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -547,7 +547,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return "Complex Interval Field with %s bits of precision" % self._prec
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -614,7 +614,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         im = rand(*args, **kwds)
         return self.element_class(self, re, im)
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``True``, since the complex numbers are a field.
 
@@ -636,7 +636,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
         """
         return self.element_class(self, self.real_field().pi())
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         The number of generators of this complex (interval) field as an
         `\RR`-algebra.

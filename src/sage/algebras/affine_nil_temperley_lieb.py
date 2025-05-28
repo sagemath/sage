@@ -113,7 +113,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         """
         return self.weyl_group().one()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

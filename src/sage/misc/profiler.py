@@ -151,7 +151,7 @@ class Profiler:
 
         return "\n".join(output)
 
-    def print_last(self):
+    def print_last(self) -> str:
         """
         Print the last profiler step.
         """

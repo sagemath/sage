@@ -69,7 +69,7 @@ class LieAlgebraRegularVectorFields(InfinitelyGeneratedLieAlgebra, IndexedGenera
         InfinitelyGeneratedLieAlgebra.__init__(self, R, index_set=ZZ, category=cat)
         IndexedGenerators.__init__(self, ZZ, prefix='d', bracket='[')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -80,7 +80,7 @@ class LieAlgebraRegularVectorFields(InfinitelyGeneratedLieAlgebra, IndexedGenera
         """
         return "The Lie algebra of regular vector fields over {}".format(self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -217,7 +217,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
                                    bracket='[')
         self._p = p
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -230,7 +230,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
         """
         return "The {}-Witt Lie algebra over {}".format(self._p, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -461,7 +461,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
             return unicode_art(m)
         return unicode_art('d' + unicode_subscript(m))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -472,7 +472,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         """
         return "The Virasoro algebra over {}".format(self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -748,7 +748,7 @@ class ChargelessRepresentation(CombinatorialFreeModule):
         cat = Modules(R).WithBasis().Graded()
         CombinatorialFreeModule.__init__(self, R, ZZ, prefix='v', category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -988,7 +988,7 @@ class VermaModule(CombinatorialFreeModule):
         from sage.misc.latex import latex
         return ' '.join(latex(d[i]) for i in k) + ' v'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

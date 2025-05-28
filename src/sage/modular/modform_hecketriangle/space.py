@@ -991,7 +991,7 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
         return ()
 
     @cached_method
-    def dimension(self):
+    def dimension(self) -> int:
         r"""
         Return the dimension of ``self``.
         Since this is the zero module ``0`` is returned.

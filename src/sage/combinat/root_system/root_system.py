@@ -364,7 +364,7 @@ class RootSystem(UniqueRepresentation, SageObject):
         if self.ambient_space() is not None:
             TestSuite(self.ambient_space()).run(**options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

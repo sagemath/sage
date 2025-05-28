@@ -544,7 +544,7 @@ class WordMorphism(SageObject):
             return False
         return self._morph == other._morph and self._codomain == other._codomain
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether ``self`` is not equal to ``other``.
 
@@ -1308,7 +1308,7 @@ class WordMorphism(SageObject):
         """
         return len(self._morph) == 0
 
-    def is_erasing(self):
+    def is_erasing(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an erasing morphism, i.e. the image of a
         letter is the empty word.
@@ -1329,7 +1329,7 @@ class WordMorphism(SageObject):
                 return True
         return False
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Return ``True`` if ``self`` is the identity morphism.
 
@@ -1523,7 +1523,7 @@ class WordMorphism(SageObject):
         eig = self.incidence_matrix().eigenvectors_left()
         return max(eig, key=lambda x: abs(x[0]))[1][0]
 
-    def _check_primitive(self):
+    def _check_primitive(self) -> bool:
         r"""
         Return ``True`` if all the letters of the domain appear in all the
         images of letters of the domain.
@@ -2303,7 +2303,7 @@ class WordMorphism(SageObject):
                 d.append(m)
         return d
 
-    def is_in_classP(self, f=None):
+    def is_in_classP(self, f=None) -> bool:
         r"""
         Return ``True`` if ``self`` is in class `P` (or `f`-`P`).
 
@@ -2381,7 +2381,7 @@ class WordMorphism(SageObject):
 
         return False
 
-    def has_conjugate_in_classP(self, f=None):
+    def has_conjugate_in_classP(self, f=None) -> bool:
         r"""
         Return ``True`` if ``self`` has a conjugate in class `f`-`P`.
 
@@ -3360,7 +3360,7 @@ class WordMorphism(SageObject):
 
         return M.column_ambient_module(base_ring=QQ).subspace(basis)
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return whether this morphism is injective.
 

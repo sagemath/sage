@@ -79,7 +79,7 @@ class PieriFactors(UniqueRepresentation, Parent):
     - [Pon2010]_
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 
@@ -426,7 +426,7 @@ class PieriFactors_type_A(PieriFactors_finite_type):
         """
         return [self.W.from_reduced_word(range(self.W.cartan_type().n, 0, -1))]
 
-    def stanley_symm_poly_weight(self, w):
+    def stanley_symm_poly_weight(self, w) -> int:
         r"""
         EXAMPLES::
 
@@ -799,7 +799,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
                                  l - len(self._min_support)):
                 yield self[self._min_support.union(extra)]
 
-    def stanley_symm_poly_weight(self, w):
+    def stanley_symm_poly_weight(self, w) -> int:
         r"""
         Weight used in computing (affine) Stanley symmetric polynomials
         for affine type A.

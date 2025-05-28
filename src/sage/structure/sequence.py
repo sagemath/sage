@@ -823,7 +823,7 @@ class Sequence_generic(SageObject, list):
         except AttributeError:
             return False
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         """
         EXAMPLES::
 

@@ -108,7 +108,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
                 raise ArithmeticError("dual_free_module must have the same rank as submodule")
             self.dual_free_module.set_cache(dual_free_module)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

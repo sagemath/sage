@@ -1190,7 +1190,7 @@ class MiniCremonaDatabase(SQLDatabase):
         self.__largest_conductor__ = next(q)[0]
         return self.__largest_conductor__
 
-    def smallest_conductor(self):
+    def smallest_conductor(self) -> int:
         """
         The smallest conductor for which the database is complete: always 1.
 

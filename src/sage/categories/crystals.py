@@ -176,7 +176,7 @@ class Crystals(Category_singleton):
 
         # TODO: This could be moved to sets
         @cached_method
-        def is_embedding(self):
+        def is_embedding(self) -> bool:
             """
             Check if ``self`` is an injective crystal morphism.
 
@@ -211,7 +211,7 @@ class Crystals(Category_singleton):
             return True
 
         @cached_method
-        def is_strict(self):
+        def is_strict(self) -> bool:
             """
             Check if ``self`` is a strict crystal morphism.
 
@@ -1872,7 +1872,7 @@ class CrystalMorphism(Morphism):
 
         Morphism.__init__(self, parent)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Used internally in printing this morphism.
 
@@ -1938,7 +1938,7 @@ class CrystalMorphism(Morphism):
     #   we can't overwrite it with the category
     # TODO: This could be moved to sets
     @cached_method
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Check if ``self`` is a surjective crystal morphism.
 
@@ -2513,7 +2513,7 @@ class CrystalHomset(Homset):
         # TODO: Should we make one of the types of morphisms into the self.Element?
         Homset.__init__(self, X, Y, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

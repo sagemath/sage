@@ -131,7 +131,7 @@ class HyperbolicIsometry(Morphism):
         """
         return self._repr_type() + " in {0}\n{1}".format(self.domain().short_name(), self._matrix)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return the type of morphism.
 
@@ -673,7 +673,7 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
         """
         return bool(self._matrix.det() > 0)
 
-    def classification(self):  # UHP
+    def classification(self) -> str:  # UHP
         r"""
         Classify the hyperbolic isometry as elliptic, parabolic, or
         hyperbolic.

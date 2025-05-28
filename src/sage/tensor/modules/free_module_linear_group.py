@@ -515,7 +515,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
     #### End of monoid methods ####
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

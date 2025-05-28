@@ -79,7 +79,7 @@ class GaloisGroup_v1(SageObject):
         self.__group = group
         self.__number_field = number_field
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Compare two number field Galois groups.
 
@@ -115,7 +115,7 @@ class GaloisGroup_v1(SageObject):
             return True
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -690,7 +690,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         else:
             return len(K.automorphisms()) == d
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this Galois group.
 

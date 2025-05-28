@@ -171,7 +171,7 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
         """
         return richcmp((self._curve, self.prime_ideal()), (other._curve, other.prime_ideal()), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the closed point.
 

@@ -50,7 +50,7 @@ class Surface(UniqueRepresentation, Parent):
         self._edges = frozenset(bdy)
         Parent.__init__(self, category=CWComplexes().Finite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -112,7 +112,7 @@ class Surface(UniqueRepresentation, Parent):
             self._dim = dim
             self._name = name
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 

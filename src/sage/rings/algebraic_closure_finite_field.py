@@ -313,7 +313,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
 
     minimal_polynomial = minpoly
 
-    def is_square(self):
+    def is_square(self) -> bool:
         """
         Return ``True`` if ``self`` is a square.
 
@@ -578,7 +578,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         return ((self.base_ring(), self.variable_name(), self.category()) ==
                 (other.base_ring(), other.variable_name(), other.category()))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` and ``other`` are not equal.
 
@@ -634,7 +634,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         else:
             return self.element_class(self, x)
 
-    def _coerce_map_from_(self, other):
+    def _coerce_map_from_(self, other) -> bool:
         """
         Return ``True`` if elements of ``other`` can be coerced into
         ``self``.
@@ -652,7 +652,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         elif self._subfield(1).has_coerce_map_from(other):
             return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -665,7 +665,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         return 'Algebraic closure of %s' % self.base_ring()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 

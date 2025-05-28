@@ -227,7 +227,7 @@ class FunctionField_polymod(FunctionField):
             raise IndexError("there is only one generator")
         return self._gen
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of the function field over its base
         field. This is by definition 1.
@@ -560,7 +560,7 @@ class FunctionField_polymod(FunctionField):
             return ZZ(1)
         return self._polynomial.degree() * self.base_field().degree(base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the function field.
 
@@ -573,7 +573,7 @@ class FunctionField_polymod(FunctionField):
         """
         return f"Function field in {self.variable_name()} defined by {self._polynomial}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of the function field.
 
@@ -632,7 +632,7 @@ class FunctionField_polymod(FunctionField):
         """
         return self._polynomial
 
-    def is_separable(self, base=None):
+    def is_separable(self, base=None) -> bool:
         r"""
         Return whether this is a separable extension of ``base``.
 

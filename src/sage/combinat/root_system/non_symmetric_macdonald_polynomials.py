@@ -1351,7 +1351,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         T_Y = KL.demazure_lusztig_operators_on_classical(q, q1, q2, convention='dominant')
         CherednikOperatorsEigenvectors.__init__(self, T, T_Y, normalized=normalized)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

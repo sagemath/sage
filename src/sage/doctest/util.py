@@ -28,7 +28,7 @@ from time import time as walltime
 from contextlib import contextmanager
 
 
-def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
+def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False) -> str:
     """
     EXAMPLES::
 
@@ -415,7 +415,7 @@ class Timer:
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -733,7 +733,7 @@ class NestedName:
             return False
         return self.all == other.all
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 

@@ -325,7 +325,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
             base = "Homology"
         return base + " module of {} over {}".format(self._complex, self.base_ring())
 
-    def _repr_term(self, i):
+    def _repr_term(self, i) -> str:
         """
         Return ``'h_{i[0],i[1]}'`` for homology, ``'h^{i[0],i[1]}'`` for
         cohomology, for the basis element indexed by ``i``.
@@ -748,7 +748,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             category = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
         HomologyVectorSpaceWithBasis.__init__(self, base_ring, cell_complex, True, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

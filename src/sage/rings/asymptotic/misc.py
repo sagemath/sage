@@ -697,7 +697,7 @@ def bidirectional_merge_sorted(A, B, key=None):
     return (resultA, resultB)
 
 
-def log_string(element, base=None):
+def log_string(element, base=None) -> str:
     r"""
     Return a representation of the log of the given element to the
     given base.

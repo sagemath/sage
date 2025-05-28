@@ -286,7 +286,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             self._gens = tuple([self.element_class(g, self, check=False)
                                 for g in gens])
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self, gap=None) -> str:
         """
         Return the string used to create this group in GAP.
 
@@ -333,7 +333,7 @@ class SymmetricGroup(PermutationGroup_symalt):
             return richcmp((self._deg, self._domain), (x._deg, x._domain), op)
         return super().__richcmp__(x, op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -759,7 +759,7 @@ class AlternatingGroup(PermutationGroup_symalt):
         """
         PermutationGroup_symalt.__init__(self, gap_group='AlternatingGroup(%s)' % len(domain), domain=domain)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -768,7 +768,7 @@ class AlternatingGroup(PermutationGroup_symalt):
         """
         return "Alternating group of order %s!/2 as a permutation group" % self.degree()
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self, gap=None) -> str:
         """
         Return the string used to create this group in GAP.
 
@@ -825,7 +825,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         gens = tuple(range(1, n+1))
         PermutationGroup_generic.__init__(self, [gens], n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -834,7 +834,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         """
         return "Cyclic group of order %s as a permutation group" % self.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if this group is commutative.
 
@@ -846,7 +846,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         """
         return True
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` if this group is abelian.
 
@@ -1033,7 +1033,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
         PermutationGroup_generic.__init__(self, gens=[a, x])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1042,7 +1042,7 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return "Dicyclic group of order %s as a permutation group" % self.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         r"""
         Return ``True`` if this group is commutative.
 
@@ -1054,7 +1054,7 @@ class DiCyclicGroup(PermutationGroup_unique):
         """
         return False
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         r"""
         Return ``True`` if this group is abelian.
 
@@ -1101,7 +1101,7 @@ class KleinFourGroup(PermutationGroup_unique):
         gens = [(1, 2), (3, 4)]
         PermutationGroup_generic.__init__(self, gens)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1140,7 +1140,7 @@ class JankoGroup(PermutationGroup_unique):
         id = 'AtlasGroup("J%s")' % n
         PermutationGroup_generic.__init__(self, gap_group=id)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1170,7 +1170,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
         libgap.load_package("atlasrep")
         PermutationGroup_generic.__init__(self, gap_group='AtlasGroup("Suz")')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1241,7 +1241,7 @@ class QuaternionGroup(DiCyclicGroup):
         """
         DiCyclicGroup.__init__(self, 2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1538,7 +1538,7 @@ class DihedralGroup(PermutationGroup_unique):
 
         PermutationGroup_generic.__init__(self, gens)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1682,7 +1682,7 @@ class SplitMetacyclicGroup(PermutationGroup_unique):
             point = next
         PermutationGroup_unique.__init__(self, gens=[x, y])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1791,7 +1791,7 @@ class SemidihedralGroup(PermutationGroup_unique):
             k = next
         PermutationGroup_unique.__init__(self, gens=[x, y])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1841,7 +1841,7 @@ class MathieuGroup(PermutationGroup_unique):
         id = 'MathieuGroup(%s)' % n
         PermutationGroup_generic.__init__(self, gap_group=id)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1949,7 +1949,7 @@ class TransitiveGroup(PermutationGroup_unique):
         """
         return self._d
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2035,7 +2035,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
     # We override the __call__ as the elements are not instances of Element
     __call__ = DisjointUnionEnumeratedSets._element_constructor_facade
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2102,7 +2102,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         self._degree = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2432,7 +2432,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
                                              Family(NonNegativeIntegers(),
                                                     PrimitiveGroups))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -2505,7 +2505,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         self._degree = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -2999,7 +2999,7 @@ class PSU(PermutationGroup_pug):
         self._field_of_definition = GF(q**2, name)
         self._n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3049,7 +3049,7 @@ class PGU(PermutationGroup_pug):
         self._field_of_definition = GF(q**2, name)
         self._n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3288,7 +3288,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
 
         PermutationGroup_generic.__init__(self, gens, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3299,7 +3299,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         """
         return "Complex reflection group G(%s, %s, %s) as a permutation group" % (self._m, self._p, self._n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3542,7 +3542,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         gap_permutation_group = self._gap_small_group.IsomorphismPermGroup().Image(self._gap_small_group)
         PermutationGroup_generic.__init__(self, gap_group=gap_permutation_group)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

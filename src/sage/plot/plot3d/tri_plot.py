@@ -49,7 +49,7 @@ class Triangle:
         self._c = c
         self._color = color
 
-    def str(self):
+    def str(self) -> str:
         """
         Return a string representation of an instance of the Triangle
         class of the form
@@ -121,7 +121,7 @@ class SmoothTriangle(Triangle):
         self._dc = dc
         self._color = color
 
-    def str(self):
+    def str(self) -> str:
         """
         Return a string representation of the SmoothTriangle of the form.
 

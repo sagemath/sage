@@ -95,7 +95,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
         R = self._A.base_ring()
         Parent.__init__(self, base=R, category=LieAlgebras(R))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -180,7 +180,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
                 return self.value == 0 and rhs == 0
             return self.parent() == rhs.parent() and self.value == rhs.value
 
-        def __ne__(self, rhs):
+        def __ne__(self, rhs) -> bool:
             """
             Check not-equals.
 

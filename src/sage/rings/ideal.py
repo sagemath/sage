@@ -285,7 +285,7 @@ class Ideal_generic(MonoidElement):
         self.__gens = gens
         MonoidElement.__init__(self, ring.ideal_monoid())
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Represent the list of generators.
 
@@ -325,7 +325,7 @@ class Ideal_generic(MonoidElement):
             return '\n(\n  %s\n)\n' % (',\n\n  '.join(L))
         return '(%s)' % (', '.join(L))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -548,7 +548,7 @@ class Ideal_generic(MonoidElement):
         # delegate: morphisms know how to apply themselves to ideals
         return phi(self)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -915,7 +915,7 @@ class Ideal_generic(MonoidElement):
         emb.sort()
         return emb
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` if the ideal is principal in the ring containing the
         ideal.
@@ -1270,7 +1270,7 @@ class Ideal_principal(Ideal_generic):
     #def __init__(self, ring, gen):
     #    Ideal_generic.__init__(self, ring, [gen])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1283,7 +1283,7 @@ class Ideal_principal(Ideal_generic):
         """
         return "Principal ideal (%s) of %s" % (self.gen(), self.ring())
 
-    def is_principal(self):
+    def is_principal(self) -> bool:
         r"""
         Return ``True`` if the ideal is principal in the ring containing the
         ideal. When the ideal construction is explicitly principal (i.e.
@@ -1371,7 +1371,7 @@ class Ideal_principal(Ideal_generic):
         except NotImplementedError:
             return self._contains_(self.ring()(x))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Very stupid constant hash function!
 
@@ -1713,7 +1713,7 @@ class Ideal_fractional(Ideal_generic):
 
     See :func:`Ideal()`.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

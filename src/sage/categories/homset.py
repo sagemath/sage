@@ -734,7 +734,7 @@ class Homset(Set_generic):
         """
         return Hom, (self._domain, self._codomain, self.__category, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1095,7 +1095,7 @@ class Homset(Set_generic):
                 and self._codomain == other._codomain
                 and self.__category == other.__category)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check for not-equality of ``self`` and ``other``.
 

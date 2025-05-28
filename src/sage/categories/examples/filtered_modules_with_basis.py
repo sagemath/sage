@@ -123,7 +123,7 @@ class FilteredPartitionModule(CombinatorialFreeModule):
         """
         return t.size()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation of ``self``.
 

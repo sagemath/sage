@@ -533,7 +533,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
     #### End of methods required for any Parent
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

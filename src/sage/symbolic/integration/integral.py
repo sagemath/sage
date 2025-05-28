@@ -167,7 +167,7 @@ class IndefiniteIntegral(BuiltinFunction):
         else:
             return f.derivative(diff_param).integral(x)
 
-    def _print_latex_(self, f, x):
+    def _print_latex_(self, f, x) -> str:
         r"""
         EXAMPLES::
 
@@ -341,7 +341,7 @@ class DefiniteIntegral(BuiltinFunction):
             ans -= f.subs(x == a) * a.diff(diff_param)
         return ans
 
-    def _print_latex_(self, f, x, a, b):
+    def _print_latex_(self, f, x, a, b) -> str:
         r"""
         Convert this integral to LaTeX notation.
 

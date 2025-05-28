@@ -109,7 +109,7 @@ class GenericSpeciesStructure(CombinatorialObject):
             return False
         return self._list == other._list and self.labels() == other.labels()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -183,7 +183,7 @@ class GenericSpeciesStructure(CombinatorialObject):
         else:
             return i
 
-    def is_isomorphic(self, x):
+    def is_isomorphic(self, x) -> bool:
         """
         EXAMPLES::
 

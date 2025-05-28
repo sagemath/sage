@@ -201,7 +201,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             del O['hue']
         return O
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this graphics primitive.
 

@@ -65,7 +65,7 @@ class PSage(Sage):
         self._number = number
         number += 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -163,7 +163,7 @@ class PSage(Sage):
         self._send_nowait(cmd)
         time.sleep(0.02)
 
-    def _send_nowait(self, x):
+    def _send_nowait(self, x) -> str:
         if x.find('\n') != -1:
             raise ValueError("x must not have any newlines")
         # Now we want the client Python process to execute two things.

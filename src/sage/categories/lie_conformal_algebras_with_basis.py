@@ -122,7 +122,7 @@ class LieConformalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: C.Graded().Super() is C.Super().Graded()                                  # needs sage.rings.number_field
                     True
                 """
-                def _repr_object_names(self):
+                def _repr_object_names(self) -> str:
                     """
                     The names of the objects of ``self``.
 

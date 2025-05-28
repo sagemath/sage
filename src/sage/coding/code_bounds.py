@@ -182,7 +182,7 @@ from .delsarte_bounds import (delsarte_bound_hamming_space,
 lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
-def _check_n_q_d(n, q, d, field_based=True):
+def _check_n_q_d(n, q, d, field_based=True) -> bool:
     r"""
     Check that the length `n`, alphabet size `q` and minimum distance `d` type
     check and make sense for a code over a field.

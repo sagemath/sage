@@ -1085,7 +1085,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             Projective Space of dimension 2 over Rational Field
         """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

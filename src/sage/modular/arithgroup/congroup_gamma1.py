@@ -114,7 +114,7 @@ class Gamma1_class(GammaH_class):
         """
         GammaH_class.__init__(self, level, [])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -261,7 +261,7 @@ class Gamma1_class(GammaH_class):
         # don't need to check d == 1 mod N as this is automatic from det
         return ((a % N == 1) and (c % N == 0))
 
-    def nu2(self):
+    def nu2(self) -> int:
         r"""
         Calculate the number of orbits of elliptic points of order 2 for this
         subgroup `\Gamma_1(N)`. This is known to be 0 if N > 2.
@@ -281,7 +281,7 @@ class Gamma1_class(GammaH_class):
         elif N == 2 or N == 1:
             return 1
 
-    def nu3(self):
+    def nu3(self) -> int:
         r"""
         Calculate the number of orbits of elliptic points of order 3 for this
         subgroup `\Gamma_1(N)`. This is known to be 0 if N > 3.

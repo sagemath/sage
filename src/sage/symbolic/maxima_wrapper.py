@@ -147,7 +147,7 @@ class MaximaWrapper(SageObject):
         """
         return (MaximaWrapper, (self._exp,))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

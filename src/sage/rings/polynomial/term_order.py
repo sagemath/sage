@@ -1961,7 +1961,7 @@ class TermOrder(SageObject):
             and self._matrix == other._matrix
             and self._singular_ringorder_column == other._singular_ringorder_column)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are not equal.
 
@@ -2142,7 +2142,7 @@ class TermOrder(SageObject):
         """
         return self._name == 'block'
 
-    def is_weighted_degree_order(self):
+    def is_weighted_degree_order(self) -> bool:
         """
         Return ``True`` if ``self`` is a weighted degree term order.
 

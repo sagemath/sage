@@ -169,7 +169,7 @@ import sage.geometry.abc
 
 
 class SetOfAllLatticePolytopesClass(Set_generic):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -845,7 +845,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
         """
         raise NotImplementedError("use nef_partitions(hodge_numbers=True)!")
 
-    def _contains(self, point, region='whole polytope'):
+    def _contains(self, point, region='whole polytope') -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -4349,7 +4349,7 @@ class NefPartition(SageObject, Hashable):
             self._hash = hash(self._vertex_to_part) + hash(self._Delta_polar)
             return self._hash
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` with ``other``.
 

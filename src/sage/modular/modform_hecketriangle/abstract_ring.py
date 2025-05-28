@@ -102,7 +102,7 @@ class FormsRing_abstract(Parent):
         self.disp_prec(5)
         self.default_num_prec(53)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -115,7 +115,7 @@ class FormsRing_abstract(Parent):
 
         return "{}FormsRing(n={}) over {}".format(self._analytic_type.analytic_space_name(), self._group.n(), self._base_ring)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 

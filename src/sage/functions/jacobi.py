@@ -501,7 +501,7 @@ class Jacobi(BuiltinFunction):
                                (m - Integer(1)))*jacobi_dn(x, m)*jacobi_sn(x, m)/m) /
                         jacobi_sn(x, m))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -510,7 +510,7 @@ class Jacobi(BuiltinFunction):
         """
         return r"\operatorname{{{}}}".format(self.kind)
 
-    def _print_latex_(self, x, m):
+    def _print_latex_(self, x, m) -> str:
         r"""
         TESTS::
 
@@ -894,7 +894,7 @@ class InverseJacobi(BuiltinFunction):
                          (-Integer(1) + m) * inverse_jacobi_sn(x, m) - m * x *
                          jacobi_cd(inverse_jacobi_sn(x, m), m)))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -903,7 +903,7 @@ class InverseJacobi(BuiltinFunction):
         """
         return r"\operatorname{{arc{}}}".format(self.kind)
 
-    def _print_latex_(self, x, m):
+    def _print_latex_(self, x, m) -> str:
         r"""
         TESTS::
 
@@ -1129,7 +1129,7 @@ class JacobiAmplitude(BuiltinFunction):
                     jacobi('dn', x, m) - m * jacobi('cn', x, m) *
                     jacobi('sn', x, m)) / (Integer(2) * (Integer(-1) + m) * m)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -1138,7 +1138,7 @@ class JacobiAmplitude(BuiltinFunction):
         """
         return r"\operatorname{am}"
 
-    def _print_latex_(self, x, m):
+    def _print_latex_(self, x, m) -> str:
         r"""
         TESTS::
 

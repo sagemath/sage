@@ -175,7 +175,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
     options = RiggedConfigurations.options
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -1244,7 +1244,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
                                          category=category)
         self._assign_names(alg.variable_names())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -636,7 +636,7 @@ class Cores_length(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -701,7 +701,7 @@ class Cores_size(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

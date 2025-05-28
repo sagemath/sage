@@ -548,7 +548,7 @@ class LFunction(SageObject):
         # example, the default of 53 bits of precision would become 64.
         self._CCin = ComplexField(pari.bitprecision(self._RR(1)))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

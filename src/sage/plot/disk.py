@@ -137,7 +137,7 @@ class Disk(GraphicPrimitive):
                 'hue': 'The color given as a hue.',
                 'zorder': 'The layer level in which to draw'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of ``Disk`` primitive.
 

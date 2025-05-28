@@ -684,7 +684,7 @@ class R(ExtraTabCompletion, Interface):
         os.system("time echo '%s' | R --vanilla" % cmd)
         print("Please restart Sage in order to use '%s'." % package_name)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this R interface.
 
@@ -732,7 +732,7 @@ class R(ExtraTabCompletion, Interface):
                 raise AttributeError("Attribute {} is not allowed to start with an underscore.".format(attrname))
             return RFunction(self, attrname)
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         Return the R command (as a string) to read in a file named
         filename into the R interpreter.
@@ -761,7 +761,7 @@ class R(ExtraTabCompletion, Interface):
         """
         self.eval(self._read_in_file_command(filename))
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         EXAMPLES::
 
@@ -910,7 +910,7 @@ class R(ExtraTabCompletion, Interface):
         """
         return RElement
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the symbol that represents ``True`` in R.
 
@@ -925,7 +925,7 @@ class R(ExtraTabCompletion, Interface):
         # when you type 1==1.
         return "[1] TRUE"
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the symbol that represents ``True`` in R.
 
@@ -940,7 +940,7 @@ class R(ExtraTabCompletion, Interface):
         # when you type 1==2.
         return "[1] FALSE"
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -1003,7 +1003,7 @@ class R(ExtraTabCompletion, Interface):
         s = pages_for_topic[0].to_docstring()
         return HelpExpression(s)
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the symbol used in R for assignment, which is ' <- '.
 
@@ -1016,7 +1016,7 @@ class R(ExtraTabCompletion, Interface):
         """
         return " <- "
 
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         """
         Return the left delimiter for lists in R, which is 'c('.
 
@@ -1029,7 +1029,7 @@ class R(ExtraTabCompletion, Interface):
         """
         return "c("
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         """
         Return the right delimiter for lists in R, which is 'c('.
 
@@ -1937,7 +1937,7 @@ class RFunction(InterfaceFunction):
         return (isinstance(other, RFunction) and
             self._name == other._name)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         EXAMPLES::
 

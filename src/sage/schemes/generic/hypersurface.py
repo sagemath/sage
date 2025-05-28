@@ -112,7 +112,7 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
             ambient._coordinate_ring = R
         AlgebraicScheme_subscheme_projective.__init__(self, ambient, [poly])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this projective
         hypersurface.
@@ -200,7 +200,7 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
             ambient._coordinate_ring = R
         AlgebraicScheme_subscheme_affine.__init__(self, ambient, [poly])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this affine
         hypersurface.

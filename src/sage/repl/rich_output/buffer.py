@@ -147,7 +147,7 @@ class OutputBuffer(SageObject):
         except PermissionError:
             pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

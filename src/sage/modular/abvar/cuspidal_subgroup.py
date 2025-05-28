@@ -193,7 +193,7 @@ class CuspidalSubgroup(CuspidalSubgroup_generic):
         sage: t.order()
         6
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the cuspidal subgroup.
 
@@ -244,7 +244,7 @@ class RationalCuspSubgroup(CuspidalSubgroup_generic):
         sage: t.order()
         6
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the cuspidal subgroup.
 
@@ -295,7 +295,7 @@ class RationalCuspidalSubgroup(CuspidalSubgroup_generic):
         sage: t.order()
         6
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the cuspidal subgroup.
 

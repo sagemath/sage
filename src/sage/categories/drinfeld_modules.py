@@ -286,7 +286,7 @@ class DrinfeldModules(Category_over_base_ring):
         self._base_over_constants_field = base_field.over(Fq_to_K)
         super().__init__(base=base_field)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of the category.
 
@@ -306,7 +306,7 @@ class DrinfeldModules(Category_over_base_ring):
         return f'\\text{{Category{{ }}of{{ }}Drinfeld{{ }}modules{{ }}' \
                f'over{{ }}{latex(self._base_field)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the category.
 

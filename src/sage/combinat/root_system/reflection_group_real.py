@@ -219,7 +219,7 @@ def ReflectionGroup(*args, **kwds):
 
 
 @cached_function
-def is_chevie_available():
+def is_chevie_available() -> bool:
     r"""
     Test whether the GAP3 Chevie package is available.
 
@@ -278,7 +278,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
                                     hyperplane_index_set=hyperplane_index_set,
                                     reflection_index_set=reflection_index_set)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -846,7 +846,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
 
 class IrreducibleRealReflectionGroup(RealReflectionGroup, IrreducibleComplexReflectionGroup):
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

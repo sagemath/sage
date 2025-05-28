@@ -42,7 +42,7 @@ class AbelianGroupMap(Morphism):
         """
         Morphism.__init__(self, parent)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         return "AbelianGroup"
 
 
@@ -143,7 +143,7 @@ class AbelianGroupMorphism(Morphism):
         in_H = [libgap(h) for h in self.codomaingens]
         return G.GroupHomomorphismByImages(H, in_G, in_H)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         return "AbelianGroup"
 
     def kernel(self):

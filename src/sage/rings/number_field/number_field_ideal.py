@@ -181,7 +181,7 @@ class NumberFieldIdeal(Ideal_generic):
             self._hash = hash(self.pari_hnf())
         return self._hash
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -431,7 +431,7 @@ class NumberFieldIdeal(Ideal_generic):
         K = self.number_field()
         return [K(x, check=False) for x in K.pari_zk() * hnf]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of this number field ideal.
 
@@ -464,7 +464,7 @@ class NumberFieldIdeal(Ideal_generic):
         """
         return "Ideal %s of %s" % (self._repr_short(), self.number_field())
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Compact string representation of this ideal.  When the norm of
         the discriminant of the defining polynomial of the number field
@@ -1014,7 +1014,7 @@ class NumberFieldIdeal(Ideal_generic):
         """
         return self.is_prime() and not self.is_zero()
 
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal is prime.
 
@@ -1864,7 +1864,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         else:
             raise ValueError("gens must have a nonzero element (zero ideal is not a fractional ideal)")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of this number field fractional ideal.
 

@@ -52,7 +52,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 import sage.rings.infinity
 
 
-def has_finite_length(obj):
+def has_finite_length(obj) -> bool:
     """
     Return ``True`` if ``obj`` is known to have finite length.
 
@@ -700,7 +700,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
         return super().cardinality()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return boolean representing emptiness of the set.
 
@@ -880,7 +880,7 @@ class Set_object_enumerated(Set_object):
             # TODO: this very slow!
             return choice(self.list())
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``True`` as this is a finite set.
 
@@ -1319,7 +1319,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
         self._latex_op = latex_op
         Set_object.__init__(self, self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this set.
 
@@ -1597,7 +1597,7 @@ class Set_object_intersection(Set_object_binary):
             category = category.Enumerated()
         Set_object_binary.__init__(self, X, Y, "intersection", "\\cap", category=category)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return whether this set is finite.
 
@@ -1768,7 +1768,7 @@ class Set_object_difference(Set_object_binary):
             category = category.Infinite()
         Set_object_binary.__init__(self, X, Y, "difference", "-", category=category)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return whether this set is finite.
 

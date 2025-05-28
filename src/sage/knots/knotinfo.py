@@ -308,7 +308,7 @@ def knotinfo_int(string):
         return int(string)
 
 
-def knotinfo_bool(string):
+def knotinfo_bool(string) -> bool:
     r"""
     Preparse a string from the KnotInfo database representing a boolean.
 
@@ -1327,7 +1327,7 @@ class KnotInfoBase(Enum):
         return not knotinfo_bool(self[self.items.unoriented])
 
     @cached_method
-    def cosmetic_crossing_conjecture_verified(self):
+    def cosmetic_crossing_conjecture_verified(self) -> bool:
         r"""
         Return whether the Cosmetic Crossing Conjecture has been verified
         for ``self``.

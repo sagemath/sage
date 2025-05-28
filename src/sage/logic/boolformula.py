@@ -643,7 +643,7 @@ class BooleanFormula:
         table = self.truthtable().get_table_list()
         return any(row[-1] is True for row in table[1:])
 
-    def is_tautology(self):
+    def is_tautology(self) -> bool:
         r"""
         Determine if the formula is always ``True``.
 
@@ -672,7 +672,7 @@ class BooleanFormula:
         """
         return not (~self).is_satisfiable()
 
-    def is_contradiction(self):
+    def is_contradiction(self) -> bool:
         r"""
         Determine if the formula is always ``False``.
 

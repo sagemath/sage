@@ -1827,7 +1827,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         self._n_skeleton = (n, ans)
         return ans
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1839,7 +1839,7 @@ class QuotientOfSimplicialSet(PushoutOfSimplicialSets):
         """
         return 'Quotient: ({}/{})'.format(self.ambient(), self.subcomplex())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 
@@ -2437,7 +2437,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         self._basepoint = ans.base_point()
         return ans
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2448,7 +2448,7 @@ class ConeOfSimplicialSet(SimplicialSet_arbitrary, UniqueRepresentation):
         """
         return 'Cone of {}'.format(self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 
@@ -2627,7 +2627,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
         self._n_skeleton = (n, ans)
         return ans
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -2639,7 +2639,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
         """
         return 'Reduced cone of {}'.format(self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation.
 

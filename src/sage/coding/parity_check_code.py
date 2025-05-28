@@ -97,7 +97,7 @@ class ParityCheckCode(AbstractLinearCode):
                 and self.base_field() == other.base_field()
                 and self.dimension() == other.dimension())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -111,7 +111,7 @@ class ParityCheckCode(AbstractLinearCode):
                 % (self.length(), self.dimension(),
                    self.base_field().cardinality()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -124,7 +124,7 @@ class ParityCheckCode(AbstractLinearCode):
         return "[%s, %s] \\textnormal{parity-check code over } %s"\
                % (self.length(), self.dimension(), self.base_field()._latex_())
 
-    def minimum_distance(self):
+    def minimum_distance(self) -> int:
         r"""
         Return the minimum distance of ``self``.
 
@@ -244,7 +244,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
             raise ValueError("code has to be a parity-check code")
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -256,7 +256,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
         """
         return "Parity-check encoder for the %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

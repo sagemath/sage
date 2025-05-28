@@ -22,7 +22,7 @@ from sage.combinat.tableau import Tableaux
 lr_macro = Template(r'\def\lr#1{\multicolumn{1}{$bar@{\hspace{.6ex}}c@{\hspace{.6ex}}$bar}{\raisebox{-.3ex}{$$#1$$}}}')
 
 
-def tex_from_array(array, with_lines=True):
+def tex_from_array(array, with_lines=True) -> str:
     r"""
     Return a latex string for a two dimensional array of partition, composition
     or skew composition shape.
@@ -242,7 +242,7 @@ def tex_from_array(array, with_lines=True):
         return '{%s\n%s\n}' % (lr, tex_from_skew_array(array[::-1], with_lines, align='t'))
 
 
-def tex_from_array_tuple(a_tuple, with_lines=True):
+def tex_from_array_tuple(a_tuple, with_lines=True) -> str:
     r"""
     Return a latex string for a tuple of two dimensional array of partition,
     composition or skew composition shape.

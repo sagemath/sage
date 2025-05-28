@@ -29,7 +29,7 @@ class POVRay:
     def __repr__(self) -> str:
         return 'POV-Ray The Persistence of Vision Ray Tracer'
 
-    def __call__(self, pov_file, outfile='sage.ppm', block=True, **kwargs):
+    def __call__(self, pov_file, outfile='sage.ppm', block=True, **kwargs) -> str:
         if not os.path.isfile(pov_file):
             return "%s not found" % (pov_file)
 

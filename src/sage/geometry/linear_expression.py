@@ -185,7 +185,7 @@ class LinearExpression(ModuleElement):
             d['b'] = self._const
         return d
 
-    def _repr_vector(self, variable='x'):
+    def _repr_vector(self, variable='x') -> str:
         """
         Return a string representation.
 
@@ -732,7 +732,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             pass
         return super()._coerce_map_from_(P)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

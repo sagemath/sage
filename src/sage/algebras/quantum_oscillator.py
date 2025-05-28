@@ -173,7 +173,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         return "Quantum oscillator algebra with q={} over {}".format(
             self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -531,7 +531,7 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
         """
         return "Fock space representation of {}".format(self._O)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

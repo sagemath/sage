@@ -562,7 +562,7 @@ class CycleIndexSeriesRing(LazySymmetricFunctions):
         p = SymmetricFunctions(base_ring).power()
         super().__init__(p)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -1598,7 +1598,7 @@ class PointwiseInverseFunction(SageObject):
         return (self.__class__ is other.__class__
                 and self._pointwise_inverse == other._pointwise_inverse)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this function is not equal to ``other``.
 

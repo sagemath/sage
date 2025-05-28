@@ -60,7 +60,7 @@ class NoetherianRings(Category):
         return [CommutativeRings()]
 
     class ParentMethods:
-        def is_noetherian(self, proof=True):
+        def is_noetherian(self, proof=True) -> bool:
             r"""
             Return ``True``, since this in an object of the category
             of Noetherian rings.

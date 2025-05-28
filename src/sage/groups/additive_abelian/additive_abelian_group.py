@@ -229,7 +229,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
         """
         FGP_Module_class.__init__(self, cover, relations)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this group.
 
@@ -361,7 +361,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
                 return ann
             return ZZ(0)
 
-    def is_multiplicative(self):
+    def is_multiplicative(self) -> bool:
         r"""
         Return ``False`` since this is an additive group.
 

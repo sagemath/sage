@@ -429,7 +429,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         x = P.base_ring().gen()
         return (a(x), y - b(x))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Mumford divisor.
 
@@ -456,7 +456,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         a, b = self._printing_polys()
         return "(%s, %s)" % (a, b)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX string representing this Mumford divisor.
 

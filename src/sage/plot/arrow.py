@@ -107,7 +107,7 @@ class CurveArrow(GraphicPrimitive):
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively."}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Text representation of an arrow graphics primitive.
 
@@ -312,7 +312,7 @@ class Arrow(GraphicPrimitive):
         options.update(kwds)
         return line3d([(self.xtail, self.ytail, ztail), (self.xhead, self.yhead, zhead)], arrow_head=True, **options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Text representation of an arrow graphics primitive.
 

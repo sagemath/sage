@@ -653,7 +653,7 @@ class AlternatingSignMatrix(Element,
         P = self.parent()
         return [P.from_height_function(hfun) for hfun in cyc]
 
-    def ASM_compatible(self, B):
+    def ASM_compatible(self, B) -> bool:
         r"""
         Return ``True`` if ``self`` and ``B`` are compatible alternating sign
         matrices in the sense of [EKLP1992]_. (If ``self`` is of size `n`, ``B``
@@ -1059,7 +1059,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         self._matrix_space = MatrixSpace(ZZ, n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1670,7 +1670,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         """
         GelfandTsetlinPatternsTopRow.__init__(self, tuple(reversed(range(1, n+1))), True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation.
 

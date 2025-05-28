@@ -94,7 +94,7 @@ class LFSRCipher(SymmetricKeyCipher):
         Kelt = lfsr_sequence(poly.list(), IS, N)
         return B([ (Melt[i]+int(Kelt[i])) % n for i in range(N) ])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this LFSR cipher.
 
@@ -276,7 +276,7 @@ class ShrinkingGeneratorCipher(SymmetricKeyCipher):
             IS_2 = DStream[r-n-1:r-n+n2]
         return B(CStream)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this shrinking generator cipher.
 

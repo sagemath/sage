@@ -471,7 +471,7 @@ class FanMorphism(FreeModuleMorphism):
                                  lattice=self.codomain(),
                                  discard_faces=True, check=check)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the `\LaTeX` representation of ``self``.
 
@@ -542,7 +542,7 @@ class FanMorphism(FreeModuleMorphism):
                 ray_index_map[i] = sigma_p.ambient_ray_indices()[0]
         return tuple(ray_index_map)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -1129,7 +1129,7 @@ class FanMorphism(FreeModuleMorphism):
         return self.index() == 1
 
     @cached_method
-    def is_bundle(self):
+    def is_bundle(self) -> bool:
         r"""
         Check if ``self`` is a bundle.
 
@@ -1224,7 +1224,7 @@ class FanMorphism(FreeModuleMorphism):
         return True
 
     @cached_method
-    def is_fibration(self):
+    def is_fibration(self) -> bool:
         r"""
         Check if ``self`` is a fibration.
 
@@ -1381,7 +1381,7 @@ class FanMorphism(FreeModuleMorphism):
                    for d in range(1, Sigma.dim() + 1) for sigma in Sigma(d))
 
     @cached_method
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Check if ``self`` is surjective.
 

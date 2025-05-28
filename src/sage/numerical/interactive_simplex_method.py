@@ -790,7 +790,7 @@ class InteractiveLPProblem(SageObject):
         lines.append(r"\end{array}")
         return "\n".join(lines)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1188,7 +1188,7 @@ class InteractiveLPProblem(SageObject):
             eqns = [[R(_) for _ in eqn] for eqn in eqns]
         return Polyhedron(ieqs=ieqs, eqns=eqns, base_ring=R)
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         r"""
         Check if ``self`` is bounded.
 
@@ -2728,7 +2728,7 @@ class LPAbstractDictionary(SageObject):
         else:
             raise ValueError("direction must be either primal or dual")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

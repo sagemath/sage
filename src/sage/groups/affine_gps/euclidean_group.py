@@ -193,7 +193,7 @@ class EuclideanGroup(AffineGroup):
         if not A.is_unitary():
             raise TypeError('A must be orthogonal (unitary)')
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -203,7 +203,7 @@ class EuclideanGroup(AffineGroup):
         """
         return "\\mathrm{E}_{%s}(%s)" % (self.degree(), self.base_ring()._latex_())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this group.
 

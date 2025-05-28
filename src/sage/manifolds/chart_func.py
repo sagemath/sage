@@ -900,7 +900,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         return self._calc_method.is_trivial_zero(self.expr(curr) - SR.one())
 
     # TODO: Remove this method as soon as issue #28629 is solved?
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return ``True`` iff ``self`` is not trivially zero since most chart
         functions are invertible and an actual computation would take too much
@@ -1126,7 +1126,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         else:
             return bool(self.expr(self._calc_method._current) == other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 
@@ -2798,7 +2798,7 @@ class ChartFunctionRing(Parent, UniqueRepresentation):
                 expression = expression.expr(method=calc_method)
         return self.element_class(self, expression, calc_method=calc_method)
 
-    def _coerce_map_from_(self, other):
+    def _coerce_map_from_(self, other) -> bool:
         r"""
         Determine whether coercion to ``self`` exists from ``other``.
 
@@ -2822,7 +2822,7 @@ class ChartFunctionRing(Parent, UniqueRepresentation):
                 return True
         return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2835,7 +2835,7 @@ class ChartFunctionRing(Parent, UniqueRepresentation):
         """
         return "Ring of chart functions on {}".format(self._chart)
 
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         """
         Return ``False`` as ``self`` is not an integral domain.
 
@@ -3016,7 +3016,7 @@ class MultiCoordFunction(SageObject, Mutability):
         self._functions = tuple(chart.function(express) for express in expressions)
         Mutability.__init__(self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -3150,7 +3150,7 @@ class MultiCoordFunction(SageObject, Mutability):
             return False
         return all(other._functions[i] == self._functions[i] for i in range(self._nf))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 

@@ -176,7 +176,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         s = self.base_ring().an_element()
         return [u, o, self([[1, 2]]), o + self([[1], [2]]), u + s * o]
 
-    def _repr_term(self, phi):
+    def _repr_term(self, phi) -> str:
         r"""
         The string representation of a basis element.
 
@@ -225,7 +225,7 @@ class FSymBases(Category_realization_of_parent):
                 HopfAlgebras(R).Graded().WithBasis().Graded().Connected()]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `FSym`.
 
@@ -521,7 +521,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return FreeSymmetricFunctions_Dual(self.base_ring())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -830,7 +830,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         """
         return FreeSymmetricFunctions(self.base_ring())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

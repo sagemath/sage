@@ -735,7 +735,7 @@ class CartanTypeFactory(SageObject):
         except (SyntaxError, ValueError):
             raise ValueError("%s is not a valid Cartan type" % t)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1039,7 +1039,7 @@ class CartanType_abstract:
         bases = (self.__class__,) + classes
         self.__class__ = dynamic_class(self.__class__.__name__+"_with_superclass", bases)
 
-    def _ascii_art_node(self, label):
+    def _ascii_art_node(self, label) -> str:
         """
         Return the ascii art for the node labelled by ``label``.
 
@@ -1050,7 +1050,7 @@ class CartanType_abstract:
         """
         return "O"
 
-    def _latex_draw_node(self, x, y, label, position='below=4pt', fill='white'):
+    def _latex_draw_node(self, x, y, label, position='below=4pt', fill='white') -> str:
         r"""
         Draw (possibly marked [crossed out]) circular node ``i`` at the
         position ``(x,y)`` with node label ``label`` .
@@ -1066,7 +1066,7 @@ class CartanType_abstract:
         return "\\draw[fill={}] ({} cm, {} cm) circle (.25cm) node[{}]{{${}$}};\n".format(
                 fill, x, y, position, label)
 
-    def _latex_draw_arrow_tip(self, x, y, rot=0):
+    def _latex_draw_arrow_tip(self, x, y, rot=0) -> str:
         r"""
         Draw an arrow tip at the point ``(x, y)`` rotated by ``rot``.
 
@@ -1277,7 +1277,7 @@ class CartanType_abstract:
         from . import type_marked
         return type_marked.CartanType(self, marked_nodes)
 
-    def is_reducible(self):
+    def is_reducible(self) -> bool:
         """
         Report whether the root system is reducible (i.e. not simple), that
         is whether it can be factored as a product of root systems.
@@ -1291,7 +1291,7 @@ class CartanType_abstract:
         """
         return not self.is_irreducible()
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Report whether this Cartan type is irreducible (i.e. simple). This
         should be overridden in any subclass.
@@ -1337,7 +1337,7 @@ class CartanType_abstract:
         """
         return self.is_irreducible()
 
-    def is_compound(self):
+    def is_compound(self) -> bool:
         """
         A short hand for not :meth:`is_atomic`.
 
@@ -1383,7 +1383,7 @@ class CartanType_abstract:
             True
         """
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return whether this Cartan type is crystallographic.
 
@@ -1403,7 +1403,7 @@ class CartanType_abstract:
         """
         return False
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether this Cartan type is simply laced.
 
@@ -1433,7 +1433,7 @@ class CartanType_abstract:
         """
         return False
 
-    def is_implemented(self):
+    def is_implemented(self) -> bool:
         """
         Check whether the Cartan datum for ``self`` is actually implemented.
 
@@ -1663,7 +1663,7 @@ class CartanType_crystallographic(CartanType_abstract):
         """
         return self.dynkin_diagram().coxeter_diagram()
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Implement :meth:`CartanType_abstract.is_crystallographic`
         by returning ``True``.
@@ -1791,7 +1791,7 @@ class CartanType_simply_laced(CartanType_crystallographic):
     An abstract class for simply laced Cartan types.
     """
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether ``self`` is simply laced, which is ``True``.
 
@@ -1831,7 +1831,7 @@ class CartanType_simple(CartanType_abstract):
     An abstract class for simple Cartan types.
     """
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return whether ``self`` is irreducible, which is ``True``.
 
@@ -1848,7 +1848,7 @@ class CartanType_finite(CartanType_abstract):
     An abstract class for simple affine Cartan types.
     """
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         EXAMPLES::
 
@@ -1857,7 +1857,7 @@ class CartanType_finite(CartanType_abstract):
         """
         return True
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         EXAMPLES::
 
@@ -1912,7 +1912,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
             fill = 'white'
         return super()._latex_draw_node(x, y, label, position, fill)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         EXAMPLES::
 
@@ -1921,7 +1921,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         """
         return False
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         EXAMPLES::
 
@@ -1930,7 +1930,7 @@ class CartanType_affine(CartanType_simple, CartanType_crystallographic):
         """
         return True
 
-    def is_untwisted_affine(self):
+    def is_untwisted_affine(self) -> bool:
         """
         Return whether ``self`` is untwisted affine.
 
@@ -2714,7 +2714,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
         self.n = n
         self.affine = affine
 
-    def _repr_(self, compact=False):
+    def _repr_(self, compact=False) -> str:
         """
         TESTS::
 
@@ -2826,7 +2826,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
         """
         return tuple(range(self.n+1))
 
-    def special_node(self):
+    def special_node(self) -> int:
         r"""
         Implement :meth:`CartanType_abstract.special_node`.
 
@@ -2906,7 +2906,7 @@ class CartanType_standard_untwisted_affine(CartanType_standard_affine):
         """
         return self.classical()
 
-    def is_untwisted_affine(self):
+    def is_untwisted_affine(self) -> bool:
         """
         Implement :meth:`CartanType_affine.is_untwisted_affine` by
         returning ``True``.

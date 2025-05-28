@@ -155,7 +155,7 @@ class SetPartitionsAk_k(SetPartitions_set):
 
     Element = SetPartitionsXkElement
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -181,7 +181,7 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
 
     Element = SetPartitionsXkElement
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1704,7 +1704,7 @@ class PartitionAlgebra_prk(PartitionAlgebra_generic):
 
 ##########################################################
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     """
     Return ``True`` if the diagram corresponding to the set partition is
     planar; otherwise, it returns ``False``.

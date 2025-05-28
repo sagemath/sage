@@ -619,7 +619,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         return self(tuple((f.one() if f != factor else element)
                           for f in self.cartesian_factors()))
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Return whether ``S`` coerces into this growth group.
 

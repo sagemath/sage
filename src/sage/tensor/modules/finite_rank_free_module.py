@@ -3555,7 +3555,7 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
         resu.set_immutable()
         return resu
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

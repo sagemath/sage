@@ -633,7 +633,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
         else:
             return exp(-y) * y**(x - 1)
 
-    def _mathematica_init_evaled_(self, *args):
+    def _mathematica_init_evaled_(self, *args) -> str:
         r"""
         EXAMPLES::
 
@@ -875,7 +875,7 @@ class Function_psi2(GinacFunction):
                                                 giac='Psi',
                                                 fricas='polygamma'))
 
-    def _maxima_init_evaled_(self, *args):
+    def _maxima_init_evaled_(self, *args) -> str:
         """
         EXAMPLES:
 

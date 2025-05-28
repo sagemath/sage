@@ -641,7 +641,7 @@ class ToricDivisor_generic(Divisor_generic):
         self._m[cone] = m
         return m
 
-    def is_Weil(self):
+    def is_Weil(self) -> bool:
         """
         Return whether the divisor is a Weil-divisor.
 
@@ -662,7 +662,7 @@ class ToricDivisor_generic(Divisor_generic):
         except TypeError:
             return False
 
-    def is_QQ_Weil(self):
+    def is_QQ_Weil(self) -> bool:
         r"""
         Return whether the divisor is a `\QQ`-Weil-divisor.
 
@@ -1688,7 +1688,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         assert isinstance(toric_variety, ToricVariety_field), str(toric_variety) + ' is not a toric variety!'
         super().__init__(toric_variety, base_ring)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -1945,7 +1945,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
             'This is a property of the Gale transform.'
         self._lift_matrix = (V * D.transpose() * U).transpose()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2046,7 +2046,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
         self._lift_matrix = group._lift_matrix
         super().__init__(ZZ, group.dimension(), coordinate_ring=QQ)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2062,7 +2062,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
         """
         return "Basis lattice of {}".format(self._group)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 

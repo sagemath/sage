@@ -85,7 +85,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteWeylGroups().Irreducible())
         self.n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

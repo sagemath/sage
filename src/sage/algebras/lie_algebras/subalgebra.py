@@ -338,7 +338,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             return self(x[0])._bracket_(self(x[1]))
         return super().__getitem__(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -361,7 +361,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         return "%s %s of %s" % (basestr, self._repr_short(), self.ambient())
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Represent the list of generators.
 

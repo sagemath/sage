@@ -359,7 +359,7 @@ class SolitonCellularAutomata(SageObject):
                 and self._states[0] == other._states[0]
                 and self._evolutions == other._evolutions)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check non equality.
 

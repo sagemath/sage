@@ -1281,7 +1281,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
         self._representation = 'core'
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1742,7 +1742,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
         self._representation = 'bounded'
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2165,7 +2165,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
         self._representation = 'factorized_permutation'
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2455,7 +2455,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         """
         return hash(tuple(tuple(x) for x in self)) + hash(self.parent().k)
 
-    def _is_valid_marked( self ):
+    def _is_valid_marked( self ) -> bool:
         r"""
         Check the validity of marks of a potential tableau ``self``.
 
@@ -2565,7 +2565,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         Tsizes = [Core(lam, self.k + 1).length() for lam in Tshapes]
         return all(Tsizes[i] == Tsizes[i+1]-1 for i in range(len(Tsizes)-1))
 
-    def is_column_strict_with_weight( self, mu ):
+    def is_column_strict_with_weight( self, mu ) -> bool:
         """
         Test if ``self`` is a column strict tableau with respect to the weight ``mu``.
 

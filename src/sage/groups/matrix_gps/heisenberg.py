@@ -173,7 +173,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
         FinitelyGeneratedMatrixGroup_gap.__init__(self, ZZ(dim), self._ring,
                                                   gap_group, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -184,7 +184,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
         """
         return "Heisenberg group of degree {} over {}".format(self._n, self._ring)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

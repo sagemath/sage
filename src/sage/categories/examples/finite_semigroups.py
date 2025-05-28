@@ -122,7 +122,7 @@ class LeftRegularBand(UniqueRepresentation, Parent):
         Parent.__init__(self,
                         category=Semigroups().Finite().FinitelyGenerated())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

@@ -373,7 +373,7 @@ class SphericalHarmonic(BuiltinFunction):
         raise ValueError('only derivative with respect to theta or phi'
                          ' supported')
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         TESTS::
 
@@ -382,7 +382,7 @@ class SphericalHarmonic(BuiltinFunction):
         """
         return r"Y_n^m"
 
-    def _print_latex_(self, n, m, theta, phi):
+    def _print_latex_(self, n, m, theta, phi) -> str:
         r"""
         TESTS::
 
@@ -609,7 +609,7 @@ class EllipticE(BuiltinFunction):
         elif diff_param == 1:
             return (elliptic_e(z, m) - elliptic_f(z, m)) / (Integer(2) * m)
 
-    def _print_latex_(self, z, m):
+    def _print_latex_(self, z, m) -> str:
         r"""
         EXAMPLES::
 
@@ -800,7 +800,7 @@ class EllipticEU(BuiltinFunction):
                     elliptic_eu(u, m) * jacobi('dn', u, m)) /
                     ((m - Integer(1)) * m))
 
-    def _print_latex_(self, u, m):
+    def _print_latex_(self, u, m) -> str:
         """
         EXAMPLES::
 
@@ -965,7 +965,7 @@ class EllipticF(BuiltinFunction):
                      (Integer(4) * (Integer(1) - m) *
                       sqrt(Integer(1) - m * sin(z) ** Integer(2)))))
 
-    def _print_latex_(self, z, m):
+    def _print_latex_(self, z, m) -> str:
         r"""
         EXAMPLES::
 
@@ -1195,7 +1195,7 @@ class EllipticPi(BuiltinFunction):
                      (Integer(2) * (m - Integer(1)) *
                      sqrt(Integer(1) - m * sin(z) ** Integer(2)))))
 
-    def _print_latex_(self, n, z, m):
+    def _print_latex_(self, n, z, m) -> str:
         r"""
         EXAMPLES::
 

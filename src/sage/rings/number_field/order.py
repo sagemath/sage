@@ -544,7 +544,7 @@ class Order(Parent, sage.rings.abc.Order):
         from sage.rings.number_field.order_ideal import NumberFieldOrderIdeal
         return NumberFieldOrderIdeal(self, *args, **kwds)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Orders currently only have coerce maps from the integers.
 
@@ -600,7 +600,7 @@ class Order(Parent, sage.rings.abc.Order):
         """
         return self.ideal(left)
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         r"""
         Return ``False`` (because an order is never a field).
 
@@ -615,7 +615,7 @@ class Order(Parent, sage.rings.abc.Order):
         """
         return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         r"""
         Return ``True`` (because orders are always Noetherian).
 
@@ -1233,7 +1233,7 @@ class Order(Parent, sage.rings.abc.Order):
             return True
         return self._module_rep == other._module_rep
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether the order ``self`` is not equal to ``other``.
 
@@ -1692,7 +1692,7 @@ class Order_absolute(Order):
 
         return AbsoluteOrder(left._K, left._module_rep.intersection(right._module_rep), is_maximal=is_maximal)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return Magma version of this absolute order.
 

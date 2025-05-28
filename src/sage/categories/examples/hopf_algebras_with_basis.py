@@ -38,7 +38,7 @@ class MyGroupAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, G,
                                          category=HopfAlgebrasWithBasis(R))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

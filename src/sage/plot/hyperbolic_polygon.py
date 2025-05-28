@@ -97,7 +97,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
         self._pts = pts
         BezierPath.__init__(self, self.path, options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of HyperbolicPolygon.
 

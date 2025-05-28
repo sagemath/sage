@@ -237,7 +237,7 @@ class Sudoku(SageObject):
         """
         return hash(self.puzzle)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check that ``self`` is not equal to ``other``.
 

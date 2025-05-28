@@ -272,7 +272,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         S = self.base_set()
         return [S.difference(s) for s in Subsets(S.difference(set))]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -349,7 +349,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
                     return self.from_set(*s)
 
             # This could go in the super category VectorSpaces().Realizations()
-            def _repr_(self):
+            def _repr_(self) -> str:
                 r"""
                 EXAMPLES::
 

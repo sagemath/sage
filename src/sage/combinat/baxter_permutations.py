@@ -265,7 +265,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
                                                     BaxterPermutations_size),
                                              facade=False, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

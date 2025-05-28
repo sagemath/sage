@@ -674,7 +674,7 @@ class CubicHeckeFileCache(SageObject):
             sage: cha_fc.section
             <enum 'section'>
         """
-        def filename(self, nstrands=None):
+        def filename(self, nstrands=None) -> str:
             r"""
             Return the file name under which the data of this file cache section
             is stored as an sobj-file.

@@ -54,7 +54,7 @@ class CartanType(CartanType_standard_untwisted_affine):
         if n >= 2:
             self._add_abstract_superclass(CartanType_simply_laced)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 

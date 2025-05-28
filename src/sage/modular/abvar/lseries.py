@@ -165,7 +165,7 @@ class Lseries_complex(Lseries):
             return False
         return self.abelian_variety() == other.abelian_variety()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -186,7 +186,7 @@ class Lseries_complex(Lseries):
         """
         return not (self == other)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of `L`-series.
 
@@ -341,7 +341,7 @@ class Lseries_padic(Lseries):
         return (self.abelian_variety() == other.abelian_variety() and
                 self.__p == other.__p)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -400,7 +400,7 @@ class Lseries_padic(Lseries):
         """
         raise NotImplementedError
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this `p`-adic `L`-series.
 

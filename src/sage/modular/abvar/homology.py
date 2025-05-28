@@ -358,7 +358,7 @@ class IntegralHomology(Homology_abvar):
         """
         Homology_abvar.__init__(self, abvar, ZZ)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the integral homology.
 
@@ -432,7 +432,7 @@ class RationalHomology(Homology_abvar):
         """
         Homology_abvar.__init__(self, abvar, QQ)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of the rational homology.
 
@@ -515,7 +515,7 @@ class Homology_over_base(Homology_abvar):
         """
         Homology_abvar.__init__(self, abvar, base_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -581,7 +581,7 @@ class Homology_submodule(Homology):
         HeckeModule_free_module.__init__(
             self, ambient.base_ring(), ambient.level(), weight=2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this submodule of homology.
 

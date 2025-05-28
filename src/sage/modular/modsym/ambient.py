@@ -1094,7 +1094,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         A = MS(rows)
         return hom(A, "Heilbronn operator(%s,%s)" % (H, t))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this Modular Symbols space.
 
@@ -1107,7 +1107,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         return "Modular Symbols space of dimension %s and weight %s for %s with sign %s and character %s over %s" % (
             self.dimension(), self.weight(), self.group(), self.sign(), self.character()._repr_short_(), self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex representation of this Modular Symbols space.
 
@@ -3147,7 +3147,7 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
 
         return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this space.
 
@@ -3338,7 +3338,7 @@ class ModularSymbolsAmbient_wtk_gamma_h(ModularSymbolsAmbient):
         """
         return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this space.
 

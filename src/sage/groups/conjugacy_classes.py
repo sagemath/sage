@@ -102,7 +102,7 @@ class ConjugacyClass(Parent):
         else: # If the group is not finite, then we do not know if we are finite or not
             Parent.__init__(self, category=EnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -138,7 +138,7 @@ class ConjugacyClass(Parent):
             return False
         return self.set() == other.set()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Negation of equality.
 
@@ -303,7 +303,7 @@ class ConjugacyClass(Parent):
                     "classes is not implemented for infinite groups! Use the "
                     "iter function instead.")
 
-    def is_real(self):
+    def is_real(self) -> bool:
         """
         Check if ``self`` is real (closed for inverses).
 

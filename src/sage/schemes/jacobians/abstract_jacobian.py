@@ -167,7 +167,7 @@ class Jacobian_generic(Scheme):
             return NotImplemented
         return richcmp(self.curve(), J.curve(), op)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this Jacobian.
 

@@ -1552,7 +1552,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
 
         raise TypeError("{} of type {} not valid to initialize an element of the universal cyclotomic field".format(elt, type(elt)))
 
-    def _coerce_map_from_(self, other):
+    def _coerce_map_from_(self, other) -> bool:
         r"""
         TESTS::
 

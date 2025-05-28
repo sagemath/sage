@@ -54,7 +54,7 @@ class SchemePoint(Element):
         """
         return self.__S
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this generic scheme point.
 
@@ -121,7 +121,7 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
         self.__u = u
         self.__x = x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Point on %s defined by x in U, where:\n  U: %s\n  x: %s" % (
             self.scheme(), self.embedding_of_affine_open().domain(),
             self.point_on_affine())
@@ -190,7 +190,7 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
         SchemeTopologicalPoint.__init__(self, S)
         self.__P = P
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this scheme point.
 

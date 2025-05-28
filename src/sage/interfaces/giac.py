@@ -379,7 +379,7 @@ class Giac(Expect):
         """
         return reduce_load_Giac, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         Return the string used to read filename into Giac.
 
@@ -399,7 +399,7 @@ class Giac(Expect):
         """
         return 'read "%s"' % filename
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -418,7 +418,7 @@ class Giac(Expect):
         """
         return '@d'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing Giac on your computer.
 
@@ -709,7 +709,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         """
         return GiacFunctionElement
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the symbol used for equality testing in Giac.
 
@@ -723,7 +723,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         """
         return '=='
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the symbol used for truth in Giac.
 
@@ -739,7 +739,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
         """
         return 'true'
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the symbol used for assignment in Giac.
 

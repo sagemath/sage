@@ -78,7 +78,7 @@ class FreeMagma(UniqueRepresentation, Parent):
 
         Parent.__init__(self, category=Magmas().FinitelyGenerated().Infinite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

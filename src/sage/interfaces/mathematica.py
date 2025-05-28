@@ -519,7 +519,7 @@ class Mathematica(ExtraTabCompletion, Expect):
                         logfile=logfile,
                         eval_using_file_cutoff=eval_using_file_cutoff)
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         return '<<"%s"' % filename
 
     def _keyboard_interrupt(self):
@@ -531,7 +531,7 @@ class Mathematica(ExtraTabCompletion, Expect):
         e.expect(self._prompt)
         return e.before
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Hints for installing mathematica on your computer.
 
@@ -624,7 +624,7 @@ remote connection to a server running Mathematica -- for hints, type
              allow_use_file=allow_use_file, wait_for_prompt=wait_for_prompt)
         return str(s).strip('\n')
 
-    def _function_call_string(self, function, args, kwds):
+    def _function_call_string(self, function, args, kwds) -> str:
         """
         Return the string used to make function calls.
 
@@ -635,16 +635,16 @@ remote connection to a server running Mathematica -- for hints, type
         """
         return "%s[%s]" % (function, ",".join(args))
 
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         return "{"
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         return "}"
 
-    def _left_func_delim(self):
+    def _left_func_delim(self) -> str:
         return "["
 
-    def _right_func_delim(self):
+    def _right_func_delim(self) -> str:
         return "]"
 
     ###########################################
@@ -662,19 +662,19 @@ remote connection to a server running Mathematica -- for hints, type
         """
         self.eval('SetDirectory["%s"]' % dir)
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         return 'True'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         return 'False'
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         return '=='
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         return ":="
 
-    def _exponent_symbol(self):
+    def _exponent_symbol(self) -> str:
         """
         Return the symbol used to denote the exponent of a number in
         Mathematica.

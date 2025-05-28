@@ -101,7 +101,7 @@ class ScatterPlot(GraphicPrimitive):
                 'zorder': 'The layer level in which to draw.',
                 'clip': 'Whether or not to clip.'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Text representation of a scatter plot graphics primitive.
 

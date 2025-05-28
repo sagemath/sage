@@ -499,7 +499,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         self._cartan_type = cartan_type
         self.module_generators = tuple([self(*x) for x in generators])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -552,7 +552,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         self.cartesian_product = cartesian_product(self.crystals)
         self.module_generators = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1094,7 +1094,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
         mg = self.element_class(self, list=data)
         self.module_generators = (mg,)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

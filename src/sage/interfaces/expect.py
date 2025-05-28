@@ -112,7 +112,7 @@ class gc_disabled:
         self._enabled = gc.isenabled()
         gc.disable()
 
-    def __exit__(self, ty: Optional[Type[BaseException]], val: Optional[BaseException], tb: Optional[TracebackType]):
+    def __exit__(self, ty: Optional[Type[BaseException]], val: Optional[BaseException], tb: Optional[TracebackType]) -> bool:
         if self._enabled:
             gc.enable()
         return False
@@ -294,7 +294,7 @@ class Expect(Interface):
         self.__so_far = ''
         E.sendline(cmd)
 
-    def is_running(self):
+    def is_running(self) -> bool:
         """
         Return ``True`` if ``self`` is currently running.
         """
@@ -331,7 +331,7 @@ class Expect(Interface):
     def is_remote(self):
         return self.__is_remote
 
-    def is_local(self):
+    def is_local(self) -> bool:
         return not self.__is_remote
 
     def user_dir(self):
@@ -380,7 +380,7 @@ class Expect(Interface):
             self._start()
         return self._expect.pid
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         r"""
         Hints for installing needed slave program on your computer.
 
@@ -388,7 +388,7 @@ class Expect(Interface):
         """
         return ''
 
-    def _install_hints_ssh(self):
+    def _install_hints_ssh(self) -> str:
         r"""
         Hints for installing passwordless authentication on your
         computer...
@@ -409,7 +409,7 @@ In many cases, the server that can actually run "slave" is not accessible from t
 If that is your case, get help with _install_hints_ssh_through_gate().
 """
 
-    def _install_hints_ssh_through_gate(self):
+    def _install_hints_ssh_through_gate(self) -> str:
         r"""
         Hints for installing passwordless authentication through a gate
         """
@@ -689,7 +689,7 @@ If this all works, you can then make calls like:
             pass
         self._reset_expect()
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string which will be used to quit the application.
 
@@ -1079,7 +1079,7 @@ If this all works, you can then make calls like:
             self._expect.expect(self._prompt)
             raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
-    def interrupt(self, tries=5, timeout=2.0, quit_on_fail=True):
+    def interrupt(self, tries=5, timeout=2.0, quit_on_fail=True) -> bool:
         E = self._expect
         if E is None:
             return True

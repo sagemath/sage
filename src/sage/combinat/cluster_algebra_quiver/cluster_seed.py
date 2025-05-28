@@ -4828,7 +4828,7 @@ def SetToPath(T):
     return ans
 
 
-def is_LeeLiZel_allowable(T, n, m, b, c):
+def is_LeeLiZel_allowable(T, n, m, b, c) -> bool:
     """
     Check if the subset `T` contributes to the computation of the greedy element `x[m,n]` in the rank two `(b,c)`-cluster algebra.
 

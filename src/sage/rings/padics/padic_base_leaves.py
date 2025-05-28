@@ -249,7 +249,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicCappedRelativeElement, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
@@ -347,7 +347,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicCappedAbsoluteElement, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
@@ -404,7 +404,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Conversion to magma.
 
@@ -461,7 +461,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicFloatingPointElement, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
@@ -565,7 +565,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
         """
         pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicFixedModElement, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
@@ -620,7 +620,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Conversion to magma.
 
@@ -688,7 +688,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         """
         pAdicFieldBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicCappedRelativeElement, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
@@ -745,7 +745,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
                 from sage.rings.padics.padic_generic import ResidueLiftingMap
                 return ResidueLiftingMap._create_(R, self)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Conversion to magma.
 
@@ -827,7 +827,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
         """
         pAdicFieldBaseGeneric.__init__(self, p, prec, print_mode, names, pAdicFloatingPointElement, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to ``self``.
 
@@ -938,7 +938,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
             pAdicRingBaseGeneric.__init__(self, p, prec, print_mode, names, None, category=category)
         pAdicLatticeGeneric.__init__(self, p, prec, print_mode, names, label, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to this ring.
 
@@ -1069,7 +1069,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
             pAdicFieldBaseGeneric.__init__(self, p, prec, print_mode, names, None, category=category)
         pAdicLatticeGeneric.__init__(self, p, prec, print_mode, names, label, category=category)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Return ``True`` if there is a coerce map from ``R`` to this ring.
 

@@ -162,7 +162,7 @@ class ImageSubobject(Parent):
         return (self._map == other._map
                 and self._domain_subset == other._domain_subset)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         EXAMPLES::
 

@@ -218,7 +218,7 @@ def find_pivot(T):
     return None
 
 
-def next_tree(T):
+def next_tree(T) -> bool:
     r"""
     Check if there is another tree after `T`.
 

@@ -449,7 +449,7 @@ class WeakReversePlanePartitions(Tableaux):
         """
         Tableaux.__init__(self, category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

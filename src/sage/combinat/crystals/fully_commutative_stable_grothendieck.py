@@ -401,7 +401,7 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
         self.max_value = len(self.H.gens())
         self.excess = excess
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a representation of ``self``.
 
@@ -602,7 +602,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
         """
         return tuple(self(x).to_highest_weight()[0] for x in _lowest_weights(self.w, self.factors, self.excess, parent=self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a representation of ``self``.
 

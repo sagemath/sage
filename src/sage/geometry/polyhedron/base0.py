@@ -446,7 +446,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         new_parent = self.parent().change_ring(base_ring, backend)
         return new_parent([vertices, rays, lines], None)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is mutable, i.e. it can be modified in place.
 
@@ -458,7 +458,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return False
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 

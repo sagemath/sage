@@ -606,7 +606,7 @@ class SelfParentPolicy(SetFactoryPolicy):
         """
         return self.self_element_constructor_attributes(self._Element)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -682,7 +682,7 @@ class TopMostParentPolicy(SetFactoryPolicy):
             return self.facade_element_constructor_attributes(
                 factory(*self._top_constraints, policy=self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -780,7 +780,7 @@ class FacadeParentPolicy(SetFactoryPolicy):
         return self.facade_element_constructor_attributes(
             self._parent_for._parent_for)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -849,7 +849,7 @@ class BareFunctionPolicy(SetFactoryPolicy):
         return {'_element_constructor_': self._constructor,
                 '_parent_for': None}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

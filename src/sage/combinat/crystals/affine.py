@@ -120,7 +120,7 @@ class AffineCrystalFromClassical(UniqueRepresentation, Parent):
                                   for gen in self.classical_crystal.module_generators]
         self.element_class._latex_ = lambda x: x.lift()._latex_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

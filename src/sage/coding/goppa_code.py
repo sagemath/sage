@@ -125,7 +125,7 @@ class GoppaCode(AbstractLinearCode):
             if generating_pol(a) == 0:
                 raise ValueError("defining elements cannot be roots of generating polynomial")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Representation of a Goppa code.
 
@@ -143,7 +143,7 @@ class GoppaCode(AbstractLinearCode):
             self.length(), self.dimension(),
             self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -358,7 +358,7 @@ class GoppaCodeEncoder(Encoder):
         """
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -375,7 +375,7 @@ class GoppaCodeEncoder(Encoder):
         """
         return "Encoder for {}".format(self.code())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

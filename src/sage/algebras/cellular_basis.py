@@ -205,7 +205,7 @@ class CellularBasis(CombinatorialFreeModule):
         to_cellular.register_as_coercion()
         from_cellular.register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -217,7 +217,7 @@ class CellularBasis(CombinatorialFreeModule):
         """
         return "Cellular basis of {}".format(self._algebra)
 
-    def _latex_term(self, x):
+    def _latex_term(self, x) -> str:
         r"""
         Return a latex representation of the term indexed by ``x``.
 

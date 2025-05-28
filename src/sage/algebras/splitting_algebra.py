@@ -403,7 +403,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             defining_polynomial = par_pol(definig_coefficients)
         return self.__class__, (defining_polynomial, self._root_names, self._iterate, False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

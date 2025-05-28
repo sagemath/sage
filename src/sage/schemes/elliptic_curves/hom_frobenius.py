@@ -283,7 +283,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
         k = Sequence(P).universe()
         return self._codomain.base_extend(k)(*(c**self._degree for c in P))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return basic facts about this Frobenius isogeny as a string.
 

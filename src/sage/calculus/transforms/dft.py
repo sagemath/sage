@@ -592,7 +592,7 @@ class IndexedSequence(SageObject):
         S1 = [S[i] * other for i in range(len(self.index_object()))]
         return IndexedSequence(S1, self.index_object())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Implement boolean equals.
 

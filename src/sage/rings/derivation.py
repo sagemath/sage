@@ -1029,7 +1029,7 @@ class RingDerivationWithoutTwist(RingDerivation):
                 dict[i] = c
         return dict
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation is zero.
 
@@ -1364,7 +1364,7 @@ class RingDerivationWithoutTwist_zero(RingDerivationWithoutTwist):
             raise ValueError("unable to create the derivation")
         RingDerivation.__init__(self, parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this derivation.
 
@@ -1376,7 +1376,7 @@ class RingDerivationWithoutTwist_zero(RingDerivationWithoutTwist):
         """
         return "0"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a string representation of this derivation.
 
@@ -1500,7 +1500,7 @@ class RingDerivationWithoutTwist_zero(RingDerivationWithoutTwist):
         """
         return self
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this derivation vanishes.
 
@@ -1994,7 +1994,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
         """
         return hash(self._scalar)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this derivation.
 
@@ -2034,7 +2034,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
             s = "(%s)*" % sc
         return "%s(%s - %s)" % (s, stwi, sdef)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this derivation.
 

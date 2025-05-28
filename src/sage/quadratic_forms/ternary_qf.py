@@ -1773,7 +1773,7 @@ class TernaryQF(SageObject):
             self._automorphisms = (-self).automorphisms()
         return self._automorphisms
 
-    def _number_of_automorphisms_reduced(self):
+    def _number_of_automorphisms_reduced(self) -> int:
         """
         Return the number of automorphisms of the reduced definite ternary quadratic form.
 

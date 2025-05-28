@@ -31,7 +31,7 @@ class Cipher(Element):
     def __eq__(self, right):
         return type(self) is type(right) and self.parent() == right.parent() and self._key == right._key
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this cipher.
 

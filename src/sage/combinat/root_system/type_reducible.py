@@ -211,7 +211,7 @@ class CartanType(SageObject, CartanType_abstract):
         """
         return self._types
 
-    def type(self):
+    def type(self) -> str:
         """
         Return ``"reducible"`` since the type is reducible.
 
@@ -397,7 +397,7 @@ class CartanType(SageObject, CartanType_abstract):
         """
         return all(t.is_finite() for t in self.component_types())
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Report that this Cartan type is not irreducible.
 
@@ -418,7 +418,7 @@ class CartanType(SageObject, CartanType_abstract):
         """
         return CartanType([t.dual() for t in self._types])
 
-    def is_affine(self):
+    def is_affine(self) -> bool:
         """
         Report that this reducible Cartan type is not affine.
 

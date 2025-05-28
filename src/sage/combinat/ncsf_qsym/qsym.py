@@ -609,7 +609,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                              codomain=Fundamental, category=category)
         Sym_s_to_F.register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -2846,7 +2846,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                              prefix='QS', bracket=False,
                                              category=QSym.Bases())
 
-        def _realization_name(self):
+        def _realization_name(self) -> str:
             r"""
             Return a nicer name for ``self`` than what is inherited
             from :mod:`sage.categories.sets_cat`.
@@ -3034,7 +3034,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             self._M.module_morphism(self._from_monomial_on_basis,
                                     codomain=self, category=QSym.Bases()).register_as_coercion()
 
-        def _realization_name(self):
+        def _realization_name(self) -> str:
             r"""
             Return a nicer name for ``self`` than what is inherited
             from :mod:`sage.categories.sets_cat`.

@@ -34,7 +34,7 @@ from .padic_lattice_element import pAdicLatticeElement, pAdicLatticeCapElement, 
 
 
 class CappedAbsoluteGeneric(LocalGeneric):
-    def is_capped_absolute(self):
+    def is_capped_absolute(self) -> bool:
         """
         Return whether this `p`-adic ring bounds precision in a
         capped absolute fashion.
@@ -59,7 +59,7 @@ class CappedAbsoluteGeneric(LocalGeneric):
         """
         return True
 
-    def _prec_type(self):
+    def _prec_type(self) -> str:
         """
         Return the precision handling type.
 
@@ -72,7 +72,7 @@ class CappedAbsoluteGeneric(LocalGeneric):
 
 
 class CappedRelativeGeneric(LocalGeneric):
-    def is_capped_relative(self):
+    def is_capped_relative(self) -> bool:
         """
         Return whether this `p`-adic ring bounds precision in a capped
         relative fashion.
@@ -97,7 +97,7 @@ class CappedRelativeGeneric(LocalGeneric):
         """
         return True
 
-    def _prec_type(self):
+    def _prec_type(self) -> str:
         """
         Return the precision handling type.
 
@@ -110,7 +110,7 @@ class CappedRelativeGeneric(LocalGeneric):
 
 
 class FixedModGeneric(LocalGeneric):
-    def is_fixed_mod(self):
+    def is_fixed_mod(self) -> bool:
         """
         Return whether this `p`-adic ring bounds precision in a fixed
         modulus fashion.
@@ -136,7 +136,7 @@ class FixedModGeneric(LocalGeneric):
         """
         return True
 
-    def _prec_type(self):
+    def _prec_type(self) -> str:
         """
         Return the precision handling type.
 
@@ -149,7 +149,7 @@ class FixedModGeneric(LocalGeneric):
 
 
 class FloatingPointGeneric(LocalGeneric):
-    def is_floating_point(self):
+    def is_floating_point(self) -> bool:
         """
         Return whether this `p`-adic ring uses a floating point precision model.
 
@@ -173,7 +173,7 @@ class FloatingPointGeneric(LocalGeneric):
         """
         return True
 
-    def _prec_type(self):
+    def _prec_type(self) -> str:
         """
         Return the precision handling type.
 
@@ -370,7 +370,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         """
         return 'lattice-' + self._subtype
 
-    def is_lattice_prec(self):
+    def is_lattice_prec(self) -> bool:
         """
         Return whether this `p`-adic ring bounds precision using
         a lattice model.
@@ -758,7 +758,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         cls = getattr(self._element_class_module, clsname)
         return cls
 
-    def _prec_type(self):
+    def _prec_type(self) -> str:
         r"""
         Return the precision handling type.
 
@@ -769,7 +769,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         """
         return 'relaxed'
 
-    def is_relaxed(self):
+    def is_relaxed(self) -> bool:
         r"""
         Return whether this `p`-adic ring is relaxed.
 
@@ -869,7 +869,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         """
         return infinity
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         Return ``True`` if there is a coercion map from ``R`` to this ring.
 
@@ -1192,7 +1192,7 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
 
 class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return whether this ring is actually a field, ie ``False``.
 
@@ -1203,7 +1203,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
         """
         return False
 
-    def krull_dimension(self):
+    def krull_dimension(self) -> int:
         r"""
         Return the Krull dimension of self, i.e. 1.
 
@@ -1320,7 +1320,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
 
 class pAdicFieldGeneric(pAdicGeneric, sage.rings.abc.pAdicField):
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return whether this ring is actually a field, ie ``True``.
 
@@ -1502,7 +1502,7 @@ class pAdicFieldBaseGeneric(pAdicBaseGeneric, pAdicFieldGeneric):
             return self
         raise ValueError("Arguments must be subfields of self.")
 
-    def subfields_of_degree(self, n):
+    def subfields_of_degree(self, n) -> int:
         r"""
         Return the number of subfields of ``self`` of degree `n`.
 

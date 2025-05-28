@@ -797,7 +797,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return f'\\phi: {latex(self._function_ring.gen())} \\mapsto ' \
                    f'{latex(self._gen)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Drinfeld module.
 
@@ -1292,7 +1292,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         except NotImplementedError:
             raise NotImplementedError('height not implemented in this case')
 
-    def is_isomorphic(self, other, absolutely=False):
+    def is_isomorphic(self, other, absolutely=False) -> bool:
         r"""
         Return ``True`` if this Drinfeld module is isomorphic to ``other``;
         return ``False`` otherwise.

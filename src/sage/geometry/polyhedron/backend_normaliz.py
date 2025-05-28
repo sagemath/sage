@@ -49,7 +49,7 @@ from .base_ZZ import Polyhedron_ZZ
 from .base_number_field import Polyhedron_base_number_field
 
 
-def _format_function_call(fn_name, *v, **k):
+def _format_function_call(fn_name, *v, **k) -> str:
     """
     Return a Python function call as a string.
 
@@ -1117,7 +1117,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             # ----8<-------------------8<-------------------8<----
             # Calling ...
         """
-        def format_number(x):
+        def format_number(x) -> str:
             try:
                 return '{}'.format(QQ(x))
             except (ValueError, TypeError):
@@ -1133,7 +1133,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
                 return s
             return '{} {}\n'.format(key, value)
 
-        def format_number_field_data(nf_triple):
+        def format_number_field_data(nf_triple) -> str:
             min_poly, gen, emb = nf_triple
             return 'min_poly ({}) embedding {}'.format(min_poly, emb)
 
@@ -2415,7 +2415,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         fraction_virtual_ring = virtual_ring.fraction_field()
         return initial_Hstar.change_ring(fraction_virtual_ring) * vector(fraction_virtual_ring, Chi_ring.gens())
 
-    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb):
+    def _is_effective_normaliz(self, Hstar, Hstar_as_lin_comb) -> bool:
         r"""
         Test for the effectiveness of the ``Hstar`` series of this polytope.
 

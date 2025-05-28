@@ -31,7 +31,7 @@ class IntegerList(ClonableArray):
     """
     Element class for :class:`IntegerLists`.
     """
-    def check(self):
+    def check(self) -> bool:
         """
         Check to make sure this is a valid element in its
         :class:`IntegerLists` parent.
@@ -178,7 +178,7 @@ class IntegerLists(Parent):
             b = b.__func__
         return a == b
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether ``self != other``.
 

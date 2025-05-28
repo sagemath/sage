@@ -1202,7 +1202,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         """
         return self._assoc._repr_option(key)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

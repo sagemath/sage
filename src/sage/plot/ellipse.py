@@ -160,7 +160,7 @@ class Ellipse(GraphicPrimitive):
                 "'dashed', 'dotted', 'solid', 'dashdot', or '--', ':', '-', '-.', "
                 "respectively."}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of ``Ellipse`` primitive.
 

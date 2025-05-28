@@ -154,7 +154,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
                 and self._colors == other._colors
                 and self._perm == other._perm)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check inequality.
 
@@ -516,7 +516,7 @@ class ShephardToddFamilyGroup(UniqueRepresentation, Parent):
                 category = category.WellGenerated()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1226,7 +1226,7 @@ class ColoredPermutations(ShephardToddFamilyGroup):
         """
         ShephardToddFamilyGroup.__init__(self, m, 1, n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1653,7 +1653,7 @@ class SignedPermutations(ColoredPermutations):
         """
         ColoredPermutations.__init__(self, 2, n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

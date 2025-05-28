@@ -224,7 +224,7 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type)
         self.module_generators = (self.module_generator(),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -669,7 +669,7 @@ class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type)
         self.module_generators = (self.module_generator(),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

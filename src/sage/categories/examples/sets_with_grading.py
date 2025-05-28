@@ -34,7 +34,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         Parent.__init__(self, category=SetsWithGrading().Infinite(),
                         facade=IntegerRing())
 
-    def an_element(self):
+    def an_element(self) -> int:
         r"""
         Return 0.
 
@@ -45,7 +45,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         return 0
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

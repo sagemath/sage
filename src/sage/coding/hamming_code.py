@@ -102,7 +102,7 @@ class HammingCode(AbstractLinearCode):
         """
         return hash((self.length(), self.dimension()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -115,7 +115,7 @@ class HammingCode(AbstractLinearCode):
         return "[%s, %s] Hamming Code over GF(%s)"\
                 % (self.length(), self.dimension(), self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -160,7 +160,7 @@ class HammingCode(AbstractLinearCode):
         H.set_immutable()
         return H
 
-    def minimum_distance(self):
+    def minimum_distance(self) -> int:
         r"""
         Return the minimum distance of ``self``.
 

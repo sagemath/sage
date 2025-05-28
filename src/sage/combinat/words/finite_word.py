@@ -581,7 +581,7 @@ class FiniteWord_class(Word_class):
             alphabet = sorted(c.keys())
         return [Integer(c[a]) for a in alphabet]
 
-    def is_yamanouchi(self, n=None):
+    def is_yamanouchi(self, n=None) -> bool:
         r"""
         Return whether ``self`` is Yamanouchi.
 
@@ -811,7 +811,7 @@ class FiniteWord_class(Word_class):
         """
         return self.length() == 0
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``True``.
 
@@ -2176,7 +2176,7 @@ class FiniteWord_class(Word_class):
         """
         return self.length() == other.length() and self.is_factor(other * other)
 
-    def is_cadence(self, seq):
+    def is_cadence(self, seq) -> bool:
         r"""
         Return ``True`` if ``seq`` is a cadence of ``self``, and ``False`` otherwise.
 
@@ -3548,7 +3548,7 @@ class FiniteWord_class(Word_class):
             return 0
         return self.length() // self.primitive_length()
 
-    def has_period(self, p):
+    def has_period(self, p) -> bool:
         r"""
         Return ``True`` if ``self`` has the period `p`,
         ``False`` otherwise.
@@ -3696,7 +3696,7 @@ class FiniteWord_class(Word_class):
 
         return Word(lcs[1][-2])
 
-    def is_subword_of(self, other):
+    def is_subword_of(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a subword of ``other``, and ``False`` otherwise.
 
@@ -4380,7 +4380,7 @@ class FiniteWord_class(Word_class):
             i -= 1
         return -1
 
-    def is_factor(self, other):
+    def is_factor(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a factor of ``other``, and ``False`` otherwise.
 
@@ -4779,7 +4779,7 @@ class FiniteWord_class(Word_class):
         from sage.combinat.words.word import Word
         return Word(ret)
 
-    def is_quasiperiodic(self):
+    def is_quasiperiodic(self) -> bool:
         r"""
         Return ``True`` if ``self`` is quasiperiodic, and ``False`` otherwise.
 
@@ -5541,7 +5541,7 @@ class FiniteWord_class(Word_class):
             best = max(best, *(abel_max[a] - abel_min[a] for a in alphabet))
         return best
 
-    def is_balanced(self, q=1):
+    def is_balanced(self, q=1) -> bool:
         r"""
         Return ``True`` if ``self`` is ``q``-balanced, and ``False`` otherwise.
 
@@ -6493,7 +6493,7 @@ class FiniteWord_class(Word_class):
             res = res.delta_inv(s=tab[i])
         return res
 
-    def is_smooth_prefix(self):
+    def is_smooth_prefix(self) -> bool:
         r"""
         Return ``True`` if ``self`` is the prefix of a smooth word, and ``False``
         otherwise.
@@ -6902,7 +6902,7 @@ class FiniteWord_class(Word_class):
         l = self.length() // 3
         return self[:l] == self[l:2*l] == self[2*l:]
 
-    def is_cube_free(self):
+    def is_cube_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` does not contain cubes, and ``False`` otherwise.
 
@@ -6965,7 +6965,7 @@ class FiniteWord_class(Word_class):
         M = FreeMonoid(len(l), l)
         return M(self)
 
-    def is_christoffel(self):
+    def is_christoffel(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a Christoffel word, and ``False`` otherwise.
 

@@ -286,7 +286,7 @@ class NuDyckWord(CombinatorialElement):
             return False
         return self._path == other._path and self._nu == other._nu
 
-    def __neq__(self, other):
+    def __neq__(self, other) -> bool:
         """
         Return if two paths are not equal.
 
@@ -1296,7 +1296,7 @@ class NuDyckWords(Parent):
             return False
         return self._nu == other._nu
 
-    def __neq__(self, other):
+    def __neq__(self, other) -> bool:
         """
         Return inequality.
 

@@ -530,7 +530,7 @@ class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
             Family(NonNegativeIntegers(), CT_n),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -627,7 +627,7 @@ class CompositionTableaux_size(CompositionTableaux):
             for T in CompositionTableaux_shape(comp, self.max_entry):
                 yield self.element_class(self, T)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -721,7 +721,7 @@ class CompositionTableaux_shape(CompositionTableaux):
         """
         return CompositionTableaux.__contains__(self, x) and [len(r) for r in x] == self.shape
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

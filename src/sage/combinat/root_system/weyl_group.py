@@ -395,7 +395,7 @@ class WeylGroup_gens(UniqueRepresentation,
             return self(m.transpose())
         return Family(prr, to_elt, name="real root to reflection")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

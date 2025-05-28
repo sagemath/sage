@@ -561,7 +561,7 @@ class ManifoldPoint(Element):
 
     add_coord = add_coordinates
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Compare the current point with another one.
 
@@ -699,7 +699,7 @@ class ManifoldPoint(Element):
                     return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Non-equality operator.
 

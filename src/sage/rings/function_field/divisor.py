@@ -1014,7 +1014,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         self._field = field # function field
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the group of divisors.
 

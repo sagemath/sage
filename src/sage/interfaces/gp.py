@@ -270,7 +270,7 @@ class Gp(ExtraTabCompletion, Expect):
         # set random seed
         self.set_seed(self._seed)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this PARI gp interpreter.
 
@@ -307,7 +307,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         return GpFunction
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit the GP interpreter.
 
@@ -328,7 +328,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         return r"\q"
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         Return the string used to read filename into GP.
 
@@ -600,7 +600,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         self.eval('kill(%s)' % var)
 
-    def _next_var_name(self):
+    def _next_var_name(self) -> str:
         """
         Return the name of the next unused interface variable name.
 
@@ -706,7 +706,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         return GpFunctionElement
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the symbol used for truth in GP.
 
@@ -722,7 +722,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         return '1'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the symbol used for falsity in GP.
 
@@ -738,7 +738,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         return '0'
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the symbol used for equality in GP.
 
@@ -754,7 +754,7 @@ class Gp(ExtraTabCompletion, Expect):
         """
         return '=='
 
-    def _exponent_symbol(self):
+    def _exponent_symbol(self) -> str:
         """
         Return the symbol to denote the exponent of a number in GP.
 

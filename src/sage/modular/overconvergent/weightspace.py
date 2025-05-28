@@ -596,7 +596,7 @@ class AlgebraicWeight(WeightCharacter):
         else:
             return hash( (self._k,self._chi.modulus(),self._chi) )
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -710,7 +710,7 @@ class ArbitraryWeight(WeightCharacter):
             raise ValueError("Must send generator to something nearer 1")
         self.w = w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this character.
 

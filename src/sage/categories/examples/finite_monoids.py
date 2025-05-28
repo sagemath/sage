@@ -79,7 +79,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=Monoids().Finite().FinitelyGenerated())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

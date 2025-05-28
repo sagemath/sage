@@ -33,7 +33,7 @@ class BackendEmacs(BackendIPythonCommandline):
         Emacs sage-mode
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of the backend.
 

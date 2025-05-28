@@ -197,7 +197,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
             return False
         return self.number_field() == right.number_field()
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Check that ``self`` is not equal to ``right``.
 
@@ -219,7 +219,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
         """
         return not (self == right)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the set of cusps of a number field.
 
@@ -239,7 +239,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
         """
         return "Set of all cusps of %s" % self.number_field()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of ``self``.
 
@@ -560,7 +560,7 @@ class NFCusp(Element):
             self.__a = R(l * self.__a)
             self.__b = R(l * self.__b)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this cusp.
 
@@ -697,7 +697,7 @@ class NFCusp(Element):
         except (ValueError, TypeError):
             raise TypeError("%s is not an integral element" % self)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex representation of this cusp.
 

@@ -886,7 +886,7 @@ class IndexedFreeMonoid(IndexedMonoid):
         sage: F.gen(2) * F.gen(12)
         X|2>*X|12>
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -972,7 +972,7 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         Implement a subclass when the index sets is finite that utilizes
         vectors or the polydict monomials with the index order fixed.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

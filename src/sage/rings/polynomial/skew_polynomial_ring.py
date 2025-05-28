@@ -476,7 +476,7 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
         self._codomain = codomain
         self._section = SectionSkewPolynomialCenterInjection(self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this morphism.
 

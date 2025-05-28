@@ -505,7 +505,7 @@ class HyperplaneArrangementElement(Element):
         """
         return self._hyperplanes
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation for a hyperplane arrangement.
 
@@ -3016,7 +3016,7 @@ class HyperplaneArrangementElement(Element):
                 return self.whitney_data()[1][0, k]
         raise ValueError('argument out of range')
 
-    def is_separating_hyperplane(self, region1, region2, hyperplane):
+    def is_separating_hyperplane(self, region1, region2, hyperplane) -> bool:
         r"""
         Test whether the ``hyperplane`` separates the given regions.
 
@@ -3695,7 +3695,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
         """
         return AmbientVectorSpace(self.base_ring(), self._names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

@@ -41,7 +41,7 @@ class GSets(Category):
         Category.__init__(self)
         self.__G = G
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

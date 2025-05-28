@@ -1277,7 +1277,7 @@ class pAdicLatticeCapElement(pAdicLatticeElement):
         self._precision._new_element(self, dx, bigoh=prec, dx_mode=dx_mode, capped=capped)
         return prec
 
-    def _is_exact_zero(self):
+    def _is_exact_zero(self) -> bool:
         r"""
         Return ``True`` if this element is exactly zero.
 

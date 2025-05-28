@@ -157,7 +157,7 @@ class XYPairsFactory(SetFactory):
         """
         return TopMostParentPolicy(self, (), XYPair)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -276,7 +276,7 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
         """
         return Pairs_Y(letter, policy=self.facade_policy())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -322,7 +322,7 @@ class PairsX_(ParentWithSetFactory, UniqueRepresentation):
         ParentWithSetFactory.__init__(self, (x, None), policy=policy,
                                       category=EnumeratedSets().Finite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -408,7 +408,7 @@ class Pairs_Y(ParentWithSetFactory, DisjointUnionEnumeratedSets):
             facade=True, keepkey=False,
             category=self.category())  # TODO remove and fix disjoint union.
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -488,7 +488,7 @@ class SingletonPair(ParentWithSetFactory, UniqueRepresentation):
         ParentWithSetFactory.__init__(self, (x, y), policy=policy,
                                       category=EnumeratedSets().Finite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

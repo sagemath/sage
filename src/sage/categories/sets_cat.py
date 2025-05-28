@@ -1826,7 +1826,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 raising :exc:`NotImplementedError` could be provided instead.
             """
 
-        def is_injective(self):
+        def is_injective(self) -> bool:
             r"""
             Return whether this map is injective.
 
@@ -1892,7 +1892,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
         class ParentMethods:
 
-            def is_finite(self):
+            def is_finite(self) -> bool:
                 """
                 Return whether this set is finite.
 
@@ -1911,7 +1911,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 return False
 
-            def is_empty(self):
+            def is_empty(self) -> bool:
                 r"""
                 Return whether this set is empty.
 
@@ -1956,7 +1956,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
         class ParentMethods:
 
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 EXAMPLES::
 
@@ -2087,7 +2087,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
         class ParentMethods:
 
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 EXAMPLES::
 
@@ -2131,7 +2131,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
         class ParentMethods:
 
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 EXAMPLES::
 
@@ -2161,7 +2161,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
 
         class ParentMethods:
 
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 EXAMPLES::
 
@@ -2360,7 +2360,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 return self._cartesian_product_of_elements(s.an_element() for s in self._sets)
 
-            def is_empty(self):
+            def is_empty(self) -> bool:
                 r"""
                 Return whether this set is empty.
 
@@ -2400,7 +2400,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     raise NotImplementedError from last_exception
                 return False
 
-            def is_finite(self):
+            def is_finite(self) -> bool:
                 r"""
                 Return whether this set is finite.
 
@@ -3198,7 +3198,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 # The split adds support for nested classes
                 return self.__class__.__base__.__name__.split('.')[-1]
 
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 EXAMPLES::
 

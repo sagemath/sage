@@ -295,7 +295,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             True
         """
 
-    def is_crystallographic(self):
+    def is_crystallographic(self) -> bool:
         """
         Return whether ``self`` is crystallographic.
 
@@ -315,7 +315,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         """
         return False
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether ``self`` is simply laced.
 

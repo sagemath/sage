@@ -310,7 +310,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 category = FiniteEnumeratedSets()
         Parent.__init__(self, facade=facade, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

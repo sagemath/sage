@@ -123,7 +123,7 @@ class Circle(GraphicPrimitive):
                 "respectively.",
                 'clip': 'Whether or not to clip the circle.'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of Circle primitive.
 

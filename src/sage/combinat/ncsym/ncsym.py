@@ -309,7 +309,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         category = GradedHopfAlgebras(R).Cocommutative()
         Parent.__init__(self, category=category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -396,7 +396,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 ....:     for A in SetPartitions(i))
                 True
             """
-            def lt(s, t):
+            def lt(s, t) -> bool:
                 if s == t:
                     return False
                 for p in s:
@@ -1730,7 +1730,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 ....:     for A in SetPartitions(i))
                 True
             """
-            def lt(s, t):
+            def lt(s, t) -> bool:
                 if s == t:
                     return False
                 for p in s:

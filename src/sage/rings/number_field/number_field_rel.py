@@ -466,7 +466,7 @@ class NumberField_relative(NumberField_generic):
         ans = Sequence(ans, immutable=True, cr=bool(ans))
         return ans
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         Return ``False``, since this is not an absolute field.
 
@@ -733,7 +733,7 @@ class NumberField_relative(NumberField_generic):
 
         return RelativeOrder(self, absolute_order, is_maximal=assume_maximal, is_maximal_at=v)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this relative number field.
 
@@ -781,7 +781,7 @@ class NumberField_relative(NumberField_generic):
         from sage.rings.number_field.homset import RelativeNumberFieldHomset
         return RelativeNumberFieldHomset(self, codomain, category)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of the extension.
 

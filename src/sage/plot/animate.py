@@ -309,7 +309,7 @@ class Animation(WithEqualityById, SageObject):
         else:
             return self._frames[i]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation for an animation.
 

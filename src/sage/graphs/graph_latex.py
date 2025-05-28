@@ -593,7 +593,7 @@ class GraphLatex(SageObject):
             return False
         return self._options == other._options
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of a
         :class:`sage.graphs.graph_latex.GraphLatex` object which includes the

@@ -544,7 +544,7 @@ class CFiniteSequence(FieldElement,
             return False
         return self.ogf() == other.ogf()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two CFiniteSequences.
 
@@ -932,7 +932,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         Parent.__init__(self, base_ring, names=self._polynomial_ring.gens(),
                         category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -1092,7 +1092,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
         """
         return self._polynomial_ring
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         """
         A coercion from `S` exists, if `S` coerces into ``self``'s fraction
         field.

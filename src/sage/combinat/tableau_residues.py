@@ -729,7 +729,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
         self._multicharge = tuple(self._base_ring(i) for i in multicharge)
         super().__init__(category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         The string representation of ``self``.
 

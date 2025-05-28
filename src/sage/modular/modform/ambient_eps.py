@@ -137,7 +137,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         base_ring = character.base_ring()
         ModularFormsAmbient.__init__(self, group, weight, base_ring, character, eis_only)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this space with character.
 

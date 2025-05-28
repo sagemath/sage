@@ -644,7 +644,7 @@ def _qepcad_atoms(formula):
     return {i.strip() for i in L}
 
 
-def _qepcad_cmd(memcells=None):
+def _qepcad_cmd(memcells=None) -> str:
     r"""
     Construct a QEPCAD command line.
 

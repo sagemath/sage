@@ -94,7 +94,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         self._module = None
         self._ambient_space = self
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -107,7 +107,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
         return "{}Forms(n={}, k={}, ep={}) over {}".format(self._analytic_type.analytic_space_name(), self._group.n(), self._weight, self._ep, self._base_ring)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 

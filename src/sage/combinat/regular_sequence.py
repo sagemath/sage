@@ -1508,7 +1508,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
         return _pickle_RegularSequenceRing, \
             (self.k, self.coefficient_ring(), self.category())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this `k`-regular sequence space.
 

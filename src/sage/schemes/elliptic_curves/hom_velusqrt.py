@@ -987,7 +987,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
     _call_ = _eval
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return basic information about this square-root Vélu isogeny as a string.
 

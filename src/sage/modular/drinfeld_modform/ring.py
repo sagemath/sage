@@ -355,7 +355,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         """
         return self.element_class(self, self._poly_ring.an_element())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

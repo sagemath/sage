@@ -420,7 +420,7 @@ class FractionField_generic(ring.Field):
         d = f.denominator()  # Integer
         return self._element_class(self, numerator=d * x, denominator=d)
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``True``, since the fraction field is a field.
 
@@ -478,7 +478,7 @@ class FractionField_generic(ring.Field):
         """
         return self._R.characteristic()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -489,7 +489,7 @@ class FractionField_generic(ring.Field):
         """
         return "Fraction Field of %s" % self._R
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -888,7 +888,7 @@ class FractionField_generic(ring.Field):
             return False
         return self._R == other._R
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -957,7 +957,7 @@ class FractionField_generic(ring.Field):
         r = self._element_class(self, x, one, coerce=False, reduce=False)
         return r
 
-    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
         """
         Check if the homomorphism defined by sending generators of this
         fraction field to ``im_gens`` in ``codomain`` is valid.
@@ -1130,7 +1130,7 @@ class FractionField_1poly_field(FractionField_generic):
         """
         return self._R
 
-    def class_number(self):
+    def class_number(self) -> int:
         """
         Here for compatibility with number fields and function fields.
 
@@ -1249,7 +1249,7 @@ class FractionFieldEmbedding(DefaultConvertMap_unique):
         """
         return self.domain().is_field()
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Return whether this map is injective.
 

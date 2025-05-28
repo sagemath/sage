@@ -1406,7 +1406,7 @@ class HasseDiagram(DiGraph):
         else:
             return self._leq_matrix
 
-    def _alternate_is_lequal(self, i, j):
+    def _alternate_is_lequal(self, i, j) -> bool:
         r"""
         Return ``True`` if ``i`` is less than or equal to ``j`` in
         ``self``, and ``False`` otherwise.
@@ -2261,7 +2261,7 @@ class HasseDiagram(DiGraph):
                 new_queue = [t for t in queue if not (leq[t, x] or leq[x, t])]
                 antichains_queues.append((new_antichain, new_queue))
 
-    def are_incomparable(self, i, j):
+    def are_incomparable(self, i, j) -> bool:
         """
         Return whether ``i`` and ``j`` are incomparable in the poset.
 

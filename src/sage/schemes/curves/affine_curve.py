@@ -209,7 +209,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
         Curve_generic.__init__(self, A, X)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -299,7 +299,7 @@ class AffinePlaneCurve(AffineCurve):
 
         super().__init__(A, [f])
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string representation of the type of this curve.
 
@@ -474,7 +474,7 @@ class AffinePlaneCurve(AffineCurve):
         Id = self.defining_ideal()
         return Id.plot(*args, **kwds)
 
-    def is_transverse(self, C, P):
+    def is_transverse(self, C, P) -> bool:
         r"""
         Return whether the intersection of this curve with the curve ``C`` at the point ``P`` is transverse.
 

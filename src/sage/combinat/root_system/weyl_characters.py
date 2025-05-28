@@ -395,7 +395,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         category = Algebras(self.base_ring())
         return SetMorphism(Hom(self.ambient(), self, category), self._retract)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1794,7 +1794,7 @@ class WeightRing(CombinatorialFreeModule):
         category = AlgebrasWithBasis(self._base_ring).Commutative()
         CombinatorialFreeModule.__init__(self, self._base_ring, self._space, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

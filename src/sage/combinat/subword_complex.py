@@ -1174,7 +1174,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         else:
             self._facets_dict = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1472,7 +1472,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         w = W.demazure_product(self._Q)
         return w == self._pi
 
-    def is_ball(self):
+    def is_ball(self) -> bool:
         r"""
         Return ``True`` if the subword complex ``self`` is a ball.
 
@@ -1499,7 +1499,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         return not self.is_sphere()
 
-    def is_pure(self):
+    def is_pure(self) -> bool:
         r"""
         Return ``True`` since all subword complexes are pure.
 
@@ -1569,7 +1569,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         return M.rank() == max(M.ncols(), M.nrows())
 
     @cached_method
-    def is_double_root_free(self):
+    def is_double_root_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` is double-root-free.
 

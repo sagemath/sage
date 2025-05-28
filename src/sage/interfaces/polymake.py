@@ -379,7 +379,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         self.eval('use Scalar::Util qw(reftype);')
         self.eval('use Scalar::Util qw(blessed);')
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         TESTS::
 
@@ -388,7 +388,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         return "="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         TESTS::
 
@@ -397,7 +397,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         """
         return "=="
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         TESTS::
 
@@ -1678,7 +1678,7 @@ class PolymakeFunctionElement(InterfaceFunctionElement):
         self._name = name
         self._is_memberfunc = memberfunction
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

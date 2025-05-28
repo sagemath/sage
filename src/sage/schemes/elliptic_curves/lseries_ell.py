@@ -85,7 +85,7 @@ class Lseries_ell(SageObject):
         D = self.dokchitser(prec)
         return D.taylor_series(a, series_prec, var)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this `L`-series.
 

@@ -37,7 +37,7 @@ class FreeAlgebra(CombinatorialFreeModule):
                                          Words(alphabet, infinite=False),
                                          category=AlgebrasWithBasis(R))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

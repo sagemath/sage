@@ -834,7 +834,7 @@ class ClassFunction_libgap(SageObject):
 
     gap = _gap_ = _libgap_
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 

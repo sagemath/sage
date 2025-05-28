@@ -458,7 +458,7 @@ class KirillovReshetikhinGenericCrystal(AffineCrystalFromClassical):
         AffineCrystalFromClassical.__init__(self, cartan_type, self.classical_decomposition(),
                                             KirillovReshetikhinCrystals())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4054,7 +4054,7 @@ class AmbientRetractMap(Map):
         self._similarity_factor_domain = similarity_factor_domain
         self._index_set = index_set
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return a string describing ``self``.
 

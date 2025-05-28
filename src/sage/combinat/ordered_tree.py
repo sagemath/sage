@@ -258,7 +258,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             children = [self.__class__(parent, x) for x in children]
         ClonableArray.__init__(self, parent, children, check=check)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return if ``self`` is the empty tree.
 
@@ -939,7 +939,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
             self, Family(NonNegativeIntegers(), OrderedTrees_size),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1028,7 +1028,7 @@ class OrderedTrees_size(OrderedTrees):
         super().__init__(category=FiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1364,7 +1364,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
             category = Sets()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

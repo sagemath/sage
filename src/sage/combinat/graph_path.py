@@ -132,7 +132,7 @@ class GraphPaths_common:
             return False
         return self.graph == other.graph
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 

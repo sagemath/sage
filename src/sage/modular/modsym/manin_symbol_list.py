@@ -490,7 +490,7 @@ class ManinSymbolList_group(ManinSymbolList):
         k = self.index((self._weight - 2 - i, v, -u))
         return k, -1 if i % 2 else 1
 
-    def _apply_S_only_0pm1(self):
+    def _apply_S_only_0pm1(self) -> bool:
         """
         Return ``True`` if the coefficient when applying the S relation is
         always 0, 1, or -1.  This is useful for optimizing code in

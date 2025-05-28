@@ -224,7 +224,7 @@ class Function_exp_integral_e(BuiltinFunction):
         """
         return _mpmath_utils_call(_mpmath_expint, n, z, parent=parent)
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         Custom ``_print_latex_`` method.
 
@@ -333,7 +333,7 @@ class Function_exp_integral_e1(BuiltinFunction):
         """
         return _mpmath_utils_call(_mpmath_e1, z, parent=parent)
 
-    def _print_latex_(self, z):
+    def _print_latex_(self, z) -> str:
         r"""
         Custom ``_print_latex_`` method.
 

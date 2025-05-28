@@ -355,7 +355,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
                                  "compare {} and {}".format(self, other))
             return bool( self.matrix(*bases) == other.matrix(*bases) )
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 
@@ -783,7 +783,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         return codom(tresu, basis=basis_codom, name=resu_name,
                      latex_name=resu_latex_name)
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         Determine whether ``self`` is injective.
 
@@ -832,7 +832,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         matrix_rep = next(iter(self._matrices.values()))
         return not matrix_rep.right_kernel().rank()
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         Determine whether ``self`` is surjective.
 
@@ -871,7 +871,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # Morphism methods
     #
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Check whether ``self`` is the identity morphism.
 

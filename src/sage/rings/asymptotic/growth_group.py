@@ -418,7 +418,7 @@ class Variable(CachedRepresentation, SageObject):
         """
         return self.var_repr == other.var_repr and self.var_bases == other.var_bases
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this variable does not equal ``other``.
 
@@ -686,7 +686,7 @@ class PartialConversionElement(SageObject):
         self.growth_group = growth_group
         self.raw_element = raw_element
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this partial conversion element.
 
@@ -1177,7 +1177,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         """
         pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A representation string for this generic element.
 
@@ -1826,7 +1826,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         self._var_ = var
         super().__init__(category=category, base=base)
 
-    def _repr_short_(self):
+    def _repr_short_(self) -> str:
         r"""
         A short representation string of this abstract growth group.
 
@@ -1848,7 +1848,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             vars = ', ' + vars
         return 'Generic(%s%s)' % (parent_to_repr_short(self.base()), vars)
 
-    def _repr_(self, condense=False):
+    def _repr_(self, condense=False) -> str:
         r"""
         A representations string of this growth group.
 
@@ -2243,7 +2243,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         """
         raise NotImplementedError('only implemented in concrete realizations')
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         r"""
         Return whether ``S`` coerces into this growth group.
 
@@ -2594,7 +2594,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         self.var = var
         super().__init__(domain, Monoids() & Posets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this functor.
 
@@ -2653,7 +2653,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         """
         return type(self) is type(other) and self.var == other.var
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this functor is not equal to ``other``.
 
@@ -4750,7 +4750,7 @@ class GenericNonGrowthElement(GenericGrowthElement):
     An element of :class:`GenericNonGrowthGroup`.
     """
 
-    def _lt_(self, other):
+    def _lt_(self, other) -> bool:
         r"""
         Return ``False`` as elements are not comparable.
 

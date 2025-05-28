@@ -122,7 +122,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
             return self
         raise ArithmeticError("sum only defined for subspaces of a common ambient Hecke module")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

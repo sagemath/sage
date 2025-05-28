@@ -409,7 +409,7 @@ class AugmentedValuation_base(InductiveValuation):
         ret = ret * self._base_valuation.element_with_valuation(s)
         return self.simplify(ret, error=error)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -604,7 +604,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         return self.element_with_valuation(self.value_group()._generator)
 
-    def is_gauss_valuation(self):
+    def is_gauss_valuation(self) -> bool:
         r"""
         Return whether this valuation is a Gauss valuation.
 
@@ -674,7 +674,7 @@ class AugmentedValuation_base(InductiveValuation):
 
         return super()._ge_(other)
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return whether this valuation is trivial, i.e., zero outside of zero.
 
@@ -764,7 +764,7 @@ class AugmentedValuation_base(InductiveValuation):
         """
         return self._base_valuation._relative_size(f)
 
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains `-\infty`.
 

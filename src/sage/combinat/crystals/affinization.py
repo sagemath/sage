@@ -97,7 +97,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         self.module_generators = tuple([self.element_class(self, b, 0)
                                         for b in B.module_generators])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -127,7 +127,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
             self._m = m
             Element.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 

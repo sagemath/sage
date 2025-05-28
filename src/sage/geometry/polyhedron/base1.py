@@ -575,7 +575,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         except StopIteration:
             pass
 
-    def contains(self, point):
+    def contains(self, point) -> bool:
         """
         Test whether the polyhedron contains the given ``point``.
 
@@ -704,7 +704,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             return self.parent().element_class(self.parent(), None, None)
         return self.relative_interior()
 
-    def interior_contains(self, point):
+    def interior_contains(self, point) -> bool:
         """
         Test whether the interior of the polyhedron contains the
         given ``point``.
@@ -763,7 +763,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
                 return False
         return True
 
-    def is_relatively_open(self):
+    def is_relatively_open(self) -> bool:
         r"""
         Return whether ``self`` is relatively open.
 
@@ -825,7 +825,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             return self
         return RelativeInterior(self)
 
-    def relative_interior_contains(self, point):
+    def relative_interior_contains(self, point) -> bool:
         """
         Test whether the relative interior of the polyhedron
         contains the given ``point``.

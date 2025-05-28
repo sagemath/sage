@@ -78,7 +78,7 @@ class ModularSymbol(SageObject):
         self.__alpha = _C(alpha)
         self.__beta = _C(beta)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this modular symbol.
 
@@ -118,7 +118,7 @@ class ModularSymbol(SageObject):
         """
         return [self.__alpha, self.__beta][j]
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return Latex representation of this modular symbol.
 

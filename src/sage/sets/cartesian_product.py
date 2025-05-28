@@ -134,7 +134,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         x = tuple(c(xx) for c, xx in zip(self._sets, x))
         return self.element_class(self, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

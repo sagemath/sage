@@ -457,7 +457,7 @@ class AbelianGroupAutomorphismGroup(AbelianGroupAutomorphismGroup_gap):
                                                    category=category,
                                                    ambient=None)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -523,7 +523,7 @@ class AbelianGroupAutomorphismGroup_subgroup(AbelianGroupAutomorphismGroup_gap):
                                                    ambient=ambient)
         self._covering_matrix_ring = ambient._covering_matrix_ring
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         The string representation of ``self``.
 

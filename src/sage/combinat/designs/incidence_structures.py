@@ -320,7 +320,7 @@ class IncidenceStructure:
         other_blocks = sorted(sorted(p_to_i[p] for p in b) for b in other.blocks())
         return self._blocks == other_blocks
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -1049,7 +1049,7 @@ class IncidenceStructure:
         B = self._blocks
         return all(B[i] != B[i + 1] for i in range(len(B) - 1))
 
-    def _gap_(self):
+    def _gap_(self) -> str:
         """
         Return the GAP string describing the design.
 
@@ -1209,7 +1209,7 @@ class IncidenceStructure:
             A = self.incidence_matrix()
             return BipartiteGraph(A)
 
-    def is_berge_cyclic(self):
+    def is_berge_cyclic(self) -> bool:
         r"""
         Check whether ``self`` is a Berge-Cyclic uniform hypergraph.
 

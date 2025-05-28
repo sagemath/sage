@@ -42,7 +42,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         assert n in [3, 4]
         CartanType_standard_finite.__init__(self, "H", n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -88,7 +88,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple):
         g.set_edge_label(n-1, n, 5)
         return g
 
-    def coxeter_number(self):
+    def coxeter_number(self) -> int:
         """
         Return the Coxeter number associated with ``self``.
 

@@ -177,7 +177,7 @@ class Word_class(SageObject):
         """
         return self._len
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return whether this word is known to be finite.
 
@@ -562,7 +562,7 @@ class Word_class(SageObject):
             parent = FiniteOrInfiniteWords(self._parent.alphabet())
         return parent(self._longest_periodic_prefix_iterator(period))
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return ``True`` if the length of ``self`` is zero, and ``False`` otherwise.
 

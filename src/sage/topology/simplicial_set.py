@@ -453,7 +453,7 @@ class AbstractSimplex_class(SageObject):
         return (self._degens == other._degens
                 and self.nondegenerate() is other.nondegenerate())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         This returns the negation of ``__eq__``.
 
@@ -580,7 +580,7 @@ class AbstractSimplex_class(SageObject):
             return False
         return id(self) < id(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -608,7 +608,7 @@ class AbstractSimplex_class(SageObject):
         """
         return self < other or self == other
 
-    def __ge__(self, other):
+    def __ge__(self, other) -> bool:
         """
         See :meth:`__lt__` for more doctests.
 
@@ -679,7 +679,7 @@ class AbstractSimplex_class(SageObject):
         """
         return bool(self.degeneracies())
 
-    def is_nondegenerate(self):
+    def is_nondegenerate(self) -> bool:
         """
         Return ``True`` if this simplex is non-degenerate.
 
@@ -3104,7 +3104,7 @@ class SimplicialSet_arbitrary(Parent):
             return self._latex_name
         return str(self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -3413,7 +3413,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     and not other.is_pointed()
                     and sorted(self._data) == sorted(other._data))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` are not equal as simplicial sets.
 

@@ -369,7 +369,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             self.quit()
         return success
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         r"""
         Return the assign symbol in GAP.
 
@@ -381,7 +381,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         return ":="
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit GAP.
 
@@ -401,7 +401,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         return 'quit;'
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         Return the command use to read in a file in GAP.
 
@@ -421,7 +421,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         return 'Read("%s");' % filename
 
-    def _continuation_prompt(self):
+    def _continuation_prompt(self) -> str:
         """
         Return the continuation prompt in GAP.
 
@@ -779,7 +779,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         return self.eval('%s in %s' % (v1, v2)) == "true"
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the symbol for truth in GAP.
 
@@ -792,7 +792,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         return "true"
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the symbol for falsity in GAP.
 
@@ -805,7 +805,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         """
         return "false"
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the symbol for equality in GAP.
 

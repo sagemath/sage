@@ -3544,7 +3544,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return ZZ.zero()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         """
         Return whether or not this curve has a CM `j`-invariant.
 

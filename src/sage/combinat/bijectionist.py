@@ -2725,7 +2725,7 @@ class _BijectionistMILP:
                                  name='veto')
         self._solution_cache.append(solution)
 
-    def _is_solution(self, constraint, values):
+    def _is_solution(self, constraint, values) -> bool:
         r"""
         Evaluate the given function at the given values.
 

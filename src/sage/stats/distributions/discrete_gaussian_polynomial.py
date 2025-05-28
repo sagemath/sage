@@ -128,7 +128,7 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
         coeffs = [self.D() for _ in range(self.n)]
         return self.P(coeffs)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

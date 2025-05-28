@@ -258,7 +258,7 @@ class PiecewiseFunction(BuiltinFunction):
             sage: piecewise.in_operands(1+sin(0*f))
             False
         """
-        def is_piecewise(ex):
+        def is_piecewise(ex) -> bool:
             if ex.operator() is piecewise:
                 return True
             for op in ex.operands():
@@ -1464,7 +1464,7 @@ class PiecewiseFunction(BuiltinFunction):
                     for domain, func in parameters]
             return pw(*args)
 
-        def _giac_init_(self, parameters, variable):
+        def _giac_init_(self, parameters, variable) -> str:
             """
             Convert this piecewise expression to its Giac equivalent.
 

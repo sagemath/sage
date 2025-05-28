@@ -66,7 +66,7 @@ class NilCoxeterAlgebra(IwahoriHeckeAlgebra.T):
         H = IwahoriHeckeAlgebra(W, 0, 0, base_ring=base_ring)
         super(IwahoriHeckeAlgebra.T, self).__init__(H, prefix=prefix)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

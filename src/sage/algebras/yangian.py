@@ -250,7 +250,7 @@ class Yangian(CombinatorialFreeModule):
                                          sorting_key=Yangian._term_key,
                                          prefix=variable_name, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -263,7 +263,7 @@ class Yangian(CombinatorialFreeModule):
         """
         return "Yangian of gl({}) in the {} filtration over {}".format(self._n, self._filtration, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -673,7 +673,7 @@ class YangianLevel(Yangian):
         CombinatorialFreeModule.__init__(self, base_ring, basis_keys,
                                          prefix=variable_name, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -685,7 +685,7 @@ class YangianLevel(Yangian):
         return "Yangian of level {} of gl({}) in the {} filtration over {}".format(
                         self._level, self._n, self._filtration, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

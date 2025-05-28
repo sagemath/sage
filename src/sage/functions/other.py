@@ -403,7 +403,7 @@ class Function_ceil(BuiltinFunction):
                                                     sympy='ceiling',
                                                     giac='ceil'))
 
-    def _print_latex_(self, x):
+    def _print_latex_(self, x) -> str:
         r"""
         EXAMPLES::
 
@@ -571,7 +571,7 @@ class Function_floor(BuiltinFunction):
         BuiltinFunction.__init__(self, "floor",
                                  conversions=dict(sympy='floor', giac='floor'))
 
-    def _print_latex_(self, x):
+    def _print_latex_(self, x) -> str:
         r"""
         EXAMPLES::
 
@@ -1809,7 +1809,7 @@ class Function_sum(BuiltinFunction):
         BuiltinFunction.__init__(self, "sum", nargs=4,
                                conversions=dict(maxima='sum'))
 
-    def _print_latex_(self, x, var, a, b):
+    def _print_latex_(self, x, var, a, b) -> str:
         r"""
         EXAMPLES::
 
@@ -1878,7 +1878,7 @@ class Function_prod(BuiltinFunction):
                                conversions=dict(maxima='product',
                                    sympy='Product', giac='product'))
 
-    def _print_latex_(self, x, var, a, b):
+    def _print_latex_(self, x, var, a, b) -> str:
         r"""
         EXAMPLES::
 
@@ -1944,7 +1944,7 @@ class Function_limit(BuiltinFunction):
         BuiltinFunction.__init__(self, "limit", nargs=0,
                                conversions=dict(maxima='limit'))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1954,7 +1954,7 @@ class Function_limit(BuiltinFunction):
         """
         return r'\lim'
 
-    def _print_latex_(self, ex, var, to, direction=''):
+    def _print_latex_(self, ex, var, to, direction='') -> str:
         r"""
         EXAMPLES::
 
@@ -2276,7 +2276,7 @@ class Function_elementof(BuiltinFunction):
         if s not in Sets():
             raise ValueError("not a set: {}".format(s))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -2286,7 +2286,7 @@ class Function_elementof(BuiltinFunction):
         """
         return r'\in'
 
-    def _print_latex_(self, ex, s):
+    def _print_latex_(self, ex, s) -> str:
         r"""
         EXAMPLES::
 

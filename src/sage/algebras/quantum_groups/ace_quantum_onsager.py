@@ -172,7 +172,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
         """
         return (-len(x), x.to_word_list())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -186,7 +186,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
         return "Alternating Central Extension of {}-Onsager algebra over {}".format(
                                                      self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

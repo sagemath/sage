@@ -207,7 +207,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         self._manifold = manifold  # the ambient manifold
         self._has_defined_points = False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 
@@ -495,7 +495,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     ambient = manifold
 
-    def is_open(self):
+    def is_open(self) -> bool:
         r"""
         Return if ``self`` is an open set.
 
@@ -513,7 +513,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         """
         return False
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         r"""
         Return if ``self`` is a closed set.
 
@@ -1009,7 +1009,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
             # Add a placeholder vertex under each subset that has a defined
             # point that we do not know about.
-            def anonymous_point_vertex(S):
+            def anonymous_point_vertex(S) -> str:
                 return f"p{S._name}"
 
             add_edges((anonymous_point_vertex(S), vertex(S))
@@ -1292,7 +1292,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     #### End of accessors
 
-    def is_subset(self, other):
+    def is_subset(self, other) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is included in ``other``.
 
@@ -2268,7 +2268,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         if not subsets:
             raise TypeError('input set must be nonempty')
 
-        def reduce():
+        def reduce() -> bool:
             # Greedily replace inclusion chains by their minimal element
             # and pairs with declared intersections by their intersection
             for U, V in itertools.combinations(subsets, 2):
@@ -2490,7 +2490,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         """
         subsets = set(subsets)
 
-        def reduce():
+        def reduce() -> bool:
             # Greedily replace inclusion chains by their maximal element
             # and pairs with declared unions by their union
             for U, V in itertools.combinations(subsets, 2):

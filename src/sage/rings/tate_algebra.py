@@ -386,7 +386,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         self._integral = A._integral
         self._parent_algebra = A
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Tate term monoid.
 
@@ -403,7 +403,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
                          for var, r in zip(self._names, self._log_radii))
         return "Monoid of terms in %s over %s" % (vars, self._base)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this Tate term monoid.
 
@@ -734,7 +734,7 @@ class TateAlgebra_generic(Parent):
         """
         return self.gen()
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         Return ``True`` if ``R`` coerces to this Tate algebra.
 
@@ -988,7 +988,7 @@ class TateAlgebra_generic(Parent):
         terms = [ self.zero() ] + [ self(t) for t in self.monoid_of_terms().some_elements() ]
         return [ terms[i] + terms[j] for i in range(len(terms)) for j in range(i, len(terms)) ]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a printable representation of this algebra.
 
@@ -1254,7 +1254,7 @@ class TateAlgebra_generic(Parent):
             gens = [self.element_class(self, g) for g in self._integer_ring._gens]
         return self.element_class(self, polring.random_element(degree, terms)(*gens), prec)
 
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         r"""
         Return ``True`` since any Tate algebra is an integral domain.
 

@@ -1245,7 +1245,7 @@ class FQSymBases(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1281,7 +1281,7 @@ class FQSymBases(Category_realization_of_parent):
                 ]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `FQSym`.
 
@@ -1338,7 +1338,7 @@ class FQSymBases(Category_realization_of_parent):
             else:
                 return Family(Permutations(degree), self.monomial)
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return whether this `FQSym` is a field.
 

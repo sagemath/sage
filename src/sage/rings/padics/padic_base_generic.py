@@ -220,7 +220,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         return self.defining_polynomial(exact=exact)
 
-    def absolute_discriminant(self):
+    def absolute_discriminant(self) -> int:
         """
         Return the absolute discriminant of this `p`-adic ring.
 
@@ -231,7 +231,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         return 1
 
-    def discriminant(self, K=None):
+    def discriminant(self, K=None) -> int:
         """
         Return the discriminant of this `p`-adic ring over ``K``.
 
@@ -256,7 +256,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         else:
             raise ValueError("Ground Ring must be a subring of self")
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return whether the Galois group is abelian, i.e. ``True``.
         #should this be automorphism group?
@@ -268,7 +268,7 @@ class pAdicBaseGeneric(pAdicGeneric):
         """
         return True
 
-    def is_normal(self):
+    def is_normal(self) -> bool:
         """
         Return whether or not this is a normal extension, i.e. ``True``.
 

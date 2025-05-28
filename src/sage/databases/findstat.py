@@ -1298,7 +1298,7 @@ def findmap(*args, **kwargs):
         data = _distribution_from_data(known_terms, domain, max_values)
         return known_terms, data, domain, codomain, function
 
-    def is_collection(arg):
+    def is_collection(arg) -> bool:
         try:
             FindStatCollection(arg)
             return True
@@ -2470,7 +2470,7 @@ class FindStatStatistics(UniqueRepresentation, Parent):
 
         return _all_statistics[id]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a short description of the set of FindStat statistics.
 
@@ -2947,7 +2947,7 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
         # we can trust that matches have fitting domain / codomain sequence
         FindStatCompoundStatistic.__init__(self, matching_statistic, domain=domain, check=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the match.
 
@@ -3849,7 +3849,7 @@ class FindStatMatchingMap(FindStatCompoundMap):
         # we can trust that matches have fitting domain / codomain sequence
         FindStatCompoundMap.__init__(self, matching_map, domain=domain, codomain=codomain, check=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the match.
 
@@ -4178,7 +4178,7 @@ class FindStatCollection(Element,
         """
         return self.id()
 
-    def is_supported(self):
+    def is_supported(self) -> bool:
         """
         Check whether the collection is fully supported by the interface.
 
@@ -4252,7 +4252,7 @@ class FindStatCollection(Element,
         """
         return self._data["LevelsWithSizes"]
 
-    def in_range(self, element):
+    def in_range(self, element) -> bool:
         r"""
         Check whether an element of the collection is in FindStat's precomputed range.
 
@@ -4446,7 +4446,7 @@ class FindStatCollection(Element,
         """
         return self._data["Code"].string_to_element
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of the FindStat collection.
 
@@ -4867,7 +4867,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
 
         raise ValueError("could not find FindStat collection for %s" % str(entry))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the representation of the set of FindStat collections.
 

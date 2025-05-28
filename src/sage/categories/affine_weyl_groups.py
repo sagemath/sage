@@ -72,7 +72,7 @@ class AffineWeylGroups(Category_singleton):
         """
         return None
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         Return the name of the objects of this category.
 

@@ -172,7 +172,7 @@ class AffineSubspace(SageObject):
         W = other._linear_part
         return V == W and self._point - other._point in V
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test whether ``self`` is not equal to ``other``.
 

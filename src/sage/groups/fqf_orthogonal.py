@@ -269,7 +269,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
                 raise ValueError("not an isometry")
         return f
 
-    def _preserves_form(self, f):
+    def _preserves_form(self, f) -> bool:
         r"""
         Return if ``f`` preserves the form.
 
@@ -364,7 +364,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
         generators = tuple(self(g, check=False) for g in generators)
         return FqfOrthogonalGroup(self, generators, self.invariant_form(), check=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         The string representation of ``self``.
 

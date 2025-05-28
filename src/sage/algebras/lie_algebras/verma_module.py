@@ -275,7 +275,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         return (-len(x), [self._triangular_key(l) for l in x.to_word_list()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -290,7 +290,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         """
         return "Verma module with highest weight {} of {}".format(self._weight, self._g)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -552,7 +552,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         wt, w = (self._weight + P.rho()).to_dominant_chamber(reduced_word=True)
         return (wt - P.rho(), w)
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return if ``self`` is a singular Verma module.
 
@@ -866,7 +866,7 @@ class VermaModuleMorphism(Morphism):
         self._scalar = scalar
         Morphism.__init__(self, parent)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return a string describing the specific type of this map,
         to be used when printing ``self``.
@@ -883,7 +883,7 @@ class VermaModuleMorphism(Morphism):
         """
         return "Verma module"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         r"""
         Return a string describing the definition of ``self``,
         to be used when printing ``self``.

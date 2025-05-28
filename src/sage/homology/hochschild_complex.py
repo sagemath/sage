@@ -105,7 +105,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         Parent.__init__(self, base=A.base_ring(),
                         category=ChainComplexes(A.base_ring()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -121,7 +121,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
         """
         return "Hochschild complex of {} with coefficients in {}".format(self._A, self._M)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -601,7 +601,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             except KeyError:
                 return self.parent().module(degree).zero()
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Print representation.
 

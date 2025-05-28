@@ -194,7 +194,7 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
 
     #### Parent methods ####
 
-    def _coerce_map_from_(self, other):
+    def _coerce_map_from_(self, other) -> bool:
         r"""
         Determine whether coercion to ``self`` exists from other parent.
 

@@ -238,7 +238,7 @@ class AlgebraicScheme(scheme.Scheme):
         self.__divisor_group = {}
         scheme.Scheme.__init__(self, A.base_scheme(), category=category)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this algebraic scheme.
 
@@ -516,7 +516,7 @@ class AlgebraicScheme(scheme.Scheme):
         """
         return self.__A.ngens()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this algebraic scheme.
 
@@ -652,7 +652,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         self._base_ring = A.base_ring()
         AlgebraicScheme.__init__(self, A)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a LaTeX representation of this algebraic scheme.
 
@@ -689,7 +689,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
                 r"\text{ and } Y \text{ is defined by } %s."
                 % (t, latex(self.ambient_space()), X, Y))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this algebraic scheme.
 
@@ -747,7 +747,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
         """
         return self.__Y
 
-    def _check_satisfies_equations(self, v):
+    def _check_satisfies_equations(self, v) -> bool:
         """
         Verify that the coordinates of v define a point on this scheme, or
         raise a :exc:`TypeError`.
@@ -1027,7 +1027,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             return NotImplemented
         return richcmp(self.defining_ideal(), other.defining_ideal(), op)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a LaTeX representation of this scheme.
 
@@ -1052,7 +1052,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         return (r"\text{Closed subscheme of } %s \text{ defined by } %s"
                 % (latex(self.ambient_space()), polynomials))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this scheme.
 

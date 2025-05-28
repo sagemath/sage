@@ -347,7 +347,7 @@ def is_MPolynomialIdeal(x) -> bool:
 
 
 class MPolynomialIdeal_magma_repr:
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return a Magma ideal matching this ideal if the base ring
         coerces to Magma and Magma is available.
@@ -2026,7 +2026,7 @@ class MPolynomialIdeal_singular_repr(
     @cached_method
     @handle_AA_and_QQbar
     @singular_gb_standard_options
-    def basis_is_groebner(self, singular=None):
+    def basis_is_groebner(self, singular=None) -> bool:
         r"""
         Return ``True`` if the generators of this ideal
         (``self.gens()``) form a Groebner basis.
@@ -3902,7 +3902,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
         self._gb_by_ordering = dict()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Stupid constant hash function.
 
@@ -5055,7 +5055,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         P = max(I, key=lambda x: x.parent().ngens()).parent()
         return P.ideal([P(f) for f in I])
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return ``True`` if this ideal is spanned by homogeneous
         polynomials, i.e., if it is a homogeneous ideal.

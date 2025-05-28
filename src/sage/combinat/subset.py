@@ -269,7 +269,7 @@ class Subsets_s(Parent):
             return False
         return self._s == other._s
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -299,7 +299,7 @@ class Subsets_s(Parent):
         """
         return hash(self._s)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -644,7 +644,7 @@ class Subsets_sk(Subsets_s):
             return False
         return self._s == other._s and self._k == other._k
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -974,7 +974,7 @@ class SubMultiset_s(Parent):
             self._l = s
             self._d, self._keys = list_to_dict(s)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -996,7 +996,7 @@ class SubMultiset_s(Parent):
             return False
         return self._d == other._d
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -1255,7 +1255,7 @@ class SubMultiset_sk(SubMultiset_s):
         """
         return Integer(sum(1 for _ in self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

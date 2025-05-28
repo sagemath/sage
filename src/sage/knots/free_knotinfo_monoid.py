@@ -206,7 +206,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
             from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
             self._indices = FiniteEnumeratedSet(self._index_dict)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

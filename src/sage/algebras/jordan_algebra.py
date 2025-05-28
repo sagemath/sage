@@ -268,7 +268,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
 
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -461,7 +461,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 return False
             return self._x == other._x
 
-        def __ne__(self, other):
+        def __ne__(self, other) -> bool:
             """
             Check inequality.
 
@@ -619,7 +619,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         cat = MagmaticAlgebras(R).Commutative().Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -822,7 +822,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             self._v = v
             AlgebraElement.__init__(self, parent)
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
 
@@ -835,7 +835,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             """
             return "{} + {}".format(self._s, self._v)
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Return a latex representation of ``self``.
 
@@ -891,7 +891,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
                 return False
             return self._s == other._s and self._v == other._v
 
-        def __ne__(self, other):
+        def __ne__(self, other) -> bool:
             """
             Check inequality.
 
@@ -1190,7 +1190,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
         cat = MagmaticAlgebras(R).Unital().FiniteDimensional().WithBasis()
         Parent.__init__(self, base=R, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

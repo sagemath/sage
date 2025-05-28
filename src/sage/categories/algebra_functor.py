@@ -668,7 +668,7 @@ class AlgebrasCategory(CovariantConstructionCategory, Category_over_base_ring):
 
     _functor_category = "Algebras"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

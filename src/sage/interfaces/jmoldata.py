@@ -85,7 +85,7 @@ class JmolData(SageObject):
 
         return jmolpath
 
-    def is_jmol_available(self):
+    def is_jmol_available(self) -> bool:
         """
         Return ``True`` if jmol is available and ``False`` if not.
 

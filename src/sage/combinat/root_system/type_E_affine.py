@@ -49,7 +49,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
             raise ValueError("Invalid Cartan Type for Type E")
         CartanType_standard_untwisted_affine.__init__(self, "E", n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 

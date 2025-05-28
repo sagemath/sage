@@ -2241,7 +2241,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # self -> E2
                     yield psi
 
-    def is_isogenous(self, other, field=None):
+    def is_isogenous(self, other, field=None) -> bool:
         """
         Return whether or not ``self`` is isogenous to ``other``.
 
@@ -2629,7 +2629,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         GL = G.relabel(labels, inplace=False)
         return GL
 
-    def endomorphism_ring_is_commutative(self):
+    def endomorphism_ring_is_commutative(self) -> bool:
         r"""
         Check whether the endomorphism ring of this elliptic curve
         *over its base field* is commutative.

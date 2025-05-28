@@ -313,7 +313,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             return False
         return list(self) == list(y)
 
-    def __ne__(self, y):
+    def __ne__(self, y) -> bool:
         """
         Check lack of equality of ``self`` and ``y``.
 
@@ -713,7 +713,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         CP = product(*[_refine_block(block, strong) for block in self])
         return set(P(_concatenate(map(list, c))) for c in CP)
 
-    def is_finer(self, co):
+    def is_finer(self, co) -> bool:
         """
         Return ``True`` if the ordered multiset partition into sets ``self``
         is finer than the composition ``co``; otherwise, return ``False``.
@@ -1584,7 +1584,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
         else:
             Parent.__init__(self, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2040,7 +2040,7 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
         self._n = n
         OrderedMultisetPartitionsIntoSets.__init__(self, True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3251,7 +3251,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             mu = self.element_class(self, (word, breaks))
             self.module_generators.append(mu)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

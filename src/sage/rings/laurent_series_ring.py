@@ -816,7 +816,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
         """
         return self._power_series_ring.default_prec()
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Laurent series rings are inexact.
 
@@ -873,7 +873,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             raise TypeError("the base ring is not a field")
         return self.gen()
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Laurent series rings are univariate.
 

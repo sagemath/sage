@@ -206,7 +206,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
         self._name = name
         self._module = module
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

@@ -135,7 +135,7 @@ class UnionOfIntervals:
         """
         return list(zip(self._endpoints[::2], self._endpoints[1::2]))
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return whether ``self`` is empty.
 
@@ -1652,7 +1652,7 @@ class EllipticCurveCanonicalHeight:
                 vals[i,j] = abs(ff((i+.5)/N + (j+.5)*tau/N))
         return vals
 
-    def complex_intersection_is_empty(self, Bk, v, verbose=False, use_half=True):
+    def complex_intersection_is_empty(self, Bk, v, verbose=False, use_half=True) -> bool:
         r"""
         Return ``True`` iff an intersection of `T_n^{(v)}` sets is empty.
 
@@ -1745,7 +1745,7 @@ class EllipticCurveCanonicalHeight:
             B = RIF(B)
             leaning_right = tau.real() / tau.imag() >= 0
 
-            def check_line(z):
+            def check_line(z) -> bool:
                 wpz = wp(z)
                 if wpz > B:
                     return True
@@ -1773,7 +1773,7 @@ class EllipticCurveCanonicalHeight:
 
         return False
 
-    def test_mu(self, mu, N, verbose=True):
+    def test_mu(self, mu, N, verbose=True) -> bool:
         r"""
         Return ``True`` if we can prove that `\mu` is a lower bound.
 

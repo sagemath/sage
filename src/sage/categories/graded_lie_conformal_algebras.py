@@ -43,7 +43,7 @@ class GradedLieConformalAlgebrasCategory(GradedModulesCategory):
         """
         return self.base_category().Super(base_ring).Graded()
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         The names of the objects of ``self``.
 

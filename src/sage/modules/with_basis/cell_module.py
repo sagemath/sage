@@ -92,7 +92,7 @@ class CellModule(CombinatorialFreeModule):
                                          A.cell_module_indices(mu),
                                          category=cat, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -105,7 +105,7 @@ class CellModule(CombinatorialFreeModule):
         """
         return "Cell module indexed by {} of {}".format(self._la, self._algebra)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -418,7 +418,7 @@ class SimpleModule(QuotientModuleWithBasis):
         # We set some print options since QuotientModuleWithBasis doesn't take them
         self.print_options(prefix='L', bracket=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

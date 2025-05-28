@@ -1011,7 +1011,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         im_base_gens = [pa+pb+pc, pa*pb+pa*pc+pb*pc, pa*pb*pc]
         base_ring_embedding = extension_ring.coerce_map_from(base_ring)
 
-        def check_base_ring_embedding(base_ring_embedding):
+        def check_base_ring_embedding(base_ring_embedding) -> bool:
             if base_ring_embedding is None:
                 return False
             try:

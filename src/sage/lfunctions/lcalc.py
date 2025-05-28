@@ -63,7 +63,7 @@ class LCalc(SageObject):
     class. Type ``lcalc.help()`` for a list of commands and
     how to call them.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Rubinsteins L-function Calculator"
 
     def __call__(self, args):

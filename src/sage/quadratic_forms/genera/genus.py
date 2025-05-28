@@ -1374,7 +1374,7 @@ class Genus_Symbol_p_adic_ring:
         rep = f"Genus symbol at {p}:    {CS_string}"
         return rep.rstrip()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         The LaTeX representation of this local genus symbol.
 
@@ -1460,7 +1460,7 @@ class Genus_Symbol_p_adic_ring:
             return False
         return self.canonical_symbol() == other.canonical_symbol()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Determines if two genus symbols are unequal (not just inequivalent!).
 

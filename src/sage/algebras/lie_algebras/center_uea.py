@@ -99,7 +99,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         self._gen_degrees = {}
         self._cur_num_gens = 0
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -114,7 +114,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         """
         return "Basis indices of {}".format(self._center)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -552,7 +552,7 @@ class CenterUEA(CombinatorialFreeModule):
         """
         return "Center of " + repr(self._envelop_alg)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

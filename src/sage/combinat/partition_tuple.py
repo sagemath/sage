@@ -588,7 +588,7 @@ class PartitionTuple(CombinatorialElement):
         """
         return ' | '.join(nu._repr_exp_high() for nu in self)
 
-    def _repr_compact_low(self):
+    def _repr_compact_low(self) -> str:
         """
         Return a string representation of ``self`` in compact form (exponential
         form with highest first).
@@ -1023,7 +1023,7 @@ class PartitionTuple(CombinatorialElement):
         """
         return PartitionTuple([nu.conjugate() for nu in self[::-1]])
 
-    def dominates(self, mu):
+    def dominates(self, mu) -> bool:
         r"""
         Return ``True`` if the PartitionTuple dominates or equals `\mu` and
         ``False`` otherwise.
@@ -2062,7 +2062,7 @@ class PartitionTuples_all(PartitionTuples):
         """
         super().__init__(category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2144,7 +2144,7 @@ class PartitionTuples_level(PartitionTuples):
         super().__init__(category=category)
         self._level = level
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2248,7 +2248,7 @@ class PartitionTuples_size(PartitionTuples):
         super().__init__(category=InfiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2351,7 +2351,7 @@ class PartitionTuples_level_size(PartitionTuples):
         self._level = level
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2589,7 +2589,7 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
         """
         RegularPartitionTuples.__init__(self, regular, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2715,7 +2715,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         PartitionTuples_level.__init__(self, level, category=category)
         self._ell = regular
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2871,7 +2871,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
         RegularPartitionTuples.__init__(self, regular, category=InfiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3010,7 +3010,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         PartitionTuples_level_size.__init__(self, level, size)
         self._ell = regular
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

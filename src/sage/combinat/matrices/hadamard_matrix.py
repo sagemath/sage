@@ -1581,7 +1581,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     return H
 
 
-def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False):
+def is_hadamard_matrix(M, normalized=False, skew=False, verbose=False) -> bool:
     r"""
     Test if ``M`` is a Hadamard matrix.
 
@@ -1825,7 +1825,7 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         def report_name(nam):
             return nam
     else:
-        def report_name(nam):
+        def report_name(nam) -> bool:
             return True
 
     if not (n % 4 == 0) and (n > 2):
@@ -2050,7 +2050,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n, e, existence=Fal
 
     from sage.graphs.strongly_regular_db import strongly_regular_graph
 
-    def true():
+    def true() -> bool:
         _rshcd_cache[n, e] = True
         return True
 
@@ -3555,7 +3555,7 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         return H
 
 
-def are_amicable_hadamard_matrices(M, N, verbose=False):
+def are_amicable_hadamard_matrices(M, N, verbose=False) -> bool:
     r"""
     Check if ``M`` and ``N`` are amicable Hadamard matrices.
 

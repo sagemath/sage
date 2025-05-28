@@ -124,7 +124,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         """
         FiniteSubgroup.__init__(self, abvar)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this torsion subgroup.
 
@@ -674,7 +674,7 @@ class QQbarTorsionSubgroup(Module):
         self.__abvar = abvar
         Module.__init__(self, ZZ)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation of QQbar points.
 

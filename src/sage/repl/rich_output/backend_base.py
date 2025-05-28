@@ -187,7 +187,7 @@ class BackendBase(SageObject):
         """
         raise NotImplementedError('derived classes must implement this method')
 
-    def is_in_terminal(self):
+    def is_in_terminal(self) -> bool:
         """
         Test whether the UI is meant to run in a terminal.
 
@@ -206,7 +206,7 @@ class BackendBase(SageObject):
         """
         return False
 
-    def max_width(self):
+    def max_width(self) -> int:
         """
         Return the number of characters that fit into one output line.
 
@@ -221,7 +221,7 @@ class BackendBase(SageObject):
         """
         return 79
 
-    def newline(self):
+    def newline(self) -> str:
         r"""
         Return the newline string.
 
@@ -591,7 +591,7 @@ class BackendSimple(BackendBase):
         simple
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of the backend.
 

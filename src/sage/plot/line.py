@@ -147,7 +147,7 @@ class Line(GraphicPrimitive_xydata):
         options.update(kwds)
         return line3d([(x, y, z) for x, y in zip(self.xdata, self.ydata)], **options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of a line primitive.
 

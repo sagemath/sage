@@ -438,7 +438,7 @@ class Hrepresentation(PolyhedronRepresentation):
         if polyhedron.is_mutable():
             polyhedron._add_dependent_object(self)
 
-    def is_H(self):
+    def is_H(self) -> bool:
         """
         Return ``True`` if the object is part of a H-representation
         (inequality or equation).
@@ -452,7 +452,7 @@ class Hrepresentation(PolyhedronRepresentation):
         """
         return True
 
-    def is_inequality(self):
+    def is_inequality(self) -> bool:
         """
         Return ``True`` if the object is an inequality of the H-representation.
 
@@ -465,7 +465,7 @@ class Hrepresentation(PolyhedronRepresentation):
         """
         return False
 
-    def is_equation(self):
+    def is_equation(self) -> bool:
         """
         Return ``True`` if the object is an equation of the H-representation.
 
@@ -748,7 +748,7 @@ class Inequality(Hrepresentation):
         """
         return self.INEQUALITY
 
-    def is_inequality(self):
+    def is_inequality(self) -> bool:
         """
         Return ``True`` since this is, by construction, an inequality.
 
@@ -761,7 +761,7 @@ class Inequality(Hrepresentation):
         """
         return True
 
-    def is_facet_defining_inequality(self, other):
+    def is_facet_defining_inequality(self, other) -> bool:
         r"""
         Check if ``self`` defines a facet of ``other``.
 
@@ -1024,7 +1024,7 @@ class Equation(Hrepresentation):
         """
         return self.EQUATION
 
-    def is_equation(self):
+    def is_equation(self) -> bool:
         """
         Test if this object is an equation.  By construction, it must be.
 
@@ -1083,7 +1083,7 @@ class Equation(Hrepresentation):
         """
         return self.polyhedron()._is_zero( self.eval(Vobj) )
 
-    def interior_contains(self, Vobj):
+    def interior_contains(self, Vobj) -> bool:
         """
         Test whether the interior of the halfspace (excluding its
         boundary) defined by the inequality contains the given
@@ -1165,7 +1165,7 @@ class Vrepresentation(PolyhedronRepresentation):
         if polyhedron.is_mutable():
             polyhedron._add_dependent_object(self)
 
-    def is_V(self):
+    def is_V(self) -> bool:
         """
         Return ``True`` if the object is part of a V-representation
         (a vertex, ray, or line).
@@ -1179,7 +1179,7 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return True
 
-    def is_vertex(self):
+    def is_vertex(self) -> bool:
         """
         Return ``True`` if the object is a vertex of the V-representation.
         This method is over-ridden by the corresponding method in the
@@ -1198,7 +1198,7 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return False
 
-    def is_ray(self):
+    def is_ray(self) -> bool:
         """
         Return ``True`` if the object is a ray of the V-representation.
         This method is over-ridden by the corresponding method in the
@@ -1218,7 +1218,7 @@ class Vrepresentation(PolyhedronRepresentation):
         """
         return False
 
-    def is_line(self):
+    def is_line(self) -> bool:
         """
         Return ``True`` if the object is a line of the V-representation.
         This method is over-ridden by the corresponding method in the
@@ -1361,7 +1361,7 @@ class Vertex(Vrepresentation):
         """
         return self.VERTEX
 
-    def is_vertex(self):
+    def is_vertex(self) -> bool:
         """
         Test if this object is a vertex.  By construction it always is.
 
@@ -1478,7 +1478,7 @@ class Ray(Vrepresentation):
         """
         return self.RAY
 
-    def is_ray(self):
+    def is_ray(self) -> bool:
         """
         Test if this object is a ray.  Always ``True`` by construction.
 
@@ -1576,7 +1576,7 @@ class Line(Vrepresentation):
         """
         return self.LINE
 
-    def is_line(self):
+    def is_line(self) -> bool:
         """
         Test if the object is a line.  By construction it must be.
 

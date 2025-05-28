@@ -21,7 +21,7 @@ class FanNotIsomorphicError(Exception):
     pass
 
 
-def fan_isomorphic_necessary_conditions(fan1, fan2):
+def fan_isomorphic_necessary_conditions(fan1, fan2) -> bool:
     """
     Check necessary (but not sufficient) conditions for the fans to be isomorphic.
 

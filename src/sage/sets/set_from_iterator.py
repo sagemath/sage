@@ -270,7 +270,7 @@ class EnumeratedSetFromIterator(Parent):
     is_parent_of = __contains__
 
     # TODO: what should we do for comparisons of infinite sets
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test.
 
@@ -330,7 +330,7 @@ class EnumeratedSetFromIterator(Parent):
                 if x != y:
                     return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 

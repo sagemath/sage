@@ -57,7 +57,7 @@ class ModularFormsSubmodule(ModularFormsSpace,
         ModularFormsSpace.__init__(self, A.group(), A.weight(),
                                          A.character(), A.base_ring())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

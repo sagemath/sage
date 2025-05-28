@@ -455,7 +455,7 @@ class OrderedSetPartition(ClonableArray,
         return FiniteEnumeratedSet([par(sum((list(i) for i in C), []))
                                     for C in product(*[OrderedSetPartitions(X) for X in self])])
 
-    def is_finer(self, co2):
+    def is_finer(self, co2) -> bool:
         """
         Return ``True`` if the ordered set partition ``self`` is finer
         than the ordered set partition ``co2``; otherwise, return ``False``.
@@ -674,7 +674,7 @@ class OrderedSetPartition(ClonableArray,
         return FiniteEnumeratedSet([par(sum((list(P) for P in C), []))
                                     for C in product(*[[buo(X, comp) for comp in Compositions(len(X))] for X in self])])
 
-    def is_strongly_finer(self, co2):
+    def is_strongly_finer(self, co2) -> bool:
         r"""
         Return ``True`` if the ordered set partition ``self`` is strongly
         finer than the ordered set partition ``co2``; otherwise, return
@@ -1065,7 +1065,7 @@ class OrderedSetPartitions_s(OrderedSetPartitions):
     Class of ordered partitions of a set `S`.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1360,7 +1360,7 @@ def multiset_permutation_to_ordered_set_partition(l, m):
     return p
 
 
-def multiset_permutation_next_lex(l):
+def multiset_permutation_next_lex(l) -> int:
     r"""
     Return the next multiset permutation after ``l``.
 
@@ -1531,7 +1531,7 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
             return X._set == frozenset(range(1, len(X._set) + 1))
         return super()._coerce_map_from_(X)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

@@ -134,7 +134,7 @@ class GraftalLaceCellularAutomata(SageObject):
         return (isinstance(other, GraftalLaceCellularAutomata)
                 and self._rule == other._rule)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check non equality.
 
@@ -211,7 +211,7 @@ class GraftalLaceCellularAutomata(SageObject):
     # Output functions
     # ----------------
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -93,7 +93,7 @@ class TestObject(SageObject):
     Test object with both :meth:`_repr_` and :meth:`_rich_repr_`
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 
@@ -131,7 +131,7 @@ class TestObject(SageObject):
 
 class BackendTest(BackendBase):
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 

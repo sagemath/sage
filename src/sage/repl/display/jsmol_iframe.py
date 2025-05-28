@@ -196,7 +196,7 @@ class JSMolHtml(SageObject):
         script += [r"].join('\n');"]
         return '\n'.join(script)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return as string representation.
 

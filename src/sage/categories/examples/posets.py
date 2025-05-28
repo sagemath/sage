@@ -68,7 +68,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Posets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -151,7 +151,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, facade=(PositiveIntegers(),), category=Posets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

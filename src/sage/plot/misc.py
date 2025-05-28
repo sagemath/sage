@@ -282,7 +282,7 @@ def unify_arguments(funcs):
     return tuple(sorted(vars, key=str)), tuple(sorted(free_variables, key=str))
 
 
-def _multiple_of_constant(n, pos, const):
+def _multiple_of_constant(n, pos, const) -> str:
     r"""
     Function for internal use in formatting ticks on axes with
     nice-looking multiples of various symbolic constants, such

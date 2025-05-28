@@ -434,7 +434,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     # Overriding default values
     ###
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         r"""
         Return the assign symbol in Maxima.
 
@@ -451,7 +451,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return ":"
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the true symbol in Maxima.
 
@@ -466,7 +466,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return 'true'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the false symbol in Maxima.
 
@@ -481,7 +481,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return 'false'
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality symbol in Maxima.
 
@@ -498,7 +498,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         return '='
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         """
         Return the inequality symbol in Maxima.
 

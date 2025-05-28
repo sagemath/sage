@@ -714,7 +714,7 @@ class Localization(Parent, UniqueRepresentation):
         self._fraction_field = base_ring.fraction_field()
         self._populate_coercion_lists_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         How to print ``self``.
 

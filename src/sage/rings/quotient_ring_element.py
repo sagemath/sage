@@ -158,7 +158,7 @@ class QuotientRingElement(RingElement):
         """
         return self.__rep not in self.parent().defining_ideal()
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         Return ``True`` if ``self`` is a unit in the quotient ring.
 
@@ -845,7 +845,7 @@ class QuotientRingElement(RingElement):
                 raise ImportError("could not import singular")
         return self.__rep._singular_(singular)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return the Magma representation of this quotient ring element.
 

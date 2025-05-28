@@ -1359,7 +1359,7 @@ class Components(SageObject):
             # called and not the present function.
         return result
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if all the components are zero and ``False`` otherwise.
 
@@ -1457,7 +1457,7 @@ class Components(SageObject):
                 return False
             return (self - other).is_zero()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Non-equality operator.
 

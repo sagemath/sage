@@ -60,7 +60,7 @@ class CNFEncoder:
             l = choose(rest)
             l_variables = set(l.variables())
 
-            def get_val(var):
+            def get_val(var) -> int:
                 if var in l_variables:
                     return 1
                 return 0

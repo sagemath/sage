@@ -2275,7 +2275,7 @@ class TensorField(ModuleElementWithMutability):
                                   # subdomains
             return resu
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 

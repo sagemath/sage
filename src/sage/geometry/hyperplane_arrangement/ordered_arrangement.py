@@ -624,7 +624,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
                     raise ValueError('arrangement cannot simultaneously have h and -h as hyperplane')
         return self.element_class(self, tuple(hyperplanes), backend=backend)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

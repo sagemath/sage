@@ -207,7 +207,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         s = 'Dual of Abelian Group isomorphic to ' + gp + ' over ' + str(self.base_ring())
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this group.
 
@@ -361,7 +361,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         G = self.group()
         return G.order()
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` since this group is commutative.
 

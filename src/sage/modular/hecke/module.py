@@ -657,7 +657,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         v = self.dual_eigenvector(names=name)
         return v.dot_product(x.element())
 
-    def _is_hecke_equivariant_free_module(self, submodule):
+    def _is_hecke_equivariant_free_module(self, submodule) -> bool:
         """
         Return ``True`` if the given free submodule of the ambient free module
         is invariant under all Hecke operators.

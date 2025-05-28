@@ -3261,7 +3261,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return sage.matrix.matrix_space.MatrixSpace(self.base_ring(), self.degree(), sparse=True)(1)
 
-    def _inner_product_is_dot_product(self):
+    def _inner_product_is_dot_product(self) -> bool:
         """
         Return whether or not the inner product on this module is induced
         by the dot product on the ambient vector space. This is used
@@ -3530,7 +3530,7 @@ class FreeModule_generic(Module_free_ambient):
         A.echelonize()
         return any(row.is_zero() for row in A.rows())
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         EXAMPLES::
 
@@ -5729,7 +5729,7 @@ class FreeModule_ambient(FreeModule_generic):
             # it knows how to do the comparison.
             return other._echelon_matrix_richcmp(self, revop(op))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The printing representation of ``self``.
 
@@ -5774,7 +5774,7 @@ class FreeModule_ambient(FreeModule_generic):
         else:
             return "Ambient free module of rank %s over %s" % (self.rank(), self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of this ambient free module.
 
@@ -6184,7 +6184,7 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
         """
         FreeModule_ambient.__init__(self, base_ring, rank, sparse, coordinate_ring, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of this free module.
 
@@ -6452,7 +6452,7 @@ class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid)
         """
         FreeModule_ambient_pid.__init__(self, base_field, dimension, sparse=sparse, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The printing representation of ``self``.
 
@@ -6951,7 +6951,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 "User basis matrix:\n%r" % self.basis_matrix()
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this free module.
 
@@ -7630,7 +7630,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         """
         return FreeModule(self.base_ring().fraction_field(), self.rank())(self.echelon_coordinates(v, check=check))
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         """
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -7780,7 +7780,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
         """
         return self.echelon_coordinate_vector(v, check=check)
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         r"""
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -7953,7 +7953,7 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
             self.degree(), self.dimension(), self.base_field()) + \
             "User basis matrix:\n%r" % self.basis_matrix()
 
-    def _denominator(self, B):
+    def _denominator(self, B) -> int:
         """
         Given a list (of field elements) returns 1 as the common
         denominator.
@@ -8264,7 +8264,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
         """
         return self.echelon_coordinate_vector(v, check=check)
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         """
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon

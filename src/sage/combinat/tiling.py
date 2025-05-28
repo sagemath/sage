@@ -676,7 +676,7 @@ class Polyomino(SageObject):
         """
         return isinstance(other, Polyomino) and self.frozenset() == other.frozenset()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether ``self`` is not equal to ``other``.
 

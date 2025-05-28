@@ -239,7 +239,7 @@ class Octave(Expect):
         """
         return reduce_load_Octave, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         """
         EXAMPLES::
 
@@ -249,7 +249,7 @@ class Octave(Expect):
         """
         return 'source("%s");' % filename
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -258,7 +258,7 @@ class Octave(Expect):
         """
         return 'quit;'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         """
         Return hints on how to install Octave.
 
@@ -372,7 +372,7 @@ class Octave(Expect):
         # set random seed
         self.set_seed(self._seed)
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class Octave(Expect):
         """
         return '=='
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -392,7 +392,7 @@ class Octave(Expect):
         """
         return '1'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         EXAMPLES::
 

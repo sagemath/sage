@@ -406,7 +406,7 @@ class PathAlgebra(CombinatorialFreeModule):
             return True
         return self._base.has_coerce_map_from(other)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Default string representation.
 

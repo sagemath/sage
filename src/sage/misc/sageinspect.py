@@ -683,7 +683,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
                 out = out or next
             return out
 
-    def visit_Compare(self, node):
+    def visit_Compare(self, node) -> bool:
         """
         Visit a Python AST :class:`ast.Compare` node.
 

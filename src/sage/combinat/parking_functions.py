@@ -1383,7 +1383,7 @@ class ParkingFunctions_all(ParkingFunctions):
                 yield self.element_class(self, list(pf))
             n += 1
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         """
         Coercion from the homogeneous component to the graded set.
 

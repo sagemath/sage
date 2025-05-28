@@ -1197,7 +1197,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
                 raise PrecisionError("The coefficient of %s^%s has not enough precision" % (self.parent().variable_name(), x))
         return polygon
 
-    def is_eisenstein(self, secure=False):
+    def is_eisenstein(self, secure=False) -> bool:
         """
         Return ``True`` if this polynomial is an Eisenstein polynomial.
 

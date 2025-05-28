@@ -470,7 +470,7 @@ class FGP_Module_class(Module):
         raise ValueError("Scalar multiplication of a module is only " +
                          "defined for an element of the base ring.")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this module.
 
@@ -529,7 +529,7 @@ class FGP_Module_class(Module):
             return False
         return self._V == other._V and self._W == other._W
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff ``self`` is not equal to ``other``.
 

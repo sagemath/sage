@@ -181,7 +181,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
             sage: LieConformalAlgebras(AA).Super().Graded()                             # needs sage.rings.number_field
             Category of H-graded super Lie conformal algebras over Algebraic Real Field
         """
-        def _repr_object_names(self):
+        def _repr_object_names(self) -> str:
             """
             The names of the objects of this category.
 

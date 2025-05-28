@@ -266,7 +266,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         # No further validity checks necessary!
         Parent.__init__(self, base=k, names=names, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -543,7 +543,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
                                     given_by_matrix=given_by_matrix)
 
     @cached_method
-    def is_associative(self):
+    def is_associative(self) -> bool:
         """
         Return ``True`` if ``self`` is associative.
 
@@ -623,7 +623,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         return self.degree() == 0 or self.base_ring().is_finite()
 
     @cached_method
-    def is_unitary(self):
+    def is_unitary(self) -> bool:
         """
         Return ``True`` if ``self`` has a two-sided multiplicative
         identity element.
@@ -774,7 +774,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         return self(self.zero().vector().parent().random_element(*args, **kwargs))
 
-    def _is_valid_homomorphism_(self, other, im_gens, base_map=None):
+    def _is_valid_homomorphism_(self, other, im_gens, base_map=None) -> bool:
         """
         TESTS::
 

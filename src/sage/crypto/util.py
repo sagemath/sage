@@ -256,7 +256,7 @@ def bin_to_ascii(B):
     return "".join(A)
 
 
-def has_blum_prime(lbound, ubound):
+def has_blum_prime(lbound, ubound) -> bool:
     r"""
     Determine whether or not there is a Blum prime within the specified closed
     interval.
@@ -348,7 +348,7 @@ def has_blum_prime(lbound, ubound):
     return False
 
 
-def is_blum_prime(n):
+def is_blum_prime(n) -> bool:
     r"""
     Determine whether or not ``n`` is a Blum prime.
 

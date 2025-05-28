@@ -242,7 +242,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         v = self.parent().discrete_log(self.level(), x)
         return prod([self._values_on_gens[i] ** v[i] for i in range(len(v))])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of this character.
 
@@ -429,7 +429,7 @@ class SmoothCharacterGroupGeneric(Parent):
                 self.number_field() == other.number_field() and
                 self.base_ring() == other.base_ring())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -569,7 +569,7 @@ class SmoothCharacterGroupGeneric(Parent):
         """
         pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -980,7 +980,7 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         """
         return ZZ.ideal(self.prime() ** level)
 
-    def _field_name(self):
+    def _field_name(self) -> str:
         r"""
         Return a string representation of the field unit group of which this is
         the character group.
@@ -1451,7 +1451,7 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
             pass
         return G
 
-    def _field_name(self):
+    def _field_name(self) -> str:
         r"""
         A string representing the unit group of which this is the character group.
 
@@ -1687,7 +1687,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
         """
         return SmoothCharacterGroupRamifiedQuadratic(self.prime(), self._flag, ring, self._name)
 
-    def _field_name(self):
+    def _field_name(self) -> str:
         r"""
         A string representing the unit group of which this is the character group.
 

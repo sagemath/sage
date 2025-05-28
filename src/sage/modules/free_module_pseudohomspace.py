@@ -165,7 +165,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
             twist = self._derivation
         return FreeModulePseudoHomspace, (self.domain(), self.codomain(), twist)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Returns a string representation of this pseudomorphism space.
 

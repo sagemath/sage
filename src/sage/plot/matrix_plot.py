@@ -152,7 +152,7 @@ class MatrixPlot(GraphicPrimitive):
                 'subdivisions': "If True, draw subdivisions of the matrix",
                 'subdivision_options': "Options (boundaries and style) of the subdivisions"}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of MatrixPlot primitive.
 

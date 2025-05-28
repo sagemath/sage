@@ -129,7 +129,7 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-def is_NumberFieldHomsetCodomain(codomain, category=None):
+def is_NumberFieldHomsetCodomain(codomain, category=None) -> bool:
     """
     Return whether ``codomain`` is a valid codomain for a
     :class:`NumberFieldHomset` in ``category``.
@@ -2514,7 +2514,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         raise NotImplementedError
 
-    def is_relative(self):
+    def is_relative(self) -> bool:
         """
         EXAMPLES::
 
@@ -3435,7 +3435,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             result += " with {} = {}".format(self.variable_name(), gen)
         return result
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this number field. This is viewed as
         a polynomial quotient ring over a field.
@@ -4482,7 +4482,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         Kbnf = self.pari_bnf(proof=proof)
         return Kbnf.rnfisnorminit(L.pari_relative_polynomial())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Create a GAP object representing ``self`` and return its name.
 
@@ -6104,7 +6104,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         ret.set_immutable()
         return ret
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``True`` since a number field is a field.
 
@@ -6711,7 +6711,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         s = k.bnfnarrow().sage()
         return AbelianGroup(s[1])
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of this number field (always 1).
 
@@ -8469,7 +8469,7 @@ class NumberField_absolute(NumberField_generic):
         for v in cartesian_product([M.base_ring()] * M.dimension()):
             yield f(M(list(v)))
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         r"""
         Return ``True`` since ``self`` is an absolute field.
 
@@ -10946,7 +10946,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         s = 'CyclotomicField(%s)' % self.__n
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return a string that provides a representation of ``self`` in GAP.
 
@@ -10997,7 +10997,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.libs.gap.libgap import libgap
         return libgap.CyclotomicField(self.__n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this cyclotomic field.
 
@@ -11508,7 +11508,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.rings.number_field.homset import CyclotomicFieldHomset
         return CyclotomicFieldHomset(self, codomain, category)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         """
         Return ``True`` since all cyclotomic fields are automatically Galois.
 
@@ -11519,7 +11519,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return True
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since all cyclotomic fields are automatically abelian.
 
@@ -12150,7 +12150,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         else:
             return NumberField_generic._latex_(self)
 
-    def _polymake_init_(self):
+    def _polymake_init_(self) -> str:
         r"""
         Return the polymake representation of this quadratic field.
 
@@ -12202,7 +12202,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         else:
             return NumberField_generic.discriminant(self, v)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         """
         Return ``True`` since all quadratic fields are automatically Galois.
 
@@ -12361,7 +12361,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
 
-    def number_of_roots_of_unity(self):
+    def number_of_roots_of_unity(self) -> int:
         """
         Return the number of roots of unity in this quadratic field.
 
@@ -12667,7 +12667,7 @@ def refine_embedding(e, prec=None):
     return elist[min(zip(diffs, count()))[1]]
 
 
-def is_real_place(v):
+def is_real_place(v) -> bool:
     r"""
     Return ``True`` if `v` is real, ``False`` if `v` is complex.
 

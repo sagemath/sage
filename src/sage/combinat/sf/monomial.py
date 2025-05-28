@@ -276,7 +276,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         s = self.realization_of().schur()
         return self(s.antipode(s(element)))
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Used in converting this ring to the corresponding ring in MAGMA.
 

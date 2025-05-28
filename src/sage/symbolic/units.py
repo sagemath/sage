@@ -1109,7 +1109,7 @@ class Units(ExtraTabCompletion):
             return False
         return (self.__name, self.__data) == (other.__name, other.__data)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 

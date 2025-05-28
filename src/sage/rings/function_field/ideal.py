@@ -134,7 +134,7 @@ class FunctionFieldIdeal(Element):
         Element.__init__(self, ring.ideal_monoid())
         self._ring = ring
 
-    def _repr_short(self):
+    def _repr_short(self) -> str:
         """
         Return a string representation of this ideal that doesn't
         include the name of the ambient ring.
@@ -154,7 +154,7 @@ class FunctionFieldIdeal(Element):
 
         return "(%s)" % (', '.join([repr(g) for g in self.gens_reduced()]), )
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this ideal.
 
@@ -977,7 +977,7 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         """
         return hash((self._ring,self._module))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test equality of this ideal with the ``other`` ideal.
 
@@ -1072,7 +1072,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
         self.__R = R
         self._populate_coercion_lists_()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of the ideal monoid.
 

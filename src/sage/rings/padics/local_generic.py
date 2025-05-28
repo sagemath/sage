@@ -77,7 +77,7 @@ class LocalGeneric(CommutativeRing):
         CommutativeRing.__init__(self, base, names=(names,),
                                  normalize=False, category=category)
 
-    def is_capped_relative(self):
+    def is_capped_relative(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a capped
         relative fashion.
@@ -102,7 +102,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_capped_absolute(self):
+    def is_capped_absolute(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a
         capped absolute fashion.
@@ -127,7 +127,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_fixed_mod(self):
+    def is_fixed_mod(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a fixed
         modulus fashion.
@@ -154,7 +154,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_floating_point(self):
+    def is_floating_point(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a floating
         point fashion.
@@ -179,7 +179,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_lattice_prec(self):
+    def is_lattice_prec(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision using
         a lattice model.
@@ -208,7 +208,7 @@ class LocalGeneric(CommutativeRing):
         """
         return False
 
-    def is_relaxed(self):
+    def is_relaxed(self) -> bool:
         r"""
         Return whether this `p`-adic ring bounds precision in a relaxed
         fashion.
@@ -600,7 +600,7 @@ class LocalGeneric(CommutativeRing):
         """
         return self._prec
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return whether this `p`-adic ring is exact, i.e. ``False``.
 

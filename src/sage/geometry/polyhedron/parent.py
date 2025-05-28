@@ -500,7 +500,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         from sage.modules.free_module import FreeModule
         return FreeModule(self.base_ring(), self.ambient_dim() + 1)
 
-    def _repr_base_ring(self):
+    def _repr_base_ring(self) -> str:
         """
         Return an abbreviated string representation of the base ring.
 
@@ -1252,7 +1252,7 @@ class Polyhedra_number_field(Polyhedra_base):
 
 
 @cached_function
-def does_backend_handle_base_ring(base_ring, backend):
+def does_backend_handle_base_ring(base_ring, backend) -> bool:
     r"""
     Return true, if ``backend`` can handle ``base_ring``.
 

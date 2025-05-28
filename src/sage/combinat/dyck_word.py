@@ -150,7 +150,7 @@ def replace_parens(x):
     raise ValueError
 
 
-def replace_symbols(x):
+def replace_symbols(x) -> str:
     r"""
     A map sending ``open_symbol`` to ``'('`` and ``close_symbol`` to ``')'``,
     and raising an error on any input other than ``open_symbol`` and

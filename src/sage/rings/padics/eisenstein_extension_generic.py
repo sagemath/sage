@@ -37,7 +37,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
         pAdicExtensionGeneric.__init__(self, poly, prec, print_mode, names, element_class)
         #self._precompute()
 
-    def _extension_type(self):
+    def _extension_type(self) -> str:
         """
         Return the type (``Unramified``, ``Eisenstein``) of this
         extension as a string, if any.

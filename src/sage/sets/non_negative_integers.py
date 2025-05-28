@@ -84,7 +84,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         Parent.__init__(self, facade=ZZ,
                         category=InfiniteEnumeratedSets().or_subcategory(category))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

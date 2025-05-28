@@ -569,7 +569,7 @@ class OverconvergentModularFormsSpace(Module):
         else:
             return self._params() == other._params()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -659,7 +659,7 @@ class OverconvergentModularFormsSpace(Module):
 
         return OverconvergentModularFormElement(self, gexp=self._gsr.gen()**i)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

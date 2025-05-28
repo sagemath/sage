@@ -190,7 +190,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, F, indices, category=cat)
         self._assign_names(self.algebra_generators().keys())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -203,7 +203,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
         return "Quantum Clifford algebra of rank {} and twist {} with q={} over {}".format(
             self._n, self._k, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -701,7 +701,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         """
         p, v = m
 
-        def ppr(i):
+        def ppr(i) -> str:
             val = p[i]
             if val == -1:
                 return 'psid%s' % i
@@ -742,7 +742,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         """
         p, v = m
 
-        def ppr(i):
+        def ppr(i) -> str:
             val = p[i]
             if val == -1:
                 return '\\psi^{\\dagger}_{%s}' % i

@@ -524,7 +524,7 @@ class FiniteSubgroup(Module):
         """
         return self.__field_of_definition
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this finite subgroup.
 
@@ -543,7 +543,7 @@ class FiniteSubgroup(Module):
             field = str(K)
         return "Finite subgroup %sover %s of %s" % (self._invariants_repr(), field, self.__abvar)
 
-    def _invariants_repr(self):
+    def _invariants_repr(self) -> str:
         """
         The string representation of the 'invariants' part of this group.
 

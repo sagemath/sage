@@ -883,7 +883,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.schur()
 
-    def _repr_(self): # could be taken care of by the category
+    def _repr_(self) -> str: # could be taken care of by the category
         r"""
         Representation of ``self``
 

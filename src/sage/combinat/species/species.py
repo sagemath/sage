@@ -149,7 +149,7 @@ class GenericCombinatorialSpecies(SageObject):
             return False
         return self._unique_info() == x._unique_info()
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` and ``other`` are not equal.
 

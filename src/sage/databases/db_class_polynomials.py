@@ -35,7 +35,7 @@ level_format = "%03d"  # level_length = 3
 
 
 class ClassPolynomialDatabase:
-    def _dbpath(self, disc, level=1):
+    def _dbpath(self, disc, level=1) -> str:
         """
         TESTS::
 

@@ -20,7 +20,7 @@ class TopologicalSpacesCategory(RegressiveCovariantConstructionCategory):
 
     _functor_category = "Topological"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -54,7 +54,7 @@ class TopologicalSpaces(TopologicalSpacesCategory):
     # We must override the general object because the names don't match
     _base_category_class = (Sets,)
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

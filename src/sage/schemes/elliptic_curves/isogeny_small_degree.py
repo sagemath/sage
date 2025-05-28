@@ -2320,7 +2320,7 @@ def _least_semi_primitive(p):
                  and R(a).multiplicative_order() >= ord), 0)
 
 
-def is_kernel_polynomial(E, m, f):
+def is_kernel_polynomial(E, m, f) -> bool:
     r"""
     Test whether ``E`` has a cyclic isogeny of degree ``m`` with kernel
     polynomial ``f``.

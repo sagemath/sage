@@ -997,7 +997,7 @@ class RESetMapReduce:
         """
         return self._roots
 
-    def map_function(self, o):
+    def map_function(self, o) -> int:
         r"""
         Return the function mapped by ``self``.
 

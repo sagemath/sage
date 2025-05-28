@@ -604,7 +604,7 @@ class ToricVariety_field(AmbientSpace):
                 self.variable_names() == right.variable_names() and
                 self.base_ring() == right.base_ring())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check not-equality of ``self`` and ``other``.
 
@@ -666,7 +666,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return self(list(range(1, self.ngens() + 1)))
 
-    def _check_satisfies_equations(self, coordinates):
+    def _check_satisfies_equations(self, coordinates) -> bool:
         r"""
         Check if ``coordinates`` define a valid point of ``self``.
 
@@ -762,7 +762,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return SchemeHomset_points_toric_field(*args, **kwds)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -776,7 +776,7 @@ class ToricVariety_field(AmbientSpace):
         """
         return r"\mathbb{X}_{%s}" % latex(self.fan())
 
-    def _latex_generic_point(self, coordinates=None):
+    def _latex_generic_point(self, coordinates=None) -> str:
         r"""
         Return a LaTeX representation of a point of ``self``.
 
@@ -888,7 +888,7 @@ class ToricVariety_field(AmbientSpace):
                        % self.fan().ngenerating_cones())
         return result
 
-    def _repr_generic_point(self, coordinates=None):
+    def _repr_generic_point(self, coordinates=None) -> str:
         r"""
         Return a string representation of a point of ``self``.
 
@@ -1232,7 +1232,7 @@ class ToricVariety_field(AmbientSpace):
                 return self.dimension() - codim
         return -1
 
-    def is_homogeneous(self, polynomial):
+    def is_homogeneous(self, polynomial) -> bool:
         r"""
         Check if ``polynomial`` is homogeneous.
 
@@ -1307,7 +1307,7 @@ class ToricVariety_field(AmbientSpace):
                 return False
         return True
 
-    def is_isomorphic(self, another):
+    def is_isomorphic(self, another) -> bool:
         r"""
         Check if ``self`` is isomorphic to ``another``.
 
@@ -3081,7 +3081,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         I = variety._fan.linear_equivalence_ideal(R) + variety._fan.Stanley_Reisner_ideal(R)
         super().__init__(R, I, names=variety.variable_names())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the cohomology ring.
 
@@ -3094,7 +3094,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         """
         return f'Rational cohomology ring of a {self._variety._repr_()}'
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of the cohomology ring.
 
@@ -3356,7 +3356,7 @@ class CohomologyClass(QuotientRingElement):
         """
         return '[' + super()._repr_() + ']'
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of the cohomology class.
 

@@ -616,7 +616,7 @@ class ChainComplexMorphism(Morphism):
         """
         return hash(self.domain()) ^ hash(self.codomain()) ^ hash(tuple(self._matrix_dictionary.items()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 

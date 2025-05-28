@@ -328,7 +328,7 @@ class TangentSpace(FiniteRankFreeModule):
         """
         return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

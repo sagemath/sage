@@ -369,7 +369,7 @@ class FiniteWords(AbstractLanguage):
             category = category.Finite()
         super().__init__(alphabet, category)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return ``False``, because the empty word is in the set.
 
@@ -1631,7 +1631,7 @@ class InfiniteWords(AbstractLanguage):
             self._check(w)
         return w
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2114,7 +2114,7 @@ class FiniteOrInfiniteWords(AbstractLanguage):
         else:
             raise ValueError("invalid argument length (={!r})".format(length))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2283,7 +2283,7 @@ class Words_n(Parent):
         """
         return self._words.random_element(length=self._n, *args, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

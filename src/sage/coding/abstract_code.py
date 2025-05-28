@@ -87,7 +87,7 @@ import inspect
 from sage.misc.sageinspect import sage_getargspec
 
 
-def _explain_constructor(cl):
+def _explain_constructor(cl) -> str:
     r"""
     Internal function for use error messages when constructing encoders and decoders.
 

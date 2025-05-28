@@ -242,7 +242,7 @@ class EnumeratedSets(CategoryWithAxiom):
             else:
                 raise NotImplementedError("iterator called but not implemented")
 
-        def is_empty(self):
+        def is_empty(self) -> bool:
             r"""
             Return whether this set is empty.
 

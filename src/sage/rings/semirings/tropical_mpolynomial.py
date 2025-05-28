@@ -844,7 +844,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         exponent = [0] * self.ngens()
         return self.element_class(self, {tuple(exponent): self.base().zero()})
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

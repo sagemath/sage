@@ -322,7 +322,7 @@ class QAryReedMullerCode(AbstractLinearCode):
         n = self.length()
         return ((q - d) * n) // q
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -337,7 +337,7 @@ class QAryReedMullerCode(AbstractLinearCode):
         return "Reed-Muller Code of order %s and %s variables over %s" % (
             self.order(), self.number_of_variables(), self.base_field())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -491,7 +491,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
         """
         return 2**(self.number_of_variables() - self.order())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -504,7 +504,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
         return "Binary Reed-Muller Code of order %s and number of variables %s" % (
             self.order(), self.number_of_variables())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -613,7 +613,7 @@ class ReedMullerVectorEncoder(Encoder):
         """
         return "Evaluation vector-style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -796,7 +796,7 @@ class ReedMullerPolynomialEncoder(Encoder):
                     "The Polynomial ring should be on %s and should have %s variables" %
                     (code.base_field(), code.number_of_variables()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -810,7 +810,7 @@ class ReedMullerPolynomialEncoder(Encoder):
         """
         return "Evaluation polynomial-style encoder for %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

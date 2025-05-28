@@ -148,7 +148,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
                                                      names, index_set,
                                                      **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -442,7 +442,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
         i = self.indices().index(w)
         return self.variable_names()[i]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

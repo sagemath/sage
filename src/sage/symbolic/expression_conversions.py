@@ -452,7 +452,7 @@ class InterfaceInit(Converter):
         except AttributeError:
             return repr(obj)
 
-    def relation(self, ex, operator):
+    def relation(self, ex, operator) -> str:
         """
         EXAMPLES::
 

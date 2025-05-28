@@ -1032,7 +1032,7 @@ class Cusps_class(Singleton, Parent):
 
     Element = Cusp
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of the set of cusps.
 
@@ -1051,7 +1051,7 @@ class Cusps_class(Singleton, Parent):
         """
         return "Set P^1(QQ) of all cusps"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of ``self``.
 
@@ -1094,7 +1094,7 @@ class Cusps_class(Singleton, Parent):
         """
         return Cusp(x)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         if QQ.has_coerce_map_from(R):
             return True
         if R is InfinityRing:

@@ -335,7 +335,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         return ProjectiveConic_field.has_rational_point(self, point=point,
                            algorithm=algorithm, read_cache=False)
 
-    def is_locally_solvable(self, p):
+    def is_locally_solvable(self, p) -> bool:
         r"""
         Return ``True`` if and only if ``self`` has a solution over the
         completion of the base field `B` of ``self`` at ``p``. Here ``p``

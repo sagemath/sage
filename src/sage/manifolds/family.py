@@ -115,7 +115,7 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
                     f'all {self._repr_object_type()} must have the same manifold'
                 )
 
-    def _repr_object_type(self):
+    def _repr_object_type(self) -> str:
         r"""
         String that describes the type of the elements (plural).
 
@@ -250,7 +250,7 @@ class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
 
         return cls(generate_subsets())
 
-    def _repr_object_type(self):
+    def _repr_object_type(self) -> str:
         r"""
         String that describes the type of the elements (plural).
 

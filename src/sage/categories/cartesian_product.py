@@ -205,7 +205,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
         """
         return isinstance(other, CartesianProductFunctor)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Comparison ignores the ``category`` parameter.
 
@@ -235,7 +235,7 @@ class CartesianProductsCategory(CovariantConstructionCategory):
 
     _functor_category = "CartesianProducts"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

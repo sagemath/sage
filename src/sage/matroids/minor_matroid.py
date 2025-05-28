@@ -424,7 +424,7 @@ class MinorMatroid(Matroid):
             return False
         return (self._contractions == other._contractions) and (self._deletions == other._deletions) and (self._matroid == other._matroid)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

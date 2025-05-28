@@ -312,7 +312,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             return False
         return self._R == right._R
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -348,7 +348,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return hash(self._R) ^ 12059065606945654693
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -392,7 +392,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         from sage.rings.polynomial.laurent_polynomial_ideal import LaurentPolynomialIdeal
         return LaurentPolynomialIdeal(self, *args, **kwds)
 
-    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None) -> bool:
         """
         EXAMPLES::
 
@@ -429,7 +429,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return self._R.term_order()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         EXAMPLES::
 
@@ -438,7 +438,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         return False
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         EXAMPLES::
 

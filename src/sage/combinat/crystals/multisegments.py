@@ -149,7 +149,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
         Parent.__init__(self, category=(HighestWeightCrystals(), InfiniteEnumeratedSets()))
         self.module_generators = (self.highest_weight_vector(),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -225,7 +225,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
                 x = mc[0]
                 return (-x[0], ZZ(x[1]))
 
-            def seg(x):
+            def seg(x) -> str:
                 m, c = x
                 if c != 1:
                     return "{} * ({}; {}]".format(c, m[0], m[1])
@@ -254,7 +254,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
                 x = mc[0]
                 return (-x[0], ZZ(x[1]))
 
-            def seg(x):
+            def seg(x) -> str:
                 m, c = x
                 if c != 1:
                     return "{} ({}; {}]".format(c, m[0], m[1])

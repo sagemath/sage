@@ -343,7 +343,7 @@ class StaticErrorRateChannel(Channel):
             raise ValueError("There might be more errors than the dimension of the input space")
         self._number_errors = number_errors
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -359,7 +359,7 @@ class StaticErrorRateChannel(Channel):
         return "Static error rate channel creating %s errors, of input and output space %s"\
                     % (format_interval(no_err), self.input_space())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -510,7 +510,7 @@ class ErrorErasureChannel(Channel):
         self._number_errors = number_errors
         self._number_erasures = number_erasures
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -529,7 +529,7 @@ class ErrorErasureChannel(Channel):
         return "Error-and-erasure channel creating %s errors and %s erasures of input space %s and output space %s"\
                 % (format_interval(no_err), format_interval(no_era), self.input_space(), self.output_space())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -716,7 +716,7 @@ class QarySymmetricChannel(Channel):
         return "q-ary symmetric channel with error probability %s, of input and output space %s"\
                     % (self.error_probability(), self.input_space())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

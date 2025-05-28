@@ -230,7 +230,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         """
         return hash(('BQFClassGroup', self._disc))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string describing this form class group.
 

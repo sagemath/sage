@@ -191,7 +191,7 @@ class Subcrystal(UniqueRepresentation, Parent):
             self._cardinality = Integer(len(contained))
             self._list = [self.element_class(self, x) for x in contained]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

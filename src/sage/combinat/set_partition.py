@@ -127,7 +127,7 @@ class AbstractSetPartition(ClonableArray,
             return False
         return list(self) == list(y)
 
-    def __ne__(self, y):
+    def __ne__(self, y) -> bool:
         """
         Check lack of equality of ``self`` and ``y``.
 
@@ -2659,7 +2659,7 @@ class SetPartitions_all(SetPartitions):
             return self
         return SetPartitions(size, **kwargs)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2723,7 +2723,7 @@ class SetPartitions_set(SetPartitions):
         self._set = s
         SetPartitions.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2902,7 +2902,7 @@ class SetPartitions_setparts(SetPartitions_set):
         SetPartitions_set.__init__(self, s)
         self._parts = parts
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -3139,7 +3139,7 @@ class SetPartitions_setn(SetPartitions_set):
         self._k = k
         SetPartitions_set.__init__(self, s)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

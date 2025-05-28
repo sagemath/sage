@@ -437,7 +437,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         """
         return self.ngens()-1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this unit group.
 

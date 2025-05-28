@@ -587,7 +587,7 @@ class Link(SageObject):
         """
         return hash(self.braid())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Check inequality.
 

@@ -497,7 +497,7 @@ class PseudolineArrangement:
         """
         return (self._n == other._n) and (self._permutations == other._permutations)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 

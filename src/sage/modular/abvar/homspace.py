@@ -381,7 +381,7 @@ class Homspace(HomsetWithBase):
         else:
             return HomsetWithBase._coerce_impl(self, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of a modular abelian variety homspace.
 
@@ -805,7 +805,7 @@ class EndomorphismSubring(Homspace):
             self._gens = tuple([self._get_matrix(g) for g in gens])
         self._is_full_ring = gens is None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

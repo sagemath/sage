@@ -1168,7 +1168,7 @@ class PeriodLattice_ell(PeriodLattice):
         return self.E
 
     @property
-    def is_approximate(self):
+    def is_approximate(self) -> bool:
         """
         ``self.is_approximate`` is deprecated, use ``not self.curve().is_exact()`` instead.
 

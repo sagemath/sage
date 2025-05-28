@@ -149,7 +149,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
         diff[n+1].set_immutable()
         ChainComplex_class.__init__(self, ZZ, ZZ(-1), R, diff)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

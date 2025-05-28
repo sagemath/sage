@@ -437,7 +437,7 @@ class GenericSymbolicSubring(SymbolicRing):
             return False
         return self._vars_ == other._vars_
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` and ``other`` are not equal.
 
@@ -531,7 +531,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         """
         return ', '.join(str(v) for v in sorted(self.vars, key=str))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this functor.
 
@@ -590,7 +590,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
         """
         return type(self) is type(other) and self.vars == other.vars
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this functor is not equal to ``other``.
 
@@ -615,7 +615,7 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
     The symbolic subring consisting of symbolic expressions in the given variables.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this symbolic subring.
 
@@ -630,7 +630,7 @@ class SymbolicSubringAcceptingVars(GenericSymbolicSubring):
         return 'Symbolic Subring accepting %s' % \
             (self._repr_variables_())
 
-    def has_valid_variable(self, variable):
+    def has_valid_variable(self, variable) -> bool:
         r"""
         Return whether the given ``variable`` is valid in this subring.
 
@@ -782,7 +782,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
     are none of the given variables.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this symbolic subring.
 
@@ -797,7 +797,7 @@ class SymbolicSubringRejectingVars(GenericSymbolicSubring):
         return 'Symbolic Subring rejecting %s' % \
             (self._repr_variables_())
 
-    def has_valid_variable(self, variable):
+    def has_valid_variable(self, variable) -> bool:
         r"""
         Return whether the given ``variable`` is valid in this subring.
 
@@ -970,7 +970,7 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
     The symbolic subring consisting of symbolic constants.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this symbolic subring.
 
@@ -984,7 +984,7 @@ class SymbolicConstantsSubring(SymbolicSubringAcceptingVars):
         """
         return 'Symbolic Constants Subring'
 
-    def has_valid_variable(self, variable):
+    def has_valid_variable(self, variable) -> bool:
         r"""
         Return whether the given ``variable`` is valid in this subring.
 

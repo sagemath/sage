@@ -147,7 +147,7 @@ class NumericalEigenforms(SageObject):
         """
         return self._weight
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print string representation of ``self``.
 

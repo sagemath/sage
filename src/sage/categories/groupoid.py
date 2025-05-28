@@ -46,7 +46,7 @@ class Groupoid(CategoryWithParameters):
             G = SymmetricGroup(8)
         self.__G = G
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

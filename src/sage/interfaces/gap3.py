@@ -573,7 +573,7 @@ class Gap3(Gap_generic):
         """
         os.system(self.__gap3_command_string)
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         r"""
 
         TESTS::

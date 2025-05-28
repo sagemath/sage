@@ -190,7 +190,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         LQ = self.Q.change_ring(R)
         return (WehlerK3Surface( [LR,LQ]))
 
-    def _check_satisfies_equations(self, P):
+    def _check_satisfies_equations(self, P) -> bool:
         r"""
         Function checks to see if point ``P`` lies on the K3 Surface.
 
@@ -1003,7 +1003,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     bad_primes.remove(p)
         return bad_primes
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Function will return the status of the smoothness of the surface.
 

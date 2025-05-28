@@ -639,7 +639,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
                 return 0
         return 0            # x is complex
 
-    def _derivative_(self, *args, **kwds):
+    def _derivative_(self, *args, **kwds) -> int:
         """
         Derivative of Kronecker delta.
 
@@ -654,7 +654,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
         # Kronecker delta is however non-trivial.
         return 0
 
-    def _print_latex_(self, m, n, **kwds):
+    def _print_latex_(self, m, n, **kwds) -> str:
         r"""
         Return latex expression.
 

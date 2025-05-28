@@ -192,7 +192,7 @@ class Fields(CategoryWithAxiom):
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
     class ParentMethods:
-        def krull_dimension(self):
+        def krull_dimension(self) -> int:
             """
             Return the Krull dimension of this field, which is 0.
 
@@ -205,7 +205,7 @@ class Fields(CategoryWithAxiom):
             """
             return 0
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             r"""
             Return ``True`` as ``self`` is a field.
 
@@ -471,7 +471,7 @@ class Fields(CategoryWithAxiom):
                 d, u, v = c*d, c*u, c*v
             return d, u, v
 
-        def is_perfect(self):
+        def is_perfect(self) -> bool:
             r"""
             Return whether this field is perfect, i.e., its characteristic is
             `p=0` or every element has a `p`-th root.
@@ -690,7 +690,7 @@ class Fields(CategoryWithAxiom):
                 raise ZeroDivisionError
             return (self/other, self.parent().zero())
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             r"""
             Return ``True`` if ``self`` has a multiplicative inverse.
 

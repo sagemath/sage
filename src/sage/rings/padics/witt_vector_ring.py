@@ -421,7 +421,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
             self._sum_polynomials[n] = S(self._sum_polynomials[n])
             self._prod_polynomials[n] = S(self._prod_polynomials[n])
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 
@@ -439,7 +439,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
         return "W_{%s}\\left(%s\\right)" % (latex(self._prec),
                                             latex(self._coefficient_ring))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of the ring.
 

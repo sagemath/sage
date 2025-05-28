@@ -415,7 +415,7 @@ class Color:
         """
         return f"RGB color {self._rgb}"
 
-    def __lt__(self, right):
+    def __lt__(self, right) -> bool:
         """
         Check whether a :class:`Color` object is less than some other
         object. This doesn't make sense, and so we conclude that it is
@@ -489,7 +489,7 @@ class Color:
             return self._rgb == right._rgb
         return False
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Compare two :class:`Color` objects to determine whether
         they refer to different colors.
@@ -516,7 +516,7 @@ class Color:
         """
         return not (self == right)
 
-    def __gt__(self, right):
+    def __gt__(self, right) -> bool:
         """
         Check whether a :class:`Color` object is greater than some other
         object. This doesn't make sense, and so we conclude that it is
@@ -1134,7 +1134,7 @@ def hue(h, s=1, v=1):
     return tuple(map(float, hsv_to_rgb(mod_one(h), mod_one(s), mod_one(v))))
 
 
-def float_to_html(r, g, b):
+def float_to_html(r, g, b) -> str:
     """
     Convert a Red-Green-Blue (RGB) color tuple to a HTML hex color.
 

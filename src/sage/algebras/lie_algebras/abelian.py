@@ -71,7 +71,7 @@ class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
         LieAlgebraWithStructureCoefficients.__init__(self, R, Family({}), names,
                                                      index_set, category, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -98,7 +98,7 @@ class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
         """
         return PolynomialRing(self.base_ring(), self.variable_names())
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since ``self`` is an abelian Lie algebra.
 
@@ -159,7 +159,7 @@ class InfiniteDimensionalAbelianLieAlgebra(InfinitelyGeneratedLieAlgebra, Indexe
         """
         return infinity
 
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` since ``self`` is an abelian Lie algebra.
 

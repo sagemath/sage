@@ -125,7 +125,7 @@ def tuple_function(x, combine_all=False):
     return "\\left(" + ", ".join(latex(v) for v in x) + "\\right)"
 
 
-def bool_function(x):
+def bool_function(x) -> str:
     r"""
     Return the LaTeX code for a boolean ``x``.
 
@@ -144,7 +144,7 @@ def bool_function(x):
     return r"\mathrm{%s}" % bool(x)
 
 
-def builtin_constant_function(x):
+def builtin_constant_function(x) -> str:
     r"""
     Return the LaTeX code for a builtin constant ``x``.
 
@@ -169,7 +169,7 @@ def builtin_constant_function(x):
     return "\\mbox{\\rm %s}" % x
 
 
-def None_function(x):
+def None_function(x) -> str:
     r"""
     Return the LaTeX code for ``None``.
 
@@ -504,7 +504,7 @@ def default_engine():
 
 
 @cached_function
-def _default_engine():
+def _default_engine() -> str:
     r"""
     Return the name of the default latex engine.
 
@@ -796,7 +796,7 @@ def _run_latex_(filename, debug=False, density=150, engine=None, png=False, do_i
     # our standard way of calling programs here; change this if we want
     # finer-grained analysis of the return code. Think of the output as
     # a boolean: "the command exited normally"
-    def subpcall(x):
+    def subpcall(x) -> bool:
         return not call(x, stdout=redirect,
                         stderr=redirect, cwd=base)
     if engine in ['pdflatex', 'xelatex', 'lualatex']:
@@ -2424,7 +2424,7 @@ class LatexExamples:
             LaTeX example for testing display of graphs...
         """
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             String representation.
 
@@ -2448,7 +2448,7 @@ a picture of a graph.
 https://www.ctan.org/pkg/tkz-graph)
 """
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             """
             LaTeX representation.
 
@@ -2493,7 +2493,7 @@ https://www.ctan.org/pkg/tkz-graph)
             LaTeX example for testing display of pstricks...
         """
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             String representation.
 
@@ -2513,7 +2513,7 @@ and try viewing it again. Call 'view' with the option `engine='latex'`
 pstricks.  From the command line, this should pop open a nice window
 with a picture of forces acting on a mass on a pendulum."""
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             """
             LaTeX representation.
 
@@ -2550,7 +2550,7 @@ with a picture of forces acting on a mass on a pendulum."""
             LaTeX example for testing display of a knot...
         """
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             String representation.
 
@@ -2569,7 +2569,7 @@ and try viewing again.
 (LaTeX code taken from the xypic manual)
 """
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             """
             LaTeX representation.
 
@@ -2599,7 +2599,7 @@ and try viewing again.
             LaTeX example for testing display of a commutative diagram...
         """
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             String representation.
 
@@ -2617,7 +2617,7 @@ To use, try to view this object -- it will not work.  Now try
 and try viewing again. You should get a picture (a part of the diagram arising
 from a filtered chain complex)."""
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             """
             LaTeX representation.
 

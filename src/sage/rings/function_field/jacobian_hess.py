@@ -135,7 +135,7 @@ class JacobianPoint(JacobianPoint_base):
         super().__init__(parent)
         self._data = (dS, ds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -484,7 +484,7 @@ class JacobianGroupEmbedding(Map):
 
         Map.__init__(self, Hom(base_group, extension_group, CommutativeAdditiveGroups()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return string representation of ``self``.
 

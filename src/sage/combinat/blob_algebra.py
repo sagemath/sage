@@ -60,7 +60,7 @@ class BlobDiagram(Element):
         self.marked = tuple(sorted([tuple(sorted(pair)) for pair in marked]))
         self.unmarked = tuple(sorted([tuple(sorted(pair)) for pair in unmarked]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -168,7 +168,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
         self._TL_diagrams = TemperleyLiebDiagrams(n)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -529,14 +529,14 @@ class BlobAlgebra(CombinatorialFreeModule):
             \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
             \end{tikzpicture}
         """
-        def edge_options(P):
+        def edge_options(P) -> str:
             if P[1] < P[0]:
                 P = [P[1], P[0]]
             if tuple(P) in diagram.marked:
                 return 'blue,very thick'
             return ''
 
-        def edge_additions(P):
+        def edge_additions(P) -> str:
             if P[1] < P[0]:
                 P = [P[1], P[0]]
             if tuple(P) in diagram.marked:

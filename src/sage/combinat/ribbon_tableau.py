@@ -228,7 +228,7 @@ class RibbonTableaux(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -977,7 +977,7 @@ class MultiSkewTableaux(UniqueRepresentation, Parent):
             category = Sets()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1058,7 +1058,7 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         self._weight = weight
         MultiSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

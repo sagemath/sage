@@ -136,7 +136,7 @@ class FacadeSets(CategoryWithAxiom):
             except AttributeError:
                 raise NotImplementedError("this parent did not specify which parents it is a facade for")
 
-        def is_parent_of(self, element):
+        def is_parent_of(self, element) -> bool:
             """
             Return whether ``self`` is the parent of ``element``.
 

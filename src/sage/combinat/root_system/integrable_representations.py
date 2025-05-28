@@ -312,7 +312,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         return sum(self._ac)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -324,7 +324,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         """
         return "Integrable representation of %s with highest weight %s" % (self._cartan_type, self._Lam)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

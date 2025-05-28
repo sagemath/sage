@@ -109,7 +109,7 @@ class StarCrystal(UniqueRepresentation, Parent):
         self._embedding = {i: Binf.crystal_morphism({t0: gens[i]}) for i in self.index_set()}
         self._pullback = {i: self._tens[i].crystal_morphism({gens[i]: t0}) for i in self.index_set()}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

@@ -534,7 +534,7 @@ class FreeModuleCoBasis(Basis_abstract):
         tester.assertEqual(len(b), len(self))
         tester.assertEqual(len(b), self.free_module().rank())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -766,7 +766,7 @@ class FreeModuleBasis(Basis_abstract):
 
     ###### Methods to be redefined by derived classes of FreeModuleBasis ######
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

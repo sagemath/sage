@@ -119,7 +119,7 @@ class FGP_Morphism(Morphism):
                     raise ValueError("phi must send optimized submodule of M.W() into N.W()")
         self._phi = phi
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

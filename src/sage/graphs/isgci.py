@@ -923,7 +923,7 @@ class GraphClasses(UniqueRepresentation):
 
         # We sort the classes alphabetically, though we would like to display
         # the meaningful classes at the top of the list
-        def sort_key(x):
+        def sort_key(x) -> str:
             name = x.get("name", "zzzzz")
             return "{}{:4}".format(name, int(x["id"].split('_')[1]))
 

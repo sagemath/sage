@@ -322,7 +322,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
             return False
         return self._system == other._system
 
-    def __neq__(self, other):
+    def __neq__(self, other) -> bool:
         """
         Inequality operator.
 

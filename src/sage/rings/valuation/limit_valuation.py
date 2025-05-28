@@ -924,7 +924,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         self._improve_approximation_for_call(f)
         return self._approximation.upper_bound(f)
 
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains `-\infty`.
 

@@ -104,7 +104,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
         self._cartan_type = cartan_type
         self._side = side
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

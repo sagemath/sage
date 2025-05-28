@@ -216,7 +216,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         # self._analytic_type=self.AT(["quasi", "mero"])
         self._analytic_type = ambient_space._analytic_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

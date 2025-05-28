@@ -300,7 +300,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         # ensure unique representation
         self.set_immutable()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         r"""
         Return if ``self`` is the empty tree.
 
@@ -534,7 +534,7 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
             self, Family(NonNegativeIntegers(), RootedTrees_size),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -638,7 +638,7 @@ class RootedTrees_size(RootedTrees):
         super().__init__(category=FiniteEnumeratedSets())
         self._n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -1018,7 +1018,7 @@ class LabelledRootedTrees_all(LabelledRootedTrees):
         category = category.Infinite()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

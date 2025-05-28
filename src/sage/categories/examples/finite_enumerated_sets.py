@@ -80,7 +80,7 @@ class Example(UniqueRepresentation, Parent):
         Parent.__init__(self, facade=IntegerRing(),
                         category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

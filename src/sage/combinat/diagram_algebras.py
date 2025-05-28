@@ -982,7 +982,7 @@ class BrauerDiagram(AbstractPartitionDiagram):
         """
         return super()._repr_()
 
-    def _repr_compact(self):
+    def _repr_compact(self) -> str:
         """
         Return a compact string representation of ``self``.
 
@@ -1209,7 +1209,7 @@ class AbstractPartitionDiagrams(Parent, UniqueRepresentation):
                                  + list(range(ZZ(-ZZ(1)/ZZ(2) - order),0)))
         self._set = base_set
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -2601,7 +2601,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
         return super()._element_constructor_(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3317,7 +3317,7 @@ class OrbitBasis(DiagramAlgebra):
         self._fill = True
         self._alg = alg
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3784,7 +3784,7 @@ class BrauerAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
 
     options = BrauerDiagram.options
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3913,7 +3913,7 @@ class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
         if (self._order - self._defects) % 2:
             raise ValueError("the number of non-defects must be even")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -4269,7 +4269,7 @@ class TemperleyLiebAlgebra(SubPartitionAlgebra, UnitDiagramMixin):
         cat = AssociativeAlgebras(base_ring.category()).Unital().FiniteDimensional().WithBasis().Cellular()
         SubPartitionAlgebra.__init__(self, k, q, base_ring, prefix, TemperleyLiebDiagrams(k), category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -4673,7 +4673,7 @@ class PropagatingIdeal(SubPartitionAlgebra):
         SubPartitionAlgebra.__init__(self, k, q, base_ring, prefix,
                                      IdealDiagrams(k), category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -5209,7 +5209,7 @@ class PottsRepresentation(CombinatorialFreeModule):
             self._symgp = SymmetricGroup([i for i in range(1, self._d+1) if i != self._y])
         self._sga = self._symgp.algebra(R)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -5577,7 +5577,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 #########################################################################
 
 
-def is_planar(sp):
+def is_planar(sp) -> bool:
     r"""
     Return ``True`` if the diagram corresponding to the set partition ``sp``
     is planar; otherwise, return ``False``.

@@ -194,7 +194,7 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
         """
         return getattr(category, self._functor_category)()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -487,7 +487,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
                              self.extra_super_categories(),
                              as_list=True)
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -496,7 +496,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         """
         return "%s of %s" % (Category._repr_object_names(self), self.base_category()._repr_object_names())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -587,7 +587,7 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
                               for cat in category._super_categories
                               if hasattr(cat, cls._functor_category)])
 
-    def is_construction_defined_by_base(self):
+    def is_construction_defined_by_base(self) -> bool:
         r"""
         Return whether the construction is defined by the base of ``self``.
 

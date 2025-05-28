@@ -448,7 +448,7 @@ class Rings(CategoryWithAxiom):
             """
             raise NotImplementedError
 
-        def is_noetherian(self):
+        def is_noetherian(self) -> bool:
             """
             Return ``True`` if this ring is Noetherian.
 
@@ -556,7 +556,7 @@ class Rings(CategoryWithAxiom):
             except (TypeError, AttributeError):
                 return False
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return ``True`` if this ring is a field.
 

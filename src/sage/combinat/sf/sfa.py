@@ -346,7 +346,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         True
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -441,7 +441,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             from sage.rings.fraction_field import FractionField_generic
             return FractionField_generic(self)
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return whether ``self`` is a field. (It is not.)
 
@@ -474,7 +474,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return self.base_ring() in CommutativeRings()
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of symmetric functions.
 
@@ -1476,7 +1476,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             # ``comparison`` needs not be called a myriad of times. Might
             # be folly.
             if comparison is None:
-                def check_word(w):
+                def check_word(w) -> bool:
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
                     if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
@@ -1694,7 +1694,7 @@ class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
         True
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1744,7 +1744,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
         False
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 

@@ -26,7 +26,7 @@ class Gnuplot(SageObject):
     """
     Interface to the Gnuplot interpreter.
     """
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         return 'quit'
 
     def gnuplot(self):
@@ -43,11 +43,11 @@ class Gnuplot(SageObject):
     def __call__(self, line):
         return self.gnuplot()(line)
 
-    def _eval_line(self, line, *args, **kwds):
+    def _eval_line(self, line, *args, **kwds) -> str:
         self(line)
         return ''
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

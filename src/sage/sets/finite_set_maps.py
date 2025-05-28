@@ -259,7 +259,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
         """
         return IntegerRange(self._n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -533,7 +533,7 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
         """
         return self._from_list_(range(self._n - 1, -1, -1))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

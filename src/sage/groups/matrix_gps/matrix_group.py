@@ -264,7 +264,7 @@ class MatrixGroup_base(Group):
         else:
             return self._ambient
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -327,7 +327,7 @@ class MatrixGroup_base(Group):
             return True
         return super()._repr_option(key)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

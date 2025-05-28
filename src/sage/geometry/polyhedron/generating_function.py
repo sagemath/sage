@@ -530,7 +530,7 @@ def generating_function_of_integral_points(polyhedron, split=False,
             def ieq_repr_rhs(a, b):
                 return (' <= ' if a < b else ' < ') + 'b{}'.format(b-1)
 
-            def ieqs_repr_lhs(pi):
+            def ieqs_repr_lhs(pi) -> str:
                 return 'b{}'.format(pi[0]-1)
 
             ieqs, repr_rhss = zip(*[(ieq(a, b), ieq_repr_rhs(a, b))

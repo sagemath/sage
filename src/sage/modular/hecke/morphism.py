@@ -152,7 +152,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
             return self.__name
         self.__name = new
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

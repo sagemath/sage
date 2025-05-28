@@ -1018,7 +1018,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         """
         return ZZ(self._p)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Non-equality operator.
 

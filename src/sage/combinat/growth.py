@@ -1134,7 +1134,7 @@ class GrowthDiagram(SageObject):
                 self._mu == other._mu and
                 self._filling == other._filling)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if the growth diagram ``other`` does not have the
         same shape and the same filling as ``self``.
@@ -3469,7 +3469,7 @@ class RuleYoungFibonacci(Rule):
         """
         return sum(v)
 
-    def is_P_edge(self, v, w):
+    def is_P_edge(self, v, w) -> bool:
         r"""
         Return whether ``(v, w)`` is a `P`-edge of ``self``.
 

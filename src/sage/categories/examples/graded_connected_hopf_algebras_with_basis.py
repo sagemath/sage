@@ -79,7 +79,7 @@ class GradedConnectedCombinatorialHopfAlgebraWithPrimitiveGenerator(Combinatoria
         """
         return i
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Representation of the graded connected Hopf algebra.
 

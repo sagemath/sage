@@ -791,7 +791,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
         category = category.Subobjects()
         AbelianGroup_gap.__init__(self, G, ambient=ambient, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this subgroup.
 

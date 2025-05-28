@@ -794,7 +794,7 @@ class OreFunctionCenterInjection(RingHomomorphism):
         self._ringembed = ringembed
         self._section = SectionOreFunctionCenterInjection(self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this morphism.
 

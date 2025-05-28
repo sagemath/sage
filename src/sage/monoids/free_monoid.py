@@ -199,7 +199,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         self.__ngens = int(n)
         Monoid_class.__init__(self, names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return f"Free monoid on {self.__ngens} generators {self.gens()}"
 
     def _element_constructor_(self, x, check=True):

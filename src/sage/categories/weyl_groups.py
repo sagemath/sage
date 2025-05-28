@@ -322,7 +322,7 @@ class WeylGroups(Category_singleton):
 
     class ElementMethods:
 
-        def is_pieri_factor(self):
+        def is_pieri_factor(self) -> bool:
             r"""
             Return whether ``self`` is a Pieri factor, as used for
             computing Stanley symmetric functions.

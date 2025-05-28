@@ -1348,7 +1348,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             pc).expr(chart)/self._dim for chart in self.top_charts()})
         return self._mean_curvature[screen._name]
 
-    def is_tangent(self, v):
+    def is_tangent(self, v) -> bool:
         r"""
         Determine whether a vector field on the ambient manifold along ``self``
         is tangent to ``self`` or not.

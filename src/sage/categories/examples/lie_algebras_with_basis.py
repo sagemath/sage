@@ -47,7 +47,7 @@ class AbelianLieAlgebra(CombinatorialFreeModule):
         """
         return IndexedPolynomialRing(self.base_ring(), self._indices)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -138,7 +138,7 @@ class IndexedPolynomialRing(CombinatorialFreeModule):
         M = IndexedFreeAbelianMonoid(indices, bracket='')
         CombinatorialFreeModule.__init__(self, R, M, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

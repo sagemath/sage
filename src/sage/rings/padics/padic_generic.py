@@ -128,7 +128,7 @@ class pAdicGeneric(LocalGeneric):
                 print_mode[option] = self._printer.dict()[option]
         return print_mode
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of ``self``.
 
@@ -1647,7 +1647,7 @@ class ResidueReductionMap(Morphism):
             f._field = False
         return f
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         The reduction map is surjective.
 
@@ -1658,7 +1658,7 @@ class ResidueReductionMap(Morphism):
         """
         return True
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         The reduction map is far from injective.
 
@@ -1704,7 +1704,7 @@ class ResidueReductionMap(Morphism):
         """
         return ResidueLiftingMap._create_(self.codomain(), self.domain())
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Type of morphism, for printing.
 
@@ -1838,7 +1838,7 @@ class ResidueLiftingMap(Morphism):
         else:
             raise NotImplementedError
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Type of morphism, for printing.
 

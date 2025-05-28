@@ -367,7 +367,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return self.dimension_relative() + 1
 
-    def _check_satisfies_equations(self, v):
+    def _check_satisfies_equations(self, v) -> bool:
         """
         Return ``True`` if ``v`` defines a point on the scheme; raise a
         :exc:`TypeError` otherwise.
@@ -583,7 +583,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         else:
             raise TypeError('%s must be a projective space, product of projective spaces, or subscheme' % right)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this projective space.
 
@@ -838,7 +838,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return SchemeMorphism_point_projective_ring(*args, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this projective space.
 
@@ -854,7 +854,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         """
         return "Projective Space of dimension %s over %s" % (self.dimension_relative(), self.base_ring())
 
-    def _repr_generic_point(self, v=None):
+    def _repr_generic_point(self, v=None) -> str:
         """
         Return a string representation of the generic point
         corresponding to the list of polys ``v`` on this projective space.
@@ -874,7 +874,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             v = self.gens()
         return '(%s)' % (" : ".join(repr(f) for f in v))
 
-    def _latex_generic_point(self, v=None):
+    def _latex_generic_point(self, v=None) -> str:
         """
         Return a LaTeX representation of the generic point
         corresponding to the list of polys ``v`` on this projective space.
@@ -932,7 +932,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
             return ProjectiveSpace(self.dimension_relative(), R,
                                self.variable_names())
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         """
         Return that this ambient space is projective `n`-space.
 

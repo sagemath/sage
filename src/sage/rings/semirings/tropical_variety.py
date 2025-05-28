@@ -352,7 +352,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         from sage.rings.integer_ring import ZZ
         return ZZ(len(self._hypersurface))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -365,7 +365,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         """
         return f"Tropical hypersurface of {self._poly}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -1070,7 +1070,7 @@ class TropicalSurface(TropicalVariety):
             combined_plot += plot
         return combined_plot
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1377,7 +1377,7 @@ class TropicalCurve(TropicalVariety):
         """
         return len(self.vertices()) == self._poly.degree() ** 2
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return ``True`` if ``self`` is simple and ``False`` otherwise.
 
@@ -1685,7 +1685,7 @@ class TropicalCurve(TropicalVariety):
                                      ymin=ymin, ymax=ymax)
         return combined_plot
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

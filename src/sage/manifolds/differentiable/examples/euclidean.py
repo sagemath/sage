@@ -800,7 +800,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
             self._init_coordinates = init_coord_methods
         self._init_coordinates[coordinates](symbols)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1202,7 +1202,7 @@ class EuclideanPlane(EuclideanSpace):
             # to the orthonormal polar frame
             self.set_default_frame(self.polar_frame())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1732,7 +1732,7 @@ class Euclidean3dimSpace(EuclideanSpace):
             # it to the orthonormal cylindrical frame
             self.set_default_frame(self.cylindrical_frame())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

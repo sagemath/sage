@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from sage.misc.latex import LatexExpr
 
 
-def is_atomic(expr, sep=['+', '-']):
+def is_atomic(expr, sep=['+', '-']) -> bool:
     r"""
     Helper function to check whether some LaTeX expression is atomic.
 

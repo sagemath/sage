@@ -305,7 +305,7 @@ class GroupSemidirectProduct(CartesianProduct):
         """
         return self._act_to_right
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A string representing the semidirect product group.
 

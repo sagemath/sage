@@ -242,7 +242,7 @@ class ShiftedPrimedTableau(ClonableArray,
         if not self.parent()._contains_tableau(self):
             raise ValueError("{} is not an element of Shifted Primed Tableaux".format(self))
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         r"""
         Return ``True`` if the entries of ``self`` are in bijection with
         positive primed integers `1', 1, 2', \ldots, n`.
@@ -303,7 +303,7 @@ class ShiftedPrimedTableau(ClonableArray,
             return False
         return self._skew == Tab._skew and list(self) == list(Tab)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1291,7 +1291,7 @@ class CrystalElementShiftedPrimedTableau(ShiftedPrimedTableau):
         T = [tuple(elmt for elmt in row if elmt is not None) for row in T]
         return type(self)(self.parent(), T, check=False, preprocessed=True)
 
-    def is_highest_weight(self, index_set=None):
+    def is_highest_weight(self, index_set=None) -> bool:
         r"""
         Return whether ``self`` is a highest weight element of the crystal.
 
@@ -1931,7 +1931,7 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
         except ValueError:
             raise ValueError("{} is not an element of {}".format(T, self))
 
-    def _contains_tableau(self, T):
+    def _contains_tableau(self, T) -> bool:
         """
         Check if ``self`` contains preprocessed tableau ``T``.
 
@@ -2027,7 +2027,7 @@ class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):
             Parent.__init__(self, category=Sets().Infinite())
         ShiftedPrimedTableaux.__init__(self, skew=skew, primed_diagonal=primed_diagonal)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2236,7 +2236,7 @@ class ShiftedPrimedTableaux_shape(ShiftedPrimedTableaux):
             base += " and maximum entry {}".format(self._max_entry)
         return base
 
-    def _contains_tableau(self, T):
+    def _contains_tableau(self, T) -> bool:
         """
         TESTS::
 
@@ -2397,7 +2397,7 @@ class ShiftedPrimedTableaux_weight(ShiftedPrimedTableaux):
             Parent.__init__(self, category=Sets().Finite())
         self._weight = weight
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2522,7 +2522,7 @@ class ShiftedPrimedTableaux_weight_shape(ShiftedPrimedTableaux):
         else:
             self._shape = SkewPartition((shape, skew))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

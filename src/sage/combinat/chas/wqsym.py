@@ -475,7 +475,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         category = HopfAlgebras(R).Graded().Connected()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -1913,7 +1913,7 @@ class WQSymBases(Category_realization_of_parent):
         self._graded = graded
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1969,7 +1969,7 @@ class WQSymBases(Category_realization_of_parent):
                 cat.Connected()]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of `WQSym`.
 
@@ -2029,7 +2029,7 @@ class WQSymBases(Category_realization_of_parent):
             except TypeError:
                 raise ValueError("cannot convert %s into an element of %s" % (p, self._indices))
 
-        def is_field(self, proof=True):
+        def is_field(self, proof=True) -> bool:
             """
             Return whether ``self`` is a field.
 

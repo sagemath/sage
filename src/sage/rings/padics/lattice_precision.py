@@ -663,7 +663,7 @@ class DifferentialPrecisionGeneric(SageObject):
         """
         raise NotImplementedError("pickling/unpickling precision modules is not implemented yet")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this precision object.
 

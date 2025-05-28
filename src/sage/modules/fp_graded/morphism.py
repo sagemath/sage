@@ -722,7 +722,7 @@ class FPModuleMorphism(Morphism):
 
         return self.codomain()(self._free_morphism(x.lift_to_free()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 

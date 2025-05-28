@@ -76,6 +76,6 @@ class GluedScheme(Scheme):
         """
         return self.__f, self.__g
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Scheme obtained by gluing X and Y along U, where\n  X: %s\n  Y: %s\n  U: %s" % (
             self.__f.codomain(), self.__g.codomain(), self.__f.domain())

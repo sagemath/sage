@@ -1257,7 +1257,7 @@ class SageInputExpression:
         self._sie_requested_varname = False
         self._sie_commands = []
 
-    def _sie_is_simple(self):
+    def _sie_is_simple(self) -> bool:
         r"""
         Return ``True`` if this :class:`SageInputExpression` is simple
         enough that duplicate uses are not worth caching.  Normally
@@ -1372,7 +1372,7 @@ class SageInputExpression:
 
         return self._sie_varname
 
-    def _sie_is_negation(self):
+    def _sie_is_negation(self) -> bool:
         r"""
         Test whether a :class:`SageInputExpression` is a negation.
 
@@ -1713,7 +1713,7 @@ class SIE_literal(SageInputExpression):
         True
     """
 
-    def _sie_is_simple(self):
+    def _sie_is_simple(self) -> bool:
         r"""
         Report that :class:`SIE_literal` values are not worth replacing by
         variables (for ``common subexpression elimination``) even if they
@@ -2944,7 +2944,7 @@ class SIE_gen(SageInputExpression):
         """
         return "{gen:%s %s}" % (self._sie_preferred_varname, repr(self._sie_parent))
 
-    def _sie_is_simple(self):
+    def _sie_is_simple(self) -> bool:
         r"""
         Report that :class:`SIE_gen` values are single tokens.
 
@@ -3109,7 +3109,7 @@ class SIE_import_name(SageInputExpression):
         return "{import:%s/%s%s}" % (self._sie_module_name, self._sie_object_name,
                                      "" if self._sie_object_name == self._sie_preferred_varname else " as %s" % self._sie_preferred_varname)
 
-    def _sie_is_simple(self):
+    def _sie_is_simple(self) -> bool:
         r"""
         Report that :class:`SIE_import_name` values are single tokens.
 
@@ -3267,7 +3267,7 @@ class SIE_assign(SageInputExpression):
         """
         raise ValueError("Cannot format SIE_assign as expression")
 
-    def _sie_format_statement(self, sif):
+    def _sie_format_statement(self, sif) -> str:
         r"""
         Return the formatted string of this :class:`SIE_assign`
         as a statement.

@@ -99,7 +99,7 @@ class Primes(Set_generic, UniqueRepresentation):
                          category=InfiniteEnumeratedSets())
         self.__proof = proof
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Representation of the set of primes.
 

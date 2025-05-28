@@ -478,7 +478,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         self._zero_element = integer_mod.IntegerMod(self, 0)
         self._one_element = integer_mod.IntegerMod(self, 1)
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         """
         EXAMPLES::
 
@@ -498,7 +498,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "ZZ/{}".format(self.order())
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         """
         Return a string representation of ``self`` in (Pan)Axiom.
 
@@ -529,7 +529,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return integer.Integer(0)
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Check if ``self`` is a Noetherian ring.
 
@@ -1036,7 +1036,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return self.__order
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -1047,7 +1047,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "Ring of integers modulo {}".format(self.__order)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex representation.
 
@@ -1974,7 +1974,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
     #######################################################
     # Suppose for interfaces
     #######################################################
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         EXAMPLES::
 
@@ -1986,7 +1986,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return 'ZmodnZ({})'.format(self.order())
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         EXAMPLES::
 

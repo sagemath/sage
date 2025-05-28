@@ -125,7 +125,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
             return (1, tuple(x[1]))
         return (2, tuple(x[1])) # x[0] == 'E'
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the term indexed by ``m``.
 
@@ -141,7 +141,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
         """
         return "{}{}".format(*m)
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a `\LaTeX` representation of the term indexed by ``m``.
 
@@ -185,7 +185,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
                                                 unicode_superscript(m[1][1])))
         return unicode_art('E({},{})'.format(m[1][0], m[1][1]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

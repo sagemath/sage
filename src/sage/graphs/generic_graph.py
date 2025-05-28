@@ -798,7 +798,7 @@ class GenericGraph(GenericGraph_pyx):
                                   name=f"Disjoint union of {n} copies of {str(self)}")
         raise TypeError('multiplication of a graph and something other than an integer is not defined')
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for inequality, complement of ``__eq__``.
 
@@ -3355,7 +3355,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return None
 
-    def _check_embedding_validity(self, embedding=None, boolean=True):
+    def _check_embedding_validity(self, embedding=None, boolean=True) -> bool:
         """
         Check whether an ``_embedding`` attribute is well defined.
 
@@ -3716,7 +3716,7 @@ class GenericGraph(GenericGraph_pyx):
             return [v for v in self if self.has_edge(v, v)]
         return []
 
-    def has_multiple_edges(self, to_undirected=False):
+    def has_multiple_edges(self, to_undirected=False) -> bool:
         """
         Return whether there are multiple edges in the (di)graph.
 
@@ -4249,7 +4249,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return pos
 
-    def _check_pos_validity(self, pos=None, dim=2):
+    def _check_pos_validity(self, pos=None, dim=2) -> bool:
         r"""
         Check whether ``pos`` specifies two (resp. 3) coordinates for every
         vertex of the (di)graph (and no more vertices).
@@ -6424,7 +6424,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return G._pos
 
-    def is_drawn_free_of_edge_crossings(self):
+    def is_drawn_free_of_edge_crossings(self) -> bool:
         """
         Check whether the position dictionary for this graph is set and that
         position dictionary gives a planar embedding.
@@ -7722,7 +7722,7 @@ class GenericGraph(GenericGraph_pyx):
             def weight(x):
                 return x if (x != {} and x is not None) else 1
         else:
-            def weight(x):
+            def weight(x) -> int:
                 return 1
 
         if algorithm in ["FF", "igraph", None]:
@@ -8044,7 +8044,7 @@ class GenericGraph(GenericGraph_pyx):
             def weight(l):
                 return l if l is not None else 1
         else:
-            def weight(l):
+            def weight(l) -> int:
                 return 1
 
         p.set_objective(p.sum(weight(l) * cut[good_edge((u, v))] for u, v, l in self.edge_iterator()))
@@ -8165,7 +8165,7 @@ class GenericGraph(GenericGraph_pyx):
             def weight(x):
                 return x if x in RR else 1
         else:
-            def weight(x):
+            def weight(x) -> int:
                 return 1
 
         if g.is_directed():
@@ -8427,7 +8427,7 @@ class GenericGraph(GenericGraph_pyx):
             def total_weight(gg):
                 return sum(weight(e) for e in gg.edge_iterator())
         else:
-            def weight(e):
+            def weight(e) -> int:
                 return 1
 
             def total_weight(gg):
@@ -8904,7 +8904,7 @@ class GenericGraph(GenericGraph_pyx):
             def weight(x):
                 return x if (x is not None and x != {}) else 1
         else:
-            def weight(x):
+            def weight(x) -> int:
                 return 1
 
         from sage.numerical.mip import MixedIntegerLinearProgram
@@ -9552,7 +9552,7 @@ class GenericGraph(GenericGraph_pyx):
             def weight(label):
                 return 1 if label is None else label
         else:
-            def weight(label):
+            def weight(label) -> int:
                 return 1
 
         ########################
@@ -10369,7 +10369,7 @@ class GenericGraph(GenericGraph_pyx):
                 def capacity(z):
                     return z if z in RR else 1
         else:
-            def capacity(z):
+            def capacity(z) -> int:
                 return 1
 
         if algorithm is None:
@@ -10800,7 +10800,7 @@ class GenericGraph(GenericGraph_pyx):
             def l_capacity(x):
                 return 1 if (x is None or x == {}) else (floor(x) if integer else x)
         else:
-            def l_capacity(x):
+            def l_capacity(x) -> int:
                 return 1
 
         directed = self.is_directed()
@@ -11002,7 +11002,7 @@ class GenericGraph(GenericGraph_pyx):
             def capacity(x):
                 return x if x in RR else 1
         else:
-            def capacity(x):
+            def capacity(x) -> int:
                 return 1
 
         if g.is_directed():
@@ -14111,7 +14111,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         return sorted(self.degree_iterator(), reverse=True)
 
-    def is_regular(self, k=None):
+    def is_regular(self, k=None) -> bool:
         """
         Check whether this graph is (`k`-)regular.
 
@@ -15650,7 +15650,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return (True, {v: (beg[v], end[v]) for v in self})
 
-    def is_gallai_tree(self):
+    def is_gallai_tree(self) -> bool:
         r"""
         Return whether the current graph is a Gallai tree.
 
@@ -15939,7 +15939,7 @@ class GenericGraph(GenericGraph_pyx):
 
         return g.is_regular(k=2) and g.is_connected()
 
-    def is_independent_set(self, vertices=None):
+    def is_independent_set(self, vertices=None) -> bool:
         """
         Check whether ``vertices`` is an independent set of ``self``.
 
@@ -17945,7 +17945,7 @@ class GenericGraph(GenericGraph_pyx):
             if check_weight:
                 self._check_weight_function(weight_function)
         else:
-            def weight_function(e):
+            def weight_function(e) -> int:
                 return 1
         return by_weight, weight_function
 
@@ -24831,7 +24831,7 @@ class GenericGraph(GenericGraph_pyx):
 
     def is_hamiltonian(self, solver=None, constraint_generation=None,
                        verbose=0, verbose_constraints=False,
-                       *, integrality_tolerance=1e-3):
+                       *, integrality_tolerance=1e-3) -> bool:
         r"""
         Test whether the current graph is Hamiltonian.
 

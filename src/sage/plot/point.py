@@ -251,7 +251,7 @@ class Point(GraphicPrimitive_xydata):
         else:
             raise ValueError('incorrect number of heights given')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of Point primitive.
 

@@ -217,7 +217,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         self._codomain = parent.codomain()
         self._ore_polynomial = ore_pol
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the morphism.
 
@@ -235,7 +235,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return f'{latex(self._ore_polynomial)}'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the morphism.
 
@@ -331,7 +331,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial == 1
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         r"""
         Return ``True`` whether the morphism is an isogeny.
 

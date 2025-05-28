@@ -553,7 +553,7 @@ class TableauTuple(CombinatorialElement):
 
     _latex_list = _repr_list
 
-    def _latex_diagram(self):
+    def _latex_diagram(self) -> str:
         r"""
         Return a LaTeX representation of ``self`` as a Young diagram.
 
@@ -2373,7 +2373,7 @@ class TableauTuples_all(TableauTuples):
         self._level = None
         self._size = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of a :class:`StandardTableauTuple`.
 
@@ -2448,7 +2448,7 @@ class TableauTuples_level(TableauTuples):
         else:
             return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of a :class:`StandardTableauTuple` of a
         fixed ``level``.
@@ -2529,7 +2529,7 @@ class TableauTuples_size(TableauTuples):
         else:
             return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of a :class:`StandardTableauTuple` of a
         fixed ``size``.
@@ -2612,7 +2612,7 @@ class TableauTuples_level_size(TableauTuples):
         else:
             return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`StandardTableauTuples` of
         given level and size.
@@ -2981,7 +2981,7 @@ class RowStandardTableauTuples_all(RowStandardTableauTuples, DisjointUnionEnumer
             Family(PartitionTuples(), RowStandardTableauTuples_shape),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`RowStandardTableauTuples` of
         arbitrary ``level`` and ``size``.
@@ -3047,7 +3047,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
             facade=True, keepkey=False)
         self._level = level
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`RowStandardTableauTuples`
         of fixed ``level``.
@@ -3145,7 +3145,7 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
             facade=True, keepkey=False)
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`RowStandardTableauTuples`
         of fixed ``size``.
@@ -3255,7 +3255,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
         self._level = level
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`RowStandardTableauTuples` of
         fixed ``level`` and size.
@@ -3380,7 +3380,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
         else:
             return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`RowStandardTableauTuples` of
         fixed shape.
@@ -3575,7 +3575,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
         self._size = residue.size()
         self._base_ring = residue.base_ring()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -3862,7 +3862,7 @@ class RowStandardTableauTuples_residue_shape(RowStandardTableauTuples_residue):
                 and t.residue_sequence(self._quantum_characteristic,
                                        self._multicharge) == self._residue)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -4267,7 +4267,7 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
                 Family(PartitionTuples(), StandardTableauTuples_shape),
                 facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`StandardTableauTuples` of
         arbitrary ``level`` and ``size``.
@@ -4349,7 +4349,7 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
                 facade=True, keepkey=False)
         self._level = level
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`StandardTableauTuples`
         of fixed ``level``.
@@ -4461,7 +4461,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
                 facade=True, keepkey=False)
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`StandardTableauTuples`
         of fixed ``size``.
@@ -4591,7 +4591,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
         self._level = level
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`StandardTableauTuples` of
         fixed ``level`` and size.
@@ -4760,7 +4760,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
                 return list(self.shape()) == sum(map(len, t))
         return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The string representation of the :class:`StandardTableauTuples` of
         fixed shape.
@@ -5084,7 +5084,7 @@ class StandardTableaux_residue(StandardTableauTuples):
         self._residue = residue
         self._size = residue.size()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -5244,7 +5244,7 @@ class StandardTableaux_residue_shape(StandardTableaux_residue):
                 and t.residue_sequence(self._quantum_characteristic,
                                        self._multicharge) == self._residue)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

@@ -180,7 +180,7 @@ class QSystem(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, basis,
                                          prefix='Q', category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

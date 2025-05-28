@@ -213,7 +213,7 @@ class SkewPartition(CombinatorialElement):
         """
         return self.parent().options._dispatch(self, '_repr_', 'display')
 
-    def _repr_quotient(self):
+    def _repr_quotient(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -658,7 +658,7 @@ class SkewPartition(CombinatorialElement):
         """
         return n <= self.overlap()
 
-    def is_ribbon(self):
+    def is_ribbon(self) -> bool:
         r"""
         Return ``True`` if and only if ``self`` is a ribbon.
 
@@ -1664,7 +1664,7 @@ class SkewPartitions_all(SkewPartitions):
         """
         SkewPartitions.__init__(self, True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1982,7 +1982,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
             return [u[0]-u[1] for u in zip(o,i)] == self.co
         return False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

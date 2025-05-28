@@ -741,7 +741,7 @@ class CoxeterMatrix(CoxeterType, metaclass=ClasscallMetaclass):
         """
         return isinstance(other, CoxeterMatrix) and self._matrix == other._matrix
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return if ``self`` and ``other`` are not equal.
 

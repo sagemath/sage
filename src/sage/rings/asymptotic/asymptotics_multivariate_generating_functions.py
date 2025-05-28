@@ -3188,7 +3188,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
                                   denominator_factored=denominator_factored,
                                   reduce=reduce)
 
-    def _coerce_map_from_(self, P):
+    def _coerce_map_from_(self, P) -> bool:
         r"""
         Check if there is a coercion from the given parent.
 

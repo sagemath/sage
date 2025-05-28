@@ -684,7 +684,7 @@ class OperationTable(SageObject):
         """
         return (self._elts == other._elts) and (self._operation == other._operation)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Inequality test, by negation of :meth:`.__eq__`.
 

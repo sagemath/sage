@@ -37,7 +37,7 @@ class SymmetricGroupConjugacyClassMixin:
         self._domain = domain
         self._set = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -68,7 +68,7 @@ class SymmetricGroupConjugacyClassMixin:
             return False
         return self._part == other._part
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 

@@ -493,7 +493,7 @@ class logstr(str):
         """
         return self
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
             sage: from sage.repl.interpreter import logstr
@@ -602,7 +602,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             pos = expr_end
         return ' '.join(new_line)
 
-    def transform(self, line, continue_prompt):
+    def transform(self, line, continue_prompt) -> str:
         r'''
         Evaluates *line* in :attr:`shell.interface` and returns a
         string representing the result of that evaluation.

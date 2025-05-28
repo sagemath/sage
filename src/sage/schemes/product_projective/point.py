@@ -127,7 +127,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         return self._points[i]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this point.
 

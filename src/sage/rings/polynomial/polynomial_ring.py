@@ -938,7 +938,7 @@ class PolynomialRing_generic(Ring):
         s = 'PolynomialRing(%s)' % (Bref)
         return magma._with_names(s, self.variable_names())
 
-    def _gap_init_(self, gap=None):
+    def _gap_init_(self, gap=None) -> str:
         """
         String for representing this polynomial ring in GAP.
 
@@ -1062,7 +1062,7 @@ class PolynomialRing_generic(Ring):
         self._cached_repr = s
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1309,7 +1309,7 @@ class PolynomialRing_generic(Ring):
     def is_exact(self):
         return self.base_ring().is_exact()
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False``, since polynomial rings are never fields.
 
@@ -1389,7 +1389,7 @@ class PolynomialRing_generic(Ring):
         """
         return self.base_ring().krull_dimension() + 1
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of this polynomial ring, which is 1
         since it is a univariate polynomial ring.

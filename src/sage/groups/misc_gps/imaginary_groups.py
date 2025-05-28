@@ -337,7 +337,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
         """
         return self.element_class(self, self.base().an_element())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation string of this imaginary group.
 

@@ -219,7 +219,7 @@ class AmbientSpace(CombinatorialFreeModule):
         else:
             return self.classical().monomial(i)
 
-    def is_extended(self):
+    def is_extended(self) -> bool:
         r"""
         Return whether this is a realization of the extended weight lattice: yes!
 

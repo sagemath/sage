@@ -55,7 +55,7 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
             SymbolicFunction.__init__(self, name, nargs, latex_name,
                     conversions, evalf_params_first)
 
-        def _maxima_init_(self):
+        def _maxima_init_(self) -> str:
             """
             EXAMPLES::
 
@@ -66,7 +66,7 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
             """
             return "'%s" % self.name()
 
-        def _fricas_init_(self):
+        def _fricas_init_(self) -> str:
             """
             Return the FriCAS equivalent of a formal function.
 

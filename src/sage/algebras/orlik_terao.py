@@ -186,7 +186,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return (-len(x), sorted(x))
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -199,7 +199,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         """
         return "OT{{{}}}".format(', '.join(str(t) for t in sorted(m)))
 
-    def _latex_term(self, m):
+    def _latex_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -219,7 +219,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         from sage.sets.set import Set
         return "e_{{{}}}".format(latex(Set(sorted(m))))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

@@ -83,7 +83,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, category=Semigroups())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -132,7 +132,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         return [self(i) for i in [3, 42, "a", 3.4, "raton laveur"]]
 
     class Element(ElementWrapper):
-        def is_idempotent(self):
+        def is_idempotent(self) -> bool:
             r"""
             Trivial implementation of ``Semigroups.Element.is_idempotent``
             since all elements of this semigroup are idempotent!
@@ -196,7 +196,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
         self.alphabet = alphabet
         Parent.__init__(self, category=Semigroups().FinitelyGenerated())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -386,7 +386,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
             category = Semigroups().Quotients()
         Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
 
         EXAMPLES::

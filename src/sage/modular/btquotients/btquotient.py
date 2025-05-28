@@ -180,7 +180,7 @@ class DoubleCosetReduction(SageObject):
         self._t_prec = -1
         self._igamma_prec = -1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -195,7 +195,7 @@ class DoubleCosetReduction(SageObject):
         return "Double coset data (%s, %s, %s)" % (self.sign(),
                                                    list(self.gamma), self.label)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``self == other``.
 
@@ -228,7 +228,7 @@ class DoubleCosetReduction(SageObject):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``self != other``.
 
@@ -1154,7 +1154,7 @@ class Vertex(SageObject):
         self.leaving_edges = leaving_edges
         self.entering_edges = entering_edges
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -1166,7 +1166,7 @@ class Vertex(SageObject):
         """
         return "Vertex of Bruhat-Tits tree for p = %s" % (self.p)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``self == other``.
 
@@ -1191,7 +1191,7 @@ class Vertex(SageObject):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``self != other``.
 
@@ -1283,7 +1283,7 @@ class Edge(SageObject):
         self.valuation = valuation
         self.parity = valuation % 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -1295,7 +1295,7 @@ class Edge(SageObject):
         """
         return "Edge of Bruhat-Tits tree for p =  %s" % (self.p)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``self == other``.
 
@@ -1330,7 +1330,7 @@ class Edge(SageObject):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``self != other``.
 
@@ -1528,7 +1528,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
     __hash__ = _cache_key
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self`` as a string.
 
@@ -1539,7 +1539,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         """
         return "Quotient of the Bruhat Tits tree of GL_2(QQ_%s) with discriminant %s and level %s" % (self.prime(), self.Nminus().factor(), self.Nplus().factor())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Compare ``self`` with ``other``.
 
@@ -1560,7 +1560,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` with ``other``.
 
@@ -1573,7 +1573,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         """
         return not self.__eq__(other)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the LaTeX representation of ``self``.
 

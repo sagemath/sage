@@ -531,7 +531,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type
 
-    def has_good_reduction(self):
+    def has_good_reduction(self) -> bool:
         r"""
         Return ``True`` if there is good reduction.
 
@@ -552,7 +552,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type is None
 
-    def has_bad_reduction(self):
+    def has_bad_reduction(self) -> bool:
         r"""
         Return ``True`` if there is bad reduction.
 
@@ -575,7 +575,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type is not None
 
-    def has_multiplicative_reduction(self):
+    def has_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is multiplicative reduction.
 

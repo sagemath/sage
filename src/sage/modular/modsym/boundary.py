@@ -645,7 +645,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
                                sign=sign,
                                base_ring=F)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

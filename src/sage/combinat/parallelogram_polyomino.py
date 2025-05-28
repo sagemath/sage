@@ -735,7 +735,7 @@ class _drawing_tool:
             ), self._rotation
         )
 
-    def draw_line(self, v1, v2, color=None, size=None):
+    def draw_line(self, v1, v2, color=None, size=None) -> str:
         r"""
         Return the TIKZ code for a line.
 
@@ -812,7 +812,7 @@ class _drawing_tool:
                 list_of_vertices[i], list_of_vertices[i+1], color, size)
         return res
 
-    def draw_point(self, p1, color=None, size=None):
+    def draw_point(self, p1, color=None, size=None) -> str:
         r"""
         Return the TIKZ code for a point.
 
@@ -2174,7 +2174,7 @@ class ParallelogramPolyomino(ClonableList,
             return 0
         return self.lower_heights()[-1]
 
-    def cell_is_inside(self, w, h):
+    def cell_is_inside(self, w, h) -> int:
         r"""
         Determine whether the cell at a given position
         is inside the parallelogram polyomino.
@@ -3912,7 +3912,7 @@ class ParallelogramPolyomino(ClonableList,
         res += "\n\\end{tikzpicture}"
         return res
 
-    def _latex_list(self):
+    def _latex_list(self) -> str:
         r"""
         Return a LaTeX version of ``self`` in a list style.
 

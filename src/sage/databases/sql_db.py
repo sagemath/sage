@@ -99,7 +99,7 @@ sqlite_keywords = ['ABORT','ACTION','ADD','AFTER','ALL','ALTER','ANALYZE',
     'WHERE']
 
 
-def regexp(expr, item):
+def regexp(expr, item) -> bool:
     """
     Function to define regular expressions in pysqlite.
 
@@ -127,7 +127,7 @@ def regexp(expr, item):
     return r.match(item) is not None
 
 
-def verify_type(type):
+def verify_type(type) -> bool:
     """
     Verify that the specified ``type`` is one of the allowed strings.
 
@@ -181,7 +181,7 @@ def verify_column(col_dict):
     return d
 
 
-def verify_operator(operator):
+def verify_operator(operator) -> bool:
     """
     Check that ``operator`` is one of the allowed strings.
     Legal operators include the following strings:

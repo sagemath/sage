@@ -258,7 +258,7 @@ class Gammoid(Matroid):
         # The roots are implied by self._D
         return (self._D == other._D and self._groundset == other._groundset)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

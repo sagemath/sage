@@ -909,7 +909,7 @@ class Maxima(MaximaAbstract, Expect):
         os.unlink(filename)
         return out
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return string representation of quit command.
 

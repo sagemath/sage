@@ -467,7 +467,7 @@ class FundamentalGroupOfExtendedAffineWeylGroup_Class(UniqueRepresentation,
         """
         return self._cartan_type
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A string representing ``self``.
 
@@ -679,7 +679,7 @@ class FundamentalGroupGL(FundamentalGroupOfExtendedAffineWeylGroup_Class):
         """
         return self(x.value() + y.value())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representing the fundamental group.
 

@@ -118,7 +118,7 @@ class OutputImageGif(OutputBase):
         """
         return cls(importlib.resources.read_binary(__package__, 'example.gif'))
 
-    def html_fragment(self):
+    def html_fragment(self) -> str:
         """
         Return a self-contained HTML fragment displaying the image.
 

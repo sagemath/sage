@@ -1460,7 +1460,7 @@ class Graph(GenericGraph):
     # Attributes
 
     @doc_index("Basic methods")
-    def is_directed(self):
+    def is_directed(self) -> bool:
         """
         Since graph is undirected, returns False.
 
@@ -1744,7 +1744,7 @@ class Graph(GenericGraph):
         return len(self.faces()) == sum(1 for b in B if len(b) > 2) + 1
 
     @doc_index("Graph properties")
-    def is_biconnected(self):
+    def is_biconnected(self) -> bool:
         """
         Test if the graph is biconnected.
 
@@ -3241,7 +3241,7 @@ class Graph(GenericGraph):
             def weight(x):
                 return x if x in RR else 1
         else:
-            def weight(x):
+            def weight(x) -> int:
                 return 1
 
         for v in self:
@@ -7395,7 +7395,7 @@ class Graph(GenericGraph):
         return list(core.values())
 
     @doc_index("Modules")
-    def is_module(self, vertices):
+    def is_module(self, vertices) -> bool:
         r"""
         Check whether ``vertices`` is a module of ``self``.
 
@@ -9204,7 +9204,7 @@ class Graph(GenericGraph):
         return len(P)
 
     @doc_index("Graph properties")
-    def is_antipodal(self):
+    def is_antipodal(self) -> bool:
         r"""
         Check whether this graph is antipodal.
 

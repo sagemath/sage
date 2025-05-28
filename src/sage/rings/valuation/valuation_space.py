@@ -175,7 +175,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
         from .trivial_valuation import TrivialPseudoValuation
         return TrivialPseudoValuation(self.domain())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this space.
 
@@ -293,7 +293,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             sage: m = H.__make_element_class__(DiscretePseudoValuation)(H)
             sage: m._test_category()
         """
-        def is_discrete_pseudo_valuation(self):
+        def is_discrete_pseudo_valuation(self) -> bool:
             r"""
             Return whether this valuation is a discrete pseudo-valuation.
 
@@ -317,7 +317,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 True
             """
 
-        def is_negative_pseudo_valuation(self):
+        def is_negative_pseudo_valuation(self) -> bool:
             r"""
             Return whether this valuation is a discrete pseudo-valuation that
             does attain `-\infty`, i.e., it is non-trivial and its domain
@@ -336,7 +336,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             raise NotImplementedError
 
         @cached_method
-        def is_trivial(self):
+        def is_trivial(self) -> bool:
             r"""
             Return whether this valuation is trivial, i.e., whether it is
             constant `\infty` or constant zero for everything but the zero
@@ -997,7 +997,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             """
             return x.inverse_of_unit()
 
-        def _relative_size(self, x):
+        def _relative_size(self, x) -> int:
             r"""
             Return an estimate on the coefficient size of ``x``.
 

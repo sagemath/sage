@@ -55,7 +55,7 @@ class HTMLText(HTMLMath):
         ''
     """
     @property
-    def description(self):
+    def description(self) -> str:
         """
         Always return empty string.
 

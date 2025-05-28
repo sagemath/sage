@@ -217,7 +217,7 @@ def has_pandoc():
     return Pandoc().is_present()
 
 
-def has_scilab():
+def has_scilab() -> bool:
     """
     Test if Scilab is available.
 
@@ -497,7 +497,7 @@ class AvailableSoftware:
         else:
             return False
 
-    def issuperset(self, other):
+    def issuperset(self, other) -> bool:
         """
         Return ``True`` if ``other`` is a subset of ``self``.
 

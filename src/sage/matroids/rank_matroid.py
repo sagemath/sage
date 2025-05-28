@@ -203,7 +203,7 @@ class RankMatroid(Matroid):
             return False
         return (self.groundset() == other.groundset()) and (self._rank_function == other._rank_function)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

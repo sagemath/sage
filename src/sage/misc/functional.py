@@ -866,7 +866,7 @@ def is_even(x):
         return x % 2 == 0
 
 
-def is_odd(x):
+def is_odd(x) -> bool:
     """
     Return whether or not ``x`` is odd.
 

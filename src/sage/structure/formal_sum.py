@@ -356,7 +356,7 @@ class FormalSums(UniqueRepresentation, Module):
         """
         return UniqueRepresentation.__classcall__(cls, base_ring)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -401,7 +401,7 @@ class FormalSums(UniqueRepresentation, Module):
             return self.element_class([(self.base_ring()(1), x)],
                                       check=False, reduce=False, parent=self)
 
-    def _coerce_map_from_(self, X):
+    def _coerce_map_from_(self, X) -> bool:
         r"""
         Return whether there is a coercion from ``X``.
 

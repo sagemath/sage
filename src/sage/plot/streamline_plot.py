@@ -100,7 +100,7 @@ class StreamlinePlot(GraphicPrimitive):
                 'start_points': 'Coordinates of starting points for the streamlines',
                 'zorder': 'The layer level in which to draw'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of StreamlinePlot graphics primitive.
 

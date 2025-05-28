@@ -339,7 +339,7 @@ class Genus2reduction(SageObject):
     def __init__(self) -> None:
         pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

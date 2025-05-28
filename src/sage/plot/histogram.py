@@ -166,7 +166,7 @@ class Histogram(GraphicPrimitive):
                 'stacked': '(True or False) If True, multiple data are stacked on top of each other.',
                 'label': 'A string label for each data list given.'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return text representation of this histogram graphics primitive.
 

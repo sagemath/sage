@@ -57,7 +57,7 @@ class PariGroup:
         return (isinstance(other, PariGroup) and
             (self.__x, self.__degree) == (other.__x, other.__degree))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test inequality.
 

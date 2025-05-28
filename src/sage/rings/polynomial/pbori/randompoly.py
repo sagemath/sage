@@ -86,7 +86,7 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
     return [p + ll_red_nf_redsb(p, solutions) for p in res]
 
 
-def sparse_random_system_data_file_content(number_of_variables, **kwds):
+def sparse_random_system_data_file_content(number_of_variables, **kwds) -> str:
     r"""
     TESTS::
 

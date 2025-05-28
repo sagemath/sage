@@ -162,7 +162,7 @@ class UniformSampler(SageObject):
         """
         return randint(self.lower_bound, self.upper_bound)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -228,7 +228,7 @@ class UniformPolynomialSampler(SageObject):
         f = self.P(coeff)
         return f
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -332,7 +332,7 @@ class LWE(SageObject):
             except (IndexError, TypeError):
                 raise TypeError("Parameter secret_dist=%s not understood." % (secret_dist))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -573,7 +573,7 @@ class RingLWE(SageObject):
         else:
             raise TypeError("Parameter secret_dist=%s not understood." % (secret_dist))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -703,7 +703,7 @@ class RingLWEConverter(SageObject):
         self._i += 1
         return r
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

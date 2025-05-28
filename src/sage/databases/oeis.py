@@ -1241,7 +1241,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
         fields = ['S', 'T', 'U']
         return to_tuple(" ".join(flatten([self._field(a) for a in fields])))[:number]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Print the sequence number and a short summary of this sequence.
 
@@ -1930,7 +1930,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             return sorted(table)
         return sorted(prog for la, prog in table if la == language)
 
-    def test_compile_sage_code(self):
+    def test_compile_sage_code(self) -> bool:
         """
         Try to compile the extracted sage code, if there is any.
 

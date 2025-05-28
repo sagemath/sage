@@ -167,7 +167,7 @@ class Derangements(UniqueRepresentation, Parent):
         self._set = x
         self.__multi = len(set(x)) < len(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

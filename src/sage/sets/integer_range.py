@@ -546,7 +546,7 @@ class IntegerRangeInfinite(IntegerRange):
         self._step = step
         Parent.__init__(self, facade=IntegerRing(), category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -710,7 +710,7 @@ class IntegerRangeFromMiddle(IntegerRange):
 
         Parent.__init__(self, facade=IntegerRing(), category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

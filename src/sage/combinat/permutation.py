@@ -6922,7 +6922,7 @@ class Permutations_msetk(Permutations_mset):
                 return False
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7009,7 +7009,7 @@ class Permutations_setk(Permutations_set):
         s = list(self._set)
         return all(i in s for i in x) and len(set(x)) == len(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7125,7 +7125,7 @@ class Arrangements_msetk(Arrangements, Permutations_msetk):
     Arrangements of length `k` of a multiset `M`.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7140,7 +7140,7 @@ class Arrangements_setk(Arrangements, Permutations_setk):
     Arrangements of length `k` of a set `S`.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7168,7 +7168,7 @@ class StandardPermutations_all(Permutations):
         cat = InfiniteEnumeratedSets() & SetsWithGrading()
         Permutations.__init__(self, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7356,7 +7356,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         cat = FiniteWeylGroups().Irreducible() & FinitePermutationGroups()
         StandardPermutations_n_abstract.__init__(self, n, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7860,7 +7860,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         return self.element_class(self, data, check=False)
 
     class Element(Permutation):
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             r"""
             Check if ``i`` is a left descent of ``self``.
 
@@ -8531,7 +8531,7 @@ class StandardPermutations_descents(StandardPermutations_n_abstract):
         StandardPermutations_n_abstract.__init__(self, n)
         self._d = d
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8755,7 +8755,7 @@ class StandardPermutations_recoilsfiner(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8823,7 +8823,7 @@ class StandardPermutations_recoilsfatter(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8898,7 +8898,7 @@ class StandardPermutations_recoils(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.recoils = recoils
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9050,7 +9050,7 @@ class StandardPermutations_bruhat_smaller(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.p = p
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9108,7 +9108,7 @@ class StandardPermutations_bruhat_greater(Permutations):
         Permutations.__init__(self, category=FiniteEnumeratedSets())
         self.p = p
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9135,7 +9135,7 @@ class StandardPermutations_bruhat_greater(Permutations):
         return iter(transitive_ideal(lambda x: x.bruhat_succ(), self.p))
 
 
-def bruhat_lequal(p1, p2):
+def bruhat_lequal(p1, p2) -> bool:
     r"""
     Return ``True`` if ``p1`` is less than ``p2`` in the Bruhat order.
 
@@ -9316,7 +9316,7 @@ class CyclicPermutations(Permutations_mset):
         """
         return super().__classcall__(cls, tuple(mset))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9462,7 +9462,7 @@ class CyclicPermutationsOfPartition(Permutations):
             if [sorted(_) for _ in self] != [sorted(_) for _ in self.parent().partition]:
                 raise ValueError("Invalid cyclic permutation of the partition" % self.parent().partition)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9586,7 +9586,7 @@ class StandardPermutations_all_avoiding(StandardPermutations_all):
         """
         return self._a
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -9702,7 +9702,7 @@ class StandardPermutations_avoiding_generic(StandardPermutations_n_abstract):
         x = Permutations()(x)
         return all(x.avoids(p) for p in self._a)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

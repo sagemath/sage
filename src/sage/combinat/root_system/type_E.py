@@ -71,7 +71,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
         else:
             raise NotImplementedError("Type \'E\' root systems only come in flavors 6, 7, 8.  Please make another choice")
 
-    def dimension(self):
+    def dimension(self) -> int:
         """
         EXAMPLES::
 
@@ -469,7 +469,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
             raise ValueError("Invalid Cartan Type for Type E")
         CartanType_standard_finite.__init__(self, "E", n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 
@@ -482,7 +482,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
 
     AmbientSpace = AmbientSpace
 
-    def coxeter_number(self):
+    def coxeter_number(self) -> int:
         """
         Return the Coxeter number associated with ``self``.
 
@@ -502,7 +502,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simpl
         # n == 8
         return 30
 
-    def dual_coxeter_number(self):
+    def dual_coxeter_number(self) -> int:
         """
         Return the dual Coxeter number associated with ``self``.
 

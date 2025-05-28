@@ -665,7 +665,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return self.__is_sparse
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         EXAMPLES::
 
@@ -678,7 +678,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return not self.__is_sparse
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Display latex representation of this power series ring.
 
@@ -693,7 +693,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return "%s[[%s]]" % (latex.latex(self.base_ring()), self.latex_variable_names()[0])
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         """
         A coercion from ``S`` exists, if ``S`` coerces into ``self``'s base ring,
         or if ``S`` is a univariate polynomial or power series ring with the
@@ -1095,7 +1095,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return PowerSeriesRing(self.base_ring(), names=var, sparse=self.is_sparse())
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is not
         exact.
@@ -1161,7 +1161,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         else:
             raise TypeError("The base ring is not a field")
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of this power series ring.
 
@@ -1262,7 +1262,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return self.has_coerce_map_from(parent(x))
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         a field.
@@ -1275,7 +1275,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         finite.

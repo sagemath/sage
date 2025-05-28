@@ -192,7 +192,7 @@ class BezierPath(GraphicPrimitive_xydata):
         options.update(kwds)
         return bezier3d([[(x,y,0) for x,y in self.path[i]] for i in range(len(self.path))], **options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return text representation of this Bezier path graphics primitive.
 

@@ -842,7 +842,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, base_ring, indices, category=category,
                                          **self._ambient.print_options())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -856,7 +856,7 @@ class SimpleModule(ModulePrinting, CombinatorialFreeModule):
         """
         return "Simple module with highest weight {} of {}".format(self._weight, self._g)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

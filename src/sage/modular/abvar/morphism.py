@@ -76,7 +76,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
         """
         return base_Morphism._repr_(self)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         Return type of morphism.
 
@@ -686,7 +686,7 @@ class DegeneracyMap(Morphism):
         """
         return self._t
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -731,7 +731,7 @@ class HeckeOperator(Morphism):
         self.__n = n
         sage.modules.matrix_morphism.MatrixMorphism_abstract.__init__(self, abvar.Hom(abvar), side)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Hecke operator.
 

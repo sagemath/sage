@@ -104,7 +104,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         Parent.__init__(self, category=FiniteCoxeterGroups())
         self.n = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

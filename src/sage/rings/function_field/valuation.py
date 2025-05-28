@@ -1225,7 +1225,7 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
             return self.domain().valuation((self._base_valuation.scale(scalar), self._to_base, self._from_base))
         return super().scale(scalar)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -1359,7 +1359,7 @@ class InfiniteRationalFunctionFieldValuation(FunctionFieldMappedValuationRelativ
         RationalFunctionFieldValuation_base.__init__(self, parent)
         ClassicalFunctionFieldValuation_base.__init__(self, parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 

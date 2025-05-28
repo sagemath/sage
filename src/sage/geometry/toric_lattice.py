@@ -975,7 +975,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         """
         return self._latex_name
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1540,7 +1540,7 @@ class ToricLattice_quotient(FGP_Module_class):
         except TypeError:
             return self.linear_combination_of_smith_form_gens(x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -1560,7 +1560,7 @@ class ToricLattice_quotient(FGP_Module_class):
         """
         return "%s / %s" % (latex(self.V()), latex(self.W()))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

@@ -190,7 +190,7 @@ class Matlab(Expect):
     def __reduce__(self):
         return reduce_load_Matlab, tuple([])
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         """
         Return the command used to read in and execute a file in Matlab.
 
@@ -208,10 +208,10 @@ class Matlab(Expect):
         """
         return "eval(fileread('{0}'));".format(filename)
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         return 'quit;'
 
-    def _install_hints(self):
+    def _install_hints(self) -> str:
         return """
         You must obtain the program MATLAB in order to use MATLAB
         from Sage.   You can read all about MATLAB at

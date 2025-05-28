@@ -30,7 +30,7 @@ from sage.repl.rich_output.output_catalog import *
 
 class BackendDoctest(BackendBase):
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

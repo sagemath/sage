@@ -721,7 +721,7 @@ class Simplex(SageObject):
             return False
         return set(self) == set(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this simplex is not equal to ``other``.
 
@@ -1189,7 +1189,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         """
         return isinstance(right, SimplicialComplex) and set(self._facets) == set(right._facets)
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Return ``True`` if ``self`` and ``right`` are not equal.
 
@@ -4555,7 +4555,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._is_immutable = True
         self._facets = tuple(self._facets)
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         """
         Return ``True`` if mutable.
 

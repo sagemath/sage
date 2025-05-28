@@ -299,7 +299,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         return (self.dimension_relative() == right.dimension_relative() and
                 self.coordinate_ring() == right.coordinate_ring())
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether the space is not equal to ``other``.
 
@@ -325,7 +325,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         return hash((self.dimension_relative(), self.coordinate_ring()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this affine space.
 
@@ -426,7 +426,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         return SchemeMorphism_point_affine(*args, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of this affine space.
 
@@ -442,7 +442,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         """
         return "Affine Space of dimension %s over %s" % (self.dimension_relative(), self.base_ring())
 
-    def _repr_generic_point(self, polys=None):
+    def _repr_generic_point(self, polys=None) -> str:
         """
         Return a string representation of the generic point
         corresponding to the list of polys on this affine space.
@@ -462,7 +462,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             polys = self.gens()
         return '(%s)' % (", ".join(str(f) for f in polys))
 
-    def _latex_generic_point(self, v=None):
+    def _latex_generic_point(self, v=None) -> str:
         """
         Return a LaTeX representation of the generic point
         corresponding to the list of polys ``v`` on this affine space.
@@ -482,7 +482,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
             v = self.gens()
         return '\\left(%s\\right)' % (", ".join(str(latex(f)) for f in v))
 
-    def _check_satisfies_equations(self, v):
+    def _check_satisfies_equations(self, v) -> bool:
         """
         Return ``True`` if ``v`` defines a point on the scheme ``self``; raise a
         :exc:`TypeError` otherwise.

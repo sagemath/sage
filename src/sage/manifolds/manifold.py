@@ -610,7 +610,7 @@ class TopologicalManifold(ManifoldSubset):
         #   (to be changed by set_calculus_method)
         self._calculus_method = 'SR'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the manifold.
 
@@ -1614,7 +1614,7 @@ class TopologicalManifold(ManifoldSubset):
                                      names=names, calc_method=calc_method,
                                      coord_restrictions=coord_restrictions)
 
-    def is_open(self):
+    def is_open(self) -> bool:
         """
         Return if ``self`` is an open set.
 

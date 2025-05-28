@@ -140,7 +140,7 @@ class PollackStevensModularDomain(SageObject):
         self._equiv_ind = equiv_ind
         self._equiv_rep = {ky: reps[vy] for ky, vy in equiv_ind.items()}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A string representation of this domain.
 
@@ -872,7 +872,7 @@ class ManinRelations(PollackStevensModularDomain):
         for j, tor_elt in zip(threetor_index, threetorrels):
             self._three_torsion[coset_reps[j]] = tor_elt
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         A printable representation of this domain.
 

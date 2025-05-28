@@ -44,7 +44,7 @@ from sage.categories.realizations import RealizationsCategory
 
 class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         r"""
         Return the name of the objects of this category.
 
@@ -82,7 +82,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
 
     class ParentMethods:
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             TESTS::
 
@@ -1102,7 +1102,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
                 and self._is_module_with_basis_over_same_base_ring
                     == other._is_module_with_basis_over_same_base_ring)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check equality.
 

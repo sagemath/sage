@@ -264,7 +264,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
                         ' x '.join('P^{}'.format(d) for d in self._dims),
                         ' over ', str(self.base_ring())])
 
-    def _repr_generic_point(self, v=None):
+    def _repr_generic_point(self, v=None) -> str:
         """
         Return a string representation of the generic point
         on this product space.
@@ -298,7 +298,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         return " \\times ".join(PS._latex_() for PS in self)
 
-    def _latex_generic_point(self, v=None):
+    def _latex_generic_point(self, v=None) -> str:
         """
         Return a LaTeX representation of the generic point
         on this product space.
@@ -356,7 +356,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         else:
             return self._components == right._components
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check non-equality of two products of projective spaces.
 
@@ -748,7 +748,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             self._degree(f)  # raises a ValueError if not multi-homogeneous
         return polynomials
 
-    def _check_satisfies_equations(self, v):
+    def _check_satisfies_equations(self, v) -> bool:
         """
         Return ``True`` if ``v`` defines a point on the scheme this space;
         raise a :exc:`TypeError` otherwise.

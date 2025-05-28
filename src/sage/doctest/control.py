@@ -205,7 +205,7 @@ class DocTestDefaults(SageObject):
             return False
         return self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for non-equality.
 
@@ -220,7 +220,7 @@ class DocTestDefaults(SageObject):
         return not (self == other)
 
 
-def skipdir(dirname):
+def skipdir(dirname) -> bool:
     """
     Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
@@ -666,7 +666,7 @@ class DocTestController(SageObject):
         expected = 12800.0       # Core i7 Quad-Core 2014
         return sum(success) / expected
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 

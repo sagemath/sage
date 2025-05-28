@@ -802,7 +802,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation.
 
@@ -1983,7 +1983,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
 
     cardinality = order
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return if ``self`` is a finite group or not.
 

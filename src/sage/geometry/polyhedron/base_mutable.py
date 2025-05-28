@@ -149,7 +149,7 @@ class Polyhedron_mutable(Polyhedron_base):
         """
         return self._is_mutable
 
-    def is_immutable(self):
+    def is_immutable(self) -> bool:
         r"""
         Return ``True`` if the polyhedron is immutable, i.e. it cannot be modified in place.
 

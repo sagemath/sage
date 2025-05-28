@@ -460,7 +460,7 @@ class FreeModulePseudoMorphism(Morphism):
             mat = self._matrix
         return self.parent()(mat, side)
 
-    def __nonzero__(self):
+    def __nonzero__(self) -> bool:
         return not (self._derivation is None and self._matrix)
 
     def _richcmp_(self, other, op):

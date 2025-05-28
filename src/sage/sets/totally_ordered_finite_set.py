@@ -74,7 +74,7 @@ class TotallyOrderedFiniteSetElement(Element):
             return False
         return other.value == self.value
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Non-equality.
 

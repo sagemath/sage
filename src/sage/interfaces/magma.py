@@ -825,7 +825,7 @@ class Magma(ExtraTabCompletion, Expect):
             s = s[z.end()+1:]
         return a
 
-    def _with_names(self, s, names):
+    def _with_names(self, s, names) -> str:
         """
         Return s but wrapped by a call to SageCreateWithNames. This is just
         a very simple convenience function so that code is cleaner.
@@ -1063,7 +1063,7 @@ class Magma(ExtraTabCompletion, Expect):
             self.__seq += 1
             return '_sage_[%s]' % self.__seq
 
-    def _next_ref_name(self):
+    def _next_ref_name(self) -> str:
         """
         Return the next reference name. This is used internally to deal
         with Magma objects that would be deallocated before they are used
@@ -1263,7 +1263,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     # Usually "Sequences" are what you want in Magma, not "lists".
     # It's very painful using the interface without this.
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         """
         Return the left sequence delimiter in Magma.
 
@@ -1277,7 +1277,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return "["
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         """
         Return the right sequence delimiter in Magma.
 
@@ -1291,7 +1291,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return "]"
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         """
         Return the assignment symbol in Magma.
 
@@ -1302,7 +1302,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return ":="
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         Return the equality testing logical symbol in Magma.
 
@@ -1313,7 +1313,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return 'eq'
 
-    def _lessthan_symbol(self):
+    def _lessthan_symbol(self) -> str:
         """
         Return the less than testing logical symbol in Magma.
 
@@ -1324,7 +1324,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return ' lt '
 
-    def _greaterthan_symbol(self):
+    def _greaterthan_symbol(self) -> str:
         """
         Return the greater than testing logical symbol in Magma.
 
@@ -1337,7 +1337,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     # For efficiency purposes, you should definitely override these
     # in your derived class.
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         Return the string representation of "truth" in Magma.
 
@@ -1348,7 +1348,7 @@ class Magma(ExtraTabCompletion, Expect):
         """
         return 'true'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         Return the string representation of "false" in Magma.
 

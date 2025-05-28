@@ -105,7 +105,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         del self._computing_eq
         return res
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

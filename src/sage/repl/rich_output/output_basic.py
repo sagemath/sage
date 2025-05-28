@@ -51,7 +51,7 @@ class OutputBase(SageObject):
     Base class for all rich output containers.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

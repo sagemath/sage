@@ -49,7 +49,7 @@ class Plane(UniqueRepresentation, Parent):
         self._n = n
         Parent.__init__(self, base=base_ring, category=Manifolds(base_ring))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

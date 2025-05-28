@@ -1071,7 +1071,7 @@ class QuadraticForm(SageObject):
 
     # ===============================================
 
-    def _is_even_symmetric_matrix_(self, A, R=None):
+    def _is_even_symmetric_matrix_(self, A, R=None) -> bool:
         """
         Test if a matrix is symmetric, defined over `R`, and has even diagonal in `R`.
 
@@ -1229,7 +1229,7 @@ class QuadraticForm(SageObject):
             return MatrixSpace(self.base_ring(), n, n)(A)
         raise TypeError("this form does not have an integral Gram matrix")
 
-    def has_integral_Gram_matrix(self):
+    def has_integral_Gram_matrix(self) -> bool:
         r"""
         Return whether the quadratic form has an integral Gram matrix (with respect to its base ring).
 

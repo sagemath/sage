@@ -75,7 +75,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         """
         Parent.__init__(self, facade=ZZ, category=Monoids())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
 
         EXAMPLES::
@@ -177,7 +177,7 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         # moment, because Set([1,2])(1) raises an error
         Parent.__init__(self, facade=(ZZ, FiniteEnumeratedSet([-infinity, +infinity])), category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
 
         EXAMPLES::

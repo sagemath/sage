@@ -118,7 +118,7 @@ class ScaledValuation_generic(DiscreteValuation):
         self._base_valuation = base_valuation
         self._scale = s
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 

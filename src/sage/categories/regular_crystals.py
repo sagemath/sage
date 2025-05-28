@@ -426,7 +426,7 @@ class RegularCrystals(Category_singleton):
             if index_set is None:
                 index_set = self.index_set()
 
-            def wt_zero(x):
+            def wt_zero(x) -> bool:
                 for i in index_set:
                     if x.epsilon(i) != x.phi(i):
                         return False

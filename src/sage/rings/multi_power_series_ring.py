@@ -431,7 +431,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             s = 'Sparse ' + s
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return latex representation of power series ring.
 
@@ -976,7 +976,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         """
         return self._is_sparse
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Is ``self`` dense? (opposite of sparse)
 

@@ -580,7 +580,7 @@ class SupersingularModule(HeckeModule_free_module):
         """
         return self.__prime
 
-    def weight(self):
+    def weight(self) -> int:
         r"""
         Return the weight associated to ``self``.
 

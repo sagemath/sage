@@ -116,7 +116,7 @@ class CartanType(CartanType_standard_affine):
         g.add_edge(n,n-1,2)
         return g
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

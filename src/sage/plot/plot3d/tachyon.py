@@ -618,7 +618,7 @@ class Tachyon(WithEqualityById, SageObject):
         dm = get_display_manager()
         dm.display_immediately(self, **kwds)
 
-    def _res(self):
+    def _res(self) -> str:
         r"""
         An internal function that writes the tachyon string for the
         resolution (x and y size of the image).
@@ -666,7 +666,7 @@ class Tachyon(WithEqualityById, SageObject):
            end_camera"""
         return camera_out
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the complete tachyon scene file as a string.
 
@@ -1103,7 +1103,7 @@ class Light:
         r, g, b = color
         self._color = (float(r), float(g), float(b))
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the tachyon string defining the light source.
 
@@ -1146,7 +1146,7 @@ class Texfunc:
         self._scale = (float(x), float(y), float(z))
         self._imagefile = imagefile
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for this texture function.
 
@@ -1233,7 +1233,7 @@ class Texture:
                        color, self._texfunc, self._phong, self._phongsize,
                        self._phongtype, self._imagefile)
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for this texture.
 
@@ -1282,7 +1282,7 @@ class Sphere:
         self._radius = float(radius)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for the sphere.
 
@@ -1324,7 +1324,7 @@ class Ring:
         self._outer = float(outer)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the ring.
 
@@ -1366,7 +1366,7 @@ class FractalLandscape:
         self._center = (float(x), float(y), float(z))
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the fractal landscape.
 
@@ -1406,7 +1406,7 @@ class Cylinder:
         self._radius = float(radius)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the cylinder.
 
@@ -1444,7 +1444,7 @@ class Plane:
         self._normal = (float(x), float(y), float(z))
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the plane.
 
@@ -1482,7 +1482,7 @@ class FCylinder:
         self._radius = float(radius)
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the finite cylinder.
 
@@ -1519,7 +1519,7 @@ class Axis_aligned_box:
         self._max_p = (float(x), float(y), float(z))
         self._texture = texture
 
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string of the axis-aligned box.
 
@@ -1539,7 +1539,7 @@ class TachyonTriangle(Triangle):
     r"""
     Basic triangle class.
     """
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for a triangle.
 
@@ -1560,7 +1560,7 @@ class TachyonSmoothTriangle(SmoothTriangle):
     r"""
     A triangle along with a normal vector, which is used for smoothing.
     """
-    def str(self):
+    def str(self) -> str:
         r"""
         Return the scene string for a smoothed triangle.
 
@@ -1727,7 +1727,7 @@ class ParametricPlot:
                 self._objects.append(FCylinder(f_0, f_f, self._r, self._tex))
             self._objects.append(Sphere(f_f, self._r, self._tex))
 
-    def tol(self, est, val):
+    def tol(self, est, val) -> bool:
         r"""
         Check relative, then absolute tolerance.
 

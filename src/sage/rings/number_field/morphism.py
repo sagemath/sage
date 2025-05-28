@@ -189,7 +189,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
         """
         return self._abs_hom
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         A short string to identify the type of this homomorphism.
 

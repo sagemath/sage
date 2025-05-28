@@ -255,7 +255,7 @@ from sage.categories.function_fields import FunctionFields
 from sage.structure.category_object import CategoryObject
 
 
-def is_FunctionField(x):
+def is_FunctionField(x) -> bool:
     """
     Return ``True`` if ``x`` is a function field.
 
@@ -400,7 +400,7 @@ class FunctionField(Field):
         """
         return self.constant_base_field().characteristic()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return whether the function field is finite, which is false.
 

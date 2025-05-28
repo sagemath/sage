@@ -348,7 +348,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
                                 # (key: bundle connection)
         super().__init__(parent, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 

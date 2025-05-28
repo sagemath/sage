@@ -86,7 +86,7 @@ class BarChart(GraphicPrimitive):
                 'width': 'The width of the bars',
                 'zorder': 'The layer level in which to draw'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return text representation of this bar chart graphics primitive.
 

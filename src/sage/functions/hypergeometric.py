@@ -306,7 +306,7 @@ class Hypergeometric(BuiltinFunction):
                                         SR._force_pyobject(b),
                                         z, **kwargs)
 
-    def _print_latex_(self, a, b, z):
+    def _print_latex_(self, a, b, z) -> str:
         r"""
         TESTS::
 
@@ -553,7 +553,7 @@ class Hypergeometric(BuiltinFunction):
                     return self.is_termwise_finite()
             return False
 
-        def is_absolutely_convergent(self, a, b, z):
+        def is_absolutely_convergent(self, a, b, z) -> bool:
             r"""
             Determine whether ``self`` converges absolutely as an infinite
             series. ``False`` is returned if not all terms are finite.

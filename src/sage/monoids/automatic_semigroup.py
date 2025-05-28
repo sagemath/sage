@@ -391,7 +391,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         # Customization
         self._repr_element_method = "ambient"
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation for ``self``.
 

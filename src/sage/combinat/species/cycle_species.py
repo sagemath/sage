@@ -199,7 +199,7 @@ class CycleSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             return self._weight * base_ring.one() / n
         return base_ring.zero()
 
-    def _order(self):
+    def _order(self) -> int:
         """
         Return the order of the generating series.
 

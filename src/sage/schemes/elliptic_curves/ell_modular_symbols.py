@@ -203,7 +203,7 @@ class ModularSymbol(SageObject):
         """
         return self._base_ring
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of modular symbols.
 

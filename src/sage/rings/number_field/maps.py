@@ -63,7 +63,7 @@ class NumberFieldIsomorphism(Map):
         sage: isinstance(fr, sage.rings.number_field.maps.NumberFieldIsomorphism)
         True
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -75,7 +75,7 @@ class NumberFieldIsomorphism(Map):
         """
         return "Isomorphism"
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -87,7 +87,7 @@ class NumberFieldIsomorphism(Map):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -219,7 +219,7 @@ class MapNumberFieldToVectorSpace(Map):
         """
         NumberFieldIsomorphism.__init__(self, Hom(K, V))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 
@@ -431,7 +431,7 @@ class NameChangeMap(NumberFieldIsomorphism):
         """
         NumberFieldIsomorphism.__init__(self, Hom(K, L))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         EXAMPLES::
 

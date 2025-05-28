@@ -93,7 +93,7 @@ class TorsionPoint(ModuleElement):
         """
         return self.__element
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

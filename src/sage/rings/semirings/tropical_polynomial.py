@@ -733,7 +733,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         """
         return self.element_class(self, [self.base().zero()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -851,7 +851,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             new_dict[f.degree()] = 0
         return self.element_class(self, new_dict)
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` to indicate that the objects are sparse polynomials.
 

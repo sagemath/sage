@@ -710,7 +710,7 @@ class TransitionMap(SageObject):
                 and (self._triv2 == other._triv2)
                 and (self._automorphism == other._automorphism))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Non-equality operator.
 

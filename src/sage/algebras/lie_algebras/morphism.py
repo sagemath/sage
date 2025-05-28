@@ -126,7 +126,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         self._im_gens = im_gens
         self._base_map = base_map
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 
@@ -289,7 +289,7 @@ class LieAlgebraHomset(Homset):
             base = X.base_ring()
         Homset.__init__(self, X, Y, category, base, check)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

@@ -185,7 +185,7 @@ class SloaneSequence(SageObject):
             return False
         return repr(self) == repr(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         EXAMPLES::
 
@@ -365,7 +365,7 @@ class A000001(SloaneSequence):
         self._small = [1, 1, 1, 2, 1, 2, 1, 5, 2, 2, 1, 5, 1, 2, 1, 14, 1, 5, 1, 5, 2, 2, 1, 15, 2, 2, 5, 4, 1, 4, 1, 51, 1, 2, 1, 14, 1, 2, 2, 14, 1, 6, 1, 4, 2, 2, 1, 52, 2, 5]
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -430,7 +430,7 @@ class A000027(SloaneSequence):
 # is this a good idea to have a link for all sequences? Jaap
     link = "http://oeis.org/classic/A000027"
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -475,7 +475,7 @@ class A000004(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -534,7 +534,7 @@ class A000005(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -584,7 +584,7 @@ class A000008(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -636,7 +636,7 @@ class A000009(SloaneSequence):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -735,7 +735,7 @@ class A000796(SloaneSequence):
         SloaneSequence.__init__(self, offset=1)
         self._b = []
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -837,7 +837,7 @@ class A003418(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -891,7 +891,7 @@ class A007318(SloaneSequence):
 
     keyword = ["nonn", "tabl", "nice", "easy", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -959,7 +959,7 @@ class A008275(SloaneSequence):
 
     keyword = ["sign", "tabl", "nice", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1036,7 +1036,7 @@ class A008277(SloaneSequence):
 
     keyword = ["nonn", "tabl", "nice", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1108,7 +1108,7 @@ class A049310(SloaneSequence):
 
     keyword = ["sign", "tabl", "nice", "easy", "core", "triangle"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1178,7 +1178,7 @@ class A000010(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1229,7 +1229,7 @@ class A000007(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1282,7 +1282,7 @@ class A005843(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1335,7 +1335,7 @@ class A000035(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1389,7 +1389,7 @@ class A000169(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1440,7 +1440,7 @@ class A000272(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1496,7 +1496,7 @@ class A000312(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1552,7 +1552,7 @@ class A001477(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1603,7 +1603,7 @@ class A004526(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1658,7 +1658,7 @@ class A000326(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1711,7 +1711,7 @@ class A002378(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1763,7 +1763,7 @@ class A002620(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1816,7 +1816,7 @@ class A005408(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1863,7 +1863,7 @@ class A000012(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1912,7 +1912,7 @@ class A000120(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1979,7 +1979,7 @@ class A010060(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2026,7 +2026,7 @@ class A000069(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2077,7 +2077,7 @@ class A001969(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2128,7 +2128,7 @@ class A000290(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2179,7 +2179,7 @@ class A000225(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2237,7 +2237,7 @@ class A000015(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2295,7 +2295,7 @@ class A000016(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2353,7 +2353,7 @@ class A000032(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2415,7 +2415,7 @@ class A004086(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2467,7 +2467,7 @@ class A002113(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2563,7 +2563,7 @@ class A000030(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2620,7 +2620,7 @@ class A000040(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2674,7 +2674,7 @@ class A002808(SloaneSequence):
         self._b = [4]
         self._n = 5
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2761,7 +2761,7 @@ class A018252(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2817,7 +2817,7 @@ class A000043(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2886,7 +2886,7 @@ class A000668(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2948,7 +2948,7 @@ class A000396(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3004,7 +3004,7 @@ class A005100(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3094,7 +3094,7 @@ class A005101(SloaneSequence):
         self._b = [12]
         self._n = 18
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3180,7 +3180,7 @@ class A002110(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3234,7 +3234,7 @@ class A000720(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3289,7 +3289,7 @@ class A064553(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3342,7 +3342,7 @@ class A001055(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3425,7 +3425,7 @@ class A006530(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3480,7 +3480,7 @@ class A000961(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3567,7 +3567,7 @@ class A005117(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3655,7 +3655,7 @@ class A020639(SloaneSequence):
         self._b = [1]
         self._n = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3741,7 +3741,7 @@ class A000041(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3803,7 +3803,7 @@ class A000045(SloaneSequence):
         self._b = []
         self._precompute()  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3901,7 +3901,7 @@ class A000108(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3953,7 +3953,7 @@ class A001006(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4004,7 +4004,7 @@ class A000079(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4057,7 +4057,7 @@ class A000578(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4110,7 +4110,7 @@ class A000244(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4161,7 +4161,7 @@ class A000302(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4214,7 +4214,7 @@ class A000583(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4266,7 +4266,7 @@ class A000142(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4319,7 +4319,7 @@ class A000085(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4373,7 +4373,7 @@ class A001189(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4426,7 +4426,7 @@ class A000670(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4481,7 +4481,7 @@ class A006318(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4535,7 +4535,7 @@ class A000165(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4587,7 +4587,7 @@ class A001147(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4640,7 +4640,7 @@ class A006882(SloaneSequence):
         self._b = []
         self._precompute(2)  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4737,7 +4737,7 @@ class A000984(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4787,7 +4787,7 @@ class A001405(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4837,7 +4837,7 @@ class A000292(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4891,7 +4891,7 @@ class A000330(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5011,7 +5011,7 @@ class A000153(ExtremesOfPermanentsSequence):
         self._a0a1d = (0, 1, 2)
         self._precompute(2)  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5064,7 +5064,7 @@ class A000255(ExtremesOfPermanentsSequence):
         self._a0a1d = (1, 1, 1)
         self._precompute(2)  # force precomputation, e.g. a(0) will fail when asked first
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5122,7 +5122,7 @@ class A000261(ExtremesOfPermanentsSequence):
         self._b = []
         self._k = self.offset + 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5180,7 +5180,7 @@ class A001909(ExtremesOfPermanentsSequence):
         self._b = []
         self._k = self.offset + 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5238,7 +5238,7 @@ class A001910(ExtremesOfPermanentsSequence):
         self._b = []
         self._k = self.offset + 1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5323,7 +5323,7 @@ class A090010(ExtremesOfPermanentsSequence2):
         self._k = self.offset + 1
         self._b = []
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5384,7 +5384,7 @@ class A055790(ExtremesOfPermanentsSequence2):
         self._precompute(2)
         self._k1 = 2
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5445,7 +5445,7 @@ class A090012(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5516,7 +5516,7 @@ class A090013(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5587,7 +5587,7 @@ class A090014(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5658,7 +5658,7 @@ class A090015(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5731,7 +5731,7 @@ class A090016(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5792,7 +5792,7 @@ class A000166(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5852,7 +5852,7 @@ class A000203(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5906,7 +5906,7 @@ class A001157(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -5957,7 +5957,7 @@ class A008683(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6015,7 +6015,7 @@ class A000204(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6070,7 +6070,7 @@ class A000217(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6125,7 +6125,7 @@ class A000124(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6177,7 +6177,7 @@ class A002275(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6298,7 +6298,7 @@ class A001110(RecurrenceSequence):
 
     link = "http://oeis.org/classic/A001110"
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6357,7 +6357,7 @@ class A051959(RecurrenceSequence):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6421,7 +6421,7 @@ class A001221(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6481,7 +6481,7 @@ class A001222(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6538,7 +6538,7 @@ class A046660(SloaneSequence):
         - Jaap Spies (2007-01-19)
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6599,7 +6599,7 @@ class A001227(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6655,7 +6655,7 @@ class A001358(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6757,7 +6757,7 @@ class A001694(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -6914,7 +6914,7 @@ class A001836(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7076,7 +7076,7 @@ class A001906(RecurrenceSequence2):
         self._b = []
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7125,7 +7125,7 @@ class A001333(RecurrenceSequence2):
         self._params = (1,1,2,1)
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7171,7 +7171,7 @@ class A001045(RecurrenceSequence2):
         self._b = []
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7220,7 +7220,7 @@ class A000129(RecurrenceSequence2):
         self._params = (0,1,2,1)
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7271,7 +7271,7 @@ class A001109(RecurrenceSequence2):
         self._b = []
         self._precompute(2)  # force precomputation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7317,7 +7317,7 @@ class A015521(RecurrenceSequence2):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7363,7 +7363,7 @@ class A015523(RecurrenceSequence2):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7411,7 +7411,7 @@ class A015530(RecurrenceSequence2):
         self._params = (0,1,4,3)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7461,7 +7461,7 @@ class A015531(RecurrenceSequence2):
         self._b = []
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7511,7 +7511,7 @@ class A015551(RecurrenceSequence2):
         self._params = (0,1,6,5)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7587,7 +7587,7 @@ class A082411(RecurrenceSequence2):
         self._params = (407389224418,76343678551,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7644,7 +7644,7 @@ class A083103(RecurrenceSequence2):
         self._params = (1786772701928802632268715130455793,1059683225053915111058165141686995,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7693,7 +7693,7 @@ class A083104(RecurrenceSequence2):
         self._params = (331635635998274737472200656430763,1510028911088401971189590305498785,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7748,7 +7748,7 @@ class A083105(RecurrenceSequence2):
         self._params = (62638280004239857,49463435743205655,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7800,7 +7800,7 @@ class A083216(RecurrenceSequence2):
         self._params = (20615674205555510, 3794765361567513,1,1)
         self._precompute(2)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7847,7 +7847,7 @@ class A061084(SloaneSequence):
 
     keyword = ["sign", "easy","nice"]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -7929,7 +7929,7 @@ class A000213(SloaneSequence):
         self._b = []
         self._precompute()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8011,7 +8011,7 @@ class A000073(SloaneSequence):
         self._b = []
         self._precompute()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8140,7 +8140,7 @@ class A079922(SloaneSequence):
         - Jaap Spies (2007-01-14)
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8208,7 +8208,7 @@ class A079923(SloaneSequence):
         - Jaap Spies (2007-01-17)
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8290,7 +8290,7 @@ class A109814(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8366,7 +8366,7 @@ class A111774(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8526,7 +8526,7 @@ class A111775(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8603,7 +8603,7 @@ class A111787(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8641,7 +8641,7 @@ class ExponentialNumbers(SloaneSequence):
         SloaneSequence.__init__(self, offset=0)
         self.a = a
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8708,7 +8708,7 @@ class A000110(ExponentialNumbers):
         """
         ExponentialNumbers.__init__(self, a=1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8760,7 +8760,7 @@ class A000587(ExponentialNumbers):
         """
         ExponentialNumbers.__init__(self, a=-1)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -8807,7 +8807,7 @@ class A000100(SloaneSequence):
         """
         SloaneSequence.__init__(self, offset=0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

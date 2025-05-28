@@ -168,7 +168,7 @@ class FilteredSimplicialComplex(SageObject):
                 and self._vertices == other._vertices
                 and self._filtration_dict == other._filtration_dict)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check inequality.
 

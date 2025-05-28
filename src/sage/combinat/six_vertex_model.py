@@ -470,7 +470,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
         self._bdry_cond = boundary_conditions # Ordered URDL
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

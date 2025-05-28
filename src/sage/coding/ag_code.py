@@ -244,7 +244,7 @@ class EvaluationAGCode(AGCode):
         """
         return hash((self._pls, self._G))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -263,7 +263,7 @@ class EvaluationAGCode(AGCode):
         return "[{}, {}] evaluation AG code over GF({})".format(
                 self.length(), self.dimension(), self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of ``self``.
 
@@ -485,7 +485,7 @@ class DifferentialAGCode(AGCode):
         """
         return hash((self._pls, self._G))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -504,7 +504,7 @@ class DifferentialAGCode(AGCode):
         return "[{}, {}] differential AG code over GF({})".format(
                 self.length(), self.dimension(), self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -775,7 +775,7 @@ class CartierCode(AGCode):
         """
         return hash((self._pls, self._G, self._r))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -795,7 +795,7 @@ class CartierCode(AGCode):
         return "[{}, {}] Cartier code over GF({})".format(
                 self.length(), self.dimension(), self.base_field().cardinality())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of ``self``.
 

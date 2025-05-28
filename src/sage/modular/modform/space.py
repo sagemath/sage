@@ -327,7 +327,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.__character
 
-    def has_character(self):
+    def has_character(self) -> bool:
         r"""
         Return ``True`` if this space of modular forms has a specific
         character.
@@ -907,7 +907,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             return f.parent()(e) == f
         raise NotImplementedError
 
-    def _coerce_map_from_(self, from_par):
+    def _coerce_map_from_(self, from_par) -> bool:
         """
         Code to make ModularFormsSpace work well with coercion framework.
 
@@ -1841,7 +1841,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         return B.coordinates(x)
 
 
-def contains_each(V, B):
+def contains_each(V, B) -> bool:
     """
     Determine whether or not V contains every element of B. Used here
     for linear algebra, but works very generally.

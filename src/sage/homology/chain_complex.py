@@ -370,7 +370,7 @@ class Chain_class(ModuleElement):
         except KeyError:
             return self.parent().free_module(degree).zero()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -510,7 +510,7 @@ class Chain_class(ModuleElement):
             concatenated += UnicodeArt([' ... ']) + r
         return concatenated
 
-    def is_cycle(self):
+    def is_cycle(self) -> bool:
         """
         Return whether the chain is a cycle.
 
@@ -531,7 +531,7 @@ class Chain_class(ModuleElement):
                 return False
         return True
 
-    def is_boundary(self):
+    def is_boundary(self) -> bool:
         """
         Return whether the chain is a boundary.
 
@@ -624,7 +624,7 @@ class Chain_class(ModuleElement):
             return False
         return self._vec == other._vec
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` if this chain is not equal to ``other``.
 
@@ -1109,7 +1109,7 @@ class ChainComplex_class(Parent):
                 equal = equal and mat.ncols() == 0 and mat.nrows() == 0
         return equal
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return ``True`` iff this chain complex is not the same as other.
 

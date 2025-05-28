@@ -113,7 +113,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             d = self.dimension()
         AmbientHeckeModule.__init__(self, base_ring, d, group.level(), weight)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of ``self``.
 

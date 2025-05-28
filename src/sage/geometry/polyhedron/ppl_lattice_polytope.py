@@ -225,7 +225,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
                 desc += ' vertices'
         return desc
 
-    def is_bounded(self):
+    def is_bounded(self) -> bool:
         """
         Return whether the lattice polytope is compact.
 
@@ -697,7 +697,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         from sage.modules.free_module import FreeModule
         return FreeModule(ZZ, self.space_dimension())
 
-    def contains(self, point_coordinates):
+    def contains(self, point_coordinates) -> bool:
         r"""
         Test whether point is contained in the polytope.
 
@@ -903,7 +903,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return tuple(sorted(vertices))
 
     @cached_method
-    def has_IP_property(self):
+    def has_IP_property(self) -> bool:
         """
         Whether the lattice polytope has the IP property.
 

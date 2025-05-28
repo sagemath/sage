@@ -177,7 +177,7 @@ class SkewTableau(ClonableList,
         else:
             return list(self) == other or list(list(row) for row in self) == other
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Check whether ``self`` is unequal to ``other``.
 
@@ -1884,7 +1884,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
         else:
             Parent.__init__(self, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2091,7 +2091,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
         """
         StandardSkewTableaux.__init__(self, category=InfiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2139,7 +2139,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
         self.n = n
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2230,7 +2230,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         self.skp = skp
         StandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -2473,7 +2473,7 @@ class SemistandardSkewTableaux_all(SemistandardSkewTableaux):
         else:
             self.max_entry = max_entry
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2558,7 +2558,7 @@ class SemistandardSkewTableaux_size(SemistandardSkewTableaux):
             self.max_entry = max_entry
         SemistandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2629,7 +2629,7 @@ class SemistandardSkewTableaux_size_weight(SemistandardSkewTableaux):
         self.mu = mu
         SemistandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2711,7 +2711,7 @@ class SemistandardSkewTableaux_shape(SemistandardSkewTableaux):
         self.max_entry = max_entry
         SemistandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -2790,7 +2790,7 @@ class SemistandardSkewTableaux_shape_weight(SemistandardSkewTableaux):
         self.mu = mu
         SemistandardSkewTableaux.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

@@ -1600,7 +1600,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         state.pop("_face_lattice", None)
         return state
 
-    def _contains(self, point, region='whole cone'):
+    def _contains(self, point, region='whole cone') -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 
@@ -1927,7 +1927,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         else:
             return NotImplemented
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -3288,7 +3288,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             return False
         return self.rays().matrix().elementary_divisors() == [1] * self.nrays()
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return whether ``self`` is the empty set.
 
@@ -4438,12 +4438,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         """
         if self.is_strictly_convex():
 
-            def not_in_linear_subspace(x):
+            def not_in_linear_subspace(x) -> bool:
                 return True
         else:
             linear_subspace = self.linear_subspace()
 
-            def not_in_linear_subspace(x):
+            def not_in_linear_subspace(x) -> bool:
                 # "x in linear_subspace" does not work, due to absence
                 # of coercion maps as of Github issue #10513.
                 try:

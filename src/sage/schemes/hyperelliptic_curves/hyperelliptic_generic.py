@@ -160,7 +160,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
 
     base_extend = change_ring
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of hyperelliptic curves.
 
@@ -184,7 +184,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             return "Hyperelliptic Curve over %s defined by %s = %s" % (R, y**2, f(x))
         return "Hyperelliptic Curve over %s defined by %s + %s = %s" % (R, y**2, h(x)*y, f(x))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of hyperelliptic curves.
 
@@ -227,7 +227,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             P = PolynomialRing(K, var)
             return (P(f), P(h))
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         r"""
         Return ``False``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
@@ -255,7 +255,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         """
         return False
 
-    def is_smooth(self):
+    def is_smooth(self) -> bool:
         r"""
         Return ``True``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
@@ -652,7 +652,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         except ValueError:
             return False
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Internal function. Returns a string to initialize this elliptic
         curve in the Magma subsystem.

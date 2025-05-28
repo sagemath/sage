@@ -606,7 +606,7 @@ class PerfectMatchings(SetPartitions_set):
             s = frozenset(s)
         return super().__classcall__(cls, s)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a description of ``self``.
 

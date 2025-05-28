@@ -296,7 +296,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
             return False
         return self._type == other._type
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return whether ``self`` is equal to ``other``.
 
@@ -621,7 +621,7 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
                 return "['E', 6, 2]"
         return CartanType._repr_(self, compact)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

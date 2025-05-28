@@ -558,7 +558,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         txt = "Quantized coordinate algebra of M({}, {}) with q={} over {}"
         return txt.format(self._m, self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -776,7 +776,7 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
         txt = "Quantized coordinate algebra of GL({}) with q={} over {}"
         return txt.format(self._n, self._q, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

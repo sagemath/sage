@@ -66,7 +66,7 @@ class Sympow(SageObject):
     this class. Type ``sympow.help()`` for a list of
     commands and how to call them.
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string describing this calculator module
         """
@@ -89,7 +89,7 @@ class Sympow(SageObject):
             w = w[:j - 1] + "sympow('" + w[j + 9:] + ')'
         return w
 
-    def _curve_str(self, E):
+    def _curve_str(self, E) -> str:
         return '-curve "%s"' % (str(list(E.minimal_model().a_invariants())).replace(' ', ''))
 
     def L(self, E, n, prec):

@@ -89,7 +89,7 @@ class CartanType(CartanType_standard_finite):
         """
         return tuple(list(range(1, self.n + 1)) + list(range(-self.n, 0)))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -112,7 +112,7 @@ class CartanType(CartanType_standard_finite):
         """
         return RootSystem(['A',self.n])
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         """
         Return whether this Cartan type is irreducible.
 
@@ -124,7 +124,7 @@ class CartanType(CartanType_standard_finite):
         """
         return True
 
-    def is_simply_laced(self):
+    def is_simply_laced(self) -> bool:
         """
         Return whether this Cartan type is simply-laced.
 

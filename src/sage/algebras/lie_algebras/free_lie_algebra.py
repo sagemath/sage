@@ -68,7 +68,7 @@ class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, Bind
                             names=lie._names, index_set=lie._indices,
                             category=FreeLieAlgebraBases(lie))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -380,7 +380,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
         Parent.__init__(self, base=R, names=names,
                         category=LieAlgebras(R).WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -908,7 +908,7 @@ class FreeLieAlgebraBases(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 

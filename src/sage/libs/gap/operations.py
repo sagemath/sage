@@ -46,7 +46,7 @@ class OperationInspector(SageObject):
         self._obj = libgap_element
         self.flags = FlagsType(TypeObj(self.obj))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation.
 

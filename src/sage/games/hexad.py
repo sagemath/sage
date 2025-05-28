@@ -244,7 +244,7 @@ class Minimog:
         """
         return f"Minimog of type {self.type} associated to\n {self.minimog}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Print latex code.
 

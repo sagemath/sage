@@ -1654,7 +1654,7 @@ class MatchingCoveredGraph(Graph):
                              'matching covered graphs')
 
     @doc_index('Overwritten methods')
-    def allows_loops(self):
+    def allows_loops(self) -> bool:
         r"""
         Return whether loops are permitted in (matching covered) graphs.
 
@@ -2215,7 +2215,7 @@ class MatchingCoveredGraph(Graph):
         return B
 
     @doc_index('Overwritten methods')
-    def has_loops(self):
+    def has_loops(self) -> bool:
         r"""
         Check whether there are loops in the (matching covered) graph.
 
@@ -2287,7 +2287,7 @@ class MatchingCoveredGraph(Graph):
 
     @doc_index('Overwritten methods')
     def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
-                             *, integrality_tolerance=1e-3):
+                             *, integrality_tolerance=1e-3) -> bool:
         r"""
         Check whether the graph has a perfect matching.
 
@@ -3334,7 +3334,7 @@ class MatchingCoveredGraph(Graph):
     loops = loop_edges
 
     @doc_index('Overwritten methods')
-    def number_of_loops(self):
+    def number_of_loops(self) -> int:
         r"""
         Return the number of edges that are loops.
 

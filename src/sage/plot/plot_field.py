@@ -105,7 +105,7 @@ class PlotField(GraphicPrimitive):
                 'zorder': 'The layer level in which to draw',
                 'color': 'The color of the arrows'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of PlotField graphics primitive.
 

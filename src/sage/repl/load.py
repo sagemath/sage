@@ -17,7 +17,7 @@ from pathlib import Path
 from sage.cpython.string import str_to_bytes, bytes_to_str, FS_ENCODING
 
 
-def is_loadable_filename(filename):
+def is_loadable_filename(filename) -> bool:
     """
     Return whether a file can be loaded into Sage.
 
@@ -54,7 +54,7 @@ def is_loadable_filename(filename):
     return ext in ('.py', '.pyx', '.sage', '.spyx', '.f', '.f90', '.m')
 
 
-def load_cython(name):
+def load_cython(name) -> str:
     """
     Helper function to load a Cython file.
 

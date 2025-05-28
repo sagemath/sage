@@ -98,7 +98,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
         self._col_sums = column_sums
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

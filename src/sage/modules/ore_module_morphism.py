@@ -362,7 +362,7 @@ class OreModuleMorphism(Morphism):
                 if self._call_(x.image()) != self._call_(x).image():
                     raise ValueError("does not define a morphism of Ore modules")
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a string with the type of this morphism.
 

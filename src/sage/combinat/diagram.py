@@ -314,7 +314,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
                     output_str += empty
             yield output_str
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -656,7 +656,7 @@ class Diagrams(UniqueRepresentation, Parent):
                 # subclass to fail, just go to the next one
                 pass
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1280,7 +1280,7 @@ class NorthwestDiagrams(Diagrams):
         . . . . O
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

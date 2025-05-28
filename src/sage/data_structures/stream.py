@@ -198,7 +198,7 @@ class Stream:
             n += 1
         return n
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return whether ``self`` and ``other`` are known to be different.
 
@@ -220,7 +220,7 @@ class Stream:
         """
         return False
 
-    def is_nonzero(self):
+    def is_nonzero(self) -> bool:
         r"""
         Return ``True`` if and only if this stream is known
         to be nonzero.
@@ -236,7 +236,7 @@ class Stream:
         """
         return False
 
-    def is_uninitialized(self):
+    def is_uninitialized(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an uninitialized stream.
 
@@ -896,7 +896,7 @@ class Stream_exact(Stream):
 
         return False
 
-    def is_nonzero(self):
+    def is_nonzero(self) -> bool:
         r"""
         Return ``True`` if and only if this stream is known
         to be nonzero.
@@ -1461,7 +1461,7 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
                                        element_class=FractionFieldElement,
                                        category=QuotientFields())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1949,7 +1949,7 @@ class Stream_uninitialized(Stream):
                 return num.constant_coefficient() / den.constant_coefficient()
             return c
 
-        def fix_cache(j, s, ao):
+        def fix_cache(j, s, ao) -> bool:
             if s._cache[ao]:
                 # TODO: perhaps, if not
                 # self._coefficient_ring.has_coerce_map_from(s._cache[ao].parent())
@@ -2512,7 +2512,7 @@ class Stream_binaryCommutative(Stream_binary):
         """
         return hash((type(self), frozenset([self._left, self._right])))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return whether ``self`` and ``other`` are known to be equal.
 
@@ -2642,7 +2642,7 @@ class Stream_zero(Stream):
         """
         return self is not other and not isinstance(other, Stream_zero) and other.is_nonzero()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -3832,7 +3832,7 @@ class Stream_cauchy_invert(Stream_unary):
                     c += l * self._series[n - k]
             yield -c * self._ainv
 
-    def is_nonzero(self):
+    def is_nonzero(self) -> bool:
         r"""
         Return ``True`` if and only if this stream is known
         to be nonzero.
@@ -3886,7 +3886,7 @@ class Stream_dirichlet_invert(Stream_unary):
         self._zero = ZZ.zero()
 
     @lazy_attribute
-    def _approximate_order(self):
+    def _approximate_order(self) -> int:
         """
         Compute and return the approximate order of ``self``.
 
@@ -4915,7 +4915,7 @@ class Stream_infinite_operator(Stream):
         """
         return hash((type(self), self._op_iter))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether ``self`` and ``other`` are known to be equal.
 
@@ -4947,7 +4947,7 @@ class Stream_infinite_operator(Stream):
             return True
         return False
 
-    def is_nonzero(self):
+    def is_nonzero(self) -> bool:
         r"""
         Return ``True`` if and only if this stream is known
         to be nonzero.

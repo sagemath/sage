@@ -265,7 +265,7 @@ class Berkovich_Cp(Berkovich):
         else:
             return self.base() == right.base() and self.ideal() == right.ideal()
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Inequality operator.
 
@@ -475,7 +475,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         self._p = prime
         Parent.__init__(self, base=base, category=TopologicalSpaces())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Berkovich Space.
 
@@ -500,7 +500,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             return "Affine Berkovich line over Cp(%s), with base %s" % (self.prime(),
                 self.base())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of this Berkovich Space.
 
@@ -709,7 +709,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
         """
         return self.base().base_ring()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Berkovich Space.
 
@@ -734,7 +734,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
             return "Projective Berkovich line over Cp(%s), with base %s" % (self.prime(),
                 self.base().base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of this Berkovich Space.
 

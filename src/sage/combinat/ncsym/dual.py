@@ -64,7 +64,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
         Sym_h_to_w.register_as_coercion()
         self.to_symmetric_function = Sym_h_to_w.section()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

@@ -742,7 +742,7 @@ class TachyonRT(SageObject):
 
     .. automethod:: __call__
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a brief description of this interface object (the Tachyon
         raytracer written by John Stone).

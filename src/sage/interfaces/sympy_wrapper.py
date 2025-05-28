@@ -107,7 +107,7 @@ class SageSet(Set):
         return self._sage_().is_finite()
 
     @property
-    def is_iterable(self):
+    def is_iterable(self) -> bool:
         r"""
         Return whether the set ``self`` is iterable.
 

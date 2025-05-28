@@ -565,7 +565,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         return self._codomain.base_extend(k)(*Q)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return basic facts about this composite isogeny as a string.
 

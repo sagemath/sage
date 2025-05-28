@@ -146,7 +146,7 @@ class CartesianProductPoset(CartesianProduct):
         """
         return self._le_(left, right)
 
-    def le_lex(self, left, right):
+    def le_lex(self, left, right) -> bool:
         r"""
         Test whether ``left`` is lexicographically smaller or equal
         to ``right``.

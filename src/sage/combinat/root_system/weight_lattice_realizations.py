@@ -167,7 +167,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 NotImplementedError: <abstract method fundamental_weight at ...>
             """
 
-        def is_extended(self):
+        def is_extended(self) -> bool:
             """
             Return whether this is a realization of the extended weight lattice.
 

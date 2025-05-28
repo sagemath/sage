@@ -51,7 +51,7 @@ from sage.doctest.sources import DictAsObject
 from .external import available_software
 
 
-def signal_name(sig):
+def signal_name(sig) -> str:
     """
     Return a string describing a signal number.
 
@@ -122,7 +122,7 @@ class DocTestReporter(SageObject):
         self.stats = {}
         self.error_status = 0
 
-    def were_doctests_with_optional_tag_run(self, tag):
+    def were_doctests_with_optional_tag_run(self, tag) -> bool:
         r"""
         Return whether doctests marked with this tag were run.
 

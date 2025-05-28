@@ -86,7 +86,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
 
         Module_free_ambient.__init__(self, base_ring, degree=degree, sparse=sparse)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this quotient module.
 
@@ -437,7 +437,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
         self.__quo_map.register_as_coercion()
         self.__lift_map = self.Hom(domain)(lift_matrix)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the rather verbose string representation of this quotient space V/W.
 

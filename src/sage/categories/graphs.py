@@ -69,7 +69,7 @@ class Graphs(Category_singleton):
                 [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
             """
 
-        def dimension(self):
+        def dimension(self) -> int:
             """
             Return the dimension of ``self`` as a CW complex.
 

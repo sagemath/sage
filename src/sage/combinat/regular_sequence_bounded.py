@@ -238,7 +238,7 @@ def is_non_negative(matrices):
     return all(min(mat.list()) >= 0 for mat in matrices)
 
 
-def is_bounded_via_mandel_simon_algorithm(matrices):
+def is_bounded_via_mandel_simon_algorithm(matrices) -> bool:
     r"""
     Return whether the semigroup generated whether the semigroup of all
     possible products of ``matrices`` is finite/bounded.

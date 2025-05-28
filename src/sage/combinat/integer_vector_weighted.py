@@ -142,7 +142,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             raise ValueError("cannot convert %s into %s" % (lst, self))
         return self.element_class(self, lst)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -294,7 +294,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
         DisjointUnionEnumeratedSets.__init__(self, F, facade=True, keepkey=False,
                                              category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

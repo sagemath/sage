@@ -509,7 +509,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         except TypeError:
             self._inverse_base_ring_generators = {}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -524,7 +524,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         return "Iwahori-Hecke algebra of type {} in {},{} over {}".format(
             ct, self._q1, self._q2, self.base_ring())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -671,7 +671,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             """
             return [Realizations(self.base()), self.base()._category]
 
-        def _repr_(self):
+        def _repr_(self) -> str:
             r"""
             Return the representation of ``self``.
 
@@ -689,7 +689,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             cases, these are just default implementations that will get
             specialized in a basis.
             """
-            def _repr_(self):
+            def _repr_(self) -> str:
                 """
                 Text representation of this basis of Iwahori-Hecke algebra.
 
@@ -754,7 +754,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     return self.one()
                 return self(W.from_reduced_word(i))
 
-            def is_field(self, proof=True):
+            def is_field(self, proof=True) -> bool:
                 """
                 Return whether this Iwahori-Hecke algebra is a field.
 
@@ -2794,7 +2794,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         Parent.__init__(self, base=base_ring, category=self._category.WithRealizations())
         self._is_generic = True  # needed for initialising _KLHeckeBasis
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

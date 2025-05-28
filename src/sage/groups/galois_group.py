@@ -178,7 +178,7 @@ class _GaloisMixin(_GMixin):
         """
         return NotImplemented
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this Galois group.
 
@@ -252,7 +252,7 @@ class _GaloisMixin(_GMixin):
         except NotImplementedError: # relative number fields don't support degree
             return self._field.absolute_degree()
 
-    def transitive_label(self):
+    def transitive_label(self) -> str:
         r"""
         Return the transitive label for the action of this Galois group on the roots of
         the defining polynomial of the field extension.
@@ -365,7 +365,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
         self._default_algorithm = algorithm
         AbelianGroup_class.__init__(self, generator_orders, gen_names)
 
-    def is_galois(self):
+    def is_galois(self) -> bool:
         r"""
         Abelian extensions are Galois.
 

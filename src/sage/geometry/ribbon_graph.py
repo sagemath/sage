@@ -324,7 +324,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
         self._sigma = sigma
         self._rho = rho
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of the two permutations that define
         the ribbon graph.

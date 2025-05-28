@@ -162,7 +162,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         k = Sequence(P).universe()
         return sum((phi._eval(P) for phi in self._phis), self._codomain.base_extend(k)(0))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return basic facts about this sum morphism as a string.
 

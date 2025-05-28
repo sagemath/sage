@@ -105,7 +105,7 @@ class MPolynomial_element(MPolynomial):
         CommutativeRingElement.__init__(self, parent)
         self.__element = x
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -1535,7 +1535,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         except KeyError:
             return self.parent().base_ring().zero()
 
-    def is_univariate(self):
+    def is_univariate(self) -> bool:
         """
         Return ``True`` if this multivariate polynomial is univariate and
         ``False`` otherwise.

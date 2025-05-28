@@ -185,7 +185,7 @@ class pAdicLseries(SageObject):
                 self._gamma == other._gamma and
                 self._precision == other._precision)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Compare ``self`` and ``other``.
 
@@ -246,7 +246,7 @@ class pAdicLseries(SageObject):
         """
         return self._quadratic_twist
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation.
 

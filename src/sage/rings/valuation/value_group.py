@@ -86,7 +86,7 @@ class DiscreteValuationCodomain(UniqueRepresentation, Parent):
             raise ValueError("must be a rational number or infinity")
         return QQ.coerce(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation.
 
@@ -195,7 +195,7 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
 
         raise ValueError("`{0}` is not in {1}.".format(x, self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation for this group.
 
@@ -557,7 +557,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
 
         raise ValueError("`{0}` is not in {1}.".format(x, self))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation for this semigroup.
 
@@ -670,7 +670,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
         return len(self._generators) == 0
 
     @cached_method
-    def is_group(self):
+    def is_group(self) -> bool:
         r"""
         Return whether this semigroup is a group.
 

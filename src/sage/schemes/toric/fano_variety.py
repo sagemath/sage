@@ -664,7 +664,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         super().__init__(fan, coordinate_names,
                          coordinate_name_indices, base_field)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 
@@ -678,7 +678,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
         """
         return r"\mathbb{P}_{%s}" % latex(self.Delta())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

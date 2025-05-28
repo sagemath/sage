@@ -57,7 +57,7 @@ class PositiveIntegers(IntegerRangeInfinite):
         """
         IntegerRangeInfinite.__init__(self, Integer(1), Integer(1))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

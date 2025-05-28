@@ -47,7 +47,7 @@ class GradedModulesCategory(RegressiveCovariantConstructionCategory, Category_ov
 
     _functor_category = "Graded"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

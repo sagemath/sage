@@ -85,7 +85,7 @@ class OutputHtml(OutputBase):
         """
         print(self.html.get_unicode())
 
-    def with_html_tag(self):
+    def with_html_tag(self) -> str:
         r"""
         Return the HTML code surrounded by ``<html>`` tag.
 

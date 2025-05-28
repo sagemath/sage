@@ -446,7 +446,7 @@ class DualMatroid(Matroid):
             return False
         return self._matroid == other._matroid
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare two matroids.
 

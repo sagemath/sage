@@ -389,19 +389,19 @@ class Interface(WithEqualityById, ParentWithBase):
     # these should all be appropriately overloaded by the derived class
     ###################################################################
 
-    def _left_list_delim(self):
+    def _left_list_delim(self) -> str:
         return "["
 
-    def _right_list_delim(self):
+    def _right_list_delim(self) -> str:
         return "]"
 
-    def _left_func_delim(self):
+    def _left_func_delim(self) -> str:
         return "("
 
-    def _right_func_delim(self):
+    def _right_func_delim(self) -> str:
         return ")"
 
-    def _assign_symbol(self):
+    def _assign_symbol(self) -> str:
         return "="
 
     def _equality_symbol(self):
@@ -423,13 +423,13 @@ class Interface(WithEqualityById, ParentWithBase):
             self.__false_symbol = self.get('1 %s 2' % self._equality_symbol())
             return self.__false_symbol
 
-    def _lessthan_symbol(self):
+    def _lessthan_symbol(self) -> str:
         return '<'
 
-    def _greaterthan_symbol(self):
+    def _greaterthan_symbol(self) -> str:
         return '>'
 
-    def _inequality_symbol(self):
+    def _inequality_symbol(self) -> str:
         return '!='
 
     def _relation_symbols(self):
@@ -451,7 +451,7 @@ class Interface(WithEqualityById, ParentWithBase):
                 operator.gt: self._greaterthan_symbol(),
                 operator.ge: ">="}
 
-    def _exponent_symbol(self):
+    def _exponent_symbol(self) -> str:
         """
         Return the symbol used to denote ``*10^`` in floats, e.g 'e' in 1.5e6.
 
@@ -619,7 +619,7 @@ class Interface(WithEqualityById, ParentWithBase):
                                        ['%s=%s' % (key, value.name()) for key, value in kwds.items()])
         return self.new(s)
 
-    def _function_call_string(self, function, args, kwds):
+    def _function_call_string(self, function, args, kwds) -> str:
         """
         Return the string used to make function calls.
 
@@ -668,7 +668,7 @@ class InterfaceFunction(SageObject):
         self._parent = parent
         self._name = name
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "%s" % self._name
 
     def __call__(self, *args, **kwds):
@@ -694,7 +694,7 @@ class InterfaceFunctionElement(SageObject):
         self._obj = obj
         self._name = name
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "%s" % self._name
 
     def __call__(self, *args, **kwds):
@@ -754,7 +754,7 @@ class InterfaceElement(Element):
             except (TypeError, RuntimeError, ValueError) as x:
                 raise TypeError(x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         #        return "\\begin{verbatim}%s\\end{verbatim}"%self
         string = str(self)
         if '|' not in string:
@@ -983,7 +983,7 @@ class InterfaceElement(Element):
 
         return NotImplemented
 
-    def is_string(self):
+    def is_string(self) -> bool:
         """
         Tell whether this element is a string.
 
@@ -1249,7 +1249,7 @@ class InterfaceElement(Element):
             return '(invalid {} object -- {})'.format(self.parent() or type(self), msg)
         return self.parent().get_using_file(self._name)
 
-    def hasattr(self, attrname):
+    def hasattr(self, attrname) -> bool:
         """
         Return whether the given attribute is already defined by this
         object, and in particular is not dynamically generated.

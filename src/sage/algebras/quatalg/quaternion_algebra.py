@@ -484,7 +484,7 @@ def is_QuaternionAlgebra(A):
 
 
 class QuaternionAlgebra_abstract(Parent):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -493,7 +493,7 @@ class QuaternionAlgebra_abstract(Parent):
         """
         return "Quaternion Algebra with base ring %s" % self.base_ring()
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of the quaternion algebra as a K-vector
         space, not including 1.
@@ -1260,7 +1260,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return (self.base_ring() == other.base_ring() and
                 (self._a, self._b) == (other._a, other._b))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1323,7 +1323,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return self._gens
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Print representation.
 
@@ -1731,7 +1731,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         except ValueError:
             raise NotImplementedError("base field must be rational numbers or a number field")
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return Magma version of this quaternion algebra.
 
@@ -2160,7 +2160,7 @@ class QuaternionOrder(Parent):
         """
         return self.__basis
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators (which is 4).
 
@@ -2284,7 +2284,7 @@ class QuaternionOrder(Parent):
         """
         return self.__quaternion_algebra
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this order.
 

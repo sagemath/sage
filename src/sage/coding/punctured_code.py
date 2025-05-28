@@ -168,7 +168,7 @@ class PuncturedCode(AbstractLinearCode):
                 and self.punctured_positions() == other.punctured_positions() \
                 and self.original_code() == other.original_code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -182,7 +182,7 @@ class PuncturedCode(AbstractLinearCode):
         return "Puncturing of %s on position(s) %s"\
                 % (self.original_code(), list(self.punctured_positions()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -376,7 +376,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
             raise TypeError("code has to be an instance of PuncturedCode class")
         super().__init__(code)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -390,7 +390,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
         """
         return "Punctured matrix-based encoder for the %s" % self.code()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -570,7 +570,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         super().__init__(code, code.ambient_space(),
                          self._original_decoder.connected_encoder())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -584,7 +584,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         """
         return "Decoder of %s through %s" % (self.code(), self.original_decoder())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

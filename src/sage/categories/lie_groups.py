@@ -62,7 +62,7 @@ class LieGroups(Category_over_base_ring):
         return None
 
     # Because Lie is a name that deserves to be capitalized
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

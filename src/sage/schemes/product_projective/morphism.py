@@ -237,7 +237,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         newP = [f(Q) for f in self.defining_polynomials()]
         return A.point(newP, check)
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         """
         Test the equality of two product projective morphisms.
 
@@ -302,7 +302,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                         return False
         return True
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Test the inequality of two prduct projective morphisms.
 
@@ -348,7 +348,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
                         return True
         return False
 
-    def is_morphism(self):
+    def is_morphism(self) -> bool:
         r"""
         Return ``True`` if this mapping is a morphism of products of projective spaces.
 

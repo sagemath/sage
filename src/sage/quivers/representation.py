@@ -906,7 +906,7 @@ class QuiverRepElement(ModuleElement):
         if name is not None:
             self.rename(name)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Default string representation.
 
@@ -1047,7 +1047,7 @@ class QuiverRepElement(ModuleElement):
         return hash(frozenset((v, tuple(self._elems[v]))
                               for v in self._quiver))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         This overrides the ``==`` operator.
 
@@ -1078,7 +1078,7 @@ class QuiverRepElement(ModuleElement):
 
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         This overrides the ``!=`` operator.
 
@@ -1474,7 +1474,7 @@ class QuiverRep_generic(WithEqualityById, Module):
             if self._maps[x].codomain() != self._spaces[x[1]]:
                 raise ValueError("codomain of map at edge '{}' does not match".format(x[2]))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Default string representation.
 

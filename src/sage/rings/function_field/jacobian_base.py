@@ -308,7 +308,7 @@ class JacobianGroup_base(Parent):
         self._genus = parent._function_field.genus()  # equals function_field.genus()
         self._base_div = base_div
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -606,7 +606,7 @@ class Jacobian_base(Parent):
                          base=function_field.constant_base_field(),
                          facade=True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

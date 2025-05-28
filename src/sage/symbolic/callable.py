@@ -292,7 +292,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         return SymbolicRing._element_constructor_(self, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of ring of callable symbolic expressions.
 
@@ -336,7 +336,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
 
     args = arguments
 
-    def _repr_element_(self, x):
+    def _repr_element_(self, x) -> str:
         """
         Return the string representation of the Expression ``x``.
 
@@ -356,7 +356,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             args = ", ".join(map(str, args))
             return "(%s) |--> %s" % (args, repr_x)
 
-    def _latex_element_(self, x):
+    def _latex_element_(self, x) -> str:
         r"""
         Finds the LaTeX representation of this expression.
 

@@ -147,7 +147,7 @@ class SpechtModule(CombinatorialFreeModule):
         cat = Modules(R).FiniteDimensional().WithBasis()
         CombinatorialFreeModule.__init__(self, R, indices, category=cat, prefix='S')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -161,7 +161,7 @@ class SpechtModule(CombinatorialFreeModule):
         """
         return "Specht module of shape {} for {}".format(self._shape, self._AK)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

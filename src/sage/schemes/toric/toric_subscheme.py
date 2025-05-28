@@ -585,7 +585,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
                            for i in range(npatches))
         return self._smooth
 
-    def is_nondegenerate(self):
+    def is_nondegenerate(self) -> bool:
         r"""
         Check if ``self`` is nondegenerate.
 

@@ -196,7 +196,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
         self._heights = [a.length() for a in self._weight]
         super().__init__(category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -251,7 +251,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
 #### common or global functions related to LR tableaux
 
 
-def is_littlewood_richardson(t, heights):
+def is_littlewood_richardson(t, heights) -> bool:
     r"""
     Return whether semistandard tableau ``t`` is Littleword-Richardson
     with respect to ``heights``.

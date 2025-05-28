@@ -159,7 +159,7 @@ class StandardSymplecticSpace(EuclideanSpace):
             q_index = 2 * i + 1
             self._symplectic_form.set_comp()[q_index, q_index + 1] = -1
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

@@ -766,7 +766,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
 
     Element = GelfandTsetlinPattern
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> bool:
         """
         TESTS::
 

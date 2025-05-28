@@ -54,7 +54,7 @@ class PBWCrystalElement(Element):
             long_word = parent._default_word
         self._pbw_datum = PBWDatum(parent._pbw_datum_parent, long_word, lusztig_datum)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -138,7 +138,7 @@ class PBWCrystalElement(Element):
         equiv_pbw_datum = self._pbw_datum.convert_to_new_long_word(other_long_word)
         return equiv_pbw_datum.lusztig_datum == other_lusztig_datum
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check inequality of ``self`` with ``other``.
 
@@ -427,7 +427,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
                                                      zero_lusztig_datum,
                                                      self._default_word),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

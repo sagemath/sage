@@ -185,7 +185,7 @@ class LinearTensorConstraint(Element):
         """
         return self._equality
 
-    def is_less_or_equal(self):
+    def is_less_or_equal(self) -> bool:
         """
         Whether the constraint is a chained less-or_equal inequality.
 
@@ -377,7 +377,7 @@ class LinearTensorConstraintsParent_class(Parent):
         """
         return self._LF
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 

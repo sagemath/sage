@@ -77,7 +77,7 @@ class SageKernelSpec:
         mkdir_p(self.kernel_dir)
 
     @classmethod
-    def identifier(cls):
+    def identifier(cls) -> str:
         """
         Internal identifier for the SageMath kernel.
 
@@ -271,7 +271,7 @@ class SageKernelSpec:
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
 
 
-def have_prerequisites(debug=True):
+def have_prerequisites(debug=True) -> bool:
     """
     Check that we have all prerequisites to run the Jupyter notebook.
 

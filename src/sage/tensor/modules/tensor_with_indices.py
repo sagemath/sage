@@ -571,7 +571,7 @@ class TensorWithIndices(SageObject):
                 and self._con == other._con
                 and self._cov == other._cov)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Check not equals.
 

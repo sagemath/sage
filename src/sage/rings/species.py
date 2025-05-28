@@ -401,7 +401,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         self._dis_cache = dict()
         self._renamed = set()  # the degrees that have been renamed already
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -887,7 +887,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                                           bracket=False, category=category)
         self._arity = indices._arity
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2143,7 +2143,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
                                          prefix='', bracket=False)
         self._arity = len(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

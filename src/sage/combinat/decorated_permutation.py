@@ -161,7 +161,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         self._n = n
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

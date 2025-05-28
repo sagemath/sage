@@ -453,7 +453,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         return self._from_dict({b: c for (c, b) in zip(x, self._indices) if c},
                                remove_zeros=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Construct a string representation of ``self``.
 

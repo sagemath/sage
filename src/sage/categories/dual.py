@@ -31,7 +31,7 @@ class DualObjectsCategory(CovariantConstructionCategory):
 
     _functor_category = "DualObjects"
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

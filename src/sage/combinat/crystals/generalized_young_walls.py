@@ -681,7 +681,7 @@ class GeneralizedYoungWall(CombinatorialElement):
              if self.column(k)[c] == i]
         return len(A)
 
-    def in_highest_weight_crystal(self, La):
+    def in_highest_weight_crystal(self, La) -> bool:
         r"""
         Return a boolean indicating if the generalized Young wall element
         is in the highest weight crystal cut out by the given highest weight
@@ -871,7 +871,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
         """
         return self.element_class(self, data)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1052,7 +1052,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
     Element = CrystalOfGeneralizedYoungWallsElement
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 

@@ -2444,7 +2444,7 @@ class PeriodMapping(SageObject):
 
 
 class RationalPeriodMapping(PeriodMapping):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -2457,7 +2457,7 @@ class RationalPeriodMapping(PeriodMapping):
 
 
 class IntegralPeriodMapping(PeriodMapping):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

@@ -73,7 +73,7 @@ class ImageManifoldSubset(ManifoldSubset):
             name = map_name + '_' + domain_subset._name
         ManifoldSubset.__init__(self, base_manifold, name, latex_name=latex_name)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 

@@ -110,7 +110,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
             self.__modsym = ModularSymbols(self.__group, weight=2).cuspidal_submodule()
             return self.__modsym
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this Jacobian modular abelian
         variety.

@@ -206,7 +206,7 @@ class KnotInfoFilename(Enum):
         else:
             return self.value[0]
 
-    def excel(self):
+    def excel(self) -> str:
         r"""
         Return the Excel-file name to download the data from the web-page.
 
@@ -222,7 +222,7 @@ class KnotInfoFilename(Enum):
         else:
             return '%s.xlsx' % (self.value[1])
 
-    def csv(self):
+    def csv(self) -> str:
         r"""
         Return the file name under which the data from the web-page
         are stored as csv file.
@@ -236,7 +236,7 @@ class KnotInfoFilename(Enum):
         """
         return '%s.csv' % (self.value[1])
 
-    def num_knots(self, version):
+    def num_knots(self, version) -> str:
         r"""
         Return the file name under which the number of knots is stored
         in an sobj-file.
@@ -250,7 +250,7 @@ class KnotInfoFilename(Enum):
         """
         return 'num_knots_%s.sobj' % version
 
-    def sobj_row(self):
+    def sobj_row(self) -> str:
         r"""
         Return the file name under which the row-data of the csv-File
         is stored as python dictionary in a sobj-file.
@@ -264,7 +264,7 @@ class KnotInfoFilename(Enum):
         """
         return 'row_dict.sobj'
 
-    def sobj_column(self):
+    def sobj_column(self) -> str:
         r"""
         Return the file name under which the column-data of the csv-File
         is stored as python dictionary in a sobj-file.
@@ -278,7 +278,7 @@ class KnotInfoFilename(Enum):
         """
         return 'column_dict.sobj'
 
-    def sobj_data(self, column):
+    def sobj_data(self, column) -> str:
         r"""
         Return the file name under which the data of the given
         column is stored as python list in a sobj-file.
@@ -295,7 +295,7 @@ class KnotInfoFilename(Enum):
         else:
             return 'knotinfo_%s' % (column.name)
 
-    def description_url(self, column):
+    def description_url(self, column) -> str:
         r"""
         Return the url of the description page of the given column.
 
@@ -308,7 +308,7 @@ class KnotInfoFilename(Enum):
         """
         return '%sdescriptions/%s.html' % (self.url(), column.name)
 
-    def diagram_url(self, fname, single=False):
+    def diagram_url(self, fname, single=False) -> str:
         r"""
         Return the url of the diagram page of the given link.
 

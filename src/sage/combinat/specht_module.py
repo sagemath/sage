@@ -243,7 +243,7 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
                                     unitriangular=False, category=Mod.Subobjects(),
                                     prefix='S')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -258,7 +258,7 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
         """
         return f"Specht module of {self._diagram} over {self.base_ring()}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -468,7 +468,7 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
                                          category=cat, prefix='T', bracket='')
         SymmetricGroupRepresentation.__init__(self, SGA)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -523,7 +523,7 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
         r._baseline = r._h - 1
         return r
 
-    def _latex_term(self, T):
+    def _latex_term(self, T) -> str:
         r"""
         Return a latex representation of the term indexed by ``T``.
 
@@ -1017,7 +1017,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
                                     unitriangular=unitriangular, category=cat,
                                     prefix='U')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1107,7 +1107,7 @@ class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
         cat = specht_module.category()
         QuotientModuleWithBasis.__init__(self, specht_module.maximal_submodule(), cat, prefix='D')
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

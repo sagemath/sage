@@ -201,7 +201,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
         self._folding = folding_of
         self._orbit = orbit
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

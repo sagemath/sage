@@ -152,7 +152,7 @@ class GroupAlgebras(AlgebrasCategory):
                 #try:
                 self._populate_coercion_lists_(coerce_list=[self.group()])
 
-        def _latex_(self):
+        def _latex_(self) -> str:
             r"""
             Latex string of ``self``.
 

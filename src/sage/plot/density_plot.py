@@ -116,7 +116,7 @@ class DensityPlot(GraphicPrimitive):
                        for available colormap names.""",
                 'interpolation': 'What interpolation method to use'}
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of DensityrPlot primitive.
 

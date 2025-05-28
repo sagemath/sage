@@ -249,7 +249,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return (-len(x), [self._basis_key(l) for l in x.to_word_list()])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -263,7 +263,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return "Universal enveloping algebra of {} in the Poincare-Birkhoff-Witt basis".format(self._g)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

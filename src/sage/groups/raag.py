@@ -499,7 +499,7 @@ class RightAngledArtinGroup(ArtinGroup):
                 return '1'
             v = self.parent().variable_names()
 
-            def to_str(name, p):
+            def to_str(name, p) -> str:
                 if p == 1:
                     return "{}".format(name)
                 return "{}^{}".format(name, p)

@@ -218,7 +218,7 @@ class VirtualCrystal(Subcrystal):
         Subcrystal.__init__(self, ambient, contained, generators,
                             cartan_type, index_set, category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

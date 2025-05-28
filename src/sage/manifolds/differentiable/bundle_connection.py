@@ -346,7 +346,7 @@ class BundleConnection(SageObject, Mutability):
         """
         self._curvature_forms.clear()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Comparison (equality) operator.
 
@@ -396,7 +396,7 @@ class BundleConnection(SageObject, Mutability):
                     return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 

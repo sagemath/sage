@@ -192,7 +192,7 @@ class AmbientSpace(Scheme):
     # End overloads
     #######################################################################
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         """
         Return whether this ambient space is projective n-space.
 

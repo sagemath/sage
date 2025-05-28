@@ -588,7 +588,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             return False
         return left.elementary_divisors() == right.elementary_divisors()
 
-    def is_subgroup(left, right):
+    def is_subgroup(left, right) -> bool:
         """
         Test whether ``left`` is a subgroup of ``right``.
 
@@ -839,7 +839,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
                 v.append("Z")
         return ' x '.join(v)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this group.
 
@@ -884,7 +884,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         GapPackage("polycyclic", spkg='gap_packages').require()
         return libgap.AbelianPcpGroup(self.gens_orders())
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return string that defines corresponding abelian group in GAP.
 
@@ -1152,7 +1152,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         s = 'Image(IsomorphismPermGroup(%s))' % self._gap_init_()
         return PermutationGroup(gap_group=s)
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` since this group is commutative.
 

@@ -588,7 +588,7 @@ class ContinuousMap(Morphism):
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 
@@ -722,7 +722,7 @@ class ContinuousMap(Morphism):
     # Morphism methods
     #
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         r"""
         Check whether ``self`` is an identity map.
 

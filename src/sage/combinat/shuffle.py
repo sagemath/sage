@@ -138,7 +138,7 @@ class ShuffleProduct_abstract(Parent):
             return False
         return self._l1 == other._l1 and self._l2 == other._l2
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for unequality.
 
@@ -234,7 +234,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
                 pass
         ShuffleProduct_abstract.__init__(self, list(l1), list(l2), element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -365,7 +365,7 @@ class ShuffleProduct(ShuffleProduct_abstract):
                 pass
         ShuffleProduct_abstract.__init__(self, list(l1), list(l2), element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -581,7 +581,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
                     pass
         ShuffleProduct_abstract.__init__(self, w1, w2, element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -790,7 +790,7 @@ class ShuffleProduct_overlapping(ShuffleProduct_abstract):
                     pass
         ShuffleProduct_abstract.__init__(self, w1, w2, element_constructor)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 

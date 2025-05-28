@@ -3716,7 +3716,7 @@ class SandpileConfig(dict):
         w = v*self._sandpile.reduced_laplacian().dense_matrix()**(-1)
         return lcm([denominator(i) for i in w])
 
-    def is_stable(self):
+    def is_stable(self) -> bool:
         r"""
         Return whether the configuration is stable.
 

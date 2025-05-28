@@ -649,7 +649,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
                               values=dict(decimal='Always display a decimal approximation',
                                           radical='Display using radicals (if possible)'))
 
-    def default_interval_prec(self):
+    def default_interval_prec(self) -> int:
         r"""
         Return the default interval precision used for root isolation.
 
@@ -1162,7 +1162,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             return x._algebraic_(AA)
         return AlgebraicReal(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1189,7 +1189,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         return super()._repr_option(key)
 
     # Is there a standard representation for this?
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex representation of ``self``.
 
@@ -1345,7 +1345,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         else:
             raise IndexError("n must be 0")
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the size of the tuple returned by :meth:`gens`.
 
@@ -1686,7 +1686,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             return x._algebraic_(QQbar)
         return AlgebraicNumber(x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -1697,7 +1697,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         """
         return "Algebraic Field"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Latex representation of ``self``.
 
@@ -1843,7 +1843,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         else:
             raise IndexError("n must be 0")
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the size of the tuple returned by :meth:`gens`.
 
@@ -3240,7 +3240,7 @@ class AlgebraicGenerator(SageObject):
         """
         return self._root.is_complex()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -3592,7 +3592,7 @@ class ANDescr(SageObject):
     ``ANDescr`` and all of its subclasses are for internal use, and should not
     be used directly.
     """
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
@@ -4296,7 +4296,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         else:
             return True
 
-    def is_integer(self):
+    def is_integer(self) -> bool:
         """
         Return ``True`` if this number is a integer.
 
@@ -6610,7 +6610,7 @@ class AlgebraicNumberPowQQAction(Action):
 
         return AlgebraicNumber(ANRoot(poly, target))
 
-    def _repr_name_(self):
+    def _repr_name_(self) -> str:
         return "Rational Powering"
 
 
@@ -6712,7 +6712,7 @@ class ANRational(ANDescr):
         """
         return qq_generator
 
-    def is_complex(self):
+    def is_complex(self) -> bool:
         r"""
         Return ``False``, since rational numbers are real.
 
@@ -6735,7 +6735,7 @@ class ANRational(ANDescr):
         """
         return self
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         """
         Check whether this descriptor represents a value with the same
         algebraic degree as the number field associated with the descriptor.
@@ -7213,7 +7213,7 @@ class ANRoot(ANDescr):
         """
         return (ANRoot, (self._poly, self._interval, self._multiplicity))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -7895,7 +7895,7 @@ class ANExtensionElement(ANDescr):
         """
         return (ANExtensionElement, (self._generator, self._value))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         fgen = self._generator._field.gen()
         sgen = str(fgen)
         return '%s where %s = 0 and %s in %s' % (self._value,
@@ -7973,7 +7973,7 @@ class ANExtensionElement(ANDescr):
             v = sib.name('QQbar' if is_qqbar else 'AA')(v)
         return (v, True)
 
-    def is_complex(self):
+    def is_complex(self) -> bool:
         r"""
         Return ``True`` if the number field that defines this element is not real.
 

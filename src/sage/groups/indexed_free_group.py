@@ -165,7 +165,7 @@ class IndexedFreeGroup(IndexedGroup, Group):
         category = Groups().or_subcategory(category)
         IndexedGroup.__init__(self, indices, prefix, category, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -326,7 +326,7 @@ class IndexedFreeAbelianGroup(IndexedGroup, AbelianGroup):
         category = Groups().or_subcategory(category)
         IndexedGroup.__init__(self, indices, prefix, category, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

@@ -286,7 +286,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
                                                         self._side),
                 self.ambient())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -914,7 +914,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
                          category=category,
                          **kwargs)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

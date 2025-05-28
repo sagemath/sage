@@ -1,7 +1,7 @@
 from .PyPolyBoRi import Polynomial, gauss_on_polys
 
 
-def dense_system(I):
+def dense_system(I) -> bool:
     I = (Polynomial(p) for p in I)
     I = (p for p in I if not p.is_zero())
     for p in I:

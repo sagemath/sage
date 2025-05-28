@@ -520,7 +520,7 @@ def frame_labels(lower_left, upper_right,
     def nd(a):
         return int(log(a) / log10)
 
-    def fmt_string(a):
+    def fmt_string(a) -> str:
         b = a / 2.0
         if b >= 1:
             return "%.1f"
@@ -925,7 +925,7 @@ class Point(PrimitiveObject):
         """
         return self.loc, self.loc
 
-    def tachyon_repr(self, render_params):
+    def tachyon_repr(self, render_params) -> str:
         """
         Return representation of the point suitable for plotting
         using the Tachyon ray tracer.

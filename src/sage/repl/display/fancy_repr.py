@@ -45,7 +45,7 @@ class ObjectReprABC:
         """
         return '{0} pretty printer'.format(self.__class__.__name__)
 
-    def __call__(self, obj, p, cycle):
+    def __call__(self, obj, p, cycle) -> bool:
         r"""
         Format object.
 
@@ -119,7 +119,7 @@ class SomeIPythonRepr(ObjectReprABC):
         del type_repr[str]
         self._type_repr = type_repr
 
-    def __call__(self, obj, p, cycle):
+    def __call__(self, obj, p, cycle) -> bool:
         r"""
         Format object.
 
@@ -168,7 +168,7 @@ class LargeMatrixHelpRepr(ObjectReprABC):
     .. automethod:: __call__
     """
 
-    def __call__(self, obj, p, cycle):
+    def __call__(self, obj, p, cycle) -> bool:
         r"""
         Format matrix.
 
@@ -226,7 +226,7 @@ class PlainPythonRepr(ObjectReprABC):
     .. automethod:: __call__
     """
 
-    def __call__(self, obj, p, cycle):
+    def __call__(self, obj, p, cycle) -> bool:
         r"""
         Format object.
 
@@ -298,7 +298,7 @@ class TallListRepr(ObjectReprABC):
     .. automethod:: __call__
     """
 
-    def __call__(self, obj, p, cycle):
+    def __call__(self, obj, p, cycle) -> bool:
         r"""
         Format list/tuple.
 

@@ -445,7 +445,7 @@ def cython(filename, verbose=0, compile_message=False,
     # We just remove all handling of "setuptools.finalize_distribution_options" entry points.
     class Distribution_no_finalize_distribution_options(Distribution):
         @staticmethod
-        def _removed(ep):
+        def _removed(ep) -> bool:
             return True
 
     dist = Distribution_no_finalize_distribution_options()

@@ -131,7 +131,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
                                                   gap_group,
                                                   category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of this matrix group.
 

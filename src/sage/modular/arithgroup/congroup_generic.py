@@ -247,7 +247,7 @@ class CongruenceSubgroupBase(ArithmeticSubgroup):
             # we shouldn't ever get here
             raise NotImplementedError
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check that ``self`` is not equal to ``other``.
 
@@ -331,7 +331,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         """
         return CongruenceSubgroup_constructor, (self.image_mod_n(),)
 
-    def _contains_sl2(self, a, b, c, d):
+    def _contains_sl2(self, a, b, c, d) -> bool:
         r"""
         Test whether ``[a,b;c,d]`` is an element of ``self``.
 
@@ -389,7 +389,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
             H = MatrixGroup([ g.matrix() for g in G.gens()] + [G.matrix_space()(-1)])
             return CongruenceSubgroup_constructor(H)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -465,7 +465,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         """
         CongruenceSubgroupBase.__init__(self, *args, **kwds)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

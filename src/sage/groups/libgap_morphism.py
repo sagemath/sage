@@ -298,7 +298,7 @@ class GroupMorphism_libgap(Morphism):
         """
         return self.parent(), (tuple(self(g) for g in self.domain().gens()),)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Part of the implementation of :meth:`_repr_`.
 
@@ -325,7 +325,7 @@ class GroupMorphism_libgap(Morphism):
         """
         return self._phi
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of ``self``.
 

@@ -862,7 +862,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         """
         return self._inverse
 
-    def verify_inverse_evolution(self, x=None):
+    def verify_inverse_evolution(self, x=None) -> bool:
         r"""
         Verify that the composition of evolution and
         inverse evolution on ``self`` is the identity

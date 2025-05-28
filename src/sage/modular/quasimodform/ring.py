@@ -334,7 +334,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         raise NotImplementedError("spaces of quasimodular forms of fixed weight not yet implemented")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 
@@ -345,7 +345,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         """
         return "Ring of Quasimodular Forms for %s over %s" % (self.group(), self.base_ring())
 
-    def _coerce_map_from_(self, M):
+    def _coerce_map_from_(self, M) -> bool:
         r"""
         Code to make QuasiModularForms work well with coercion framework.
 

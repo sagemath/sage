@@ -248,7 +248,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             initial_element = self((starting_weight,))
         self.module_generators = (initial_element,)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1251,7 +1251,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
         self._cartan_type = cartan_type
         self.module_generators = (self.module_generator(),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1490,7 +1490,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
 # Helper functions
 
 
-def positively_parallel_weights(v, w):
+def positively_parallel_weights(v, w) -> bool:
     """
     Check whether the vectors ``v`` and ``w`` are positive scalar
     multiples of each other.

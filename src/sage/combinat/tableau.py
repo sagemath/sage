@@ -839,7 +839,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         except IndexError:
             raise IndexError("the cell (%d,%d) is not contained in %s" % (i, j, repr(self)))
 
-    def level(self):
+    def level(self) -> int:
         """
         Return the level of ``self``, which is always 1.
 
@@ -3032,7 +3032,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         return heights
 
-    def last_letter_lequal(self, tab2):
+    def last_letter_lequal(self, tab2) -> bool:
         """
         Return ``True`` if ``self`` is less than or equal to ``tab2`` in the last
         letter ordering.
@@ -5721,7 +5721,7 @@ class Tableaux_all(Tableaux):
         """
         super().__init__(category=Sets())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -5781,7 +5781,7 @@ class Tableaux_size(Tableaux):
         """
         return Tableaux.__contains__(self, x) and sum(len(row) for row in x) == self.size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6288,7 +6288,7 @@ class SemistandardTableaux_all(SemistandardTableaux, DisjointUnionEnumeratedSets
         else:
             self.max_entry = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6337,7 +6337,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
         super().__init__(category=InfiniteEnumeratedSets())
         self.size = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6459,7 +6459,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
         """
         return SemistandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6537,7 +6537,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
                          category=FiniteEnumeratedSets())
         self.size = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6800,7 +6800,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
         """
         return SemistandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -6941,7 +6941,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         super().__init__(p, len(mu))
         self.weight = mu
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7057,7 +7057,7 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
         self.size = n
         self.weight = mu
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7304,7 +7304,7 @@ class RowStandardTableaux_all(RowStandardTableaux, DisjointUnionEnumeratedSets):
                                              Family(NonNegativeIntegers(), RowStandardTableaux_size),
                                              facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7371,7 +7371,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
                                              facade=True, keepkey=False)
         self._size = Integer(n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7450,7 +7450,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
         """
         return RowStandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7699,7 +7699,7 @@ class StandardTableaux_all(StandardTableaux, DisjointUnionEnumeratedSets):
                                              Family(NonNegativeIntegers(), StandardTableaux_size),
                                              facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7760,7 +7760,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
                                              facade=True, keepkey=False)
         self.size = Integer(n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -7960,7 +7960,7 @@ class StandardTableaux_shape(StandardTableaux):
         """
         return StandardTableaux.__contains__(self, x) and [len(_) for _ in x] == self.shape
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8852,7 +8852,7 @@ class IncreasingTableaux_all(IncreasingTableaux, DisjointUnionEnumeratedSets):
                 Family(list(range(max_entry + 1)), SST_n),
                 facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8891,7 +8891,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
         super().__init__(category=InfiniteEnumeratedSets())
         self.size = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -8986,7 +8986,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
         """
         return IncreasingTableaux.__contains__(self, x) and [len(row) for row in x] == self.shape
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9063,7 +9063,7 @@ class IncreasingTableaux_size(IncreasingTableaux):
                          category=FiniteEnumeratedSets())
         self.size = n
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9256,7 +9256,7 @@ class IncreasingTableaux_shape(IncreasingTableaux):
         return (IncreasingTableaux.__contains__(self, x)
                 and [len(row) for row in x] == self.shape)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9292,7 +9292,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
         super().__init__(p, len(wt))
         self.weight = wt
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -9438,7 +9438,7 @@ class IncreasingTableaux_size_weight(IncreasingTableaux):
         self.size = n
         self.weight = wt
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

@@ -299,7 +299,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         self.letters = CrystalOfLetters(cartan_type.classical())
         self.module_generators = self._build_module_generators()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

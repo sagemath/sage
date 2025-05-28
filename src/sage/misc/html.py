@@ -381,7 +381,7 @@ class MathJax:
 
 class HTMLFragmentFactory(SageObject):
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation.
 

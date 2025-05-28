@@ -1483,7 +1483,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             l = [sum(e[i] * degrees[i] for i in range(n)) for e in exps]
             return max(l)
 
-        def is_homogeneous(self, total=False):
+        def is_homogeneous(self, total=False) -> bool:
             r"""
             Return ``True`` if ``self`` is homogeneous and ``False`` otherwise.
 
@@ -3005,7 +3005,7 @@ class DifferentialGCAlgebra(GCAlgebra):
         return {i: self._numerical_invariants[i]
                 for i in range(1, max_degree + 1)}
 
-    def is_formal(self, i, max_iterations=3):
+    def is_formal(self, i, max_iterations=3) -> bool:
         r"""
         Check if the algebra is ``i``-formal. That is, if it is ``i``-quasi-isomorphic
         to its cohomology algebra.
@@ -3084,7 +3084,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             """
             return self.parent().differential()(self)
 
-        def is_coboundary(self):
+        def is_coboundary(self) -> bool:
             """
             Return ``True`` if ``self`` is a coboundary and ``False``
             otherwise.
@@ -3912,7 +3912,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
                        and x.degree(total=total) == y.degree(total=total))
                    for (x, y) in zip(self.domain().gens(), self.im_gens()))
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         EXAMPLES::
 
@@ -3930,7 +3930,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             return "Commutative Differential Graded Algebra"
         return "Graded Commutative Algebra"
 
-    def _repr_defn(self):
+    def _repr_defn(self) -> str:
         """
         EXAMPLES::
 
@@ -4131,7 +4131,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         """
         return hash(self._x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -4141,7 +4141,7 @@ class CohomologyClass(SageObject, CachedRepresentation):
         """
         return '[{}]'.format(self._x)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 

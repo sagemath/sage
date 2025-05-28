@@ -190,7 +190,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         """
         return self._base_valuation.value_semigroup()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a printable representation of this valuation.
 
@@ -553,7 +553,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
                 return GaussValuation(ring, self._base_valuation.restriction(ring.base()))
         return super().restriction(ring)
 
-    def is_gauss_valuation(self):
+    def is_gauss_valuation(self) -> bool:
         r"""
         Return whether this valuation is a Gauss valuation.
 

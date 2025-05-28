@@ -119,7 +119,7 @@ class Bimodules(CategoryWithParameters):
         from sage.rings.real_mpfr import RR
         return cls(QQ, RR)
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

@@ -78,7 +78,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
         Parent.__init__(self, category=RegularSuperCrystals())
         self.module_generators = (self.element_class(self, frozenset()),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -556,7 +556,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
                 self._reg.module_generators[0])
         self.module_generators = (self.element_class(self, data),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

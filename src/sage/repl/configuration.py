@@ -86,7 +86,7 @@ class SageIpythonConfiguration:
         from sage.repl.interpreter import SageTerminalInteractiveShell
         return SageTerminalInteractiveShell.colors.default()
 
-    def simple_prompt(self):
+    def simple_prompt(self) -> bool:
         """
         Return whether to use the simple prompt.
 

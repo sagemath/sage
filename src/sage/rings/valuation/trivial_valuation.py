@@ -101,7 +101,7 @@ class TrivialDiscretePseudoValuation_base(DiscretePseudoValuation):
         """
         raise ValueError("Trivial valuations do not define a uniformizing element")
 
-    def is_trivial(self):
+    def is_trivial(self) -> bool:
         r"""
         Return whether this valuation is trivial.
 
@@ -113,7 +113,7 @@ class TrivialDiscretePseudoValuation_base(DiscretePseudoValuation):
         """
         return True
 
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains the value `-\infty`.
 
@@ -166,7 +166,7 @@ class TrivialDiscretePseudoValuation(TrivialDiscretePseudoValuation_base, Infini
         from sage.rings.infinity import infinity
         return infinity
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -230,7 +230,7 @@ class TrivialDiscretePseudoValuation(TrivialDiscretePseudoValuation_base, Infini
         self.residue_ring().coerce(X)  # ignore the output
         return self.domain().zero()
 
-    def _ge_(self, other):
+    def _ge_(self, other) -> bool:
         r"""
         Return whether this valuation is bigger or equal than ``other``
         everywhere.
@@ -286,7 +286,7 @@ class TrivialDiscreteValuation(TrivialDiscretePseudoValuation_base, DiscreteValu
         from sage.rings.infinity import infinity
         return infinity if x == 0 else self.codomain().zero()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a printable representation of this valuation.
 
@@ -361,7 +361,7 @@ class TrivialDiscreteValuation(TrivialDiscretePseudoValuation_base, DiscreteValu
             return [TrivialValuation(ring)]
         return super(DiscretePseudoValuation, self).extensions(ring)
 
-    def _ge_(self, other):
+    def _ge_(self, other) -> bool:
         r"""
         Return whether this valuation is bigger or equal than ``other``
         everywhere.

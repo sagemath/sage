@@ -127,7 +127,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                 raise ValueError("the input has more than 1 connected "
                                  "component")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -324,7 +324,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
                     break
         return code
 
-    def arf_invariant(self):
+    def arf_invariant(self) -> int:
         """
         Return the Arf invariant.
 
@@ -496,7 +496,7 @@ class Knots(Singleton, Parent):
         """
         Parent.__init__(self, category=Monoids().Infinite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 

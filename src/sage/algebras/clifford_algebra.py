@@ -197,7 +197,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             return "Subsets of {0,1}" + extra
         return f"Subsets of {{0,1,...,{self._nbits-1}}}" + extra
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -536,7 +536,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, indices, category=category, sorting_key=tuple)
         self._assign_names(names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1477,7 +1477,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         cat = HopfAlgebrasWithBasis(R).FiniteDimensional().Supercommutative().Supercocommutative()
         CliffordAlgebra.__init__(self, QuadraticForm(R, len(names)), names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2292,7 +2292,7 @@ class ExteriorAlgebraBoundary(ExteriorAlgebraDifferential):
 
     - :wikipedia:`Exterior_algebra#Lie_algebra_homology`
     """
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 
@@ -2563,7 +2563,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
                 self._cos_coeff[m] = self._cos_coeff.get(m, zero) + c * k
         ExteriorAlgebraDifferential.__init__(self, E, s_coeff)
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         """
         TESTS::
 
@@ -2781,7 +2781,7 @@ class ExteriorAlgebraIdeal(Ideal_nc):
         R = self.ring()
         return self._groebner_strategy.reduce(R(f))
 
-    def _contains_(self, f):
+    def _contains_(self, f) -> bool:
         r"""
         Return ``True`` if ``f`` is in this ideal,
         ``False`` otherwise.

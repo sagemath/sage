@@ -470,7 +470,7 @@ def quaternion_order_with_given_level(A, level):
 
 
 class BrandtSubmodule(HeckeSubmodule):
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this Brandt submodule.
 

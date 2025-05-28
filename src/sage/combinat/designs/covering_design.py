@@ -277,7 +277,7 @@ class CoveringDesign(SageObject):
         return repr + '\n'.join('  '.join(str(k) for k in block) for block in
                                 self.__incidence_structure.blocks())
 
-    def is_covering(self):
+    def is_covering(self) -> bool:
         """
         Check all `t`-sets are in fact covered by the blocks of ``self``.
 

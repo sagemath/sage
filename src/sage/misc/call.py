@@ -89,7 +89,7 @@ class AttrCallObject:
         """
         return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Equality testing.
 

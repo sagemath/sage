@@ -564,7 +564,7 @@ class QuotientRing_nc(Parent):
             return QuotientFunctor(self.__I, names=names,
                                    as_field=isinstance(self, Field)), self.__R
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -577,7 +577,7 @@ class QuotientRing_nc(Parent):
         """
         return "Quotient of %s by the ideal %s" % (self.cover_ring(), self.defining_ideal()._repr_short())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 
@@ -924,7 +924,7 @@ class QuotientRing_nc(Parent):
             except NotImplementedError:
                 return False
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         r"""
         Return ``True`` if this ring is Noetherian.
 
@@ -1328,7 +1328,7 @@ class QuotientRing_nc(Parent):
         self.__singular = singular("%s" % self.__I._singular_().name(), "qring")
         return self.__singular
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return string that evaluates to Magma version of this quotient
         ring. This is called implicitly when doing conversions to Magma.
@@ -1539,7 +1539,7 @@ class QuotientRingIdeal_generic(ideal.Ideal_generic):
         R = self.ring()
         return R.defining_ideal() + R.cover_ring().ideal([g.lift() for g in self.gens()])
 
-    def _contains_(self, other):
+    def _contains_(self, other) -> bool:
         r"""
         Check whether this ideal contains the given element.
 

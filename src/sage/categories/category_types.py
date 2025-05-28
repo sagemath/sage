@@ -121,7 +121,7 @@ class Elements(Category):
         """
         return Elements, (self.__object, )
 
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -130,7 +130,7 @@ class Elements(Category):
         """
         return "elements of %s" % self.object()
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -302,7 +302,7 @@ class Category_over_base(CategoryWithParameters):
             name = base
         return Category._repr_object_names(self) + " over %s" % name
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -333,7 +333,7 @@ class Category_over_base(CategoryWithParameters):
 
 
 class AbelianCategory(Category):
-    def is_abelian(self):
+    def is_abelian(self) -> bool:
         """
         Return ``True`` as ``self`` is an abelian category.
 

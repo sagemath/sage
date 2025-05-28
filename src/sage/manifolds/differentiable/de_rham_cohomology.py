@@ -116,7 +116,7 @@ class DeRhamCohomologyClass(AlgebraElement):
         super().__init__(parent=parent)
         self._representative = representative
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of the object.
 
@@ -135,7 +135,7 @@ class DeRhamCohomologyClass(AlgebraElement):
             name = 'unnamed form'
         return f"[{name}]"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of the object.
 
@@ -270,7 +270,7 @@ class DeRhamCohomologyClass(AlgebraElement):
         """
         return self.parent()(self.representative() - other.representative())
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Comparison (equality) operator.
 

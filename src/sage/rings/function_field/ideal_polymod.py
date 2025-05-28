@@ -833,7 +833,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         return n
 
     @cached_method
-    def is_prime(self):
+    def is_prime(self) -> bool:
         """
         Return ``True`` if this ideal is a prime ideal.
 

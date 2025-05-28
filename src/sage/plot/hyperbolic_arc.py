@@ -215,7 +215,7 @@ class HyperbolicArc(HyperbolicArcCore):
         self._bezier_path(self.A, self.B, M, True)
         BezierPath.__init__(self, self.path, options)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of HyperbolicArc.
 

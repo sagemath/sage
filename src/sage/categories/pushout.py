@@ -183,7 +183,7 @@ class ConstructionFunctor(Functor):
         else:
             return other * self
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Equality here means that they are mathematically equivalent, though they may have
         specific implementation data. This method will usually be overloaded in subclasses.
@@ -202,7 +202,7 @@ class ConstructionFunctor(Functor):
         """
         return type(self) is type(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -280,7 +280,7 @@ class ConstructionFunctor(Functor):
         else:
             return None
 
-    def commutes(self, other):
+    def commutes(self, other) -> bool:
         """
         Determine whether ``self`` commutes with another construction functor.
 
@@ -518,7 +518,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
         else:
             return type(self) is type(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -669,7 +669,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
                 return True
         return c
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -914,7 +914,7 @@ class PolynomialFunctor(ConstructionFunctor):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -963,7 +963,7 @@ class PolynomialFunctor(ConstructionFunctor):
         else:
             return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1058,7 +1058,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1158,7 +1158,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         else:
             return [MultiPolynomialFunctor((x,), self.term_order) for x in reversed(self.vars)]
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1310,7 +1310,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
         )
         return InfinitePolynomialRing(R, self._gens, order=self._order, implementation=self._imple)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1336,7 +1336,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
                     self._imple == other._imple)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1638,7 +1638,7 @@ class MatrixFunctor(ConstructionFunctor):
             return (self.nrows == other.nrows and self.ncols == other.ncols)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -1792,7 +1792,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
             return self.var == other.var
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2003,7 +2003,7 @@ class VectorFunctor(ConstructionFunctor):
                     self.latex_name_mapping == other.latex_name_mapping)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2305,7 +2305,7 @@ class SubspaceFunctor(ConstructionFunctor):
             return tuple(other.basis) == tuple(R(x) for x in self.basis)
         return c
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2549,7 +2549,7 @@ class CompletionFunctor(ConstructionFunctor):
                 if self.type not in self._dvr_types:
                     raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -2630,7 +2630,7 @@ class CompletionFunctor(ConstructionFunctor):
             return self.p == other.p
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -2972,7 +2972,7 @@ class QuotientFunctor(ConstructionFunctor):
                 self.names == other.names and
                 self.I == other.I)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -3382,7 +3382,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                 self.precs == other.precs and
                 self.latex_names == other.latex_names)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 
@@ -3707,7 +3707,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
         self._gens = tuple(gens)
         self._domain = domain
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         EXAMPLES::
 
@@ -3983,7 +3983,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
 
         return self.box == other.box
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Check whether ``self`` is not equal to ``other``.
 

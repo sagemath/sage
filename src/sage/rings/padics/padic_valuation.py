@@ -946,7 +946,7 @@ class pAdicValuation_padic(pAdicValuation_base):
         v = ZZ(v * self.domain().absolute_e())
         return self.domain().one() << v
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a printable representation of this valuation.
 
@@ -1066,7 +1066,7 @@ class pAdicValuation_int(pAdicValuation_base):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a printable representation of this valuation.
 

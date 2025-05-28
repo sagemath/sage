@@ -187,7 +187,7 @@ class DiscretePseudoValuation(Morphism):
             return self._ge_(other)
         raise NotImplementedError("Operator not implemented for this valuation")
 
-    def _eq_(self, other):
+    def _eq_(self, other) -> bool:
         r"""
         Return whether this valuation and ``other`` are indistinguishable.
 
@@ -290,7 +290,7 @@ class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
         True
         sage: TestSuite(w).run()                # long time                             # needs sage.geometry.polyhedron sage.rings.padics
     """
-    def is_discrete_valuation(self):
+    def is_discrete_valuation(self) -> bool:
         r"""
         Return whether this valuation is a discrete valuation.
 
@@ -325,7 +325,7 @@ class NegativeInfiniteDiscretePseudoValuation(InfiniteDiscretePseudoValuation):
 
         sage: TestSuite(w).run()                # long time
     """
-    def is_negative_pseudo_valuation(self):
+    def is_negative_pseudo_valuation(self) -> bool:
         r"""
         Return whether this valuation attains the value `-\infty`.
 
@@ -363,7 +363,7 @@ class DiscreteValuation(DiscretePseudoValuation):
         True
         sage: TestSuite(w).run()                # long time                             # needs sage.geometry.polyhedron sage.rings.padics
     """
-    def is_discrete_valuation(self):
+    def is_discrete_valuation(self) -> bool:
         r"""
         Return whether this valuation is a discrete valuation.
 
@@ -704,7 +704,7 @@ class DiscreteValuation(DiscretePseudoValuation):
                 # squarefree factors of G (up to required_precision.)
                 pass
 
-        def is_sufficient(leaf, others):
+        def is_sufficient(leaf, others) -> bool:
             if leaf.valuation.mu() < required_precision:
                 return False
             if require_final_EF and not leaf.ef:
@@ -1098,7 +1098,7 @@ class MacLaneApproximantNode:
             return False
         return (self.valuation, self.parent, self.ef, self.principal_part_bound, self.coefficients, self.valuations, self.forced_leaf) == (other.valuation, other.parent, other.ef, other.principal_part_bound, other.coefficients, other.valuations, other.forced_leaf)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return whether this node is not equal to ``other``.
 

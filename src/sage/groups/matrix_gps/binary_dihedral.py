@@ -90,7 +90,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
         FinitelyGeneratedMatrixGroup_gap.__init__(self, ZZ(2), R, gap_group, category=Groups().Finite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -101,7 +101,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
         """
         return "Binary dihedral group of order {}".format(4 * self._n)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 

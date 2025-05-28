@@ -65,7 +65,7 @@ class MetricSpacesCategory(RegressiveCovariantConstructionCategory):
                               super().default_super_categories(category)])
 
     # We currently don't have a use for this, but we probably will
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 
@@ -109,7 +109,7 @@ class MetricSpaces(MetricSpacesCategory):
         Category of metric spaces
         sage: TestSuite(C).run()
     """
-    def _repr_object_names(self):
+    def _repr_object_names(self) -> str:
         """
         EXAMPLES::
 

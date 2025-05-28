@@ -962,7 +962,7 @@ def _next_good_prime(p, R, qq, patience, qqold):
         return False
 
 
-def _is_p_power_mod(a, p, N):
+def _is_p_power_mod(a, p, N) -> bool:
     """
     Determine if ``a`` is a ``p`` th power modulo ``N``.
 

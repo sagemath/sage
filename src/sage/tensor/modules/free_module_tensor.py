@@ -1899,7 +1899,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 raise ValueError("no common basis for the comparison")
             return bool(self._components[basis] == other._components[basis])
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 

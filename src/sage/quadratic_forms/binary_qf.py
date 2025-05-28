@@ -155,7 +155,7 @@ class BinaryQF(SageObject):
             raise TypeError('binary quadratic form must be given by a quadratic homogeneous bivariate integer polynomial or its coefficients')
         self._poly = None
 
-    def _pari_init_(self):
+    def _pari_init_(self) -> str:
         """
         Convert this quadratic form to PARI.
 
@@ -367,7 +367,7 @@ class BinaryQF(SageObject):
             return False
         return (self._a, self._b, self._c) == (right._a, right._b, right._c)
 
-    def __ne__(self, right):
+    def __ne__(self, right) -> bool:
         """
         Return ``True`` if ``self`` and ``right`` are not identical.
 

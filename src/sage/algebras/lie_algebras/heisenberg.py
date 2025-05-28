@@ -410,7 +410,7 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
             category=LieAlgebras(R).Nilpotent().FiniteDimensional().WithBasis())
         HeisenbergAlgebra_abstract.__init__(self, names)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -448,7 +448,7 @@ class InfiniteHeisenbergAlgebra(HeisenbergAlgebra_abstract, LieAlgebraWithGenera
         LieAlgebraWithGenerators.__init__(self, R, index_set=S, category=cat)
         HeisenbergAlgebra_abstract.__init__(self, S)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -712,7 +712,7 @@ class HeisenbergAlgebra_matrix(HeisenbergAlgebra_fd, LieAlgebraFromAssociative):
         LieAlgebraFromAssociative.__init__(self, MS, p + q + z, names=names,
                                            index_set=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

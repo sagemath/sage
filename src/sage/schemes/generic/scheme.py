@@ -877,7 +877,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
             state['_AffineScheme__R'] = state.pop('_Spec__R')
         super().__setstate__(state)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -895,7 +895,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         """
         return "Spectrum of {}".format(self.__R)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of ``self``.
 

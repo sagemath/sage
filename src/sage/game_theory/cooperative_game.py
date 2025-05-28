@@ -395,7 +395,7 @@ class CooperativeGame(SageObject):
 
         return payoff_vector
 
-    def is_monotone(self):
+    def is_monotone(self) -> bool:
         r"""
         Return ``True`` if ``self`` is monotonic.
 
@@ -457,7 +457,7 @@ class CooperativeGame(SageObject):
         return not any(set(p1) <= set(p2) and self.ch_f[p1] > self.ch_f[p2]
                        for p1, p2 in permutations(self.ch_f.keys(), 2))
 
-    def is_superadditive(self):
+    def is_superadditive(self) -> bool:
         r"""
         Return ``True`` if ``self`` is superadditive.
 
@@ -548,7 +548,7 @@ class CooperativeGame(SageObject):
                     return False
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a concise description of ``self``.
 
@@ -672,7 +672,7 @@ class CooperativeGame(SageObject):
         pl = tuple(sorted(self.player_list))
         return sum(payoff_vector.values()) == self.ch_f[pl]
 
-    def nullplayer(self, payoff_vector):
+    def nullplayer(self, payoff_vector) -> bool:
         r"""
         Return ``True`` if ``payoff_vector`` possesses the nullplayer
         property.
@@ -765,7 +765,7 @@ class CooperativeGame(SageObject):
                 return False
         return True
 
-    def is_symmetric(self, payoff_vector):
+    def is_symmetric(self, payoff_vector) -> bool:
         r"""
         Return ``True`` if ``payoff_vector`` possesses the symmetry property.
 

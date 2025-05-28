@@ -2267,7 +2267,7 @@ class AbstractLabelledTree(AbstractTree):
             self._label = label
         super().__init__(parent, children, check=check)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 

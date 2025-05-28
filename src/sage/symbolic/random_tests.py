@@ -404,7 +404,7 @@ def assert_strict_weak_order(a, b, c, cmp_func):
             if cmp_M[i, j] and cmp_M[j, i]:
                 raise ValueError(msg)
 
-    def incomparable(i, j):
+    def incomparable(i, j) -> bool:
         return not (cmp_M[i, j] or cmp_M[j, i])
 
     for i, j, k in Permutations([0, 1, 2]):

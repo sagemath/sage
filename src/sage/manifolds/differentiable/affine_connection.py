@@ -475,7 +475,7 @@ class AffineConnection(SageObject):
         self._torsion_forms.clear()
         self._curvature_forms.clear()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Comparison (equality) operator.
 
@@ -532,7 +532,7 @@ class AffineConnection(SageObject):
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Inequality operator.
 
@@ -980,7 +980,7 @@ class AffineConnection(SageObject):
         """
         return self._is_immutable
 
-    def is_mutable(self):
+    def is_mutable(self) -> bool:
         r"""
         Return ``True`` if this object is mutable, i.e. its coefficients can
         be changed, and ``False`` if it is not.

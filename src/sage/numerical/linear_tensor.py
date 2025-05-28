@@ -312,7 +312,7 @@ class LinearTensorParent_class(Parent):
         """
         return self._linear_functions
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation.
 
@@ -420,7 +420,7 @@ class LinearTensorParent_class(Parent):
                 x = {-1: self._convert_constant(x_R)}
         return self.element_class(self, x)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         Allow coercion of scalars into tensors.
 

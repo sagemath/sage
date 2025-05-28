@@ -518,7 +518,7 @@ class Sigma0_class(Parent):
         x.set_immutable()
         return self.element_class(self, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of ``self``.
 

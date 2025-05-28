@@ -312,7 +312,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         from sage.combinat.specht_module import SymmetricGroupRepresentation
         self._representation_mixin_class = SymmetricGroupRepresentation
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -3177,7 +3177,7 @@ def e_ik(itab, ktab, star=0):
     return res
 
 
-def seminormal_test(n):
+def seminormal_test(n) -> bool:
     """
     Run a variety of tests to verify that the construction of the
     seminormal basis works as desired. The numbers appearing are

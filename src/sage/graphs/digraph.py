@@ -911,7 +911,7 @@ class DiGraph(GenericGraph):
 
     # Attributes
 
-    def is_directed(self):
+    def is_directed(self) -> bool:
         """
         Since digraph is directed, return ``True``.
 
@@ -3826,7 +3826,7 @@ class DiGraph(GenericGraph):
 
         return Polyhedron(ieqs=ineqs, eqns=eqs, backend=backend)
 
-    def is_tournament(self):
+    def is_tournament(self) -> bool:
         r"""
         Check whether the digraph is a tournament.
 

@@ -446,7 +446,7 @@ class AnalyticType(FiniteLatticePoset):
                                     elements=L._elements, category=L.category(),
                                     facade=False, key=None)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 

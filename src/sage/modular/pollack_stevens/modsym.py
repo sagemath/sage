@@ -163,7 +163,7 @@ class PSModularSymbolElement(ModuleElement):
         else:
             self._map = ManinMap(parent._coefficients, parent._source, map_data)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of the symbol.
 
@@ -564,7 +564,7 @@ class PSModularSymbolElement(ModuleElement):
         return min([val.diagonal_valuation(p) for val in self._map])
 
     @cached_method
-    def is_Tq_eigensymbol(self, q, p=None, M=None):
+    def is_Tq_eigensymbol(self, q, p=None, M=None) -> bool:
         r"""
         Determine if ``self`` is an eigenvector for `T_q` modulo `p^M`.
 

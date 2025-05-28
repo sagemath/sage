@@ -57,7 +57,7 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
         self._base_module_basis = base_module_basis
         self._comp = tensor_module._basis_sym()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 

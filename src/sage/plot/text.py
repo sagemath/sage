@@ -74,7 +74,7 @@ class Text(GraphicPrimitive):
         from sage.plot.plot import minmax_data
         return minmax_data([self.x], [self.y], dict=True)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of Text primitive.
 

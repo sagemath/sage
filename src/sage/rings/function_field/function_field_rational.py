@@ -206,7 +206,7 @@ class RationalFunctionField(FunctionField):
         """
         return self._hash
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of the function field.
 
@@ -604,7 +604,7 @@ class RationalFunctionField(FunctionField):
             raise IndexError("Only one generator.")
         return self._gen
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators, which is 1.
 

@@ -257,7 +257,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
         self._sym_h.register_conversion(self.module_morphism(self._supp_to_h, codomain=self._sym_h))
         self._sym_s.register_conversion(self.module_morphism(self._supp_to_s, codomain=self._sym_s))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string describing ``self``.
 

@@ -248,7 +248,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
         self._eval_line(')set output length 245', reformat=False)
         self._eval_line(')set message autoload off', reformat=False)
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         EXAMPLES::
 
@@ -277,7 +277,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
         # The space before the \n is also important.
         return ')read %s \n' % filename
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         Return the string used to quit Axiom.
 
@@ -474,7 +474,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
         return "\n".join(line[i:] for line in outs[1:])
 
     # define relational operators
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """equality symbol
 
         EXAMPLES::

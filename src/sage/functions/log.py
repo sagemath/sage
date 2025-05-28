@@ -406,7 +406,7 @@ class Function_polylog(GinacFunction):
                                  matlab='polylog',
                                  sympy='polylog'))
 
-    def _maxima_init_evaled_(self, *args):
+    def _maxima_init_evaled_(self, *args) -> str:
         """
         EXAMPLES:
 
@@ -841,7 +841,7 @@ class Function_lambert_w(BuiltinFunction):
 
         return lambert_w(n, z) / (z * lambert_w(n, z) + z)
 
-    def _maxima_init_evaled_(self, n, z):
+    def _maxima_init_evaled_(self, n, z) -> str:
         """
         EXAMPLES:
 
@@ -870,7 +870,7 @@ class Function_lambert_w(BuiltinFunction):
         else:
             return "generalized_lambert_w(%s,%s)" % (n, maxima_z)
 
-    def _print_(self, n, z):
+    def _print_(self, n, z) -> str:
         """
         Custom _print_ method to avoid printing the branch number if
         it is zero.
@@ -887,7 +887,7 @@ class Function_lambert_w(BuiltinFunction):
         else:
             return "lambert_w(%s, %s)" % (n, z)
 
-    def _print_latex_(self, n, z):
+    def _print_latex_(self, n, z) -> str:
         r"""
         Custom _print_latex_ method to avoid printing the branch
         number if it is zero.
@@ -1190,7 +1190,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
 
         return zeta(m) - hurwitz_zeta(m, z + 1)
 
-    def _maxima_init_evaled_(self, n, z):
+    def _maxima_init_evaled_(self, n, z) -> str:
         """
         EXAMPLES::
 
@@ -1239,7 +1239,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         else:
             return m * (zeta(m + 1) - harmonic_number(n, m + 1))
 
-    def _print_(self, z, m):
+    def _print_(self, z, m) -> str:
         """
         EXAMPLES::
 
@@ -1253,7 +1253,7 @@ class Function_harmonic_number_generalized(BuiltinFunction):
         else:
             return "harmonic_number(%s, %s)" % (z, m)
 
-    def _print_latex_(self, z, m):
+    def _print_latex_(self, z, m) -> str:
         """
         EXAMPLES::
 
@@ -1387,7 +1387,7 @@ class Function_harmonic_number(BuiltinFunction):
         """
         return zeta(2) - harmonic_number(z, 2)
 
-    def _print_latex_(self, z):
+    def _print_latex_(self, z) -> str:
         """
         EXAMPLES::
 

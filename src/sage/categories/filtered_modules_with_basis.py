@@ -710,7 +710,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
     class ElementMethods:
 
-        def is_homogeneous(self):
+        def is_homogeneous(self) -> bool:
             r"""
             Return whether the element ``self`` is homogeneous.
 

@@ -445,7 +445,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         Phi.algebra_morphism(Phi._to_complete_on_generators,
                              codomain=complete).register_as_coercion()
 
-    def _repr_(self): # could be taken care of by the category
+    def _repr_(self) -> str: # could be taken care of by the category
         r"""
         EXAMPLES::
 
@@ -4656,7 +4656,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                         category=category)
             from_S.register_as_coercion()
 
-        def _realization_name(self):
+        def _realization_name(self) -> str:
             r"""
             TESTS::
 
@@ -4942,7 +4942,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                         category=category)
             from_S.register_as_coercion()
 
-        def _realization_name(self):
+        def _realization_name(self) -> str:
             r"""
             TESTS::
 
@@ -5170,7 +5170,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                                     codomain=self,
                                     category=category).register_as_coercion()
 
-        def _realization_name(self):
+        def _realization_name(self) -> str:
             r"""
             TESTS::
 

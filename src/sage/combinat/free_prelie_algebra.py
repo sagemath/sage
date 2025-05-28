@@ -707,7 +707,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             raise TypeError('not able to convert this to this algebra')
         # Ok, not a pre-Lie algebra element (or should not be viewed as one).
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         Return ``True`` if there is a coercion from ``R`` into ``self``
         and ``False`` otherwise.

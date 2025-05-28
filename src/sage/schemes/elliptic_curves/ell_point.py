@@ -4253,7 +4253,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
     r"""
     Class for elliptic curve points over finite fields.
     """
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         """
         Return a string representation of ``self`` that ``MAGMA`` can
         use for input.
@@ -4633,7 +4633,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         return ZZ(k % p)
 
-    def has_finite_order(self):
+    def has_finite_order(self) -> bool:
         r"""
         Return ``True`` if this point has finite additive order as an element
         of the group of points on this curve.

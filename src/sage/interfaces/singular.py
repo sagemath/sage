@@ -477,7 +477,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         return reduce_load_Singular, ()
 
-    def _equality_symbol(self):
+    def _equality_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -486,7 +486,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         return '=='
 
-    def _true_symbol(self):
+    def _true_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -495,7 +495,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         return '1'
 
-    def _false_symbol(self):
+    def _false_symbol(self) -> str:
         """
         EXAMPLES::
 
@@ -504,7 +504,7 @@ class Singular(ExtraTabCompletion, Expect):
         """
         return '0'
 
-    def _quit_string(self):
+    def _quit_string(self) -> str:
         """
         EXAMPLES::
 
@@ -558,7 +558,7 @@ class Singular(ExtraTabCompletion, Expect):
                 pass
             E.sendline(";")
 
-    def _read_in_file_command(self, filename):
+    def _read_in_file_command(self, filename) -> str:
         r"""
         EXAMPLES::
 

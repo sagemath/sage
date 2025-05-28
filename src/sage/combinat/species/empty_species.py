@@ -133,7 +133,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
     _default_structure_class = 0
     _isotypes = _structures
 
-    def _equation(self, var_mapping):
+    def _equation(self, var_mapping) -> int:
         """
         Return the right hand side of an algebraic equation satisfied by
         this species. This is a utility function called by the

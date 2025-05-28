@@ -674,7 +674,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         resu = [l] + [u for t in self for u in t._sort_key()]
         return tuple(resu)
 
-    def is_empty(self):
+    def is_empty(self) -> bool:
         """
         Return whether ``self`` is empty.
 
@@ -4091,7 +4091,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             self, Family(NonNegativeIntegers(), BinaryTrees_size),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -4193,7 +4193,7 @@ class BinaryTrees_size(BinaryTrees):
                          category=FiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -4344,7 +4344,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
             self, Family(NonNegativeIntegers(), _full_construction),
             facade=True, keepkey=False)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -4429,7 +4429,7 @@ class FullBinaryTrees_size(BinaryTrees):
                          category=FiniteEnumeratedSets())
         self._size = size
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -5160,7 +5160,7 @@ class LabelledBinaryTrees(LabelledOrderedTrees):
     labels constraints.
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 

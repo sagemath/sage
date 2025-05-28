@@ -11,7 +11,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-def parity(self, allow_rescaling_flag=True):
+def parity(self, allow_rescaling_flag=True) -> str:
     r"""
     Return the parity ("even" or "odd") of an integer-valued quadratic
     form over `\ZZ`, defined up to similitude/rescaling of the form so that
