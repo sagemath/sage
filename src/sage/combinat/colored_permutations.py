@@ -2116,7 +2116,7 @@ class TabloidModule(Representation_abstract, CombinatorialFreeModule):
     The vector space of all tabloids of a fixed shape with the natural
     signed permutation group action.
 
-    A *tabloid* of size `n` is a pair of squences sets `(S, T)` such that:
+    A *tabloid* of size `n` is a pair of sequences sets `(S, T)` such that:
 
     - For all `X, Y \in S \cup T`, we have `X \cap Y = \emptyset`
       (all sets are pairwise disjoint).
@@ -2372,6 +2372,9 @@ class TabloidModule(Representation_abstract, CombinatorialFreeModule):
 
     def _semigroup_basis_action(self, g, T):
         """
+        Return the action of the symmetric group element ``g`` on the
+        tabloid ``T``.
+
         EXAMPLES::
 
             sage: B5 = SignedPermutations(5)
@@ -2390,7 +2393,7 @@ class TabloidModule(Representation_abstract, CombinatorialFreeModule):
     def _semigroup_action(self, g, vec, vec_on_left):
         r"""
         Return the action of the symmetric group element ``g`` on the
-        ordered set partition ``osp``.
+        vector ``vec``.
 
         EXAMPLES::
 
