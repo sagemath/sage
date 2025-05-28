@@ -446,7 +446,6 @@ class OperationTable(SageObject):
         self._closed = closed
         self._elts_ext = [] # elements that are not in _elts
         self._n_ext = 0
-        self._names_type = names
 
         # Determine the operation, if given by a string
         # Some simple symbols are supported,
