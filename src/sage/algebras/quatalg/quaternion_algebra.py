@@ -1199,7 +1199,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #     # we do not know why magma does the following, so we do not do it.
         #     for p in self.ramified_primes():
         #         if not (level % p**2):
-        #             raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+        #             raise NotImplementedError("currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
 
         #     P = O._left_ideal_basis([N1] + [x * y - y * x
         #                                     for x in self.basis()
@@ -3439,7 +3439,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             1/2*i + j + 5/2*k
         """
         if not self.quaternion_algebra().is_definite():
-            raise TypeError("The quaternion algebra must be definite")
+            raise TypeError("the quaternion algebra must be definite")
 
         U = self.gram_matrix().LLL_gram().transpose()
         return tuple(sum(c * g for c, g in zip(row, self.basis())) for row in U)
@@ -4724,7 +4724,7 @@ def maxord_solve_aux_eq(a, b, p):
         ....:         assert mod(1 - a*y^2 - b*z^2 + a*b*w^2, 4) == 0
     """
     if p != ZZ(2):
-        raise NotImplementedError("Algorithm only implemented over ZZ at the moment")
+        raise NotImplementedError("algorithm only implemented over ZZ at the moment")
 
     v_a = a.valuation(p)
     v_b = b.valuation(p)
