@@ -692,9 +692,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if (
             self._nrows == self._ncols and
             isinstance(v, Vector_mod2_dense) and
-            v.parent().is_full() and
-            v.parent().degree() == self._nrows and
-            v.parent().base_ring() is self._base_ring
+            v.parent().rank() == self._ncols # check if the parent of v is full rank
             ):
             VS = v.parent()
         else:
