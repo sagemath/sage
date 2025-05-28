@@ -207,7 +207,6 @@ else
   singular_proj = subproject('singular')
   singular_factory = singular_proj.get_variable('factory_dep')
 endif
-maxima = find_program('maxima', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
 

@@ -16,7 +16,6 @@ if not fs.exists(datadir / 'cremona')
     'Warning: The specified datadir does not contain the necessary Cremona database. Either specify a different datadir or specify a correct the correct path via the environment variable SAGE_SHARE during runtime.',
   )
 endif
-conf_data.set('SAGE_MAXIMA', maxima.full_path())
 # Kenzo cannot yet be provided by the system, so we always use the SAGE_LOCAL path for now.
 conf_data.set('SAGE_KENZO_FAS', '\'${prefix}\'/lib/ecl/kenzo.fas')
 # It can be found, so we don't have to set anything here:

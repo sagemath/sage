@@ -36,6 +36,7 @@ maxima_dep = declare_dependency(
   variables: {
     'MAXIMA_FAS': meson.current_build_dir() + '/build/src/binary-ecl/maxima.fas',
     'MAXIMA_SHARE': meson.current_build_dir() + '/dist/usr/local/share/maxima/5.47.0/share',
+    'MAXIMA_BIN': meson.current_build_dir() + '/dist/usr/local/bin/maxima',
   },
   dependencies: maxima_fas_dep
 )

@@ -15,7 +15,8 @@ if ecl_bin.found()
     '(quit)',
     check: false,
   )
-  maxima_present = maxima_check.returncode() == 0
+  maxima_exec = find_program('maxima', required: not is_windows, disabler: true)
+  maxima_present = maxima_check.returncode() == 0 and maxima_exec.found()
 else
   maxima_present = false
 endif
@@ -29,11 +30,13 @@ if not maxima_present
     'SAGE_MAXIMA_SHARE',
     maxima.get_variable(internal: 'MAXIMA_SHARE'),
   )
+  conf_data.set('SAGE_MAXIMA', maxima.get_variable(internal: 'MAXIMA_BIN'))
 else
   maxima = declare_dependency()
   # ecl does not have any problems with Maxima, so nothing needs to be set here:
   conf_data.set('SAGE_MAXIMA_FAS', '')
   conf_data.set('SAGE_MAXIMA_SHARE', '')
+  conf_data.set('SAGE_MAXIMA', maxima.full_path())
 endif
 
 braiding = dependency(
