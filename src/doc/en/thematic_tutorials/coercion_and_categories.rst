@@ -102,7 +102,7 @@ Let us nevertheless provide an example using::
 
     sage: from sage.rings.ring import Field
 
-as this base class still provides more methods than a general parent::
+as this base class still provides a few more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
     ['_CommutativeRing__fraction_field',
