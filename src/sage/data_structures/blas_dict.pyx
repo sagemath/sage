@@ -340,6 +340,20 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
         {0: 10, 1: 10}
         sage: blas.linear_combination( [(D,1), (D,-1)] )
         {}
+
+    Check right multiplication with coefficients in a noncommutative ring::
+
+        sage: SGA = SymmetricGroupAlgebra(QQ, 3)
+        sage: s1 = SGA([2, 1, 3]) # (1 2)
+        sage: s2 = SGA([3, 1, 2]) # (1 3)
+        sage: D1 = {0: s1}
+        sage: blas.linear_combination([(D1, s2)], factor_on_left=False)
+        {0: s1 * s2}
+
+    Check left multiplication with coefficients in a noncommutative ring::
+    
+        sage: blas.linear_combination([(D1, s2)], factor_on_left=True)
+        {0: s2 * s1}
     """
     cdef dict result = {}
     cdef dict D
