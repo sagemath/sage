@@ -97,7 +97,7 @@ class DocTestReporter(SageObject):
     """
     This class reports to the users on the results of doctests.
     """
-    def __init__(self, controller):
+    def __init__(self, controller) -> None:
         """
         Initialize the reporter.
 

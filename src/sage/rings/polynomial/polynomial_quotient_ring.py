@@ -396,7 +396,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
     """
     Element = PolynomialQuotientRingElement
 
-    def __init__(self, ring, polynomial, name=None, category=None):
+    def __init__(self, ring, polynomial, name=None, category=None) -> None:
         """
         TESTS::
 
@@ -2291,7 +2291,7 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, CommutativeR
         sage: loads(xbar.dumps()) == xbar
         True
     """
-    def __init__(self, ring, polynomial, name=None, category=None):
+    def __init__(self, ring, polynomial, name=None, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -2429,7 +2429,7 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
         sage: loads(xbar.dumps()) == xbar
         True
     """
-    def __init__(self, ring, polynomial, name=None, category=None):
+    def __init__(self, ring, polynomial, name=None, category=None) -> None:
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
 
     def base_field(self):

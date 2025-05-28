@@ -135,7 +135,7 @@ class SchemeHomset_toric_variety(SchemeHomset_generic):
                 to Rational polyhedral fan in 1-d lattice N.
     """
 
-    def __init__(self, X, Y, category=None, check=True, base=ZZ):
+    def __init__(self, X, Y, category=None, check=True, base=ZZ) -> None:
         """
         The Python constructor.
 

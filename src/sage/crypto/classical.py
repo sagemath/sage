@@ -252,7 +252,7 @@ class AffineCryptosystem(SymmetricKeyCryptosystem):
     - [Sti2006]_
     """
 
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         r"""
         See ``AffineCryptosystem`` for full documentation.
 
@@ -1319,7 +1319,7 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S, m):
+    def __init__(self, S, m) -> None:
         r"""
         See ``HillCryptosystem`` for full documentation.
 
@@ -1783,7 +1783,7 @@ class ShiftCryptosystem(SymmetricKeyCryptosystem):
         ValueError: K (=-2) is outside the range of acceptable values for a key of this shift cryptosystem.
     """
 
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         r"""
         See ``ShiftCryptosystem`` for full documentation.
 
@@ -3002,7 +3002,7 @@ class SubstitutionCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S):
+    def __init__(self, S) -> None:
         """
         See ``SubstitutionCryptosystem`` for full documentation.
 
@@ -3230,7 +3230,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S, n):
+    def __init__(self, S, n) -> None:
         """
         See ``TranspositionCryptosystem`` for full documentation.
 
@@ -3470,7 +3470,7 @@ class VigenereCryptosystem(SymmetricKeyCryptosystem):
         True
     """
 
-    def __init__(self, S, n):
+    def __init__(self, S, n) -> None:
         """
         See ``VigenereCryptosystem`` for full documentation.
 

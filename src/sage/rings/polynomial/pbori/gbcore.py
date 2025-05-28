@@ -165,7 +165,7 @@ class HeuristicalFunction:
             complete_dict = self.heuristicFunction(complete_dict)
         return self.f(**complete_dict)
 
-    def __init__(self, f, heuristic_function):
+    def __init__(self, f, heuristic_function) -> None:
         self.argnames, self.varargs, self.varopts, self.defaults = getargspec(f)[:4]
         if hasattr(f, "options"):
             self.options = f.options

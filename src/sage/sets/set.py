@@ -468,7 +468,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
         (False, False)
     """
 
-    def __init__(self, X, category=None):
+    def __init__(self, X, category=None) -> None:
         """
         Create a Set_object.
 
@@ -602,7 +602,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
                 pass
         return self._an_element_from_iterator()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if `x` is in ``self``.
 
@@ -849,7 +849,7 @@ class Set_object_enumerated(Set_object):
     """
     A finite enumerated set.
     """
-    def __init__(self, X, category=None):
+    def __init__(self, X, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -903,7 +903,7 @@ class Set_object_enumerated(Set_object):
         from sage.rings.integer import Integer
         return Integer(len(self.set()))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -1300,7 +1300,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
             Y = Set(Y)
         return type.__call__(cls, X, Y, *args, **kwds)
 
-    def __init__(self, X, Y, op, latex_op, category=None):
+    def __init__(self, X, Y, op, latex_op, category=None) -> None:
         r"""
         Initialization.
 
@@ -1371,7 +1371,7 @@ class Set_object_union(Set_object_binary):
     """
     A formal union of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1466,7 +1466,7 @@ class Set_object_union(Set_object_binary):
         yield from self._X
         yield from self._Y
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is an element of ``self``.
 
@@ -1520,7 +1520,7 @@ class Set_object_union(Set_object_binary):
         sympy_init()
         return Union(self._X._sympy_(), self._Y._sympy_())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this set is not empty.
 
@@ -1557,7 +1557,7 @@ class Set_object_intersection(Set_object_binary):
     """
     Formal intersection of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1687,7 +1687,7 @@ class Set_object_intersection(Set_object_binary):
             if x in Y:
                 yield x
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``self`` contains ``x``.
 
@@ -1739,7 +1739,7 @@ class Set_object_difference(Set_object_binary):
     """
     Formal difference of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1861,7 +1861,7 @@ class Set_object_difference(Set_object_binary):
             if x not in self._Y:
                 yield x
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``self`` contains ``x``.
 
@@ -1919,7 +1919,7 @@ class Set_object_symmetric_difference(Set_object_binary):
     """
     Formal symmetric difference of two sets.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -2032,7 +2032,7 @@ class Set_object_symmetric_difference(Set_object_binary):
             if y not in self._X:
                 yield y
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``self`` contains ``x``.
 

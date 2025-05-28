@@ -316,7 +316,7 @@ class FindStat(UniqueRepresentation, SageObject):
 
     :class:`FindStat` is a class preserving user information.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the database.
 
@@ -330,7 +330,7 @@ class FindStat(UniqueRepresentation, SageObject):
         self._user_email = ""
         self._allow_execution = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -1394,7 +1394,7 @@ class FindStatFunction(SageObject):
     This class provides methods to access and modify properties of a
     single statistic or map of the FindStat database.
     """
-    def __init__(self, id, data=None, function=None):
+    def __init__(self, id, data=None, function=None) -> None:
         """
         Initialize a statistic or map.
 
@@ -1505,7 +1505,7 @@ class FindStatFunction(SageObject):
 
         return self._function(elt)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the representation of the FindStat statistic or map.
 
@@ -1808,7 +1808,7 @@ class FindStatCombinatorialStatistic(SageObject):
     :class:`FindStatStatistic`, :class:`FindStatCompoundStatistic`
     and :class:`FindStatStatisticQuery`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize the combinatorial statistic.
 
@@ -2123,7 +2123,7 @@ class FindStatStatistic(Element,
         """
         return FindStatStatistics()(entry)
 
-    def __init__(self, parent, id):
+    def __init__(self, parent, id) -> None:
         """
         Initialize a FindStat statistic from an identifier.
 
@@ -2421,7 +2421,7 @@ class FindStatStatistics(UniqueRepresentation, Parent):
         The number of crossings of a perfect matching.
         The number of crossings plus two-nestings of a perfect matching.
     """
-    def __init__(self, domain=None):
+    def __init__(self, domain=None) -> None:
         """
         TESTS::
 
@@ -2533,7 +2533,7 @@ class FindStatStatisticQuery(FindStatStatistic):
     def __init__(self, data=None, values_of=None, distribution_of=None,
                  domain=None, known_terms=None, function=None,
                  depth=FINDSTAT_DEFAULT_DEPTH,
-                 debug=False):
+                 debug=False) -> None:
         """
         Initialize a query for FindStat (compound) statistics.
 
@@ -2706,7 +2706,7 @@ class FindStatStatisticQuery(FindStatStatistic):
                                        max_values,
                                        generating_functions=True)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of the query.
 
@@ -2737,7 +2737,7 @@ class FindStatStatisticQuery(FindStatStatistic):
         """
         return self._result[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of results in the query.
 
@@ -2751,7 +2751,7 @@ class FindStatStatisticQuery(FindStatStatistic):
 
 
 class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
-    def __init__(self, id, domain=None, check=True):
+    def __init__(self, id, domain=None, check=True) -> None:
         """
         Initialize a compound statistic.
 
@@ -2922,7 +2922,7 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
 
 
 class FindStatMatchingStatistic(FindStatCompoundStatistic):
-    def __init__(self, matching_statistic, offset, quality, domain=None):
+    def __init__(self, matching_statistic, offset, quality, domain=None) -> None:
         """
         Initialize a FindStat statistic match.
 
@@ -3094,7 +3094,7 @@ class FindStatMap(Element,
         """
         return FindStatMaps()(entry)
 
-    def __init__(self, parent, id):
+    def __init__(self, parent, id) -> None:
         """
         Initialize the map.
 
@@ -3358,7 +3358,7 @@ class FindStatMaps(UniqueRepresentation, Parent):
         Dyck paths -> Dyck paths
             reverse
     """
-    def __init__(self, domain=None, codomain=None):
+    def __init__(self, domain=None, codomain=None) -> None:
         """
         TESTS::
 
@@ -3482,7 +3482,7 @@ class FindStatMapQuery(FindStatMap):
     def __init__(self, data=None, values_of=None, distribution_of=None,
                  domain=None, codomain=None, known_terms=None, function=None,
                  depth=FINDSTAT_DEFAULT_DEPTH,
-                 debug=False):
+                 debug=False) -> None:
         """
         Initialize a query for FindStat (compound) maps.
 
@@ -3597,7 +3597,7 @@ class FindStatMapQuery(FindStatMap):
                                   function=function)
         Element.__init__(self, FindStatMaps()) # this is not completely correct, but it works
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of the query.
 
@@ -3626,7 +3626,7 @@ class FindStatMapQuery(FindStatMap):
         """
         return self._result[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of results in the query.
 
@@ -3640,7 +3640,7 @@ class FindStatMapQuery(FindStatMap):
 
 
 class FindStatCompoundMap(Element, FindStatCombinatorialMap):
-    def __init__(self, id, domain=None, codomain=None, check=True):
+    def __init__(self, id, domain=None, codomain=None, check=True) -> None:
         """
         Initialize a compound statistic.
 
@@ -3785,7 +3785,7 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
         """
         return self._maps
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of maps occurring in the compound map.
 
@@ -3825,7 +3825,7 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
 
 
 class FindStatMatchingMap(FindStatCompoundMap):
-    def __init__(self, matching_map, quality, domain=None, codomain=None):
+    def __init__(self, matching_map, quality, domain=None, codomain=None) -> None:
         """
         Initialize a FindStat map match.
 
@@ -4083,7 +4083,7 @@ class FindStatCollection(Element,
         """
         return FindStatCollections()(entry)
 
-    def __init__(self, parent, id, data, sageconstructor_overridden):
+    def __init__(self, parent, id, data, sageconstructor_overridden) -> None:
         """
         Initialize the collection.
 
@@ -4694,7 +4694,7 @@ class FindStatCollections(UniqueRepresentation, Parent):
          Cc0029: Lattices,
          Cc0030: Ordered set partitions]
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Fetch the collections from FindStat.
 

@@ -195,7 +195,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
     """
     Element = VectorField
 
-    def __init__(self, domain: DifferentiableManifold, dest_map: Optional[DiffMap] = None):
+    def __init__(self, domain: DifferentiableManifold, dest_map: Optional[DiffMap] = None) -> None:
         r"""
         Construct the module of vector fields taking values on a (a priori)
         non-parallelizable differentiable manifold.
@@ -1501,7 +1501,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
     Element = VectorFieldParal
 
-    def __init__(self, domain, dest_map=None):
+    def __init__(self, domain, dest_map=None) -> None:
         r"""
         Construct the free module of vector fields with values on a
         parallelizable manifold.

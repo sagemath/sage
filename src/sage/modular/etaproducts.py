@@ -84,7 +84,7 @@ def EtaGroup(level):
 
 class EtaGroupElement(Element):
 
-    def __init__(self, parent, rdict):
+    def __init__(self, parent, rdict) -> None:
         r"""
         Create an eta product object. Usually called implicitly via
         EtaGroup_class.__call__ or the EtaProduct factory function.
@@ -419,7 +419,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         True
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         Create the group of eta products of a given level, which must be a
         positive integer.
@@ -728,7 +728,7 @@ class CuspFamily(SageObject):
     r"""
     A family of elliptic curves parametrising a region of `X_0(N)`.
     """
-    def __init__(self, N, width, label=None):
+    def __init__(self, N, width, label=None) -> None:
         r"""
         Create the cusp of width d on X_0(N) corresponding to the family
         of Tate curves `(\CC_p/q^d, \langle \zeta q\rangle)`.

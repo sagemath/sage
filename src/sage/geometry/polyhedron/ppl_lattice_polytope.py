@@ -191,7 +191,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         A 2-dimensional lattice polytope in ZZ^2 with 3 vertices
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation.
 

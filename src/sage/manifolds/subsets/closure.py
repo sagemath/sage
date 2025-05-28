@@ -57,7 +57,7 @@ class ManifoldSubsetClosure(ManifoldSubset):
         True
     """
 
-    def __init__(self, subset, name=None, latex_name=None):
+    def __init__(self, subset, name=None, latex_name=None) -> None:
         r"""
         Initialize a :class:`ManifoldSubsetClosure` instance.
 

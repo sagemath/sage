@@ -25,7 +25,7 @@ class CombinatorialSpeciesStructure(SpeciesStructureWrapper):
 
 
 class CombinatorialSpecies(GenericCombinatorialSpecies):
-    def __init__(self, min=None):
+    def __init__(self, min=None) -> None:
         """
         EXAMPLES::
 

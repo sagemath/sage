@@ -75,7 +75,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
         Type II point centered at 0 of radius 3^0
     """
 
-    def __init__(self, parent, center, radius=None, power=None, prec=20, space_type=None, error_check=True):
+    def __init__(self, parent, center, radius=None, power=None, prec=20, space_type=None, error_check=True) -> None:
         """
         Initialization function.
 
@@ -1243,7 +1243,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         sage: TestSuite(Q5).run()
     """
 
-    def __init__(self, parent, center, radius=None, power=None, prec=20, error_check=True):
+    def __init__(self, parent, center, radius=None, power=None, prec=20, error_check=True) -> None:
         """
         Initialization function.
 
@@ -1881,7 +1881,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         sage: TestSuite(Q1).run()
     """
 
-    def __init__(self, parent, center, radius=None, power=None, prec=20, error_check=True):
+    def __init__(self, parent, center, radius=None, power=None, prec=20, error_check=True) -> None:
         """
         Initialization function.
 

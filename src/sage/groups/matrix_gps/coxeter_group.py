@@ -233,7 +233,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 base_ring = UniversalCyclotomicField()
         return super().__classcall__(cls, data, base_ring, data.index_set())
 
-    def __init__(self, coxeter_matrix, base_ring, index_set):
+    def __init__(self, coxeter_matrix, base_ring, index_set) -> None:
         """
         Initialize ``self``.
 

@@ -31,7 +31,7 @@ class Representation_abstract:
 
     - ``lie_algebra`` -- a Lie algebra
     """
-    def __init__(self, lie_algebra):
+    def __init__(self, lie_algebra) -> None:
         r"""
         Initialize ``self``.
 
@@ -288,7 +288,7 @@ class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract)
         return super(cls, RepresentationByMorphism).__classcall__(cls, lie_algebra,
              f, index_set, on_basis, category=C, **kwargs)
 
-    def __init__(self, lie_algebra, f, index_set, on_basis, category, **kwargs):
+    def __init__(self, lie_algebra, f, index_set, on_basis, category, **kwargs) -> None:
         r"""
         Initialize ``self``.
 
@@ -419,7 +419,7 @@ class TrivialRepresentation(CombinatorialFreeModule, Representation_abstract):
 
     - :wikipedia:`Trivial_representation`
     """
-    def __init__(self, lie_algebra, **kwargs):
+    def __init__(self, lie_algebra, **kwargs) -> None:
         r"""
         Initialize ``self``.
 
@@ -540,7 +540,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
 
     - [BEdG2009]_
     """
-    def __init__(self, L, minimal=False):
+    def __init__(self, L, minimal=False) -> None:
         r"""
         Initialize ``self``.
 
@@ -820,7 +820,7 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
         sage: F.dimension()
         243
     """
-    def __init__(self, L):
+    def __init__(self, L) -> None:
         r"""
         Initialize ``self``.
 

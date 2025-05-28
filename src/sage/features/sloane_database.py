@@ -27,7 +27,7 @@ class SloaneOEIS(Feature):
         sage: bool(SloaneOEIS().is_present())  # optional - sloane_database
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

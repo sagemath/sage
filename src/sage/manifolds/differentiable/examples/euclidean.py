@@ -728,7 +728,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
                  coordinates='Cartesian', symbols=None, metric_name='g',
                  metric_latex_name=None, start_index=1, base_manifold=None,
                  category=None, init_coord_methods=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a Euclidean space.
 
@@ -1165,7 +1165,7 @@ class EuclideanPlane(EuclideanSpace):
     """
     def __init__(self, name=None, latex_name=None, coordinates='Cartesian',
                  symbols=None, metric_name='g', metric_latex_name=None,
-                 start_index=1, base_manifold=None, category=None, unique_tag=None):
+                 start_index=1, base_manifold=None, category=None, unique_tag=None) -> None:
         r"""
         Construct a Euclidean plane.
 
@@ -1686,7 +1686,7 @@ class Euclidean3dimSpace(EuclideanSpace):
     """
     def __init__(self, name=None, latex_name=None, coordinates='Cartesian',
                  symbols=None, metric_name='g', metric_latex_name=None,
-                 start_index=1, base_manifold=None, category=None, unique_tag=None):
+                 start_index=1, base_manifold=None, category=None, unique_tag=None) -> None:
         r"""
         Construct a Euclidean 3-space.
 

@@ -533,7 +533,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
     """
     Element = AbelianGroupElement
 
-    def __init__(self, generator_orders, names, category=None):
+    def __init__(self, generator_orders, names, category=None) -> None:
         """
         The Python constructor.
 
@@ -1264,7 +1264,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             raise NotImplementedError("group must be finite")
         return tuple(iter(self))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of ``self``.
 
@@ -1641,7 +1641,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         There should be a way to coerce an element of a subgroup
         into the ambient group.
     """
-    def __init__(self, ambient, gens, names='f', category=None):
+    def __init__(self, ambient, gens, names='f', category=None) -> None:
         """
         EXAMPLES::
 
@@ -1744,7 +1744,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             category = Groups().Commutative().Subobjects()
         AbelianGroup_class.__init__(self, invs, names, category=category)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test whether ``x`` is an element of this subgroup.
 

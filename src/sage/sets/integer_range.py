@@ -322,7 +322,7 @@ class IntegerRangeFinite(IntegerRange):
 
     See :class:`IntegerRange` for more details.
     """
-    def __init__(self, begin, end, step=Integer(1)):
+    def __init__(self, begin, end, step=Integer(1)) -> None:
         r"""
         TESTS::
 
@@ -336,7 +336,7 @@ class IntegerRangeFinite(IntegerRange):
         self._step = step
         Parent.__init__(self, facade=IntegerRing(), category=FiniteEnumeratedSets())
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         Return ``True`` if ``elt`` is in ``self``.
 
@@ -531,7 +531,7 @@ class IntegerRangeInfinite(IntegerRange):
 
     See :class:`IntegerRange` for more details.
     """
-    def __init__(self, begin, step=Integer(1)):
+    def __init__(self, begin, step=Integer(1)) -> None:
         r"""
         TESTS::
 
@@ -562,7 +562,7 @@ class IntegerRangeInfinite(IntegerRange):
         """
         return "{%s, %s, ...}" % (self._begin, self._begin+self._step)
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         Return ``True`` if ``elt`` is in ``self``.
 
@@ -676,7 +676,7 @@ class IntegerRangeFromMiddle(IntegerRange):
 
     See :class:`IntegerRange` for more details.
     """
-    def __init__(self, begin, end, step=Integer(1), middle_point=Integer(1)):
+    def __init__(self, begin, end, step=Integer(1), middle_point=Integer(1)) -> None:
         r"""
         TESTS::
 
@@ -723,7 +723,7 @@ class IntegerRangeFromMiddle(IntegerRange):
         return "Integer progression containing %s with increment %s and bounded with %s and %s" % (
             self._middle_point, self._step, self._begin, self._end)
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         Return ``True`` if ``elt`` is in ``self``.
 

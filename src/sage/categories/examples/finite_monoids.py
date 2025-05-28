@@ -65,7 +65,7 @@ class IntegerModMonoid(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, n=12):
+    def __init__(self, n=12) -> None:
         r"""
         EXAMPLES::
 

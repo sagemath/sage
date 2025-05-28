@@ -139,7 +139,7 @@ class Superincreasing(SageObject):
         Super-increasing sequence of length 8
     """
 
-    def __init__(self, seq=None):
+    def __init__(self, seq=None) -> None:
         r"""
         Constructing a super-increasing sequence object from ``seq``.
 
@@ -199,7 +199,7 @@ class Superincreasing(SageObject):
         """
         return not self.__eq__(other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this super-increasing
         sequence object.

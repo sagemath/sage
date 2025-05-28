@@ -5,7 +5,7 @@ from .statistics import used_vars_set
 
 
 class CNFEncoder:
-    def __init__(self, r, random_seed=16):
+    def __init__(self, r, random_seed=16) -> None:
         self.random_generator = Random(random_seed)
         self.one_set = r.one().set()
         self.empty_set = r.zero().set()

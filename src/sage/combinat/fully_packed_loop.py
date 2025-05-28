@@ -550,7 +550,7 @@ class FullyPackedLoop(Element, metaclass=InheritComparisonClasscallMetaclass):
         FPLs = FullyPackedLoops(len(SVM))
         return FPLs(generator)
 
-    def __init__(self, parent, generator):
+    def __init__(self, parent, generator) -> None:
         """
         Initialise object, can take ASM of FPL as generator.
 
@@ -1254,7 +1254,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         True
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -1290,7 +1290,7 @@ class FullyPackedLoops(Parent, UniqueRepresentation):
         """
         return "Fully packed loops on a %sx%s grid" % (self._n, self._n)
 
-    def __contains__(self, fpl):
+    def __contains__(self, fpl) -> bool:
         """
         Check if ``fpl`` is in ``self``.
 

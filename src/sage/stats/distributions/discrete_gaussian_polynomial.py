@@ -78,7 +78,7 @@ class DiscreteGaussianDistributionPolynomialSampler(SageObject):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, P, n, sigma):
+    def __init__(self, P, n, sigma) -> None:
         r"""
         Construct a sampler for univariate polynomials of degree ``n-1``
         where coefficients are drawn independently with standard deviation

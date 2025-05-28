@@ -892,7 +892,7 @@ class Point(PrimitiveObject):
         sage: point3d((4,3,2),size=2,color='red',opacity=.5)
         Graphics3d Object
     """
-    def __init__(self, center, size=1, **kwds):
+    def __init__(self, center, size=1, **kwds) -> None:
         """
         Create the graphics primitive :class:`Point` in 3-D.
 
@@ -1075,7 +1075,7 @@ class Line(PrimitiveObject):
         Graphics3d Object
     """
     def __init__(self, points, thickness=5, corner_cutoff=0.5,
-                 arrow_head=False, **kwds):
+                 arrow_head=False, **kwds) -> None:
         """
         Create the graphics primitive :class:`Line` in 3-D.
 

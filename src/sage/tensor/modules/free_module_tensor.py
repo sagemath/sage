@@ -275,7 +275,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
         sym=None,
         antisym=None,
         parent=None,
-    ):
+    ) -> None:
         r"""
         TESTS::
 
@@ -322,7 +322,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
     ####### Required methods for ModuleElement (beside arithmetic) #######
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -1538,7 +1538,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
                 basis = self._fmodule._def_basis
         return self.comp(basis)[args]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set a component w.r.t. some basis.
 

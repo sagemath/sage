@@ -219,7 +219,7 @@ class AlgebraicScheme(scheme.Scheme):
     defined by equations in affine, projective, or toric ambient
     spaces.
     """
-    def __init__(self, A, category=None):
+    def __init__(self, A, category=None) -> None:
         """
         TESTS::
 
@@ -617,7 +617,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
            x - y
     """
 
-    def __init__(self, X, Y):
+    def __init__(self, X, Y) -> None:
         """
         The constructor.
 
@@ -911,7 +911,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
           x^2 - y*z
     """
 
-    def __init__(self, A, polynomials, category=None):
+    def __init__(self, A, polynomials, category=None) -> None:
         """
         See ``AlgebraicScheme_subscheme`` for documentation.
 

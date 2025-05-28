@@ -132,7 +132,7 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
         True
     """
 
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         Initialize ``self``.
 
@@ -259,7 +259,7 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
         True
     """
 
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         Initialize ``self``.
 
@@ -546,7 +546,7 @@ class CycleIndexSeriesRing(LazySymmetricFunctions):
     """
     Element = CycleIndexSeries
 
-    def __init__(self, base_ring, sparse=True):
+    def __init__(self, base_ring, sparse=True) -> None:
         """
         Initialize ``self``.
 

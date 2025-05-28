@@ -344,7 +344,7 @@ class Chart(UniqueRepresentation, SageObject):
         calc_method=None,
         periods=None,
         coord_restrictions=None,
-    ):
+    ) -> None:
         r"""
         Construct a chart.
 
@@ -1898,7 +1898,7 @@ class RealChart(Chart):
         bounds=None,
         periods=None,
         coord_restrictions=None,
-    ):
+    ) -> None:
         r"""
         Construct a chart on a real topological manifold.
 
@@ -3456,7 +3456,7 @@ class CoordChange(SageObject):
         v = x - y
     """
 
-    def __init__(self, chart1, chart2, *transformations):
+    def __init__(self, chart1, chart2, *transformations) -> None:
         r"""
         Construct a transition map.
 

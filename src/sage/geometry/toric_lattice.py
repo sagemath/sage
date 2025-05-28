@@ -483,7 +483,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             return None
         return super()._convert_map_from_(other)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is an element of ``self``.
 
@@ -882,7 +882,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
 
     Element = ToricLatticeElement
 
-    def __init__(self, rank, name, dual_name, latex_name, latex_dual_name):
+    def __init__(self, rank, name, dual_name, latex_name, latex_dual_name) -> None:
         r"""
         See :class:`ToricLattice <ToricLatticeFactory>` for documentation.
 
@@ -1407,7 +1407,7 @@ class ToricLattice_quotient(FGP_Module_class):
         True
     """
 
-    def __init__(self, V, W, check=True, positive_point=None, positive_dual_point=None, **kwds):
+    def __init__(self, V, W, check=True, positive_point=None, positive_dual_point=None, **kwds) -> None:
         r"""
         The constructor.
 

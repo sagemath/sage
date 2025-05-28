@@ -77,7 +77,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
     .. NOTE:: F4d is pickled by construction as F4.dual() hence the above failure.
     """
 
-    def __init__(self, type):
+    def __init__(self, type) -> None:
         """
         INPUT:
 

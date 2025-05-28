@@ -221,7 +221,7 @@ class Yangian(CombinatorialFreeModule):
                                      variable_name=variable_name,
                                      filtration=filtration)
 
-    def __init__(self, base_ring, n, variable_name, filtration):
+    def __init__(self, base_ring, n, variable_name, filtration) -> None:
         r"""
         Initialize ``self``.
 
@@ -650,7 +650,7 @@ class YangianLevel(Yangian):
         t(1)[1,2]*t(1)[1,3]*t(3)[2,1] + t(1)[1,2]*t(3)[2,3]
          - t(1)[1,3]*t(3)[1,1] + t(1)[1,3]*t(3)[2,2] - t(3)[1,3]
     """
-    def __init__(self, base_ring, n, level, variable_name, filtration):
+    def __init__(self, base_ring, n, level, variable_name, filtration) -> None:
         """
         Initialize ``self``.
 
@@ -950,7 +950,7 @@ class GradedYangianNatural(GradedYangianBase):
 
     - ``Y`` -- a Yangian with the natural filtration
     """
-    def __init__(self, Y):
+    def __init__(self, Y) -> None:
         """
         Initialize ``self``.
 
@@ -995,7 +995,7 @@ class GradedYangianLoop(GradedYangianBase):
 
     - ``Y`` -- a Yangian with the loop filtration
     """
-    def __init__(self, Y):
+    def __init__(self, Y) -> None:
         """
         Initialize ``self``.
 

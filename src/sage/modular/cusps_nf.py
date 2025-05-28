@@ -159,7 +159,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
         sage: kCusps = NFCusps(k); kCusps
         Set of all cusps of Number Field in a with defining polynomial x^2 + 5
     """
-    def __init__(self, number_field):
+    def __init__(self, number_field) -> None:
         """
         See ``NFCusps`` for full documentation.
 
@@ -420,7 +420,7 @@ class NFCusp(Element):
         ...
         ValueError: Cannot coerce cusps from one field to another
     """
-    def __init__(self, number_field, a, b=None, parent=None, lreps=None):
+    def __init__(self, number_field, a, b=None, parent=None, lreps=None) -> None:
         """
         Constructor of number field cusps. See ``NFCusp`` for full
         documentation.

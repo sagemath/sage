@@ -33,7 +33,7 @@ class msolve(Executable):
         sage: msolve().is_present()  # optional - msolve
         FeatureTestResult('msolve', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

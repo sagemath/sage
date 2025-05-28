@@ -41,7 +41,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         ct = CartanType(cartan_type)
         return super().__classcall__(cls, ct, *args, **options)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         TESTS::
 
@@ -424,7 +424,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
     class Element(ElementWrapper):
         wrapped_class = CoxGroupElement
 
-        def __init__(self, parent, x):
+        def __init__(self, parent, x) -> None:
             """
             TESTS::
 
@@ -556,7 +556,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return self.__class__(self.parent(), self.value * y.value)
 
-        def __len__(self):
+        def __len__(self) -> int:
             """
             EXAMPLES::
 

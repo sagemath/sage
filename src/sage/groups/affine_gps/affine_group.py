@@ -180,7 +180,7 @@ class AffineGroup(UniqueRepresentation, Group):
                 ring = FiniteField(ring, var)
         return super().__classcall__(cls, degree, ring)
 
-    def __init__(self, degree, ring):
+    def __init__(self, degree, ring) -> None:
         """
         Initialize ``self``.
 

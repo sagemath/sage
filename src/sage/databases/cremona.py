@@ -648,7 +648,7 @@ class MiniCremonaDatabase(SQLDatabase):
     """
     _expected_skeleton = _miniCremonaSkeleton
 
-    def __init__(self, name, read_only=True, build=False):
+    def __init__(self, name, read_only=True, build=False) -> None:
         """
         Initialize the database.
 
@@ -740,7 +740,7 @@ class MiniCremonaDatabase(SQLDatabase):
             ret['allgens'] = self.allgens(N)
         return ret
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of this database.
 

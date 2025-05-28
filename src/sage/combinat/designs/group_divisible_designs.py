@@ -260,7 +260,7 @@ class GroupDivisibleDesign(IncidenceStructure):
         [['a', 'b', 'c'], ['d', 'e', 'f'], ['g', 'h', 'i'], ['k', 'l', 'm']]
     """
     def __init__(self, points, groups, blocks, G=None, K=None, lambd=1,
-                 check=True, copy=True, **kwds):
+                 check=True, copy=True, **kwds) -> None:
         r"""
         Constructor function.
 
@@ -334,7 +334,7 @@ class GroupDivisibleDesign(IncidenceStructure):
         else:
             return [[self._points[i] for i in g] for g in self._groups]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string that describes ``self``.
 

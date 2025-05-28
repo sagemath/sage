@@ -1973,7 +1973,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         sage: s(m([2,1]))
         -2*s[1, 1, 1] + s[2, 1]
     """
-    def __init__(self, Sym, basis_name=None, prefix=None, graded=True):
+    def __init__(self, Sym, basis_name=None, prefix=None, graded=True) -> None:
         r"""
         Initialize the symmetric function algebra.
 
@@ -6621,7 +6621,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, basis, name, *args):
+    def __init__(self, basis, name, *args) -> None:
         r"""
         Initialize the functor.
 
@@ -6763,7 +6763,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
 
 
 class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
-    def __init__(self, basis, family, name, *args):
+    def __init__(self, basis, family, name, *args) -> None:
         r"""
         Initialize the functor.
 

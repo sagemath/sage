@@ -159,7 +159,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         sage: P != P
         False
     """
-    def __init__(self, p, use_database=True):
+    def __init__(self, p, use_database=True) -> None:
         """
         TESTS::
 

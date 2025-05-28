@@ -197,7 +197,7 @@ class NumberField_relative(NumberField_generic):
         True
     """
     def __init__(self, base, polynomial, name,
-                 latex_name=None, names=None, check=True, embedding=None, structure=None):
+                 latex_name=None, names=None, check=True, embedding=None, structure=None) -> None:
         r"""
         Initialization.
 

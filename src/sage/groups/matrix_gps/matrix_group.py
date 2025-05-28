@@ -433,7 +433,7 @@ class MatrixGroup_generic(MatrixGroup_base):
 
     Element = MatrixGroupElement_generic
 
-    def __init__(self, degree, base_ring, category=None):
+    def __init__(self, degree, base_ring, category=None) -> None:
         """
         Base class for matrix groups over generic base rings.
 

@@ -866,7 +866,7 @@ class QuiverRepElement(ModuleElement):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, parent, elements=None, name=None):
+    def __init__(self, parent, elements=None, name=None) -> None:
         """
         Initialize ``self``. Type ``QuiverRepElement?`` for more information.
 
@@ -1351,7 +1351,7 @@ class QuiverRep_generic(WithEqualityById, Module):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, k, P, spaces, maps):
+    def __init__(self, k, P, spaces, maps) -> None:
         """
         Initialize ``self``. Type ``QuiverRep?`` for more information.
 
@@ -2711,7 +2711,7 @@ class QuiverRep_with_path_basis(QuiverRep_generic):
     #       associated to vertex v in the QuiverRepElement by the matrix
     #       _left_action_mats[e][v]
 
-    def __init__(self, k, P, basis):
+    def __init__(self, k, P, basis) -> None:
         """
         Initialize ``self``. Type ``QuiverRep_with_path_basis?`` for more
         information.
@@ -2927,7 +2927,7 @@ class QuiverRep_with_dual_path_basis(QuiverRep_generic):
     #       correspond to the basis elements of the space assigned to that
     #       vertex.
 
-    def __init__(self, k, P, basis):
+    def __init__(self, k, P, basis) -> None:
         """
         Initialize ``self``. Type ``QuiverRep_with_dual_path_basis?`` for
         more information.

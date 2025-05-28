@@ -188,7 +188,7 @@ class Sigma0Element(MonoidElement):
         [ 1 -2]
         [ 0  1]
     """
-    def __init__(self, parent, mat):
+    def __init__(self, parent, mat) -> None:
         r"""
         EXAMPLES::
 
@@ -330,7 +330,7 @@ class _Sigma0Embedding(Morphism):
     framework so that "x * y" will work if ``x`` is a matrix and ``y`` is a `\Sigma_0`
     element (returning a matrix, *not* a Sigma0 element).
     """
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         TESTS::
 
@@ -392,7 +392,7 @@ class Sigma0_class(Parent):
     """
     Element = Sigma0Element
 
-    def __init__(self, N, base_ring, adjuster):
+    def __init__(self, N, base_ring, adjuster) -> None:
         r"""
         Standard init function. For args documentation see the factory
         function.

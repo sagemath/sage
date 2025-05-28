@@ -457,7 +457,7 @@ class Kash(Expect):
                  restart_on_ctrlc=True,
                  logfile=None,
                  server=None,
-                 server_tmpdir=None):
+                 server_tmpdir=None) -> None:
         """
         INPUT:
 
@@ -700,11 +700,11 @@ class KashElement(ExpectElement):
         other._check_valid()
         return self.parent()('%s mod %s' % (self._name, other._name))
 
-    def __len__(self):
+    def __len__(self) -> int:
         self._check_valid()
         return int(self.parent().eval('Length(%s)' % self.name()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this Kash element is not 0 or FALSE.
 
@@ -781,7 +781,7 @@ class KashElement(ExpectElement):
 
 
 class KashDocumentation(list):
-    def __repr__(self):
+    def __repr__(self) -> str:
         if len(self) == 0:
             return "No matches."
         return '\n'.join(self)

@@ -67,7 +67,7 @@ class QuiverHomSpace(Homset):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, domain, codomain, category=None):
+    def __init__(self, domain, codomain, category=None) -> None:
         """
         Initialize ``self``. Type ``QuiverHomSpace?`` for more information.
 

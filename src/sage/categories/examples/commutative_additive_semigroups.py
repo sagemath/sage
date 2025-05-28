@@ -67,7 +67,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a','b','c','d')) -> None:
         r"""
         The free commutative monoid.
 
@@ -144,7 +144,7 @@ class FreeCommutativeAdditiveSemigroup(UniqueRepresentation, Parent):
         return self((a, (ord(a)-96)) for a in self.alphabet)
 
     class Element(ElementWrapper):
-        def __init__(self, parent, iterable):
+        def __init__(self, parent, iterable) -> None:
             """
             EXAMPLES::
 

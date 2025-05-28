@@ -320,7 +320,7 @@ class Giac(Expect):
         sage: g.n()
         0.577215664901533
     """
-    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
+    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None) -> None:
         """
         Create an instance of the Giac interpreter.
 
@@ -840,7 +840,7 @@ class GiacFunctionElement(FunctionElement):
 
 @instancedoc
 class GiacElement(ExpectElement):
-    def __float__(self):
+    def __float__(self) -> float:
         """
         Return a floating point version of ``self``.
 
@@ -952,7 +952,7 @@ class GiacElement(ExpectElement):
         """
         return self.parent()._tab_completion()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -972,7 +972,7 @@ class GiacElement(ExpectElement):
         for i in range(len(self)):  # zero-indexed if giac is maple_mode(0)
             yield self[i]
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         Note that clearing object is pointless since it wastes time.
         (Ex: otherwise doing a=0 after a = (giac('x+y+z')^40).normal() is very slow )

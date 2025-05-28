@@ -65,7 +65,7 @@ class SagePrettyPrinter(PrettyPrinter):
         """
         return len(self.stack) <= 1   # only the object currently being represented
 
-    def __init__(self, output, max_width, newline, max_seq_length=None):
+    def __init__(self, output, max_width, newline, max_seq_length=None) -> None:
         """
         Pretty print Sage objects for the commandline.
 

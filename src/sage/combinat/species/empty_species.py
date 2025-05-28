@@ -80,7 +80,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         True
     """
 
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Initializer for the empty species.
 

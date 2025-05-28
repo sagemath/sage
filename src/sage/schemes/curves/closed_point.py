@@ -112,7 +112,7 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
          Point (x + 1, y + a),
          Point (x + 1, y + (a + 1))]
     """
-    def __init__(self, curve, prime_ideal, degree):
+    def __init__(self, curve, prime_ideal, degree) -> None:
         """
         Initialize.
 

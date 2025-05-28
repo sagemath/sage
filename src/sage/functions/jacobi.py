@@ -168,7 +168,7 @@ class Jacobi(BuiltinFunction):
     """
     Base class for the Jacobi elliptic functions.
     """
-    def __init__(self, kind):
+    def __init__(self, kind) -> None:
         r"""
         Initialize ``self``.
 
@@ -540,7 +540,7 @@ class InverseJacobi(BuiltinFunction):
     r"""
     Base class for the inverse Jacobi elliptic functions.
     """
-    def __init__(self, kind):
+    def __init__(self, kind) -> None:
         r"""
         Initialize ``self``.
 
@@ -1073,7 +1073,7 @@ class JacobiAmplitude(BuiltinFunction):
     `\operatorname{am}(x|m) = \int_0^x \operatorname{dn}(t|m) dt` for
     `-K(m) \leq x \leq K(m)`, `F(\operatorname{am}(x|m)|m) = x`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

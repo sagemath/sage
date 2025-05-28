@@ -135,7 +135,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
           x*u - y*v,
           x*y*v^2 + z^2*u*w
     """
-    def __init__(self, polys):
+    def __init__(self, polys) -> None:
         if not isinstance(polys, (list, tuple)):
             raise TypeError("polys must be a list or tuple of polynomials")
         R = polys[0].parent()

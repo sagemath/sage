@@ -253,7 +253,7 @@ class RealReflectionGroup(ComplexReflectionGroup):
         :func:`ReflectionGroup`
     """
 
-    def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None):
+    def __init__(self, W_types, index_set=None, hyperplane_index_set=None, reflection_index_set=None) -> None:
         r"""
         Initialize ``self``.
 

@@ -66,7 +66,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             return YokonumaHeckeAlgebraWeyl(d, n, q, R)
         return YokonumaHeckeAlgebraGL(d, n, q, R)
 
-    def __init__(self, d, W, q, R, indices, category=None):
+    def __init__(self, d, W, q, R, indices, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -262,7 +262,7 @@ class YokonumaHeckeAlgebraGL(YokonumaHeckeAlgebra):
     - [ERH2015]_
     - [JPdA15]_
     """
-    def __init__(self, d, n, q, R):
+    def __init__(self, d, n, q, R) -> None:
         """
         Initialize ``self``.
 
@@ -667,7 +667,7 @@ class YokonumaHeckeAlgebraWeyl(YokonumaHeckeAlgebra):
 
     - [Marin2018]_
     """
-    def __init__(self, d, ct, q, R):
+    def __init__(self, d, ct, q, R) -> None:
         r"""
         Initialize ``self``.
 

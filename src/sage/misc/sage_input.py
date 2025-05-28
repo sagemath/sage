@@ -305,7 +305,7 @@ class SageInputBuilder:
         (3 + 4)*(5 + 6)
     """
 
-    def __init__(self, allow_locals=False, preparse=True):
+    def __init__(self, allow_locals=False, preparse=True) -> None:
         r"""
         Initialize an instance of :class:`SageInputBuilder`.
 
@@ -1233,7 +1233,7 @@ class SageInputExpression:
     way, that reveals the internal structure of the expression tree.
     """
 
-    def __init__(self, sib):
+    def __init__(self, sib) -> None:
         r"""
         Initialize a :class:`SageInputExpression`.
 
@@ -1764,7 +1764,7 @@ class SIE_literal_stringrep(SIE_literal):
         {atomic:False}
     """
 
-    def __init__(self, sib, n):
+    def __init__(self, sib, n) -> None:
         r"""
         Initialize a :class:`SIE_literal_stringrep` value.
 
@@ -1788,7 +1788,7 @@ class SIE_literal_stringrep(SIE_literal):
         self._sie_value = str(n)
         self._sie_share = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_literal_stringrep`
         value.
@@ -1839,7 +1839,7 @@ class SIE_call(SageInputExpression):
         {call: {atomic:GF}({atomic:49})}
     """
 
-    def __init__(self, sib, func, args, kwargs):
+    def __init__(self, sib, func, args, kwargs) -> None:
         r"""
         Initialize an instance of :class:`SIE_call`.
 
@@ -1867,7 +1867,7 @@ class SIE_call(SageInputExpression):
         self._sie_args = args
         self._sie_kwargs = kwargs
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_call` value.
 
@@ -1942,7 +1942,7 @@ class SIE_subscript(SageInputExpression):
         {subscr: {atomic:QQ}[{atomic:'x,y'}]}
     """
 
-    def __init__(self, sib, coll, key):
+    def __init__(self, sib, coll, key) -> None:
         r"""
         Initialize an instance of :class:`SIE_subscript`.
 
@@ -1974,7 +1974,7 @@ class SIE_subscript(SageInputExpression):
         self._sie_coll = coll
         self._sie_key = key
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_subscript` value.
 
@@ -2050,7 +2050,7 @@ class SIE_getattr(SageInputExpression):
         sage: sie
         {call: {getattr: {atomic:CC}.gen}()}
     """
-    def __init__(self, sib, obj, attr):
+    def __init__(self, sib, obj, attr) -> None:
         r"""
         Initialize an instance of :class:`SIE_getattr`.
 
@@ -2074,7 +2074,7 @@ class SIE_getattr(SageInputExpression):
         self._sie_obj = obj
         self._sie_attr = attr
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_getattr` value.
 
@@ -2141,7 +2141,7 @@ class SIE_tuple(SageInputExpression):
         {list: ({atomic:'lists'})}
     """
 
-    def __init__(self, sib, values, is_list):
+    def __init__(self, sib, values, is_list) -> None:
         r"""
         Initialize an instance of :class:`SIE_tuple`.
 
@@ -2169,7 +2169,7 @@ class SIE_tuple(SageInputExpression):
         self._sie_values = values
         self._sie_is_list = is_list
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_tuple` value.
 
@@ -2253,7 +2253,7 @@ class SIE_dict(SageInputExpression):
                 {atomic:0}:{atomic:32}, {atomic:100}:{atomic:212}}}
     """
 
-    def __init__(self, sib, entries):
+    def __init__(self, sib, entries) -> None:
         r"""
         Initialize an instance of :class:`SIE_dict`.
 
@@ -2277,7 +2277,7 @@ class SIE_dict(SageInputExpression):
         super().__init__(sib)
         self._sie_entries = entries
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_dict` value.
 
@@ -2343,7 +2343,7 @@ class SIE_binary(SageInputExpression):
         {binop:+ {atomic:3} {atomic:5}}
     """
 
-    def __init__(self, sib, op, lhs, rhs):
+    def __init__(self, sib, op, lhs, rhs) -> None:
         r"""
         Initialize an instance of :class:`SIE_binary`.
 
@@ -2369,7 +2369,7 @@ class SIE_binary(SageInputExpression):
         self._sie_op = op
         self._sie_operands = (lhs, rhs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_binary` value.
 
@@ -2493,7 +2493,7 @@ class SIE_unary(SageInputExpression):
         {unop:- {atomic:256}}
     """
 
-    def __init__(self, sib, op, operand):
+    def __init__(self, sib, op, operand) -> None:
         r"""
         Initialize an instance of :class:`SIE_unary`.
 
@@ -2517,7 +2517,7 @@ class SIE_unary(SageInputExpression):
         self._sie_op = op
         self._sie_operand = operand
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_unary` value.
 
@@ -2680,7 +2680,7 @@ class SIE_gens_constructor(SageInputExpression):
         {constr_parent: {subscr: {atomic:QQ}[{atomic:'x'}]} with gens: ('x',)}
     """
 
-    def __init__(self, sib, constr, gen_names, gens_syntax=None):
+    def __init__(self, sib, constr, gen_names, gens_syntax=None) -> None:
         r"""
         Initialize an instance of :class:`SIE_gens_constructor`.
 
@@ -2715,7 +2715,7 @@ class SIE_gens_constructor(SageInputExpression):
         self._sie_assign_gens = False
         self._sie_generated = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_gens_constructor` value.
 
@@ -2906,7 +2906,7 @@ class SIE_gen(SageInputExpression):
         {gen:x {constr_parent: {subscr: {atomic:ZZ}[{atomic:'x'}]} with gens: ('x',)}}
     """
 
-    def __init__(self, sib, parent, name):
+    def __init__(self, sib, parent, name) -> None:
         r"""
         Initialize an instance of :class:`SIE_gen`.
 
@@ -2930,7 +2930,7 @@ class SIE_gen(SageInputExpression):
         self._sie_parent = parent
         self._sie_preferred_varname = name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_gen` value.
 
@@ -3058,7 +3058,7 @@ class SIE_import_name(SageInputExpression):
         {import:sage.foo/happy as sad}
     """
 
-    def __init__(self, sib, module, name, alt_name=None):
+    def __init__(self, sib, module, name, alt_name=None) -> None:
         r"""
         Initialize an instance of :class:`SIE_import_name`.
 
@@ -3092,7 +3092,7 @@ class SIE_import_name(SageInputExpression):
         else:
             self._sie_preferred_varname = alt_name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_import_name` value.
 
@@ -3192,7 +3192,7 @@ class SIE_assign(SageInputExpression):
         {assign: {getattr: {atomic:foo}.x} {atomic:pi}}
     """
 
-    def __init__(self, sib, lhs, rhs):
+    def __init__(self, sib, lhs, rhs) -> None:
         r"""
         Initialize an instance of :class:`SIE_assign`.
 
@@ -3216,7 +3216,7 @@ class SIE_assign(SageInputExpression):
         self._sie_lhs = lhs
         self._sie_rhs = rhs
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing this :class:`SIE_assign` command.
 
@@ -3292,7 +3292,7 @@ class SageInputFormatter:
     formatting process.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize an instance of :class:`SageInputFormatter`.
 
@@ -3597,7 +3597,7 @@ class SageInputAnswer(tuple):
         else:
             return tuple.__new__(cls, (cmds, expr))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation for a :class:`SageInputAnswer`,
         such that if you evaluate this :class:`SageInputAnswer` at the

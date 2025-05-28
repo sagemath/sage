@@ -132,7 +132,7 @@ class Decoder(SageObject):
         """
         return self._decoder_type
 
-    def __init__(self, code, input_space, connected_encoder_name):
+    def __init__(self, code, input_space, connected_encoder_name) -> None:
         r"""
         Initialize mandatory parameters for :class:`Decoder` objects.
 

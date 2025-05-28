@@ -92,7 +92,7 @@ class LieAlgebraHomomorphism_im_gens(Morphism):
         sage: phi(X).bracket(phi(Y))
         -i*C
     """
-    def __init__(self, parent, im_gens, base_map=None, check=True):
+    def __init__(self, parent, im_gens, base_map=None, check=True) -> None:
         """
         EXAMPLES::
 
@@ -270,7 +270,7 @@ class LieAlgebraHomset(Homset):
         This is a very minimal implementation which does not
         have coercions of the morphisms.
     """
-    def __init__(self, X, Y, category=None, base=None, check=True):
+    def __init__(self, X, Y, category=None, base=None, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -474,7 +474,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
                 Z |--> 0
                 W |--> 0
     """
-    def __init__(self, on_generators, domain=None, codomain=None, check=True, base_map=None, category=None):
+    def __init__(self, on_generators, domain=None, codomain=None, check=True, base_map=None, category=None) -> None:
         r"""
         Initialize ``self``.
 

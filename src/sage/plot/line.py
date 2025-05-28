@@ -33,7 +33,7 @@ class Line(GraphicPrimitive_xydata):
         sage: Line([1,2,7], [1,5,-1], {})
         Line defined by 3 points
     """
-    def __init__(self, xdata, ydata, options):
+    def __init__(self, xdata, ydata, options) -> None:
         """
         Initialize a line graphics primitive.
 
@@ -183,7 +183,7 @@ class Line(GraphicPrimitive_xydata):
         """
         return self.xdata[i], self.ydata[i]
 
-    def __setitem__(self, i, point):
+    def __setitem__(self, i, point) -> None:
         """
         Set the i-th element of this line (really a sequence of lines
         through given points).
@@ -218,7 +218,7 @@ class Line(GraphicPrimitive_xydata):
         self.xdata[i] = float(point[0])
         self.ydata[i] = float(point[1])
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of points on this line (where a line is really a sequence
         of line segments through a given list of points).

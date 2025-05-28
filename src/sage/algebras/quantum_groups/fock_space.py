@@ -338,7 +338,7 @@ class FockSpace(Parent, UniqueRepresentation):
             return FockSpaceTruncated(n, truncated, q, base_ring)
         return super().__classcall__(cls, n, multicharge, q, base_ring)
 
-    def __init__(self, n, multicharge, q, base_ring):
+    def __init__(self, n, multicharge, q, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -557,7 +557,7 @@ class FockSpace(Parent, UniqueRepresentation):
             sage: x.e(2)
             |3, 1> + q*|2, 1, 1>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             """
             Initialize ``self``.
 
@@ -1062,7 +1062,7 @@ class FockSpace(Parent, UniqueRepresentation):
              + q^2*|[], [4]> + q^3*|[], [3, 1]> + q^3*|[], [2, 1, 1]>
              + q^4*|[], [1, 1, 1, 1]>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 
@@ -1291,7 +1291,7 @@ class FockSpace(Parent, UniqueRepresentation):
              + q^2*|[], [4]> + q^3*|[], [3, 1]> + q^3*|[], [2, 1, 1]>
              + q^4*|[], [1, 1, 1, 1]>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 
@@ -1390,7 +1390,7 @@ class FockSpaceBases(Category_realization_of_parent):
     r"""
     The category of bases of a (truncated) Fock space.
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of a Fock space.
 
@@ -1678,7 +1678,7 @@ class FockSpaceTruncated(FockSpace):
         q = base_ring(q)
         return super().__classcall__(cls, n, k, q, base_ring)
 
-    def __init__(self, n, k, q, base_ring):
+    def __init__(self, n, k, q, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -1731,7 +1731,7 @@ class FockSpaceTruncated(FockSpace):
             sage: u3.f(0,3,2,1,1)
             0
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 
@@ -1851,7 +1851,7 @@ class FockSpaceTruncated(FockSpace):
             sage: G._G_to_fock_basis(Partition([12,9]), 'LLT')
             |12, 9> + q*|12, 4, 4, 1> + q*|8, 8, 5> + q^2*|8, 8, 4, 1>
         """
-        def __init__(self, F, algorithm='GW'):
+        def __init__(self, F, algorithm='GW') -> None:
             r"""
             Initialize ``self``.
 
@@ -2124,7 +2124,7 @@ class FockSpaceTruncated(FockSpace):
             sage: F(G[7])
             |7> + q*|3, 3, 1>
         """
-        def __init__(self, F):
+        def __init__(self, F) -> None:
             r"""
             Initialize ``self``.
 

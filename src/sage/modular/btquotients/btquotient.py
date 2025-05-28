@@ -144,7 +144,7 @@ class DoubleCosetReduction(SageObject):
     - Marc Masdeu
     """
 
-    def __init__(self, Y, x, extrapow=0):
+    def __init__(self, Y, x, extrapow=0) -> None:
         r"""
         Initialize and compute the reduction as a double coset.
 
@@ -420,7 +420,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
     - Marc Masdeu (2012-02-20)
     """
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         """
         Initialize a BruhatTitsTree object for a given prime `p`.
 
@@ -1123,7 +1123,7 @@ class Vertex(SageObject):
     - Marc Masdeu (2012-02-20)
     """
     def __init__(self, p, label, rep, leaving_edges=None,
-                 entering_edges=None, determinant=None, valuation=None):
+                 entering_edges=None, determinant=None, valuation=None) -> None:
         """
         This initializes a structure to represent vertices of
         quotients of the Bruhat-Tits tree. It is useful to enrich the
@@ -1250,7 +1250,7 @@ class Edge(SageObject):
     - Marc Masdeu (2012-02-20)
     """
     def __init__(self, p, label, rep, origin, target, links=None,
-                 opposite=None, determinant=None, valuation=None):
+                 opposite=None, determinant=None, valuation=None) -> None:
         """
         Representation for edges of quotients of the Bruhat-Tits
         tree. It is useful to enrich the representation of an edge as
@@ -1421,7 +1421,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                                      seed, magma_session)
 
     def __init__(self, p, Nminus, Nplus=1, character=None,
-                 use_magma=False, seed=None, magma_session=None):
+                 use_magma=False, seed=None, magma_session=None) -> None:
         """
         Compute the quotient of the Bruhat-Tits tree by an arithmetic
         quaternionic group.

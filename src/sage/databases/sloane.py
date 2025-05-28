@@ -97,7 +97,7 @@ class SloaneEncyclopediaClass:
     that contains only the sequence numbers and the sequences
     themselves.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize the database but do not load any of the data.
         """
@@ -107,7 +107,7 @@ class SloaneEncyclopediaClass:
         self.__loaded__ = False
         self.__loaded_names__ = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of this database.
 
@@ -142,7 +142,7 @@ class SloaneEncyclopediaClass:
             self.__data__[N][1] = [ZZ(n) for n in list]
         return self.__data__[N][1]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of sequences in the encyclopedia.
         """

@@ -54,7 +54,7 @@ class QuaGroupModuleElement(Element):
     """
     Base class for elements created using QuaGroup.
     """
-    def __init__(self, parent, libgap_elt):
+    def __init__(self, parent, libgap_elt) -> None:
         """
         Initialize ``self``.
 
@@ -358,7 +358,7 @@ class QuantumGroup(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type, q)
 
-    def __init__(self, cartan_type, q):
+    def __init__(self, cartan_type, q) -> None:
         """
         Initialize ``self``.
 
@@ -1075,7 +1075,7 @@ class QuantumGroupMorphism(Morphism):
     r"""
     A morphism whose domain is a quantum group.
     """
-    def __init__(self, parent, im_gens, check=True):
+    def __init__(self, parent, im_gens, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -1452,7 +1452,7 @@ class CrystalGraphVertex(SageObject):
     r"""
     Helper class used as the vertices of a crystal graph.
     """
-    def __init__(self, V, s):
+    def __init__(self, V, s) -> None:
         """
         Initialize ``self``.
 
@@ -1553,7 +1553,7 @@ class QuantumGroupModule(Parent, UniqueRepresentation):
     r"""
     Abstract base class for quantum group representations.
     """
-    def __init__(self, Q, category):
+    def __init__(self, Q, category) -> None:
         r"""
         Initialize ``self``.
 
@@ -1744,7 +1744,7 @@ class HighestWeightModule(QuantumGroupModule):
             weight = P(weight)
         return super().__classcall__(cls, Q, weight)
 
-    def __init__(self, Q, weight):
+    def __init__(self, Q, weight) -> None:
         """
         Initialize ``self``.
 
@@ -1821,7 +1821,7 @@ class HighestWeightModule(QuantumGroupModule):
 
 
 class TensorProductOfHighestWeightModules(QuantumGroupModule):
-    def __init__(self, *modules, **options):
+    def __init__(self, *modules, **options) -> None:
         """
         Initialize ``self``.
 
@@ -1957,7 +1957,7 @@ class TensorProductOfHighestWeightModules(QuantumGroupModule):
 
 
 class HighestWeightSubmodule(QuantumGroupModule):
-    def __init__(self, ambient, gen, weight):
+    def __init__(self, ambient, gen, weight) -> None:
         """
         Initialize ``self``.
 
@@ -2183,7 +2183,7 @@ class LowerHalfQuantumGroup(Parent, UniqueRepresentation):
             Q = QuantumGroup(Q)
         return super().__classcall__(cls, Q)
 
-    def __init__(self, Q):
+    def __init__(self, Q) -> None:
         """
         Initialize ``self``.
 

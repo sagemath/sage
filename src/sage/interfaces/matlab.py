@@ -174,7 +174,7 @@ class Matlab(Expect):
            505
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None, server_tmpdir=None):
+                 logfile=None, server=None, server_tmpdir=None) -> None:
         Expect.__init__(self,
                         name='matlab',
                         prompt='>> ',

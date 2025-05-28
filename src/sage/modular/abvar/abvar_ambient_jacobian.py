@@ -73,7 +73,7 @@ class ModAbVar_ambient_jacobian_class(ModularAbelianVariety_modsym_abstract):
     An ambient Jacobian modular abelian variety attached to a
     congruence subgroup.
     """
-    def __init__(self, group):
+    def __init__(self, group) -> None:
         """
         Create an ambient Jacobian modular abelian variety.
 

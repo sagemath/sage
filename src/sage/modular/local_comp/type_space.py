@@ -158,7 +158,7 @@ class TypeSpace(SageObject):
     # Basic initialisation and data-access functions
     #################################################
 
-    def __init__(self, f, p, base_extend=True):
+    def __init__(self, f, p, base_extend=True) -> None:
         r"""
         EXAMPLES::
 

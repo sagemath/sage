@@ -26,7 +26,7 @@ class BSD_data:
         Tate-Shafarevich group for the Elliptic Curve
          defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.curve = None
         self.two_tor_rk = None
         self.Sha = None

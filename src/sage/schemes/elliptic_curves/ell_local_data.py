@@ -155,7 +155,7 @@ class EllipticCurveLocalData(SageObject):
           Tamagawa Number: 2
     """
 
-    def __init__(self, E, P, proof=None, algorithm='pari', globally=False):
+    def __init__(self, E, P, proof=None, algorithm='pari', globally=False) -> None:
         r"""
         Initialize the reduction data for the elliptic curve `E` at the prime `P`.
 
@@ -289,7 +289,7 @@ class EllipticCurveLocalData(SageObject):
                 else:
                     self._reduction_type = -1
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this reduction data.
 

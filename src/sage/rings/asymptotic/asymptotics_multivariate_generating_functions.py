@@ -326,7 +326,7 @@ class FractionWithFactoredDenominator(RingElement):
     - Daniel Krenn (2014-12-01)
     """
 
-    def __init__(self, parent, numerator, denominator_factored, reduce=True):
+    def __init__(self, parent, numerator, denominator_factored, reduce=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -3012,7 +3012,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         return super().__classcall__(cls, denominator_ring,
                                      numerator_ring, category)
 
-    def __init__(self, denominator_ring, numerator_ring=None, category=None):
+    def __init__(self, denominator_ring, numerator_ring=None, category=None) -> None:
         r"""
         Initialize ``self``.
 

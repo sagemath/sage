@@ -426,7 +426,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         sage: a**(10^62)
         61
     """
-    def __init__(self, order, cache=None, category=None):
+    def __init__(self, order, cache=None, category=None) -> None:
         """
         Create with the command ``IntegerModRing(order)``.
 

@@ -141,7 +141,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, evaluation_points, dimension, column_multipliers=None):
+    def __init__(self, evaluation_points, dimension, column_multipliers=None) -> None:
         r"""
         TESTS:
 
@@ -693,7 +693,7 @@ class GRSEvaluationVectorEncoder(Encoder):
         Evaluation vector-style encoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -842,7 +842,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
         Univariate Polynomial Ring in y over Finite Field of size 59
     """
 
-    def __init__(self, code, polynomial_ring=None):
+    def __init__(self, code, polynomial_ring=None) -> None:
         r"""
         TESTS:
 
@@ -1113,7 +1113,7 @@ class GRSBerlekampWelchDecoder(Decoder):
         Berlekamp-Welch decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -1417,7 +1417,7 @@ class GRSGaoDecoder(Decoder):
         Gao decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -1807,7 +1807,7 @@ class GRSErrorErasureDecoder(Decoder):
         Error-Erasure decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -2037,7 +2037,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         Key equation decoder for [40, 12, 29] Reed-Solomon Code over GF(59)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS::
 

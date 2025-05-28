@@ -110,7 +110,7 @@ class Mupad(ExtraTabCompletion, Expect):
     """
     Interface to the MuPAD interpreter.
     """
-    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None):
+    def __init__(self, maxread=None, script_subdirectory=None, server=None, server_tmpdir=None, logfile=None) -> None:
         """
         Create an instance of the MuPAD interpreter.
 
@@ -604,7 +604,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         s = P._eval_line('generate::TeX(%s)' % self.name())
         return s.replace('\\\\', '\\').strip().strip('"')
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         The analogue in MuPAD of Python's len is the method nops.
 

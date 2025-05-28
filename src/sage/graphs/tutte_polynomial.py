@@ -233,7 +233,7 @@ class Ear:
 
     INPUT:
     """
-    def __init__(self, graph, end_points, interior, is_cycle):
+    def __init__(self, graph, end_points, interior, is_cycle) -> None:
         """
         EXAMPLES::
 
@@ -377,7 +377,7 @@ class EdgeSelection:
 
 
 class VertexOrder(EdgeSelection):
-    def __init__(self, order):
+    def __init__(self, order) -> None:
         """
         EXAMPLES::
 

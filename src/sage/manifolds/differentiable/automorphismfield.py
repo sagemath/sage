@@ -138,7 +138,7 @@ class AutomorphismField(TensorField):
         sage: ia is ~a
         True
     """
-    def __init__(self, vector_field_module, name=None, latex_name=None):
+    def __init__(self, vector_field_module, name=None, latex_name=None) -> None:
         r"""
         Construct a field of tangent-space automorphisms on a
         non-parallelizable manifold.
@@ -988,7 +988,7 @@ class AutomorphismFieldParal(FreeModuleAutomorphism, TensorFieldParal):
         sage: inv is ~rot
         True
     """
-    def __init__(self, vector_field_module, name=None, latex_name=None):
+    def __init__(self, vector_field_module, name=None, latex_name=None) -> None:
         r"""
         Construct a field of tangent-space automorphisms.
 

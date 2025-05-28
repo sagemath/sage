@@ -122,7 +122,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simply_laced, Ca
 
 
 class CartanType(CartanType_standard_finite, CartanType_simply_laced):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 

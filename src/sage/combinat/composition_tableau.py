@@ -68,7 +68,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
             return t
         return CompositionTableaux_all().element_class(CompositionTableaux_all(), t)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         r"""
         Initialize a composition tableau.
 
@@ -426,7 +426,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
         return CompositionTableaux_all(max_entry)
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -470,7 +470,7 @@ class CompositionTableaux(UniqueRepresentation, Parent):
 
         return self.element_class(self, t)
 
-    def __contains__(self, T):
+    def __contains__(self, T) -> bool:
         r"""
         Return ``True`` if ``T`` can be interpreted as
         :class:`CompositionTableau`.
@@ -515,7 +515,7 @@ class CompositionTableaux_all(CompositionTableaux, DisjointUnionEnumeratedSets):
     All composition tableaux.
     """
 
-    def __init__(self, max_entry=None):
+    def __init__(self, max_entry=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -569,7 +569,7 @@ class CompositionTableaux_size(CompositionTableaux):
     OUTPUT: the class of composition tableaux of size `n`
     """
 
-    def __init__(self, n, max_entry=None):
+    def __init__(self, n, max_entry=None) -> None:
         r"""
         Initialize the class of composition tableaux of size `n`.
 
@@ -584,7 +584,7 @@ class CompositionTableaux_size(CompositionTableaux):
                          category=FiniteEnumeratedSets())
         self.size = n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         TESTS::
 
@@ -666,7 +666,7 @@ class CompositionTableaux_shape(CompositionTableaux):
     - ``comp`` -- a composition
     - ``max_entry`` -- nonnegative integer (default: size of ``comp``)
     """
-    def __init__(self, comp, max_entry=None):
+    def __init__(self, comp, max_entry=None) -> None:
         """
         Initialize ``self``.
 
@@ -710,7 +710,7 @@ class CompositionTableaux_shape(CompositionTableaux):
             for z in CompositionTableauxBacktracker(self.shape, self.max_entry):
                 yield CompositionTableau(z)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         TESTS::
 
@@ -753,7 +753,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
     A backtracker class for generating sets of composition tableaux.
     """
 
-    def __init__(self, shape, max_entry=None):
+    def __init__(self, shape, max_entry=None) -> None:
         """
         EXAMPLES::
 

@@ -217,7 +217,7 @@ class TamariIntervalPoset(Element,
         P = TamariIntervalPosets_all()
         return P.element_class(P, *args, **opts)
 
-    def __init__(self, parent, size, relations=None, check=True):
+    def __init__(self, parent, size, relations=None, check=True) -> None:
         r"""
         TESTS::
 
@@ -3618,7 +3618,7 @@ class TamariIntervalPosets_all(DisjointUnionEnumeratedSets, TamariIntervalPosets
     The enumerated set of all Tamari interval-posets.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -3706,7 +3706,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
     The enumerated set of interval-posets of a given size.
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         r"""
         TESTS::
 

@@ -169,7 +169,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
     _degree = None
 
-    def __init__(self, E, power=1):
+    def __init__(self, E, power=1) -> None:
         r"""
         Construct a Frobenius isogeny on a given curve with a given
         power of the base-ring characteristic.

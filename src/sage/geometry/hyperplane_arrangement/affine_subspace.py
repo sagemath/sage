@@ -93,7 +93,7 @@ class AffineSubspace(SageObject):
           p = (1, 0, 0, 0)
           W = Vector space of dimension 4 over Rational Field
     """
-    def __init__(self, p, V):
+    def __init__(self, p, V) -> None:
         r"""
         Construct an :class:`AffineSubspace`.
 
@@ -254,7 +254,7 @@ class AffineSubspace(SageObject):
             return False
         return self <= other
 
-    def __contains__(self, q):
+    def __contains__(self, q) -> bool:
         r"""
         Test whether the point ``q`` is in the affine space.
 

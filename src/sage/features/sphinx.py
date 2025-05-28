@@ -28,7 +28,7 @@ class Sphinx(PythonModule):
         sage: Sphinx().is_present()                     # optional - sphinx
         FeatureTestResult('sphinx', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -54,7 +54,7 @@ class JupyterSphinx(PythonModule):
         sage: JupyterSphinx().is_present()                      # optional - jupyter_sphinx
         FeatureTestResult('jupyter_sphinx', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

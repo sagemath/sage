@@ -61,7 +61,7 @@ class DynamicalSystem_product_projective(DynamicalSystem,
           Defn: Defined by sending (x : y : z , w : u) to (x^2 : y^2 : z^2 , w^2 : u^2).
     """
 
-    def __init__(self, polys, domain):
+    def __init__(self, polys, domain) -> None:
         r"""
         The Python constructor.
 

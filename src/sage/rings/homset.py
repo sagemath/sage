@@ -75,7 +75,7 @@ class RingHomset_generic(HomsetWithBase):
 
     Element = morphism.RingHomomorphism
 
-    def __init__(self, R, S, category=None):
+    def __init__(self, R, S, category=None) -> None:
         """
         Initialize ``self``.
 

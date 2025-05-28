@@ -68,7 +68,7 @@ class LeftZeroSemigroup(UniqueRepresentation, Parent):
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The left zero semigroup.
 
@@ -174,7 +174,7 @@ class FreeSemigroup(UniqueRepresentation, Parent):
 
         sage: TestSuite(S).run()
     """
-    def __init__(self, alphabet=('a','b','c','d')):
+    def __init__(self, alphabet=('a','b','c','d')) -> None:
         r"""
         The free semigroup.
 
@@ -360,7 +360,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
         """
         return self.retract(self.ambient()(x))
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         r"""
         This quotient of the left zero semigroup of integers obtained by
         setting `x=42` for any `x\geq 42`.
@@ -512,7 +512,7 @@ class QuotientOfLeftZeroSemigroup(UniqueRepresentation, Parent):
 
 
 class IncompleteSubquotientSemigroup(UniqueRepresentation,Parent):
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         r"""
         An incompletely implemented subquotient semigroup, for testing purposes.
 

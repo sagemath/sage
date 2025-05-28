@@ -232,7 +232,7 @@ class TangentSpace(FiniteRankFreeModule):
     """
     Element = TangentVector
 
-    def __init__(self, point: ManifoldPoint, base_ring=None):
+    def __init__(self, point: ManifoldPoint, base_ring=None) -> None:
         r"""
         Construct the tangent space at a given point.
 

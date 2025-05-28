@@ -52,7 +52,7 @@ class ShiftingSequenceSpace(Singleton, Parent):
         False
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize ``self``.
 
@@ -64,7 +64,7 @@ class ShiftingSequenceSpace(Singleton, Parent):
         Parent.__init__(self, facade=(tuple,),
                         category=Sets().Infinite().Facade())
 
-    def __contains__(self, seq):
+    def __contains__(self, seq) -> bool:
         r"""
         Return ``True`` if and only if ``seq`` is a valid shifting sequence.
 
@@ -235,7 +235,7 @@ class ShiftingOperatorAlgebra(CombinatorialFreeModule):
         s[3, 2, 1]
     """
 
-    def __init__(self, base_ring=QQ['t'], prefix='S'):
+    def __init__(self, base_ring=QQ['t'], prefix='S') -> None:
         r"""
         Initialize ``self``.
 

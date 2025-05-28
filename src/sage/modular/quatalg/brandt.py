@@ -483,7 +483,7 @@ class BrandtSubmodule(HeckeSubmodule):
 
 
 class BrandtModuleElement(HeckeModuleElement):
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         EXAMPLES::
 
@@ -610,7 +610,7 @@ class BrandtModule_class(AmbientHeckeModule):
         sage: BrandtModule(3, 10)
         Brandt module of dimension 4 of level 3*10 of weight 2 over Rational Field
     """
-    def __init__(self, N, M, weight, base_ring):
+    def __init__(self, N, M, weight, base_ring) -> None:
         """
         INPUT:
 

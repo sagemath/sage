@@ -29,7 +29,7 @@ NAME_RE = re.compile(r'(Setter|Getter|Tester)\((.*)\)')
 
 class OperationInspector(SageObject):
 
-    def __init__(self, libgap_element):
+    def __init__(self, libgap_element) -> None:
         """
         Information about operations that can act on a given LibGAP element.
 

@@ -57,7 +57,7 @@ class Circle(GraphicPrimitive):
 
         sage: C = circle((2,3), 5)
     """
-    def __init__(self, x, y, r, options):
+    def __init__(self, x, y, r, options) -> None:
         """
         Initialize base class Circle.
 

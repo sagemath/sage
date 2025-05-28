@@ -26,7 +26,7 @@ class Ecm(Executable):
         sage: Ecm().is_present()
         FeatureTestResult('ecm', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

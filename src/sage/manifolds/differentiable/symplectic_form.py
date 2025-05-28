@@ -117,7 +117,7 @@ class SymplecticForm(DiffForm):
         manifold: Union[DifferentiableManifold, VectorFieldModule],
         name: Optional[str] = None,
         latex_name: Optional[str] = None,
-    ):
+    ) -> None:
         r"""
         Construct a symplectic form.
 
@@ -669,7 +669,7 @@ class SymplecticFormParal(SymplecticForm, DiffFormParal):
         manifold: Union[VectorFieldModule, DifferentiableManifold],
         name: Optional[str],
         latex_name: Optional[str] = None,
-    ):
+    ) -> None:
         r"""
         Construct a symplectic form.
 

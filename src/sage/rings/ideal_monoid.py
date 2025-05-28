@@ -47,7 +47,7 @@ class IdealMonoid_c(Parent):
 
     Element = ideal.Ideal_generic  # this doesn't seem to do anything
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         Initialize ``self``.
 

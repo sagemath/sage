@@ -29,7 +29,7 @@ class UnramifiedExtensionGeneric(pAdicExtensionGeneric):
     r"""
     An unramified extension of `\QQ_p` or `\ZZ_p`.
     """
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, poly, prec, print_mode, names, element_class) -> None:
         """
         Initialize ``self``.
 

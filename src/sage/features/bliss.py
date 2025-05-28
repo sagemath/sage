@@ -45,7 +45,7 @@ class BlissLibrary(CythonFeature):
         sage: BlissLibrary().require()  # optional - libbliss
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -68,7 +68,7 @@ class Bliss(JoinFeature):
         sage: from sage.features.bliss import Bliss
         sage: Bliss().require()  # optional - bliss
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

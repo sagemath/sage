@@ -97,7 +97,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
     r"""
     Elements of HeckeTriangleGroup.
     """
-    def __init__(self, parent, M, check=True, **kwargs):
+    def __init__(self, parent, M, check=True, **kwargs) -> None:
         r"""
         An element of HeckeTriangle group given by a matrix ``M``.
 

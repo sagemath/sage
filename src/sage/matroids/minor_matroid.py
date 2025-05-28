@@ -125,7 +125,7 @@ class MinorMatroid(Matroid):
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
     """
 
-    def __init__(self, matroid, contractions=None, deletions=None):
+    def __init__(self, matroid, contractions=None, deletions=None) -> None:
         """
         See the class docstring for documentation.
 

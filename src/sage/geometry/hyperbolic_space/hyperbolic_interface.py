@@ -86,7 +86,7 @@ class HyperbolicPlane(Parent, UniqueRepresentation):
     - ``KM`` -- Klein disk
     - ``HM`` -- hyperboloid model
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -138,7 +138,7 @@ class HyperbolicModels(Category_realization_of_parent):
     r"""
     The category of hyperbolic models of hyperbolic space.
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the hyperbolic models of hyperbolic space.
 

@@ -34,7 +34,7 @@ class Plane(UniqueRepresentation, Parent):
         sage: TestSuite(M).run()
     """
 
-    def __init__(self, n=3, base_ring=None):
+    def __init__(self, n=3, base_ring=None) -> None:
         r"""
         EXAMPLES::
 

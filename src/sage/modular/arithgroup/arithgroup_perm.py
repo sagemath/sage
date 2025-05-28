@@ -1586,7 +1586,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         <class 'sage.modular.arithgroup.arithgroup_perm.OddArithmeticSubgroup_Permutation_with_category'>
     """
 
-    def __init__(self, S2, S3, L, R, canonical_labels=False):
+    def __init__(self, S2, S3, L, R, canonical_labels=False) -> None:
         r"""
         TESTS::
 
@@ -1906,7 +1906,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         sage: G.genus()
         0
     """
-    def __init__(self, S2, S3, L, R, canonical_labels=False):
+    def __init__(self, S2, S3, L, R, canonical_labels=False) -> None:
         r"""
         TESTS::
 

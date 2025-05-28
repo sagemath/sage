@@ -172,7 +172,7 @@ class FractionField_generic(ring.Field):
     """
     def __init__(self, R,
                  element_class=fraction_field_element.FractionFieldElement,
-                 category=QuotientFields()):
+                 category=QuotientFields()) -> None:
         """
         Create the fraction field of the integral domain ``R``.
 
@@ -1094,7 +1094,7 @@ class FractionField_1poly_field(FractionField_generic):
     Many of the functions here are included for coherence with number fields.
     """
     def __init__(self, R,
-                 element_class=fraction_field_element.FractionFieldElement_1poly_field):
+                 element_class=fraction_field_element.FractionFieldElement_1poly_field) -> None:
         """
         Just change the default for ``element_class``.
 

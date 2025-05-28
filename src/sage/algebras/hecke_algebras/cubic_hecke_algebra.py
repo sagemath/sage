@@ -833,7 +833,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                                      cubic_equation_parameters=cubic_equation_parameters,
                                      cubic_equation_roots=cubic_equation_roots)
 
-    def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None):
+    def __init__(self, names, cubic_equation_parameters=None, cubic_equation_roots=None) -> None:
         r"""
         Initialize ``self``.
 

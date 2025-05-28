@@ -37,7 +37,7 @@ class Text(GraphicPrimitive):
 
         sphinx_plot(text("I like Fibonacci",(3,5)))
     """
-    def __init__(self, string, point, options):
+    def __init__(self, string, point, options) -> None:
         """
         Initialize base class Text.
 

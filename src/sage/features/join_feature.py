@@ -49,7 +49,7 @@ class JoinFeature(Feature):
     """
 
     def __init__(self, name, features, spkg=None, url=None, description=None, type=None,
-                 **kwds):
+                 **kwds) -> None:
         """
         TESTS:
 

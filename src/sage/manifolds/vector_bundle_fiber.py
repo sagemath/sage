@@ -160,7 +160,7 @@ class VectorBundleFiber(FiniteRankFreeModule):
     """
     Element = VectorBundleFiberElement
 
-    def __init__(self, vector_bundle, point):
+    def __init__(self, vector_bundle, point) -> None:
         r"""
         Construct a fiber of a vector bundle.
 

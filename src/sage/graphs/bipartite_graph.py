@@ -356,7 +356,7 @@ class BipartiteGraph(Graph):
         ValueError: cannot add edge from 0 to 0 in graph without loops
     """
 
-    def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
+    def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds) -> None:
         """
         Create a bipartite graph.
 
@@ -645,7 +645,7 @@ class BipartiteGraph(Graph):
         self.left = cols[1]
         self.right = cols[0]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a short string representation of ``self``.
 

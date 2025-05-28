@@ -81,7 +81,7 @@ class GolayCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, extended=True):
+    def __init__(self, base_field, extended=True) -> None:
         r"""
         TESTS:
 

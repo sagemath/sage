@@ -121,7 +121,7 @@ class HyperbolicModel(Parent, UniqueRepresentation, BindableClass):
     _Isometry = HyperbolicIsometry
 
     def __init__(self, space, name, short_name, bounded, conformal,
-                 dimension, isometry_group, isometry_group_is_projective):
+                 dimension, isometry_group, isometry_group_is_projective) -> None:
         """
         Initialize ``self``.
 
@@ -771,7 +771,7 @@ class HyperbolicModelUHP(HyperbolicModel):
     _Geodesic = HyperbolicGeodesicUHP
     _Isometry = HyperbolicIsometryUHP
 
-    def __init__(self, space):
+    def __init__(self, space) -> None:
         """
         Initialize ``self``.
 
@@ -1142,7 +1142,7 @@ class HyperbolicModelPD(HyperbolicModel):
     _Geodesic = HyperbolicGeodesicPD
     _Isometry = HyperbolicIsometryPD
 
-    def __init__(self, space):
+    def __init__(self, space) -> None:
         """
         Initialize ``self``.
 
@@ -1270,7 +1270,7 @@ class HyperbolicModelKM(HyperbolicModel):
     _Geodesic = HyperbolicGeodesicKM
     _Isometry = HyperbolicIsometryKM
 
-    def __init__(self, space):
+    def __init__(self, space) -> None:
         """
         Initialize ``self``.
 
@@ -1393,7 +1393,7 @@ class HyperbolicModelHM(HyperbolicModel):
     """
     _Geodesic = HyperbolicGeodesicHM
 
-    def __init__(self, space):
+    def __init__(self, space) -> None:
         """
         Initialize ``self``.
 

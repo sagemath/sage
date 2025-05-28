@@ -424,7 +424,7 @@ class TensorField(ModuleElementWithMutability):
         sym=None,
         antisym=None,
         parent=None,
-    ):
+    ) -> None:
         r"""
         Construct a tensor field.
 
@@ -503,7 +503,7 @@ class TensorField(ModuleElementWithMutability):
 
     # ###### Required methods for ModuleElement (beside arithmetic) #######
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -1975,7 +1975,7 @@ class TensorField(ModuleElementWithMutability):
                 frame = self._domain._def_frame
         return self.comp(frame)[args]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set a component with respect to some vector frame.
 

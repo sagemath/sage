@@ -65,7 +65,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
     is the base class for ambient spaces of modular forms and modular symbols,
     and for Brandt modules.
     """
-    def __init__(self, base_ring, rank, level, weight, category=None):
+    def __init__(self, base_ring, rank, level, weight, category=None) -> None:
         r"""
         Create an ambient Hecke module.
 

@@ -305,7 +305,7 @@ class MPowerSeries(PowerSeries):
         True
     """
 
-    def __init__(self, parent, x=0, prec=infinity, is_gen=False, check=False):
+    def __init__(self, parent, x=0, prec=infinity, is_gen=False, check=False) -> None:
         """
         Input ``x`` can be an :class:`MPowerSeries`, or an element of
 
@@ -2155,7 +2155,7 @@ class MO:
         sage: w^2
         1 + 2*a + O(a, b, c)^2
     """
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         """
         Initialize ``self``.
 

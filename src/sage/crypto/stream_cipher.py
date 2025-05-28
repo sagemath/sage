@@ -16,7 +16,7 @@ from sage.monoids.string_monoid_element import StringMonoidElement
 
 
 class LFSRCipher(SymmetricKeyCipher):
-    def __init__(self, parent, poly, IS):
+    def __init__(self, parent, poly, IS) -> None:
         """
         Create a linear feedback shift register (LFSR) cipher.
 
@@ -146,7 +146,7 @@ class LFSRCipher(SymmetricKeyCipher):
 
 
 class ShrinkingGeneratorCipher(SymmetricKeyCipher):
-    def __init__(self, parent, e1, e2):
+    def __init__(self, parent, e1, e2) -> None:
         """
         Create a shrinking generator cipher.
 

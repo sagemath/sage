@@ -341,7 +341,7 @@ class ContinuedFraction_base(SageObject):
     sum or product, rely on the optional method :meth:`value` (and not on
     convergents) and may fail at execution if it is not implemented.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         INPUT:
 
@@ -749,7 +749,7 @@ class ContinuedFraction_base(SageObject):
         else:
             raise ValueError("%s unknown rounding mode" % rnd)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -959,7 +959,7 @@ class ContinuedFraction_base(SageObject):
             yield q
             i += 1
 
-    def __int__(self):
+    def __int__(self) -> int:
         """
         EXAMPLES::
 
@@ -1018,7 +1018,7 @@ class ContinuedFraction_base(SageObject):
             return self.quotient(0)
         return self.quotient(0)+1
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``False`` if ``self`` is zero.
 
@@ -1309,7 +1309,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
         for the period. In the purely periodic case ``_x1`` is empty while in
         the rational case ``_x2`` is the tuple ``(0,)``.
     """
-    def __init__(self, x1, x2=None, check=True):
+    def __init__(self, x1, x2=None, check=True) -> None:
         r"""
         INPUT:
 
@@ -1612,7 +1612,7 @@ class ContinuedFraction_periodic(ContinuedFraction_base):
             return '[%d; ' % self._x1[0] + period + ']'
         return '[%d; ' % self._x1[0] + ', '.join(str(a) for a in self._x1[1:]) + ', ' + period + ']'
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of terms in this continued fraction.
 
@@ -1819,7 +1819,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
         sage: cf.value()                                                                # needs sage.symbolic
         e
     """
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         r"""
         INPUT:
 
@@ -1850,7 +1850,7 @@ class ContinuedFraction_real(ContinuedFraction_base):
         """
         return Infinity
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         TESTS::
 
@@ -2056,7 +2056,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
         fraction evaluates to 1.718281828459046? in Real Interval Field
         with 53 bits of precision.
     """
-    def __init__(self, w, value=None, check=True):
+    def __init__(self, w, value=None, check=True) -> None:
         r"""
         INPUT:
 

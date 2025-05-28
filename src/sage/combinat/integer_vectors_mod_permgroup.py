@@ -314,7 +314,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
         sage: TestSuite(I).run()
     """
 
-    def __init__(self, G, sgs=None):
+    def __init__(self, G, sgs=None) -> None:
         """
         TESTS::
 
@@ -484,7 +484,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
                 assert (p == NN(p)), 'Elements of %s should be integers' % v
         return is_canonical(self._sgs, self.element_class(self, list(v), check=False))
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         """
         EXAMPLES::
 
@@ -647,7 +647,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         sage: TestSuite(I).run()
     """
 
-    def __init__(self, G, d, max_part, sgs=None):
+    def __init__(self, G, d, max_part, sgs=None) -> None:
         r"""
         TESTS::
 
@@ -745,7 +745,7 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         """
         return self._permgroup
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         TESTS::
 

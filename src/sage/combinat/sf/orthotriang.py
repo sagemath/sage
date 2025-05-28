@@ -68,7 +68,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         """
         return super().__classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff)
 
-    def __init__(self, Sym, base, scalar, prefix, basis_name, leading_coeff):
+    def __init__(self, Sym, base, scalar, prefix, basis_name, leading_coeff) -> None:
         r"""
         Initialization of the symmetric function algebra defined via orthotriangular rules.
 
@@ -300,7 +300,7 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
         sage: s.construction()
         (SymmetricFunctionsFunctor[Schur], Rational Field)
     """
-    def __init__(self, basis):
+    def __init__(self, basis) -> None:
         r"""
         Initialize the functor.
 

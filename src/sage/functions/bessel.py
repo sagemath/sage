@@ -334,7 +334,7 @@ class Function_Bessel_J(BuiltinFunction):
 
     - [AS-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_J`.
 
@@ -557,7 +557,7 @@ class Function_Bessel_Y(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_Y`.
 
@@ -770,7 +770,7 @@ class Function_Bessel_I(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_I`.
 
@@ -973,7 +973,7 @@ class Function_Bessel_K(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_Bessel_K`.
 
@@ -1268,7 +1268,7 @@ class Function_Struve_H(BuiltinFunction):
 
     - [WP-Struve]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1383,7 +1383,7 @@ class Function_Struve_L(BuiltinFunction):
 
     - [WP-Struve]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1499,7 +1499,7 @@ class Function_Hankel1(BuiltinFunction):
 
     - [AS-Bessel]_ see 9.1.6
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1586,7 +1586,7 @@ class Function_Hankel2(BuiltinFunction):
 
     - [AS-Bessel]_ see 9.1.6
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1685,7 +1685,7 @@ class SphericalBesselJ(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1784,7 +1784,7 @@ class SphericalBesselY(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1883,7 +1883,7 @@ class SphericalHankel1(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1985,7 +1985,7 @@ class SphericalHankel2(BuiltinFunction):
 
     - [WP-Bessel]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

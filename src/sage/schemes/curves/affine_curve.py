@@ -184,7 +184,7 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
         Affine Curve over Finite Field of size 7 defined by x^2 - z, -x + z
     """
 
-    def __init__(self, A, X):
+    def __init__(self, A, X) -> None:
         r"""
         Initialize.
 
@@ -277,7 +277,7 @@ class AffinePlaneCurve(AffineCurve):
     Affine plane curves.
     """
 
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         Initialize.
 
@@ -832,7 +832,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
     """
     _point = AffineCurvePoint_field
 
-    def __init__(self, A, X):
+    def __init__(self, A, X) -> None:
         r"""
         Initialize.
 

@@ -86,7 +86,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
 
     __len__ = None
 
-    def __init__(self, ambient, predicate, maximal=False, element_class=Set_object_enumerated):
+    def __init__(self, ambient, predicate, maximal=False, element_class=Set_object_enumerated) -> None:
         """
         TESTS::
 
@@ -121,7 +121,7 @@ class PairwiseCompatibleSubsets(RecursivelyEnumeratedSet_forest):
         """
         return self.__class__ is other.__class__ and self._ambient == other._ambient and self._predicate.__str__() == other._predicate.__str__()
 
-    def __contains__(self, subset):
+    def __contains__(self, subset) -> bool:
         """
         Membership testing.
 

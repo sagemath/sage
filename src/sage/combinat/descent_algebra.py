@@ -130,7 +130,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         True
     """
 
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         r"""
         EXAMPLES::
 
@@ -219,7 +219,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             [D{}]
         """
 
-        def __init__(self, alg, prefix='D'):
+        def __init__(self, alg, prefix='D') -> None:
             r"""
             Initialize ``self``.
 
@@ -438,7 +438,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
              B[2, 1, 1], B[2, 2], B[3, 1], B[4]]
         """
 
-        def __init__(self, alg, prefix='B'):
+        def __init__(self, alg, prefix='B') -> None:
             r"""
             Initialize ``self``.
 
@@ -671,7 +671,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             [I[1, 1, 1, 1], I[1, 1, 2], I[1, 2, 1], I[1, 3], I[2, 1, 1], I[2, 2], I[3, 1], I[4]]
         """
 
-        def __init__(self, alg, prefix='I'):
+        def __init__(self, alg, prefix='I') -> None:
             r"""
             Initialize ``self``.
 
@@ -843,7 +843,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
     The category of bases of a descent algebra.
     """
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of a descent algebra.
 

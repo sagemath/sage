@@ -766,7 +766,7 @@ class AdditiveMagmas(Category_singleton):
             #     return self == self.parent().zero()
 
             @abstract_method
-            def __bool__(self):
+            def __bool__(self) -> bool:
                 """
                 Return whether ``self`` is not zero.
 

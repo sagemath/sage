@@ -93,7 +93,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     fcp = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.fcp
     trace = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.trace
 
-    def __init__(self, parent, side='left'):
+    def __init__(self, parent, side='left') -> None:
         """
         INPUT:
 
@@ -1557,7 +1557,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
       the matrix ``A`` if it is mutable. If ``False``, then this makes
       ``A`` immutable.
     """
-    def __init__(self, parent, A, copy_matrix=True, side='left'):
+    def __init__(self, parent, A, copy_matrix=True, side='left') -> None:
         """
         Initialize ``self``.
 

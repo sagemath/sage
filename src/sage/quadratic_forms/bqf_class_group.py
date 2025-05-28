@@ -124,7 +124,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         Form Class Group of Discriminant -484
     """
 
-    def __init__(self, D, *, check=True):
+    def __init__(self, D, *, check=True) -> None:
         r"""
         Construct the class group for a given discriminant `D`.
 
@@ -388,7 +388,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         Class of 3*x^2 + 2*x*y + 140*y^2
     """
 
-    def __init__(self, F, parent, *, check=True, reduce=True):
+    def __init__(self, F, parent, *, check=True, reduce=True) -> None:
         r"""
         Constructor for classes of binary quadratic forms.
 
@@ -758,7 +758,7 @@ class BQFClassGroupQuotientMorphism(Morphism):
         sage: proj(elt1 + elt2) == proj(elt1) + proj(elt2)
         True
     """
-    def __init__(self, G, H):
+    def __init__(self, G, H) -> None:
         r"""
         Initialize this morphism between class groups of binary
         quadratic forms.

@@ -254,7 +254,7 @@ class Ideal_generic(MonoidElement):
 
     See :func:`Ideal()`.
     """
-    def __init__(self, ring, gens, coerce=True, **kwds):
+    def __init__(self, ring, gens, coerce=True, **kwds) -> None:
         """
         Initialize this ideal.
 
@@ -372,7 +372,7 @@ class Ideal_generic(MonoidElement):
             return rich_to_bool(op, 0)
         return richcmp(self.gens(), other.gens(), op)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 
@@ -416,7 +416,7 @@ class Ideal_generic(MonoidElement):
         """
         raise NotImplementedError
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if this ideal is not `(0)`.
 
@@ -1349,7 +1349,7 @@ class Ideal_principal(Ideal_generic):
             raise ValueError(f"i (={i}) must be 0")
         return self.gens()[0]
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is in ``self``.
 

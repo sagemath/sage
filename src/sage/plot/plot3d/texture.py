@@ -278,7 +278,7 @@ class Texture(WithEqualityById, SageObject, metaclass=ClasscallMetaclass):
         return typecall(cls, id, **kwds)
 
     def __init__(self, id, color=(.4, .4, 1), opacity=1, ambient=0.5,
-                 diffuse=1, specular=0, shininess=1, name=None, **kwds):
+                 diffuse=1, specular=0, shininess=1, name=None, **kwds) -> None:
         r"""
         Construction of a texture.
 

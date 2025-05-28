@@ -81,7 +81,7 @@ class UnwrappingMorphism(Morphism):
     r"""
     The embedding into the ambient group. Used by the coercion framework.
     """
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         EXAMPLES::
 
@@ -124,7 +124,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
     An element of an :class:`AdditiveAbelianGroupWrapper`.
     """
 
-    def __init__(self, parent, vector, element=None, check=False):
+    def __init__(self, parent, vector, element=None, check=False) -> None:
         r"""
         EXAMPLES::
 
@@ -202,7 +202,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     Element = AdditiveAbelianGroupWrapperElement
 
-    def __init__(self, universe, gens, invariants):
+    def __init__(self, universe, gens, invariants) -> None:
         r"""
         EXAMPLES::
 

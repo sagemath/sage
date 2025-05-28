@@ -216,7 +216,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             return super().__classcall__(cls, R, n, None, prefix, side)
         return super().__classcall__(cls, R, n, tuple(names), prefix, side)
 
-    def __init__(self, R, n, names, prefix, side):
+    def __init__(self, R, n, names, prefix, side) -> None:
         """
         Initialize ``self``.
 
@@ -658,7 +658,7 @@ class ZinbielFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, variables, side):
+    def __init__(self, variables, side) -> None:
         """
         EXAMPLES::
 

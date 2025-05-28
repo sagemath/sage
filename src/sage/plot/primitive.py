@@ -42,7 +42,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
         sage: hash(circle((0,0),1))  # random
         42
     """
-    def __init__(self, options):
+    def __init__(self, options) -> None:
         """
         Create a base class GraphicsPrimitive.  All this does is
         set the options.

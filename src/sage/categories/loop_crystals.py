@@ -1176,7 +1176,7 @@ class LocalEnergyFunction(Map):
 
     [KKMMNN1992]_
     """
-    def __init__(self, B, Bp, normalization=0):
+    def __init__(self, B, Bp, normalization=0) -> None:
         """
         Initialize ``self``.
 

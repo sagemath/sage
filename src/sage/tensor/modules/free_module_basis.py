@@ -70,7 +70,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
         (2, Element e_2 of the Rank-3 free module M over the Integer Ring),
         (3, Element e_3 of the Rank-3 free module M over the Integer Ring)]
     """
-    def __init__(self, fmodule, symbol, latex_symbol, indices, latex_indices):
+    def __init__(self, fmodule, symbol, latex_symbol, indices, latex_indices) -> None:
         """
         Initialize ``self``.
 
@@ -184,7 +184,7 @@ class Basis_abstract(UniqueRepresentation, AbstractFamily):
         tester.assertEqual(len(b), len(self))
         tester.assertEqual(len(b), self.free_module().rank())
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the basis length, i.e. the rank of the free module.
 
@@ -486,7 +486,7 @@ class FreeModuleCoBasis(Basis_abstract):
         sage: TestSuite(f).run()
     """
     def __init__(self, basis, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None):
+                 latex_indices=None) -> None:
         r"""
         TESTS::
 
@@ -702,7 +702,7 @@ class FreeModuleBasis(Basis_abstract):
                                            latex_symbol_dual=latex_symbol_dual)
 
     def __init__(self, fmodule, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None, symbol_dual=None, latex_symbol_dual=None):
+                 latex_indices=None, symbol_dual=None, latex_symbol_dual=None) -> None:
         r"""
         Initialize ``self``.
 

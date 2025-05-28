@@ -436,7 +436,7 @@ class OrthogonalFunction(BuiltinFunction):
     the others are other values or parameters where the polynomial is
     evaluated.
     """
-    def __init__(self, name, nargs=2, latex_name=None, conversions=None):
+    def __init__(self, name, nargs=2, latex_name=None, conversions=None) -> None:
         """
         :class:`OrthogonalFunction` class needs the same input parameter as
         its parent class.
@@ -662,7 +662,7 @@ class Func_chebyshev_T(ChebyshevFunction):
        sage: test = chebyshev_T(k, x); test                                             # needs sage.symbolic
        chebyshev_T(k, x)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Init method for the chebyshev polynomials of the first kind.
 
@@ -982,7 +982,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         sage: chebyshev_U(3, t)
         8*t^3 - 4*t
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Init method for the chebyshev polynomials of the second kind.
 
@@ -1342,7 +1342,7 @@ class Func_legendre_P(GinacFunction):
         2^(-n + 2)*(-1)^(1/2*n)*gamma(n)/(n*gamma(1/2*n)^2)
         sage: forget()
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Init method for the Legendre polynomials of the first kind.
 
@@ -1362,7 +1362,7 @@ legendre_P = Func_legendre_P()
 
 
 class Func_legendre_Q(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1692,7 +1692,7 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
     - [DLMF-Legendre]_
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1912,7 +1912,7 @@ gen_legendre_P = Func_assoc_legendre_P()
 
 
 class Func_assoc_legendre_Q(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -2094,7 +2094,7 @@ class Func_hermite(GinacFunction):
         ...
         RuntimeError: derivative w.r.t. to the index is not supported yet
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Init method for the Hermite polynomials.
 
@@ -2148,7 +2148,7 @@ class Func_jacobi_P(OrthogonalFunction):
         sage: jacobi_P(2, 1, 2, 1.2)                                                    # needs sage.libs.flint
         5.01000000000000
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Init method for the Jacobi polynomials.
 
@@ -2367,7 +2367,7 @@ class Func_ultraspherical(GinacFunction):
         ...
         RuntimeError: gegenb_eval: The index n must be a nonnegative integer
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Init method for the ultraspherical polynomials.
 
@@ -2395,7 +2395,7 @@ class Func_laguerre(OrthogonalFunction):
 
     - [AS1964]_ 22.5.16, page 778 and page 789.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Init method for the Laguerre polynomials.
 
@@ -2550,7 +2550,7 @@ class Func_gen_laguerre(OrthogonalFunction):
 
     - [AS1964]_ 22.5.16, page 778 and page 789.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Init method for the Laguerre polynomials.
 
@@ -2733,7 +2733,7 @@ class Func_krawtchouk(OrthogonalFunction):
         ....:     == krawtchouk(j, x, n, 1-q) for j in range(n+1))
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -2846,7 +2846,7 @@ class Func_meixner(OrthogonalFunction):
     - ``x`` -- the independent variable `x`
     - ``b``, ``c`` -- the parameters `b`, `c`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -2996,7 +2996,7 @@ class Func_hahn(OrthogonalFunction):
         sage: all(M[i,j] == 0 for i in range(3) for j in range(3) if i != j)
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 

@@ -512,7 +512,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
         from sage.algebras.lie_algebras.free_lie_algebra import FreeLieAlgebra
         return FreeLieAlgebra(R, names, index_set)
 
-    def __init__(self, R, names=None, category=None):
+    def __init__(self, R, names=None, category=None) -> None:
         """
         The Lie algebra.
 
@@ -785,7 +785,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
     """
     A Lie algebra with distinguished generators.
     """
-    def __init__(self, R, names=None, index_set=None, category=None, prefix='L', **kwds):
+    def __init__(self, R, names=None, index_set=None, category=None, prefix='L', **kwds) -> None:
         """
         The Lie algebra.
 
@@ -871,7 +871,7 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
     r"""
     A finitely generated Lie algebra.
     """
-    def __init__(self, R, names=None, index_set=None, category=None):
+    def __init__(self, R, names=None, index_set=None, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -1148,7 +1148,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         return super().__classcall__(cls, A, gens, names=names,
                                      index_set=index_set, category=category)
 
-    def __init__(self, A, gens=None, names=None, index_set=None, category=None):
+    def __init__(self, A, gens=None, names=None, index_set=None, category=None) -> None:
         """
         Initialize ``self``.
 

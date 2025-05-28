@@ -16,7 +16,7 @@ class Threejs(StaticFile):
         True
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

@@ -149,7 +149,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             from sage.rings.number_field.number_field_base import NumberField
             return NumberField.__new__(cls)
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         We create the rational numbers `\QQ`, and call a few functions::
 
@@ -290,7 +290,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return RationalField, tuple()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of elements in ``self``.
 

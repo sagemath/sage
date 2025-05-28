@@ -248,7 +248,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
             maximal_faces = tuple(tuple(mf) for mf in maximal_faces)
         return super().__classcall__(self, maximal_faces, name=name, **kwds)
 
-    def __init__(self, maximal_faces=None, name=None, **kwds):
+    def __init__(self, maximal_faces=None, name=None, **kwds) -> None:
         """
         TESTS::
 

@@ -191,7 +191,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         True
     """
     def __init__(self, rank, name, base_space, field='real',
-                 latex_name=None, category=None, unique_tag=None):
+                 latex_name=None, category=None, unique_tag=None) -> None:
         r"""
         Construct a topological vector bundle.
 

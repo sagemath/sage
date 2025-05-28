@@ -83,7 +83,7 @@ class FDerivativeOperator:
     a list recording the indices of the variables with respect
     to which the partial derivative is taken.
     """
-    def __init__(self, function, parameter_set):
+    def __init__(self, function, parameter_set) -> None:
         r"""
         Initialize this function derivative operator.
 
@@ -140,7 +140,7 @@ class FDerivativeOperator:
         vars = [args[i] for i in self._parameter_set]
         return self._f(*args).diff(*vars)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this function derivative operator.
 
@@ -227,13 +227,13 @@ class DerivativeOperator:
         D[0, 1](f)(x, x^2)
     """
     class DerivativeOperatorWithParameters:
-        def __init__(self, parameter_set):
+        def __init__(self, parameter_set) -> None:
             self._parameter_set = parameter_set
 
         def __call__(self, function):
             return FDerivativeOperator(function, self._parameter_set)
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             """
             Return the string representation of this derivative operator.
 

@@ -60,7 +60,7 @@ class NonNegativeIntegerSemiring(NonNegativeIntegers):
         sage: x+3
         18
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

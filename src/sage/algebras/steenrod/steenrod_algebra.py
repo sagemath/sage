@@ -517,7 +517,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         return super().__classcall__(self, p=p, basis=std_basis, profile=std_profile,
                                      truncation_type=std_type, generic=std_generic)
 
-    def __init__(self, p=2, basis='milnor', **kwds):
+    def __init__(self, p=2, basis='milnor', **kwds) -> None:
         r"""
         INPUT:
 
@@ -2133,7 +2133,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return a.change_basis(self.basis_name())
         raise ValueError("element does not lie in this Steenrod algebra")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``self`` contains `x`.
 

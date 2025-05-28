@@ -84,7 +84,7 @@ class EllipticCurveHomset(SchemeHomset_generic):
         sage: iso in End(E)
         False
     """
-    def __init__(self, E1, E2, category=None):
+    def __init__(self, E1, E2, category=None) -> None:
         r"""
         Construct the homset for a given pair of elliptic curves
         defined over the same base ring.

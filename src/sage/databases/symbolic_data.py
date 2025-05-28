@@ -84,7 +84,7 @@ class SymbolicData:
     This class needs the optional ``database_symbolic_data`` package to be
     installed.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -161,7 +161,7 @@ class SymbolicData:
         I = P.ideal([P(f) for f in polys])
         return I
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

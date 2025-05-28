@@ -40,7 +40,7 @@ class CoTree:
     This data structure is used for the generation of cographs in
     :meth:`cographs`.
     """
-    def __init__(self, name='root'):
+    def __init__(self, name='root') -> None:
         r"""
         Initialize a cotree.
 
@@ -62,7 +62,7 @@ class CoTree:
         self.info = None
         self.parent = None
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return a string representation of ``self``.
 

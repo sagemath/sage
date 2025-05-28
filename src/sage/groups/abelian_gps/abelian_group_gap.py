@@ -51,7 +51,7 @@ class AbelianGroupElement_gap(ElementLibGAP):
         sage: G.gens()
         (f1, f2)
     """
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         """
         The Python constructor.
 
@@ -242,7 +242,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         sage: G
         Abelian group with gap, generator orders (3, 2, 5)
     """
-    def __init__(self, G, category, ambient=None):
+    def __init__(self, G, category, ambient=None) -> None:
         r"""
         Create an instance of this class.
 
@@ -667,7 +667,7 @@ class AbelianGroupGap(AbelianGroup_gap):
             return ValueError("generator orders must be nonnegative")
         return super().__classcall__(cls, generator_orders)
 
-    def __init__(self, generator_orders):
+    def __init__(self, generator_orders) -> None:
         r"""
         Constructor.
 
@@ -756,7 +756,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
         sage: gen = G.gens()[:2]
         sage: S = G.subgroup(gen)
     """
-    def __init__(self, ambient, gens):
+    def __init__(self, ambient, gens) -> None:
         r"""
         Initialize this subgroup.
 
@@ -905,7 +905,7 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
         sage: Q2
         Quotient abelian group with generator orders (1, 3)
     """
-    def __init__(self, G, N):
+    def __init__(self, G, N) -> None:
         r"""
         Constructor.
 

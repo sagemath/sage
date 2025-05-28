@@ -15,7 +15,7 @@ from sage.rings.integer_ring import ZZ
 
 
 class CartanType(CartanType_standard_affine):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 

@@ -647,7 +647,7 @@ class GrowthDiagram(SageObject):
         1  0
     """
 
-    def __init__(self, rule, filling=None, shape=None, labels=None):
+    def __init__(self, rule, filling=None, shape=None, labels=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -2369,7 +2369,7 @@ class RuleLLMS(Rule):
     zero_edge = None  # to prevent confusion with the edge labelled with content 0
     has_multiple_edges = True
 
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         r"""
         Initialize ``self``.
 

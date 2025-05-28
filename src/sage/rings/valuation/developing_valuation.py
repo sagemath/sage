@@ -68,7 +68,7 @@ class DevelopingValuation(DiscretePseudoValuation):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent, phi):
+    def __init__(self, parent, phi) -> None:
         r"""
         TESTS::
 

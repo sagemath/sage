@@ -188,7 +188,7 @@ class LatticeDiagram(CombinatorialObject):
 
 
 class AugmentedLatticeDiagramFilling(CombinatorialObject):
-    def __init__(self, l, pi=None):
+    def __init__(self, l, pi=None) -> None:
         """
         EXAMPLES::
 
@@ -242,7 +242,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
         return LatticeDiagram([max(0, len(self[i]) - 1)
                                for i in range(1, len(self) + 1)])
 
-    def __contains__(self, ij):
+    def __contains__(self, ij) -> bool:
         """
         Return ``True`` if the box ``(i,j) (= ij)`` is in ``self``. Note that this
         does not include the basement row.
@@ -610,7 +610,7 @@ def NonattackingFillings(shape, pi=None):
 
 
 class NonattackingFillings_shape(Parent, UniqueRepresentation):
-    def __init__(self, shape, pi=None):
+    def __init__(self, shape, pi=None) -> None:
         """
         EXAMPLES::
 
@@ -623,7 +623,7 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
         self._name = "Nonattacking fillings of %s" % list(shape)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -686,7 +686,7 @@ class NonattackingFillings_shape(Parent, UniqueRepresentation):
 
 
 class NonattackingBacktracker(GenericBacktracker):
-    def __init__(self, shape, pi=None):
+    def __init__(self, shape, pi=None) -> None:
         """
         EXAMPLES::
 

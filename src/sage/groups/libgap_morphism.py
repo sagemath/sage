@@ -255,7 +255,7 @@ class GroupMorphism_libgap(Morphism):
          over Finite Field of size 2
          to General Linear Group of degree 3 over Integer Ring in Category of groups
     """
-    def __init__(self, homset, gap_hom, check=True):
+    def __init__(self, homset, gap_hom, check=True) -> None:
         r"""
         Constructor method.
 
@@ -606,7 +606,7 @@ class GroupHomset_libgap(HomsetWithBase):
          to Abelian group with gap, generator orders (2, 4)
          in Category of finite enumerated commutative groups
     """
-    def __init__(self, G, H, category=None, check=True):
+    def __init__(self, G, H, category=None, check=True) -> None:
         r"""
         Return the homset of two libgap groups.
 

@@ -89,7 +89,7 @@ class SpecFunctor(Functor, UniqueRepresentation):
     """
     The Spec functor.
     """
-    def __init__(self, base_ring=None):
+    def __init__(self, base_ring=None) -> None:
         """
         EXAMPLES::
 

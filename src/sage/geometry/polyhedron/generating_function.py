@@ -808,7 +808,7 @@ class _TransformHrepresentation:
     :meth:`~_TransformHrepresentation.apply_rules`).
     """
 
-    def __init__(self, inequalities, equations, B):
+    def __init__(self, inequalities, equations, B) -> None:
         r"""
         See :class:`_TransformHrepresentation` for details.
 
@@ -1414,7 +1414,7 @@ class _TransformMod(_TransformHrepresentation):
          [(-2, -2, -2, 2)], [(0, -2, 2, 0)])
     """
 
-    def __init__(self, inequalities, equations, B, mod):
+    def __init__(self, inequalities, equations, B, mod) -> None:
         r"""
         See :class:`_TransformMod` for details.
 

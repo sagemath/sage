@@ -135,7 +135,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
     - [LTV1999]_
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -190,7 +190,7 @@ class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
         An element in a BZ multisegments crystal.
         """
 
-        def __init__(self, parent, value):
+        def __init__(self, parent, value) -> None:
             """
             Initialize ``self``.
 

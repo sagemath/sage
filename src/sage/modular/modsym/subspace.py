@@ -33,7 +33,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
     # Special Methods
     ################################
     def __init__(self, ambient_hecke_module, submodule,
-                 dual_free_module=None, check=False):
+                 dual_free_module=None, check=False) -> None:
         """
         INPUT:
 

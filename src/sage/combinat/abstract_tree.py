@@ -2019,7 +2019,7 @@ class AbstractClonableTree(AbstractTree):
         """
         pass
 
-    def __setitem__(self, idx, value):
+    def __setitem__(self, idx, value) -> None:
         """
         Substitute a subtree.
 
@@ -2216,7 +2216,7 @@ class AbstractLabelledTree(AbstractTree):
     .. SEEALSO:: :class:`AbstractTree`
     """
 
-    def __init__(self, parent, children, label=None, check=True):
+    def __init__(self, parent, children, label=None, check=True) -> None:
         """
         TESTS::
 

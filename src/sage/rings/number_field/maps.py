@@ -161,7 +161,7 @@ class MapVectorSpaceToNumberField(NumberFieldIsomorphism):
         (a, 3*a^3 + 2*a^2 + a)
     """
 
-    def __init__(self, V, K):
+    def __init__(self, V, K) -> None:
         r"""
         EXAMPLES::
 
@@ -204,7 +204,7 @@ class MapNumberFieldToVectorSpace(Map):
         sage: type(to)
         <class 'sage.rings.number_field.maps.MapNumberFieldToVectorSpace'>
     """
-    def __init__(self, K, V):
+    def __init__(self, K, V) -> None:
         r"""
         Standard initialisation function.
 
@@ -278,7 +278,7 @@ class MapRelativeVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         sage: (to * fr)(V([1, 2])) == V([1, 2])
         True
     """
-    def __init__(self, V, K):
+    def __init__(self, V, K) -> None:
         r"""
 
         EXAMPLES::
@@ -329,7 +329,7 @@ class MapRelativeNumberFieldToRelativeVectorSpace(NumberFieldIsomorphism):
         <class 'sage.rings.number_field.maps.MapRelativeNumberFieldToRelativeVectorSpace'>
     """
 
-    def __init__(self, K, V):
+    def __init__(self, K, V) -> None:
         r"""
         EXAMPLES::
 
@@ -414,7 +414,7 @@ class NameChangeMap(NumberFieldIsomorphism):
         (<class 'sage.rings.number_field.maps.NameChangeMap'>,
          <class 'sage.rings.number_field.maps.NameChangeMap'>)
     """
-    def __init__(self, K, L):
+    def __init__(self, K, L) -> None:
         r"""
         EXAMPLES::
 
@@ -507,7 +507,7 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
         (True, True)
     """
 
-    def __init__(self, R, A):
+    def __init__(self, R, A) -> None:
         r"""
         EXAMPLES::
 
@@ -543,7 +543,7 @@ class MapAbsoluteToRelativeNumberField(NumberFieldIsomorphism):
     r"""
     See :class:`~MapRelativeToAbsoluteNumberField` for examples.
     """
-    def __init__(self, A, R):
+    def __init__(self, A, R) -> None:
         r"""
         EXAMPLES::
 
@@ -586,7 +586,7 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
         <class 'sage.rings.number_field.maps.MapVectorSpaceToRelativeNumberField'>
     """
 
-    def __init__(self, V, L, from_V, from_K):
+    def __init__(self, V, L, from_V, from_K) -> None:
         r"""
         EXAMPLES::
 
@@ -651,7 +651,7 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
         sage: to(L.gen()), fr(to(L.gen())) == L.gen()
         ((0, 1, 0, 0, 0, 0, 0, 0), True)
     """
-    def __init__(self, L, V, to_K, to_V):
+    def __init__(self, L, V, to_K, to_V) -> None:
         r"""
         EXAMPLES::
 

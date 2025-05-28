@@ -94,7 +94,7 @@ class PoissonTensorField(MultivectorField):
         manifold: Union[DifferentiableManifold, VectorFieldModule],
         name: Optional[str] = "varpi",
         latex_name: Optional[str] = "\\varpi",
-    ):
+    ) -> None:
         r"""
         Construct a Poisson bivector field.
 
@@ -251,7 +251,7 @@ class PoissonTensorFieldParal(PoissonTensorField, MultivectorFieldParal):
         manifold: Union[DifferentiableManifold, VectorFieldModule],
         name: Optional[str] = None,
         latex_name: Optional[str] = None,
-    ):
+    ) -> None:
         r"""
         Construct a Poisson bivector field.
 

@@ -439,7 +439,7 @@ class Sequence_generic(SageObject, list):
         Finite Field of size 5
     """
     def __init__(self, x, universe=None, check=True, immutable=False,
-                 cr=False, cr_str=None, use_sage_types=False):
+                 cr=False, cr_str=None, use_sage_types=False) -> None:
         r"""
         Create a sequence.
 
@@ -498,7 +498,7 @@ class Sequence_generic(SageObject, list):
         self._require_mutable()
         list.reverse(self)
 
-    def __setitem__(self, n, value):
+    def __setitem__(self, n, value) -> None:
         """
         EXAMPLES::
 
@@ -733,7 +733,7 @@ class Sequence_generic(SageObject, list):
         from sage.misc.latex import list_function as list_latex_function
         return list_latex_function(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         EXAMPLES::
 

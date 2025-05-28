@@ -200,7 +200,7 @@ class CombinatorialMap:
     :func:`combinatorial_map_wrapper`.
     """
 
-    def __init__(self, f, order=None, name=None):
+    def __init__(self, f, order=None, name=None) -> None:
         """
         Constructor for combinatorial maps.
 
@@ -234,7 +234,7 @@ class CombinatorialMap:
         if hasattr(f, "__module__"):
             self.__module__ = f.__module__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

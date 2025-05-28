@@ -680,7 +680,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         sage: K.<x> = FunctionField(QQ)
         sage: v = K.valuation(x^2 + 1) # indirect doctest
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 
@@ -991,7 +991,7 @@ class FiniteRationalFunctionFieldValuation(InducedRationalFunctionFieldValuation
         sage: q = L.valuation(x^6 - t); q
         (x^6 + 2*t)-adic valuation
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 
@@ -1018,7 +1018,7 @@ class NonClassicalRationalFunctionFieldValuation(InducedRationalFunctionFieldVal
         sage: w = K.valuation(v); w  # indirect doctest
         2-adic valuation
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS:
 
@@ -1092,7 +1092,7 @@ class FunctionFieldFromLimitValuation(FiniteExtensionFromLimitValuation, Discret
         sage: w = v.extension(L); w                                                     # needs sage.rings.function_field
         (x - 1)-adic valuation
     """
-    def __init__(self, parent, approximant, G, approximants):
+    def __init__(self, parent, approximant, G, approximants) -> None:
         r"""
         TESTS::
 
@@ -1157,7 +1157,7 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
         sage: v = K.valuation(1/x); v
         Valuation at the infinite place
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 
@@ -1273,7 +1273,7 @@ class FunctionFieldMappedValuationRelative_base(FunctionFieldMappedValuation_bas
         sage: v = K.valuation(1/x); v
         Valuation at the infinite place
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_domain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 
@@ -1318,7 +1318,7 @@ class RationalFunctionFieldMappedValuation(FunctionFieldMappedValuationRelative_
         [ Gauss valuation induced by 2-adic valuation, v(x) = 1 ]
         (in Rational function field in x over Rational Field after x |--> 1/x)
     """
-    def __init__(self, parent, base_valuation, to_base_valuation_doain, from_base_valuation_domain):
+    def __init__(self, parent, base_valuation, to_base_valuation_doain, from_base_valuation_domain) -> None:
         r"""
         TESTS::
 
@@ -1344,7 +1344,7 @@ class InfiniteRationalFunctionFieldValuation(FunctionFieldMappedValuationRelativ
         sage: K.<x> = FunctionField(QQ)
         sage: v = K.valuation(1/x)  # indirect doctest
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         TESTS::
 

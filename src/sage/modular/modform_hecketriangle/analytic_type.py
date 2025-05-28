@@ -359,7 +359,7 @@ class AnalyticType(FiniteLatticePoset):
         """
         return super(FinitePoset, cls).__classcall__(cls)
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Container for all possible analytic types of forms and/or spaces.
 

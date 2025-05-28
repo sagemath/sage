@@ -61,7 +61,7 @@ class GeneralizedYoungWall(CombinatorialElement):
            |
     """
 
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         r"""
         EXAMPLES::
 
@@ -839,7 +839,7 @@ class InfinityCrystalOfGeneralizedYoungWalls(UniqueRepresentation, Parent):
         """
         return super().__classcall__(cls, n, category)
 
-    def __init__(self, n, category):
+    def __init__(self, n, category) -> None:
         r"""
         EXAMPLES::
 
@@ -1033,7 +1033,7 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
         La = RootSystem(['A', n, 1]).weight_lattice(extended=True)(La)
         return super().__classcall__(cls, n, La)
 
-    def __init__(self, n, La):
+    def __init__(self, n, La) -> None:
         r"""
         EXAMPLES::
 

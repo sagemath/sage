@@ -446,7 +446,7 @@ class pAdicValuation_base(DiscreteValuation):
         sage: TestSuite(QQ.valuation(5)).run()  # long time                             # needs sage.geometry.polyhedron
         sage: TestSuite(Zp(5).valuation()).run()        # long time                     # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent, p):
+    def __init__(self, parent, p) -> None:
         r"""
         TESTS::
 
@@ -855,7 +855,7 @@ class pAdicValuation_padic(pAdicValuation_base):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         TESTS::
 
@@ -1322,7 +1322,7 @@ class pAdicFromLimitValuation(FiniteExtensionFromLimitValuation, pAdicValuation_
         sage: v.shift(1, -1).parent()                                                   # needs sage.rings.number_field
         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
     """
-    def __init__(self, parent, approximant, G, approximants):
+    def __init__(self, parent, approximant, G, approximants) -> None:
         r"""
         TESTS::
 

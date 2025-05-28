@@ -227,7 +227,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         return super().__classcall__(cls, k, table,
                                      names, category=cat)
 
-    def __init__(self, k, table, names='e', category=None):
+    def __init__(self, k, table, names='e', category=None) -> None:
         """
         TESTS::
 

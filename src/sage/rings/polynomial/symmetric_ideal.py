@@ -179,7 +179,7 @@ class SymmetricIdeal(Ideal_generic):
         False
     """
 
-    def __init__(self, ring, gens, coerce=True):
+    def __init__(self, ring, gens, coerce=True) -> None:
         """
         INPUT:
 
@@ -201,7 +201,7 @@ class SymmetricIdeal(Ideal_generic):
         """
         Ideal_generic.__init__(self, ring, gens, coerce=coerce)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

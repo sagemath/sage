@@ -307,7 +307,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
     _degree = None
     _phis = None
 
-    def __init__(self, E, kernel, codomain=None, model=None, velu_sqrt_bound=None):
+    def __init__(self, E, kernel, codomain=None, model=None, velu_sqrt_bound=None) -> None:
         """
         Construct a composite isogeny with given kernel (and optionally,
         prescribed codomain curve). The isogeny is decomposed into steps

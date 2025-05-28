@@ -51,7 +51,7 @@ class ExtendedCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, C):
+    def __init__(self, C) -> None:
         r"""
         TESTS:
 
@@ -190,7 +190,7 @@ class ExtendedCodeExtendedMatrixEncoder(Encoder):
     - ``code`` -- the associated code of ``self``
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -304,7 +304,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
          through Gao decoder for [15, 7, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder=None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs) -> None:
         r"""
         TESTS:
 

@@ -29,7 +29,7 @@ class Kenzo(Feature):
         sage: Kenzo().is_present()  # optional - kenzo
         FeatureTestResult('kenzo', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

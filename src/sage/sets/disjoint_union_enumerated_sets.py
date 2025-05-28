@@ -272,7 +272,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             cls, Family(fam),
             facade=facade, keepkey=keepkey, category=category)
 
-    def __init__(self, family, facade=True, keepkey=False, category=None):
+    def __init__(self, family, facade=True, keepkey=False, category=None) -> None:
         """
         TESTS::
 
@@ -349,7 +349,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 warn("%s is an infinite union\nThe default implementation of __contains__ can loop forever. Please overload it." % (self))
             return any(x in a for a in self._family)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check containment.
 

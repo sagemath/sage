@@ -74,7 +74,7 @@ class TernaryQF(SageObject):
 
     possible_automorphisms = None
 
-    def __init__(self, v):
+    def __init__(self, v) -> None:
         r"""
         Create the ternary quadratic form `a\cdot x^2 + b\cdot y^2 + c\cdot z^2 + r\cdot y\cdot z + s\cdot x\cdot z + t\cdot x\cdot y` from the
         tuple ``v=[a,b,c,r,s,t]`` over `\ZZ`.

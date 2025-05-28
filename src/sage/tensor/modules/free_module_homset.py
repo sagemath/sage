@@ -163,7 +163,7 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
             return FreeModuleEndset(fmodule1, name, latex_name)
         return type.__call__(cls, fmodule1, fmodule2, name, latex_name)
 
-    def __init__(self, fmodule1, fmodule2, name, latex_name):
+    def __init__(self, fmodule1, fmodule2, name, latex_name) -> None:
         r"""
         TESTS::
 
@@ -448,7 +448,7 @@ class FreeModuleEndset(FreeModuleHomset):
 
     Element = FiniteRankFreeModuleEndomorphism
 
-    def __init__(self, fmodule, name, latex_name):
+    def __init__(self, fmodule, name, latex_name) -> None:
         r"""
         TESTS::
 

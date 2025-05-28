@@ -558,7 +558,7 @@ class CubeGroup(PermutationGroup_generic):
             sage: groups.permutation.RubiksCube()
             The Rubik's cube group with generators R,L,F,B,U,D in SymmetricGroup(48).
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -595,7 +595,7 @@ class CubeGroup(PermutationGroup_generic):
         """
         return ['B','D','F','L','R','U']
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1221,7 +1221,7 @@ class RubiksCube(SageObject):
         sage: C == RubiksCube("L*R")
         True
     """
-    def __init__(self, state=None, history=[], colors=[lpurple,yellow,red,green,orange,blue]):
+    def __init__(self, state=None, history=[], colors=[lpurple,yellow,red,green,orange,blue]) -> None:
         """
         Initialize ``self``.
 

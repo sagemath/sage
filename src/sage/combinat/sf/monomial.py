@@ -28,7 +28,7 @@ from sage.arith.misc import multinomial, factorial, binomial
 
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class for methods related to monomial symmetric functions.
 

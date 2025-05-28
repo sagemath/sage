@@ -37,7 +37,7 @@ def is_Monoid(x) -> bool:
 
 
 class Monoid_class(Parent):
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         EXAMPLES::
 

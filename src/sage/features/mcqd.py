@@ -28,7 +28,7 @@ class Mcqd(JoinFeature):
         FeatureTestResult('mcqd', True)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 

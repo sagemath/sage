@@ -1011,7 +1011,7 @@ class BranchingRule(SageObject):
     """
 
     def __init__(self, R, S, f, name='default', intermediate_types=[],
-                 intermediate_names=[]):
+                 intermediate_names=[]) -> None:
         """
         INPUT:
 

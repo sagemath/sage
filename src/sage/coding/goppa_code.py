@@ -96,7 +96,7 @@ class GoppaCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, generating_pol, defining_set):
+    def __init__(self, generating_pol, defining_set) -> None:
         """
         Initialize.
 
@@ -342,7 +342,7 @@ class GoppaCodeEncoder(Encoder):
         sage: c in C
         True
     """
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         """
         Initialize.
 

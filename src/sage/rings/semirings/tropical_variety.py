@@ -164,7 +164,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
         [(t1 - 1/2, t2, t3, t1), [t2 - 9/2 <= t1, t1 <= t3 + 1/2, t2 - 5 <= t3], 1],
         [(2*t1 - t2 + 4, t2, t3, t1), [t1 <= min(1/2*t2 + 1/2*t3 - 2, t2 - 9/2)], 1]]
     """
-    def __init__(self, poly):
+    def __init__(self, poly) -> None:
         r"""
         Initialize ``self``.
 

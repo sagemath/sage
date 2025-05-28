@@ -26,7 +26,7 @@ class KroneckerQuiverPathAlgebra(CombinatorialFreeModule):
     implementation of path algebras.
     """
 
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         EXAMPLES::
 

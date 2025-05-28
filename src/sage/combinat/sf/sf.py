@@ -845,7 +845,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         - Devise a mechanism so that pickling bases of symmetric
           functions pickles the coercions which have a cache.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         Initialization of ``self``.
 
@@ -1596,7 +1596,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
 
 class SymmetricaConversionOnBasis:
-    def __init__(self, t, domain, codomain):
+    def __init__(self, t, domain, codomain) -> None:
         """
         Initialization of ``self``.
 

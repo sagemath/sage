@@ -236,7 +236,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         """
         return OrderedTrees_all()
 
-    def __init__(self, parent=None, children=None, check=True):
+    def __init__(self, parent=None, children=None, check=True) -> None:
         """
         TESTS::
 
@@ -914,7 +914,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
         +Infinity
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -948,7 +948,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
         """
         return "Ordered trees"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1017,7 +1017,7 @@ class OrderedTrees_size(OrderedTrees):
         [[[], []], [[[]]]]
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         """
         TESTS::
 
@@ -1037,7 +1037,7 @@ class OrderedTrees_size(OrderedTrees):
         """
         return "Ordered trees of size {}".format(self._size)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1354,7 +1354,7 @@ class LabelledOrderedTrees(UniqueRepresentation, Parent):
         True
     """
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         TESTS::
 

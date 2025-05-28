@@ -221,7 +221,7 @@ class KenzoObject(SageObject):
       (which is an ecl object)
     """
 
-    def __init__(self, kenzo_object):
+    def __init__(self, kenzo_object) -> None:
         r"""
         Construct the chain complex.
 

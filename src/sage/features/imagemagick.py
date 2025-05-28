@@ -32,7 +32,7 @@ class Magick(Executable):
         sage: Magick().is_present()  # optional - imagemagick
         FeatureTestResult('magick', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -122,7 +122,7 @@ class ImageMagick(JoinFeature):
         sage: ImageMagick().is_present()  # optional - imagemagick
         FeatureTestResult('imagemagick', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

@@ -438,7 +438,7 @@ class AvailableSoftware:
         sage: available_software.issuperset(set(['internet','latex'])) # random, optional - internet latex
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialization.
 
@@ -462,7 +462,7 @@ class AvailableSoftware:
         self._seen = Array('i', len(self._features)) # initialized to zeroes
         self._hidden = Array('i', len(self._features)) # initialized to zeroes
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         """
         Return ``True`` if ``item`` is available on the system.
 

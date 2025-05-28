@@ -89,7 +89,7 @@ class OutputBase(SageObject):
 
 class OutputPlainText(OutputBase):
 
-    def __init__(self, plain_text):
+    def __init__(self, plain_text) -> None:
         """
         Plain Text Output.
 
@@ -153,7 +153,7 @@ class OutputPlainText(OutputBase):
 
 class OutputAsciiArt(OutputBase):
 
-    def __init__(self, ascii_art):
+    def __init__(self, ascii_art) -> None:
         """
         ASCII Art Output.
 
@@ -216,7 +216,7 @@ class OutputAsciiArt(OutputBase):
 
 class OutputUnicodeArt(OutputBase):
 
-    def __init__(self, unicode_art):
+    def __init__(self, unicode_art) -> None:
         """
         Unicode Art Output.
 
@@ -288,7 +288,7 @@ class OutputUnicodeArt(OutputBase):
 
 class OutputLatex(OutputBase):
 
-    def __init__(self, latex):
+    def __init__(self, latex) -> None:
         """
         LaTeX Output.
 

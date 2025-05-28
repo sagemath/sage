@@ -184,7 +184,7 @@ class FPModule(UniqueRepresentation, IndexedGenerators, Module):
         j = Hom(relations_module, generator_module)(rels)
         return super().__classcall__(cls, j, names=names)
 
-    def __init__(self, j, names):
+    def __init__(self, j, names) -> None:
         r"""
         Create a finitely presented module over a connected graded algebra.
 

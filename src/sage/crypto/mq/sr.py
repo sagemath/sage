@@ -323,6 +323,8 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.structure.element import Matrix
 
 from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
+from types import TracebackType
+from typing import Optional, Type
 
 
 def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -417,7 +419,7 @@ def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
 
 
 class SR_generic(MPolynomialSystemGenerator):
-    def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
+    def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs) -> None:
         """
         Small Scale Variants of the AES.
 
@@ -2450,7 +2452,7 @@ class SR_gf2n(SR_generic):
 
 
 class SR_gf2(SR_generic):
-    def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
+    def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs) -> None:
         r"""
         Small Scale Variants of the AES polynomial system constructor over
         `\GF{2}`. See help for SR.
@@ -3253,7 +3255,7 @@ class AllowZeroInversionsContext:
     """
     Temporarily allow zero inversion.
     """
-    def __init__(self, sr):
+    def __init__(self, sr) -> None:
         """
         EXAMPLES::
 
@@ -3283,7 +3285,7 @@ class AllowZeroInversionsContext:
         self.allow_zero_inversions = self.sr._allow_zero_inversions
         self.sr._allow_zero_inversions = True
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         """
         EXAMPLES::
 

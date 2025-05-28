@@ -216,7 +216,7 @@ def _lagrange_polynomial(R, eval_pts, values):
 #################################################
 
 class SkewPolynomialRing(OrePolynomialRing):
-    def __init__(self, base_ring, morphism, derivation, name, sparse, category=None):
+    def __init__(self, base_ring, morphism, derivation, name, sparse, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -457,7 +457,7 @@ class SkewPolynomialCenterInjection(RingHomomorphism):
         sage: iota = S.convert_map_from(Z)
         sage: TestSuite(iota).run(skip=['_test_category'])
     """
-    def __init__(self, domain, codomain, embed, order):
+    def __init__(self, domain, codomain, embed, order) -> None:
         r"""
         Initialize this morphism.
 
@@ -568,7 +568,7 @@ class SkewPolynomialRing_finite_order(SkewPolynomialRing):
         - :class:`sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing`
         - :mod:`sage.rings.polynomial.skew_polynomial_finite_order`
     """
-    def __init__(self, base_ring, morphism, derivation, name, sparse, category=None):
+    def __init__(self, base_ring, morphism, derivation, name, sparse, category=None) -> None:
         r"""
         Initialize this skew polynomial ring.
 
@@ -775,7 +775,7 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
         Add methods related to center of skew polynomial ring, irreducibility, karatsuba
         multiplication and factorization.
     """
-    def __init__(self, base_ring, morphism, derivation, names, sparse, category=None):
+    def __init__(self, base_ring, morphism, derivation, names, sparse, category=None) -> None:
         r"""
         This method is a constructor for a general, dense univariate skew polynomial ring
         over a finite field.

@@ -475,7 +475,7 @@ class Mathematica(ExtraTabCompletion, Expect):
     Interface to the Mathematica interpreter.
     """
     def __init__(self, maxread=None, script_subdirectory=None, logfile=None, server=None,
-                 server_tmpdir=None, command=None, verbose_start=False):
+                 server_tmpdir=None, command=None, verbose_start=False) -> None:
         r"""
         TESTS:
 
@@ -724,7 +724,7 @@ class MathematicaElement(ExpectElement):
             raise AttributeError
         return MathematicaFunctionElement(self, attrname)
 
-    def __float__(self, precision=16):
+    def __float__(self, precision=16) -> float:
         P = self.parent()
         return float(P.eval('N[%s,%s]' % (self.name(), precision)))
 
@@ -903,11 +903,11 @@ class MathematicaElement(ExpectElement):
             raise NotImplementedError("Unable to parse Mathematica \
                 output: %s" % res)
 
-    def __str__(self):
+    def __str__(self) -> str:
         P = self._check_valid()
         return P.get(self._name, ascii_art=True)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the object's length, evaluated by mathematica.
 
@@ -1044,7 +1044,7 @@ class MathematicaElement(ExpectElement):
             return rich_to_bool(op, 0)
         return NotImplemented
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether this Mathematica element is not identical to ``False``.
 

@@ -71,7 +71,7 @@ class HeckeModule_generic(Module):
 
     Element = element.HeckeModuleElement
 
-    def __init__(self, base_ring, level, category=None):
+    def __init__(self, base_ring, level, category=None) -> None:
         r"""
         Create a Hecke module. Not intended to be called directly.
 
@@ -493,7 +493,7 @@ class HeckeModule_free_module(HeckeModule_generic):
     """
     A Hecke module modeled on a free module over a commutative ring.
     """
-    def __init__(self, base_ring, level, weight, category=None):
+    def __init__(self, base_ring, level, weight, category=None) -> None:
         r"""
         Initialise a module.
 
@@ -560,7 +560,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         return hash((self.__weight, self.level(), self.base_ring()))
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of factors in the decomposition of ``self``.
 

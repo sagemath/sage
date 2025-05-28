@@ -126,7 +126,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             return PoincareBirkhoffWittBasisSemisimpleLieAlgebra(g, basis_key, prefix, **kwds)
         return super().__classcall__(cls, g, basis_key, prefix, **kwds)
 
-    def __init__(self, g, basis_key, prefix, **kwds):
+    def __init__(self, g, basis_key, prefix, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -644,7 +644,7 @@ class PoincareBirkhoffWittBasisSemisimpleLieAlgebra(PoincareBirkhoffWittBasis):
     The Poincare-Birkhoff-Witt basis of a finite dimensional triangular
     Kac-Moody Lie algebra (i.e., a semisimple Lie algebra).
     """
-    def __init__(self, g, basis_key=None, *args, **kwds):
+    def __init__(self, g, basis_key=None, *args, **kwds) -> None:
         r"""
         Initialize ``self``.
 

@@ -75,7 +75,7 @@ class CellModule(CombinatorialFreeModule):
         kwds['prefix'] = kwds.get('prefix', 'W')
         return super().__classcall__(cls, A, mu, **kwds)
 
-    def __init__(self, A, mu, **kwds):
+    def __init__(self, A, mu, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -403,7 +403,7 @@ class SimpleModule(QuotientModuleWithBasis):
     where `\operatorname{rad}(\lambda)` is the radical of the
     bilinear form `\Phi_{\lambda}`.
     """
-    def __init__(self, submodule):
+    def __init__(self, submodule) -> None:
         """
         Initialize ``self``.
 

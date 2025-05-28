@@ -203,7 +203,7 @@ class DrinfeldModules(Category_over_base_ring):
         TypeError: function ring base must be a finite field
     """
 
-    def __init__(self, base_field, name='t'):
+    def __init__(self, base_field, name='t') -> None:
         r"""
         Initialize ``self``.
 

@@ -180,7 +180,7 @@ class PerfectMatching(SetPartition):
         P = PerfectMatchings(base_set)
         return P(parts)
 
-    def __init__(self, parent, s, check=True, sort=True):
+    def __init__(self, parent, s, check=True, sort=True) -> None:
         """
         Initialize ``self``.
 
@@ -635,7 +635,7 @@ class PerfectMatchings(SetPartitions_set):
             yield self.element_class(self, ((s[a], s[b]) for a, b in val),
                                      check=False, sort=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Test if ``x`` is an element of ``self``.
 

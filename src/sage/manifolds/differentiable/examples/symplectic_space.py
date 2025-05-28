@@ -46,7 +46,7 @@ class StandardSymplecticSpace(EuclideanSpace):
         start_index: int = 1,
         base_manifold: Optional[StandardSymplecticSpace] = None,
         names: Optional[tuple[str]] = None,
-    ):
+    ) -> None:
         r"""
         INPUT:
 

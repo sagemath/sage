@@ -54,7 +54,7 @@ class ManinSymbolList(Parent):
 
     Element = ManinSymbol
 
-    def __init__(self, weight, lst):
+    def __init__(self, weight, lst) -> None:
         """
         Constructor for a ManinSymbolList.
 
@@ -134,7 +134,7 @@ class ManinSymbolList(Parent):
         """
         return list(self._symbol_list)  # This makes a shallow copy
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of this :class:`ManinSymbolList`.
 
@@ -396,7 +396,7 @@ class ManinSymbolList_group(ManinSymbolList):
         sage: ManinSymbolList_group(11, 2, P1List(11))
         <sage.modular.modsym.manin_symbol_list.ManinSymbolList_group_with_category object at ...>
     """
-    def __init__(self, level, weight, syms):
+    def __init__(self, level, weight, syms) -> None:
         """
         Constructor for class ManinSymbolList_group.
 
@@ -722,7 +722,7 @@ class ManinSymbolList_gamma0(ManinSymbolList_group):
         sage: len(m)
         36
     """
-    def __init__(self, level, weight):
+    def __init__(self, level, weight) -> None:
         """
         Constructor for a ModularSymbolList for Gamma_0(N).
 
@@ -737,7 +737,7 @@ class ManinSymbolList_gamma0(ManinSymbolList_group):
         """
         ManinSymbolList_group.__init__(self, level, weight, p1list.P1List(level))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation.
 
@@ -781,7 +781,7 @@ class ManinSymbolList_gamma1(ManinSymbolList_group):
         sage: m == loads(dumps(m))
         True
     """
-    def __init__(self, level, weight):
+    def __init__(self, level, weight) -> None:
         r"""
         Constructor for a ModularSymbolList for `\Gamma_0(N)`.
 
@@ -794,7 +794,7 @@ class ManinSymbolList_gamma1(ManinSymbolList_group):
         """
         ManinSymbolList_group.__init__(self, level, weight, g1list.G1list(level))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of this :class:`ManinSymbolList`.
 
@@ -841,7 +841,7 @@ class ManinSymbolList_gamma_h(ManinSymbolList_group):
         sage: m == loads(dumps(m))
         True
     """
-    def __init__(self, group, weight):
+    def __init__(self, group, weight) -> None:
         r"""
         Constructor for Manin symbols for `\Gamma_H(N)`.
 
@@ -866,7 +866,7 @@ class ManinSymbolList_gamma_h(ManinSymbolList_group):
         """
         return self.__group
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -901,7 +901,7 @@ class ManinSymbolList_character(ManinSymbolList):
         sage: m == loads(dumps(m))
         True
     """
-    def __init__(self, character, weight):
+    def __init__(self, character, weight) -> None:
         """
         Constructor for :class:`ManinSymbolList_character` objects.
 
@@ -941,7 +941,7 @@ class ManinSymbolList_character(ManinSymbolList):
         self.__list = L
         ManinSymbolList.__init__(self, weight, L)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Standard function returning string representation.
 

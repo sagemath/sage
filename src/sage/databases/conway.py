@@ -17,7 +17,7 @@ from collections.abc import Mapping
 
 
 class DictInMapping(Mapping):
-    def __init__(self, dict):
+    def __init__(self, dict) -> None:
         """
         Places dict into a non-mutable mapping.
 
@@ -46,7 +46,7 @@ class DictInMapping(Mapping):
         """
         return self._store[key]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         TESTS::
 
@@ -69,7 +69,7 @@ class DictInMapping(Mapping):
         """
         return iter(self._store)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -81,7 +81,7 @@ class DictInMapping(Mapping):
 
 
 class ConwayPolynomials(Mapping):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize the database.
 
@@ -94,7 +94,7 @@ class ConwayPolynomials(Mapping):
         import conway_polynomials
         self._store = conway_polynomials.database()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a description of this database.
 
@@ -134,7 +134,7 @@ class ConwayPolynomials(Mapping):
                 pass
             raise err
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of polynomials in this database.
 

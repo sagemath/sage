@@ -68,7 +68,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         return super().__classcall__(cls, n)
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Hecke triangle group (2, n, infinity).
 

@@ -50,7 +50,7 @@ class AmbientSpace(Scheme):
 
     - ``R`` -- ring
     """
-    def __init__(self, n, R=ZZ):
+    def __init__(self, n, R=ZZ) -> None:
         """
         TESTS::
 

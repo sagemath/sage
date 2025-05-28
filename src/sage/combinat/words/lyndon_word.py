@@ -126,7 +126,7 @@ class LyndonWords_class(UniqueRepresentation, Parent):
     r"""
     The set of all Lyndon words.
     """
-    def __init__(self, alphabet=None):
+    def __init__(self, alphabet=None) -> None:
         r"""
         INPUT:
 
@@ -158,7 +158,7 @@ class LyndonWords_class(UniqueRepresentation, Parent):
             raise ValueError("not a Lyndon word")
         return w
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation.
 
@@ -169,7 +169,7 @@ class LyndonWords_class(UniqueRepresentation, Parent):
         """
         return "Lyndon words"
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         """
         TESTS::
 
@@ -194,7 +194,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
         sage: L.list()
         [word: 1223, word: 1232, word: 1322]
     """
-    def __init__(self, e):
+    def __init__(self, e) -> None:
         """
         TESTS::
 
@@ -212,7 +212,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
                         facade=(self._words,)
                         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -244,7 +244,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
             raise ValueError("evaluation is not {}".format(self._e))
         return w
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         """
         EXAMPLES::
 
@@ -359,7 +359,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
          word: 2233,
          word: 2333]
     """
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         Initialize ``self``.
 
@@ -380,7 +380,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
                         facade=(self._words,)
                         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -421,7 +421,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             raise ValueError("length is not k={}".format(self._k))
         return w
 
-    def __contains__(self, w):
+    def __contains__(self, w) -> bool:
         """
         TESTS::
 
@@ -499,7 +499,7 @@ def StandardBracketedLyndonWords(n, k):
 
 
 class StandardBracketedLyndonWords_nk(UniqueRepresentation, Parent):
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         TESTS::
 
@@ -514,7 +514,7 @@ class StandardBracketedLyndonWords_nk(UniqueRepresentation, Parent):
         from sage.categories.enumerated_sets import EnumeratedSets
         Parent.__init__(self, category=EnumeratedSets().Finite())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -544,7 +544,7 @@ class StandardBracketedLyndonWords_nk(UniqueRepresentation, Parent):
         """
         return standard_bracketing(self._lyndon(*args, **kwds))
 
-    def __contains__(self, sblw):
+    def __contains__(self, sblw) -> bool:
         """
         EXAMPLES::
 

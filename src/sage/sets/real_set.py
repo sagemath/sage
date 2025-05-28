@@ -133,7 +133,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
     - ``check`` -- boolean; whether to check the other arguments for validity
     """
 
-    def __init__(self, lower, lower_closed, upper, upper_closed, check=True):
+    def __init__(self, lower, lower_closed, upper, upper_closed, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -1282,7 +1282,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         union_intervals = RealSet.normalize(intervals)
         return UniqueRepresentation.__classcall__(cls, *union_intervals, normalized=True)
 
-    def __init__(self, *intervals, normalized=True):
+    def __init__(self, *intervals, normalized=True) -> None:
         r"""
         TESTS::
 
@@ -1453,7 +1453,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
 
     __getitem__ = get_interval
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         A set is considered ``True`` unless it is empty, in which case it is
         considered to be ``False``.

@@ -212,7 +212,7 @@ class FreeModuleAltForm(FreeModuleTensor):
         sage: s.display(e)
         zero = 0
     """
-    def __init__(self, fmodule, degree, name=None, latex_name=None):
+    def __init__(self, fmodule, degree, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 

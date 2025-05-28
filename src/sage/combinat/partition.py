@@ -516,7 +516,7 @@ class Partition(CombinatorialElement):
             self._set_parent(state[0])
             self.__dict__ = state[1]
 
-    def __init__(self, parent, mu):
+    def __init__(self, parent, mu) -> None:
         """
         Initialize ``self``.
 
@@ -6314,7 +6314,7 @@ class Partitions(UniqueRepresentation, Parent):
         raise ValueError("n must be an integer or be equal to one of "
                          "None, NN, NonNegativeIntegers()")
 
-    def __init__(self, is_infinite=False):
+    def __init__(self, is_infinite=False) -> None:
         """
         Initialize ``self``.
 
@@ -6490,7 +6490,7 @@ class Partitions(UniqueRepresentation, Parent):
 
         raise ValueError(f'{lst} is not an element of {self}')
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -6565,7 +6565,7 @@ class Partitions_all(Partitions):
         sage: TestSuite( sage.combinat.partition.Partitions_all() ).run()
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -6828,7 +6828,7 @@ class Partitions_all(Partitions):
 
 
 class Partitions_all_constrained(Partitions):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         """
         TESTS::
 
@@ -6859,7 +6859,7 @@ class Partitions_all_constrained(Partitions):
 
         Partitions.__init__(self, is_infinite=self._max_sum is infinity)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -6927,7 +6927,7 @@ class Partitions_all_bounded(Partitions):
     """
     Partitions whose parts do not exceed a given bound.
     """
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         TESTS::
 
@@ -6936,7 +6936,7 @@ class Partitions_all_bounded(Partitions):
         self.k = k
         Partitions.__init__(self, is_infinite=True)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7000,7 +7000,7 @@ class Partitions_n(Partitions):
         sage: TestSuite( sage.combinat.partition.Partitions_n(0) ).run()                # needs sage.libs.flint
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -7011,7 +7011,7 @@ class Partitions_n(Partitions):
         Partitions.__init__(self)
         self.n = n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -7403,7 +7403,7 @@ class Partitions_nk(Partitions):
         sage: TestSuite( sage.combinat.partition.Partitions_nk(0,0) ).run()
     """
 
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         Initialize ``self``.
 
@@ -7415,7 +7415,7 @@ class Partitions_nk(Partitions):
         self.n = n
         self.k = k
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -7660,7 +7660,7 @@ class Partitions_parts_in(Partitions):
         parts = tuple(sorted(set(map(ZZ, parts))))
         return super().__classcall__(cls, Integer(n), parts)
 
-    def __init__(self, n, parts):
+    def __init__(self, n, parts) -> None:
         """
         Initialize ``self``.
 
@@ -7672,7 +7672,7 @@ class Partitions_parts_in(Partitions):
         self.n = n
         self.parts = list(parts)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7979,7 +7979,7 @@ class Partitions_starting(Partitions):
         return super().__classcall__(cls, Integer(n),
                                      starting_partition)
 
-    def __init__(self, n, starting_partition):
+    def __init__(self, n, starting_partition) -> None:
         """
         Initialize ``self``.
 
@@ -8026,7 +8026,7 @@ class Partitions_starting(Partitions):
         """
         return f"Partitions of the integer {self.n} starting with {self._starting}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -8116,7 +8116,7 @@ class Partitions_ending(Partitions):
         return super().__classcall__(cls, Integer(n),
                                      ending_partition)
 
-    def __init__(self, n, ending_partition):
+    def __init__(self, n, ending_partition) -> None:
         """
         Initialize ``self``.
 
@@ -8152,7 +8152,7 @@ class Partitions_ending(Partitions):
         """
         return f"Partitions of the integer {self.n} ending with {self._ending}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -8236,7 +8236,7 @@ class PartitionsInBox(Partitions):
         sage: Partitions(max_part=2, max_length=3)
         Integer partitions which fit in a 3 x 2 box
     """
-    def __init__(self, h, w):
+    def __init__(self, h, w) -> None:
         """
         Initialize ``self``.
 
@@ -8260,7 +8260,7 @@ class PartitionsInBox(Partitions):
         """
         return f"Integer partitions which fit in a {self.h} x {self.w} box"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -8405,7 +8405,7 @@ class Partitions_with_constraints(IntegerListsLex):
     Element = Partition
     options = Partitions.options
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -8459,7 +8459,7 @@ class RegularPartitions(Partitions):
       partitions is infinite
     """
 
-    def __init__(self, ell, is_infinite=False):
+    def __init__(self, ell, is_infinite=False) -> None:
         """
         Initialize ``self``.
 
@@ -8483,7 +8483,7 @@ class RegularPartitions(Partitions):
         """
         return self._ell
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -8552,7 +8552,7 @@ class RegularPartitions_all(RegularPartitions):
         :class:`~sage.combinat.partition.RegularPartitions`
     """
 
-    def __init__(self, ell):
+    def __init__(self, ell) -> None:
         """
         Initialize ``self``.
 
@@ -8622,7 +8622,7 @@ class RegularPartitions_truncated(RegularPartitions):
         :class:`~sage.combinat.partition.RegularPartitions`
     """
 
-    def __init__(self, ell, max_len):
+    def __init__(self, ell, max_len) -> None:
         """
         Initialize ``self``.
 
@@ -8646,7 +8646,7 @@ class RegularPartitions_truncated(RegularPartitions):
         """
         return self._max_len
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -8751,7 +8751,7 @@ class RegularPartitions_bounded(RegularPartitions):
         :class:`~sage.combinat.partition.RegularPartitions`
     """
 
-    def __init__(self, ell, k):
+    def __init__(self, ell, k) -> None:
         """
         Initialize ``self``.
 
@@ -8770,7 +8770,7 @@ class RegularPartitions_bounded(RegularPartitions):
         self.k = k
         RegularPartitions.__init__(self, ell, False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -8836,7 +8836,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         :class:`~sage.combinat.partition.RegularPartitions`
     """
 
-    def __init__(self, n, ell):
+    def __init__(self, n, ell) -> None:
         """
         Initialize ``self``.
 
@@ -8863,7 +8863,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
         """
         return f"{self._ell}-Regular Partitions of the integer {self.n}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -9003,7 +9003,7 @@ class OrderedPartitions(Partitions):
             k = Integer(k)
         return super().__classcall__(cls, Integer(n), k)
 
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         Initialize ``self``.
 
@@ -9019,7 +9019,7 @@ class OrderedPartitions(Partitions):
         self.n = n
         self.k = k
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check to see if ``x`` is an element of ``self``.
 
@@ -9149,7 +9149,7 @@ class Partitions_length_and_parts_constrained(Partitions):
         sage: Partitions_length_and_parts_constrained(9, 1, 9, 1, 9) == Partitions(9)
         False
     """
-    def __init__(self, n, min_length, max_length, min_part, max_part):
+    def __init__(self, n, min_length, max_length, min_part, max_part) -> None:
         """
         Initialize ``self``.
 
@@ -9220,7 +9220,7 @@ class Partitions_length_and_parts_constrained(Partitions):
             return f"Partitions of {self._n} " + parts_str
         return f"Partitions of {self._n}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is contained in ``self``.
 
@@ -9337,7 +9337,7 @@ class PartitionsGreatestLE(UniqueRepresentation, IntegerListsLex):
         sage: PartitionsGreatestLE(10, 2).first().parent()
         Partitions...
     """
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         Initialize ``self``.
 
@@ -9425,7 +9425,7 @@ class PartitionsGreatestEQ(UniqueRepresentation, IntegerListsLex):
         Partitions...
     """
 
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         Initialize ``self``.
 
@@ -9499,7 +9499,7 @@ class RestrictedPartitions_generic(Partitions):
       partitions is infinite
     """
 
-    def __init__(self, ell, is_infinite=False):
+    def __init__(self, ell, is_infinite=False) -> None:
         """
         Initialize ``self``.
 
@@ -9523,7 +9523,7 @@ class RestrictedPartitions_generic(Partitions):
         """
         return self._ell
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -9611,7 +9611,7 @@ class RestrictedPartitions_all(RestrictedPartitions_generic):
         :class:`~sage.combinat.partition.RestrictedPartitions_generic`
     """
 
-    def __init__(self, ell):
+    def __init__(self, ell) -> None:
         """
         Initialize ``self``.
 
@@ -9665,7 +9665,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
         :class:`~sage.combinat.partition.RestrictedPartitions_generic`
     """
 
-    def __init__(self, n, ell):
+    def __init__(self, n, ell) -> None:
         """
         Initialize ``self``.
 
@@ -9687,7 +9687,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
         """
         return f"{self._ell}-Restricted Partitions of the integer {self.n}"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 

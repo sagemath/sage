@@ -179,7 +179,7 @@ class CartanType(CartanType_standard_finite, CartanType_simply_laced, CartanType
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 

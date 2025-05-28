@@ -81,7 +81,7 @@ class GraftalLaceCellularAutomata(SageObject):
 
     - [Kas2018]_
     """
-    def __init__(self, rule):
+    def __init__(self, rule) -> None:
         """
         Initialize ``self``.
 

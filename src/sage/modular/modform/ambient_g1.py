@@ -59,7 +59,7 @@ class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
     r"""
     A space of modular forms for the group `\Gamma_H(N)` over the rational numbers.
     """
-    def __init__(self, group, weight, eis_only):
+    def __init__(self, group, weight, eis_only) -> None:
         r"""
         Create a space of modular forms for `\Gamma_H(N)` of integral weight over the
         rational numbers.
@@ -152,7 +152,7 @@ class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
     r"""
     A space of modular forms for the group `\Gamma_1(N)` over the rational numbers.
     """
-    def __init__(self, level, weight, eis_only):
+    def __init__(self, level, weight, eis_only) -> None:
         r"""
         Create a space of modular forms for `\Gamma_1(N)` of integral weight over the
         rational numbers.

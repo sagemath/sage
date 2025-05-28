@@ -317,7 +317,7 @@ def ChainComplex(data=None, base_ring=None, grading_group=None,
 
 class Chain_class(ModuleElement):
 
-    def __init__(self, parent, vectors, check=True):
+    def __init__(self, parent, vectors, check=True) -> None:
         r"""
         A Chain in a Chain Complex.
 
@@ -666,7 +666,7 @@ class ChainComplex_class(Parent):
         sage: D
         Chain complex with at most 2 nonzero terms over Integer Ring
     """
-    def __init__(self, grading_group, degree_of_differential, base_ring, differentials):
+    def __init__(self, grading_group, degree_of_differential, base_ring, differentials) -> None:
         """
         Initialize ``self``.
 

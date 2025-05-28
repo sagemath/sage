@@ -93,7 +93,7 @@ class qCommutingPolynomials_generic(CombinatorialFreeModule):
             B.set_immutable()
         return super().__classcall__(cls, q=q, B=B, names=names)
 
-    def __init__(self, q, B, indices, names):
+    def __init__(self, q, B, indices, names) -> None:
         r"""
         Initialize ``self``.
 
@@ -276,7 +276,7 @@ class qCommutingPolynomials(qCommutingPolynomials_generic):
         sage: all(f[b] == q_binomial(10, b.list()[1], q^3) for b in f.support())
         True
     """
-    def __init__(self, q, B, names):
+    def __init__(self, q, B, names) -> None:
         r"""
         Initialize ``self``.
 
@@ -452,7 +452,7 @@ class qCommutingLaurentPolynomials(qCommutingPolynomials_generic):
         sage: all(f[b] == q_binomial(10, -b.list()[1], q^3) for b in f.support())
         True
     """
-    def __init__(self, q, B, names):
+    def __init__(self, q, B, names) -> None:
         r"""
         Initialize ``self``.
 

@@ -263,7 +263,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
     Element = FreeModuleAutomorphism
 
-    def __init__(self, fmodule):
+    def __init__(self, fmodule) -> None:
         r"""
         See :class:`FreeModuleLinearGroup` for documentation and examples.
 

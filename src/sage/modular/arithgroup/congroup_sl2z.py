@@ -53,7 +53,7 @@ class SL2Z_class(Gamma0_class):
     subgroup of itself.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The modular group `\SL_2(\Z)`.
 

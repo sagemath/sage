@@ -68,7 +68,7 @@ class Jack(UniqueRepresentation):
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(t))
 
-    def __init__(self, Sym, t):
+    def __init__(self, Sym, t) -> None:
         r"""
         The family of Jack symmetric functions including the `P`, `Q`, `J`, `Qp`
         bases.  The default parameter is ``t``.
@@ -93,7 +93,7 @@ class Jack(UniqueRepresentation):
             self._name_suffix += " with t=%s" % t
         self._name = "Jack polynomials"+self._name_suffix+" over "+repr(Sym.base_ring())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         The string representation for the family of Jack symmetric function bases.
 
@@ -494,7 +494,7 @@ def normalize_coefficients(self, c):
 
 
 class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
-    def __init__(self, jack):
+    def __init__(self, jack) -> None:
         r"""
         A class of methods which are common to all Jack bases of the symmetric functions.
 
@@ -854,7 +854,7 @@ def part_scalar_jack(part1, part2, t):
 
 class JackPolynomials_p(JackPolynomials_generic):
 
-    def __init__(self, jack):
+    def __init__(self, jack) -> None:
         r"""
         The `P` basis is uni-triangularly related to the monomial basis and
         orthogonal with respect to the Jack scalar product.
@@ -1058,7 +1058,7 @@ class JackPolynomials_p(JackPolynomials_generic):
 
 class JackPolynomials_j(JackPolynomials_generic):
 
-    def __init__(self, jack):
+    def __init__(self, jack) -> None:
         r"""
         The `J` basis is a defined as a normalized form of the `P` basis.
 
@@ -1094,7 +1094,7 @@ class JackPolynomials_j(JackPolynomials_generic):
 #Q basis
 class JackPolynomials_q(JackPolynomials_generic):
 
-    def __init__(self, jack):
+    def __init__(self, jack) -> None:
         r"""
         The `Q` basis is defined as a normalized form of the `P` basis.
 
@@ -1131,7 +1131,7 @@ h_to_qp_cache = {}
 
 
 class JackPolynomials_qp(JackPolynomials_generic):
-    def __init__(self, jack):
+    def __init__(self, jack) -> None:
         r"""
         The `Qp` basis is the dual basis to the `P` basis with respect to the
         standard scalar product
@@ -1323,7 +1323,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
 
 class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         r"""
         Return the algebra of zonal polynomials.
 

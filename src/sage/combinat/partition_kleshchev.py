@@ -1422,7 +1422,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
     - [Vazirani2002]_
     """
 
-    def __init__(self, e, multicharge, convention):
+    def __init__(self, e, multicharge, convention) -> None:
         r"""
         Initialize ``self``.
 
@@ -1484,7 +1484,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
         return 'Kleshchev partitions with e=%s and multicharge=(%s)' % (
                         self._e,','.join('%s' % m for m in self._multicharge))
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         """
         Containment test for Kleshchev partitions.
 
@@ -1637,7 +1637,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
     Kleshchev partitions of a fixed size.
     """
 
-    def __init__(self, e, multicharge=(0,), size=0, convention='RS'):
+    def __init__(self, e, multicharge=(0,), size=0, convention='RS') -> None:
         r"""
         Initialize ``self``.
 
@@ -1709,7 +1709,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
             self._e,','.join('%s' % m for m in self._multicharge), self._size
         )
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         """
         Check if ``mu`` is in ``self``.
 

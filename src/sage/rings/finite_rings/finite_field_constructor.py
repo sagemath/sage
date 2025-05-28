@@ -489,7 +489,7 @@ class FiniteFieldFactory(UniqueFactory):
         sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
         True
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Initialization.
 

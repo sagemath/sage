@@ -186,7 +186,7 @@ class CartanTypeFolded(UniqueRepresentation, SageObject):
             orbit = tuple(map(tuple, orbit))
         return super().__classcall__(cls, cartan_type, virtual, orbit)
 
-    def __init__(self, cartan_type, folding_of, orbit):
+    def __init__(self, cartan_type, folding_of, orbit) -> None:
         """
         Initialize ``self``.
 

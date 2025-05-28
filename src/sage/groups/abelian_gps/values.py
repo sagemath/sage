@@ -174,7 +174,7 @@ class AbelianGroupWithValuesEmbedding(Morphism):
         -1
     """
 
-    def __init__(self, domain, codomain):
+    def __init__(self, domain, codomain) -> None:
         """
         Construct the morphism.
 
@@ -233,7 +233,7 @@ class AbelianGroupWithValuesElement(AbelianGroupElement):
         sage: TestSuite(a*b).run()
     """
 
-    def __init__(self, parent, exponents, value=None):
+    def __init__(self, parent, exponents, value=None) -> None:
         """
         Create an element.
 
@@ -374,7 +374,7 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
     """
     Element = AbelianGroupWithValuesElement
 
-    def __init__(self, generator_orders, names, values, values_group):
+    def __init__(self, generator_orders, names, values, values_group) -> None:
         """
         The Python constructor.
 

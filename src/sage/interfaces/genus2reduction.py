@@ -145,7 +145,7 @@ class ReductionData(SageObject):
        4577-4610, Section 7.2, Proposition 4).
     """
     def __init__(self, pari_result, P, Q, Pmin, Qmin, minimal_disc,
-                 local_data, conductor):
+                 local_data, conductor) -> None:
         self.pari_result = pari_result
         self.P = P
         self.Q = Q
@@ -336,7 +336,7 @@ class Genus2reduction(SageObject):
     Conrad-Edixhoven-Stein that the component group of
     `J(X_1(p))` is trivial for all primes `p`.)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def _repr_(self):

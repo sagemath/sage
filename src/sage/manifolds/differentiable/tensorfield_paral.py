@@ -614,7 +614,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         h = (t + 1) ∂/∂x⊗∂/∂x + t^2 ∂/∂x⊗∂/∂y + sin(t) ∂/∂z⊗∂/∂x
     """
     def __init__(self, vector_field_module, tensor_type, name=None,
-                 latex_name=None, sym=None, antisym=None):
+                 latex_name=None, sym=None, antisym=None) -> None:
         r"""
         Construct a tensor field.
 

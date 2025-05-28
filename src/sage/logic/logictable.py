@@ -133,7 +133,7 @@ class Truthtable:
     - ``vo`` -- list of the variables in the expression in order,
       with each variable occurring only once
     """
-    def __init__(self, t, vo):
+    def __init__(self, t, vo) -> None:
         r"""
         Initialize the data fields.
 
@@ -197,7 +197,7 @@ class Truthtable:
         self.__vars_order.reverse()
         return rt
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of the calling table object.
 

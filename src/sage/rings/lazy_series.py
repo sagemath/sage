@@ -301,7 +301,7 @@ class LazyModuleElement(Element):
         sage: R[0:10]
         [0, -1, -2, -3, -4, -5, -6, -7, -8, -9]
     """
-    def __init__(self, parent, coeff_stream):
+    def __init__(self, parent, coeff_stream) -> None:
         """
         Initialize the series.
 
@@ -1037,7 +1037,7 @@ class LazyModuleElement(Element):
         """
         return hash(self._coeff_stream)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Test whether ``self`` is not zero.
 

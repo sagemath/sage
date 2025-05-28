@@ -222,7 +222,7 @@ class KleberTreeNode(Element):
     - ``parent_node`` -- (default: ``None``) the parent node of this node
     """
 
-    def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None):
+    def __init__(self, parent_obj, node_weight, dominant_root, parent_node=None) -> None:
         r"""
         Initialize the tree node.
 
@@ -611,7 +611,7 @@ class KleberTree(UniqueRepresentation, Parent):
             classical = CartanType(classical)
         return super().__classcall__(cls, cartan_type, B, classical)
 
-    def __init__(self, cartan_type, B, classical_ct):
+    def __init__(self, cartan_type, B, classical_ct) -> None:
         r"""
         Construct a Kleber tree.
 
@@ -1159,7 +1159,7 @@ class VirtualKleberTree(KleberTree):
             raise ValueError("use KleberTree for simply-laced types")
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         """
         Initialize ``self``.
 
@@ -1352,7 +1352,7 @@ class KleberTreeTypeA2Even(VirtualKleberTree):
         B = tuple(map(tuple, B))
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         """
         Initialize ``self``.
 

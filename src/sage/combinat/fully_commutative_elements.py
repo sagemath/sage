@@ -910,7 +910,7 @@ class FullyCommutativeElements(UniqueRepresentation, Parent):
             group = CoxeterGroup(data)
         return super().__classcall__(cls, group)
 
-    def __init__(self, coxeter_group):
+    def __init__(self, coxeter_group) -> None:
         r"""
         EXAMPLES::
 

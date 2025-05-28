@@ -24,7 +24,7 @@ class FreeAlgebra(CombinatorialFreeModule):
     This class illustrates a minimal implementation of an algebra with basis.
     """
 
-    def __init__(self, R, alphabet=("a", "b", "c")):
+    def __init__(self, R, alphabet=("a", "b", "c")) -> None:
         """
         EXAMPLES::
 

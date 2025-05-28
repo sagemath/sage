@@ -177,7 +177,7 @@ def get_variable_list(output_file_contents):
 
 class PHC_Object:
 
-    def __init__(self, output_file_contents, input_ring):
+    def __init__(self, output_file_contents, input_ring) -> None:
         """
         A container for data from the PHCpack program - lists of float
         solutions, etc.  Currently the file contents are kept as a string;

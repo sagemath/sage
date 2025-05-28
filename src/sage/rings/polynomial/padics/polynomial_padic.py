@@ -28,7 +28,7 @@ from sage.structure.factorization import Factorization
 
 
 class Polynomial_padic(Polynomial):
-    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False) -> None:
         Polynomial.__init__(self, parent, is_gen, construct)
 
     def _repr(self, name=None):

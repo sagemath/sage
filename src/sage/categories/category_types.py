@@ -50,7 +50,7 @@ class Elements(Category):
         sage: loads(C.dumps()) == C
         True
     """
-    def __init__(self, object):
+    def __init__(self, object) -> None:
         """
         EXAMPLES::
 
@@ -170,7 +170,7 @@ class Category_over_base(CategoryWithParameters):
         True
     """
 
-    def __init__(self, base, name=None):
+    def __init__(self, base, name=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -346,7 +346,7 @@ class AbelianCategory(Category):
 
 
 class Category_over_base_ring(Category_over_base):
-    def __init__(self, base, name=None):
+    def __init__(self, base, name=None) -> None:
         """
         Initialize ``self``.
 
@@ -492,7 +492,7 @@ class Category_over_base_ring(Category_over_base):
             return C.base() in base_ring
         return False
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether ``x`` is an object of this category.
 
@@ -535,7 +535,7 @@ class Category_over_base_ring(Category_over_base):
 # Category of objects in some ambient object
 #############################################################
 class Category_in_ambient(Category):
-    def __init__(self, ambient, name=None):
+    def __init__(self, ambient, name=None) -> None:
         """
         Initialize ``self``.
 
@@ -606,7 +606,7 @@ class Category_ideal(Category_in_ambient):
         """
         return self.ambient()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

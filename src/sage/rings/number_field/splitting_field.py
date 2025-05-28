@@ -42,7 +42,7 @@ class SplittingFieldAbort(Exception):
         ...
         SplittingFieldAbort: degree of splitting field equals 12
     """
-    def __init__(self, div, mult):
+    def __init__(self, div, mult) -> None:
         self.degree_divisor = div
         self.degree_multiple = mult
         if div == mult:
@@ -64,7 +64,7 @@ class SplittingData:
     field containing the current field `K` and all roots of other
     polynomials inside the list `L` with ``dm`` less than this ``dm``.
     """
-    def __init__(self, _pol, _dm):
+    def __init__(self, _pol, _dm) -> None:
         self.pol = _pol
         self.dm = Integer(_dm)
 
@@ -101,7 +101,7 @@ class SplittingData:
         """
         return self.pol.poldegree()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

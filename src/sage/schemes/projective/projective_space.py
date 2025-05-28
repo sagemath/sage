@@ -340,7 +340,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
         normalized_names = normalize_names(n + 1, names)
         return super().__classcall__(cls, n, R, normalized_names)
 
-    def __init__(self, n, R=ZZ, names=None):
+    def __init__(self, n, R=ZZ, names=None) -> None:
         """
         Initialization function.
 

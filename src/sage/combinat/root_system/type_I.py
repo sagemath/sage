@@ -12,7 +12,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 

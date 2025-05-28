@@ -110,7 +110,7 @@ class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
             raise NotImplementedError("R must be a finite ring or ZZ")
         return super().__classcall__(cls, n, R)
 
-    def __init__(self, n=1, R=0):
+    def __init__(self, n=1, R=0) -> None:
         """
         Initialize ``self``.
 

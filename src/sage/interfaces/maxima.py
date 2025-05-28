@@ -523,7 +523,7 @@ class Maxima(MaximaAbstract, Expect):
         False
     """
     def __init__(self, script_subdirectory=None, logfile=None, server=None,
-                 init_code=None):
+                 init_code=None) -> None:
         """
         Create an instance of the Maxima interpreter.
 
@@ -1155,7 +1155,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
         cos(_SAGE_VAR_x)+%e^234
     """
 
-    def __init__(self, parent, value, is_name=False, name=None):
+    def __init__(self, parent, value, is_name=False, name=None) -> None:
         """
         Create a Maxima element.
         See ``MaximaElement`` for full documentation.
@@ -1223,7 +1223,7 @@ class MaximaElementFunction(MaximaElement, MaximaAbstractElementFunction):
         h(x)*y
     """
 
-    def __init__(self, parent, name, defn, args, latex):
+    def __init__(self, parent, name, defn, args, latex) -> None:
         """
         Create a Maxima function.
         See ``MaximaElementFunction`` for full documentation.

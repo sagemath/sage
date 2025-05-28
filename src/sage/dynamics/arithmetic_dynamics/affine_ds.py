@@ -304,7 +304,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             return DynamicalSystem_affine_finite_field(polys, domain)
         return DynamicalSystem_affine_field(polys, domain)
 
-    def __init__(self, polys_or_rat_fncts, domain):
+    def __init__(self, polys_or_rat_fncts, domain) -> None:
         r"""
         The Python constructor.
 

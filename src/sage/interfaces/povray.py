@@ -26,7 +26,7 @@ class POVRay:
 
     POVRay: http://www.povray.org
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'POV-Ray The Persistence of Vision Ray Tracer'
 
     def __call__(self, pov_file, outfile='sage.ppm', block=True, **kwargs):

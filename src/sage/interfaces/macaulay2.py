@@ -184,7 +184,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
     Interface to the Macaulay2 interpreter.
     """
     def __init__(self, maxread=None, script_subdirectory=None,
-                 logfile=None, server=None, server_tmpdir=None, command=None):
+                 logfile=None, server=None, server_tmpdir=None, command=None) -> None:
         """
         Initialize a Macaulay2 interface instance.
 
@@ -908,7 +908,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         for i in range(len(self)):  # zero-indexed!
             yield self[i]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -1046,7 +1046,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                                "IN:%s\nOUT:%s" % (cmd, ans))
         return P._object_class()(P, new_name, is_name=True)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -1072,7 +1072,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         n = self.parent()(n)
         return self.parent().new('%s # %s' % (self.name(), n.name()))
 
-    def __setitem__(self, index, value):
+    def __setitem__(self, index, value) -> None:
         """
         EXAMPLES::
 
@@ -1163,7 +1163,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             x = self.parent(x)
         return self.parent().new('%s %% %s' % (self.name(), x.name()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether this Macaulay2 element is not ``False`` or not ``0``.
 

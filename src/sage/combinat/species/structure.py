@@ -45,7 +45,7 @@ from copy import copy
 
 
 class GenericSpeciesStructure(CombinatorialObject):
-    def __init__(self, parent, labels, list):
+    def __init__(self, parent, labels, list) -> None:
         """
         This is a base class from which the classes for the structures inherit.
 
@@ -80,7 +80,7 @@ class GenericSpeciesStructure(CombinatorialObject):
         except AttributeError:
             raise NotImplementedError
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -214,7 +214,7 @@ SpeciesStructure = GenericSpeciesStructure
 
 
 class SpeciesStructureWrapper(GenericSpeciesStructure):
-    def __init__(self, parent, s, **options):
+    def __init__(self, parent, s, **options) -> None:
         """
         This is a class for the structures of species such as the sum
         species that do not provide "additional" structure.  For example,
@@ -262,7 +262,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 
         return getattr(self._s, attr)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the repr of the object which this one wraps.
 
@@ -329,7 +329,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 
 
 class SpeciesWrapper(Parent):
-    def __init__(self, species, labels, iterator, generating_series, name, structure_class):
+    def __init__(self, species, labels, iterator, generating_series, name, structure_class) -> None:
         """
         This is a abstract base class for the set of structures of a
         species as well as the set of isotypes of the species.
@@ -455,7 +455,7 @@ class SpeciesWrapper(Parent):
 
 
 class StructuresWrapper(SpeciesWrapper):
-    def __init__(self, species, labels, structure_class):
+    def __init__(self, species, labels, structure_class) -> None:
         """
         A base class for the set of structures of a species with given
         set of labels.  An object of this type is returned when you
@@ -476,7 +476,7 @@ class StructuresWrapper(SpeciesWrapper):
 
 
 class IsotypesWrapper(SpeciesWrapper):
-    def __init__(self, species, labels, structure_class):
+    def __init__(self, species, labels, structure_class) -> None:
         """
         A base class for the set of isotypes of a species with given
         set of labels.  An object of this type is returned when you
@@ -497,7 +497,7 @@ class IsotypesWrapper(SpeciesWrapper):
 
 
 class SimpleStructuresWrapper(SpeciesWrapper):
-    def __init__(self, species, labels, structure_class):
+    def __init__(self, species, labels, structure_class) -> None:
         """
         .. warning::
 
@@ -518,7 +518,7 @@ class SimpleStructuresWrapper(SpeciesWrapper):
 
 
 class SimpleIsotypesWrapper(SpeciesWrapper):
-    def __init__(self, species, labels, structure_class):
+    def __init__(self, species, labels, structure_class) -> None:
         """
         .. warning::
 

@@ -247,7 +247,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         sage: ele1 == ele2
         True
     """
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -725,7 +725,7 @@ class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
         names = tuple(normalize_names(n, names))
         return super().__classcall__(cls, names, cbg_type=cbg_type)
 
-    def __init__(self, names, cbg_type=None):
+    def __init__(self, names, cbg_type=None) -> None:
         r"""
         Python constructor.
 

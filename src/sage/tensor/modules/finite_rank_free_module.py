@@ -563,7 +563,7 @@ class FiniteRankFreeModule_abstract(UniqueRepresentation, ReflexiveModule_abstra
         latex_name=None,
         category=None,
         ambient=None,
-    ):
+    ) -> None:
         r"""
         See :class:`FiniteRankFreeModule` for documentation and examples.
 
@@ -1265,7 +1265,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         output_formatter=None,
         category=None,
         ambient=None,
-    ):
+    ) -> None:
         r"""
         See :class:`FiniteRankFreeModule` for documentation and examples.
 
@@ -3434,7 +3434,7 @@ class FiniteRankDualFreeModule(ReflexiveModule_dual, FiniteRankFreeModule_abstra
 
     Element = FreeModuleAltForm
 
-    def __init__(self, fmodule, name=None, latex_name=None):
+    def __init__(self, fmodule, name=None, latex_name=None) -> None:
         r"""
         TESTS::
 

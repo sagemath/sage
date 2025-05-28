@@ -101,7 +101,7 @@ class Gamma1_class(GammaH_class):
         1
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_1(N)`.
 

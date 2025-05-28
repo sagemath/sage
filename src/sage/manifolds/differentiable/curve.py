@@ -347,7 +347,7 @@ class DifferentiableCurve(DiffMap):
         1/9*sqrt(5)
     """
     def __init__(self, parent, coord_expression=None, name=None,
-                 latex_name=None, is_isomorphism=False, is_identity=False):
+                 latex_name=None, is_isomorphism=False, is_identity=False) -> None:
         r"""
         Construct a curve.
 

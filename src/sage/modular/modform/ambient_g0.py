@@ -32,7 +32,7 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
     r"""
     A space of modular forms for `\Gamma_0(N)` over `\QQ`.
     """
-    def __init__(self, level, weight):
+    def __init__(self, level, weight) -> None:
         r"""
         Create a space of modular symbols for `\Gamma_0(N)` of given
         weight defined over `\QQ`.

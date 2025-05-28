@@ -245,7 +245,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
     # Construction and other basic methods
     # We assume that p is good input. Type checking etc. is now done
     # in the _element_constructor_ of the parent.
-    def __init__(self, A, p):
+    def __init__(self, A, p) -> None:
         """
         TESTS::
 

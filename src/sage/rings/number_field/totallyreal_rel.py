@@ -239,7 +239,7 @@ class tr_data_rel:
     further documentation.
     """
 
-    def __init__(self, F, m, B, a=None):
+    def __init__(self, F, m, B, a=None) -> None:
         r"""
         Initialization routine (constructor).
 

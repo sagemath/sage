@@ -23,7 +23,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
     Groupes et Algèbres de Lie, Ch. 4,5,6 (planche VIII).
     """
 
-    def __init__(self, root_system, base_ring):
+    def __init__(self, root_system, base_ring) -> None:
         r"""
         Initialize the ambient lattice for the root system of type `F_4`.
 
@@ -202,7 +202,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanTy
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

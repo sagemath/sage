@@ -155,7 +155,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, wt, WLR=WLR)
 
-    def __init__(self, wt, WLR):
+    def __init__(self, wt, WLR) -> None:
         r"""
         Initialize ``self``.
 
@@ -305,7 +305,7 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
     Highest weight crystal of rigged configurations in non-simply-laced type.
     """
 
-    def __init__(self, vct, wt, WLR):
+    def __init__(self, vct, wt, WLR) -> None:
         """
         Initialize ``self``.
 

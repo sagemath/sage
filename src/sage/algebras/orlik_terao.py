@@ -121,7 +121,7 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
             ordering = sorted(M.groundset())
         return super().__classcall__(cls, R, M, tuple(ordering))
 
-    def __init__(self, R, M, ordering=None):
+    def __init__(self, R, M, ordering=None) -> None:
         """
         Initialize ``self``.
 
@@ -614,7 +614,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         sage: [OTG.lift(b) for b in OTG.basis()]
         [OT{}, OT{0} + OT{1} + OT{2} + OT{3} + OT{4} + OT{5}]
     """
-    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
+    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs) -> None:
         r"""
         Initialize ``self``.
 

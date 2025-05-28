@@ -241,7 +241,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         return super().__classcall__(cls, I, ambient, names, index_set,
                                      category=category)
 
-    def __init__(self, I, L, names, index_set, category=None):
+    def __init__(self, I, L, names, index_set, category=None) -> None:
         r"""
         Initialize ``self``.
 

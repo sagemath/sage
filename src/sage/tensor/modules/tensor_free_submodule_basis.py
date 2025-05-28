@@ -40,7 +40,7 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
     """
 
     def __init__(self, tensor_module, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None, symbol_dual=None, latex_symbol_dual=None):
+                 latex_indices=None, symbol_dual=None, latex_symbol_dual=None) -> None:
         r"""
         TESTS::
 

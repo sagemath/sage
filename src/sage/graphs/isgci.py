@@ -420,7 +420,7 @@ class GraphClass(SageObject, CachedRepresentation):
         sage: Chordal >= Trees
         True
     """
-    def __init__(self, name, gc_id, recognition_function=None):
+    def __init__(self, name, gc_id, recognition_function=None) -> None:
         r"""
         Class constructor.
 
@@ -564,7 +564,7 @@ class GraphClass(SageObject, CachedRepresentation):
 
         return [smallgraphs[g] for g in excluded]
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Check if ``g`` belongs to the graph class represented by ``self``.
 

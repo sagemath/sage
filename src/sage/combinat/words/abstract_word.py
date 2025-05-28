@@ -204,7 +204,7 @@ class Word_class(SageObject):
         """
         return False
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the length of ``self`` (as a Python integer).
 

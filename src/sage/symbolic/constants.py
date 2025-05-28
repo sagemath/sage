@@ -273,7 +273,7 @@ def unpickle_Constant(class_name, name, conversions, latex, mathml, domain):
 @richcmp_method
 class Constant:
     def __init__(self, name, conversions=None, latex=None, mathml='',
-                 domain='complex'):
+                 domain='complex') -> None:
         """
         EXAMPLES::
 
@@ -415,7 +415,7 @@ class Constant:
         """
         return self._name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class Constant:
 
 
 class Pi(Constant):
-    def __init__(self, name='pi'):
+    def __init__(self, name='pi') -> None:
         r"""
         TESTS::
 
@@ -565,7 +565,7 @@ class Pi(Constant):
                           latex=r"\pi", mathml="<mi>&pi;</mi>",
                           domain='positive')
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -693,7 +693,7 @@ class NotANumber(Constant):
     """
     Not a Number
     """
-    def __init__(self, name="NaN"):
+    def __init__(self, name="NaN") -> None:
         """
         EXAMPLES::
 
@@ -703,7 +703,7 @@ class NotANumber(Constant):
         conversions = dict(matlab='NaN')
         Constant.__init__(self, name, conversions=conversions)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -770,7 +770,7 @@ class GoldenRatio(Constant):
         sage: float(grm + grm)
         3.23606797749979
     """
-    def __init__(self, name='golden_ratio'):
+    def __init__(self, name='golden_ratio') -> None:
         """
         EXAMPLES::
 
@@ -795,7 +795,7 @@ class GoldenRatio(Constant):
         x = QQ['x'].gen(0)
         return x**2 - x - 1
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -886,7 +886,7 @@ class Log2(Constant):
         sage: giac(log2)  # optional - giac
         ln(2)
     """
-    def __init__(self, name='log2'):
+    def __init__(self, name='log2') -> None:
         """
         EXAMPLES::
 
@@ -899,7 +899,7 @@ class Log2(Constant):
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\log(2)', domain='positive')
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -953,7 +953,7 @@ class EulerGamma(Constant):
         sage: R(eg)
         1.1544313298030657212130241801648048620843186718798471976115
     """
-    def __init__(self, name='euler_gamma'):
+    def __init__(self, name='euler_gamma') -> None:
         """
         EXAMPLES::
 
@@ -978,7 +978,7 @@ class EulerGamma(Constant):
         """
         return R.euler_constant()
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -1023,7 +1023,7 @@ class Catalan(Constant):
         sage: catalan^2 + mertens
         mertens + catalan^2
     """
-    def __init__(self, name='catalan'):
+    def __init__(self, name='catalan') -> None:
         """
         EXAMPLES::
 
@@ -1057,7 +1057,7 @@ class Catalan(Constant):
         """
         return R('0.91596559417721901505460351493252')
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -1099,7 +1099,7 @@ class Khinchin(Constant):
         sage: m.N(200)                                 # optional - mathematica
         2.685452001065306445309714835481795693820382293...32852204481940961807
     """
-    def __init__(self, name='khinchin'):
+    def __init__(self, name='khinchin') -> None:
         """
         EXAMPLES::
 
@@ -1123,7 +1123,7 @@ class Khinchin(Constant):
         import sage.libs.mpmath.all as a
         return a.eval_constant('khinchin', R)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -1148,7 +1148,7 @@ class TwinPrime(Constant):
         sage: twinprime.n(digits=60)
         0.660161815846869573927812110014555778432623360284733413319448
     """
-    def __init__(self, name='twinprime'):
+    def __init__(self, name='twinprime') -> None:
         """
         EXAMPLES::
 
@@ -1171,7 +1171,7 @@ class TwinPrime(Constant):
         import sage.libs.mpmath.all as a
         return a.eval_constant('twinprime', R)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -1196,7 +1196,7 @@ class Mertens(Constant):
         sage: mertens.n(digits=60)
         0.261497212847642783755426838608695859051566648261199206192064
     """
-    def __init__(self, name='mertens'):
+    def __init__(self, name='mertens') -> None:
         """
         EXAMPLES::
 
@@ -1219,7 +1219,7 @@ class Mertens(Constant):
         import sage.libs.mpmath.all as a
         return a.eval_constant('mertens', R)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 
@@ -1248,7 +1248,7 @@ class Glaisher(Constant):
         sage: parent(a)
         Symbolic Ring
     """
-    def __init__(self, name='glaisher'):
+    def __init__(self, name='glaisher') -> None:
         """
         EXAMPLES::
 
@@ -1272,7 +1272,7 @@ class Glaisher(Constant):
         import sage.libs.mpmath.all as a
         return a.eval_constant('glaisher', R)
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 

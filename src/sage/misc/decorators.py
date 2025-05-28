@@ -236,7 +236,7 @@ class infix_operator:
         'or': {'left': '__or__', 'right': '__ror__'},
     }
 
-    def __init__(self, precedence):
+    def __init__(self, precedence) -> None:
         """
         INPUT:
 
@@ -273,7 +273,7 @@ class infix_operator:
 class _infix_wrapper:
     function = None
 
-    def __init__(self, left=None, right=None):
+    def __init__(self, left=None, right=None) -> None:
         """
         Initialize the actual infix object, with possibly a specified left
         and/or right operand.
@@ -360,7 +360,7 @@ def decorator_defaults(func):
 
 
 class suboptions:
-    def __init__(self, name, **options):
+    def __init__(self, name, **options) -> None:
         """
         A decorator for functions which collects all keywords
         starting with ``name+'_'`` and collects them into a dictionary
@@ -445,7 +445,7 @@ class suboptions:
 
 
 class options:
-    def __init__(self, **options):
+    def __init__(self, **options) -> None:
         """
         A decorator for functions which allows for default options to be
         set and reset by the end user.  Additionally, if one needs to, one
@@ -584,7 +584,7 @@ class options:
 
 
 class rename_keyword:
-    def __init__(self, deprecated=None, deprecation=None, **renames):
+    def __init__(self, deprecated=None, deprecation=None, **renames) -> None:
         """
         A decorator which renames keyword arguments and optionally
         deprecates the new keyword.
@@ -699,7 +699,7 @@ class specialize:
         sage: greet(name = 'Javert')
         Bon Voyage, Javert!
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self.args = args
         self.kwargs = kwargs
 

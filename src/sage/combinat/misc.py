@@ -40,7 +40,7 @@ class DoublyLinkedList:
         Doubly linked list of [1, 2, 3]: [1, 2, 3]
     """
 
-    def __init__(self, l):
+    def __init__(self, l) -> None:
         """
         TESTS::
 
@@ -93,7 +93,7 @@ class DoublyLinkedList:
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -271,7 +271,7 @@ class IterableFunctionCall:
         foo
     """
 
-    def __init__(self, f, *args, **kwargs):
+    def __init__(self, f, *args, **kwargs) -> None:
         """
         EXAMPLES::
 
@@ -293,7 +293,7 @@ class IterableFunctionCall:
         """
         return self.f(*self.args, **self.kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

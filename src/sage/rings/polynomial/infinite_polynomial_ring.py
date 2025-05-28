@@ -410,7 +410,7 @@ class InfiniteGenDict:
         sage: sage_eval('3*a_3*b_5-1/2*a_7', D._D[0])
         -1/2*a_7 + 3*a_3*b_5
     """
-    def __init__(self, Gens):
+    def __init__(self, Gens) -> None:
         """
         INPUT:
 
@@ -459,7 +459,7 @@ class InfiniteGenDict:
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -516,7 +516,7 @@ class GenDictWithBasering:
         sage: sage_eval('3*a_3*b_5-1/2*a_7', D)
         -1/2*a_7 + 3*a_3*b_5
     """
-    def __init__(self, parent, start):
+    def __init__(self, parent, start) -> None:
         """
         INPUT:
 
@@ -583,7 +583,7 @@ class GenDictWithBasering:
 
     next = __next__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -662,7 +662,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
     See :mod:`~sage.rings.polynomial.infinite_polynomial_ring` for
     more details.
     """
-    def __init__(self, R, names, order):
+    def __init__(self, R, names, order) -> None:
         """
         INPUT:
 
@@ -742,7 +742,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         self._populate_coercion_lists_()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -1390,7 +1390,7 @@ class InfinitePolynomialGen(SageObject):
         True
     """
 
-    def __init__(self, parent, name):
+    def __init__(self, parent, name) -> None:
         """
         EXAMPLES::
 
@@ -1520,7 +1520,7 @@ class InfinitePolynomialGen(SageObject):
         """
         return self._name + '_*'
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         EXAMPLES::
 
@@ -1542,7 +1542,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
     from which this class inherits, it keeps a polynomial ring that comprises all elements that have
     been created so far.
     """
-    def __init__(self, R, names, order):
+    def __init__(self, R, names, order) -> None:
         """
         EXAMPLES::
 

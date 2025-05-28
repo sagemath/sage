@@ -47,7 +47,7 @@ from sage.symbolic.function import GinacFunction
 
 
 class Function_sinh(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The hyperbolic sine function.
 
@@ -85,7 +85,7 @@ sinh = Function_sinh()
 
 
 class Function_cosh(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The hyperbolic cosine function.
 
@@ -123,7 +123,7 @@ cosh = Function_cosh()
 
 
 class Function_tanh(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The hyperbolic tangent function.
 
@@ -191,7 +191,7 @@ tanh = Function_tanh()
 
 
 class Function_coth(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The hyperbolic cotangent function.
 
@@ -250,7 +250,7 @@ coth = Function_coth()
 
 
 class Function_sech(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The hyperbolic secant function.
 
@@ -307,7 +307,7 @@ sech = Function_sech()
 
 
 class Function_csch(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The hyperbolic cosecant function.
 
@@ -367,7 +367,7 @@ csch = Function_csch()
 
 
 class Function_arcsinh(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The inverse of the hyperbolic sine function.
 
@@ -430,7 +430,7 @@ arcsinh = asinh = Function_arcsinh()
 
 
 class Function_arccosh(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The inverse of the hyperbolic cosine function.
 
@@ -521,7 +521,7 @@ arccosh = acosh = Function_arccosh()
 
 
 class Function_arctanh(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The inverse of the hyperbolic tangent function.
 
@@ -582,7 +582,7 @@ arctanh = atanh = Function_arctanh()
 
 
 class Function_arccoth(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The inverse of the hyperbolic cotangent function.
 
@@ -644,7 +644,7 @@ arccoth = acoth = Function_arccoth()
 
 
 class Function_arcsech(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The inverse of the hyperbolic secant function.
 
@@ -692,7 +692,7 @@ arcsech = asech = Function_arcsech()
 
 
 class Function_arccsch(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The inverse of the hyperbolic cosecant function.
 

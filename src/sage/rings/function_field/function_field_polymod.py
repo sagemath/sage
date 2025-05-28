@@ -108,7 +108,7 @@ class FunctionField_polymod(FunctionField):
     """
     Element = FunctionFieldElement_polymod
 
-    def __init__(self, polynomial, names, category=None):
+    def __init__(self, polynomial, names, category=None) -> None:
         """
         Create a function field defined as an extension of another function
         field by adjoining a root of a univariate polynomial.
@@ -2044,7 +2044,7 @@ class FunctionField_global(FunctionField_simple):
     """
     _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace_global')
 
-    def __init__(self, polynomial, names):
+    def __init__(self, polynomial, names) -> None:
         """
         Initialize.
 

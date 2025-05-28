@@ -30,7 +30,7 @@ from . import ell_generic
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
-    def __init__(self, R, data, category=None):
+    def __init__(self, R, data, category=None) -> None:
         r"""
         Constructor for elliptic curves over fields.
 

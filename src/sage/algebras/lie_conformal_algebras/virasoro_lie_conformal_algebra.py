@@ -53,7 +53,7 @@ class VirasoroLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: Vir.gens()
         (L, C)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 

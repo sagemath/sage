@@ -64,7 +64,7 @@ class CrystalOfBKKTableaux(CrystalOfWords):
             raise ValueError("invalid hook shape")
         return super().__classcall__(cls, ct, shape)
 
-    def __init__(self, ct, shape):
+    def __init__(self, ct, shape) -> None:
         r"""
         Initialize ``self``.
 

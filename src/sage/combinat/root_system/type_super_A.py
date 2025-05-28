@@ -34,7 +34,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
          2: (0, 0, 0, 0, 1)}
     """
 
-    def __init__(self, root_system, base_ring, index_set=None):
+    def __init__(self, root_system, base_ring, index_set=None) -> None:
         """
         Initialize ``self``.
 
@@ -455,7 +455,7 @@ class CartanType(SuperCartanType_standard):
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
 
-    def __init__(self, m, n):
+    def __init__(self, m, n) -> None:
         """
         EXAMPLES::
 

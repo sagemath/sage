@@ -104,7 +104,7 @@ class DivisorGroup_generic(FormalSums):
         # Must not call super().__classcall__()!
         return UniqueRepresentation.__classcall__(cls, scheme, base_ring)
 
-    def __init__(self, scheme, base_ring):
+    def __init__(self, scheme, base_ring) -> None:
         r"""
         Construct a :class:`DivisorGroup_generic`.
 

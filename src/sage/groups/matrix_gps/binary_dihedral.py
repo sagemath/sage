@@ -60,7 +60,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
     - :wikipedia:`Dicyclic_group#Binary_dihedral_group`
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 

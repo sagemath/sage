@@ -223,7 +223,7 @@ class AtomicSpeciesElement(WithEqualityById,
         lookup.append(elm)
         return elm
 
-    def __init__(self, parent, dis, domain_partition):
+    def __init__(self, parent, dis, domain_partition) -> None:
         r"""
         Initialize an atomic species.
 
@@ -378,7 +378,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, names)
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         Initialize the class of atomic species.
 
@@ -594,7 +594,7 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         _atomic_set_like_species(n, self._names)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return whether ``x`` is in ``self``.
 
@@ -865,7 +865,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
         names = normalize_names(-1, names)
         return UniqueRepresentation.__classcall__(cls, names)
 
-    def __init__(self, names):
+    def __init__(self, names) -> None:
         r"""
         Initialize the monoid of molecular species.
 
@@ -2123,7 +2123,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
         names = normalize_names(-1, names)
         return super().__classcall__(cls, base_ring, names)
 
-    def __init__(self, base_ring, names):
+    def __init__(self, base_ring, names) -> None:
         r"""
         Initialize the ring of polynomial species.
 

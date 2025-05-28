@@ -360,7 +360,7 @@ class RiggedConfigurations(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         r"""
         Initialize the RiggedConfigurations class.
 
@@ -1095,7 +1095,7 @@ class RCNonSimplyLaced(RiggedConfigurations):
         B = tuple(map(tuple, B))
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, dims):
+    def __init__(self, cartan_type, dims) -> None:
         """
         Initialize ``self``.
 

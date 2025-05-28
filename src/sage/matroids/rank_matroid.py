@@ -83,7 +83,7 @@ class RankMatroid(Matroid):
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
     """
-    def __init__(self, groundset, rank_function):
+    def __init__(self, groundset, rank_function) -> None:
         """
         Initialize the rank matroid.
 

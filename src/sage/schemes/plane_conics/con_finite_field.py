@@ -46,7 +46,7 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
         sage: Conic(X^2 + Y^2 - 2*Z^2)
         Projective Conic Curve over Finite Field of size 5 defined by X^2 + Y^2 - 2*Z^2
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 

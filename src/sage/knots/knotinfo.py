@@ -2525,7 +2525,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         True
     """
 
-    def __init__(self, crossing_number, is_knot, is_alternating, name_unoriented=None):
+    def __init__(self, crossing_number, is_knot, is_alternating, name_unoriented=None) -> None:
         r"""
         Python constructor.
 
@@ -2675,7 +2675,7 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             l = LS.lower_list(oriented=oriented, comp=comp, det=det, homfly=homfly)
         return l + self.list(oriented=oriented, comp=comp, det=det, homfly=homfly)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the representation string of ``self``.
 

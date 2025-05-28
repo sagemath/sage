@@ -33,7 +33,7 @@ class Cycle(UniqueRepresentation, Parent):
 
         sage: TestSuite(C).run()
     """
-    def __init__(self, n=5):
+    def __init__(self, n=5) -> None:
         r"""
         EXAMPLES::
 

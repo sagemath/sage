@@ -315,7 +315,7 @@ class ComputeMinimalPolynomials(SageObject):
         sage: C.integer_valued_polynomials_generators()
         (x^3 + x^2 - 12*x - 20, [1, 1/4*x^2 + 3/4*x + 1/2])
     """
-    def __init__(self, B):
+    def __init__(self, B) -> None:
         r"""
         Initialize the ComputeMinimalPolynomials class.
 

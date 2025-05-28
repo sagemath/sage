@@ -44,7 +44,7 @@ class FormsRing_abstract(Parent):
     from .analytic_type import AnalyticType
     AT = AnalyticType()
 
-    def __init__(self, group, base_ring, red_hom, n):
+    def __init__(self, group, base_ring, red_hom, n) -> None:
         r"""
         Abstract (Hecke) forms ring.
 

@@ -211,7 +211,7 @@ class LinearTensorParent_class(Parent):
     """
     Element = LinearTensor
 
-    def __init__(self, free_module, linear_functions):
+    def __init__(self, free_module, linear_functions) -> None:
         """
         The Python constructor.
 

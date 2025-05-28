@@ -81,7 +81,7 @@ class DrinfeldModuleAction(Action):
         True
     """
 
-    def __init__(self, drinfeld_module):
+    def __init__(self, drinfeld_module) -> None:
         """
         Initialize ``self``.
 

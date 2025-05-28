@@ -50,7 +50,7 @@ class NeveuSchwarzLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: G.degree()
         3/2
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 

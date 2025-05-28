@@ -94,7 +94,7 @@ class QuadraticFormLocalRepresentationConditions:
         sage: L
         [0]
     """
-    def __init__(self, Q):
+    def __init__(self, Q) -> None:
         r"""
         Take a :class:`QuadraticForm` and computes its local conditions (if
         they do not already exist).  The ``recompute_flag`` overrides the

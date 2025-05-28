@@ -225,7 +225,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         sage: Polyhedra(ZZ, 3)
         Polyhedra in ZZ^3
     """
-    def __init__(self, base_ring, ambient_dim, backend):
+    def __init__(self, base_ring, ambient_dim, backend) -> None:
         """
         The Python constructor.
 

@@ -361,7 +361,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
     Element = ScalarField
 
-    def __init__(self, domain):
+    def __init__(self, domain) -> None:
         r"""
         Construct an algebra of scalar fields.
 

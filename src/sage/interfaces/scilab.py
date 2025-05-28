@@ -218,7 +218,7 @@ class Scilab(Expect):
     """
     def __init__(self, maxread=None, script_subdirectory=None,
                  logfile=None, server=None, server_tmpdir=None,
-                 seed=None):
+                 seed=None) -> None:
         """
         Initialize the Scilab class.
 
@@ -457,7 +457,7 @@ class ScilabElement(ExpectElement):
             index = str(n)
         return self.parent()('%s(%s)' % (self._name, index))
 
-    def __setitem__(self, n, value):
+    def __setitem__(self, n, value) -> None:
         """
         Set an element of a matrix.
 

@@ -50,7 +50,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             and Category of infinite sets
         sage: TestSuite(R).run()
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 

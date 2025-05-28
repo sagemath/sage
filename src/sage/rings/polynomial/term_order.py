@@ -568,7 +568,7 @@ class TermOrder(SageObject):
         else:
             self.__dict__.update(dict)
 
-    def __init__(self, name='lex', n=0, force=False):
+    def __init__(self, name='lex', n=0, force=False) -> None:
         """
         Construct a new term order object.
 
@@ -1998,7 +1998,7 @@ class TermOrder(SageObject):
         else:
             return self
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of this term order, i.e. the number of
         variables it covers. This may be zero for indefinitely many

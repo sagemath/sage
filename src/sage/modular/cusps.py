@@ -64,7 +64,7 @@ class Cusp(Element):
         sage: a.parent() is b.parent()
         True
     """
-    def __init__(self, a, b=None, parent=None, check=True):
+    def __init__(self, a, b=None, parent=None, check=True) -> None:
         r"""
         Create the cusp a/b in `\mathbb{P}^1(\QQ)`, where if b=0
         this is the cusp at infinity.
@@ -1017,7 +1017,7 @@ class Cusps_class(Singleton, Parent):
         sage: loads(C.dumps()) == C
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The set of cusps, i.e. `\mathbb{P}^1(\QQ)`.
 

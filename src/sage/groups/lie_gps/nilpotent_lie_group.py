@@ -209,7 +209,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         exp(0)
     """
 
-    def __init__(self, L, name, **kwds):
+    def __init__(self, L, name, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -850,7 +850,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
             exp(X + Y + 1/2*Z)
         """
 
-        def __init__(self, parent, **kwds):
+        def __init__(self, parent, **kwds) -> None:
             r"""
             Initialize ``self``.
 

@@ -89,7 +89,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
           To:   Projective Space of dimension 2 over Rational Field
           Defn: Defined on coordinates by sending (x, y) to (x : y : 1)
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         r"""
         Initialize.
 

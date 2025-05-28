@@ -139,7 +139,7 @@ def SetPartitionsAk(k):
 
 
 class SetPartitionsAk_k(SetPartitions_set):
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         TESTS::
 
@@ -166,7 +166,7 @@ class SetPartitionsAk_k(SetPartitions_set):
 
 
 class SetPartitionsAkhalf_k(SetPartitions_set):
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         TESTS::
 
@@ -191,7 +191,7 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         s = self.k + 1
         return "Set partitions of {1, ..., %s, -1, ..., -%s} with %s and -%s in the same block" % (s, s, s, s)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -309,7 +309,7 @@ class SetPartitionsSk_k(SetPartitionsAk_k):
         """
         return SetPartitionsAk_k._repr_(self) + " with propagating number %s" % self.k
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -369,7 +369,7 @@ class SetPartitionsSk_k(SetPartitionsAk_k):
 
 
 class SetPartitionsSkhalf_k(SetPartitionsAkhalf_k):
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -490,7 +490,7 @@ class SetPartitionsIk_k(SetPartitionsAk_k):
         """
         return SetPartitionsAk_k._repr_(self) + " with propagating number < %s" % self.k
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -543,7 +543,7 @@ class SetPartitionsIk_k(SetPartitionsAk_k):
 
 
 class SetPartitionsIkhalf_k(SetPartitionsAkhalf_k):
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -654,7 +654,7 @@ class SetPartitionsBk_k(SetPartitionsAk_k):
         """
         return SetPartitionsAk_k._repr_(self) + " with block size 2"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -749,7 +749,7 @@ class SetPartitionsBkhalf_k(SetPartitionsAkhalf_k):
         """
         return SetPartitionsAkhalf_k._repr_(self) + " and with block size 2"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -863,7 +863,7 @@ class SetPartitionsPk_k(SetPartitionsAk_k):
         """
         return SetPartitionsAk_k._repr_(self) + " that are planar"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -923,7 +923,7 @@ class SetPartitionsPk_k(SetPartitionsAk_k):
 
 
 class SetPartitionsPkhalf_k(SetPartitionsAkhalf_k):
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1029,7 +1029,7 @@ class SetPartitionsTk_k(SetPartitionsBk_k):
         """
         return SetPartitionsBk_k._repr_(self) + " and that are planar"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1082,7 +1082,7 @@ class SetPartitionsTk_k(SetPartitionsBk_k):
 
 
 class SetPartitionsTkhalf_k(SetPartitionsBkhalf_k):
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1157,7 +1157,7 @@ def SetPartitionsRk(k):
 
 
 class SetPartitionsRk_k(SetPartitionsAk_k):
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         TESTS::
 
@@ -1178,7 +1178,7 @@ class SetPartitionsRk_k(SetPartitionsAk_k):
         """
         return SetPartitionsAk_k._repr_(self) + " with at most 1 positive and negative entry in each block"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1250,7 +1250,7 @@ class SetPartitionsRk_k(SetPartitionsAk_k):
 
 
 class SetPartitionsRkhalf_k(SetPartitionsAkhalf_k):
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1353,7 +1353,7 @@ def SetPartitionsPRk(k):
 
 
 class SetPartitionsPRk_k(SetPartitionsRk_k):
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         TESTS::
 
@@ -1374,7 +1374,7 @@ class SetPartitionsPRk_k(SetPartitionsRk_k):
         """
         return SetPartitionsRk_k._repr_(self) + " and that are planar"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1433,7 +1433,7 @@ class SetPartitionsPRk_k(SetPartitionsRk_k):
 
 
 class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1506,7 +1506,7 @@ class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
 # Algebras
 
 class PartitionAlgebra_generic(CombinatorialFreeModule):
-    def __init__(self, R, cclass, n, k, name=None, prefix=None):
+    def __init__(self, R, cclass, n, k, name=None, prefix=None) -> None:
         """
         EXAMPLES::
 
@@ -1560,7 +1560,7 @@ class PartitionAlgebraElement_ak(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_ak(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 
@@ -1581,7 +1581,7 @@ class PartitionAlgebraElement_bk(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_bk(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 
@@ -1602,7 +1602,7 @@ class PartitionAlgebraElement_sk(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_sk(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 
@@ -1623,7 +1623,7 @@ class PartitionAlgebraElement_pk(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_pk(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 
@@ -1644,7 +1644,7 @@ class PartitionAlgebraElement_tk(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_tk(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 
@@ -1665,7 +1665,7 @@ class PartitionAlgebraElement_rk(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_rk(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 
@@ -1686,7 +1686,7 @@ class PartitionAlgebraElement_prk(PartitionAlgebraElement_generic):
 
 
 class PartitionAlgebra_prk(PartitionAlgebra_generic):
-    def __init__(self, R, k, n, name=None):
+    def __init__(self, R, k, n, name=None) -> None:
         """
         EXAMPLES::
 

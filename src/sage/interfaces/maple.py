@@ -264,7 +264,7 @@ class Maple(ExtraTabCompletion, Expect):
     Maple (and get the result back as a string).
     """
     def __init__(self, maxread=None, script_subdirectory=None, server=None,
-            server_tmpdir=None, logfile=None, ulimit=None):
+            server_tmpdir=None, logfile=None, ulimit=None) -> None:
         """
         Create an instance of the Maple interpreter.
 
@@ -919,7 +919,7 @@ class MapleFunctionElement(FunctionElement):
 @instancedoc
 class MapleElement(ExtraTabCompletion, ExpectElement):
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         Return a floating point version of ``self``.
 

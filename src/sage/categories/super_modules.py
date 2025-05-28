@@ -52,7 +52,7 @@ class SuperModulesCategory(CovariantConstructionCategory, Category_over_base_rin
         C = super().default_super_categories(category, *args)
         return C._with_axioms(axioms)
 
-    def __init__(self, base_category):
+    def __init__(self, base_category) -> None:
         """
         EXAMPLES::
 

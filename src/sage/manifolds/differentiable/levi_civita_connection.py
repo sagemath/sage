@@ -200,7 +200,7 @@ class LeviCivitaConnection(AffineConnection):
         Gam^ph_r,ph = 1/r
         Gam^ph_th,ph = cos(th)/sin(th)
     """
-    def __init__(self, metric, name, latex_name=None, init_coef=True):
+    def __init__(self, metric, name, latex_name=None, init_coef=True) -> None:
         r"""
         Construct a Levi-Civita connection.
 

@@ -97,7 +97,7 @@ class ScaledValuation_generic(DiscreteValuation):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent, base_valuation, s):
+    def __init__(self, parent, base_valuation, s) -> None:
         r"""
         .. TODO::
 

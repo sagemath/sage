@@ -89,7 +89,7 @@ class MPolynomial_element(MPolynomial):
         them. This is not ideal because of the presence of inexact zeros, see
         :issue:`35174`.
     """
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         EXAMPLES::
 
@@ -421,7 +421,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     Multivariate polynomials implemented in pure python using
     polydicts.
     """
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         EXAMPLES::
 
@@ -1849,7 +1849,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
     # required by Python 3
     __hash__ = MPolynomial_element.__hash__
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if ``self != 0``.
 

@@ -43,7 +43,7 @@ class CPLEX(MIPBackend):
     r"""
     A :class:`~sage.features.Feature` describing whether the :class:`MixedIntegerLinearProgram` backend ``CPLEX`` is available.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -59,7 +59,7 @@ class Gurobi(MIPBackend):
     r"""
     A :class:`~sage.features.Feature` describing whether the :class:`MixedIntegerLinearProgram` backend ``Gurobi`` is available.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -75,7 +75,7 @@ class COIN(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing whether the :class:`MixedIntegerLinearProgram` backend ``COIN`` is available.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -92,7 +92,7 @@ class CVXOPT(JoinFeature):
     r"""
     A :class:`~sage.features.Feature` describing whether the :class:`MixedIntegerLinearProgram` backend ``CVXOPT`` is available.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

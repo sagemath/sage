@@ -345,7 +345,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name):
+    def __init__(self, base_field, length, default_encoder_name, default_decoder_name) -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -2260,7 +2260,7 @@ class LinearCode(AbstractLinearCode):
     - David Joyner (11-2005)
     - Charles Prior (03-2016): :issue:`20198`, LinearCode from a code
     """
-    def __init__(self, generator, d=None):
+    def __init__(self, generator, d=None) -> None:
         r"""
         See the docstring for :meth:`LinearCode`.
 
@@ -2426,7 +2426,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
     - ``code`` -- the associated :class:`LinearCode` of this encoder
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -2634,7 +2634,7 @@ class LinearCodeSyndromeDecoder(Decoder):
     informative.
     """
 
-    def __init__(self, code, maximum_error_weight=None):
+    def __init__(self, code, maximum_error_weight=None) -> None:
         r"""
         TESTS:
 
@@ -2957,7 +2957,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
     - ``code`` -- a code associated to this decoder
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 

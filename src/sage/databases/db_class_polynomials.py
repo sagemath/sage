@@ -99,7 +99,7 @@ class HilbertClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     model = "Cls"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Hilbert class polynomial database"
 
 ######################################################
@@ -113,7 +113,7 @@ class AtkinClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     model = "Atk"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Atkin class polynomial database"
 
 
@@ -121,7 +121,7 @@ class WeberClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     The database of Weber class polynomials.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Weber class polynomial database"
 
 
@@ -131,5 +131,5 @@ class DedekindEtaClassPolynomialDatabase(ClassPolynomialDatabase):
     """
     model = "Eta"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Dedekind eta class polynomial database"

@@ -543,7 +543,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
 
             \sum_{k=0}^{n_1} (-1)^k q^{\binom{k}{2} - n_1 * n_2} \genfrac{[}{]}{0pt}{}{n_1}{k}_q \genfrac{[}{]}{0pt}{}{n_1+n_2-k}{n_1}_q S[n_1 + n_2 - k].
         """
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             Initialize ``self``.
 

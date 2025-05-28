@@ -35,7 +35,8 @@ EXAMPLES::
 from __future__ import annotations
 
 import warnings
-from typing import Any
+from typing import Optional, Type, Any
+from types import TracebackType
 
 try:
     from typing import Self  # type: ignore (Python >= 3.11)
@@ -113,7 +114,7 @@ class RichReprWarning(UserWarning):
 
 class restricted_output:
 
-    def __init__(self, display_manager, output_classes):
+    def __init__(self, display_manager, output_classes) -> None:
         """
         Context manager to temporarily restrict the accepted output types.
 
@@ -172,7 +173,7 @@ class restricted_output:
         dm.preferences.graphics = 'disable'
         dm.preferences.supplemental_plot = 'never'
 
-    def __exit__(self, exception_type, value, traceback):
+    def __exit__(self, exception_type: Optional[Type[BaseException]], value: Optional[BaseException], traceback: Optional[TracebackType]):
         """
         Exit the restricted output context.
 
@@ -195,7 +196,7 @@ class DisplayManager(SageObject):
 
     _instance: Self | None = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The Display Manager.
 

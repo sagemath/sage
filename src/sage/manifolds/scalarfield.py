@@ -1113,7 +1113,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
     _name: Optional[str]
 
     def __init__(self, parent, coord_expression=None, chart=None, name=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a scalar field.
 
@@ -1171,7 +1171,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
     # ### Required methods for an algebra element (beside arithmetic) ###
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 

@@ -66,7 +66,7 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
         TypeError: all objects must have the same manifold
     """
 
-    def __init__(self, objects=(), keys=None):
+    def __init__(self, objects=(), keys=None) -> None:
         r"""
         Initialize a new instance of :class:`ManifoldObjectFiniteFamily`.
 
@@ -151,7 +151,7 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             return NotImplemented
         return self.keys() < other.keys()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of the object.
 

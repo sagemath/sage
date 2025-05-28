@@ -27,7 +27,7 @@ class dot2tex(PythonModule):
         sage: dot2tex().is_present()                     # optional - dot2tex
         FeatureTestResult('dot2tex', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

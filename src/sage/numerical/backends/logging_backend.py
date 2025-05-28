@@ -117,7 +117,7 @@ class LoggingBackend(GenericBackend):
     """
 
     def __init__(self, backend, printing=True, doctest=None, test_method=None,
-                 base_ring=None):
+                 base_ring=None) -> None:
         """
         See :class:`LoggingBackendFactory` for documentation.
 

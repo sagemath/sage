@@ -143,7 +143,7 @@ class DocTestSource:
     - ``options`` -- a :class:`sage.doctest.control.DocTestDefaults`
       instance or equivalent
     """
-    def __init__(self, options):
+    def __init__(self, options) -> None:
         """
         Initialization.
 
@@ -438,7 +438,7 @@ class StringDocTestSource(DocTestSource):
         sage: extras['line_number']
         True
     """
-    def __init__(self, basename, source, options, printpath, lineno_shift=0):
+    def __init__(self, basename, source, options, printpath, lineno_shift=0) -> None:
         r"""
         Initialization.
 
@@ -546,7 +546,7 @@ class FileDocTestSource(DocTestSource):
         ValueError: unknown extension for the file to test (=...txtt),
         valid extensions are: .py, .pyx, .pxd, .pxi, .sage, .spyx, .tex, .rst, .rst.txt
     """
-    def __init__(self, path, options):
+    def __init__(self, path, options) -> None:
         """
         Initialization.
 
@@ -1611,7 +1611,7 @@ class DictAsObject(dict):
         sage: D.a
         2
     """
-    def __init__(self, attrs):
+    def __init__(self, attrs) -> None:
         """
         Initialization.
 
@@ -1631,7 +1631,7 @@ class DictAsObject(dict):
         super().__init__(attrs)
         self.__dict__.update(attrs)
 
-    def __setitem__(self, ky, val):
+    def __setitem__(self, ky, val) -> None:
         """
         We preserve the ability to access entries through either the
         dictionary or attribute interfaces.
@@ -1650,7 +1650,7 @@ class DictAsObject(dict):
         except TypeError:
             pass
 
-    def __setattr__(self, ky, val):
+    def __setattr__(self, ky, val) -> None:
         """
         We preserve the ability to access entries through either the
         dictionary or attribute interfaces.

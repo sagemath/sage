@@ -41,7 +41,7 @@ class TotallyOrderedFiniteSetElement(Element):
         sage: x.parent()
         {2, 7}
     """
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         r"""
         TESTS::
 
@@ -121,7 +121,7 @@ class TotallyOrderedFiniteSetElement(Element):
         """
         return repr(self.value)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         String that represents ``self``.
 
@@ -257,7 +257,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
             tuple(elements),
             facade)
 
-    def __init__(self, elements, facade=True):
+    def __init__(self, elements, facade=True) -> None:
         """
         Initialize ``self``.
 

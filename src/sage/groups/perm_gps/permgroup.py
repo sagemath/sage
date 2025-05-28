@@ -427,7 +427,7 @@ class PermutationGroup_generic(FiniteGroup):
         sage: TestSuite(G).run()
     """
     def __init__(self, gens=None, gap_group=None, canonicalize=True,
-                 domain=None, category=None):
+                 domain=None, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -5062,7 +5062,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
         ((1,2,3,4),)
     """
     def __init__(self, ambient, gens=None, gap_group=None, domain=None,
-                 category=None, canonicalize=True, check=True):
+                 category=None, canonicalize=True, check=True) -> None:
         r"""
         Initialization method for the
         ``PermutationGroup_subgroup`` class.
@@ -5329,7 +5329,7 @@ class PermutationGroup_action(PermutationGroup_generic):
         ....:                  action=lambda g, x: x, domain=[1])
         Permutation Group with generators [()]
     """
-    def __init__(self, gens, action, domain, gap_group=None, category=None, canonicalize=None):
+    def __init__(self, gens, action, domain, gap_group=None, category=None, canonicalize=None) -> None:
         """
         Initialize ``self``.
 

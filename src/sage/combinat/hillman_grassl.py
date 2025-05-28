@@ -169,7 +169,7 @@ class WeakReversePlanePartition(Tableau):
             raise TypeError("r must be a list of positive integers")
         return WeakReversePlanePartitions()(r)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         """
         Initialize ``self``.
 
@@ -438,7 +438,7 @@ class WeakReversePlanePartitions(Tableaux):
 
         return super().__classcall__(cls, **kwds)
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 

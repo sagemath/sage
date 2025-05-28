@@ -87,7 +87,7 @@ class StarCrystal(UniqueRepresentation, Parent):
         [[1, 1, 1, 1, 1, 2, 2], [2, 3, 3, 3]]
     """
 
-    def __init__(self, Binf):
+    def __init__(self, Binf) -> None:
         r"""
         Initialize ``self``.
 

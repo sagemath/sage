@@ -357,7 +357,7 @@ class AbstractLinearRankMetricCode(AbstractLinearCodeNoMetric):
     _registered_decoders = {}
 
     def __init__(self, base_field, sub_field, length, default_encoder_name,
-            default_decoder_name, basis=None):
+            default_decoder_name, basis=None) -> None:
         r"""
         Initialize mandatory parameters that every linear rank metric code has.
 
@@ -727,7 +727,7 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
         (1, 1, 0)
     """
 
-    def __init__(self, generator, sub_field=None, basis=None):
+    def __init__(self, generator, sub_field=None, basis=None) -> None:
         r"""
         See the docstring for :meth:`LinearRankMetricCode`.
 
@@ -849,7 +849,7 @@ class LinearRankMetricCodeNearestNeighborDecoder(Decoder):
     This decoder will decode to the nearest codeword found.
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
 
         INPUT:

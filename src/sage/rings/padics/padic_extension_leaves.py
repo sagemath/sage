@@ -103,7 +103,7 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
         sage: R.<a> = ZqCR(27,1000)                                                     # needs sage.libs.ntl
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.ntl
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT') -> None:
         r"""
         A capped relative representation of `\ZZ_q`.
 
@@ -162,7 +162,7 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
         sage: R.<a> = QqCR(27,1000)                                                     # needs sage.libs.ntl
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.ntl
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT') -> None:
         r"""
         A representation of `\QQ_q`.
 
@@ -248,7 +248,7 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
         sage: R.<a> = ZqCA(27,1000)                                                     # needs sage.libs.flint
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.flint
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT') -> None:
         r"""
         A capped absolute representation of `ZZ_q`.
 
@@ -308,7 +308,7 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
         sage: R.<a> = ZqFM(27,1000)                                                     # needs sage.libs.flint
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)     # long time             # needs sage.libs.flint
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT') -> None:
         """
         A fixed modulus representation of Zq.
 
@@ -371,7 +371,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
         sage: R.<a> = ZqFP(27,10000); R == loads(dumps(R))                              # needs sage.libs.flint
         True
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT') -> None:
         r"""
         A floating point representation of `\ZZ_q`.
 
@@ -427,7 +427,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
         sage: R.<a> = QqFP(27,10000); R == loads(dumps(R))                              # needs sage.libs.flint
         True
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT') -> None:
         r"""
         A representation of `\QQ_q`.
 
@@ -497,7 +497,7 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
         sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl sage.rings.padics
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL') -> None:
         r"""
         A capped relative representation of an Eisenstein extension of `\ZZ_p`.
 
@@ -553,7 +553,7 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
         sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL') -> None:
         r"""
         A capped relative representation of an Eisenstein extension of `\QQ_p`.
 
@@ -610,7 +610,7 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
         sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl sage.rings.padics
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation) -> None:
         r"""
         A capped absolute representation of an Eisenstein extension of `\ZZ_p`.
 
@@ -666,7 +666,7 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
         sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl sage.rings.padics
         sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
+    def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL') -> None:
         r"""
         A fixed modulus representation of an eisenstein extension of `\ZZ_p`.
 

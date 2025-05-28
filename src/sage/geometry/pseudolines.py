@@ -170,7 +170,7 @@ from copy import deepcopy
 
 class PseudolineArrangement:
 
-    def __init__(self, seq, encoding='auto'):
+    def __init__(self, seq, encoding='auto') -> None:
         r"""
         Create an arrangement of pseudolines.
 
@@ -467,7 +467,7 @@ class PseudolineArrangement:
 
         return L.show(axes=False, **args)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A short txt description of the pseudoline arrangement.
 

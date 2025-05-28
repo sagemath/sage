@@ -142,7 +142,7 @@ class IncidenceStructure:
         True
     """
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
-                 name=None, check=True, copy=True):
+                 name=None, check=True, copy=True) -> None:
         r"""
         TESTS::
 
@@ -260,7 +260,7 @@ class IncidenceStructure:
             for b in self._blocks:
                 yield [self._points[i] for i in b]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A print method.
 
@@ -334,7 +334,7 @@ class IncidenceStructure:
         """
         return not self == other
 
-    def __contains__(self, block):
+    def __contains__(self, block) -> bool:
         r"""
         Test if a block belongs to the incidence structure.
 

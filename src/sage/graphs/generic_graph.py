@@ -469,7 +469,7 @@ class GenericGraph(GenericGraph_pyx):
     graphics_array_defaults = {'layout': 'circular', 'vertex_size': 50,
                                'vertex_labels': False, 'graph_border': True}
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Every graph carries a dictionary of options, set here to ``None``.
 
@@ -835,7 +835,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         return self * n
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         str(G) returns the name of the graph, unless the name is the empty
         string, in which case it returns the default representation.

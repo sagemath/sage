@@ -22,7 +22,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ProductSpeciesStructure(GenericSpeciesStructure):
-    def __init__(self, parent, labels, subset, left, right):
+    def __init__(self, parent, labels, subset, left, right) -> None:
         """
         TESTS::
 
@@ -35,7 +35,7 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
         self._subset = subset
         GenericSpeciesStructure.__init__(self, parent, labels, [left, right])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of this object.
 
@@ -203,7 +203,7 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
 
 class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
-    def __init__(self, F, G, min=None, max=None, weight=None):
+    def __init__(self, F, G, min=None, max=None, weight=None) -> None:
         """
         EXAMPLES::
 

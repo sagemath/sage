@@ -60,7 +60,7 @@ lazy_import('mpmath', ['airyai', 'airybi'],
 
 
 class FunctionAiryAiGeneral(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The generalized derivative of the Airy Ai function.
 
@@ -153,7 +153,7 @@ class FunctionAiryAiGeneral(BuiltinFunction):
 
 
 class FunctionAiryAiSimple(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The class for the Airy Ai function.
 
@@ -258,7 +258,7 @@ class FunctionAiryAiSimple(BuiltinFunction):
 
 
 class FunctionAiryAiPrime(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The derivative of the Airy Ai function; see :func:`airy_ai`
         for the full documentation.
@@ -498,7 +498,7 @@ def airy_ai(alpha, x=None, hold_derivative=True, **kwds):
 
 
 class FunctionAiryBiGeneral(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The generalized derivative of the Airy Bi function.
 
@@ -590,7 +590,7 @@ class FunctionAiryBiGeneral(BuiltinFunction):
 
 
 class FunctionAiryBiSimple(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The class for the Airy Bi function.
 
@@ -699,7 +699,7 @@ class FunctionAiryBiSimple(BuiltinFunction):
 
 
 class FunctionAiryBiPrime(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The derivative of the Airy Bi function; see :func:`airy_bi`
         for the full documentation.

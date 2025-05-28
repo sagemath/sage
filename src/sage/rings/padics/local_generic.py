@@ -31,7 +31,7 @@ from sage.rings.ring import CommutativeRing
 
 
 class LocalGeneric(CommutativeRing):
-    def __init__(self, base, prec, names, element_class, category=None):
+    def __init__(self, base, prec, names, element_class, category=None) -> None:
         r"""
         Initialize ``self``.
 

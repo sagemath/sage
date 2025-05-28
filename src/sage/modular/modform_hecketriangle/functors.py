@@ -150,7 +150,7 @@ class FormsSubSpaceFunctor(ConstructionFunctor):
 
     rank = 10
 
-    def __init__(self, ambient_space_functor, generators):
+    def __init__(self, ambient_space_functor, generators) -> None:
         r"""
         Construction functor for the forms sub space
         for the given ``generators`` inside the ambient space
@@ -345,7 +345,7 @@ class FormsSpaceFunctor(ConstructionFunctor):
 
     rank = 10
 
-    def __init__(self, analytic_type, group, k, ep):
+    def __init__(self, analytic_type, group, k, ep) -> None:
         r"""
         Construction functor for the forms space
         (or forms ring, see above) with
@@ -529,7 +529,7 @@ class FormsRingFunctor(ConstructionFunctor):
 
     rank = 10
 
-    def __init__(self, analytic_type, group, red_hom):
+    def __init__(self, analytic_type, group, red_hom) -> None:
         r"""
         Construction functor for the forms ring
         with the given ``analytic_type``, ``group``
@@ -719,7 +719,7 @@ class BaseFacade(Parent, UniqueRepresentation):
     (not the ``BaseFacade`` of it).
     """
 
-    def __init__(self, ring):
+    def __init__(self, ring) -> None:
         r"""
         BaseFacade of ``ring`` (see above).
 
@@ -738,7 +738,7 @@ class BaseFacade(Parent, UniqueRepresentation):
         # The BaseFacade(R) coerces/embeds into R, used in pushout
         self.register_embedding(self.Hom(self._ring, Sets())(lambda x: x))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of ``self``.
 

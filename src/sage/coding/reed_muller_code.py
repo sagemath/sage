@@ -229,7 +229,7 @@ class QAryReedMullerCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, order, num_of_var):
+    def __init__(self, base_field, order, num_of_var) -> None:
         r"""
         TESTS:
 
@@ -417,7 +417,7 @@ class BinaryReedMullerCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, order, num_of_var):
+    def __init__(self, order, num_of_var) -> None:
         r"""
         TESTS:
 
@@ -583,7 +583,7 @@ class ReedMullerVectorEncoder(Encoder):
          Binary Reed-Muller Code of order 2 and number of variables 4
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -759,7 +759,7 @@ class ReedMullerPolynomialEncoder(Encoder):
          Binary Reed-Muller Code of order 2 and number of variables 4
     """
 
-    def __init__(self, code, polynomial_ring=None):
+    def __init__(self, code, polynomial_ring=None) -> None:
         r"""
         TESTS:
 

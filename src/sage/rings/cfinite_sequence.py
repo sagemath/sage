@@ -313,7 +313,7 @@ class CFiniteSequence(FieldElement,
             parent = CFiniteSequences(QQ, variables)
         return parent(ogf)  # if ogf cannot be converted to a fraction field, this will break and raise the proper error
 
-    def __init__(self, parent, ogf):
+    def __init__(self, parent, ogf) -> None:
         r"""
         Initialize the C-Finite sequence.
 
@@ -897,7 +897,7 @@ class CFiniteSequences_generic(Parent, UniqueRepresentation):
 
     Element = CFiniteSequence
 
-    def __init__(self, polynomial_ring, category):
+    def __init__(self, polynomial_ring, category) -> None:
         r"""
         Create the ring of CFiniteSequences over ``base_ring``.
 

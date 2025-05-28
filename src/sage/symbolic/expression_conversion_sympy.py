@@ -55,7 +55,7 @@ class SympyConverter(Converter):
         sage: (x+I)._sympy_()
         x + I
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 

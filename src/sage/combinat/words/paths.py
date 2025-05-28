@@ -363,7 +363,7 @@ class WordPaths_all(FiniteWords):
     The combinatorial class of all paths, i.e of all words over
     an alphabet where each letter is mapped to a step (a vector).
     """
-    def __init__(self, alphabet, steps):
+    def __init__(self, alphabet, steps) -> None:
         r"""
         INPUT:
 
@@ -612,7 +612,7 @@ class WordPaths_square_grid(WordPaths_all):
     r"""
     The combinatorial class of all paths on the square grid.
     """
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         The combinatorial class of all finite paths on the square grid.
 
@@ -680,7 +680,7 @@ class WordPaths_triangle_grid(WordPaths_all):
     r"""
     The combinatorial class of all paths on the triangle grid.
     """
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         The combinatorial class of all finite paths on the triangle grid.
 
@@ -759,7 +759,7 @@ class WordPaths_hexagonal_grid(WordPaths_triangle_grid):
     r"""
     The combinatorial class of all paths on the hexagonal grid.
     """
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         The combinatorial class of all finite paths on the hexagonal grid.
 
@@ -827,7 +827,7 @@ class WordPaths_cube_grid(WordPaths_all):
     r"""
     The combinatorial class of all paths on the cube grid.
     """
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         The combinatorial class of all finite paths on the cube grid.
 
@@ -896,7 +896,7 @@ class WordPaths_dyck(WordPaths_all):
     r"""
     The combinatorial class of all Dyck paths.
     """
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         The combinatorial class of all finite Dyck paths.
 
@@ -964,7 +964,7 @@ class WordPaths_north_east(WordPaths_all):
     r"""
     The combinatorial class of all paths using North and East directions.
     """
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         The combinatorial class of all finite paths using only north and east
         steps on the square grid.
@@ -2284,7 +2284,7 @@ class FiniteWordPath_triangle_grid(FiniteWordPath_2d):
 
 # TODO: faire une verification du mot pour etre sur hexagonal grid
 class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):
-    def __init__(self, parent, *args, **kwds):
+    def __init__(self, parent, *args, **kwds) -> None:
         r"""
         INPUT:
 

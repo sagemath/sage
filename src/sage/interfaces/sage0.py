@@ -133,7 +133,7 @@ class Sage(ExtraTabCompletion, Expect):
                  server=None,
                  server_tmpdir=None,
                  remote_cleaner=True,
-                 **kwds):
+                 **kwds) -> None:
         """
         EXAMPLES::
 

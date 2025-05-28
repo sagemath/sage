@@ -240,7 +240,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
     r"""
     A (special) Jordan algebra `A^+` from an associative algebra `A`.
     """
-    def __init__(self, A, names=None):
+    def __init__(self, A, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -381,7 +381,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
         """
         An element of a special Jordan algebra.
         """
-        def __init__(self, parent, x):
+        def __init__(self, parent, x) -> None:
             """
             Initialize ``self``.
 
@@ -604,7 +604,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
     r"""
     A Jordan algebra given by a symmetric bilinear form `m`.
     """
-    def __init__(self, R, form, names=None):
+    def __init__(self, R, form, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -808,7 +808,7 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
         """
         An element of a Jordan algebra defined by a symmetric bilinear form.
         """
-        def __init__(self, parent, s, v):
+        def __init__(self, parent, s, v) -> None:
             """
             Initialize ``self``.
 
@@ -1150,7 +1150,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
     - :wikipedia:`Hurwitz's_theorem_(composition_algebras)#Applications_to_Jordan_algebras`
     - `<https://math.ucr.edu/home/baez/octonions/octonions.pdf>`_
     """
-    def __init__(self, O):
+    def __init__(self, O) -> None:
         r"""
         Initialize ``self``.
 
@@ -1463,7 +1463,7 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
         r"""
         An element of an exceptional Jordan algebra.
         """
-        def __init__(self, parent, data):
+        def __init__(self, parent, data) -> None:
             """
             Initialize ``self``.
 

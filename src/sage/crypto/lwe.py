@@ -128,7 +128,7 @@ class UniformSampler(SageObject):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, lower_bound, upper_bound):
+    def __init__(self, lower_bound, upper_bound) -> None:
         """
         Construct a uniform sampler with bounds ``lower_bound`` and
         ``upper_bound`` (both endpoints inclusive).
@@ -186,7 +186,7 @@ class UniformPolynomialSampler(SageObject):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, P, n, lower_bound, upper_bound):
+    def __init__(self, P, n, lower_bound, upper_bound) -> None:
         """
         Construct a sampler for univariate polynomials of degree ``n-1`` where
         coefficients are drawn uniformly at random between ``lower_bound`` and
@@ -246,7 +246,7 @@ class LWE(SageObject):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, n, q, D, secret_dist='uniform', m=None):
+    def __init__(self, n, q, D, secret_dist='uniform', m=None) -> None:
         r"""
         Construct an LWE oracle in dimension ``n`` over a ring of order
         ``q`` with noise distribution ``D``.
@@ -374,7 +374,7 @@ class Regev(LWE):
 
     .. automethod:: __init__
     """
-    def __init__(self, n, secret_dist='uniform', m=None):
+    def __init__(self, n, secret_dist='uniform', m=None) -> None:
         """
         Construct LWE instance parameterised by security parameter ``n`` where
         the modulus ``q`` and the ``stddev`` of the noise are chosen as in
@@ -406,7 +406,7 @@ class LindnerPeikert(LWE):
 
     .. automethod:: __init__
     """
-    def __init__(self, n, delta=0.01, m=None):
+    def __init__(self, n, delta=0.01, m=None) -> None:
         """
         Construct LWE instance parameterised by security parameter ``n`` where
         the modulus ``q`` and the ``stddev`` of the noise is chosen as in
@@ -455,7 +455,7 @@ class UniformNoiseLWE(LWE):
 
     .. automethod:: __init__
     """
-    def __init__(self, n, instance='key', m=None):
+    def __init__(self, n, instance='key', m=None) -> None:
         """
         Construct LWE instance parameterised by security parameter ``n`` where
         all other parameters are chosen as in [CGW2013]_.
@@ -521,7 +521,7 @@ class RingLWE(SageObject):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, N, q, D, poly=None, secret_dist='uniform', m=None):
+    def __init__(self, N, q, D, poly=None, secret_dist='uniform', m=None) -> None:
         """
         Construct a Ring-LWE oracle in dimension ``n=phi(N)`` over a ring of order
         ``q`` with noise distribution ``D``.
@@ -616,7 +616,7 @@ class RingLindnerPeikert(RingLWE):
 
     .. automethod:: __init__
     """
-    def __init__(self, N, delta=0.01, m=None):
+    def __init__(self, N, delta=0.01, m=None) -> None:
         """
         Construct a Ring-LWE oracle in dimension ``n=phi(N)`` where
         the modulus ``q`` and the ``stddev`` of the noise is chosen as in
@@ -662,7 +662,7 @@ class RingLWEConverter(SageObject):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, ringlwe):
+    def __init__(self, ringlwe) -> None:
         """
         INPUT:
 

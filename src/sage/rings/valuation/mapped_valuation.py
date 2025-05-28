@@ -53,7 +53,7 @@ class MappedValuation_base(DiscretePseudoValuation):
 
         sage: TestSuite(w).run()                # long time                             # needs sage.rings.function_field
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         .. TODO::
 
@@ -400,7 +400,7 @@ class FiniteExtensionFromInfiniteValuation(MappedValuation_base, DiscreteValuati
         sage: w = v.extension(L); w
         (x)-adic valuation
     """
-    def __init__(self, parent, base_valuation):
+    def __init__(self, parent, base_valuation) -> None:
         r"""
         TESTS::
 
@@ -600,7 +600,7 @@ class FiniteExtensionFromLimitValuation(FiniteExtensionFromInfiniteValuation):
         sage: TestSuite(w[0]).run()             # long time                             # needs sage.rings.function_field
         sage: TestSuite(w[1]).run()             # long time                             # needs sage.rings.function_field
     """
-    def __init__(self, parent, approximant, G, approximants):
+    def __init__(self, parent, approximant, G, approximants) -> None:
         r"""
         EXAMPLES:
 

@@ -143,7 +143,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
 
         return super().__classcall__(cls, q, R)
 
-    def __init__(self, q, R):
+    def __init__(self, q, R) -> None:
         r"""
         Initialize ``self``.
 
@@ -481,7 +481,7 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
     The unique Fock space representation of the
     :class:`~sage.algebras.quantum_oscillator.QuantumOscillatorAlgebra`.
     """
-    def __init__(self, oscillator_algebra):
+    def __init__(self, oscillator_algebra) -> None:
         r"""
         Initialize ``self``.
 

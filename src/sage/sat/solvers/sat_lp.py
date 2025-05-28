@@ -12,7 +12,7 @@ from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 
 
 class SatLP(SatSolver):
-    def __init__(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
+    def __init__(self, solver=None, verbose=0, *, integrality_tolerance=1e-3) -> None:
         r"""
         Initialize the instance.
 
@@ -145,7 +145,7 @@ class SatLP(SatSolver):
         n = max(b)
         return [None] + [b.get(i, False) for i in range(1, n + 1)]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

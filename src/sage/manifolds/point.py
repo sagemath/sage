@@ -165,7 +165,7 @@ class ManifoldPoint(Element):
     method :meth:`plot`.
     """
     def __init__(self, parent, coords=None, chart=None, name=None,
-                 latex_name=None, check_coords=True):
+                 latex_name=None, check_coords=True) -> None:
         r"""
         Construct a manifold point.
 

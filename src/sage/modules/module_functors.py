@@ -78,7 +78,7 @@ class QuotientModuleFunctor(ConstructionFunctor):
     """
     rank = 5  # ranking of functor, not rank of module
 
-    def __init__(self, relations):
+    def __init__(self, relations) -> None:
         """
         Initialization of ``self``.
 

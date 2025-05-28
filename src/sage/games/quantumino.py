@@ -281,7 +281,7 @@ class QuantuminoState(SageObject):
         Quantumino state where the following pentamino is put aside :
         Polyomino: [(0, 0, 0), (0, 1, 0), (0, 2, 0), (1, 0, 0), (1, 0, 1)], Color: green
     """
-    def __init__(self, pentos, aside, box=(5, 8, 2)):
+    def __init__(self, pentos, aside, box=(5, 8, 2)) -> None:
         r"""
         EXAMPLES::
 
@@ -298,7 +298,7 @@ class QuantuminoState(SageObject):
         self._aside = aside
         self._box = box
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -412,7 +412,7 @@ class QuantuminoSolver(SageObject):
         Quantumino solver for the box (5, 4, 4)
         Aside pentamino number: 12
     """
-    def __init__(self, aside, box=(5, 8, 2)):
+    def __init__(self, aside, box=(5, 8, 2)) -> None:
         r"""
         Constructor.
 
@@ -428,7 +428,7 @@ class QuantuminoSolver(SageObject):
         self._aside = aside
         self._box = box
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation.
 

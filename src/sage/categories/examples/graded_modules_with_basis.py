@@ -96,7 +96,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
           sage: p.degree()                                                              # needs sage.modules
           6
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         EXAMPLES::
 

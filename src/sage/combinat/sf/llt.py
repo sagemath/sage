@@ -109,7 +109,7 @@ class LLT_class(UniqueRepresentation):
         """
         return super().__classcall__(cls, Sym, k, Sym.base_ring()(t))
 
-    def __init__(self, Sym, k, t):
+    def __init__(self, Sym, k, t) -> None:
         r"""
         Class of LLT symmetric function bases.
 
@@ -153,7 +153,7 @@ class LLT_class(UniqueRepresentation):
         self._name += self._name_suffix + " over %s" % self._sym.base_ring()
         self._m = Sym.monomial()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Representation of the LLT symmetric functions.
 
@@ -416,7 +416,7 @@ class LLT_class(UniqueRepresentation):
 
 class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
-    def __init__(self, llt, prefix):
+    def __init__(self, llt, prefix) -> None:
         r"""
         A class of methods which are common to both the hspin and hcospin
         of the LLT symmetric functions.
@@ -627,7 +627,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 # the H-spin basis
 class LLT_spin(LLT_generic):
 
-    def __init__(self, llt):
+    def __init__(self, llt) -> None:
         r"""
         A class of methods for the h-spin LLT basis of the symmetric functions.
 
@@ -696,7 +696,7 @@ class LLT_spin(LLT_generic):
 
 # the h-cospin basis
 class LLT_cospin(LLT_generic):
-    def __init__(self, llt):
+    def __init__(self, llt) -> None:
         r"""
         A class of methods for the h-cospin LLT basis of the symmetric functions.
 

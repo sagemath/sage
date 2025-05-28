@@ -38,7 +38,7 @@ class Bimodules(CategoryWithParameters):
         [Category of left modules over Rational Field, Category of right modules over Integer Ring]
     """
 
-    def __init__(self, left_base, right_base, name=None):
+    def __init__(self, left_base, right_base, name=None) -> None:
         """
         The ``name`` parameter is ignored.
 

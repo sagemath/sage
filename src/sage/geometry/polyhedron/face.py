@@ -124,7 +124,7 @@ class PolyhedronFace(ConvexSet_closed):
         sage: TestSuite(face).run()
     """
 
-    def __init__(self, polyhedron, V_indices, H_indices):
+    def __init__(self, polyhedron, V_indices, H_indices) -> None:
         r"""
         The constructor.
 

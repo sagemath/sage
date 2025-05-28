@@ -459,7 +459,7 @@ class QuotientRing_nc(Parent):
     """
     Element = quotient_ring_element.QuotientRingElement
 
-    def __init__(self, R, I, names, category=None):
+    def __init__(self, R, I, names, category=None) -> None:
         """
         Create the quotient ring of `R` by the twosided ideal `I`.
 
@@ -1407,7 +1407,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
          by the ideal (x^2 + 3*x + 4, x^2 + 1)
     """
 
-    def __init__(self, R, I, names, category=None):
+    def __init__(self, R, I, names, category=None) -> None:
         """
         Initialize ``self``.
 

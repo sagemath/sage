@@ -334,7 +334,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         calc_method=None,
         expansion_symbol=None,
         order=None,
-    ):
+    ) -> None:
         r"""
         Initialize ``self``.
 
@@ -765,7 +765,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         else:
             return calc.simplify(resu, method=curr)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -2754,7 +2754,7 @@ class ChartFunctionRing(Parent, UniqueRepresentation):
 
     Element = ChartFunction
 
-    def __init__(self, chart):
+    def __init__(self, chart) -> None:
         """
         Initialize ``self``.
 
@@ -2996,7 +2996,7 @@ class MultiCoordFunction(SageObject, Mutability):
         (4,)
     """
 
-    def __init__(self, chart, expressions):
+    def __init__(self, chart, expressions) -> None:
         r"""
         Initialize ``self``.
 

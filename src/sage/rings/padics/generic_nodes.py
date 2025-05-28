@@ -314,7 +314,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
         sage: R._prec_type()
         'lattice-float'
     """
-    def __init__(self, p, prec, print_mode, names, label=None, category=None):
+    def __init__(self, p, prec, print_mode, names, label=None, category=None) -> None:
         """
         Initialization.
 

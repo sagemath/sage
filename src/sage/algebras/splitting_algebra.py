@@ -203,7 +203,7 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
     """
     Element = SplittingAlgebraElement
 
-    def __init__(self, monic_polynomial, names='X', iterate=True, warning=True):
+    def __init__(self, monic_polynomial, names='X', iterate=True, warning=True) -> None:
         r"""
         Python constructor.
 

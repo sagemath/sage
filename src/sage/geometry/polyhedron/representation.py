@@ -65,7 +65,7 @@ class PolyhedronRepresentation(SageObject):
     RAY = RAY
     LINE = LINE
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of the representation data.
 
@@ -384,7 +384,7 @@ class Hrepresentation(PolyhedronRepresentation):
     a polyhedron. Inherits from ``PolyhedronRepresentation``.
     """
 
-    def __init__(self, polyhedron_parent):
+    def __init__(self, polyhedron_parent) -> None:
         """
         Initialize the PolyhedronRepresentation object.
 
@@ -1114,7 +1114,7 @@ class Vrepresentation(PolyhedronRepresentation):
     polyhedron. Inherits from ``PolyhedronRepresentation``.
     """
 
-    def __init__(self, polyhedron_parent):
+    def __init__(self, polyhedron_parent) -> None:
         """
         Initialize the PolyhedronRepresentation object.
 

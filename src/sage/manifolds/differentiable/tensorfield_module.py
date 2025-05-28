@@ -240,7 +240,7 @@ class TensorFieldModule(UniqueRepresentation, ReflexiveModule_tensor):
     """
     Element = TensorField
 
-    def __init__(self, vector_field_module, tensor_type, category=None):
+    def __init__(self, vector_field_module, tensor_type, category=None) -> None:
         r"""
         Construct a module of tensor fields taking values on a (a priori) not
         parallelizable differentiable manifold.
@@ -734,7 +734,7 @@ class TensorFieldFreeModule(TensorFreeModule):
     """
     Element = TensorFieldParal
 
-    def __init__(self, vector_field_module, tensor_type):
+    def __init__(self, vector_field_module, tensor_type) -> None:
         r"""
         Construct a module of tensor fields taking values on a
         parallelizable differentiable manifold.

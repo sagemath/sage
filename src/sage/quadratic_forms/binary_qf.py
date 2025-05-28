@@ -97,7 +97,7 @@ class BinaryQF(SageObject):
         sage: BinaryQF(1, 0, 1)
         x^2 + y^2
     """
-    def __init__(self, a, b=None, c=None):
+    def __init__(self, a, b=None, c=None) -> None:
         r"""
         Create a binary quadratic form `ax^2 + bxy + cy^2`.
 

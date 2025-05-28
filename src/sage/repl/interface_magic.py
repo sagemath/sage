@@ -164,7 +164,7 @@ class InterfaceMagic:
             if magic._name == name:
                 return magic
 
-    def __init__(self, name, interface):
+    def __init__(self, name, interface) -> None:
         """
         Interface Magic.
 

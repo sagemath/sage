@@ -123,7 +123,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         Out[{}] + 2*Out[{1}] + 2*Out[{2}] + 2*Out[{3}] + 2*Out[{1, 2}] + 2*Out[{1, 3}] + 4*Out[{2, 3}] + 4*Out[{1, 2, 3}]
     """
 
-    def __init__(self, R, S):
+    def __init__(self, R, S) -> None:
         r"""
         EXAMPLES::
 
@@ -396,7 +396,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             The subset algebra of {1, 2, 3} over Rational Field in the Fundamental basis
         """
 
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             EXAMPLES::
 
@@ -486,7 +486,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             -21*In[{}] - 2*In[{1}] + 19*In[{2}] + 53*In[{1, 2}]
         """
 
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             EXAMPLES::
 
@@ -529,7 +529,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
             Out[{}] + 4*Out[{1}] + 9*Out[{2}] + Out[{1, 2}]
         """
 
-        def __init__(self, A):
+        def __init__(self, A) -> None:
             r"""
             EXAMPLES::
 

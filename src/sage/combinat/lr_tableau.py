@@ -78,7 +78,7 @@ class LittlewoodRichardsonTableau(SemistandardTableau):
         shape = tab.shape()
         return LittlewoodRichardsonTableaux(shape, weight)(t)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         r"""
         Initialize ``self``.
 
@@ -177,7 +177,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
             raise ValueError("the sizes of shapes and sequence of weights do not match")
         return super().__classcall__(cls, shape, weight)
 
-    def __init__(self, shape, weight):
+    def __init__(self, shape, weight) -> None:
         r"""
         Initialize the parent class of Littlewood-Richardson tableaux.
 
@@ -225,7 +225,7 @@ class LittlewoodRichardsonTableaux(SemistandardTableaux):
                     shift = sum(a.length() for a in self._weight[:-1])
                     yield self.element_class(self, _tableau_join(t, s, shift=shift))
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Check if ``t`` is contained in ``self``.
 

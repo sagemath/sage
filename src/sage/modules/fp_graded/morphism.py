@@ -182,7 +182,7 @@ class FPModuleMorphism(Morphism):
         ValueError: relation Sq(6)*g[2] + Sq(5)*g[3] is not sent to zero
     """
 
-    def __init__(self, parent, values, check=True):
+    def __init__(self, parent, values, check=True) -> None:
         r"""
         Create a homomorphism between finitely presented graded modules.
 

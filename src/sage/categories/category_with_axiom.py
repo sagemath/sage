@@ -2085,7 +2085,7 @@ class CategoryWithAxiom(Category):
         # Sets.SubcategoryMethods.Finite, with its first argument bound to Rings()
         return getattr(super(base_category.__class__.__base__, base_category), cls._axiom)
 
-    def __init__(self, base_category):
+    def __init__(self, base_category) -> None:
         """
         TESTS::
 
@@ -2503,7 +2503,7 @@ class CategoryWithAxiom(Category):
 
 class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_ring):
 
-    def __init__(self, base_category):
+    def __init__(self, base_category) -> None:
         """
         TESTS::
 

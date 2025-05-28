@@ -601,7 +601,7 @@ class MatchingCoveredGraph(Graph):
 
     def __init__(self, data=None, matching=None, algorithm='Edmonds',
                  solver=None, verbose=0, integrality_tolerance=0.001,
-                 *args, **kwds):
+                 *args, **kwds) -> None:
         r"""
         Create a matching covered graph, that is a connected nontrivial graph
         wherein each edge participates in some perfect matching.
@@ -648,7 +648,7 @@ class MatchingCoveredGraph(Graph):
         else:
             raise TypeError('input data is of unknown type')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a short string representation of the (matching covered) graph.
 

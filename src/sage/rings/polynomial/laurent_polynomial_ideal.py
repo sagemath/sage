@@ -28,7 +28,7 @@ from sage.arith.misc import GCD
 
 
 class LaurentPolynomialIdeal( Ideal_generic ):
-    def __init__(self, ring, gens, coerce=True, hint=None):
+    def __init__(self, ring, gens, coerce=True, hint=None) -> None:
         r"""
         Create an ideal in a Laurent polynomial ring.
 
@@ -184,7 +184,7 @@ class LaurentPolynomialIdeal( Ideal_generic ):
         else:
             raise ValueError("invalid comparison")
 
-    def __contains__(self, f):
+    def __contains__(self, f) -> bool:
         """
         Implement containment testing (in) for Laurent polynomial ideals.
 

@@ -107,7 +107,7 @@ class GradedFiniteFreeResolution(FiniteFreeResolution):
 
     - ``name`` -- string; name of the base ring
     """
-    def __init__(self, module, degrees=None, shifts=None, name='S', **kwds):
+    def __init__(self, module, degrees=None, shifts=None, name='S', **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -325,7 +325,7 @@ class GradedFiniteFreeResolution_free_module(GradedFiniteFreeResolution, FiniteF
         sage: res = FreeResolution(M, graded=True); res
         S(0)⊕S(0)⊕S(0) <-- S(-3)⊕S(-1) <-- 0
     """
-    def __init__(self, module, degrees=None, *args, **kwds):
+    def __init__(self, module, degrees=None, *args, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -471,7 +471,7 @@ class GradedFiniteFreeResolution_singular(GradedFiniteFreeResolution, FiniteFree
         sage: r = I.graded_free_resolution(); r
         S(0) <-- S(-1)⊕S(-2)⊕S(-2) <-- S(-3)⊕S(-3)⊕S(-4) <-- S(-5) <-- 0
     """
-    def __init__(self, module, degrees=None, shifts=None, name='S', algorithm='heuristic', **kwds):
+    def __init__(self, module, degrees=None, shifts=None, name='S', algorithm='heuristic', **kwds) -> None:
         """
         Initialize.
 

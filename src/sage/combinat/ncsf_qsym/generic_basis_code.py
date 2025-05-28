@@ -989,7 +989,7 @@ class AlgebraMorphism(ModuleMorphismByLinearity): # Find a better name
     A class for algebra morphism defined on a free algebra from the image of the generators
     """
 
-    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False):
+    def __init__(self, domain, on_generators, position=0, codomain=None, category=None, anti=False) -> None:
         """
         Given a map on the multiplicative basis of a free algebra, this method
         returns the algebra morphism that is the linear extension of its image

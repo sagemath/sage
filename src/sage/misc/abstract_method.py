@@ -140,7 +140,7 @@ def abstract_method(f=None, optional=False):
 
 
 class AbstractMethod:
-    def __init__(self, f, optional=False):
+    def __init__(self, f, optional=False) -> None:
         """
         Constructor for abstract methods.
 
@@ -170,7 +170,7 @@ class AbstractMethod:
         except AttributeError:
             pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

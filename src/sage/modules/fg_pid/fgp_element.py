@@ -55,7 +55,7 @@ class FGP_Element(ModuleElement):
         sage: loads(dumps(Q.0)) == Q.0
         True
     """
-    def __init__(self, parent, x, check=DEBUG):
+    def __init__(self, parent, x, check=DEBUG) -> None:
         """
         INPUT:
 

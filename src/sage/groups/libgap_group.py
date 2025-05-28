@@ -41,7 +41,7 @@ class GroupLibGAP(GroupMixinLibGAP, Group, ParentLibGAP):
 
     Element = ElementLibGAP
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Group interface for LibGAP-based groups.
 

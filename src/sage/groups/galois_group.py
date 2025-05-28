@@ -353,7 +353,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
     r"""
     Abelian Galois groups
     """
-    def __init__(self, field, generator_orders, algorithm=None, gen_names='sigma'):
+    def __init__(self, field, generator_orders, algorithm=None, gen_names='sigma') -> None:
         r"""
         Initialize this Galois group.
 

@@ -38,7 +38,7 @@ class JmolData(SageObject):
         Create an animated image file (GIF) if spin is on and put data
         extracted from a file into a variable/string/structure to return
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES:
 

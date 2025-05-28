@@ -38,7 +38,7 @@ class BarChart(GraphicPrimitive):
         sage: type(g)
         <class 'sage.plot.bar_chart.BarChart'>
     """
-    def __init__(self, ind, datalist, options):
+    def __init__(self, ind, datalist, options) -> None:
         """
         Initialize a ``BarChart`` primitive.
 

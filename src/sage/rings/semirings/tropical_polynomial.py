@@ -637,7 +637,7 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             names = (names,)
         return super().__classcall__(cls, base_semiring, tuple(names))
 
-    def __init__(self, base_semiring, names):
+    def __init__(self, base_semiring, names) -> None:
         r"""
         Initialize ``self``.
 

@@ -53,7 +53,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
     """
     Submodule of a Hecke module.
     """
-    def __init__(self, ambient, submodule, dual_free_module=None, check=True):
+    def __init__(self, ambient, submodule, dual_free_module=None, check=True) -> None:
         r"""
         Initialise a submodule of an ambient Hecke module.
 

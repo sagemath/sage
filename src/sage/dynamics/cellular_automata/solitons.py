@@ -291,7 +291,7 @@ class SolitonCellularAutomata(SageObject):
         t: 7
                           .       (-2, 5)(-2, -5, 4, 6) ... (-6, 2) ...
     """
-    def __init__(self, initial_state, cartan_type=2, vacuum=1):
+    def __init__(self, initial_state, cartan_type=2, vacuum=1) -> None:
         """
         Initialize ``self``.
 

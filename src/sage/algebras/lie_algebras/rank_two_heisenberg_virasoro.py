@@ -83,7 +83,7 @@ class RankTwoHeisenbergVirasoro(InfinitelyGeneratedLieAlgebra, IndexedGenerators
 
     - [LT2018]_
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         Initialize ``self``.
 

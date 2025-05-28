@@ -104,7 +104,7 @@ from . import element
 
 
 class BoundarySpaceElement(hecke.HeckeModuleElement):
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         Create a boundary symbol.
 
@@ -279,7 +279,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
                  weight=2,
                  sign=0,
                  base_ring=QQ,
-                 character=None):
+                 character=None) -> None:
         """
         Space of boundary symbols for a congruence subgroup of SL_2(Z).
 
@@ -609,7 +609,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
 
 
 class BoundarySpace_wtk_g0(BoundarySpace):
-    def __init__(self, level, weight, sign, F):
+    def __init__(self, level, weight, sign, F) -> None:
         """
         Initialize a space of boundary symbols of weight k for Gamma_0(N)
         over base field F.
@@ -752,7 +752,7 @@ class BoundarySpace_wtk_g0(BoundarySpace):
 
 
 class BoundarySpace_wtk_g1(BoundarySpace):
-    def __init__(self, level, weight, sign, F):
+    def __init__(self, level, weight, sign, F) -> None:
         """
         Initialize a space of boundary modular symbols for Gamma1(N).
 
@@ -952,7 +952,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
 
 
 class BoundarySpace_wtk_gamma_h(BoundarySpace):
-    def __init__(self, group, weight, sign, F):
+    def __init__(self, group, weight, sign, F) -> None:
         """
         Initialize a space of boundary modular symbols for GammaH(N).
 
@@ -1203,7 +1203,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
 
 
 class BoundarySpace_wtk_eps(BoundarySpace):
-    def __init__(self, eps, weight, sign=0):
+    def __init__(self, eps, weight, sign=0) -> None:
         """
         Space of boundary modular symbols with given weight, character, and
         sign.

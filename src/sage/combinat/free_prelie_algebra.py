@@ -198,7 +198,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names=None):
+    def __init__(self, R, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -895,7 +895,7 @@ class PreLieFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, vars):
+    def __init__(self, vars) -> None:
         """
         EXAMPLES::
 

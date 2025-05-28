@@ -118,7 +118,7 @@ class Diagram(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         """
         return Diagrams()(cells, n_rows, n_cols, check)
 
-    def __init__(self, parent, cells, n_rows=None, n_cols=None, check=True):
+    def __init__(self, parent, cells, n_rows=None, n_cols=None, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -575,7 +575,7 @@ class Diagrams(UniqueRepresentation, Parent):
         Combinatorial diagrams
     """
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         r"""
         Initialize ``self``.
 

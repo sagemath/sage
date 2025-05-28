@@ -123,7 +123,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
             w = w0*(w1.inverse())
         return super().__classcall__(cls, w, n, x)
 
-    def __init__(self, w, n, x=None):
+    def __init__(self, w, n, x=None) -> None:
         r"""
         EXAMPLES::
 

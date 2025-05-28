@@ -326,7 +326,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
                                      order, default_prec, sparse)
 
     def __init__(self, base_ring, num_gens, name_list,
-                 order='negdeglex', default_prec=10, sparse=False):
+                 order='negdeglex', default_prec=10, sparse=False) -> None:
         """
         Initialize a multivariate power series ring.  See PowerSeriesRing
         for complete documentation.

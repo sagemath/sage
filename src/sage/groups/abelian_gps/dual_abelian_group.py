@@ -121,7 +121,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
     """
     Element = DualAbelianGroupElement
 
-    def __init__(self, G, names, base_ring):
+    def __init__(self, G, names, base_ring) -> None:
         """
         The Python constructor.
 
@@ -164,7 +164,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         return self._base_ring
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Print method.
 
@@ -332,7 +332,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         # TODO: deprecate
         return self.group().gens_orders()
 
-    def __contains__(self, X):
+    def __contains__(self, X) -> bool:
         """
         Implement "in".
 

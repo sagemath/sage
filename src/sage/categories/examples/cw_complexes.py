@@ -34,7 +34,7 @@ class Surface(UniqueRepresentation, Parent):
 
         sage: TestSuite(X).run()
     """
-    def __init__(self, bdy=(1, 2, 1, 2)):
+    def __init__(self, bdy=(1, 2, 1, 2)) -> None:
         r"""
         EXAMPLES::
 
@@ -97,7 +97,7 @@ class Surface(UniqueRepresentation, Parent):
         """
         A cell in a CW complex.
         """
-        def __init__(self, parent, dim, name):
+        def __init__(self, parent, dim, name) -> None:
             """
             Initialize ``self``.
 

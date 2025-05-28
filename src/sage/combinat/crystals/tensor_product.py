@@ -483,7 +483,7 @@ class TensorProductOfCrystalsWithGenerators(TensorProductOfCrystals):
         :meth:`~sage.categories.crystals.Crystals.ParentMethods.subcrystal`.
     """
 
-    def __init__(self, crystals, generators, cartan_type):
+    def __init__(self, crystals, generators, cartan_type) -> None:
         """
         EXAMPLES::
 
@@ -525,7 +525,7 @@ class FullTensorProductOfCrystals(TensorProductOfCrystals):
         Merge this into :class:`TensorProductOfCrystals`.
     """
 
-    def __init__(self, crystals, **options):
+    def __init__(self, crystals, **options) -> None:
         """
         TESTS::
 
@@ -970,7 +970,7 @@ class CrystalOfTableaux(CrystalOfWords):
         T.shapes = spin_shapes
         return T
 
-    def __init__(self, cartan_type, shapes):
+    def __init__(self, cartan_type, shapes) -> None:
         """
         Construct the crystal of all tableaux of the given shapes.
 
@@ -1072,7 +1072,7 @@ class CrystalOfQueerTableaux(CrystalOfWords, QueerSuperCrystalsMixin):
     - ``shape`` -- a shape
     """
 
-    def __init__(self, cartan_type, shape):
+    def __init__(self, cartan_type, shape) -> None:
         """
         Initialize ``self``.
 

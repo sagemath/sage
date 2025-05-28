@@ -98,7 +98,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         """
         return Knots().element_class(data, check=check)
 
-    def __init__(self, data, check=True):
+    def __init__(self, data, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -485,7 +485,7 @@ class Knots(Singleton, Parent):
     """
     The set for all knots, as a monoid for the connected sum.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 

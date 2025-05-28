@@ -162,7 +162,7 @@ class ModuleMorphism(Morphism):
     - handles the proper inheritance from categories by updating the
       class of ``self`` upon construction.
     """
-    def __init__(self, domain, codomain=None, category=None, affine=False):
+    def __init__(self, domain, codomain=None, category=None, affine=False) -> None:
         """
         Initialization of module morphisms.
 
@@ -248,7 +248,7 @@ class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
           :class:`TriangularModuleMorphism`.
     """
 
-    def __init__(self, domain, function, codomain=None, category=None):
+    def __init__(self, domain, function, codomain=None, category=None) -> None:
         """
         TESTS::
 
@@ -296,7 +296,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
         the attribute ``_on_basis``
     """
     def __init__(self, domain, on_basis=None, codomain=None, category=None,
-                 position=0, zero=None):
+                 position=0, zero=None) -> None:
         """
         TESTS::
 
@@ -630,7 +630,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         [-1/3*B[1] + B[2] - 1/12*B[3], 1/4*B[3], 1/3*B[1] - 1/6*B[3]]
     """
     def __init__(self, triangular='upper', unitriangular=False,
-                 key=None, inverse=None, inverse_on_support=identity, invertible=None):
+                 key=None, inverse=None, inverse_on_support=identity, invertible=None) -> None:
         """
         TESTS::
 
@@ -1174,7 +1174,7 @@ class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularM
         - :class:`ModuleMorphismByLinearity` and
           :class:`TriangularModuleMorphism`.
     """
-    def __init__(self, domain, on_basis, codomain=None, category=None, **keywords):
+    def __init__(self, domain, on_basis, codomain=None, category=None, **keywords) -> None:
         r"""
         TESTS::
 
@@ -1225,7 +1225,7 @@ class TriangularModuleMorphismFromFunction(ModuleMorphismFromFunction, Triangula
         - :class:`ModuleMorphismFromFunction` and
           :class:`TriangularModuleMorphism`.
     """
-    def __init__(self, domain, function, codomain=None, category=None, **keywords):
+    def __init__(self, domain, function, codomain=None, category=None, **keywords) -> None:
         r"""
         TESTS::
 
@@ -1301,7 +1301,7 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
         Possibly implement rank, addition, multiplication, matrix,
         etc, from the stored matrix.
     """
-    def __init__(self, domain, matrix, codomain=None, category=None, side='left'):
+    def __init__(self, domain, matrix, codomain=None, category=None, side='left') -> None:
         r"""
         Initialize ``self``.
 
@@ -1437,7 +1437,7 @@ class DiagonalModuleMorphism(ModuleMorphismByLinearity):
         sage: phi(x[1]), phi(x[2]), phi(x[3])
         (B[1], 2*B[2], 6*B[3])
     """
-    def __init__(self, domain, diagonal, codomain=None, category=None):
+    def __init__(self, domain, diagonal, codomain=None, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1569,7 +1569,7 @@ class PointwiseInverseFunction(SageObject):
         sage: f(0), f(1), f(2), f(3)
         (1, 1, 1/2, 1/6)
     """
-    def __init__(self, f):
+    def __init__(self, f) -> None:
         """
         TESTS::
 

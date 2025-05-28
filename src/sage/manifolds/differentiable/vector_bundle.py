@@ -88,7 +88,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         True
     """
     def __init__(self, rank, name, base_space, field='real', latex_name=None,
-                 category=None, unique_tag=None):
+                 category=None, unique_tag=None) -> None:
         r"""
         Construct a differentiable vector bundle.
 
@@ -428,7 +428,7 @@ class TensorBundle(DifferentiableVectorBundle):
         sage: R_tensor_module is PhiTM.section_module()
         True
     """
-    def __init__(self, base_space, k, l, dest_map=None):
+    def __init__(self, base_space, k, l, dest_map=None) -> None:
         r"""
         Construct a tensor bundle.
 

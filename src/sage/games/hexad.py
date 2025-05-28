@@ -139,7 +139,7 @@ class Minimog:
         [        5         9         8        10]
         [        4         1         6         7]
     """
-    def __init__(self, type='shuffle'):
+    def __init__(self, type='shuffle') -> None:
         self.type = type
         MS34 = MatrixSpace(SR, 3, 4)
         minimog_modulo11 = MS34([[0, 3, infinity, 2], [5, 9, 8, 10], [4, 1, 6, 7]])

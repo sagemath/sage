@@ -177,7 +177,7 @@ class RightAngledArtinGroup(ArtinGroup):
                              " number of vertices of the defining graph")
         return super().__classcall__(cls, G, names)
 
-    def __init__(self, G, names):
+    def __init__(self, G, names) -> None:
         """
         Initialize ``self``.
 
@@ -403,7 +403,7 @@ class RightAngledArtinGroup(ArtinGroup):
         ``i`` is the index of a vertex in the defining graph (with some
         fixed order of the vertices) and ``p`` is the power.
         """
-        def __init__(self, parent, lst):
+        def __init__(self, parent, lst) -> None:
             """
             Initialize ``self``.
 
@@ -645,7 +645,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
 
     - [CQ2019]_
     """
-    def __init__(self, R, A):
+    def __init__(self, R, A) -> None:
         """
         Initialize ``self``.
 

@@ -156,7 +156,7 @@ class SchemeMorphism(Element):
         Category of homsets of schemes
     """
 
-    def __init__(self, parent, codomain=None):
+    def __init__(self, parent, codomain=None) -> None:
         """
         The Python constructor.
 
@@ -679,7 +679,7 @@ class SchemeMorphism_id(SchemeMorphism):
         Scheme endomorphism of Spectrum of Integer Ring
           Defn: Identity map
     """
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         The Python constructor.
 
@@ -722,7 +722,7 @@ class SchemeMorphism_structure_map(SchemeMorphism):
         Scheme endomorphism of Spectrum of Integer Ring
           Defn: Structure map
     """
-    def __init__(self, parent, codomain=None):
+    def __init__(self, parent, codomain=None) -> None:
         """
         The Python constructor.
 
@@ -793,7 +793,7 @@ class SchemeMorphism_spec(SchemeMorphism):
           To:   Rational Field
           Defn: x |--> 7
     """
-    def __init__(self, parent, phi, check=True):
+    def __init__(self, parent, phi, check=True) -> None:
         """
         The Python constructor.
 
@@ -962,7 +962,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         TypeError: polys (=[e^x, e^y]) must be elements of Multivariate
         Polynomial Ring in x, y over Rational Field
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         """
         The Python constructor.
 
@@ -1741,7 +1741,7 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
         Scheme endomorphism of Spectrum of Integer Ring
           Defn: Identity map
     """
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         Initialize.
 
@@ -1860,7 +1860,7 @@ class SchemeMorphism_point(SchemeMorphism):
         """
         return self._coords
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of coordinates.
 

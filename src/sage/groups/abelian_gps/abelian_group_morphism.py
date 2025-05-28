@@ -36,7 +36,7 @@ class AbelianGroupMap(Morphism):
     """
     A set-theoretic map between AbelianGroups.
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         The Python constructor.
         """
@@ -96,7 +96,7 @@ class AbelianGroupMorphism(Morphism):
 #    raise TypeError("the list %s must generate G" % genss)
 #TypeError: the list [a*b, c^2] must generate G
 
-    def __init__(self, G, H, genss, imgss):
+    def __init__(self, G, H, genss, imgss) -> None:
         from sage.categories.homset import Hom
         Morphism.__init__(self, Hom(G, H))
         if len(genss) != len(imgss):

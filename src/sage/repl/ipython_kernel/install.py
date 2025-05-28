@@ -28,7 +28,7 @@ from sage.env import (
 
 class SageKernelSpec:
 
-    def __init__(self, prefix=None):
+    def __init__(self, prefix=None) -> None:
         """
         Utility to manage SageMath kernels and extensions.
 

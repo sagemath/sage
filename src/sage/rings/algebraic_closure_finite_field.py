@@ -74,7 +74,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
         sage: type(F.gen(2))
         <class 'sage.rings.algebraic_closure_finite_field.AlgebraicClosureFiniteField_pseudo_conway_with_category.element_class'>
     """
-    def __init__(self, parent, value):
+    def __init__(self, parent, value) -> None:
         """
         TESTS::
 
@@ -546,7 +546,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         sage: GF(3).algebraic_closure().is_finite()
         False
     """
-    def __init__(self, base_ring, name, category=None):
+    def __init__(self, base_ring, name, category=None) -> None:
         """
         TESTS::
 
@@ -1011,7 +1011,7 @@ class AlgebraicClosureFiniteField_pseudo_conway(WithEqualityById, AlgebraicClosu
         sage: F3 == F5
         False
     """
-    def __init__(self, base_ring, name, category=None, lattice=None, use_database=True):
+    def __init__(self, base_ring, name, category=None, lattice=None, use_database=True) -> None:
         """
         INPUT:
 

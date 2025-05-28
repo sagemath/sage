@@ -69,7 +69,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         sage: c.gens()
         (2, 1/2*w - 1/2)
     """
-    def __init__(self, parent, element, ideal=None):
+    def __init__(self, parent, element, ideal=None) -> None:
         """
         Return the ideal class of this fractional ideal.
 
@@ -435,7 +435,7 @@ class ClassGroup(AbelianGroupWithValues_class):
     """
     Element = FractionalIdealClass
 
-    def __init__(self, gens_orders, names, number_field, gens, proof=True):
+    def __init__(self, gens_orders, names, number_field, gens, proof=True) -> None:
         r"""
         Create a class group.
 
@@ -651,7 +651,7 @@ class SClassGroup(ClassGroup):
     """
     Element = SFractionalIdealClass
 
-    def __init__(self, gens_orders, names, number_field, gens, S, proof=True):
+    def __init__(self, gens_orders, names, number_field, gens, S, proof=True) -> None:
         r"""
         Create an `S`-class group.
 

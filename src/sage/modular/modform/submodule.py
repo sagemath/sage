@@ -35,7 +35,7 @@ class ModularFormsSubmodule(ModularFormsSpace,
     """
     A submodule of an ambient space of modular forms.
     """
-    def __init__(self, ambient_module, submodule, dual=None, check=False):
+    def __init__(self, ambient_module, submodule, dual=None, check=False) -> None:
         """
         INPUT:
 

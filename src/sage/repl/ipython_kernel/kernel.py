@@ -46,7 +46,7 @@ class SageKernel(IPythonKernel):
 
     shell_class = Type(SageZMQInteractiveShell)
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         """
         The Sage Jupyter Kernel.
 

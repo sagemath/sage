@@ -79,7 +79,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -101,7 +101,7 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         return "An example of an infinite enumerated set: the nonnegative integers"
 
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         """
         EXAMPLES::
 

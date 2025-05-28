@@ -459,7 +459,7 @@ class Order(Parent, sage.rings.abc.Order):
         ValueError: the rank of the span of gens is wrong
     """
 
-    def __init__(self, K):
+    def __init__(self, K) -> None:
         """
         This is called when creating an order to set the ambient field.
 
@@ -1530,7 +1530,7 @@ class Order(Parent, sage.rings.abc.Order):
 
 
 class Order_absolute(Order):
-    def __init__(self, K, module_rep):
+    def __init__(self, K, module_rep) -> None:
         """
         EXAMPLES::
 
@@ -2175,7 +2175,7 @@ class Order_relative(Order):
     contained order.
     """
 
-    def __init__(self, K, absolute_order):
+    def __init__(self, K, absolute_order) -> None:
         """
         Create the relative order.
 

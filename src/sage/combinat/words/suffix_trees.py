@@ -28,7 +28,7 @@ lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
 class SuffixTrie(SageObject):
-    def __init__(self, word):
+    def __init__(self, word) -> None:
         r"""
         Construct the suffix trie of the word w.
 
@@ -508,7 +508,7 @@ class SuffixTrie(SageObject):
 
 
 class ImplicitSuffixTree(SageObject):
-    def __init__(self, word):
+    def __init__(self, word) -> None:
         r"""
         Construct the implicit suffix tree of a word w.
 
@@ -1606,7 +1606,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
     time. The algorithm is an implementation of the one proposed in
     [DS2004]_.
     """
-    def __init__(self, w):
+    def __init__(self, w) -> None:
         """
         Initialize ``self``.
 
@@ -1636,7 +1636,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         ImplicitSuffixTree.__init__(self, w)
         self.labeling = self._complete_labeling()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 

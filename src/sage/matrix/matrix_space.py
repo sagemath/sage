@@ -785,7 +785,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return super().__classcall__(cls, base_ring, nrows,
                                      ncols, sparse, matrix_cls, **kwds)
 
-    def __init__(self, base_ring, nrows, ncols, sparse, implementation):
+    def __init__(self, base_ring, nrows, ncols, sparse, implementation) -> None:
         r"""
         INPUT:
 
@@ -1546,7 +1546,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         return "\\mathrm{Mat}_{%s\\times %s}(%s)" % (self.nrows(), self.ncols(),
                                                      latex.latex(self.base_ring()))
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return number of elements of this matrix space if it fits in
         an int; raise a :exc:`TypeError` if there are infinitely many

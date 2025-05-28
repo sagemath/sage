@@ -22,7 +22,7 @@ from sage.groups.matrix_gps.named_group import NamedMatrixGroup_generic
 class NamedMatrixGroup_gap(NamedMatrixGroup_generic, MatrixGroup_gap):
 
     def __init__(self, degree, base_ring, special, sage_name, latex_string,
-                 gap_command_string, category=None):
+                 gap_command_string, category=None) -> None:
         """
         Base class for "named" matrix groups using LibGAP.
 

@@ -105,7 +105,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         sage: (singular(xi)*singular(xi)).NF('std(0)')                                  # needs sage.libs.singular
         -1
     """
-    def __init__(self, parent, polynomial, check=True):
+    def __init__(self, parent, polynomial, check=True) -> None:
         """
         Create an element of the quotient of a polynomial ring.
 
@@ -314,7 +314,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
     def __getitem__(self, n):
         return self._polynomial[n]
 
-    def __int__(self):
+    def __int__(self) -> int:
         """
         Coerce this element to an int if possible.
 

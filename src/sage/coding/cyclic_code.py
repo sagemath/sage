@@ -288,7 +288,7 @@ class CyclicCode(AbstractLinearCode):
     _registered_decoders = {}
 
     def __init__(self, generator_pol=None, length=None, code=None, check=True,
-                 D=None, field=None, primitive_root=None):
+                 D=None, field=None, primitive_root=None) -> None:
         r"""
         TESTS:
 
@@ -462,7 +462,7 @@ class CyclicCode(AbstractLinearCode):
                                  "of powers and the length and the field, or "
                                  "a generator polynomial and the code length")
 
-    def __contains__(self, word):
+    def __contains__(self, word) -> bool:
         r"""
         Return ``True`` if ``word`` belongs to ``self``, ``False`` otherwise.
 
@@ -836,7 +836,7 @@ class CyclicCodePolynomialEncoder(Encoder):
         Polynomial-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         EXAMPLES::
 
@@ -1005,7 +1005,7 @@ class CyclicCodeVectorEncoder(Encoder):
         Vector-style encoder for [7, 4] Cyclic Code over GF(2)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
 
         EXAMPLES::
@@ -1198,7 +1198,7 @@ class CyclicCodeSurroundingBCHDecoder(Decoder):
         sage: D
         Decoder through the surrounding BCH code of the [15, 10] Cyclic Code over GF(16)
     """
-    def __init__(self, code, **kwargs):
+    def __init__(self, code, **kwargs) -> None:
         r"""
 
         EXAMPLES::

@@ -31,7 +31,7 @@ class ObjectReprABC:
     .. automethod:: __call__
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation.
 
@@ -100,7 +100,7 @@ class ObjectReprABC:
 
 class SomeIPythonRepr(ObjectReprABC):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Some selected representers from IPython.
 

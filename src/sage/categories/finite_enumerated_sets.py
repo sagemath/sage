@@ -81,7 +81,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
     class ParentMethods:
 
-        def __len__(self):
+        def __len__(self) -> int:
             """
             Return the number of elements of ``self``.
 

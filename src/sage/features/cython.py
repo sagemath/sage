@@ -20,7 +20,7 @@ class sage__misc__cython(CythonFeature):
     A :class:`~sage.features.Feature` which describes whether :mod:`sage.misc.cython`
     is available and functional.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

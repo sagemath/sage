@@ -47,7 +47,7 @@ class DiscreteValuationCodomain(UniqueRepresentation, Parent):
 
         sage: TestSuite(C).run() # long time
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -149,7 +149,7 @@ class DiscreteValueGroup(UniqueRepresentation, Parent):
         generator = QQ.coerce(generator).abs()
         return super().__classcall__(cls, generator)
 
-    def __init__(self, generator):
+    def __init__(self, generator) -> None:
         r"""
         TESTS::
 
@@ -456,7 +456,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, tuple(simplified_generators))
 
-    def __init__(self, generators):
+    def __init__(self, generators) -> None:
         r"""
         TESTS::
 

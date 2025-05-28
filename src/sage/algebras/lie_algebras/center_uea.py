@@ -67,7 +67,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         """
         return super(IndexedMonoid, cls).__classcall__(cls, center)
 
-    def __init__(self, center, indices=None):
+    def __init__(self, center, indices=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -383,7 +383,7 @@ class SimpleLieCenterIndices(CenterIndices):
     For more information, see
     :class:`~sage.algebras.lie_algebras.center_uea.CenterIndices`.
     """
-    def __init__(self, center):
+    def __init__(self, center) -> None:
         r"""
         Initialize ``self``.
 
@@ -499,7 +499,7 @@ class CenterUEA(CombinatorialFreeModule):
         sage: all(v * g == g * v for g in U.algebra_generators() for v in elts)
         True
     """
-    def __init__(self, g, UEA):
+    def __init__(self, g, UEA) -> None:
         r"""
         Initialize ``self``.
 

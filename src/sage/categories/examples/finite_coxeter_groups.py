@@ -86,7 +86,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
          ((2, 1), (2,), 1)]
     """
 
-    def __init__(self, n=5):
+    def __init__(self, n=5) -> None:
         r"""
         Construct the `n`-th DihedralGroup of order `2 n`.
 
@@ -115,7 +115,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         """
         return "The %s-th dihedral group of order %s" % (self.n, 2 * self.n)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Check if the element ``x`` is in the mathematical parent ``self``.
 

@@ -401,7 +401,7 @@ def construct_from_generators_indices(generators, filtration, base_ring, check):
 
 class FilteredVectorSpace_class(FreeModule_ambient_field):
 
-    def __init__(self, base_ring, dim, generators, filtration, check=True):
+    def __init__(self, base_ring, dim, generators, filtration, check=True) -> None:
         r"""
         A descending filtration of a vector space.
 

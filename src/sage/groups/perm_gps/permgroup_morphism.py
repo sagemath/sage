@@ -162,7 +162,7 @@ class PermutationGroupMorphism_id(PermutationGroupMorphism):
 
 
 class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
-    def __init__(self, G, H, gap_hom):
+    def __init__(self, G, H, gap_hom) -> None:
         r"""
         This is a Python trick to allow Sage programmers to create a group
         homomorphism using GAP using very general constructions. An example
@@ -243,7 +243,7 @@ class PermutationGroupMorphism_from_gap(PermutationGroupMorphism):
 
 
 class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
-    def __init__(self, G, H, gens=None):
+    def __init__(self, G, H, gens=None) -> None:
         r"""
         Some python code for wrapping GAP's ``GroupHomomorphismByImages``
         function but only for permutation groups. Can be expensive if G is

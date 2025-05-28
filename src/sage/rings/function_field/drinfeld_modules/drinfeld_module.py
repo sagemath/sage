@@ -638,7 +638,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             return DrinfeldModule_charzero(gen, category)
         return cls.__classcall__(cls, gen, category)
 
-    def __init__(self, gen, category):
+    def __init__(self, gen, category) -> None:
         """
         Initialize ``self``.
 

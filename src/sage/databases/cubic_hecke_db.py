@@ -179,7 +179,7 @@ class CubicHeckeDataBase(SageObject):
     """
     section = CubicHeckeDataSection
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize ``self``.
 
@@ -365,7 +365,7 @@ class MarkovTraceModuleBasis(Enum):
         sage: MarkovTraceModuleBasis.K92.description()
         'knot 9_34'
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -704,7 +704,7 @@ class CubicHeckeFileCache(SageObject):
         basis_extensions = 'basis_extensions'
         markov_trace = 'markov_trace'
 
-    def __init__(self, num_strands):
+    def __init__(self, num_strands) -> None:
         r"""
         Initialize ``self``.
 

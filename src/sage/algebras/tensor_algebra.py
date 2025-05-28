@@ -91,7 +91,7 @@ class TensorAlgebra(CombinatorialFreeModule):
         sage: TA.algebra_generators()
         Finite family {'a': B['a'], 'b': B['b'], 'c': B['c']}
     """
-    def __init__(self, M, prefix='T', category=None, **options):
+    def __init__(self, M, prefix='T', category=None, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -604,7 +604,7 @@ class TensorAlgebraFunctor(ConstructionFunctor):
     #   since this should be applied after all of the module functors
     rank = 20
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         """
         Initialize ``self``.
 

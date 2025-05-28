@@ -645,7 +645,7 @@ class Morphism(Morphism_abstract, sage.modules.matrix_morphism.MatrixMorphism):
 
 
 class DegeneracyMap(Morphism):
-    def __init__(self, parent, A, t, side='left'):
+    def __init__(self, parent, A, t, side='left') -> None:
         """
         Create the degeneracy map of index t in parent defined by the
         matrix A.
@@ -702,7 +702,7 @@ class HeckeOperator(Morphism):
     """
     A Hecke operator acting on a modular abelian variety.
     """
-    def __init__(self, abvar, n, side='left'):
+    def __init__(self, abvar, n, side='left') -> None:
         """
         Create the Hecke operator of index `n` acting on the
         abelian variety abvar.

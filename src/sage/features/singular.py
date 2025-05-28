@@ -32,7 +32,7 @@ class Singular(Executable):
         sage: Singular().is_present()                                                   # needs singular
         FeatureTestResult('singular', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

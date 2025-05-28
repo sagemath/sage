@@ -16,7 +16,7 @@ class Info(Executable):
         sage: Info()
         Feature('info')
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

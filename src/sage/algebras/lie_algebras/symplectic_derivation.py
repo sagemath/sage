@@ -90,7 +90,7 @@ class SymplecticDerivationLieAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGener
 
     - [Harako2020]_
     """
-    def __init__(self, R, g):
+    def __init__(self, R, g) -> None:
         r"""
         Initialize ``self``.
 

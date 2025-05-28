@@ -87,7 +87,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
         This class is for internal use only!
     """
 
-    def __init__(self, tp_krt):
+    def __init__(self, tp_krt) -> None:
         """
         Initialize ``self``.
 
@@ -135,7 +135,7 @@ class HighestWeightTensorKRT(UniqueRepresentation):
                                  for x in self.tp_krt.rigged_configurations().module_generators])
         yield from self._cache
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -297,7 +297,7 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
         B = tuple(tuple(dim) for dim in B)
         return super().__classcall__(cls, cartan_type, B)
 
-    def __init__(self, cartan_type, B):
+    def __init__(self, cartan_type, B) -> None:
         r"""
         Initialize ``self``.
 

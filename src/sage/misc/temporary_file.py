@@ -26,7 +26,8 @@ AUTHORS:
 import atexit
 import os
 import tempfile
-from typing import IO
+from typing import Optional, Type, IO
+from types import TracebackType
 
 # Until tmp_dir() and tmp_filename() are removed, we use this directory
 # as the parent for all temporary files & directories created by them.
@@ -371,7 +372,7 @@ class atomic_write:
 
         return self.tempfile
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]) -> None:
         """
         If the ``with`` block was successful, move the temporary file
         to the target file. Otherwise, delete the temporary file.
@@ -491,7 +492,7 @@ class atomic_dir:
         self.tempname = os.path.abspath(tdir.name)
         return tdir
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]) -> None:
         """
         If the ``with`` block was successful, move the temporary directory
         to the target directory. Otherwise, delete the temporary directory.

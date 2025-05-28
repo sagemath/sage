@@ -16,7 +16,7 @@ class GeneratorLimitExceeded(Exception):
     Docstring for GeneratorLimitExceeded
     """
 
-    def __init__(self, strat):
+    def __init__(self, strat) -> None:
         self.strat = strat
 
 

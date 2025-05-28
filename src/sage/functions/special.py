@@ -242,7 +242,7 @@ class SphericalHarmonic(BuiltinFunction):
 
     - :wikipedia:`Spherical_harmonics`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -501,7 +501,7 @@ class EllipticE(BuiltinFunction):
 
     - :wikipedia:`Jacobi_elliptic_functions`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -645,7 +645,7 @@ class EllipticEC(BuiltinFunction):
 
     - :wikipedia:`Elliptic_integral#Complete_elliptic_integral_of_the_second_kind`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -742,7 +742,7 @@ class EllipticEU(BuiltinFunction):
 
     - :wikipedia:`Jacobi_elliptic_functions`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -866,7 +866,7 @@ class EllipticF(BuiltinFunction):
 
     - :wikipedia:`Elliptic_integral#Incomplete_elliptic_integral_of_the_first_kind`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -1003,7 +1003,7 @@ class EllipticKC(BuiltinFunction):
 
     - :wikipedia:`Elliptic_integral#Incomplete_elliptic_integral_of_the_first_kind`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -1115,7 +1115,7 @@ class EllipticPi(BuiltinFunction):
 
     - :wikipedia:`Elliptic_integral#Incomplete_elliptic_integral_of_the_third_kind`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

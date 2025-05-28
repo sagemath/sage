@@ -106,7 +106,7 @@ class EllipticCurveSaturator(SageObject):
         may access the data via methods of the EllipticCurve
         classes.
     """
-    def __init__(self, E, verbose=False):
+    def __init__(self, E, verbose=False) -> None:
         r"""
         Initialize the saturator.
 

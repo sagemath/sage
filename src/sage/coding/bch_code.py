@@ -105,7 +105,7 @@ class BCHCode(CyclicCode):
     """
 
     def __init__(self, base_field, length, designed_distance,
-                 primitive_root=None, offset=1, jump_size=1, b=0):
+                 primitive_root=None, offset=1, jump_size=1, b=0) -> None:
         """
         TESTS:
 
@@ -271,7 +271,7 @@ class BCHUnderlyingGRSDecoder(Decoder):
     - ``**kwargs`` -- all extra arguments are forwarded to the GRS decoder
     """
 
-    def __init__(self, code, grs_decoder='KeyEquationSyndrome', **kwargs):
+    def __init__(self, code, grs_decoder='KeyEquationSyndrome', **kwargs) -> None:
         r"""
 
         EXAMPLES::

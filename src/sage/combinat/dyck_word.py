@@ -341,7 +341,7 @@ class DyckWord(CombinatorialElement):
 
         raise ValueError("invalid Dyck word")
 
-    def __init__(self, parent, l, latex_options={}):
+    def __init__(self, parent, l, latex_options={}) -> None:
         r"""
         TESTS::
 
@@ -3546,7 +3546,7 @@ class DyckWords_all(DyckWords):
     All Dyck words.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -3621,7 +3621,7 @@ class DyckWordBacktracker(GenericBacktracker):
     - Dan Drake (2008-05-30)
     """
 
-    def __init__(self, k1, k2):
+    def __init__(self, k1, k2) -> None:
         r"""
         TESTS::
 
@@ -3685,7 +3685,7 @@ class DyckWords_size(DyckWords):
     Dyck words with `k_1` openers and `k_2` closers.
     """
 
-    def __init__(self, k1, k2):
+    def __init__(self, k1, k2) -> None:
         r"""
         TESTS:
 
@@ -4005,7 +4005,7 @@ class CompleteDyckWords_all(CompleteDyckWords, DyckWords_all):
         This is implemented by comparison of area sequences.
         """
 
-        def __init__(self):
+        def __init__(self) -> None:
             r"""
             TESTS::
 
@@ -4072,7 +4072,7 @@ class CompleteDyckWords_size(CompleteDyckWords, DyckWords_size):
     All complete Dyck words of a given size.
     """
 
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         Initialize ``self``.
 

@@ -57,7 +57,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
 
     .. TODO:: An example illustrating unitary flag.
     """
-    def __init__(self, parent, f, check=True, unitary=True):
+    def __init__(self, parent, f, check=True, unitary=True) -> None:
         """
         TESTS::
 

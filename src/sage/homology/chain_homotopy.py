@@ -109,7 +109,7 @@ class ChainHomotopy(Morphism):
         ...
         ValueError: the data do not define a valid chain homotopy
     """
-    def __init__(self, matrices, f, g=None):
+    def __init__(self, matrices, f, g=None) -> None:
         r"""
         Create a chain homotopy between the given chain maps
         from a dictionary of matrices.
@@ -422,7 +422,7 @@ class ChainContraction(ChainHomotopy):
         ....:                       1: zero_matrix(ZZ, 1),
         ....:                       2: identity_matrix(ZZ, 1)}, pi, iota)
     """
-    def __init__(self, matrices, pi, iota):
+    def __init__(self, matrices, pi, iota) -> None:
         r"""
         Create a chain contraction from the given data.
 

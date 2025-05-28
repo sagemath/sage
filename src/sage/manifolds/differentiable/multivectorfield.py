@@ -154,7 +154,7 @@ class MultivectorField(TensorField):
         f*(a∧b) = (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
           ∂/∂u∧∂/∂v
     """
-    def __init__(self, vector_field_module, degree, name=None, latex_name=None):
+    def __init__(self, vector_field_module, degree, name=None, latex_name=None) -> None:
         r"""
         Construct a multivector field.
 
@@ -856,7 +856,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         2-vector field on the 3-dimensional differentiable manifold R3
     """
     def __init__(self, vector_field_module, degree, name=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         r"""
         Construct a multivector field.
 

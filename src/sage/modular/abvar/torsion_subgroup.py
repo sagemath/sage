@@ -107,7 +107,7 @@ class RationalTorsionSubgroup(FiniteSubgroup):
     """
     The torsion subgroup of a modular abelian variety.
     """
-    def __init__(self, abvar):
+    def __init__(self, abvar) -> None:
         """
         Create the torsion subgroup.
 
@@ -656,7 +656,7 @@ class QQbarTorsionSubgroup(Module):
 
     Element = TorsionPoint
 
-    def __init__(self, abvar):
+    def __init__(self, abvar) -> None:
         """
         Group of all torsion points over the algebraic closure on an
         abelian variety.

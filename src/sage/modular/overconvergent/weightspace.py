@@ -141,7 +141,7 @@ class WeightSpace_class(Parent):
         True
     """
 
-    def __init__(self, p, base_ring):
+    def __init__(self, p, base_ring) -> None:
         r"""
         Initialisation function.
 
@@ -310,7 +310,7 @@ class WeightCharacter(Element):
     # AbelianGroupMorphism; but Sage does not know about the abelian group
     # Z_p^*, so Hom(Z_p^*, C_p^*) is a bit beyond it!
 
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         Initialisation function.
 
@@ -487,7 +487,7 @@ class AlgebraicWeight(WeightCharacter):
         False
     """
 
-    def __init__(self, parent, k, chi=None):
+    def __init__(self, parent, k, chi=None) -> None:
         r"""
         Create a locally algebraic weight-character.
 
@@ -689,7 +689,7 @@ class AlgebraicWeight(WeightCharacter):
 
 class ArbitraryWeight(WeightCharacter):
 
-    def __init__(self, parent, w, t):
+    def __init__(self, parent, w, t) -> None:
         r"""
         Create the element of `p`-adic weight space in the given component
         mapping 1 + p to w.

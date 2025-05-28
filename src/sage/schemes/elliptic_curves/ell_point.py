@@ -169,7 +169,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
     """
     A point on an elliptic curve.
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         Initialize this elliptic-curve point.
 
@@ -447,7 +447,7 @@ class EllipticCurvePoint(AdditiveGroupElement,
         """
         return IntegerMulAction(ZZ, self.parent())._act_(other, self)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Test whether this elliptic-curve point equals the neutral
         element of the group (i.e., the point at infinity).
@@ -559,7 +559,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         sage: P.codomain() == P.curve()                                                 # needs sage.rings.number_field
         True
     """
-    def __init__(self, curve, v, check=True):
+    def __init__(self, curve, v, check=True) -> None:
         """
         Constructor for a point on an elliptic curve.
 
@@ -777,7 +777,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     additive_order = order
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this is not the zero point on the curve.
 

@@ -74,7 +74,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
     A smooth (i.e. locally constant) character of `F^\times`, for `F` some
     finite extension of `\QQ_p`.
     """
-    def __init__(self, parent, c, values_on_gens):
+    def __init__(self, parent, c, values_on_gens) -> None:
         r"""
         Standard init function.
 
@@ -356,7 +356,7 @@ class SmoothCharacterGroupGeneric(Parent):
 
     Element = SmoothCharacterGeneric
 
-    def __init__(self, p, base_ring):
+    def __init__(self, p, base_ring) -> None:
         r"""
         TESTS::
 
@@ -1412,7 +1412,7 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
         sage: TestSuite(SmoothCharacterGroupUnramifiedQuadratic(2, QQ)).run()
     """
 
-    def __init__(self, prime, base_ring, names='s'):
+    def __init__(self, prime, base_ring, names='s') -> None:
         r"""
         Standard initialisation function.
 
@@ -1615,7 +1615,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
     The group of smooth characters of `K^\times`, where `K` is a ramified
     quadratic extension of `\QQ_p`, and `p \ne 2`.
     """
-    def __init__(self, prime, flag, base_ring, names='s'):
+    def __init__(self, prime, flag, base_ring, names='s') -> None:
         r"""
         Standard initialisation function.
 

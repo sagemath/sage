@@ -67,7 +67,7 @@ class Polygon(GraphicPrimitive_xydata):
         sage: polygon2d([(1, 1), (0, 1), (1, 0)], fill=False, linestyle='dashed')
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xdata, ydata, options):
+    def __init__(self, xdata, ydata, options) -> None:
         """
         Initialize base class Polygon.
 
@@ -110,7 +110,7 @@ class Polygon(GraphicPrimitive_xydata):
         """
         return self.xdata[i], self.ydata[i]
 
-    def __setitem__(self, i, point):
+    def __setitem__(self, i, point) -> None:
         """
         Change `i`-th vertex of Polygon primitive.
 
@@ -132,7 +132,7 @@ class Polygon(GraphicPrimitive_xydata):
         self.xdata[i] = float(point[0])
         self.ydata[i] = float(point[1])
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return number of vertices of Polygon primitive.
 

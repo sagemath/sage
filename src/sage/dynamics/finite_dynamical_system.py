@@ -359,7 +359,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
                                          create_tuple=create_tuple)
         return typecall(cls, X, phi, cache_orbits=cache_orbits, create_tuple=create_tuple)
 
-    def __init__(self, X, phi, cache_orbits=False, create_tuple=False):
+    def __init__(self, X, phi, cache_orbits=False, create_tuple=False) -> None:
         r"""
         Initialize ``self``.
 
@@ -750,7 +750,7 @@ class InvertibleDiscreteDynamicalSystem(DiscreteDynamicalSystem):
         sage: D_right.ground_set()
         (0, 1, 2, 3, 4)
     """
-    def __init__(self, X, phi, inverse=None, cache_orbits=False, create_tuple=False):
+    def __init__(self, X, phi, inverse=None, cache_orbits=False, create_tuple=False) -> None:
         r"""
         Initialize ``self``.
 

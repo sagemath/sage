@@ -193,7 +193,7 @@ class ModularFormsRing(Parent):
 
     Element = GradedModularFormElement
 
-    def __init__(self, group, base_ring=QQ):
+    def __init__(self, group, base_ring=QQ) -> None:
         r"""
         INPUT:
 

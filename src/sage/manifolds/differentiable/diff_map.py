@@ -400,7 +400,7 @@ class DiffMap(ContinuousMap):
         True
     """
     def __init__(self, parent, coord_functions=None, name=None,
-                 latex_name=None, is_isomorphism=False, is_identity=False):
+                 latex_name=None, is_isomorphism=False, is_identity=False) -> None:
         r"""
         Construct a differentiable map.
 

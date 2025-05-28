@@ -265,7 +265,7 @@ class GraphPaths_all(Parent, GraphPaths_common):
         37
     """
 
-    def __init__(self, g):
+    def __init__(self, g) -> None:
         """
         TESTS::
 
@@ -277,7 +277,7 @@ class GraphPaths_all(Parent, GraphPaths_common):
         self.graph = g
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -302,7 +302,7 @@ class GraphPaths_all(Parent, GraphPaths_common):
 
 
 class GraphPaths_t(Parent, GraphPaths_common):
-    def __init__(self, g, target):
+    def __init__(self, g, target) -> None:
         """
         TESTS::
 
@@ -315,7 +315,7 @@ class GraphPaths_t(Parent, GraphPaths_common):
         self.target = target
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -347,7 +347,7 @@ class GraphPaths_t(Parent, GraphPaths_common):
 
 
 class GraphPaths_s(Parent, GraphPaths_common):
-    def __init__(self, g, source):
+    def __init__(self, g, source) -> None:
         """
         TESTS::
 
@@ -360,7 +360,7 @@ class GraphPaths_s(Parent, GraphPaths_common):
         self.source = source
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -410,7 +410,7 @@ class GraphPaths_st(Parent, GraphPaths_common):
         2
     """
 
-    def __init__(self, g, source, target):
+    def __init__(self, g, source, target) -> None:
         """
         TESTS::
 
@@ -424,7 +424,7 @@ class GraphPaths_st(Parent, GraphPaths_common):
         self.target = target
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

@@ -50,7 +50,7 @@ class Arc(GraphicPrimitive):
         sage: print(Arc(0,0,1,1,pi/4,pi/4,pi/2,{}))
         Arc with center (0.0,0.0) radii (1.0,1.0) angle 0.78539816339... inside the sector (0.78539816339...,1.5707963267...)
     """
-    def __init__(self, x, y, r1, r2, angle, s1, s2, options):
+    def __init__(self, x, y, r1, r2, angle, s1, s2, options) -> None:
         """
         Initialize base class ``Arc``.
 

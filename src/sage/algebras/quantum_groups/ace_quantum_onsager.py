@@ -138,7 +138,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
                 q = R(q)
         return super().__classcall__(cls, R, q)
 
-    def __init__(self, R, q):
+    def __init__(self, R, q) -> None:
         r"""
         Initialize ``self``.
 

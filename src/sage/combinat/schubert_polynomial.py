@@ -381,7 +381,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
     Element = SchubertPolynomial_class
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 

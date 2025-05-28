@@ -81,7 +81,7 @@ from sage.structure.sage_object import SageObject
 
 class Property(property):
 
-    def __init__(self, name, allowed_values, doc=None):
+    def __init__(self, name, allowed_values, doc=None) -> None:
         r"""
         Preference item.
 
@@ -147,7 +147,7 @@ class Property(property):
                           for value in self.allowed_values)
         return doc + '\n\n'.join(values_doc)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation.
 
@@ -261,7 +261,7 @@ class Property(property):
 
 class PreferencesABC(SageObject):
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Preferences for displaying graphics.
 

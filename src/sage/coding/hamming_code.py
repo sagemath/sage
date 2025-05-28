@@ -46,7 +46,7 @@ class HammingCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, order):
+    def __init__(self, base_field, order) -> None:
         r"""
         TESTS:
 

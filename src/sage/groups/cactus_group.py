@@ -69,7 +69,7 @@ class CactusGroup(UniqueRepresentation, Group):
         ....:     for p in range(1, 6) for q in range(p+1, 6))
         True
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -548,7 +548,7 @@ class CactusGroup(UniqueRepresentation, Group):
         """
         An element of a cactus group.
         """
-        def __init__(self, parent, data):
+        def __init__(self, parent, data) -> None:
             """
             Initialize ``self``.
 
@@ -872,7 +872,7 @@ class PureCactusGroup(KernelSubgroup):
         1 \longrightarrow PJ_n \longrightarrow J_n \longrightarrow S_n
         \longrightarrow 1.
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 

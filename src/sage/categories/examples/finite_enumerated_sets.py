@@ -65,7 +65,7 @@ class Example(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -89,7 +89,7 @@ class Example(UniqueRepresentation, Parent):
         """
         return "An example of a finite enumerated set: {1,2,3}"
 
-    def __contains__(self, o):
+    def __contains__(self, o) -> bool:
         """
         EXAMPLES::
 
@@ -113,7 +113,7 @@ class Example(UniqueRepresentation, Parent):
 
 class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
 
-    def __init__(self, ambient=Example()):
+    def __init__(self, ambient=Example()) -> None:
         """
         TESTS::
 
@@ -181,7 +181,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         return x ** 2
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Membership testing by checking whether the preimage by the
         bijection is in the ambient space.

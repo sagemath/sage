@@ -153,7 +153,7 @@ class Divisor_generic(FormalSum):
         False
     """
 
-    def __init__(self, v, parent, check=True, reduce=True):
+    def __init__(self, v, parent, check=True, reduce=True) -> None:
         r"""
         Construct a :class:`Divisor_generic`.
 
@@ -296,7 +296,7 @@ class Divisor_curve(Divisor_generic):
         sage: E.divisor([(3,P), (-4,5*P)])
         3*(x, y) - 4*(x - 1/4*z, y + 5/8*z)
     """
-    def __init__(self, v, parent=None, check=True, reduce=True):
+    def __init__(self, v, parent=None, check=True, reduce=True) -> None:
         """
         Construct a divisor on a curve.
 

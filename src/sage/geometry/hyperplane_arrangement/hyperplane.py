@@ -149,7 +149,7 @@ class Hyperplane(LinearExpression):
         sage: x + 0 == x + ambient(0)    # because coercion requires them
         True
     """
-    def __init__(self, parent, coefficients, constant):
+    def __init__(self, parent, coefficients, constant) -> None:
         """
         Initialize ``self``.
 
@@ -249,7 +249,7 @@ class Hyperplane(LinearExpression):
                 max_value = values[i]
         return max_pos
 
-    def __contains__(self, q):
+    def __contains__(self, q) -> bool:
         r"""
         Test whether the point ``q`` is in the hyperplane.
 

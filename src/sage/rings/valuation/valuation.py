@@ -78,7 +78,7 @@ class DiscretePseudoValuation(Morphism):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         TESTS::
 
@@ -1064,7 +1064,7 @@ class MacLaneApproximantNode:
         sage: v.extension(GaussianIntegers())  # indirect doctest                       # needs sage.rings.number_field sage.rings.padics
         3-adic valuation
     """
-    def __init__(self, valuation, parent, ef, principal_part_bound, coefficients, valuations):
+    def __init__(self, valuation, parent, ef, principal_part_bound, coefficients, valuations) -> None:
         r"""
         TESTS::
 

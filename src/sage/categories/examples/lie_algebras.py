@@ -81,7 +81,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
         """
         return super().__classcall__(cls, tuple(gens))
 
-    def __init__(self, gens):
+    def __init__(self, gens) -> None:
         """
         EXAMPLES::
 

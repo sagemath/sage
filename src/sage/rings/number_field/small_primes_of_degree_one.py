@@ -117,7 +117,7 @@ class Small_primes_of_degree_one_iter:
 
     - Nick Alexander
     """
-    def __init__(self, field, num_integer_primes=10000, max_iterations=100):
+    def __init__(self, field, num_integer_primes=10000, max_iterations=100) -> None:
         r"""
         Construct a new iterator of small degree one primes.
 

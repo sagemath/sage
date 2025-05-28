@@ -126,7 +126,7 @@ class Cube(SageObject):
         sage: Cube(()).dimension()  # empty cube has dimension -1
         -1
     """
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         """
         Define a cube for use in constructing a cubical complex.
 
@@ -877,7 +877,7 @@ class CubicalComplex(GenericCellComplex):
 
     Therefore, neither are cones or suspensions.
     """
-    def __init__(self, maximal_faces=None, maximality_check=True):
+    def __init__(self, maximal_faces=None, maximality_check=True) -> None:
         r"""
         Define a cubical complex.  See ``CubicalComplex`` for more
         documentation.

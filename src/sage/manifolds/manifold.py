@@ -523,7 +523,7 @@ class TopologicalManifold(ManifoldSubset):
 
     def __init__(self, n, name, field, structure, base_manifold=None,
                  latex_name=None, start_index=0, category=None,
-                 unique_tag=None):
+                 unique_tag=None) -> None:
         r"""
         Construct a topological manifold.
 
@@ -757,7 +757,7 @@ class TopologicalManifold(ManifoldSubset):
         return self.element_class(self, coords=coords, chart=chart,
                                   check_coords=False)
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check whether a point is contained in the manifold.
 

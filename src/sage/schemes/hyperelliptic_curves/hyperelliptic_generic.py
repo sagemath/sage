@@ -103,7 +103,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
         sage: hash(C1) == hash(C2)
         False
     """
-    def __init__(self, PP, f, h=None, names=None, genus=None):
+    def __init__(self, PP, f, h=None, names=None, genus=None) -> None:
         x, y, z = PP.gens()
         df = f.degree()
         F1 = sum([ f[i]*x**i*z**(df-i) for i in range(df+1) ])

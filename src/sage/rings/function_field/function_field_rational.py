@@ -126,7 +126,7 @@ class RationalFunctionField(FunctionField):
     """
     Element = FunctionFieldElement_rational
 
-    def __init__(self, constant_field, names, category=None):
+    def __init__(self, constant_field, names, category=None) -> None:
         """
         Initialize.
 

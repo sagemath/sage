@@ -90,7 +90,7 @@ class NumberFieldStructure(UniqueRepresentation):
         sage: KK is LL
         False
     """
-    def __init__(self, other):
+    def __init__(self, other) -> None:
         """
         Initialization.
 
@@ -240,7 +240,7 @@ class RelativeFromAbsolute(NumberFieldStructure):
         sage: RelativeFromAbsolute(QQ, 1/2)
         <sage.rings.number_field.structure.RelativeFromAbsolute object at 0x...>
     """
-    def __init__(self, other, gen):
+    def __init__(self, other, gen) -> None:
         r"""
         Initialization.
 

@@ -37,7 +37,7 @@ class ModulePrinting:
     """
     Helper mixin class for printing the module vectors.
     """
-    def __init__(self, vector_name='v'):
+    def __init__(self, vector_name='v') -> None:
         r"""
         Initialize ``self``.
 
@@ -153,7 +153,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
 
     - :wikipedia:`Verma_module`
     """
-    def __init__(self, g, weight, basis_key=None, prefix='f', **kwds):
+    def __init__(self, g, weight, basis_key=None, prefix='f', **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -850,7 +850,7 @@ class VermaModuleMorphism(Morphism):
     r"""
     A morphism of a Verma module to another module in Category `\mathcal{O}`.
     """
-    def __init__(self, parent, scalar):
+    def __init__(self, parent, scalar) -> None:
         """
         Initialize ``self``.
 

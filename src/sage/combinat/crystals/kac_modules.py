@@ -65,7 +65,7 @@ class CrystalOfOddNegativeRoots(UniqueRepresentation, Parent):
         """
         return super().__classcall__(cls, CartanType(cartan_type))
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -535,7 +535,7 @@ class CrystalOfKacModule(UniqueRepresentation, Parent):
         mu = _Partitions(mu)
         return super().__classcall__(cls, cartan_type, la, mu)
 
-    def __init__(self, cartan_type, la, mu):
+    def __init__(self, cartan_type, la, mu) -> None:
         """
         Initialize ``self``.
 

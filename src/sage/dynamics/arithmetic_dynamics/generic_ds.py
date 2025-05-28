@@ -176,7 +176,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
         return DynamicalSystem_projective(morphism_or_polys, domain, names)
 
-    def __init__(self, polys_or_rat_fncts, domain):
+    def __init__(self, polys_or_rat_fncts, domain) -> None:
         r"""
         The Python constructor.
 

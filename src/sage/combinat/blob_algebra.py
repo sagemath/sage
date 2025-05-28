@@ -45,7 +45,7 @@ class BlobDiagram(Element):
     propagating strand or to the left of it and not nested.
     """
 
-    def __init__(self, parent, marked, unmarked):
+    def __init__(self, parent, marked, unmarked) -> None:
         r"""
         Initialize ``self``.
 
@@ -154,7 +154,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
     The set of all blob diagrams.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize ``self``.
 
@@ -240,7 +240,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             raise ValueError("not a blob diagram of order {}".format(self._n))
         return ret
 
-    def __contains__(self, X):
+    def __contains__(self, X) -> bool:
         r"""
         Check if ``X`` is contained in ``self``.
 
@@ -434,7 +434,7 @@ class BlobAlgebra(CombinatorialFreeModule):
         q3 = base_ring(q3)
         return super().__classcall__(cls, k, q1, q2, q3, base_ring, prefix)
 
-    def __init__(self, k, q1, q2, q3, base_ring, prefix):
+    def __init__(self, k, q1, q2, q3, base_ring, prefix) -> None:
         r"""
         Initialize ``self``.
 

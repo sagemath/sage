@@ -145,7 +145,7 @@ class EnumeratedSetFromIterator(Parent):
         In order to make the ``TestSuite`` works, the elements of the set
         should have parents.
     """
-    def __init__(self, f, args=None, kwds=None, name=None, category=None, cache=False):
+    def __init__(self, f, args=None, kwds=None, name=None, category=None, cache=False) -> None:
         """
         TESTS::
 
@@ -250,7 +250,7 @@ class EnumeratedSetFromIterator(Parent):
         l.pop(-1)
         return '{' + ', '.join(repr(x) for x in l) + ', ...}'
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Test whether ``x`` is in ``self``.
 
@@ -643,7 +643,7 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
         sage: Graphs(10) is Graphs(10)                                                  # needs sage.graphs
         False
     """
-    def __init__(self, f=None, name=None, **options):
+    def __init__(self, f=None, name=None, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -728,7 +728,7 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
 
     - ``options`` -- any option accepted by :class:`EnumeratedSetFromIterator`
     """
-    def __init__(self, inst, f, name=None, **options):
+    def __init__(self, inst, f, name=None, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -907,7 +907,7 @@ class EnumeratedSetFromIterator_method_decorator:
         It is not yet possible to use ``set_from_method`` in conjunction with
         ``cached_method``.
     """
-    def __init__(self, f=None, **options):
+    def __init__(self, f=None, **options) -> None:
         r"""
         Initialize ``self``.
 

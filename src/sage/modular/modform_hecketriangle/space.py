@@ -98,7 +98,7 @@ class QuasiMeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresenta
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) quasi meromorphic modular forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -145,7 +145,7 @@ class QuasiWeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) quasi weakly holomorphic modular forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -192,7 +192,7 @@ class QuasiModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) quasi modular forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -352,7 +352,7 @@ class QuasiCuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) quasi cusp forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -523,7 +523,7 @@ class MeromorphicModularForms(FormsSpace_abstract, Module, UniqueRepresentation)
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) meromorphic modular forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -571,7 +571,7 @@ class WeakModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) weakly holomorphic modular forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -616,7 +616,7 @@ class ModularForms(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) modular forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -768,7 +768,7 @@ class CuspForms(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the Module of (Hecke) cusp forms
         of weight ``k`` with multiplier ``ep`` for the given ``group`` and ``base_ring``.
@@ -918,7 +918,7 @@ class ZeroForm(FormsSpace_abstract, Module, UniqueRepresentation):
         (group, base_ring, k, ep, n) = canonical_parameters(group, base_ring, k, ep, n)
         return super().__classcall__(cls, group=group, base_ring=base_ring, k=k, ep=ep, n=n)
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Return the zero Module for the zero form of weight ``k`` with multiplier ``ep``
         for the given ``group`` and ``base_ring``.

@@ -128,7 +128,7 @@ class GenericDeclaration(UniqueRepresentation):
         True
     """
 
-    def __init__(self, var, assumption):
+    def __init__(self, var, assumption) -> None:
         """
         This class represents generic assumptions, such as a variable being
         an integer or a function being increasing. It passes such
@@ -165,7 +165,7 @@ class GenericDeclaration(UniqueRepresentation):
         self._assumption = assumption
         self._context = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -926,7 +926,7 @@ class assuming:
         ...
         ValueError: Assumption is inconsistent
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         EXAMPLES::
 

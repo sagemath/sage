@@ -214,7 +214,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
     # The element class must be overridden in derived classes
     Element = AdditiveAbelianGroupElement
 
-    def __init__(self, cover, relations):
+    def __init__(self, cover, relations) -> None:
         r"""
         EXAMPLES::
 
@@ -407,7 +407,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
     A variant which fixes a set of generators, which need not be in Smith form
     (or indeed independent).
     """
-    def __init__(self, cover, rels, gens):
+    def __init__(self, cover, rels, gens) -> None:
         r"""
         Standard initialisation function.
 

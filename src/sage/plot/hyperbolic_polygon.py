@@ -54,7 +54,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
          sage: print(HyperbolicPolygon([0, 1/2, I], "UHP", {}))
          Hyperbolic polygon (0.000000000000000, 0.500000000000000, 1.00000000000000*I)
     """
-    def __init__(self, pts, model, options):
+    def __init__(self, pts, model, options) -> None:
         """
         Initialize HyperbolicPolygon.
 

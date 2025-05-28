@@ -27,7 +27,7 @@ class ModularAbelianVarieties(Category_over_base):
         sage: ModularAbelianVarieties(QQ)
         Category of modular abelian varieties over Rational Field
     """
-    def __init__(self, Y):
+    def __init__(self, Y) -> None:
         """
         TESTS::
 

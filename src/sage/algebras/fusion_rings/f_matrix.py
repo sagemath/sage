@@ -263,7 +263,7 @@ class FMatrix(SageObject):
         sage: f.field()                                 # long time
         Algebraic Field
     """
-    def __init__(self, fusion_ring, fusion_label='f', var_prefix='fx', inject_variables=False):
+    def __init__(self, fusion_ring, fusion_label='f', var_prefix='fx', inject_variables=False) -> None:
         r"""
         Initialize ``self``.
 

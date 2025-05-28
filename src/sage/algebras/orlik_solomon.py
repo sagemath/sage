@@ -104,7 +104,7 @@ class OrlikSolomonAlgebra(CombinatorialFreeModule):
             ordering = sorted(M.groundset())
         return super().__classcall__(cls, R, M, tuple(ordering))
 
-    def __init__(self, R, M, ordering=None):
+    def __init__(self, R, M, ordering=None) -> None:
         """
         Initialize ``self``.
 
@@ -751,7 +751,7 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
         `g \cdot I \in \mathcal{I}` for every `g \in G` and for
         every `I \in \mathcal{I}`.
     """
-    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
+    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs) -> None:
         r"""
         Initialize ``self``.
 

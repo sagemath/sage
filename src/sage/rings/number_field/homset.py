@@ -35,7 +35,7 @@ class NumberFieldHomset(RingHomset_generic):
 
     Element = NumberFieldHomomorphism_im_gens
 
-    def __init__(self, R, S, category=None):
+    def __init__(self, R, S, category=None) -> None:
         """
         TESTS:
 

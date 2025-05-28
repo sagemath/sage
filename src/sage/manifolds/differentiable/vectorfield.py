@@ -198,7 +198,7 @@ class VectorField(MultivectorField):
            (x, y) ↦ 2*x^2 - 2*y^2 + 2*x + 2*y
            (t, u) ↦ 2*t*u + 2*t
     """
-    def __init__(self, vector_field_module, name=None, latex_name=None):
+    def __init__(self, vector_field_module, name=None, latex_name=None) -> None:
         r"""
         Construct a vector field with values on a non-parallelizable manifold.
 
@@ -1585,7 +1585,7 @@ class VectorFieldParal(FiniteRankFreeModuleElement, MultivectorFieldParal,
         sage: w.at(p) == v.at(Phi(p))
         True
     """
-    def __init__(self, vector_field_module, name=None, latex_name=None):
+    def __init__(self, vector_field_module, name=None, latex_name=None) -> None:
         r"""
         Construct a vector field with values on a parallelizable manifold.
 

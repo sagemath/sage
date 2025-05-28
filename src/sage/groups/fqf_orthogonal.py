@@ -162,7 +162,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
     """
     Element = FqfIsometry
 
-    def __init__(self, ambient, gens, fqf, check=False):
+    def __init__(self, ambient, gens, fqf, check=False) -> None:
         r"""
         TESTS::
 
@@ -406,7 +406,7 @@ class ActionOnFqf(Action):
         sage: x * g
         (2, 0)
     """
-    def __init__(self, orthogonal_grp, fqf, on_subquotient=False, is_left=False):
+    def __init__(self, orthogonal_grp, fqf, on_subquotient=False, is_left=False) -> None:
         r"""
         Initialize the action.
 

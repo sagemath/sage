@@ -56,7 +56,7 @@ class CNFEncoder(ANF2CNFConverter):
     .. automethod:: __init__
     .. automethod:: __call__
     """
-    def __init__(self, solver, ring, max_vars_sparse=6, use_xor_clauses=None, cutting_number=6, random_seed=16):
+    def __init__(self, solver, ring, max_vars_sparse=6, use_xor_clauses=None, cutting_number=6, random_seed=16) -> None:
         """
         Construct ANF to CNF converter over ``ring`` passing clauses to ``solver``.
 

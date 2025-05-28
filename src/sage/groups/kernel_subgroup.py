@@ -29,7 +29,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
     Let `\phi : G \to H` be a group homomorphism. The kernel
     `K = \{\phi(g) = 1 | g \in G\}` is a normal subgroup of `G`.
     """
-    def __init__(self, morphism):
+    def __init__(self, morphism) -> None:
         r"""
         Initialize ``self``.
 

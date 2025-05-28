@@ -14,7 +14,7 @@ from .cartan_type import CartanType_standard_untwisted_affine
 
 
 class CartanType(CartanType_standard_untwisted_affine):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

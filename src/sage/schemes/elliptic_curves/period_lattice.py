@@ -143,7 +143,7 @@ class PeriodLattice_ell(PeriodLattice):
     embedding.
     """
 
-    def __init__(self, E, embedding=None):
+    def __init__(self, E, embedding=None) -> None:
         r"""
         Initialises the period lattice by storing the elliptic curve and the embedding.
 
@@ -326,7 +326,7 @@ class PeriodLattice_ell(PeriodLattice):
         a = self.E.base_field().gen()
         return richcmp(self.embedding(a), other.embedding(a), op)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation of this period lattice.
 

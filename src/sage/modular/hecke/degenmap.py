@@ -77,7 +77,7 @@ class DegeneracyMap(morphism.HeckeModuleMorphism_matrix):
         Domain: Modular Symbols space of dimension 9 for Gamma_0(33) of weight ...
         Codomain: Modular Symbols space of dimension 25 for Gamma_0(66) of weight ...
     """
-    def __init__(self, matrix, domain, codomain, t):
+    def __init__(self, matrix, domain, codomain, t) -> None:
         r"""
         Initialise a degeneracy map.
 

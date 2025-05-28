@@ -240,7 +240,7 @@ class RingClassField(SageObject):
         sage: loads(dumps(K_c)) == K_c
         True
     """
-    def __init__(self, D, c, check=True):
+    def __init__(self, D, c, check=True) -> None:
         """
         INPUT:
 
@@ -624,7 +624,7 @@ class GaloisGroup(SageObject):
         sage: type(G)
         <class 'sage.schemes.elliptic_curves.heegner.GaloisGroup'>
     """
-    def __init__(self, field, base=QQ):
+    def __init__(self, field, base=QQ) -> None:
         r"""
         INPUT:
 
@@ -1184,7 +1184,7 @@ class GaloisGroup(SageObject):
         """
         return self._list()[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -1254,7 +1254,7 @@ class GaloisAutomorphism(SageObject):
         make :class:`GaloisAutomorphism` derive from GroupElement, so
         that one gets powers for free, etc.
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         INPUT:
 
@@ -1320,7 +1320,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         sage: loads(dumps(conj)) == conj
         True
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         """
         INPUT:
 
@@ -1439,7 +1439,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         sage: loads(dumps(sigma)) == sigma
         True
     """
-    def __init__(self, parent, quadratic_form, alpha=None):
+    def __init__(self, parent, quadratic_form, alpha=None) -> None:
         r"""
         INPUT:
 
@@ -1742,7 +1742,7 @@ class HeegnerPoint(SageObject):
         sage: loads(dumps(x)) == x
         True
     """
-    def __init__(self, N, D, c):
+    def __init__(self, N, D, c) -> None:
         """
         INPUT:
 
@@ -1967,7 +1967,7 @@ class HeegnerPoints(SageObject):
         sage: isinstance(H, sage.schemes.elliptic_curves.heegner.HeegnerPoints)
         True
     """
-    def __init__(self, N):
+    def __init__(self, N) -> None:
         """
         INPUT:
 
@@ -2138,7 +2138,7 @@ class HeegnerPoints_level_disc(HeegnerPoints):
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, N, D):
+    def __init__(self, N, D) -> None:
         """
         INPUT:
 
@@ -2385,7 +2385,7 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, N, D, c=ZZ(1)):
+    def __init__(self, N, D, c=ZZ(1)) -> None:
         """
         Create set of Heegner points.
 
@@ -2515,7 +2515,7 @@ class HeegnerPoints_level_disc_cond(HeegnerPoints_level, HeegnerPoints_level_dis
         """
         return self.points()[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of Heegner points.
 
@@ -2685,7 +2685,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
         sage: loads(dumps(x)) == x
         True
     """
-    def __init__(self, N, D, c=ZZ(1), f=None, check=True):
+    def __init__(self, N, D, c=ZZ(1), f=None, check=True) -> None:
         r"""
         INPUT:
 
@@ -3001,7 +3001,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         sage: type(P)
         <class 'sage.schemes.elliptic_curves.heegner.HeegnerPointOnEllipticCurve'>
     """
-    def __init__(self, E, x, check=True):
+    def __init__(self, E, x, check=True) -> None:
         r"""
         INPUT:
 
@@ -4041,7 +4041,7 @@ class KolyvaginPoint(HeegnerPoint):
         sage: loads(dumps(y)) == y
         True
     """
-    def __init__(self, heegner_point):
+    def __init__(self, heegner_point) -> None:
         """
         Create a Kolyvagin point.
 
@@ -4507,7 +4507,7 @@ class KolyvaginCohomologyClass(SageObject):
         sage: y.kolyvagin_cohomology_class(5)
         Kolyvagin cohomology class c(1) in H^1(K,E[5])
     """
-    def __init__(self, kolyvagin_point, n):
+    def __init__(self, kolyvagin_point, n) -> None:
         """
 
         EXAMPLES::
@@ -4658,7 +4658,7 @@ class HeegnerQuatAlg(SageObject):
         sage: loads(dumps(H)) == H
         True
     """
-    def __init__(self, level, ell):
+    def __init__(self, level, ell) -> None:
         r"""
         INPUT:
 
@@ -5845,7 +5845,7 @@ class HeegnerQuatAlgEmbedding(SageObject):
         sage: loads(dumps(f)) == f
         True
     """
-    def __init__(self, D, c, R, beta):
+    def __init__(self, D, c, R, beta) -> None:
         r"""
         INPUT:
 

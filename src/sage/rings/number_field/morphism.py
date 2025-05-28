@@ -151,7 +151,7 @@ class RelativeNumberFieldHomomorphism_from_abs(RingHomomorphism):
     homomorphism from the corresponding absolute field.
     """
 
-    def __init__(self, parent, abs_hom):
+    def __init__(self, parent, abs_hom) -> None:
         r"""
         EXAMPLES::
 

@@ -293,7 +293,7 @@ class FormattedExpansion(SageObject):
         sage: latex(f)
         \frac{x}{2}
     """
-    def __init__(self, txt=None, latex=None):
+    def __init__(self, txt=None, latex=None) -> None:
         r"""
         TESTS::
 

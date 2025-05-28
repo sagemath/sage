@@ -59,7 +59,7 @@ class baseWI:
         sage: baseWI(u,r,s,t)
         (u, r, s, t)
     """
-    def __init__(self, u=1, r=0, s=0, t=0):
+    def __init__(self, u=1, r=0, s=0, t=0) -> None:
         r"""
         Constructor: check for valid parameters (defaults to identity).
 
@@ -142,7 +142,7 @@ class baseWI:
         u, r, s, t = self.tuple()
         return baseWI(1/u, -r/u**2, -s/u, (r*s-t)/u**3)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation  of this isomorphism.
 
@@ -436,7 +436,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         sage: w._domain == E
         True
     """
-    def __init__(self, E=None, urst=None, F=None):
+    def __init__(self, E=None, urst=None, F=None) -> None:
         r"""
         Constructor for the ``WeierstrassIsomorphism`` class.
 
@@ -739,7 +739,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         return NotImplemented
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this WeierstrassIsomorphism.
 

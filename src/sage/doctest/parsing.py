@@ -682,7 +682,7 @@ class OriginalSource:
         ....:     ex.source
         'doctest_var = 42; doctest_var^2\n'
     """
-    def __init__(self, example):
+    def __init__(self, example) -> None:
         """
         Swaps out the source for the sage_source of a doctest example.
 
@@ -756,7 +756,7 @@ class SageDocTestParser(doctest.DocTestParser):
     optionals: dict[str, int]
     probed_tags: Union[bool, set[str]]
 
-    def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
+    def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()) -> None:
         r"""
         INPUT:
 

@@ -185,7 +185,7 @@ def normalize_args_invariant_form(R, d, invariant_form):
 class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
 
     def __init__(self, degree, base_ring, special, sage_name, latex_string,
-                 category=None, invariant_form=None):
+                 category=None, invariant_form=None) -> None:
         """
         Base class for "named" matrix groups.
 

@@ -50,7 +50,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
         sage: FiniteField(next_prime(1000))                                             # needs sage.rings.finite_rings
         Finite Field of size 1009
     """
-    def __init__(self, p, check=True, modulus=None):
+    def __init__(self, p, check=True, modulus=None) -> None:
         """
         Return a new finite field of order `p` where `p` is prime.
 

@@ -168,7 +168,7 @@ class Subcrystal(UniqueRepresentation, Parent):
                                      index_set=tuple(index_set),
                                      category=category)
 
-    def __init__(self, ambient, contained, generators, cartan_type, index_set, category):
+    def __init__(self, ambient, contained, generators, cartan_type, index_set, category) -> None:
         """
         Initialize ``self``.
 
@@ -223,7 +223,7 @@ class Subcrystal(UniqueRepresentation, Parent):
             return self._contained.__contains__
         return self._contained # Otherwise it should be a function
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 

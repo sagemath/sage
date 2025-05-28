@@ -364,7 +364,7 @@ class AffineConnection(SageObject):
         sage: nab_copy.is_immutable()
         False
     """
-    def __init__(self, domain, name, latex_name=None):
+    def __init__(self, domain, name, latex_name=None) -> None:
         r"""
         Construct an affine connection.
 
@@ -1114,7 +1114,7 @@ class AffineConnection(SageObject):
                 frame = self._domain._def_frame
         return self.coef(frame)[args]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the connection coefficient w.r.t. some frame corresponding to the
         given indices.

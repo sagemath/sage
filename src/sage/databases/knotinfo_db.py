@@ -353,7 +353,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
 
     filename = KnotInfoFilename
 
-    def __init__(self, install=False):
+    def __init__(self, install=False) -> None:
         r"""
         Python constructor.
 

@@ -266,7 +266,7 @@ class UCFtoQQbar(Morphism):
         sage: complex(UCF.one()/2)
         (0.5+0j)
     """
-    def __init__(self, UCF):
+    def __init__(self, UCF) -> None:
         r"""
         INPUT:
 
@@ -307,7 +307,7 @@ class UCFtoQQbar(Morphism):
 
 
 class UniversalCyclotomicFieldElement(FieldElement):
-    def __init__(self, parent, obj):
+    def __init__(self, parent, obj) -> None:
         r"""
         INPUT:
 
@@ -657,7 +657,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         from sage.rings.real_mpfr import RR
         return float(RR(self))
 
-    def __complex__(self):
+    def __complex__(self) -> complex:
         r"""
         TESTS::
 
@@ -1309,7 +1309,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return super().__classcall__(cls, None)
 
-    def __init__(self, names=None):
+    def __init__(self, names=None) -> None:
         r"""
         TESTS::
 

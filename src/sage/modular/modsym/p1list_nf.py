@@ -177,7 +177,7 @@ class MSymbol(SageObject):
         sage: loads(dumps(alpha))==alpha
         True
     """
-    def __init__(self, N, c, d=None, check=True):
+    def __init__(self, N, c, d=None, check=True) -> None:
         """
         See ``MSymbol`` for full documentation.
 
@@ -218,7 +218,7 @@ class MSymbol(SageObject):
                 raise ValueError("(%s, %s) is not an element of P1(R/N)." % (c1, d1))
         self.__c, self.__d = (c1, d1)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this MSymbol.
 
@@ -507,7 +507,7 @@ class P1NFList(SageObject):
         sage: loads(dumps(P)) == P
         True
     """
-    def __init__(self, N):
+    def __init__(self, N) -> None:
         r"""
         The constructor for the class P1NFList. See ``P1NFList`` for full
         documentation.
@@ -567,7 +567,7 @@ class P1NFList(SageObject):
         """
         return self.__list[n]
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the length of this P1NFList.
 
@@ -582,7 +582,7 @@ class P1NFList(SageObject):
         """
         return len(self.__list)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this P1NFList.
 

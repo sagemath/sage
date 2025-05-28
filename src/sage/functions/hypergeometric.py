@@ -243,7 +243,7 @@ class Hypergeometric(BuiltinFunction):
 
     where `(x)_n` is the rising factorial.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize class.
 
@@ -972,7 +972,7 @@ class Hypergeometric_M(BuiltinFunction):
         sage: hypergeometric_M(1, 1/2, x).simplify_hypergeometric()
         (-I*sqrt(pi)*x*erf(I*sqrt(-x))*e^x + sqrt(-x))/sqrt(-x)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1087,7 +1087,7 @@ class Hypergeometric_U(BuiltinFunction):
         sage: hypergeometric_U(1, 3, x).simplify_hypergeometric()                       # needs sage.symbolic
         (x + 1)/x^2
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

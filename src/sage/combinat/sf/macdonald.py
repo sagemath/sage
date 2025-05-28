@@ -78,7 +78,7 @@ _qt_kostka_cache = {}
 
 class Macdonald(UniqueRepresentation):
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         The family of Macdonald symmetric function bases.
 
@@ -113,7 +113,7 @@ class Macdonald(UniqueRepresentation):
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(q), Sym.base_ring()(t))
 
-    def __init__(self, Sym, q, t):
+    def __init__(self, Sym, q, t) -> None:
         r"""
         Macdonald Symmetric functions including `P`, `Q`, `J`, `H`, `Ht` bases
         also including the S basis which is the plethystic transformation
@@ -717,7 +717,7 @@ def cmunu(mu, nu):
 
 class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         A class for methods for one of the Macdonald bases of the symmetric functions.
 
@@ -997,7 +997,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
 
 class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         The `P` basis is defined here as the `J` basis times a
         normalizing coefficient `c2`.
@@ -1066,7 +1066,7 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
 
 #Q basis
 class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         The `Q` basis is defined here as the `J` basis times a
         normalizing coefficient.
@@ -1100,7 +1100,7 @@ class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
 
 
 class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         The `J` basis is calculated using determinantal formulas of
         Lapointe-Lascoux-Morse giving the action on the `S`-basis.
@@ -1198,7 +1198,7 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
 
 
 class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         The `H` basis is defined as `H_\mu = \sum_{\lambda} K_{\lambda\mu}(q,t) s_\lambda`
         where `K_{\lambda\mu}(q,t)` are the Macdonald Kostka coefficients.
@@ -1410,7 +1410,7 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
 
 class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         The `Ht` basis is defined as `{\tilde H}_\mu = t^{n(\mu)} \sum_{\lambda}
         K_{\lambda\mu}(q,t^{-1}) s_\lambda` where `K_{\lambda\mu}(q,t)` are the
@@ -1687,7 +1687,7 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
 
 class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
-    def __init__(self, macdonald):
+    def __init__(self, macdonald) -> None:
         r"""
         An implementation of the basis `s_\lambda[(1-t)X/(1-q)]`.
 

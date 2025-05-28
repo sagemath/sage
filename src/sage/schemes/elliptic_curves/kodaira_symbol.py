@@ -74,7 +74,7 @@ class KodairaSymbol_class(SageObject):
     Users should use the ``KodairaSymbol()`` function to construct
     Kodaira Symbols rather than use the class constructor directly.
     """
-    def __init__(self, symbol):
+    def __init__(self, symbol) -> None:
         r"""
         Constructor for Kodaira Symbol class.
 
@@ -212,7 +212,7 @@ class KodairaSymbol_class(SageObject):
         else:
             raise ValueError("input is not a Kodaira symbol")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of this Kodaira Symbol.
 

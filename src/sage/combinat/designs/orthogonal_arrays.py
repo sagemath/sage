@@ -392,7 +392,7 @@ class TransversalDesign(GroupDivisibleDesign):
         sage: designs.transversal_design(None,36)
         Transversal Design TD(10,36)
     """
-    def __init__(self, blocks, k=None, n=None, check=True, **kwds):
+    def __init__(self, blocks, k=None, n=None, check=True, **kwds) -> None:
         r"""
         Constructor of the class.
 
@@ -423,7 +423,7 @@ class TransversalDesign(GroupDivisibleDesign):
                                       check=False,
                                       **kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string describing the transversal design.
 
@@ -2116,7 +2116,7 @@ class OAMainFunctions:
         ...
         NotImplementedError: I don't know how to build an OA(12,20)!
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         There is nothing here.
 

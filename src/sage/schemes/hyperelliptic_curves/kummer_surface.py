@@ -27,7 +27,7 @@ from sage.categories.schemes import Schemes
 
 
 class KummerSurface(AlgebraicScheme_subscheme_projective):
-    def __init__(self, J):
+    def __init__(self, J) -> None:
         """
         EXAMPLES::
 

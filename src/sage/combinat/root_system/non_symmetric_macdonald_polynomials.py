@@ -1310,7 +1310,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         q2 = K(q2)
         return super().__classcall__(cls, KL, q, q1, q2, normalized)
 
-    def __init__(self, KL, q, q1, q2, normalized):
+    def __init__(self, KL, q, q1, q2, normalized) -> None:
         r"""
         Initialize the nonsymmetric Macdonald polynomial class.
 

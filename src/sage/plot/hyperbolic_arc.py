@@ -191,7 +191,7 @@ class HyperbolicArc(HyperbolicArcCore):
          sage: HyperbolicArc(0, 1/2+I*sqrt(3)/2, "UHP", {})
          Hyperbolic arc (0.000000000000000, 0.500000000000000 + 0.866025403784439*I)
     """
-    def __init__(self, A, B, model, options):
+    def __init__(self, A, B, model, options) -> None:
         """
         Initialize ``self``.
 

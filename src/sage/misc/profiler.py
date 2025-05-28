@@ -79,7 +79,7 @@ class Profiler:
     - David Harvey (August 2006)
     """
 
-    def __init__(self, systems=[], verbose=False):
+    def __init__(self, systems=[], verbose=False) -> None:
         """
         INPUT:
 
@@ -126,7 +126,7 @@ class Profiler:
             print(self.print_last())
             sys.stdout.flush()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """ Returns a nicely formatted table of stored checkpoints and timings. """
         if not self._checkpoints:
             return "no checkpoints defined"

@@ -348,7 +348,7 @@ class BlockFinder:
     This is the Python library's :class:`inspect.BlockFinder` modified
     to recognize Cython definitions.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.indent = 0
         self.islambda = False
         self.started = False

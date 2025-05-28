@@ -183,7 +183,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
     - Cameron Franc (2012-02-20)
     - Marc Masdeu
     """
-    def __init__(self, _parent, vec):
+    def __init__(self, _parent, vec) -> None:
         """
         Create a harmonic cocycle element.
 
@@ -692,7 +692,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
                                      basis_matrix,
                                      base_field)
 
-    def __init__(self, X, k, prec=None, basis_matrix=None, base_field=None):
+    def __init__(self, X, k, prec=None, basis_matrix=None, base_field=None) -> None:
         """
         Compute the space of harmonic cocycles.
 
@@ -1506,7 +1506,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
     - Cameron Franc (2012-02-20)
     - Marc Masdeu
     """
-    def __init__(self, parent, vec):
+    def __init__(self, parent, vec) -> None:
         """
         Create a pAdicAutomorphicFormElement.
 
@@ -1597,7 +1597,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
             return b
         return not b
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Tell whether the form is zero or not.
 
@@ -2178,7 +2178,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
                                      overconvergent)
 
     def __init__(self, domain, U, prec=None, t=None, R=None,
-                 overconvergent=False):
+                 overconvergent=False) -> None:
         """
         Create a space of `p`-automorphic forms.
 

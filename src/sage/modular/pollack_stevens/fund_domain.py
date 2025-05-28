@@ -113,7 +113,7 @@ class PollackStevensModularDomain(SageObject):
         ...
         TypeError: unable to coerce <class 'sage.modular.arithgroup.congroup_gamma0.Gamma0_class_with_category'> to an integer
     """
-    def __init__(self, N, reps, indices, rels, equiv_ind):
+    def __init__(self, N, reps, indices, rels, equiv_ind) -> None:
         r"""
         INPUT:
 
@@ -152,7 +152,7 @@ class PollackStevensModularDomain(SageObject):
         """
         return "Modular Symbol domain of level %s" % self._N
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of coset representatives.
 
@@ -573,7 +573,7 @@ class ManinRelations(PollackStevensModularDomain):
         ...
         ValueError: N must be a positive integer
     """
-    def __init__(self, N):
+    def __init__(self, N) -> None:
         r"""
         Create an instance of this class.
 

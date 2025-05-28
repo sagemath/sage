@@ -30,7 +30,7 @@ class LFSRCryptosystem(SymmetricKeyCryptosystem):
     """
     Linear feedback shift register cryptosystem class
     """
-    def __init__(self, field=None):
+    def __init__(self, field=None) -> None:
         """
         Create a linear feedback shift cryptosystem.
 
@@ -107,7 +107,7 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
     """
     Shrinking generator cryptosystem class
     """
-    def __init__(self, field=None):
+    def __init__(self, field=None) -> None:
         """
         Create a shrinking generator cryptosystem.
 

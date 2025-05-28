@@ -67,7 +67,7 @@ class Tuples(Parent, UniqueRepresentation):
         """
         return super().__classcall__(cls, tuple(S), k)
 
-    def __init__(self, S, k):
+    def __init__(self, S, k) -> None:
         """
         TESTS::
 
@@ -81,7 +81,7 @@ class Tuples(Parent, UniqueRepresentation):
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -294,7 +294,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         """
         return super().__classcall__(cls, tuple(S), k)
 
-    def __init__(self, S, k):
+    def __init__(self, S, k) -> None:
         """
         TESTS::
 
@@ -308,7 +308,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 

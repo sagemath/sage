@@ -21,7 +21,7 @@ from sage.groups.libgap_wrapper import ElementLibGAP
 
 
 class GroupMixinLibGAP:
-    def __contains__(self, elt):
+    def __contains__(self, elt) -> bool:
         r"""
         TESTS::
 
@@ -824,7 +824,7 @@ class GroupMixinLibGAP:
         while not iterator.IsDoneIterator().sage():
             yield self.element_class(self, iterator.NextIterator())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of elements in ``self``.
 

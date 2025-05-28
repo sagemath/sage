@@ -212,7 +212,7 @@ class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
         - :arxiv:`0812.3082`
         - https://www.dmtcs.org/pdfpapers/dmAA0123.pdf
     """
-    def __init__(self, M, S, action=operator.mul, side='left', *args, **kwargs):
+    def __init__(self, M, S, action=operator.mul, side='left', *args, **kwargs) -> None:
         """
         Initialize ``self``.
 
@@ -828,7 +828,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         return super().__classcall__(cls, M, G, chi, action=operator.mul,
                                      side='left', **kwargs)
 
-    def __init__(self, M, G, chi, action=operator.mul, side='left', **kwargs):
+    def __init__(self, M, G, chi, action=operator.mul, side='left', **kwargs) -> None:
         r"""
         Initialize ``self``.
 

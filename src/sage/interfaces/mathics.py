@@ -468,7 +468,7 @@ class Mathics(Interface):
                  maxread=None,
                  logfile=None,
                  init_list_length=1024,
-                 seed=None):
+                 seed=None) -> None:
         r"""
         Python constructor.
 
@@ -918,7 +918,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
                 return expr.__getattribute__(attrname)
         return InterfaceFunctionElement(self, attrname)
 
-    def __float__(self, precision=16):
+    def __float__(self, precision=16) -> float:
         r"""
         EXAMPLES::
 
@@ -1080,7 +1080,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
                 return p
         return s
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the object's length, evaluated by mathics.
 
@@ -1220,7 +1220,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             return rich_to_bool(op, 0)
         return NotImplemented
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether this Mathics element is not identical to ``False``.
 

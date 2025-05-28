@@ -172,7 +172,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
         True
     """
     def __init__(self, parent, matrix_rep, bases=None, name=None,
-                 latex_name=None, is_identity=False):
+                 latex_name=None, is_identity=False) -> None:
         r"""
         TESTS:
 
@@ -394,7 +394,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # Required module methods
     #
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -1329,7 +1329,7 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
         True
     """
     def __init__(self, parent, matrix_rep, bases=None, name=None,
-                 latex_name=None, is_identity=False):
+                 latex_name=None, is_identity=False) -> None:
         r"""
         TESTS::
 

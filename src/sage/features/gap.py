@@ -34,7 +34,7 @@ class GapPackage(Feature):
         sage: GapPackage("grape", spkg='gap_packages')
         Feature('gap_package_grape')
     """
-    def __init__(self, package, **kwds):
+    def __init__(self, package, **kwds) -> None:
         r"""
         TESTS::
 

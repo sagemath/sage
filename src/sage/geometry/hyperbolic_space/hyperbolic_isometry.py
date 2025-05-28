@@ -82,7 +82,7 @@ class HyperbolicIsometry(Morphism):
     # "Private" Methods #
     #####################
 
-    def __init__(self, model, A, check=True):
+    def __init__(self, model, A, check=True) -> None:
         r"""
         See :class:`HyperbolicIsometry` for full documentation.
 

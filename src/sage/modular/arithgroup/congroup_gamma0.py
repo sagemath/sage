@@ -114,7 +114,7 @@ class Gamma0_class(GammaH_class):
           of weight 2 with sign 1 over Rational Field
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         The congruence subgroup `\Gamma_0(N)`.
 

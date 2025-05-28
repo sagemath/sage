@@ -450,7 +450,7 @@ class FriezePatterns(PathTableaux):
         [ ,  , 1, 1, 1]
     """
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         r"""
         Initialize ``self``.
 

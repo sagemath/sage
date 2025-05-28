@@ -132,7 +132,7 @@ class Sudoku(SageObject):
         |4 9 1|8 5 6|7 2 3|
         +-----+-----+-----+
     """
-    def __init__(self, puzzle, verify_input=True):
+    def __init__(self, puzzle, verify_input=True) -> None:
         r"""
         Initialize a Sudoku puzzle, determine its size, sanity-check the inputs.
 

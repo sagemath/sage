@@ -374,7 +374,7 @@ class HyperplaneArrangementElement(Element):
         :class:`HyperplaneArrangementElement` instances directly,
         always use the parent.
     """
-    def __init__(self, parent, hyperplanes, check=True, backend=None):
+    def __init__(self, parent, hyperplanes, check=True, backend=None) -> None:
         """
         Construct a hyperplane arrangement.
 
@@ -3604,7 +3604,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
     """
     Element = HyperplaneArrangementElement
 
-    def __init__(self, base_ring, names=tuple()):
+    def __init__(self, base_ring, names=tuple()) -> None:
         """
         Initialize ``self``.
 

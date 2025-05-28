@@ -105,7 +105,7 @@ class LocalOptions:
     classes LocalOptions and GlobalOptions.
     """
 
-    def __init__(self, name='', **options):
+    def __init__(self, name='', **options) -> None:
         r"""
         Construct a new LocalOptions.
 
@@ -197,7 +197,7 @@ class LocalOptions:
                         for key in options)
         return 'Current options for {}\n{}'.format(self._name, txt)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         r"""
         The ``__setitem__`` method is used to change the current values of the
         options. It also checks that the supplied options are valid and changes
@@ -594,7 +594,7 @@ class _drawing_tool:
         (1.000000, -1.000000);'
     """
 
-    def __init__(self, options, XY=lambda v: v):
+    def __init__(self, options, XY=lambda v: v) -> None:
         r"""
         Construct a drawing tools to produce some TIKZ drawing.
 
@@ -1131,7 +1131,7 @@ class ParallelogramPolyomino(ClonableList,
         """
         return ParallelogramPolyomino([self.lower_path(), self.upper_path()])
 
-    def __init__(self, parent, value, check=True):
+    def __init__(self, parent, value, check=True) -> None:
         r"""
         Construct a parallelogram polyomino.
 
@@ -2277,7 +2277,7 @@ class ParallelogramPolyomino(ClonableList,
             [0, 1, 1]
         """
 
-        def __init__(self, polyomino, row):
+        def __init__(self, polyomino, row) -> None:
             r"""
             The constructor of the class.
 
@@ -4050,7 +4050,7 @@ class ParallelogramPolyominoes_size(
          [[0, 1, 1, 1], [1, 1, 1, 0]]]
     """
 
-    def __init__(self, size, policy):
+    def __init__(self, size, policy) -> None:
         r"""
         Construct a set of Parallelogram Polyominoes of a given size.
 
@@ -4219,7 +4219,7 @@ class ParallelogramPolyominoes_all(
         Parallelogram polyominoes
     """
 
-    def __init__(self, policy):
+    def __init__(self, policy) -> None:
         r"""
         Construct the set of all parallelogram polyominoes.
 

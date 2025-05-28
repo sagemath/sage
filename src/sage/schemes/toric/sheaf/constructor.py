@@ -134,7 +134,7 @@ def LineBundle(X, D):
 
 class SheafLibrary:
 
-    def __init__(self, toric_variety):
+    def __init__(self, toric_variety) -> None:
         """
         Utility object to construct sheaves on toric varieties.
 
@@ -152,7 +152,7 @@ class SheafLibrary:
         """
         self._variety = toric_variety
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation.
 

@@ -189,7 +189,7 @@ class Gp(ExtraTabCompletion, Expect):
                  server=None,
                  server_tmpdir=None,
                  init_list_length=1024,
-                 seed=None):
+                 seed=None) -> None:
         """
         Initialization of this PARI gp interpreter.
 
@@ -919,7 +919,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
         """
         return repr(self.type()) == 't_STR'
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         Return Python float.
 
@@ -930,7 +930,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
         """
         return float(pari(str(self)))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 
@@ -985,7 +985,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
         cc_val = self._complex_mpfr_field_(CC)
         return CDF(cc_val)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -994,7 +994,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
         """
         return int(self.length())
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         Note that clearing object is pointless since it wastes time and
         PARI/GP doesn't really free used memory.

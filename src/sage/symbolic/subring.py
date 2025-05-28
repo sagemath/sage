@@ -248,7 +248,7 @@ SymbolicSubring = SymbolicSubringFactory("SymbolicSubring")
 
 class GenericSymbolicSubring(SymbolicRing):
 
-    def __init__(self, vars):
+    def __init__(self, vars) -> None:
         r"""
         An abstract base class for a symbolic subring.
 
@@ -502,7 +502,7 @@ class GenericSymbolicSubringFunctor(ConstructionFunctor):
 
     _repr_type_ = 'generic'
 
-    def __init__(self, vars):
+    def __init__(self, vars) -> None:
         r"""
         See :class:`GenericSymbolicSubringFunctor` for details.
 

@@ -76,7 +76,7 @@ class MorphismVectorSpaceToFiniteField(FiniteFieldVectorSpaceIsomorphism):
     """
     Isomorphisms from vector spaces to finite fields.
     """
-    def __init__(self, V, K, C):
+    def __init__(self, V, K, C) -> None:
         """
         Initialize.
 
@@ -137,7 +137,7 @@ class MorphismFiniteFieldToVectorSpace(FiniteFieldVectorSpaceIsomorphism):
     """
     Isomorphisms from finite fields to vector spaces
     """
-    def __init__(self, K, V, C):
+    def __init__(self, K, V, C) -> None:
         """
         Initialize.
 

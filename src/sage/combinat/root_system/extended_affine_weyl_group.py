@@ -448,7 +448,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
     The parent-with-realization class of an extended affine Weyl group.
     """
 
-    def __init__(self, cartan_type, general_linear, **print_options):
+    def __init__(self, cartan_type, general_linear, **print_options) -> None:
         r"""
 
         EXAMPLES::
@@ -2024,7 +2024,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                (as a matrix group acting on the coweight lattice)
         """
 
-        def __init__(self, E):
+        def __init__(self, E) -> None:
             r"""
             Create the PW0 realization of the extended affine Weyl group.
 
@@ -2213,7 +2213,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
              acting on Multiplicative form of Coweight lattice of the Root system of type ['A', 2]
         """
 
-        def __init__(self, E):
+        def __init__(self, E) -> None:
             r"""
             EXAMPLES::
 
@@ -2411,7 +2411,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
               acted upon by Fundamental group of type ['A', 2, 1]
         """
 
-        def __init__(self, E):
+        def __init__(self, E) -> None:
             r"""
             EXAMPLES::
 
@@ -2571,7 +2571,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
              (as a matrix group acting on the root lattice)
         """
 
-        def __init__(self, E):
+        def __init__(self, E) -> None:
             r"""
 
             EXAMPLES::
@@ -2743,7 +2743,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
               upon by Weyl Group of type ['A', 2] (as a matrix group acting on the weight lattice)
         """
 
-        def __init__(self, E):
+        def __init__(self, E) -> None:
             r"""
 
             EXAMPLES::
@@ -2915,7 +2915,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
              acting on Multiplicative form of Weight lattice of the Root system of type ['A', 2]
         """
 
-        def __init__(self, E):
+        def __init__(self, E) -> None:
             r"""
             EXAMPLES::
 

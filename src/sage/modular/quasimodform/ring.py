@@ -218,7 +218,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
     """
     Element = QuasiModularFormsElement
 
-    def __init__(self, group=1, base_ring=QQ, name='E2'):
+    def __init__(self, group=1, base_ring=QQ, name='E2') -> None:
         r"""
         INPUT:
 

@@ -117,7 +117,7 @@ class InformationSetAlgorithm(SageObject):
          decoding up to 4 errors
     """
 
-    def __init__(self, code, decoding_interval, algorithm_name, parameters=None):
+    def __init__(self, code, decoding_interval, algorithm_name, parameters=None) -> None:
         r"""
         TESTS::
 
@@ -398,7 +398,7 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         ISD Algorithm (Lee-Brickell) for [24, 12, 8] Extended Golay code over GF(2)
          decoding between 2 and 3 errors
     """
-    def __init__(self, code, decoding_interval, search_size=None):
+    def __init__(self, code, decoding_interval, search_size=None) -> None:
         r"""
         TESTS:
 
@@ -759,7 +759,7 @@ class LinearCodeInformationSetDecoder(Decoder):
         Information-set decoder (Lee-Brickell) for [12, 6, 6] Extended Golay code over GF(3)
          decoding up to 2 errors
     """
-    def __init__(self, code, number_errors, algorithm=None, **kwargs):
+    def __init__(self, code, number_errors, algorithm=None, **kwargs) -> None:
         r"""
         TESTS:
 

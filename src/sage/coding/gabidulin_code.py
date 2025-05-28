@@ -58,7 +58,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
     _registered_decoders = {}
 
     def __init__(self, base_field, length, dimension, sub_field=None,
-            twisting_homomorphism=None, evaluation_points=None):
+            twisting_homomorphism=None, evaluation_points=None) -> None:
         r"""
         Representation of a Gabidulin Code.
 
@@ -390,7 +390,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
 
 class GabidulinVectorEvaluationEncoder(Encoder):
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         """
         This method constructs the vector evaluation encoder for
         Gabidulin Codes.
@@ -564,7 +564,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
          [2, 2, 1] linear Gabidulin code over GF(16)/GF(4)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         INPUT:
 
@@ -773,7 +773,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
 
 class GabidulinGaoDecoder(Decoder):
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         Gao style decoder for Gabidulin Codes.
 

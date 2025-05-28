@@ -441,7 +441,7 @@ class CompositeConstructionFunctor(ConstructionFunctor):
           over Fraction Field of Univariate Polynomial Ring in t
            over Finite Field of size 2 (using GF2X)
     """
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         """
         TESTS::
 
@@ -611,7 +611,7 @@ class IdentityConstructionFunctor(ConstructionFunctor):
     """
     rank = -100
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -825,7 +825,7 @@ class PolynomialFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, var, multi_variate=False, sparse=False, implementation=None):
+    def __init__(self, var, multi_variate=False, sparse=False, implementation=None) -> None:
         """
         TESTS::
 
@@ -1001,7 +1001,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
 
     rank = 9
 
-    def __init__(self, vars, term_order):
+    def __init__(self, vars, term_order) -> None:
         """
         EXAMPLES::
 
@@ -1262,7 +1262,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
     # has rank 10. So, do fine tuning...
     rank = 9.5
 
-    def __init__(self, gens, order, implementation):
+    def __init__(self, gens, order, implementation) -> None:
         """
         TESTS::
 
@@ -1575,7 +1575,7 @@ class MatrixFunctor(ConstructionFunctor):
     """
     rank = 10
 
-    def __init__(self, nrows, ncols, is_sparse=False):
+    def __init__(self, nrows, ncols, is_sparse=False) -> None:
         """
         TESTS::
 
@@ -1715,7 +1715,7 @@ class LaurentPolynomialFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, var, multi_variate=False):
+    def __init__(self, var, multi_variate=False) -> None:
         """
         INPUT:
 
@@ -1859,7 +1859,7 @@ class VectorFunctor(ConstructionFunctor):
     # This coincides with the rank of the matrix construction functor, but this is OK since they cannot both be applied in any order
 
     def __init__(self, n=None, is_sparse=False, inner_product_matrix=None, *,
-                 with_basis='standard', basis_keys=None, name_mapping=None, latex_name_mapping=None):
+                 with_basis='standard', basis_keys=None, name_mapping=None, latex_name_mapping=None) -> None:
         """
         INPUT:
 
@@ -2182,7 +2182,7 @@ class SubspaceFunctor(ConstructionFunctor):
     # map into the original, not vice versa.
     coercion_reversed = True
 
-    def __init__(self, basis):
+    def __init__(self, basis) -> None:
         """
         INPUT:
 
@@ -2415,7 +2415,7 @@ class FractionField(ConstructionFunctor):
     """
     rank = 5
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -2490,7 +2490,7 @@ class CompletionFunctor(ConstructionFunctor):
     _real_types = ['Interval', 'Ball', 'MPFR', 'RDF', 'RLF', 'RR']
     _dvr_types = [None, 'fixed-mod', 'floating-point', 'capped-abs', 'capped-rel', 'lattice-cap', 'lattice-float', 'relaxed']
 
-    def __init__(self, p, prec, extras=None):
+    def __init__(self, p, prec, extras=None) -> None:
         """
         INPUT:
 
@@ -2840,7 +2840,7 @@ class QuotientFunctor(ConstructionFunctor):
     rank = 4.5
 
     def __init__(self, I, names=None, as_field=False, domain=None,
-                 codomain=None, **kwds):
+                 codomain=None, **kwds) -> None:
         """
         INPUT:
 
@@ -3150,7 +3150,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
 
     def __init__(self, polys, names, embeddings=None, structures=None,
                  cyclotomic=None, precs=None, implementations=None,
-                 *, residue=None, latex_names=None, **kwds):
+                 *, residue=None, latex_names=None, **kwds) -> None:
         """
         INPUT:
 
@@ -3632,7 +3632,7 @@ class AlgebraicClosureFunctor(ConstructionFunctor):
     """
     rank = 3
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -3694,7 +3694,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
 
     rank = 10
 
-    def __init__(self, gens, domain):
+    def __init__(self, gens, domain) -> None:
         """
         EXAMPLES::
 
@@ -3855,7 +3855,7 @@ class EquivariantSubobjectConstructionFunctor(ConstructionFunctor):
          of Full MatrixSpace of 2 by 2 dense matrices over Rational Field
     """
     def __init__(self, S, action=operator.mul, side='left',
-                 other_action=None, other_side='left'):
+                 other_action=None, other_side='left') -> None:
         """
         EXAMPLES::
 
@@ -3935,7 +3935,7 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
     """
     rank = 100
 
-    def __init__(self, box):
+    def __init__(self, box) -> None:
         """
         TESTS::
 

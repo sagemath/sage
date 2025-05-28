@@ -135,7 +135,7 @@ class Category_realization_of_parent(Category_over_base, BindableClass):
 
     as well as the name for that category.
     """
-    def __init__(self, parent_with_realization):
+    def __init__(self, parent_with_realization) -> None:
         """
         TESTS::
 

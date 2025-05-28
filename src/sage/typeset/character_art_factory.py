@@ -24,7 +24,7 @@ class CharacterArtFactory(SageObject):
 
     def __init__(self,
                  art_type, string_type, magic_method_name,
-                 parenthesis, square_bracet, curly_brace):
+                 parenthesis, square_bracet, curly_brace) -> None:
         r"""
         Abstract base class for character art factory.
 

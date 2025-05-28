@@ -82,7 +82,7 @@ class lfun_generic:
         1.64493406684823 - 0.937548254315844*z + 0.994640117149451*z^2 - 1.00002430047384*z^3 + 1.00006193307...*z^4 + O(z^5)
     """
     def __init__(self, conductor, gammaV, weight, eps, poles=[],
-                 residues='automatic', prec=None, *args, **kwds):
+                 residues='automatic', prec=None, *args, **kwds) -> None:
         """
         Initialisation of a :pari:`lfun` from motivic data.
 
@@ -505,7 +505,7 @@ class LFunction(SageObject):
         sage: L.taylor_series(1, 3)
         0.0374412812685155 + 0.0709221123619322*z + 0.0380744761270520*z^2 + O(z^3)
     """
-    def __init__(self, lfun, prec=None):
+    def __init__(self, lfun, prec=None) -> None:
         """
         Initialization of the `L`-function from a PARI `L`-function.
 

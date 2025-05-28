@@ -314,7 +314,7 @@ class SimplicialSetHomset(Homset):
 
 class SimplicialSetMorphism(Morphism):
     def __init__(self, data=None, domain=None, codomain=None,
-                 constant=None, identity=False, check=True):
+                 constant=None, identity=False, check=True) -> None:
         r"""
         Return a morphism of simplicial sets.
 

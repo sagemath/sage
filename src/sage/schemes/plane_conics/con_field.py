@@ -58,7 +58,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         sage: K = FractionField(PolynomialRing(QQ, 't'))
         sage: Conic([K(1), 1, -1])._test_pickling()
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 

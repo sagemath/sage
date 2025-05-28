@@ -44,7 +44,7 @@ class GenericBacktracker:
     handling simple special cases.
     """
 
-    def __init__(self, initial_data, initial_state):
+    def __init__(self, initial_data, initial_state) -> None:
         r"""
         EXAMPLES::
 
@@ -128,7 +128,7 @@ class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_fo
         sage: PP._test_enumerated_set_contains()  # long time
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

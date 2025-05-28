@@ -182,7 +182,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
     """
     Element = complex_interval.ComplexIntervalFieldElement
 
-    def __init__(self, prec=53):
+    def __init__(self, prec=53) -> None:
         """
         Initialize ``self``.
 

@@ -99,7 +99,7 @@ class IndexedSequence(SageObject):
       containing the same number of elements as ``self``, which is a
       list of elements taken from a field
     """
-    def __init__(self, L, index_object):
+    def __init__(self, L, index_object) -> None:
         r"""
         Initialize ``self``.
 

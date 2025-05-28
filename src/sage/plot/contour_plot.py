@@ -62,7 +62,7 @@ class ContourPlot(GraphicPrimitive):
         ....:              plot_points=121, cmap='hsv')
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xy_data_array, xrange, yrange, options):
+    def __init__(self, xy_data_array, xrange, yrange, options) -> None:
         """
         Initialize base class ``ContourPlot``.
 

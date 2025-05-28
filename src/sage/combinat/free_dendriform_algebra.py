@@ -154,7 +154,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names=None):
+    def __init__(self, R, names=None) -> None:
         """
         Initialize ``self``.
 
@@ -794,7 +794,7 @@ class DendriformFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, vars):
+    def __init__(self, vars) -> None:
         """
         EXAMPLES::
 

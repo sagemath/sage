@@ -131,7 +131,7 @@ class NakajimaMonomial(Element):
         sage: M.set_variables('Y')
     """
 
-    def __init__(self, parent, Y, A):
+    def __init__(self, parent, Y, A) -> None:
         r"""
         INPUT:
 
@@ -842,7 +842,7 @@ class InfinityCrystalOfNakajimaMonomials(UniqueRepresentation, Parent):
         M.set_variables('Y')
         return M
 
-    def __init__(self, ct, c, category=None):
+    def __init__(self, ct, c, category=None) -> None:
         r"""
         EXAMPLES::
 
@@ -1204,7 +1204,7 @@ class CrystalOfNakajimaMonomials(InfinityCrystalOfNakajimaMonomials):
         c = InfinityCrystalOfNakajimaMonomials._normalize_c(c, n)
         return super().__classcall__(cls, cartan_type, La, c)
 
-    def __init__(self, ct, La, c):
+    def __init__(self, ct, La, c) -> None:
         r"""
         EXAMPLES::
 

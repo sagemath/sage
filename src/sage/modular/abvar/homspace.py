@@ -198,7 +198,7 @@ class Homspace(HomsetWithBase):
     """
     Element = morphism.Morphism
 
-    def __init__(self, domain, codomain, cat):
+    def __init__(self, domain, codomain, cat) -> None:
         """
         Create a homspace.
 
@@ -738,7 +738,7 @@ class Homspace(HomsetWithBase):
 # to just a subgroup.
 class EndomorphismSubring(Homspace):
 
-    def __init__(self, A, gens=None, category=None):
+    def __init__(self, A, gens=None, category=None) -> None:
         """
         A subring of the endomorphism ring.
 

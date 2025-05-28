@@ -67,7 +67,7 @@ class Point(GraphicPrimitive_xydata):
         sage: point((3,3))
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, xdata, ydata, options):
+    def __init__(self, xdata, ydata, options) -> None:
         """
         Initialize base class Point.
 

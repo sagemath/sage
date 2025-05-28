@@ -253,7 +253,7 @@ class ElementaryCellularAutomata(SageObject):
 
     :wikipedia:`Elementary_cellular_automaton`
     """
-    def __init__(self, rule, width=None, initial_state=None, boundary=(0, 0)):
+    def __init__(self, rule, width=None, initial_state=None, boundary=(0, 0)) -> None:
         """
         Initialize ``self``.
 

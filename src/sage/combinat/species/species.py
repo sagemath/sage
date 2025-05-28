@@ -60,7 +60,7 @@ from functools import reduce
 
 
 class GenericCombinatorialSpecies(SageObject):
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         TESTS::
 
@@ -233,7 +233,7 @@ class GenericCombinatorialSpecies(SageObject):
         kwds.update({'weight': weight})
         return self.__class__(*[args_dict[i] for i in range(len(args_dict))], **kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of this species.
 

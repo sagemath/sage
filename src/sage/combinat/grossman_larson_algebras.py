@@ -162,7 +162,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names=None):
+    def __init__(self, R, names=None) -> None:
         """
         Initialize ``self``.
 

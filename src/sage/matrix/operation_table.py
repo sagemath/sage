@@ -386,7 +386,7 @@ class OperationTable(SageObject):
     - Bruno Edwards (2022-10-31)
     """
 
-    def __init__(self, S, operation, names='letters', elements=None):
+    def __init__(self, S, operation, names='letters', elements=None) -> None:
         r"""
         TESTS::
 

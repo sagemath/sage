@@ -51,7 +51,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
           x^2 - y*z
     """
     def __init__(self, A, polynomials, embedding_center=None,
-                 embedding_codomain=None, embedding_images=None):
+                 embedding_codomain=None, embedding_images=None) -> None:
         """
         EXAMPLES::
 

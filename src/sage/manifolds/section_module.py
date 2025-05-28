@@ -143,7 +143,7 @@ class SectionModule(UniqueRepresentation, Parent):
     """
     Element = Section
 
-    def __init__(self, vbundle, domain):
+    def __init__(self, vbundle, domain) -> None:
         r"""
         Construct the module of continuous sections over a vector bundle.
 
@@ -569,7 +569,7 @@ class SectionFreeModule(FiniteRankFreeModule):
     """
     Element = TrivialSection
 
-    def __init__(self, vbundle, domain):
+    def __init__(self, vbundle, domain) -> None:
         r"""
         Construct the free module of sections over a trivial part of a vector
         bundle.

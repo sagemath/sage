@@ -205,7 +205,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     Witt symmetric functions pass through the complete homogeneous
     symmetric functions by default.
     """
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         r"""
         Initialize ``self``.
 

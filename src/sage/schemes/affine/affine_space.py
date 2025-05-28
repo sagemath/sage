@@ -184,7 +184,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
         sage: AffineSpace(0)
         Affine Space of dimension 0 over Integer Ring
     """
-    def __init__(self, n, R, names, ambient_projective_space, default_embedding_index):
+    def __init__(self, n, R, names, ambient_projective_space, default_embedding_index) -> None:
         """
         EXAMPLES::
 

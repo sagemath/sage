@@ -71,7 +71,7 @@ from sage.structure.factory import UniqueFactory
 ######################################################################
 
 class CallableSymbolicExpressionFunctor(ConstructionFunctor):
-    def __init__(self, arguments):
+    def __init__(self, arguments) -> None:
         """
         A functor which produces a CallableSymbolicExpressionRing from
         the SymbolicRing.
@@ -93,7 +93,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         self.rank = 3
         ConstructionFunctor.__init__(self, Rings(), Rings())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -225,7 +225,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
 
 
 class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.CallableSymbolicExpressionRing):
-    def __init__(self, arguments):
+    def __init__(self, arguments) -> None:
         """
         EXAMPLES:
 

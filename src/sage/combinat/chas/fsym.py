@@ -41,7 +41,7 @@ class FSymBasis_abstract(CombinatorialFreeModule, BindableClass):
 
     - ``_prefix`` -- the basis prefix
     """
-    def __init__(self, alg, graded=True):
+    def __init__(self, alg, graded=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -485,7 +485,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
         sage: TG[t].to_symmetric_function()
         s[2, 2, 1]
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         TESTS::
 
@@ -790,7 +790,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         sage: TF(F[[5, 1, 4, 2, 3]])
         F[135|2|4]
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         Initialize ``self``.
 

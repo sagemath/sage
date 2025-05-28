@@ -297,7 +297,7 @@ class FunctionField(Field):
     """
     _differentials_space = LazyImport('sage.rings.function_field.differential', 'DifferentialsSpace')
 
-    def __init__(self, base_field, names, category=FunctionFields()):
+    def __init__(self, base_field, names, category=FunctionFields()) -> None:
         """
         Initialize.
 

@@ -954,7 +954,7 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         # the MRO.
         return self._operation("+", other)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 
@@ -968,7 +968,7 @@ class GapElement_generic(ModuleElement, ExtraTabCompletion, ExpectElement):
         P = self._check_valid()
         return self != P(0) and repr(self) != 'false'
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -1068,7 +1068,7 @@ class Gap(Gap_generic):
                  server_tmpdir=None,
                  logfile=None,
                  seed=None,
-                 env={}):
+                 env={}) -> None:
         """
         EXAMPLES::
 

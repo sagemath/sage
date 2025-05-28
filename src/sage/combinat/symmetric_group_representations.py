@@ -303,7 +303,7 @@ class SymmetricGroupRepresentation_generic_class(Element):
     """
     _default_ring = None
 
-    def __init__(self, parent, partition):
+    def __init__(self, parent, partition) -> None:
         r"""
         An irreducible representation of the symmetric group corresponding
         to ``partition``.
@@ -504,7 +504,7 @@ class SymmetricGroupRepresentations_class(UniqueRepresentation,Parent):
     representations of the symmetric group.
     """
 
-    def __init__(self, n, ring=None, cache_matrices=True):
+    def __init__(self, n, ring=None, cache_matrices=True) -> None:
         r"""
         Irreducible representations of the symmetric group.
 
@@ -1052,7 +1052,7 @@ class UnitaryRepresentation(SymmetricGroupRepresentation_generic_class):
     Cholesky decomposition of the unique solution `U` to the equation
     `\rho(g)^T U \rho(g) = U` for all `g` in `G`.
     """
-    def __init__(self, parent, partition):
+    def __init__(self, parent, partition) -> None:
         r"""
         Initialize ``self``.
 
@@ -1349,7 +1349,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             raise ValueError(f"{shape} is not a partition of {SGA.n}")
         return super().__classcall__(cls, SGA, shape)
 
-    def __init__(self, SGA, shape):
+    def __init__(self, SGA, shape) -> None:
         r"""
         Initialize ``self``.
 

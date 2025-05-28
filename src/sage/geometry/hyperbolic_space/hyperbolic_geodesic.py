@@ -137,7 +137,7 @@ class HyperbolicGeodesic(SageObject):
     # "Private" Methods #
     #####################
 
-    def __init__(self, model, start, end, **graphics_options):
+    def __init__(self, model, start, end, **graphics_options) -> None:
         r"""
         See :class:`HyperbolicGeodesic` for full documentation.
 

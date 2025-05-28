@@ -97,7 +97,7 @@ class TensorFreeSubmodule_sym(TensorFreeModule):
         T^{\{2,3\}}(M) \otimes T^{\{6,7\}}(M^*) \otimes \mathrm{Sym}^{\{0,1\}}(M) \otimes \mathrm{ASym}^{\{4,5\}}(M^*)
     """
     def __init__(self, fmodule, tensor_type, name=None, latex_name=None,
-                 sym=None, antisym=None, *, category=None, ambient=None):
+                 sym=None, antisym=None, *, category=None, ambient=None) -> None:
         r"""
         TESTS::
 

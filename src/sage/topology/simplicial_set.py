@@ -296,7 +296,7 @@ class AbstractSimplex_class(SageObject):
     """
 
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
-                 latex_name=None):
+                 latex_name=None) -> None:
         """
         A simplex of dimension ``dim``.
 
@@ -916,7 +916,7 @@ class AbstractSimplex_class(SageObject):
 # __ge__, __le__. Inheriting from AbstractSimplex_class first seems to
 # be slightly faster.
 class NonDegenerateSimplex(AbstractSimplex_class, WithEqualityById):
-    def __init__(self, dim, name=None, latex_name=None):
+    def __init__(self, dim, name=None, latex_name=None) -> None:
         """
         A nondegenerate simplex.
 
@@ -1225,7 +1225,7 @@ class SimplicialSet_arbitrary(Parent):
             return self.faces(simplex)[i]
         return None
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is a simplex which is contained in this complex.
 
@@ -3204,7 +3204,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
     """
 
     def __init__(self, data, base_point=None, name=None, check=True,
-                 category=None, latex_name=None):
+                 category=None, latex_name=None) -> None:
         r"""
         TESTS::
 

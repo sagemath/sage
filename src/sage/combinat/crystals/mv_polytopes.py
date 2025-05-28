@@ -358,7 +358,7 @@ class MVPolytopes(PBWCrystal):
     - [Kam2010]_
     """
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 

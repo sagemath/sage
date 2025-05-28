@@ -117,7 +117,7 @@ class KoszulComplex(ChainComplex_class, UniqueRepresentation):
             R = elements[0].parent()
         return super().__classcall__(cls, R, tuple(elements))
 
-    def __init__(self, R, elements):
+    def __init__(self, R, elements) -> None:
         """
         Initialize ``self``.
 

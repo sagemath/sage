@@ -85,7 +85,7 @@ class VoronoiDiagram(SageObject):
 
     - Moritz Firsching (2012-09-21)
     """
-    def __init__(self, points):
+    def __init__(self, points) -> None:
         r"""
         See ``VoronoiDiagram`` for full documentation.
 

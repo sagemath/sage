@@ -38,7 +38,7 @@ class WordDatatype_morphic(WordDatatype_callable):
     Datatype for a morphic word defined by a morphism, a starting letter
     and a coding.
     """
-    def __init__(self, parent, morphism, letter, coding=None, length=Infinity):
+    def __init__(self, parent, morphism, letter, coding=None, length=Infinity) -> None:
         r"""
         INPUT:
 

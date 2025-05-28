@@ -47,7 +47,7 @@ from sage.repl.rich_output.output_catalog import OutputPlainText, OutputImagePng
 
 class TestOutputPlainText(OutputPlainText):
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Backend-specific subclass of the plain text output container.
 

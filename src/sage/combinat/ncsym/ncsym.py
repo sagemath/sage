@@ -293,7 +293,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         -4*p[] + 2*p[1] + p[2, 2]
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -362,7 +362,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
              3}, {2}} # m{}
         """
 
-        def __init__(self, NCSym):
+        def __init__(self, NCSym) -> None:
             """
             EXAMPLES::
 
@@ -855,7 +855,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: e = NCSym.e()
         """
 
-        def __init__(self, NCSym):
+        def __init__(self, NCSym) -> None:
             """
             EXAMPLES::
 
@@ -1042,7 +1042,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             h{} # h{{1, 2}} + 2*h{{1}} # h{{1}} + h{{1, 2}} # h{}
         """
 
-        def __init__(self, NCSym):
+        def __init__(self, NCSym) -> None:
             """
             EXAMPLES::
 
@@ -1230,7 +1230,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             4*p[] + 8*p[1] + 4*p[1, 1] + 12*p[2] + 12*p[2, 1] + 9*p[2, 2]
         """
 
-        def __init__(self, NCSym):
+        def __init__(self, NCSym) -> None:
             """
             EXAMPLES::
 
@@ -1627,7 +1627,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             p[2, 1]
         """
 
-        def __init__(self, NCSym):
+        def __init__(self, NCSym) -> None:
             """
             EXAMPLES::
 
@@ -1700,7 +1700,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
              x{{1, 2}, {3}} # x{{1, 2}, {3}}
         """
 
-        def __init__(self, NCSym):
+        def __init__(self, NCSym) -> None:
             """
             EXAMPLES::
 
@@ -1798,7 +1798,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             [  0   0   0   0   0   0   0   0   0   0   0   0   0   0   1]
         """
 
-        def __init__(self, NCSym, q=2):
+        def __init__(self, NCSym, q=2) -> None:
             """
             EXAMPLES::
 
@@ -1940,7 +1940,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
              supercharacter basis with parameter q=2
         """
 
-        def __init__(self, NCSym, q=2):
+        def __init__(self, NCSym, q=2) -> None:
             """
             EXAMPLES::
 

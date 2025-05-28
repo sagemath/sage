@@ -354,7 +354,7 @@ class GenericTerm(MultiplicativeGroupElement):
         False
     """
 
-    def __init__(self, parent, growth):
+    def __init__(self, parent, growth) -> None:
         r"""
         See :class:`GenericTerm` for more information.
 
@@ -1416,7 +1416,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
         return super().__classcall__(
             cls, term_monoid_factory, growth_group, coefficient_ring, category)
 
-    def __init__(self, term_monoid_factory, growth_group, coefficient_ring, category):
+    def __init__(self, term_monoid_factory, growth_group, coefficient_ring, category) -> None:
         r"""
         See :class:`GenericTermMonoid` for more information.
 
@@ -3015,7 +3015,7 @@ class TermWithCoefficient(GenericTerm):
         Term with coefficient 3/8 and growth x^3
     """
 
-    def __init__(self, parent, growth, coefficient):
+    def __init__(self, parent, growth, coefficient) -> None:
         r"""
         See :class:`TermWithCoefficient` for more information.
 
@@ -4353,7 +4353,7 @@ class BTerm(TermWithCoefficient):
         sage: T(x^3*y^2, coefficient=42, valid_from={'x': 10, 'y': 20})
         B(42*x^3*y^2, x >= 10, y >= 20)
     """
-    def __init__(self, parent, growth, valid_from, **kwds):
+    def __init__(self, parent, growth, valid_from, **kwds) -> None:
         r"""
         See :class:`BTerm` for more information.
 
@@ -5044,7 +5044,7 @@ class TermMonoidFactory(UniqueRepresentation, UniqueFactory):
     def __init__(self, name,
                  exact_term_monoid_class=None,
                  O_term_monoid_class=None,
-                 B_term_monoid_class=None):
+                 B_term_monoid_class=None) -> None:
         r"""
         See :class:`TermMonoidFactory` for more information.
 

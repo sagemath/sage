@@ -147,7 +147,7 @@ from sage.schemes.elliptic_curves.hom import EllipticCurveHom
 
 class EllipticCurveHom_scalar(EllipticCurveHom):
 
-    def __init__(self, E, m):
+    def __init__(self, E, m) -> None:
         """
         Construct a scalar-multiplication map on an elliptic curve.
 

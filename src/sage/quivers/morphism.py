@@ -117,7 +117,7 @@ class QuiverRepHom(CallMorphism):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, domain, codomain, data={}):
+    def __init__(self, domain, codomain, data={}) -> None:
         """
         Initialize ``self``. Type ``QuiverRepHom?`` for more information.
 

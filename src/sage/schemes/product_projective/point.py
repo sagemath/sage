@@ -46,7 +46,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         sage: T.point([1, 2, 3, 4, 5])
         (1/3 : 2/3 : 1 , 4/5 : 1)
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         r"""
         The Python constructor.
 
@@ -238,7 +238,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         """
         return (x for P in self._points for x in P._coords)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the total number of coordinates in ``self``.
 

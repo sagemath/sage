@@ -121,7 +121,7 @@ class AbstractLanguage(Parent):
     simply disappear or become a common base class for all languages. In the
     latter case, its name would possibly change to ``Language``.
     """
-    def __init__(self, alphabet=None, category=None):
+    def __init__(self, alphabet=None, category=None) -> None:
         r"""
         INPUT:
 
@@ -340,7 +340,7 @@ class FiniteWords(AbstractLanguage):
         sage: TestSuite(FiniteWords(['a'])).run()
     """
 
-    def __init__(self, alphabet=None, category=None):
+    def __init__(self, alphabet=None, category=None) -> None:
         """
         INPUT:
 
@@ -1674,7 +1674,7 @@ class InfiniteWords(AbstractLanguage):
 
 
 class FiniteOrInfiniteWords(AbstractLanguage):
-    def __init__(self, alphabet):
+    def __init__(self, alphabet) -> None:
         r"""
         INPUT:
 
@@ -2130,7 +2130,7 @@ class Words_n(Parent):
     r"""
     The set of words of fixed length on a given alphabet.
     """
-    def __init__(self, words, n):
+    def __init__(self, words, n) -> None:
         r"""
         INPUT:
 
@@ -2295,7 +2295,7 @@ class Words_n(Parent):
             return "Words over {} of length {}".format(self.alphabet(), self._n)
         return "Words of length {} over {}".format(self._n, self.alphabet())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

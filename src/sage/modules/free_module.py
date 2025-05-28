@@ -894,7 +894,7 @@ class Module_free_ambient(Module):
         sage: N.degree()
         2
     """
-    def __init__(self, base_ring, degree, sparse=False, category=None):
+    def __init__(self, base_ring, degree, sparse=False, category=None) -> None:
         """
         Initialize.
 
@@ -1997,7 +1997,7 @@ class FreeModule_generic(Module_free_ambient):
         False
     """
     def __init__(self, base_ring, rank, degree, sparse=False,
-                 coordinate_ring=None, category=None):
+                 coordinate_ring=None, category=None) -> None:
         """
         Create the free module of given rank ``rank`` over the given base
         ring ``base_ring``.
@@ -3446,7 +3446,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return self.__rank
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if and only if the rank of this module is
         nonzero. In other words, this returns ``False`` for the zero
@@ -3770,7 +3770,7 @@ class FreeModule_generic_domain(FreeModule_generic):
     """
     Base class for free modules over an integral domain.
     """
-    def __init__(self, base_ring, rank, degree, sparse=False, coordinate_ring=None, category=None):
+    def __init__(self, base_ring, rank, degree, sparse=False, coordinate_ring=None, category=None) -> None:
         """
         Create a free module over an integral domain.
 
@@ -3867,7 +3867,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
     """
     Base class for all free modules over a PID.
     """
-    def __init__(self, base_ring, rank, degree, sparse=False, coordinate_ring=None, category=None):
+    def __init__(self, base_ring, rank, degree, sparse=False, coordinate_ring=None, category=None) -> None:
         """
         Create a free module over a PID.
 
@@ -4496,7 +4496,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
     """
     Base class for all free modules over fields.
     """
-    def __init__(self, base_field, dimension, degree, sparse=False, category=None):
+    def __init__(self, base_field, dimension, degree, sparse=False, category=None) -> None:
         """
         Create a vector space over a field.
 
@@ -5467,7 +5467,7 @@ class FreeModule_ambient(FreeModule_generic):
     """
     Ambient free module over a commutative ring.
     """
-    def __init__(self, base_ring, rank, sparse=False, coordinate_ring=None, category=None):
+    def __init__(self, base_ring, rank, sparse=False, coordinate_ring=None, category=None) -> None:
         """
         The free module of given rank over the given base_ring.
 
@@ -6172,7 +6172,7 @@ class FreeModule_ambient_domain(FreeModule_generic_domain, FreeModule_ambient):
         Ambient free module of rank 3 over the principal ideal domain
          Univariate Polynomial Ring in x over Finite Field of size 5
     """
-    def __init__(self, base_ring, rank, sparse=False, coordinate_ring=None, category=None):
+    def __init__(self, base_ring, rank, sparse=False, coordinate_ring=None, category=None) -> None:
         """
         Create the ambient free module of given rank over the given integral
         domain.
@@ -6341,7 +6341,7 @@ class FreeModule_ambient_pid(FreeModule_generic_pid, FreeModule_ambient_domain):
     """
     Ambient free module over a principal ideal domain.
     """
-    def __init__(self, base_ring, rank, sparse=False, coordinate_ring=None, category=None):
+    def __init__(self, base_ring, rank, sparse=False, coordinate_ring=None, category=None) -> None:
         """
         Create the ambient free module of given rank over the given
         principal ideal domain.
@@ -6432,7 +6432,7 @@ class FreeModule_ambient_pid(FreeModule_generic_pid, FreeModule_ambient_domain):
 ###############################################################################
 
 class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid):
-    def __init__(self, base_field, dimension, sparse=False, category=None):
+    def __init__(self, base_field, dimension, sparse=False, category=None) -> None:
         """
         Create the ambient vector space of given dimension over the given
         field.
@@ -6541,7 +6541,7 @@ class FreeModule_ambient_field(FreeModule_generic_field, FreeModule_ambient_pid)
 
 
 class RealDoubleVectorSpace_class(FreeModule_ambient_field):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         FreeModule_ambient_field.__init__(self, sage.rings.real_double.RDF, n)
 
     def coordinates(self, v):
@@ -6549,7 +6549,7 @@ class RealDoubleVectorSpace_class(FreeModule_ambient_field):
 
 
 class ComplexDoubleVectorSpace_class(FreeModule_ambient_field):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         FreeModule_ambient_field.__init__(self, sage.rings.complex_double.CDF, n)
 
     def coordinates(self, v):
@@ -6612,7 +6612,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
     def __init__(self, ambient, basis, check=True,
                  echelonize=False, echelonized_basis=None,
                  already_echelonized=False,
-                 category=None):
+                 category=None) -> None:
         r"""
         See :class:`FreeModule_submodule_with_basis_pid` for documentation.
 
@@ -7701,7 +7701,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
         sage: TestSuite(v).run()
     """
     def __init__(self, ambient, gens, check=True, already_echelonized=False,
-                 category=None):
+                 category=None) -> None:
         """
         Create an embedded free module over a PID.
 
@@ -7859,7 +7859,7 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
     def __init__(self, ambient, basis, check=True,
                  echelonize=False, echelonized_basis=None,
                  already_echelonized=False,
-                 category=None):
+                 category=None) -> None:
         """
         Create a vector space with given basis.
 
@@ -8057,7 +8057,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
         sage: vector(QQ, W.coordinates(v)) * W.basis_matrix()
         (1, 5, 9)
     """
-    def __init__(self, ambient, gens, check=True, already_echelonized=False, category=None):
+    def __init__(self, ambient, gens, check=True, already_echelonized=False, category=None) -> None:
         """
         Create an embedded vector subspace with echelonized basis.
 
@@ -8400,7 +8400,7 @@ class EchelonMatrixKey:
         sage: modules == modules_sorted
         True
     """
-    def __init__(self, obj):
+    def __init__(self, obj) -> None:
         r"""
         Create a container for a free module with a total ordering.
 

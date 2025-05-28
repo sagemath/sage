@@ -60,7 +60,7 @@ class GaloisGroup_GF(GaloisGroup_cyc):
     """
     Element = GaloisGroup_GFElement
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         r"""
         Create a Galois group.
 

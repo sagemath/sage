@@ -59,7 +59,7 @@ class SpikeFunction:
         sage: S.support                                                                 # needs sage.symbolic
         [0.0, 1.0, 3.141592653589793]
     """
-    def __init__(self, v, eps=0.0000001):
+    def __init__(self, v, eps=0.0000001) -> None:
         """
         Initialize base class SpikeFunction.
 
@@ -91,7 +91,7 @@ class SpikeFunction:
         self.support = [float(x[0]) for x in self.v]
         self.height = [float(x[1]) for x in self.v]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of a spike function.
 

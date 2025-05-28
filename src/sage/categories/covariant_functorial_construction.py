@@ -418,7 +418,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
         else:
             return cls.default_super_categories(category, *args)
 
-    def __init__(self, category, *args):
+    def __init__(self, category, *args) -> None:
         r"""
         TESTS::
 

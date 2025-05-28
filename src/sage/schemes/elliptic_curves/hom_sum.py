@@ -63,7 +63,7 @@ class EllipticCurveHom_sum(EllipticCurveHom):
     _degree = None
     _phis = None
 
-    def __init__(self, phis, domain=None, codomain=None):
+    def __init__(self, phis, domain=None, codomain=None) -> None:
         r"""
         Construct a sum morphism of elliptic curves from its summands.
         (For empty sums, the domain and codomain curves must be given.)

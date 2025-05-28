@@ -300,7 +300,7 @@ class RibbonGraph(SageObject, UniqueRepresentation):
             M = rho.parent()
         return super().__classcall__(cls, M(sigma), M(rho))
 
-    def __init__(self, sigma, rho):
+    def __init__(self, sigma, rho) -> None:
         r"""
         Initialize ``self``.
 

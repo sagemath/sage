@@ -33,7 +33,7 @@ from sage.rings.infinity import infinity
 
 
 class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebra_multiplicative):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class for methods for the elementary basis of the symmetric functions.
 

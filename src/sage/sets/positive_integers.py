@@ -47,7 +47,7 @@ class PositiveIntegers(IntegerRangeInfinite):
 
         sage: TestSuite(PositiveIntegers()).run()
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 

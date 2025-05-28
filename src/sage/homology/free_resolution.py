@@ -180,7 +180,7 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
             return module.graded_free_resolution(*args, **kwds)
         return module.free_resolution(*args, **kwds)
 
-    def __init__(self, module, name='S', **kwds):
+    def __init__(self, module, name='S', **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -390,7 +390,7 @@ class FiniteFreeResolution(FreeResolution):
         s += ' <-- 0'
         return s
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the length of this resolution.
 
@@ -851,7 +851,7 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
         [-y*z + x*w]
         [ z^2 - y*w]
     """
-    def __init__(self, module, name='S', algorithm='heuristic', **kwds):
+    def __init__(self, module, name='S', algorithm='heuristic', **kwds) -> None:
         r"""
         Initialize ``self``.
 

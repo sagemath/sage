@@ -107,7 +107,7 @@ class TransformWidget:
         sage: w.get_interact_value()
         'pipi'
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Construct a :class:`TransformWidget`.
 
@@ -383,7 +383,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
     value = List()
     description = Unicode()
 
-    def __init__(self, nrows, ncols, make_widget, description="", transform=None):
+    def __init__(self, nrows, ncols, make_widget, description="", transform=None) -> None:
         """
         Create a :class:`Grid` widget.
 

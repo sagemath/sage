@@ -219,7 +219,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
     """
     Element = MultivectorField
 
-    def __init__(self, vector_field_module, degree):
+    def __init__(self, vector_field_module, degree) -> None:
         r"""
         Construction a module of multivector fields.
 
@@ -657,7 +657,7 @@ class MultivectorFreeModule(ExtPowerFreeModule):
 
     Element = MultivectorFieldParal
 
-    def __init__(self, vector_field_module, degree):
+    def __init__(self, vector_field_module, degree) -> None:
         r"""
         Construct a free module of multivector fields.
 

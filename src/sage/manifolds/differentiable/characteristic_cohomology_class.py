@@ -328,7 +328,7 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
         sage: A == 1 - p1/24 + (7*p1^2-4*p2)/5760 + (44*p1*p2-31*p1^3-16*p3)/967680
         True
     """
-    def __init__(self, parent, x, name=None, latex_name=None):
+    def __init__(self, parent, x, name=None, latex_name=None) -> None:
         r"""
         Construct a characteristic cohomology class.
 
@@ -733,7 +733,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
     """
     Element = CharacteristicCohomologyClassRingElement
 
-    def __init__(self, base, vbundle):
+    def __init__(self, base, vbundle) -> None:
         r"""
         Construct a characteristic cohomology ring.
 

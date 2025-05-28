@@ -608,7 +608,7 @@ class SetPartition(AbstractSetPartition,
         P = SetPartitions()
         return P.element_class(P, parts, check=check)
 
-    def __init__(self, parent, s, check=True):
+    def __init__(self, parent, s, check=True) -> None:
         """
         Initialize ``self``.
 
@@ -2074,7 +2074,7 @@ class SetPartitions(UniqueRepresentation, Parent):
                     raise ValueError("part must be an integer partition of %s" % len(s))
                 return SetPartitions_setparts(s, Partition(part))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -2633,7 +2633,7 @@ class SetPartitions_all(SetPartitions):
     All set partitions.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -2707,7 +2707,7 @@ class SetPartitions_set(SetPartitions):
         """
         return super().__classcall__(cls, frozenset(s))
 
-    def __init__(self, s):
+    def __init__(self, s) -> None:
         """
         Initialize ``self``.
 
@@ -2732,7 +2732,7 @@ class SetPartitions_set(SetPartitions):
         """
         return "Set partitions of %s" % (Set(self._set))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -2888,7 +2888,7 @@ class SetPartitions_setparts(SetPartitions_set):
             s = list(range(1, s + 1))
         return super().__classcall__(cls, frozenset(s), Partition(parts))
 
-    def __init__(self, s, parts):
+    def __init__(self, s, parts) -> None:
         """
         Initialize the data structure.
 
@@ -3052,7 +3052,7 @@ class SetPartitions_setparts(SetPartitions_set):
                   for i in range(k)]
             yield self.element_class(self, sp, check=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check containment.
 
@@ -3129,7 +3129,7 @@ class SetPartitions_setn(SetPartitions_set):
         """
         return super().__classcall__(cls, frozenset(s), k)
 
-    def __init__(self, s, k):
+    def __init__(self, s, k) -> None:
         """
         TESTS::
 
@@ -3198,7 +3198,7 @@ class SetPartitions_setn(SetPartitions_set):
         for sp in set_partition_iterator_blocks(s, self._k):
             yield self.element_class(self, sp, check=False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check containment.
 

@@ -110,7 +110,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
     _functor_category = "CartesianProducts"
     symbol = " (+) "
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         r"""
         Constructor. See :class:`CartesianProductFunctor` for details.
 

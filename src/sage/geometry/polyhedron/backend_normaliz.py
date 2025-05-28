@@ -201,7 +201,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
         sage: P.vertices()                                                              # needs sage.rings.number_field sage.symbolic
         (A vertex at (2^(1/3)), A vertex at (sqrt(2)))
     """
-    def __init__(self, parent, Vrep, Hrep, normaliz_cone=None, normaliz_data=None, internal_base_ring=None, **kwds):
+    def __init__(self, parent, Vrep, Hrep, normaliz_cone=None, normaliz_data=None, internal_base_ring=None, **kwds) -> None:
         """
         Initialize the polyhedron.
 

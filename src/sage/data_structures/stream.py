@@ -140,7 +140,7 @@ class Stream:
         code is not executed if ``_approximate_order`` is set to a
         value before it is accessed.
     """
-    def __init__(self, true_order):
+    def __init__(self, true_order) -> None:
         """
         Initialize ``self``.
 
@@ -280,7 +280,7 @@ class Stream_inexact(Stream):
 
     If the cache is dense, it begins with the first nonzero term.
     """
-    def __init__(self, is_sparse, true_order):
+    def __init__(self, is_sparse, true_order) -> None:
         """
         Initialize the stream class for a stream whose
         coefficients are not necessarily eventually constant.
@@ -615,7 +615,7 @@ class Stream_exact(Stream):
         :class:`sage.rings.lazy_series_ring.LazySeriesRing`, where
         the input is shifted to have the prescribed order.
     """
-    def __init__(self, initial_coefficients, constant=None, degree=None, order=None):
+    def __init__(self, initial_coefficients, constant=None, degree=None, order=None) -> None:
         """
         Initialize a stream with eventually constant coefficients.
 
@@ -952,7 +952,7 @@ class Stream_iterator(Stream_inexact):
         sage: [f[i] for i in range(10)]
         [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]
     """
-    def __init__(self, iter, approximate_order, true_order=False):
+    def __init__(self, iter, approximate_order, true_order=False) -> None:
         """
         Initialize.
 
@@ -1010,7 +1010,7 @@ class Stream_function(Stream_inexact):
         sage: f[4]
         4
     """
-    def __init__(self, function, is_sparse, approximate_order, true_order=False):
+    def __init__(self, function, is_sparse, approximate_order, true_order=False) -> None:
         """
         Initialize.
 
@@ -1121,7 +1121,7 @@ class Stream_taylor(Stream_inexact):
         sage: [f[i] for i in range(4)]
         [1, 2, 4, 8]
     """
-    def __init__(self, function, is_sparse):
+    def __init__(self, function, is_sparse) -> None:
         """
         Initialize.
 
@@ -1268,7 +1268,7 @@ class VariablePool(UniqueRepresentation):
 
     - ``ring`` -- :class:`InfinitePolynomialRing`
     """
-    def __init__(self, ring):
+    def __init__(self, ring) -> None:
         """
         Initialize the pool.
 
@@ -1400,7 +1400,7 @@ class CoefficientRing(UniqueRepresentation, FractionField_generic):
     r"""
     The class of unknown coefficients in a stream.
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         Initialize ``self``.
 
@@ -1540,7 +1540,7 @@ class Stream_uninitialized(Stream):
         sage: C[4]
         0
     """
-    def __init__(self, approximate_order, true_order=False, name=None):
+    def __init__(self, approximate_order, true_order=False, name=None) -> None:
         """
         Initialize ``self``.
 
@@ -1560,7 +1560,7 @@ class Stream_uninitialized(Stream):
         self._is_sparse = False
         self._name = name
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         Remove variables from the pool on destruction.
 
@@ -2271,7 +2271,7 @@ class Stream_unary(Stream_inexact):
         sage: [g[i] for i in range(10)]
         [0, 4, 8, 12, 16, 20, 24, 28, 32, 36]
     """
-    def __init__(self, series, is_sparse, true_order=False):
+    def __init__(self, series, is_sparse, true_order=False) -> None:
         """
         Initialize ``self``.
 
@@ -2377,7 +2377,7 @@ class Stream_binary(Stream_inexact):
         sage: [h[i] for i in range(10)]
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
     """
-    def __init__(self, left, right, is_sparse):
+    def __init__(self, left, right, is_sparse) -> None:
         """
         Initialize ``self``.
 
@@ -2554,7 +2554,7 @@ class Stream_zero(Stream):
         sage: s[5]
         0
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -2978,7 +2978,7 @@ class Stream_cauchy_compose(Stream_binary):
         sage: [u[i] for i in range(10)]
         [0, 1, 3, 8, 21, 55, 144, 377, 987, 2584]
     """
-    def __init__(self, f, g, is_sparse):
+    def __init__(self, f, g, is_sparse) -> None:
         """
         Initialize ``self``.
 
@@ -3163,7 +3163,7 @@ class Stream_plethysm(Stream_binary):
         sage: r_s - sum(r2[n] for n in range(2*(r_s.degree()+1)))                       # needs sage.modules
         (a2*b1^2-a2*b1)*p[2] + (a2*b111^2-a2*b111)*p[2, 2, 2] + (a2*b21^2-a2*b21)*p[4, 2]
     """
-    def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None):
+    def __init__(self, f, g, is_sparse, p, ring=None, include=None, exclude=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -3443,7 +3443,7 @@ class Stream_scalar(Stream_unary):
     - ``scalar`` -- a nonzero, non-one scalar
     - ``is_sparse`` -- boolean
     """
-    def __init__(self, series, scalar, is_sparse):
+    def __init__(self, series, scalar, is_sparse) -> None:
         """
         Initialize ``self``.
 
@@ -3643,7 +3643,7 @@ class Stream_neg(Stream_unary):
     # TODO: maybe we should just inherit from `Stream` instead of
     # inheriting from `Stream_unary` and do not create a copy of the
     # cache
-    def __init__(self, series, is_sparse):
+    def __init__(self, series, is_sparse) -> None:
         """
         Initialize ``self``.
 
@@ -3737,7 +3737,7 @@ class Stream_cauchy_invert(Stream_unary):
         sage: [g[i] for i in range(10)]
         [-1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     """
-    def __init__(self, series, approximate_order=None):
+    def __init__(self, series, approximate_order=None) -> None:
         """
         Initialize ``self``.
 
@@ -3868,7 +3868,7 @@ class Stream_dirichlet_invert(Stream_unary):
         sage: [moebius(i) for i in range(10)]                                           # needs sage.libs.pari
         [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
     """
-    def __init__(self, series, is_sparse):
+    def __init__(self, series, is_sparse) -> None:
         """
         Initialize.
 
@@ -3980,7 +3980,7 @@ class Stream_map_coefficients(Stream_unary):
         sage: [g[i] for i in range(10)]
         [0, -1, -1, -1, -1, -1, -1, -1, -1, -1]
     """
-    def __init__(self, series, function, is_sparse, approximate_order=None, true_order=False):
+    def __init__(self, series, function, is_sparse, approximate_order=None, true_order=False) -> None:
         """
         Initialize ``self``.
 
@@ -4092,7 +4092,7 @@ class Stream_shift(Stream):
     - ``series`` -- a :class:`Stream`
     - ``shift`` -- integer
     """
-    def __init__(self, series, shift):
+    def __init__(self, series, shift) -> None:
         """
         Initialize ``self``.
 
@@ -4241,7 +4241,7 @@ class Stream_truncated(Stream_unary):
     - ``shift`` -- integer
     - ``minimal_valuation`` -- integer; this is also the approximate order
     """
-    def __init__(self, series, shift, minimal_valuation):
+    def __init__(self, series, shift, minimal_valuation) -> None:
         """
         Initialize ``self``.
 
@@ -4488,7 +4488,7 @@ class Stream_derivative(Stream_unary):
     - ``shift`` -- positive integer
     - ``is_sparse`` -- boolean
     """
-    def __init__(self, series, shift, is_sparse):
+    def __init__(self, series, shift, is_sparse) -> None:
         """
         Initialize ``self``.
 
@@ -4616,7 +4616,7 @@ class Stream_integral(Stream_unary):
     - ``integration_constants`` -- list of integration constants
     - ``is_sparse`` -- boolean
     """
-    def __init__(self, series, integration_constants, is_sparse):
+    def __init__(self, series, integration_constants, is_sparse) -> None:
         """
         Initialize ``self``.
 
@@ -4757,7 +4757,7 @@ class Stream_infinite_operator(Stream):
 
     - ``iterator`` -- the iterator for the factors
     """
-    def __init__(self, iterator):
+    def __init__(self, iterator) -> None:
         r"""
         Initialize ``self``.
 

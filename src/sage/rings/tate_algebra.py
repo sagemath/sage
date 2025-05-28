@@ -350,7 +350,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
     """
     Element = TateAlgebraTerm
 
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         r"""
         Initialize the Tate term monoid.
 
@@ -675,7 +675,7 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
 ###############
 
 class TateAlgebra_generic(Parent):
-    def __init__(self, field, prec, log_radii, names, order, integral=False):
+    def __init__(self, field, prec, log_radii, names, order, integral=False) -> None:
         """
         Initialize the Tate algebra.
 

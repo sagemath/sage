@@ -95,7 +95,7 @@ class Test:
     Testing class for arithmetic subgroup implemented via permutations.
     """
 
-    def __init__(self, index=20, index_max=50, odd_probability=0.5):
+    def __init__(self, index=20, index_max=50, odd_probability=0.5) -> None:
         r"""
         Create an arithmetic subgroup testing object.
 
@@ -134,7 +134,7 @@ class Test:
 
         self.index = index
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of ``self``.
 

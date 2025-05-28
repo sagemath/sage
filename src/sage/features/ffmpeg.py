@@ -25,7 +25,7 @@ class FFmpeg(Executable):
         sage: FFmpeg().is_present()  # optional - ffmpeg
         FeatureTestResult('ffmpeg', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

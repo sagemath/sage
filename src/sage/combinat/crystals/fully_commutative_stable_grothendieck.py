@@ -127,7 +127,7 @@ class DecreasingHeckeFactorization(Element, metaclass=InheritComparisonClasscall
                     parent = FullyCommutativeStableGrothendieckCrystal(word, factors, excess)
         return parent.element_class(parent, u)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         """
         Initialize a decreasing factorization for ``self`` given the relevant data.
 
@@ -366,7 +366,7 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
             raise ValueError("excess must be 0 for the empty word")
         return super().__classcall__(cls, w, factors, excess)
 
-    def __init__(self, w, factors, excess):
+    def __init__(self, w, factors, excess) -> None:
         """
         Initialize a set for ``self`` given reduced word ``w`` in the symmetric group,
         number of factors ``factors`` and``excess`` extra letters.
@@ -530,7 +530,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
             raise ValueError("excess must be 0 for the empty word")
         return super().__classcall__(cls, w, factors, excess)
 
-    def __init__(self, w, factors, excess):
+    def __init__(self, w, factors, excess) -> None:
         """
         Initialize a crystal for ``self`` given reduced word ``w`` in the symmetric group,
         number of factors ``factors`` and``excess`` extra letters.
@@ -616,7 +616,7 @@ class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
         return "Fully commutative stable Grothendieck crystal of type A_{} associated to {} with excess {}".format(self.factors-1, list(self.w), self.excess)
 
     class Element(DecreasingHeckeFactorization):
-        def __init__(self, parent, t):
+        def __init__(self, parent, t) -> None:
             """
             Create an instance ``self`` of element ``t``.
 

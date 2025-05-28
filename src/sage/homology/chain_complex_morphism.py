@@ -95,7 +95,7 @@ class ChainComplexMorphism(Morphism):
     """
     An element of this class is a morphism of chain complexes.
     """
-    def __init__(self, matrices, C, D, check=True):
+    def __init__(self, matrices, C, D, check=True) -> None:
         """
         Create a morphism from a dictionary of matrices.
 

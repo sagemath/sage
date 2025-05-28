@@ -163,7 +163,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
 
     - :wikipedia:`Filtered_algebra#Associated_graded_algebra`
     """
-    def __init__(self, A, category=None):
+    def __init__(self, A, category=None) -> None:
         """
         Initialize ``self``.
 

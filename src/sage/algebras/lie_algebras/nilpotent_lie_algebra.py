@@ -132,7 +132,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
         return super().__classcall__(cls, R, s_coeff, names,
                                      index_set, category=category, **kwds)
 
-    def __init__(self, R, s_coeff, names, index_set, step=None, **kwds):
+    def __init__(self, R, s_coeff, names, index_set, step=None, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -338,7 +338,7 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
             cls, R, r, s, names=tuple(names), naming=naming,
             category=category, **kwds)
 
-    def __init__(self, R, r, s, names, naming, category, **kwds):
+    def __init__(self, R, r, s, names, naming, category, **kwds) -> None:
         r"""
         Initialize ``self``.
 

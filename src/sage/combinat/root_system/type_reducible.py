@@ -76,7 +76,7 @@ class CartanType(SageObject, CartanType_abstract):
         A4xBC5~xC3
     """
 
-    def __init__(self, types):
+    def __init__(self, types) -> None:
         """
         Initialize ``self``.
 

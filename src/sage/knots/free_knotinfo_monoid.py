@@ -117,7 +117,7 @@ class FreeKnotInfoMonoid(IndexedFreeAbelianMonoid):
         return UniqueRepresentation.__classcall__(cls, max_crossing_number,
                                                   prefix=prefix, **kwds)
 
-    def __init__(self, max_crossing_number, category=None, prefix=None, **kwds):
+    def __init__(self, max_crossing_number, category=None, prefix=None, **kwds) -> None:
         r"""
         Initialize ``self`` with generators belonging to prime knots with
         at most ``max_crossing_number`` crossings.

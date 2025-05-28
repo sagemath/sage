@@ -31,7 +31,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
     Element = MatrixGroupElement_gap
 
-    def __init__(self, degree, base_ring, libgap_group, ambient=None, category=None):
+    def __init__(self, degree, base_ring, libgap_group, ambient=None, category=None) -> None:
         """
         Base class for matrix groups that implements GAP interface.
 

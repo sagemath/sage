@@ -244,7 +244,7 @@ class FPElement(IndexedFreeModuleElement):
         F_n = self.parent().vector_presentation(degree)
         return F_n.quotient_map()(self.lift_to_free().vector_presentation())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Determine if this element is nonzero.
 

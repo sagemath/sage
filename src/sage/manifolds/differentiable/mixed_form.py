@@ -212,7 +212,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
         ...
         ValueError: the components of an immutable element cannot be changed
     """
-    def __init__(self, parent, name=None, latex_name=None):
+    def __init__(self, parent, name=None, latex_name=None) -> None:
         r"""
         Construct a mixed form.
 
@@ -623,7 +623,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
                     comp_latex_name = '{' + self._latex_name + '}_{' + str(i) + '}'
                 self[i].set_name(name=comp_name, latex_name=comp_latex_name)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -1176,7 +1176,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
 
         return resu
 
-    def __setitem__(self, index, values):
+    def __setitem__(self, index, values) -> None:
         r"""
         Set a component with respect to some vector frame.
 

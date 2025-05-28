@@ -36,7 +36,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
     See Section 2.3 of [BZ05]_ for a study.
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -124,7 +124,7 @@ class SymmetricFunctionsNonCommutingVariablesDual(UniqueRepresentation, Parent):
             3*h[2, 1]
         """
 
-        def __init__(self, NCSymD):
+        def __init__(self, NCSymD) -> None:
             """
             EXAMPLES::
 

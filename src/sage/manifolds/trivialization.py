@@ -123,7 +123,7 @@ class Trivialization(UniqueRepresentation, SageObject):
         [1, 0]
     """
 
-    def __init__(self, vector_bundle, name, domain, latex_name=None):
+    def __init__(self, vector_bundle, name, domain, latex_name=None) -> None:
         r"""
         Construct a local trivialization of the vector bundle ``vector_bundle``.
 
@@ -362,7 +362,7 @@ class TransitionMap(SageObject):
         Transition map from Trivialization (phi_U, E|_U) to Trivialization
          (phi_V, E|_V)
     """
-    def __init__(self, triv1, triv2, transf, compute_inverse=True):
+    def __init__(self, triv1, triv2, transf, compute_inverse=True) -> None:
         r"""
         Construct a transition map between two trivializations.
 

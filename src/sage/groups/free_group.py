@@ -187,7 +187,7 @@ class FreeGroupElement(ElementLibGAP):
         True
     """
 
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         """
         The Python constructor.
 
@@ -693,7 +693,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names, gap_group=None):
+    def __init__(self, generator_names, gap_group=None) -> None:
         """
         Python constructor.
 

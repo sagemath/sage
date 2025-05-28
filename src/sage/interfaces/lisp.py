@@ -64,7 +64,7 @@ class Lisp(Expect):
                  maxread=None, script_subdirectory=None,
                  logfile=None,
                  server=None,
-                 server_tmpdir=None):
+                 server_tmpdir=None) -> None:
         """
         EXAMPLES::
 
@@ -416,7 +416,7 @@ class LispElement(RingElement, ExpectElement):
         else:
             return rich_to_bool(op, 1)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         EXAMPLES::
 

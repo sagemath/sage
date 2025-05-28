@@ -46,7 +46,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
           Defn: Defined by sending (x : y : z , w : u) to (x^2 : y^2 : z^2 , w^2 : u^2).
     """
 
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         r"""
         The Python constructor.
 

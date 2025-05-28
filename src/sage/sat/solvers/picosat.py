@@ -41,7 +41,7 @@ class PicoSAT(SatSolver):
         sage: from sage.sat.solvers.picosat import PicoSAT
         sage: solver = PicoSAT()                           # optional - pycosat
     """
-    def __init__(self, verbosity=0, prop_limit=0):
+    def __init__(self, verbosity=0, prop_limit=0) -> None:
         r"""
         Construct a new PicoSAT instance.
 
@@ -170,7 +170,7 @@ class PicoSAT(SatSolver):
         else:
             return (None,) + tuple([s > 0 for s in sol])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 

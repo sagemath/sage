@@ -131,7 +131,7 @@ class PathAlgebra(CombinatorialFreeModule):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, k, P, order='negdegrevlex'):
+    def __init__(self, k, P, order='negdegrevlex') -> None:
         """
         Create a :class:`PathAlgebra` object.
 

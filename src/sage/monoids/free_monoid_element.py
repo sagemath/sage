@@ -55,7 +55,7 @@ class FreeMonoidElement(MonoidElement):
         ...
         NotImplementedError
     """
-    def __init__(self, F, x, check=True):
+    def __init__(self, F, x, check=True) -> None:
         """
         Create the element `x` of the FreeMonoid `F`.
 

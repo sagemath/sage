@@ -100,7 +100,7 @@ class SineGordonYsystem(SageObject):
         sage: Y.plot()     #not tested
     """
 
-    def __init__(self, X, na):
+    def __init__(self, X, na) -> None:
         """
         TESTS::
 

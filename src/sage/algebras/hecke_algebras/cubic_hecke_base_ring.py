@@ -208,7 +208,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
         sage: _.an_element()
         b^2*c^-1 + e3*a
     """
-    def __init__(self, names, order='degrevlex', ring_of_definition=None, third_unity_root_name='e3', markov_trace_version=False):
+    def __init__(self, names, order='degrevlex', ring_of_definition=None, third_unity_root_name='e3', markov_trace_version=False) -> None:
         r"""
         Initialize ``self``.
 
@@ -961,7 +961,7 @@ class CubicHeckeRingOfDefinition(Localization):
         - 5*E(105)^62 - 5*E(105)^68 - 8*E(105)^71 - 5*E(105)^74 - 5*E(105)^83
         - 5*E(105)^86 - 5*E(105)^89 - 5*E(105)^92 - 5*E(105)^101 - 5*E(105)^104
     """
-    def __init__(self, names=('u', 'v', 'w', 's'), order='degrevlex', markov_trace_version=False):
+    def __init__(self, names=('u', 'v', 'w', 's'), order='degrevlex', markov_trace_version=False) -> None:
         r"""
         Initialize ``self``.
 

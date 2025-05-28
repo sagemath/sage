@@ -15,7 +15,7 @@ latex_re = re.compile(r'<html>(?P<mathstart>\\\[|\\\()(?P<latex>.*)(?P<mathend>\
 
 class OutputHtml(OutputBase):
 
-    def __init__(self, html):
+    def __init__(self, html) -> None:
         """
         HTML Output.
 

@@ -1344,7 +1344,7 @@ class FSMState(SageObject):
     def __init__(self, label, word_out=None,
                  is_initial=False, is_final=False, final_word_out=None,
                  initial_probability=None,
-                 hook=None, color=None, allow_label_None=False):
+                 hook=None, color=None, allow_label_None=False) -> None:
         """
         See :class:`FSMState` for more information.
 
@@ -1946,7 +1946,7 @@ class FSMState(SageObject):
                 color and
                 self.initial_probability == other.initial_probability)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True``.
 
@@ -2178,7 +2178,7 @@ class FSMTransition(SageObject):
 
     def __init__(self, from_state, to_state,
                  word_in=None, word_out=None,
-                 hook=None):
+                 hook=None) -> None:
         """
         See :class:`FSMTransition` for more information.
 
@@ -2392,7 +2392,7 @@ class FSMTransition(SageObject):
         """
         return not (self == other)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True``.
 
@@ -2997,7 +2997,7 @@ class FiniteStateMachine(SageObject):
                  determine_alphabets=None,
                  with_final_word_out=None,
                  store_states_dict=True,
-                 on_duplicate_transition=None):
+                 on_duplicate_transition=None) -> None:
         """
         See :class:`FiniteStateMachine` for more information.
 
@@ -3797,7 +3797,7 @@ class FiniteStateMachine(SageObject):
     # tests
     # ************************************************************************
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if the finite state machine consists of at least
         one state.
@@ -3914,7 +3914,7 @@ class FiniteStateMachine(SageObject):
         """
         return not (self == other)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         """
         Return ``True``, if the finite state machine contains the
         state or transition item.
@@ -10712,7 +10712,7 @@ class Automaton(FiniteStateMachine):
         Empty automaton
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         Initialize an automaton. See :class:`Automaton` and its parent
         :class:`FiniteStateMachine` for more information.
@@ -12761,7 +12761,7 @@ class _FSMTapeCache_(SageObject):
     """
 
     def __init__(self, tape_cache_manager, tape, tape_ended,
-                 position, is_multitape):
+                 position, is_multitape) -> None:
         """
         See :class:`_FSMTapeCache_` for more details.
 
@@ -13365,7 +13365,7 @@ class _FSMTapeCacheDetectEpsilon_(_FSMTapeCache_):
     only epsilon transitions.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         See :class:`_FSMTapeCache_` for more details.
 
@@ -13810,7 +13810,7 @@ class FSMProcessIterator(SageObject, Iterator):
             process (0 branches)
         """
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             """
             Return a nice representation of ``self``.
 
@@ -13859,7 +13859,7 @@ class FSMProcessIterator(SageObject, Iterator):
                  write_final_word_out=True,
                  format_output=None,
                  process_all_prefixes_of_input=False,
-                 **kwargs):
+                 **kwargs) -> None:
         """
         See :class:`FSMProcessIterator` for more information.
 
@@ -14702,7 +14702,7 @@ class _FSMProcessIteratorEpsilon_(FSMProcessIterator):
         {0: ['', 'bde', 'cde'], 1: ['a'], 2: ['b', 'c'], 3: ['bd', 'cd']}
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         See :class:`_FSMProcessIteratorEpsilon_` and
         :class:`FSMProcessIterator` for more information.
@@ -14821,7 +14821,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
          Branch(accept=True, state='B', output='zzo')]
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """
         See :class:`_FSMProcessIteratorAll_` and
         :class:`FSMProcessIterator` for more information.

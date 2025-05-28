@@ -255,7 +255,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         sage: s.matrix(f) == a.matrix(f) + b.matrix(f)
         True
     """
-    def __init__(self, fmodule, name=None, latex_name=None):
+    def __init__(self, fmodule, name=None, latex_name=None) -> None:
         r"""
         TESTS::
 

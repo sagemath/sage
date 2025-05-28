@@ -44,7 +44,7 @@ class OreModules(Category_over_base_ring):
             ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
         return cls.__classcall__(cls, ore)
 
-    def __init__(self, ore):
+    def __init__(self, ore) -> None:
         r"""
         Initialize this category.
 

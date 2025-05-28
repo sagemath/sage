@@ -991,7 +991,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
     # Python Special Functions
     #
 
-    def __init__(self, E, kernel, codomain=None, degree=None, model=None, check=True):
+    def __init__(self, E, kernel, codomain=None, degree=None, model=None, check=True) -> None:
         r"""
         Constructor for ``EllipticCurveIsogeny`` class.
 

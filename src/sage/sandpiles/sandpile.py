@@ -504,7 +504,7 @@ class Sandpile(DiGraph):
             enter "Sandpile.FOO?" or enter "S.FOO?" for any Sandpile S."""),
                        verbose=verbose)
 
-    def __init__(self, g, sink=None):
+    def __init__(self, g, sink=None) -> None:
         r"""
         Create a sandpile.
 
@@ -2871,7 +2871,7 @@ class SandpileConfig(dict):
             enter "SandpileConfig.FOO?" or enter "c.FOO?" for any SandpileConfig c."""),
                        verbose=verbose)
 
-    def __init__(self, S, c):
+    def __init__(self, S, c) -> None:
         r"""
         Create a configuration on a Sandpile.
 
@@ -2931,7 +2931,7 @@ class SandpileConfig(dict):
         c.__dict__.update(self.__dict__)
         return c
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key, item) -> None:
         r"""
         Overrides the setitem method for dict.
 
@@ -4119,7 +4119,7 @@ class SandpileDivisor(dict):
             enter "SandpileDivisor.FOO?" or enter "D.FOO?" for any SandpileDivisor D."""),
                        verbose=verbose)
 
-    def __init__(self, S, D):
+    def __init__(self, S, D) -> None:
         r"""
         Create a divisor on a Sandpile.
 
@@ -4174,7 +4174,7 @@ class SandpileDivisor(dict):
         D.__dict__.update(self.__dict__)
         return D
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key, item) -> None:
         r"""
         Overrides the setitem method for dict.
 

@@ -46,7 +46,7 @@ class ImaginaryElement(AdditiveGroupElement):
     - ``imag`` -- an element of parent's base
     """
 
-    def __init__(self, parent, imag):
+    def __init__(self, parent, imag) -> None:
         r"""
         See :class:`ImaginaryGroup` for more information.
 
@@ -300,7 +300,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
             category = AdditiveGroups().AdditiveCommutative()
         return category
 
-    def __init__(self, base, category):
+    def __init__(self, base, category) -> None:
         r"""
         See :class:`ImaginaryGroup` for more information.
 

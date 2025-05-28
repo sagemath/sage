@@ -75,7 +75,7 @@ class ConjugacyClass(Parent):
         Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a
         permutation group
     """
-    def __init__(self, group, element):
+    def __init__(self, group, element) -> None:
         r"""
         Generic conjugacy classes for elements in a group.
 
@@ -159,7 +159,7 @@ class ConjugacyClass(Parent):
         """
         return not (self == other)
 
-    def __contains__(self, element):
+    def __contains__(self, element) -> bool:
         r"""
         Check if ``element`` belongs to the conjugacy class ``self``.
 
@@ -369,7 +369,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         Conjugacy class of (1,2,3,4) in Symmetric group of order 4! as a
         permutation group
     """
-    def __init__(self, group, element):
+    def __init__(self, group, element) -> None:
         r"""
         Constructor for the class.
 
@@ -440,7 +440,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         """
         return self._gap_().Size().sage()
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Containment test.
 

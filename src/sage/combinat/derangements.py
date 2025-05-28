@@ -150,7 +150,7 @@ class Derangements(UniqueRepresentation, Parent):
             x = tuple(range(1, x + 1))
         return super().__classcall__(cls, tuple(x))
 
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         """
         Initialize ``self``.
 

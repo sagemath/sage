@@ -199,7 +199,7 @@ class ToricIdeal(MPolynomialIdeal):
     def __init__(self, A,
                  names='z', base_ring=QQ,
                  polynomial_ring=None,
-                 algorithm='HostenSturmfels'):
+                 algorithm='HostenSturmfels') -> None:
         r"""
         Create an ideal and a multivariate polynomial ring containing it.
 

@@ -1260,7 +1260,7 @@ class Genus_Symbol_p_adic_ring:
         sage: G3 = Genus_Symbol_p_adic_ring(p,s3); G3
         Genus symbol at 3:     1^-3 3^1
     """
-    def __init__(self, prime, symbol, check=True):
+    def __init__(self, prime, symbol, check=True) -> None:
         r"""
         Create the local genus symbol of given prime and local invariants.
 
@@ -1292,7 +1292,7 @@ class Genus_Symbol_p_adic_ring:
         self._symbol = symbol
         self._canonical_symbol = None
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation for the `p`-adic genus symbol.
 
@@ -2347,7 +2347,7 @@ class GenusSymbol_global_ring:
         :func:`Genus` to create a :class:`GenusSymbol_global_ring` from the Gram matrix directly.
     """
 
-    def __init__(self, signature_pair, local_symbols, representative=None, check=True):
+    def __init__(self, signature_pair, local_symbols, representative=None, check=True) -> None:
         r"""
         Initialize a global genus symbol.
 

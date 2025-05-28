@@ -99,7 +99,7 @@ class DocTestDefaults(SageObject):
                         optional='sage,optional', random_seed=None,
                         stats_path='.../timings2.json')
     """
-    def __init__(self, runtest_default=False, **kwds):
+    def __init__(self, runtest_default=False, **kwds) -> None:
         """
         Edit these parameters after creating an instance.
 
@@ -362,7 +362,7 @@ class Logger:
         hello world
         'hello world\n'
     """
-    def __init__(self, *files):
+    def __init__(self, *files) -> None:
         r"""
         Initialize the logger for writing to all files in ``files``.
 
@@ -405,7 +405,7 @@ class DocTestController(SageObject):
 
     After creating it with appropriate options, call the :meth:`run` method to run the doctests.
     """
-    def __init__(self, options, args):
+    def __init__(self, options, args) -> None:
         """
         Initialization.
 
@@ -587,7 +587,7 @@ class DocTestController(SageObject):
             randstate.set_random_seed()
             self.options.random_seed = randstate.initial_seed()
 
-    def __del__(self):
+    def __del__(self) -> None:
         if getattr(self, 'logfile', None) is not None:
             self.logfile.close()
 

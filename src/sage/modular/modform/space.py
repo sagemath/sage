@@ -114,7 +114,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
     """
     Element = ModularFormElement
 
-    def __init__(self, group, weight, character, base_ring, category=None):
+    def __init__(self, group, weight, character, base_ring, category=None) -> None:
         r"""
         Generic spaces of modular forms. For spaces of modular forms for
         `\Gamma_0(N)` or `\Gamma_1(N)`, the default base

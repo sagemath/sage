@@ -107,7 +107,7 @@ class pRational:
         sage: z.valuation()
         4
     """
-    def __init__(self, p, x, exponent=0, valuation=None):
+    def __init__(self, p, x, exponent=0, valuation=None) -> None:
         r"""
         Construct the element ``x * p^exponent``.
 
@@ -127,7 +127,7 @@ class pRational:
         self.exponent = exponent
         self._valuation = valuation
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this element.
 
@@ -625,7 +625,7 @@ class DifferentialPrecisionGeneric(SageObject):
         sage: R.precision()
         Precision lattice on 0 objects (label: init)
     """
-    def __init__(self, p, label):
+    def __init__(self, p, label) -> None:
         r"""
         TESTS::
 
@@ -1560,7 +1560,7 @@ class PrecisionLattice(UniqueRepresentation, DifferentialPrecisionGeneric):
         sage: R.precision()
         Precision lattice on 0 objects (label: init)
     """
-    def __init__(self, p, label):
+    def __init__(self, p, label) -> None:
         r"""
         TESTS::
 
@@ -2150,7 +2150,7 @@ class PrecisionModule(UniqueRepresentation, DifferentialPrecisionGeneric):
     The precision module (which is not necessarily a lattice)
     is stored as a matrix whose rows are generators.
     """
-    def __init__(self, p, label, prec):
+    def __init__(self, p, label, prec) -> None:
         r"""
         Initialize this precision module.
 
@@ -2771,7 +2771,7 @@ class pAdicLatticeElementWeakProxy:
     """
     _next_id = 0
 
-    def __init__(self, element, callback=None):
+    def __init__(self, element, callback=None) -> None:
         r"""
         TESTS::
 
@@ -2839,7 +2839,7 @@ class pAdicLatticeElementWeakProxy:
         """
         return self._weakref()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a printable representation of this proxy.
 

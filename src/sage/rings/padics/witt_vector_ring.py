@@ -263,7 +263,7 @@ class WittVectorRing(CommutativeRing, UniqueRepresentation):
 
         return child.__classcall__(child, coefficient_ring, prec, p)
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
         Initialises ``self``.
 
@@ -656,7 +656,7 @@ class WittVectorRing_finotti(WittVectorRing):
     """
     Element = WittVector_finotti
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
         Initialises ``self``.
 
@@ -798,7 +798,7 @@ class WittVectorRing_phantom(WittVectorRing):
     """
     Element = WittVector_phantom
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
         Initialises ``self``.
 
@@ -859,7 +859,7 @@ class WittVectorRing_pinvertible(WittVectorRing):
     """
     Element = WittVector_pinvertible
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
         Initialises ``self``.
 
@@ -901,7 +901,7 @@ class WittVectorRing_standard(WittVectorRing):
     """
     Element = WittVector_standard
 
-    def __init__(self, coefficient_ring, prec, prime):
+    def __init__(self, coefficient_ring, prec, prime) -> None:
         r"""
         Initialises ``self``.
 

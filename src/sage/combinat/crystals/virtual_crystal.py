@@ -201,7 +201,7 @@ class VirtualCrystal(Subcrystal):
                                      tuple(index_set), category)
 
     def __init__(self, ambient, virtualization, scaling_factors,
-                 contained, generators, cartan_type, index_set, category):
+                 contained, generators, cartan_type, index_set, category) -> None:
         """
         Initialize ``self``.
 
@@ -232,7 +232,7 @@ class VirtualCrystal(Subcrystal):
         """
         return "Virtual crystal of {} of type {}".format(self._ambient, self._cartan_type)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is in ``self``.
 

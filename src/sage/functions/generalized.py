@@ -93,7 +93,7 @@ class FunctionDiracDelta(BuiltinFunction):
 
     - :wikipedia:`Dirac_delta_function`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The Dirac delta (generalized) function, ``dirac_delta(x)``.
 
@@ -230,7 +230,7 @@ class FunctionHeaviside(GinacFunction):
 
     -  :wikipedia:`Heaviside_function`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The Heaviside step function, ``heaviside(x)``.
 
@@ -321,7 +321,7 @@ class FunctionUnitStep(GinacFunction):
         sage: h(pi).numerical_approx()
         1.00000000000000
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The unit step function, ``unit_step(x)``.
 
@@ -425,7 +425,7 @@ class FunctionSignum(BuiltinFunction):
 
     - :wikipedia:`Sign_function`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The sgn function, ``sgn(x)``.
 
@@ -567,7 +567,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
 
     - :wikipedia:`Kronecker_delta`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The Kronecker delta function.
 

@@ -43,7 +43,7 @@ def function_factory(name, nargs=0, latex_name=None, conversions=None,
         1.00000000000000
     """
     class NewSymbolicFunction(SymbolicFunction):
-        def __init__(self):
+        def __init__(self) -> None:
             """
             EXAMPLES::
 

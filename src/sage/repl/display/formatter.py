@@ -82,7 +82,7 @@ lazy_import('matplotlib.figure', 'Figure')
 
 class SageDisplayFormatter(DisplayFormatter):
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         This is where the Sage rich objects are translated to IPython.
 
@@ -253,7 +253,7 @@ class SageDisplayFormatter(DisplayFormatter):
 
 class SagePlainTextFormatter(PlainTextFormatter):
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         Improved plain text IPython formatter.
 

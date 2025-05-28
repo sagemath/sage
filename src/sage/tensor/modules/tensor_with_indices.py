@@ -382,7 +382,7 @@ class TensorWithIndices(SageObject):
                                  "with the tensor type")
         return con,cov
 
-    def __init__(self, tensor, indices):
+    def __init__(self, tensor, indices) -> None:
         r"""
         TESTS::
 
@@ -822,7 +822,7 @@ class TensorWithIndices(SageObject):
         else:
             return self._tensor[args]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
          Set a component w.r.t. some basis.
 

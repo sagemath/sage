@@ -502,7 +502,7 @@ class QuadraticForm(SageObject):
     lazy_import('sage.quadratic_forms.genera.genus',
                 '_genera_staticmethod', as_='genera')
 
-    def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None):
+    def __init__(self, R, n=None, entries=None, unsafe_initialization=False, number_of_automorphisms=None, determinant=None) -> None:
         """
         EXAMPLES::
 
@@ -790,7 +790,7 @@ class QuadraticForm(SageObject):
 
         return self.__coeffs[i*self.__n - i*(i-1)//2 + j - i]
 
-    def __setitem__(self, ij, coeff):
+    def __setitem__(self, ij, coeff) -> None:
         r"""
         Set the coefficient `a_{ij}` in front of `x_i\cdot x_j`.
 

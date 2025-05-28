@@ -39,7 +39,7 @@ class Lseries(SageObject):
     This is a common base class for complex and `p`-adic `L`-series
     of modular abelian varieties.
     """
-    def __init__(self, abvar):
+    def __init__(self, abvar) -> None:
         """
         Called when creating an `L`-series.
 
@@ -296,7 +296,7 @@ class Lseries_padic(Lseries):
     """
     A `p`-adic `L`-series attached to a modular abelian variety.
     """
-    def __init__(self, abvar, p):
+    def __init__(self, abvar, p) -> None:
         """
         Create a `p`-adic `L`-series.
 

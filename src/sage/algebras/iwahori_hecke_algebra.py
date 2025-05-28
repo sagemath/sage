@@ -450,7 +450,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         q2 = base_ring(q2)
         return super().__classcall__(cls, W, q1, q2, base_ring)
 
-    def __init__(self, W, q1, q2, base_ring):
+    def __init__(self, W, q1, q2, base_ring) -> None:
         r"""
         Initialize and return the two parameter Iwahori-Hecke algebra ``self``.
 
@@ -640,7 +640,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         r"""
         The category of bases of a Iwahori-Hecke algebra.
         """
-        def __init__(self, base):
+        def __init__(self, base) -> None:
             r"""
             Initialize the bases of a Iwahori-Hecke algebra.
 
@@ -1227,7 +1227,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         Technical methods (i.e., not mathematical) that are inherited by each
         basis of the algebra. These methods cannot be defined in the category.
         """
-        def __init__(self, algebra, prefix=None):
+        def __init__(self, algebra, prefix=None) -> None:
             r"""
             Initialises a basis class for the Iwahori-Hecke algebra ``algebra``.
             Optionally, a ``prefix`` can be set which is used when printing the
@@ -1777,7 +1777,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         Abstract class for the common methods for the Kazhdan-Lusztig `C` and
         `C^{\prime}` bases.
         """
-        def __init__(self, IHAlgebra, prefix=None):
+        def __init__(self, IHAlgebra, prefix=None) -> None:
             r"""
             Initialize the Kazhdan-Lusztig basis of the Iwahori-Hecke
             algebra ``IHAlgebra``.
@@ -1977,7 +1977,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         """
         _basis_name = 'Cp'   # this is used, for example, by specialize_to and is the default prefix
 
-        def __init__(self, IHAlgebra, prefix=None):
+        def __init__(self, IHAlgebra, prefix=None) -> None:
             r"""
             TESTS::
 
@@ -2491,7 +2491,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         """
         _basis_name = "A"
 
-        def __init__(self, IHAlgebra, prefix=None):
+        def __init__(self, IHAlgebra, prefix=None) -> None:
             r"""
             Initialize the `A`-basis of the Iwahori-Hecke algebra ``IHAlgebra``.
 
@@ -2623,7 +2623,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         """
         _basis_name = "B"
 
-        def __init__(self, IHAlgebra, prefix=None):
+        def __init__(self, IHAlgebra, prefix=None) -> None:
             r"""
             Initialize the `B`-basis of the Iwahori-Hecke algebra ``IHAlgebra``.
 
@@ -2756,7 +2756,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
             W = CoxeterGroup(W)
         return super().__classcall__(cls, W)
 
-    def __init__(self, W):
+    def __init__(self, W) -> None:
         r"""
         EXAMPLES::
 

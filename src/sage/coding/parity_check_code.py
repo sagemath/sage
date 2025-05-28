@@ -54,7 +54,7 @@ class ParityCheckCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field=GF(2), dimension=7):
+    def __init__(self, base_field=GF(2), dimension=7) -> None:
         r"""
         Initialize mandatory parameters for a parity-check code object.
 
@@ -164,7 +164,7 @@ class ParityCheckCodeGeneratorMatrixEncoder(LinearCodeGeneratorMatrixEncoder):
         Generator matrix-based encoder for [8, 7] parity-check code over GF(5)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -228,7 +228,7 @@ class ParityCheckCodeStraightforwardEncoder(Encoder):
         Parity-check encoder for the [8, 7] parity-check code over GF(5)
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 

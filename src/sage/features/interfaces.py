@@ -52,7 +52,7 @@ class InterfaceFeature(Feature):
             module = PythonModule(module)
         return Feature.__classcall__(cls, name, module, description)
 
-    def __init__(self, name, module, description):
+    def __init__(self, name, module, description) -> None:
         """
         TESTS::
 

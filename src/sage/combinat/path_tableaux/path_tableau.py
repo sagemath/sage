@@ -435,7 +435,7 @@ class PathTableaux(UniqueRepresentation,Parent):
     The abstract parent class for PathTableau.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -478,7 +478,7 @@ class CylindricalDiagram(SageObject):
         [ ,  ,  ,  ,  ,  , 0, 1, 2, 3, 2, 1, 0]
     """
 
-    def __init__(self, T):
+    def __init__(self, T) -> None:
         """
         Initialize ``self`` from the
         :class:`~sage.combinat.path_tableaux.path_tableau.PathTableau`
@@ -611,7 +611,7 @@ class CylindricalDiagram(SageObject):
         result += "\n \\end{array}\n"
         return result
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the length of ``self``.
 

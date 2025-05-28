@@ -69,7 +69,7 @@ class BaxterPermutations_size(BaxterPermutations):
         Baxter permutations of size 5
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -249,7 +249,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         Baxter permutations
     """
 
-    def __init__(self, n=None):
+    def __init__(self, n=None) -> None:
         r"""
         EXAMPLES::
 
@@ -277,7 +277,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
         """
         return "Baxter permutations"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if and only if ``x`` is a Baxter permutation.
 

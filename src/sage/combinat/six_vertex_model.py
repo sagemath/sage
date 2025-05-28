@@ -456,7 +456,7 @@ class SixVertexModel(UniqueRepresentation, Parent):
             boundary_conditions = tuple(tuple(x) for x in boundary_conditions)
         return super().__classcall__(cls, n, m, boundary_conditions)
 
-    def __init__(self, n, m, boundary_conditions):
+    def __init__(self, n, m, boundary_conditions) -> None:
         """
         Initialize ``self``.
 
@@ -674,7 +674,7 @@ class SquareIceModel(SixVertexModel):
     are in bijection with alternating sign matrices.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 

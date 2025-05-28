@@ -75,7 +75,7 @@ class TateCurve(SageObject):
 
     REFERENCES: [Sil1994]_
     """
-    def __init__(self, E, p):
+    def __init__(self, E, p) -> None:
         r"""
         INPUT:
 

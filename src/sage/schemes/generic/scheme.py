@@ -91,7 +91,7 @@ class Scheme(Parent):
         True
     """
 
-    def __init__(self, X=None, category=None):
+    def __init__(self, X=None, category=None) -> None:
         """
         Construct a scheme.
 
@@ -813,7 +813,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         For affine spaces over a base ring and subschemes thereof, see
         :class:`sage.schemes.generic.algebraic_scheme.AffineSpace`.
     """
-    def __init__(self, R, S=None, category=None):
+    def __init__(self, R, S=None, category=None) -> None:
         """
         Construct the affine scheme with coordinate ring `R`.
 

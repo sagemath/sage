@@ -40,7 +40,7 @@ lazy_import('sage.functions.gamma',
 
 
 class Function_abs(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The absolute value function.
 
@@ -298,7 +298,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
 
 
 class Function_ceil(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The ceiling function.
 
@@ -471,7 +471,7 @@ ceil = Function_ceil()
 
 
 class Function_floor(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The floor function.
 
@@ -639,7 +639,7 @@ floor = Function_floor()
 
 
 class Function_Order(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The order function.
 
@@ -704,7 +704,7 @@ Order = Function_Order()
 
 
 class Function_frac(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The fractional part function `\{x\}`.
 
@@ -829,7 +829,7 @@ class Function_real_nth_root(BuiltinFunction):
         sage: _.diff()
         (abs(x)^3)^(1/5)*sgn(x^3)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize.
 
@@ -962,7 +962,7 @@ real_nth_root = Function_real_nth_root()
 
 
 class Function_arg(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The argument function for complex numbers.
 
@@ -1117,7 +1117,7 @@ arg = Function_arg()
 # Real and Imaginary Parts #
 ############################
 class Function_real_part(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Return the real part of the (possibly complex) input.
 
@@ -1214,7 +1214,7 @@ real = real_part = Function_real_part()
 
 
 class Function_imag_part(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Return the imaginary part of the (possibly complex) input.
 
@@ -1281,7 +1281,7 @@ imag = imag_part = imaginary = Function_imag_part()
 # Complex Conjugate        #
 ############################
 class Function_conjugate(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Return the complex conjugate of the input.
 
@@ -1370,7 +1370,7 @@ conjugate = Function_conjugate()
 
 
 class Function_factorial(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Return the factorial of `n`.
 
@@ -1565,7 +1565,7 @@ factorial = Function_factorial()
 
 
 class Function_binomial(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Return the binomial coefficient.
 
@@ -1798,7 +1798,7 @@ class Function_sum(BuiltinFunction):
         sage: r.unhold()                                                                # needs sage.symbolic
         55
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -1855,7 +1855,7 @@ class Function_prod(BuiltinFunction):
         sage: r.unhold()                                                                # needs sage.symbolic
         3628800
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -1933,7 +1933,7 @@ class Function_limit(BuiltinFunction):
         sage: slimit(1/x, x, 0, minus)
         limit(1/x, x, 0, minus)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -2052,7 +2052,7 @@ class Function_cases(GinacFunction):
         sage: ex.subs(x==0, y==1)
         pi
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -2157,7 +2157,7 @@ class Function_crootof(BuiltinFunction):
         sage: (c^6 + c + 1).n(100) < 1e-25
         True
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -2249,7 +2249,7 @@ class Function_elementof(BuiltinFunction):
         sage: element_of(x, SR(Set([4,6,8])))
         element_of(x, {8, 4, 6})
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

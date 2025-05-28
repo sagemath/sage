@@ -118,7 +118,7 @@ class LocalComponentBase(SageObject):
     Base class for local components of newforms. Not to be directly instantiated; use the :func:`~LocalComponent` constructor function.
     """
 
-    def __init__(self, newform, prime, twist_factor):
+    def __init__(self, newform, prime, twist_factor) -> None:
         r"""
         Standard initialisation function.
 
@@ -953,7 +953,7 @@ class ImprimitiveLocalComponent(LocalComponentBase):
     component and a character to twist by.
     """
 
-    def __init__(self, newform, prime, twist_factor, min_twist, chi):
+    def __init__(self, newform, prime, twist_factor, min_twist, chi) -> None:
         r"""
         EXAMPLES::
 

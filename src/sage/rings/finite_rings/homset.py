@@ -196,7 +196,7 @@ class FiniteFieldHomset(RingHomset_generic):
         self.__order = n
         return n
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of elements of ``self``.
 

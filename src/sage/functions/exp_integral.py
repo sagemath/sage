@@ -149,7 +149,7 @@ class Function_exp_integral_e(BuiltinFunction):
     Numerical evaluation is handled using mpmath, but symbolics are handled
     by Sage and Maxima.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :meth:`Function_exp_integral_e`.
 
@@ -307,7 +307,7 @@ class Function_exp_integral_e1(BuiltinFunction):
     Numerical evaluation is handled using mpmath, but symbolics are handled
     by Sage and Maxima.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :class:`Function_exp_integral_e1`.
 
@@ -419,7 +419,7 @@ class Function_log_integral(BuiltinFunction):
 
     .. _`logarithmic-integral`: http://mpmath.org/doc/current/functions/expintegrals.html#logarithmic-integral
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         See the docstring for ``Function_log_integral``.
 
@@ -614,7 +614,7 @@ class Function_log_integral_offset(BuiltinFunction):
     .. _`logarithmic-integral`: http://mpmath.org/doc/current/functions/expintegrals.html#logarithmic-integral
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         See the docstring for ``Function_log_integral_offset``.
 
@@ -787,7 +787,7 @@ class Function_sin_integral(BuiltinFunction):
 
     .. _`si`: http://mpmath.org/doc/current/functions/expintegrals.html#si
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for ``Function_sin_integral``.
 
@@ -962,7 +962,7 @@ class Function_cos_integral(BuiltinFunction):
 
     .. _`ci`: http://mpmath.org/doc/current/functions/expintegrals.html#ci
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for :class:`Function_cos_integral`.
 
@@ -1097,7 +1097,7 @@ class Function_sinh_integral(BuiltinFunction):
 
     .. _`shi`: http://mpmath.org/doc/current/functions/expintegrals.html#shi
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for ``Function_sinh_integral``.
 
@@ -1240,7 +1240,7 @@ class Function_cosh_integral(BuiltinFunction):
 
     .. _`chi`: http://mpmath.org/doc/current/functions/expintegrals.html#chi
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         See the docstring for ``Function_cosh_integral``.
 
@@ -1357,7 +1357,7 @@ class Function_exp_integral(BuiltinFunction):
         sage: (Ei(-Z)).limit(Z=1000).n()
         -5.07089306023517e-438
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 

@@ -55,7 +55,7 @@ kenzo_path = Path(SAGE_ENV['SAGE_EXTCODE']) / 'kenzo'
 # The nerve of a finite monoid, used in sage.categories.finite_monoid.
 
 class Nerve(SimplicialSet_arbitrary):
-    def __init__(self, monoid):
+    def __init__(self, monoid) -> None:
         """
         The nerve of a multiplicative monoid.
 

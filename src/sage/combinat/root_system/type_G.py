@@ -114,7 +114,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanTy
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_crystallographic):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 

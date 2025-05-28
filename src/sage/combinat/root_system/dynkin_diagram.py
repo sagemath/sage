@@ -252,7 +252,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
     """
 
     def __init__(self, t=None, index_set=None, odd_isotropic_roots=[],
-                 **options):
+                 **options) -> None:
         """
         Initialize ``self``.
 

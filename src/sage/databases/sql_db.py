@@ -403,7 +403,7 @@ def _create_print_table(cur, col_titles, **kwds):
 
 
 class SQLQuery(SageObject):
-    def __init__(self, database, *args, **kwds):
+    def __init__(self, database, *args, **kwds) -> None:
         """
         A query for a SQLite database.
 
@@ -520,7 +520,7 @@ class SQLQuery(SageObject):
             self.__param_tuple__ = tuple()
             self.__query_string__ = ''
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Override the print output to display useful info regarding the
         query.
@@ -896,7 +896,7 @@ class SQLQuery(SageObject):
 
 
 class SQLDatabase(SageObject):
-    def __init__(self, filename=None, read_only=None, skeleton=None):
+    def __init__(self, filename=None, read_only=None, skeleton=None) -> None:
         r"""
         A SQL Database object corresponding to a database file.
 
@@ -1110,7 +1110,7 @@ class SQLDatabase(SageObject):
             raise RuntimeError('Cannot update skeleton of a read only '
                 + 'database.')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Override the print output to display useful info regarding the
         database.

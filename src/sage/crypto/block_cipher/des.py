@@ -340,7 +340,7 @@ class DES(SageObject):
     .. automethod:: __call__
     """
 
-    def __init__(self, rounds=None, keySchedule='DES_KS', keySize=64, doFinalRound=True):
+    def __init__(self, rounds=None, keySchedule='DES_KS', keySize=64, doFinalRound=True) -> None:
         r"""
         Construct an instance of DES.
 
@@ -462,7 +462,7 @@ class DES(SageObject):
         else:
             return self.__dict__ == other.__dict__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string representation of this DES.
 
@@ -788,7 +788,7 @@ class DES_KS(SageObject):
     .. automethod:: __call__
     """
 
-    def __init__(self, rounds=16, masterKey=None):
+    def __init__(self, rounds=16, masterKey=None) -> None:
         r"""
         Construct an instance of DES_KS.
 
@@ -901,7 +901,7 @@ class DES_KS(SageObject):
         else:
             return self.__dict__ == other.__dict__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string representation of this DES_KS.
 

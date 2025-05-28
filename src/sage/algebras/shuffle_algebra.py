@@ -143,7 +143,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         return super().__classcall__(cls, R,
                                      Alphabet(names), prefix)
 
-    def __init__(self, R, names, prefix):
+    def __init__(self, R, names, prefix) -> None:
         r"""
         Initialize ``self``.
 
@@ -675,7 +675,7 @@ class DualPBWBasis(CombinatorialFreeModule):
         """
         return super().__classcall__(cls, R, Alphabet(names))
 
-    def __init__(self, R, names):
+    def __init__(self, R, names) -> None:
         """
         Initialize ``self``.
 

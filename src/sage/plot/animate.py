@@ -235,7 +235,7 @@ class Animation(WithEqualityById, SageObject):
         sage: hash(Animation())  # random
         140658972348064
     """
-    def __init__(self, v=None, **kwds):
+    def __init__(self, v=None, **kwds) -> None:
         r"""
         Return an animation of a sequence of plots of objects.  See
         documentation of :func:`animate` for more details and
@@ -403,7 +403,7 @@ class Animation(WithEqualityById, SageObject):
 
         return Animation(self._frames + other._frames, **kwds)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Length of ``self``.
 
@@ -1299,7 +1299,7 @@ class APngAssembler:
                            b"pHYs", b"sBIT", b"tRNS"])
 
     def __init__(self, out, num_frames,
-                 num_plays=0, delay=200, delay_denominator=100):
+                 num_plays=0, delay=200, delay_denominator=100) -> None:
         r"""
         Initialize for creation of an APNG file.
         """

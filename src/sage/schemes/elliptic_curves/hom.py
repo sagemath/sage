@@ -45,7 +45,7 @@ class EllipticCurveHom(Morphism):
     """
     Base class for elliptic-curve morphisms.
     """
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         Constructor for elliptic-curve morphisms.
 

@@ -77,7 +77,7 @@ class KeyConvertingDict(dict):
         64
     """
 
-    def __init__(self, key_conversion_function, data=None):
+    def __init__(self, key_conversion_function, data=None) -> None:
         r"""
         Construct a dictionary with a given conversion function.
 
@@ -117,7 +117,7 @@ class KeyConvertingDict(dict):
         key = self.key_conversion_function(key)
         return super().__getitem__(key)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         r"""
         Assign an element in the dictionary.
 
@@ -137,7 +137,7 @@ class KeyConvertingDict(dict):
         key = self.key_conversion_function(key)
         return super().__setitem__(key, value)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         r"""
         Remove a mapping from the dictionary.
 
@@ -157,7 +157,7 @@ class KeyConvertingDict(dict):
         key = self.key_conversion_function(key)
         return super().__delitem__(key)
 
-    def __contains__(self, key):
+    def __contains__(self, key) -> bool:
         r"""
         Test whether a given key is contained in the mapping.
 

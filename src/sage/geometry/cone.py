@@ -796,7 +796,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
     - collection of given integral rays.
     """
 
-    def __init__(self, rays, lattice):
+    def __init__(self, rays, lattice) -> None:
         r"""
         See :class:`IntegralRayCollection` for documentation.
 
@@ -1451,7 +1451,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
     """
 
     def __init__(self, rays=None, lattice=None,
-                 ambient=None, ambient_ray_indices=None, PPL=None):
+                 ambient=None, ambient_ray_indices=None, PPL=None) -> None:
         r"""
         See :class:`ConvexRationalPolyhedralCone` for documentation.
 
@@ -1549,7 +1549,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._PPL_C_Polyhedron = C_Polyhedron(gs)
         return self._PPL_C_Polyhedron
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check if ``point`` is contained in ``self``.
 

@@ -98,7 +98,7 @@ class HighestWeightCrystalOfTypeA(UniqueRepresentation, Parent):
         running ._test_stembridge_local_axioms() . . . pass
     """
 
-    def __init__(self, n=3):
+    def __init__(self, n=3) -> None:
         """
         EXAMPLES::
 
@@ -177,7 +177,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
         sage: C.highest_weight_vector()
         0
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -193,7 +193,7 @@ class NaiveCrystal(UniqueRepresentation, Parent):
                           [3, 5, 1], [0, 4, 2], [4, 5, 2]])
         self.module_generators = [self(0)]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 

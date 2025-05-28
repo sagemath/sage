@@ -247,7 +247,7 @@ class table(SageObject):
     .. automethod:: _rich_repr_
     """
     def __init__(self, rows=None, columns=None, header_row=False,
-                 header_column=False, frame=False, align='left'):
+                 header_column=False, frame=False, align='left') -> None:
         r"""
         EXAMPLES::
 

@@ -23,7 +23,7 @@ class EllipticCurveFormalGroup(SageObject):
     r"""
     The formal group associated to an elliptic curve.
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         """
         EXAMPLES::
 

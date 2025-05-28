@@ -30,7 +30,7 @@ class OreModule_homspace(UniqueRepresentation, HomsetWithBase):
     """
     Element = OreModuleMorphism
 
-    def __init__(self, domain, codomain, category=None):
+    def __init__(self, domain, codomain, category=None) -> None:
         r"""
         Initialize this homspace.
 

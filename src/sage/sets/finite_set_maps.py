@@ -221,7 +221,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
       ``EnumeratedSets().Finite()`` which is the default value.
     """
 
-    def __init__(self, m, n, category=None):
+    def __init__(self, m, n, category=None) -> None:
         """
         TESTS::
 
@@ -268,7 +268,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
         """
         return "Maps from %s to %s" % (self.domain(), self.codomain())
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -383,7 +383,7 @@ class FiniteSetMaps_Set(FiniteSetMaps_MN):
       constructed. It must be a sub-category of
       ``EnumeratedSets().Finite()`` which is the default value.
     """
-    def __init__(self, domain, codomain, category=None):
+    def __init__(self, domain, codomain, category=None) -> None:
         """
         EXAMPLES::
 
@@ -495,7 +495,7 @@ class FiniteSetEndoMaps_N(FiniteSetMaps_MN):
       and ``EnumeratedSets().Finite()`` which is the default value.
     """
 
-    def __init__(self, n, action, category=None):
+    def __init__(self, n, action, category=None) -> None:
         """
         EXAMPLES::
 
@@ -560,7 +560,7 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
       constructed. It must be a sub-category of ``Monoids().Finite()``
       and ``EnumeratedSets().Finite()`` which is the default value.
     """
-    def __init__(self, domain, action, category=None):
+    def __init__(self, domain, action, category=None) -> None:
         """
         TESTS::
 

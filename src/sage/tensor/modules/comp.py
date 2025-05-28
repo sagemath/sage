@@ -484,7 +484,7 @@ class Components(SageObject):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None):
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -874,7 +874,7 @@ class Components(SageObject):
             return [self._gen_list(ind + [i], no_format, format_type)
                     for i in range(si, nsi)]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the component corresponding to the given indices.
 
@@ -2978,7 +2978,7 @@ class CompWithSym(Components):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None, sym=None, antisym=None):
+                 output_formatter=None, sym=None, antisym=None) -> None:
         r"""
         TESTS::
 
@@ -3281,7 +3281,7 @@ class CompWithSym(Components):
                         return self._output_formatter(
                                                 -self._comp[ind], format_type)
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the component corresponding to the given indices.
 
@@ -4743,7 +4743,7 @@ class CompFullySym(CompWithSym):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None):
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -4857,7 +4857,7 @@ class CompFullySym(CompWithSym):
             return self._output_formatter(self._ring.zero(),
                                              format_type)
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set the component corresponding to the given indices.
 
@@ -5193,7 +5193,7 @@ class CompFullyAntiSym(CompWithSym):
         True
     """
     def __init__(self, ring, frame, nb_indices, start_index=0,
-                 output_formatter=None):
+                 output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -5554,7 +5554,7 @@ class KroneckerDelta(CompFullySym):
         sage: d[:]
         [['1', '0', '0'], ['0', '1', '0'], ['0', '0', '1']]
     """
-    def __init__(self, ring, frame, start_index=0, output_formatter=None):
+    def __init__(self, ring, frame, start_index=0, output_formatter=None) -> None:
         r"""
         TESTS::
 
@@ -5580,7 +5580,7 @@ class KroneckerDelta(CompFullySym):
         n = str(self._dim)
         return "Kronecker delta of size " + n + "x" + n
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Should not be used (the components of a Kronecker delta are constant).
 

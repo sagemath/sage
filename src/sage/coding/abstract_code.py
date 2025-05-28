@@ -203,7 +203,7 @@ class AbstractCode(Parent):
     """
 
     def __init__(self, length, default_encoder_name=None,
-                 default_decoder_name=None, metric='Hamming'):
+                 default_decoder_name=None, metric='Hamming') -> None:
         r"""
         Initialize mandatory parameters that any code shares.
 
@@ -348,7 +348,7 @@ class AbstractCode(Parent):
         """
         raise RuntimeError("Please override __iter__ in the implementation of {}".format(self.parent()))
 
-    def __contains__(self, c):
+    def __contains__(self, c) -> bool:
         r"""
         Return an error message requiring to override ``__contains__`` in ``self``.
 

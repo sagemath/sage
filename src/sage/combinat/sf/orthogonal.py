@@ -159,7 +159,7 @@ class SymmetricFunctionAlgebra_orthogonal(sfa.SymmetricFunctionAlgebra_generic):
         1
     """
 
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         Initialize ``self``.
 

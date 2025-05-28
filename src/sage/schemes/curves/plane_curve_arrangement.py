@@ -776,7 +776,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     """
     An ordered projective plane curve arrangement.
     """
-    def __init__(self, parent, curves, check=True):
+    def __init__(self, parent, curves, check=True) -> None:
         """
         Construct an ordered projective plane curve arrangement.
 
@@ -1006,7 +1006,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         names = normalize_names(len(names), names)
         return super().__classcall__(cls, base, names)
 
-    def __init__(self, base_ring, names: tuple[str, ...] = ()):
+    def __init__(self, base_ring, names: tuple[str, ...] = ()) -> None:
         """
         Initialize ``self``.
 

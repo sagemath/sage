@@ -352,7 +352,7 @@ class ContinuousMap(Morphism):
         latex_name=None,
         is_isomorphism=False,
         is_identity=False,
-    ):
+    ) -> None:
         r"""
         Initialize ``self``.
 

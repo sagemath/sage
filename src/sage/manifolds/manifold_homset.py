@@ -139,7 +139,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
 
     Element = ContinuousMap
 
-    def __init__(self, domain, codomain, name=None, latex_name=None):
+    def __init__(self, domain, codomain, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 

@@ -131,7 +131,7 @@ class MiniAES(SageObject):
         True
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         A simplified variant of the Advanced Encryption Standard (AES).
 
@@ -405,7 +405,7 @@ class MiniAES(SageObject):
                  (self._sboxE == other._sboxE) and
                  (self._sboxD == other._sboxD) )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return the string representation of ``self``.
 

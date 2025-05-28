@@ -482,7 +482,7 @@ class AlgebraFunctor(CovariantFunctorialConstruction):
     _functor_name = "algebra"
     _functor_category = "Algebras"
 
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         EXAMPLES::
 
@@ -557,7 +557,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
         sage: A is KleinFourGroup().algebra(QQ)
         True
     """
-    def __init__(self, group):
+    def __init__(self, group) -> None:
         r"""
         See :class:`GroupAlgebraFunctor` for full documentation.
 

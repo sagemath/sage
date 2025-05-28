@@ -50,7 +50,7 @@ class SourceDistributionFilter:
         sage: sage.misc.package_dir.__file__ in F
         False
     """
-    def __init__(self, include_distributions=None, exclude_distributions=None):
+    def __init__(self, include_distributions=None, exclude_distributions=None) -> None:
         r"""
         TESTS:
 
@@ -66,7 +66,7 @@ class SourceDistributionFilter:
             exclude_distributions = ()
         self._exclude_distributions = exclude_distributions
 
-    def __contains__(self, filename):
+    def __contains__(self, filename) -> bool:
         r"""
         TESTS:
 

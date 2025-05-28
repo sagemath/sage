@@ -60,7 +60,7 @@ class Encoder(SageObject):
     - [Nie]_
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         Initialize mandatory parameters for an :class:`Encoder` object.
 

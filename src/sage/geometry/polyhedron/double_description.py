@@ -107,7 +107,7 @@ def random_inequalities(d, n):
 
 class DoubleDescriptionPair:
 
-    def __init__(self, problem, A_rows, R_cols):
+    def __init__(self, problem, A_rows, R_cols) -> None:
         r"""
         Base class for a double description pair `(A, R)`.
 
@@ -186,7 +186,7 @@ class DoubleDescriptionPair:
         """
         return self.__class__(self.problem, A_rows, R_cols)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return string representation.
 
@@ -513,7 +513,7 @@ class Problem:
 
     pair_class = DoubleDescriptionPair
 
-    def __init__(self, A):
+    def __init__(self, A) -> None:
         r"""
         Base class for implementations of the double description algorithm.
 
@@ -607,7 +607,7 @@ class Problem:
         """
         return self._A.ncols()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation.
 

@@ -459,7 +459,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 return DynamicalSystem_projective_finite_field(polys, domain)
         return DynamicalSystem_projective_field(polys, domain)
 
-    def __init__(self, polys, domain):
+    def __init__(self, polys, domain) -> None:
         r"""
         The Python constructor.
 

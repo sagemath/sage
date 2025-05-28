@@ -59,7 +59,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     - ``_basis_name`` -- the name of the basis (must match one
       of the names that the basis can be constructed from `WQSym`)
     """
-    def __init__(self, alg, graded=True):
+    def __init__(self, alg, graded=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -463,7 +463,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
         - Dendriform structure.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -708,7 +708,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "X"
         _basis_name = "Characteristic"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -904,7 +904,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "C"
         _basis_name = "Cone"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1053,7 +1053,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "Q"
         _basis_name = "Q"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1435,7 +1435,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "Phi"
         _basis_name = "Phi"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1893,7 +1893,7 @@ class WQSymBases(Category_realization_of_parent):
     r"""
     The category of bases of `WQSym`.
     """
-    def __init__(self, base, graded):
+    def __init__(self, base, graded) -> None:
         r"""
         Initialize ``self``.
 

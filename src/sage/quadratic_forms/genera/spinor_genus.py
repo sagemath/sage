@@ -92,7 +92,7 @@ class SpinorOperators(AbelianGroupGap):
         sage: SpinorOperators((2, 3, 7))
         Group of SpinorOperators at primes (2, 3, 7)
     """
-    def __init__(self, primes):
+    def __init__(self, primes) -> None:
         r"""
         Initialize the group of spinor operators.
 

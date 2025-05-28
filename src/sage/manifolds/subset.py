@@ -152,7 +152,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     _name: str
 
-    def __init__(self, manifold, name: str, latex_name=None, category=None):
+    def __init__(self, manifold, name: str, latex_name=None, category=None) -> None:
         r"""
         Construct a manifold subset.
 
@@ -367,7 +367,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
     #### End of methods required for any Parent in the category of sets
 
-    def __contains__(self, point):
+    def __contains__(self, point) -> bool:
         r"""
         Check whether ``point`` is contained in ``self``.
 

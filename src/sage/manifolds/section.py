@@ -211,7 +211,7 @@ class Section(ModuleElementWithMutability):
         ...
         ValueError: the name of an immutable element cannot be changed
     """
-    def __init__(self, section_module, name=None, latex_name=None):
+    def __init__(self, section_module, name=None, latex_name=None) -> None:
         r"""
         Construct a local section.
 
@@ -253,7 +253,7 @@ class Section(ModuleElementWithMutability):
 
     ####### Required methods for ModuleElement (beside arithmetic) #######
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if ``self`` is nonzero and ``False`` otherwise.
 
@@ -1561,7 +1561,7 @@ class Section(ModuleElementWithMutability):
                 frame = self._smodule.default_frame()
         return self.comp(frame)[args]
 
-    def __setitem__(self, args, value):
+    def __setitem__(self, args, value) -> None:
         r"""
         Set a component with respect to some local frame.
 
@@ -2333,7 +2333,7 @@ class TrivialSection(FiniteRankFreeModuleElement, Section):
         sage: isinstance(s.parent(), FiniteRankFreeModule)
         True
     """
-    def __init__(self, section_module, name=None, latex_name=None):
+    def __init__(self, section_module, name=None, latex_name=None) -> None:
         r"""
         Construct a section on a trivial vector bundle.
 

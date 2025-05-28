@@ -732,7 +732,7 @@ class TropicalMPolynomialSemiring(UniqueRepresentation, Parent):
         sage: f * R.one() == f
         True
     """
-    def __init__(self, base_semiring, n, names, order):
+    def __init__(self, base_semiring, n, names, order) -> None:
         r"""
         Initialize ``self``.
 

@@ -57,7 +57,7 @@ class AbelianLieAlgebra(LieAlgebraWithStructureCoefficients):
             return InfiniteDimensionalAbelianLieAlgebra(R, index_set, **kwds)
         return super().__classcall__(cls, R, names, index_set, category=category, **kwds)
 
-    def __init__(self, R, names, index_set, category, **kwds):
+    def __init__(self, R, names, index_set, category, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -134,7 +134,7 @@ class InfiniteDimensionalAbelianLieAlgebra(InfinitelyGeneratedLieAlgebra, Indexe
     A Lie algebra `\mathfrak{g}` is abelian if `[x, y] = 0` for all
     `x, y \in \mathfrak{g}`.
     """
-    def __init__(self, R, index_set, prefix='L', **kwds):
+    def __init__(self, R, index_set, prefix='L', **kwds) -> None:
         """
         Initialize ``self``.
 

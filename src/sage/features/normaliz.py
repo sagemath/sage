@@ -27,7 +27,7 @@ class PyNormaliz(JoinFeature):
         sage: PyNormaliz().is_present()                    # optional - pynormaliz
         FeatureTestResult('pynormaliz', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

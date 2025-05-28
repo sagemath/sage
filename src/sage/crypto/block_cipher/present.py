@@ -173,7 +173,7 @@ class PRESENT(SageObject):
     .. automethod:: __call__
     """
 
-    def __init__(self, keySchedule=80, rounds=None, doFinalRound=False):
+    def __init__(self, keySchedule=80, rounds=None, doFinalRound=False) -> None:
         r"""
         Construct an instance of PRESENT.
 
@@ -330,7 +330,7 @@ class PRESENT(SageObject):
         else:
             return self.__dict__ == other.__dict__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string representation of this PRESENT.
 
@@ -710,7 +710,7 @@ class PRESENT_KS(SageObject):
     .. automethod:: __call__
     """
 
-    def __init__(self, keysize=80, rounds=31, master_key=None):
+    def __init__(self, keysize=80, rounds=31, master_key=None) -> None:
         r"""
         Construct an instance of PRESENT_KS.
 
@@ -821,7 +821,7 @@ class PRESENT_KS(SageObject):
         else:
             return self.__dict__ == other.__dict__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A string representation of this PRESENT_KS.
 

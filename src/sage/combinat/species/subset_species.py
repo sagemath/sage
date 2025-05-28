@@ -26,7 +26,7 @@ from sage.arith.misc import factorial
 
 
 class SubsetSpeciesStructure(GenericSpeciesStructure):
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -136,7 +136,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         return super().__classcall__(cls, *args, **kwds)
 
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Return the species of subsets.
 

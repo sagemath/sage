@@ -199,7 +199,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         sage: f(Q)
         (4 : 1 , 1 : 2 : 1)
     """
-    def __init__(self, N, R=QQ, names=None):
+    def __init__(self, N, R=QQ, names=None) -> None:
         r"""
         The Python constructor.
 

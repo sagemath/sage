@@ -116,7 +116,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         Q = Q.copy(immutable=True, weighted=True)
         return super().__classcall__(cls, Q)
 
-    def __init__(self, Q):
+    def __init__(self, Q) -> None:
         """
         Initialize ``self``.
 
@@ -503,7 +503,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self._quiver.is_directed_acyclic() and not self._quiver.has_loops()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 

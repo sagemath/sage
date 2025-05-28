@@ -20,7 +20,7 @@ from sage.repl.rich_output.buffer import OutputBuffer
 
 class OutputVideoBase(OutputBase):
 
-    def __init__(self, video, loop=True):
+    def __init__(self, video, loop=True) -> None:
         """
         Abstract base class for rich video output.
 

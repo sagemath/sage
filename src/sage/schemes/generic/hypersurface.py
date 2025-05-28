@@ -76,7 +76,7 @@ class ProjectiveHypersurface(AlgebraicScheme_subscheme_projective):
          in Projective Space of dimension 2 over Rational Field
     """
 
-    def __init__(self, poly, ambient=None):
+    def __init__(self, poly, ambient=None) -> None:
         """
         Return the projective hypersurface in the space ambient
         defined by the polynomial ``poly``.
@@ -163,7 +163,7 @@ class AffineHypersurface(AlgebraicScheme_subscheme_affine):
         Affine hypersurface defined by -z^3 + x*y
          in Affine Space of dimension 3 over Rational Field
     """
-    def __init__(self, poly, ambient=None):
+    def __init__(self, poly, ambient=None) -> None:
         """
         Return the affine hypersurface in the space ambient
         defined by the polynomial poly.

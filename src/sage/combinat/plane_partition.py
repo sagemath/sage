@@ -99,7 +99,7 @@ class PlanePartition(ClonableArray,
         pp = PlanePartitions(box_size=box_size)
         return pp.element_class(pp, PP)  # The check() will raise the appropriate error
 
-    def __init__(self, parent, pp, check=True):
+    def __init__(self, parent, pp, check=True) -> None:
         r"""
         Initialize a plane partition.
 
@@ -1388,7 +1388,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
 
         raise ValueError("invalid symmetry class option")
 
-    def __init__(self, box_size=None, symmetry=None, category=None):
+    def __init__(self, box_size=None, symmetry=None, category=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1405,7 +1405,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
 
     Element = PlanePartition
 
-    def __contains__(self, pp):
+    def __contains__(self, pp) -> bool:
         """
         Check to see that ``pp`` is a valid plane partition.
 
@@ -1473,7 +1473,7 @@ class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
     r"""
     All plane partitions.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all plane partitions.
 
@@ -1532,7 +1532,7 @@ class PlanePartitions_box(PlanePartitions):
     will have at most `a` rows, of lengths at most `b`, with entries
     at most `c`.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         r"""
         Initialize the class of plane partitions that fit in a box of a
         specified size.
@@ -1556,7 +1556,7 @@ class PlanePartitions_box(PlanePartitions):
         return "Plane partitions inside a {} x {} x {} box".format(
             self._box[0], self._box[1], self._box[2])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1728,7 +1728,7 @@ class PlanePartitions_n(PlanePartitions):
     """
     Plane partitions with a fixed number of boxes.
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize the class of plane partitions with ``n`` boxes.
 
@@ -1859,7 +1859,7 @@ class PlanePartitions_SPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     symmetric.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         Initialize ``self``.
 
@@ -2062,7 +2062,7 @@ class PlanePartitions_CSPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     cyclically symmetric.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         Initialize ``self``.
 
@@ -2270,7 +2270,7 @@ class PlanePartitions_TSPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     totally symmetric.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         Initialize ``self``.
 
@@ -2449,7 +2449,7 @@ class PlanePartitions_SCPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     self-complementary.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         Initialize ``self``.
 
@@ -2729,7 +2729,7 @@ class PlanePartitions_TCPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     transpose-complement.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         Initialize ``self``.
 
@@ -2815,7 +2815,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     symmetric self-complementary.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         Initialize ``self``.
 
@@ -2926,7 +2926,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     cyclically symmetric and transpose-complement.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         TESTS::
 
@@ -3010,7 +3010,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     cyclically symmetric self-complementary.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         r"""
         Initialize ``self``.
 
@@ -3087,7 +3087,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
     Plane partitions that fit inside a box of a specified size that are
     totally symmetric self-complementary.
     """
-    def __init__(self, box_size):
+    def __init__(self, box_size) -> None:
         """
         TESTS::
 

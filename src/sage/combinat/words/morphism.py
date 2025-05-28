@@ -168,7 +168,7 @@ class PeriodicPointIterator:
         sage: p._cache[2]
         lazy list ['c', 'b', 'a', ...]
     """
-    def __init__(self, m, cycle):
+    def __init__(self, m, cycle) -> None:
         r"""
         INPUT:
 
@@ -287,7 +287,7 @@ class WordMorphism(SageObject):
         sage: wm == loads(dumps(wm))
         True
     """
-    def __init__(self, data, domain=None, codomain=None):
+    def __init__(self, data, domain=None, codomain=None) -> None:
         r"""
         Construction of the morphism.
 

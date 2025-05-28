@@ -403,7 +403,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         sage: TestSuite(complete).run()
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         TESTS::
 
@@ -2522,7 +2522,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Non-Commutative Symmetric Functions over the Rational Field in the Ribbon basis
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             EXAMPLES::
 
@@ -2944,7 +2944,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Non-Commutative Symmetric Functions over the Rational Field in the Complete basis
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             EXAMPLES::
 
@@ -3211,7 +3211,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             Non-Commutative Symmetric Functions over the Rational Field in the Elementary basis
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             EXAMPLES::
 
@@ -3627,7 +3627,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             True
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             TESTS:
 
@@ -4069,7 +4069,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             2*Phi[] + 2*Phi[1] + 3*Phi[1, 1]
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             TESTS:
 
@@ -4463,7 +4463,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             11*nM[1, 1, 1, 1, 1] + 8*nM[1, 1, 2, 1] + 8*nM[1, 2, 1, 1] + 5*nM[1, 3, 1] + 8*nM[2, 1, 1, 1] + 5*nM[2, 2, 1] + 5*nM[3, 1, 1] + 2*nM[4, 1]
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             TESTS:
 
@@ -4624,7 +4624,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             R[2, 1, 3]
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             TESTS:
 
@@ -4912,7 +4912,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             s[3, 2, 1]
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             EXAMPLES::
 
@@ -5140,7 +5140,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             s[3, 2, 1]
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             Initialize ``self``.
 
@@ -5316,7 +5316,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
         for all `n \geq 0`.
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             EXAMPLES::
 
@@ -5492,7 +5492,7 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
             \sigma_1 = exp(Z_1) exp(Z_2/2) exp(Z_3/3) \cdots exp(Z_n/n) \cdots.
         """
 
-        def __init__(self, NCSF):
+        def __init__(self, NCSF) -> None:
             r"""
             EXAMPLES::
 

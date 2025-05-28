@@ -150,7 +150,7 @@ class LinearTensorConstraint(Element):
         (1.0, 2.0)*x_0 + (2.0, 4.0)*x_1 <= (-5.0, -5.0) + (2.0, 3.0)*x_2
     """
 
-    def __init__(self, parent, lhs, rhs, equality):
+    def __init__(self, parent, lhs, rhs, equality) -> None:
         r"""
         Constructor for ``LinearTensorConstraint``.
 
@@ -321,7 +321,7 @@ class LinearTensorConstraintsParent_class(Parent):
     """
     Element = LinearTensorConstraint
 
-    def __init__(self, linear_tensor_parent):
+    def __init__(self, linear_tensor_parent) -> None:
         """
         The Python constructor.
 

@@ -61,7 +61,7 @@ class PositiveIntegerMonoid(UniqueRepresentation, Parent):
         running ._test_prod() . . . pass
         running ._test_some_elements() . . . pass
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -160,7 +160,7 @@ class IntegersCompletion(UniqueRepresentation, Parent):
         running ._test_pickling() . . . pass
         running ._test_some_elements() . . . pass
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 

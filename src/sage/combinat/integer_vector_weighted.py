@@ -103,7 +103,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
 
         return super().__classcall__(cls, n, weight)
 
-    def __init__(self, n, weight):
+    def __init__(self, n, weight) -> None:
         """
         TESTS::
 
@@ -151,7 +151,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         """
         return "Integer vectors of %s weighted by %s" % (self._n, list(self._weights))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -273,7 +273,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
         [0, 12, 0, 0, 0]
     """
 
-    def __init__(self, weight):
+    def __init__(self, weight) -> None:
         """
         TESTS::
 
@@ -303,7 +303,7 @@ class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
         """
         return "Integer vectors weighted by %s" % list(self._weights)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

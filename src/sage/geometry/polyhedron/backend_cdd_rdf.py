@@ -83,7 +83,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
 
     _cdd_executable = 'cddexec'
 
-    def __init__(self, parent, Vrep, Hrep, **kwds):
+    def __init__(self, parent, Vrep, Hrep, **kwds) -> None:
         """
         The Python constructor.
 

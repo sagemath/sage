@@ -23,7 +23,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
     """
     The Eisenstein submodule of an ambient space of modular forms.
     """
-    def __init__(self, ambient_space):
+    def __init__(self, ambient_space) -> None:
         """
         Return the Eisenstein submodule of the given space.
 

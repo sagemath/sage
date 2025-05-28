@@ -201,7 +201,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
          by -x^2 + (-u)*z^2 + y*w, x*w + (-3*u^2)*z*w
     """
 
-    def __init__(self, A, X, category=None):
+    def __init__(self, A, X, category=None) -> None:
         """
         Initialize.
 
@@ -607,7 +607,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
          defined by y^2*z - x*z^2 - z^3
     """
 
-    def __init__(self, A, f, category=None):
+    def __init__(self, A, f, category=None) -> None:
         """
         Initialize.
 
@@ -1582,7 +1582,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
     """
     _point = ProjectiveCurvePoint_field
 
-    def __init__(self, A, X, category=None):
+    def __init__(self, A, X, category=None) -> None:
         """
         Initialize.
 
@@ -2280,7 +2280,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
     _point = IntegralProjectiveCurvePoint
     _closed_point = IntegralProjectiveCurveClosedPoint
 
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         """
         Initialize.
 

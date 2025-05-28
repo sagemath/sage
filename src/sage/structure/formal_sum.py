@@ -84,7 +84,7 @@ class FormalSum(ModuleElement):
     """
     A formal sum over a ring.
     """
-    def __init__(self, x, parent=None, check=True, reduce=True):
+    def __init__(self, x, parent=None, check=True, reduce=True) -> None:
         """
         INPUT:
 
@@ -177,7 +177,7 @@ class FormalSum(ModuleElement):
         """
         return self._data[n]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 

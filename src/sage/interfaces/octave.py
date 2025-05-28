@@ -182,7 +182,7 @@ class Octave(Expect):
     """
 
     def __init__(self, maxread=None, script_subdirectory=None, logfile=None,
-            server=None, server_tmpdir=None, seed=None, command=None):
+            server=None, server_tmpdir=None, seed=None, command=None) -> None:
         """
         EXAMPLES::
 
@@ -644,7 +644,7 @@ class OctaveElement(ExpectElement):
         else:
             raise TypeError("no Sage ring associated to this element.")
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Test whether this element is nonzero.
 

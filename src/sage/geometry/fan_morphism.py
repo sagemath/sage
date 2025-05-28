@@ -246,7 +246,7 @@ class FanMorphism(FreeModuleMorphism):
                  codomain=None,
                  subdivide=False,
                  check=True,
-                 verbose=False):
+                 verbose=False) -> None:
         r"""
         Create a fan morphism.
 

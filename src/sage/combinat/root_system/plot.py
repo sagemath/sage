@@ -851,7 +851,7 @@ class PlotOptions:
                  level=None,
                  affine=None,
                  arrowsize=5,
-                 ):
+                 ) -> None:
         r"""
         TESTS::
 

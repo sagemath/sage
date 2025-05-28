@@ -22,7 +22,7 @@ class SchemePoint(Element):
     Base class for points on a scheme, either topological or defined
     by a morphism.
     """
-    def __init__(self, S, parent=None):
+    def __init__(self, S, parent=None) -> None:
         """
         INPUT:
 
@@ -86,7 +86,7 @@ class SchemeTopologicalPoint(SchemePoint):
     """
     Base class for topological points on schemes.
     """
-    def __init__(self, S):
+    def __init__(self, S) -> None:
         """
         INPUT:
 
@@ -109,7 +109,7 @@ class SchemeTopologicalPoint(SchemePoint):
 
 
 class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
-    def __init__(self, u, x):
+    def __init__(self, u, x) -> None:
         """
         INPUT:
 
@@ -146,7 +146,7 @@ class SchemeTopologicalPoint_affine_open(SchemeTopologicalPoint):
 
 
 class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
-    def __init__(self, S, P, check=False):
+    def __init__(self, S, P, check=False) -> None:
         """
         INPUT:
 

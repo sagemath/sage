@@ -189,7 +189,7 @@ class SkewPartition(CombinatorialElement):
             raise ValueError("invalid skew partition: %s" % skp)
         return SkewPartitions()(skp)
 
-    def __init__(self, parent, skp):
+    def __init__(self, parent, skp) -> None:
         """
         TESTS::
 
@@ -1390,7 +1390,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         else:
             return SkewPartitions_all()
 
-    def __init__(self, is_infinite=False):
+    def __init__(self, is_infinite=False) -> None:
         """
         TESTS::
 
@@ -1493,7 +1493,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         """
         return self.element_class(self, skp)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1653,7 +1653,7 @@ class SkewPartitions_all(SkewPartitions):
     Class of all skew partitions.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -1739,7 +1739,7 @@ class SkewPartitions_n(SkewPartitions):
             overlap = 1
         return super().__classcall__(cls, n, overlap)
 
-    def __init__(self, n, overlap):
+    def __init__(self, n, overlap) -> None:
         """
         Return the set of the skew partitions of ``n`` with overlap
         at least ``overlap``, and no empty row.
@@ -1773,7 +1773,7 @@ class SkewPartitions_n(SkewPartitions):
         self.overlap = overlap
         SkewPartitions.__init__(self, False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1952,7 +1952,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
             overlap = 1
         return super().__classcall__(cls, co, overlap)
 
-    def __init__(self, co, overlap):
+    def __init__(self, co, overlap) -> None:
         """
         TESTS::
 
@@ -1963,7 +1963,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
         self.overlap = overlap
         SkewPartitions.__init__(self, False)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 

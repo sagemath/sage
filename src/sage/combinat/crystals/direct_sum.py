@@ -119,7 +119,7 @@ class DirectSumOfCrystals(DisjointUnionEnumeratedSets):
         return super().__classcall__(cls,
             Family(ret), facade=facade, keepkey=keepkey, category=category)
 
-    def __init__(self, crystals, facade, keepkey, category, **options):
+    def __init__(self, crystals, facade, keepkey, category, **options) -> None:
         """
         TESTS::
 

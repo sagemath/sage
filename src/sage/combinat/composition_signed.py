@@ -67,7 +67,7 @@ class SignedCompositions(Compositions_n):
         sage: TestSuite(SC).run()
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -76,7 +76,7 @@ class SignedCompositions(Compositions_n):
         """
         return "Signed compositions of %s" % self.n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 

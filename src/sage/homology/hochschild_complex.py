@@ -83,7 +83,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
     - https://ncatlab.org/nlab/show/Hochschild+cohomology
     - [Red2001]_
     """
-    def __init__(self, A, M):
+    def __init__(self, A, M) -> None:
         """
         Initialize ``self``.
 
@@ -570,7 +570,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             sage: H({0: x-y, 2: H.module(2).basis().an_element()})
             Chain with 2 nonzero terms over Integer Ring
         """
-        def __init__(self, parent, vectors):
+        def __init__(self, parent, vectors) -> None:
             """
             Initialize ``self``.
 

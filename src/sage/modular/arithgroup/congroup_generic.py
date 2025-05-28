@@ -152,7 +152,7 @@ def is_CongruenceSubgroup(x):
 
 class CongruenceSubgroupBase(ArithmeticSubgroup):
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         """
         Create a congruence subgroup with given level.
 
@@ -300,7 +300,7 @@ class CongruenceSubgroupFromGroup(CongruenceSubgroupBase):
         sage: TestSuite(G).run()
     """
 
-    def __init__(self, G):
+    def __init__(self, G) -> None:
         r"""
         Standard init function.
 
@@ -454,7 +454,7 @@ class CongruenceSubgroup(CongruenceSubgroupFromGroup):
         """
         raise NotImplementedError
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         Bypass the init function of the CongruenceSubgroupFromGroup class.
 

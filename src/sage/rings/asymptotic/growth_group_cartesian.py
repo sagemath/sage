@@ -288,7 +288,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
     __classcall__ = CartesianProductPoset.__classcall__
 
-    def __init__(self, sets, category, **kwds):
+    def __init__(self, sets, category, **kwds) -> None:
         r"""
         See :class:`GenericProduct` for details.
 
@@ -782,7 +782,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         # At the end of the iteration the data is reset to None instead
         # of raising a StopIteration.
         class it:
-            def __init__(self, it):
+            def __init__(self, it) -> None:
                 self.it = it
                 self.var = None
                 self.factors = None
@@ -1352,7 +1352,7 @@ class UnivariateProduct(GenericProduct):
         :class:`GenericProduct`.
     """
 
-    def __init__(self, sets, category, **kwargs):
+    def __init__(self, sets, category, **kwargs) -> None:
         r"""
         See :class:`UnivariateProduct` for details.
 
@@ -1384,7 +1384,7 @@ class MultivariateProduct(GenericProduct):
         :class:`UnivariateProduct`,
         :class:`GenericProduct`.
     """
-    def __init__(self, sets, category, **kwargs):
+    def __init__(self, sets, category, **kwargs) -> None:
         r"""
 
         TESTS::

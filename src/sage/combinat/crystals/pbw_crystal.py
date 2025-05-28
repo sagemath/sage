@@ -38,7 +38,7 @@ class PBWCrystalElement(Element):
     A crystal element in the PBW model.
     """
 
-    def __init__(self, parent, lusztig_datum, long_word=None):
+    def __init__(self, parent, lusztig_datum, long_word=None) -> None:
         """
         Initialize ``self``.
 
@@ -405,7 +405,7 @@ class PBWCrystal(Parent, UniqueRepresentation):
             raise NotImplementedError("only implemented for finite types")
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 

@@ -93,7 +93,7 @@ class FreeModulePseudoHomspace(UniqueRepresentation, HomsetWithBase):
                 raise ValueError("the domain does not coerce into the codomain")
         return cls.__classcall__(cls, domain, codomain, ore)
 
-    def __init__(self, domain, codomain, ore):
+    def __init__(self, domain, codomain, ore) -> None:
         r"""
         Initialize this pseudohom space.
 

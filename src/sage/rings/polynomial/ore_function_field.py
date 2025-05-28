@@ -189,7 +189,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
     """
     Element = None
 
-    def __init__(self, ring, category=None):
+    def __init__(self, ring, category=None) -> None:
         r"""
         Initialize this Ore function field.
 
@@ -696,7 +696,7 @@ class SectionOreFunctionCenterInjection(Section):
     Section of the canonical injection of the center of a Ore
     function field into this field
     """
-    def __init__(self, embed):
+    def __init__(self, embed) -> None:
         r"""
         Initialize this map.
 
@@ -775,7 +775,7 @@ class OreFunctionCenterInjection(RingHomomorphism):
     Canonical injection of the center of a Ore function field
     into this field.
     """
-    def __init__(self, domain, codomain, ringembed):
+    def __init__(self, domain, codomain, ringembed) -> None:
         r"""
         Initialize this morphism.
 
@@ -877,7 +877,7 @@ class OreFunctionField_with_large_center(OreFunctionField):
     """
     A specialized class for Ore polynomial fields whose center has finite index.
     """
-    def __init__(self, ring, category=None):
+    def __init__(self, ring, category=None) -> None:
         r"""
         Initialize this Ore function field.
 

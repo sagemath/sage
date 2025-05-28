@@ -32,7 +32,7 @@ class MaximaFunctionElementWrapper(MaximaFunctionElement):
 
 
 class MaximaWrapper(SageObject):
-    def __init__(self, exp):
+    def __init__(self, exp) -> None:
         """
         Wrapper around Sage expressions to give access to Maxima methods.
 

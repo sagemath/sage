@@ -29,7 +29,7 @@ class IntegerFactorization(Factorization):
     """
 
     def __init__(self, x, unit=None, cr=False, sort=True, simplify=True,
-                 unsafe=False):
+                 unsafe=False) -> None:
         """
         Set ``self`` to the factorization object with list ``x``,
         which must be a sorted list of pairs, where each pair contains

@@ -191,7 +191,7 @@ class MutablePosetShell(SageObject):
 
         :class:`MutablePoset`
     """
-    def __init__(self, poset, element):
+    def __init__(self, poset, element) -> None:
         r"""
         See :class:`MutablePosetShell` for details.
 
@@ -1326,7 +1326,7 @@ class MutablePoset(SageObject):
 
         :class:`MutablePosetShell`.
     """
-    def __init__(self, data=None, key=None, merge=None, can_merge=None):
+    def __init__(self, data=None, key=None, merge=None, can_merge=None) -> None:
         r"""
         See :class:`MutablePoset` for details.
 
@@ -1417,7 +1417,7 @@ class MutablePoset(SageObject):
         self._oo_.predecessors().add(self._null_)
         self._shells_ = {}
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of elements contained in this poset.
 

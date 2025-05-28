@@ -217,7 +217,7 @@ class AbelianVarieties(Schemes_over_base):
         ...
         ValueError: category of abelian varieties is only defined over fields
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Constructor for the ``AbelianVarieties`` category.
 
@@ -320,7 +320,7 @@ class Jacobians(Schemes_over_base):
 
         sage: TestSuite(Jacobians(QQ)).run()
     """
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Constructor of this category.
 

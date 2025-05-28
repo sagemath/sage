@@ -419,7 +419,7 @@ class LatexExpr(str):
         """
         return LatexExpr(other) + self
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -550,7 +550,7 @@ class _Latex_prefs_object(SageObject):
     An object that holds LaTeX global preferences.
     """
     def __init__(self, bb=False, delimiters=["(", ")"],
-                 matrix_column_alignment='r'):
+                 matrix_column_alignment='r') -> None:
         """
         Define an object that holds LaTeX global preferences.
 
@@ -969,7 +969,7 @@ class Latex(LatexCall):
         sage: LatexExpr(r"y \neq") + latex(x^20 + 1)                                    # needs sage.symbolic
         y \neq x^{20} + 1
     """
-    def __init__(self, debug=False, slide=False, density=150, engine=None):
+    def __init__(self, debug=False, slide=False, density=150, engine=None) -> None:
         """
         Initialize the latex builder.
 

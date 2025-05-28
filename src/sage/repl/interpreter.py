@@ -484,7 +484,7 @@ class logstr(str):
     This provides a ``_latex_`` method which is just the string
     wrapped in a ``\\verb`` environment.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
             sage: from sage.repl.interpreter import logstr
@@ -517,7 +517,7 @@ class logstr(str):
 class InterfaceShellTransformer(PrefilterTransformer):
     priority = 50
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Initialize this class.  All of the arguments get passed to
         :meth:`PrefilterTransformer.__init__`.
@@ -749,7 +749,7 @@ def get_test_shell():
 #######################
 
 class SageCrashHandler(IPAppCrashHandler):
-    def __init__(self, app):
+    def __init__(self, app) -> None:
         """
         A custom :class:`CrashHandler` which gives the user
         instructions on how to post the problem to sage-support.

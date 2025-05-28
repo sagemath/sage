@@ -290,7 +290,7 @@ class Gap3(Gap_generic):
     """
     _identical_function = "IsIdentical"
 
-    def __init__(self, command=gap3_cmd):
+    def __init__(self, command=gap3_cmd) -> None:
         r"""
         Initialize the GAP3 interface and start a session.
 
@@ -689,7 +689,7 @@ class GAP3Element(GapElement_generic):
 
     - Franco Saliola (Feb 2010)
     """
-    def __init__(self, parent, value, is_name=False, name=None):
+    def __init__(self, parent, value, is_name=False, name=None) -> None:
         r"""
         See ``GAP3Element`` for full documentation.
 

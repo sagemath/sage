@@ -470,7 +470,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule):
     """
     Element = FreeAlgebraElement
 
-    def __init__(self, R, n, names, degrees=None):
+    def __init__(self, R, n, names, degrees=None) -> None:
         """
         The free algebra on `n` generators over a base ring.
 
@@ -1228,7 +1228,7 @@ class PBWBasisOfFreeAlgebra(CombinatorialFreeModule):
             alg = FreeAlgebra(R, n, names)
         return super().__classcall__(cls, alg)
 
-    def __init__(self, alg):
+    def __init__(self, alg) -> None:
         """
         Initialize ``self``.
 
@@ -1503,7 +1503,7 @@ class AssociativeFunctor(ConstructionFunctor):
     """
     rank = 9
 
-    def __init__(self, vars, degs=None):
+    def __init__(self, vars, degs=None) -> None:
         """
         EXAMPLES::
 

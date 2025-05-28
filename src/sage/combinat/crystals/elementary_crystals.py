@@ -262,7 +262,7 @@ class TCrystal(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type, weight)
 
-    def __init__(self, cartan_type, weight):
+    def __init__(self, cartan_type, weight) -> None:
         r"""
         Initialize ``self``.
 
@@ -519,7 +519,7 @@ class RCrystal(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type, weight, dual)
 
-    def __init__(self, cartan_type, weight, dual):
+    def __init__(self, cartan_type, weight, dual) -> None:
         r"""
         Initialize ``self``.
 
@@ -795,7 +795,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
             raise ValueError('i must an element of the index set')
         return super().__classcall__(cls, cartan_type, i)
 
-    def __init__(self, cartan_type, i):
+    def __init__(self, cartan_type, i) -> None:
         r"""
         Initialize ``self``.
 
@@ -859,7 +859,7 @@ class ElementaryCrystal(UniqueRepresentation, Parent):
         Element of a `B_i` crystal.
         """
 
-        def __init__(self, parent, m):
+        def __init__(self, parent, m) -> None:
             r"""
             EXAMPLES::
 
@@ -1098,7 +1098,7 @@ class ComponentCrystal(UniqueRepresentation, Parent):
                 P = cartan_type.root_system().weight_lattice()
         return super().__classcall__(cls, cartan_type, P)
 
-    def __init__(self, cartan_type, P):
+    def __init__(self, cartan_type, P) -> None:
         r"""
         Initialize ``self``.
 

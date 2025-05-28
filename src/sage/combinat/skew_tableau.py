@@ -104,7 +104,7 @@ class SkewTableau(ClonableList,
 
         return SkewTableaux()(st)
 
-    def __init__(self, parent, st):
+    def __init__(self, parent, st) -> None:
         """
         TESTS::
 
@@ -1870,7 +1870,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
     Class of all skew tableaux.
     """
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -1912,7 +1912,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
     Element = SkewTableau
     options = Tableaux.options
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check if ``x`` is a skew tableau.
 
@@ -2058,7 +2058,7 @@ class StandardSkewTableaux(SkewTableaux):
         else:
             raise TypeError("invalid argument")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -2082,7 +2082,7 @@ class StandardSkewTableaux_all(StandardSkewTableaux):
     Class of all standard skew tableaux.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -2128,7 +2128,7 @@ class StandardSkewTableaux_size(StandardSkewTableaux):
     Standard skew tableaux of a fixed size `n`.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 
@@ -2219,7 +2219,7 @@ class StandardSkewTableaux_shape(StandardSkewTableaux):
         """
         return super().__classcall__(cls, SkewPartition(skp))
 
-    def __init__(self, skp):
+    def __init__(self, skp) -> None:
         """
         TESTS::
 
@@ -2426,7 +2426,7 @@ class SemistandardSkewTableaux(SkewTableaux):
 
         raise ValueError("invalid input")
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -2455,7 +2455,7 @@ class SemistandardSkewTableaux_all(SemistandardSkewTableaux):
     maximum entry.
     """
 
-    def __init__(self, max_entry):
+    def __init__(self, max_entry) -> None:
         """
         Initialize ``self``.
 
@@ -2544,7 +2544,7 @@ class SemistandardSkewTableaux_size(SemistandardSkewTableaux):
     possibly with a given maximum entry.
     """
 
-    def __init__(self, n, max_entry):
+    def __init__(self, n, max_entry) -> None:
         """
         EXAMPLES::
 
@@ -2618,7 +2618,7 @@ class SemistandardSkewTableaux_size_weight(SemistandardSkewTableaux):
         """
         return super().__classcall__(cls, n, tuple(mu))
 
-    def __init__(self, n, mu):
+    def __init__(self, n, mu) -> None:
         """
         EXAMPLES::
 
@@ -2698,7 +2698,7 @@ class SemistandardSkewTableaux_shape(SemistandardSkewTableaux):
             max_entry = sum(p[0]) - sum(p[1])
         return super().__classcall__(cls, SkewPartition(p), max_entry)
 
-    def __init__(self, p, max_entry):
+    def __init__(self, p, max_entry) -> None:
         """
         EXAMPLES::
 
@@ -2777,7 +2777,7 @@ class SemistandardSkewTableaux_shape_weight(SemistandardSkewTableaux):
         mu = tuple(mu)
         return super().__classcall__(cls, p, mu)
 
-    def __init__(self, p, mu):
+    def __init__(self, p, mu) -> None:
         """
         EXAMPLES::
 

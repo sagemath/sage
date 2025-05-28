@@ -357,7 +357,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
     An element of a Jacobian defined over a field, i.e. in
     `J(K) = \mathrm{Pic}^0_K(C)`.
     """
-    def __init__(self, parent, polys, check=True):
+    def __init__(self, parent, polys, check=True) -> None:
         r"""
         Create a new Jacobian element in Mumford representation.
 
@@ -724,7 +724,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         # comparing polynomials is well-defined
         return richcmp(self.__polys, other.__polys, op)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if this divisor is not the additive identity element.
 

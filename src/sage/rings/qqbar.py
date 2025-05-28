@@ -1109,7 +1109,7 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
         except BaseException:
             return AlgebraicField_common.__new__(cls)
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Standard initialization function.
 
@@ -1640,7 +1640,7 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
         except BaseException:
             return AlgebraicField_common.__new__(cls)
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Standard init function.
 
@@ -3100,7 +3100,7 @@ class AlgebraicGeneratorRelation(SageObject):
     A simple class for maintaining relations in the lattice of algebraic
     extensions.
     """
-    def __init__(self, child1, child1_poly, child2, child2_poly, parent):
+    def __init__(self, child1, child1_poly, child2, child2_poly, parent) -> None:
         r"""
         EXAMPLES::
 
@@ -3129,7 +3129,7 @@ class AlgebraicGenerator(SageObject):
     directly.
     """
 
-    def __init__(self, field, root):
+    def __init__(self, field, root) -> None:
         """
         Construct an ``AlgebraicGenerator`` object.
 
@@ -3790,7 +3790,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         256.0019531175495?
     """
 
-    def __init__(self, parent, x):
+    def __init__(self, parent, x) -> None:
         r"""
         Initialize an algebraic number. The argument must be either
         a rational number, a Gaussian rational, or a subclass of ``ANDescr``.
@@ -4129,7 +4129,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         else:
             return hash((self + QQbar_hash_offset).interval_exact(CIF))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Check whether ``self`` is nonzero.
 
@@ -4989,7 +4989,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
 
     .. automethod:: _richcmp_
     """
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         r"""
         Initialize this AlgebraicNumber object.
 
@@ -5202,7 +5202,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         """
         return AA(self)._mpfr_(field)
 
-    def __float__(self):
+    def __float__(self) -> float:
         r"""
         Compute a good float approximation to ``self``. Works only if the
         imaginary component of ``self`` is exactly zero; otherwise it
@@ -5221,7 +5221,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         """
         return AA(self).__float__()
 
-    def __complex__(self):
+    def __complex__(self) -> complex:
         r"""
         Compute a good complex approximation to ``self``.
 
@@ -5555,7 +5555,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     .. automethod:: _richcmp_
     """
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         """
         Create an algebraic real from x, possibly taking the real part of x.
 
@@ -6262,7 +6262,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
     _mpfr_ = real_number
 
-    def __float__(self):
+    def __float__(self) -> float:
         r"""
         Compute a good float approximation to ``self``.
 
@@ -6487,7 +6487,7 @@ class AlgebraicNumberPowQQAction(Action):
         sage: (AA(2)^(1/2)-AA(2)^(1/2))^(1/2)
         0
     """
-    def __init__(self, G, S):
+    def __init__(self, G, S) -> None:
         """
         EXAMPLES::
 
@@ -6620,7 +6620,7 @@ class ANRational(ANDescr):
     rational. This class is private, and should not be used directly.
     """
 
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         """
         TESTS::
 
@@ -6931,7 +6931,7 @@ class AlgebraicPolynomialTracker(SageObject):
         1.618033988749895?
     """
 
-    def __init__(self, poly):
+    def __init__(self, poly) -> None:
         r"""
         Initialize this AlgebraicPolynomialTracker object.
 
@@ -7180,7 +7180,7 @@ class ANRoot(ANDescr):
     root of a polynomial with algebraic coefficients.
     This class is private, and should not be used directly.
     """
-    def __init__(self, poly, interval, multiplicity=1):
+    def __init__(self, poly, interval, multiplicity=1) -> None:
         r"""
         Initialize this ``ANRoot`` object.
 
@@ -7874,7 +7874,7 @@ class ANExtensionElement(ANDescr):
         else:
             return ANDescr.__new__(self)
 
-    def __init__(self, generator, value):
+    def __init__(self, generator, value) -> None:
         self._generator = generator
         self._value = value
         self._exactly_real = not generator.is_complex()
@@ -8328,7 +8328,7 @@ class ANExtensionElement(ANDescr):
 
 
 class ANUnaryExpr(ANDescr):
-    def __init__(self, arg, op):
+    def __init__(self, arg, op) -> None:
         r"""
         Initialize this ANUnaryExpr.
 
@@ -8585,7 +8585,7 @@ class ANUnaryExpr(ANDescr):
 
 
 class ANBinaryExpr(ANDescr):
-    def __init__(self, left, right, op):
+    def __init__(self, left, right, op) -> None:
         r"""
         Initialize this ANBinaryExpr.
 

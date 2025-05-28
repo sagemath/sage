@@ -237,7 +237,7 @@ class ResidueSequence(ClonableArray,
         multicharge = tuple(multicharge)
         return ResidueSequences(e, multicharge).element_class(ResidueSequences(e, multicharge), tuple(residues), check)
 
-    def __init__(self, parent, residues, check):
+    def __init__(self, parent, residues, check) -> None:
         r"""
         Initialize ``self``.
 
@@ -289,7 +289,7 @@ class ResidueSequence(ClonableArray,
         """
         return self.__str__()
 
-    def __str__(self, join='with'):
+    def __str__(self, join='with') -> str:
         r"""
         The string representation of a residue sequence is a comma separated
         tuple with no spaces.
@@ -704,7 +704,7 @@ class ResidueSequences(UniqueRepresentation, Parent):
 
     Element = ResidueSequence
 
-    def __init__(self, e, multicharge=(0,)):
+    def __init__(self, e, multicharge=(0,)) -> None:
         r"""
         Initialise the parent class for residue sequences.
 

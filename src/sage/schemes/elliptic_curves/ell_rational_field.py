@@ -151,7 +151,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         sage: EllipticCurve('462.f3')
         Elliptic Curve defined by y^2 + x*y = x^3 - 363*x + 1305 over Rational Field
     """
-    def __init__(self, ainvs, **kwds):
+    def __init__(self, ainvs, **kwds) -> None:
         r"""
         Constructor for the EllipticCurve_rational_field class.
 

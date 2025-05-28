@@ -24,7 +24,7 @@ from sage.rings.infinity import infinity
 
 
 class EisensteinExtensionGeneric(pAdicExtensionGeneric):
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, poly, prec, print_mode, names, element_class) -> None:
         """
         Initialize ``self``.
 

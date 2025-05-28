@@ -252,7 +252,7 @@ class CooperativeGame(SageObject):
         sage: letter_game.is_symmetric({'A': 0, 'C': 35, 'B': 3})
         True
     """
-    def __init__(self, characteristic_function):
+    def __init__(self, characteristic_function) -> None:
         r"""
         Initialize a co-operative game and checks the inputs.
 

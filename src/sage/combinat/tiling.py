@@ -493,7 +493,7 @@ class Polyomino(SageObject):
         Polyomino: [(0, 0, 0), (0, 1, 0), (1, 1, 0), (1, 1, 1)], Color: blue
     """
 
-    def __init__(self, coords, color='gray', dimension=None):
+    def __init__(self, coords, color='gray', dimension=None) -> None:
         r"""
         Constructor.
 
@@ -603,7 +603,7 @@ class Polyomino(SageObject):
         """
         return sorted(self.frozenset())
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the size of the polyomino, i.e. the number of n-dimensional
         unit cubes.
@@ -1572,7 +1572,7 @@ class TilingSolver(SageObject):
     """
 
     def __init__(self, pieces, box, rotation=True,
-                 reflection=False, reusable=False, outside=False):
+                 reflection=False, reusable=False, outside=False) -> None:
         r"""
         Constructor.
 

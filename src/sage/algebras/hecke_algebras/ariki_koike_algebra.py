@@ -74,7 +74,7 @@ class _Basis(CombinatorialFreeModule, BindableClass):
     r"""
     Abstract base class for bases of the Ariki-Koike algebra.
     """
-    def __init__(self, algebra, prefix='AK'):
+    def __init__(self, algebra, prefix='AK') -> None:
         r"""
         Initialize ``self``.
 
@@ -321,7 +321,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         u = tuple([R(val) for val in u])
         return super().__classcall__(cls, r, n, q, u, R)
 
-    def __init__(self, r, n, q, u, R):
+    def __init__(self, r, n, q, u, R) -> None:
         r"""
         Initialize ``self``.
 
@@ -436,7 +436,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         r"""
         The category of bases of a Ariki-Koike algebra.
         """
-        def __init__(self, base):
+        def __init__(self, base) -> None:
             r"""
             Initialize ``self``.
 
@@ -614,7 +614,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         This was the basis defined in [AK1994]_ except using the
         renormalized Jucys-Murphy elements.
         """
-        def __init__(self, algebra):
+        def __init__(self, algebra) -> None:
             r"""
             Initialize ``self``.
 
@@ -1200,7 +1200,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
         `T_{1,k} = T_0^k`) and `w` is a reduced expression of an
         element in `\mathfrak{S}_n`.
         """
-        def __init__(self, algebra):
+        def __init__(self, algebra) -> None:
             r"""
             Initialize ``self``.
 

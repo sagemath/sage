@@ -49,7 +49,7 @@ class SAGE_SRC(StaticFile):
     A :class:`~sage.features.Feature` which describes the presence of the
     monolithic source tree of the Sage library.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -88,7 +88,7 @@ class sagemath_doc_html(StaticFile):
         sage: sagemath_doc_html().is_present()                                          # needs sagemath_doc_html
         FeatureTestResult('sagemath_doc_html', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -158,7 +158,7 @@ class sage__combinat(JoinFeature):
         sage: sage__combinat().is_present()                                             # needs sage.combinat
         FeatureTestResult('sage.combinat', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -204,7 +204,7 @@ class sage__geometry__polyhedron(JoinFeature):
         FeatureTestResult('sage.geometry.polyhedron', True)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -277,7 +277,7 @@ class sage__graphs(JoinFeature):
         sage: sage__graphs().is_present()                                               # needs sage.graphs
         FeatureTestResult('sage.graphs', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -323,7 +323,7 @@ class sage__groups(JoinFeature):
         sage: sage__groups().is_present()                                               # needs sage.groups
         FeatureTestResult('sage.groups', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -347,7 +347,7 @@ class sage__libs__braiding(PythonModule):
         FeatureTestResult('sage.libs.braiding', True)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -370,7 +370,7 @@ class sage__libs__ecl(PythonModule):
         FeatureTestResult('sage.libs.ecl', True)
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -396,7 +396,7 @@ class sage__libs__flint(JoinFeature):
         sage: sage__libs__flint().is_present()                                          # needs sage.libs.flint
         FeatureTestResult('sage.libs.flint', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -428,7 +428,7 @@ class sage__libs__gap(JoinFeature):
         sage: sage__libs__gap().is_present()                                            # needs sage.libs.gap
         FeatureTestResult('sage.libs.gap', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -467,7 +467,7 @@ class sage__libs__linbox(JoinFeature):
         sage: sage__libs__linbox().is_present()                                         # needs sage.libs.linbox
         FeatureTestResult('sage.libs.linbox', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -496,7 +496,7 @@ class sage__libs__m4ri(JoinFeature):
         sage: sage__libs__m4ri().is_present()                                           # needs sage.libs.m4ri
         FeatureTestResult('sage.libs.m4ri', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -524,7 +524,7 @@ class sage__libs__ntl(JoinFeature):
         sage: sage__libs__ntl().is_present()                                            # needs sage.libs.ntl
         FeatureTestResult('sage.libs.ntl', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -550,7 +550,7 @@ class sage__libs__giac(JoinFeature):
         sage: sage__libs__giac().is_present()                                           # needs sage.libs.giac
         FeatureTestResult('sage.libs.giac', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -576,7 +576,7 @@ class sage__libs__homfly(JoinFeature):
         sage: sage__libs__homfly().is_present()                                         # needs sage.libs.homfly
         FeatureTestResult('sage.libs.homfly', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -614,7 +614,7 @@ class sage__libs__pari(JoinFeature):
         sage: sage__libs__pari().is_present()                                           # needs sage.libs.pari
         FeatureTestResult('sage.libs.pari', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -645,7 +645,7 @@ class sage__libs__singular(JoinFeature):
         sage: sage__libs__singular().is_present()                                       # needs sage.libs.singular
         FeatureTestResult('sage.libs.singular', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -668,7 +668,7 @@ class sage__modular(JoinFeature):
         sage: sage__modular().is_present()                                              # needs sage.modular
         FeatureTestResult('sage.modular', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -706,7 +706,7 @@ class sage__modules(JoinFeature):
         sage: sage__modules().is_present()                                              # needs sage.modules
         FeatureTestResult('sage.modules', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -746,7 +746,7 @@ class sage__numerical__mip(PythonModule):
         sage: sage__numerical__mip().is_present()                                       # needs sage.numerical.mip
         FeatureTestResult('sage.numerical.mip', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -768,7 +768,7 @@ class sage__plot(JoinFeature):
         sage: sage__plot().is_present()                                                 # needs sage.plot
         FeatureTestResult('sage.plot', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -791,7 +791,7 @@ class sage__rings__complex_double(PythonModule):
         sage: sage__rings__complex_double().is_present()                                # needs sage.rings.complex_double
         FeatureTestResult('sage.rings.complex_double', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -814,7 +814,7 @@ class sage__rings__finite_rings(JoinFeature):
         sage: sage__rings__finite_rings().is_present()                                  # needs sage.rings.finite_rings
         FeatureTestResult('sage.rings.finite_rings', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -859,7 +859,7 @@ class sage__rings__function_field(JoinFeature):
         sage: sage__rings__function_field().is_present()                                # needs sage.rings.function_field
         FeatureTestResult('sage.rings.function_field', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -928,7 +928,7 @@ class sage__rings__number_field(JoinFeature):
         sage: sage__rings__number_field().is_present()                                  # needs sage.rings.number_field
         FeatureTestResult('sage.rings.number_field', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -953,7 +953,7 @@ class sage__rings__padics(JoinFeature):
         sage: sage__rings__padics().is_present()                                        # needs sage.rings.padics
         FeatureTestResult('sage.rings.padics', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -976,7 +976,7 @@ class sage__rings__polynomial__pbori(JoinFeature):
         sage: sage__rings__polynomial__pbori().is_present()                             # needs sage.rings.polynomial.pbori
         FeatureTestResult('sage.rings.polynomial.pbori', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1009,7 +1009,7 @@ class sage__rings__real_double(PythonModule):
         sage: sage__rings__real_double().is_present()                                   # needs sage.rings.real_double
         FeatureTestResult('sage.rings.real_double', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1030,7 +1030,7 @@ class sage__rings__real_mpfr(JoinFeature):
         sage: sage__rings__real_mpfr().is_present()                                     # needs sage.rings.real_mpfr
         FeatureTestResult('sage.rings.real_mpfr', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1055,7 +1055,7 @@ class sage__sat(JoinFeature):
         sage: sage__sat().is_present()                                                  # needs sage.sat
         FeatureTestResult('sage.sat', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1078,7 +1078,7 @@ class sage__schemes(JoinFeature):
         sage: sage__schemes().is_present()                                              # needs sage.schemes
         FeatureTestResult('sage.schemes', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1113,7 +1113,7 @@ class sage__symbolic(JoinFeature):
         sage: sage__symbolic().is_present()                                             # needs sage.symbolic
         FeatureTestResult('sage.symbolic', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

@@ -42,7 +42,7 @@ class FakeExpression:
     that tree-walkers won't care about the difference.
     """
 
-    def __init__(self, operands, operator):
+    def __init__(self, operands, operator) -> None:
         """
         EXAMPLES::
 
@@ -54,7 +54,7 @@ class FakeExpression:
         self._operands = operands
         self._operator = operator
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -129,7 +129,7 @@ class FakeExpression:
 
 
 class Converter:
-    def __init__(self, use_fake_div=False):
+    def __init__(self, use_fake_div=False) -> None:
         """
         If use_fake_div is set to True, then the converter will try to
         replace expressions whose operator is operator.mul with the
@@ -385,7 +385,7 @@ class Converter:
 
 
 class InterfaceInit(Converter):
-    def __init__(self, interface):
+    def __init__(self, interface) -> None:
         """
         EXAMPLES::
 
@@ -673,7 +673,7 @@ class FriCASConverter(InterfaceInit):
         ----------------------
                    y
     """
-    def __init__(self):
+    def __init__(self) -> None:
         import sage.interfaces.fricas
         super().__init__(sage.interfaces.fricas.fricas)
 
@@ -850,7 +850,7 @@ fricas_converter = FriCASConverter()
 # Polynomial #
 ##############
 class PolynomialConverter(Converter):
-    def __init__(self, ex, base_ring=None, ring=None):
+    def __init__(self, ex, base_ring=None, ring=None) -> None:
         """
         A converter from symbolic expressions to polynomials.
 
@@ -1089,7 +1089,7 @@ def polynomial(ex, base_ring=None, ring=None):
 
 
 class LaurentPolynomialConverter(PolynomialConverter):
-    def __init__(self, ex, base_ring=None, ring=None):
+    def __init__(self, ex, base_ring=None, ring=None) -> None:
         """
         A converter from symbolic expressions to Laurent polynomials.
 
@@ -1159,7 +1159,7 @@ def laurent_polynomial(ex, base_ring=None, ring=None):
 #################
 
 class FastCallableConverter(Converter):
-    def __init__(self, ex, etb):
+    def __init__(self, ex, etb) -> None:
         """
         EXAMPLES::
 
@@ -1339,7 +1339,7 @@ def fast_callable(ex, etb):
 
 
 class RingConverter(Converter):
-    def __init__(self, R, subs_dict=None):
+    def __init__(self, R, subs_dict=None) -> None:
         """
         A class to convert expressions to other rings.
 
@@ -1454,7 +1454,7 @@ class RingConverter(Converter):
 
 
 class ExpressionTreeWalker(Converter):
-    def __init__(self, ex):
+    def __init__(self, ex) -> None:
         """
         A class that walks the tree. Mainly for subclassing.
 
@@ -1568,7 +1568,7 @@ class ExpressionTreeWalker(Converter):
 
 
 class SubstituteFunction(ExpressionTreeWalker):
-    def __init__(self, ex, *args):
+    def __init__(self, ex, *args) -> None:
         """
         A class that walks the tree and replaces occurrences of a
         function with another.
@@ -1680,7 +1680,7 @@ class Exponentialize(ExpressionTreeWalker):
     }
     Circs = list(CircDict)
 
-    def __init__(self, ex):
+    def __init__(self, ex) -> None:
         """
         A class that walks a symbolic expression tree and replace circular
         and hyperbolic functions by their respective exponential
@@ -1718,7 +1718,7 @@ class Exponentialize(ExpressionTreeWalker):
 
 
 class DeMoivre(ExpressionTreeWalker):
-    def __init__(self, ex, force=False):
+    def __init__(self, ex, force=False) -> None:
         r"""
         A class that walks a symbolic expression tree and replaces
         occurences of complex exponentials (optionally, all
@@ -1813,7 +1813,7 @@ class HalfAngle(ExpressionTreeWalker):
     }
     Halves = list(HalvesDict)
 
-    def __init__(self, ex):
+    def __init__(self, ex) -> None:
         """
         A class that walks a symbolic expression tree, replacing each
         occurrence of a trigonometric or hyperbolic function by its
@@ -1847,7 +1847,7 @@ class HalfAngle(ExpressionTreeWalker):
 
 
 class HoldRemover(ExpressionTreeWalker):
-    def __init__(self, ex, exclude=None):
+    def __init__(self, ex, exclude=None) -> None:
         """
         A class that walks the tree and evaluates every operator
         that is not in a given list of exceptions.

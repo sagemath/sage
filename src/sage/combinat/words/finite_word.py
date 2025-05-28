@@ -232,7 +232,7 @@ lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
 class FiniteWord_class(Word_class):
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the full (not truncated) string representation of the word
         without identifier.
@@ -7110,7 +7110,7 @@ class Factorization(list):
         sage: f == loads(dumps(f))
         True
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of the object.
 

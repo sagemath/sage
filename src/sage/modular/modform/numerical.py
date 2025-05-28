@@ -89,7 +89,7 @@ class NumericalEigenforms(SageObject):
          [6.0, -3.2360679774997894, 1.2360679774997936]]
     """
     def __init__(self, group, weight=2, eps=1e-20,
-                 delta=1e-2, tp=[2,3,5]):
+                 delta=1e-2, tp=[2,3,5]) -> None:
         """
         Create a new space of numerical eigenforms.
 

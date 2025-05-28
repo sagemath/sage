@@ -150,7 +150,7 @@ class pAdicLseries(SageObject):
         sage: lp == loads(dumps(lp))
         True
     """
-    def __init__(self, E, p, implementation='eclib', normalize='L_ratio'):
+    def __init__(self, E, p, implementation='eclib', normalize='L_ratio') -> None:
         r"""
         INPUT:
 

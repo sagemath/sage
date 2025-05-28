@@ -98,7 +98,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         return super().__classcall__(cls, tuple(iterable))
 
-    def __init__(self, elements):
+    def __init__(self, elements) -> None:
         """
         TESTS::
 
@@ -137,7 +137,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
         """
         return '{' + ', '.join(repr(e) for e in self._elements) + '}'
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 

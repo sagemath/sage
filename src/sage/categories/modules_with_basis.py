@@ -1650,7 +1650,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             zero = self.parent().base_ring().zero()
             return all(v == zero for v in self.monomial_coefficients(copy=False).values())
 
-        def __len__(self):
+        def __len__(self) -> int:
             """
             Return the number of basis elements whose coefficients in
             ``self`` are nonzero.

@@ -42,7 +42,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         2*a0 + 1 + 3*a1 + a0*a1*a2*a3
     """
 
-    def __init__(self, n, R=ZZ, prefix='a'):
+    def __init__(self, n, R=ZZ, prefix='a') -> None:
         """
         Initiate the affine nilTemperley Lieb algebra over the ring `R`.
 

@@ -190,7 +190,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         gamma = base_ring(gamma)
         return super().__classcall__(cls, alpha, beta, gamma, base_ring=base_ring)
 
-    def __init__(self, alpha, beta, gamma, base_ring):
+    def __init__(self, alpha, beta, gamma, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -578,7 +578,7 @@ class VermaModule(CombinatorialFreeModule):
         la = R(la)
         return super().__classcall__(cls, DU, la)
 
-    def __init__(self, DU, la):
+    def __init__(self, DU, la) -> None:
         """
         Initialize ``self``.
 

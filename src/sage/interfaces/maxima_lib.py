@@ -359,7 +359,7 @@ class MaximaLib(MaximaAbstract):
         RuntimeError: Maxima interface in library mode can only
         be instantiated once
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Create an instance of the Maxima interpreter.
         See ``MaximaLib`` for full documentation.

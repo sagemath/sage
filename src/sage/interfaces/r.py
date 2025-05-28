@@ -459,7 +459,7 @@ class R(ExtraTabCompletion, Interface):
                  maxread=None,
                  logfile=None,
                  init_list_length=1024,
-                 seed=None):
+                 seed=None) -> None:
         """
         An interface to the R interpreter.
 
@@ -1488,7 +1488,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         """
         return isinstance(self.sage(), str)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of this object.
 
@@ -1594,7 +1594,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
                     L.append(str(n[i]))
             return P.new('%s[%s]' % (self._name, ','.join(L)))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Implement ``bool(self)``.
 
@@ -1901,7 +1901,7 @@ class RFunctionElement(InterfaceFunctionElement):
 
 @instancedoc
 class RFunction(InterfaceFunction):
-    def __init__(self, parent, name, r_name=None):
+    def __init__(self, parent, name, r_name=None) -> None:
         """
         A Function in the R interface.
 
@@ -2077,7 +2077,7 @@ class HelpExpression(str):
     """
     Used to improve printing of output of r.help.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return string representation of ``self``.
 

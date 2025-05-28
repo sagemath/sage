@@ -2446,7 +2446,7 @@ class CartanType_standard(UniqueRepresentation, SageObject):
         format = '%s%s' if compact else "['%s', %s]"
         return format % (self.letter, self.n)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 
@@ -2496,7 +2496,7 @@ class CartanType_standard_finite(CartanType_standard, CartanType_finite):
          True
     """
 
-    def __init__(self, letter, n):
+    def __init__(self, letter, n) -> None:
         """
         EXAMPLES::
 
@@ -2690,7 +2690,7 @@ class CartanType_standard_affine(CartanType_standard, CartanType_affine):
     A concrete class for affine simple Cartan types.
     """
 
-    def __init__(self, letter, n, affine=1):
+    def __init__(self, letter, n, affine=1) -> None:
         """
         EXAMPLES::
 
@@ -2945,7 +2945,7 @@ class CartanType_decorator(UniqueRepresentation, SageObject, CartanType_abstract
     Concrete base class for Cartan types that decorate another Cartan type.
     """
 
-    def __init__(self, ct):
+    def __init__(self, ct) -> None:
         """
         Initialize ``self``.
 
@@ -3035,7 +3035,7 @@ class SuperCartanType_standard(UniqueRepresentation, SageObject):
         formatstr = '%s%s|%s' if compact else "['%s', [%s, %s]]"
         return formatstr % (self.letter, self.m, self.n)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         EXAMPLES::
 

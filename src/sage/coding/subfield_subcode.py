@@ -51,7 +51,7 @@ class SubfieldSubcode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, original_code, subfield, embedding=None):
+    def __init__(self, original_code, subfield, embedding=None) -> None:
         r"""
         TESTS:
 
@@ -283,7 +283,7 @@ class SubfieldSubcodeOriginalCodeDecoder(Decoder):
          through Gao decoder for [13, 5, 9] Reed-Solomon Code over GF(16)
     """
 
-    def __init__(self, code, original_decoder=None, **kwargs):
+    def __init__(self, code, original_decoder=None, **kwargs) -> None:
         r"""
         TESTS:
 

@@ -349,7 +349,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         return super().__classcall__(cls, generators, ambient=ambient,
                                      one=one, mul=mul, category=category)
 
-    def __init__(self, generators, ambient, one, mul, category):
+    def __init__(self, generators, ambient, one, mul, category) -> None:
         """
         Initialize this semigroup.
 
@@ -857,7 +857,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
     class Element(ElementWrapper):
 
-        def __init__(self, ambient_element, parent):
+        def __init__(self, ambient_element, parent) -> None:
             """
             TESTS::
 

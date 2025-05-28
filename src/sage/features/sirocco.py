@@ -28,7 +28,7 @@ class Sirocco(JoinFeature):
         sage: from sage.features.sirocco import Sirocco
         sage: Sirocco().require()  # optional - sirocco
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

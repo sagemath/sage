@@ -636,7 +636,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             return GelfandTsetlinPatternsTopRow(top_row, strict)
         return super().__classcall__(cls, n, k, strict)
 
-    def __init__(self, n, k, strict):
+    def __init__(self, n, k, strict) -> None:
         """
         Initialize ``self``.
 
@@ -660,7 +660,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
         else:
             Parent.__init__(self, category=InfiniteEnumeratedSets())
 
-    def __contains__(self, gt):
+    def __contains__(self, gt) -> bool:
         """
         Check to see if ``gt`` is in ``self``.
 
@@ -1191,7 +1191,7 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
     Gelfand-Tsetlin patterns with a fixed top row.
     """
 
-    def __init__(self, top_row, strict):
+    def __init__(self, top_row, strict) -> None:
         """
         Initialize ``self``.
 

@@ -259,7 +259,7 @@ def graph_db_info(tablename=None):
 
 class GenericGraphQuery(SQLQuery):
 
-    def __init__(self, query_string, database=None, param_tuple=None):
+    def __init__(self, query_string, database=None, param_tuple=None) -> None:
         """
         A query for a :class:`~GraphDatabase`.
 
@@ -321,7 +321,7 @@ class GenericGraphQuery(SQLQuery):
 class GraphQuery(GenericGraphQuery):
 
     def __init__(self, graph_db=None, query_dict=None, display_cols=None,
-                 immutable=False, **kwds):
+                 immutable=False, **kwds) -> None:
         r"""
         A query for an instance of :class:`~GraphDatabase`.
 
@@ -781,7 +781,7 @@ class GraphQuery(GenericGraphQuery):
 
 class GraphDatabase(SQLDatabase):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Graph Database.
 

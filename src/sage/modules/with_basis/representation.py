@@ -44,7 +44,7 @@ class Representation_abstract:
         This class should come before :class:`CombinatorialFreeModule` in the
         MRO in order for tensor products to use the correct class.
     """
-    def __init__(self, semigroup, side, algebra=None):
+    def __init__(self, semigroup, side, algebra=None) -> None:
         """
         Initialize ``self``.
 
@@ -1092,7 +1092,7 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
     - :wikipedia:`Group_representation`
     """
-    def __init__(self, semigroup, module, on_basis, side='left', **kwargs):
+    def __init__(self, semigroup, module, on_basis, side='left', **kwargs) -> None:
         """
         Initialize ``self``.
 
@@ -1332,7 +1332,7 @@ class Subrepresentation(Representation_abstract, SubmoduleWithBasis):
     # Use the same normalization as the base class
     __classcall_private__ = SubmoduleWithBasis.__classcall_private__
 
-    def __init__(self, basis, support_order, ambient, *args, **opts):
+    def __init__(self, basis, support_order, ambient, *args, **opts) -> None:
         r"""
         Initialize ``self``.
 
@@ -1409,7 +1409,7 @@ class QuotientRepresentation(Representation_abstract, QuotientModuleWithBasis):
     # Use the same normalization as the base class
     __classcall_private__ = QuotientModuleWithBasis.__classcall_private__
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         r"""
         Initialize ``self``.
 
@@ -1491,7 +1491,7 @@ class Representation_Tensor(Representation_abstract, CombinatorialFreeModule_Ten
             options['category'] = options['category'].FiniteDimensional()
         return super().__classcall__(cls, reps, **options)
 
-    def __init__(self, reps, **options):
+    def __init__(self, reps, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -1551,7 +1551,7 @@ class Representation_Exterior(Representation_abstract, CombinatorialFreeModule):
     r"""
     The exterior power representation (in a fixed degree).
     """
-    def __init__(self, rep, degree=None, category=None, **options):
+    def __init__(self, rep, degree=None, category=None, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -1797,7 +1797,7 @@ class Representation_ExteriorAlgebra(Representation_Exterior):
     r"""
     The exterior algebra representation.
     """
-    def __init__(self, rep, degree=None, category=None, **options):
+    def __init__(self, rep, degree=None, category=None, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -1864,7 +1864,7 @@ class Representation_Symmetric(Representation_abstract, CombinatorialFreeModule)
     r"""
     The symmetric power representation in a fixed degree.
     """
-    def __init__(self, rep, degree, **options):
+    def __init__(self, rep, degree, **options) -> None:
         r"""
         Initialize ``self``.
 
@@ -2145,7 +2145,7 @@ class RegularRepresentation(Representation):
 
     - :wikipedia:`Regular_representation`
     """
-    def __init__(self, semigroup, base_ring, side='left'):
+    def __init__(self, semigroup, base_ring, side='left') -> None:
         """
         Initialize ``self``.
 
@@ -2226,7 +2226,7 @@ class TrivialRepresentation(Representation_abstract, CombinatorialFreeModule):
 
     - :wikipedia:`Trivial_representation`
     """
-    def __init__(self, semigroup, base_ring):
+    def __init__(self, semigroup, base_ring) -> None:
         """
         Initialize ``self``.
 
@@ -2345,7 +2345,7 @@ class SignRepresentation_abstract(Representation_abstract, CombinatorialFreeModu
 
     - :wikipedia:`Representation_theory_of_the_symmetric_group`
     """
-    def __init__(self, group, base_ring, sign_function=None):
+    def __init__(self, group, base_ring, sign_function=None) -> None:
         """
         Initialize ``self``.
 
@@ -2576,7 +2576,7 @@ class ReflectionRepresentation(Representation_abstract, CombinatorialFreeModule)
             base_ring = W.one().canonical_matrix().base_ring()
         return super().__classcall__(cls, W, base_ring)
 
-    def __init__(self, W, base_ring):
+    def __init__(self, W, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -2671,7 +2671,7 @@ class NaturalMatrixRepresentation(Representation):
             base_ring = semigroup.base_ring()
         return super().__classcall__(cls, semigroup, base_ring)
 
-    def __init__(self, semigroup, base_ring):
+    def __init__(self, semigroup, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -2849,7 +2849,7 @@ class SchurFunctorRepresentation(Subrepresentation):
         from sage.combinat.partition import _Partitions
         return super().__classcall__(cls, V, _Partitions(shape))
 
-    def __init__(self, V, shape):
+    def __init__(self, V, shape) -> None:
         r"""
         Initialize ``self``.
 

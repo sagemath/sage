@@ -223,7 +223,7 @@ class WeylGroup_gens(UniqueRepresentation,
     def __classcall__(cls, domain, prefix=None):
         return super().__classcall__(cls, domain, prefix)
 
-    def __init__(self, domain, prefix):
+    def __init__(self, domain, prefix) -> None:
         """
         EXAMPLES::
 
@@ -637,7 +637,7 @@ class ClassicalWeylSubgroup(WeylGroup_gens):
         return Family({i: self.from_morphism(self.domain().simple_reflection(i))
                        for i in self.index_set()})
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -691,7 +691,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
     Class for a Weyl Group elements
     """
 
-    def __init__(self, parent, g, check=False):
+    def __init__(self, parent, g, check=False) -> None:
         """
         EXAMPLES::
 
@@ -1021,7 +1021,7 @@ class WeylGroup_permutation(UniqueRepresentation, PermutationGroup_generic):
         """
         return super().__classcall__(cls, CartanType(cartan_type), prefix)
 
-    def __init__(self, cartan_type, prefix):
+    def __init__(self, cartan_type, prefix) -> None:
         """
         Initialize ``self``.
 

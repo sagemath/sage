@@ -721,7 +721,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
         else:
             raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -755,7 +755,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
 
     Element = IntegerVector
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -819,7 +819,7 @@ class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     Class of all integer vectors.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 
@@ -864,7 +864,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
     Integer vectors that sum to `n`.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -915,7 +915,7 @@ class IntegerVectors_n(UniqueRepresentation, IntegerVectors):
                 yield self.element_class(self, iv, check=False)
             k += 1
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -1002,7 +1002,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
     Integer vectors of length `k`.
     """
 
-    def __init__(self, k):
+    def __init__(self, k) -> None:
         """
         TESTS::
 
@@ -1061,7 +1061,7 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
                 yield self.element_class(self, iv, check=False)
             n += 1
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -1160,7 +1160,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
     - Mike Hansen
     """
 
-    def __init__(self, n, k):
+    def __init__(self, n, k) -> None:
         """
         TESTS::
 
@@ -1256,7 +1256,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         return "Integer vectors of length {} that sum to {}".format(self.k,
                                                                     self.n)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1412,7 +1412,7 @@ class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
         """
         return super().__classcall__(cls, n, tuple(comp))
 
-    def __init__(self, n, comp):
+    def __init__(self, n, comp) -> None:
         """
         EXAMPLES::
 
@@ -1501,7 +1501,7 @@ class IntegerVectorsConstraints(IntegerVectors):
     Class of integer vectors subject to various constraints.
     """
 
-    def __init__(self, n=None, k=None, **constraints):
+    def __init__(self, n=None, k=None, **constraints) -> None:
         """
         Initialize ``self``.
 
@@ -1600,7 +1600,7 @@ class IntegerVectorsConstraints(IntegerVectors):
         """
         return hash((self.n, self.k, tuple(self.constraints.items())))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 

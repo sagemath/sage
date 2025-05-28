@@ -39,7 +39,7 @@ available_integrators['libgiac'] = external.libgiac_integrator
 
 
 class IndefiniteIntegral(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Class to represent an indefinite integral.
 
@@ -194,7 +194,7 @@ indefinite_integral = IndefiniteIntegral()
 
 
 class DefiniteIntegral(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         The symbolic function representing a definite integral.
 

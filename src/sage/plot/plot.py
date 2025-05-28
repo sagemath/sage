@@ -707,7 +707,7 @@ def SelectiveFormatter(formatter, skip_values):
         from matplotlib.ticker import Formatter
 
         class _SelectiveFormatterClass(Formatter):
-            def __init__(self, formatter, skip_values):
+            def __init__(self, formatter, skip_values) -> None:
                 """
                 Initialize a SelectiveFormatter object.
 

@@ -549,7 +549,7 @@ class ToricVariety_field(AmbientSpace):
         sage: P1xP1 = ToricVariety(fan)
     """
 
-    def __init__(self, fan, coordinate_names, coordinate_indices, base_field):
+    def __init__(self, fan, coordinate_names, coordinate_indices, base_field) -> None:
         r"""
         See :class:`ToricVariety_field` for documentation.
 
@@ -3031,7 +3031,7 @@ class CohomologyRing(QuotientRing_generic, UniqueRepresentation):
         Rational cohomology ring of a 2-d CPR-Fano toric variety covered by 3 affine patches
     """
 
-    def __init__(self, variety):
+    def __init__(self, variety) -> None:
         r"""
         See :class:`CohomologyRing` for documentation.
 
@@ -3319,7 +3319,7 @@ class CohomologyClass(QuotientRingElement):
         [z]
     """
 
-    def __init__(self, cohomology_ring, representative):
+    def __init__(self, cohomology_ring, representative) -> None:
         r"""
         Construct the cohomology class.
 

@@ -50,7 +50,7 @@ class ModularSymbol(SageObject):
     r"""
     The modular symbol `X^i\cdot Y^{k-2-i}\cdot \{\alpha, \beta\}`.
     """
-    def __init__(self, space, i, alpha, beta):
+    def __init__(self, space, i, alpha, beta) -> None:
         """
         Initialise a modular symbol.
 

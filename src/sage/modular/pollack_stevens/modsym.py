@@ -116,7 +116,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
 
 class PSModSymAction(Action):
-    def __init__(self, actor, MSspace):
+    def __init__(self, actor, MSspace) -> None:
         r"""
         Create the action.
 
@@ -148,7 +148,7 @@ class PSModSymAction(Action):
 
 
 class PSModularSymbolElement(ModuleElement):
-    def __init__(self, map_data, parent, construct=False):
+    def __init__(self, map_data, parent, construct=False) -> None:
         r"""
         Initialize a modular symbol.
 

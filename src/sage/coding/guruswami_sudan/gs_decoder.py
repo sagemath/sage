@@ -555,7 +555,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
         return l > 0 and s > 0 and n * s * (s+1) < (l+1) * (2*s*(n-tau) - (k-1) * l)
 
     ####################### decoder itself ###############################
-    def __init__(self, code, tau=None, parameters=None, interpolation_alg=None, root_finder=None):
+    def __init__(self, code, tau=None, parameters=None, interpolation_alg=None, root_finder=None) -> None:
         r"""
         TESTS:
 

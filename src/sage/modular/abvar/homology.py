@@ -96,7 +96,7 @@ class Homology_abvar(Homology):
     """
     The homology of a modular abelian variety.
     """
-    def __init__(self, abvar, base):
+    def __init__(self, abvar, base) -> None:
         """
         This is an abstract base class, so it is called implicitly in the
         following examples.
@@ -336,7 +336,7 @@ class IntegralHomology(Homology_abvar):
     The integral homology `H_1(A,\ZZ)` of a modular
     abelian variety.
     """
-    def __init__(self, abvar):
+    def __init__(self, abvar) -> None:
         """
         Create the integral homology of a modular abelian variety.
 
@@ -412,7 +412,7 @@ class RationalHomology(Homology_abvar):
     The rational homology `H_1(A,\QQ)` of a modular
     abelian variety.
     """
-    def __init__(self, abvar):
+    def __init__(self, abvar) -> None:
         """
         Create the rational homology of a modular abelian variety.
 
@@ -490,7 +490,7 @@ class Homology_over_base(Homology_abvar):
     The homology over a modular abelian variety over an arbitrary base
     commutative ring (not `\ZZ` or `\QQ`).
     """
-    def __init__(self, abvar, base_ring):
+    def __init__(self, abvar, base_ring) -> None:
         r"""
         Called when creating homology with coefficients not
         `\ZZ` or `\QQ`.
@@ -550,7 +550,7 @@ class Homology_submodule(Homology):
     """
     A submodule of the homology of a modular abelian variety.
     """
-    def __init__(self, ambient, submodule):
+    def __init__(self, ambient, submodule) -> None:
         """
         Create a submodule of the homology of a modular abelian variety.
 

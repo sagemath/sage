@@ -22,7 +22,7 @@ lazy_import('mpmath', 'gammainc', as_='_mpmath_gammainc')
 
 
 class Function_gamma(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The Gamma function.  This is defined by
 
@@ -188,7 +188,7 @@ gamma1 = Function_gamma()
 
 
 class Function_log_gamma(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The principal branch of the log gamma function. Note that for
         `x < 0`, ``log(gamma(x))`` is not, in general, equal to
@@ -305,7 +305,7 @@ log_gamma = Function_log_gamma()
 
 
 class Function_gamma_inc(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The upper incomplete gamma function.
 
@@ -493,7 +493,7 @@ gamma_inc = Function_gamma_inc()
 
 
 class Function_gamma_inc_lower(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The lower incomplete gamma function.
 
@@ -759,7 +759,7 @@ register_symbol(_mathematica_gamma3, dict(mathematica='Gamma'), 3)
 
 
 class Function_psi1(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The digamma function, `\psi(x)`, is the logarithmic derivative of the
         gamma function.
@@ -814,7 +814,7 @@ class Function_psi1(GinacFunction):
 
 
 class Function_psi2(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Derivatives of the digamma function `\psi(x)`.
 
@@ -965,7 +965,7 @@ register_symbol(_swap_psi, {'giac': 'Psi'}, 2)
 
 
 class Function_beta(GinacFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Return the beta function.  This is defined by
 

@@ -41,7 +41,7 @@ from sage.structure.sage_object import SageObject
 
 class Image(SageObject):
 
-    def __init__(self, mode, size, color='white'):
+    def __init__(self, mode, size, color='white') -> None:
         """
         Create a new image with the given mode and size.
 

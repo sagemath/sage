@@ -80,7 +80,7 @@ lazy_import('sage.symbolic.ring', 'SR')
 
 
 class PiecewiseFunction(BuiltinFunction):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Piecewise function.
 
@@ -416,7 +416,7 @@ class PiecewiseFunction(BuiltinFunction):
                 intervals += list(domain)
             return RealSet(*intervals)
 
-        def __len__(self, parameters, variable):
+        def __len__(self, parameters, variable) -> int:
             """
             Return the number of "pieces".
 

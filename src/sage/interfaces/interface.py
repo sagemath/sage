@@ -52,7 +52,7 @@ from sage.misc.instancedoc import instancedoc
 
 
 class AsciiArtString(str):
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
 
@@ -67,7 +67,7 @@ class Interface(WithEqualityById, ParentWithBase):
         representations of objects in interfaces works
         correctly). Otherwise they are never equal.
     """
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         """
         Initialize ``self``.
 
@@ -664,7 +664,7 @@ class InterfaceFunction(SageObject):
     """
     Interface function.
     """
-    def __init__(self, parent, name):
+    def __init__(self, parent, name) -> None:
         self._parent = parent
         self._name = name
 
@@ -690,7 +690,7 @@ class InterfaceFunctionElement(SageObject):
     """
     Interface function element.
     """
-    def __init__(self, obj, name):
+    def __init__(self, obj, name) -> None:
         self._obj = obj
         self._name = name
 
@@ -737,7 +737,7 @@ class InterfaceElement(Element):
     """
     Interface element.
     """
-    def __init__(self, parent, value, is_name=False, name=None):
+    def __init__(self, parent, value, is_name=False, name=None) -> None:
         Element.__init__(self, parent)
         self._create = value
         if parent is None:
@@ -771,7 +771,7 @@ class InterfaceElement(Element):
         for i in range(1, len(self) + 1):
             yield self[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Call self.sage() and return the length of that sage object.
 
@@ -905,7 +905,7 @@ class InterfaceElement(Element):
         P = self.parent()
         return getattr(P, self.name())(*args)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         P = self._check_valid()
         if not isinstance(x, InterfaceElement) or x.parent() is not self.parent():
             x = P.new(x)
@@ -1012,7 +1012,7 @@ class InterfaceElement(Element):
             raise ValueError("The session in which this object was defined is no longer running.")
         return P
 
-    def __del__(self):
+    def __del__(self) -> None:
         try:
             self._check_valid()
         except ValueError:
@@ -1122,7 +1122,7 @@ class InterfaceElement(Element):
         """
         return self._sage_(*args, **kwds)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         To obtain the string representation, it is first checked whether
         the element is still valid. Then, if ``self._cached_repr`` is
@@ -1294,7 +1294,7 @@ class InterfaceElement(Element):
         else:
             return P.new('%s[%s]' % (self._name, str(n)[1:-1]))
 
-    def __int__(self):
+    def __int__(self) -> int:
         """
         EXAMPLES::
 
@@ -1318,7 +1318,7 @@ class InterfaceElement(Element):
         """
         return bool(self)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return whether this element is not ``False``.
 
@@ -1348,7 +1348,7 @@ class InterfaceElement(Element):
                             P._false_symbol())
         return P.eval(cmd) != P._true_symbol()
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         EXAMPLES::
 

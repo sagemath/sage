@@ -59,7 +59,7 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         return super().__classcall__(cls, proof)
 
-    def __init__(self, proof):
+    def __init__(self, proof) -> None:
         """
         EXAMPLES::
 
@@ -110,7 +110,7 @@ class Primes(Set_generic, UniqueRepresentation):
         """
         return "Set of all prime numbers: 2, 3, 5, 7, ..."
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Check whether an object is a prime number.
 

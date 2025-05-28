@@ -444,7 +444,7 @@ class PartitionTuple(CombinatorialElement):
         else:
             return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
-    def __init__(self, parent, mu):
+    def __init__(self, parent, mu) -> None:
         """
         Initialize ``self`` and checks that the input determines a tuple of
         partitions.
@@ -479,7 +479,7 @@ class PartitionTuple(CombinatorialElement):
         """
         return len(self._list)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of this partition tuple.
 
@@ -1925,7 +1925,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             raise ValueError('{} is not a {}'.format(mu, self))
         return self.element_class(self, mu)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if `\mu` is in ``self``.
 
@@ -2052,7 +2052,7 @@ class PartitionTuples_all(PartitionTuples):
     Class of partition tuples of a arbitrary level and arbitrary sum.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class.
 
@@ -2125,7 +2125,7 @@ class PartitionTuples_level(PartitionTuples):
     integer.
     """
 
-    def __init__(self, level, category=None):
+    def __init__(self, level, category=None) -> None:
         r"""
         Initialize this class.
 
@@ -2155,7 +2155,7 @@ class PartitionTuples_level(PartitionTuples):
         """
         return 'Partition tuples of level {}'.format(self._level)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if `\mu` is in ``self``.
 
@@ -2230,7 +2230,7 @@ class PartitionTuples_size(PartitionTuples):
     Class of partition tuples of a fixed size, but arbitrary level.
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         r"""
         Initialize this class.
 
@@ -2259,7 +2259,7 @@ class PartitionTuples_size(PartitionTuples):
         """
         return 'Partition tuples of size {}'.format(self._size)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if `\mu` is in ``self``.
 
@@ -2336,7 +2336,7 @@ class PartitionTuples_level_size(PartitionTuples):
     Class of partition tuples with a fixed level and a fixed size.
     """
 
-    def __init__(self, level, size):
+    def __init__(self, level, size) -> None:
         r"""
         Initialize this class.
 
@@ -2364,7 +2364,7 @@ class PartitionTuples_level_size(PartitionTuples):
         """
         return 'Partition tuples of level {} and size {}'.format(self._level, self._size)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if ``mu`` is in ``self``.
 
@@ -2502,7 +2502,7 @@ class RegularPartitionTuples(PartitionTuples):
     Abstract base class for `\ell`-regular partition tuples.
     """
 
-    def __init__(self, regular, **kwds):
+    def __init__(self, regular, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -2516,7 +2516,7 @@ class RegularPartitionTuples(PartitionTuples):
         self._ell = regular
         PartitionTuples.__init__(self, **kwds)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Check if ``mu`` is an `\ell`-regular partition tuple.
 
@@ -2578,7 +2578,7 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
     Class of `\ell`-regular partition tuples.
     """
 
-    def __init__(self, regular):
+    def __init__(self, regular) -> None:
         r"""
         Initialize ``self``.
 
@@ -2687,7 +2687,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         False
     """
 
-    def __init__(self, level, regular):
+    def __init__(self, level, regular) -> None:
         r"""
         Initialize ``self``.
 
@@ -2732,7 +2732,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         return '{}-Regular partition tuples of level {}'.format(self._ell,
                                                                 self._level)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if ``mu`` is in ``self``.
 
@@ -2857,7 +2857,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
     Class of `\ell`-regular partition tuples with a fixed size.
     """
 
-    def __init__(self, size, regular):
+    def __init__(self, size, regular) -> None:
         r"""
         Initialize ``self``.
 
@@ -2882,7 +2882,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
         """
         return '{}-Regular partition tuples of size {}'.format(self._ell, self._size)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if ``mu`` is in ``self``.
 
@@ -2987,7 +2987,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
          ([2, 1], [], [4])]
     """
 
-    def __init__(self, level, size, regular):
+    def __init__(self, level, size, regular) -> None:
         r"""
         Initialize ``self``.
 
@@ -3029,7 +3029,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
         return '{}-Regular partition tuples of level {} and size {}'.format(
                                             self._ell, self._level, self._size)
 
-    def __contains__(self, mu):
+    def __contains__(self, mu) -> bool:
         r"""
         Return ``True`` if `\mu` is in ``self``.
 

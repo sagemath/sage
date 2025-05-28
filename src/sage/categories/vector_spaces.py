@@ -72,7 +72,7 @@ class VectorSpaces(Category_module):
                                  " got {}".format(K))
         return super().__classcall__(cls, K)
 
-    def __init__(self, K):
+    def __init__(self, K) -> None:
         """
         EXAMPLES::
 

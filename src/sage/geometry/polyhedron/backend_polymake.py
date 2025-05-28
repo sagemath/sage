@@ -195,7 +195,7 @@ class Polyhedron_polymake(Polyhedron_base):
         """
         return x > 0
 
-    def __init__(self, parent, Vrep, Hrep, polymake_polytope=None, **kwds):
+    def __init__(self, parent, Vrep, Hrep, polymake_polytope=None, **kwds) -> None:
         """
         Initialize the polyhedron.
 

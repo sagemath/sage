@@ -156,7 +156,7 @@ class SubwordComplexFacet(Simplex, Element):
 
     # standard functions
 
-    def __init__(self, parent, positions, facet_test=True):
+    def __init__(self, parent, positions, facet_test=True) -> None:
         r"""
         Initialize a facet of the subword complex ``parent``.
 
@@ -1085,7 +1085,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         Q = tuple(Q)
         return super().__classcall__(cls, Q, w, algorithm=algorithm)
 
-    def __init__(self, Q, w, algorithm='inductive'):
+    def __init__(self, Q, w, algorithm='inductive') -> None:
         r"""
         Initialize the subword complex `\mathcal{SC}(Q,w)`.
 
@@ -1225,7 +1225,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
 
     Element = SubwordComplexFacet
 
-    def __contains__(self, F):
+    def __contains__(self, F) -> bool:
         r"""
         Test if ``self`` contains a given iterable ``F``.
 

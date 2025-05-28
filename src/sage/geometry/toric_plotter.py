@@ -187,7 +187,7 @@ class ToricPlotter(SageObject):
     the plotting mode and/or cut-off bounds. Otherwise plots maybe invalid.
     """
 
-    def __init__(self, all_options, dimension, generators=None):
+    def __init__(self, all_options, dimension, generators=None) -> None:
         r"""
         See :class:`ToricPlotter` for documentation.
 

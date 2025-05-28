@@ -79,7 +79,7 @@ class MFSeriesConstructor(SageObject, UniqueRepresentation):
 
         return super().__classcall__(cls, group, prec)
 
-    def __init__(self, group, prec):
+    def __init__(self, group, prec) -> None:
         r"""
         Constructor for the Fourier expansion of some
         (specific, basic) modular forms.

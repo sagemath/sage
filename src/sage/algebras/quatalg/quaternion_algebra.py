@@ -840,7 +840,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         sage: QuaternionAlgebra(QQ, -7, -21)  # indirect doctest
         Quaternion Algebra (-7, -21) with base ring Rational Field
     """
-    def __init__(self, base_ring, a, b, names='i,j,k'):
+    def __init__(self, base_ring, a, b, names='i,j,k') -> None:
         """
         Create the quaternion algebra with `i^2 = a`, `j^2 = b`, and
         `ij = -ji = k`.
@@ -1994,7 +1994,7 @@ class QuaternionOrder(Parent):
         sage: type(QuaternionAlgebra(-1,-7).maximal_order())
         <class 'sage.algebras.quatalg.quaternion_algebra.QuaternionOrder_with_category'>
     """
-    def __init__(self, A, basis, check=True):
+    def __init__(self, A, basis, check=True) -> None:
         """
         INPUT:
 
@@ -3022,7 +3022,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     - ``check`` -- boolean (default: ``True``); if ``False``, do no type
       checking.
     """
-    def __init__(self, Q, basis, left_order=None, right_order=None, check=True):
+    def __init__(self, Q, basis, left_order=None, right_order=None, check=True) -> None:
         """
         EXAMPLES::
 
@@ -3276,7 +3276,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             self.__right_order = self._compute_order(side='right')
         return self.__right_order
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return string representation of this quaternion fractional ideal.
 
@@ -4203,7 +4203,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # find an element of minimal norm in self; see [Piz1980]_, Corollary 1.20.
         return True, self.minimal_element()
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return whether ``x`` is in ``self``.
 

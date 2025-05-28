@@ -339,7 +339,7 @@ class PickleObject:
     reflect the changes).
     """
 
-    def __init__(self, value, expression):
+    def __init__(self, value, expression) -> None:
         r"""
         Construct a PickleObject.
 
@@ -386,7 +386,7 @@ class PickleDict:
     instead of always starting with an empty dictionary and assigning to
     it.
     """
-    def __init__(self, items):
+    def __init__(self, items) -> None:
         r"""
         Initialize a PickleDict.
 
@@ -405,7 +405,7 @@ class PickleInstance:
     other possible values of a :class:`PickleObject`, a :class:`PickleInstance` doesn't represent
     an exact value; instead, it gives the class (type) of the object.
     """
-    def __init__(self, klass):
+    def __init__(self, klass) -> None:
         r"""
         Initialize a PickleInstance.
 
@@ -425,7 +425,7 @@ class PickleExplainer:
     directly constructing values.
     """
     def __init__(self, sib, in_current_sage=False, default_assumptions=False,
-                 pedantic=False):
+                 pedantic=False) -> None:
         r"""
         Initialize a PickleExplainer interpreter for the pickle virtual machine.
 
@@ -2655,7 +2655,7 @@ class EmptyOldstyleClass:
     A featureless old-style class (does not inherit from object); used for
     testing :func:`explain_pickle`.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print an EmptyOldstyleClass.
 
@@ -2693,7 +2693,7 @@ class EmptyNewstyleClass:
     A featureless new-style class (inherits from object); used for
     testing :func:`explain_pickle`.
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print an EmptyNewstyleClass.
 
@@ -2716,7 +2716,7 @@ class TestReduceGetinitargs:
     An old-style class with a :func:`__getinitargs__` method.  Used for testing
     :func:`explain_pickle`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize a TestReduceGetinitargs object.  Note that the
         constructor prints out a message.
@@ -2744,7 +2744,7 @@ class TestReduceGetinitargs:
         """
         return ()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print a TestReduceGetinitargs.
 
@@ -2768,7 +2768,7 @@ class TestReduceNoGetinitargs:
     An old-style class with no :meth:`__getinitargs__` method.  Used for testing
     :func:`explain_pickle`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize a TestReduceNoGetinitargs object.  Note that the
         constructor prints out a message.
@@ -2782,7 +2782,7 @@ class TestReduceNoGetinitargs:
         """
         print("Running __init__ for TestReduceNoGetinitargs")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print a TestReduceNoGetinitargs.
 
@@ -2854,7 +2854,7 @@ class TestAppendNonlist:
     A list-like class, carefully designed to test exact unpickling
     behavior.  Used for testing :func:`explain_pickle`.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Construct a TestAppendNonlist.
 
@@ -2914,7 +2914,7 @@ class TestAppendNonlist:
         """
         return (TestAppendNonlist, (), None, iter(self.list))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print a TestAppendNonlist.  Just prints as its underlying list.
 
@@ -2952,7 +2952,7 @@ class TestBuild:
         """
         return ({'x': 3}, {'y': 4})
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print a TestBuild.
 
@@ -3020,7 +3020,7 @@ class TestGlobalNewName:
         sage: loads(dumps(TestGlobalOldName()))
         TestGlobalNewName
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print a TestGlobalNewName.
 
@@ -3055,7 +3055,7 @@ class TestGlobalFunnyName:
         sage: globals()['funny$name'] is TestGlobalFunnyName
         True
     """
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Print a TestGlobalFunnyName.
 

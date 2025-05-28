@@ -286,7 +286,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         return DynamicalSystem_Berkovich_projective(dynamical_system, domain)
 
-    def __init__(self, dynamical_system, domain):
+    def __init__(self, dynamical_system, domain) -> None:
         r"""
         The Python constructor.
 
@@ -549,7 +549,7 @@ class DynamicalSystem_Berkovich_projective(DynamicalSystem_Berkovich):
             domain = Berkovich_Cp_Projective(morphism_domain)
         return typecall(cls, dynamical_system, domain)
 
-    def __init__(self, dynamical_system, domain=None):
+    def __init__(self, dynamical_system, domain=None) -> None:
         """
         Python constructor.
 
@@ -1031,7 +1031,7 @@ class DynamicalSystem_Berkovich_affine(DynamicalSystem_Berkovich):
             domain = Berkovich_Cp_Affine(morphism_domain.base_ring())
         return typecall(cls, dynamical_system, domain)
 
-    def __init__(self, dynamical_system, domain):
+    def __init__(self, dynamical_system, domain) -> None:
         """
         Python constructor.
 

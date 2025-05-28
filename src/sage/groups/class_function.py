@@ -108,7 +108,7 @@ class ClassFunction_gap(SageObject):
         True
     """
 
-    def __init__(self, G, values):
+    def __init__(self, G, values) -> None:
         r"""
         Return the character of the group ``G`` with values given by the list
         values. The order of the values must correspond to the output of
@@ -163,7 +163,7 @@ class ClassFunction_gap(SageObject):
         """
         return self._gap_classfunction
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation.
 
@@ -792,7 +792,7 @@ class ClassFunction_libgap(SageObject):
         True
     """
 
-    def __init__(self, G, values):
+    def __init__(self, G, values) -> None:
         r"""
         Return the character of the group ``G`` with values given by the list
         values. The order of the values must correspond to the output of

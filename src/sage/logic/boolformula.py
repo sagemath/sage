@@ -167,7 +167,7 @@ class BooleanFormula:
     __tree = []
     __vars_order = []
 
-    def __init__(self, exp, tree, vo):
+    def __init__(self, exp, tree, vo) -> None:
         r"""
         Initialize the data fields.
 
@@ -184,7 +184,7 @@ class BooleanFormula:
         self.__tree = tree
         self.__vars_order = vo
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this statement.
 

@@ -99,7 +99,7 @@ class DeRhamCohomologyClass(AlgebraElement):
         ...
         NotImplementedError: comparison via exact forms is currently not supported
     """
-    def __init__(self, parent, representative):
+    def __init__(self, parent, representative) -> None:
         r"""
         Construct an element of the de Rham cohomology ring.
 
@@ -354,7 +354,7 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
         sage: H.one()
         [one]
     """
-    def __init__(self, de_rham_complex):
+    def __init__(self, de_rham_complex) -> None:
         r"""
         Construct the de Rham cohomology ring.
 

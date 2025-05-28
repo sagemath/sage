@@ -1032,7 +1032,7 @@ class LiftMorphism(Morphism):
     The natural lifting morphism from a Lie algebra to its
     enveloping algebra.
     """
-    def __init__(self, domain, codomain):
+    def __init__(self, domain, codomain) -> None:
         """
         Initialize ``self``.
 

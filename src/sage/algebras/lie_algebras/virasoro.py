@@ -56,7 +56,7 @@ class LieAlgebraRegularVectorFields(InfinitelyGeneratedLieAlgebra, IndexedGenera
 
         :class:`WittLieAlgebra_charp`
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -192,7 +192,7 @@ class WittLieAlgebra_charp(FinitelyGeneratedLieAlgebra, IndexedGenerators):
 
         :class:`LieAlgebraRegularVectorFields`
     """
-    def __init__(self, R, p):
+    def __init__(self, R, p) -> None:
         """
         Initialize ``self``.
 
@@ -378,7 +378,7 @@ class VirasoroAlgebra(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
 
     - :wikipedia:`Virasoro_algebra`
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -729,7 +729,7 @@ class ChargelessRepresentation(CombinatorialFreeModule):
     - [Mat1992]_
     - [IK2010]_
     """
-    def __init__(self, V, a, b):
+    def __init__(self, V, a, b) -> None:
         """
         Initialize ``self``.
 
@@ -936,7 +936,7 @@ class VermaModule(CombinatorialFreeModule):
         #   make sure they are Integers.
         return tuple([ZZ(-i) for i in x])
 
-    def __init__(self, V, c, h):
+    def __init__(self, V, c, h) -> None:
         """
         Initialize ``self``.
 

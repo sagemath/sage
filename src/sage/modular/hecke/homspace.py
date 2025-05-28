@@ -49,7 +49,7 @@ class HeckeModuleHomspace(HomsetWithBase):
     A space of homomorphisms between two objects in the category of Hecke
     modules over a given base ring.
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         r"""
         Create the space of homomorphisms between X and Y, which must have the
         same base ring.

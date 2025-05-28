@@ -156,7 +156,7 @@ class SuperPartition(ClonableArray,
             return SPs([[-a for a in lst if a <= 0],
                         [a for a in lst if a > 0]])
 
-    def __init__(self, parent, lst, check=True, immutable=True):
+    def __init__(self, parent, lst, check=True, immutable=True) -> None:
         """
         Initialize ``self``.
 
@@ -825,7 +825,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
             raise ValueError("m must be an integer")
         raise ValueError("n must be an integer")
 
-    def __init__(self, is_infinite=False):
+    def __init__(self, is_infinite=False) -> None:
         """
         Initialize ``self``.
 
@@ -961,7 +961,7 @@ class SuperPartitions(UniqueRepresentation, Parent):
 
 
 class SuperPartitions_n_m(SuperPartitions):
-    def __init__(self, n, m):
+    def __init__(self, n, m) -> None:
         """
         Initialize ``self``.
 
@@ -1041,7 +1041,7 @@ class SuperPartitions_n_m(SuperPartitions):
 
 
 class SuperPartitions_n(SuperPartitions):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -1113,7 +1113,7 @@ class SuperPartitions_n(SuperPartitions):
 
 
 class SuperPartitions_all(SuperPartitions):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initialize ``self``.
 

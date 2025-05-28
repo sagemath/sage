@@ -389,7 +389,7 @@ class SupersingularModule(HeckeModule_free_module):
         ...
         NotImplementedError: supersingular modules of level > 1 not yet implemented
     """
-    def __init__(self, prime=2, level=1, base_ring=ZZ):
+    def __init__(self, prime=2, level=1, base_ring=ZZ) -> None:
         r"""
         Create a supersingular module.
 

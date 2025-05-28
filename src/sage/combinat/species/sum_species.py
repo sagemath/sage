@@ -25,7 +25,7 @@ class SumSpeciesStructure(SpeciesStructureWrapper):
 
 
 class SumSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
-    def __init__(self, F, G, min=None, max=None, weight=None):
+    def __init__(self, F, G, min=None, max=None, weight=None) -> None:
         """
         Return the sum of two species.
 

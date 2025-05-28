@@ -429,7 +429,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
 
     Element = Berkovich_Element_Cp_Affine
 
-    def __init__(self, base, ideal=None):
+    def __init__(self, base, ideal=None) -> None:
         """
         The Python constructor.
 
@@ -624,7 +624,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
 
     Element = Berkovich_Element_Cp_Projective
 
-    def __init__(self, base, ideal=None):
+    def __init__(self, base, ideal=None) -> None:
         """
         The Python constructor.
 

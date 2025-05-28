@@ -27,7 +27,7 @@ class AffineCipher(SymmetricKeyCipher):
     as the latter provides a convenient user interface.
     """
 
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         r"""
         Create an affine cipher.
 
@@ -157,7 +157,7 @@ class HillCipher(SymmetricKeyCipher):
     """
     Hill cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a Hill cipher.
 
@@ -243,7 +243,7 @@ class ShiftCipher(SymmetricKeyCipher):
     as the latter provides a convenient user interface.
     """
 
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         r"""
         Create a shift cipher.
 
@@ -380,7 +380,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
     """
     Substitution cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a substitution cipher.
 
@@ -454,7 +454,7 @@ class TranspositionCipher(SymmetricKeyCipher):
     """
     Transition cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a transposition cipher.
 
@@ -525,7 +525,7 @@ class VigenereCipher(SymmetricKeyCipher):
     """
     Vigenere cipher class
     """
-    def __init__(self, parent, key):
+    def __init__(self, parent, key) -> None:
         """
         Create a Vigenere cipher.
 

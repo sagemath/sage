@@ -100,7 +100,7 @@ class FreeBosonsLieConformalAlgebra(GradedLieConformalAlgebra):
         [-1  0]
     """
     def __init__(self, R, ngens=None, gram_matrix=None, names=None,
-                 index_set=None):
+                 index_set=None) -> None:
         """
         Initialize ``self``.
 

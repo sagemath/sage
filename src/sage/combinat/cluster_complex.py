@@ -208,7 +208,7 @@ class ClusterComplex(SubwordComplex):
                                                         coxeter_element=coxeter_element,
                                                         algorithm=algorithm)
 
-    def __init__(self, W, k, coxeter_element, algorithm):
+    def __init__(self, W, k, coxeter_element, algorithm) -> None:
         """
         Initialize ``self``.
 

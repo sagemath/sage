@@ -104,7 +104,7 @@ class DyckPath(PathTableau):
         """
         return DyckPaths()(ot)
 
-    def __init__(self, parent, ot, check=True):
+    def __init__(self, parent, ot, check=True) -> None:
         r"""
         Initialize a Dyck path.
 

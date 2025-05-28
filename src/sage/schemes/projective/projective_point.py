@@ -74,7 +74,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         (2 : 3 : 4)
     """
 
-    def __init__(self, X, v, check=True):
+    def __init__(self, X, v, check=True) -> None:
         """
         The Python constructor.
 
@@ -1073,7 +1073,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         (0.400000000000000 : 0.600000000000000 : 0.800000000000000 : 1.00000000000000)
     """
 
-    def __init__(self, X, v, check=True):
+    def __init__(self, X, v, check=True) -> None:
         """
         The Python constructor.
 

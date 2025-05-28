@@ -667,7 +667,7 @@ class NormalFormGame(SageObject, MutableMapping):
       blank
     """
 
-    def __init__(self, generator=None):
+    def __init__(self, generator=None) -> None:
         r"""
         Initialize a Normal Form game and checks the inputs.
 
@@ -781,7 +781,7 @@ class NormalFormGame(SageObject, MutableMapping):
             game = generator
             self._gambit_game(game)
 
-    def __delitem__(self, key):
+    def __delitem__(self, key) -> None:
         r"""
         This method is one of a collection that aims to make a game
         instance behave like a dictionary which can be used if a game
@@ -845,7 +845,7 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         return iter(self.utilities)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key, value) -> None:
         r"""
         This method is one of a collection that aims to make a game
         instance behave like a dictionary which can be used if a game
@@ -876,7 +876,7 @@ class NormalFormGame(SageObject, MutableMapping):
         """
         self.utilities[key] = value
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the length of the game to be the length of the utilities.
 
@@ -2672,7 +2672,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
 
 class _Player:
-    def __init__(self, num_strategies):
+    def __init__(self, num_strategies) -> None:
         r"""
         TESTS::
 

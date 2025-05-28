@@ -1310,7 +1310,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
     """
     def __init__(self, polynomial, name, latex_name,
                  check=True, embedding=None, category=None,
-                 assume_disc_small=False, maximize_at_primes=None, structure=None):
+                 assume_disc_small=False, maximize_at_primes=None, structure=None) -> None:
         """
         Create a number field.
 
@@ -8071,7 +8071,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
 class NumberField_absolute(NumberField_generic):
     def __init__(self, polynomial, name, latex_name=None, check=True, embedding=None,
-                 assume_disc_small=False, maximize_at_primes=None, structure=None):
+                 assume_disc_small=False, maximize_at_primes=None, structure=None) -> None:
         r"""
         Function to initialize an absolute number field.
 
@@ -10775,7 +10775,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         sage: type(cf3(z1))
         <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic'>
     """
-    def __init__(self, n, names, embedding=None, assume_disc_small=False, maximize_at_primes=None):
+    def __init__(self, n, names, embedding=None, assume_disc_small=False, maximize_at_primes=None) -> None:
         """
         A cyclotomic field, i.e., a field obtained by adjoining an `n`-th
         root of unity to the rational numbers.
@@ -12024,7 +12024,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
         Number Field in b with defining polynomial x^2 + 4 with b = 2*I
     """
     def __init__(self, polynomial, name=None, latex_name=None, check=True, embedding=None,
-                 assume_disc_small=False, maximize_at_primes=None, structure=None):
+                 assume_disc_small=False, maximize_at_primes=None, structure=None) -> None:
         """
         Create a quadratic number field.
 

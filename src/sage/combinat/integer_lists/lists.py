@@ -85,7 +85,7 @@ class IntegerLists(Parent):
 
     Element = IntegerList
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -265,7 +265,7 @@ class IntegerLists(Parent):
         """
         return getattr(self.backend, name)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         """
         Return ``True`` if ``item`` meets the constraints imposed by
         the arguments.

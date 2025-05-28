@@ -418,7 +418,7 @@ class ToricDivisor_generic(Divisor_generic):
         on 2-d CPR-Fano toric variety covered by 6 affine patches
     """
 
-    def __init__(self, v, parent, check=True, reduce=True):
+    def __init__(self, v, parent, check=True, reduce=True) -> None:
         """
         See :class:`ToricDivisor_generic` for documentation.
 
@@ -1652,7 +1652,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
         on 2-d CPR-Fano toric variety covered by 3 affine patches
     """
 
-    def __init__(self, toric_variety, base_ring):
+    def __init__(self, toric_variety, base_ring) -> None:
         r"""
         Construct an instance of :class:`ToricDivisorGroup`.
 
@@ -1901,7 +1901,7 @@ class ToricRationalDivisorClassGroup(FreeModule_ambient_field, UniqueRepresentat
         toric variety covered by 3 affine patches
     """
 
-    def __init__(self, toric_variety):
+    def __init__(self, toric_variety) -> None:
         r"""
         Construct the toric rational divisor class group.
 
@@ -2029,7 +2029,7 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
         [Divisor class [1, 0], Divisor class [0, 1]]
     """
 
-    def __init__(self, group):
+    def __init__(self, group) -> None:
         r"""
         See :class:`ToricRationalDivisorClassGroup_basis_lattice` for
         documentation.

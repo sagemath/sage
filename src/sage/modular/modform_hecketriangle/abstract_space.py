@@ -46,7 +46,7 @@ class FormsSpace_abstract(FormsRing_abstract):
     from .element import FormsElement
     Element = FormsElement
 
-    def __init__(self, group, base_ring, k, ep, n):
+    def __init__(self, group, base_ring, k, ep, n) -> None:
         r"""
         Abstract (Hecke) forms space.
 

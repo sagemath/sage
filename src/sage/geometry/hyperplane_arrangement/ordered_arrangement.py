@@ -107,7 +107,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         :class:`OrderedHyperplaneArrangementElement` instances directly,
         always use the parent.
     """
-    def __init__(self, parent, hyperplanes, check=True, backend=None):
+    def __init__(self, parent, hyperplanes, check=True, backend=None) -> None:
         """
         Construct an ordered hyperplane arrangement.
 

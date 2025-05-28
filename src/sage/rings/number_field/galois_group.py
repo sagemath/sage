@@ -52,7 +52,7 @@ class GaloisGroup_v1(SageObject):
         Number Field in a with defining polynomial x^3 - 2 with a = 1.259921049894873?
     """
 
-    def __init__(self, group, number_field):
+    def __init__(self, group, number_field) -> None:
         """
         Create a Galois group.
 
@@ -140,7 +140,7 @@ class GaloisGroup_v1(SageObject):
         """
         return not (self == other)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Display print representation of a Galois group.
 
@@ -265,7 +265,7 @@ class GaloisGroup_v2(GaloisGroup_perm):
         True
     """
 
-    def __init__(self, number_field, algorithm='pari', names=None, gc_numbering=None, _type=None):
+    def __init__(self, number_field, algorithm='pari', names=None, gc_numbering=None, _type=None) -> None:
         r"""
         Create a Galois group.
 

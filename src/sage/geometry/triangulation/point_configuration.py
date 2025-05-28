@@ -322,7 +322,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         return super().__classcall__(cls, points, connected, fine,
                                      regular, star, defined_affine)
 
-    def __init__(self, points, connected, fine, regular, star, defined_affine):
+    def __init__(self, points, connected, fine, regular, star, defined_affine) -> None:
         """
         Initialize a :class:`PointConfiguration` object.
 

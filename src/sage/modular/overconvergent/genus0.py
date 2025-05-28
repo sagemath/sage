@@ -325,7 +325,7 @@ class OverconvergentModularFormsSpace(Module):
     # Init script #
     ###############
 
-    def __init__(self, prime, weight, radius, base_ring, prec, char):
+    def __init__(self, prime, weight, radius, base_ring, prec, char) -> None:
         r"""
         Create a space of overconvergent `p`-adic modular forms of level
         `\Gamma_0(p)`, over the given base ring.
@@ -1419,7 +1419,7 @@ class OverconvergentModularFormElement(ModuleElement):
         True
     """
 
-    def __init__(self, parent, gexp=None, qexp=None):
+    def __init__(self, parent, gexp=None, qexp=None) -> None:
         r"""
         Create an element of this space.
 

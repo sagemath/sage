@@ -21,7 +21,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
     Groupes et Algèbres de Lie, Ch. 4,5,6 (planche V-VII).
     """
 
-    def __init__(self, root_system, baseRing):
+    def __init__(self, root_system, baseRing) -> None:
         """
         Create the ambient space for the root system for E6, E7, E8.
         Specify the Base, i.e., the simple roots w.r. to the canonical
@@ -437,7 +437,7 @@ from .cartan_type import CartanType_standard_finite, CartanType_simple, CartanTy
 
 
 class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_simply_laced):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         EXAMPLES::
 

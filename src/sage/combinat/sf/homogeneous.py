@@ -34,7 +34,7 @@ from sage.rings.infinity import infinity
 
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class of methods specific to the homogeneous basis of
         symmetric functions.

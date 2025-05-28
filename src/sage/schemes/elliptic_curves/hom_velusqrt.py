@@ -151,7 +151,7 @@ class _VeluBoundObj:
         sage: _velu_sqrt_bound.get()
         50
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.bound = Integer(1000)
 
     def set(self, b):
@@ -160,7 +160,7 @@ class _VeluBoundObj:
     def get(self):
         return self.bound
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"VeluSqrtBound Object with bound = {self.bound}"
 
 
@@ -339,7 +339,7 @@ class FastEllipticPolynomial:
         sage: hP(7 + t)
         15*t + 19
     """
-    def __init__(self, E, n, P, Q=None):
+    def __init__(self, E, n, P, Q=None) -> None:
         r"""
         Initialize this elliptic polynomial and precompute some
         input-independent data required for evaluation.
@@ -492,7 +492,7 @@ class FastEllipticPolynomial:
         assert r.is_constant()
         return s * r[0]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this elliptic polynomial.
 
@@ -674,7 +674,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
 
         :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
     """
-    def __init__(self, E, P, *, codomain=None, model=None, Q=None):
+    def __init__(self, E, P, *, codomain=None, model=None, Q=None) -> None:
         r"""
         Initialize this square-root Vélu isogeny from a kernel point of odd order.
 

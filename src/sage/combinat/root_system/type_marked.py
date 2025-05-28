@@ -85,7 +85,7 @@ class CartanType(cartan_type.CartanType_decorator):
         marked_nodes = tuple(sorted(marked_nodes))
         return super().__classcall__(cls, ct, marked_nodes)
 
-    def __init__(self, ct, marked_nodes):
+    def __init__(self, ct, marked_nodes) -> None:
         """
         Return an isomorphic Cartan type obtained by marking the
         nodes of the Dynkin diagram.

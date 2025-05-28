@@ -73,7 +73,7 @@ class AmbientSpace(CombinatorialFreeModule):
         False
     """
 
-    def __init__(self, root_system, base_ring, index_set=None):
+    def __init__(self, root_system, base_ring, index_set=None) -> None:
         """
         EXAMPLES::
 

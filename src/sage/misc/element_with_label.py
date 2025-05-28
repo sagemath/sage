@@ -42,7 +42,7 @@ class ElementWithLabel:
         sage: list(nP)
         [(0, 0), (0, 0)]
     """
-    def __init__(self, element, label):
+    def __init__(self, element, label) -> None:
         """
         Construct an object that wraps ``element`` but presents itself
         as ``label``.
@@ -75,7 +75,7 @@ class ElementWithLabel:
         """
         return latex(self.label)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return the string representation of ``self``, which is just
         the string representation of the label.
@@ -91,7 +91,7 @@ class ElementWithLabel:
         """
         return str(self.label)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the representation of ``self``, which is just
         the representation of the label.

@@ -148,7 +148,7 @@ from functools import reduce
 
 
 class LatinSquare:
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         """
         Latin squares.
 
@@ -203,7 +203,7 @@ class LatinSquare:
         from sage.misc.persist import dumps
         return dumps(self.square)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         The string representation of a latin square is the same as the
         underlying matrix.
@@ -216,7 +216,7 @@ class LatinSquare:
         """
         return str(self.square)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         The representation of a latin square is the same as the underlying
         matrix.
@@ -247,7 +247,7 @@ class LatinSquare:
 
         return self.square[r, c]
 
-    def __setitem__(self, rc, val):
+    def __setitem__(self, rc, val) -> None:
         """
         If L is a LatinSquare then this method allows us to set L[r, c].
 

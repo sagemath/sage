@@ -121,7 +121,7 @@ class TangentVector(FiniteRankFreeModuleElement):
         :class:`~sage.tensor.modules.free_module_element.FiniteRankFreeModuleElement`
         for more documentation.
     """
-    def __init__(self, parent, name=None, latex_name=None):
+    def __init__(self, parent, name=None, latex_name=None) -> None:
         r"""
         Construct a tangent vector.
 

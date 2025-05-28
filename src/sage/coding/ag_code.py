@@ -146,7 +146,7 @@ class EvaluationAGCode(AGCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, pls, G):
+    def __init__(self, pls, G) -> None:
         """
         Initialize.
 
@@ -385,7 +385,7 @@ class DifferentialAGCode(AGCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, pls, G):
+    def __init__(self, pls, G) -> None:
         """
         Initialize.
 
@@ -630,7 +630,7 @@ class CartierCode(AGCode):
         sage: code.minimum_distance()           # long time
         2
     """
-    def __init__(self, pls, G, r=1, name=None):
+    def __init__(self, pls, G, r=1, name=None) -> None:
         """
         Initialize.
 

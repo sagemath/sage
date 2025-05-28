@@ -395,7 +395,7 @@ class TableauTuple(CombinatorialElement):
             return Tableaux_all().element_class(Tableaux_all(), t[0])
         return TableauTuples_all().element_class(TableauTuples_all(), t)
 
-    def __init__(self, parent, t, check=True):
+    def __init__(self, parent, t, check=True) -> None:
         r"""
         Initialize a tableau.
 
@@ -1525,7 +1525,7 @@ class RowStandardTableauTuple(TableauTuple, metaclass=ClasscallMetaclass):
         P = RowStandardTableauTuples_all()
         return P.element_class(P, t)
 
-    def __init__(self, parent, t, check=True):
+    def __init__(self, parent, t, check=True) -> None:
         r"""
         Initialize a row standard tableau tuple.
 
@@ -1904,7 +1904,7 @@ class StandardTableauTuple(RowStandardTableauTuple):
         P = StandardTableauTuples_all()
         return P.element_class(P, t)
 
-    def __init__(self, parent, t, check=True):
+    def __init__(self, parent, t, check=True) -> None:
         r"""
         Initialize a standard tableau tuple.
 
@@ -2248,7 +2248,7 @@ class TableauTuples(UniqueRepresentation, Parent):
 
         raise ValueError('%s is not an element of %s' % (t, self))
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function of :class:`TableauTuples`.
 
@@ -2360,7 +2360,7 @@ class TableauTuples_all(TableauTuples):
     and ``size``.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all tableaux.
 
@@ -2403,7 +2403,7 @@ class TableauTuples_level(TableauTuples):
     ``size``.
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         Initialize the class of tableaux of level ``level``.
 
@@ -2415,7 +2415,7 @@ class TableauTuples_level(TableauTuples):
         super().__init__(category=Sets())
         self._level = level
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`TableauTuples` of a fixed ``level``.
 
@@ -2484,7 +2484,7 @@ class TableauTuples_size(TableauTuples):
     ``size``.
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         """
         Initialize the class of tableaux of size ``size``.
 
@@ -2496,7 +2496,7 @@ class TableauTuples_size(TableauTuples):
         super().__init__(category=Sets())
         self._size = size
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`TableauTuples` of a fixed ``size``.
 
@@ -2565,7 +2565,7 @@ class TableauTuples_level_size(TableauTuples):
     ``size``.
     """
 
-    def __init__(self, level, size):
+    def __init__(self, level, size) -> None:
         r"""
         Initialize the class of tableaux of size ``size``.
 
@@ -2584,7 +2584,7 @@ class TableauTuples_level_size(TableauTuples):
         self._level = level
         self._size = size
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`TableauTuples` of a fixed ``level``
         and ``size``.
@@ -2894,7 +2894,7 @@ class RowStandardTableauTuples(TableauTuples):
             return tabs
         raise IndexError('value out of range')
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`RowStandardTableauTuples` of
         arbitrary ``level`` and ``size``.
@@ -2961,7 +2961,7 @@ class RowStandardTableauTuples_all(RowStandardTableauTuples, DisjointUnionEnumer
     :meth:`~TableauTuples.level` and :meth:`~TableauTuples.size`.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all row standard tableaux.
 
@@ -3012,7 +3012,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
     and arbitrary ``size``.
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         Initialize the class of row standard tableaux of level
         ``level`` of arbitrary ``size``.
@@ -3059,7 +3059,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
         """
         return 'Row standard tableau tuples of level %s' % self.level()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`RowStandardTableauTuples` of
         fixed ``level``.
@@ -3110,7 +3110,7 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
     and a fixed ``size``.
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         r"""
         Initialize the class of row standard tableaux of size ``size`` of
         arbitrary level.
@@ -3157,7 +3157,7 @@ class RowStandardTableauTuples_size(RowStandardTableauTuples, DisjointUnionEnume
         """
         return "Row standard tableau tuples of size %s" % self.size()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`RowStandardTableauTuples` of fixed
         ``size``.
@@ -3210,7 +3210,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
     and a fixed ``size``.
     """
 
-    def __init__(self, level, size):
+    def __init__(self, level, size) -> None:
         r"""
         Initialize the class of row standard tableaux of level ``level``
         and size ``size``.
@@ -3267,7 +3267,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
         """
         return f"Row standard tableau tuples of level {self.level()} and size {self.size()}"
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`RowStandardTableauTuples` of fixed
         ``level`` and size.
@@ -3326,7 +3326,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
     Class of all :class:`RowStandardTableauTuples` of a fixed shape.
     """
 
-    def __init__(self, shape):
+    def __init__(self, shape) -> None:
         r"""
         Initialize the class of row standard tableaux of shape ``p``
         and no maximum entry.
@@ -3350,7 +3350,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
         self._level = len(shape)
         self._size = shape.size()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function of :class:`RowStandardTableauTuples` of
         fixed shape.
@@ -3551,7 +3551,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
         Row standard tableaux with 3-residue sequence (1,2,0,0,0,1,2) and multicharge (0,1)
     """
 
-    def __init__(self, residue):
+    def __init__(self, residue) -> None:
         r"""
         Initialize ``self``.
 
@@ -3588,7 +3588,7 @@ class RowStandardTableauTuples_residue(RowStandardTableauTuples):
         """
         return 'Row standard tableaux with {}'.format(self._residue.__str__('and'))
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Check containment of ``t`` in ``self``.
 
@@ -3793,7 +3793,7 @@ class RowStandardTableauTuples_residue_shape(RowStandardTableauTuples_residue):
          ([[5, 6], [1]], [[3, 7], [4], [2]])]
     """
 
-    def __init__(self, residue, shape):
+    def __init__(self, residue, shape) -> None:
         r"""
         Initialize ``self``.
 
@@ -3841,7 +3841,7 @@ class RowStandardTableauTuples_residue_shape(RowStandardTableauTuples_residue):
             for c in range(len(shape)):
                 self._cumulative_lengths[c+1] = self._cumulative_lengths[c] + len(shape[c])
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Check containment of ``t`` in ``self``.
 
@@ -4183,7 +4183,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
             return tabs
         raise IndexError('value out of range')
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`StandardTableauTuples` of arbitrary
         ``level`` and ``size``.
@@ -4250,7 +4250,7 @@ class StandardTableauTuples_all(StandardTableauTuples, DisjointUnionEnumeratedSe
     :meth:`~TableauTuples.level` and :meth:`~TableauTuples.size`.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all standard tableaux. Input is not
         checked; please use :class:`StandardTableauTuples` to ensure the
@@ -4328,7 +4328,7 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
     and arbitrary ``size``.
     """
 
-    def __init__(self, level):
+    def __init__(self, level) -> None:
         r"""
         Initialize the class of semistandard tableaux of level ``level`` of
         arbitrary ``size``.
@@ -4361,7 +4361,7 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
         """
         return 'Standard tableau tuples of level %s' % self.level()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`StandardTableauTuples` of
         fixed ``level``.
@@ -4442,7 +4442,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
     and a fixed ``size``.
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         r"""
         Initialize the class of semistandard tableaux of size ``size`` of
         arbitrary level. Input is not checked; please use
@@ -4473,7 +4473,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
         """
         return "Standard tableau tuples of size %s" % self.size()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`StandardTableauTuples` of fixed
         ``size``.
@@ -4569,7 +4569,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
     fixed ``size``.
     """
 
-    def __init__(self, level, size):
+    def __init__(self, level, size) -> None:
         r"""
         Initialize the class of semistandard tableaux of level ``level`` and
         size ``size``. Input is not checked; please use
@@ -4603,7 +4603,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
         """
         return f"Standard tableau tuples of level {self.level()} and size {self.size()}"
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function for :class:`StandardTableauTuples` of fixed
         ``level`` and size.
@@ -4712,7 +4712,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
     Class of all :class:`StandardTableauTuples` of a fixed shape.
     """
 
-    def __init__(self, shape):
+    def __init__(self, shape) -> None:
         r"""
         Initialize the class of semistandard tableaux of shape ``p`` and no
         maximum entry. Input is not checked; please use
@@ -4732,7 +4732,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         self._level = len(shape)
         self._size = shape.size()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Containment function of :class:`StandardTableauTuples` of fixed shape.
 
@@ -5061,7 +5061,7 @@ class StandardTableaux_residue(StandardTableauTuples):
         Standard tableaux with 3-residue sequence (1,2,0,0,0,1,2) and multicharge (0,1)
     """
 
-    def __init__(self, residue):
+    def __init__(self, residue) -> None:
         r"""
         Initialize ``self``.
 
@@ -5095,7 +5095,7 @@ class StandardTableaux_residue(StandardTableauTuples):
         """
         return 'Standard tableaux with {}'.format(self._residue.__str__('and'))
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Check containment of ``t`` in ``self``.
 
@@ -5197,7 +5197,7 @@ class StandardTableaux_residue_shape(StandardTableaux_residue):
          ([[1, 5], [6]], [[2, 3], [4], [7]])]
     """
 
-    def __init__(self, residue, shape):
+    def __init__(self, residue, shape) -> None:
         r"""
         Initialize ``self``.
 
@@ -5223,7 +5223,7 @@ class StandardTableaux_residue_shape(StandardTableaux_residue):
         self._shape = shape
         self._size = residue.size()
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Check containment of ``t`` in ``self``.
 

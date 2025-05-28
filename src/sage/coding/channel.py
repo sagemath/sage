@@ -149,7 +149,7 @@ class Channel(SageObject):
     - ``output_space`` -- the space of the transmitted words
     """
 
-    def __init__(self, input_space, output_space):
+    def __init__(self, input_space, output_space) -> None:
         r"""
         Initialize parameters for a Channel object.
 
@@ -321,7 +321,7 @@ class StaticErrorRateChannel(Channel):
         of input and output space Vector space of dimension 40 over Finite Field of size 59
     """
 
-    def __init__(self, space, number_errors):
+    def __init__(self, space, number_errors) -> None:
         r"""
         TESTS:
 
@@ -479,7 +479,7 @@ class ErrorErasureChannel(Channel):
         Vector space of dimension 40 over Finite Field of size 2)
     """
 
-    def __init__(self, space, number_errors, number_erasures):
+    def __init__(self, space, number_errors, number_erasures) -> None:
         r"""
         TESTS:
 
@@ -671,7 +671,7 @@ class QarySymmetricChannel(Channel):
           Vector space of dimension 50 over Finite Field of size 59
     """
 
-    def __init__(self, space, epsilon):
+    def __init__(self, space, epsilon) -> None:
         r"""
         TESTS:
 
@@ -701,7 +701,7 @@ class QarySymmetricChannel(Channel):
         except Exception:
             raise ValueError("space has to be of the form Sigma^n, where Sigma has a random_element() method")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of ``self``.
 

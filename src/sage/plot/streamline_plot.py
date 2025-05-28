@@ -27,7 +27,7 @@ class StreamlinePlot(GraphicPrimitive):
     """
     Primitive class that initializes the StreamlinePlot graphics type
     """
-    def __init__(self, xpos_array, ypos_array, xvec_array, yvec_array, options):
+    def __init__(self, xpos_array, ypos_array, xvec_array, yvec_array, options) -> None:
         """
         Create the graphics primitive StreamlinePlot. This sets options
         and the array to be plotted as attributes.

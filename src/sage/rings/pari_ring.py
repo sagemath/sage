@@ -170,7 +170,7 @@ class PariRing(Singleton, Parent):
     """
     Element = Pari
 
-    def __init__(self):
+    def __init__(self) -> None:
         Parent.__init__(self, self, category=Rings())
 
     def __repr__(self) -> str:

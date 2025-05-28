@@ -562,7 +562,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         :doc:`term_monoid`,
         :mod:`~sage.data_structures.mutable_poset`.
     """
-    def __init__(self, parent, summands, simplify=True, convert=True):
+    def __init__(self, parent, summands, simplify=True, convert=True) -> None:
         r"""
         See :class:`AsymptoticExpansion` for more information.
 
@@ -3605,7 +3605,7 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
 
     def __init__(self, growth_group, coefficient_ring,
                  category, default_prec,
-                 term_monoid_factory, locals):
+                 term_monoid_factory, locals) -> None:
         r"""
         See :class:`AsymptoticRing` for more information.
 
@@ -4617,7 +4617,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
     def __init__(self, growth_group,
                  default_prec=None, category=None,
                  term_monoid_factory=None, locals=None,
-                 cls=None):
+                 cls=None) -> None:
         r"""
         See :class:`AsymptoticRingFunctor` for details.
 

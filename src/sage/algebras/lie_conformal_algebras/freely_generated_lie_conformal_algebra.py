@@ -39,7 +39,7 @@ class FreelyGeneratedLieConformalAlgebra(LieConformalAlgebraWithBasis):
         some central generators `C_i` such that `TC_i = 0`.
     """
     def __init__(self, R, index_set=None, central_elements=None, category=None,
-                 element_class=None, prefix=None, **kwds):
+                 element_class=None, prefix=None, **kwds) -> None:
         """
         Initialize ``self``.
 

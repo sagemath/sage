@@ -37,7 +37,7 @@ from sage.structure.sage_object import SageObject
 
 class OutputBuffer(SageObject):
 
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         """
         Data stored either in memory or as a file.
 

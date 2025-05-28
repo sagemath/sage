@@ -85,7 +85,7 @@ class HeckeAlgebraRepresentation(WithEqualityById, SageObject):
     - [HST2008]_
     """
 
-    def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side='right'):
+    def __init__(self, domain, on_basis, cartan_type, q1, q2, q=ZZ.one(), side='right') -> None:
         r"""
         TESTS::
 
@@ -816,7 +816,7 @@ class CherednikOperatorsEigenvectors(UniqueRepresentation, SageObject):
         classical operators `T_1, \ldots, T_n` from `T` and `T_Y` coincide.
     """
 
-    def __init__(self, T, T_Y=None, normalized=True):
+    def __init__(self, T, T_Y=None, normalized=True) -> None:
         r"""
         INPUT:
 

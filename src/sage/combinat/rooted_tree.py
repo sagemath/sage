@@ -173,7 +173,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         """
         return RootedTrees_all()
 
-    def __init__(self, parent=None, children=[], check=True):
+    def __init__(self, parent=None, children=[], check=True) -> None:
         """
         TESTS::
 
@@ -518,7 +518,7 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
     See :class:`RootedTree` for a definition.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -543,7 +543,7 @@ class RootedTrees_all(DisjointUnionEnumeratedSets, RootedTrees):
         """
         return "Rooted trees"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -628,7 +628,7 @@ class RootedTrees_size(RootedTrees):
         sage: for i in range(1, 6): TestSuite(RootedTrees_size(i)).run()                # needs sage.combinat
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -647,7 +647,7 @@ class RootedTrees_size(RootedTrees):
         """
         return "Rooted trees with {} nodes".format(self._n)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -1007,7 +1007,7 @@ class LabelledRootedTrees_all(LabelledRootedTrees):
     See :class:`LabelledRootedTree` for a definition.
     """
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         TESTS::
 

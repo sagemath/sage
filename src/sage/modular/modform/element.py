@@ -674,7 +674,7 @@ class ModularForm_abstract(ModuleElement):
                 vals.append(df[i] / self[i])
             return G(vals)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if ``self`` is nonzero, and ``False`` if not.
 
@@ -1551,7 +1551,7 @@ class Newform(ModularForm_abstract):
     # The reasons why Newform does not inherit from ModularFormElement
     # should really be documented somewhere.
 
-    def __init__(self, parent, component, names, check=True):
+    def __init__(self, parent, component, names, check=True) -> None:
         r"""
         Initialize a Newform object.
 
@@ -1908,7 +1908,7 @@ class Newform(ModularForm_abstract):
         """
         return self._defining_modular_symbols().ambient().cuspidal_subspace().new_subspace().decomposition().index(self._defining_modular_symbols())
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True``, as newforms are never zero.
 
@@ -2591,7 +2591,7 @@ class Newform(ModularForm_abstract):
 
 
 class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         r"""
         An element of a space of modular forms.
 
@@ -2957,7 +2957,7 @@ class ModularFormElement_elliptic_curve(Newform):
     r"""
     A modular form attached to an elliptic curve over `\QQ`.
     """
-    def __init__(self, parent, E):
+    def __init__(self, parent, E) -> None:
         """
         Modular form attached to an elliptic curve as an element
         of a space of modular forms.
@@ -3092,7 +3092,7 @@ class EisensteinSeries(ModularFormElement):
          -1/7*zeta6 - 2/7 + q + (2*zeta6 - 1)*q^2 + (-3*zeta6 + 1)*q^3 + O(q^4),
          q + (zeta6 + 1)*q^2 + (-zeta6 + 3)*q^3 + O(q^4)]
     """
-    def __init__(self, parent, vector, t, chi, psi):
+    def __init__(self, parent, vector, t, chi, psi) -> None:
         """
         An Eisenstein series.
 
@@ -3414,7 +3414,7 @@ class GradedModularFormElement(ModuleElement):
         sage: M({4:f, 2:g})
         2 + 12*q + 36*q^2 + 252*q^3 + 84*q^4 + 72*q^5 + O(q^6)
     """
-    def __init__(self, parent, forms_datum):
+    def __init__(self, parent, forms_datum) -> None:
         r"""
         INPUT:
 

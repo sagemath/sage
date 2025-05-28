@@ -315,7 +315,7 @@ class Variable(CachedRepresentation, SageObject):
         sage: v = Variable('(e^(n*log(n)))', ignore=('e',)); repr(v), v.variable_names()
         ('e^(n*log(n))', ('n',))
     """
-    def __init__(self, var, repr=None, latex_name=None, ignore=None):
+    def __init__(self, var, repr=None, latex_name=None, ignore=None) -> None:
         r"""
         See :class:`Variable` for details.
 
@@ -635,7 +635,7 @@ class PartialConversionValueError(ValueError):
     The remaining argument passed on to
     :python:`ValueError<library/exceptions.html#exceptions.ValueError>`.
     """
-    def __init__(self, element, *args, **kwds):
+    def __init__(self, element, *args, **kwds) -> None:
         r"""
         See :exc:`PartialConversionValueError` for more information.
 
@@ -673,7 +673,7 @@ class PartialConversionElement(SageObject):
     elements of
     :mod:`cartesian products of growth groups <sage.rings.asymptotic.growth_group_cartesian>`.
     """
-    def __init__(self, growth_group, raw_element):
+    def __init__(self, growth_group, raw_element) -> None:
         r"""
         See :class:`PartialConversionElement` for more information.
 
@@ -1113,7 +1113,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         True
     """
 
-    def __init__(self, parent, raw_element):
+    def __init__(self, parent, raw_element) -> None:
         r"""
         See :class:`GenericGrowthElement` for more information.
 
@@ -1753,7 +1753,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         else:
             return None
 
-    def __init__(self, base, var, category):
+    def __init__(self, base, var, category) -> None:
         r"""
         See :class:`GenericGrowthGroup` for more information.
 
@@ -2574,7 +2574,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
 
     rank = 13
 
-    def __init__(self, var, domain):
+    def __init__(self, var, domain) -> None:
         r"""
         See :class:`AbstractGrowthGroupFunctor` for details.
 
@@ -2688,7 +2688,7 @@ class DecreasingGrowthElementError(ValueError):
     The remaining arguments are passed on to
     :python:`ValueError<library/exceptions.html#exceptions.ValueError>`.
     """
-    def __init__(self, element, *args, **kwds):
+    def __init__(self, element, *args, **kwds) -> None:
         r"""
         See :exc:`DecreasingGrowthElementError` for more information.
 
@@ -3708,7 +3708,7 @@ class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
     _functor_name = 'MonomialGrowthGroup'
 
-    def __init__(self, var):
+    def __init__(self, var) -> None:
         r"""
         See :class:`MonomialGrowthGroupFunctor` for details.
 
@@ -4196,7 +4196,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         ('Inverse', 'Inverse', False),
         ('Commutative', 'Commutative', False)]
 
-    def __init__(self, base, *args, **kwds):
+    def __init__(self, base, *args, **kwds) -> None:
         r"""
         See :class:`ExponentialGrowthGroup` for more information.
 
@@ -4712,7 +4712,7 @@ class ExponentialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
 
     _functor_name = 'ExponentialGrowthGroup'
 
-    def __init__(self, var):
+    def __init__(self, var) -> None:
         r"""
         See :class:`ExponentialGrowthGroupFunctor` for details.
 

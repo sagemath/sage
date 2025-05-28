@@ -121,7 +121,7 @@ class PuncturedCode(AbstractLinearCode):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, C, positions):
+    def __init__(self, C, positions) -> None:
         r"""
         TESTS:
 
@@ -360,7 +360,7 @@ class PuncturedCodePuncturedMatrixEncoder(Encoder):
          Puncturing of [11, 5] linear code over GF(7) on position(s) [3]
     """
 
-    def __init__(self, code):
+    def __init__(self, code) -> None:
         r"""
         TESTS:
 
@@ -498,7 +498,7 @@ class PuncturedCodeOriginalCodeDecoder(Decoder):
         True
     """
 
-    def __init__(self, code, strategy=None, original_decoder=None, **kwargs):
+    def __init__(self, code, strategy=None, original_decoder=None, **kwargs) -> None:
         r"""
         TESTS:
 

@@ -125,7 +125,7 @@ class SpechtModule(CombinatorialFreeModule):
         la = PartitionTuples(AK._r, AK._n)(la)
         return super().__classcall__(cls, AK, la)
 
-    def __init__(self, AK, la):
+    def __init__(self, AK, la) -> None:
         r"""
         Initialize ``self``.
 

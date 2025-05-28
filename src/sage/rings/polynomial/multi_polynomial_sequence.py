@@ -397,7 +397,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
 
 class PolynomialSequence_generic(Sequence_generic):
-    def __init__(self, parts, ring, immutable=False, cr=False, cr_str=None):
+    def __init__(self, parts, ring, immutable=False, cr=False, cr_str=None) -> None:
         """
         Construct a new system of multivariate polynomials.
 

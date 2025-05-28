@@ -628,7 +628,7 @@ class RiemannSurface:
         certification=True,
         differentials=None,
         integration_method="rigorous"
-    ):
+    ) -> None:
         r"""
         TESTS::
 
@@ -746,7 +746,7 @@ class RiemannSurface:
             fast_callable(h, domain=self._CC) for h in self.cohomology_basis()
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of the Riemann surface class.
 
@@ -4013,7 +4013,7 @@ class RiemannSurfaceSum(RiemannSurface):
         2
     """
 
-    def __init__(self, L):
+    def __init__(self, L) -> None:
         r"""
         TESTS::
 

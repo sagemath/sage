@@ -60,7 +60,7 @@ class KazhdanLusztigPolynomial(UniqueRepresentation, SageObject):
         q + 1
     """
 
-    def __init__(self, W, q, trace=False):
+    def __init__(self, W, q, trace=False) -> None:
         """
         Initialize ``self``.
 

@@ -220,7 +220,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
     """
     A class for modules of derivations over a commutative ring.
     """
-    def __init__(self, domain, codomain, twist=None):
+    def __init__(self, domain, codomain, twist=None) -> None:
         """
         Initialize this module of derivation.
 
@@ -1342,7 +1342,7 @@ class RingDerivationWithoutTwist_zero(RingDerivationWithoutTwist):
     It is used when the parent is the zero derivation module
     (e.g., when its domain is ``ZZ``, ``QQ``, a finite field, etc.)
     """
-    def __init__(self, parent, arg=None):
+    def __init__(self, parent, arg=None) -> None:
         """
         Initialize this derivation.
 
@@ -1534,7 +1534,7 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
     computation rules for derivations. It is used for derivations
     over fraction fields and quotient rings.
     """
-    def __init__(self, parent, arg=None):
+    def __init__(self, parent, arg=None) -> None:
         """
         Initialize this derivation.
 
@@ -1683,7 +1683,7 @@ class RingDerivationWithoutTwist_function(RingDerivationWithoutTwist):
     are either polynomials, rational fractions, power series or
     Laurent series.
     """
-    def __init__(self, parent, arg=None):
+    def __init__(self, parent, arg=None) -> None:
         """
         Initialize this derivation.
 
@@ -1960,7 +1960,7 @@ class RingDerivationWithTwist_generic(RingDerivation):
     morphism of the codomain over the domain) for a scalar
     `\lambda` varying in the codomain.
     """
-    def __init__(self, parent, scalar=0):
+    def __init__(self, parent, scalar=0) -> None:
         """
         Initialize this derivation.
 

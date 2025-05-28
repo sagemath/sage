@@ -147,7 +147,7 @@ class FunctionFieldDivisor(ModuleElement):
          + 3*Place (x, (1/(x^3 + x^2 + x))*y^2)
          - 6*Place (x + 1, y + 1)
     """
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         """
         Initialize.
 
@@ -999,7 +999,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
     """
     Element = FunctionFieldDivisor
 
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         Initialize.
 

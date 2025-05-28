@@ -348,7 +348,7 @@ class SageSpoofInOut(SageObject):
         hello world
         sage: O.close()
     """
-    def __init__(self, outfile=None, infile=None):
+    def __init__(self, outfile=None, infile=None) -> None:
         """
         Initialization.
 
@@ -379,7 +379,7 @@ class SageSpoofInOut(SageObject):
         self.real_stderr = os.fdopen(os.dup(sys.stderr.fileno()), "w")
         self.position = 0
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         Stop spoofing.
 
@@ -519,7 +519,7 @@ TestResults = namedtuple('TestResults', 'failed attempted')
 
 
 class SageDocTestRunner(doctest.DocTestRunner):
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
         """
         A customized version of DocTestRunner that tracks dependencies
         of doctests.
@@ -1728,7 +1728,7 @@ class DocTestDispatcher(SageObject):
     Create parallel :class:`DocTestWorker` processes and dispatches
     doctesting tasks.
     """
-    def __init__(self, controller: DocTestController):
+    def __init__(self, controller: DocTestController) -> None:
         """
         INPUT:
 
@@ -2200,7 +2200,7 @@ class DocTestWorker(multiprocessing.Process):
         sage: reporter.report(FDS, False, W.exitcode, result, "")
             [... tests, ...s wall]
     """
-    def __init__(self, source, options, funclist=[], baseline=None):
+    def __init__(self, source, options, funclist=[], baseline=None) -> None:
         """
         Initialization.
 
@@ -2527,7 +2527,7 @@ class DocTestTask:
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
 
-    def __init__(self, source):
+    def __init__(self, source) -> None:
         """
         Initialization.
 

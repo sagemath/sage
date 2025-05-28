@@ -71,7 +71,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class PrefixClosedSet:
-    def __init__(self, words):
+    def __init__(self, words) -> None:
         r"""
         A prefix-closed set.
 
@@ -119,7 +119,7 @@ class PrefixClosedSet:
         from sage.combinat.words.words import Words
         return cls(Words(alphabet, infinite=False))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         A representation string of this prefix-closed set.
 
@@ -378,7 +378,7 @@ def minimize_result(operation):
 
 
 class RecognizableSeries(ModuleElement):
-    def __init__(self, parent, mu, left, right):
+    def __init__(self, parent, mu, left, right) -> None:
         r"""
         A recognizable series.
 
@@ -865,7 +865,7 @@ class RecognizableSeries(ModuleElement):
             (all(not self.mu[a] for a in self.parent().alphabet()) and
              not self[self.parent().indices()()])
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return whether this recognizable series is nonzero.
 
@@ -1688,7 +1688,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         return (coefficient_ring, indices, category, minimize_results)
 
-    def __init__(self, coefficient_ring, indices, category, minimize_results):
+    def __init__(self, coefficient_ring, indices, category, minimize_results) -> None:
         r"""
         See :class:`RecognizableSeriesSpace` for details.
 

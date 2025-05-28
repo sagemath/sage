@@ -49,7 +49,7 @@ class RootSpace(CombinatorialFreeModule):
         \alpha_{1}
     """
 
-    def __init__(self, root_system, base_ring):
+    def __init__(self, root_system, base_ring) -> None:
         """
         EXAMPLES::
 

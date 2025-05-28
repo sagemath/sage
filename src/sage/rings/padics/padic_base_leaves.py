@@ -211,7 +211,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
     An implementation of the `p`-adic integers with capped relative
     precision.
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -309,7 +309,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
     r"""
     An implementation of the `p`-adic integers with capped absolute precision.
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -423,7 +423,7 @@ class pAdicRingFloatingPoint(pAdicRingBaseGeneric, pAdicFloatingPointRingGeneric
     An implementation of the `p`-adic integers with floating point
     precision.
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -518,7 +518,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
     r"""
     An implementation of the `p`-adic integers using fixed modulus.
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -644,7 +644,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
         sage: K = Qp(101)  # indirect doctest
     """
 
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -788,7 +788,7 @@ class pAdicFieldFloatingPoint(pAdicFieldBaseGeneric, pAdicFloatingPointFieldGene
     An implementation of the `p`-adic rationals with floating point
     precision.
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -920,7 +920,7 @@ class pAdicRingLattice(pAdicLatticeGeneric, pAdicRingBaseGeneric):
         sage: R
         2-adic Ring with lattice-cap precision (label: init)
     """
-    def __init__(self, p, prec, subtype, print_mode, names, label=None, category=None):
+    def __init__(self, p, prec, subtype, print_mode, names, label=None, category=None) -> None:
         """
         Initialization.
 
@@ -1051,7 +1051,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         sage: R
         2-adic Field with lattice-cap precision (label: init)
     """
-    def __init__(self, p, prec, subtype, print_mode, names, label=None, category=None):
+    def __init__(self, p, prec, subtype, print_mode, names, label=None, category=None) -> None:
         """
         Initialization.
 
@@ -1176,7 +1176,7 @@ class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
         sage: type(R)                                                                   # needs sage.libs.flint
         <class 'sage.rings.padics.padic_base_leaves.pAdicRingRelaxed_with_category'>
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 
@@ -1215,7 +1215,7 @@ class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
         sage: type(R)                                                                   # needs sage.libs.flint
         <class 'sage.rings.padics.padic_base_leaves.pAdicFieldRelaxed_with_category'>
     """
-    def __init__(self, p, prec, print_mode, names, category=None):
+    def __init__(self, p, prec, print_mode, names, category=None) -> None:
         """
         Initialization.
 

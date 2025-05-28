@@ -41,7 +41,7 @@ class SymmetricGroupRepresentation(Representation_abstract):
     """
     Mixin class for symmetric group (algebra) representations.
     """
-    def __init__(self, SGA):
+    def __init__(self, SGA) -> None:
         """
         Initialize ``self``.
 
@@ -222,7 +222,7 @@ class SpechtModule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             raise ValueError(f"the domain size (={rk}) does not match the number of boxes (={n}) of the diagram")
         return super().__classcall__(cls, SGA, D)
 
-    def __init__(self, SGA, D):
+    def __init__(self, SGA, D) -> None:
         r"""
         Initialize ``self``.
 
@@ -447,7 +447,7 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
             raise ValueError(f"the domain size (={rk}) does not match the number of boxes (={n}) of the diagram")
         return super().__classcall__(cls, SGA, shape)
 
-    def __init__(self, SGA, shape):
+    def __init__(self, SGA, shape) -> None:
         r"""
         Initialize ``self``.
 
@@ -675,7 +675,7 @@ class SpechtModuleTableauxBasis(SpechtModule):
         - :class:`~sage.combinat.symmetric_group_representations.SpechtRepresentation`
           for an implementation of the representation by matrices.
     """
-    def __init__(self, ambient):
+    def __init__(self, ambient) -> None:
         r"""
         Initialize ``self``.
 
@@ -971,7 +971,7 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
         sage: sum(SGA.basis()) * u
         0
     """
-    def __init__(self, specht_module):
+    def __init__(self, specht_module) -> None:
         r"""
         Initialize ``self``.
 
@@ -1081,7 +1081,7 @@ class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
         [0 0 2 1]
         [0 0 1 2]
     """
-    def __init__(self, specht_module):
+    def __init__(self, specht_module) -> None:
         r"""
         Initialize ``self``.
 

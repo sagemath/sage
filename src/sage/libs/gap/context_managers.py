@@ -43,11 +43,13 @@ The value is reset even if exceptions occur::
 ###############################################################################
 
 from sage.libs.gap.libgap import libgap
+from types import TracebackType
+from typing import Optional, Type
 
 
 class GlobalVariableContext:
 
-    def __init__(self, variable, value):
+    def __init__(self, variable, value) -> None:
         """
         Context manager for GAP global variables.
 
@@ -89,7 +91,7 @@ class GlobalVariableContext:
         self._old_value = libgap.get_global(self._variable)
         libgap.set_global(self._variable, self._new_value)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type: Optional[Type[BaseException]], exc_val: Optional[BaseException], exc_tb: Optional[TracebackType]):
         """
         Called when exiting the with-block.
 

@@ -43,7 +43,7 @@ from sage.structure.richcmp import rich_to_bool
 
 
 class pAdicExtensionGeneric(pAdicGeneric):
-    def __init__(self, poly, prec, print_mode, names, element_class):
+    def __init__(self, poly, prec, print_mode, names, element_class) -> None:
         """
         Initialization.
 

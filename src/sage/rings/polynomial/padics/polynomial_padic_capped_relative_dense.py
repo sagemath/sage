@@ -37,7 +37,7 @@ Polynomial_generic_cdv = sage.rings.polynomial.polynomial_element_generic.Polyno
 
 
 class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_padic):
-    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False, absprec=infinity, relprec=infinity):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False, absprec=infinity, relprec=infinity) -> None:
         """
         TESTS::
 

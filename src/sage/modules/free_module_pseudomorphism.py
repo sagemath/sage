@@ -125,7 +125,7 @@ class FreeModulePseudoMorphism(Morphism):
         sage: phi(v)
         (2*z + 1, 6*z^2 + 4*z + 5)
     """
-    def __init__(self, parent, f, side):
+    def __init__(self, parent, f, side) -> None:
         """
         Constructs a pseudomorphism of free modules.
 

@@ -42,7 +42,7 @@ class SagePrompts(Prompts):
 
 class InterfacePrompts(Prompts):
 
-    def __init__(self, interface_name):
+    def __init__(self, interface_name) -> None:
         self.__name = interface_name
         self.__width = len(interface_name)
 

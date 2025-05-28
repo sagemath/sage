@@ -294,7 +294,7 @@ class multiples:
         3 to the power 3 = 27
         3 to the power 4 = 81
     """
-    def __init__(self, P, n, P0=None, indexed=False, operation='+', op=None):
+    def __init__(self, P, n, P0=None, indexed=False, operation='+', op=None) -> None:
         """
         Create a multiples iterator.
 

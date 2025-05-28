@@ -28,7 +28,7 @@ from sage.misc.superseded import deprecated_function_alias
 
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class for methods associated to the power sum basis of the symmetric functions.
 

@@ -31,7 +31,7 @@ lazy_import('sage.libs.lrcalc', 'lrcalc')
 
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
-    def __init__(self, Sym):
+    def __init__(self, Sym) -> None:
         """
         A class for methods related to the Schur symmetric function basis.
 

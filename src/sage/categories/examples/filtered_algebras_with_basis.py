@@ -46,7 +46,7 @@ class PBWBasisCrossProduct(CombinatorialFreeModule):
       by using :meth:`degree_on_basis` which returns the sum of exponents
       of the monomial
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         """
         EXAMPLES::
 

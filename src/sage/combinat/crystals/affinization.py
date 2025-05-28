@@ -76,7 +76,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
     - [HK2002]_ Chapter 10
     """
 
-    def __init__(self, B):
+    def __init__(self, B) -> None:
         """
         Initialize ``self``.
 
@@ -113,7 +113,7 @@ class AffinizationOfCrystal(UniqueRepresentation, Parent):
         An element in an affinization crystal.
         """
 
-        def __init__(self, parent, b, m):
+        def __init__(self, parent, b, m) -> None:
             """
             Initialize ``self``.
 

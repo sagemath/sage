@@ -59,7 +59,7 @@ class HeckeModules(Category_module):
 
         sage: TestSuite(HeckeModules(ZZ)).run()
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 

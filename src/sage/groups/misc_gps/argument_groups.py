@@ -64,7 +64,7 @@ class AbstractArgument(MultiplicativeGroupElement):
     - ``normalize`` -- boolean (default: ``True``)
     """
 
-    def __init__(self, parent, element, normalize=True):
+    def __init__(self, parent, element, normalize=True) -> None:
         r"""
         See :class:`AbstractArgument` for more information.
 
@@ -348,7 +348,7 @@ class AbstractArgumentGroup(UniqueRepresentation, Parent):
             category = Groups().Commutative()
         return category
 
-    def __init__(self, base, category):
+    def __init__(self, base, category) -> None:
         r"""
         See :class:`AbstractArgumentGroup` for more information.
 
@@ -995,7 +995,7 @@ class RootsOfUnityGroup(UnitCircleGroup):
         category = cls._determine_category_(category)
         return super(AbstractArgumentGroup, cls).__classcall__(cls, category)
 
-    def __init__(self, category):
+    def __init__(self, category) -> None:
         r"""
         See :class:`RootsOfUnityGroup` for more information.
 
@@ -1046,7 +1046,7 @@ class ArgumentByElement(AbstractArgument):
     - ``normalize`` -- boolean (default: ``True``)
     """
 
-    def __init__(self, parent, element, normalize=True):
+    def __init__(self, parent, element, normalize=True) -> None:
         r"""
         See :class:`ArgumentByElement` for more information.
 
@@ -1383,7 +1383,7 @@ class Sign(AbstractArgument):
     - ``normalize`` -- boolean (default: ``True``)
     """
 
-    def __init__(self, parent, element, normalize=True):
+    def __init__(self, parent, element, normalize=True) -> None:
         r"""
         See :class:`Sign` for more information.
 
@@ -1615,7 +1615,7 @@ class SignGroup(AbstractArgumentGroup):
         return super(AbstractArgumentGroup, cls).__classcall__(
             cls, category)
 
-    def __init__(self, category):
+    def __init__(self, category) -> None:
         r"""
         See :class:`SignGroup` for more information.
 

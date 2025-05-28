@@ -65,7 +65,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
         ....:     for i in range(w0.length()))
         True
     """
-    def __init__(self, L):
+    def __init__(self, L) -> None:
         r"""
         Initialize ``self``.
 

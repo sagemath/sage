@@ -39,7 +39,7 @@ class ScatterPlot(GraphicPrimitive):
         sage: ScatterPlot([0,1,2], [3.5,2,5.1], {'facecolor':'white', 'marker':'s'})
         Scatter plot graphics primitive on 3 data points
     """
-    def __init__(self, xdata, ydata, options):
+    def __init__(self, xdata, ydata, options) -> None:
         """
         Scatter plot graphics primitive.
 

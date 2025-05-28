@@ -181,7 +181,7 @@ class Graphics(WithEqualityById, SageObject):
     .. automethod:: _rich_repr_
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Create a new empty Graphics objects with all the defaults.
 
@@ -1010,7 +1010,7 @@ class Graphics(WithEqualityById, SageObject):
                 return display_manager.graphics_from_save(
                     self.save, kwds, file_ext, output_container)
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return string representation of this plot.
 
@@ -1043,7 +1043,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         return self._objects[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         If G is of type Graphics, then len(G) gives the number of distinct
         graphics primitives making up that object.
@@ -1057,7 +1057,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         return len(self._objects)
 
-    def __delitem__(self, i):
+    def __delitem__(self, i) -> None:
         """
         If G is of type Graphics, then del(G[i]) removes the i-th distinct
         graphic primitive making up that object.
@@ -1076,7 +1076,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         del self._objects[int(i)]
 
-    def __setitem__(self, i, x):
+    def __setitem__(self, i, x) -> None:
         """
         You can replace a :class:`GraphicPrimitive` (point, line, circle, etc...) in
         a :class:`Graphics` object G with any other :class:`GraphicPrimitive`

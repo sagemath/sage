@@ -219,7 +219,7 @@ class RibbonTableaux(UniqueRepresentation, Parent):
 
         return RibbonTableaux_shape_weight_length(shape, weight, length)
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         EXAMPLES::
 
@@ -300,7 +300,7 @@ class RibbonTableaux_shape_weight_length(RibbonTableaux):
 
         return super().__classcall__(cls, shape, tuple(weight), length)
 
-    def __init__(self, shape, weight, length):
+    def __init__(self, shape, weight, length) -> None:
         """
         EXAMPLES::
 
@@ -966,7 +966,7 @@ class MultiSkewTableaux(UniqueRepresentation, Parent):
     Multiskew tableaux.
     """
 
-    def __init__(self, category=None):
+    def __init__(self, category=None) -> None:
         """
         EXAMPLES::
 
@@ -1047,7 +1047,7 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
 
         return super().__classcall__(cls, shape, weight)
 
-    def __init__(self, shape, weight):
+    def __init__(self, shape, weight) -> None:
         """
         TESTS::
 
@@ -1069,7 +1069,7 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         """
         return "Semistandard multi skew tableaux of shape %s and weight %s" % (list(self._shape), self._weight)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 

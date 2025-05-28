@@ -111,7 +111,7 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
             return g2(R)
         raise ValueError("invalid Cartan type")
 
-    def __init__(self, R, ct, e, f, h, sparse=True):
+    def __init__(self, R, ct, e, f, h, sparse=True) -> None:
         """
         Initialize ``self``.
 
@@ -421,7 +421,7 @@ class gl(MatrixLieAlgebraFromAssociative):
     - ``R`` -- the base ring
     - ``n`` -- the size of the matrix
     """
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         """
         Initialize ``self``.
 
@@ -561,7 +561,7 @@ class sl(ClassicalMatrixLieAlgebra):
     The Lie algebra `\mathfrak{sl}_n`, which consists of all `n \times n`
     matrices with trace 0. This is the Lie algebra of type `A_{n-1}`.
     """
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         """
         Initialize ``self``.
 
@@ -661,7 +661,7 @@ class so(ClassicalMatrixLieAlgebra):
     This is the Lie algebra of type `B_{(n-1)/2}` or `D_{n/2}` if `n`
     is odd or even respectively.
     """
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         """
         Initialize ``self``.
 
@@ -792,7 +792,7 @@ class sp(ClassicalMatrixLieAlgebra):
 
     This is the Lie algebra of type `C_k`.
     """
-    def __init__(self, R, n):
+    def __init__(self, R, n) -> None:
         """
         Initialize ``self``.
 
@@ -869,7 +869,7 @@ class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
     """
     A matrix Lie algebra of exceptional type.
     """
-    def __init__(self, R, cartan_type, e, f, h=None, sparse=False):
+    def __init__(self, R, cartan_type, e, f, h=None, sparse=False) -> None:
         """
         Initialize ``self``.
 
@@ -902,7 +902,7 @@ class e6(ExceptionalMatrixLieAlgebra):
     The simple Lie algebra `\mathfrak{e}_6` of type `E_6`. The matrix
     representation is given following [HRT2000]_.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -931,7 +931,7 @@ class e7(ExceptionalMatrixLieAlgebra):
     The simple Lie algebra `\mathfrak{e}_7` of type `E_7`. The matrix
     representation is given following [HRT2000]_.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -966,7 +966,7 @@ class e8(ExceptionalMatrixLieAlgebra):
     The simple Lie algebra `\mathfrak{e}_8` of type `E_8` built from the
     adjoint representation in the Chevalley basis.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -1009,7 +1009,7 @@ class f4(ExceptionalMatrixLieAlgebra):
     representation is given following [HRT2000]_ but indexed in the
     reversed order (i.e., interchange 1 with 4 and 2 with 3).
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -1056,7 +1056,7 @@ class g2(ExceptionalMatrixLieAlgebra):
     The simple Lie algebra `\mathfrak{g}_2` of type `G_2`. The matrix
     representation is given following [HRT2000]_.
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -1116,7 +1116,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
         ...
         TypeError: no conversion of this rational to integer
     """
-    def __init__(self, R, cartan_type):
+    def __init__(self, R, cartan_type) -> None:
         """
         Initialize ``self``.
 
@@ -1258,7 +1258,7 @@ class MatrixCompactRealForm(FinitelyGeneratedLieAlgebra):
         """
         An element of a matrix Lie algebra in its compact real form.
         """
-        def __init__(self, parent, real, imag):
+        def __init__(self, parent, real, imag) -> None:
             """
             Initialize ``self``.
 
@@ -1649,7 +1649,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             return LieAlgebraChevalleyBasis_simply_laced(R, cartan_type, epsilon)
         return super().__classcall__(cls, R, cartan_type)
 
-    def __init__(self, R, cartan_type):
+    def __init__(self, R, cartan_type) -> None:
         r"""
         Initialize ``self``.
 
@@ -2307,7 +2307,7 @@ class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
         sage: L.e(1).bracket(L.e(2))
         -E[alpha[1] + alpha[2]]
     """
-    def __init__(self, R, cartan_type, epsilon):
+    def __init__(self, R, cartan_type, epsilon) -> None:
         """
         Initialize ``self``.
 

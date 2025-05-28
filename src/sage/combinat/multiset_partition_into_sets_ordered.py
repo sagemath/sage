@@ -152,7 +152,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             P = OrderedMultisetPartitionsIntoSets(_get_weight(X))
             return P.element_class(P, co)
 
-    def __init__(self, parent, data):
+    def __init__(self, parent, data) -> None:
         """
         Initialize ``self``.
 
@@ -1490,7 +1490,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             # generic parent
             return OrderedMultisetPartitionsIntoSets_all_constraints(**constraints)
 
-    def __init__(self, is_finite=None, **constraints):
+    def __init__(self, is_finite=None, **constraints) -> None:
         """
         Initialize ``self``.
 
@@ -1666,7 +1666,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
     Element = OrderedMultisetPartitionIntoSets
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return if ``x`` is contained in ``self``.
 
@@ -2020,7 +2020,7 @@ class OrderedMultisetPartitionsIntoSets_n(OrderedMultisetPartitionsIntoSets):
     Ordered multiset partitions into sets of a fixed integer `n`.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Initialize ``self``.
 
@@ -2155,7 +2155,7 @@ class OrderedMultisetPartitionsIntoSets_n_constraints(OrderedMultisetPartitionsI
     satisfying constraints.
     """
 
-    def __init__(self, n, **constraints):
+    def __init__(self, n, **constraints) -> None:
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_n`` to initialize.
 
@@ -2194,7 +2194,7 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
     Class of ordered multiset partitions into sets of a fixed multiset `X`.
     """
 
-    def __init__(self, X):
+    def __init__(self, X) -> None:
         """
         Initialize ``self``.
 
@@ -2227,7 +2227,7 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
         ms_rep = "{{" + ", ".join(map(str, self._Xtup)) + "}}"
         return "Ordered Multiset Partitions into Sets" + " of multiset %s" % ms_rep
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return if ``x`` is contained in ``self``.
 
@@ -2365,7 +2365,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
     satisfying constraints.
     """
 
-    def __init__(self, X, **constraints):
+    def __init__(self, X, **constraints) -> None:
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_X`` to initialize.
 
@@ -2407,7 +2407,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
     over a fixed alphabet `A`.
     """
 
-    def __init__(self, A, d):
+    def __init__(self, A, d) -> None:
         """
         Initialize ``self``.
 
@@ -2539,7 +2539,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d_constraints(OrderedMultisetPartit
     over a fixed alphabet `A` satisfying constraints.
     """
 
-    def __init__(self, A, d, **constraints):
+    def __init__(self, A, d, **constraints) -> None:
         """
         Mimic class ``OrderedMultisetPartitionsIntoSets_alph_d`` to initialize.
 
@@ -3209,7 +3209,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         sage: b.e(2)                                                                    # needs sage.modules
     """
 
-    def __init__(self, n, ell, k):
+    def __init__(self, n, ell, k) -> None:
         """
         Initialize ``self``.
 
@@ -3318,7 +3318,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
         else:
             raise ValueError("cannot convert %s into an element of %s" % (x, self))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if ``x`` is an element of ``self`` or an ordered
         multiset partition into sets.

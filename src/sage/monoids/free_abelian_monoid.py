@@ -188,7 +188,7 @@ class FreeAbelianMonoid_class(Parent):
     """
     Element = FreeAbelianMonoidElement
 
-    def __init__(self, n, names):
+    def __init__(self, n, names) -> None:
         """
         Initialize ``self``.
 
@@ -205,7 +205,7 @@ class FreeAbelianMonoid_class(Parent):
         assert names is not None
         Parent.__init__(self, names=names, category=Monoids().Commutative())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         n = self.__ngens
         return f"Free abelian monoid on {n} generators {self.gens()}"
 
@@ -225,7 +225,7 @@ class FreeAbelianMonoid_class(Parent):
             return x
         return self.element_class(self, x)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if `x` is an element of this abelian monoid.
 

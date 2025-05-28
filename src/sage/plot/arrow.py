@@ -24,7 +24,7 @@ from sage.plot.colors import to_mpl_color
 
 
 class CurveArrow(GraphicPrimitive):
-    def __init__(self, path, options):
+    def __init__(self, path, options) -> None:
         """
         Return an arrow graphics primitive along the provided path (bezier curve).
 
@@ -179,7 +179,7 @@ class Arrow(GraphicPrimitive):
         sage: P
         Arrow from (0.0,1.0) to (2.0,3.0)
     """
-    def __init__(self, xtail, ytail, xhead, yhead, options):
+    def __init__(self, xtail, ytail, xhead, yhead, options) -> None:
         """
         Create an arrow graphics primitive.
 
@@ -399,7 +399,7 @@ class Arrow(GraphicPrimitive):
             import matplotlib.patheffects as pe
 
             class CheckNthSubPath:
-                def __init__(self, patch, n):
+                def __init__(self, patch, n) -> None:
                     """
                     Creates a callable object that returns ``True`` if the
                     provided path is the n-th path from the patch.
@@ -427,7 +427,7 @@ class Arrow(GraphicPrimitive):
 
             class ConditionalStroke(pe.RendererBase):
 
-                def __init__(self, condition_func, pe_list):
+                def __init__(self, condition_func, pe_list) -> None:
                     """
                     Path effect that is only applied when the ``condition_func``
                     returns ``True``.

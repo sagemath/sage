@@ -210,7 +210,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         return Tableaux_all().element_class(Tableaux_all(), t)
 
-    def __init__(self, parent, t, check=True):
+    def __init__(self, parent, t, check=True) -> None:
         r"""
         Initialize a tableau.
 
@@ -5667,7 +5667,7 @@ class Tableaux(UniqueRepresentation, Parent):
 
         return self.element_class(self, t)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -5710,7 +5710,7 @@ class Tableaux(UniqueRepresentation, Parent):
 
 class Tableaux_all(Tableaux):
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all tableaux.
 
@@ -5748,7 +5748,7 @@ class Tableaux_size(Tableaux):
     Tableaux of a fixed size `n`.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize the class of tableaux of size `n`.
 
@@ -5763,7 +5763,7 @@ class Tableaux_size(Tableaux):
         super().__init__(category=Sets())
         self.size = n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -6099,7 +6099,7 @@ class SemistandardTableaux(Tableaux):
 
     Element = SemistandardTableau
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -6206,7 +6206,7 @@ class SemistandardTableaux(Tableaux):
             return tabs
         raise IndexError('value out of range')
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Return ``True`` if ``t`` can be interpreted as a
         :class:`SemistandardTableau`.
@@ -6260,7 +6260,7 @@ class SemistandardTableaux_all(SemistandardTableaux, DisjointUnionEnumeratedSets
     All semistandard tableaux.
     """
 
-    def __init__(self, max_entry=None):
+    def __init__(self, max_entry=None) -> None:
         r"""
         Initialize the class of all semistandard tableaux.
 
@@ -6319,7 +6319,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
     Semistandard tableaux of fixed size `n` with no maximum entry.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize the class of semistandard tableaux of size ``n`` with no
         maximum entry.
@@ -6346,7 +6346,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
         """
         return "Semistandard tableaux of size %s" % str(self.size)
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Return ``True`` if ``t`` can be interpreted as an element of this
         class.
@@ -6420,7 +6420,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
     Semistandard tableaux of fixed shape `p` and no maximum entry.
     """
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         r"""
         Initialize the class of semistandard tableaux of shape ``p`` and no
         maximum entry.
@@ -6440,7 +6440,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
         super().__init__(category=InfiniteEnumeratedSets())
         self.shape = p
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -6508,7 +6508,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
     Semistandard tableaux of fixed size `n`.
     """
 
-    def __init__(self, n, max_entry=None):
+    def __init__(self, n, max_entry=None) -> None:
         r"""
         Initialize the class of semistandard tableaux of size `n`.
 
@@ -6549,7 +6549,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
         """
         return "Semistandard tableaux of size %s and maximum entry %s" % (str(self.size), str(self.max_entry))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -6712,7 +6712,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
     - ``max_entry`` -- the max entry; defaults to the size of `p`
     """
 
-    def __init__(self, p, max_entry=None):
+    def __init__(self, p, max_entry=None) -> None:
         r"""
         Initialize the class of semistandard tableaux of shape `p`, with a
         given ``max_entry``.
@@ -6780,7 +6780,7 @@ class SemistandardTableaux_shape(SemistandardTableaux):
             for sst in SemistandardTableaux_shape_weight(self.shape, Composition(c)):
                 yield self.element_class(self, sst)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -6923,7 +6923,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
     Semistandard tableaux of fixed shape `p` and weight `\mu`.
     """
 
-    def __init__(self, p, mu):
+    def __init__(self, p, mu) -> None:
         r"""
         Initialize the class of all semistandard tableaux of shape ``p`` and
         weight ``mu``.
@@ -6950,7 +6950,7 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         """
         return "Semistandard tableaux of shape %s and weight %s" % (self.shape, self.weight)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -7037,7 +7037,7 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
     Semistandard tableaux of fixed size `n` and weight `\mu`.
     """
 
-    def __init__(self, n, mu):
+    def __init__(self, n, mu) -> None:
         r"""
         Initialize the class of semistandard tableaux of size ``n`` and
         weight ``mu``.
@@ -7101,7 +7101,7 @@ class SemistandardTableaux_size_weight(SemistandardTableaux):
             c += SemistandardTableaux_shape_weight(p, self.weight).cardinality()
         return c
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7250,7 +7250,7 @@ class RowStandardTableaux(Tableaux):
 
     Element = RowStandardTableau
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -7285,7 +7285,7 @@ class RowStandardTableaux_all(RowStandardTableaux, DisjointUnionEnumeratedSets):
     All row standard tableaux.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all standard tableaux.
 
@@ -7350,7 +7350,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         2063837185739279909309355007659204891024472174278
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize the class of all row standard tableaux of size ``n``.
 
@@ -7380,7 +7380,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         """
         return "Row standard tableaux of size %s" % self._size
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7420,7 +7420,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
     Row Standard tableaux of a fixed shape `p`.
     """
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         r"""
         Initialize the class of all row standard tableaux of a given shape.
 
@@ -7436,7 +7436,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
         super().__init__(category=FiniteEnumeratedSets())
         self.shape = p
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -7649,7 +7649,7 @@ class StandardTableaux(SemistandardTableaux):
 
     Element = StandardTableau
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -7686,7 +7686,7 @@ class StandardTableaux_all(StandardTableaux, DisjointUnionEnumeratedSets):
     All standard tableaux.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Initialize the class of all standard tableaux.
 
@@ -7738,7 +7738,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
         sage: TestSuite( StandardTableaux(4) ).run()
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize the class of all standard tableaux of size `n`.
 
@@ -7769,7 +7769,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
         """
         return "Standard tableaux of size %s" % self.size
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7925,7 +7925,7 @@ class StandardTableaux_shape(StandardTableaux):
     Semistandard tableaux of a fixed shape `p`.
     """
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         r"""
         Initialize the class of all semistandard tableaux of a given shape.
 
@@ -7941,7 +7941,7 @@ class StandardTableaux_shape(StandardTableaux):
         super().__init__(category=FiniteEnumeratedSets())
         self.shape = p
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -8624,7 +8624,7 @@ class IncreasingTableaux(Tableaux):
 
     Element = IncreasingTableau
 
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         """
         Initialize ``self``.
 
@@ -8730,7 +8730,7 @@ class IncreasingTableaux(Tableaux):
             return tabs
         raise IndexError('value out of range')
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Return ``True`` if ``t`` can be interpreted as an
         :class:`IncreasingTableau`.
@@ -8817,7 +8817,7 @@ class IncreasingTableaux_all(IncreasingTableaux, DisjointUnionEnumeratedSets):
         [[]]
     """
 
-    def __init__(self, max_entry=None):
+    def __init__(self, max_entry=None) -> None:
         r"""
         Initialize the class of all increasing tableaux.
 
@@ -8872,7 +8872,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
     Increasing tableaux of fixed size `n` with no maximum entry.
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Initialize the class of increasing tableaux of size `n` with no
         maximum entry.
@@ -8900,7 +8900,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
         """
         return "Increasing tableaux of size %s" % str(self.size)
 
-    def __contains__(self, t):
+    def __contains__(self, t) -> bool:
         """
         Return ``True`` if ``t`` can be interpreted as an element of ``self``.
 
@@ -8953,7 +8953,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
     Increasing tableaux of fixed shape `p` and no maximum entry.
     """
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         r"""
         Initialize the class of increasing tableaux of shape `p` and no
         maximum entry.
@@ -8973,7 +8973,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
         super().__init__(category=InfiniteEnumeratedSets())
         self.shape = p
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -9035,7 +9035,7 @@ class IncreasingTableaux_size(IncreasingTableaux):
     Increasing tableaux of fixed size `n`.
     """
 
-    def __init__(self, n, max_entry=None):
+    def __init__(self, n, max_entry=None) -> None:
         r"""
         Initialize the class of increasing tableaux of size `n`.
 
@@ -9075,7 +9075,7 @@ class IncreasingTableaux_size(IncreasingTableaux):
         """
         return "Increasing tableaux of size %s and maximum entry %s" % (str(self.size), str(self.max_entry))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -9155,7 +9155,7 @@ class IncreasingTableaux_shape(IncreasingTableaux):
     - ``max_entry`` -- the max entry; defaults to the size of ``p``
     """
 
-    def __init__(self, p, max_entry=None):
+    def __init__(self, p, max_entry=None) -> None:
         r"""
         Initialize the class of increasing tableaux of shape `p`, with a
         given ``max_entry``.
@@ -9235,7 +9235,7 @@ class IncreasingTableaux_shape(IncreasingTableaux):
             for sst in IncreasingTableaux_shape_weight(self.shape, wt):
                 yield self.element_class(self, sst)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -9274,7 +9274,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
     Increasing tableaux of fixed shape `p` and binary weight `wt`.
     """
 
-    def __init__(self, p, wt):
+    def __init__(self, p, wt) -> None:
         r"""
         Initialize the class of all increasing tableaux of shape ``p`` and
         weight ``mu``.
@@ -9301,7 +9301,7 @@ class IncreasingTableaux_shape_weight(IncreasingTableaux_shape):
         """
         return "Increasing tableaux of shape %s and weight %s" % (self.shape, self.weight)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -9418,7 +9418,7 @@ class IncreasingTableaux_size_weight(IncreasingTableaux):
     Increasing tableaux of fixed size `n` and weight `wt`.
     """
 
-    def __init__(self, n, wt):
+    def __init__(self, n, wt) -> None:
         r"""
         Initialize the class of increasing tableaux of size `n` and
         weight ``wt``.
@@ -9468,7 +9468,7 @@ class IncreasingTableaux_size_weight(IncreasingTableaux):
             for sst in IncreasingTableaux_shape_weight(p, self.weight):
                 yield self.element_class(self, sst)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 

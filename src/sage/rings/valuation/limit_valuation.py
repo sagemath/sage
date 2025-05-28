@@ -182,7 +182,7 @@ class LimitValuation_generic(DiscretePseudoValuation):
         True
         sage: TestSuite(w._base_valuation).run()        # long time                     # needs sage.rings.function_field
     """
-    def __init__(self, parent, approximation):
+    def __init__(self, parent, approximation) -> None:
         r"""
         TESTS::
 
@@ -375,7 +375,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         sage: u = v._base_valuation; u
         [ Gauss valuation induced by 2-adic valuation, v(x + 1) = 1/2 , … ]
     """
-    def __init__(self, parent, approximation, G):
+    def __init__(self, parent, approximation, G) -> None:
         r"""
         TESTS::
 

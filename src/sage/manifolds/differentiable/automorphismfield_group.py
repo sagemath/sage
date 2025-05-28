@@ -146,7 +146,7 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
 
     Element = AutomorphismField
 
-    def __init__(self, vector_field_module):
+    def __init__(self, vector_field_module) -> None:
         r"""
         See :class:`AutomorphismfieldGroup` for documentation and examples.
 
@@ -582,7 +582,7 @@ class AutomorphismFieldParalGroup(FreeModuleLinearGroup):
 
     Element = AutomorphismFieldParal
 
-    def __init__(self, vector_field_module):
+    def __init__(self, vector_field_module) -> None:
         r"""
         See :class:`AutomorphismfieldParalGroup` for documentation and
         examples.

@@ -54,7 +54,7 @@ mathml_table = {
 
 
 class MathML(str):
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
 

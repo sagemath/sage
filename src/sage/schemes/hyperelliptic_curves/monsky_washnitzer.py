@@ -86,7 +86,7 @@ class SpecialCubicQuotientRingElement(ModuleElement):
     """
     An element of a :class:`SpecialCubicQuotientRing`.
     """
-    def __init__(self, parent, p0, p1, p2, check=True):
+    def __init__(self, parent, p0, p1, p2, check=True) -> None:
         """
         Construct the element `p_0 + p_1*x + p_2*x^2`, where
         the `p_i` are polynomials in `T`.
@@ -474,7 +474,7 @@ class SpecialCubicQuotientRing(UniqueRepresentation, Parent):
         against Sage's ordinary quotient ring arithmetic. I cannot seem
         to get the quotient ring stuff happening right now...
     """
-    def __init__(self, Q, laurent_series=False):
+    def __init__(self, Q, laurent_series=False) -> None:
         """
         Constructor.
 
@@ -1863,7 +1863,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
         sage: MW(x + x**2 + y - 77)
         -(77-y)*1 + x + x^2
     """
-    def __init__(self, parent, val=0, offset=0, check=True):
+    def __init__(self, parent, val=0, offset=0, check=True) -> None:
         """
         Elements in the Hyperelliptic quotient ring.
 
@@ -1973,7 +1973,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
         else:
             raise ZeroDivisionError("element not invertible")
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` iff ``self`` is not zero.
 
@@ -2361,7 +2361,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
     """
     _p = None
 
-    def __init__(self, Q, R=None, invert_y=True):
+    def __init__(self, Q, R=None, invert_y=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -2811,7 +2811,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         sage: MW(x, 10)
         y^10*x dx/2y
     """
-    def __init__(self, parent, val, offset=0):
+    def __init__(self, parent, val, offset=0) -> None:
         r"""
         Initialize ``self``.
 
@@ -2960,7 +2960,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
         """
         return self._coeff
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -3495,7 +3495,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
     r"""
     A ring of Monsky--Washnitzer differentials over ``base_ring``.
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         Initialize ``self``.
 

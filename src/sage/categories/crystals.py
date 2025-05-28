@@ -1842,7 +1842,7 @@ class CrystalMorphism(Morphism):
       for the weight, `\varepsilon` and `\varphi`
     """
     def __init__(self, parent, cartan_type=None,
-                 virtualization=None, scaling_factors=None):
+                 virtualization=None, scaling_factors=None) -> None:
         """
         Initialize ``self``.
 
@@ -2055,7 +2055,7 @@ class CrystalMorphismByGenerators(CrystalMorphism):
     """
     def __init__(self, parent, on_gens, cartan_type=None,
                  virtualization=None, scaling_factors=None,
-                 gens=None, check=True):
+                 gens=None, check=True) -> None:
         """
         Construct a virtual crystal morphism.
 
@@ -2497,7 +2497,7 @@ class CrystalHomset(Homset):
         [[-2]] |--> [[-2, -2]]
         [[-1]] |--> [[-1, -1]]
     """
-    def __init__(self, X, Y, category=None):
+    def __init__(self, X, Y, category=None) -> None:
         """
         Initialize ``self``.
 

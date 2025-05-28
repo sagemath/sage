@@ -756,7 +756,7 @@ class Qepcad_expect(ExtraTabCompletion, Expect):
     def __init__(self, memcells=None,
                  maxread=None,
                  logfile=None,
-                 server=None):
+                 server=None) -> None:
         r"""
         Initialize a low-level wrapper for QEPCAD.
 
@@ -791,7 +791,7 @@ class Qepcad:
 
     def __init__(self, formula,
                  vars=None, logfile=None, verbose=False,
-                 memcells=None, server=None):
+                 memcells=None, server=None) -> None:
         r"""
         Construct a QEPCAD wrapper object.
 
@@ -887,7 +887,7 @@ class Qepcad:
         qex.eval(formula + '.')
         self._qex = qex
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this :class:`Qepcad` object.
 
@@ -1757,7 +1757,7 @@ class qformula:
     A qformula holds a string describing a formula in QEPCAD's syntax,
     and a set of variables used.
     """
-    def __init__(self, formula, vars, qvars=[]):
+    def __init__(self, formula, vars, qvars=[]) -> None:
         r"""
         Construct a qformula from a string, a frozenset of variable names,
         and (optionally) a list of ordered quantified names.
@@ -1779,7 +1779,7 @@ class qformula:
         self.vars = vars
         self.qvars = qvars
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of a qformula (this is just
         the formula it holds).
@@ -2364,7 +2364,7 @@ class QepcadCell:
     r"""
     A wrapper for a QEPCAD cell.
     """
-    def __init__(self, parent, lines):
+    def __init__(self, parent, lines) -> None:
         r"""
         Construct a :class:`QepcadCell` wrapper for a QEPCAD cell, given
         a :class:`Qepcad` object and a list of lines holding QEPCAD's
@@ -2527,7 +2527,7 @@ class QepcadCell:
         """
         return self._parent.cell(self.index() + (i,))
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return the number of elements in the stack over a QEPCAD cell.
 
@@ -2549,7 +2549,7 @@ class QepcadCell:
         """
         return self._number_of_children
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of a QEPCAD cell.
 

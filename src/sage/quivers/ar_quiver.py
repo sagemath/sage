@@ -162,7 +162,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         quiver = quiver.copy(immutable=True)
         return super().__classcall__(cls, quiver)
 
-    def __init__(self, quiver):
+    def __init__(self, quiver) -> None:
         r"""
         Initialize ``self``.
 
@@ -678,7 +678,7 @@ class AuslanderReitenQuiver(UniqueRepresentation, Parent):
         r"""
         A node in the AR quiver.
         """
-        def __init__(self, parent, vertex, level):
+        def __init__(self, parent, vertex, level) -> None:
             r"""
             Initialize ``self``.
 

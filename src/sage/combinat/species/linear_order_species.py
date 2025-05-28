@@ -79,7 +79,7 @@ class LinearOrderSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         """
         return super().__classcall__(cls, *args, **kwds)
 
-    def __init__(self, min=None, max=None, weight=None):
+    def __init__(self, min=None, max=None, weight=None) -> None:
         """
         Return the species of linear orders.
 

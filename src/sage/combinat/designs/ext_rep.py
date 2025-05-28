@@ -629,7 +629,7 @@ class XTree:
     pyRXP 0.9 package by Robin Becker at ReportLab.
     '''
 
-    def __init__(self, node):
+    def __init__(self, node) -> None:
         """
         Initialisation method given a node in an XML document.
 
@@ -674,7 +674,7 @@ class XTree:
         self.xt_attributes = attributes
         self.xt_children = children
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of an XTree object.
 
@@ -765,7 +765,7 @@ class XTree:
         else:
             return child
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of the current node.
 
@@ -817,7 +817,7 @@ class XTreeProcessor:
         self.node_stack = [self.current_node]
         self.in_item = False
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Internal initialisation for the processor of XTrees.
 

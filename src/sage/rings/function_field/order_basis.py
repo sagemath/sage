@@ -67,7 +67,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
         ...
         ValueError: basis (y, y, y^3, y^4, 2*x*y + (x^4 + 1)/x) is not linearly independent
     """
-    def __init__(self, basis, check=True):
+    def __init__(self, basis, check=True) -> None:
         """
         Initialize.
 
@@ -361,7 +361,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
         sage: O.basis()
         (1/x*y + 1, 1/x*y, 1/x^2*y^2, 1/x^3*y^3)
     """
-    def __init__(self, basis, check=True):
+    def __init__(self, basis, check=True) -> None:
         """
         Initialize.
 

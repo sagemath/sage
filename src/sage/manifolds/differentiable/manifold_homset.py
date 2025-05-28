@@ -160,7 +160,7 @@ class DifferentiableManifoldHomset(TopologicalManifoldHomset):
 
     Element = DiffMap
 
-    def __init__(self, domain, codomain, name=None, latex_name=None):
+    def __init__(self, domain, codomain, name=None, latex_name=None) -> None:
         r"""
         TESTS::
 
@@ -370,7 +370,7 @@ class DifferentiableCurveSet(DifferentiableManifoldHomset):
     """
     Element = DifferentiableCurve
 
-    def __init__(self, domain, codomain, name=None, latex_name=None):
+    def __init__(self, domain, codomain, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -689,7 +689,7 @@ class IntegratedCurveSet(DifferentiableCurveSet):
 
     Element = IntegratedCurve
 
-    def __init__(self, domain, codomain, name=None, latex_name=None):
+    def __init__(self, domain, codomain, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1118,7 +1118,7 @@ class IntegratedAutoparallelCurveSet(IntegratedCurveSet):
 
     Element = IntegratedAutoparallelCurve
 
-    def __init__(self, domain, codomain, name=None, latex_name=None):
+    def __init__(self, domain, codomain, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -1566,7 +1566,7 @@ class IntegratedGeodesicSet(IntegratedAutoparallelCurveSet):
 
     Element = IntegratedGeodesic
 
-    def __init__(self, domain, codomain, name=None, latex_name=None):
+    def __init__(self, domain, codomain, name=None, latex_name=None) -> None:
         r"""
         Initialize ``self``.
 

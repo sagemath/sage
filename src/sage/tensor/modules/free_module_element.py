@@ -198,7 +198,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         fmodule: FiniteRankFreeModule,
         name: str | None = None,
         latex_name: str | None = None,
-    ):
+    ) -> None:
         r"""
         TESTS::
 

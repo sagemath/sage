@@ -34,7 +34,7 @@ from sage.rings.padics.padic_floating_point_element import pAdicCoercion_ZZ_FP, 
 class pAdicBaseGeneric(pAdicGeneric):
     _implementation = 'GMP'
 
-    def __init__(self, p, prec, print_mode, names, element_class, category=None):
+    def __init__(self, p, prec, print_mode, names, element_class, category=None) -> None:
         """
         Initialization.
 

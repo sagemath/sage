@@ -153,7 +153,7 @@ class Benchmark:
 
     bench = run
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Print representation of self, simply coming from self.repr_str.
 
@@ -172,7 +172,7 @@ class Benchmark:
 
 
 class Divpoly(Benchmark):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         Class for benchmarking computation of the division polynomial
         of the following elliptic curve.
@@ -228,7 +228,7 @@ class Divpoly(Benchmark):
 
 
 class PolySquare(Benchmark):
-    def __init__(self, n, R):
+    def __init__(self, n, R) -> None:
         self.__n = n
         self.__R = R
         self.repr_str = 'Square a polynomial of degree %s over %s' % (self.__n, self.__R)
@@ -290,7 +290,7 @@ class PolySquare(Benchmark):
 
 
 class MPolynomialPower(Benchmark):
-    def __init__(self, nvars=2, exp=10, base=QQ, allow_singular=True):
+    def __init__(self, nvars=2, exp=10, base=QQ, allow_singular=True) -> None:
         self.nvars = nvars
         self.exp = exp
         self.base = base
@@ -421,7 +421,7 @@ class MPolynomialPower(Benchmark):
 
 
 class MPolynomialMult(Benchmark):
-    def __init__(self, nvars=2, base=QQ, allow_singular=True):
+    def __init__(self, nvars=2, base=QQ, allow_singular=True) -> None:
         if nvars % 2:
             nvars += 1
         self.nvars = nvars
@@ -569,7 +569,7 @@ class MPolynomialMult(Benchmark):
 
 
 class MPolynomialMult2(Benchmark):
-    def __init__(self, nvars=2, base=QQ, allow_singular=True):
+    def __init__(self, nvars=2, base=QQ, allow_singular=True) -> None:
         if nvars % 2:
             nvars += 1
         self.nvars = nvars
@@ -752,7 +752,7 @@ class MPolynomialMult2(Benchmark):
 
 
 class CharPolyTp(Benchmark):
-    def __init__(self, N=37, k=2, p=2, sign=1):
+    def __init__(self, N=37, k=2, p=2, sign=1) -> None:
         self.N = N
         self.k = k
         self.p = p
@@ -832,7 +832,7 @@ class CharPolyTp(Benchmark):
 
 
 class PolyFactor(Benchmark):
-    def __init__(self, n, R):
+    def __init__(self, n, R) -> None:
         self.__n = n
         self.__R = R
         self.repr_str = "Factor a product of 2 polynomials of degree %s over %s." % (self.__n, self.__R)
@@ -898,7 +898,7 @@ class PolyFactor(Benchmark):
 
 
 class SquareInts(Benchmark):
-    def __init__(self, base=10, ndigits=10**5):
+    def __init__(self, base=10, ndigits=10**5) -> None:
         self.__ndigits = ndigits
         self.base = base
         self.repr_str = "Square the integer %s^%s" % (self.base, self.__ndigits)
@@ -1033,7 +1033,7 @@ class SquareInts(Benchmark):
 
 
 class MatrixSquare(Benchmark):
-    def __init__(self, n, R):
+    def __init__(self, n, R) -> None:
         self.__n = n
         self.__R = R
         self.repr_str = 'Square a matrix of degree %s over %s' % (self.__n, self.__R)
@@ -1112,7 +1112,7 @@ class MatrixSquare(Benchmark):
 
 
 class Factorial(Benchmark):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         self.__n = n
         self.repr_str = "Compute the factorial of %s" % self.__n
 
@@ -1179,7 +1179,7 @@ class Factorial(Benchmark):
 
 
 class Fibonacci(Benchmark):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         self.__n = n
         self.repr_str = "Compute the %s-th Fibonacci number" % self.__n
 
@@ -1262,7 +1262,7 @@ class Fibonacci(Benchmark):
 
 
 class SEA(Benchmark):
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         self.__p = p
         self.repr_str = "Do SEA on an elliptic curve over GF(%s)" % self.__p
 
@@ -1304,7 +1304,7 @@ class SEA(Benchmark):
 
 
 class MatrixKernel(Benchmark):
-    def __init__(self, n, R):
+    def __init__(self, n, R) -> None:
         self.__n = n
         self.__R = R
         self.repr_str = 'Kernel of a matrix of degree %s over %s' % (self.__n, self.__R)
@@ -1364,7 +1364,7 @@ class MatrixKernel(Benchmark):
 
 
 class ComplexMultiply(Benchmark):
-    def __init__(self, bits_prec, times):
+    def __init__(self, bits_prec, times) -> None:
         self.__bits_prec = bits_prec
         self.__times = times
         self.repr_str = "List of multiplies of two complex numbers with %s bits of precision %s times" % (self.__bits_prec, self.__times)
@@ -1429,7 +1429,7 @@ class ComplexMultiply(Benchmark):
 
 
 class ModularSymbols1(Benchmark):
-    def __init__(self, N, k=2):
+    def __init__(self, N, k=2) -> None:
         self.__N = N
         self.__k = k
         self.repr_str = 'Presentation for modular symbols on Gamma_0(%s) of weight %s' % (self.__N, self.__k)
@@ -1467,7 +1467,7 @@ class ModularSymbols1(Benchmark):
 
 
 class ModularSymbolsDecomp1(Benchmark):
-    def __init__(self, N, k=2, sign=1, bnd=10):
+    def __init__(self, N, k=2, sign=1, bnd=10) -> None:
         self.N = N
         self.k = k
         self.sign = sign
@@ -1509,7 +1509,7 @@ class ModularSymbolsDecomp1(Benchmark):
 
 
 class EllipticCurveTraces(Benchmark):
-    def __init__(self, B):
+    def __init__(self, B) -> None:
         self.B = B
         self.repr_str = "Compute all a_p for the elliptic curve [1,2,3,4,5], for p < %s" % self.B
 
@@ -1549,7 +1549,7 @@ class EllipticCurveTraces(Benchmark):
 
 
 class EllipticCurvePointMul(Benchmark):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         self.n = n
         self.repr_str = "Compute %s*(0,0) on the elliptic curve [0, 0, 1, -1, 0] over QQ" % self.n
 
@@ -1623,7 +1623,7 @@ class EllipticCurvePointMul(Benchmark):
 
 
 class EllipticCurveMW(Benchmark):
-    def __init__(self, ainvs):
+    def __init__(self, ainvs) -> None:
         self.ainvs = ainvs
         self.repr_str = "Compute generators for the Mordell-Weil group of the elliptic curve %s over QQ" % self.ainvs
 
@@ -1661,7 +1661,7 @@ class EllipticCurveMW(Benchmark):
 
 
 class FiniteExtFieldMult(Benchmark):
-    def __init__(self, field, times):
+    def __init__(self, field, times) -> None:
         self.__times = times
         self.field = field
         self.e = field.gen()**(field.cardinality() / 3)
@@ -1722,7 +1722,7 @@ class FiniteExtFieldMult(Benchmark):
 
 
 class FiniteExtFieldAdd(Benchmark):
-    def __init__(self, field, times):
+    def __init__(self, field, times) -> None:
         self.__times = times
         self.field = field
         self.e = field.gen()**(field.cardinality() / 3)

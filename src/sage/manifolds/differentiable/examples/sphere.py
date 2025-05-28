@@ -331,7 +331,7 @@ class Sphere(PseudoRiemannianSubmanifold):
 
     def __init__(self, n, radius=1, ambient_space=None, center=None, name=None,
                  latex_name=None, coordinates='spherical', names=None,
-                 category=None, init_coord_methods=None, unique_tag=None):
+                 category=None, init_coord_methods=None, unique_tag=None) -> None:
         r"""
         Construct sphere smoothly embedded in Euclidean space.
 

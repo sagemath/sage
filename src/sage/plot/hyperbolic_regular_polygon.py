@@ -100,7 +100,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
          ...
          ValueError: degenerated polygons (sides<=2) are not supported
     """
-    def __init__(self, sides, i_angle, center, options):
+    def __init__(self, sides, i_angle, center, options) -> None:
         """
         Initialize HyperbolicRegularPolygon.
 

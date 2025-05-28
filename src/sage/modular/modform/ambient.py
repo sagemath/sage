@@ -87,7 +87,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
     """
     An ambient space of modular forms.
     """
-    def __init__(self, group, weight, base_ring, character=None, eis_only=False):
+    def __init__(self, group, weight, base_ring, character=None, eis_only=False) -> None:
         """
         Create an ambient space of modular forms.
 

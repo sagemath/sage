@@ -44,7 +44,7 @@ class AffinePermutation(ClonableArray):
         Type A affine permutation with window [3, -1, 0, 6, 5, 4, 10, 9]
     """
 
-    def __init__(self, parent, lst, check=True):
+    def __init__(self, parent, lst, check=True) -> None:
         r"""
         Initialize ``self``.
 
@@ -2004,7 +2004,7 @@ class AffinePermutationGroupGeneric(UniqueRepresentation, Parent):
     # Type-free methods.
     # ----------------------
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         r"""
         TESTS::
 

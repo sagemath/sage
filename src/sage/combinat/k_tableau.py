@@ -701,7 +701,7 @@ class WeakTableau_core(WeakTableau_abstract):
         weight = WeakTableau_bounded.from_core_tableau(t,k).weight()
         return WeakTableaux_core(k, [outer, inner], weight)(t)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         r"""
         Initialization of weak `k`-tableau ``t`` in core representation.
 
@@ -1250,7 +1250,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
             shape = tuple([Core(r,k+1) for r in shape])
         return super().__classcall__(cls, k, shape, tuple(weight))
 
-    def __init__(self, k, shape, weight):
+    def __init__(self, k, shape, weight) -> None:
         r"""
         Initialize the parent class of (skew) weak `k`-tableaux in core representation.
 
@@ -1397,7 +1397,7 @@ class WeakTableau_bounded(WeakTableau_abstract):
             raise ValueError("The shape of %s is not %s-bounded" % (t, k))
         return WeakTableaux_bounded(k, [outer, inner], weight)(t)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         r"""
         Initialization of (skew) weak `k`-tableau ``t`` in `k`-bounded representation.
 
@@ -1713,7 +1713,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
             shape = tuple([Partition(r) for r in shape])
         return super().__classcall__(cls, k, shape, tuple(weight))
 
-    def __init__(self, k, shape, weight):
+    def __init__(self, k, shape, weight) -> None:
         r"""
         Initialize the parent class of (skew) weak `k`-tableaux in bounded representation.
 
@@ -1856,7 +1856,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         outer_shape = (W.prod(w)*W(inner_shape.to_grassmannian())).affine_grassmannian_to_core()
         return WeakTableaux_factorized_permutation(k, [outer_shape, inner_shape], weight)(w)
 
-    def __init__(self, parent, t):
+    def __init__(self, parent, t) -> None:
         r"""
         Initialization of (skew) weak `k`-tableau ``t`` in factorized permutation representation.
 
@@ -2136,7 +2136,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
             shape = tuple([Core(r,k+1) for r in shape])
         return super().__classcall__(cls, k, shape, tuple(weight))
 
-    def __init__(self, k, shape, weight):
+    def __init__(self, k, shape, weight) -> None:
         r"""
         Initialize the parent class of weak `k`-tableaux in factorized permutation representation.
 
@@ -2255,7 +2255,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         (2, 2, 3, 1)
     """
 
-    def __init__(self, parent, T):
+    def __init__(self, parent, T) -> None:
         """
         INPUT:
 
@@ -3859,7 +3859,7 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
 
 class StrongTableaux(UniqueRepresentation, Parent):
 
-    def __init__( self, k, shape, weight ):
+    def __init__( self, k, shape, weight ) -> None:
         r"""
         TESTS::
 

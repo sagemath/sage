@@ -138,7 +138,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
     _registered_encoders = {}
     _registered_decoders = {}
 
-    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming'):
+    def __init__(self, base_field, length, default_encoder_name, default_decoder_name, metric='Hamming') -> None:
         """
         Initialize mandatory parameters that any linear code shares.
 
@@ -490,7 +490,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         """
         return self.parity_check_matrix()*r
 
-    def __contains__(self, v):
+    def __contains__(self, v) -> bool:
         r"""
         Return ``True`` if `v` can be coerced into ``self``.
         Otherwise, return ``False``.
@@ -1116,7 +1116,7 @@ class LinearCodeSystematicEncoder(Encoder):
         if LinearCodeSystematicEncoder is the default encoder
     """
 
-    def __init__(self, code, systematic_positions=None):
+    def __init__(self, code, systematic_positions=None) -> None:
         r"""
         EXAMPLES::
 

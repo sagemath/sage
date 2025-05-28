@@ -21,7 +21,7 @@ class CartanType(CartanType_standard_finite):
     .. SEEALSO:: :func:`~sage.combinat.root_systems.cartan_type.CartanType`
     """
 
-    def __init__(self, m):
+    def __init__(self, m) -> None:
         """
         EXAMPLES::
 

@@ -178,7 +178,7 @@ class GaloisRepresentation(SageObject):
         Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
 
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         See ``GaloisRepresentation`` for documentation.
 
@@ -191,7 +191,7 @@ class GaloisRepresentation(SageObject):
         self.__image_type = {}
         self._E = E
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of the class.
 

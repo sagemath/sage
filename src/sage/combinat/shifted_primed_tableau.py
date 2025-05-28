@@ -141,7 +141,7 @@ class ShiftedPrimedTableau(ClonableArray,
             skew = skew_
         return ShiftedPrimedTableaux(skew=skew, primed_diagonal=primed_diagonal)(T)
 
-    def __init__(self, parent, T, skew=None, check=True, preprocessed=False):
+    def __init__(self, parent, T, skew=None, check=True, preprocessed=False) -> None:
         r"""
         Initialize a shifted tableau.
 
@@ -1364,7 +1364,7 @@ class PrimedEntry(SageObject):
     - ``double`` -- the doubled value
     """
 
-    def __init__(self, entry=None, double=None):
+    def __init__(self, entry=None, double=None) -> None:
         """
         Normalize the entry.
 
@@ -1421,7 +1421,7 @@ class PrimedEntry(SageObject):
         """
         return hash(self._entry)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Represent ``self`` as primed or unprimed integer.
 
@@ -1848,7 +1848,7 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
 
             return ShiftedPrimedTableaux_weight_shape(weight, shape, skew=skew, primed_diagonal=primed_diagonal)
 
-    def __init__(self, skew=None, primed_diagonal=False):
+    def __init__(self, skew=None, primed_diagonal=False) -> None:
         """
         Initialization of the parent class with given skew shape.
 
@@ -1995,7 +1995,7 @@ class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):
     The class of all shifted primed tableaux.
     """
 
-    def __init__(self, skew=None, primed_diagonal=False):
+    def __init__(self, skew=None, primed_diagonal=False) -> None:
         """
         Initialize the class of all shifted tableaux.
 
@@ -2165,7 +2165,7 @@ class ShiftedPrimedTableaux_shape(ShiftedPrimedTableaux):
         return super().__classcall__(cls,
                      shape=shape, max_entry=max_entry, skew=skew, primed_diagonal=primed_diagonal)
 
-    def __init__(self, shape, max_entry=None, skew=None, primed_diagonal=False):
+    def __init__(self, shape, max_entry=None, skew=None, primed_diagonal=False) -> None:
         """
         Initialize the class of shifted primed tableaux of a given shape.
 
@@ -2380,7 +2380,7 @@ class ShiftedPrimedTableaux_weight(ShiftedPrimedTableaux):
         16
     """
 
-    def __init__(self, weight, skew=None, primed_diagonal=False):
+    def __init__(self, weight, skew=None, primed_diagonal=False) -> None:
         """
         Initialize the class of shifted primed tableaux of a given weight.
 
@@ -2499,7 +2499,7 @@ class ShiftedPrimedTableaux_weight_shape(ShiftedPrimedTableaux):
         32
     """
 
-    def __init__(self, weight, shape, skew=None, primed_diagonal=False):
+    def __init__(self, weight, shape, skew=None, primed_diagonal=False) -> None:
         """
         Initialize the class of shifted primed tableaux of the given weight
         and shape.

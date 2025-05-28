@@ -62,6 +62,8 @@ from sage.misc.object_multiplexer import Multiplex
 from sage.misc.instancedoc import instancedoc
 
 from sage.cpython.string import str_to_bytes, bytes_to_str
+from types import TracebackType
+from typing import Optional, Type
 
 BAD_SESSION = -2
 
@@ -110,7 +112,7 @@ class gc_disabled:
         self._enabled = gc.isenabled()
         gc.disable()
 
-    def __exit__(self, ty, val, tb):
+    def __exit__(self, ty: Optional[Type[BaseException]], val: Optional[BaseException], tb: Optional[TracebackType]):
         if self._enabled:
             gc.enable()
         return False
@@ -127,7 +129,7 @@ class Expect(Interface):
                  verbose_start=False, init_code=[], max_startup_time=None,
                  logfile=None, eval_using_file_cutoff=0,
                  do_cleaner=True, remote_cleaner=False, path=None,
-                 terminal_echo=True):
+                 terminal_echo=True) -> None:
 
         Interface.__init__(self, name)
 
@@ -1500,7 +1502,7 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
     """
     Expect element.
     """
-    def __init__(self, parent, value, is_name=False, name=None):
+    def __init__(self, parent, value, is_name=False, name=None) -> None:
         RingElement.__init__(self, parent)
         self._create = value
         if parent is None:
@@ -1552,7 +1554,7 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
             raise ValueError("The session in which this object was defined is no longer running.")
         return P
 
-    def __del__(self):
+    def __del__(self) -> None:
         try:
             self._check_valid()
         except ValueError:
@@ -1575,7 +1577,7 @@ class StdOutContext:
     A context in which all communication between Sage and a subprocess
     interfaced via pexpect is printed to stdout.
     """
-    def __init__(self, interface, silent=False, stdout=None):
+    def __init__(self, interface, silent=False, stdout=None) -> None:
         """
         Construct a new context in which all communication between Sage
         and a subprocess interfaced via pexpect is printed to stdout.
@@ -1626,7 +1628,7 @@ class StdOutContext:
             self.interface._expect.logfile = Multiplex(stdout)
         return self.interface
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         r"""
         EXAMPLES::
 

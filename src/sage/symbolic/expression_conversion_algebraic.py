@@ -32,7 +32,7 @@ from sage.symbolic.ring import SR
 # Algebraic #
 #############
 class AlgebraicConverter(Converter):
-    def __init__(self, field):
+    def __init__(self, field) -> None:
         """
         EXAMPLES::
 

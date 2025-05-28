@@ -50,7 +50,7 @@ number = 0
 
 
 class PSage(Sage):
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         if 'server' in kwds:
             raise NotImplementedError("PSage doesn't work on remote server yet.")
         Sage.__init__(self, **kwds)
@@ -106,7 +106,7 @@ class PSage(Sage):
             return False
         return True
 
-    def __del__(self):
+    def __del__(self) -> None:
         """
         TESTS:
 

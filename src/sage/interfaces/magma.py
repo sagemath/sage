@@ -227,6 +227,8 @@ import sage.misc.sage_eval
 import sage.interfaces.abc
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from types import TracebackType
+from typing import Optional, Type
 
 PROMPT = ">>>"
 
@@ -306,7 +308,7 @@ class Magma(ExtraTabCompletion, Expect):
     """
     def __init__(self, script_subdirectory=None,
                  logfile=None, server=None, server_tmpdir=None,
-                 user_config=False, seed=None, command=None):
+                 user_config=False, seed=None, command=None) -> None:
         """
         INPUT:
 
@@ -2266,7 +2268,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         for i in range(1, len(z) + 1):
             yield z[i]
 
-    def __len__(self):
+    def __len__(self) -> int:
         r"""
         Return cardinality of this Magma element.
 
@@ -2565,7 +2567,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
         """
         return self.parent()('%s div %s' % (self.name(), x.name()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if ``self`` is nonzero according to Magma.
 
@@ -2769,7 +2771,7 @@ class MagmaGBLogPrettyPrinter:
     )
     pol_curr = re.compile("^Number of pair polynomials\\: (\\d+), at (\\d+) column\\(s\\), .*")
 
-    def __init__(self, verbosity=1, style='magma'):
+    def __init__(self, verbosity=1, style='magma') -> None:
         """
         Construct a new Magma Groebner Basis log pretty printer.
 
@@ -2939,7 +2941,7 @@ class MagmaGBDefaultContext:
     Context to force preservation of verbosity options for Magma's
     Groebner basis computation.
     """
-    def __init__(self, magma=None):
+    def __init__(self, magma=None) -> None:
         """
         INPUT:
 
@@ -2970,7 +2972,7 @@ class MagmaGBDefaultContext:
         self.groebner_basis_verbose = self.magma.GetVerbose('Groebner')
         self.magma.SetVerbose('Groebner', 0)
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         """
         EXAMPLES::
 

@@ -239,7 +239,7 @@ class DeltaComplex(GenericCellComplex):
     Type ``delta_complexes.`` and then hit the :kbd:`Tab` key to get the
     full list.
     """
-    def __init__(self, data=None, check_validity=True):
+    def __init__(self, data=None, check_validity=True) -> None:
         r"""
         Define a `\Delta`-complex.  See :class:`DeltaComplex` for more
         documentation.

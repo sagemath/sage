@@ -83,7 +83,7 @@ class Parallelism(Singleton, SageObject):
 
         sage: Parallelism().set(nproc=1)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Construct the single instance of class Parallelism (singleton model).
 

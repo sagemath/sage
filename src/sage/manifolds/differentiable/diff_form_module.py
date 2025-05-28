@@ -257,7 +257,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
     """
     Element = DiffForm
 
-    def __init__(self, vector_field_module, degree):
+    def __init__(self, vector_field_module, degree) -> None:
         r"""
         Construction a module of differential forms.
 
@@ -734,7 +734,7 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
 
     Element = DiffFormParal
 
-    def __init__(self, vector_field_module, degree):
+    def __init__(self, vector_field_module, degree) -> None:
         r"""
         Construct a free module of differential forms.
 
@@ -1031,7 +1031,7 @@ class VectorFieldDualFreeModule(DiffFormFreeModule):
         True
     """
 
-    def __init__(self, vector_field_module):
+    def __init__(self, vector_field_module) -> None:
         r"""
         Construct a free module of differential 1-forms.
 

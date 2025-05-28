@@ -216,7 +216,7 @@ def experimental_warning(issue_number, message, stacklevel=4):
 
 
 class experimental:
-    def __init__(self, issue_number, stacklevel=4):
+    def __init__(self, issue_number, stacklevel=4) -> None:
         """
         A decorator which warns about the experimental/unstable status of
         the decorated class/method/function.
@@ -336,7 +336,7 @@ class __experimental_self_test:
         I'm B
     """
     @experimental(issue_number=88888)
-    def __init__(self, x):
+    def __init__(self, x) -> None:
         print("I'm " + x)
 
 
@@ -350,7 +350,7 @@ class DeprecatedFunctionAlias:
     - Florent Hivert (2009-11-23), with the help of Mike Hansen.
     - Luca De Feo (2011-07-11), printing the full module path when different from old path
     """
-    def __init__(self, issue_number, func, module, instance=None, unbound=None):
+    def __init__(self, issue_number, func, module, instance=None, unbound=None) -> None:
         r"""
         TESTS::
 

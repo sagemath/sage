@@ -135,7 +135,7 @@ class EllipticCurveTorsionSubgroup(groups.AdditiveAbelianGroupWrapper):
     - Chris Wuthrich: initial implementation over number fields.
     - John Cremona: additional features and unification.
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Initialization function for EllipticCurveTorsionSubgroup class.
 

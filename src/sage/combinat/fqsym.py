@@ -44,7 +44,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
       of the names that the basis can be constructed from FQSym
     """
 
-    def __init__(self, alg):
+    def __init__(self, alg) -> None:
         r"""
         Initialize ``self``.
 
@@ -351,7 +351,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
     - [GriRei18]_
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -893,7 +893,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         _prefix = "M"
         _basis_name = "Monomial"
 
-        def __init__(self, alg):
+        def __init__(self, alg) -> None:
             """
             Initialize ``self``.
 
@@ -1227,7 +1227,7 @@ class FQSymBases(Category_realization_of_parent):
     The category of graded bases of `FQSym` indexed by permutations.
     """
 
-    def __init__(self, base):
+    def __init__(self, base) -> None:
         r"""
         Initialize the bases of an `FQSym`.
 

@@ -230,7 +230,7 @@ class KyotoPathModel(TensorProductOfCrystals):
 
         return super().__classcall__(cls, crystals, weight, P)
 
-    def __init__(self, crystals, weight, P):
+    def __init__(self, crystals, weight, P) -> None:
         """
         Initialize ``self``.
 

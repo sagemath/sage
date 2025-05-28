@@ -481,7 +481,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 raise ValueError("infinite list")
             return self.unrank(i)
 
-        def __len__(self):
+        def __len__(self) -> int:
             """
             Return the number of elements of ``self``.
 

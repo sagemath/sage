@@ -94,7 +94,7 @@ class NumberFieldIdeal(Ideal_generic):
         sage: I.norm()
         1/6
     """
-    def __init__(self, field, gens, coerce=True):
+    def __init__(self, field, gens, coerce=True) -> None:
         """
         INPUT:
 
@@ -1838,7 +1838,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
         sage: isinstance(I, Ideal_fractional)
         True
     """
-    def __init__(self, field, gens, coerce=True):
+    def __init__(self, field, gens, coerce=True) -> None:
         """
         INPUT:
 
@@ -3347,7 +3347,7 @@ class QuotientMap:
     domain is the appropriate valuation ring.  For examples, see
     :meth:`~sage.rings.number_field.number_field_ideal.NumberFieldFractionalIdeal.residue_field`.
     """
-    def __init__(self, K, M_OK_change, Q, I):
+    def __init__(self, K, M_OK_change, Q, I) -> None:
         """
         Initialize this QuotientMap.
 
@@ -3388,7 +3388,7 @@ class QuotientMap:
         w = v * self.__M_OK_change
         return self.__Q( list(w) )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this QuotientMap.
 
@@ -3408,7 +3408,7 @@ class LiftMap:
     Class to hold data needed by lifting maps from residue fields to
     number field orders.
     """
-    def __init__(self, OK, M_OK_map, Q, I):
+    def __init__(self, OK, M_OK_map, Q, I) -> None:
         """
         Initialize this LiftMap.
 
@@ -3456,7 +3456,7 @@ class LiftMap:
         z = (w * self.__M_OK_map).list()
         return self.__OK(sum(z[i] * self.__Kgen ** i for i in range(len(z))))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of this QuotientMap.
 

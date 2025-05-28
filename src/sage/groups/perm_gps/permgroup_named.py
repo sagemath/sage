@@ -250,7 +250,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
         sage: h = SymmetricGroup(1).hom(SymmetricGroup(2))
     """
-    def __init__(self, domain=None):
+    def __init__(self, domain=None) -> None:
         """
         Initialize ``self``.
 
@@ -710,7 +710,7 @@ class SymmetricGroup(PermutationGroup_symalt):
 
 
 class AlternatingGroup(PermutationGroup_symalt):
-    def __init__(self, domain=None):
+    def __init__(self, domain=None) -> None:
         """
         The alternating group of order `n!/2`, as a permutation group.
 
@@ -785,7 +785,7 @@ class AlternatingGroup(PermutationGroup_symalt):
 
 
 class CyclicPermutationGroup(PermutationGroup_unique):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         A cyclic group of order `n`, as a permutation group.
 
@@ -988,7 +988,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
     - Rob Beezer (2009-10-18)
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         The dicyclic group of order `4n`, as a permutation group.
 
@@ -1068,7 +1068,7 @@ class DiCyclicGroup(PermutationGroup_unique):
 
 
 class KleinFourGroup(PermutationGroup_unique):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The Klein 4 Group, which has order `4` and exponent `2`, viewed
         as a subgroup of `S_4`.
@@ -1112,7 +1112,7 @@ class KleinFourGroup(PermutationGroup_unique):
 
 
 class JankoGroup(PermutationGroup_unique):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         Janko Groups `J1, J2`, and `J3`.
         (Note that `J4` is too big to be treated here.)
@@ -1151,7 +1151,7 @@ class JankoGroup(PermutationGroup_unique):
 
 
 class SuzukiSporadicGroup(PermutationGroup_unique):
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         Suzuki Sporadic Group.
 
@@ -1232,7 +1232,7 @@ class QuaternionGroup(DiCyclicGroup):
 
     - Rob Beezer (2009-10-09)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -1392,7 +1392,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
 
     - Kevin Halasz (2012-7-12)
     """
-    def __init__(self, factors):
+    def __init__(self, factors) -> None:
         r"""
         Init method of class <GeneralDihedralGroup>. See the docstring
         for :class:`<GeneralDihedralGroup>`.
@@ -1460,7 +1460,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
 
 
 class DihedralGroup(PermutationGroup_unique):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         r"""
         The Dihedral group of order `2n` for any integer `n\geq 1`.
 
@@ -1549,7 +1549,7 @@ class DihedralGroup(PermutationGroup_unique):
 
 
 class SplitMetacyclicGroup(PermutationGroup_unique):
-    def __init__(self, p, m):
+    def __init__(self, p, m) -> None:
         r"""
         The split metacyclic group of order `p^m`.
 
@@ -1693,7 +1693,7 @@ class SplitMetacyclicGroup(PermutationGroup_unique):
 
 
 class SemidihedralGroup(PermutationGroup_unique):
-    def __init__(self, m):
+    def __init__(self, m) -> None:
         r"""
         The semidihedral group of order `2^m`.
 
@@ -1802,7 +1802,7 @@ class SemidihedralGroup(PermutationGroup_unique):
 
 
 class MathieuGroup(PermutationGroup_unique):
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         The Mathieu group of degree `n`.
 
@@ -1852,7 +1852,7 @@ class MathieuGroup(PermutationGroup_unique):
 
 
 class TransitiveGroup(PermutationGroup_unique):
-    def __init__(self, d, n):
+    def __init__(self, d, n) -> None:
         """
         The transitive group from the GAP tables of transitive groups.
 
@@ -2019,7 +2019,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
          Transitive group number 2 of degree 3, Transitive group number 1 of degree 4,
          Transitive group number 2 of degree 4, Transitive group number 3 of degree 4)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -2044,7 +2044,7 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         return "Transitive Groups"
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         EXAMPLES::
 
@@ -2091,7 +2091,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
 
         sage: TestSuite(TransitiveGroups(3)).run()
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -2111,7 +2111,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         return "Transitive Groups of degree %s" % (self._degree,)
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         EXAMPLES::
 
@@ -2288,7 +2288,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         GAPError: Error, Primitive groups of degree 4096 are not known!
     """
 
-    def __init__(self, d, n):
+    def __init__(self, d, n) -> None:
         """
         The Python constructor.
 
@@ -2420,7 +2420,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
         sage: TestSuite(PrimitiveGroups()).run()  # known bug, long time
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -2445,7 +2445,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         return "Primitive Groups"
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         Test whether `G` is in ``self``.
 
@@ -2494,7 +2494,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
 
         sage: TestSuite(PrimitiveGroups(3)).run()
     """
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 
@@ -2518,7 +2518,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         return "Primitive Groups of degree %s" % (self._degree)
 
-    def __contains__(self, G):
+    def __contains__(self, G) -> bool:
         r"""
         Test whether `G` is in ``self``.
 
@@ -2647,7 +2647,7 @@ class PermutationGroup_plg(PermutationGroup_unique):
 
 
 class PGL(PermutationGroup_plg):
-    def __init__(self, n, q, name='a'):
+    def __init__(self, n, q, name='a') -> None:
         r"""
         The projective general linear groups over `\GF(q)`.
 
@@ -2707,7 +2707,7 @@ class PGL(PermutationGroup_plg):
 
 
 class PSL(PermutationGroup_plg):
-    def __init__(self, n, q, name='a'):
+    def __init__(self, n, q, name='a') -> None:
         r"""
         The projective special linear groups over `\GF(q)`.
 
@@ -2884,7 +2884,7 @@ class PSL(PermutationGroup_plg):
 
 
 class PSp(PermutationGroup_plg):
-    def __init__(self, n, q, name='a'):
+    def __init__(self, n, q, name='a') -> None:
         r"""
         The projective symplectic linear groups over `\GF(q)`.
 
@@ -2960,7 +2960,7 @@ class PermutationGroup_pug(PermutationGroup_plg):
 
 
 class PSU(PermutationGroup_pug):
-    def __init__(self, n, q, name='a'):
+    def __init__(self, n, q, name='a') -> None:
         r"""
         The projective special unitary groups over `\GF(q)`.
 
@@ -3010,7 +3010,7 @@ class PSU(PermutationGroup_pug):
 
 
 class PGU(PermutationGroup_pug):
-    def __init__(self, n, q, name='a'):
+    def __init__(self, n, q, name='a') -> None:
         r"""
         The projective general unitary groups over `\GF(q)`.
 
@@ -3060,7 +3060,7 @@ class PGU(PermutationGroup_pug):
 
 
 class SuzukiGroup(PermutationGroup_unique):
-    def __init__(self, q, name='a'):
+    def __init__(self, q, name='a') -> None:
         r"""
         The Suzuki group over `\GF(q)`,
         `^2 B_2(2^{2k+1}) = Sz(2^{2k+1})`.
@@ -3232,7 +3232,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
 
     - :wikipedia:`Complex_reflection_group`
     """
-    def __init__(self, m, p=None, n=None):
+    def __init__(self, m, p=None, n=None) -> None:
         """
         Initialize ``self``.
 
@@ -3528,7 +3528,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
           (Group of order 6 and GAP Id 1 as a permutation group)]
     """
 
-    def __init__(self, order, gap_id):
+    def __init__(self, order, gap_id) -> None:
         """
         Initialize ``self``.
 

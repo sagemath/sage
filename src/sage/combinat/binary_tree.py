@@ -149,7 +149,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
         """
         return BinaryTrees_all()
 
-    def __init__(self, parent, children=None, check=True):
+    def __init__(self, parent, children=None, check=True) -> None:
         r"""
         TESTS::
 
@@ -4066,7 +4066,7 @@ def from_tamari_sorting_tuple(key):
 
 class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -4100,7 +4100,7 @@ class BinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
         """
         return "Binary trees"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -4178,7 +4178,7 @@ class BinaryTrees_size(BinaryTrees):
         sage: for i in range(6): TestSuite(BinaryTrees_size(i)).run()
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         """
         TESTS::
 
@@ -4202,7 +4202,7 @@ class BinaryTrees_size(BinaryTrees):
         """
         return "Binary trees of size %s" % (self._size)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -4319,7 +4319,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
     All full binary trees.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -4353,7 +4353,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
         """
         return "Full binary trees"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -4417,7 +4417,7 @@ class FullBinaryTrees_size(BinaryTrees):
     Full binary trees of a fixed size (number of nodes).
     """
 
-    def __init__(self, size):
+    def __init__(self, size) -> None:
         r"""
         TESTS::
 
@@ -4438,7 +4438,7 @@ class FullBinaryTrees_size(BinaryTrees):
         """
         return "Full binary trees of size %s" % self._size
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         TESTS::
 

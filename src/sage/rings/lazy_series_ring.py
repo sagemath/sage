@@ -1877,7 +1877,7 @@ class LazyLaurentSeriesRing(LazySeriesRing):
     # Follow the "generic" normalization
     __classcall_private__ = LazySeriesRing.__classcall_private__
 
-    def __init__(self, base_ring, names, sparse=True, category=None):
+    def __init__(self, base_ring, names, sparse=True, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -2412,7 +2412,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
     # Follow the "generic" normalization
     __classcall_private__ = LazySeriesRing.__classcall_private__
 
-    def __init__(self, base_ring, names, sparse=True, category=None):
+    def __init__(self, base_ring, names, sparse=True, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -3144,7 +3144,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
     """
     Element = LazyCompletionGradedAlgebraElement
 
-    def __init__(self, basis, sparse=True, category=None):
+    def __init__(self, basis, sparse=True, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -3665,7 +3665,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         from sage.symbolic.ring import SR
         return SR
 
-    def __init__(self, base_ring, names, sparse=True, category=None):
+    def __init__(self, base_ring, names, sparse=True, category=None) -> None:
         r"""
         Initialize the ring.
 

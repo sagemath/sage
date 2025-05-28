@@ -170,7 +170,7 @@ class QuantumCliffordAlgebra(CombinatorialFreeModule):
             return QuantumCliffordAlgebraRootUnity(n, k, q, F)
         return QuantumCliffordAlgebraGeneric(n, k, q, F)
 
-    def __init__(self, n, k, q, F, psi, indices):
+    def __init__(self, n, k, q, F, psi, indices) -> None:
         r"""
         Initialize ``self``.
 
@@ -357,7 +357,7 @@ class QuantumCliffordAlgebraGeneric(QuantumCliffordAlgebra):
     When `k = 2`, we recover the original definition given by Hayashi in
     [Hayashi1990]_. The `k = 1` version was used in [Kwon2014]_.
     """
-    def __init__(self, n, k, q, F):
+    def __init__(self, n, k, q, F) -> None:
         r"""
         Initialize ``self``.
 
@@ -653,7 +653,7 @@ class QuantumCliffordAlgebraRootUnity(QuantumCliffordAlgebra):
         (\psi_a \psi^*_a)^2 & = \psi_a \psi^*_a \omega_a^k.
         \end{aligned}
     """
-    def __init__(self, n, k, q, F):
+    def __init__(self, n, k, q, F) -> None:
         r"""
         Initialize ``self``.
 

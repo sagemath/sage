@@ -33,7 +33,7 @@ class Lseries_ell(SageObject):
     """
     An elliptic curve `L`-series.
     """
-    def __init__(self, E):
+    def __init__(self, E) -> None:
         r"""
         Create an elliptic curve `L`-series.
 

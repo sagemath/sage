@@ -297,7 +297,7 @@ class CoFrame(FreeModuleCoBasis):
         (0, 0, 1)
     """
     def __init__(self, frame, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None):
+                 latex_indices=None) -> None:
         r"""
         Construct a coframe, dual to a given vector frame.
 
@@ -672,7 +672,7 @@ class VectorFrame(FreeModuleBasis):
 
     def __init__(self, vector_field_module, symbol, latex_symbol=None,
                  from_frame=None, indices=None, latex_indices=None,
-                 symbol_dual=None, latex_symbol_dual=None):
+                 symbol_dual=None, latex_symbol_dual=None) -> None:
         r"""
         Construct a vector frame on a parallelizable manifold.
 
@@ -1628,7 +1628,7 @@ class CoordCoFrame(CoFrame):
         True
     """
     def __init__(self, coord_frame, symbol, latex_symbol=None, indices=None,
-                 latex_indices=None):
+                 latex_indices=None) -> None:
         r"""
         Construct a coordinate coframe.
 
@@ -1701,7 +1701,7 @@ class CoordFrame(VectorFrame):
     # The following class attribute must be redefined by any derived class:
     _cobasis_class = CoordCoFrame
 
-    def __init__(self, chart):
+    def __init__(self, chart) -> None:
         r"""
         Construct a coordinate frame.
 

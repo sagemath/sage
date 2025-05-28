@@ -203,7 +203,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
     def __init__(self, name='axiom', command='axiom -nox -noclef',
                  script_subdirectory=None, logfile=None,
                  server=None, server_tmpdir=None,
-                 init_code=[')lisp (si::readline-off)']):
+                 init_code=[')lisp (si::readline-off)']) -> None:
         """
         Create an instance of the Axiom interpreter.
 
@@ -626,7 +626,7 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
         i = s.rfind('Type:')
         return P(s[i+5:].strip())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of a list.
 
@@ -898,7 +898,7 @@ AxiomElement = PanAxiomElement
 
 @instancedoc
 class PanAxiomFunctionElement(FunctionElement):
-    def __init__(self, object, name):
+    def __init__(self, object, name) -> None:
         """
         TESTS::
 
@@ -923,7 +923,7 @@ AxiomFunctionElement = PanAxiomFunctionElement
 
 @instancedoc
 class PanAxiomExpectFunction(ExpectFunction):
-    def __init__(self, parent, name):
+    def __init__(self, parent, name) -> None:
         """
         TESTS::
 

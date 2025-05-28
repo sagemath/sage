@@ -229,7 +229,7 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
 
         return UniqueRepresentation.__classcall__(cls, power_series)
 
-    def __init__(self, power_series):
+    def __init__(self, power_series) -> None:
         """
         Initialization.
 

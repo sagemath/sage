@@ -307,7 +307,7 @@ class FreeQuadraticModule_generic(free_module.FreeModule_generic):
         sage: M1 == M2
         False
     """
-    def __init__(self, base_ring, rank, degree, inner_product_matrix, sparse=False):
+    def __init__(self, base_ring, rank, degree, inner_product_matrix, sparse=False) -> None:
         """
         Create the free module of given rank over the given ``base_ring``.
 
@@ -589,7 +589,7 @@ class FreeQuadraticModule_generic_pid(free_module.FreeModule_generic_pid,
     """
     Class of all free modules over a PID.
     """
-    def __init__(self, base_ring, rank, degree, inner_product_matrix, sparse=False):
+    def __init__(self, base_ring, rank, degree, inner_product_matrix, sparse=False) -> None:
         """
         Create a free module over a PID.
 
@@ -696,7 +696,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
     """
     Base class for all free modules over fields.
     """
-    def __init__(self, base_field, dimension, degree, inner_product_matrix, sparse=False):
+    def __init__(self, base_field, dimension, degree, inner_product_matrix, sparse=False) -> None:
         """
         Create a vector space over a field.
 
@@ -820,7 +820,7 @@ class FreeQuadraticModule_ambient(free_module.FreeModule_ambient,
     """
     Ambient free module over a commutative ring.
     """
-    def __init__(self, base_ring, rank, inner_product_matrix, sparse=False):
+    def __init__(self, base_ring, rank, inner_product_matrix, sparse=False) -> None:
         """
         The free module of given rank over the given ``base_ring``.
 
@@ -944,7 +944,7 @@ class FreeQuadraticModule_ambient_domain(free_module.FreeModule_ambient_domain,
     """
     Ambient free quadratic module over an integral domain.
     """
-    def __init__(self, base_ring, rank, inner_product_matrix, sparse=False):
+    def __init__(self, base_ring, rank, inner_product_matrix, sparse=False) -> None:
         """
         EXAMPLES::
 
@@ -1035,7 +1035,7 @@ class FreeQuadraticModule_ambient_pid(free_module.FreeModule_ambient_pid,
     """
     Ambient free quadratic module over a principal ideal domain.
     """
-    def __init__(self, base_ring, rank, inner_product_matrix, sparse=False):
+    def __init__(self, base_ring, rank, inner_product_matrix, sparse=False) -> None:
         """
         Create the ambient free module of given rank over the given
         principal ideal domain.
@@ -1120,7 +1120,7 @@ class FreeQuadraticModule_ambient_field(free_module.FreeModule_ambient_field,
                                         FreeQuadraticModule_generic_field,
                                         FreeQuadraticModule_ambient_pid):
 
-    def __init__(self, base_field, dimension, inner_product_matrix, sparse=False):
+    def __init__(self, base_field, dimension, inner_product_matrix, sparse=False) -> None:
         """
         Create the ambient vector space of given dimension over the given field.
 
@@ -1239,7 +1239,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
     """
     def __init__(self, ambient, basis, inner_product_matrix,
                  check=True, echelonize=False, echelonized_basis=None,
-                 already_echelonized=False):
+                 already_echelonized=False) -> None:
         """
         Create a free module with basis over a PID.
 
@@ -1410,7 +1410,7 @@ class FreeQuadraticModule_submodule_pid(free_module.FreeModule_submodule_pid,
         sage: loads(v.dumps()) == v
         True
     """
-    def __init__(self, ambient, gens, inner_product_matrix, check=True, already_echelonized=False):
+    def __init__(self, ambient, gens, inner_product_matrix, check=True, already_echelonized=False) -> None:
         """
         Create an embedded free module over a PID.
 
@@ -1507,7 +1507,7 @@ class FreeQuadraticModule_submodule_with_basis_field(free_module.FreeModule_subm
         True
     """
     def __init__(self, ambient, basis, inner_product_matrix,
-                 check=True, echelonize=False, echelonized_basis=None, already_echelonized=False):
+                 check=True, echelonize=False, echelonized_basis=None, already_echelonized=False) -> None:
         """
         Create a vector space with given basis.
 
@@ -1627,7 +1627,7 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
         sage: vector(QQ, W.coordinates(v)) * W.basis_matrix()
         (1, 5, 9)
     """
-    def __init__(self, ambient, gens, inner_product_matrix, check=True, already_echelonized=False):
+    def __init__(self, ambient, gens, inner_product_matrix, check=True, already_echelonized=False) -> None:
         """
         Create an embedded vector subspace with echelonized basis.
 

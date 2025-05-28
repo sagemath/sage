@@ -139,7 +139,7 @@ class Feature(TrivialUniqueRepresentation):
         sage: GapPackage("grape") is GapPackage("grape")
         True
     """
-    def __init__(self, name, spkg=None, url=None, description=None, type='optional'):
+    def __init__(self, name, spkg=None, url=None, description=None, type='optional') -> None:
         r"""
         TESTS::
 
@@ -244,7 +244,7 @@ class Feature(TrivialUniqueRepresentation):
         if not presence:
             raise FeatureNotPresentError(self, presence.reason, presence.resolution)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a printable representation of this object.
 
@@ -435,7 +435,7 @@ class FeatureNotPresentError(RuntimeError):
         ...
         FeatureNotPresentError: missing is not available.
     """
-    def __init__(self, feature, reason=None, resolution=None):
+    def __init__(self, feature, reason=None, resolution=None) -> None:
         self.feature = feature
         self.reason = reason
         self._resolution = resolution
@@ -446,7 +446,7 @@ class FeatureNotPresentError(RuntimeError):
             return self._resolution
         return self.feature.resolution()
 
-    def __str__(self):
+    def __str__(self) -> str:
         r"""
         Return the error message.
 
@@ -504,7 +504,7 @@ class FeatureTestResult:
         sage: FeatureTestResult(package, False, resolution='rtm').resolution
         'rtm'
     """
-    def __init__(self, feature, is_present, reason=None, resolution=None):
+    def __init__(self, feature, is_present, reason=None, resolution=None) -> None:
         r"""
         TESTS::
 
@@ -523,7 +523,7 @@ class FeatureTestResult:
             return self._resolution
         return self.feature.resolution()
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Whether the tested :class:`Feature` is present.
 
@@ -537,7 +537,7 @@ class FeatureTestResult:
         """
         return bool(self.is_present)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 
@@ -678,7 +678,7 @@ class Executable(FileFeature):
         sage: Executable(name='does-not-exist', executable='does-not-exist-xxxxyxyyxyy').is_present()
         FeatureTestResult('does-not-exist', False)
     """
-    def __init__(self, name, executable, **kwds):
+    def __init__(self, name, executable, **kwds) -> None:
         r"""
         TESTS::
 
@@ -778,7 +778,7 @@ class StaticFile(FileFeature):
         To install no_such_file...you can try to run...sage -i some_spkg...
         Further installation instructions might be available at http://rand.om.
     """
-    def __init__(self, name, filename, *, search_path=None, type='optional', **kwds):
+    def __init__(self, name, filename, *, search_path=None, type='optional', **kwds) -> None:
         r"""
         TESTS::
 
@@ -889,7 +889,7 @@ class CythonFeature(Feature):
         sage: broken.is_present()
         FeatureTestResult('broken', False)
     """
-    def __init__(self, name, test_code, **kwds):
+    def __init__(self, name, test_code, **kwds) -> None:
         r"""
         TESTS::
 
@@ -950,7 +950,7 @@ class PythonModule(Feature):
         sage: from sage.features import PythonModule
         sage: PythonModule("ssl").require()  # not tested - output depends on the python build
     """
-    def __init__(self, name, **kwds):
+    def __init__(self, name, **kwds) -> None:
         r"""
         TESTS::
 

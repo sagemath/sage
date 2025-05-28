@@ -37,7 +37,7 @@ class TrivialValuationFactory(UniqueFactory):
         sage: v(1)
         0
     """
-    def __init__(self, clazz, parent, *args, **kwargs):
+    def __init__(self, clazz, parent, *args, **kwargs) -> None:
         r"""
         TESTS::
 
@@ -139,7 +139,7 @@ class TrivialDiscretePseudoValuation(TrivialDiscretePseudoValuation_base, Infini
 
         sage: TestSuite(v).run() # long time
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         TESTS::
 
@@ -259,7 +259,7 @@ class TrivialDiscreteValuation(TrivialDiscretePseudoValuation_base, DiscreteValu
 
         sage: TestSuite(v).run() # long time
     """
-    def __init__(self, parent):
+    def __init__(self, parent) -> None:
         r"""
         TESTS::
 

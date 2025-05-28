@@ -81,7 +81,7 @@ class Polynomial_generic_sparse(Polynomial):
         sage: (s + T)**2
         s^2 + 2*Tbar*s + 4
     """
-    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False) -> None:
         """
         TESTS::
 
@@ -1051,7 +1051,7 @@ class Polynomial_generic_sparse(Polynomial):
 
 
 class Polynomial_generic_domain(Polynomial, IntegralDomainElement):
-    def __init__(self, parent, is_gen=False, construct=False):
+    def __init__(self, parent, is_gen=False, construct=False) -> None:
         Polynomial.__init__(self, parent, is_gen=is_gen)
 
     def is_unit(self):
@@ -1139,12 +1139,12 @@ class Polynomial_generic_sparse_field(Polynomial_generic_sparse, Polynomial_gene
         sage: loads(f.dumps()) == f
         True
     """
-    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False) -> None:
         Polynomial_generic_sparse.__init__(self, parent, x, check, is_gen)
 
 
 class Polynomial_generic_dense_field(Polynomial_generic_dense, Polynomial_generic_field):
-    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False):
+    def __init__(self, parent, x=None, check=True, is_gen=False, construct=False) -> None:
         Polynomial_generic_dense.__init__(self, parent, x, check, is_gen)
 
 

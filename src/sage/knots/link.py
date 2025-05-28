@@ -281,7 +281,7 @@ class Link(SageObject):
         Implement methods to creating new links from previously created links.
     """
 
-    def __init__(self, data):
+    def __init__(self, data) -> None:
         r"""
         Initialize ``self``.
 

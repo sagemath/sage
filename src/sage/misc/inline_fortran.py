@@ -62,14 +62,14 @@ def _import_module_from_path_impl(name, path):
 
 
 class InlineFortran:
-    def __init__(self, globals=None):
+    def __init__(self, globals=None) -> None:
         # globals=None means: use user globals from REPL
         self.globs = globals
         self.library_paths = []
         self.libraries = []
         self.verbose = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "Interface to Fortran compiler"
 
     def __call__(self, *args, **kwds):

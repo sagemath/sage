@@ -105,7 +105,7 @@ class BinaryRecurrenceSequence(SageObject):
         With initial conditions: u_0 = 2, and u_1 = 1
     """
 
-    def __init__(self, b, c, u0=0, u1=1):
+    def __init__(self, b, c, u0=0, u1=1) -> None:
         """
         See :class:`BinaryRecurrenceSequence` for full documentation.
 

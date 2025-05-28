@@ -200,7 +200,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         raise ValueError("did not manage to make this into a parking function")
 
-    def __init__(self, parent, lst):
+    def __init__(self, parent, lst) -> None:
         """
         TESTS::
 
@@ -1312,7 +1312,7 @@ class ParkingFunctions(UniqueRepresentation, Parent):
 
 
 class ParkingFunctions_all(ParkingFunctions):
-    def __init__(self):
+    def __init__(self) -> None:
         """
         TESTS::
 
@@ -1453,7 +1453,7 @@ class ParkingFunctions_n(ParkingFunctions):
         [1, 1, 1]
     """
 
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         """
         TESTS::
 

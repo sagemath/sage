@@ -40,7 +40,7 @@ class Ternary(Element):
 
     The same semantic works for graphs instead of sets.
     """
-    def __init__(self, parent, n):
+    def __init__(self, parent, n) -> None:
         """
         Initialize one element.
 
@@ -157,7 +157,7 @@ class TernaryLogic(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
         running ._test_zero() . . . pass
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         The ternary-logic semiring.
 

@@ -75,7 +75,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         True
     """
 
-    def __init__(self, *iters):
+    def __init__(self, *iters) -> None:
         """
         TESTS::
 
@@ -122,7 +122,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         """
         return hash(tuple(self.iters))
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         EXAMPLES::
 
@@ -158,7 +158,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         """
         return (self.__class__, (self.iters))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -192,7 +192,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         """
         return self._mrange.cardinality()
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the number of elements of the Cartesian product.
 

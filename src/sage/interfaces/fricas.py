@@ -283,7 +283,7 @@ class FriCAS(ExtraTabCompletion, Expect):
     """
     def __init__(self, name='fricas', command=None,
                  script_subdirectory=None, logfile=None,
-                 server=None, server_tmpdir=None):
+                 server=None, server_tmpdir=None) -> None:
         """
         Create an instance of the FriCAS interpreter.
 
@@ -1014,7 +1014,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
     .. automethod:: _sage_
     """
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of a list.
 
@@ -1111,7 +1111,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             return P.new("elt(%s,last)" % (self._name))
         return P.new("elt(%s,%s)" % (self._name, n + 1))
 
-    def __int__(self):
+    def __int__(self) -> int:
         """
         TESTS::
 
@@ -1134,7 +1134,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         P = self._check_valid()
         return P.new(self._name + "::Boolean").sage()
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Check whether the expression is different from zero.
 
@@ -1146,7 +1146,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         P = self._check_valid()
         return not P.new("zero?(%s)" % self._name).sage()
 
-    def __float__(self):
+    def __float__(self) -> float:
         """
         TESTS::
 
@@ -2068,7 +2068,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
 @instancedoc
 class FriCASFunctionElement(FunctionElement):
-    def __init__(self, object, name):
+    def __init__(self, object, name) -> None:
         """
         Make FriCAS operation names valid python function identifiers.
 
@@ -2091,7 +2091,7 @@ class FriCASFunctionElement(FunctionElement):
 
 @instancedoc
 class FriCASExpectFunction(ExpectFunction):
-    def __init__(self, parent, name):
+    def __init__(self, parent, name) -> None:
         """
         Translate the pythonized function identifier back to a FriCAS
         operation name.

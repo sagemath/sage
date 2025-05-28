@@ -52,7 +52,7 @@ class HeckeModuleElement(ModuleElement):
     """
     Element of a Hecke module.
     """
-    def __init__(self, parent, x=None):
+    def __init__(self, parent, x=None) -> None:
         """
         INPUT:
 

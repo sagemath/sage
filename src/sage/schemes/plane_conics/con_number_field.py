@@ -44,7 +44,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         sage: K.<a> = NumberField(x^3 - 3, 'a')
         sage: Conic([a, 1, -1])._test_pickling()
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 

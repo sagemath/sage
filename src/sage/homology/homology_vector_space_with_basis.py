@@ -182,7 +182,7 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
         sage: b.cup_product(b)
         h^{2,0}
     """
-    def __init__(self, base_ring, cell_complex, cohomology=False, category=None):
+    def __init__(self, base_ring, cell_complex, cohomology=False, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -576,7 +576,7 @@ class HomologyVectorSpaceWithBasis_mod2(HomologyVectorSpaceWithBasis):
         sage: x4 * Sq(3)
         0
     """
-    def __init__(self, base_ring, cell_complex, category=None):
+    def __init__(self, base_ring, cell_complex, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -731,7 +731,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
         sage: x * x
         -h^{4,0}
     """
-    def __init__(self, base_ring, cell_complex, category=None):
+    def __init__(self, base_ring, cell_complex, category=None) -> None:
         """
         Initialize ``self``.
 
@@ -1004,7 +1004,7 @@ class CohomologyRing_mod2(CohomologyRing):
         sage: x * Sq(3)
         h^{4,0}
     """
-    def __init__(self, base_ring, cell_complex):
+    def __init__(self, base_ring, cell_complex) -> None:
         """
         Initialize ``self``.
 

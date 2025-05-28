@@ -150,7 +150,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
 
         sage: TestSuite(v).run()                # long time                             # needs sage.geometry.polyhedron
     """
-    def __init__(self, parent, v):
+    def __init__(self, parent, v) -> None:
         """
         TESTS::
 

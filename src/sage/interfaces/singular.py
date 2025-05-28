@@ -355,6 +355,8 @@ import sage.rings.integer
 
 from sage.misc.verbose import get_verbose
 from sage.misc.instancedoc import instancedoc
+from types import TracebackType
+from typing import Optional, Type
 
 
 class SingularError(RuntimeError):
@@ -386,7 +388,7 @@ class Singular(ExtraTabCompletion, Expect):
     """
     def __init__(self, maxread=None, script_subdirectory=None,
                  logfile=None, server=None, server_tmpdir=None,
-                 seed=None):
+                 seed=None) -> None:
         """
         EXAMPLES::
 
@@ -1336,7 +1338,7 @@ class Singular(ExtraTabCompletion, Expect):
 @instancedoc
 class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.SingularElement):
 
-    def __init__(self, parent, type, value, is_name=False):
+    def __init__(self, parent, type, value, is_name=False) -> None:
         """
         EXAMPLES::
 
@@ -1456,7 +1458,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         else:
             return self.parent()(self.name())
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the size of this Singular element.
 
@@ -1469,7 +1471,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         """
         return int(self.size())
 
-    def __setitem__(self, n, value):
+    def __setitem__(self, n, value) -> None:
         """
         Set the `n`-th element of ``self`` to `x`.
 
@@ -1510,7 +1512,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         else:
             P.eval('%s[%s] = %s' % (self.name(), n, value.name()))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this Singular element is not zero.
 
@@ -2527,7 +2529,7 @@ class SingularGBLogPrettyPrinter:
 
     global_pattern = re.compile(r"(\[\d+:\d+\]|s|-|\.|h|H\(\d+\)|\(\d+\)|\(S:\d+\)|\d+|M\[\d+,[b,e]*\d+\]|b|e).*")
 
-    def __init__(self, verbosity=1):
+    def __init__(self, verbosity=1) -> None:
         """
         Construct a new Singular Groebner Basis log pretty printer.
 
@@ -2678,7 +2680,7 @@ class SingularGBDefaultContext:
     - Martin Albrecht
     - Simon King
     """
-    def __init__(self, singular=None):
+    def __init__(self, singular=None) -> None:
         """
         Within this context all Singular Groebner basis calculations
         are reduced automatically.
@@ -2765,7 +2767,7 @@ class SingularGBDefaultContext:
         except SingularError:
             pass
 
-    def __exit__(self, typ, value, tb):
+    def __exit__(self, typ: Optional[Type[BaseException]], value: Optional[BaseException], tb: Optional[TracebackType]):
         """
         EXAMPLES::
 

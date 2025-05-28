@@ -28,7 +28,7 @@ class dot(Executable):
         sage: dot().is_present()  # optional - graphviz
         FeatureTestResult('dot', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -51,7 +51,7 @@ class neato(Executable):
         sage: neato().is_present()  # optional - graphviz
         FeatureTestResult('neato', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -74,7 +74,7 @@ class twopi(Executable):
         sage: twopi().is_present()  # optional - graphviz
         FeatureTestResult('twopi', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 
@@ -99,7 +99,7 @@ class Graphviz(JoinFeature):
         sage: Graphviz().is_present()  # optional - graphviz
         FeatureTestResult('graphviz', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

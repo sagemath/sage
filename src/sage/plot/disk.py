@@ -64,7 +64,7 @@ class Disk(GraphicPrimitive):
         sage: disk((2,3), 2, (0,pi/2))
         Graphics object consisting of 1 graphics primitive
     """
-    def __init__(self, point, r, angle, options):
+    def __init__(self, point, r, angle, options) -> None:
         """
         Initialize base class ``Disk``.
 

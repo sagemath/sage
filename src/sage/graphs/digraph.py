@@ -524,7 +524,7 @@ class DiGraph(GenericGraph):
                  weighted=None, data_structure='sparse',
                  vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
-                 sparse=True, immutable=False, hash_labels=None):
+                 sparse=True, immutable=False, hash_labels=None) -> None:
         """
         TESTS::
 

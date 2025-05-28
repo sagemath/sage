@@ -25,7 +25,7 @@ class dvipng(Executable):
         sage: dvipng().is_present()             # optional - dvipng
         FeatureTestResult('dvipng', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

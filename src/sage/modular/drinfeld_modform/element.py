@@ -92,7 +92,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         :class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`
         and access its elements using the relevant methods.
     """
-    def __init__(self, parent, polynomial):
+    def __init__(self, parent, polynomial) -> None:
         if not isinstance(polynomial, MPolynomial):
             raise TypeError("input must be a multivariate polynomial")
         if not parent.base_ring().has_coerce_map_from(polynomial.base_ring()):
@@ -180,7 +180,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self.__class__(self.parent(), -self._polynomial)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` whether ``self`` is nonzero.
 

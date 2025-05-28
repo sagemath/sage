@@ -139,7 +139,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(q))
 
-    def __init__(self, sym, q):
+    def __init__(self, sym, q) -> None:
         r"""
         Initialize ``self``.
 

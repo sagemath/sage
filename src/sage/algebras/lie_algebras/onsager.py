@@ -111,7 +111,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
     - [Onsager1944]_
     - [DG1982]_
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -388,7 +388,7 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
 
     - [BK2017]_
     """
-    def __init__(self, g, q, c):
+    def __init__(self, g, q, c) -> None:
         """
         Initialize ``self``.
 
@@ -1032,7 +1032,7 @@ class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
         ....:     for k in range(-4,4) for m in range(-4,4))
         True
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         r"""
         Initialize ``self``.
 

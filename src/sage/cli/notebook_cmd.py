@@ -26,7 +26,7 @@ class JupyterNotebookCmd:
             help="start the Jupyter notebook server (default: jupyter)",
         )
 
-    def __init__(self, options: CliOptions):
+    def __init__(self, options: CliOptions) -> None:
         r"""
         Initialize the command.
         """

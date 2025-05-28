@@ -432,7 +432,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         Set of rational points of Affine Space of dimension 2 over Rational Field
     """
 
-    def __init__(self, X, Y, category=None, check=True, base=ZZ):
+    def __init__(self, X, Y, category=None, check=True, base=ZZ) -> None:
         """
         Python constructor.
 

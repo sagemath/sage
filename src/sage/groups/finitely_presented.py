@@ -211,7 +211,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         b*a*b^-1*a^-1
     """
 
-    def __init__(self, parent, x, check=True):
+    def __init__(self, parent, x, check=True) -> None:
         """
         The Python constructor.
 
@@ -421,7 +421,7 @@ class RewritingSystem:
 
     - Miguel Angel Marco Buzunariz (2013-12-16)
     """
-    def __init__(self, G):
+    def __init__(self, G) -> None:
         """
         Initialize ``self``.
 
@@ -444,7 +444,7 @@ class RewritingSystem:
         self._monoid = self._monoid_isomorphism.Image()
         self._gap = self._monoid.KnuthBendixRewritingSystem()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation.
 
@@ -729,7 +729,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
     """
     Element = FinitelyPresentedGroupElement
 
-    def __init__(self, free_group, relations, category=None, libgap_fpgroup=None):
+    def __init__(self, free_group, relations, category=None, libgap_fpgroup=None) -> None:
         """
         The Python constructor.
 

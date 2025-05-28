@@ -28,7 +28,7 @@ class python_igraph(JoinFeature):
         sage: python_igraph().is_present()                    # optional - python_igraph
         FeatureTestResult('python_igraph', True)
     """
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         TESTS::
 

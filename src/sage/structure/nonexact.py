@@ -40,7 +40,7 @@ class Nonexact:
     - ``prec`` -- nonnegative integer representing the default precision of
       ``self`` (default: 20)
     """
-    def __init__(self, prec=20):
+    def __init__(self, prec=20) -> None:
         if prec < 0:
             raise ValueError(f"prec (= {prec}) must be nonnegative")
         self._default_prec = Integer(prec)

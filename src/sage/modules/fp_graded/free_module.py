@@ -389,7 +389,7 @@ class FreeGradedModule(CombinatorialFreeModule):
                                      category=category, names=names,
                                      prefix=prefix, **kwds)
 
-    def __init__(self, algebra, generator_degrees, category, names=None, **kwds):
+    def __init__(self, algebra, generator_degrees, category, names=None, **kwds) -> None:
         r"""
         Create a finitely generated free graded module over a connected graded
         algebra.

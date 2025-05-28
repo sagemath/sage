@@ -183,7 +183,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
 
         return super().__classcall__(cls, starting_weight, starting_weight_parent=starting_weight_parent)
 
-    def __init__(self, starting_weight, starting_weight_parent):
+    def __init__(self, starting_weight, starting_weight_parent) -> None:
         """
         Initialize ``self``.
 
@@ -1235,7 +1235,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
         cartan_type = CartanType(cartan_type)
         return super().__classcall__(cls, cartan_type)
 
-    def __init__(self, cartan_type):
+    def __init__(self, cartan_type) -> None:
         """
         Initialize ``self``.
 

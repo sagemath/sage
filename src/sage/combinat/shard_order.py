@@ -70,7 +70,7 @@ class ShardPosetElement(tuple):
         """
         return tuple.__new__(cls, p)
 
-    def __init__(self, p):
+    def __init__(self, p) -> None:
         r"""
         INPUT:
 

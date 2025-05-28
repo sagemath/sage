@@ -54,7 +54,7 @@ class FiniteSetsOrderedByInclusion(UniqueRepresentation, Parent):
         running ._test_some_elements() . . . pass
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 
@@ -137,7 +137,7 @@ class PositiveIntegersOrderedByDivisibilityFacade(UniqueRepresentation, Parent):
 
     element_class = type(Set([]))
 
-    def __init__(self):
+    def __init__(self) -> None:
         r"""
         EXAMPLES::
 

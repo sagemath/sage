@@ -22,7 +22,7 @@ class Parser:
     the ``'LCP'`` algorithm.
     """
 
-    def __init__(self, raw_string):
+    def __init__(self, raw_string) -> None:
         """
         Initialise a Parser instance by storing a ``raw_string``
         (currently only used with H representation of a game).

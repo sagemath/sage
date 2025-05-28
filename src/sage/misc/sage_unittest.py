@@ -146,7 +146,7 @@ class TestSuite:
           ``Semigroups()``).
     """
 
-    def __init__(self, instance):
+    def __init__(self, instance) -> None:
         """
         TESTS::
 
@@ -158,7 +158,7 @@ class TestSuite:
             instance = PythonObjectWithTests(instance)
         self._instance = instance
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -389,7 +389,7 @@ class InstanceTester(unittest.TestCase):
     longMessage = False
 
     def __init__(self, instance, elements=None, verbose=False, prefix='',
-                 max_runs=4096, max_samples=None, **options):
+                 max_runs=4096, max_samples=None, **options) -> None:
         """
         A gadget attached to an instance providing it with testing utilities.
 
@@ -453,7 +453,7 @@ class InstanceTester(unittest.TestCase):
                 sys.stdout.write(message)
             sys.stdout.flush()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -585,7 +585,7 @@ class PythonObjectWithTests:
 
         sage: TestSuite("bla").run()
     """
-    def __init__(self, instance):
+    def __init__(self, instance) -> None:
         """
         EXAMPLES::
 

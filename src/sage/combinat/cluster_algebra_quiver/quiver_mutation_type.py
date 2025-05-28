@@ -1111,7 +1111,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
     called directly, but through :class:`QuiverMutationType`.
     """
 
-    def __init__(self, letter, rank, twist=None):
+    def __init__(self, letter, rank, twist=None) -> None:
         """
         Should not be called directly but through QuiverMutationType.
 
@@ -1969,7 +1969,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
     :class:`QuiverMutationType_abstract`.
     """
 
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         """
         Should not be called directly, but through QuiverMutationType.
 

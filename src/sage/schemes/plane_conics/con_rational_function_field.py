@@ -73,7 +73,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
     - [HC2006]_
     - [Ack2016]_
     """
-    def __init__(self, A, f):
+    def __init__(self, A, f) -> None:
         r"""
         See ``Conic`` for full documentation.
 

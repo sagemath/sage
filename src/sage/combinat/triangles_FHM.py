@@ -132,7 +132,7 @@ class Triangle(SageObject):
         ⎝1 4⎠
     """
 
-    def __init__(self, poly, variables=None):
+    def __init__(self, poly, variables=None) -> None:
         """
         EXAMPLES::
 

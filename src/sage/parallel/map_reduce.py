@@ -637,7 +637,7 @@ class ActiveTaskCounterDarwin:
     do not correctly implement POSIX's semaphore semantic. So we use
     a shared integer with a lock.
     """
-    def __init__(self, task_number):
+    def __init__(self, task_number) -> None:
         r"""
         TESTS::
 
@@ -649,7 +649,7 @@ class ActiveTaskCounterDarwin:
         self._active_tasks = mp.Value(ctypes.c_int, task_number)
         self._lock = mp.Lock()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -771,7 +771,7 @@ class ActiveTaskCounterPosix:
         So there is a non negligible overhead. It will probably be worth it
         if we try to cythonize the code. So I'm keeping both implementations.
     """
-    def __init__(self, task_number):
+    def __init__(self, task_number) -> None:
         r"""
         TESTS::
 
@@ -782,7 +782,7 @@ class ActiveTaskCounterPosix:
         """
         self._active_tasks = mp.Semaphore(task_number)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -923,7 +923,7 @@ class RESetMapReduce:
                  map_function=None,
                  reduce_function=None,
                  reduce_init=None,
-                 forest=None):
+                 forest=None) -> None:
         r"""
         TESTS::
 
@@ -1564,7 +1564,7 @@ class RESetMapReduceWorker(mp.Process):
       * ``False`` -- results are sent back after each finished branches, when
         the process is asking for more work.
     """
-    def __init__(self, mapred, iproc, reduce_locally):
+    def __init__(self, mapred, iproc, reduce_locally) -> None:
         r"""
         TESTS::
 
@@ -1858,7 +1858,7 @@ class RESetMPExample(RESetMapReduce):
 
     .. SEEALSO:: This is an example of :class:`RESetMapReduce`
     """
-    def __init__(self, maxl=9):
+    def __init__(self, maxl=9) -> None:
         r"""
         TESTS::
 

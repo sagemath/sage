@@ -56,7 +56,7 @@ class QuantumGroupRepresentation(CombinatorialFreeModule):
             q = R.gen()
         return super().__classcall__(cls, R, C, q)
 
-    def __init__(self, R, C, q):
+    def __init__(self, R, C, q) -> None:
         """
         Initialize ``self``.
 
@@ -300,7 +300,7 @@ class AdjointRepresentation(CyclicRepresentation):
 
     - [OS2018]_
     """
-    def __init__(self, R, C, q):
+    def __init__(self, R, C, q) -> None:
         """
         Initialize ``self``.
 

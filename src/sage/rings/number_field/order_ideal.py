@@ -111,7 +111,7 @@ class NumberFieldOrderIdeal_generic(Ideal_generic):
     r"""
     An ideal of a not necessarily maximal order in a number field.
     """
-    def __init__(self, O, gens, *, coerce=True):
+    def __init__(self, O, gens, *, coerce=True) -> None:
         r"""
         Ideals of not necessarily maximal orders.
 
@@ -351,7 +351,7 @@ class NumberFieldOrderIdeal_quadratic(NumberFieldOrderIdeal_generic):
     r"""
     An ideal of a not necessarily maximal order in a *quadratic* number field.
     """
-    def __init__(self, O, gens, *, coerce=True):
+    def __init__(self, O, gens, *, coerce=True) -> None:
         r"""
         Ideals of *quadratic* orders are implemented by a specialized
         class because they have some extra features not present in
