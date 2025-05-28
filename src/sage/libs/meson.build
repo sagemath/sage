@@ -25,7 +25,10 @@ if not maxima_present
   maxima = maxima_proj.get_variable('maxima_dep')
   # Use the freshly built maxima
   conf_data.set('SAGE_MAXIMA_FAS', maxima.get_variable(internal: 'MAXIMA_FAS'))
-  conf_data.set('SAGE_MAXIMA_SHARE', maxima.get_variable(internal: 'MAXIMA_SHARE'))
+  conf_data.set(
+    'SAGE_MAXIMA_SHARE',
+    maxima.get_variable(internal: 'MAXIMA_SHARE'),
+  )
 else
   maxima = declare_dependency()
   # ecl does not have any problems with Maxima, so nothing needs to be set here:
