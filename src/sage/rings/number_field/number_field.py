@@ -81,13 +81,10 @@ from collections import Counter
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
-import sage.libs.ntl.all as ntl
 import sage.rings.abc
 import sage.rings.complex_mpfr
 from sage.rings.polynomial.polynomial_element import Polynomial
 import sage.rings.real_mpfr
-import sage.rings.real_mpfi
-import sage.rings.complex_double
 import sage.rings.real_double
 import sage.rings.real_lazy
 
@@ -102,10 +99,6 @@ from sage.rings.finite_rings.integer_mod import mod
 from sage.categories.number_fields import NumberFields
 
 from sage.misc.latex import latex_variable_name
-
-from .unit_group import UnitGroup
-from .class_group import ClassGroup
-from .class_group import SClassGroup
 
 from sage.structure.element import Element
 from sage.structure.parent import Parent
@@ -136,18 +129,14 @@ lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldEl
 _NumberFields = NumberFields()
 
 
-def is_NumberFieldHomsetCodomain(codomain):
+def is_NumberFieldHomsetCodomain(codomain, category=None):
     """
-    Return whether ``codomain`` is a valid codomain for a number
-    field homset.
-
-    This is used by NumberField._Hom_ to determine
-    whether the created homsets should be a
-    :class:`sage.rings.number_field.homset.NumberFieldHomset`.
+    Return whether ``codomain`` is a valid codomain for a
+    :class:`NumberFieldHomset` in ``category``.
 
     EXAMPLES:
 
-    This currently accepts any parent (CC, RR, ...) in :class:`Fields`::
+    This currently accepts any ring (CC, RR, ...)::
 
         sage: from sage.rings.number_field.number_field import is_NumberFieldHomsetCodomain
         sage: is_NumberFieldHomsetCodomain(QQ)
@@ -156,24 +145,31 @@ def is_NumberFieldHomsetCodomain(codomain):
         sage: is_NumberFieldHomsetCodomain(NumberField(x^2 + 1, 'x'))
         True
         sage: is_NumberFieldHomsetCodomain(ZZ)
-        False
+        True
         sage: is_NumberFieldHomsetCodomain(3)
         False
         sage: is_NumberFieldHomsetCodomain(MatrixSpace(QQ, 2))
-        False
+        True
         sage: is_NumberFieldHomsetCodomain(InfinityRing)
-        False
+        True
 
-    Question: should, for example, QQ-algebras be accepted as well?
-
-    Caveat: Gap objects are not (yet) in :class:`Fields`, and therefore
-    not accepted as number field homset codomains::
+    Gap objects are not (yet) in :class:`Fields`, and therefore not accepted as
+    number field homset codomains::
 
         sage: is_NumberFieldHomsetCodomain(gap.Rationals)                               # needs sage.libs.gap
         False
     """
-    from sage.categories.fields import Fields
-    return codomain in Fields()
+    from sage.categories.rings import Rings
+
+    if category is None:
+        category = codomain.category()
+
+    if not category.is_subcategory(Rings()):
+        return False
+
+    assert codomain in category
+
+    return True
 
 
 def proof_flag(t):
@@ -204,8 +200,6 @@ import sage.rings.infinity as infinity
 from sage.rings.rational import Rational
 from sage.rings.integer import Integer
 import sage.rings.polynomial.polynomial_element as polynomial_element
-import sage.groups.abelian_gps.abelian_group
-import sage.rings.complex_interval_field
 
 from sage.structure.factory import UniqueFactory
 from . import number_field_element
@@ -216,10 +210,8 @@ from cypari2.gen import Gen as pari_gen
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfi import RIF
 from sage.rings.cif import CIF
 from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
 from sage.rings.real_lazy import RLF, CLF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
@@ -1988,10 +1980,9 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: loads(dumps(H)) is H
             True
         """
-        if not is_NumberFieldHomsetCodomain(codomain):
-            # Using LazyFormat fixes #28036 - infinite loop
-            from sage.misc.lazy_format import LazyFormat
-            raise TypeError(LazyFormat("%s is not suitable as codomain for homomorphisms from %s") % (codomain, self))
+        if not is_NumberFieldHomsetCodomain(codomain, category):
+            raise TypeError
+
         from sage.rings.number_field.homset import NumberFieldHomset
         return NumberFieldHomset(self, codomain, category)
 
@@ -2051,6 +2042,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if p == infinity.infinity:
             gen_image = self.gen_embedding()
             if gen_image is not None:
+                from sage.rings.complex_double import CDF
+
                 if gen_image in RDF:
                     return QQ.completion(p, prec, extras)
                 elif gen_image in CDF:
@@ -3932,6 +3925,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              Fractional ideal (3)]
             sage: K.primes_of_bounded_norm(1)
             []
+            sage: K.primes_of_bounded_norm(1.1)
+            []
             sage: x = polygen(QQ, 'x')
             sage: K.<a> = NumberField(x^3 - 2)
             sage: P = K.primes_of_bounded_norm(30)
@@ -3951,7 +3946,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             B = ZZ(B)
         except (TypeError, AttributeError):
             try:
-                B = ZZ(B.ceil())
+                B = ZZ(B.floor())
             except (TypeError, AttributeError):
                 raise TypeError("%s is not valid bound on prime ideals" % B)
         if B < 2:
@@ -4614,6 +4609,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             ``proof.number_field(False)``. It can easily take 1000s of times
             longer to do computations with ``proof=True`` (the default).
         """
+        from .class_group import ClassGroup
+
         proof = proof_flag(proof)
         try:
             return self.__class_group[proof, names]
@@ -4701,6 +4698,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Class group of order 4 with structure C4 of Number Field in a
              with defining polynomial x^2 + 14 with a = 3.741657386773942?*I
         """
+        from .class_group import SClassGroup
+
         proof = proof_flag(proof)
         if all(P.is_principal() for P in S):
             C = self.class_group(proof=proof)
@@ -6705,10 +6704,12 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: QuadraticField(3, 'a').narrow_class_group()
             Multiplicative Abelian group isomorphic to C2
         """
+        from sage.groups.abelian_gps.abelian_group import AbelianGroup
+
         proof = proof_flag(proof)
         k = self.pari_bnf(proof)
         s = k.bnfnarrow().sage()
-        return sage.groups.abelian_gps.abelian_group.AbelianGroup(s[1])
+        return AbelianGroup(s[1])
 
     def ngens(self):
         """
@@ -6773,6 +6774,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         try:
             return (self.__polynomial_ntl, self.__denominator_ntl)
         except AttributeError:
+            import sage.libs.ntl.all as ntl
+
             self.__denominator_ntl = ntl.ZZ()
             den = self.polynomial().denominator()
             self.__denominator_ntl.set_from_sage_int(ZZ(den))
@@ -7218,6 +7221,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
              -a^15 - a^14 - 2*a^11 - a^10 + a^9 - a^8 - 2*a^7 + a^5 - 2*a^3 + a^2 + 3*a - 1,
              -3*a^16 - 3*a^15 - 3*a^14 - 3*a^13 - 3*a^12 - 2*a^11 - 2*a^10 - 2*a^9 - a^8 + a^7 + 2*a^6 + 3*a^5 + 3*a^4 + 4*a^3 + 6*a^2 + 8*a + 8]
         """
+        from sage.rings.number_field.unit_group import UnitGroup
+
         proof = proof_flag(proof)
 
         try:
@@ -7334,6 +7339,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: U.log(u)
             (1, 1, 4, 1, 5)
         """
+        from sage.rings.number_field.unit_group import UnitGroup
+
         proof = proof_flag(proof)
 
         # process the parameter S:
@@ -9616,6 +9623,8 @@ class NumberField_absolute(NumberField_generic):
                Defn: alpha |--> 0.96 + 1.7*I]
         """
         if prec is None:
+            from sage.rings.real_mpfi import RIF
+
             R = RIF
             C = CIF
 
@@ -10441,7 +10450,7 @@ class NumberField_absolute(NumberField_generic):
         # symbol is negative for all primes in S and positive
         # at all primes in S'
         # For technical reasons, a Hilbert symbol of -1 is
-        # respresented as 1 and a Hilbert symbol of 1
+        # represented as 1 and a Hilbert symbol of 1
         # is represented as 0
         V = VectorSpace(GF(2), len(SL))
         v = V([1]*len(S) + [0]*len(L))
@@ -10829,6 +10838,8 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             # As a consequence, a result of _an_element_() with the wrong class
             # is cached during the call to has_coerce_map_from. We reset the
             # cache afterwards.
+            from sage.rings.complex_double import CDF
+
             self._standard_embedding = not CDF.has_coerce_map_from(self) or CDF(self.gen()).imag() > 0
             self._cache_an_element = None
 
@@ -11259,6 +11270,8 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: K5._log_gen(zeta15**3)
             4
         """
+        from sage.rings.complex_double import CDF
+
         X = x.parent()
         gen = self.gen()
 
@@ -11460,12 +11473,10 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         zeta = self.gen()
         return sum(QQ(c) * zeta**i for i, c in enumerate(coeffs))
 
-    def _Hom_(self, codomain, cat=None):
+    def _Hom_(self, codomain, category=None):
         """
         Return homset of homomorphisms from the cyclotomic field ``self`` to
         the number field codomain.
-
-        The ``cat`` option is currently ignored.
 
         EXAMPLES:
 
@@ -11483,12 +11494,19 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
                to Number Field in a with defining polynomial x^2 + 3
             sage: End(CyclotomicField(21))
             Automorphism group of Cyclotomic Field of order 21 and degree 12
+
+        ::
+
+            sage: K = CyclotomicField(3)
+            sage: Hom(K, ZZ).category()
+            Category of homsets of euclidean domains and noetherian rings
+
         """
-        if is_NumberFieldHomsetCodomain(codomain):
-            from sage.rings.number_field.homset import CyclotomicFieldHomset
-            return CyclotomicFieldHomset(self, codomain)
-        else:
+        if not is_NumberFieldHomsetCodomain(codomain, category):
             raise TypeError
+
+        from sage.rings.number_field.homset import CyclotomicFieldHomset
+        return CyclotomicFieldHomset(self, codomain, category)
 
     def is_galois(self):
         """
@@ -12058,6 +12076,8 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
                 self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
 
         self._NumberField_generic__gen = self._element_class(self, parts)
+
+        from sage.rings.complex_double import CDF
 
         # we must set the flag _standard_embedding *before* any element creation
         # Note that in the following code, no element is built.

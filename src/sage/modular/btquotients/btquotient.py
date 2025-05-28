@@ -1714,7 +1714,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute certain invariants from the level data of the quotient
         which allow one to compute the genus of the curve.
 
-        Details to be found in Theorem 9 of [FM2014]_.
+        Details to be found in Theorem 3.8 of [FM2014]_.
 
         EXAMPLES::
 
@@ -2120,7 +2120,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         my_args.update(kwargs)
         return S.plot(*args, **my_args)
 
-    def is_admissible(self, D):
+    def is_admissible(self, D) -> bool:
         r"""
         Test whether the imaginary quadratic field of
         discriminant `D` embeds in the quaternion algebra. It
