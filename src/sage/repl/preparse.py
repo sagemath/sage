@@ -1324,7 +1324,9 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
                 # Python 3 does not allow leading zeroes. Sage does, so just strip them out.
                 # The number is still interpreted as decimal, not octal!
                 num = re.sub(r'^0+', '', num)
-                if quotes:
+                if len(num) <= 4300:
+                    num_make = "Integer(%s)" % num
+                elif quotes:
                     num_make = "Integer(%s%s%s)" % (quotes, num, quotes)
                 else:
                     code_points = list(map(ord, list(num)))
