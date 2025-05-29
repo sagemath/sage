@@ -2956,10 +2956,138 @@ class DiGraph(GenericGraph):
                        (rooted or neighbor not in starting_vertices or path[0] <= neighbor):
                         heappush(heap_queue, (length + weight_function(e), path + [neighbor]))
 
+    def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
+                                         remove_acyclic_edges=True,
+                                         weight_function=None, by_weight=False,
+                                         check_weight=True, report_weight=False):
+        r"""
+        Return an iterator over the **simple** cycles of ``self`` starting with the
+        given edge in increasing length order. Each edge must have a positive weight.
+
+        INPUT:
+
+        - ``edge`` -- the starting edge of the cycle.
+
+        - ``max_length`` -- nonnegative integer (default: ``None``); the
+          maximum length of the enumerated paths. If set to ``None``, then all
+          lengths are allowed.
+
+        - ``remove_acyclic_edges`` -- boolean (default: ``True``); whether
+          acyclic edges must be removed from the graph.  Used to avoid
+          recomputing it for each edge
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight.
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges
+          in the graph are weighted, otherwise all edges have weight 1
+
+        - ``check_weight`` -- boolean (default: ``True``); whether to check that
+          the ``weight_function`` outputs a number for each edge
+
+        - ``report_weight`` -- boolean (default: ``False``); if ``False``, just
+          a cycle is returned. Otherwise a tuple of cycle length and cycle is
+          returned.
+
+        OUTPUT: iterator
+
+        ALGORITHM:
+
+        Given an edge `uv`, this algorithm extracts k-shortest `vu`-path in `G-uv`
+        in increasing length order by using k-shortest path algorithm. Thus, it
+        extracts only simple cycles. See
+        :math:`~sage.graphs.path_enumeration.shortest_simple_paths` for more
+        information.
+
+        EXAMPLES:
+
+            sage: g = graphs.Grid2dGraph(2, 5).to_directed()
+            sage: it = g._all_simple_cycles_iterator_edge(((0, 0), (0, 1), None), report_weight=True)
+            sage: for i in range(5): print(next(it))
+            (2, [(0, 0), (0, 1), (0, 0)])
+            (4, [(0, 0), (0, 1), (1, 1), (1, 0), (0, 0)])
+            (6, [(0, 0), (0, 1), (0, 2), (1, 2), (1, 1), (1, 0), (0, 0)])
+            (8, [(0, 0), (0, 1), (0, 2), (0, 3), (1, 3), (1, 2), (1, 1), (1, 0), (0, 0)])
+            (10, [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 4), (1, 3), (1, 2), (1, 1), (1, 0), (0, 0)])
+
+        Each edge must have a positive weight::
+
+            sage: g = DiGraph()
+            sage: g.add_edges([('a', 'b', -2), ('b', 'a', 1)])
+            sage: next(g._all_simple_cycles_iterator_edge(('a', 'b', -2), max_length=None, by_weight=True))
+            Traceback (most recent call last):
+            ...
+            ValueError: negative weight is not allowed
+
+        TESTS:
+
+        A graph with a loop::
+
+            sage: g = DiGraph(loops=True)
+            sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'a'), ('c', 'c')])
+            sage: it = g._all_simple_cycles_iterator_edge(('a', 'b'), remove_acyclic_edges=True)
+            sage: next(it)
+            ['a', 'b', 'c', 'a']
+            sage: g = DiGraph(loops=True)
+            sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'c')])
+            sage: it = g._all_simple_cycles_iterator_edge(('c', 'c'), remove_acyclic_edges=True)
+            sage: next(it)
+            ['c', 'c']
+        """
+        # First we remove vertices and edges that are not part of any cycle
+        if remove_acyclic_edges:
+            h = None
+            for component in self.strongly_connected_components_subgraphs():
+                if component.has_edge(edge):
+                    h = component
+            if h is None:
+                # edge connects two strongly connected components, so
+                # no simple cycle starting with edge exists.
+                return
+        else:
+            h = copy(self)
+        # delete edge
+        h.delete_edge(edge)
+
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
+
+        if by_weight:
+            for e in self.edge_iterator():
+                if weight_function(e) < 0:
+                    raise ValueError("negative weight is not allowed")
+
+        it = h.shortest_simple_paths(source=edge[1], target=edge[0],
+                                     weight_function=weight_function,
+                                     by_weight=by_weight,
+                                     check_weight=check_weight,
+                                     algorithm='Feng',
+                                     report_edges=False,
+                                     report_weight=True)
+
+        edge_weight = weight_function(edge)
+
+        if max_length is None:
+            from sage.rings.infinity import Infinity
+            max_length = Infinity
+        for length, path in it:
+            if length + edge_weight > max_length:
+                break
+
+            if report_weight:
+                yield length + edge_weight, [edge[0]] + path
+            else:
+                yield [edge[0]] + path
+
     def all_cycles_iterator(self, starting_vertices=None, simple=False,
                             rooted=False, max_length=None, trivial=False,
                             weight_function=None, by_weight=False,
-                            check_weight=True, report_weight=False):
+                            check_weight=True, report_weight=False,
+                            algorithm='A'):
         r"""
         Return an iterator over all the cycles of ``self`` starting with one of
         the given vertices. Each edge must have a positive weight.
@@ -3005,11 +3133,22 @@ class DiGraph(GenericGraph):
           a cycle is returned. Otherwise a tuple of cycle length and cycle is
           returned.
 
+        - ``algorithm`` -- string (default: ``'A'``); the algorithm used to
+          enumerate the cycles.
+
+          - The algorithm ``'A'`` holds cycle iterators starting with each vertex,
+            and output them in increasing length order.
+
+          - The algorithm ``'B'`` holds cycle iterators starting with each edge,
+            and output them in increasing length order. It depends on the k-shortest
+            simple paths algorithm. Thus, it is not available if ``simple=False``.
+
         OUTPUT: iterator
 
         .. SEEALSO::
 
             - :meth:`all_simple_cycles`
+            - :meth:`~sage.graphs.path_enumeration.shortest_simple_paths`
 
         AUTHOR:
 
@@ -3105,6 +3244,16 @@ class DiGraph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: negative weight is not allowed
+
+        The algorithm ``'B'`` is available only when `simple=True`::
+
+            sage: g = DiGraph()
+            sage: g.add_edges([('a', 'b', 1), ('b', 'a', 1)])
+            sage: next(g.all_cycles_iterator(algorithm='B', simple=False))
+            ....:
+            Traceback (most recent call last):
+            ...
+            ValueError: The algorithm 'B' is available only when simple=True.
         """
         if starting_vertices is None:
             starting_vertices = self
@@ -3127,28 +3276,54 @@ class DiGraph(GenericGraph):
                 if weight_function(e) < 0:
                     raise ValueError("negative weight is not allowed")
 
-        # We create one cycles iterator per vertex. This is necessary if we
-        # want to iterate over cycles with increasing length.
-        def cycle_iter(v):
-            return h._all_cycles_iterator_vertex(v,
-                                                 starting_vertices=starting_vertices,
-                                                 simple=simple,
-                                                 rooted=rooted,
-                                                 max_length=max_length,
-                                                 trivial=trivial,
-                                                 remove_acyclic_edges=False,
-                                                 weight_function=weight_function,
-                                                 by_weight=by_weight,
-                                                 check_weight=check_weight,
-                                                 report_weight=True)
+        if algorithm == 'A':
+            # We create one cycles iterator per vertex. This is necessary if we
+            # want to iterate over cycles with increasing length.
+            def cycle_iter(v):
+                return h._all_cycles_iterator_vertex(v,
+                                                    starting_vertices=starting_vertices,
+                                                    simple=simple,
+                                                    rooted=rooted,
+                                                    max_length=max_length,
+                                                    trivial=trivial,
+                                                    remove_acyclic_edges=False,
+                                                    weight_function=weight_function,
+                                                    by_weight=by_weight,
+                                                    check_weight=check_weight,
+                                                    report_weight=True)
 
-        vertex_iterators = {v: cycle_iter(v) for v in starting_vertices}
+            iterators = {v: cycle_iter(v) for v in starting_vertices}
+        elif algorithm == 'B':
+            if not simple:
+                raise ValueError("The algorithm 'B' is available only when simple=True.")
+            def simple_cycle_iter(hh, e):
+                return hh._all_simple_cycles_iterator_edge(e,
+                                                           max_length=max_length,
+                                                           remove_acyclic_edges=False,
+                                                           weight_function=weight_function,
+                                                           by_weight=by_weight,
+                                                           check_weight=check_weight,
+                                                           report_weight=True)
+            SCCS = h.strongly_connected_components_subgraphs()
+            iterators = dict()
+            while SCCS:
+                hh = SCCS.pop()
+                if not hh.size():
+                    continue
+                e = next(hh.edge_iterator())
+                iterators[e] = simple_cycle_iter(hh, e)
+                hh.delete_edge(e)
+                SCCS.extend(hh.strongly_connected_components_subgraphs())
+        else:
+            raise ValueError(f"The algorithm {algorithm} is not valid. \
+                               Use the algorithm 'A' or 'B'.")
+
 
         cycles = []
-        for vi in vertex_iterators.values():
+        for key, it in iterators.items():
             try:
-                length, cycle = next(vi)
-                cycles.append((length, cycle))
+                length, cycle = next(it)
+                cycles.append((length, cycle, key))
             except StopIteration:
                 pass
         # Since we always extract a shortest path, using a heap
@@ -3157,7 +3332,7 @@ class DiGraph(GenericGraph):
         heapify(cycles)
         while cycles:
             # We choose the shortest available cycle
-            length, shortest_cycle = heappop(cycles)
+            length, shortest_cycle, key = heappop(cycles)
             if report_weight:
                 yield (length, shortest_cycle)
             else:
@@ -3165,15 +3340,16 @@ class DiGraph(GenericGraph):
             # We update the cycle iterator to its next available cycle if it
             # exists
             try:
-                length, cycle = next(vertex_iterators[shortest_cycle[0]])
-                heappush(cycles, (length, cycle))
+                length, cycle = next(iterators[key])
+                heappush(cycles, (length, cycle, key))
             except StopIteration:
                 pass
 
     def all_simple_cycles(self, starting_vertices=None, rooted=False,
                           max_length=None, trivial=False,
                           weight_function=None, by_weight=False,
-                          check_weight=True, report_weight=False):
+                          check_weight=True, report_weight=False,
+                          algorithm='A'):
         r"""
         Return a list of all simple cycles of ``self``. The cycles are
         enumerated in increasing length order. Each edge must have a
@@ -3213,6 +3389,15 @@ class DiGraph(GenericGraph):
         - ``report_weight`` -- boolean (default: ``False``); if ``False``, just
           a cycle is returned. Otherwise a tuple of cycle length and cycle is
           returned.
+
+        - ``algorithm`` -- string (default: ``'A'``); the algorithm used to
+          enumerate the cycles.
+
+          - The algorithm ``'A'`` holds cycle iterators starting with each vertex,
+            and output them in increasing length order.
+
+          - The algorithm ``'B'`` holds cycle iterators starting with each edge,
+            and output them in increasing length order.
 
         OUTPUT: list
 
@@ -3326,14 +3511,29 @@ class DiGraph(GenericGraph):
 
         A cycle is enumerated in increasing length order for a weighted graph::
 
-            sage: g.all_simple_cycles(weight_function=lambda e:e[0]+e[1], by_weight=True,
-            ....:                     report_weight=True)
+            sage: cycles = g.all_simple_cycles(weight_function=lambda e:e[0]+e[1],
+            ....:                              by_weight=True, report_weight=True)
+            sage: cycles
             [(2, [0, 1, 0]), (4, [0, 2, 0]), (6, [0, 1, 2, 0]), (6, [0, 2, 1, 0]),
              (6, [0, 3, 0]), (6, [1, 2, 1]), (8, [0, 1, 3, 0]), (8, [0, 3, 1, 0]),
              (8, [1, 3, 1]), (10, [0, 2, 3, 0]), (10, [0, 3, 2, 0]), (10, [2, 3, 2]),
              (12, [0, 1, 2, 3, 0]), (12, [0, 1, 3, 2, 0]), (12, [0, 2, 1, 3, 0]),
              (12, [0, 2, 3, 1, 0]), (12, [0, 3, 1, 2, 0]), (12, [0, 3, 2, 1, 0]),
              (12, [1, 2, 3, 1]), (12, [1, 3, 2, 1])]
+
+        The algorithm ``'B'`` can be used::
+
+            sage: cycles_B = g.all_simple_cycles(weight_function=lambda e:e[0]+e[1], by_weight=True,
+            ....:                                report_weight=True, algorithm='B')
+            sage: cycles_B
+            [(2, [0, 1, 0]), (4, [0, 2, 0]), (6, [0, 1, 2, 0]), (6, [0, 2, 1, 0]),
+             (6, [0, 3, 0]), (6, [1, 2, 1]), (8, [0, 1, 3, 0]), (8, [0, 3, 1, 0]),
+             (8, [1, 3, 1]), (10, [0, 2, 3, 0]), (10, [0, 3, 2, 0]), (10, [2, 3, 2]),
+             (12, [0, 1, 3, 2, 0]), (12, [0, 1, 2, 3, 0]), (12, [0, 2, 3, 1, 0]),
+             (12, [0, 2, 1, 3, 0]), (12, [0, 3, 2, 1, 0]), (12, [0, 3, 1, 2, 0]),
+             (12, [1, 2, 3, 1]), (12, [1, 3, 2, 1])]
+            sage: cycles.sort() == cycles_B.sort()
+            True
         """
         return list(self.all_cycles_iterator(starting_vertices=starting_vertices,
                                              simple=True, rooted=rooted,
@@ -3341,7 +3541,8 @@ class DiGraph(GenericGraph):
                                              weight_function=weight_function,
                                              by_weight=by_weight,
                                              check_weight=check_weight,
-                                             report_weight=report_weight))
+                                             report_weight=report_weight,
+                                             algorithm=algorithm))
 
     def path_semigroup(self):
         """
