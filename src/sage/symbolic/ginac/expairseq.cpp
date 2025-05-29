@@ -661,7 +661,7 @@ bool expairseq::expair_needs_further_processing(epp /*unused*/)
 	return false;
 }
 
-numeric expairseq::default_overall_coeff() const
+const numeric& expairseq::default_overall_coeff() const
 {
 	return *_num0_p;
 }
