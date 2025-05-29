@@ -13,7 +13,7 @@
 如何在 Sage 中计算有限群的特征标表？可以使用 Sage-GAP 接口来计算特征标表。
 
 你可以使用 PermutationGroup 类的 ``character_table`` 方法，
-或通过 GAP 命令 ``CharacterTable`` 的接口，将置换群 :math:`G` 的特征标值表构建为 Sage 矩阵。
+或通过 GAP 命令 ``CharacterTable`` 的接口，将置换群 `G` 的特征标值表构建为 Sage 矩阵。
 
 ::
 
@@ -73,8 +73,8 @@
     A = E(3)^2
       = (-1-Sqrt(-3))/2 = -1-b3
 
-其中 :math:`E(3)` 表示单位立方根，:math:`ER(-3)` 表示 :math:`-3` 的平方根，即 :math:`i\sqrt{3}`,
-而 :math:`b3 = \frac{1}{2}(-1+i \sqrt{3})`。
+其中 `E(3)` 表示单位立方根，`ER(-3)` 表示 `-3` 的平方根，即 `i\sqrt{3}`,
+而 `b3 = \frac{1}{2}(-1+i \sqrt{3})`。
 请注意添加的 ``print`` Python 命令。这会令输出更美观。
 
 .. link

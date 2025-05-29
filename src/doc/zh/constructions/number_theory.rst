@@ -7,7 +7,7 @@
 
 如何在 Sage 中计算模幂？
 
-要想在 Sage 中计算 :math:`51^{2006} \pmod{97}`，请输入
+要想在 Sage 中计算 `51^{2006} \pmod{97}`，请输入
 
 ::
 
@@ -29,9 +29,9 @@
 离散对数
 =============
 
-要找到数 :math:`x` 使得
-:math:`b^x\equiv a \pmod m` （
-:math:`a \pmod m` 的离散对数）可以使用 ``log`` 命令：
+要找到数 `x` 使得
+`b^x\equiv a \pmod m` （
+`a \pmod m` 的离散对数）可以使用 ``log`` 命令：
 
 ::
 
@@ -73,7 +73,7 @@
           2011
 
 Pari 命令 ``primepi`` 通过 ``pari(x).primepi()`` 命令使用。
-它返回 :math:`\leq x` 的质数数量，例如：
+它返回 `\leq x` 的质数数量，例如：
 
 ::
 
@@ -81,7 +81,7 @@ Pari 命令 ``primepi`` 通过 ``pari(x).primepi()`` 命令使用。
           4
 
 使用 ``primes_first_n`` 或 ``primes`` 可以检查到，
-实有 :math:`4` 个小于等于 :math:`10` 的质数：
+实有 `4` 个小于等于 `10` 的质数：
 
 ::
 

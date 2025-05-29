@@ -39,7 +39,7 @@ gnuplot 没有隐式绘图命令，所以如果你想使用隐式绘图绘制曲
 还可以生成其他函数图像：
 
 雅可比椭圆函数
-:math:`\text{sn}(x,2)`, :math:`-3<x<3` 的红色图像（请勿输入 ``....:``）:
+`\text{sn}(x,2)`, `-3<x<3` 的红色图像（请勿输入 ``....:``）:
 
 ::
 
@@ -47,14 +47,14 @@ gnuplot 没有隐式绘图命令，所以如果你想使用隐式绘图绘制曲
     ....:     for i in range(-300,300)]
     sage: show(line(L, rgbcolor=(3/4,1/4,1/8)))
 
-:math:`J`-贝塞尔函数 :math:`J_2(x)`, :math:`0<x<10` 的红色图像：
+`J`-贝塞尔函数 `J_2(x)`, `0<x<10` 的红色图像：
 
 ::
 
     sage: L = [(i/10.0, maxima.eval('bessel_j (2,%s/10.0)'%i)) for i in range(100)]
     sage: show(line(L, rgbcolor=(3/4,1/4,5/8)))
 
-黎曼 :math:`\zeta` 函数 :math:`\zeta(1/2 + it)`, :math:`0<t<30` 的紫色图像：
+黎曼 `\zeta` 函数 `\zeta(1/2 + it)`, `0<t<30` 的紫色图像：
 
 ::
 
@@ -185,7 +185,7 @@ openmath
 Openmath 是由 W. Schelter 编写的 TCL/Tk GUI 绘图程序。
 
 以下命令绘制函数
-:math:`\cos(2x)+2e^{-x}`
+`\cos(2x)+2e^{-x}`
 
 ::
 
@@ -208,7 +208,7 @@ Openmath 是由 W. Schelter 编写的 TCL/Tk GUI 绘图程序。
 
     sage: maxima.plot2d('[x,x^2,x^3]','[x,-1,1]','[plot_format,openmath]')  # not tested
 
-Openmath 还可以绘制 :math:`z=f(x,y)` 形式的三维曲面，其中 :math:`x` 和 :math:`y` 在矩形范围内。
+Openmath 还可以绘制 `z=f(x,y)` 形式的三维曲面，其中 `x` 和 `y` 在矩形范围内。
 例如，这里有一个可以用鼠标移动的“实时”三维图：
 
 ::
@@ -284,7 +284,7 @@ gnuplot
     sage: maxima.plot3d_parametric(["v*sin(u)","v*cos(u)","v"], ["u","v"],
     ....:     [-3.2,3.2],[0,3],opts)
 
-为了演示如何传递 gnuplot 选项，下面是关于绘制黎曼 :math:`\zeta` 函数 :math:`\zeta(s)` 上一系列点的示例
+为了演示如何传递 gnuplot 选项，下面是关于绘制黎曼 `\zeta` 函数 `\zeta(s)` 上一系列点的示例
 （使用 Pari 计算，但使用 Maxima 和 Gnuplot 绘图）: {plot!points} {Riemann zeta function}
 
 .. skip

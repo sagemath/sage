@@ -37,7 +37,7 @@
 
 选项 ``algorithm="bn"`` 使用 Sage 的 Singular 接口并调用 ``brnoeth`` 包。
 
-下面是将 Sage 的 ``rational_points`` 应用于 :math:`GF(8)` 上的 Klein 四次方程的另一个例子。
+下面是将 Sage 的 ``rational_points`` 应用于 `GF(8)` 上的 Klein 四次方程的另一个例子。
 
 ::
 
@@ -76,9 +76,9 @@
 
 
 -  对于平面曲线，你可以使用 Singular 的 ``closed_points`` 命令。
-   输入是 :math:`2` 变量环 :math:`F[x,y]` 中曲线 :math:`X` 的消失理想 :math:`I`。
+   输入是 `2` 变量环 `F[x,y]` 中曲线 `X` 的消失理想 `I`。
    ``closed_points`` 命令返回一个素理想列表（每个都是 Gröbner 基），
-   对应于 :math:`V(I)` 的（不同仿射闭合）点。以下是示例：
+   对应于 `V(I)` 的（不同仿射闭合）点。以下是示例：
 
    .. skip
 
@@ -148,7 +148,7 @@
        True
 
 -  另一种计算有理点的方法是使用 Singular 的 ``NSplaces`` 命令。
-   以下是用该方法在 :math:`GF(8)` 上计算 Klein 四次方程的示例：
+   以下是用该方法在 `GF(8)` 上计算 Klein 四次方程的示例：
 
    ::
 
@@ -171,7 +171,7 @@
        ...
        sage: klein3 = singular.extcurve(3, klein2)
 
-   上面我们在 Singular 中定义了一条 :math:`GF(8)` 上的曲线 :math:`X = \{f = 0\}`。
+   上面我们在 Singular 中定义了一条 `GF(8)` 上的曲线 `X = \{f = 0\}`。
 
    .. link
 
@@ -216,7 +216,7 @@
        [2]:
           1,2
 
-   对于度为 :math:`3` 的地方：
+   对于度为 `3` 的地方：
 
    .. link
 
@@ -268,7 +268,7 @@
        [9]:
           3,7
 
-   实际获取 :math:`X(GF(8))` 的点：
+   实际获取 `X(GF(8))` 的点：
 
    .. link
 
@@ -293,16 +293,16 @@
              0
        ...
 
-   加上另外 21 个点（已省略）。总共有 :math:`23` 个有理点。
+   加上另外 21 个点（已省略）。总共有 `23` 个有理点。
 
 .. index:: Riemann-Roch space
 
 使用 Singular 计算 Riemann-Roch 空间
 ====================================
 
-为了计算域 :math:`F` 上曲线上的因子 :math:`D` 的 Riemann-Roch 空间基，
+为了计算域 `F` 上曲线上的因子 `D` 的 Riemann-Roch 空间基，
 可以使用 Sage 封装的 ``riemann_roch_basis`` 方法，它是 Singular 实现的 Brill Noether 算法。
-注意，这个封装当前仅在 :math:`F` 是素数且因子 :math:`D` 在有理点上受支持时才有效。
+注意，这个封装当前仅在 `F` 是素数且因子 `D` 在有理点上受支持时才有效。
 下面是如何使用 ``riemann_roch_basis`` 的示例，以及如何使用 Singular 本身来帮助理解封装的工作方式。
 
 -  使用 ``riemann_roch_basis``:
@@ -382,9 +382,9 @@
 AG 码
 --------
 
-Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空间 :math:`L(D)=L_X(D)` 的基，
-从而计算 AG 码 :math:`C=C_X(D,E)`。
-除了曲线 :math:`X` 和因子 :math:`D`，还必须指定求值因子 :math:`E`。
+Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空间 `L(D)=L_X(D)` 的基，
+从而计算 AG 码 `C=C_X(D,E)`。
+除了曲线 `X` 和因子 `D`，还必须指定求值因子 `E`。
 
 请注意，自从 ``riemann_roch_basis`` 封装被修复后，本节尚未更新。
 请参阅上文中，了解如何正确定义 Singular 的 ``BrillNoether`` 命令的因子。
@@ -418,7 +418,7 @@ Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空�
     sage: singular.eval("setring R;")
     ''
 
-向量 :math:`G` 表示因子“无穷远点的 5 倍”。
+向量 `G` 表示因子“无穷远点的 5 倍”。
 
 .. index:: Riemann-Roch space
 
@@ -492,8 +492,8 @@ Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空�
           1
     ...
 
-再加上 :math:`5` 个，曲线上总共有 :math:`9` 个有理点。
-我们使用这些点的子集（除第一个点外）定义我们的“求值因子” :math:`D`：
+再加上 `5` 个，曲线上总共有 `9` 个有理点。
+我们使用这些点的子集（除第一个点外）定义我们的“求值因子” `D`：
 
 .. skip
 
@@ -521,6 +521,6 @@ Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空�
     0,0,(a),  (a+1),1,  1,    (a+1),(a),
     0,0,1,    1,    (a),(a+1),(a+1),(a)
 
-这就是我们最终想要的生成矩阵，其中 ``a`` 表示基域 :math:`GF(2)` 上度为 :math:`2` 的域扩张的生成器。
+这就是我们最终想要的生成矩阵，其中 ``a`` 表示基域 `GF(2)` 上度为 `2` 的域扩张的生成器。
 
 是否可以对其进行“封装”？

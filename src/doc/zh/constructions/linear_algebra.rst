@@ -72,7 +72,7 @@
     [ 1  0 -3  2]
     [ 0  1 -2  1]
 
-:math:`\QQ` 上的一维核：
+`\QQ` 上的一维核：
 
 ::
 
@@ -166,7 +166,7 @@
 ``frobenius`` 用于 Frobenius 标准型（有理规范型）。
 
 
-有许多域（例如：:math:`\QQ`）或有限域上的矩阵方法：
+有许多域（例如：`\QQ`）或有限域上的矩阵方法：
 ``row_span``, ``nullity``,
 ``transpose``, ``swap_rows``, ``matrix_from_columns``,
 ``matrix_from_rows`` 等等。
@@ -183,9 +183,9 @@
 如何使用 Sage 计算特征值和特征向量？
 
 Sage 提供了一系列完整的函数来计算特征值和左右特征向量以及特征子空间。
-如果我们的矩阵为 :math:`A`，那么 ``eigenmatrix_right``
-（相对的为 ``eightmatrix_left``）命令会给出矩阵 :math:`D` 和 :math:`P`，
-使得 :math:`AP=PD`（相对的为 :math:`PA=DP`）。
+如果我们的矩阵为 `A`，那么 ``eigenmatrix_right``
+（相对的为 ``eightmatrix_left``）命令会给出矩阵 `D` 和 `P`，
+使得 `AP=PD`（相对的为 `PA=DP`）。
 
 ::
 
@@ -260,10 +260,10 @@ Sage 提供了一系列完整的函数来计算特征值和左右特征向量以
     sage: eig.sage()
     [[[-I*sqrt(3), I*sqrt(3)], [1, 1]], [[[1, 1/4*I*sqrt(3) + 1/4]], [[1, -1/4*I*sqrt(3) + 1/4]]]]
 
-这告诉我们 :math:`\vec{v}_1 = [1,(\sqrt{3}i + 1)/4]` 是
-:math:`\lambda_1 = - \sqrt{3}i` （重数为 1）的特征向量，
-而 :math:`\vec{v}_2 = [1,(-\sqrt{3}i + 1)/4]` 是
-:math:`\lambda_2 =  \sqrt{3}i` （重数也为 1）的特征向量。
+这告诉我们 `\vec{v}_1 = [1,(\sqrt{3}i + 1)/4]` 是
+`\lambda_1 = - \sqrt{3}i` （重数为 1）的特征向量，
+而 `\vec{v}_2 = [1,(-\sqrt{3}i + 1)/4]` 是
+`\lambda_2 =  \sqrt{3}i` （重数也为 1）的特征向量。
 
 以下是另外两个例子：
 
@@ -323,7 +323,7 @@ Sage 提供了一系列完整的函数来计算特征值和左右特征向量以
 
 特征多项式是一个适用于方阵的 Sage 方法。
 
-首先是 :math:`\ZZ` 上的矩阵：
+首先是 `\ZZ` 上的矩阵：
 
 ::
 
@@ -334,7 +334,7 @@ Sage 提供了一系列完整的函数来计算特征值和左右特征向量以
     sage: f.parent()
     Univariate Polynomial Ring in x over Integer Ring
 
-我们计算一个定义在多项式环 :math:`\ZZ[a]` 上的矩阵的特征多项式：
+我们计算一个定义在多项式环 `\ZZ[a]` 上的矩阵的特征多项式：
 
 ::
 
@@ -355,7 +355,7 @@ Sage 提供了一系列完整的函数来计算特征值和左右特征向量以
     sage: M.determinant()
     a^2
 
-我们计算一个定义在多元多项式环 :math:`\ZZ[u,v]` 上的矩阵的特征多项式：
+我们计算一个定义在多元多项式环 `\ZZ[u,v]` 上的矩阵的特征多项式：
 
 ::
 

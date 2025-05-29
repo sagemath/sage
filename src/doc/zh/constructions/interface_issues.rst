@@ -38,8 +38,8 @@
 将输出写入文件。
 
 (b) 在 KDE konsole 中启动（仅适用于 Linux）。
-进入 ``Settings`` :math:`\rightarrow` ``History ...`` 并选择“无限制”。
-启动你的会话。准备就绪后，进入 ``edit`` :math:`\rightarrow` ``save history as ...``。
+进入 ``Settings`` `\rightarrow` ``History ...`` 并选择“无限制”。
+启动你的会话。准备就绪后，进入 ``edit`` `\rightarrow` ``save history as ...``。
 
 某些接口（如 Singular 或 GAP 的接口）允许你创建日志文件。
 对于 Singular，有一个日志文件选项（在 ``singular.py`` 中）。

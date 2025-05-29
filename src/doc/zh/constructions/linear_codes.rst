@@ -7,7 +7,7 @@
 码
 =====
 
-长度为 :math:`n` 的线性码是 :math:`GF(q)^n` 的有限维子空间。
+长度为 `n` 的线性码是 `GF(q)^n` 的有限维子空间。
 Sage 能够在一定程度上计算线性纠错码。它基本上对 GAP 和 GUAVA 命令进行了一些封装。
 GUAVA 2.8 未包含在 Sage 4.0 的 GAP 安装中，但可以作为可选包安装。
 
@@ -63,7 +63,7 @@ Sage 能够计算汉明 (Hamming) 码
    pair: codes; generator matrix
    pair: codes; dual
 
-对于给定的码 :math:`C`，Sage 可以返回生成矩阵、检验矩阵和对偶码：
+对于给定的码 `C`，Sage 可以返回生成矩阵、检验矩阵和对偶码：
 
 ::
 
@@ -87,9 +87,9 @@ Sage 能够计算汉明 (Hamming) 码
     sage: C.dual_code()
     [21, 3] linear code over GF(4)
 
-对于 :math:`C` 和向量 :math:`v\in GF(q)^n`，
-Sage 可以尝试使用校验子解码 (syndrome decoding) 来解码 :math:`v`
-（即，在汉明度量下找到最接近 :math:`v` 的码字 :math:`c\in C`）。
+对于 `C` 和向量 `v\in GF(q)^n`，
+Sage 可以尝试使用校验子解码 (syndrome decoding) 来解码 `v`
+（即，在汉明度量下找到最接近 `v` 的码字 `c\in C`）。
 到目前为止，尚未实现任何特殊的解码方法。
 
 ::
@@ -135,27 +135,27 @@ Sage 还可以通过 Singular 接口 § sec:agcodes 计算代数几何码，称�
 流密码长期以来一直被用作伪随机数生成器的来源。
 {linear feedback shift register}
 
-S. Golomb {G} 给出了数字序列 :math:`{\bf a}=\{a_n\}_{n=1}^\infty` (:math:`a_n\in \{0,1\}`)
+S. Golomb {G} 给出了数字序列 `{\bf a}=\{a_n\}_{n=1}^\infty` (`a_n\in \{0,1\}`)
 被认为是“随机”的三个统计特征。
-将 :math:`{\bf a}` 的自相关定义为：
+将 `{\bf a}` 的自相关定义为：
 
-.. math::
+.. MATH::
    C(k)=C(k,{\bf a})=\lim_{N\rightarrow \infty}
    \frac{1}{N}\sum_{n=1}^N (-1)^{a_n+a_{n+k}}.
 
-如果 :math:`a` 是周期性的，周期为 :math:`P`，则该公式可以简化为：
+如果 `a` 是周期性的，周期为 `P`，则该公式可以简化为：
 
-.. math::
+.. MATH::
    C(k)=\frac{1}{P}\sum_{n=1}^P (-1)^{a_n+a_{n+k}}
 
-假设 :math:`a` 是周期性的，周期为 :math:`P`。
+假设 `a` 是周期性的，周期为 `P`。
 
 
--  平衡： :math:`|\sum_{n=1}^P(-1)^{a_n}|\leq 1`.
+-  平衡： `|\sum_{n=1}^P(-1)^{a_n}|\leq 1`.
 
 -  低自相关：
 
-   .. math::
+   .. MATH::
       C(k)=
       \left\{
       \begin{array}{cc}
@@ -164,15 +164,15 @@ S. Golomb {G} 给出了数字序列 :math:`{\bf a}=\{a_n\}_{n=1}^\infty` (:math:
       \end{array}
       \right.
 
-   （对于满足头两个特性的序列，已知 :math:`\epsilon=-1/P` 必然成立。）
+   （对于满足头两个特性的序列，已知 `\epsilon=-1/P` 必然成立。）
 
--  比例运行特性：在每个周期中，一半的递推序列长度为 :math:`1`, 四分之一长度为 :math:`2`, 等等。
-   此外，:math:`1` 的递推次数和 :math:`0` 的递推次数相等。
+-  比例运行特性：在每个周期中，一半的递推序列长度为 `1`, 四分之一长度为 `2`, 等等。
+   此外，`1` 的递推次数和 `0` 的递推次数相等。
 
 
 满足这些特性的序列将被称为伪随机数列。{pseudo-random}
 
-一般反馈移位寄存器是一个映射 :math:`f:{\bf F}_q^d\rightarrow {\bf F}_q^d`，形式为：
+一般反馈移位寄存器是一个映射 `f:{\bf F}_q^d\rightarrow {\bf F}_q^d`，形式为：
 
 .. MATH::
 
@@ -182,14 +182,14 @@ S. Golomb {G} 给出了数字序列 :math:`{\bf a}=\{a_n\}_{n=1}^\infty` (:math:
    \end{array}
 
 
-其中 :math:`C:{\bf F}_q^d\rightarrow {\bf F}_q` 是一个给定的函数。当 :math:`C` 形式为：
+其中 `C:{\bf F}_q^d\rightarrow {\bf F}_q` 是一个给定的函数。当 `C` 形式为：
 
 .. MATH::
 
     C(x_0,...,x_{n-1}) = c_0 x_0 + ... + c_{n-1} x_{n-1},
 
-对于某些给定常数 :math:`c_i\in {\bf F}_q`, 该映射被称为线性反馈移位寄存器（LFSR）。
-系数序列 :math:`c_i` 被称为密钥，多项式
+对于某些给定常数 `c_i\in {\bf F}_q`, 该映射被称为线性反馈移位寄存器（LFSR）。
+系数序列 `c_i` 被称为密钥，多项式
 
 .. MATH::
 
@@ -201,16 +201,16 @@ S. Golomb {G} 给出了数字序列 :math:`{\bf a}=\{a_n\}_{n=1}^\infty` (:math:
 有时被称为连接多项式。
 
 
-例如：在 :math:`GF(2)` 上，如果
-:math:`[c_0,c_1,c_2,c_3]=[1,0,0,1]` 则
-:math:`C(x) = 1 + x + x^4`,
+例如：在 `GF(2)` 上，如果
+`[c_0,c_1,c_2,c_3]=[1,0,0,1]` 则
+`C(x) = 1 + x + x^4`,
 
-.. math::x_n = x_{n-4} + x_{n-1},\ \ \ n\geq 4.
+.. MATH::x_n = x_{n-4} + x_{n-1},\ \ \ n\geq 4.
 
 
 那么 LFSR 序列为
 
-.. math::
+.. MATH::
 
    \begin{array}{c}
    1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, \\
@@ -218,8 +218,8 @@ S. Golomb {G} 给出了数字序列 :math:`{\bf a}=\{a_n\}_{n=1}^\infty` (:math:
    \end{array}
 
 
-此 :math:`0,1` 序列是周期性的，周期为 :math:`P=2^4-1=15`，并满足 Golomb 的三个随机性条件。
-然而，这个以 15 为周期的序列可以通过只知道 8 个项被“破解”（即生成 :math:`g(x)` 的过程）！
+此 `0,1` 序列是周期性的，周期为 `P=2^4-1=15`，并满足 Golomb 的三个随机性条件。
+然而，这个以 15 为周期的序列可以通过只知道 8 个项被“破解”（即生成 `g(x)` 的过程）！
 这是 Berlekamp-Massey 算法 {M} 的功能，已通过 ``lfsr_connection_polynomial`` 实现
 （产生 ``berlekamp_massey`` 的反向结果）。
 
@@ -275,7 +275,7 @@ S. Golomb {G} 给出了数字序列 :math:`{\bf a}=\{a_n\}_{n=1}^\infty` (:math:
     sage: e(m)
     EHTTACDNAEHTTAH
 
-其思想是加密系统是一个映射 :math:`E: KS \to \text{Hom}_\text{Set}(MS,CS)`，
-其中 math:`KS`, :math:`MS` 和 :math:`CS` 分别是密钥空间、明文（或消息）空间和密文空间。
-假设 :math:`E` 为单射，所以 ``e.key()`` 返回原像密钥。
+其思想是加密系统是一个映射 `E: KS \to \text{Hom}_\text{Set}(MS,CS)`，
+其中 math:`KS`, `MS` 和 `CS` 分别是密钥空间、明文（或消息）空间和密文空间。
+假设 `E` 为单射，所以 ``e.key()`` 返回原像密钥。
 
