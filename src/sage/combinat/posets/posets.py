@@ -2772,6 +2772,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not self.cardinality():
             return []
+        # precomputation helps for speed:
+        if self.cardinality() > 60:
+            self.lequal_matrix()
+
         H = self._hasse_diagram
         stock = [(x, x, x) for x in H]
         poly = [len(stock)]
