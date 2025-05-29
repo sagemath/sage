@@ -15134,15 +15134,15 @@ class GenericGraph(GenericGraph_pyx):
         from sage.combinat.matrices.dancing_links import dlx_solver
 
         edges = list(self.edges(labels=False))
-        edge_to_column_id = {edge:i for i,edge in enumerate(edges)}
+        edge_to_column_id = {edge:i for i, edge in enumerate(edges)}
 
         rows = set()
         for h in self.subgraph_search_iterator(H, induced=induced, return_graphs=True):
             h_edges = h.edges(labels=False)
             L = sorted(edge_to_column_id[edge] for edge in h_edges)
             rows.add(tuple(L))
-        rows = list(list(row) for row in rows)
         dlx = dlx_solver(rows)
+        rows = dlx.rows()  # the list of rows in the order used by the solver
 
         for solution in dlx.solutions_iterator():
             yield [[edges[j] for j in rows[i]] for i in solution]
