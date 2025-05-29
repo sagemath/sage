@@ -3285,9 +3285,9 @@ def EllipticCurve_with_prime_order(N):
 
     def abs_products_under(bound):
         """
-        This function returns an iterator of all numbers with absolute value not
-        exceeding ``bound`` expressable as product of distinct elements in ``S``
-        in ascending order.
+        This function returns an iterator of all numbers with absolute
+        value not exceeding ``bound`` expressible as product of
+        distinct elements in ``S`` in ascending order.
         """
         import heapq
         hq = [(1, 1, -1)]

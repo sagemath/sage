@@ -589,7 +589,7 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     INPUT:
 
     - ``n`` -- integer; the order of the matrices to be returned
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we have the quadruple
 
     OUTPUT:
@@ -695,7 +695,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
     INPUT:
 
     - ``n`` -- integer; the order of the matrix
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we can do the construction
     - ``check`` -- boolean (default: ``True``); if ``True`` check the result
 
