@@ -420,7 +420,7 @@ class MultizetaValues(Singleton):
         sage: parent(M((2,3,4,5), prec=128))
         Real Field with 128 bits of precision
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         When first called, pre-compute up to weight 8 at precision 1024.
 
@@ -443,7 +443,7 @@ class MultizetaValues(Singleton):
         """
         return f"Cached multiple zeta values at precision {self.prec} up to weight {self.max_weight}"
 
-    def reset(self, max_weight=8, prec=1024):
+    def reset(self, max_weight=8, prec=1024) -> None:
         r"""
         Reset the cache to its default values or to given arguments.
 
@@ -464,7 +464,7 @@ class MultizetaValues(Singleton):
         self.max_weight = int(max_weight)
         self._data = pari.zetamultall(self.max_weight, precision=self.prec)
 
-    def update(self, max_weight, prec):
+    def update(self, max_weight, prec) -> None:
         """
         Compute and store more values if needed.
 
@@ -550,7 +550,7 @@ class MultizetaValues(Singleton):
 Values = MultizetaValues()
 
 
-def extend_multiplicative_basis(B, n) -> Iterator:
+def extend_multiplicative_basis(B, n) -> Iterator[tuple]:
     """
     Extend a multiplicative basis into a basis.
 
@@ -647,7 +647,7 @@ class Multizetas(CombinatorialFreeModule):
         sage: z
         ζ(1,2,3)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -726,7 +726,7 @@ class Multizetas(CombinatorialFreeModule):
         """
         return self([]), self([2]), self([3]), self([4]), self((1, 2))
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of the algebra.
 
@@ -1253,7 +1253,7 @@ class Multizetas(CombinatorialFreeModule):
                 raise TypeError('invalid comparison for multizetas')
             return self.iterated()._richcmp_(other.iterated(), op)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             """
             Return the hash of ``self``.
 
@@ -1404,7 +1404,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         sage: M((1,0))*M((1,0,0))
         6*I(11000) + 3*I(10100) + I(10010)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -2067,7 +2067,7 @@ class All_iterated(CombinatorialFreeModule):
         sage: x.regularise()
         -I(10)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
