@@ -23,7 +23,6 @@ class JupyterNotebookCmd:
             nargs="?",
             const="jupyter",
             choices=["jupyter", "jupyterlab"],
-            default="jupyter",
             help="start the Jupyter notebook server (default: jupyter)",
         )
 
