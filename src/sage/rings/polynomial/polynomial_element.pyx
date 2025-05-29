@@ -66,7 +66,6 @@ import copy
 import re
 from io import StringIO
 
-from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 import sage.rings.rational
 import sage.rings.integer
 import sage.rings.integer_ring
@@ -2837,11 +2836,25 @@ cdef class Polynomial(CommutativePolynomial):
             except TypeError:
                 pass
 
-        # Delegate to coercion model. The line below is basically
-        # RingElement.__truediv__(left, right), except that it also
-        # works if left is not of type RingElement.
-        return wrapperdescr_fastcall(RingElement.__truediv__,
-                left, (right,), <object>NULL)
+        # Try to coerce denominator in numerator parent...
+        if isinstance(right, Polynomial):
+            R = (<Polynomial>right)._parent
+            try:
+                x = R.coerce(left)
+                return x.__truediv__(right)
+            except TypeError:
+                pass
+
+        # ...and numerator in denominator parent
+        if isinstance(left, Polynomial):
+            R = (<Polynomial>left)._parent
+            try:
+                x = R.coerce(right)
+                return left.__truediv__(x)
+            except TypeError:
+                pass
+
+        return NotImplemented
 
     def __pow__(left, right, modulus):
         """
