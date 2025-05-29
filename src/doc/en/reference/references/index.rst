@@ -1415,6 +1415,11 @@ REFERENCES:
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
 
+.. [Buell89] Duncan A. Buell.
+             *Binary Quadratic Forms: Classical Theory and Modern Computations.*
+             Springer, 1989.
+             :doi:`https://doi.org/10.1007/978-1-4612-4542-1`
+
 .. [BV2004] Jean-Luc Baril, Vincent Vajnovszki. *Gray code for derangements*.
             Discrete Applied Math. 140 (2004)
             :doi:`10.1016/j.dam.2003.06.002`
