@@ -343,8 +343,9 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             f = f.truncate(degree_bound + 1)
 
         try:
-            if f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())!= 0:
-                return f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
+            reduction = f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
+            if reduction != 0:
+                return reduction
             raise ValueError("Cannot reduce element with finite valuation; use reduce_to_unit instead")
         except Exception:
             if check and not all(v >= 0 for v in self.valuations(f)):
