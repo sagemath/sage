@@ -3148,7 +3148,7 @@ class DiGraph(GenericGraph):
         .. SEEALSO::
 
             - :meth:`all_simple_cycles`
-            - :math:`~sage.graphs.path_enumeration.shortest_simple_paths`
+            - :meth:`~sage.graphs.path_enumeration.shortest_simple_paths`
 
         AUTHOR:
 
