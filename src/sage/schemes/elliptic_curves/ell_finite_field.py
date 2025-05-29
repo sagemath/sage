@@ -1347,7 +1347,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
-    def has_order(self, value, num_checks=8):
+    def has_order(self, value, num_checks=8) -> bool:
         r"""
         Return ``True`` if the curve has order ``value``.
 

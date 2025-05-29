@@ -3123,7 +3123,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return None
         return self._vertex_to_element(hasse_bot)
 
-    def has_bottom(self):
+    def has_bottom(self) -> bool:
         """
         Return ``True`` if the poset has a unique minimal element, and
         ``False`` otherwise.
@@ -3178,7 +3178,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             return None
         return self._vertex_to_element(hasse_top)
 
-    def has_top(self):
+    def has_top(self) -> bool:
         """
         Return ``True`` if the poset has a unique maximal element, and
         ``False`` otherwise.

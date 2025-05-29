@@ -373,12 +373,12 @@ class FullyCommutativeElement(NormalizedClonableList):
         """
         m = self.parent().coxeter_group().coxeter_matrix()
         view = list(self) if side == 'left' else self[::-1]
-        for (i, t) in enumerate(view):
+        for i, t in enumerate(view):
             if t == s and not any(m[x, t] > 2 for x in view[:i]):
                 return i
         return None
 
-    def has_descent(self, s, side='left'):
+    def has_descent(self, s, side='left') -> bool:
         r"""
         Determine if ``s`` is a descent on the appropriate side of ``self``.
 
