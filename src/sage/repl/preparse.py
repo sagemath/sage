@@ -1124,8 +1124,9 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
       name-construction pairs
 
     - ``quotes`` -- string (default: ``"'"``); used to surround string
-      arguments to RealNumber and ComplexNumber. If ``None``, will rebuild
-      the string using a list of its Unicode code-points.
+      arguments to RealNumber and ComplexNumber, and Integer when the
+      number is longer than 4300 digits. If ``None``, will rebuild the
+      string using a list of its Unicode code-points.
 
     OUTPUT:
 
@@ -1188,6 +1189,12 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'Integer(42)'
         sage: preparse_numeric_literals('000042')
         'Integer(42)'
+        sage: preparse_numeric_literals("1" * 4300) == f"Integer({"1" * 4300})"
+        True
+        sage: preparse_numeric_literals("1" * 4301) == f"Integer({"1" * 4301})"
+        False
+        sage: preparse_numeric_literals("1" * 4301) == f"Integer('{"1" * 4301}')"
+        True
 
     Test underscores as digit separators (PEP 515,
     https://www.python.org/dev/peps/pep-0515/)::
@@ -1253,6 +1260,10 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'RealNumber(str().join(map(chr, [51, 46, 49, 52])))'
         sage: preparse_numeric_literals('5j', quotes=None)
         'ComplexNumber(0, str().join(map(chr, [53])))'
+        sage: preparse_numeric_literals("1" * 4301, quotes=None) == f'Integer(str().join(map(chr, {[49] * 4301})))'
+        True
+        sage: preparse_numeric_literals("1" * 4301, quotes="'''") == f"Integer('''{"1" * 4301}''')"
+        True
     """
     literals = {}
     last = 0
