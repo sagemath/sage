@@ -394,6 +394,10 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
 
         # extract structural coefficients from the free Lie algebra
         s_coeff = {}
+        ls_cache = {W: W.leading_support()
+                    for d, bd in basis_by_deg.items()
+                    if d <= s
+                    for _, W in bd}
         for dx in range(1, s + 1):
             # Brackets are only computed when deg(X) + deg(Y) <= s
             # We also require deg(Y) >= deg(X) by the ordering
@@ -404,14 +408,14 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
                         for Y_ind, Y in basis_by_deg[dy][i + 1:]:
                             Z = L[X, Y]
                             if not Z.is_zero():
-                                s_coeff[(X_ind, Y_ind)] = {W_ind: Z[W.leading_support()]
+                                s_coeff[(X_ind, Y_ind)] = {W_ind: Z[ls_cache[W]]
                                                            for W_ind, W in basis_by_deg[dx + dy]}
                 else:
                     for X_ind, X in basis_by_deg[dx]:
                         for Y_ind, Y in basis_by_deg[dy]:
                             Z = L[X, Y]
                             if not Z.is_zero():
-                                s_coeff[(X_ind, Y_ind)] = {W_ind: Z[W.leading_support()]
+                                s_coeff[(X_ind, Y_ind)] = {W_ind: Z[ls_cache[W]]
                                                            for W_ind, W in basis_by_deg[dx + dy]}
 
         names, index_set = standardize_names_index_set(names, index_set)
