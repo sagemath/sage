@@ -1138,6 +1138,7 @@ class LazySpecies(LazyCompletionGradedAlgebra):
             self.Polygons = lambda: PolygonSpecies(self)
             self.OrientedSets = lambda: OrientedSetSpecies(self)
 
+
 class PolygonSpecies(LazySpeciesElement):
     def __init__(self, parent):
         r"""
