@@ -398,7 +398,7 @@ class AtomicSpeciesElement(WithEqualityById,
         cosets of corresponding groups.
 
         The relabelling is such that the first few labels correspond
-        to the first factor in the atomic decomposition, etc.
+        to the first sort, etc.
 
         EXAMPLES::
 
