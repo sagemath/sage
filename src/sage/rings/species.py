@@ -2345,6 +2345,79 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 for e, s in cartesian_product([range(c), M.structures(*labels)]):
                     yield M, s, e
 
+    def action(self, n):
+        r"""
+        Return `F` as a right action of `S_n` on `1,\dots,|F[n]|`.
+
+        EXAMPLES::
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P.<X> = PolynomialSpecies(QQ)
+            sage: n = 3; F = X^n
+            sage: Fn = range(1, 1+len(list(F.structures(range(n)))))
+            sage: a, d = F.action(n)
+            sage: P((Fn, a), {0: range(1, n+1)}) == F
+            True
+
+            sage: n = 3; F = P(SymmetricGroup(n))
+            sage: Fn = range(1, 1+len(list(F.structures(range(n)))))
+            sage: a, d = F.action(n)
+            sage: P((Fn, a), {0: range(1, n+1)}) == F
+            True
+
+            sage: n = 3; F = X*P(SymmetricGroup(n-1));
+            sage: Fn = range(1, 1+len(list(F.structures(range(n)))))
+            sage: a, d = F.action(n)
+            sage: P((Fn, a), {0: range(1, n+1)}) == F
+            True
+
+            sage: n = 4; F = P(SymmetricGroup(2))(P(SymmetricGroup(2)))
+            sage: Fn = range(1, 1+len(list(F.structures(range(n)))))
+            sage: a, d = F.action(n)
+            sage: P((Fn, a), {0: range(1, n+1)}) == F
+            True
+
+            sage: n = 6; F = P(SymmetricGroup(2))(P(SymmetricGroup(3)))
+            sage: Fn = range(1, 1+len(list(F.structures(range(n)))))
+            sage: a, d = F.action(n)
+            sage: P((Fn, a), {0: range(1, n+1)}, check=False) == F
+            True
+
+            sage: n = 4; F = P(SymmetricGroup(2))(P(SymmetricGroup(2))) + X^4
+            sage: Fn = range(1, 1+len(list(F.structures(range(n)))))
+            sage: a, d = F.action(n)
+            sage: P((Fn, a), {0: range(1, n+1)}, check=False) == F
+            True
+        """
+        Fn = self.homogeneous_component(n)
+        S = SymmetricGroup(n)
+        structures = [(F_mol, c,
+                       libgap.RightTransversal(S,
+                                               F_mol.permutation_group()[0]))
+                      for F_mol, c in Fn.monomial_coefficients().items()]
+
+        index_to_structure = dict()
+        i = 1
+        for F_mol, c, R in structures:
+            for j in range(c):
+                for k, s in enumerate(R, 1):
+                    index_to_structure[i] = (F_mol, j, k, s, R)
+                    k1 = libgap.PositionCanonical(R, s)
+                    assert k1 == k, f"The position of {s} in {R} should be {k} but is {k1}"
+                    i += 1
+        structure_to_index = {s[:3]: i for i, s in index_to_structure.items()}
+
+        N = len(index_to_structure)
+
+        def a(i, pi):
+            assert 1 <= i <= N, f"we should have 1 <= {i} <= |F[{n}]|={N}, and pi={pi} in S_{n}"
+            # compute F[pi](i)
+            F_mol, j, k, s, R = index_to_structure[i]
+            return structure_to_index[(F_mol, j,
+                                       int(libgap.PositionCanonical(R, libgap.OnRight(s, pi))))]
+
+        return a, index_to_structure
+
 
 class PolynomialSpecies(CombinatorialFreeModule):
     r"""

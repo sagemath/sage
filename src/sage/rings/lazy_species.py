@@ -843,6 +843,47 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         F.define(P(coefficient))
         return F
 
+    def functorial_composition(self, *args):
+        r"""
+        Return the functorial composition of `F` and `G`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: F = L.Cycles()
+            sage: G = X^3
+            sage: F.functorial_composition(G)
+            (3*C_3+8*X*E_2+15*X^3) + O^7
+
+        Graphs::
+
+            sage: E = L.Sets()
+            sage: subsets = E^2
+            sage: pairs = E*E.restrict(2, 2)
+            sage: G = subsets.functorial_composition(pairs)
+            sage: G[5] - L.Graphs()[5]
+            0
+
+        Coverings::
+
+            sage: E = L.Sets()
+            sage: p = E^2
+            sage: pp = E * E.restrict(1)
+            sage: CovE = p.functorial_composition(pp)
+            sage: CovE.isotype_generating_series().truncate(5)  # long time
+            1 + 2*X + 6*X^2 + 40*X^3 + 1992*X^4
+            sage: oeis(CovE.isotype_generating_series()[:5])  # long time, optional -- internet
+            0: A000612: Number of P-equivalence classes of switching functions of n or fewer variables, divided by 2.
+
+
+            sage: Cov = CovE * E.inverse()
+            sage: Cov.isotype_generating_series().truncate(5)  # long time
+            1 + X + 4*X^2 + 34*X^3 + 1952*X^4
+            sage: oeis(Cov.isotype_generating_series()[:5])  # long time, optional -- internet
+            0: A055621: Number of covers of an unlabeled n-set.
+        """
+        return FunctorialCompositionSpeciesElement(self, *args)
+
 
 class LazySpeciesElement_generating_series_mixin:
     r"""
@@ -1131,6 +1172,56 @@ class CompositionSpeciesElement(LazySpeciesElement):
                 F_s = F.structures(*[[tuple(b) for b in chi_inv[i]] for i in range(m)])
                 G_s = [G[i].structures(*split_set(C)) for i in range(m) for C in chi_inv[i]]
                 yield from itertools.product(F_s, itertools.product(*G_s))
+
+
+class FunctorialCompositionSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, *args):
+        r"""
+        Initialize the functorial composition of species.
+
+        TESTS::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: E = L.Sets()
+            sage: subsets = E^2
+            sage: pairs = E*E.restrict(2, 2)
+            sage: G = subsets.functorial_composition(pairs)
+            sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+        """
+        fP = left.parent()
+        # Find a good parent for the result
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
+
+        args = [P(g) for g in args]
+        if len(args) > 1:
+            raise NotImplementedError("multisort functorial composition is not yet implemented")
+
+        R = P._internal_poly_ring.base_ring()
+
+        def coefficient(n):
+            G = args[0][n]
+            a, d = G.action(n) # a(i, pi) with 1 <= i <= N and pi in S_n
+            N = len(d)
+            S = SymmetricGroup(N)
+            F = left[N]
+            b, e = F.action(N) # b(i, pi) with 1 <= i <= G[N] and pi in S_N
+            M = len(e)
+
+            def c(i, pi):
+                # pi in S_n
+                # 1 <= i <= F[G[n]] = F[N]
+                G_pi = S([a(j, pi) for j in range(1, N+1)])
+                return b(i, G_pi)
+
+            return R((range(1, M+1), c), {0: list(range(1, n+1))},
+                     check=False)
+
+        coeff_stream = Stream_function(coefficient, P._sparse, 0)
+        super().__init__(P, coeff_stream)
+        self._left = left
+        self._args = args
 
 
 class LazySpecies(LazyCompletionGradedAlgebra):
