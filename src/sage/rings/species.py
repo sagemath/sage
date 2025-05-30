@@ -400,7 +400,7 @@ class AtomicSpeciesElement(WithEqualityById,
         cosets of corresponding groups.
 
         The relabelling is such that the first few labels correspond
-        to the first factor in the atomic decomposition, etc.
+        to the first sort, etc.
 
         EXAMPLES::
 
@@ -948,7 +948,13 @@ def _stabilizer_subgroups(G, X, a, side='right', check=True):
         sage: X = [1, 2, 3]
         sage: _stabilizer_subgroups(G, X, lambda pi, x: pi(x), side='left')
         [Permutation Group with generators [(2,3)]]
+
+    Be warned that the product in permutation groups is left-to-right composition::
+
         sage: _stabilizer_subgroups(G, X, lambda x, pi: pi(x), side='right')
+        [Permutation Group with generators [(2,3)]]
+
+        sage: _stabilizer_subgroups(G, X, lambda x, pi: pi.inverse()(x), side='right')
         Traceback (most recent call last):
         ...
         ValueError: The given function is not a right group action: g=(1,3,2), h=(2,3), x=1 do not satisfy the condition
@@ -972,7 +978,7 @@ def _stabilizer_subgroups(G, X, a, side='right', check=True):
     elif side == "right":
         if check:
             for g, h, x in product(G, G, X):
-                if not a(x, h * g) == a(a(x, g), h):
+                if not a(x, h * g) == a(a(x, h), g):
                     raise ValueError(f"The given function is not a right group action: g={g}, h={h}, x={x} do not satisfy the condition")
 
         g_orbits = [orbit_decomposition(X_set, lambda x: a(x, g))

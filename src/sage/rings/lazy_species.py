@@ -14,61 +14,60 @@ AUTHORS:
 
 EXAMPLES:
 
-    We can reproduce the molecular expansions from Appendix B in
-    [GL2011]_ with little effort.  The molecular expansion of the
-    species of point determining graphs can be computed as the
-    species of graphs composed with the compositional inverse of the
-    species of non-empty sets.::
+We can reproduce the molecular expansions from Appendix B in
+[GL2011]_ with little effort.  The molecular expansion of the
+species of point determining graphs can be computed as the
+species of graphs composed with the compositional inverse of the
+species of non-empty sets::
 
-        sage: L.<X> = LazySpecies(QQ)
-        sage: E = L.Sets()
-        sage: Ep = E.restrict(1)
-        sage: G = L.Graphs()
+    sage: L.<X> = LazySpecies(QQ)
+    sage: E = L.Sets()
+    sage: Ep = E.restrict(1)
+    sage: G = L.Graphs()
 
-    The molecular decomposition begins with::
+The molecular decomposition begins with::
 
-        sage: P = G(Ep.revert())
-        sage: P.truncate(6)
-        1 + X + E_2 + (E_3+X*E_2) + (E_4+X*E_3+E_2(E_2)+X^2*E_2+E_2(X^2))
-        + (E_5+E_2*E_3+X*E_4+X*E_2^2+X^2*E_3+2*X*E_2(E_2)+P_5+5*X*E_2(X^2)+3*X^3*E_2)
+    sage: P = G(Ep.revert())
+    sage: P.truncate(6)
+    1 + X + E_2 + (E_3+X*E_2) + (E_4+X*E_3+E_2(E_2)+X^2*E_2+E_2(X^2))
+    + (E_5+E_2*E_3+X*E_4+X*E_2^2+X^2*E_3+2*X*E_2(E_2)+P_5+5*X*E_2(X^2)+3*X^3*E_2)
 
-    Note that [GL2011]_ write `D_5` instead of `P_5`, and there is
-    apparently a misprint: `X*E_2(E_2) + 4 X^3 E_2` should be `2 X
-    E_2(E_2) + 3 X^3 E_2`.
+Note that [GL2011]_ write `D_5` instead of `P_5`, and there is
+apparently a misprint: `X*E_2(E_2) + 4 X^3 E_2` should be `2 X
+E_2(E_2) + 3 X^3 E_2`.
 
-    To compute the molecular decomposition of the species of
-    connected graphs with no endpoints, we use Equation (3.3) in
-    [GL2011]_.  Before that we need to define the species of
-    connected graphs::
+To compute the molecular decomposition of the species of
+connected graphs with no endpoints, we use Equation (3.3) in
+[GL2011]_.  Before that we need to define the species of
+connected graphs::
 
-        sage: Gc = Ep.revert()(G-1)
-        sage: E_2 = L(SymmetricGroup(2))
-        sage: Mc = Gc(X*E(-X)) + E_2(-X)
-        sage: E(Mc).truncate(5)
-        1 + X + E_2 + 2*E_3 + (2*E_4+E_2(E_2)+E_2^2+X*E_3)
+    sage: Gc = Ep.revert()(G-1)
+    sage: E_2 = L(SymmetricGroup(2))
+    sage: Mc = Gc(X*E(-X)) + E_2(-X)
+    sage: E(Mc).truncate(5)
+    1 + X + E_2 + 2*E_3 + (2*E_4+E_2(E_2)+E_2^2+X*E_3)
 
-    Note that [GL2011]_ apparently contains a misprint: `2 X E_3`
-    should be `X E_3 + E_2^2`.  Indeed, the graphs on four vertices
-    without endpoints are the complete graph and the empty graph, the
-    square, the diamond graph and the triangle with an extra isolated
-    vertex.
+Note that [GL2011]_ apparently contains a misprint: `2 X E_3`
+should be `X E_3 + E_2^2`.  Indeed, the graphs on four vertices
+without endpoints are the complete graph and the empty graph, the
+square, the diamond graph and the triangle with an extra isolated
+vertex.
 
+To compute the molecular decomposition of the species of
+bi-point-determining graphs we use Corollary (4.6) in
+[GL2011]_::
 
-    To compute the molecular decomposition of the species of
-    bi-point-determining graphs we use Corollary (4.6) in
-    [GL2011]_::
-
-        sage: B = G(2*Ep.revert() - X)
-        sage: B.truncate(6)
-        1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
-
+    sage: B = G(2*Ep.revert() - X)
+    sage: B.truncate(6)
+    1 + X + E_2(X^2) + (P_5+5*X*E_2(X^2))
 """
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.lazy_series import LazyCompletionGradedAlgebraElement, LazyModuleElement
+from sage.rings.lazy_series import (LazyCompletionGradedAlgebraElement,
+                                    LazyModuleElement)
 from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
                                          LazyPowerSeriesRing,
                                          LazySymmetricFunctions)
@@ -81,12 +80,17 @@ from sage.categories.tensor import tensor
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.subset import subsets
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.combinat.partition import Partitions, Partition
+from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup, CyclicPermutationGroup
+from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
+                                                  CyclicPermutationGroup,
+                                                  DihedralGroup,
+                                                  SymmetricGroup)
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import parent
+from sage.structure.unique_representation import UniqueRepresentation
 import itertools
 from collections import defaultdict
 
@@ -99,11 +103,11 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
 
     INPUT:
 
-    - ``n`` -- a nonnegative integer, the sum of the parts
-    - ``d`` -- a nonnegative integer, the total weight
-    - ``weight_multiplicities`` -- an iterable,
+    - ``n`` -- nonnegative integer; the sum of the parts
+    - ``d`` -- nonnegative integer; the total weight
+    - ``weight_multiplicities`` -- iterable;
       ``weight_multiplicities[i]`` is the number of positions with
-      weight `i+1`.
+      weight ``i+1``
 
     .. TODO::
 
@@ -131,7 +135,6 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
          [2, 0, 0, 1],
          [1, 1, 0, 1],
          [0, 2, 0, 1]]
-
     """
     # the empty composition exists if and only if n == d == 0
     if not n:
@@ -150,10 +153,11 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
         pass
     if _w0 > d:
         return
+    from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
     for s in range(n + 1):
         for c in weighted_compositions(n - s, d - s * (_w0 + 1), weight_multiplicities, _w0=_w0+1):
             m = weight_multiplicities[_w0]
-            for v in map(list, IntegerVectors(s, length=m)):
+            for v in IntegerListsBackend_invlex(s, length=m)._iter():
                 yield v + c
 
 
@@ -189,7 +193,8 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
          ([0, 3], [0, 1])]
     """
     k = len(n_vec)
-    for d_vec in IntegerVectors(d, length=k):
+    from sage.combinat.integer_lists.invlex import IntegerListsBackend_invlex
+    for d_vec in IntegerListsBackend_invlex(d, length=k)._iter():
         yield from itertools.product(*map(weighted_compositions,
                                           n_vec, d_vec,
                                           weight_multiplicities_vec))
@@ -204,7 +209,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
     Compute the molecular expansion of `E(-X)`::
 
         sage: L = LazySpecies(ZZ, "X")
-        sage: E = L(lambda n: SymmetricGroup(n))
+        sage: E = L(SymmetricGroup)
         sage: E_inv = 1 / E
         sage: E_inv
         1 + (-X) + (-E_2+X^2) + (-E_3+2*X*E_2-X^3)
@@ -228,11 +233,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: E.isotype_generating_series()
             1 + X + X^2 + X^3 + X^4 + X^5 + X^6 + O(X^7)
 
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L(CyclicPermutationGroup, valuation=1)
             sage: E(C).isotype_generating_series()
             1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
 
@@ -274,7 +279,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E.generating_series()
             1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
 
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L.Cycles()
             sage: C.generating_series()
             X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
 
@@ -321,7 +326,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             h[] + h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + O^7
 
             sage: s = SymmetricFunctions(QQ).s()
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L.Cycles()
             sage: s(C.cycle_index_series()[5])
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
 
@@ -380,13 +385,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
-            sage: F = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
-            sage: list((E+F).structures([1,2,3]))
-            [(E_3, ((1, 2, 3),)), (E_3, ((1, 2, 3),))]
-
+            sage: list((E+E).structures([1,2,3]))
+            [((E_3, ((1, 2, 3),)), 'left'), ((E_3, ((1, 2, 3),)), 'right')]
         """
         return SumSpeciesElement(self, other)
 
@@ -397,7 +400,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: sorted((E^2).structures([1,2,3]))
             [((1, ()), (E_3, ((1, 2, 3),))),
              ((X, ((1,),)), (E_2, ((2, 3),))),
@@ -424,12 +427,12 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
 
-            sage: P = L(lambda n: CyclicPermutationGroup(n))
-            sage: list(P.structures([1,2,3]))
+            sage: C = L(CyclicPermutationGroup, valuation=1)
+            sage: list(C.structures([1,2,3]))
             [(C_3, ((1, 2, 3),)), (C_3, ((1, 3, 2),))]
 
             sage: F = 1/(2-E)
@@ -466,7 +469,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         yield from self[sum(map(len, labels))].structures(*labels)
 
-    def _test_structures(self, tester=None):
+    def _test_structures(self, tester=None, max_size=4, **options):
         r"""
         Check that structures and generating series are consistent.
 
@@ -480,22 +483,28 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: XY = L(P(PermutationGroup([], domain=[1, 2, 3]), {0: [1], 1: [2, 3]}))
             sage: XY._test_structures()
         """
-        n = 3
+        if tester is None:
+            tester = self._tester(**options)
         P = self.parent()
-        if P._arity == 1:
-            labels = list(range(n))
-            s = list(self.structures(labels))
-            assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
-            coeff = self.generating_series()[n]
-            assert len(s) / factorial(n) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
-        else:
-            label_shapes = IntegerVectors(n, length=P._arity)
-            for shape in label_shapes:
-                labels = [list(range(k)) for k in shape]
-                s = list(self.structures(*labels))
-                assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
-                coeff = self.generating_series()[n].coefficient(list(shape))
-                assert len(s) / ZZ.prod(factorial(k) for k in shape) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
+        for n in range(max_size):
+            if P._arity == 1:
+                labels = list(range(n))
+                s = list(self.structures(labels))
+                tester.assertEqual(len(s), len(set(s)),
+                                   f"structures for {labels} are {s}, which is not a set")
+                coeff = self.generating_series()[n]
+                tester.assertEqual(len(s) / factorial(n), coeff,
+                                   f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}")
+            else:
+                label_shapes = IntegerVectors(n, length=P._arity)
+                for shape in label_shapes:
+                    labels = [list(range(k)) for k in shape]
+                    s = list(self.structures(*labels))
+                    tester.assertEqual(len(s), len(set(s)), f"structures for {labels} are {s}, which is not a set")
+                    coeff = self.generating_series()[n].coefficient(list(shape))
+                    tester.assertEqual(len(s) / ZZ.prod(factorial(k) for k in shape),
+                                       coeff,
+                                       f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}")
 
     def isotypes(self, *shape):
         r"""
@@ -507,11 +516,11 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(QQ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: list(E.isotypes(3))
             [(E_3,)]
 
-            sage: P = L(lambda n: CyclicPermutationGroup(n))
+            sage: P = L(CyclicPermutationGroup, valuation=1)
             sage: list(P.isotypes(3))
             [(C_3,)]
 
@@ -544,7 +553,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 for e in range(c):
                     yield (M, e)
 
-    def _test_isotypes(self, tester=None):
+    def _test_isotypes(self, tester=None, max_size=4, **options):
         r"""
         Check that isotypes and generating series are consistent.
 
@@ -554,32 +563,38 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
-            sage: XY._test_isotypes()
+            sage: XY._test_isotypes(max_size=5)
         """
-        n = 3
+        if tester is None:
+            tester = self._tester(**options)
         P = self.parent()
-        if P._arity == 1:
-            s = list(self.isotypes(n))
-            assert len(s) == len(set(s)), f"isotypes for {n} are {s}, which is not a set"
-            coeff = self.isotype_generating_series()[n]
-            assert len(s) == coeff, f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}"
-        else:
-            shapes = IntegerVectors(n, length=P._arity)
-            for shape in shapes:
-                s = list(self.isotypes(*shape))
-                assert len(s) == len(set(s)), f"isotypes for {shape} are {s}, which is not a set"
-                coeff = self.isotype_generating_series()[n].coefficient(list(shape))
-                assert len(s) == coeff, f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}"
+        for n in range(max_size):
+            if P._arity == 1:
+                s = list(self.isotypes(n))
+                tester.assertEqual(len(s), len(set(s)),
+                                   f"isotypes for {n} are {s}, which is not a set")
+                coeff = self.isotype_generating_series()[n]
+                tester.assertEqual(len(s), coeff,
+                                   f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}")
+            else:
+                shapes = IntegerVectors(n, length=P._arity)
+                for shape in shapes:
+                    s = list(self.isotypes(*shape))
+                    tester.assertEqual(len(s), len(set(s)),
+                                       f"isotypes for {shape} are {s}, which is not a set")
+                    coeff = self.isotype_generating_series()[n].coefficient(list(shape))
+                    tester.assertEqual(len(s), coeff,
+                                       f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}")
 
     def polynomial(self, degree=None, names=None):
         r"""
-        Return ``self`` as a polynomial if ``self`` is actually so.
+        Return ``self`` as a polynomial if ``self`` is actually so or up to
+        specified degree.
 
         INPUT:
 
-        - ``degree`` -- ``None`` or an integer
-        - ``names`` -- names of the variables; if it is ``None``, the name of
-          the variables of the series is used
+        - ``degree`` -- (optional) integer
+        - ``names`` -- (default: name of the variables of the series) names of the variables
 
         OUTPUT:
 
@@ -591,7 +606,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         EXAMPLES::
 
             sage: L = LazySpecies(ZZ, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
+            sage: E = L(SymmetricGroup)
             sage: E.polynomial(3)
             1 + X + E_2 + E_3
         """
@@ -614,30 +629,22 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
     def __call__(self, *args):
         """
+        Evaluate ``self`` at ``*args``.
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L.<X> = LazySpecies(QQ)
             sage: E2 = L(SymmetricGroup(2))
             sage: E2(E2)
             E_2(E_2) + O^11
 
-            sage: from sage.rings.species import PolynomialSpecies
-            sage: P = PolynomialSpecies(QQ, "X")
-            sage: Gc = L(lambda n: sum(P(G.automorphism_group()) for G in graphs(n) if G.is_connected()) if n else 0)
-            sage: E = L.Sets()
-            sage: G = L.Graphs()
-            sage: E(Gc) - G
-            O^7
-
-            sage: L.<X> = LazySpecies(QQ)
             sage: E = L.Sets()
             sage: A = L.undefined(1)
             sage: A.define(X*E(A))
             sage: A[5]
             X*E_4 + X^2*E_3 + 3*X^3*E_2 + X*E_2(X^2) + 3*X^5
 
-            sage: C = L(lambda n: CyclicPermutationGroup(n) if n else 0)
+            sage: C = L.Cycles()
             sage: F = E(C(A))
             sage: [sum(F[n].monomial_coefficients().values()) for n in range(1, 7)]
             [1, 3, 7, 19, 47, 130]
@@ -647,8 +654,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: R.<q> = QQ[]
             sage: L = LazySpecies(R, "X")
-            sage: E = L(lambda n: SymmetricGroup(n))
-            sage: E1 = L(lambda n: SymmetricGroup(n) if n else 0)
+            sage: E = L.Sets()
+            sage: E1 = E.restrict(1)
             sage: E(q*E1)[4]
             (q^4+q)*E_4 + q^2*E_2(E_2) + q^2*X*E_3 + q^3*E_2^2
 
@@ -660,6 +667,14 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             X + E_2 + O^8
             sage: E2(X + E2)
             E_2 + X*E_2 + E_2(E_2) + O^9
+
+            sage: from sage.rings.species import PolynomialSpecies
+            sage: P = PolynomialSpecies(QQ, "X")
+            sage: Gc = L(lambda n: sum(P(G.automorphism_group()) for G in graphs(n) if G.is_connected()) if n else 0)
+            sage: E = L.Sets()
+            sage: G = L.Graphs()
+            sage: E(Gc) - G
+            O^7
 
             sage: (1+E2)(X)
             1 + E_2 + O^7
@@ -811,6 +826,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             return (-1)**(len(mu)-1) * multinomial(mu.to_exp()) / len(mu)
 
         F = P.undefined()
+
         def coefficient(n):
             if not n:
                 return 0
@@ -843,7 +859,7 @@ class LazySpeciesElement_generating_series_mixin:
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L = LazySpecies(QQ, "X")
             sage: L.Graphs().isotype_generating_series().truncate(8)
             1 + X + 2*X^2 + 4*X^3 + 11*X^4 + 34*X^5 + 156*X^6 + 1044*X^7
 
@@ -867,7 +883,7 @@ class LazySpeciesElement_generating_series_mixin:
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L = LazySpecies(QQ, "X")
             sage: L.Graphs().generating_series().truncate(7)
             1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
         """
@@ -875,7 +891,7 @@ class LazySpeciesElement_generating_series_mixin:
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
-        return L(lambda n: cis[n].coefficient(Partition([1]*n)))
+        return L(lambda n: cis[n].coefficient(_Partitions([1]*n)))
 
 
 class SumSpeciesElement(LazySpeciesElement):
@@ -903,16 +919,16 @@ class SumSpeciesElement(LazySpeciesElement):
             sage: L = LazySpecies(QQ, "X")
             sage: F = L.Sets() + L.SetPartitions()
             sage: list(F.structures([1,2,3]))
-            [(1, 2, 3),
-             {{1, 2, 3}},
-             {{1, 2}, {3}},
-             {{1, 3}, {2}},
-             {{1}, {2, 3}},
-             {{1}, {2}, {3}}]
+            [((1, 2, 3), 'left'),
+             ({{1, 2, 3}}, 'right'),
+             ({{1, 2}, {3}}, 'right'),
+             ({{1, 3}, {2}}, 'right'),
+             ({{1}, {2, 3}}, 'right'),
+             ({{1}, {2}, {3}}, 'right')]
         """
         labels = _label_sets(self.parent()._arity, labels)
-        yield from self._left.structures(*labels)
-        yield from self._right.structures(*labels)
+        yield from ((s, 'left') for s in self._left.structures(*labels))
+        yield from ((s, 'right') for s in self._right.structures(*labels))
 
 
 class ProductSpeciesElement(LazySpeciesElement):
@@ -970,16 +986,16 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
         TESTS::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: P.zero()(X)
+            sage: L.<X> = LazySpecies(QQ)
+            sage: L.zero()(X)
             0
-            sage: X(P.zero())
+            sage: X(L.zero())
             0
-            sage: (1+X)(P.zero())
+            sage: (1+X)(L.zero())
             1
 
-            sage: L.<X,Y> = LazySpecies(QQ)
-            sage: F = P.Sets()(X + 2*Y)
+            sage: L2.<X,Y> = LazySpecies(QQ)
+            sage: F = L.Sets()(X + 2*Y)
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
         fP = left.parent()
@@ -1037,7 +1053,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
                         multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
                                           for d, (_, c) in zip(alpha, g_flat) if d]
                         molecules = [M for alpha, g_flat in zip(degrees, args_flat)
-                                          for d, (M, _) in zip(alpha, g_flat) if d]
+                                     for d, (M, _) in zip(alpha, g_flat) if d]
                         non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
                         names = ["X%s" % i for i in range(len(molecules))]
                         FX = F._compose_with_weighted_singletons(names,
@@ -1118,9 +1134,6 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
 
 class LazySpecies(LazyCompletionGradedAlgebra):
-    """
-    The ring of combinatorial species.
-    """
     Element = LazySpeciesElement
 
     @staticmethod
@@ -1128,14 +1141,16 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         """
         Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: LazySpecies(QQ, "X")
-            Lazy completion of Polynomial species in X over Rational Field
+            sage: LazySpecies(QQ, "X") is LazySpecies(QQ, "X")
+            True
         """
         from sage.structure.category_object import normalize_names
         names = normalize_names(-1, names)
-        return super().__classcall__(cls, base_ring, names, sparse)
+        if len(names) == 1:
+            return LazySpeciesUnivariate(base_ring, names, sparse)
+        return LazySpeciesMultivariate(base_ring, names, sparse)
 
     def _first_ngens(self, n):
         r"""
@@ -1147,7 +1162,7 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         EXAMPLES::
 
-            sage: P.<X, Y> = LazySpecies(QQ)  # indirect doctest
+            sage: L.<X, Y> = LazySpecies(QQ)  # indirect doctest
             sage: 1/(1-X-Y)
             1 + (X+Y) + (X^2+2*X*Y+Y^2) + (X^3+3*X^2*Y+3*X*Y^2+Y^3)
              + (X^4+4*X^3*Y+6*X^2*Y^2+4*X*Y^3+Y^4)
@@ -1158,18 +1173,35 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
     def __init__(self, base_ring, names, sparse):
         r"""
-        Initialize the ring of lazy species.
+        The ring of lazy species.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        We provide univariate and multivariate (mostly known as
+        multisort) species::
+
+            sage: LazySpecies(QQ, "X")
+            Lazy completion of Polynomial species in X over Rational Field
 
             sage: LazySpecies(QQ, "X, Y")
             Lazy completion of Polynomial species in X, Y over Rational Field
 
+        In the univariate case, several basic species are provided as
+        methods::
+
             sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Graphs()
-            sage: P = L.SetPartitions()
-            sage: S = L.Sets()
-            sage: C = L.Cycles()
+            sage: L.Sets()
+            Set species
+            sage: L.Cycles()
+            Cycle species
+            sage: L.OrientedSets()
+            Oriented Set species
+            sage: L.Polygons()
+            Polygon species
+            sage: L.Graphs()
+            Graph species
+            sage: L.SetPartitions()
+            Set Partition species
 
         TESTS::
 
@@ -1178,26 +1210,151 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         """
         super().__init__(PolynomialSpecies(base_ring, names))
         self._arity = len(names)
-        if self._arity == 1:
-            self.Graphs = lambda: GraphSpecies(self)
-            self.SetPartitions = lambda: SetPartitionSpecies(self)
-            self.Sets = lambda: SetSpecies(self)
-            self.Cycles = lambda: CycleSpecies(self)
 
 
-class SetSpecies(LazySpeciesElement):
+class LazySpeciesUnivariate(LazySpecies):
+    def Graphs(self):
+        r"""
+        Return the species of vertex labelled simple graphs.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Graphs()
+            sage: set(G.isotypes(2))
+            {Graph on 2 vertices, Graph on 2 vertices}
+
+            sage: G.isotype_generating_series()[20]
+            645490122795799841856164638490742749440
+        """
+        return GraphSpecies(self)
+
+    def SetPartitions(self):
+        r"""
+        Return the species of set partitions.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.SetPartitions()
+            sage: set(G.isotypes(4))
+            {[1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4]}
+            sage: set(G.structures(["a", 1, x]))
+            {{{'a', x}, {1}},
+             {{'a'}, {1}, {x}},
+             {{1, 'a', x}},
+             {{1, 'a'}, {x}},
+             {{1, x}, {'a'}}}
+        """
+        return SetPartitionSpecies(self)
+
+    def Sets(self):
+        r"""
+        Return the species of sets.
+
+        This species corresponds to the symmetric groups.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Sets()
+            sage: set(G.isotypes(4))
+            {(E_4,)}
+            sage: set(G.structures(["a", 1, x]))
+            {(1, 'a', x)}
+        """
+        return SetSpecies(self)
+
+    def Cycles(self):
+        r"""
+        Return the species of (oriented) cycles.
+
+        This species corresponds to the cyclic groups.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Cycles()
+            sage: set(G.isotypes(4))
+            {(C_4,)}
+            sage: set(G.structures(["a", 1, x]))
+            {(1, 'a', x), (1, x, 'a')}
+        """
+        return CycleSpecies(self)
+
+    def Polygons(self):
+        r"""
+        Return the species of polygons.
+
+        Polygons are cycles up to orientation.
+
+        This species corresponds to the dihedral groups.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Polygons()
+            sage: set(G.isotypes(5))
+            {(P_5,)}
+            sage: set(G.structures(["a", 1, "b", 2]))
+            {(E_2(E_2), ((1, 'a', 2, 'b'),)),
+             (E_2(E_2), ((1, 'b', 2, 'a'),)),
+             (E_2(E_2), ((1, 2, 'a', 'b'),))}
+        """
+        return PolygonSpecies(self)
+
+    def OrientedSets(self):
+        r"""
+        Return the species of oriented sets.
+
+        Oriented sets are total orders up to an even orientation.
+
+        This species corresponds to the alternating groups.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.OrientedSets()
+            sage: set(G.isotypes(5))
+            {(Eo_5,)}
+            sage: set(G.structures(["a", 1, "b", 2]))
+            {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
+        """
+        return OrientedSetSpecies(self)
+
+
+class LazySpeciesMultivariate(LazySpecies):
+    pass
+
+
+class SetSpecies(LazySpeciesElement, UniqueRepresentation,
+                 metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
         Initialize the species of sets.
 
         TESTS::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: E = P.Sets()
+            sage: L = LazySpecies(QQ, "X")
+            sage: E = L.Sets()
             sage: TestSuite(E).run(skip=['_test_category', '_test_pickling'])
+
+            sage: E is L.Sets()
+            True
         """
-        S = parent(lambda n: SymmetricGroup(n))
+        S = parent(SymmetricGroup)
         super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").Sets()  # indirect doctest
+           Set species
+        """
+        return "Set species"
 
     def structures(self, labels):
         r"""
@@ -1214,19 +1371,34 @@ class SetSpecies(LazySpeciesElement):
         yield labels[0]
 
 
-class CycleSpecies(LazySpeciesElement):
+class CycleSpecies(LazySpeciesElement, UniqueRepresentation,
+                   metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
         Initialize the species of cycles.
 
         TESTS::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: C = P.Cycles()
+            sage: L = LazySpecies(QQ, "X")
+            sage: C = L.Cycles()
             sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
+
+            sage: C is L.Cycles()
+            True
         """
-        S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
+        S = parent(CyclicPermutationGroup, valuation=1)
         super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").Cycles()  # indirect doctest
+           Cycle species
+        """
+        return "Cycle species"
 
     def structures(self, labels):
         r"""
@@ -1250,20 +1422,96 @@ class CycleSpecies(LazySpeciesElement):
         yield from map(tuple, CyclicPermutations(labels[0]))
 
 
-class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElement):
+class PolygonSpecies(LazySpeciesElement, UniqueRepresentation,
+                     metaclass=InheritComparisonClasscallMetaclass):
+    def __init__(self, parent):
+        r"""
+        Initialize the species of polygons.
+
+        TESTS::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: P = L.Polygons()
+            sage: TestSuite(P).run(skip=['_test_category', '_test_pickling'])
+
+            sage: P is L.Polygons()
+            True
+        """
+        S = parent(DihedralGroup, valuation=3)
+        super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").Polygons()  # indirect doctest
+           Polygon species
+        """
+        return "Polygon species"
+
+
+class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
+                         metaclass=InheritComparisonClasscallMetaclass):
+    def __init__(self, parent):
+        r"""
+        Initialize the species of polygons.
+
+        TESTS::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: Eo = L.OrientedSets()
+            sage: TestSuite(Eo).run(skip=['_test_category', '_test_pickling'])
+
+            sage: Eo is L.OrientedSets()
+            True
+        """
+        S = parent(AlternatingGroup, valuation=4)
+        super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").OrientedSets()  # indirect doctest
+           Oriented Set species
+        """
+        return "Oriented Set species"
+
+
+class GraphSpecies(LazySpeciesElement_generating_series_mixin,
+                   LazySpeciesElement, UniqueRepresentation,
+                   metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
         Initialize the species of simple graphs.
 
         TESTS::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: G = P.Graphs()
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Graphs()
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+
+            sage: G is L.Graphs()
+            True
         """
         P = parent._laurent_poly_ring
         S = parent(lambda n: sum(P(G.automorphism_group()) for G in graphs(n)))
         super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").Graphs()  # indirect doctest
+           Graph species
+        """
+        return "Graph species"
 
     def isotypes(self, labels):
         r"""
@@ -1271,8 +1519,8 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         EXAMPLES::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: G = P.Graphs()
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Graphs()
             sage: list(G.isotypes(2))
             [Graph on 2 vertices, Graph on 2 vertices]
         """
@@ -1286,7 +1534,7 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L = LazySpecies(QQ, "X")
             sage: L.Graphs().generating_series().truncate(7)
             1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
         """
@@ -1304,9 +1552,14 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L = LazySpecies(QQ, "X")
             sage: L.Graphs().cycle_index_series().truncate(4)
             p[] + p[1] + (p[1,1]+p[2]) + (4/3*p[1,1,1]+2*p[2,1]+2/3*p[3])
+
+        Check that the number of isomorphism types is computed quickly::
+
+            sage: L.Graphs().isotype_generating_series()[20]
+            645490122795799841856164638490742749440
         """
         P = self.parent()
         p = SymmetricFunctions(P.base_ring().fraction_field()).p()
@@ -1328,20 +1581,35 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin, LazySpeciesElemen
         return L(coefficient)
 
 
-class SetPartitionSpecies(LazySpeciesElement):
+class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
+                          metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
         Initialize the species of set partitions.
 
         TESTS::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: p = P.SetPartitions()
+            sage: L = LazySpecies(QQ, "X")
+            sage: p = L.SetPartitions()
             sage: TestSuite(p).run(skip=['_test_category', '_test_pickling'])
+
+            sage: p is L.SetPartitions()
+            True
         """
         E = parent.Sets()
         E1 = parent.Sets().restrict(1)
         super().__init__(parent, E(E1)._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").SetPartitions()  # indirect doctest
+           Set Partition species
+        """
+        return "Set Partition species"
 
     def isotypes(self, labels):
         r"""
@@ -1349,8 +1617,8 @@ class SetPartitionSpecies(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: p = P.SetPartitions()
+            sage: L = LazySpecies(QQ, "X")
+            sage: p = L.SetPartitions()
             sage: list(p.isotypes(3))
             [[3], [2, 1], [1, 1, 1]]
         """
@@ -1385,8 +1653,8 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         TESTS::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: G3 = P.Graphs().restrict(3, 3)
+            sage: L = LazySpecies(QQ, "X")
+            sage: G3 = L.Graphs().restrict(3, 3)
             sage: TestSuite(G3).run(skip=['_test_category', '_test_pickling'])
         """
         self._F = F
@@ -1417,8 +1685,8 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: P.<X> = LazySpecies(QQ)
-            sage: p = P.SetPartitions().restrict(2, 2)
+            sage: L = LazySpecies(QQ, "X")
+            sage: p = L.SetPartitions().restrict(2, 2)
             sage: list(p.isotypes(3))
             []
         """
