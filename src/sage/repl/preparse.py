@@ -1189,6 +1189,8 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'Integer(42)'
         sage: preparse_numeric_literals('000042')
         'Integer(42)'
+
+    Cheeck that :issue:`40179` is fixed::
         sage: preparse_numeric_literals("1" * 4300) == f"Integer({"1" * 4300})"
         True
         sage: preparse_numeric_literals("1" * 4301) == f"Integer({"1" * 4301})"
