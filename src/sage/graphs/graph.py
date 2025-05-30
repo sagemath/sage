@@ -9544,8 +9544,8 @@ class Graph(GenericGraph):
             True
 
         `K_{4,4}` has a projective plane crossing number of 2. One of the
-           minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
-           dictionary from :meth:`~Graph.minor`::
+         minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+         dictionary from :meth:`~Graph.minor`::
 
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
             sage: minor_map = K44.is_projective_planar()
@@ -9558,7 +9558,7 @@ class Graph(GenericGraph):
 
         TESTS::
 
-        sage: len(graphs. p2_forbidden_minors())
+        sage: len(graphs.p2_forbidden_minors())
         35
         """
 
