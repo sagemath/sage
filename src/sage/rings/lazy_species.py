@@ -66,7 +66,8 @@ from sage.functions.other import binomial, factorial
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.lazy_series import LazyCompletionGradedAlgebraElement, LazyModuleElement
+from sage.rings.lazy_series import (LazyCompletionGradedAlgebraElement,
+                                    LazyModuleElement)
 from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
                                          LazyPowerSeriesRing,
                                          LazySymmetricFunctions)
@@ -83,7 +84,10 @@ from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup, CyclicPermutationGroup
+from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
+                                                  CyclicPermutationGroup,
+                                                  DihedralGroup,
+                                                  SymmetricGroup)
 from sage.structure.element import parent
 import itertools
 from collections import defaultdict
@@ -1131,6 +1135,37 @@ class LazySpecies(LazyCompletionGradedAlgebra):
             self.SetPartitions = lambda: SetPartitionSpecies(self)
             self.Sets = lambda: SetSpecies(self)
             self.Cycles = lambda: CycleSpecies(self)
+            self.Polygons = lambda: PolygonSpecies(self)
+            self.OrientedSets = lambda: OrientedSetSpecies(self)
+
+class PolygonSpecies(LazySpeciesElement):
+    def __init__(self, parent):
+        r"""
+        Initialize the species of polygons.
+
+        TESTS::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: P = L.Polygons()
+            sage: TestSuite(P).run(skip=['_test_category', '_test_pickling'])
+        """
+        S = parent(DihedralGroup, valuation=3)
+        super().__init__(parent, S._coeff_stream)
+
+
+class OrientedSetSpecies(LazySpeciesElement):
+    def __init__(self, parent):
+        r"""
+        Initialize the species of polygons.
+
+        TESTS::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: Eo = L.OrientedSets()
+            sage: TestSuite(Eo).run(skip=['_test_category', '_test_pickling'])
+        """
+        S = parent(AlternatingGroup, valuation=4)
+        super().__init__(parent, S._coeff_stream)
 
 
 class SetSpecies(LazySpeciesElement):
@@ -1144,7 +1179,7 @@ class SetSpecies(LazySpeciesElement):
             sage: E = P.Sets()
             sage: TestSuite(E).run(skip=['_test_category', '_test_pickling'])
         """
-        S = parent(lambda n: SymmetricGroup(n))
+        S = parent(SymmetricGroup)
         super().__init__(parent, S._coeff_stream)
 
     def structures(self, labels):
@@ -1173,7 +1208,7 @@ class CycleSpecies(LazySpeciesElement):
             sage: C = P.Cycles()
             sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
         """
-        S = parent(lambda n: CyclicPermutationGroup(n) if n else 0)
+        S = parent(CyclicPermutationGroup, valuation=1)
         super().__init__(parent, S._coeff_stream)
 
     def structures(self, labels):
