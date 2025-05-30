@@ -469,7 +469,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         yield from self[sum(map(len, labels))].structures(*labels)
 
-    def _test_structures(self, tester=None):
+    def _test_structures(self, tester=None, max_size=4, **options):
         r"""
         Check that structures and generating series are consistent.
 
@@ -483,22 +483,28 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: XY = L(P(PermutationGroup([], domain=[1, 2, 3]), {0: [1], 1: [2, 3]}))
             sage: XY._test_structures()
         """
-        n = 3
+        if tester is None:
+            tester = self._tester(**options)
         P = self.parent()
-        if P._arity == 1:
-            labels = list(range(n))
-            s = list(self.structures(labels))
-            assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
-            coeff = self.generating_series()[n]
-            assert len(s) / factorial(n) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
-        else:
-            label_shapes = IntegerVectors(n, length=P._arity)
-            for shape in label_shapes:
-                labels = [list(range(k)) for k in shape]
-                s = list(self.structures(*labels))
-                assert len(s) == len(set(s)), f"structures for {labels} are {s}, which is not a set"
-                coeff = self.generating_series()[n].coefficient(list(shape))
-                assert len(s) / ZZ.prod(factorial(k) for k in shape) == coeff, f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}"
+        for n in range(max_size):
+            if P._arity == 1:
+                labels = list(range(n))
+                s = list(self.structures(labels))
+                tester.assertEqual(len(s), len(set(s)),
+                                   f"structures for {labels} are {s}, which is not a set")
+                coeff = self.generating_series()[n]
+                tester.assertEqual(len(s) / factorial(n), coeff,
+                                   f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}")
+            else:
+                label_shapes = IntegerVectors(n, length=P._arity)
+                for shape in label_shapes:
+                    labels = [list(range(k)) for k in shape]
+                    s = list(self.structures(*labels))
+                    tester.assertEqual(len(s), len(set(s)), f"structures for {labels} are {s}, which is not a set")
+                    coeff = self.generating_series()[n].coefficient(list(shape))
+                    tester.assertEqual(len(s) / ZZ.prod(factorial(k) for k in shape),
+                                       coeff,
+                                       f"the number of structures for {labels} is {len(s)}, but the generating series gives {coeff}")
 
     def isotypes(self, *shape):
         r"""
@@ -547,7 +553,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 for e in range(c):
                     yield (M, e)
 
-    def _test_isotypes(self, tester=None):
+    def _test_isotypes(self, tester=None, max_size=4, **options):
         r"""
         Check that isotypes and generating series are consistent.
 
@@ -557,22 +563,28 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L = LazySpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
-            sage: XY._test_isotypes()
+            sage: XY._test_isotypes(max_size=5)
         """
-        n = 3
+        if tester is None:
+            tester = self._tester(**options)
         P = self.parent()
-        if P._arity == 1:
-            s = list(self.isotypes(n))
-            assert len(s) == len(set(s)), f"isotypes for {n} are {s}, which is not a set"
-            coeff = self.isotype_generating_series()[n]
-            assert len(s) == coeff, f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}"
-        else:
-            shapes = IntegerVectors(n, length=P._arity)
-            for shape in shapes:
-                s = list(self.isotypes(*shape))
-                assert len(s) == len(set(s)), f"isotypes for {shape} are {s}, which is not a set"
-                coeff = self.isotype_generating_series()[n].coefficient(list(shape))
-                assert len(s) == coeff, f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}"
+        for n in range(max_size):
+            if P._arity == 1:
+                s = list(self.isotypes(n))
+                tester.assertEqual(len(s), len(set(s)),
+                                   f"isotypes for {n} are {s}, which is not a set")
+                coeff = self.isotype_generating_series()[n]
+                tester.assertEqual(len(s), coeff,
+                                   f"the number of isotypes for {n} is {len(s)}, but the generating series gives {coeff}")
+            else:
+                shapes = IntegerVectors(n, length=P._arity)
+                for shape in shapes:
+                    s = list(self.isotypes(*shape))
+                    tester.assertEqual(len(s), len(set(s)),
+                                       f"isotypes for {shape} are {s}, which is not a set")
+                    coeff = self.isotype_generating_series()[n].coefficient(list(shape))
+                    tester.assertEqual(len(s), coeff,
+                                       f"the number of isotypes for {shape} is {len(s)}, but the generating series gives {coeff}")
 
     def polynomial(self, degree=None, names=None):
         r"""
@@ -990,7 +1002,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
                         multiplicities = [c for alpha, g_flat in zip(degrees, args_flat)
                                           for d, (_, c) in zip(alpha, g_flat) if d]
                         molecules = [M for alpha, g_flat in zip(degrees, args_flat)
-                                          for d, (M, _) in zip(alpha, g_flat) if d]
+                                     for d, (M, _) in zip(alpha, g_flat) if d]
                         non_zero_degrees = [[d for d in alpha if d] for alpha in degrees]
                         names = ["X%s" % i for i in range(len(molecules))]
                         FX = F._compose_with_weighted_singletons(names,
