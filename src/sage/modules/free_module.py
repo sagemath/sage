@@ -4265,7 +4265,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent.
 
         The input vectors need not be linearly independent when ``check`` is set to ``False``::
 
@@ -4818,7 +4818,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent.
 
         The basis vectors can be linearly dependent when ``check`` is set to ``False``::
 
@@ -6698,14 +6698,17 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                                 "the ambient vector space")
             
         # This is original basis converted to ambient module/vector space.
-        # Without this, the echelon form computation simply fails!
-        # Even multiplication may end up failing.
+        # Without the conversion, the echelon form computation fails with
+        # a segmentation fault, while clearing out the denominator via
+        # multiplication. This is probably due to different ring structures
+        # or different implementations of converted and non converted
+        # elements.
         self.__converted_basis = basis
 
-        MAT = sage.matrix.matrix_space.MatrixSpace(
+        MS = sage.matrix.matrix_space.MatrixSpace(
             R_coord, len(basis), ambient.degree(), sparse=ambient.is_sparse())
         
-        A = MAT(basis)
+        A = MS(basis)
 
         # Rank computation is expected to be fast unlike echelon form computation
         # TODO: Avoid rank computation during module construction
@@ -6725,7 +6728,13 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         FreeModule_generic_pid.__init__(self, base_ring=R, coordinate_ring=R_coord,
                                         rank=rank, degree=ambient.degree(),
                                         sparse=ambient.is_sparse(), category=category)
+        
+        MS_ECH = sage.matrix.matrix_space.MatrixSpace(
+                R_coord, rank, ambient.degree(), sparse=ambient.is_sparse())
 
+        has_echelonized_basis = echelonize or already_echelonized or echelonized_basis
+
+        matrix = None
         if echelonize and not already_echelonized:
             matrix = self._echelonized_basis(ambient, basis)
             assert rank == matrix.nrows()
@@ -6735,25 +6744,20 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         w = [C(self, x.list(), coerce=False, copy=False) for x in basis]
         self.__basis = basis_seq(self, w)
 
-        has_echelonized_basis = echelonize or already_echelonized or echelonized_basis
-
         if has_echelonized_basis:
-            if echelonize or already_echelonized:
-                self.__echelonized_basis = self.__basis
+            if matrix is not None:
+                self.__echelonized_basis_matrix = matrix
+            
+            elif echelonize or already_echelonized:
+                self.__echelonized_basis_matrix = MS_ECH(self.__basis)
+            
             elif echelonized_basis:
                 w = [C(self, x.list(), coerce=False, copy=False) for x in echelonized_basis]
-                self.__echelonized_basis = basis_seq(self, w)
-
-                # TODO: Validate span of echelonized basis with provided basis
-                if check and len(self.__echelonized_basis) != rank:
-                    raise ValueError("The given echelonized basis vectors are not correct.")
-                
-            MAT_ECH = sage.matrix.matrix_space.MatrixSpace(
-                R_coord, rank, ambient.degree(), sparse=ambient.is_sparse())
-            self.__echelonized_basis_matrix = MAT_ECH(self.__echelonized_basis)
+                # Will throw error if matrix space and basis_seq have different sizes
+                self.__echelonized_basis_matrix = MS_ECH(basis_seq(self, w))
             
         if check and len(self.__basis) != rank:
-            raise ValueError("The given basis vectors must be linearly independent.")
+            raise ValueError("the given basis vectors must be linearly independent.")
 
     def __hash__(self):
         """
