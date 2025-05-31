@@ -6782,6 +6782,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if check and len(self.__basis) != rank:
             raise ValueError("the given basis vectors must be linearly independent.")
 
+        # If echelonized basis is either provided or computed, store the
+        # same in matrix form, else it will be computed on demand
         if has_echelonized_basis:
             if matrix is not None:
                 self.__echelonized_basis_matrix = matrix
@@ -6920,6 +6922,18 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V.echelonized_basis_matrix()
             [1 2 3]
             [0 3 6]
+
+            sage: from sage.modules.free_module import FreeModule_ambient_pid, FreeModule_submodule_with_basis_pid
+            sage: V = FreeModule_ambient_pid(ZZ, 3)
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]])
+            sage: W.basis_matrix()
+            [1 2 3]
+            [1 1 1]
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            False
+            sage: W.echelonized_basis_matrix()
+            [ 1  0 -1]
+            [ 0  1  2]
         """
         try:
             return self.__echelonized_basis_matrix
