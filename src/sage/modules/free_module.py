@@ -6677,6 +6677,41 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             Join of
              Category of finite dimensional algebras with basis over Rational Field and
              Category of subobjects of sets
+
+        Test for echelonization related parameters::
+            sage: V = FreeModule_ambient_pid(ZZ, 3)
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]]) # echelonized is False by default
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            False
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]], echelonize=True)
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            True
+            sage: W.echelonized_basis_matrix()
+            [ 1  0 -1]
+            [ 0  1  2]
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,0], [0,0,1]], already_echelonized=True)
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            True
+            sage: W.echelonized_basis_matrix()
+            [1 2 0]
+            [0 0 1]
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [0,0,1]], echelonized_basis=[[1,2,0], [0,0,1]])
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            True
+            sage: W.echelonized_basis_matrix()
+            [1 2 0]
+            [0 0 1]
+
+        Test that error is thrown when echelonized basis has incorrect size::
+            sage: V = FreeModule_ambient_pid(ZZ, 3)
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3]]); W
+            Free module of degree 3 and rank 1 over Integer Ring
+            User basis matrix:
+            [1 2 3]
+            sage: Y = FreeModule_submodule_with_basis_pid(V, [[1,2,3]], echelonized_basis=[[1,2,0], [0,0,1]]); Y
+            Traceback (most recent call last):
+            ...
+            ValueError: sequence too long (expected length 1, got more)
         """
         if not isinstance(ambient, FreeModule_ambient_pid):
             raise TypeError("ambient (=%s) must be ambient." % ambient)
@@ -6744,6 +6779,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         w = [C(self, x.list(), coerce=False, copy=False) for x in basis]
         self.__basis = basis_seq(self, w)
 
+        if check and len(self.__basis) != rank:
+            raise ValueError("the given basis vectors must be linearly independent.")
+
         if has_echelonized_basis:
             if matrix is not None:
                 self.__echelonized_basis_matrix = matrix
@@ -6752,12 +6790,14 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 self.__echelonized_basis_matrix = MS_ECH(self.__basis)
             
             elif echelonized_basis:
-                w = [C(self, x.list(), coerce=False, copy=False) for x in echelonized_basis]
+                w = [C(self, x, coerce=False, copy=False) for x in echelonized_basis]
                 # Will throw error if matrix space and basis_seq have different sizes
-                self.__echelonized_basis_matrix = MS_ECH(basis_seq(self, w))
-            
-        if check and len(self.__basis) != rank:
-            raise ValueError("the given basis vectors must be linearly independent.")
+                matrix = MS_ECH(basis_seq(self, w))
+                
+                if check and rank != matrix.rank():
+                    raise ValueError("the given echelonized basis vectors do not have the correct rank")
+
+                self.__echelonized_basis_matrix = matrix
 
     def __hash__(self):
         """
