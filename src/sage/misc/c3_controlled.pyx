@@ -1121,7 +1121,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         to reconstruct an element of the hierarchy from its value::
 
             sage: x._from_value                                                         # needs sage.graphs
-            Cached version of <cyfunction HierarchyElement.__classcall__.<locals>.f at ...>
+            Cached version of <...__classcall__...>
             sage: x._from_value(x.value) is x                                           # needs sage.graphs
             True
         """
