@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6.1.0
