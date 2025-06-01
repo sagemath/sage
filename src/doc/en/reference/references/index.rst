@@ -135,8 +135,8 @@ REFERENCES:
             Mathematics Magazine, Volume 83, Number 3, June 2010, pages 200-9.
             :doi:`10.4169/002557010X494841`.
 
-.. [AE1993] \A. Apostolico, A. Ehrenfeucht, Efficient detection of
-            quasiperiodicities in strings,
+.. [AE1993] \A. Apostolico, A. Ehrenfeucht, *Efficient detection of
+            quasiperiodicities in strings*,
             Theoret. Comput. Sci. 119 (1993) 247--265.
 
 .. [AG1988] George E. Andrews, F. G. Garvan,
@@ -147,8 +147,8 @@ REFERENCES:
 
 .. [AGHJLPR2017] Benjamin Assarf, Ewgenij Gawrilow, Katrin Herr, Michael Joswig,
                  Benjamin Lorenz, Andreas Paffenholz, and Thomas Rehn,
-                 Computing convex hulls and counting integer points with
-                 polymake, Math. Program. Comput. 9 (2017), no. 1, 1–38,
+                 *Computing convex hulls and counting integer points with
+                 polymake*, Math. Program. Comput. 9 (2017), no. 1, 1–38,
                  :doi:`10.1007/s12532-016-0104-z`
 
 .. [AguSot05] Marcelo Aguiar and Frank Sottile,
@@ -1082,7 +1082,7 @@ REFERENCES:
             graphs and posets, Math. Oper. Res., Vol 8 (1983): 170-184.
 
 .. [BM1993] \M. Broué and G. Malle, *Zyklotomische Heckealgebren*,
-            Asterisque, **212** (1993), 119-89.
+            Astérisque, **212** (1993), 119-89.
 
 .. [BM1997] \K. Bremke and G. Malle,
             *Reduced words and a length function for* `G(e,1,n)`.
@@ -1155,7 +1155,7 @@ REFERENCES:
               :arxiv:`cs/0609020`
 
 .. [BN2010] \D. Bump and M. Nakasuji.
-            Integration on `p`-adic groups and crystal bases.
+            *Integration on `p`-adic groups and crystal bases*.
             Proc. Amer. Math. Soc. 138(5), pp. 1595--1605.
 
 .. [BN2008] Victor V. Batyrev and Benjamin Nill. Combinatorial aspects
@@ -1204,8 +1204,8 @@ REFERENCES:
             Communications*. John Wiley and Sons, 1982.
 
 .. [BP1993] Dominique Bernardi and Bernadette Perrin-Riou,
-            Variante `p`-adique de la conjecture de Birch et
-            Swinnerton-Dyer (le cas supersingulier),
+            *Variante `p`-adique de la conjecture de Birch et
+            Swinnerton-Dyer (le cas supersingulier)*,
             C. R. Acad. Sci. Paris, Sér I. Math., 317 (1993), no. 3,
             227-232.
 
@@ -1397,13 +1397,13 @@ REFERENCES:
              computation, AMS/CRM Lecture Notes, 48 (2009),
              45-71. :arxiv:`math/0702239`
 
-.. [BSV2010] \M. Bolt, S. Snoeyink, E. Van Andel. "Visual
+.. [BSV2010] \M. Bolt, S. Snoeyink, E. Van Andel. *Visual
              representation of the Riemann map and Ahlfors map via the
-             Kerzman-Stein equation". Involve 3-4 (2010), 405-420.
+             Kerzman-Stein equation*. Involve 3-4 (2010), 405-420.
 
 .. [BDLGZ2009] \M. Bucci et al.  A. De Luca, A. Glen, L. Q. Zamboni,
-               A connection between palindromic and factor complexity
-               using return words," Advances in Applied Mathematics
+               *A connection between palindromic and factor complexity
+               using return words*, Advances in Applied Mathematics
                42 (2009) 60-74.
 
 .. [BSZ2019] Nils Bruin, Jeroen Sijsling, and Alexandre Zotine,
@@ -1414,6 +1414,11 @@ REFERENCES:
 .. [BUVO2007] Johannes Buchmann, Ullrich Vollmer: Binary Quadratic Forms,
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
+
+.. [Buell89] Duncan A. Buell.
+             *Binary Quadratic Forms: Classical Theory and Modern Computations.*
+             Springer, 1989.
+             :doi:`https://doi.org/10.1007/978-1-4612-4542-1`
 
 .. [BV2004] Jean-Luc Baril, Vincent Vajnovszki. *Gray code for derangements*.
             Discrete Applied Math. 140 (2004)
@@ -2058,8 +2063,8 @@ REFERENCES:
              Okounkov-Vershik Approach, Character Formulas, and Partition
              Algebras*. CUP 2010.
 
-.. [CT2013] \J. E. Cremona and T. Thongjunthug, The Complex AGM, periods of
-            elliptic curves over $\CC$ and complex elliptic logarithms.
+.. [CT2013] \J. E. Cremona and T. Thongjunthug, *The Complex AGM, periods of
+            elliptic curves over `\CC` and complex elliptic logarithms*.
             Journal of Number Theory Volume 133, Issue 8, August 2013, pages
             2813-2841.
 
@@ -2978,7 +2983,7 @@ REFERENCES:
             J. Algebra 324 (2010), no. 11, 3007–3016.
 
 .. [GJ2016] Muddappa Seetharama Gowda and Juyoung Jeong.
-            Spectral cones in Euclidean Jordan algebras.
+            *Spectral cones in Euclidean Jordan algebras*.
             Linear Algebra and its Applications, 509:286-305, 2016.
             :doi:`10.1016/j.laa.2016.08.004`.
 
@@ -2986,7 +2991,7 @@ REFERENCES:
                  "Pyjamask"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/Pyjamask-spec.pdf
 
-.. [Gou2020] Fernando Q. Gouvêa, *$p$-adic Numbers: An Introduction*,
+.. [Gou2020] Fernando Q. Gouvêa, `p`-*adic Numbers: An Introduction*,
             Third Edition.  Springer Nature Switzerland AG, 2020.
 
 .. [GJK+2014] Dimitar Grantcharov, Ji Hye Jung, Seok-Jin Kang, Masaki Kashiwara,
@@ -3114,6 +3119,9 @@ REFERENCES:
 
 .. [GR2001] Chris Godsil and Gordon Royle, *Algebraic Graph Theory*. Graduate
             Texts in Mathematics, Springer, 2001.
+
+.. [Gre1988] \C. Greene. *Posets of shuffles*. J. Combin. Theory Ser. A
+             Vol 47.2 (1988), pp. 191--206.
 
 .. [Gre2006] \R. M. Green, *Star reducible Coxeter groups*, Glasgow
              Mathematical Journal, Volume 48, Issue 3, pp. 583-609.
@@ -3245,10 +3253,10 @@ REFERENCES:
               results in the theory of the Wiener number*. Indian Journal of
               Chemistry, 32A:651--661, 1993.
 
-.. [GZ1983] Greene; Zaslavsky, "On the Interpretation of Whitney
+.. [GZ1983] Greene; Zaslavsky, *On the Interpretation of Whitney
             Numbers Through Arrangements of Hyperplanes, Zonotopes,
             Non-Radon Partitions, and Orientations of
-            Graphs". Transactions of the American Mathematical
+            Graphs*. Transactions of the American Mathematical
             Society, Vol. 280, No. 1. (Nov., 1983), pp. 97-126.
 
 .. [GZ1986] \B. Gross and D. Zagier, *Heegner points and
@@ -3910,9 +3918,9 @@ REFERENCES:
 .. [Kat1991] Nicholas M. Katz, *Exponential sums and differential equations*,
              Princeton University Press, Princeton NJ, 1991.
 
-.. [Kat2004] Kayuza Kato, `p`-adic Hodge theory and values of zeta
+.. [Kat2004] Kayuza Kato, `p`-*adic Hodge theory and values of zeta
              functions of modular forms, Cohomologies `p`-adiques et
-             applications arithmétiques III, Astérisque vol 295, SMF,
+             applications arithmétiques III*, Astérisque vol 295, SMF,
              Paris, 2004.
 
 .. [Kau1968] \W. H. Kautz. "Bounds on directed (d, k) graphs". Theory of
@@ -4788,6 +4796,9 @@ REFERENCES:
 .. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
+.. [MacCM2022] Thomas McConville and Henri Mühle. *Shuffle lattices and bubble
+               lattices*. Sémin. Lothar. Comb. 86B, Article 63 (2022).
+
 .. [Mac1995] \I. G. Macdonald, Symmetric functions and Hall
              polynomials, second ed., The Clarendon Press, Oxford
              University Press, New York, 1995, With contributions
@@ -4798,7 +4809,6 @@ REFERENCES:
 
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
-
 
 .. [Mar1980] Jacques Martinet, Petits discriminants des corps de
              nombres, Journ. Arithm. 1980, Cambridge Univ. Press,
@@ -6455,7 +6465,7 @@ REFERENCES:
               :arxiv:`0809.3413v3`.
 
 .. [RouSuthZur2022] Jeremy Rouse, Andrew V. Sutherland, David Zureick-Brown.
-                    *`\ell`-adic images of Galois for elliptic curves over `\Q`* (and an appendix with John Voight).
+                    `\ell`-*adic images of Galois for elliptic curves over* `\QQ` (and an appendix with John Voight).
                     Forum of Mathematics, Sigma , Volume 10 , 2022.
                     :doi: `10.1017/fms.2022.38`.
                     :arxiv:`2106.11141`.
