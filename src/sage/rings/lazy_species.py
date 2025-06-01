@@ -847,16 +847,17 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Return the functorial composition of `F` and `G`.
 
-        This is defined on objects as `F\square G[U] = F[G[U]` and on
-        bijections as `F\square G[\sigma] = F[G[\sigma]]`.
+        This is defined on objects as `F\Box G[U] = F[G[U]` and on
+        bijections as `F\Box G[\sigma] = F[G[\sigma]]`.
 
-        Thus, `(F+G)\square H = F\square H + G\square H`.
+        Thus, `(F+G)\Box H = F\Box H + G\Box H`.  Moreover,
+        `(F\times G)\Box H = (F\Box H) \times (G\Box H)`.
 
         The species of elements `X E` is a (left and right) neutral
         element.
 
         The species of sets is an absorbing element on the left, that
-        is, `E\square G = E`.  Moreover, `F\square E = |F[1]| E`.
+        is, `E\Box G = E`.  Moreover, `F\Box E = |F[1]| E`.
 
         EXAMPLES::
 
