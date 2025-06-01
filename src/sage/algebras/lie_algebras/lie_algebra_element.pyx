@@ -22,7 +22,6 @@ from cpython.object cimport Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.misc.repr import repr_lincomb
 from sage.structure.element cimport have_same_parent, parent
 from sage.structure.coerce cimport coercion_model
-from sage.cpython.wrapperdescr cimport wrapperdescr_fastcall
 from sage.structure.element_wrapper cimport ElementWrapper
 from sage.structure.richcmp cimport richcmp, richcmp_not_equal
 from sage.data_structures.blas_dict cimport axpy, add, negate, scal
@@ -66,9 +65,26 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         """
         try:
             # Try the normal coercion first
-            return wrapperdescr_fastcall(IndexedFreeModuleElement.__mul__,
-                                         left, (right,), <object>NULL)
+            return IndexedFreeModuleElement.__mul__(left, right)
         except TypeError:
+            pass
+
+        try:
+            # Handle the case of right multiplication by scalar
+            if isinstance(left, IndexedFreeModuleElement):
+                R = (<IndexedFreeModuleElement>left)._parent._base
+                x = R.coerce(right)
+                return IndexedFreeModuleElement.__mul__(left, x)
+        except (TypeError, KeyError):
+            pass
+
+        try:
+            # Handle the case of left multiplication by scalar
+            if isinstance(right, IndexedFreeModuleElement):
+                R = (<IndexedFreeModuleElement>right)._parent._base
+                x = R.coerce(left)
+                return IndexedFreeModuleElement.__mul__(x, right)
+        except (TypeError, KeyError):
             pass
 
         # Lift up to the UEA and try multiplication there
@@ -349,9 +365,26 @@ cdef class LieAlgebraElementWrapper(ElementWrapper):
         """
         try:
             # Try the normal coercion first
-            return wrapperdescr_fastcall(ElementWrapper.__mul__,
-                                         left, (right,), <object>NULL)
+            return ElementWrapper.__mul__(left, right)
         except TypeError:
+            pass
+
+        try:
+            # Handle the case of right multiplication by scalar
+            if isinstance(left, LieAlgebraElementWrapper):
+                R = (<LieAlgebraElementWrapper>left)._parent._base
+                x = R.coerce(right)
+                return ElementWrapper.__mul__(left, x)
+        except (TypeError, KeyError):
+            pass
+
+        try:
+            # Handle the case of left multiplication by scalar
+            if isinstance(right, LieAlgebraElementWrapper):
+                R = (<LieAlgebraElementWrapper>right)._parent._base
+                x = R.coerce(left)
+                return ElementWrapper.__mul__(x, right)
+        except (TypeError, KeyError):
             pass
 
         # Lift up to the UEA and try multiplication there
