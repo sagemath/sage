@@ -645,89 +645,18 @@ class BQFClassGroup_element(AdditiveGroupElement):
         return order_from_multiple(self, self.parent().cardinality())
 
 
-def _project_bqf(bqf, q):
-    r"""
-    Internal helper function to compute the image of a
-    :class:`BQFClassGroup_element` of discriminant `D`
-    in the form class group of discriminant `D/q^2`.
-
-    ALGORITHM: Find a class representative with `q^2 \mid a`
-    (and `q \mid b`) and substitute `x\mapsto x/q`.
-
-    EXAMPLES::
-
-        sage: from sage.quadratic_forms.bqf_class_group import _project_bqf
-        sage: f1 = BinaryQF([4, 2, 105])
-        sage: f2 = _project_bqf(f1, 2); f2
-        x^2 + x*y + 105*y^2
-        sage: f1.discriminant().factor()
-        -1 * 2^2 * 419
-        sage: f2.discriminant().factor()
-        -1 * 419
-
-    ::
-
-        sage: f1 = BinaryQF([109, 92, 113])
-        sage: f2 = _project_bqf(f1, 101); f2
-        53*x^2 - 152*x*y + 109*y^2
-        sage: f1.discriminant().factor()
-        -1 * 2^2 * 101^2
-        sage: f2.discriminant().factor()
-        -1 * 2^2
-    """
-    q2 = q**2
-    disc = bqf.discriminant()
-    if not q2.divides(disc) or disc//q2 % 4 not in (0, 1):
-        raise ValueError('discriminant not divisible by q^2')
-
-    a, b, c = bqf
-
-    # lucky case: q^2|c (and q|b)
-    if q2.divides(c):
-        a, b, c = c, -b, a
-
-    # general case: neither q^2|a nor q^2|c
-    elif not q2.divides(a):
-
-        # represent some multiple of q^2
-        R = Zmod(q2)
-        x = polygen(R)
-        for v in R:
-            eq = a*x**2 + b*x*v + c*v**2
-            try:
-                u = eq.any_root()
-            except (ValueError, IndexError):  # why IndexError? see #37034
-                continue
-            if u or v:
-                break
-        else:
-            assert False
-
-        # find equivalent form with q^2|a (and q|b)
-        u, v = map(ZZ, (u, v))
-        assert q2.divides(bqf(u, v))
-        if not v:
-            v += q
-        g, r, s = u.xgcd(v)
-        assert g.is_one()
-        M = matrix(ZZ, [[u, -v], [s, r]])
-        assert M.det().is_one()
-        a, b, c = bqf * M
-
-    # remaining case: q^2|a (and q|b)
-    assert q2.divides(a)
-    assert q.divides(b)
-    return BinaryQF(a//q2, b//q, c)
-
-
 class BQFClassGroupQuotientMorphism(Morphism):
     r"""
     Let `D` be a discriminant and `f > 0` an integer.
 
     Given the class groups `G` and `H` of discriminants `f^2 D` and `D`,
     this class represents the natural projection morphism `G \to H` which
-    is defined by finding a class representative `[a,b,c]` satisfying
-    `f^2 \mid a` and `f \mid b` and substituting `x \mapsto x/f`.
+    is defined by composing the class representative `[a,b,c]` with the
+    principal form of the target discriminant.
+
+    Alternatively, evaluating this map can be characterized as finding a
+    class representative `[a,b,c]` satisfying `f^2 \mid a` and `f \mid b`
+    and substituting `x \mapsto x/f`.
 
     This map is a well-defined group homomorphism.
 
@@ -757,6 +686,17 @@ class BQFClassGroupQuotientMorphism(Morphism):
         sage: elt2 = G.random_element()
         sage: proj(elt1 + elt2) == proj(elt1) + proj(elt2)
         True
+
+    Check that it satisfies compatibility::
+
+        sage: ff = f * randrange(1, 10^3)
+        sage: F = BQFClassGroup(ff^2*D)
+        sage: proj = F.hom(H)
+        sage: proj1 = F.hom(G)
+        sage: proj2 = G.hom(H)
+        sage: elt = F.random_element()
+        sage: proj(elt) == proj2(proj1(elt))
+        True
     """
     def __init__(self, G, H):
         r"""
@@ -775,9 +715,8 @@ class BQFClassGroupQuotientMorphism(Morphism):
             raise TypeError('G needs to be a BQFClassGroup')
         if not isinstance(H, BQFClassGroup):
             raise TypeError('H needs to be a BQFClassGroup')
-        try:
-            self.f = ZZ((G.discriminant() / H.discriminant()).sqrt(extend=False)).factor()
-        except ValueError:
+        f2 = ZZ(G.discriminant() / H.discriminant())
+        if not f2.is_square():
             raise ValueError('morphism only defined when disc(G) = f^2 * disc(H)')
         super().__init__(G, H)
 
@@ -787,22 +726,17 @@ class BQFClassGroupQuotientMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism, _project_bqf
+            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
             sage: G = BQFClassGroup(-4*117117)
             sage: H = BQFClassGroup(-4*77)
             sage: proj = BQFClassGroupQuotientMorphism(G, H)
             sage: elt = G(BinaryQF(333, 306, 422))
             sage: proj(elt)
             Class of 9*x^2 + 4*x*y + 9*y^2
-            sage: proj(elt) == H(_project_bqf(_project_bqf(elt.form(), 3), 13))
-            True
-            sage: proj(elt) == H(_project_bqf(_project_bqf(elt.form(), 13), 3))
-            True
 
-        ALGORITHM: Repeated application of :func:`_project_bqf` for the prime factors in `f`.
+        ALGORITHM: [Buell89]_, Theorem 7.9
         """
+        one = BinaryQF.principal(self.codomain().discriminant())
         bqf = elt.form()
-        for q, m in self.f:
-            for _ in range(m):
-                bqf = _project_bqf(bqf, q)
+        bqf *= one
         return self.codomain()(bqf)

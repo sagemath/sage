@@ -150,8 +150,14 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     all_requirements.add("blas=2.*=openblas")
     all_requirements.remove("{{ compiler('c') }}")
     all_requirements.remove("{{ compiler('cxx') }}")
-    all_requirements.remove("{{ compiler'fortran' }}")
-    all_requirements.add("fortran-compiler")
+    # For some reason, grayskull mishandles the fortran compiler sometimes
+    # so handle both cases
+    for item in ["{{ compiler('fortran') }}", "{{ compiler'fortran' }}"]:
+        try:
+            all_requirements.remove(item)
+        except ValueError:
+            pass
+    all_requirements.append("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
         # For mingw:

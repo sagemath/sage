@@ -28,7 +28,6 @@ extension_data = {
   'getattr' : files('getattr.pyx'),
   'string' : files('string.pyx'),
   'type' : files('type.pyx'),
-  'wrapperdescr' : files('wrapperdescr.pyx'),
 }
 
 foreach name, pyx : extension_data

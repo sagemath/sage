@@ -8911,7 +8911,7 @@ class Sloane(SageObject):
         ::
 
             sage: sloane.__repr__
-            <built-in method __repr__ of Sloane object at 0x...>
+            <...__repr__...of Sloane object at 0x...>
             sage: sloane.__name__
             Traceback (most recent call last):
             ...

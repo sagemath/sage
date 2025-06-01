@@ -674,7 +674,7 @@ cdef class FiniteFamily(AbstractFamily):
         else:
             return list(self._dictionary.values())
 
-    def has_key(self, k):
+    def has_key(self, k) -> bool:
         """
         Return whether ``k`` is a key of ``self``.
 
@@ -687,7 +687,7 @@ cdef class FiniteFamily(AbstractFamily):
         """
         return k in self._dictionary
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         EXAMPLES::
 

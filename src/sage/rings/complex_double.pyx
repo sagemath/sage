@@ -1076,7 +1076,7 @@ cdef class ComplexDoubleElement(FieldElement):
 
         INPUT:
 
-        - ``format_spec`` -- string; a floating point format specificier as
+        - ``format_spec`` -- string; a floating point format specifier as
           defined by :python:`the format specification mini-language
           <library/string.html#formatspec>` in Python
 

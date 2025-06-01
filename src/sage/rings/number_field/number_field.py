@@ -112,6 +112,7 @@ from sage.structure.proof.proof import get_flag
 from . import maps
 from . import structure
 from . import number_field_morphisms
+from . import number_field_base
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -121,6 +122,29 @@ from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
+
+from sage.misc.latex import latex
+
+import sage.rings.infinity as infinity
+from sage.rings.rational import Rational
+from sage.rings.integer import Integer
+import sage.rings.polynomial.polynomial_element as polynomial_element
+import sage.groups.abelian_gps.abelian_group
+import sage.rings.complex_interval_field
+
+from sage.structure.factory import UniqueFactory
+from . import number_field_element
+from . import number_field_element_quadratic
+from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
+from sage.libs.pari import pari
+from cypari2.gen import Gen as pari_gen
+
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.cif import CIF
+from sage.rings.real_double import RDF
+from sage.rings.real_lazy import RLF, CLF
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
@@ -192,28 +216,6 @@ def proof_flag(t):
         'banana'
     """
     return get_flag(t, "number_field")
-
-
-from sage.misc.latex import latex
-
-import sage.rings.infinity as infinity
-from sage.rings.rational import Rational
-from sage.rings.integer import Integer
-import sage.rings.polynomial.polynomial_element as polynomial_element
-
-from sage.structure.factory import UniqueFactory
-from . import number_field_element
-from . import number_field_element_quadratic
-from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
-from sage.libs.pari import pari
-from cypari2.gen import Gen as pari_gen
-
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.rings.cif import CIF
-from sage.rings.real_double import RDF
-from sage.rings.real_lazy import RLF, CLF
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
 def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
@@ -1188,9 +1190,6 @@ class CyclotomicFieldFactory(UniqueFactory):
 
 
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
-
-
-from . import number_field_base
 
 
 is_NumberField = number_field_base.is_NumberField
@@ -2600,11 +2599,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         f = x**2 + x
         while w < u and not w % 2:
             s = F.lift(q((a - 1) / pi**w).sqrt())
-            a = a / (1 + s*(pi**(w/2)))**2
+            a = a / (1 + s * (pi**(w / 2)))**2
             w = (a - 1).valuation(p)
         if w < u and w % 2:
             return v + w
-        if w == u and (f + F((a-1) / 4)).is_irreducible():
+        if w == u and (f + F((a - 1) / 4)).is_irreducible():
             return v + w
         return Infinity
 
@@ -3415,7 +3414,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     H.append(chi)
         return H
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this number field.
 
@@ -3435,7 +3434,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             result += " with {} = {}".format(self.variable_name(), gen)
         return result
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this number field. This is viewed as
         a polynomial quotient ring over a field.
@@ -6526,10 +6525,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # faster than computing all the conjugates, etc ...
 
         # flag to disable FLATTER, which is much more unstable than fplll
-        flag = 1 if pari.version() >= (2,17) else 0
+        flag = 1 if pari.version() >= (2, 17) else 0
         if self.is_totally_real():
             from sage.matrix.constructor import matrix
-            M = matrix(ZZ, d, d, [[(x*y).trace() for x in ZK] for y in ZK])
+            M = matrix(ZZ, d, d, [[(x * y).trace() for x in ZK] for y in ZK])
             T = pari(M).qflllgram(flag=flag)
         else:
             M = self.minkowski_embedding(ZK, prec=prec)
@@ -10841,7 +10840,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             from sage.rings.complex_double import CDF
 
             self._standard_embedding = not CDF.has_coerce_map_from(self) or CDF(self.gen()).imag() > 0
-            self._cache_an_element = None
 
             if n == 4:
                 self._element_class = number_field_element_quadratic.NumberFieldElement_gaussian
@@ -10997,7 +10995,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.libs.gap.libgap import libgap
         return libgap.CyclotomicField(self.__n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this cyclotomic field.
 
@@ -11029,7 +11027,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return self.__n
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of this cyclotomic field.
 

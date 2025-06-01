@@ -212,7 +212,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
         return self.monomial(w)
 
     @cached_method
-    def has_no_braid_relation(self, w, i):
+    def has_no_braid_relation(self, w, i) -> bool:
         """
         Assuming that `w` contains no relations of the form `s_i^2` or `s_i s_{i+1} s_i` or
         `s_i s_{i-1} s_i`, tests whether `w s_i` contains terms of this form.
@@ -239,10 +239,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
                     (i + 1) % w.parent().n]
         for j in adjacent:
             if j in w.descents():
-                if j in wi.descents():
-                    return False
-                else:
-                    return True
+                return j not in wi.descents()
         return self.has_no_braid_relation(w * s[w.first_descent()], i)
 
     def _repr_term(self, t, short_display=True):

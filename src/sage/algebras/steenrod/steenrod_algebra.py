@@ -3059,7 +3059,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self.is_field()
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         This algebra is Noetherian if and only if it is finite.
 

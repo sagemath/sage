@@ -88,6 +88,8 @@ jobs:
 
       - name: Setup Conda environment
         uses: conda-incubator/setup-miniconda@v3
+        continue-on-error: true
+        id: conda1
         with:
           python-version: ${{ matrix.python }}
           # Disabled for now due to
@@ -98,6 +100,22 @@ jobs:
           channel-priority: true
           activate-environment: sage-dev
           environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || startsWith(matrix.os, 'ubuntu') && 'linux' || 'win' }}.yml
+
+      # Sometimes the conda setup fails due to network issues.
+      # This is a workaround to retry the setup step if it fails.
+      # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/129
+      - name: Setup Conda environment (2nd time)
+        uses: conda-incubator/setup-miniconda@v3
+        if: steps.conda1.outcome == 'failure'
+        with:
+          python-version: ${{ matrix.python }}
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || 'linux' }}.yml
+
 
       - name: Print Conda environment
         shell: bash -l {0}

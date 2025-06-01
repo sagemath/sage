@@ -677,9 +677,23 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: r1 = A*v1
             sage: r0.column(0) == r1
             True
+
+        Check that :issue:`40167` is fixed::
+
+            sage: M = matrix(GF(2), [[1,1],[0,1]])
+            sage: v = vector(GF(2), [0, 1])
+            sage: V = span([v])             # one-dimensional subspace of GF(2)^2
+            sage: image_basis = [M * b for b in V.basis()]
+            sage: image = span(image_basis)
+            sage: image_basis[0] in image.basis()
+            True
         """
         cdef mzd_t *tmp
-        if self._nrows == self._ncols and isinstance(v, Vector_mod2_dense):
+        if (
+            self._nrows == self._ncols and
+            isinstance(v, Vector_mod2_dense) and
+            v.parent().rank() == self._ncols # check if the parent of v is full rank
+            ):
             VS = v.parent()
         else:
             global VectorSpace

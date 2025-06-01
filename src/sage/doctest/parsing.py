@@ -1478,7 +1478,7 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "R[write to console]" in got:
-            # Supress R warnings
+            # suppress R warnings
             r_warning_regex = re.compile(r'R\[write to console\]:.*')
             got = r_warning_regex.sub('', got)
             did_fixup = True
@@ -1507,6 +1507,13 @@ class SageOutputChecker(doctest.OutputChecker):
             # Xcode 15.
             dup_lib_regex = re.compile("ld: warning: ignoring duplicate libraries: .*")
             got = dup_lib_regex.sub('', got)
+            did_fixup = True
+
+        if "duplicate" in got:
+            # Warnings about duplicate rpaths in the linker command line
+            # occurs sometimes when compiling cython code via sage.misc.cython
+            dup_rpath_regex = re.compile("ld: warning: duplicate -rpath .* ignored")
+            got = dup_rpath_regex.sub('', got)
             did_fixup = True
 
         return did_fixup, want, got

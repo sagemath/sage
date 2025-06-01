@@ -577,13 +577,14 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     def _create_data_sobj(self, sobj_path=None):
         r"""
         Create ``sobj`` files containing the contents of the whole table.
+
         To each column there is created one file containing a list of
         strings giving the entries of the database table.
 
         The length of these lists depends on the type of the corresponding
         column. If a column is used in both tables
         (``KnotInfoColumnTypes.KnotsAndLinks``) the list of proper links
-        is appended to the list of knots.  In both other cases the lenght
+        is appended to the list of knots.  In both other cases the length
         of the list corresponds to the number of listed knots and proper
         links respectively.
 

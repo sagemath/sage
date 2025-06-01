@@ -1419,7 +1419,7 @@ def defining_polynomial_for_Kp(prime, prec=106):
         L = [g.change_ring(ZZ) for g, _ in factors]
         A = [g for g in L if (g(theta)).valuation(prime) >= e*N/2]
 
-        # We narrow down the list unitl only one value remains
+        # We narrow down the list until only one value remains
 
         if len(A) == 1:
             return A[0].change_ring(Integers(p**prec)).change_ring(ZZ)

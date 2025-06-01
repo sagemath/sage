@@ -327,7 +327,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.__character
 
-    def has_character(self):
+    def has_character(self) -> bool:
         r"""
         Return ``True`` if this space of modular forms has a specific
         character.

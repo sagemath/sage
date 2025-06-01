@@ -1347,7 +1347,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         """
         return not is_j_supersingular(self.j_invariant(), proof=proof)
 
-    def has_order(self, value, num_checks=8):
+    def has_order(self, value, num_checks=8) -> bool:
         r"""
         Return ``True`` if the curve has order ``value``.
 
@@ -3285,9 +3285,9 @@ def EllipticCurve_with_prime_order(N):
 
     def abs_products_under(bound):
         """
-        This function returns an iterator of all numbers with absolute value not
-        exceeding ``bound`` expressable as product of distinct elements in ``S``
-        in ascending order.
+        This function returns an iterator of all numbers with absolute
+        value not exceeding ``bound`` expressible as product of
+        distinct elements in ``S`` in ascending order.
         """
         import heapq
         hq = [(1, 1, -1)]
