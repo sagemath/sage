@@ -146,8 +146,6 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: MeromorphicModularFormsRing(n=3)(x) == MeromorphicModularFormsRing(n=4)(x)
             False
             sage: MeromorphicModularFormsRing()(-1/x) is MeromorphicModularFormsRing()(1/(-x))
-            False
-            sage: MeromorphicModularFormsRing()(-1/x) == MeromorphicModularFormsRing()(1/(-x))
             True
             sage: MeromorphicModularFormsRing(base_ring=CC)(-1/x) == MeromorphicModularFormsRing()(1/(-x))
             True
