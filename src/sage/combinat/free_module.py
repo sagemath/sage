@@ -1781,7 +1781,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         """
         Dispatch to the appropriate class based on the input.
 
-        EXMAPLES::
+        EXAMPLES::
 
             sage: Q = RootSystem(['A',3]).root_space(GF(3))
             sage: W = WeylGroup(['A',3], prefix='s')

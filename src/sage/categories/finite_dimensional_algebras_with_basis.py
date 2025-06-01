@@ -475,7 +475,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             Here, ``gens`` is an iterable containing elements of
             ``self`` or a single element of ``self``,
-            wheras ``side`` is either ``'left'`` or
+            and ``side`` is either ``'left'`` or
             ``'right'`` or ``'twosided'``.
 
             .. TODO::
