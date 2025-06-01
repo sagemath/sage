@@ -1437,7 +1437,7 @@ class ModularForm_abstract(ModuleElement):
         return y.ceil()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         r"""
         Return whether the modular form ``self`` has complex multiplication.
 

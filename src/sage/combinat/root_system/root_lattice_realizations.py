@@ -3642,7 +3642,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         # Descents
         ##########################################################################
 
-        def has_descent(self, i, positive=False):
+        def has_descent(self, i, positive=False) -> bool:
             """
             Test if ``self`` has a descent at position `i`, that is, if ``self`` is
             on the strict negative side of the `i`-th simple reflection
