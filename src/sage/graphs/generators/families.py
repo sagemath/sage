@@ -3131,7 +3131,6 @@ def p2_forbidden_minors():
     The order of the graphs is the same as they appear in [WA2025]_.
 
     We return the graphs using the Sage Graph constructor.
-
     """
 
     p2_forbidden_minors_graph6 = [

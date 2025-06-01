@@ -9522,7 +9522,7 @@ class Graph(GenericGraph):
         plane.  The approach is to check that the graph does not contain any
         of the known forbidden minors.
 
-        INPUT
+        INPUT:
 
         - ``return_map`` -- boolean (default: ``False``); whether to return
           a map indicating one of the forbidden graph minors if in fact the
@@ -9540,17 +9540,17 @@ class Graph(GenericGraph):
         The Peterson graph is a known projective planar graph::
 
             sage: P = graphs.PetersenGraph()
-            sage: P.is_projective_planar()
+            sage: P.is_projective_planar()  # long time
             True
 
         `K_{4,4}` has a projective plane crossing number of 2. One of the
-         minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
-         dictionary from :meth:`~Graph.minor`::
+        minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+        dictionary from :meth:`~Graph.minor`::
 
             sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
-            sage: minor_map = K44.is_projective_planar()
-            sage: minor_map
-            {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]}
+            sage: K44.is_projective_planar(return_map=True)
+            (False,
+             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]})
 
         .. SEEALSO::
 
@@ -9558,14 +9558,13 @@ class Graph(GenericGraph):
 
         TESTS::
 
-        sage: len(graphs.p2_forbidden_minors())
-        35
+            sage: len(graphs.p2_forbidden_minors())
+            35
         """
 
         from sage.graphs.generators.families import p2_forbidden_minors
         num_verts_G = self.num_verts()
         num_edges_G = self.num_edges()
-        minor_map = None
 
         for forbidden_minor in p2_forbidden_minors():
             # Can't be a minor if it has more vertices or edges than G
@@ -9579,8 +9578,7 @@ class Graph(GenericGraph):
                 if minor_map is not None:
                     if return_map:
                         return False, minor_map
-                    else:
-                        return False
+                    return False
 
             # If G has no H minor, then G.minor(H) throws a ValueError
             except ValueError:
