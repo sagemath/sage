@@ -847,6 +847,17 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Return the functorial composition of `F` and `G`.
 
+        This is defined on objects as `F\square G[U] = F[G[U]` and on
+        bijections as `F\square G[\sigma] = F[G[\sigma]]`.
+
+        Thus, `(F+G)\square H = F\square H + G\square H`.
+
+        The species of elements `X E` is a (left and right) neutral
+        element.
+
+        The species of sets is an absorbing element on the left, that
+        is, `E\square G = E`.  Moreover, `F\square E = |F[1]| E`.
+
         EXAMPLES::
 
             sage: L.<X> = LazySpecies(QQ)
@@ -875,12 +886,22 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: oeis(CovE.isotype_generating_series()[:5])  # long time, optional -- internet
             0: A000612: Number of P-equivalence classes of switching functions of n or fewer variables, divided by 2.
 
-
             sage: Cov = CovE * E.inverse()
             sage: Cov.isotype_generating_series().truncate(5)  # long time
             1 + X + 4*X^2 + 34*X^3 + 1952*X^4
             sage: oeis(Cov.isotype_generating_series()[:5])  # long time, optional -- internet
             0: A055621: Number of covers of an unlabeled n-set.
+
+        The functorial composition of two atomic species is not necessarily molecular::
+
+            sage: C = L.Cycles()
+            sage: C.restrict(6,6).functorial_composition(C.restrict(4,4))[4]
+            4*X^2*E_2 + 3*X*C_3 + 2*X^4
+
+        Another special case which is easy to understand::
+
+            sage: [(X^factorial(k)).functorial_composition(X^k) - factorial(factorial(k)-1)*X^k for k in range(4)]
+            [O^7, O^7, O^7, O^7]
         """
         return FunctorialCompositionSpeciesElement(self, *args)
 
