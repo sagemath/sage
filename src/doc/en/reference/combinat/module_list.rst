@@ -140,6 +140,7 @@ Comprehensive Module List
     sage/combinat/grossman_larson_algebras
     sage/combinat/growth
     sage/combinat/hall_polynomial
+    sage/combinat/designs/hash_family
     sage/combinat/hillman_grassl
     sage/combinat/integer_lists/base
     sage/combinat/integer_lists/invlex
