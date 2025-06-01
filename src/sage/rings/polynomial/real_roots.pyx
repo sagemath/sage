@@ -3750,7 +3750,7 @@ cdef class island:
 
         return self.known_done
 
-    def has_root(self):
+    def has_root(self) -> bool:
         """
         Assuming that the island is done (has either 0 or 1 roots),
         reports whether the island has a root.
