@@ -1729,7 +1729,7 @@ class MatchingCoveredGraph(Graph):
             [{0}, {1}, {2, 3, 4}, {5}, {6}, {7}]
 
         For a bicritical graph (for instance, the Petersen graph), the
-        canonical parition constitutes of only singleton sets each containing
+        canonical partition constitutes of only singleton sets each containing
         an individual vertex::
 
             sage: P = graphs.PetersenGraph()
@@ -2002,7 +2002,7 @@ class MatchingCoveredGraph(Graph):
         EXAMPLES:
 
         If one specifies a perfect matching while initializing the object, the
-        value of ``self._matching`` is captures the same matching::
+        value of ``self._matching`` is the same matching::
 
             sage: P = graphs.PetersenGraph()
             sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
@@ -2012,8 +2012,8 @@ class MatchingCoveredGraph(Graph):
             sage: M == sorted(G.get_matching())
             True
 
-        If no matching is specified while initilizing a matching covered graph,
-        a perfect is computed
+        If no matching is specified while initializing a matching
+        covered graph, a perfect matching is computed
         :meth:`~sage.graphs.graph.Graph.matching` and that is captured as
         ``self._matching``::
 
@@ -2865,7 +2865,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.is_brick()
             True
 
-        The triangular cicular ladder (a graph on six vertices), aka
+        The triangular circular ladder (a graph on six vertices), aka
         `\overline{C_6}` is a brick::
 
             sage: C6Bar = graphs.CircularLadderGraph(3)
