@@ -1499,6 +1499,8 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
             Check that we support different parents::
 
                 sage: F = CombinatorialFreeModule(QQ, Partitions())
+                sage: M = MolecularSpecies("X,Y")
+                sage: A = M(G, {0: [5,6], 1: [1,2,3,4]})
                 sage: P = A.cycle_index(parent=tensor([F, F]))
                 sage: P
                 1/4*B[[1, 1]] # B[[1, 1, 1, 1]] + 1/4*B[[1, 1]] # B[[2, 2]] + 1/4*B[[2]] # B[[1, 1, 1, 1]] + 1/4*B[[2]] # B[[2, 2]]
