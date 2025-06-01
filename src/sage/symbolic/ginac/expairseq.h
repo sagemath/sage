@@ -116,7 +116,7 @@ protected:
 	                                               const numeric & c) const;
 	virtual ex recombine_pair_to_ex(const expair & p) const;
 	virtual bool expair_needs_further_processing(epp it);
-	virtual numeric default_overall_coeff() const;
+	virtual const numeric& default_overall_coeff() const;
 	virtual void combine_overall_coeff(const numeric & c);
 	virtual void combine_overall_coeff(const numeric & c1, const numeric & c2);
 	virtual bool can_make_flat(const expair & p) const;
