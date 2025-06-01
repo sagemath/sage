@@ -71,7 +71,7 @@ the literature::
      Place (x^7 + 27/4, y + 4/9*x^5, y^2 + 4/3*x^3),
      Place (x^7 + 27/4, y - 2/9*x^5, y^2 + 1/3*x^3)]
 
-We can read off out the output of ``places_at_branch_locus`` to choose our
+We can read off from the output of ``places_at_branch_locus`` to choose our
 divisor, and we can calculate the canonical divisor using curve functionality::
 
     sage: P0 = 1*BL[0]
@@ -200,16 +200,19 @@ def bisect(L, t):
 
     INPUT:
 
-    - ``L`` -- list of tuples such that the first term of each tuple is a real
-      number between 0 and 1. These real numbers must be increasing
+    - ``L`` -- list of tuples where the first element of each tuple is a real
+      number between 0 and 1, in increasing order
 
     - ``t`` -- real number between `t_0` and `t_n`
 
-    OUTPUT: integer i, giving the position in L where t would be in
+    OUTPUT: 
+    
+    Integer; the index ``i`` such that ``L[i][0] <= t < L[i+1][0]``. If ``t`` 
+    equals ``L[i][0]`` exactly, then ``i`` is returned.
 
     EXAMPLES:
 
-    Form a list of the desired form, and pick a real number between 0 and 1::
+    Create a list and find the position of a value::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import bisect
         sage: L = [(0.0, 'a'), (0.3, 'b'), (0.7, 'c'), (0.8, 'd'), (0.9, 'e'), (1.0, 'f')]
@@ -217,8 +220,7 @@ def bisect(L, t):
         sage: bisect(L,t)
         1
 
-    Another example which demonstrates that if t is equal to one of the t_i, it
-    returns that index::
+    When ``t`` equals one of the first elements exactly, that index is returned::
 
         sage: L = [(0.0, 'a'), (0.1, 'b'), (0.45, 'c'), (0.5, 'd'), (0.65, 'e'), (1.0, 'f')]
         sage: t = 0.5
@@ -255,6 +257,10 @@ def numerical_inverse(C):
     INPUT:
 
     - ``C`` -- a real or complex invertible square matrix
+
+    OUTPUT:
+    - A ``Matrix`` over the same ring as ``C``, representing its
+    numerical inverse.
 
     EXAMPLES::
 
@@ -302,24 +308,36 @@ class ConvergenceError(ValueError):
 
 def differential_basis_baker(f):
     r"""
-    Compute a differential basis for a curve that is nonsingular outside (1:0:0),(0:1:0),(0:0:1).
+    Compute a differential basis for a plane curve `f(x,y)=0`
+    that is nonsingular outside the coordinate points at infinity
+    (1:0:0), (0:1:0), and (0:0:1).
 
-    Baker's theorem tells us that if a curve has its singularities at the coordinate vertices and meets
-    some further easily tested genericity criteria,
-    then we can read off a basis for the regular differentials from the interior of the
-    Newton polygon spanned by the monomials. While this theorem only applies to special plane curves
-    it is worth implementing because the analysis is relatively cheap and it applies to a lot of
-    commonly encountered curves (e.g., curves given by a hyperelliptic model). Other advantages include
-    that we can do the computation over any exact base ring (the alternative Singular based method for
-    computing the adjoint ideal requires the rationals), and that we can avoid being affected by subtle bugs
-    in the Singular code.
+    This method applies Baker's theorem, which states that if a curve's
+    singularities are restricted to the coordinate vertices in the projective
+    plane and it meets certain easily testable genericity criteria, a basis
+    for the regular differentials can be derived from the interior integral
+    points of its Newton polygon.
 
-    ``None`` is returned when ``f`` does not describe a curve of the relevant type. If ``f`` is of the relevant
-    type, but is of genus `0` then ``[]`` is returned (which are both False values, but they are not equal).
+    This approach is advantageous for curves meeting these criteria (e.g.,
+    many hyperelliptic curves) because it is computationally inexpensive,
+    can be performed over any exact base ring (unlike some Singular-based
+    methods requiring rationals), and avoids potential issues with external
+    library routines.
 
     INPUT:
 
-    - ``f`` -- a bivariate polynomial
+    - ``f`` -- a bivariate polynomial defining the plane curve.
+
+    OUTPUT:
+
+    - A list of monomials `x^a y^b` such that `x^a y^b dx / (df/dy)` forms a
+      basis for the regular differentials on the curve defined by `f`.
+    - Returns ``None`` if ``f`` does not describe a curve of the required type
+      (i.e., if its singularities are not appropriately located or if it fails
+      genericity conditions).
+    - Returns an empty list ``[]`` if ``f`` is of the required type but has
+      genus 0. Note that both ``None`` and ``[]`` evaluate to ``False`` in a
+      boolean context, but are distinct return values.
 
     EXAMPLES::
 
@@ -331,14 +349,14 @@ def differential_basis_baker(f):
         sage: f = y^2 - (x-3)^2*x
         sage: differential_basis_baker(f) is None
         True
-        sage: differential_basis_baker(x^2+y^2-1)
+        sage: differential_basis_baker(x^2+y^2-1) # Genus 0 curve
         []
 
     TESTS::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import differential_basis_baker
         sage: R.<x,y> = QQ[]
-        sage: f = y^12 - x*(x - 1)^7
+        sage: f = y^12 - x*(x - 1)^7 # Fails genericity (edge polynomial not square-free)
         sage: differential_basis_baker(f) is None
         True
     """
@@ -377,7 +395,7 @@ def differential_basis_baker(f):
 
 def find_closest_element(item, lst):
     r"""
-    Return the index of the closest element of a list.
+    Return the index of the closest element in a list.
 
     Given ``List`` and ``item``, return the index of the element ``l`` of ``List``
     which minimises ``(item-l).abs()``. If there are multiple such elements, the
@@ -389,16 +407,23 @@ def find_closest_element(item, lst):
 
     - ``lst`` -- list to look for closest element in
 
+    OUTPUT:
+
+    Integer; the index of the closest element in ``lst``
+
     EXAMPLES::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import find_closest_element
-        sage: i = 5
-        sage: l = list(range(10))
-        sage: i == find_closest_element(i, l)
-        True
+        sage: find_closest_element(5, list(range(10)))
+        5
+        sage: find_closest_element(4.7, [1, 3, 5, 7])  # 5 is closest to 4.7
+        2
 
-    Note that this method does no checks on the input, but will fail for inputs
-    where the absolute value or subtraction do not make sense.
+    .. NOTE::
+
+        This function assumes that subtraction and absolute value operations
+        are defined between ``item`` and elements of ``lst``. No type checking
+        is performed.
     """
     dists = [(item - l).abs() for l in lst]
     return dists.index(min(dists))
@@ -406,56 +431,50 @@ def find_closest_element(item, lst):
 
 def reparameterize_differential_minpoly(minpoly, z0):
     r"""
-    Rewrites a minimal polynomial to write is around `z_0`.
+    Reparameterize a differential's minimal polynomial around a new point `z_0`.
 
-    Given a minimal polynomial `m(z,g)`, where `g` corresponds to a differential
-    on the surface (that is, it is represented as a rational function, and
-    implicitly carries a factor `dz`), we rewrite the minpoly in terms of
-    variables `\bar{z}, \bar{g}` s.t now `\bar{z}=0 \Leftrightarrow z=z_0`.
+    Given a minimal polynomial `m(z,g)` for a differential `g dz`, 
+    we compute the minimal polynomial for the same differential expressed 
+    in local coordinates around the point `z_0`. The transformation uses 
+    `\bar{z} = z - z_0` for finite `z_0`, or `\bar{z} = z^{-1}` when `z_0 = \infty`.
 
     INPUT:
 
-    - ``minpoly`` -- a polynomial in two variables, where the first variable
-      corresponds to the base coordinate on the Riemann surface
-    - ``z0`` -- complex number or infinity; the point about which to
-      reparameterize
+    - ``minpoly`` -- polynomial in two variables representing the minimal
+      polynomial of a differential
 
-    OUTPUT: a polynomial in two variables giving the reparameterize minimal polynomial
+    - ``z0`` -- complex number or infinity; the center point for the new
+      local coordinate system
+
+    OUTPUT: 
+    
+    Polynomial in two variables (with names ending in "bar") giving 
+    the reparameterized minimal polynomial
 
     EXAMPLES:
 
-    On the curve given by `w^2 - z^3 + 1 = 0`, we have differential
-    `\frac{dz}{2w} = \frac{dz}{2\sqrt{z^3-1}}`
-    with minimal polynomial `g^2(z^3-1) - 1/4=0`. We can make the substitution
-    `\bar{z}=z^{-1}` to parameterise the differential about `z=\infty` as
-
-    .. MATH::
-
-        \frac{-\bar{z}^{-2} d\bar{z}}{2\sqrt{\bar{z}^{-3}-1}} = \frac{-d\bar{z}}{2\sqrt{\bar{z}(1-\bar{z}^3)}}.
-
-    Hence the transformed differential should have minimal polynomial
-    `\bar{g}^2 \bar{z} (1 - \bar{z}^3) - 1/4 = 0`, and we can check this::
+    Consider the elliptic curve `w^2 = z^3 - 1` with differential `dz/(2w)`.
+    We can reparameterize this differential around infinity::
 
         sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface, reparameterize_differential_minpoly
         sage: R.<z,w> = QQ[]
         sage: S = RiemannSurface(w^2-z^3+1)
         sage: minpoly = S._cohomology_basis_bounding_data[1][0][2]
-        sage: z0 = Infinity
-        sage: reparameterize_differential_minpoly(minpoly, z0)
+        sage: reparameterize_differential_minpoly(minpoly, Infinity)
         -zbar^4*gbar^2 + zbar*gbar^2 - 1/4
 
-    We can further check that reparameterising about `0` is the identity
-    operation::
+    Reparameterizing around 0 is the identity operation::
 
-        sage: reparameterize_differential_minpoly(minpoly, 0)(*minpoly.parent().gens()) == minpoly
+        sage: original = minpoly
+        sage: reparameterized = reparameterize_differential_minpoly(minpoly, 0)
+        sage: reparameterized(*minpoly.parent().gens()) == original
         True
 
     .. NOTE::
 
-        As part of the routine, when reparameterising about infinity, a
-        rational function is reduced and then the numerator is taken. Over
-        an inexact ring this is numerically unstable, and so it is advisable
-        to only reparameterize about infinity over an exact ring.
+        When reparameterizing around infinity over inexact rings (like ``CDF``),
+        numerical instability may occur during polynomial reduction. For reliable
+        results with infinity, use exact rings like ``QQ`` or ``QQbar``.
     """
     P = minpoly.parent()
     F = PolynomialRing(P.base_ring(), [str(v) + "bar" for v in P.gens()])
@@ -770,11 +789,14 @@ class RiemannSurface:
 
         INPUT:
 
-        - ``z0`` -- complex number; a point in the complex z-plane
+        - ``z0`` -- complex number; a point in the complex ``z``-plane.
 
         OUTPUT:
 
-        A set of complex numbers corresponding to solutions of `f(z_0,w) = 0`.
+        A list of complex numbers, representing the distinct solutions ``w`` to
+        ``f(z0, w) = 0``. The length of the list is typically ``self.degree``
+        (the degree of `f` in `w`). At ramification points, the list will contain 
+        fewer than ``self.degree`` distinct values.
 
         EXAMPLES::
 
@@ -783,13 +805,13 @@ class RiemannSurface:
             sage: f = w^2 - z^4 + 1
             sage: S = RiemannSurface(f)
 
-        Find the w-values above the origin, i.e. the solutions of `w^2 + 1 = 0`::
+        Find the w-values above the origin (i.e. solutions to `w^2 + 1 = 0`)::
 
             sage: S.w_values(0)  # abs tol 1e-14
             [-1.00000000000000*I, 1.00000000000000*I]
 
-        Note that typically the method returns a list of length ``self.degree``,
-        but that at ramification points, this may no longer be true::
+        At a ramification point (e.g., `z=1` for `w^2 - z^4 + 1 = 0`),
+        there is only one distinct `w`-value (namely `w=0`)::
 
             sage: S.w_values(1)  # abs tol 1e-14
             [0.000000000000000]
@@ -1002,45 +1024,51 @@ class RiemannSurface:
             # points and the point in question.
             return min(abs(b - z1) for b in self._f_branch_locus) / 2
 
-    def homotopy_continuation(self, edge):
+    def homotopy_continuation(self, edge_coords):
         r"""
-        Perform homotopy continuation along an edge of the Voronoi diagram using
-        Newton iteration.
+        Perform homotopy continuation along a straight line segment in the
+        `z`-plane using Newton iteration to track the `w`-values.
 
         INPUT:
 
-        - ``edge`` -- tuple ``(z_start, z_end)`` indicating the straight line
-          over which to perform the homotopy continuation
+        - ``edge_coords`` -- tuple ``(z_start, z_end)`` of complex numbers,
+          defining the start and end points of the straight line segment in
+          the `z`-plane over which to perform continuation.
 
         OUTPUT:
 
-        A list containing the initialised continuation data. Each entry in the
-        list contains: the `t` values that entry corresponds to, a list of
-        complex numbers corresponding to the points which are reached when
-        continued along the edge when traversing along the direction of the
-        edge, and a value ``epsilon`` giving the minimumdistance between the
-        fibre values divided by 3. The ordering of these points indicates how
-        they have been permuted due to the weaving of the curve.
+        A list representing the steps of the continuation. Each element in
+        the list is a tuple ``(t, w_at_t, epsilon_t)`` where:
+          - ``t`` is the parameter value (from 0 to 1) along the path from
+            ``z_start`` to ``z_end``.
+          - ``w_at_t`` is a list of complex numbers, representing the
+            `w`-values on the surface above `z(t) = z_start*(1-t) + z_end*t`.
+            The order of these `w`-values reflects the permutation
+            induced by following the paths from their initial positions
+            above ``z_start``.
+          - ``epsilon_t`` is a heuristic value related to the minimum
+            distance between the `w`-values in ``w_at_t``, used internally.
 
         EXAMPLES:
 
         We check that continued values along an edge correspond (up to the
-        appropriate permutation) to what is stored. Note that the permutation
-        was originally computed from this data::
+        appropriate permutation) to what is stored. The permutation itself
+        is computed from this continuation data.::
 
             sage: from sage.schemes.riemann_surfaces.riemann_surface import RiemannSurface
             sage: R.<z,w> = QQ[]
             sage: f = z^3*w + w^3 + z
             sage: S = RiemannSurface(f)
-            sage: edge1 = sorted(S.edge_permutations())[0]
-            sage: sigma = S.edge_permutations()[edge1]
-            sage: edge = [S._vertices[i] for i in edge1]
-            sage: continued_values = S.homotopy_continuation(edge)[-1][1]
-            sage: stored_values = S.w_values(S._vertices[edge1[1]])
-            sage: all(abs(continued_values[i]-stored_values[sigma(i)]) < 1e-8 for i in range(3))
+            sage: edge_indices = sorted(S.edge_permutations())[0]
+            sage: sigma = S.edge_permutations()[edge_indices]
+            sage: edge_coordinates = [S._vertices[i] for i in edge_indices]
+            sage: continuation_data = S.homotopy_continuation(edge_coordinates)
+            sage: continued_w_values_at_end = continuation_data[-1][1]
+            sage: stored_w_values_at_end = S.w_values(S._vertices[edge_indices[1]])
+            sage: all(abs(continued_w_values_at_end[i] - stored_w_values_at_end[sigma(i)]) < 1e-8 for i in range(S.degree))
             True
         """
-        z_start, z_end = edge
+        z_start, z_end = edge_coords
         z_start = self._CC(z_start)
         z_end = self._CC(z_end)
         ZERO = self._RR.zero()
@@ -2358,7 +2386,10 @@ class RiemannSurface:
         r"""
         Compute the period matrix of the surface.
 
-        OUTPUT: a matrix of complex values
+        OUTPUT: 
+        
+        A ``Matrix`` over a complex field, representing the period matrix
+        of the combined surface.
 
         EXAMPLES::
 
@@ -2397,7 +2428,10 @@ class RiemannSurface:
         r"""
         Compute the Riemann matrix.
 
-        OUTPUT: a matrix of complex values
+        OUTPUT: 
+        
+        A ``Matrix`` over a complex field, representing the Riemann matrix
+        of the combined surface.
 
         EXAMPLES::
 
@@ -2760,28 +2794,24 @@ class RiemannSurface:
 
         INPUT:
 
-        - ``other`` -- (default: ``self``) the codomain; another Riemann
-          surface
-
-        - ``hom_basis`` -- (default: ``None``) a `\ZZ`-basis of the
+        - ``other`` -- (default: ``self``) The codomain; another Riemann
+          surface.
+        - ``hom_basis`` -- (default: ``None``) A `\ZZ`-basis for the
           homomorphisms from ``self`` to ``other``, as obtained from
-          :meth:`homomorphism_basis`. If you have already calculated this
-          basis, it saves time to pass it via this keyword argument. Otherwise
-          the method will calculate it.
-
-        - ``b`` -- integer (default provided); as for
-          :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis
-
-        - ``r`` -- integer (default: ``b/4``);  as for
-          :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis
+          :meth:`homomorphism_basis`. Providing this can save computation time
+          if already calculated.
+        - ``b`` -- integer (default provided by :meth:`homomorphism_basis`);
+          Used if ``hom_basis`` is not provided and needs to be computed.
+          See :meth:`homomorphism_basis` for details.
+        - ``r`` -- integer (default provided by :meth:`homomorphism_basis`);
+          Used if ``hom_basis`` is not provided and needs to be computed.
+          See :meth:`homomorphism_basis` for details.
 
         OUTPUT:
 
-        This returns the combinations of the elements of
-        :meth:`homomorphism_basis` that correspond to symplectic
-        isomorphisms between the Jacobians of ``self`` and ``other``.
+        A list of integer matrices. Each matrix represents a symplectic
+        isomorphism between the Jacobians of ``self`` and ``other``,
+        expressed in the homology basis.
 
         EXAMPLES::
 
@@ -2839,27 +2869,27 @@ class RiemannSurface:
 
         INPUT:
 
-        - ``endo_basis`` -- (default: ``None``) a `\ZZ`-basis of the
+        - ``endo_basis`` -- (default: ``None``) A `\ZZ`-basis for the
           endomorphisms of ``self``, as obtained from
-          :meth:`endomorphism_basis`. If you have already calculated this
-          basis, it saves time to pass it via this keyword argument. Otherwise
-          the method will calculate it.
-
-        - ``b`` -- integer (default provided); as for
-          :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis
-
-        - ``r`` -- integer (default: ``b/4``);  as for
-          :meth:`homomorphism_basis`, and used in its invocation if
-          (re)calculating said basis
+          :meth:`endomorphism_basis`. Providing this can save computation
+          time if already calculated.
+        - ``b`` -- integer (default provided by :meth:`endomorphism_basis`);
+          Used if ``endo_basis`` is not provided and needs to be computed.
+          See :meth:`endomorphism_basis` for details.
+        - ``r`` -- integer (default provided by :meth:`endomorphism_basis`);
+          Used if ``endo_basis`` is not provided and needs to be computed.
+          See :meth:`endomorphism_basis` for details.
 
         OUTPUT:
 
-        The symplectic automorphism group of the Jacobian of the Riemann
-        surface. The automorphism group of the Riemann surface itself can be
-        recovered from this; if the curve is hyperelliptic, then it is
-        identical, and if not, then one divides out by the central element
-        corresponding to multiplication by -1.
+        A ``MatrixGroup`` representing the symplectic automorphism group of the
+        Jacobian of the Riemann surface.
+
+        .. NOTE::
+        The automorphism group of the Riemann surface itself can be
+        recovered from this: if the curve is hyperelliptic, this group is
+        isomorphic to the curve's automorphism group. Otherwise, one typically
+        quotients by the central element corresponding to multiplication by -1.
 
         EXAMPLES::
 
@@ -2867,7 +2897,7 @@ class RiemannSurface:
             sage: A.<x,y> = QQ[]
             sage: S = RiemannSurface(y^2 - (x^6 + 2*x^4 + 4*x^2 + 8), prec = 100)
             sage: G = S.symplectic_automorphism_group()
-            sage: G.as_permutation_group().is_isomorphic(DihedralGroup(4))
+            sage: G.as_permutation_group().is_isomorphic(DihedralGroup(4)) # G is a matrix group
             True
         """
         RsAut = self.symplectic_isomorphisms(hom_basis=endo_basis, b=b, r=r)
@@ -3674,16 +3704,20 @@ class RiemannSurface:
         r"""
         Return the places above the branch locus.
 
-        Return a list of the of places above the branch locus. This must be
-        done over the base ring, and so the places are given in terms of the
-        factors of the discriminant. Currently, this method only works when
-        ``self._R.base_ring() == QQ`` as for other rings, the function field
-        for ``Curve(self.f)`` is not implemented. To go from these divisors to
-        a divisor list, see :meth:`divisor_to_divisor_list`.
+        This method identifies all places in the function field of `self.curve()`
+        that are ramified over the base `z`-plane. The places are determined
+        over the base ring of the curve's defining polynomial.
+
+        Currently, this method requires ``self.f.base_ring()`` to be `\QQ`,
+        as the function field machinery for curves over other rings may not be
+        fully implemented for this operation.
+
+        To convert these places into a list format suitable for methods like
+        :meth:`abel_jacobi`, see :meth:`divisor_to_divisor_list`.
 
         OUTPUT:
 
-        List of places of the functions field ``Curve(self.f).function_field()``.
+        A list of ``Place`` objects from the function field ``self.curve().function_field()``.
 
         EXAMPLES::
 
@@ -3929,8 +3963,10 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     OUTPUT:
 
-    A list of `2g \times 2h` integer matrices that, for large enough `r`, `b-r`,
-    generate the `\ZZ`-module of relevant transformations.
+    A list of `2*g1 \times 2*g2` integer matrices (where `g1` and `g2` are
+    the dimensions of `M1` and `M2` respectively). For sufficiently
+    chosen `r` and `b-r`, these matrices form a `\ZZ`-basis for the
+    module of transformations `(D, B; C, A)` satisfying the condition.
 
     EXAMPLES::
 
