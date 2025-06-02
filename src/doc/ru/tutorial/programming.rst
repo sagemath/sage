@@ -404,8 +404,8 @@ Python, сработает нормально.
 
 Словарь (также именуемый ассоциативным массивом) - это сопоставление
 'хэшируемых' объектов (как строки, числа и кортежи из них; см. документацию
-Python: http://docs.python.org/tut/node7.html и
-http://docs.python.org/lib/typesmapping.html) произвольным объектам.
+Python: http://docs.python.org/3/tutorial/datastructures.html и
+https://docs.python.org/3/library/stdtypes.html#typesmapping) произвольным объектам.
 
 ::
 
