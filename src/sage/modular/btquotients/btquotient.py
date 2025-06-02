@@ -1468,7 +1468,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 else:
                     self._magma = magma_session
                 self._magma(p)
-            except RuntimeError:
+            except TypeError:
                 raise NotImplementedError('Sage does not know yet how to work with the kind of orders that you are trying to use. Try installing Magma first and set it up so that Sage can use it.')
 
             # This is added for debugging, in order to have reproducible results
