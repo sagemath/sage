@@ -1476,16 +1476,16 @@ class Posets(metaclass=ClasscallMetaclass):
                 return ((a[0] == b[0] + 1 and a[1] == b[1]) or
                         (a[1] == b[1] + 1 and a[0] == b[0]))
             return JoinSemilattice((lam.cells(), cell_geq), cover_relations=True)
-        else:
-            def cell_leq(a, b):
-                """
-                Nested function that returns ``True`` if the cell `a` is
-                to the left or above
-                the cell `b` in the (English) Young diagram.
-                """
-                return ((a[0] == b[0] - 1 and a[1] == b[1]) or
-                        (a[1] == b[1] - 1 and a[0] == b[0]))
-            return MeetSemilattice((lam.cells(), cell_leq), cover_relations=True)
+
+        def cell_leq(a, b):
+            """
+            Nested function that returns ``True`` if the cell `a` is
+            to the left or above
+            the cell `b` in the (English) Young diagram.
+            """
+            return ((a[0] == b[0] - 1 and a[1] == b[1]) or
+                    (a[1] == b[1] - 1 and a[0] == b[0]))
+        return MeetSemilattice((lam.cells(), cell_leq), cover_relations=True)
 
     @staticmethod
     def YoungsLattice(n):
