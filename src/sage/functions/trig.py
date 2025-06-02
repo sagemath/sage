@@ -1,5 +1,22 @@
 r"""
 Trigonometric functions
+
+TESTS:
+
+Check that :issue:`35696` is fixed::
+
+    sage: sin(x*(x+1)-x^2-x)
+    0
+    sage: cos(x*(x+1)-x^2-x)
+    1
+    sage: tan(x*(x+1)-x^2-x)
+    0
+    sage: csc(x*(x+1)-x^2-x)
+    Infinity
+    sage: sec(x*(x+1)-x^2-x)
+    1
+    sage: cot(x*(x+1)-x^2-x)
+    Infinity
 """
 import math
 

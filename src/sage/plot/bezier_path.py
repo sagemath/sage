@@ -76,7 +76,8 @@ class BezierPath(GraphicPrimitive_xydata):
 
         self.path = [np.array(l, float) for l in path]
 
-        # In oder to feed later to matplotlib.path.Path we convert in the following form
+        # In order to feed later to matplotlib.path.Path we convert in
+        # the following form
         # - vertices: an Nx2 float array of vertices
         # - codes: an N-length uint8 array of vertex types, or None
         #   where each code could be MOVETO (=1), LINETO (=2), CURVE3 (=3), CURVE4 (=4)
