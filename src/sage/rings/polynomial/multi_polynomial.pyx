@@ -2916,6 +2916,7 @@ cdef class MPolynomial(CommutativePolynomial):
         n, u = lc.canonical_associate()
         return (u.inverse_of_unit() * self, u)
 
+
 def _is_M_convex_(points) -> bool:
     r"""
     Return whether ``points`` represents a set of integer lattice points
