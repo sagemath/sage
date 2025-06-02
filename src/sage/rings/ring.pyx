@@ -757,64 +757,6 @@ cdef class Field(CommutativeRing):
     """
     _default_category = _Fields
 
-    def fraction_field(self):
-        """
-        Return the fraction field of ``self``.
-
-        EXAMPLES:
-
-        Since fields are their own field of fractions, we simply get the
-        original field in return::
-
-            sage: QQ.fraction_field()
-            Rational Field
-            sage: RR.fraction_field()                                                   # needs sage.rings.real_mpfr
-            Real Field with 53 bits of precision
-            sage: CC.fraction_field()                                                   # needs sage.rings.real_mpfr
-            Complex Field with 53 bits of precision
-
-            sage: x = polygen(ZZ, 'x')
-            sage: F = NumberField(x^2 + 1, 'i')                                         # needs sage.rings.number_field
-            sage: F.fraction_field()                                                    # needs sage.rings.number_field
-            Number Field in i with defining polynomial x^2 + 1
-        """
-        return self
-
-    def _pseudo_fraction_field(self):
-        """
-        The fraction field of ``self`` is always available as ``self``.
-
-        EXAMPLES::
-
-            sage: QQ._pseudo_fraction_field()
-            Rational Field
-            sage: K = GF(5)
-            sage: K._pseudo_fraction_field()
-            Finite Field of size 5
-            sage: K._pseudo_fraction_field() is K
-            True
-        """
-        return self
-
-    def algebraic_closure(self):
-        """
-        Return the algebraic closure of ``self``.
-
-        .. NOTE::
-
-           This is only implemented for certain classes of field.
-
-        EXAMPLES::
-
-            sage: K = PolynomialRing(QQ,'x').fraction_field(); K
-            Fraction Field of Univariate Polynomial Ring in x over Rational Field
-            sage: K.algebraic_closure()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Algebraic closures of general fields not implemented.
-        """
-        raise NotImplementedError("Algebraic closures of general fields not implemented.")
-
     def an_embedding(self, K):
         r"""
         Return some embedding of this field into another field `K`,

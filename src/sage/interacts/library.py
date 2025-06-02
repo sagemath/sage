@@ -1642,7 +1642,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     html('<center><font color="green">$g = %s$</font></center>' % latex(g))
     html('<center><font color="blue"><b>$h = %s = %s$</b></font></center>' % (lbl, latex(h)))
     if do_plot:
-        P = plot(f, xrange, color='red', thickness=2) +  \
+        P = plot(f, xrange, color='red', thickness=2) + \
             plot(g, xrange, color='green', thickness=2) + \
             plot(h, xrange, color='blue', thickness=2)
         if yrange == 'auto':

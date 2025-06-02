@@ -110,6 +110,7 @@ AUTHOR:
 # ***************************************************************************
 
 
+cimport cython
 from sage.misc.fast_methods cimport hash_by_id
 from sage.misc.cachefunc import cached_method
 from sage.cpython.getattr cimport AttributeErrorMessage
@@ -612,6 +613,7 @@ cdef class RingExtension_generic(Parent):
         self.register_coercion(RingExtensionBackendIsomorphism(ring.Hom(self)))
         ring.register_conversion(RingExtensionBackendReverseIsomorphism(self.Hom(ring)))
 
+    @cython.binding(True)
     def __getattr__(self, name):
         """
         If this extension was created with ``import_methods = True``,

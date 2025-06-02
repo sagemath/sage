@@ -2349,12 +2349,14 @@ class HyperbolicGeodesicHM(HyperbolicGeodesic):
         # This means that cosh(x)*v1 + sinh(x)*v2 is unit timelike.
         hyperbola = tuple(cosh(x)*v1 + sinh(x)*v2)
         endtime = arcsinh(v2_ldot_u2)
-        # mimic the function _parametric_plot3d_curve using a bezier3d instead of a line3d
-        # this is required in order to be able to plot hyperbolic polygons whithin the plot library
+        # mimic the function _parametric_plot3d_curve using a bezier3d
+        # instead of a line3d
+        # this is required in order to be able to plot hyperbolic
+        # polygons within the plot library
         g, ranges = setup_for_eval_on_grid(hyperbola, [(x, 0, endtime)], points)
         f_x, f_y, f_z = g
-        points = [(f_x(u), f_y(u), f_z(u)) for u in xsrange(*ranges[0], include_endpoint=True)]
-        return points
+        return [(f_x(u), f_y(u), f_z(u))
+                for u in xsrange(*ranges[0], include_endpoint=True)]
 
     def plot(self, show_hyperboloid=True, **graphics_options):
         r"""

@@ -83,7 +83,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
 
     OUTPUT: a quadratic form with the specified invariants
 
-    Let `(a_1, \ldots, a_n)` be the gram marix of a regular quadratic space.
+    Let `(a_1, \ldots, a_n)` be the Gram matrix of a regular quadratic space.
     Then Cassel's Hasse invariant is defined as
 
     .. MATH::
@@ -1215,7 +1215,7 @@ class QuadraticForm(SageObject):
             sage: A.base_ring()
             Integer Ring
         """
-        A = (ZZ(1) / ZZ(2)) * self.matrix()
+        A = (ZZ.one() / ZZ(2)) * self.matrix()
         n = self.dim()
 
         # Test to see if it has an integral Gram matrix
@@ -1229,11 +1229,12 @@ class QuadraticForm(SageObject):
             return MatrixSpace(self.base_ring(), n, n)(A)
         raise TypeError("this form does not have an integral Gram matrix")
 
-    def has_integral_Gram_matrix(self):
+    def has_integral_Gram_matrix(self) -> bool:
         r"""
         Return whether the quadratic form has an integral Gram matrix (with respect to its base ring).
 
-        A warning is issued if the form is defined over a field, since in that case the return is trivially true.
+        A warning is issued if the form is defined over a field,
+        since in that case the return is trivially true.
 
         EXAMPLES::
 

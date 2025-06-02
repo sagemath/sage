@@ -729,8 +729,8 @@ class LeviCivitaConnection(AffineConnection):
                                         if not use_Bianchi or (j <= k or j <= l):
                                             res[i,j,k,l] = frame[k](gam[[i,j,l]]) - \
                                                            frame[l](gam[[i,j,k]]) + \
-                                                           gam_gam[[i,k,j,l]] -  \
-                                                           gam_gam[[i,l,j,k]] -  \
+                                                           gam_gam[[i,k,j,l]] - \
+                                                           gam_gam[[i,l,j,k]] - \
                                                            gam_sc[[i,j,k,l]]
                             if use_Bianchi:
                                 # first Bianchi identity

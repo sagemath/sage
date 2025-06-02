@@ -734,7 +734,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         def first_descent(self, side='right', index_set=None, positive=False):
             """
             Return the first left (resp. right) descent of ``self``, as
-            ane element of ``index_set``, or ``None`` if there is none.
+            an element of ``index_set``, or ``None`` if there is none.
 
             See :meth:`descents` for a description of the options.
 
@@ -810,7 +810,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 return [I[i] for i in index_set if not _matrix_test_right_descent(M, i, n, zero)]
             return [I[i] for i in index_set if _matrix_test_right_descent(M, i, n, zero)]
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             r"""
             Return whether ``i`` is a right descent of ``self``.
 

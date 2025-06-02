@@ -1,0 +1,41 @@
+From 52621bc6bf24fca2b1d8c1ef3c10ddf4fb9c52bd Mon Sep 17 00:00:00 2001
+From: Dima Pasechnik <dima@pasechnik.info>
+Date: Mon, 26 May 2025 04:03:40 -0500
+Subject: [PATCH] Fixing darwin headerpad issue (#5992)
+
+---
+ Makefile.rules | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile.rules b/Makefile.rules
+index 670e7d3f57..47dffbaae6 100644
+--- a/Makefile.rules
++++ b/Makefile.rules
+@@ -431,7 +431,7 @@ build/obj/%.c.o: %.c cnf/GAP-CFLAGS cnf/GAP-CPPFLAGS $(obj_deps)
+ ########################################################################
+ 
+ LINK=$(CC)
+-
++GAP_INSTALL_EXTRAFLAGS =
+ SHLIB_MAJOR = $(GAP_KERNEL_MAJOR_VERSION)
+ ifneq (,$(findstring cygwin,$(host_os)))
+   SHLIB_EXT=.dll
+@@ -447,7 +447,8 @@ else ifneq (,$(findstring darwin,$(host_os)))
+   LINK_SHLIB_FLAGS += -compatibility_version $(LIBGAP_COMPAT_VER)
+   LINK_SHLIB_FLAGS += -current_version $(LIBGAP_CURRENT_VER)
+   LINK_SHLIB_FLAGS += -Wl,-single_module
+-  LINK_SHLIB_FLAGS += -headerpad_max_install_names
++  LINK_SHLIB_FLAGS += -Wl,-headerpad_max_install_names
++  GAP_INSTALL_EXTRAFLAGS = -Wl,-headerpad_max_install_names
+ 
+   GAP_CPPFLAGS += -DPIC
+   GAP_CFLAGS += -fno-common
+@@ -519,7 +520,7 @@ build/main.c: src/main.c config.status
+ 
+ # build rule for the gap executable used by the `install-bin` target
+ build/gap-install: build/obj/build/main.c.o libgap$(SHLIB_EXT) cnf/GAP-LDFLAGS cnf/GAP-LIBS cnf/GAP-OBJS
+-	$(QUIET_LINK)$(LINK) $(GAP_LDFLAGS) $< $(GAP_LIBS) -L${abs_builddir} -lgap -o $@
++	$(QUIET_LINK)$(LINK) $(GAP_LDFLAGS) $(GAP_INSTALL_EXTRAFLAGS) $< $(GAP_LIBS) -L${abs_builddir} -lgap -o $@
+ 	$(INSTALL_NAME_TOOL) -change $(LIBGAP_FULL) $(libdir)/$(LIBGAP_FULL) $@
+ 
+ endif

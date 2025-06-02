@@ -1453,7 +1453,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     return order_from_multiple(P, m, operation=operation, check=False)
 
 
-def has_order(P, n, operation='+'):
+def has_order(P, n, operation='+') -> bool:
     r"""
     Generic function to test if a group element `P` has order
     exactly equal to a given positive integer `n`.
@@ -1544,7 +1544,7 @@ def has_order(P, n, operation='+'):
     else:
         raise ValueError('unknown group operation')
 
-    def _rec(Q, fn):
+    def _rec(Q, fn) -> bool:
         if not fn:
             return isid(Q)
 

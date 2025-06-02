@@ -185,7 +185,7 @@ class DihedralGroup(UniqueRepresentation, Parent):
         wrapped_class = tuple
         __lt__ = ElementWrapper._lt_by_value
 
-        def has_right_descent(self, i, positive=False, side='right'):
+        def has_right_descent(self, i, positive=False, side='right') -> bool:
             r"""
             Implement :meth:`SemiGroups.ElementMethods.has_right_descent`.
 

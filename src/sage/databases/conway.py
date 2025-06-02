@@ -208,7 +208,7 @@ class ConwayPolynomials(Mapping):
         except KeyError:
             raise RuntimeError("Conway polynomial over F_%s of degree %s not in database." % (p, n))
 
-    def has_polynomial(self, p, n):
+    def has_polynomial(self, p, n) -> bool:
         """
         Return ``True`` if the database of Conway polynomials contains the
         polynomial of degree ``n`` over ``GF(p)``.
@@ -227,7 +227,7 @@ class ConwayPolynomials(Mapping):
             sage: c.has_polynomial(60821, 5)
             False
         """
-        return (p,n) in self
+        return (p, n) in self
 
     def primes(self):
         """

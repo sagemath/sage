@@ -3190,7 +3190,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             else:
                 tab_r = tab[r]
-                if c == len(tab_r):
+                if c == len(tab_r) and (r == 0 or len(tab_r) < len(tab[r-1])):
                     tab_r.append(m)
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
@@ -3201,7 +3201,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         else:
             try:
                 return self.parent().Element(tab)
-            except Exception:
+            except ValueError:
                 return Tableau(tab)
 
     ##############

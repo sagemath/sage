@@ -825,7 +825,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     # h_dict caches the class number h of all discriminants previously
     # encountered; we will use the function OrderClassNumber() to
-    # quicky compute the class number of non-fundamental discriminants
+    # quickly compute the class number of non-fundamental discriminants
     # from the fundamental ones. Note that in the initialisation, the
     # keys of h_dict include nonfundamental discriminants, but we only
     # update it with fundamental ones.

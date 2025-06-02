@@ -29,6 +29,7 @@ The infinite set of all posets can be used to find minimal examples::
 
     :meth:`~Posets.AntichainPoset` | Return an antichain on `n` elements.
     :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
+    :meth:`~Posets.BubblePoset` | Return the Bubble lattice for `(m,n)`.
     :meth:`~Posets.ChainPoset` | Return a chain on `n` elements.
     :meth:`~Posets.Crown` | Return the crown poset on `2n` elements.
     :meth:`~Posets.DexterSemilattice` | Return the Dexter semilattice.
@@ -52,6 +53,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
     :meth:`~Posets.SetPartitions` | Return the poset of set partitions of the set `\{1,\dots,n\}`.
     :meth:`~Posets.ShardPoset` | Return the shard intersection order.
+    :meth:`~Posets.ShufflePoset` | Return the Shuffle lattice for `(m,n)`.
     :meth:`~Posets.SSTPoset` | Return the poset on semistandard tableaux of shape `s` and largest entry `f` that is ordered by componentwise comparison.
     :meth:`~Posets.StandardExample` | Return the standard example of a poset with dimension `n`.
     :meth:`~Posets.SymmetricGroupAbsoluteOrderPoset` | The poset of permutations with respect to absolute order.
@@ -99,6 +101,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
+from sage.combinat.posets import bubble_shuffle
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -279,6 +282,10 @@ class Posets(metaclass=ClasscallMetaclass):
         return FiniteLatticePoset(hasse_diagram=D,
                                   category=FiniteLatticePosets(),
                                   facade=facade)
+
+    BubblePoset = staticmethod(bubble_shuffle.BubblePoset)
+
+    ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
 
     @staticmethod
     def ChainPoset(n, facade=None):
