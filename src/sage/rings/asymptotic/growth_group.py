@@ -5246,18 +5246,18 @@ class GrowthGroupFactory(UniqueFactory):
         sfactors = split_str_by_op(
             ' '.join(specification.split()).replace('**', '^'), '*')
 
-        def remove_parentheses(s):
+        def remove_parentheses(s: str) -> str:
             while s.startswith('(') and s.endswith(')'):
                 s = s[1:-1].strip()
             return s
 
-        def has_l_property(s, properties, invert=False):
+        def has_l_property(s, properties, invert=False) -> tuple(str, bool):
             for p in properties:
                 if s.startswith(p):
                     return s[len(p):].strip(), not invert
             return s, invert
 
-        def has_r_property(s, properties, invert=False):
+        def has_r_property(s, properties, invert=False) -> tuple(str, bool):
             for p in properties:
                 if s.endswith(p):
                     return s[:-len(p)].strip(), not invert
