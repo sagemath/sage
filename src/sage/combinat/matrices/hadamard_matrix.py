@@ -500,13 +500,13 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     e = matrix([[1] * (2*m)])
     one = matrix([1])
-    H = block_matrix([[ one,       -e,  one,        e,  one,        e,  one,        e],
+    H = block_matrix([[ one, -e,  one,        e,  one,        e,  one,        e],
                       [-e.T,  T(0, 0),  e.T,  T(0, 1),  e.T,  T(0, 2),  e.T,  T(0, 3)],
-                      [-one,       -e,  one,       -e,  one,        e, -one,       -e],
+                      [-one, -e,  one, -e,  one,        e, -one, -e],
                       [-e.T, -T(1, 0), -e.T,  T(1, 1),  e.T,  T(1, 2), -e.T, -T(1, 3)],
-                      [-one,       -e, -one,       -e,  one,       -e,  one,        e],
+                      [-one, -e, -one, -e,  one, -e,  one,        e],
                       [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T,  T(2, 2),  e.T,  T(2, 3)],
-                      [-one,       -e,  one,        e, -one,       -e,  one,       -e],
+                      [-one, -e,  one,        e, -one, -e,  one, -e],
                       [-e.T, -T(3, 0),  e.T,  T(3, 1), -e.T, -T(3, 2), -e.T,  T(3, 3)]])
 
     if check:
@@ -589,7 +589,7 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     INPUT:
 
     - ``n`` -- integer; the order of the matrices to be returned
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we have the quadruple
 
     OUTPUT:
@@ -695,7 +695,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
     INPUT:
 
     - ``n`` -- integer; the order of the matrix
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we can do the construction
     - ``check`` -- boolean (default: ``True``); if ``True`` check the result
 
@@ -1568,9 +1568,9 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     m1 = matrix([-1])
     p1 = matrix([1])
     H = block_matrix([[  p1,   m1,   p1,   p1,     e,       e,       e,       e],
-                      [  p1,   p1,   m1,   p1,    -e,       e,      -e,       e],
-                      [  m1,   p1,   p1,   p1,    -e,       e,       e,      -e],
-                      [  m1,   m1,   m1,   p1,    -e,      -e,       e,       e],
+                      [  p1,   p1,   m1,   p1, -e,       e, -e,       e],
+                      [  m1,   p1,   p1,   p1, -e,       e,       e, -e],
+                      [  m1,   m1,   m1,   p1, -e, -e,       e,       e],
                       [-e.T,  e.T,  e.T, -e.T,    A1,    A2*P,    A3*P,    A4*P],
                       [-e.T, -e.T,  e.T,  e.T, -A2*P,      A1, -A4.T*P,  A3.T*P],
                       [-e.T, -e.T, -e.T, -e.T, -A3*P,  A4.T*P,      A1, -A2.T*P],
@@ -3548,10 +3548,10 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         A_t_W = A.tensor_product(W)
         e_t_f = e.tensor_product(f)
         H = block_matrix([
-            [J(1, 1),                f,                      e_t_f,                  -e_t_f],
+            [J(1, 1),                f,                      e_t_f, -e_t_f],
             [f.T,                  J4m,     e.tensor_product(W-II),  e.tensor_product(W+II)],
             [ e_t_f.T, (e.T).tensor_product(W-II), A_t_W+JJ.tensor_product(II),         H34],
-            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T,      -A_t_W+JJ.tensor_product(II)]])
+            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T, -A_t_W+JJ.tensor_product(II)]])
         return H
 
 

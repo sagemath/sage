@@ -648,7 +648,7 @@ class AbstractTree:
 
     def contour_traversal(self, first_action=None, middle_action=None, final_action=None, leaf_action=None):
         r"""
-        Run the counterclockwise countour traversal algorithm (iterative
+        Run the counterclockwise contour traversal algorithm (iterative
         implementation) and subject every node encountered
         to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it.
 

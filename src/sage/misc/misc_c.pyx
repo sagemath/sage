@@ -185,7 +185,7 @@ cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutof
         return balanced_list_prod(L, offset, k, cutoff) * balanced_list_prod(L, offset + k, count - k, cutoff)
 
 
-cpdef iterator_prod(L, z=None):
+cpdef iterator_prod(L, z=None, bint multiply=True):
     """
     Attempt to do a balanced product of an arbitrary and unknown length
     sequence (such as a generator). Intermediate multiplications are always
@@ -207,11 +207,18 @@ cpdef iterator_prod(L, z=None):
         sage: L = [NonAssociative(label) for label in 'abcdef']
         sage: iterator_prod(L)
         (((a*b)*(c*d))*(e*f))
+
+    When ``multiply=False``, the items are added up instead (however this
+    interface should not be used directly, use :func:`balanced_sum` instead)::
+
+        sage: iterator_prod((1..5), multiply=False)
+        15
     """
-    # TODO: declaring sub_prods as a list should speed much of this up.
+    cdef list sub_prods
     L = iter(L)
     if z is None:
-        sub_prods = [next(L)] * 10
+        sub_prods = [next(L)] * 10  # only take one element from L, the rest are just placeholders
+        # the list size can be dynamically increased later
     else:
         sub_prods = [z] * 10
 
@@ -232,17 +239,26 @@ cpdef iterator_prod(L, z=None):
         else:
             # for even i we multiply the stack down
             # by the number of factors of 2 in i
-            x = sub_prods[tip] * x
+            if multiply:
+                x = sub_prods[tip] * x
+            else:
+                x = sub_prods[tip] + x
             for j from 1 <= j < 64:
                 if i & (1 << j):
                     break
                 tip -= 1
-                x = sub_prods[tip] * x
+                if multiply:
+                    x = sub_prods[tip] * x
+                else:
+                    x = sub_prods[tip] + x
             sub_prods[tip] = x
 
     while tip > 0:
         tip -= 1
-        sub_prods[tip] *= sub_prods[tip + 1]
+        if multiply:
+            sub_prods[tip] *= sub_prods[tip + 1]
+        else:
+            sub_prods[tip] += sub_prods[tip + 1]
 
     return sub_prods[0]
 
@@ -366,14 +382,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
     if type(x) is not list and type(x) is not tuple:
 
         if PyGen_Check(x):
-            # lazy list, do lazy product
-            try:
-                sum = copy(next(x)) if z is None else z + next(x)
-                for a in x:
-                    sum += a
-                return sum
-            except StopIteration:
-                x = []
+            return iterator_prod(x, z, multiply=False)
         else:
             try:
                 return x.sum()
@@ -405,8 +414,8 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
 
     - ``L`` -- the terms (MUST be a tuple or list)
     - ``off`` -- offset in the list from which to start
-    - ``count`` -- how many terms in the sum
-    - ``cutoff`` -- the minimum count to recurse on.  Must be at least 2
+    - ``count`` -- how many terms in the sum; must be positive
+    - ``cutoff`` -- the minimum count to recurse on; must be at least 2
 
     OUTPUT:
 

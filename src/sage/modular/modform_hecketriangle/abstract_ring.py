@@ -835,7 +835,7 @@ class FormsRing_abstract(Parent):
             - (self._group.n()-2) / (4*self._group.n()) * (Z**2+X**(self._group.n()-2)) * dZ
 
     @cached_method
-    def has_reduce_hom(self):
+    def has_reduce_hom(self) -> bool:
         r"""
         Return whether the method ``reduce`` should reduce
         homogeneous elements to the corresponding space of homogeneous elements.

@@ -175,7 +175,7 @@ def is_locally_equivalent_to(self, other, check_primes_only=False,
     return True
 
 
-def has_equivalent_Jordan_decomposition_at_prime(self, other, p):
+def has_equivalent_Jordan_decomposition_at_prime(self, other, p) -> bool:
     """
     Determine if the given quadratic form has a Jordan decomposition
     equivalent to that of ``self``.

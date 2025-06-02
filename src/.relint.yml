@@ -1,13 +1,5 @@
 # Simple pattern exclusions
 
-- name: 'python3: Python3 incompatible code'
-  hint: |
-    # ifilter, imap, izip           # __metaclass__
-    # update raise statements       # except Exception, var
-    # six is no longer allowed
-  pattern: '(import.*[, ]ifilter|import.*[, ]imap|import.*[, ]izip|^\s*raise\s*[A-Za-z]*Error\s*,|__metaclass__|except\s*[A-Za-z]\s*,|import six|from six import)'
-  filePattern: .*[.](py|pyx|rst)
-
 - name: 'foreign_latex: foreign commands in LaTeX'
   hint: |
     use equivalent LaTeX commands instead of plain TeX commands such as \over, \choose, etc.

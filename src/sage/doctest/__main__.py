@@ -141,7 +141,7 @@ def _make_parser():
                         choices=["DEFAULT", "ALWAYS", "NEVER"],
                         default=0,
                         action=GCAction,
-                        help="control garbarge collection "
+                        help="control garbage collection "
                         "(ALWAYS: collect garbage before every test; NEVER: disable gc; DEFAULT: Python default)")
 
     # The --serial option is only really for internal use, better not

@@ -471,7 +471,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
                 raise ValueError('{} is not in {}'.format(data, self))
 
         elif not isinstance(data, int) or data != 0:
-            raise ValueError('input is ambigous: '
+            raise ValueError('input is ambiguous: '
                              '{} as well as imag={} '
                              'specified'.format(data, imag))
 

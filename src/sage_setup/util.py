@@ -13,7 +13,7 @@ Utility functions for building Sage
 # ****************************************************************************
 
 
-def stable_uniq(L):
+def stable_uniq(L) -> list:
     """
     Given an iterable L, remove duplicate items from L by keeping only
     the last occurrence of any item.
@@ -32,7 +32,7 @@ def stable_uniq(L):
     return sorted(D, key=lambda item: D[item])
 
 
-def have_module(name):
+def have_module(name) -> bool:
     """
     Check whether a Python module named ``name`` can be imported.
 

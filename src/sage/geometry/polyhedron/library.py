@@ -3263,7 +3263,7 @@ class Polytopes:
             sage: P1 = polytopes.hypercube(4, intervals, backend='ppl')                 # needs pplpy
             sage: assert P == P1                                                        # needs pplpy
 
-        Check that coercion for input invervals is handled correctly::
+        Check that coercion for input intervals is handled correctly::
 
             sage: P = polytopes.hypercube(2, [[1/2, 2], [0, 1]])
             sage: P = polytopes.hypercube(2, [[1/2, 2], [0, 1.0]])

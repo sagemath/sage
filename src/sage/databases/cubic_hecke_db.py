@@ -653,8 +653,9 @@ class CubicHeckeFileCache(SageObject):
 
     class section(Enum):
         r"""
-        Enum for the different sections of file cache. The following choices are
-        possible:
+        Enum for the different sections of file cache.
+
+        The following choices are possible:
 
         - ``matrix_representations`` -- file cache for representation matrices
           of basis elements
@@ -663,7 +664,7 @@ class CubicHeckeFileCache(SageObject):
           in the case of cubic Hecke algebras on more than 4 strands
         - ``markov_trace`` -- file cache for intermediate results of long
           calculations in order to recover the results already obtained by
-          previous attemps of calculation until the corresponding intermediate
+          previous attempts of calculation until the corresponding intermediate
           step
 
         EXAMPLES::
@@ -729,7 +730,7 @@ class CubicHeckeFileCache(SageObject):
 
     def _warn_incompatibility(self, fname):
         """
-        Warn the user that he has an incomaptible file cache under ``Sage_DOT``
+        Warn the user that he has an incompatible file cache under ``Sage_DOT``
         and move it away to another file (marked with timestamp).
 
         EXAMPLES::

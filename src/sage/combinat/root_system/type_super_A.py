@@ -375,7 +375,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             I = P.index_set()
             return P.sum((-c/dep[0]) * h[I[i]] for i,c in dep[1:].items())
 
-        def has_descent(self, i, positive=False):
+        def has_descent(self, i, positive=False) -> bool:
             """
             Test if ``self`` has a descent at position `i`, that is
             if ``self`` is on the strict negative side of the `i`-th
@@ -414,7 +414,7 @@ class AmbientSpace(ambient_space.AmbientSpace):
             else:
                 return s < 0
 
-        def is_dominant_weight(self):
+        def is_dominant_weight(self) -> bool:
             """
             Test whether ``self`` is a dominant element of the weight lattice.
 

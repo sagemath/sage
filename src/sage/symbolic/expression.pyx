@@ -2490,7 +2490,7 @@ cdef class Expression(Expression_abc):
         """
         pynac_forget_gdecl(self._gobj, str_to_bytes(decl))
 
-    def has_wild(self):
+    def has_wild(self) -> bool:
         """
         Return ``True`` if this expression contains a wildcard.
 

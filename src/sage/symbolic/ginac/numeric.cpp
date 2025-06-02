@@ -1180,10 +1180,11 @@ numeric numeric::conj() const {
                 "conjugate");
                 if (obj == nullptr)
                         return *this;
-                obj = PyObject_CallObject(obj, NULL);
-                if (obj == nullptr)
+                PyObject *res = PyObject_CallObject(obj, NULL);
+                Py_DECREF(obj);
+                if (res == nullptr)
                         py_error("Error calling Python conjugate");
-                return obj;
+                return res;
         }
         default:
                 stub("invalid type: ::conjugate() type not handled");
@@ -3377,7 +3378,7 @@ ex numeric::evalf(int /*level*/, PyObject* parent) const {
         if (ans == nullptr)
                 throw (std::runtime_error("numeric::evalf(): error calling py_float()"));
 
-        return ans;
+        return numeric(ans);
 }
 
 const numeric numeric::try_py_method(const std::string& s) const
@@ -3390,7 +3391,6 @@ const numeric numeric::try_py_method(const std::string& s) const
                 PyErr_Clear();
                 throw std::logic_error("");
         }
-        
         return numeric(ret);
 }
 
@@ -5015,13 +5015,18 @@ const numeric isqrt(const numeric &x) {
 
 /** Floating point evaluation of Sage's constants. */
 ex ConstantEvalf(unsigned serial, PyObject* dict) {
+        PyObject* x;
         if (dict == nullptr) {
                 dict = PyDict_New();
                 PyDict_SetItemString(dict, "parent", CC_get());
+                x = py_funcs.py_eval_constant(serial, dict);
+                Py_DECREF(dict); // To avoid a memory leak, see bug #27536.
         }
-        PyObject* x = py_funcs.py_eval_constant(serial, dict);
+        else x = py_funcs.py_eval_constant(serial, dict);
+
         if (x == nullptr) py_error("error getting digits of constant");
-        return x;
+
+        return numeric(x);
 }
 
 ex UnsignedInfinityEvalf(unsigned serial, PyObject* parent) {

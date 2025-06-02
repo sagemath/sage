@@ -31,7 +31,7 @@ cdef class PolyhedronFaceLattice:
     cdef int is_incidence_initialized
     cdef int incidence_dim_one
     cdef int incidence_dim_two
-    cdef size_t incidence_counter_one  # walks trough faces of incidence_dim_one
+    cdef size_t incidence_counter_one  # walks through faces of incidence_dim_one
     cdef size_t incidence_counter_two  # walks through all indices of coatoms (for each face in incidence_dim_one)
 
     # Intersection of ``faces[incidence_dim_one][incidence_counter_one]`` with

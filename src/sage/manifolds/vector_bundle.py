@@ -1247,7 +1247,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
                             break
         return list(self._orientation)
 
-    def has_orientation(self):
+    def has_orientation(self) -> bool:
         r"""
         Check whether ``self`` admits an obvious or by user set orientation.
 

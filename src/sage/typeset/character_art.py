@@ -684,7 +684,7 @@ class CharacterArt(SageObject):
         new_baseline = self.__class__._compute_new_baseline(self, Nelt)
 
         if self._baseline is not None and Nelt._baseline is not None:
-            # left treatement
+            # left treatment
             new_matrix.extend(line + " " * (self._l - len(line))
                               for line in self._matrix)
 
@@ -709,7 +709,7 @@ class CharacterArt(SageObject):
                     for _ in range((new_h - new_baseline) - (self._h - self._baseline)):
                         new_matrix.insert(0, " " * self._l)
 
-            # right treatement
+            # right treatment
             i = 0
             if new_h > Nelt._h:
                 # |  }              new_h > Nelt._h

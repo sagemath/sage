@@ -1721,7 +1721,7 @@ class DeMoivre(ExpressionTreeWalker):
     def __init__(self, ex, force=False):
         r"""
         A class that walks a symbolic expression tree and replaces
-        occurences of complex exponentials (optionally, all
+        occurrences of complex exponentials (optionally, all
         exponentials) by their respective trigonometric expressions.
 
         INPUT:
