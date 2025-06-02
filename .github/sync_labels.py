@@ -22,6 +22,7 @@ from logging import info, warning, debug, getLogger, INFO, DEBUG, WARNING
 from json import loads
 from enum import Enum
 from datetime import datetime, timedelta
+import subprocess
 from subprocess import check_output, CalledProcessError
 
 datetime_format = '%Y-%m-%dT%H:%M:%SZ'
@@ -631,14 +632,16 @@ class GhLabelSynchronizer:
         issue = 'issue'
         if self._pr:
             issue = 'pr'
+        # workaround for gh bug, it cannot deduce repo from url automatically
+        repo = '/'.join(self._url.split('/')[:5])
         if arg:
-            cmd_str = 'gh %s %s %s %s "%s"' % (issue, cmd, self._url, option, arg)
+            cmd_str = 'gh --repo %s %s %s %s %s "%s"' % (repo, issue, cmd, self._url, option, arg)
         else:
-            cmd_str = 'gh %s %s %s %s' % (issue, cmd, self._url, option)
+            cmd_str = 'gh --repo %s %s %s %s %s' % (repo, issue, cmd, self._url, option)
         debug('Execute command: %s' % cmd_str)
         ex_code = os.system(cmd_str)
         if ex_code:
-            warning('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
+            raise RuntimeError('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
 
     def edit(self, arg, option):
         r"""
