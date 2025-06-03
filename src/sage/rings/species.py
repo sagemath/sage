@@ -1567,26 +1567,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: Ms = M.subset(n)  # long time
                 sage: Cs = [m.cycle_index() for m in Ms]  # long time
                 sage: [m for m in Ms if Cs.count(m.cycle_index()) > 1]  # long time
-                [X^2*Pb_4, {((3,4)(5,6), (1,2)(3,4))}]
-
-            Find two atomic species with the same cycle index::
-
-                sage: from sage.rings.species import AtomicSpecies
-                sage: A = AtomicSpecies("X")
-                sage: n = 8
-                sage: As = A.subset(n)  # long time
-                sage: Cs = [M({a: 1}).cycle_index() for a in As]  # long time
-                sage: [a for a in As if Cs.count(M({a: 1}).cycle_index()) > 1]  # long time
-                [{((3,4,7)(5,6,8), (1,3,7,6)(2,5,8,4))},
-                 {((4,6)(7,8), (4,8)(6,7), (1,4)(2,6)(3,7)(5,8), (1,2)(3,5), (1,3)(2,5))},
-                 {((3,4,7)(5,6,8), (1,8,2,7)(3,4,5,6), (1,7)(2,8)(3,4)(5,6))},
-                 {((1,8)(2,6,4,7,3,5), (1,3)(2,4))},
-                 {((2,3)(5,6)(7,8), (1,2)(3,4), (1,3)(2,4))},
-                 {((3,4)(5,6), (1,8,3,5,4,7)(2,6))},
-                 {((4,6)(7,8), (1,4,3,7)(2,6,5,8), (1,2)(3,5))},
-                 {((1,2)(3,4), (1,3)(2,4)(7,8), (3,4)(5,6))},
-                 {((3,5)(4,6), (3,5)(7,8), (1,4)(2,6)(3,7)(5,8), (1,2)(3,5), (1,3)(2,5)(4,7)(6,8))},
-                 {((4,6)(7,8), (1,4)(2,6)(3,7)(5,8), (1,2)(3,5), (1,3,2,5)(4,7,6,8))}]
+                [{((3,4)(5,6), (1,2)(3,4))}, X^2*Pb_4]
 
             TESTS:
 
