@@ -588,7 +588,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
         return True
 
     @cached_method
-    def has_IP_property(self):
+    def has_IP_property(self) -> bool:
         """
         Test whether the polyhedron has the IP property.
 

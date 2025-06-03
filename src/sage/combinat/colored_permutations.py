@@ -283,7 +283,7 @@ class ColoredPermutation(MultiplicativeGroupElement):
         D = diagonal_matrix(Cp, [g ** i for i in self._colors])
         return self._perm.to_matrix() * D
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Return ``True`` if ``i`` is a left descent of ``self``.
 
@@ -1438,7 +1438,7 @@ class SignedPermutation(ColoredPermutation,
         """
         return self._perm.to_matrix() * diagonal_matrix(self._colors)
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         """
         Return ``True`` if ``i`` is a left descent of ``self``.
 
