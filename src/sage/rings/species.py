@@ -1569,6 +1569,16 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: [m for m in Ms if Cs.count(m.cycle_index()) > 1]  # long time
                 [{((3,4)(5,6), (1,2)(3,4))}, X^2*Pb_4]
 
+            Find two atomic species with the same cycle index::
+
+                sage: from sage.rings.species import AtomicSpecies
+                sage: A = AtomicSpecies("X")
+                sage: n = 8
+                sage: As = A.subset(n)  # long time
+                sage: Cs = [M({a: 1}).cycle_index() for a in As]  # long time
+                sage: len([a for a in As if Cs.count(M({a: 1}).cycle_index()) > 1])  # long time
+                10
+
             TESTS:
 
             Check that we support different parents::
