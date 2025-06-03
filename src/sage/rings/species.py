@@ -1472,8 +1472,13 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: n = 6
                 sage: Ms = M.subset(n)  # long time
                 sage: Cs = [m.cycle_index() for m in Ms]  # long time
-                sage: [m for m in Ms if Cs.count(m.cycle_index()) > 1]  # long time
-                [{((3,4)(5,6), (1,2)(3,4))}, X^2*Pb_4]
+                sage: d = [m for m in Ms if Cs.count(m.cycle_index()) > 1]  # long time
+                sage: len(d)  # long time
+                2
+                sage: Pb_4 = M(PermutationGroup([[(1,2), (3,4)], [(1,4), (2,3)]]))
+                sage: X = M(SymmetricGroup(1))
+                sage: X^2*Pb_4 in d  # long time
+                True
 
             TESTS:
 
