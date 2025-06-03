@@ -1011,9 +1011,10 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
         oriented_trian_edges.extend(oriented_trian)
 
     # test that no edge is in more than two oriented triangles
+    from collections import Counter
+    edge_count = Counter(oriented_trian_edges)
     multiple_trian_edges = []
-    for edge in oriented_trian_edges:
-        count = oriented_trian_edges.count(edge)
+    for edge, count in edge_count.items():
         if count > 2:
             return _false_return(17)
         elif count == 2:
