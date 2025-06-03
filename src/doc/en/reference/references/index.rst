@@ -1479,8 +1479,8 @@ REFERENCES:
 .. [dCa2007] \C. de Canniere: *Analysis and Design of Symmetric Encryption
              Algorithms*, PhD Thesis, 2007.
 
-.. [Can1990] \J. Canny. Generalised characteristic polynomials.
-             J. Symbolic Comput. Vol. 9, No. 3, 1990, 241--250.
+.. [Can1990] \J. Canny. *Generalised characteristic polynomials*.
+             \J. Symbolic Comput. Vol. 9, No. 3, 1990, 241--250.
 
 .. [Car1972] \R. W. Carter. *Simple groups of Lie type*, volume 28 of
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
@@ -1491,6 +1491,9 @@ REFERENCES:
 .. [Cha2005] \F. Chapoton, *Une Base Symétrique de l'algèbre des
              Coinvariants Quasi-Symétriques*, Electronic Journal of
              Combinatorics Vol 12(1) (2005) N16.
+
+.. [Cha2020] \F. Chapoton, *Some properties of a new partial order
+             on Dyck paths*. Algebr. Comb. 3, No. 2, 433-463 (2020).
 
 .. [Che1944] \S. Chern, *A simple intrinsic proof of the Gauss-Bonnet formula
              for closed Riemannian manifolds*, Ann. of Math. (2) 45 (1944),
@@ -1917,6 +1920,10 @@ REFERENCES:
 
 .. [Com2019] Camille Combe, *Réalisation cubique du poset des
              intervalles de Tamari*, preprint :arxiv:`1904.00658`
+
+.. [Com2021] Camille Combe, *A geometric and combinatorial exploration
+             of Hochschild lattices*. Electron. J. Comb. 28, No. 2,
+             Research Paper P2.38, 29 p. (2021).
 
 .. [Com1974] Comtet Louis, *Identities and Expansions*.
              In: Advanced Combinatorics. 1974. pp. 127-175
@@ -5949,6 +5956,9 @@ REFERENCES:
 .. [Sam2012] \P. Samanta: *Antipodal Graphs*
              :doi:`10.13140/RG.2.2.28238.46409`
 
+.. [San2009] Samson Saneblidze. *The bitwisted Cartesian model for the free
+             loop fibration*. Topology Appl. 156, No. 5, 897-910 (2009).
+
 .. [Saw1985] \K. Sawade.
              *A Hadamard matrix of order 268*,
              Graphs and Combinatorics 1(1) (1985): 185-187.
@@ -5962,8 +5972,8 @@ REFERENCES:
              Proc. 1st Annual ACM-SIAM Symposium on Discrete Algorithms,
              San Francisco (1994), pp. 138-147.
 
-.. [Sch1996] \E. Schaefer. A simplified data encryption
-             algorithm. Cryptologia, 20(1):77--84, 1996.
+.. [Sch1996] \E. Schaefer. *A simplified data encryption
+             algorithm*. Cryptologia, 20(1):77--84, 1996.
 
 .. [Scha1996] Richard D. Schaefer. *An Introduction to Nonassociative Algebras*.
               Dover, New York, 1996.
