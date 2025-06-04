@@ -1301,7 +1301,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     # check if all variables are assumed integer;
     # if so, we have a Diophantine
 
-    def has_integer_assumption(v):
+    def has_integer_assumption(v) -> bool:
         from sage.symbolic.assumptions import assumptions, GenericDeclaration
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
