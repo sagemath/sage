@@ -473,7 +473,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Check that structures and generating series are consistent.
 
-        We check all structures on 3 labels.
+        We check all structures with less than ``max_size`` labels.
 
         TESTS::
 
@@ -1490,7 +1490,7 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin,
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
-        return L(lambda n: 2 ** binomial(n, 2) / factorial(n))
+        return L(lambda n: 2**binomial(n, 2) / factorial(n))
 
     def cycle_index_series(self):
         r"""
