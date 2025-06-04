@@ -2627,6 +2627,446 @@ class RiemannSurface:
         M2 = other.riemann_matrix()
         return integer_matrix_relations(M2, M1, b, r)
 
+    def _find_idempotents(self, basis):
+        r"""
+        Find non-trivial idempotents in the endomorphism ring basis.
+        
+        This method searches for non-trivial idempotents (elements e where e^2 = e)
+        in the endomorphism ring of the Jacobian. It uses three different approaches:
+        
+        INPUT:
+        
+        - ``basis`` -- list of 2g x 2g matrices forming a basis of the endomorphism ring
+        
+        OUTPUT:
+        
+        A list of non-trivial idempotent matrices
+        """
+        def _is_idempotent(R, tolerance=1e-10):
+            """Check if matrix R satisfies R^2 = R"""
+            try:
+                diff = R * R - R
+                if hasattr(diff, 'norm'):
+                    return diff.norm() < tolerance
+                else:
+                    return all(abs(entry) < tolerance for entry in diff.list())
+            except Exception:
+                return False
+        
+        def _is_nontrivial_idempotent(R, tolerance=1e-10):
+            """Check if R is a non-trivial idempotent (not 0 or I)"""
+            if not _is_idempotent(R, tolerance):
+                return False
+            
+            n = R.nrows()
+            
+            # Check if R is zero matrix
+            try:
+                if R.norm() < tolerance or R.is_zero():
+                    return False
+                elif all(abs(entry) < tolerance for entry in R.list()):
+                    return False
+            except Exception:
+                pass
+                
+            # Check if R is identity matrix - be more explicit about this check
+            try:
+                # Check with identity matrix
+                identity_matrix = Matrix.identity(R.base_ring(), n)
+                if R == identity_matrix:
+                    return False
+                    
+                # Check if (R - I) is zero
+                diff = R - identity_matrix
+                if diff.norm() < tolerance or diff.is_zero():
+                    return False
+                elif all(abs(entry) < tolerance for entry in diff.list()):
+                    return False
+                        
+            except Exception:
+                pass
+                
+            return True
+        
+        def _find_idempotents_polynomial(basis):
+            """
+            Find idempotents using polynomial equations R^2 - R = 0.
+            
+            This method finds coefficients mu_i such that for a given
+            basis {B_1, ..., B_n} of the endomorphism ring, the linear 
+            combination R = Σ mu_i B_i satisfies the idempotent condition R^2 = R.
+            
+            The algorithm sets up a polynomial ring with variables mu_0, ..., mu_k,
+            expresses R^2 - R in terms of these variables, equates each matrix entry
+            of R^2 - R to zero, and solves the resulting polynomial system using
+            algebraic varieties.
+            
+            INPUT:
+            
+            - ``basis`` -- list of square matrices forming a basis for the
+              endomorphism ring
+            
+            OUTPUT:
+            
+            A list of non-trivial idempotent matrices found by solving the
+            polynomial system R^2 - R = 0.
+            """
+            if not basis:
+                return []
+            
+            k = len(basis)
+            n = basis[0].nrows()
+            
+            # Validate input
+            if not all(B.is_square() and B.nrows() == n for B in basis):
+                raise ValueError("All basis matrices must be square and of the same size")
+            
+            # Create polynomial ring with variables mu_0, mu_1, ...
+            var_names = [f'mu_{i}' for i in range(k)]
+            P = PolynomialRing(QQ, var_names)
+            mu_vars = P.gens()
+            
+            # Precompute all pairwise products
+            products = {}
+            for i in range(k):
+                for j in range(k):
+                    products[(i, j)] = basis[i] * basis[j]
+            
+            equations = []
+            
+            for row in range(n):
+                for col in range(n):
+                    # Compute R^2 entries
+                    r_squared_entry = sum(
+                        mu_vars[i] * mu_vars[j] * products[(i, j)][row, col]
+                        for i in range(k) for j in range(k)
+                    )
+                        
+                    r_entry = sum(
+                        mu_vars[i] * basis[i][row, col] 
+                        for i in range(k)
+                    )
+                        
+                    # Compute the equation
+                    equation = r_squared_entry - r_entry
+                    equations.append(equation)
+            
+            # Remove zero equations to simplify the system
+            equations = [eq for eq in equations if not eq.is_zero()]
+            
+            if not equations:
+                # If all equations are zero, any linear combination worksgs
+                return []
+            
+            # Solve the polynomial system
+            I = P.ideal(equations)
+            try:
+                varieties = I.variety()
+   
+            # Typically the exception is that the ideal is not zero-dimensional
+            except Exception:
+                return []
+            
+            # Process solutions to extract idempotents
+            idempotents = []
+            tolerance = 1e-10
+            
+            for sol in varieties:
+                try:
+                    # Extract coefficients from solution
+                    coeffs = []
+                    for i in range(k):
+                        coeff = sol.get(mu_vars[i], 0) 
+                        coeffs.append(coeff)
+                    
+                    # Skip trivial solution (all coefficients zero)
+                    if all(abs(c) < tolerance for c in coeffs):
+                        continue
+                    
+                    # Construct the matrix R
+                    try:
+                        R = sum(coeffs[i] * basis[i] for i in range(k))
+                        
+                        # Verify it's actually an idempotent
+                        if _is_nontrivial_idempotent(R):
+                            idempotents.append(R)
+                            
+                    except Exception:
+                        continue
+                        
+                except Exception:
+                    continue
+
+            return idempotents
+            
+        def _find_central_idempotents(basis):
+            r"""
+            Find idempotents in the center of the endomorphism ring.
+            
+            This method identifies elements in the center of the endomorphism ring
+            (elements that commute with all basis elements) and then searches for
+            idempotents within this center.
+            
+            INPUT:
+            
+            - ``basis`` -- list of matrices forming a basis for the endomorphism ring
+            
+            OUTPUT:
+            
+            List of non-trivial idempotent matrices found in the center of the ring
+            """
+            if not basis:
+                return []
+                
+            # Find center elements (elements that commute with all basis elements)
+            center_basis = []
+            k = len(basis)
+            
+            # Set up system to find center
+            # For each pair of basis elements, we need [R, basis[i]] = 0
+            # where R = sum(c_j * basis[j])
+            
+            equations_matrix_rows = []
+            for i in range(k):
+                for j in range(k):
+                    comm = basis[i] * basis[j] - basis[j] * basis[i]
+                    equations_matrix_rows.append(comm.list())
+            
+            if not equations_matrix_rows:
+                return []
+            
+            # Solve homogeneous system
+            eqn_matrix = Matrix(QQ, equations_matrix_rows)
+            try:
+                kernel = eqn_matrix.kernel()
+                center_basis = [sum(v[j] * basis[j] for j in range(k)) for v in kernel.basis()]
+            except Exception:
+                return []
+            
+            if not center_basis:
+                return []
+            
+            # Now find idempotents in the center
+            return _find_idempotents_polynomial(center_basis)
+            
+        def _find_basic_idempotents(basis):
+            """
+            Find idempotents using basic checks on the endomorphism basis.
+            
+            This function performs two basic checks:
+            1. Check if any basis elements are already non-trivial idempotents
+            2. Check for involutions and derive idempotents from them
+            
+            INPUT:
+            
+            - ``basis`` -- list of matrices forming a basis for the endomorphism ring
+            
+            OUTPUT:
+            
+            List of non-trivial idempotent matrices found through basic checks
+            """
+            # Basic checks:
+            if not basis:
+                return []
+                
+            # 1. Check if we have non-trivial idempotents in the basis
+            idempotents = []
+            for R in basis:
+                if _is_nontrivial_idempotent(R):
+                    idempotents.append(R)
+            
+            if idempotents:
+                return idempotents
+                
+            # 2. Check for involutions
+            n = basis[0].nrows()
+            I = Matrix.identity(QQ, n)
+            
+            for R in basis:
+                try:
+                    if (R * R - I).is_zero() and R != I:
+                        e1 = (I + R) / 2
+                        e2 = (I - R) / 2
+                        if _is_nontrivial_idempotent(e1):
+                            idempotents.append(e1)
+                        if _is_nontrivial_idempotent(e2):
+                            idempotents.append(e2)
+                except Exception:
+                    continue
+                    
+            if idempotents:
+                return idempotents
+                
+            return []
+        
+        def _find_idempotents_spectral(basis, trials=5):
+            """
+            Find idempotents using spectral projection method.
+            
+            This method generates random elements in the Q-span of the endomorphism
+            basis, computes their minimal polynomials and splitting fields, then
+            constructs idempotent projectors corresponding to distinct eigenvalues.
+            
+            INPUT:
+            
+            - ``basis`` -- list of matrices forming a basis for the endomorphism ring
+            - ``trials`` -- integer (default: 5); number of random elements to try
+            
+            OUTPUT:
+            
+            A list of non-trivial idempotent matrices found through spectral
+            decomposition of random elements in the Q-span of the basis.
+            """
+            import random
+            k = len(basis)
+            if k == 0:
+                return []
+            for _ in range(trials):
+                coeffs = [random.randint(1, 5) for _ in range(k)]
+                X = sum(coeffs[i] * basis[i] for i in range(k))
+                poly = X.minimal_polynomial()
+                
+                L = poly.splitting_field('a')
+                X = X.change_ring(L)
+                # lift polynomial to L[t]
+                PR = PolynomialRing(L, 'poly.variable_name()')
+                fL = PR(poly)
+                roots = fL.roots(multiplicities=True)
+
+                # require simple spectrum
+                if any(m > 1 for (_, m) in roots):
+                    return []
+                
+                lambdas = [r for (r, _) in roots]
+
+                if L:
+                    Ring = L
+                else:
+                    Ring = X.base_ring()
+                
+                n = X.nrows()
+                I = Matrix(Ring, n, n, [Ring(1) if i == j else Ring(0) for i in range(n) for j in range(n)])
+                idempotents = []
+                for l_i in lambdas:
+                    ej = I
+                    for l_j in lambdas:
+                        if l_i == l_j:
+                            continue
+                        ej = (ej * (X - l_i * I)) / (l_i - l_j)
+                    if _is_nontrivial_idempotent(ej):
+                        idempotents.append(ej)
+                if idempotents:
+                    return idempotents
+            return []
+
+        #idempotents = _find_basic_idempotents(basis)
+        #if idempotents:
+        #    return idempotents
+
+        try:
+            idempotents = _find_idempotents_spectral(basis, trials=1)
+            if idempotents:
+                return idempotents
+        except Exception:
+            pass
+
+        try:
+            idempotents = _find_idempotents_polynomial(basis)
+            if idempotents:
+                return idempotents
+        except Exception:
+            pass
+                        
+        try:
+            idempotents = _find_central_idempotents(basis)
+            if idempotents:
+                return idempotents
+        except Exception:
+            pass
+            
+        return []
+
+    def _compute_M(self, idempotents):
+        r"""
+        Compute the reduction matrix M from a list of idempotents.
+        
+        Given a list of idempotents from the endomorphism ring, this method
+        selects the first idempotent with even rank and constructs the 
+        corresponding reduction matrix M.
+        
+        INPUT:
+        
+        - ``idempotents`` -- list of idempotent matrices
+        
+        OUTPUT:
+        
+        A matrix M representing the reduction matrix for Poincaré normal form
+        """
+        if not idempotents:
+            return None
+            
+        # Find first idempotent with even rank
+        selected_idempotent = None
+        for e in idempotents:
+            if not e.is_square():
+                        continue
+            r = e.rank()
+            if r > 0 and r % 2 == 0:
+                selected_idempotent = e
+                break
+        
+        if selected_idempotent is None:
+            return None
+
+        # Ensure the idempotent is integral by clearing denominators or rounding if necessary
+        from sage.arith.all import lcm
+        from sage.rings.all import ZZ
+
+        # Try to clear denominators if possible
+        entries = selected_idempotent.list()
+        try:
+            # Try to get denominators (for QQ or fraction fields)
+            denoms = []
+            for entry in entries:
+                try:
+                    d = entry.denominator()
+                    if d != 1:
+                        denoms.append(d)
+                except (AttributeError, TypeError):
+                    pass
+            scale = lcm(denoms) if denoms else 1
+            e_integral = Matrix(ZZ, scale * selected_idempotent)
+        except Exception:
+            pass
+
+        # Compute reduction matrix using Hermite normal form
+        r = e_integral.rank()
+        M = e_integral.transpose().hermite_form()[:r, :]
+        
+        return M
+        
+
+    def find_M(self):
+        r"""
+        Find the reduction matrix M for Poincaré normal form computation.
+        
+        This method computes the reduction matrix M from the endomorphism ring
+        of the Jacobian of the Riemann surface. The matrix M is derived from
+        a non-trivial idempotent in the endomorphism ring and is used to
+        initiate the Poincaré reduction process for decomposable Jacobians.
+        
+        OUTPUT:
+        
+        A matrix M representing the reduction matrix. This is a 2m * 2g integer
+        matrix where m is the genus of a factor Jacobian and g is the genus of
+        the original surface. The matrix M acts on the homology basis and selects
+        a sublattice corresponding to a factor Jacobian.
+        """
+        endo_basis = self.endomorphism_basis()
+        idempotents = self._find_idempotents(endo_basis)
+        M = self._compute_M(idempotents)
+        return M
+
     def tangent_representation_numerical(self, Rs, other=None):
         r"""
         Compute the numerical tangent representations corresponding to the
@@ -2635,7 +3075,7 @@ class RiemannSurface:
         The representations on homology ``Rs`` have to be given with respect to
         the symplectic homology basis of the Jacobian of ``self`` and ``other``.
         Such matrices can for example be obtained via
-        :meth:`endomorphism_basis`.
+        :meth:`eteemorphism_basis`.
 
         Let `P` and `Q` be the period matrices of ``self`` and ``other``. Then
         for a homology representation `R`, the corresponding tangential
