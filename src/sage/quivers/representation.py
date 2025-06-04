@@ -2013,11 +2013,7 @@ class QuiverRep_generic(WithEqualityById, Module):
         gens = self.gens()
         if len(gens) != len(coordinates):
             raise ValueError("the coordinates do not match the dimension of the module")
-
-        result = self()  # this must not be self.zero(), which is cached
-        for ci, gi in zip(coordinates, gens):
-            result += ci * gi
-        return result
+        return self.sum(ci * gi for ci, gi in zip(coordinates, gens))
 
     ###########################################################################
     #                                                                         #
