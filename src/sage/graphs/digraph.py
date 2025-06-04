@@ -3320,7 +3320,6 @@ class DiGraph(GenericGraph):
             raise ValueError(f"The algorithm {algorithm} is not valid. \
                                Use the algorithm 'A' or 'B'.")
 
-
         cycles = []
         for key, it in iterators.items():
             try:
