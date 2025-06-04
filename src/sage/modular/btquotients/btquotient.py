@@ -2802,8 +2802,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             [-1], [ 0]
             ]
         """
-        q = self.get_eichler_order_quadform()
-        return [Matrix(4,1,v) for v in q.vectors_by_length(1)[1]]
+        return [Matrix(4,1,v) for v in self._find_elements_in_order(1)]
 
     @cached_method
     def _get_Up_data(self):
