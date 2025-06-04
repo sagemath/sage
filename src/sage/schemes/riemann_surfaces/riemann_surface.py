@@ -2959,9 +2959,9 @@ class RiemannSurface:
                     return idempotents
             return []
 
-        #idempotents = _find_basic_idempotents(basis)
-        #if idempotents:
-        #    return idempotents
+        idempotents = _find_basic_idempotents(basis)
+        if idempotents:
+            return idempotents
 
         try:
             idempotents = _find_idempotents_spectral(basis, trials=1)
