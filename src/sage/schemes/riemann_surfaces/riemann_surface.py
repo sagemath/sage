@@ -3075,7 +3075,7 @@ class RiemannSurface:
         The representations on homology ``Rs`` have to be given with respect to
         the symplectic homology basis of the Jacobian of ``self`` and ``other``.
         Such matrices can for example be obtained via
-        :meth:`eteemorphism_basis`.
+        :meth:`endomorphism_basis`.
 
         Let `P` and `Q` be the period matrices of ``self`` and ``other``. Then
         for a homology representation `R`, the corresponding tangential
