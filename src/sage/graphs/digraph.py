@@ -3296,6 +3296,7 @@ class DiGraph(GenericGraph):
         elif algorithm == 'B':
             if not simple:
                 raise ValueError("The algorithm 'B' is available only when simple=True.")
+
             def simple_cycle_iter(hh, e):
                 return hh._all_simple_cycles_iterator_edge(e,
                                                            max_length=max_length,
@@ -3304,6 +3305,7 @@ class DiGraph(GenericGraph):
                                                            by_weight=by_weight,
                                                            check_weight=check_weight,
                                                            report_weight=True)
+
             SCCS = h.strongly_connected_components_subgraphs()
             iterators = dict()
             while SCCS:

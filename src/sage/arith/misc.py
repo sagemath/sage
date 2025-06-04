@@ -3600,7 +3600,7 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
-    
+
     Tests for call with length 1 lists (:issue:`40074`)::
 
         sage: x = CRT_list([1], [2]); x
