@@ -627,7 +627,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type == 1
 
-    def has_nonsplit_multiplicative_reduction(self) > bool:
+    def has_nonsplit_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is non-split multiplicative reduction.
 
