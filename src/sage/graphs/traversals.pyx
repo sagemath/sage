@@ -61,7 +61,6 @@ Methods
 
 from collections import deque
 
-from libc.string cimport memset
 from libc.stdint cimport uint32_t
 from libcpp.vector cimport vector
 from cysignals.signals cimport sig_on, sig_off
@@ -73,7 +72,6 @@ from sage.graphs.base.static_sparse_backend cimport StaticSparseCGraph
 from sage.graphs.base.static_sparse_backend cimport StaticSparseBackend
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 
@@ -463,6 +461,14 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         Traceback (most recent call last):
         ...
         ValueError: 'foo' is not a graph vertex
+
+    Check that :issue:`39934` is fixed::
+
+        sage: G = Graph(1, immutable=True)
+        sage: G.lex_BFS(algorithm='slow')
+        [0]
+        sage: G.lex_BFS(algorithm='fast')
+        [0]
     """
     if initial_vertex is not None and initial_vertex not in G:
         raise ValueError(f"'{initial_vertex}' is not a graph vertex")
@@ -473,22 +479,15 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     if algorithm != "fast":
         raise ValueError(f"unknown algorithm '{algorithm}'")
 
-    cdef size_t n = G.order()
-
     # For algorithm "fast" we need to convert G to an undirected graph
     if G.is_directed():
         G = G.to_undirected()
 
-    # Initialize variables needed by the fast and slow algorithms
+    # Initialize variables needed by the fast algorithm
     cdef CGraphBackend Gbackend = <CGraphBackend> G._backend
     cdef CGraph cg = Gbackend.cg()
-    cdef list sigma = []
-    cdef dict predecessor = {}
-    # Initialize variables needed by the fast algorithm
     cdef vector[int] sigma_int
     cdef vector[int] pred
-    # Initialize variables needed by the slow algorithm
-    cdef dict lexicographic_label
     # Temporary variables
     cdef int vi, i, initial_v_int
 
@@ -498,9 +497,11 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
         initial_v_int = Gbackend.get_vertex(initial_vertex)
     else:
         initial_v_int = -1
+    sig_on()
     extended_lex_BFS(cg, sigma_int, NULL, initial_v_int, &pred, NULL, NULL)
-    sigma = [ Gbackend.vertex_label(vi) for vi in sigma_int ]
-    predecessor = { u: sigma[i] for u, i in zip(sigma, pred) if i != -1 }
+    sig_off()
+    cdef list sigma = [Gbackend.vertex_label(vi) for vi in sigma_int]
+    cdef dict predecessor = {u: sigma[i] for u, i in zip(sigma, pred) if i != -1}
 
     if reverse:
         sigma.reverse()

@@ -174,6 +174,7 @@ Packaging
    :maxdepth: 2
 
    packaging
+   downstream
    packaging_sage_library
 
 

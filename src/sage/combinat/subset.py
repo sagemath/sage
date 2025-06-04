@@ -855,7 +855,7 @@ class Subsets_sk(Subsets_s):
         else:
             return self.element_class([lset[i] for i in combination.from_rank(r, n, self._k)])
 
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an example of subset.
 

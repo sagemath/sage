@@ -322,13 +322,13 @@ cdef class PathAlgebraElement(RingElement):
             sage: len(X^5)
             17
         """
-        cdef size_t l = 0
+        cdef size_t ell = 0
         cdef path_homog_poly_t *H = self.data
         while H != NULL:
             sig_check()
-            l += H.poly.nterms
+            ell += H.poly.nterms
             H = H.nxt
-        return l
+        return ell
 
     cpdef ssize_t degree(self) except -2:
         """
@@ -369,9 +369,9 @@ cdef class PathAlgebraElement(RingElement):
             return -1
         return deg
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         """
-        Tells whether this element is homogeneous.
+        Tell whether this element is homogeneous.
 
         EXAMPLES::
 
