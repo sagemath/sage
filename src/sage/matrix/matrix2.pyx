@@ -1152,18 +1152,33 @@ cdef class Matrix(Matrix1):
             [-236774176922867   -3334450741532  470910201757143          1961587  230292926737068]
             [  82318322106118    1159275026338 -163719448527234          -681977  -80065012022313]
             [  53148766104440     748485096017 -105705345467375          -440318  -51693918051894]
+
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_smith_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solution
         """
         S,U,V = self.smith_form()
 
         n,m = self.dimensions()
         r = B.ncols()
 
+        UB = U * B
+        if UB[m:]:
+            raise ValueError("matrix equation has no solution")
+
         X_ = []
-        for d, v in zip(S.diagonal(), (U*B).rows()):
+        for d, v in zip(S.diagonal(), UB):
             if d:
                 X_.append(v / d)
             elif v:
-                raise ValueError("matrix equation has no solutions")
+                raise ValueError("matrix equation has no solution")
             else:
                 X_.append([0] * r)
 
@@ -1173,7 +1188,7 @@ cdef class Matrix(Matrix1):
         try:
             X_ = matrix(self.base_ring(), m, r, X_)
         except TypeError:
-            raise ValueError("matrix equation has no solutions")
+            raise ValueError("matrix equation has no solution")
 
         return V * X_
 
@@ -1219,18 +1234,29 @@ cdef class Matrix(Matrix1):
             [  968595469303  1461570161933   781069571508  1246248350502       -1629017]
             [ -235552378240  -355438713600  -189948023680  -303074680960         396160]
             [             0              0              0              0              0]
+
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_hermite_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solution
         """
         H,U = self.transpose().hermite_form(transformation=True)
         H = H.transpose()
         U = U.transpose()
-#        assert self*U == H
 
         n,m = self.dimensions()
+        k = min(n,m)
         r = B.ncols()
 
         from sage.matrix.constructor import matrix
         X_ = matrix(self.base_ring(), m, r)
-        for i in range(min(n,m)):
+        for i in range(k):
             v = B[i,:]
             v -= H[i,:i] * X_[:i]
             d = H[i][i]
@@ -1238,7 +1264,9 @@ cdef class Matrix(Matrix1):
                 X_[i] = v / d
             except (ZeroDivisionError, TypeError) as e:
                 raise ValueError("matrix equation has no solutions")
-#        assert H*X_ == B
+
+        if B[k:] != H[k:] * X_:
+            raise ValueError("matrix equation has no solution")
 
         return U * X_
 
