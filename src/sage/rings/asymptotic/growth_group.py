@@ -5251,13 +5251,13 @@ class GrowthGroupFactory(UniqueFactory):
                 s = s[1:-1].strip()
             return s
 
-        def has_l_property(s, properties, invert=False) -> tuple(str, bool):
+        def has_l_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.startswith(p):
                     return s[len(p):].strip(), not invert
             return s, invert
 
-        def has_r_property(s, properties, invert=False) -> tuple(str, bool):
+        def has_r_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.endswith(p):
                     return s[:-len(p)].strip(), not invert
