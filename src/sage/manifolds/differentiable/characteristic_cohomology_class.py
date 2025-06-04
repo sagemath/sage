@@ -1004,7 +1004,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
                 val = P([(-1) ** k * val[2 * k + 1] for k in range(n + 1)])
                 sym = multiplicative_sequence(val, n)
             else:
-                raise AttributeError('unkown class type')
+                raise AttributeError('unknown class type')
 
             d = {}
             w_vec = self._weighted_vectors

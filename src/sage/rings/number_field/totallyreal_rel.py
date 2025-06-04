@@ -650,9 +650,9 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     ::
 
-        a[d]*x^n + ... + a[0]*x^(n-d)
+        a[k]*x^m + ... + a[0]*x^(m-k)
 
-    if ``length(a) = d+1``, so in particular always ``a[d] = 1``.
+    if ``length(a) = k+1``, so in particular always ``a[k] = 1``.
 
     .. NOTE::
 

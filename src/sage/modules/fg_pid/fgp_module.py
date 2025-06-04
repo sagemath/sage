@@ -764,7 +764,7 @@ class FGP_Module_class(Module):
         V = self._V.submodule(x) + self._W
         return self._module_constructor(V, self._W)
 
-    def has_canonical_map_to(self, A):
+    def has_canonical_map_to(self, A) -> bool:
         """
         Return ``True`` if ``self`` has a canonical map to ``A``, relative to the
         given presentation of ``A``.

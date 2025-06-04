@@ -7860,7 +7860,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         return self.element_class(self, data, check=False)
 
     class Element(Permutation):
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             r"""
             Check if ``i`` is a left descent of ``self``.
 
@@ -7898,7 +7898,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 if val == i + 1:
                     return True
 
-        def has_right_descent(self, i, mult=None):
+        def has_right_descent(self, i, mult=None) -> bool:
             r"""
             Check if ``i`` is a right descent of ``self``.
 

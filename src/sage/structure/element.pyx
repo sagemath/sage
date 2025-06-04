@@ -4491,6 +4491,22 @@ cdef class FieldElement(CommutativeRingElement):
             other = self.parent()(other)
         return bool(self) or other.is_zero()
 
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]; k=R.fraction_field()
+            sage: (x/y).canonical_associate()
+            (1, x/y)
+            sage: (0).canonical_associate()
+            (0, 1)
+        """
+        P = self.parent()
+        if self.is_zero():
+            return (P.zero(), P.one())
+        return (P.one(), self)
 
 def is_AlgebraElement(x):
     """

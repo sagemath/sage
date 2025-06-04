@@ -91,7 +91,7 @@ class HasseDiagram(DiGraph):
         Hasse diagram of a poset containing 4 elements
         sage: TestSuite(H).run()
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -2945,7 +2945,7 @@ class HasseDiagram(DiGraph):
 
         return True
 
-    def neutral_elements(self):
+    def neutral_elements(self) -> set:
         """
         Return the list of neutral elements of the lattice.
 
@@ -2993,7 +2993,7 @@ class HasseDiagram(DiGraph):
         mt = self.meet_matrix()
         jn = self.join_matrix()
 
-        def is_neutral(a):
+        def is_neutral(a) -> bool:
             noncomp = all_elements.difference(self.depth_first_search(a))
             noncomp.difference_update(self.depth_first_search(a, neighbors=self.neighbor_in_iterator))
 
@@ -3085,7 +3085,7 @@ class HasseDiagram(DiGraph):
                 result = e
         return result
 
-    def atoms_of_congruence_lattice(self):
+    def atoms_of_congruence_lattice(self) -> list:
         r"""
         Return atoms of the congruence lattice.
 

@@ -926,7 +926,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
         return s is positive
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         """
         Test if ``self`` has a left descent at position ``i``.
 
@@ -947,7 +947,7 @@ class WeylGroupElement(MatrixGroupElement_gap):
         """
         return self.has_descent(i, side='left')
 
-    def has_right_descent(self, i):
+    def has_right_descent(self, i) -> bool:
         """
         Test if ``self`` has a right descent at position ``i``.
 

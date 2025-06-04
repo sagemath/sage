@@ -44,7 +44,6 @@ cimport cython
 #
 ####################
 
-from sage.cpython.string cimport str_to_bytes
 from sage.cpython.string import FS_ENCODING
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -467,8 +466,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             raise ValueError("cannot construct meataxe matrix from empty filename")
 
         if type(filename) is not bytes:
-            filename = str_to_bytes(filename, FS_ENCODING,
-                                    'surrogateescape')
+            filename = filename.encode(FS_ENCODING, 'surrogateescape')
+
         sig_on()
         try:
             mat = MatLoad(filename)
@@ -1906,7 +1905,9 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
     # in Python-3, Sage will receive a str in `latin1` encoding. Therefore,
     # in the following line, we use a helper function that would return bytes,
     # regardless whether the input is bytes or str.
-    cdef bytes Data = str_to_bytes(data, encoding='latin1')
+    if isinstance(data, str):
+        data = data.encode('latin1')
+    cdef bytes Data = data
     if isinstance(f, int):
         # This is for old pickles created with the group cohomology spkg
         MS = MatrixSpace(GF(f, 'z'), nr, nc, implementation=Matrix_gfpn_dense)

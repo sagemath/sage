@@ -963,7 +963,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
     n1 = _ring.cf.cfInit(0, _ring.cf)
 
     while quo!=0:
-        coeff = _ring.cf.cfInit(quo%b, _ring.cf)
+        coeff = _ring.cf.cfInit(quo % b, _ring.cf)
 
         if not _ring.cf.cfIsZero(coeff, _ring.cf):
             apow2 = _ring.cf.cfMult(coeff, apow1, _ring.cf)
@@ -1753,7 +1753,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
         OverflowError: exponent overflow (4294967296)  # 64-bit
     """
     if unlikely(e > _ring.bitmask):
-        raise OverflowError("exponent overflow (%d)"%(e))
+        raise OverflowError("exponent overflow (%d)" % (e))
 
 cdef init_libsingular():
     """

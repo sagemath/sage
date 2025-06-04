@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6.0.1
+        uses: astral-sh/setup-uv@v6.1.0
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -62,16 +62,16 @@ jobs:
         run: |
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
           uv pip install \
-            meson-python \
-            "cypari2 >=2.2.1" \
-            "cysignals >=1.11.2, != 1.12.0" \
-            "cython >=3.0, != 3.0.3" \
-            "gmpy2 ~=2.1.b999" \
-            memory_allocator \
-            "numpy >=1.25" \
-            jinja2
-
-          uv sync --frozen --inexact --no-build-isolation-package=sagemath
+              meson-python \
+              "cypari2 >=2.2.1" \
+              "cython >=3.0, != 3.0.3, != 3.1.0" \
+              "cython >=3.0, != 3.0.3" \
+              "gmpy2 ~=2.1.b999" \
+              memory_allocator \
+              "numpy >=1.25" \
+              jinja2 \
+              setuptool
+          uv sync --frozen --inexact --no-build-isolation
 
       - name: Test
         run: |

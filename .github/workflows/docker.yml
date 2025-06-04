@@ -20,6 +20,7 @@ on:
           [
            "ubuntu-focal",
            "ubuntu-jammy",
+           "ubuntu-noble",
            "debian-bullseye",
            "debian-bookworm",
            "fedora-40",

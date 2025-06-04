@@ -6,10 +6,10 @@ This is the reference to the Sagemath R interface, usable from any
 Sage program.
 
 The %r interface creating an R cell in the sage
-notebook is decribed in the Notebook manual.
+notebook is described in the Notebook manual.
 
 The %R and %%R interface creating an R line or an R cell in the
-Jupyter notebook are briefly decribed at the end of this page. This
+Jupyter notebook are briefly described at the end of this page. This
 documentation will be expanded and placed in the Jupyter notebook
 manual when this manual exists.
 

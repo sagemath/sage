@@ -661,7 +661,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                  for j in range(self._faces[i].n)]
                 for i in range(self.fcount)]
 
-    def has_local_colors(self):
+    def has_local_colors(self) -> bool:
         """
         Return ``True`` if and only if every face has an individual color.
 

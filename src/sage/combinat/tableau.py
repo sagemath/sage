@@ -3190,7 +3190,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             else:
                 tab_r = tab[r]
-                if c == len(tab_r):
+                if c == len(tab_r) and (r == 0 or len(tab_r) < len(tab[r-1])):
                     tab_r.append(m)
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
@@ -3201,7 +3201,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         else:
             try:
                 return self.parent().Element(tab)
-            except Exception:
+            except ValueError:
                 return Tableau(tab)
 
     ##############
@@ -5730,7 +5730,7 @@ class Tableaux_all(Tableaux):
         """
         return "Tableaux"
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -5790,7 +5790,7 @@ class Tableaux_size(Tableaux):
         """
         return "Tableaux of size %s" % self.size
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -7398,7 +7398,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         """
         return RowStandardTableaux.__contains__(self, x) and sum(map(len, x)) == self._size
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 

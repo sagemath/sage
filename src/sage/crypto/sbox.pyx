@@ -1646,7 +1646,7 @@ cdef class SBox(SageObject):
                     ret.append((j, i, c))
         return ret
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         """
         Return ``True`` if there exists a nonzero component function of this
         S-Box that has a linear structure.

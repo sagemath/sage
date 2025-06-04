@@ -25,7 +25,7 @@
  *      0, 1 and -1 --- or in compactified --- a string with zeros in front of 1 or -1 is written as a single
  *      number --- notation.
  *
- *    - All functions can be nummerically evaluated with arguments in the whole complex plane. The parameters
+ *    - All functions can be numerically evaluated with arguments in the whole complex plane. The parameters
  *      for Li, zeta and S must be positive integers. If you want to have an alternating Euler sum, you have
  *      to give the signs of the parameters as a second argument s to zeta(m,s) containing 1 and -1.
  *

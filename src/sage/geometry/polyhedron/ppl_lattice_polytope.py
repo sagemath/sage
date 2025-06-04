@@ -903,7 +903,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         return tuple(sorted(vertices))
 
     @cached_method
-    def has_IP_property(self):
+    def has_IP_property(self) -> bool:
         """
         Whether the lattice polytope has the IP property.
 

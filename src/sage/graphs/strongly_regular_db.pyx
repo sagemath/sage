@@ -957,7 +957,7 @@ def is_complete_multipartite(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_complete_multipartite
         sage: t = is_complete_multipartite(12,8,4,8); t
-        (<cyfunction is_complete_multipartite.<locals>.CompleteMultipartiteSRG at ...>,
+        (<...CompleteMultipartiteSRG...>,
          3,
          4)
         sage: g = t[0](*t[1:]); g
@@ -1492,7 +1492,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_twograph_descendant_of_srg
         sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t                        # needs sage.rings.finite_rings
-        (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...
+        (<...is_twograph_descendant_of_srg...>, (8,))
         sage: g = t[0](*t[1:]); g                                                       # needs sage.rings.finite_rings
         descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
@@ -1662,9 +1662,9 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
         sage: t[0](*t[1:]).is_strongly_regular(parameters=True)                         # needs sage.schemes
         (290, 136, 63, 64)
         sage: is_switch_OA_srg(626, 300, 143, 144)                                      # needs sage.schemes
-        (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 12, 25)
+        (<...switch_OA_srg..., 12, 25)
         sage: is_switch_OA_srg(842, 406, 195, 196)                                      # needs sage.schemes
-        (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 14, 29)
+        (<...switch_OA_srg..., 14, 29)
     """
     cdef int n_2_p_1 = v
     cdef int n = <int> floor(sqrt(n_2_p_1 - 1))
@@ -2920,21 +2920,21 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_graph_lazy
         sage: g,p=strongly_regular_graph_lazy(10,6,3); g,p
-        (<cyfunction is_johnson.<locals>.<lambda> at ...>, 5)
+        (<...is_johnson...>, 5)
         sage: g(p)
         Johnson graph with parameters 5,2: Graph on 10 vertices
         sage: g,p=strongly_regular_graph_lazy(10,3,0,1); g,p
-        (<cyfunction strongly_regular_graph_lazy.<locals>.<lambda> at...>,
+        (<...strongly_regular_graph_lazy...>,
          (5,))
         sage: g(p)
         complement(Johnson graph with parameters 5,2): Graph on 10 vertices
         sage: g,p=strongly_regular_graph_lazy(12,3,2); g,p
-        (<cyfunction strongly_regular_graph_lazy.<locals>.<lambda> at...>,
+        (<...strongly_regular_graph_lazy...>,
          (3, 4))
         sage: g(p)
         complement(Multipartite Graph with set sizes [4, 4, 4]): Graph on 12 vertices
         sage: g = strongly_regular_graph_lazy(539,250,105); g                           # needs sage.combinat sage.modules
-        (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...>,
+        (<...is_twograph_descendant_of_srg...>,
          5,
          11)
         sage: g[0](*g[1:])                                                              # needs sage.combinat sage.modules

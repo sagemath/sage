@@ -2390,11 +2390,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             raise ValueError("The point P must be n-torsion")
 
         # NOTE: Pari returns the non-reduced Tate pairing, so we
-        # must perform the exponentation ourselves using the supplied
+        # must perform the exponentiation ourselves using the supplied
         # k value
         ePQ = pari.elltatepairing(E, P, Q, n)
         exp = Integer((q**k - 1)/n)
-        return K(ePQ**exp) # Cast the PARI type back to the base ring
+        return K(ePQ**exp)  # Cast the PARI type back to the base ring
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""

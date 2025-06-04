@@ -1943,7 +1943,7 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
         \end{aligned}
 
     Defining `g(z) = \sum_{n=1}^\infty x_{n-1} z^n`,
-    we have the analoguous alternative definitions
+    we have the analogous alternative definitions
 
     .. MATH::
 
@@ -1996,7 +1996,7 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
         sage: k = 4 # positive integer
         sage: R.<x> = InfinitePolynomialRing(QQ)
         sage: PR = PolynomialRing(QQ, 'x', n)
-        sage: d = {x[i]: PR.gen(i) for i in range(n)} #substitution dictionnary
+        sage: d = {x[i]: PR.gen(i) for i in range(n)}  # substitution dictionary
         sage: L.<z> = LazyPowerSeriesRing(R)
         sage: f = L(lambda i: x[i-1]/factorial(i), valuation=1)
         sage: all(exp(f)[i].subs(d) * factorial(i) == bell_polynomial(i) for i in range(n+1))

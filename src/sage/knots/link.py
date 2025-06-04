@@ -2050,7 +2050,7 @@ class Link(SageObject):
             conway += coeff * t_poly**M
         return conway
 
-    def khovanov_polynomial(self, var1='q', var2='t', base_ring=ZZ):
+    def khovanov_polynomial(self, var1='q', var2='t', torsion='T', ring=ZZ, base_ring=None):
         r"""
         Return the Khovanov polynomial of ``self``.
 
@@ -2059,32 +2059,43 @@ class Link(SageObject):
         INPUT:
 
         - ``var1`` -- (default: ``'q'``) the first variable. Its exponents
-          give the (torsion free) rank of the height of Khovanov homology
+          correspond to the height of Khovanov homology
         - ``var2`` -- (default: ``'t'``) the second variable. Its exponents
-          give the (torsion free) rank of the degree of Khovanov homology
-        - ``base_ring`` -- (default: ``ZZ``) the ring of the polynomial's
-          coefficients
+          correspond to the degree of Khovanov homology
+        - ``torsion`` -- (default: ``'T'``) additional variable to indicate
+          the torsion of the integral homology group corresponding to the
+          monomial; monomials without it correspond to torsion free ``ring``
+          modules; if it appears its exponents stands for the modulus of
+          the torsion
+        - ``ring`` -- (default: ``ZZ``) the ring of the homology. This will
+          be transferred to :meth:`khovanov_homology`
+
+        Here we follow the conventions used in
+        `KnotInfo <https://knotinfo.math.indiana.edu/descriptions/khovanov_unreduced_integral_polynomial.html>`__
 
         OUTPUT:
 
-        A two variate Laurent Polynomial over the ``base_ring``, more precisely an
-        instance of :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial`.
+        A two or three (for integral homology) variate Laurent polynomial over
+        ``ZZ``, more precisely an instance of
+        :class:`~sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair`.
 
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
             sage: K.khovanov_polynomial()                                               # needs sage.modules
-            q^-1 + q^-3 + q^-5*t^-2 + q^-9*t^-3
-            sage: K.khovanov_polynomial(base_ring=GF(2))                                # needs sage.modules
-            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-9*t^-3
+            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2*T^2 + q^-9*t^-3
+            sage: K.khovanov_polynomial(ring=GF(2))                                     # needs sage.modules
+            q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-7*t^-3 + q^-9*t^-3
 
         The figure eight knot::
 
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
             sage: L.khovanov_polynomial(var1='p')                                       # needs sage.modules
-            p^5*t^2 + p*t + p + p^-1 + p^-1*t^-1 + p^-5*t^-2
-            sage: L.khovanov_polynomial(var1='p', var2='s', base_ring=GF(4))            # needs sage.modules sage.rings.finite_rings
-            p^5*s^2 + p^3*s^2 + p*s + p + p^-1 + p^-1*s^-1 + p^-3*s^-1 + p^-5*s^-2
+            p^5*t^2 + p^3*t^2*T^2 + p*t + p + p^-1 + p^-1*t^-1
+              + p^-3*t^-1*T^2 + p^-5*t^-2
+            sage: L.khovanov_polynomial(var1='p', var2='s', ring=GF(4))                 # needs sage.modules sage.rings.finite_rings
+            p^5*s^2 + p^3*s^2 + p^3*s + p*s + p + p^-1 + p^-1*s^-1
+              + p^-3*s^-1 + p^-3*s^-2 + p^-5*s^-2
 
         The Hopf link::
 
@@ -2096,18 +2107,39 @@ class Link(SageObject):
 
         .. SEEALSO:: :meth:`khovanov_homology`
         """
-        L = LaurentPolynomialRing(base_ring, [var1, var2])
-        ch = base_ring.characteristic()
+        if base_ring:
+            ring = base_ring
+            from sage.misc.superseded import deprecation
+            deprecation(40149, "base_ring is deprecated, use argument ring instead.")
+
+        ch = ring.characteristic()
+        integral = False
+        if ch == 0 and not ring.is_field():
+            integral = True
+            L = LaurentPolynomialRing(ZZ, [var1, var2, torsion])
+        else:
+            L = LaurentPolynomialRing(ZZ, [var1, var2])
         coeff = {}
-        kh = self.khovanov_homology()
+        kh = self.khovanov_homology(ring=ring)
         from sage.rings.infinity import infinity
         for h in kh:
             for d in kh[h]:
                 H = kh[h][d]
-                gens = [g for g in H.gens() if g.order() == infinity or ch.divides(g.order())]
-                l = len(gens)
-                if l:
-                    coeff[(h, d)] = l
+                gens = {g: g.order() for g in H.gens()}
+                if integral:
+                    tor_count = {}
+                    for g, tor in gens.items():
+                        if tor in tor_count:
+                            tor_count[tor] += 1
+                        else:
+                            tor_count[tor] = 1
+                    for tor, ell in tor_count.items():
+                        if tor is infinity:
+                            coeff[(h, d, 0)] = ell
+                        else:
+                            coeff[(h, d, tor)] = ell
+                else:
+                    coeff[(h, d)] = len(gens)
         return L(coeff)
 
     def determinant(self):
@@ -3156,7 +3188,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the
+        - ``n`` -- the number of colors to consider (if omitted the
           value of the determinant of ``self`` will be taken)
 
         OUTPUT: a matrix over the residue class ring of integers modulo ``n``
@@ -3211,7 +3243,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the
+        - ``n`` -- the number of colors to consider (if omitted the
           value of the determinant of ``self`` will be taken)
 
         EXAMPLES:
@@ -3264,7 +3296,7 @@ class Link(SageObject):
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the value
+        - ``n`` -- the number of colors to consider (if omitted the value
           of the determinant of ``self`` will be taken). Note that there
           are no colorings if n is coprime to the determinant of ``self``
 
@@ -3324,13 +3356,14 @@ class Link(SageObject):
 
     def coloring_maps(self, n=None, finitely_presented=False):
         r"""
-        Return the `n`-coloring maps of ``self``. These are group
-        homomorphisms from the fundamental group of ``self`` to the
-        `n`-th dihedral group.
+        Return the `n`-coloring maps of ``self``.
+
+        These are group homomorphisms from the fundamental group of
+        ``self`` to the `n`-th dihedral group.
 
         INPUT:
 
-        - ``n`` -- the number of colors to consider (if ommitted the value
+        - ``n`` -- the number of colors to consider (if omitted the value
           of the determinant of ``self`` will be taken). Note that there
           are no coloring maps if n is coprime to the determinant of ``self``
 
@@ -4481,7 +4514,7 @@ class Link(SageObject):
                 if proves[k]:
                     l += match_lists[k]
         else:
-            # for multi-component links there could regularily be more than one
+            # for multi-component links there could regularly be more than one
             # matching entry
             for k in match_lists.keys():
                 l += match_lists[k]

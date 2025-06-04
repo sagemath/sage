@@ -1979,8 +1979,8 @@ class AffineConnection(SageObject):
                                     for l in manif.irange(start=k+1):
                                         res[i,j,k,l] = frame[k](gam[[i,j,l]]) - \
                                                        frame[l](gam[[i,j,k]]) + \
-                                                       gam_gam[[i,k,j,l]] -  \
-                                                       gam_gam[[i,l,j,k]] -  \
+                                                       gam_gam[[i,k,j,l]] - \
+                                                       gam_gam[[i,l,j,k]] - \
                                                        gam_sc[[i,j,k,l]]
             self._riemann = resu
         return self._riemann

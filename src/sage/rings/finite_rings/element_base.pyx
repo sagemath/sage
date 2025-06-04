@@ -165,6 +165,31 @@ cdef class FiniteRingElement(CommutativeRingElement):
         length = (self.parent().order().nbits() + 7) // 8
         return int(self).to_bytes(length=length, byteorder=byteorder)
 
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        Implemented here because not all finite field elements inherit from FieldElement.
+        
+        EXAMPLES::
+        
+            sage: GF(7)(1).canonical_associate()
+            (1, 1)
+            sage: GF(7)(3).canonical_associate()
+            (1, 3)
+            sage: GF(7)(0).canonical_associate()
+            (0, 1)
+            sage: IntegerModRing(15)(7).canonical_associate()
+            NotImplemented
+        """
+        R = self.parent()
+        if R.is_field():
+            if self.is_zero():
+                return (R.zero(), R.one())
+            return (R.one(), self)
+        return NotImplemented
+
+
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
     Elements represented as polynomials modulo a given ideal.

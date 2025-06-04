@@ -124,6 +124,10 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows and (name == 'sage_ostools')
+    # Uses posix API
+    continue
+  endif
   deps = [py_dep, gmp]
   if name == 'binary_tree'
     deps += [cysignals]

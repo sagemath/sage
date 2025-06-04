@@ -249,10 +249,10 @@ class IntegerModFactory(UniqueFactory):
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
 
 
-from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.noetherian_rings import NoetherianRings
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.category import JoinCategory
-default_category = JoinCategory((CommutativeRings(), FiniteEnumeratedSets()))
+default_category = JoinCategory((NoetherianRings(), FiniteEnumeratedSets()))
 ZZ = integer_ring.IntegerRing()
 
 
@@ -448,6 +448,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: R = IntegerModRing(18)
             sage: R.is_finite()
             True
+
+        TESTS::
+
+            sage: Integers(8).is_noetherian()
+            True
         """
         order = ZZ(order)
         if order <= 0:
@@ -478,7 +483,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         self._zero_element = integer_mod.IntegerMod(self, 0)
         self._one_element = integer_mod.IntegerMod(self, 1)
 
-    def _macaulay2_init_(self, macaulay2=None):
+    def _macaulay2_init_(self, macaulay2=None) -> str:
         """
         EXAMPLES::
 
@@ -498,7 +503,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return "ZZ/{}".format(self.order())
 
-    def _axiom_init_(self):
+    def _axiom_init_(self) -> str:
         """
         Return a string representation of ``self`` in (Pan)Axiom.
 
@@ -529,17 +534,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return integer.Integer(0)
 
-    def is_noetherian(self):
-        """
-        Check if ``self`` is a Noetherian ring.
-
-        EXAMPLES::
-
-            sage: Integers(8).is_noetherian()
-            True
-        """
-        return True
-
     def extension(self, poly, name=None, names=None, **kwds):
         """
         Return an algebraic extension of ``self``. See
@@ -560,7 +554,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         return CommutativeRing.extension(self, poly, name, names, **kwds)
 
     @cached_method
-    def is_prime_field(self):
+    def is_prime_field(self) -> bool:
         """
         Return ``True`` if the order is prime.
 
@@ -573,7 +567,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         return self.__order.is_prime()
 
-    def _precompute_table(self):
+    def _precompute_table(self) -> None:
         """
         Compute a table of elements so that elements are unique.
 
@@ -585,7 +579,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         self._pyx_order.precompute_table(self)
 
-    def list_of_elements_of_multiplicative_group(self):
+    def list_of_elements_of_multiplicative_group(self) -> list:
         """
         Return a list of all invertible elements, as python ints.
 

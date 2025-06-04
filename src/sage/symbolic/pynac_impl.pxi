@@ -43,7 +43,6 @@ from sage.libs.gmp.all cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari import pari
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
@@ -1544,6 +1543,7 @@ def doublefactorial(n):
 
 
 cdef py_fibonacci(n):
+    from sage.libs.pari import pari
     return Integer(pari(n).fibonacci())
 
 cdef py_step(n):

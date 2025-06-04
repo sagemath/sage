@@ -2840,6 +2840,28 @@ class LazyModuleElement(Element):
         phi = P.euler()
         return phi(self)
 
+    def jacobi_theta(self, w, a=0, b=0):
+        r"""
+        Return the Jacobi theta function `\vartheta_{ab}(w; q)` evaluated
+        with the nome `q` at ``self``.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.lazy_series_ring.LazyLaurentSeriesRing.jacobi_theta`
+
+        EXAMPLES::
+
+            sage: R.<w> = LaurentSeriesRing(QQ)
+            sage: L.<q> = LazyLaurentSeriesRing(R)
+            sage: theta = L.jacobi_theta(w)
+            sage: (q + q^2).jacobi_theta(w) - theta(q + q^2)
+            O(q^7)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "q", sparse=self.parent()._sparse)
+        phi = P.jacobi_theta(w=w, a=a, b=b)
+        return phi(self)
+
     # === powers ===
 
     def __pow__(self, n):

@@ -868,7 +868,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: set(f(p) for p in f.domain())
             {(0 : 0 : 1), (0 : 1 : 1), (1 : 0 : 1)}
 
-        Verfication of the example ::
+        Verification of the example ::
 
             sage: # needs sage.libs.pari
             sage: h = g*f; h
