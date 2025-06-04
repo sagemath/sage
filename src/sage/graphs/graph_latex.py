@@ -429,7 +429,7 @@ Visit 'https://www.ctan.org/pkg/tkz-berge'.
 """)
 
 
-def have_tkz_graph():
+def have_tkz_graph() -> bool:
     r"""
     Return ``True`` if the proper LaTeX packages for the ``tikzpicture``
     environment are installed in the user's environment, namely ``tikz``,
