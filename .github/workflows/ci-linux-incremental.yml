@@ -20,6 +20,7 @@ on:
     paths:
       - '.github/workflows/ci-linux-incremental.yml'
       - 'build/pkgs/**'
+      - 'configure.ac'
       - '!build/pkgs/sage_conf/**'
       - '!build/pkgs/sage_docbuild/**'
       - '!build/pkgs/sage_setup/**'
