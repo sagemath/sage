@@ -86,22 +86,22 @@ import numbers
 from memory_allocator cimport MemoryAllocator
 from cysignals.memory cimport check_calloc, sig_free
 
-from sage.graphs.graph              import Graph
-from sage.geometry.polyhedron.base  import Polyhedron_base
+from sage.graphs.graph import Graph
+from sage.geometry.polyhedron.base import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
-from sage.geometry.cone             import ConvexRationalPolyhedralCone
-from sage.structure.element         import Matrix
-from sage.matrix.matrix_dense      cimport Matrix_dense
-from sage.misc.misc                 import is_iterator
+from sage.geometry.cone import ConvexRationalPolyhedralCone
+from sage.structure.element import Matrix
+from sage.matrix.matrix_dense cimport Matrix_dense
+from sage.misc.misc import is_iterator
 from .conversions import (incidence_matrix_to_bit_rep_of_facets,
                           incidence_matrix_to_bit_rep_of_Vrep,
                           facets_tuple_to_bit_rep_of_facets,
                           facets_tuple_to_bit_rep_of_Vrep)
 from sage.geometry.polyhedron.combinatorial_polyhedron.conversions cimport Vrep_list_to_bit_rep
-from sage.misc.cachefunc            import cached_method
+from sage.misc.cachefunc import cached_method
 
-from sage.rings.integer                cimport smallInteger
-from cysignals.signals                 cimport sig_check
+from sage.rings.integer cimport smallInteger
+from cysignals.signals cimport sig_check
 
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure cimport face_len_atoms, face_init, face_free
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator cimport iter_t, parallel_f_vector
@@ -1467,14 +1467,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         if add_equations and names:
             return tuple(
-                    ((f(self._ridges.get(i).first),) + self.equations(),
-                     (f(self._ridges.get(i).second),) + self.equations())
-                    for i in range (n_ridges))
-        else:
-            return tuple(
-                    (f(self._ridges.get(i).first),
-                     f(self._ridges.get(i).second))
-                    for i in range (n_ridges))
+                ((f(self._ridges.get(i).first),) + self.equations(),
+                 (f(self._ridges.get(i).second),) + self.equations())
+                for i in range(n_ridges))
+
+        return tuple(
+            (f(self._ridges.get(i).first),
+             f(self._ridges.get(i).second))
+            for i in range(n_ridges))
 
     @cached_method
     def facet_adjacency_matrix(self, algorithm=None):
@@ -1841,7 +1841,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.flag_f_vector()                                                     # needs sage.combinat
             {(-1,): 1, (0, 1): 0, (0, 2): 0, (0,): 0, (1, 2): 8, (1,): 4, (2,): 4, 3: 1}
 
-        If the arguments are not stricly increasing or out of range, a key error is raised::
+        If the arguments are not strictly increasing or out of range,
+        a key error is raised::
 
             sage: C.flag_f_vector(-1,0,3,5)                                             # needs sage.combinat
             Traceback (most recent call last):
@@ -3507,8 +3508,9 @@ cdef class CombinatorialPolyhedron(SageObject):
         If ``dual``, use the face iterator in dual mode, else in non-dual.
         If ``dual`` is ``-1`` determine this automatically.
 
-        If the ``f_vector`` is unkown computes it as well if computing the edges
-        in non-dual mode or the ridges in dual-mode.
+        If the ``f_vector`` is unknown computes it as well if
+        computing the edges in non-dual mode or the ridges in
+        dual-mode.
 
         See :meth:`CombinatorialPolyhedron.edges` and :meth:`CombinatorialPolyhedron.ridges`.
         """
@@ -3670,7 +3672,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # If ``not do_f_vector`` the iterator is set up
             # for ``output_dimension`` and
             # ``d < dim`` implies
-            # ``d == ouput_dimension``.
+            # ``d == output_dimension``.
             if not do_f_vector or d == output_dimension:
                 if do_atom_rep:
                     # Set up face_iter.atom_rep

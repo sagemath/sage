@@ -30,20 +30,20 @@ AUTHOR:
 * canonical generation function
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Robert L. Miller <rlmillster@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from libc.string cimport memcpy
 from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
-from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
+from cysignals.memory cimport sig_malloc, sig_free
 
 from sage.structure.element cimport Matrix
 from sage.misc.timing import cputime
@@ -1004,7 +1004,7 @@ cdef class BinaryCode:
             [10101010]
         """
         cdef int i, j
-        s = 'Binary [%d,%d] linear code, generator matrix\n'%(self.ncols, self.nrows)
+        s = 'Binary [%d,%d] linear code, generator matrix\n' % (self.ncols, self.nrows)
         for i from 0 <= i < self.nrows:
             s += '[' + self._word((<codeword> 1)<<i) + ']\n'
         return s
@@ -1028,10 +1028,8 @@ cdef class BinaryCode:
         Note that behavior under input which does not represent a word in
         the code is unspecified (gives nonsense).
         """
-        s = ''
-        for j from 0 <= j < self.ncols:
-            s += '%d'%self.is_one(coords,j)
-        return s
+        return ''.join('%d' % self.is_one(coords, j)
+                       for j in range(self.ncols))
 
     def _is_one(self, word, col):
         """
@@ -1186,7 +1184,8 @@ cdef class BinaryCode:
             if not parity:
                 while not combination & (1 << j): j += 1
                 j += 1
-            if j == self.nrows: break
+            if j == self.nrows:
+                break
             else:
                 combination ^= (1 << j)
                 word ^= self.basis[j]
@@ -1309,22 +1308,23 @@ cdef class OrbitPartition:
         """
         cdef int i
         cdef int j
-        s = 'OrbitPartition on %d words and %d columns. Data:\n'%(self.nwords, self.ncols)
+        s = 'OrbitPartition on %d words and %d columns. Data:\n' % (self.nwords,
+                                                                    self.ncols)
 #        s += 'Parents::\n'
         s += 'Words:\n'
         for i from 0 <= i < self.nwords:
-            s += '%d,'%self.wd_parent[i]
+            s += '%d,' % self.wd_parent[i]
         s = s[:-1] + '\nColumns:\n'
         for j from 0 <= j < self.ncols:
-            s += '%d,'%self.col_parent[j]
+            s += '%d,' % self.col_parent[j]
 #        s = s[:-1] + '\n'
 #        s += 'Min Cell Reps::\n'
 #        s += 'Words:\n'
 #        for i from 0 <= i < self.nwords:
-#            s += '%d,'%self.wd_min_cell_rep[i]
+#            s += '%d,' % self.wd_min_cell_rep[i]
 #        s = s[:-1] + '\nColumns:\n'
 #        for j from 0 <= j < self.ncols:
-#            s += '%d,'%self.col_min_cell_rep[j]
+#            s += '%d,' % self.col_min_cell_rep[j]
         return s[:-1]
 
     def _wd_find(self, word):
@@ -1773,7 +1773,8 @@ cdef class PartitionStack:
         current = ''
         for k from 0 <= k < 2*self.ncols:
             current = self._repr_at_k(k)
-            if current == last: break
+            if current == last:
+                break
             s += current
             last = current
         return s
@@ -1985,7 +1986,7 @@ cdef class PartitionStack:
         cdef int reps = (1 << self_col_ents[0]), length, word
         cdef int radix = self.radix, nwords = self.nwords, ncols = self.ncols
         length = 1 + nwords/radix
-        if nwords%radix:
+        if nwords % radix:
             length += 1
         for i from 0 <= i < length:
             Omega[start+i] = 0
@@ -1995,7 +1996,7 @@ cdef class PartitionStack:
         for i from 0 < i < nwords:
             if self_wd_lvls[i-1] <= k:
                 word = self_wd_lvls[i-1]
-                Omega[start+1+word/radix] += (1 << word%radix)
+                Omega[start+1+word/radix] += (1 << word % radix)
 
 #    def _fixed_cols(self, mcrs, k): #TODO
 #        """
@@ -2048,13 +2049,13 @@ cdef class PartitionStack:
         Phi[start] = fixed & Omega[start]
         # zero out the rest of Phi
         length = 1 + nwords/self.radix
-        if nwords%self.radix:
+        if nwords % self.radix:
             length += 1
         for i from 0 < i < length:
             Phi[start+i] = 0
         for i from 0 <= i < nwords:
             ell = self_wd_ents[i]
-            Phi[start+1+ell/radix] = ((self_wd_lvls[i] <= k) << ell%radix)
+            Phi[start+1+ell/radix] = ((self_wd_lvls[i] <= k) << ell % radix)
         for i from 0 < i < length:
             Phi[i] &= Omega[i]
 
@@ -2125,7 +2126,8 @@ cdef class PartitionStack:
                     min = i - j + 1
                     location = j
                 j = i + 1
-            if self_col_lvls[i] == -1: break
+            if self_col_lvls[i] == -1:
+                break
             i += 1
 #        i = 0; j = 0
 #        while True:
@@ -2142,13 +2144,14 @@ cdef class PartitionStack:
         j = location
         # zero out this level of W:
         ell = 1 + nwords/radix
-        if nwords%radix:
+        if nwords % radix:
             ell += 1
         for i from 0 <= i < ell:
             W[start+i] = 0
         if min_is_col:
             while True:
-                if self_col_lvls[j] <= k: break
+                if self_col_lvls[j] <= k:
+                    break
                 j += 1
             # j now points to the last element of the cell
             i = location
@@ -2158,13 +2161,14 @@ cdef class PartitionStack:
             return self_col_ents[location]
         else:
             while True:
-                if self_wd_lvls[j] <= k: break
+                if self_wd_lvls[j] <= k:
+                    break
                 j += 1
             # j now points to the last element of the cell
             i = location
             while i <= j:
                 ell = self_wd_ents[i]
-                W[start+1+ell/radix] ^= (1 << ell%radix)
+                W[start+1+ell/radix] ^= (1 << ell % radix)
                 i += 1
             return self_wd_ents[location] ^ self.flag
 
@@ -3492,9 +3496,9 @@ cdef class BinaryCodeClassifier:
                 for i from 0 <= i < jj:
                     Omega[ii+i] = ~0
                     Phi[ii+i] = 0
-                if nwords%self.radix:
+                if nwords % self.radix:
                     jj += 1
-#                Omega[ii+jj-1] = ~((1 << nwords%self.radix) - 1)
+#                Omega[ii+jj-1] = ~((1 << nwords % self.radix) - 1)
                 # Omega stores the minimum cell representatives
                 i = 0
                 while i < ncols:
@@ -3510,10 +3514,10 @@ cdef class BinaryCodeClassifier:
                 while i < nwords:
                     j = word_gamma[i]
                     while j != i:
-                        Omega[ii+1+j/jj] ^= (1<<(j%jj))
+                        Omega[ii+1+j/jj] ^= (1<<(j % jj))
                         j = word_gamma[j]
                     i += 1
-                    while i < nwords and not Omega[ii+1+i/jj]&(1<<(i%jj)):
+                    while i < nwords and not Omega[ii+1+i/jj]&(1<<(i % jj)):
                         i += 1
                 # Phi stores the columns fixed by the automorphism
                 for i from 0 <= i < ncols:
@@ -3521,7 +3525,7 @@ cdef class BinaryCodeClassifier:
                         Phi[ii] ^= (1 << i)
                 for i from 0 <= i < nwords:
                     if word_gamma[i] == i:
-                        Phi[ii+1+i/jj] ^= (1<<(i%jj))
+                        Phi[ii+1+i/jj] ^= (1<<(i % jj))
 
                 # Now incorporate the automorphism into Theta
                 j = Theta.merge_perm(col_gamma, word_gamma)
@@ -3571,7 +3575,7 @@ cdef class BinaryCodeClassifier:
                     ii = self.Phi_size*l
                     jj = self.Phi_size*k
                     j = 1 + nwords/self.radix
-                    if nwords%self.radix:
+                    if nwords % self.radix:
                         j += 1
                     W[jj] &= Omega[ii]
                     for i from 0 < i < j:
@@ -3623,7 +3627,7 @@ cdef class BinaryCodeClassifier:
                 if v[k]&nu.flag:
                     ii = self.radix
                     i = (v[k]^nu.flag) + 1
-                    while i < nwords and not (1 << i%ii) & W[jj+1+i/ii]:
+                    while i < nwords and not (1 << i % ii) & W[jj+1+i/ii]:
                         i += 1
                     if i < nwords:
                         v[k] = i^nu.flag
@@ -3695,14 +3699,14 @@ cdef class BinaryCodeClassifier:
                     # intersect W[k] with each Omega[i] such that v[0]...v[k-1] is in Phi[i]
                     jj = self.Phi_size*self.L
                     iii = nwords/self.radix
-                    if nwords%self.radix:
+                    if nwords % self.radix:
                         iii += 1
                     for ii from 0 <= ii < iii:
                         Phi[jj+ii] = 0
                     for ii from 0 <= ii < k:
                         if v[ii]&nu.flag:
                             i = v[ii]^nu.flag
-                            Phi[jj+1+i/self.radix] ^= (1 << i%self.radix)
+                            Phi[jj+1+i/self.radix] ^= (1 << i % self.radix)
                         else:
                             Phi[jj] ^= (1 << v[ii])
                     for i from 0 <= i <= l:
@@ -3722,7 +3726,7 @@ cdef class BinaryCodeClassifier:
                     i = (v[k]^nu.flag)
                     while i < nwords:
                         i += 1
-                        if (1 << i%self.radix) & W[jjj+1+i/self.radix]: break
+                        if (1 << i % self.radix) & W[jjj+1+i/self.radix]: break
                     if i < nwords:
                         v[k] = i^nu.flag
                         state = 15
@@ -3852,9 +3856,9 @@ cdef class BinaryCodeClassifier:
             sage: soc_iter = codes.databases.self_orthogonal_binary_codes(12, 6, 4)
             sage: L = list(soc_iter)
             sage: for n in range(13):
-            ....:   s = 'n=%2d : '%n
+            ....:   s = 'n=%2d : ' % n
             ....:   for k in range(1,7):
-            ....:       s += '%3d '%len([C for C in L
+            ....:       s += '%3d ' % len([C for C in L
             ....:                        if C.length() == n and C.dimension() == k])
             ....:   print(s)
             n= 0 :   0   0   0   0   0   0
@@ -3972,7 +3976,7 @@ cdef class BinaryCodeClassifier:
 
         while True:
             if nonzero_gate & word == nonzero_gate and \
-              (ham_wts[word & 65535] + ham_wts[(word >> 16) & 65535])%d == 0:
+              (ham_wts[word & 65535] + ham_wts[(word >> 16) & 65535]) % d == 0:
                 temp = (word >> B.nrows) & ((<codeword>1 << k) - 1)
                 if not orbit_checks[temp >> log_2_radix] & ((<codeword>1) << (temp & radix_gate)):
                     B_aug = BinaryCode(B, word)

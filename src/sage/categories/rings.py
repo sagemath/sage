@@ -5,7 +5,8 @@ Rings
 # ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
-#                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
+#                2008      Teresa Gomez-Diaz (CNRS)
+#                          <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -16,6 +17,7 @@ from types import GeneratorType
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.misc.prandom import randint
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
@@ -554,6 +556,158 @@ class Rings(CategoryWithAxiom):
             except (TypeError, AttributeError):
                 return False
 
+        def is_field(self, proof=True):
+            """
+            Return ``True`` if this ring is a field.
+
+            INPUT:
+
+            - ``proof`` -- boolean (default: ``True``); determines what to do in
+              unknown cases
+
+            ALGORITHM:
+
+            If the parameter ``proof`` is set to ``True``, the returned value is
+            correct but the method might throw an error.  Otherwise, if it is set
+            to ``False``, the method returns ``True`` if it can establish that
+            ``self`` is a field and ``False`` otherwise.
+
+            EXAMPLES::
+
+                sage: QQ.is_field()
+                True
+                sage: GF(9, 'a').is_field()                                                 # needs sage.rings.finite_rings
+                True
+                sage: ZZ.is_field()
+                False
+                sage: QQ['x'].is_field()
+                False
+                sage: Frac(QQ['x']).is_field()
+                True
+
+            This illustrates the use of the ``proof`` parameter::
+
+                sage: R.<a,b> = QQ[]
+                sage: S.<x,y> = R.quo((b^3))                                                # needs sage.libs.singular
+                sage: S.is_field(proof=True)                                                # needs sage.libs.singular
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+                sage: S.is_field(proof=False)                                               # needs sage.libs.singular
+                False
+            """
+            if self.is_zero():
+                return False
+
+            if proof:
+                raise NotImplementedError("No way to prove that %s is an integral domain!" % self)
+            else:
+                return False
+
+        def zeta(self, n=2, all=False):
+            """
+            Return a primitive ``n``-th root of unity in ``self`` if there
+            is one, or raise a :exc:`ValueError` otherwise.
+
+            INPUT:
+
+            - ``n`` -- positive integer
+
+            - ``all`` -- boolean (default: ``False``); whether to return
+              a list of all primitive `n`-th roots of unity. If ``True``, raise a
+              :exc:`ValueError` if ``self`` is not an integral domain.
+
+            OUTPUT: element of ``self`` of finite order
+
+            EXAMPLES::
+
+                sage: QQ.zeta()
+                -1
+                sage: QQ.zeta(1)
+                1
+                sage: CyclotomicField(6).zeta(6)                                            # needs sage.rings.number_field
+                zeta6
+                sage: CyclotomicField(3).zeta(3)                                            # needs sage.rings.number_field
+                zeta3
+                sage: CyclotomicField(3).zeta(3).multiplicative_order()                     # needs sage.rings.number_field
+                3
+
+                sage: # needs sage.rings.finite_rings
+                sage: a = GF(7).zeta(); a
+                3
+                sage: a.multiplicative_order()
+                6
+                sage: a = GF(49,'z').zeta(); a
+                z
+                sage: a.multiplicative_order()
+                48
+                sage: a = GF(49,'z').zeta(2); a
+                6
+                sage: a.multiplicative_order()
+                2
+
+                sage: QQ.zeta(3)
+                Traceback (most recent call last):
+                ...
+                ValueError: no n-th root of unity in rational field
+                sage: Zp(7, prec=8).zeta()                                                  # needs sage.rings.padics
+                3 + 4*7 + 6*7^2 + 3*7^3 + 2*7^5 + 6*7^6 + 2*7^7 + O(7^8)
+
+            TESTS::
+
+                sage: R.<x> = QQ[]
+                sage: R.zeta(1)
+                1
+                sage: R.zeta(2)
+                -1
+                sage: R.zeta(3)                                                             # needs sage.libs.pari
+                Traceback (most recent call last):
+                ...
+                ValueError: no 3rd root of unity in Univariate Polynomial Ring in x over Rational Field
+                sage: IntegerModRing(8).zeta(2, all = True)
+                Traceback (most recent call last):
+                ...
+                ValueError: ring is not an integral domain
+            """
+            if all and not self.is_integral_domain():
+                raise ValueError("ring is not an integral domain")
+            if n == 2:
+                if all:
+                    return [self(-1)]
+                else:
+                    return self(-1)
+            elif n == 1:
+                if all:
+                    return [self(1)]
+                else:
+                    return self(1)
+            else:
+                f = self['x'].cyclotomic_polynomial(n)
+                if all:
+                    return [-P[0] for P, e in f.factor() if P.degree() == 1]
+                for P, e in f.factor():
+                    if P.degree() == 1:
+                        return -P[0]
+                from sage.rings.integer_ring import ZZ
+                raise ValueError("no %s root of unity in %r" % (ZZ(n).ordinal_str(), self))
+
+        def zeta_order(self):
+            """
+            Return the order of the distinguished root of unity in ``self``.
+
+            EXAMPLES::
+
+                sage: CyclotomicField(19).zeta_order()                                      # needs sage.rings.number_field
+                38
+                sage: GF(19).zeta_order()
+                18
+                sage: GF(5^3,'a').zeta_order()                                              # needs sage.rings.finite_rings
+                124
+                sage: Zp(7, prec=8).zeta_order()                                            # needs sage.rings.padics
+                6
+            """
+            return self.zeta().multiplicative_order()
+
         def localization(self, *args, **kwds):
             """
             Return the localization of ``self``.
@@ -751,108 +905,20 @@ class Rings(CategoryWithAxiom):
                 from sage.modules.free_module import FreeModule
                 return FreeModule(self, n)
 
-        @cached_method
-        def ideal_monoid(self):
+        def nilradical(self):
             """
-            The monoid of the ideals of this ring.
+            Return the nilradical of this ring.
 
             EXAMPLES::
 
-                sage: # needs sage.modules
-                sage: MS = MatrixSpace(QQ, 2, 2)
-                sage: isinstance(MS, Ring)
-                False
-                sage: MS in Rings()
-                True
-                sage: MS.ideal_monoid()
-                Monoid of ideals of Full MatrixSpace of 2 by 2 dense matrices
-                over Rational Field
+                sage: QQ['x,y'].nilradical()
+                Ideal (0) of Multivariate Polynomial Ring in x, y over Rational Field
 
-            Note that the monoid is cached::
+            .. SEEALSO::
 
-                sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
-                True
-
-            More examples::
-
-                sage: # needs sage.combinat sage.modules
-                sage: F.<x,y,z> = FreeAlgebra(ZZ, 3)
-                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-                sage: Q = F.quotient(I)
-                sage: Q.ideal_monoid()
-                Monoid of ideals of Quotient of Free Algebra on 3 generators (x, y, z)
-                 over Integer Ring by the ideal (x*y + y*z, x^2 + x*y - y*x - y^2)
-                sage: F.<x,y,z> = FreeAlgebra(ZZ, implementation='letterplace')
-                sage: I = F * [x*y + y*z, x^2 + x*y - y*x - y^2] * F
-                sage: Q = F.quo(I)
-                sage: Q.ideal_monoid()
-                Monoid of ideals of Quotient of Free Associative Unital Algebra
-                 on 3 generators (x, y, z) over Integer Ring
-                 by the ideal (x*y + y*z, x*x + x*y - y*x - y*y)
-
-                sage: ZZ.ideal_monoid()
-                Monoid of ideals of Integer Ring
-                sage: R.<x> = QQ[]; R.ideal_monoid()
-                Monoid of ideals of Univariate Polynomial Ring in x over Rational Field
+                :meth:`~sage.categories.finite_dimensional_lie_algebras_with_basis.FiniteDimensionalLieAlgebrasWithBasis.ParentMethods.nilradical`
             """
-            try:
-                from sage.rings.ideal_monoid import IdealMonoid
-                return IdealMonoid(self)
-            except TypeError:
-                from sage.rings.noncommutative_ideals import IdealMonoid_nc
-                return IdealMonoid_nc(self)
-
-        def _ideal_class_(self, n=0):
-            r"""
-            Return a callable object that can be used to create ideals in this
-            ring.
-
-            EXAMPLES::
-
-                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
-                sage: MS._ideal_class_()                                                # needs sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-            Since :issue:`7797`, non-commutative rings have ideals as well::
-
-                sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
-                sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-            """
-            from sage.rings.noncommutative_ideals import Ideal_nc
-            return Ideal_nc
-
-        @cached_method
-        def zero_ideal(self):
-            """
-            Return the zero ideal of this ring (cached).
-
-            EXAMPLES::
-
-                sage: ZZ.zero_ideal()
-                Principal ideal (0) of Integer Ring
-                sage: QQ.zero_ideal()
-                Principal ideal (0) of Rational Field
-                sage: QQ['x'].zero_ideal()
-                Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
-
-            The result is cached::
-
-                sage: ZZ.zero_ideal() is ZZ.zero_ideal()
-                True
-
-            TESTS:
-
-            Make sure that :issue:`13644` is fixed::
-
-                sage: # needs sage.rings.padics
-                sage: K = Qp(3)
-                sage: R.<a> = K[]
-                sage: L.<a> = K.extension(a^2-3)
-                sage: L.ideal(a)
-                Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
-            """
-            return self._ideal_class_(1)(self, [self.zero()])
+            return self.zero_ideal().radical()
 
         @cached_method
         def unit_ideal(self):
@@ -865,21 +931,6 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
             """
             return self._ideal_class_(1)(self, [self.one()])
-
-        def principal_ideal(self, gen, coerce=True):
-            """
-            Return the principal ideal generated by gen.
-
-            EXAMPLES::
-
-                sage: R.<x,y> = ZZ[]
-                sage: R.principal_ideal(x+2*y)
-                Ideal (x + 2*y) of Multivariate Polynomial Ring in x, y over Integer Ring
-            """
-            C = self._ideal_class_(1)
-            if coerce:
-                gen = self(gen)
-            return C(self, [gen])
 
         def characteristic(self):
             """
@@ -1003,6 +1054,22 @@ class Rings(CategoryWithAxiom):
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
                 sage: R.ideal()
                 Principal ideal (0) of Univariate Polynomial Ring in x over Rational Field
+
+            Check ``ideal_class=`` keyword argument when input is empty::
+
+                sage: from sage.rings.ideal import Ideal_pid
+                sage: class CustomIdealClass(Ideal_pid):
+                ....:     pass
+                sage: type(ZZ.ideal(6))
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: type(ZZ.ideal(6, ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
+                sage: type(ZZ.ideal())
+                <class 'sage.rings.ideal.Ideal_pid'>
+                sage: type(ZZ.ideal(ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
+                sage: type(ZZ.ideal((), ideal_class=CustomIdealClass))
+                <class '...CustomIdealClass'>
             """
             if 'coerce' in kwds:
                 coerce = kwds['coerce']
@@ -1645,6 +1712,40 @@ class Rings(CategoryWithAxiom):
                 x = self.random_element(*args, **kwds)
                 if not x.is_zero():
                     return x
+
+        def random_element(self, *args):
+            """
+            Return a random integer coerced into this ring.
+
+            INPUT:
+
+            - either no integer, one integer or two integers
+
+            The integer is chosen uniformly from the closed interval
+            ``[-2,2]``, ``[-a,a]`` or ``[a,b]`` according to the
+            length of the input.
+
+            ALGORITHM:
+
+            This uses Python's ``randint``.
+
+            EXAMPLES::
+
+                sage: -8 <= ZZ.random_element(8) <= 8
+                True
+                sage: -8 <= QQ.random_element(8) <= 8
+                True
+                sage: 4 <= ZZ.random_element(4,12) <= 12
+                True
+            """
+            if not args:
+                a, b = -2, 2
+            elif len(args) == 1:
+                bound = args[0]
+                a, b = -bound, bound
+            else:
+                a, b = args[0], args[1]
+            return randint(a, b) * self.one()
 
     class ElementMethods:
         def is_unit(self) -> bool:

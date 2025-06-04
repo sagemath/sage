@@ -546,6 +546,18 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             [-1  1]  [ 0 -1]  [ 1  0]
             [ 0  1], [-1  0], [ 1 -1]
             ]
+
+        TESTS::
+
+            sage: W = CoxeterGroup(CoxeterType(['A', 2]).relabel({1: 'r', 2: 's'}))
+            sage: F = W._positive_roots_reflections()
+            sage: F.keys()
+            [(1, 0), (1, 1), (0, 1)]
+            sage: list(F)
+            [
+            [-1  1]  [ 0 -1]  [ 1  0]
+            [ 0  1], [-1  0], [ 1 -1]
+            ]
         """
         if not self.is_finite():
             raise NotImplementedError('not available for infinite groups')
@@ -557,13 +569,14 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         simple_roots = FreeModule(self.base_ring(), self.ngens()).gens()
 
         refls = self.simple_reflections()
+        refls_index = {refl_i[1]: refl_i[0] for refl_i in enumerate(refls.keys())}
         resu = []
         d = {}
         for i in range(1, N + 1):
             segment = word[:i]
             last = segment.pop()
             ref = refls[last]
-            rt = simple_roots[last - 1]
+            rt = simple_roots[refls_index[last]]
             while segment:
                 last = segment.pop()
                 cr = refls[last]
@@ -721,7 +734,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         def first_descent(self, side='right', index_set=None, positive=False):
             """
             Return the first left (resp. right) descent of ``self``, as
-            ane element of ``index_set``, or ``None`` if there is none.
+            an element of ``index_set``, or ``None`` if there is none.
 
             See :meth:`descents` for a description of the options.
 
@@ -797,7 +810,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
                 return [I[i] for i in index_set if not _matrix_test_right_descent(M, i, n, zero)]
             return [I[i] for i in index_set if _matrix_test_right_descent(M, i, n, zero)]
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             r"""
             Return whether ``i`` is a right descent of ``self``.
 

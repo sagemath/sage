@@ -44,7 +44,6 @@ cimport cython
 #
 ####################
 
-from sage.cpython.string cimport str_to_bytes
 from sage.cpython.string import FS_ENCODING
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -467,8 +466,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             raise ValueError("cannot construct meataxe matrix from empty filename")
 
         if type(filename) is not bytes:
-            filename = str_to_bytes(filename, FS_ENCODING,
-                                    'surrogateescape')
+            filename = filename.encode(FS_ENCODING, 'surrogateescape')
+
         sig_on()
         try:
             mat = MatLoad(filename)
@@ -724,7 +723,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         x = self.Data.Data
         cdef int nr = self.Data.Nor
         cdef int nc = self.Data.Noc
-        cdef int i, j
+        cdef Py_ssize_t i, j
 
         FfSetField(fl)
         FfSetNoc(nc)
@@ -740,28 +739,28 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                     MPB += 1
                     tmp *= fl
                 O = (fl**MPB)
-                if nc%MPB:
+                if nc % MPB:
                     for i in range(nr):
                         y = <unsigned char*>x
                         for j in range(FfCurrentRowSizeIo-1):
-                            y[j] = RandState.c_random()%O
+                            y[j] = RandState.c_random() % O
                             sig_check()
-                        for j in range(nc-(nc%MPB), nc):
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl) ))
+                        for j in range(nc-(nc % MPB), nc):
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl) ))
                             sig_check()
                         FfStepPtr(&(x))
                 else:
                     for i in range(nr):
                         y = <unsigned char*>x
                         for j in range(FfCurrentRowSizeIo):
-                            y[j] = RandState.c_random()%O
+                            y[j] = RandState.c_random() % O
                             sig_check()
                         FfStepPtr(&(x))
             else:
                 for i in range(nr):
                     for j in range(nc):
                         if RandState.c_rand_double() < density:
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl) ))
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl) ))
                             sig_check()
                     FfStepPtr(&(x))
         else:
@@ -769,7 +768,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                 fl -= 1
                 for i in range(nr):
                     for j in range(nc):
-                        FfInsert(x, j, FfFromInt( (RandState.c_random()%fl)+1 ))
+                        FfInsert(x, j, FfFromInt( (RandState.c_random() % fl)+1 ))
                         sig_check()
                     FfStepPtr(&(x))
             else:
@@ -777,7 +776,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
                 for i in range(nr):
                     for j in range(nc):
                         if RandState.c_rand_double() < density:
-                            FfInsert(x, j, FfFromInt( (RandState.c_random()%fl)+1 ))
+                            FfInsert(x, j, FfFromInt( (RandState.c_random() % fl)+1 ))
                             sig_check()
                     FfStepPtr(&(x))
 
@@ -1906,7 +1905,9 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
     # in Python-3, Sage will receive a str in `latin1` encoding. Therefore,
     # in the following line, we use a helper function that would return bytes,
     # regardless whether the input is bytes or str.
-    cdef bytes Data = str_to_bytes(data, encoding='latin1')
+    if isinstance(data, str):
+        data = data.encode('latin1')
+    cdef bytes Data = data
     if isinstance(f, int):
         # This is for old pickles created with the group cohomology spkg
         MS = MatrixSpace(GF(f, 'z'), nr, nc, implementation=Matrix_gfpn_dense)
