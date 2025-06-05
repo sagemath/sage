@@ -72,13 +72,13 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
+from sage.misc.cachefunc import cached_method, cached_function
 from sage.structure.parent import Parent
 from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.misc.cachefunc import cached_method, cached_function
 
 
 @cached_function
@@ -597,7 +597,7 @@ class NFCusp(Element):
         """
         return self.parent().number_field()
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -901,7 +901,8 @@ class NFCusp(Element):
 
         return ABM
 
-    def is_Gamma0_equivalent(self, other, N, Transformation=False):
+    def is_Gamma0_equivalent(self, other, N,
+                             Transformation=False) -> bool | tuple[bool, Any]:
         r"""
         Check if cusps ``self`` and ``other`` are `\Gamma_0(N)`- equivalent.
 
@@ -1184,9 +1185,9 @@ def NFCusps_ideal_reps_for_levelN(N, nlists=1):
         sage: from sage.modular.cusps_nf import NFCusps_ideal_reps_for_levelN
         sage: NFCusps_ideal_reps_for_levelN(N)
         [(Fractional ideal (1),
-          Fractional ideal (67, a + 17),
-          Fractional ideal (127, a + 48),
-          Fractional ideal (157, a - 19))]
+          Fractional ideal (67, -4/7*a^3 + 13/7*a^2 + 39/7*a - 43),
+          Fractional ideal (127, -4/7*a^3 + 13/7*a^2 + 39/7*a - 42),
+          Fractional ideal (157, -4/7*a^3 + 13/7*a^2 + 39/7*a + 48))]
         sage: L = NFCusps_ideal_reps_for_levelN(N, 5)
         sage: all(len(L[i]) == k.class_number() for i in range(len(L)))
         True
@@ -1244,7 +1245,7 @@ def units_mod_ideal(I):
         sage: I = k.ideal(5, a + 1)
         sage: units_mod_ideal(I)
         [1,
-        -2*a^2 - 4*a + 1,
+        2*a^2 + 4*a - 1,
         ...]
 
     ::

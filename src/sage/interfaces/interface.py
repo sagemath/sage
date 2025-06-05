@@ -203,7 +203,7 @@ class Interface(WithEqualityById, ParentWithBase):
     def _post_interact(self):
         pass
 
-    def cputime(self):
+    def cputime(self) -> float:
         """
         CPU time since this process started running.
         """
@@ -1045,8 +1045,7 @@ class InterfaceElement(Element):
         ::
 
             sage: gp(10.^80)._sage_repr()
-            '1.0000000000000000000000000000000000000e80'    # 64-bit
-            '1.000000000000000000000000000e80'              # 32-bit
+            '1.0000000000000000000000000000000000000e80'
             sage: mathematica('10.^80')._sage_repr()  # optional - mathematica
             '1.e80'
 
