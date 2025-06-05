@@ -1517,6 +1517,145 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                                distinct=True)
             return self(r)
 
+        def abreu_nigro_g(self, H, k, q='q'):
+            r"""
+            Return the Abreu-Nigro `g_{H,k}(x; q)` symmetric function
+            for the Hessenberg function ``H`` in the basis ``self``.
+
+            INPUT:
+
+            - ``H`` -- list; the Hessenberg function
+            - ``k`` -- integer; must satisfy ``0 <= k < len(H)``
+            - ``q`` -- (default: ``'q'``) base ring element for `q`
+
+            A *Hessenberg function* (of length `n`) is a function `H \colon
+            \{1, \ldots, n\} \to \{1, \ldots, n\}` such that `\max(i, H(i-1))
+            \leq H(i) \leq n` for all `i` (by convention `H(0) = 0`). The
+            *Abreu-Nigro* `g` *symmetric function* [AN2023]_ (Definition 1.3)
+            is defined by
+
+            .. MATH::
+
+                g_{H,k}(x; q) := \sum_{\sigma = \tau_1 \cdots \tau_j}
+                (-1)^{|\tau_1|-n+k} q^{w_H(\sigma)} h_{|\tau_1|-n+k}(x)
+                \omega( \rho_{|\tau_2|,\ldots,|\tau_j|}(x; q) ),
+
+            where the sum is over all permutations `\sigma \in S_n` such that
+            `|\tau_1| \geq n - k` and `\sigma(i) \leq H(i)` for all `i`;
+            `\tau_1, \ldots, \tau_j` is the cycle decomposition of `\sigma`
+            (with cycles sorted by smallest elements, and with these
+            smallest elements placed at the beginning of each cycle);
+            `\rho_{\lambda}` is the Abreu-Nigro basis [AN2021II]_
+            (see :class:`SymmetricFunctions.abreu_nigro`); and
+
+            .. MATH::
+
+                w_H(\sigma) = |\{(i, j) \mid i < j \leq H(i) \text{ and } j
+                                 \text{ precedes } i \text{ in } \sigma^c \}|,
+
+            with `\sigma^c` being the permutation formed by removing the
+            parentheses in the cycle decomposition `\tau_1 \cdots \tau_j`.
+
+            EXAMPLES:
+
+            We verify the `e`-positivity of some examples::
+
+                sage: q = ZZ['q'].fraction_field().gen()
+                sage: Sym = SymmetricFunctions(q.parent())
+                sage: e = Sym.e()
+                sage: e.abreu_nigro_g([1,2], 0, q)
+                0
+                sage: e.abreu_nigro_g([1,2], 1, q)
+                e[1]
+                sage: e.abreu_nigro_g([2,2], 0, q)
+                e[]
+                sage: e.abreu_nigro_g([2,2], 1, q)
+                0
+                sage: H = [3, 3, 4, 5, 6, 7, 7]
+                sage: [e.abreu_nigro_g(H, k, q) for k in range(7)]
+                [(q+1)*e[],
+                 q*e[1],
+                 (q^2+q)*e[2],
+                 q^2*e[2, 1] + (q^3+2*q^2+q)*e[3],
+                 (q^3+q^2)*e[2, 2] + (q^3+q^2)*e[3, 1] + (q^4+2*q^3+2*q^2+q)*e[4],
+                 q^3*e[3, 2] + (q^4+q^3+q^2)*e[5],
+                 (q^4+q^3)*e[3, 3] + (q^4+q^3)*e[4, 2] + (q^5+q^4+q^3+q^2)*e[6]]
+
+            We reproduce Example 1.5 in [AN2023]_::
+
+                sage: H = [2, 4, 4, 5, 6, 6]
+                sage: [e.abreu_nigro_g(H, k, q) for k in range(6)]
+                [(q+1)*e[],
+                 q*e[1],
+                 (q^2+q)*e[2],
+                 q^2*e[3],
+                 (q^3+q^2)*e[4],
+                 (q^4+3*q^3+q^2)*e[3, 2] + (q^4+q^3+q^2)*e[4, 1]
+                  + (q^5+2*q^4+2*q^3+2*q^2+q)*e[5]]
+
+            We verify Theorem 1.7 in [AN2023]_ for an example::
+
+                sage: from sage.combinat.q_analogues import q_int
+                sage: H = [2, 4, 4, 4]
+                sage: G = posets.HessenbergPoset(H).incomparability_graph()
+                sage: cqf = G.chromatic_quasisymmetric_function(q, q.parent()); cqf
+                (q^4+6*q^3+10*q^2+6*q+1)*M[1, 1, 1, 1] + (q^3+2*q^2+q)*M[1, 1, 2]
+                 + (q^3+2*q^2+q)*M[1, 2, 1] + (q^3+2*q^2+q)*M[2, 1, 1]
+                sage: e(cqf.to_symmetric_function())
+                (q^3+2*q^2+q)*e[3, 1] + (q^4+2*q^3+2*q^2+2*q+1)*e[4]
+                sage: sum(q_int(k, q) * e[k] * e.abreu_nigro_g(H, len(H)-k, q)
+                ....:     for k in range(1, len(H)+1))
+                (q^3+2*q^2+q)*e[3, 1] + (q^4+2*q^3+2*q^2+2*q+1)*e[4]
+
+            TESTS::
+
+                sage: e = SymmetricFunctions(ZZ['q'].fraction_field()).e()
+                sage: e.abreu_nigro_g([3, 2, 3], 2, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: [3, 2, 3] is not a Hessenberg function
+                sage: e.abreu_nigro_g([1, 4, 5], 2, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: [1, 4, 5] is not a Hessenberg function
+                sage: e.abreu_nigro_g([1, 1, 3], 2, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: [1, 1, 3] is not a Hessenberg function
+                sage: e.abreu_nigro_g([1, 3, 3], 5, q)
+                Traceback (most recent call last):
+                ...
+                ValueError: k must be between 0 and 3
+            """
+            if not H:
+                return self.one()
+            n = len(H)
+            if not all(max(i+1, H[i-1]) <= H[i] for i in range(1, n)) or H[-1] > n:
+                raise ValueError(f"{H} is not a Hessenberg function")
+            if k < 0 or k >= n:
+                raise ValueError(f"k must be between 0 and {n}")
+            ret = self.zero()
+            h = self.realization_of().h()
+            rho = self.realization_of().abreu_nigro(q)
+            from sage.combinat.permutation import Permutations
+            for sigma in Permutations(n):
+                # Filter out the permutations not used in the sum
+                if any(sigma[i] > H[i] for i in range(n)):
+                    continue
+                tau = sigma.to_cycles()
+                if len(tau[0]) < n - k:
+                    continue
+                sc = sum(tau, ())
+                # We use 0-based i and j
+                sc_pos = {i-1: pos for pos, i in enumerate(sc)}
+                inv = sum(1 for j in range(1, n) for i in range(j) if j < H[i]
+                          and sc_pos[j] < sc_pos[i])
+                K = len(tau[0]) - n + k
+                lam = [len(tau[i]) for i in range(1, len(tau))]
+                lam.sort(reverse=True)
+                ret += (-1)**K * q**inv * self(h[K] * h(rho[lam]).omega())
+            return ret
+
         def formal_series_ring(self):
             r"""
             Return the completion of all formal linear combinations of
@@ -1982,7 +2121,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         # Convert to the power sum
         p = self.realization_of().power()
         p_x = p(x)
-        expr_k = lambda k: expr.subs(**dict([(str(x),x**k) for x in deg_one]))
+        expr_k = lambda k: expr.subs(**{str(x): x**k for x in deg_one})
         f = lambda m,c: (m, c*prod([expr_k(k) for k in m]))
         return self(p_x.map_item(f))
 
@@ -2284,28 +2423,28 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
             sage: c2 == d2
             True
         """
-        #Decide whether we know how to go from self to other or
-        #from other to self
+        # Decide whether we know how to go from self to other or
+        # from other to self
         if to_other_function is not None:
-            known_cache = self_to_other_cache  #the known direction
-            unknown_cache = other_to_self_cache  #the unknown direction
+            known_cache = self_to_other_cache  # the known direction
+            unknown_cache = other_to_self_cache  # the unknown direction
             known_function = to_other_function
         else:
-            unknown_cache = self_to_other_cache  #the known direction
-            known_cache = other_to_self_cache  #the unknown direction
+            unknown_cache = self_to_other_cache  # the known direction
+            known_cache = other_to_self_cache  # the unknown direction
             known_function = to_self_function
 
-        #Do nothing if we've already computed the inverse
-        #for degree n.
+        # Do nothing if we've already computed the inverse
+        # for degree n.
         if n in known_cache and n in unknown_cache:
             return
 
-        #Univariate polynomial arithmetic is faster
-        #over ZZ.  Since that is all we need to compute
-        #the transition matrices between S and P, we
-        #should use that.
-        #Zt = ZZ['t']
-        #t = Zt.gen()
+        # Univariate polynomial arithmetic is faster
+        # over ZZ.  Since that is all we need to compute
+        # the transition matrices between S and P, we
+        # should use that.
+        # Zt = ZZ['t']
+        # t = Zt.gen()
         one = base_ring.one()
         zero = base_ring.zero()
 
@@ -3145,7 +3284,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: R.<x, y> = QQ[]
             sage: s = SymmetricFunctions(R.fraction_field()).s()
             sage: factor((s[3] + x*s[2,1] + 1)*(3*y*s[2] + s[4,1] + x*y))
-            (-s[] + (-x)*s[2, 1] - s[3]) * ((-x*y)*s[] + (-3*y)*s[2] - s[4, 1])
+            (-s[] - x*s[2, 1] - s[3]) * (-x*y*s[] - 3*y*s[2] - s[4, 1])
 
         TESTS::
 
@@ -3783,7 +3922,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     omega_involution = omega
 
-    def theta(self,a):
+    def theta(self, a):
         r"""
         Return the image of ``self`` under the theta endomorphism which sends
         `p_k` to `a \cdot p_k` for every positive integer `k`.
@@ -3833,7 +3972,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: q,t = QQqt.gens()
             sage: p = SymmetricFunctions(QQqt).p()
             sage: p([2]).theta_qt(q,t)
-            ((-q^2+1)/(-t^2+1))*p[2]
+            -((q^2-1)/(-t^2+1))*p[2]
             sage: p([2,1]).theta_qt(q,t)
             ((q^3-q^2-q+1)/(t^3-t^2-t+1))*p[2, 1]
             sage: p(0).theta_qt(q=1,t=3)
@@ -3892,13 +4031,13 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: q,t = QQqt.gens()
             sage: p = SymmetricFunctions(QQqt).p()
             sage: p[5].omega_qt()
-            ((-q^5+1)/(-t^5+1))*p[5]
+            -((q^5-1)/(-t^5+1))*p[5]
             sage: p[5].omega_qt(q,t)
-            ((-q^5+1)/(-t^5+1))*p[5]
+            -((q^5-1)/(-t^5+1))*p[5]
             sage: p([2]).omega_qt(q,t)
             ((q^2-1)/(-t^2+1))*p[2]
             sage: p([2,1]).omega_qt(q,t)
-            ((-q^3+q^2+q-1)/(t^3-t^2-t+1))*p[2, 1]
+            -((q^3-q^2-q+1)/(t^3-t^2-t+1))*p[2, 1]
             sage: p([3,2]).omega_qt(5,q)
             -(2976/(q^5-q^3-q^2+1))*p[3, 2]
             sage: p(0).omega_qt()
@@ -3911,11 +4050,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: H([1,1]).omega_qt(q,t)
             ((2*q^2-2*q*t-2*q+2*t)/(t^3-t^2-t+1))*McdH[1, 1] + ((q-1)/(t-1))*McdH[2]
             sage: H([1,1]).omega_qt(t,q)
-            ((-t^3+t^2+t-1)/(-q^3+q^2+q-1))*McdH[2]
+            -((t^3-t^2-t+1)/(-q^3+q^2+q-1))*McdH[2]
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: S = Sym.macdonald().S()
             sage: S([1,1]).omega_qt()
-            ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdS[1, 1] + ((-q^2*t+q*t+q-1)/(-t^3+t^2+t-1))*McdS[2]
+            ((q^2-q*t-q+t)/(t^3-t^2-t+1))*McdS[1, 1] - ((q^2*t-q*t-q+1)/(-t^3+t^2+t-1))*McdS[2]
             sage: s = Sym.schur()
             sage: s(S([1,1]).omega_qt())
             s[2]
@@ -4859,14 +4998,14 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: p = Sym.power()
             sage: p([1,1]).nabla()
-            (-1/2*q*t+1/2*q+1/2*t+1/2)*p[1, 1] + (1/2*q*t-1/2*q-1/2*t+1/2)*p[2]
+            -(1/2*q*t-1/2*q-1/2*t-1/2)*p[1, 1] + (1/2*q*t-1/2*q-1/2*t+1/2)*p[2]
             sage: p([2,1]).nabla(q=1)
-            (-t-1)*p[1, 1, 1] + t*p[2, 1]
+            -(t+1)*p[1, 1, 1] + t*p[2, 1]
             sage: p([2]).nabla(q=1)*p([1]).nabla(q=1)
-            (-t-1)*p[1, 1, 1] + t*p[2, 1]
+            -(t+1)*p[1, 1, 1] + t*p[2, 1]
             sage: s = Sym.schur()
             sage: s([2,1]).nabla()
-            (-q^3*t-q^2*t^2-q*t^3)*s[1, 1, 1] + (-q^2*t-q*t^2)*s[2, 1]
+            -(q^3*t+q^2*t^2+q*t^3)*s[1, 1, 1] - (q^2*t+q*t^2)*s[2, 1]
             sage: s([1,1,1]).nabla()
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
             sage: s([1,1,1]).nabla(t=1)
@@ -4876,9 +5015,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(1).nabla()
             s[]
             sage: s([2,1]).nabla(power=-1)
-            ((-q-t)/(q^2*t^2))*s[2, 1] + ((q^2+q*t+t^2)/(-q^3*t^3))*s[3]
+            -((q+t)/(q^2*t^2))*s[2, 1] + ((q^2+q*t+t^2)/(-q^3*t^3))*s[3]
             sage: (s([2])+s([3])).nabla()
-            (-q*t)*s[1, 1] + (q^3*t^2+q^2*t^3)*s[1, 1, 1] + q^2*t^2*s[2, 1]
+            -q*t*s[1, 1] + (q^3*t^2+q^2*t^3)*s[1, 1, 1] + q^2*t^2*s[2, 1]
         """
         parent = self.parent()
         BR = parent.base_ring()
@@ -6492,7 +6631,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
         - ``name`` -- the name of the basis
         - ``args`` -- any further arguments necessary to initialize the basis
 
-        .. WARNING:
+        .. WARNING::
 
             Strictly speaking, this is not necessarily a functor on
             :class:`CommutativeRings`, but rather a functor on
@@ -6632,7 +6771,7 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
 
         - ``basis`` -- the basis of the symmetric function algebra
 
-        .. WARNING:
+        .. WARNING::
 
             Strictly speaking, this is not necessarily a functor on
             :class:`CommutativeRings`, but rather a functor on
@@ -6747,7 +6886,7 @@ def _nonnegative_coefficients(x):
         sage: _nonnegative_coefficients(x^2-4)
         False
     """
-    if isinstance(x, Polynomial) or isinstance(x, MPolynomial):
+    if isinstance(x, (Polynomial, MPolynomial)):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0
@@ -6900,7 +7039,7 @@ def _from_polynomial(p, f):
     n = p.parent().ngens()
     if n == 1:
         d = {_Partitions.from_exp([e]): c
-             for e, c in p.dict().items()}
+             for e, c in p.monomial_coefficients().items()}
     else:
         d = {_Partitions.from_exp(e): c
              for e, c in p.iterator_exp_coeff(False)}

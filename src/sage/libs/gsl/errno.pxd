@@ -5,9 +5,9 @@ from libc.stdio cimport FILE
 
 cdef extern from "gsl/gsl_errno.h":
 
-    ctypedef void gsl_error_handler_t (char * reason, char * file,int line, int gsl_errno)
+    ctypedef void gsl_error_handler_t (char * reason, char * file, int line, int gsl_errno)
 
-    ctypedef void gsl_stream_handler_t (char * label, char * file,int line, char * reason)
+    ctypedef void gsl_stream_handler_t (char * label, char * file, int line, char * reason)
 
 
     void gsl_error (char * reason,char * file, int line, int gsl_errno)

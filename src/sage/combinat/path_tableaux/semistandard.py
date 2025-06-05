@@ -173,7 +173,7 @@ class SemistandardPathTableau(PathTableau):
         elif isinstance(st, GelfandTsetlinPattern):
             w = list(st)
             w.reverse()
-            w = [(),*w]
+            w = [(), *w]
 
         elif isinstance(st, (Tableau,SkewTableau)):
             w = st.to_chain()

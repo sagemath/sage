@@ -275,7 +275,7 @@ cdef class Map(Element):
         maps::
 
             sage: phi.domain                                                            # needs sage.rings.number_field
-            <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
+            <weakref at ...; to '...NumberField_quadratic_with_category' at ...>
             sage: phi._make_strong_references()                                         # needs sage.rings.number_field
             sage: print(phi.domain)                                                     # needs sage.rings.number_field
             The constant function (...) -> Number Field in a
@@ -343,7 +343,7 @@ cdef class Map(Element):
         maps::
 
             sage: phi.domain                                                            # needs sage.rings.number_field
-            <weakref at ...; to 'NumberField_quadratic_with_category' at ...>
+            <weakref at ...; to '...NumberField_quadratic_with_category' at ...>
             sage: phi._make_strong_references()                                         # needs sage.rings.number_field
             sage: print(phi.domain)                                                     # needs sage.rings.number_field
             The constant function (...) -> Number Field in a
@@ -655,9 +655,11 @@ cdef class Map(Element):
             sage: f = R.hom([x+y, x-y], R)
             sage: f.category_for()
             Join of Category of unique factorization domains
-            and Category of commutative algebras
-            over (number fields and quotient fields and metric spaces)
-            and Category of infinite sets
+             and Category of algebras with basis over
+              (number fields and quotient fields and metric spaces)
+             and Category of commutative algebras over
+              (number fields and quotient fields and metric spaces)
+             and Category of infinite sets
             sage: f.category()
             Category of endsets of unital magmas
              and right modules over (number fields and quotient fields and metric spaces)

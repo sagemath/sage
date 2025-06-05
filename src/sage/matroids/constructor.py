@@ -805,17 +805,17 @@ def Matroid(groundset=None, data=None, **kwds):
         if isinstance(data, Graph):
             key = 'graph'
         elif isinstance(data, Matrix) or (
-             isinstance(data, tuple) and isinstance(data[0], Matrix)):
+                isinstance(data, tuple) and isinstance(data[0], Matrix)):
             key = 'matrix'
         elif isinstance(data, sage.modules.with_basis.morphism.ModuleMorphism) or (
-             isinstance(data, tuple) and
-             isinstance(data[0], sage.modules.with_basis.morphism.ModuleMorphism)):
+                isinstance(data, tuple) and
+                isinstance(data[0], sage.modules.with_basis.morphism.ModuleMorphism)):
             key = 'morphism'
         elif isinstance(data, sage.matroids.matroid.Matroid):
             key = 'matroid'
         elif isinstance(data, str):
             key = 'revlex'
-        elif isinstance(data, dict) or isinstance(data, FiniteLatticePoset):
+        elif isinstance(data, (dict, FiniteLatticePoset)):
             key = 'flats'
         elif data is None:
             raise TypeError("no input data given for Matroid()")
@@ -1032,11 +1032,9 @@ def Matroid(groundset=None, data=None, **kwds):
         subsets = sorted(combinations(range(N), rk), key=revlex_sort_key)
         if len(data) != len(subsets):
             raise ValueError("expected string of length %s (%s choose %s), got %s" %
-                (len(subsets), N, rk, len(data)))
-        bases = []
-        for i, x in enumerate(data):
-            if x != '0':
-                bases.append([groundset[c] for c in subsets[i]])
+                             (len(subsets), N, rk, len(data)))
+        bases = [[groundset[c] for c in subsets[i]]
+                 for i, x in enumerate(data) if x != '0']
         M = BasisMatroid(groundset=groundset, bases=bases)
 
     # Circuit closures:

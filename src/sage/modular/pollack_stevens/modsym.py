@@ -114,6 +114,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
     Phi = ~(q ** (k + 1) + 1 - aq) * Phi
     return Phi
 
+
 class PSModSymAction(Action):
     def __init__(self, actor, MSspace):
         r"""
@@ -678,15 +679,15 @@ class PSModularSymbolElement(ModuleElement):
         #     aq.add_bigoh(M)
         return aq
 
-    def is_ordinary(self, p=None, P=None):
+    def is_ordinary(self, p=None, P=None) -> bool:
         r"""
-        Return true if the `p`-th eigenvalue is a `p`-adic unit.
+        Return ``True`` if the `p`-th eigenvalue is a `p`-adic unit.
 
         INPUT:
 
-        - ``p`` -- a positive integral prime, or None (default: ``None``)
-        - ``P`` -- a prime of the base ring above `p`, or None. This is ignored
-          unless the base ring is a number field
+        - ``p`` -- a positive integral prime, or ``None`` (default: ``None``)
+        - ``P`` -- a prime of the base ring above `p`, or ``None``.
+          This is ignored unless the base ring is a number field
 
         OUTPUT: boolean
 
@@ -1573,7 +1574,7 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
         return self.__class__(self._map.specialize(new_base_ring),
                               self.parent()._specialize_parent_space(new_base_ring), construct=True)
 
-    def padic_lseries(self,*args, **kwds):
+    def padic_lseries(self, *args, **kwds):
         """
         Return the `p`-adic `L`-series of this modular symbol.
 

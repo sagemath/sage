@@ -536,9 +536,11 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: K.<z> = Fq.extension(3)
             sage: coeffs = [z] + [K.random_element() for _ in range(10)]
             sage: phi = DrinfeldModule(A, coeffs)
-            sage: f = phi.hom(K.random_element())
+            sage: a = K.random_element()
+            sage: while a.is_zero():
+            ....:     a = K.random_element()
+            sage: f = phi.hom(a)
             sage: g = ~f
-
             sage: (f*g).is_identity()
             True
             sage: (g*f).is_identity()
@@ -742,7 +744,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f.characteristic_polynomial()
             X^3 + (T + 1)*X^2 + (2*T + 3)*X + 2*T^3 + T + 1
 
-        We verify, on an example, that the caracteristic polynomial
+        We verify, on an example, that the characteristic polynomial
         of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 
@@ -801,7 +803,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: 0
 
-        We verify, on an example, that the caracteristic polynomial
+        We verify, on an example, that the characteristic polynomial
         of the morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 

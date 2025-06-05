@@ -1,6 +1,6 @@
-#cdivision=False
-#cython: cdivision_warnings=False
-#cython: profile=False
+# cdivision=False
+# cython: cdivision_warnings=False
+# cython: profile=False
 r"""
 Modular symbols by numerical integration
 
@@ -1254,8 +1254,8 @@ cdef class ModularSymbolNumerical:
 
         if err > 0.1:
             # the following did not work (compilation failed)
-            #from warnings import warn
-            #warn(Rounded an error of %s, looks like a bug." % err,
+            # from warnings import warn
+            # warn(Rounded an error of %s, looks like a bug." % err,
             # RuntimeWarning, stacklevel=5)
             print ("Warning: Rounded an error of ", err, ", looks like a bug "
                    + "in mod_sym_num.pyx.")
@@ -1411,8 +1411,8 @@ cdef class ModularSymbolNumerical:
         cdef ComplexNumber q, s
         cdef int n
 
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print("Warning: more than 10^7 terms to sum")
@@ -1467,12 +1467,12 @@ cdef class ModularSymbolNumerical:
         #        " T=%s" % (tau,number_of_terms), level=5)
         cdef complex q, s
         cdef int n
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print("Warning: more than 10^7 terms to sum")
-            #raise Warning("more than 10^7 terms to sum")
+            # raise Warning("more than 10^7 terms to sum")
         if number_of_terms > self._lans:
             self._add_an_coefficients(number_of_terms)
 
@@ -1525,8 +1525,8 @@ cdef class ModularSymbolNumerical:
         #        " T=%s" % (y,m,number_of_terms), level=5)
         cdef double q, qq
         cdef int n, i
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print(" Warning: more than 10^7 terms to sum")
@@ -1605,8 +1605,8 @@ cdef class ModularSymbolNumerical:
         #        " T=%s" % (y,m,number_of_terms), level=5)
         cdef RealNumber q, qq
         cdef int n, i
-        #self.nc_sums += 1
-        #self.nc_terms += Integer(number_of_terms)
+        # self.nc_sums += 1
+        # self.nc_terms += Integer(number_of_terms)
 
         if number_of_terms > 10000000:
             print(" Warning: more than 10^7 terms to sum")
@@ -2293,7 +2293,7 @@ cdef class ModularSymbolNumerical:
         if method == "direct" or method == "both":
             verbose(" using the direct integration from %s to %s with "
                     "%s terms to sum" % (r, rr, T), level=2)
-            #self.nc_direct += 1
+            # self.nc_direct += 1
             ans = self._from_r_to_rr_approx_direct(r, rr, epsQ, epsQQ,
                                                    wQ, wQQ, T, prec, eps,
                                                    use_partials)
@@ -2303,7 +2303,7 @@ cdef class ModularSymbolNumerical:
         if method == "indirect" or method == "both":
             verbose("  using the indirect integration from %s to %s "
                     "with %s terms to sum" % (r, rr, T1+T2), level=2)
-            #self.nc_indirect += 1
+            # self.nc_indirect += 1
             ans2 = (self._from_ioo_to_r_approx(r, eps/2,
                                                use_partials=use_partials)
                     - self._from_ioo_to_r_approx(rr, eps/2,

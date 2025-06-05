@@ -5,13 +5,13 @@ This module provides the class :class:`VoronoiDiagram` for computing the
 Voronoi diagram of a finite list of points in `\RR^d`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Moritz Firsching <moritz@math.fu-berlin.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -290,7 +290,7 @@ class VoronoiDiagram(SageObject):
                 cell_colors = rainbow(self._n)
                 shuffle(cell_colors)
             else:
-                if not (isinstance(cell_colors, list) or (isinstance(cell_colors, dict))):
+                if not isinstance(cell_colors, (list, dict)):
                     raise AssertionError("'cell_colors' must be a list or a dictionary")
             for i, p in enumerate(self._P):
                 col = cell_colors[i]

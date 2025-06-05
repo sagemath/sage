@@ -1387,7 +1387,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
                     ev_group[location][2] = ev_group[location][0]/ev_group[location][1]
             return [(return_class(avg), m) for _, m, avg in ev_group]
 
-    def left_eigenvectors(self, other=None, *, homogeneous=False):
+    def eigenvectors_left(self, other=None, *, algorithm=None, homogeneous=False):
         r"""
         Compute the ordinary or generalized left eigenvectors of a matrix of
         double precision real or complex numbers (i.e. ``RDF`` or ``CDF``).
@@ -1397,6 +1397,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
           eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
           solved
+
+        - ``algorithm`` (default: ``None``); for compatibility with
+          :meth:`sage.matrix.matrix2.Matrix.eigenvectors_left`, supported options
+          are ``None`` (select automatically) or ``'scipy'``
 
         - ``homogeneous`` -- boolean (default: ``False``); if ``True``, use
           homogeneous coordinates for the eigenvalues in the output
@@ -1514,6 +1518,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: spectrum
             [(1.0*I, [(1.0, 0.0)], 1), (1.0, [(0.0, 1.0)], 1)]
         """
+        if algorithm not in (None, "scipy"):
+            raise NotImplementedError(f"algorithm {algorithm} not implemented for matrix over {self.base_ring()}")
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
         if other is not None and not other.is_square():
@@ -1542,9 +1548,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             v = [CDF(e) for e in v]
         return [(v[i], [eig[i].conjugate()], 1) for i in range(len(v))]
 
-    eigenvectors_left = left_eigenvectors
+    left_eigenvectors = eigenvectors_left
 
-    def right_eigenvectors(self, other=None, *, homogeneous=False):
+    def eigenvectors_right(self, other=None, *, homogeneous=False):
         r"""
         Compute the ordinary or generalized right eigenvectors of a matrix of
         double precision real or complex numbers (i.e. ``RDF`` or ``CDF``).
@@ -1694,7 +1700,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             v = [CDF(e) for e in v]
         return [(v[i], [eig[i]], 1) for i in range(len(v))]
 
-    eigenvectors_right = right_eigenvectors
+    right_eigenvectors = eigenvectors_right
 
     def _solve_right_nonsingular_square(self, B, check_rank=False):
         """
@@ -1881,7 +1887,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         OUTPUT:
 
-        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conj().transpose()``
+        ``U, S, V`` -- immutable matrices such that ``A = U*S*V.conjugate_transpose()``
         where `U` and `V` are orthogonal and `S` is zero off of the diagonal
 
         Note that if ``self`` is m-by-n, then the dimensions of the
@@ -2392,12 +2398,12 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         self.cache(key, unitary)
         return unitary
 
-    def _is_hermitian_orthonormal(self, tol = 1e-12, skew=False):
+    def _is_hermitian_orthonormal(self, tol=1e-12, skew=False):
         r"""
         Return ``True`` if the matrix is (skew-)Hermitian.
 
-        For internal purposes. This function is used in `is_hermitian`
-        and `is_skew_hermitian` functions.
+        For internal purposes. This function is used in ``is_hermitian``
+        and ``is_skew_hermitian`` functions.
 
         INPUT:
 
@@ -2513,7 +2519,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         self.cache(key, hermitian)
         return hermitian
 
-    def is_hermitian(self, tol=1e-12, algorithm = "naive"):
+    def is_hermitian(self, tol=1e-12, algorithm="naive"):
         r"""
         Return ``True`` if the matrix is equal to its conjugate-transpose.
 
@@ -2640,7 +2646,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         else:
             raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
-    def is_skew_hermitian(self, tol = 1e-12, algorithm = 'orthonormal'):
+    def is_skew_hermitian(self, tol=1e-12, algorithm='orthonormal'):
         r"""
         Return ``True`` if the matrix is equal to the negative of its
         conjugate transpose.
@@ -3582,7 +3588,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             posdef = self.fetch(cache_str)
         return posdef
 
-    cdef _vector_times_matrix_(self,Vector v):
+    cdef _vector_times_matrix_(self, Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self.row_ambient_module().zero_vector()
         global numpy
@@ -3595,7 +3601,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
-    cdef _matrix_times_vector_(self,Vector v):
+    cdef _matrix_times_vector_(self, Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self.column_ambient_module().zero_vector()
 
@@ -3609,7 +3615,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(self._matrix_numpy, v_numpy)
         return M(ans)
 
-    def _replace_self_with_numpy32(self,numpy_matrix):
+    def _replace_self_with_numpy32(self, numpy_matrix):
         """
 
         EXAMPLES::

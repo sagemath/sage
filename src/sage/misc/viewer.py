@@ -26,6 +26,7 @@ Functions and classes
 ---------------------
 """
 
+import platform
 from sage.structure.sage_object import SageObject
 
 
@@ -66,10 +67,10 @@ def default_viewer(viewer=None):
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
 
-    elif os.uname()[0] == 'Darwin':
+    elif platform.system() == 'Darwin':
         # Simple on OS X, since there is an open command that opens
         # anything, using the user's preferences.
-        BROWSER = 'open'
+        BROWSER = 'open -W'
         DVI_VIEWER = BROWSER
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER

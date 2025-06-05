@@ -78,7 +78,7 @@ overview can also be found in Section 4.6 of [Rüt2014]_.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.abstract_method import abstract_method
 from .valuation import DiscretePseudoValuation, InfiniteDiscretePseudoValuation
@@ -409,8 +409,8 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         if self.domain() is ring:
             return [self]
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-        if isinstance(ring, PolynomialRing_general) and self.domain().base_ring().is_subring(ring.base_ring()):
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(ring, PolynomialRing_generic) and self.domain().base_ring().is_subring(ring.base_ring()):
             if self.domain().base_ring().fraction_field() is ring.base_ring():
                 return [LimitValuation(self._initial_approximation.change_domain(ring),
                         self._G.change_ring(ring.base_ring()))]
@@ -661,8 +661,8 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             # the approximation ends in v(phi)=infty
             return R
         else:
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            assert (isinstance(R, PolynomialRing_general))
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            assert (isinstance(R, PolynomialRing_generic))
             return R.base_ring()
 
     def _ge_(self, other):

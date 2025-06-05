@@ -72,7 +72,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
         sage: R.structure_coefficients()
         Finite family {('a', 'c'): ((0, K),),  ('b', 'd'): ((0, K),),  ('c', 'a'): ((0, K),),  ('d', 'b'): ((0, K),)}
     """
-    def __init__(self,R,ngens=2,names=None,index_set=None):
+    def __init__(self, R, ngens=2, names=None, index_set=None):
         """
         Initialize ``self``.
 
@@ -117,7 +117,7 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
                          parity=parity,
                          central_elements=('K',))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -127,4 +127,4 @@ class FermionicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
             The Fermionic ghosts Lie conformal algebra with generators (b, c, K) over Rational Field
         """
         return "The Fermionic ghosts Lie conformal algebra with generators {} "\
-               "over {}".format(self.gens(),self.base_ring())
+            "over {}".format(self.gens(), self.base_ring())

@@ -33,7 +33,7 @@ cdef class PowComputer_flint(PowComputer_class):
         sage: PowComputer_flint(5, 20, 20, 20, False)
         FLINT PowComputer for 5
     """
-    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed = None):
+    def __cinit__(self, Integer prime, long cache_limit, long prec_cap, long ram_prec_cap, bint in_field, poly=None, shift_seed=None):
         """
         Memory initialization.
 

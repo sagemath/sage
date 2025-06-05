@@ -1135,10 +1135,8 @@ cdef class GapElement(RingElement):
         Check that this can be interrupted gracefully::
 
             sage: a, b = libgap.GL(1000, 3).GeneratorsOfGroup(); g = a * b
-            sage: alarm(0.5); g ^ (2 ^ 10000)
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.5): g ^ (2 ^ 10000)
 
             sage: libgap.CyclicGroup(2) ^ 2
             Traceback (most recent call last):
@@ -2437,31 +2435,22 @@ cdef class GapElement_Function(GapElement):
             <Gap function "NormalSubgroups">
             sage: b
             Sym( [ 1 .. 4 ] )
-            sage: sorted(a(b))
-            [Group(()),
-             Sym( [ 1 .. 4 ] ),
-             Alt( [ 1 .. 4 ] ),
-             Group([ (1,4)(2,3), (1,2)(3,4) ])]
+            sage: [x.StructureDescription() for x in sorted(a(b))]
+            ["1", "S4", "A4", "C2 x C2"]
 
             sage: libgap.eval("a := NormalSubgroups")
             <Gap function "NormalSubgroups">
             sage: libgap.eval("b := SymmetricGroup(4)")
             Sym( [ 1 .. 4 ] )
             sage: libgap.collect()
-            sage: sorted(libgap.eval('a') (libgap.eval('b')))
-            [Group(()),
-             Sym( [ 1 .. 4 ] ),
-             Alt( [ 1 .. 4 ] ),
-             Group([ (1,4)(2,3), (1,2)(3,4) ])]
+            sage: [x.StructureDescription() for x in sorted(libgap.eval('a') (libgap.eval('b')))]
+            ["1", "S4", "A4", "C2 x C2"]
 
             sage: a = libgap.eval('a')
             sage: b = libgap.eval('b')
             sage: libgap.collect()
-            sage: sorted(a(b))
-            [Group(()),
-             Sym( [ 1 .. 4 ] ),
-             Alt( [ 1 .. 4 ] ),
-             Group([ (1,4)(2,3), (1,2)(3,4) ])]
+            sage: [x.StructureDescription() for x in sorted(a(b))]
+            ["1", "S4", "A4", "C2 x C2"]
 
         Not every ``GapElement`` is callable::
 
@@ -3260,7 +3249,7 @@ cdef class GapElement_RecordIterator():
         # note the abs: negative values mean the rec keys are not sorted
         key_index = abs(GET_RNAM_PREC(self.rec.value, i))
         key = char_to_str(GAP_CSTR_STRING(NAME_RNAM(key_index)))
-        cdef Obj result = GET_ELM_PREC(self.rec.value,i)
+        cdef Obj result = GET_ELM_PREC(self.rec.value, i)
         val = make_any_gap_element(self.rec.parent(), result)
         self.i += 1
         return (key, val)

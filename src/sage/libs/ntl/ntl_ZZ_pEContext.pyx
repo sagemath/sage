@@ -73,7 +73,7 @@ cdef class ntl_ZZ_pEContext_class():
         """
         return ntl_ZZ_pEContext, (self.f,)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -82,7 +82,7 @@ cdef class ntl_ZZ_pEContext_class():
             sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
             NTL modulus [1 1 1] (mod 7)
         """
-        return "NTL modulus %s (mod %s)"%(self.f, self.pc.p)
+        return "NTL modulus %s (mod %s)" % (self.f, self.pc.p)
 
     def get_pc(self):
         """
@@ -134,11 +134,11 @@ cdef class ntl_ZZ_pEContext_class():
         self.pc.restore_c()
         self.x.restore()
 
-    #def ZZ_pX(self,v = None):
+    #def ZZ_pX(self, v=None):
     #    from ntl_ZZ_pX import ntl_ZZ_pX
     #    return ntl_ZZ_pX(v,modulus=self)
 
-    def ZZ_pE(self, v = None):
+    def ZZ_pE(self, v=None):
         """
         Return a ZZ_pE object with modulus ``self`` out of the data v.
 
@@ -151,7 +151,7 @@ cdef class ntl_ZZ_pEContext_class():
         from sage.libs.ntl.ntl_ZZ_pE import ntl_ZZ_pE
         return ntl_ZZ_pE(v,modulus=self)
 
-    def ZZ_pEX(self, v = None):
+    def ZZ_pEX(self, v=None):
         """
         Return a ZZ_pE object with modulus ``self`` out of the data v.
 

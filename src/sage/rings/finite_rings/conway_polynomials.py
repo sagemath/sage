@@ -64,6 +64,7 @@ def conway_polynomial(p, n):
     except KeyError:
         raise RuntimeError("requested Conway polynomial not in database.")
 
+
 def exists_conway_polynomial(p, n):
     """
     Check whether the Conway polynomial of degree `n` over ``GF(p)``
@@ -98,6 +99,7 @@ def exists_conway_polynomial(p, n):
         return ConwayPolynomials().has_polynomial(p,n)
     except ImportError:
         return False
+
 
 class PseudoConwayLattice(WithEqualityById, SageObject):
     r"""
@@ -328,6 +330,7 @@ def _find_pow_of_frobenius(p, n, x, y):
         raise RuntimeError("No appropriate power of Frobenius found")
     return mod(i, n)
 
+
 def _crt_non_coprime(running, a):
     """
     Extension of the ``crt`` method of ``IntegerMod`` to the case of
@@ -360,6 +363,7 @@ def _crt_non_coprime(running, a):
             else:
                 a_modulus = a_val_unit[1]
         return (running % running_modulus).crt(a % a_modulus)
+
 
 def _frobenius_shift(K, generators, check_only=False):
     """

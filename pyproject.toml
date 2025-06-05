@@ -1,0 +1,229 @@
+[build-system]
+build-backend = 'mesonpy'
+# Minimum requirements for the build system to execute.
+requires = [
+    'meson-python',
+    'cypari2 >=2.2.1; sys_platform != "win32"',
+    # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+    'cysignals >=1.11.2, != 1.12.0',
+    # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
+    'cython >=3.0, != 3.0.3',
+    'gmpy2 ~=2.1.b999',
+    'memory_allocator',
+    'numpy >=1.25',
+    'jinja2'
+]
+[tool.meson-python.args]
+# Prevent meson from trying to install the autoconf subprojects
+# otherwise we hit https://github.com/mesonbuild/meson-python/issues/598
+# The subprojects have to set the rpath to the build directory, which should work as long as
+# we don't use build isolation.
+# Also don't install subprojects providing static libraries as per https://mesonbuild.com/meson-python/how-to-guides/shared-libraries.html#static-library-from-subproject
+# This actually covers all current subprojects; so just don't install any of them. 
+install = ['--skip-subprojects']
+# Ensure that ``library`` targets are built as static, and nothing gets installed
+setup = ['--default-library=static']
+
+[project]
+name = "sagemath"
+description = "Sage: Open Source Mathematics Software: Standard Python Library"
+dependencies = [
+    'six >=1.15.0',
+    'conway-polynomials >=0.8',
+    'cypari2 >=2.2.1; sys_platform != "win32"',
+    # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+    'cysignals >=1.11.2, != 1.12.0',
+    'cython >=3.0, != 3.0.3',
+    'gmpy2 ~=2.1.b999',
+    'lrcalc ~=2.1; sys_platform != "win32"',
+    'memory_allocator',
+    'numpy >=1.25',
+    # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
+    'pplpy >=0.8.6; sys_platform != "win32"',
+    'primecountpy; sys_platform != "win32"',
+    'requests >=2.13.0',
+    # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
+    # version 4.4.0 adds another Python 3.11 typing backport
+    'typing_extensions >= 4.4.0; python_version<"3.11"',
+    'ipython >=8.9.0',
+    'pexpect >=4.8.0',
+    'platformdirs',
+    'sphinx >=5.2, <9',
+    'networkx >=3.1',
+    'scipy >=1.11',
+    'sympy >=1.6, <2.0',
+    'matplotlib >=3.7.0',
+    'pillow >=7.2.0',
+    'mpmath >=1.1.0',
+    'ipykernel >=5.2.1',
+    'jupyter-client',
+    'ipywidgets >=7.5.1',
+    'fpylll >=0.5.9; sys_platform != "win32"',
+    'ptyprocess > 0.5',
+    # TODO: Remove this once the migration to meson is complete
+    'pkgconfig',
+    'traitlets',
+]
+dynamic = ["version"]
+license = {text = "GNU General Public License (GPL) v2 or later"}
+authors = [{name = "The Sage Developers", email = "sage-support@googlegroups.com"}]
+classifiers = [
+    "Development Status :: 6 - Mature",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
+    "Operating System :: POSIX",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+urls = {Homepage = "https://www.sagemath.org"}
+requires-python = ">=3.11, <3.14"
+
+[project.optional-dependencies]
+R = [
+    'rpy2 >=3.3',
+]
+giac = [
+    'sagemath_giac',
+]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[project.scripts]
+sage = "sage.cli:main"
+
+[tool.conda-lock]
+platforms = [
+    'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
+]
+
+[tool.pytest.ini_options]
+python_files = "*_test.py"
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools"
+# The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
+addopts = "--import-mode importlib -p no:warnings"
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+# https://docs.pytest.org/en/stable/reference/reference.html#confval-consider_namespace_packages
+consider_namespace_packages = true
+
+# External dependencies in the format proposed by https://peps.python.org/pep-0725
+[external]
+build-requires = [
+  "virtual:compiler/c",
+  "virtual:compiler/cpp",
+  "pkg:generic/pkg-config"
+]
+
+host-requires = [
+  "virtual:interface/blas",
+  "virtual:compiler/fortran",
+  "pkg:generic/boost",
+  "pkg:generic/brial",
+  "pkg:generic/cddlib",
+  "pkg:generic/cliquer",
+  "pkg:generic/ecl",
+  "pkg:generic/eclib",
+  "pkg:generic/ecm",
+  "pkg:generic/fflas-ffpack",
+  "pkg:generic/flint",
+  "pkg:generic/libgd",
+  "pkg:generic/gap",
+  "pkg:generic/gfan",
+  "pkg:generic/givaro",
+  "pkg:generic/glpk",
+  "pkg:generic/gmp",
+  "pkg:generic/gsl",
+  "pkg:generic/iml",
+  "pkg:generic/lcalc",
+  "pkg:generic/libbraiding",
+  "pkg:generic/libhomfly",
+  "pkg:generic/linbox",
+  "pkg:generic/lrcalc",
+  "pkg:generic/m4ri",
+  "pkg:generic/m4rie",
+  "pkg:generic/maxima",
+  "pkg:generic/mpc",
+  "pkg:generic/mpfi",
+  "pkg:generic/mpfr",
+  "pkg:generic/nauty",
+  "pkg:generic/ntl",
+  "pkg:generic/palp",
+  "pkg:generic/pari",
+  "pkg:generic/pari-elldata",
+  "pkg:generic/pari-galdata",
+  "pkg:generic/pari-seadata",
+  "pkg:generic/planarity",
+  "pkg:generic/primesieve",
+  "pkg:generic/primecount",
+  "pkg:generic/qhull",
+  "pkg:generic/rw",
+  "pkg:generic/singular",
+  "pkg:generic/symmetrica",
+  "pkg:generic/sympow",
+]
+
+dependencies = [
+  "pkg:generic/sagemath-polytopes-db",
+  "pkg:generic/sagemath-elliptic-curves",
+  "pkg:generic/sagemath-graphs",
+  "pkg:generic/tachyon",
+]
+
+[dependency-groups]
+test = [
+  "pytest",
+  "pytest-xdist",
+  "coverage",
+]
+docs = [
+  "sphinx", 
+  "sphinx-inline-tabs", 
+  "furo",
+]
+lint = [
+  "relint",
+  "ruff",
+  "pycodestyle",
+  "flake8-rst-docstrings",
+]
+dev = [
+  "tqdm",
+  "pygithub",
+  "meson",
+  "conda-lock",
+  "grayskull",
+  "toml",
+]
+
+[tool.ruff]
+# https://docs.astral.sh/ruff/configuration
+
+# Python 3.11 is the minimum supported version
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+  "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
+  "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
+  "I", # isort - https://docs.astral.sh/ruff/rules/#isort-i
+  "PL", # pylint - https://docs.astral.sh/ruff/rules/#pylint-pl
+]
+ignore = [
+  "E501", # Line too long - hard to avoid in doctests, and better handled by black.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"all.py" = [
+  "F401", # Unused import - these files are by definition collections of imports.
+]
+
+[tool.uv]
+# Don't use build isolation for sage (it's incompatible with meson-python's editable install)
+no-build-isolation-package = ["sagemath"]

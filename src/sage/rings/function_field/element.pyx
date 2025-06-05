@@ -202,6 +202,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         We also substitute the generators in any base fields::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -224,6 +225,8 @@ cdef class FunctionFieldElement(FieldElement):
             Traceback (most recent call last):
             ...
             TypeError: in_dict must be a dict
+
+            sage: # needs sage.rings.function_field
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
             sage: f = x + y
@@ -234,6 +237,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         We can also substitute using dictionary syntax::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -249,6 +253,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         Check that we correctly handle extension fields::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -270,6 +275,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         Test that substitution works for rational functions::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^4 - 3)
@@ -298,6 +304,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         Same purpose as above but over an extension field over the rationals::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^3 - (x^3 + 2*x*y + 1/x))
@@ -319,6 +326,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         Test proper handling of not making substitutions::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: f = x
             sage: f.subs() is f
@@ -357,6 +365,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         Test error handling with ambiguously named generators::
 
+            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<x> = K[]
             sage: L.<x> = K.extension(x^3 - x)

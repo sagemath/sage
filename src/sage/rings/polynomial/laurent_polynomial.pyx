@@ -13,7 +13,7 @@ from sage.structure.element import coerce_binop, parent
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 from sage.rings.infinity import minus_infinity
 
@@ -218,7 +218,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         return self.number_of_terms()
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Abstract ``dict`` method.
 
@@ -226,12 +226,14 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
 
             sage: R.<x> = LaurentPolynomialRing(ZZ)
             sage: from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial
-            sage: LaurentPolynomial.dict(x)
+            sage: LaurentPolynomial.monomial_coefficients(x)
             Traceback (most recent call last):
             ...
             NotImplementedError
         """
         raise NotImplementedError
+
+    dict = monomial_coefficients
 
     def map_coefficients(self, f, new_base_ring=None):
         """
@@ -294,7 +296,8 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k, f(v)) for (k, v) in self.dict().items()]))
+        return R(dict([(k, f(v))
+                       for k, v in self.monomial_coefficients().items()]))
 
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):
@@ -426,7 +429,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         if self.__n < 0:
             raise ValueError("Laurent polynomial with negative valuation cannot be converted to polynomial")
 
-        if isinstance(R, PolynomialRing_general):
+        if isinstance(R, PolynomialRing_generic):
             return R(self.__u) << self.__n
         elif self.__n == 0:
             return R(self.__u)
@@ -838,7 +841,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         d = {repr(g): R.var(g) for g in self._parent.gens()}
         return self.subs(**d)
 
-    cpdef dict dict(self):
+    cpdef dict monomial_coefficients(self):
         """
         Return a dictionary representing ``self``.
 
@@ -848,11 +851,18 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: Q.<t> = LaurentPolynomialRing(R)
             sage: f = (x^3 + y/t^3)^3 + t^2; f
             y^3*t^-9 + 3*x^3*y^2*t^-6 + 3*x^6*y*t^-3 + x^9 + t^2
+            sage: f.monomial_coefficients()
+            {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
+
+        ``dict`` is an alias::
+
             sage: f.dict()
             {-9: y^3, -6: 3*x^3*y^2, -3: 3*x^6*y, 0: x^9, 2: 1}
         """
-        cdef dict d = self.__u.dict()
-        return {k+self.__n: d[k] for k in d}
+        cdef dict d = self.__u.monomial_coefficients()
+        return {k + self.__n: d[k] for k in d}
+
+    dict = monomial_coefficients
 
     def coefficients(self):
         """
@@ -1126,7 +1136,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         return self.__u.is_monomial()
 
-    def __pow__(_self, r, dummy):
+    def __pow__(_self, r, mod):
         """
         EXAMPLES::
 
@@ -1145,9 +1155,21 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             x^-8
             sage: (5*x^-4)^-3
             5*x^12
+
+        Check that using third argument raises an error::
+
+            sage: L.<x> = LaurentPolynomialRing(R)
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef LaurentPolynomial_univariate self = _self
         cdef long right = r
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
         if right != r:
             raise ValueError("exponent must be an integer")
         try:
@@ -2124,7 +2146,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             Multivariate Polynomial Ring in t, tinv over Rational Field
         """
         dres = {}
-        for (e, c) in self.dict().items():
+        for e, c in self.monomial_coefficients().items():
             if e > 0:
                 dres[(e, 0)] = c
             else:

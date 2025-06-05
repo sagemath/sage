@@ -7,15 +7,15 @@ r"""
     typically used in combinatorics (see :mod:`sage.combinat.q_analogues`).
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
@@ -181,7 +181,8 @@ def q_binomial(n, k, q=None):
     TESTS::
 
         sage: from sage.algebras.quantum_groups.q_numbers import q_binomial
-        sage: all(q_binomial(n, k, 1) == binomial(n, k) for n in range(7) for k in range(n+1))
+        sage: all(q_binomial(n, k, 1) == binomial(n, k)
+        ....:     for n in range(6) for k in range(n+1))
         True
         sage: q_binomial(-2, 1)
         Traceback (most recent call last):
@@ -190,13 +191,13 @@ def q_binomial(n, k, q=None):
     """
     # sanity checks
     if not (n in ZZ and k in ZZ):
-        raise ValueError("arguments ({}, {}) must be integers".format(n, k))
+        raise ValueError(f"arguments ({n}, {k}) must be integers")
     if n < 0:
         raise ValueError('n must be nonnegative')
-    if not (0 <= k and k <= n):
+    if not (0 <= k <= n):
         return 0
 
-    k = min(n - k, k) # Pick the smallest k
+    k = min(n - k, k)  # Pick the smallest k
     denomin = q_factorial(n - k, q) * q_factorial(k, q)
     numerat = q_factorial(n, q)
     try:

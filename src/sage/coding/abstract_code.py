@@ -324,9 +324,9 @@ class AbstractCode(Parent):
         r"""
         Return an error message requiring to override ``__iter__`` in ``self``.
 
-        As one has to implement specific category related methods (`__iter__` and
-        `__contains__`) when writing a new code class which inherits from
-        :class:`AbstractCode`, the generic call to `__iter__` has to fail.
+        As one has to implement specific category related methods (``__iter__`` and
+        ``__contains__``) when writing a new code class which inherits from
+        :class:`AbstractCode`, the generic call to ``__iter__`` has to fail.
 
         EXAMPLES:
 
@@ -352,9 +352,9 @@ class AbstractCode(Parent):
         r"""
         Return an error message requiring to override ``__contains__`` in ``self``.
 
-        As one has to implement specific category related methods (`__iter__` and
-        `__contains__`) when writing a new code class which inherits from
-        :class:`AbstractCode`, the generic call to `__contains__` has to fail.
+        As one has to implement specific category related methods (``__iter__`` and
+        ``__contains__``) when writing a new code class which inherits from
+        :class:`AbstractCode`, the generic call to ``__contains__`` has to fail.
 
         EXAMPLES:
 
@@ -448,9 +448,9 @@ class AbstractCode(Parent):
         r"""
         Return an error message requiring to override ``_repr_`` in ``self``.
 
-        As one has to implement specific representation methods (`_repr_` and
-        `_latex_`) when writing a new code class which inherits from
-        :class:`AbstractCode`, the generic call to `_repr_` has to fail.
+        As one has to implement specific representation methods (``_repr_`` and
+        ``_latex_``) when writing a new code class which inherits from
+        :class:`AbstractCode`, the generic call to ``_repr_`` has to fail.
 
         EXAMPLES:
 
@@ -476,9 +476,9 @@ class AbstractCode(Parent):
         r"""
         Return an error message requiring to override ``_latex_`` in ``self``.
 
-        As one has to implement specific representation methods (`_repr_` and
-        `_latex_`) when writing a new code class which inherits from
-        :class:`AbstractCode`, the generic call to `_latex_` has to fail.
+        As one has to implement specific representation methods (``_repr_`` and
+        ``_latex_``) when writing a new code class which inherits from
+        :class:`AbstractCode`, the generic call to ``_latex_`` has to fail.
 
         EXAMPLES:
 

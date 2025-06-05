@@ -1298,7 +1298,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 raise ValueError("the entries must be nonnegative integers")
         from sage.matrix.matrix_space import MatrixSpace
         if max_entry is None:
-            max_entry = max([max(c) for c in self])
+            max_entry = max(max(c) for c in self)
         MS = MatrixSpace(ZZ, len(self[0]), max_entry)
         Tconj = self.conjugate()
         conj_len = len(Tconj)
@@ -1694,7 +1694,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
     evaluation = weight
 
-    def is_row_strict(self):
+    def is_row_strict(self) -> bool:
         """
         Return ``True`` if ``self`` is a row strict tableau and ``False``
         otherwise.
@@ -1715,7 +1715,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return all(row[i] < row[i+1] for row in self for i in range(len(row)-1))
 
-    def is_row_increasing(self, weak=False):
+    def is_row_increasing(self, weak=False) -> bool:
         r"""
         Return ``True`` if the entries in each row are in increasing order,
         and ``False`` otherwise.
@@ -1741,7 +1741,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                 return a < b
         return all(test(a, b) for row in self for (a, b) in zip(row, row[1:]))
 
-    def is_column_increasing(self, weak=False):
+    def is_column_increasing(self, weak=False) -> bool:
         r"""
         Return ``True`` if the entries in each column are in increasing order,
         and ``False`` otherwise.
@@ -1770,7 +1770,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             return all(test(a[i], b_i) for i, b_i in enumerate(b))
         return all(tworow(self[r], self[r + 1]) for r in range(len(self) - 1))
 
-    def is_column_strict(self):
+    def is_column_strict(self) -> bool:
         """
         Return ``True`` if ``self`` is a column strict tableau and ``False``
         otherwise.
@@ -1801,7 +1801,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             return all(a[i] < b_i for i, b_i in enumerate(b))
         return all(tworow(self[r], self[r+1]) for r in range(len(self)-1))
 
-    def is_semistandard(self):
+    def is_semistandard(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a semistandard tableau, and ``False``
         otherwise.
@@ -1824,7 +1824,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self.is_row_increasing(weak=True) and self.is_column_increasing()
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` if ``self`` is a standard tableau and ``False``
         otherwise.
@@ -1843,7 +1843,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         entries = sorted(self.entries())
         return entries == list(range(1, self.size() + 1)) and self.is_row_strict() and self.is_column_strict()
 
-    def is_increasing(self):
+    def is_increasing(self) -> bool:
         """
         Return ``True`` if ``self`` is an increasing tableau and
         ``False`` otherwise.
@@ -1865,7 +1865,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self.is_row_strict() and self.is_column_strict()
 
-    def is_rectangular(self):
+    def is_rectangular(self) -> bool:
         """
         Return ``True`` if the tableau ``self`` is rectangular and
         ``False`` otherwise.
@@ -2055,19 +2055,19 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         w = self.weight()
         s = self.cells()
 
-        for l in range(1, len(w)+1):
+        for l in range(1, len(w) + 1):
             new_s = [(i, j) for i, j in s if self[i][j] == l]
 
             # If there are no elements that meet the condition
-            if new_s == []:
+            if not new_s:
                 res.append(0)
                 continue
-            x = set((i-j) % (k+1) for i, j in new_s)
+            x = {(i - j) % (k + 1) for i, j in new_s}
             res.append(len(x))
 
         return res
 
-    def is_k_tableau(self, k):
+    def is_k_tableau(self, k) -> bool:
         r"""
         Check whether ``self`` is a valid weak `k`-tableau.
 
@@ -2518,7 +2518,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not (self.is_semistandard()):
             raise ValueError("reverse bumping is only defined for semistandard tableaux")
         try:
-            (r, c) = loc
+            r, c = loc
             if (r, c) not in self.corners():
                 raise ValueError("invalid corner")
         except TypeError:
@@ -2955,9 +2955,8 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         # tableau, by including the identity permutation on the set [1..k].
         k = self.size()
         gens = [list(range(1, k + 1))]
-        for row in self:
-            for j in range(len(row) - 1):
-                gens.append((row[j], row[j + 1]))
+        gens.extend((row[j], row[j + 1])
+                    for row in self for j in range(len(row) - 1))
         return PermutationGroup(gens)
 
     def column_stabilizer(self):
@@ -3178,7 +3177,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             IndexError: (2, 2) is not an addable cell of the tableau
         """
         tab = self.to_list()
-        (r, c) = cell
+        r, c = cell
         try:
             tab[r][c] = m   # will work if we are replacing an entry
         except IndexError:
@@ -3191,7 +3190,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             else:
                 tab_r = tab[r]
-                if c == len(tab_r):
+                if c == len(tab_r) and (r == 0 or len(tab_r) < len(tab[r-1])):
                     tab_r.append(m)
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
@@ -3202,7 +3201,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         else:
             try:
                 return self.parent().Element(tab)
-            except Exception:
+            except ValueError:
                 return Tableau(tab)
 
     ##############
@@ -3617,7 +3616,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         except Exception:
             return Tableau([[w[entry-1] for entry in row] for row in self])
 
-    def is_key_tableau(self):
+    def is_key_tableau(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a key tableau or ``False`` otherwise.
 
@@ -4789,7 +4788,7 @@ class StandardTableau(SemistandardTableau):
         return all(self.restrict(m).shape().dominates(t.restrict(m).shape())
                    for m in range(1, 1 + self.size()))
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` since ``self`` is a standard tableau.
 
@@ -5731,7 +5730,7 @@ class Tableaux_all(Tableaux):
         """
         return "Tableaux"
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -5791,7 +5790,7 @@ class Tableaux_size(Tableaux):
         """
         return "Tableaux of size %s" % self.size
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -5842,7 +5841,7 @@ class SemistandardTableaux(Tableaux):
     OUTPUT:
 
     - The appropriate class, after checking basic consistency tests. (For
-      example, specifying ``eval`` implies a value for `max_entry`).
+      example, specifying ``eval`` implies a value for ``max_entry``).
 
     A semistandard tableau is a tableau whose entries are positive integers,
     which are weakly increasing in rows and strictly increasing down columns.
@@ -6974,15 +6973,12 @@ class SemistandardTableaux_shape_weight(SemistandardTableaux_shape):
         for row in x:
             for i in row:
                 content[i] = content.get(i, 0) + 1
-        content_list = [0]*int(max(content))
+        content_list = [0] * int(max(content))
 
-        for key in content:
-            content_list[key-1] = content[key]
+        for key, c in content.items():
+            content_list[key - 1] = c
 
-        if content_list != self.weight:
-            return False
-
-        return True
+        return content_list == self.weight
 
     def cardinality(self):
         """
@@ -7402,7 +7398,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
         """
         return RowStandardTableaux.__contains__(self, x) and sum(map(len, x)) == self._size
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -7675,9 +7671,9 @@ class StandardTableaux(SemistandardTableaux):
         """
         if isinstance(x, StandardTableau):
             return True
-        elif Tableaux.__contains__(self, x):
+        if Tableaux.__contains__(self, x):
             flatx = sorted(c for row in x for c in row)
-            return flatx == list(range(1, len(flatx)+1)) and (len(x) == 0 or
+            return all(i == fi for i, fi in enumerate(flatx, start=1)) and (len(x) == 0 or
                      (all(row[i] < row[i+1] for row in x for i in range(len(row)-1)) and
                       all(x[r][c] < x[r+1][c] for r in range(len(x)-1)
                           for c in range(len(x[r+1])))
@@ -8134,8 +8130,6 @@ class StandardTableaux_shape(StandardTableaux):
 
             yield self.element_class(self, tableau)
 
-        return
-
     def list(self):
         r"""
         Return a list of the standard Young tableaux of the specified shape.
@@ -8183,25 +8177,20 @@ class StandardTableaux_shape(StandardTableaux):
         t = [[None] * n for n in p]
 
         # Get the cells in the Young diagram
-        cells = []
-        for i in range(len(p)):
-            for j in range(p[i]):
-                cells.append((i, j))
+        cells = [(i, j) for i in range(len(p)) for j in range(p[i])]
 
         m = sum(p)
-        while m > 0:
+        while m:
             # Choose a cell at random
             cell = random.choice(cells)
 
             # Find a corner
             inner_corners = p.corners()
             while cell not in inner_corners:
-                hooks = []
-                for k in range(cell[1] + 1, p[cell[0]]):
-                    hooks.append((cell[0], k))
-                for k in range(cell[0] + 1, len(p)):
-                    if p[k] > cell[1]:
-                        hooks.append((k, cell[1]))
+                c0, c1 = cell
+                hooks = [(c0, k) for k in range(c1 + 1, p[c0])]
+                hooks.extend((k, c1)
+                             for k in range(c0 + 1, len(p)) if p[k] > c1)
                 cell = random.choice(hooks)
 
             # Assign m to cell

@@ -2,7 +2,7 @@ r"""
 Sage Interacts
 
 Sage interacts are applications of the `@interact decorator <../../sagenb/notebook/interact.html>`_.
-They are conveniently accessible in the Sage Notebook via ``interacts.[TAB].[TAB]()``.
+They are conveniently accessible in the Sage notebook via ``interacts.[TAB].[TAB]()``.
 The first ``[TAB]`` lists categories and the second ``[TAB]`` reveals the interact examples.
 
 EXAMPLES:
@@ -496,6 +496,7 @@ def quadratic_equation(A, B, C):
            r"\frac{-%s\pm\sqrt{%s}}{%s} = %s$"
     html(calc % (B, dis1, A, B, dis2, (2*A), sol))
 
+
 @library_interact(
     a0=lambda: slider(0, 360, 1, 30, label='A'),
     a1=lambda: slider(0, 360, 1, 180, label='B'),
@@ -924,7 +925,7 @@ def bisection_method(title, f, interval, d, maxn):
           maxn: IntSlider(value=10, description='max iterations', max=15)
     """
     def _bisection_method(f, a, b, maxn, eps):
-        intervals = [(a,b)]
+        intervals = [(a, b)]
         round = 1
         two = float(2)
         while True:
@@ -937,12 +938,12 @@ def bisection_method(title, f, interval, d, maxn):
             if abs(fc) < eps:
                 return c, intervals
             if fa*fc < 0:
-                a, b = a, c
+                b = c
             elif fc*fb < 0:
-                a, b = c, b
+                a = c
             else:
                 raise ValueError("f must have a sign change in the interval (%s,%s)" % (a,b))
-            intervals.append((a,b))
+            intervals.append((a, b))
             round += 1
         return c, intervals
 
@@ -1641,7 +1642,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     html('<center><font color="green">$g = %s$</font></center>' % latex(g))
     html('<center><font color="blue"><b>$h = %s = %s$</b></font></center>' % (lbl, latex(h)))
     if do_plot:
-        P = plot(f, xrange, color='red', thickness=2) +  \
+        P = plot(f, xrange, color='red', thickness=2) + \
             plot(g, xrange, color='green', thickness=2) + \
             plot(h, xrange, color='blue', thickness=2)
         if yrange == 'auto':

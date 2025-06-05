@@ -356,9 +356,9 @@ REFERENCES:
 - :wikipedia:`Chebyshev_polynomials`
 - :wikipedia:`Legendre_polynomials`
 - :wikipedia:`Hermite_polynomials`
-- http://mathworld.wolfram.com/GegenbauerPolynomial.html
+- https://mathworld.wolfram.com/GegenbauerPolynomial.html
 - :wikipedia:`Jacobi_polynomials`
-- :wikipedia:`Laguerre_polynomia`
+- :wikipedia:`Laguerre_polynomials`
 - :wikipedia:`Associated_Legendre_polynomials`
 - :wikipedia:`Kravchuk_polynomials`
 - :wikipedia:`Meixner_polynomials`
@@ -502,9 +502,11 @@ class OrthogonalFunction(BuiltinFunction):
 
     def __call__(self, *args, **kwds):
         """
-        This overides the call method from SageObject to avoid problems with coercions,
-        since the _eval_ method is able to handle more data types than symbolic functions
-        would normally allow.
+        This overrides the call method from SageObject to avoid
+        problems with coercions, since the _eval_ method is able to
+        handle more data types than symbolic functions would normally
+        allow.
+
         Thus we have the distinction between algebraic objects (if n is an integer),
         and else as symbolic function.
 
@@ -543,9 +545,11 @@ class ChebyshevFunction(OrthogonalFunction):
     """
     def __call__(self, n, *args, **kwds):
         """
-        This overides the call method from :class:`SageObject` to avoid problems with coercions,
-        since the ``_eval_`` method is able to handle more data types than symbolic functions
-        would normally allow.
+        This overrides the call method from :class:`SageObject` to
+        avoid problems with coercions, since the ``_eval_`` method is
+        able to handle more data types than symbolic functions would
+        normally allow.
+
         Thus we have the distinction between algebraic objects (if n is an integer),
         and else as symbolic function.
 
@@ -2343,10 +2347,10 @@ class Func_ultraspherical(GinacFunction):
         sage: # needs mpmath
         sage: from mpmath import gegenbauer as gegenbauer_mp
         sage: from mpmath import mp
-        sage: mp.pretty = True; mp.dps=25
-        sage: gegenbauer_mp(-7,0.5,0.3)
+        sage: print(gegenbauer_mp(-7,0.5,0.3))
         0.1291811875
-        sage: gegenbauer_mp(2+3j, -0.75, -1000j)
+        sage: with mp.workdps(25):
+        ....:     print(gegenbauer_mp(2+3j, -0.75, -1000j))
         (-5038991.358609026523401901 + 9414549.285447104177860806j)
 
     TESTS:

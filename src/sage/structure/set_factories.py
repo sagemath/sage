@@ -306,12 +306,12 @@ AUTHORS:
 
 - Florent Hivert (2011-2012): initial revision
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Florent Hivert <florent.hivert at lri.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.structure.sage_object import SageObject
@@ -846,7 +846,8 @@ class BareFunctionPolicy(SetFactoryPolicy):
             sage: pol.element_constructor_attributes(())
             {'_element_constructor_': <... 'tuple'>, '_parent_for': None}
         """
-        return {'_element_constructor_' : self._constructor, '_parent_for' : None}
+        return {'_element_constructor_': self._constructor,
+                '_parent_for': None}
 
     def _repr_(self):
         r"""
@@ -1107,7 +1108,7 @@ class ParentWithSetFactory(Parent):
             False
         """
         if (isinstance(x, self.element_class) and
-            x.parent() == self._parent_for):  # TODO: is_parent_of ???
+                x.parent() == self._parent_for):  # TODO: is_parent_of ???
             try:
                 self.check_element(x, True)
             except ValueError:
@@ -1140,7 +1141,7 @@ class ParentWithSetFactory(Parent):
         # Ensure idempotence of element construction
         if (len(args) == 1 and
             isinstance(args[0], self.element_class) and
-            args[0].parent() == self._parent_for):
+                args[0].parent() == self._parent_for):
             check = keywords.get("check", True)
             if check:
                 self.check_element(args[0], check)

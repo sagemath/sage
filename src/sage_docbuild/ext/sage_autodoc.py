@@ -35,16 +35,19 @@ AUTHORS:
 - François Bissey (2024-08-24): rebased on Sphinx 8.0.2
 
 - François Bissey (2024-09-10): Tweaks to support python 3.9 (and older sphinx) as well
+
+- François Bissey (2024-11-12): rebased on Sphinx 8.1.3 (while trying to keep python 3.9 compatibility)
+
+- François Bissey (2025-02-24): Remove python 3.9 support hacks, making us closer to upstream
 """
 
 from __future__ import annotations
 
 import functools
 import operator
-import sys
 import re
 from inspect import Parameter, Signature
-from typing import TYPE_CHECKING, Any, ClassVar, NewType, TypeVar
+from typing import TYPE_CHECKING, Any, NewType, TypeVar
 
 from docutils.statemachine import StringList
 
@@ -79,17 +82,29 @@ from sage.misc.sageinspect import (sage_getdoc_original,
                                    is_function_or_cython_function)
 
 _getdoc = getdoc
+
+
 def getdoc(obj, *args, **kwargs):
     return sage_getdoc_original(obj)
+
+
 # ------------------------------------------------------------------
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterator, Sequence
     from types import ModuleType
+    from typing import ClassVar, Literal, TypeAlias
 
     from sphinx.application import Sphinx
     from sphinx.environment import BuildEnvironment
     from sphinx.ext.autodoc.directive import DocumenterBridge
+
+    _AutodocObjType = Literal[
+        'module', 'class', 'exception', 'function', 'method', 'attribute'
+    ]
+    _AutodocProcessDocstringListener: TypeAlias = Callable[
+        [Sphinx, _AutodocObjType, str, Any, dict[str, bool], list[str]], None
+    ]
 
 logger = logging.getLogger(__name__)
 
@@ -225,7 +240,9 @@ def merge_members_option(options: dict) -> None:
 
 # Some useful event listener factories for autodoc-process-docstring.
 
-def cut_lines(pre: int, post: int = 0, what: str | None = None) -> Callable:
+def cut_lines(
+    pre: int, post: int = 0, what: Sequence[str] | None = None
+) -> _AutodocProcessDocstringListener:
     """Return a listener that removes the first *pre* and last *post*
     lines of every docstring.  If *what* is a sequence of strings,
     only docstrings of a type in *what* will be processed.
@@ -233,7 +250,7 @@ def cut_lines(pre: int, post: int = 0, what: str | None = None) -> Callable:
     Use like this (e.g. in the ``setup()`` function of :file:`conf.py`)::
 
        from sphinx.ext.autodoc import cut_lines
-       app.connect('autodoc-process-docstring', cut_lines(4, what=['module']))
+       app.connect('autodoc-process-docstring', cut_lines(4, what={'module'}))
 
     This can (and should) be used in place of ``automodule_skip_lines``.
     """
@@ -250,9 +267,22 @@ def cut_lines(pre: int, post: int = 0, what: str | None = None) -> Callable:
     #
     #     ... in place of ``automodule_skip_lines``.
     # -------------------------------------------------------------------------
-    def process(app: Sphinx, what_: str, name: str, obj: Any, options: Any, lines: list[str],
-                ) -> None:
-        if what and what_ not in what:
+    if not what:
+        what_unique: frozenset[str] = frozenset()
+    elif isinstance(what, str):  # strongly discouraged
+        what_unique = frozenset({what})
+    else:
+        what_unique = frozenset(what)
+
+    def process(
+        app: Sphinx,
+        what_: _AutodocObjType,
+        name: str,
+        obj: Any,
+        options: dict[str, bool],
+        lines: list[str],
+    ) -> None:
+        if what_unique and what_ not in what_unique:
             return
         del lines[:pre]
         if post:
@@ -271,7 +301,7 @@ def between(
     what: Sequence[str] | None = None,
     keepempty: bool = False,
     exclude: bool = False,
-) -> Callable:
+) -> _AutodocProcessDocstringListener:
     """Return a listener that either keeps, or if *exclude* is True excludes,
     lines between lines that match the *marker* regular expression.  If no line
     matches, the resulting docstring would be empty, so no change will be made
@@ -282,8 +312,14 @@ def between(
     """
     marker_re = re.compile(marker)
 
-    def process(app: Sphinx, what_: str, name: str, obj: Any, options: Any, lines: list[str],
-                ) -> None:
+    def process(
+        app: Sphinx,
+        what_: _AutodocObjType,
+        name: str,
+        obj: Any,
+        options: dict[str, bool],
+        lines: list[str],
+    ) -> None:
         if what and what_ not in what:
             return
         deleted = 0
@@ -308,7 +344,7 @@ def between(
 
 # This class is used only in ``sphinx.ext.autodoc.directive``,
 # But we define this class here to keep compatibility (see #4538)
-class Options(dict):
+class Options(dict[str, Any]):
     """A dict/attribute hybrid that returns None on nonexisting keys."""
 
     def copy(self) -> Options:
@@ -476,9 +512,10 @@ class Documenter:
         """
         with mock(self.config.autodoc_mock_imports):
             try:
-                ret = import_object(self.modname, self.objpath, self.objtype,
-                                    attrgetter=self.get_attr,
-                                    warningiserror=self.config.autodoc_warningiserror)
+                ret = import_object(
+                    self.modname, self.objpath, self.objtype,
+                    attrgetter=self.get_attr,
+                )
                 self.module, self.parent, self.object_name, self.object = ret
                 if ismock(self.object):
                     self.object = undecorate(self.object)
@@ -673,7 +710,7 @@ class Documenter:
 
         # add additional content (e.g. from document), if present
         if more_content:
-            for line, src in zip(more_content.data, more_content.items):
+            for line, src in zip(more_content.data, more_content.items, strict=True):
                 self.add_line(line, src[0], src[1])
 
     def get_object_members(self, want_all: bool) -> tuple[bool, list[ObjectMember]]:
@@ -1044,7 +1081,7 @@ class ModuleDocumenter(Documenter):
         super().add_content(None)
         self.indent = old_indent
         if more_content:
-            for line, src in zip(more_content.data, more_content.items):
+            for line, src in zip(more_content.data, more_content.items, strict=True):
                 self.add_line(line, src[0], src[1])
 
     @classmethod
@@ -1145,7 +1182,8 @@ class ModuleDocumenter(Documenter):
                 else:
                     logger.warning(__('missing attribute mentioned in :members: option: '
                                       'module %s, attribute %s'),
-                                   safe_getattr(self.object, '__name__', '???', name),
+                                   safe_getattr(self.object, '__name__', '???'),
+                                   name,
                                    type='autodoc')
             return False, ret
 
@@ -1579,14 +1617,8 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
     def can_document_member(
         cls: type[Documenter], member: Any, membername: str, isattr: bool, parent: Any,
     ) -> bool:
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            result_bool = isinstance(member, type) or (
-                isattr and isinstance(member, NewType | TypeVar))
-        except:
-            result_bool = isinstance(member, type) or (
-                isattr and (inspect.isNewType(member) or isinstance(member, TypeVar)))
-        return result_bool
+        return isinstance(member, type) or (
+            isattr and isinstance(member, NewType | TypeVar))
 
     def import_object(self, raiseerror: bool = False) -> bool:
         ret = super().import_object(raiseerror)
@@ -1659,12 +1691,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             # -------------------------------------------------------------------
             else:
                 self.doc_as_attr = True
-            # support both sphinx 8 and py3.9/older sphinx
-            try:
-                test_bool = isinstance(self.object, NewType | TypeVar)
-            except:
-                test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
-            if test_bool:
+            if isinstance(self.object, NewType | TypeVar):
                 modname = getattr(self.object, '__module__', self.modname)
                 if modname != self.modname and self.modname.startswith(modname):
                     bases = self.modname[len(modname):].strip('.').split('.')
@@ -1673,12 +1700,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         return ret
 
     def _get_signature(self) -> tuple[Any | None, str | None, Signature | None]:
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            test_bool = isinstance(self.object, NewType | TypeVar)
-        except:
-            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
-        if test_bool:
+        if isinstance(self.object, NewType | TypeVar):
             # Suppress signature
             return None, None, None
 
@@ -1863,24 +1885,14 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             self.directivetype = 'attribute'
         super().add_directive_header(sig)
 
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            test_bool = isinstance(self.object, NewType | TypeVar)
-        except:
-            test_bool = inspect.isNewType(self.object) or isinstance(self.object, TypeVar)
-        if test_bool:
+        if isinstance(self.object, NewType | TypeVar):
             return
 
         if self.analyzer and '.'.join(self.objpath) in self.analyzer.finals:
             self.add_line('   :final:', sourcename)
 
         canonical_fullname = self.get_canonical_fullname()
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            newtype_test = isinstance(self.object, NewType)
-        except:
-            newtype_test = inspect.isNewType(self.object)
-        if (not self.doc_as_attr and not newtype_test
+        if (not self.doc_as_attr and not isinstance(self.object, NewType)
                 and canonical_fullname and self.fullname != canonical_fullname):
             self.add_line('   :canonical: %s' % canonical_fullname, sourcename)
 
@@ -1932,28 +1944,6 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
         if isinstance(self.object, TypeVar):
             if self.object.__doc__ == TypeVar.__doc__:
                 return []
-        # ------------------------------------------------------------------
-        # This section is kept for compatibility with python 3.9
-        # see https://github.com/sagemath/sage/pull/38549#issuecomment-2327790930
-        if sys.version_info[:2] < (3, 10):
-            if inspect.isNewType(self.object) or isinstance(self.object, TypeVar):
-                parts = self.modname.strip('.').split('.')
-                orig_objpath = self.objpath
-                for i in range(len(parts)):
-                    new_modname = '.'.join(parts[:len(parts) - i])
-                    new_objpath = parts[len(parts) - i:] + orig_objpath
-                    try:
-                        analyzer = ModuleAnalyzer.for_module(new_modname)
-                        analyzer.analyze()
-                        key = ('', new_objpath[-1])
-                        comment = list(analyzer.attr_docs.get(key, []))
-                        if comment:
-                            self.objpath = new_objpath
-                            self.modname = new_modname
-                            return [comment]
-                    except PycodeError:
-                        pass
-        # ------------------------------------------------------------------
         if self.doc_as_attr:
             # Don't show the docstring of the class when it is an alias.
             if self.get_variable_comment():
@@ -2017,12 +2007,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):  # type: 
             return None
 
     def add_content(self, more_content: StringList | None) -> None:
-        # support both sphinx 8 and py3.9/older sphinx
-        try:
-            newtype_test = isinstance(self.object, NewType)
-        except:
-            newtype_test = inspect.isNewType(self.object)
-        if newtype_test:
+        if isinstance(self.object, NewType):
             if self.config.autodoc_typehints_format == "short":
                 supertype = restify(self.object.__supertype__, "smart")
             else:
@@ -2179,7 +2164,7 @@ class UninitializedGlobalVariableMixin(DataDocumenterMixinBase):
             # annotation only instance variable (PEP-526)
             try:
                 with mock(self.config.autodoc_mock_imports):
-                    parent = import_module(self.modname, self.config.autodoc_warningiserror)
+                    parent = import_module(self.modname)
                     annotations = get_type_hints(parent, None,
                                                  self.config.autodoc_type_aliases,
                                                  include_extras=True)
@@ -2629,9 +2614,10 @@ class RuntimeInstanceAttributeMixin(DataDocumenterMixinBase):
         except ImportError as exc:
             try:
                 with mock(self.config.autodoc_mock_imports):
-                    ret = import_object(self.modname, self.objpath[:-1], 'class',
-                                        attrgetter=self.get_attr,  # type: ignore[attr-defined]
-                                        warningiserror=self.config.autodoc_warningiserror)
+                    ret = import_object(
+                        self.modname, self.objpath[:-1], 'class',
+                        attrgetter=self.get_attr,  # type: ignore[attr-defined]
+                    )
                     parent = ret[3]
                     if self.is_runtime_instance_attribute(parent):
                         self.object = self.RUNTIME_INSTANCE_ATTRIBUTE
@@ -2676,16 +2662,17 @@ class UninitializedInstanceAttributeMixin(DataDocumenterMixinBase):
         return self.objpath[-1] in annotations
 
     def import_object(self, raiseerror: bool = False) -> bool:
-        """Check the exisitence of uninitialized instance attribute when failed to import
+        """Check the existence of uninitialized instance attribute when failed to import
         the attribute.
         """
         try:
             return super().import_object(raiseerror=True)  # type: ignore[misc]
         except ImportError as exc:
             try:
-                ret = import_object(self.modname, self.objpath[:-1], 'class',
-                                    attrgetter=self.get_attr,  # type: ignore[attr-defined]
-                                    warningiserror=self.config.autodoc_warningiserror)
+                ret = import_object(
+                    self.modname, self.objpath[:-1], 'class',
+                    attrgetter=self.get_attr,  # type: ignore[attr-defined]
+                )
                 parent = ret[3]
                 if self.is_uninitialized_instance_attribute(parent):
                     self.object = UNINITIALIZED_ATTR
@@ -2760,9 +2747,7 @@ class AttributeDocumenter(GenericAliasMixin, SlotsMixin,  # type: ignore[misc]
         if isinstance(type(member), ClasscallMetaclass):
             return True
         # ---------------------------------------------------------------------
-        if not inspect.isroutine(member) and not isinstance(member, type):
-            return True
-        return False
+        return not inspect.isroutine(member) and not isinstance(member, type)
 
     def document_members(self, all_members: bool = False) -> None:
         pass
@@ -2918,7 +2903,7 @@ class PropertyDocumenter(DocstringStripSignatureMixin,  # type: ignore[misc]
             return False
 
     def import_object(self, raiseerror: bool = False) -> bool:
-        """Check the exisitence of uninitialized instance attribute when failed to import
+        """Check the existence of uninitialized instance attribute when failed to import
         the attribute.
         """
         ret = super().import_object(raiseerror)
@@ -2991,7 +2976,7 @@ class PropertyDocumenter(DocstringStripSignatureMixin,  # type: ignore[misc]
 
 def autodoc_attrgetter(app: Sphinx, obj: Any, name: str, *defargs: Any) -> Any:
     """Alternative getattr() for types"""
-    for typ, func in app.registry.autodoc_attrgettrs.items():
+    for typ, func in app.registry.autodoc_attrgetters.items():
         if isinstance(obj, typ):
             return func(obj, name, *defargs)
 

@@ -101,6 +101,23 @@ AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at bui
 
 #---------------------------------------------------------
 
+# Check for systems where Meson build is recommended
+AC_ARG_ENABLE([meson-check],
+  [AS_HELP_STRING([--disable-meson-check],
+    [do not fail the build if running on systems where Meson is preferred])],
+  [enable_meson_check=$enableval],
+  [enable_meson_check=yes])
+
+if test "$enable_meson_check" != no; then
+  AC_MSG_CHECKING([for Arch Linux])
+  if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
+    AC_MSG_RESULT([yes])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+  else
+    AC_MSG_RESULT([no])
+  fi
+fi
+
 AC_ARG_ENABLE([build-as-root],
               [AS_HELP_STRING([--enable-build-as-root],
                               [allow building Sage as root (for use in containers)])],
@@ -222,7 +239,7 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29])
+PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -431,7 +448,7 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
-AC_ARG_ENABLE([sagelib],
+AC_ARG_ENABLE([sage_conf],
   AS_HELP_STRING([--disable-sage_conf],
                  [disable build of the sage_conf package]), [
     for pkg in sage_conf; do

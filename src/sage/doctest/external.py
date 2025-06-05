@@ -16,7 +16,7 @@ AUTHORS:
 - Kwankyu Lee (2016-03-09) -- initial version, based on code by Robert Bradshaw and Nathann Cohen
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016      Kwankyu Lee <ekwankyu@gmail.com>
 #                     2018      Thierry Monteil
 #                     2018-2021 Sébastien Labbé
@@ -28,16 +28,16 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import multiprocessing
-import os
+import platform
 
 # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
-if os.uname().sysname == 'Darwin':
+if platform.system() == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
@@ -45,7 +45,8 @@ Array = multiprocessing.Array
 # software xxx is available to Sage.
 prefix = 'has_'
 
-def has_internet():
+
+def has_internet() -> bool:
     """
     Test if Internet is available.
 
@@ -61,7 +62,8 @@ def has_internet():
     from sage.features.internet import Internet
     return Internet().is_present()
 
-def has_latex():
+
+def has_latex() -> bool:
     """
     Test if Latex is available.
 
@@ -74,7 +76,8 @@ def has_latex():
     from sage.features.latex import latex
     return latex().is_present()
 
-def has_xelatex():
+
+def has_xelatex() -> bool:
     """
     Test if xelatex is available.
 
@@ -87,7 +90,8 @@ def has_xelatex():
     from sage.features.latex import xelatex
     return xelatex().is_present()
 
-def has_pdflatex():
+
+def has_pdflatex() -> bool:
     """
     Test if pdflatex is available.
 
@@ -100,7 +104,8 @@ def has_pdflatex():
     from sage.features.latex import pdflatex
     return pdflatex().is_present()
 
-def has_lualatex():
+
+def has_lualatex() -> bool:
     """
     Test if lualatex is available.
 
@@ -113,7 +118,8 @@ def has_lualatex():
     from sage.features.latex import lualatex
     return lualatex().is_present()
 
-def has_magma():
+
+def has_magma() -> bool:
     """
     Test if Magma is available.
 
@@ -126,7 +132,8 @@ def has_magma():
     from sage.features.interfaces import Magma
     return Magma().is_present()
 
-def has_matlab():
+
+def has_matlab() -> bool:
     """
     Test if Matlab is available.
 
@@ -139,7 +146,8 @@ def has_matlab():
     from sage.features.interfaces import Matlab
     return Matlab().is_present()
 
-def has_mathematica():
+
+def has_mathematica() -> bool:
     """
     Test if Mathematica is available.
 
@@ -152,7 +160,8 @@ def has_mathematica():
     from sage.features.interfaces import Mathematica
     return Mathematica().is_present()
 
-def has_maple():
+
+def has_maple() -> bool:
     """
     Test if Maple is available.
 
@@ -165,7 +174,8 @@ def has_maple():
     from sage.features.interfaces import Maple
     return Maple().is_present()
 
-def has_macaulay2():
+
+def has_macaulay2() -> bool:
     """
     Test if Macaulay2 is available.
 
@@ -178,7 +188,8 @@ def has_macaulay2():
     from sage.features.interfaces import Macaulay2
     return Macaulay2().is_present()
 
-def has_octave():
+
+def has_octave() -> bool:
     """
     Test if Octave is available.
 
@@ -191,7 +202,8 @@ def has_octave():
     from sage.features.interfaces import Octave
     return Octave().is_present()
 
-def has_pandoc():
+
+def has_pandoc() -> bool:
     """
     Test if pandoc is available.
 
@@ -204,7 +216,8 @@ def has_pandoc():
     from sage.features.pandoc import Pandoc
     return Pandoc().is_present()
 
-def has_scilab():
+
+def has_scilab() -> bool:
     """
     Test if Scilab is available.
 
@@ -221,7 +234,8 @@ def has_scilab():
     except Exception:
         return False
 
-def has_cplex():
+
+def has_cplex() -> bool:
     """
     Test if CPLEX is available.
 
@@ -234,7 +248,8 @@ def has_cplex():
     from sage.features.mip_backends import CPLEX
     return CPLEX().is_present()
 
-def has_gurobi():
+
+def has_gurobi() -> bool:
     """
     Test if Gurobi is available.
 
@@ -247,7 +262,8 @@ def has_gurobi():
     from sage.features.mip_backends import Gurobi
     return Gurobi().is_present()
 
-def has_graphviz():
+
+def has_graphviz() -> bool:
     """
     Test if graphviz (dot, twopi, neato) are available.
 
@@ -260,7 +276,8 @@ def has_graphviz():
     from sage.features.graphviz import Graphviz
     return Graphviz().is_present()
 
-def has_ffmpeg():
+
+def has_ffmpeg() -> bool:
     """
     Test if ffmpeg is available.
 
@@ -273,7 +290,8 @@ def has_ffmpeg():
     from sage.features.ffmpeg import FFmpeg
     return FFmpeg().is_present()
 
-def has_imagemagick():
+
+def has_imagemagick() -> bool:
     """
     Test if ImageMagick (command magick or convert) is available.
 
@@ -286,7 +304,8 @@ def has_imagemagick():
     from sage.features.imagemagick import ImageMagick
     return ImageMagick().is_present()
 
-def has_dvipng():
+
+def has_dvipng() -> bool:
     """
     Test if dvipng is available.
 
@@ -299,7 +318,8 @@ def has_dvipng():
     from sage.features.dvipng import dvipng
     return dvipng().is_present()
 
-def has_pdf2svg():
+
+def has_pdf2svg() -> bool:
     """
     Test if pdf2svg is available.
 
@@ -312,7 +332,8 @@ def has_pdf2svg():
     from sage.features.pdf2svg import pdf2svg
     return pdf2svg().is_present()
 
-def has_rubiks():
+
+def has_rubiks() -> bool:
     """
     Test if the rubiks package (``cu2``, ``cubex``, ``dikcube``,
     ``mcube``, ``optimal``, and ``size222``) is available.
@@ -326,7 +347,8 @@ def has_rubiks():
     from sage.features.rubiks import Rubiks
     return Rubiks().is_present()
 
-def has_4ti2():
+
+def has_4ti2() -> bool:
     """
     Test if the 4ti2 package is available.
 
@@ -339,9 +361,14 @@ def has_4ti2():
     from sage.features.four_ti_2 import FourTi2
     return FourTi2().is_present()
 
+
 def external_features():
     r"""
     Generate the features that are only to be tested if ``--optional=external`` is used.
+
+    .. SEEALSO::
+
+        :func:`sage.features.all.all_features`
 
     EXAMPLES::
 
@@ -363,7 +390,8 @@ def external_features():
     yield CPLEX()
     yield Gurobi()
 
-def external_software() -> list[str]:
+
+def _external_software() -> list[str]:
     """
     Return the alphabetical list of external software supported by this module.
 
@@ -376,10 +404,10 @@ def external_software() -> list[str]:
     return sorted(f.name for f in external_features())
 
 
-external_software = external_software()
+external_software: list[str] = _external_software()
 
 
-class AvailableSoftware():
+class AvailableSoftware:
     """
     This class keeps the set of available software whose availability is detected lazily
     from the list of external software.

@@ -28,7 +28,7 @@ from sage.rings.rational_field import QQ
 from sage.schemes.projective.projective_space import ProjectiveSpace
 
 lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.matrix.constructor', ['matrix', 'column_matrix'])
 lazy_import('sage.modules.free_module_element', 'vector')
 lazy_import('sage.rings.number_field.unit_group', 'UnitGroup')
@@ -158,7 +158,7 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 

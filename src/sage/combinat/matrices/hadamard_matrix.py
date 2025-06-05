@@ -90,7 +90,6 @@ from sage.combinat.designs.difference_family import (get_fixed_relative_differen
                                                      skew_supplementary_difference_set,
                                                      complementary_difference_sets)
 from sage.combinat.t_sequences import T_sequences_smallcases
-from sage.cpython.string import bytes_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import (block_matrix,
@@ -501,13 +500,13 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     e = matrix([[1] * (2*m)])
     one = matrix([1])
-    H = block_matrix([[ one,       -e,  one,        e,  one,        e,  one,        e],
+    H = block_matrix([[ one, -e,  one,        e,  one,        e,  one,        e],
                       [-e.T,  T(0, 0),  e.T,  T(0, 1),  e.T,  T(0, 2),  e.T,  T(0, 3)],
-                      [-one,       -e,  one,       -e,  one,        e, -one,       -e],
+                      [-one, -e,  one, -e,  one,        e, -one, -e],
                       [-e.T, -T(1, 0), -e.T,  T(1, 1),  e.T,  T(1, 2), -e.T, -T(1, 3)],
-                      [-one,       -e, -one,       -e,  one,       -e,  one,        e],
+                      [-one, -e, -one, -e,  one, -e,  one,        e],
                       [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T,  T(2, 2),  e.T,  T(2, 3)],
-                      [-one,       -e,  one,        e, -one,       -e,  one,       -e],
+                      [-one, -e,  one,        e, -one, -e,  one, -e],
                       [-e.T, -T(3, 0),  e.T,  T(3, 1), -e.T, -T(3, 2), -e.T,  T(3, 3)]])
 
     if check:
@@ -590,7 +589,7 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     INPUT:
 
     - ``n`` -- integer; the order of the matrices to be returned
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we have the quadruple
 
     OUTPUT:
@@ -696,7 +695,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
     INPUT:
 
     - ``n`` -- integer; the order of the matrix
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we can do the construction
     - ``check`` -- boolean (default: ``True``); if ``True`` check the result
 
@@ -1115,7 +1114,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
     r"""
-    Create a Hadamard matrix using the contruction detailed in [CW1972]_.
+    Create a Hadamard matrix using the construction detailed in [CW1972]_.
 
     Given four circulant matrices `X_1`, X_2, X_3, X_4` of order `n` with entries (0, 1, -1)
     such that the entrywise product of two distinct matrices is always equal to `0` and that
@@ -1135,7 +1134,7 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     - ``C`` -- the matrix described above
     - ``D`` -- the matrix described above
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the resulting
-      matrix is Hadamard before returing it
+      matrix is Hadamard before returning it
 
     EXAMPLES::
 
@@ -1302,7 +1301,7 @@ def _get_baumert_hall_units(n, existence=False):
 
     - ``n`` -- integer; the size of the Baumert-Hall units
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check whether
-      the units can be contructed
+      the units can be constructed
 
     OUTPUT:
 
@@ -1503,7 +1502,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
-    - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
 
     OUTPUT:
@@ -1569,9 +1568,9 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     m1 = matrix([-1])
     p1 = matrix([1])
     H = block_matrix([[  p1,   m1,   p1,   p1,     e,       e,       e,       e],
-                      [  p1,   p1,   m1,   p1,    -e,       e,      -e,       e],
-                      [  m1,   p1,   p1,   p1,    -e,       e,       e,      -e],
-                      [  m1,   m1,   m1,   p1,    -e,      -e,       e,       e],
+                      [  p1,   p1,   m1,   p1, -e,       e, -e,       e],
+                      [  m1,   p1,   p1,   p1, -e,       e,       e, -e],
+                      [  m1,   m1,   m1,   p1, -e, -e,       e,       e],
                       [-e.T,  e.T,  e.T, -e.T,    A1,    A2*P,    A3*P,    A4*P],
                       [-e.T, -e.T,  e.T,  e.T, -A2*P,      A1, -A4.T*P,  A3.T*P],
                       [-e.T, -e.T, -e.T, -e.T, -A3*P,  A4.T*P,      A1, -A2.T*P],
@@ -1964,7 +1963,7 @@ def hadamard_matrix_www(url_file, comments=False):
     rws = []
     url = "http://neilsloane.com/hadamard/" + url_file
     with urlopen(url) as f:
-        s = [bytes_to_str(line) for line in f.readlines()]
+        s = [line.decode() for line in f.readlines()]
     for i in range(n):
         line = s[i]
         rws.append([1 if line[j] == "+" else -1 for j in range(n)])
@@ -2395,7 +2394,7 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
 
 def skew_hadamard_matrix_spence_construction(n, check=True):
     r"""
-    Construct skew Hadamard matrix of order `n` using Spence constrution.
+    Construct skew Hadamard matrix of order `n` using Spence construction.
 
     This function will construct skew Hadamard matrix of order `n=2(q+1)` where `q` is
     a prime power with `q = 5` (mod 8). The construction is taken from [Spe1977]_, and the
@@ -3549,10 +3548,10 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         A_t_W = A.tensor_product(W)
         e_t_f = e.tensor_product(f)
         H = block_matrix([
-            [J(1, 1),                f,                      e_t_f,                  -e_t_f],
+            [J(1, 1),                f,                      e_t_f, -e_t_f],
             [f.T,                  J4m,     e.tensor_product(W-II),  e.tensor_product(W+II)],
             [ e_t_f.T, (e.T).tensor_product(W-II), A_t_W+JJ.tensor_product(II),         H34],
-            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T,      -A_t_W+JJ.tensor_product(II)]])
+            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T, -A_t_W+JJ.tensor_product(II)]])
         return H
 
 

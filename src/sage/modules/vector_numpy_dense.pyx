@@ -128,7 +128,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         from copy import copy
         return self._new(copy(self._vector_numpy))
 
-    def __init__(self, parent, entries, coerce = True, copy = True):
+    def __init__(self, parent, entries, coerce=True, copy=True):
         """
         Fill the vector with entries.
 

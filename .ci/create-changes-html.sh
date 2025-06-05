@@ -16,6 +16,12 @@ echo '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highli
 echo '<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>' >> CHANGES.html
 echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
+<style>
+  p.diff a:first-child {
+    font-weight: bold;
+    font-size: x-large;
+  }
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 // This URL is hardcoded in the file .github/workflows/doc-publish.yml.

@@ -792,7 +792,7 @@ class HyperplaneArrangementElement(Element):
             [[0], [1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]
 
         By passing the argument ``element_label="subset"``, each element of the
-        intesection poset is labelled by the set of indices of the hyperplanes
+        intersection poset is labelled by the set of indices of the hyperplanes
         whose intersection is said element. The index of a hyperplane is its
         index in ``self.hyperplanes()``. ::
 
@@ -1414,7 +1414,7 @@ class HyperplaneArrangementElement(Element):
         charpoly = self.characteristic_polynomial()
         return (-1)**self.rank() * charpoly(1)
 
-    def has_good_reduction(self, p):
+    def has_good_reduction(self, p) -> bool:
         r"""
         Return whether the hyperplane arrangement has good reduction mod `p`.
 
@@ -2199,7 +2199,7 @@ class HyperplaneArrangementElement(Element):
         while R:
             # Transfer the "next step" to the "current step"
             curTest = list(nextTest)
-            nextTest = set([])
+            nextTest = set()
             # we want to test each region that we haven't hit yet
             for r in R:
                 # Since it's graded, it suffices to look at the regions of the previous rank

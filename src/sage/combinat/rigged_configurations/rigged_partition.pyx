@@ -24,7 +24,7 @@ AUTHORS:
     Convert this to using multiplicities `m_i` (perhaps with a dictionary?)?
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010-2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -36,8 +36,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.latex import latex
 from sage.structure.richcmp cimport richcmp
@@ -134,7 +134,7 @@ cdef class RiggedPartition(SageObject):
         """
         # If it is empty, return saying so
         if not self._list:
-            return("(/)\n")
+            return "(/)\n"
 
         from sage.combinat.partition import Partitions
         if Partitions.options.convention == "French":
@@ -148,7 +148,7 @@ cdef class RiggedPartition(SageObject):
             ret_str += "[ ]"*val
             ret_str += str(self.rigging[i])
             ret_str += "\n"
-        return(ret_str)
+        return ret_str
 
     def _latex_(self):
         r"""
@@ -191,7 +191,7 @@ cdef class RiggedPartition(SageObject):
 
         from sage.combinat.rigged_configurations.rigged_configurations import RiggedConfigurations
         if RiggedConfigurations.options.convention == 'English':
-            ret_string += "\\cline{2-%s} "%(1+num_cols) + latex(self.vacancy_numbers[0])
+            ret_string += "\\cline{2-%s} " % (1+num_cols) + latex(self.vacancy_numbers[0])
             for i, row_len in enumerate(self._list):
 
                 ret_string += " &" + "\\phantom{|}&"*row_len
@@ -210,7 +210,7 @@ cdef class RiggedPartition(SageObject):
             ret_string += "\n\\end{array}\n}"
         else:
             for i, row_len in enumerate(reversed(self._list)):
-                ret_string += "\\cline{2-%s} "%(1 + row_len) + latex(self.vacancy_numbers[-i-1])
+                ret_string += "\\cline{2-%s} " % (1 + row_len) + latex(self.vacancy_numbers[-i-1])
                 ret_string += " &" + "\\phantom{|}&"*row_len
 
                 if num_cols == row_len:
@@ -220,7 +220,7 @@ cdef class RiggedPartition(SageObject):
                     ret_string += "}{l}{" + latex(self.rigging[-i-1]) + "}"
 
                 ret_string += " \\\\\n"
-            ret_string += "\\cline{2-%s}\n\\end{array}\n}"%(1 + num_cols)
+            ret_string += "\\cline{2-%s}\n\\end{array}\n}" % (1 + num_cols)
 
         return ret_string
 
@@ -578,7 +578,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
         """
         # If it is empty, return saying so
         if not self._list:
-            return("(/)\n")
+            return "(/)\n"
 
         from sage.combinat.partition import Partitions
         if Partitions.options.convention == "french":
@@ -599,7 +599,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             ret_str += box_str*val
             ret_str += str(self.rigging[i])
             ret_str += "\n"
-        return(ret_str)
+        return ret_str
 
     def _latex_(self):
         r"""
@@ -645,7 +645,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
         ret_string = "{\n\\begin{array}[t]{r|" + "c|"*num_cols + "l}\n"
 
         if RiggedConfigurations.options.convention == 'English':
-            ret_string += "\\cline{2-%s} "%(1+num_cols) + latex(self.vacancy_numbers[0])
+            ret_string += "\\cline{2-%s} " % (1+num_cols) + latex(self.vacancy_numbers[0])
             for i, row_len in enumerate(self._list):
                 ret_string += " &" + box_str*row_len
 
@@ -663,7 +663,7 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
             ret_string += "\n\\end{array}\n}"
         else:
             for i, row_len in enumerate(reversed(self._list)):
-                ret_string += "\\cline{2-%s} "%(1 + row_len)
+                ret_string += "\\cline{2-%s} " % (1 + row_len)
                 ret_string += latex(self.vacancy_numbers[-i-1])
                 ret_string += " &" + box_str*row_len
 
@@ -674,6 +674,6 @@ cdef class RiggedPartitionTypeB(RiggedPartition):
                     ret_string += "}{l}{" + latex(self.rigging[-i-1]) + "}"
 
                 ret_string += " \\\\\n"
-            ret_string += "\\cline{2-%s}\n\\end{array}\n}"%(1 + num_cols)
+            ret_string += "\\cline{2-%s}\n\\end{array}\n}" % (1 + num_cols)
 
         return ret_string

@@ -167,7 +167,6 @@ class HyperbolicArcCore(BezierPath):
                     self.path.append(points[N: N + 3])
                     N += 3
                 self.last_plotted = "arc"
-        return
 
 
 class HyperbolicArc(HyperbolicArcCore):

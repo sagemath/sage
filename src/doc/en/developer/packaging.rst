@@ -497,10 +497,9 @@ should not need to add it yourself.
 
 The following are also available, but rarely used.
 
-- ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
-  the given arguments, as well as additional arguments passed to
-  cmake (assuming packages are using the GNUInstallDirs module) so
-  that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
+- ``sdh_cmake [...]``: Runs ``cmake`` with the given arguments, as well as
+  additional arguments (assuming packages are using the GNUInstallDirs module)
+  so that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
   correctly.
 
 - ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
@@ -1010,11 +1009,11 @@ to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
 ``VERSION_MINOR``, and ``VERSION_MICRO``.
 
 For Python packages available from PyPI, you should use an
-``upstream_url`` from ``pypi.io``, which follows the format
+``upstream_url`` from ``files.pythonhosted.org``, which follows the format
 
 .. CODE-BLOCK:: bash
 
-    upstream_url=https://pypi.io/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
+    upstream_url=https://files.pythonhosted.org/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
 
 Developers who wish to test a package update from a PR branch before
 the archive is available on a Sage mirror. Sage falls back to

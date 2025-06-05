@@ -1,7 +1,7 @@
 """
 Arrows
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -16,8 +16,8 @@ Arrows
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword
 from sage.plot.colors import to_mpl_color
@@ -55,7 +55,7 @@ class CurveArrow(GraphicPrimitive):
 
             sage: import numpy  # to ensure numpy 2.0 compatibility
             sage: if int(numpy.version.short_version[0]) > 1:
-            ....:     numpy.set_printoptions(legacy="1.25")
+            ....:     _ = numpy.set_printoptions(legacy="1.25")
             sage: from sage.plot.arrow import CurveArrow
             sage: b = CurveArrow(path=[[(0,0),(.5,.5),(1,0)],[(.5,1),(0,0)]],
             ....:                options={})

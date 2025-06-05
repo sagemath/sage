@@ -577,13 +577,14 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     def _create_data_sobj(self, sobj_path=None):
         r"""
         Create ``sobj`` files containing the contents of the whole table.
+
         To each column there is created one file containing a list of
         strings giving the entries of the database table.
 
         The length of these lists depends on the type of the corresponding
         column. If a column is used in both tables
         (``KnotInfoColumnTypes.KnotsAndLinks``) the list of proper links
-        is appended to the list of knots.  In both other cases the lenght
+        is appended to the list of knots.  In both other cases the length
         of the list corresponds to the number of listed knots and proper
         links respectively.
 
@@ -838,6 +839,8 @@ column_demo_sample = {
     'fibered':              ['Fibered',              KnotInfoColumnTypes.OnlyKnots],
     'unoriented':           ['Unoriented',           KnotInfoColumnTypes.OnlyLinks],
     'symmetry_type':        ['Symmetry Type',        KnotInfoColumnTypes.OnlyKnots],
+    'geometric_type':       ['Geometric Type',       KnotInfoColumnTypes.OnlyKnots],
+    'cosmetic_crossing':    ['Cosmetic Crossing',    KnotInfoColumnTypes.OnlyKnots],
     'width':                ['Width',                KnotInfoColumnTypes.OnlyKnots],
     'arc_notation':         ['Arc Notation',         KnotInfoColumnTypes.OnlyLinks],
     'dt_code':              ['DT code',              KnotInfoColumnTypes.OnlyLinks]
@@ -1019,6 +1022,18 @@ data_demo_sample = {
         'reversible',
         'reversible'
         ],
+    dc.geometric_type: [
+        '',
+        'torus knot T(2,3)',
+        'hyperbolic',
+        'torus knot T(2,5)',
+        'hyperbolic',
+        'hyperbolic',
+        'hyperbolic',
+        'hyperbolic',
+        'torus knot T(2,7)',
+        'hyperbolic'],
+    dc.cosmetic_crossing: ['', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N', 'N'],
     dc.homfly_polynomial: [
         '',
         '(2*v^2-v^4)+v^2*z^2',

@@ -196,8 +196,7 @@ We find the `x` such that `e^x - 3x = 0`.
 Note that this agrees with what the PARI interpreter gp produces::
 
     sage: gp('solve(x=1,2,exp(x)-3*x)')
-    1.512134551657842473896739678              # 32-bit
-    1.5121345516578424738967396780720387046    # 64-bit
+    1.5121345516578424738967396780720387046
 
 Next we find the minimum of a polynomial using the two different
 ways of accessing Mathics::
@@ -319,7 +318,7 @@ For more details, see the documentation for ``._sage_()``.
 
 OTHER Examples::
 
-    sage: def math_bessel_K(nu,x):
+    sage: def math_bessel_K(nu, x):
     ....:     return mathics(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathics
     -2.5928861754911969782 + 0.18048997206696202663 I
@@ -397,12 +396,12 @@ from sage.structure.richcmp import rich_to_bool
 
 def _mathics_sympysage_symbol(self):
     r"""
-    Convert a Sympy symbol ``self`` to a correspondig element
+    Convert a Sympy symbol ``self`` to a corresponding element
     in Sage's symbolic ring.
 
     This function replaces ``_sympysage_symbol`` to
     take care of the special names used in Mathics.
-    It is set to the method `_sage_` of the Sympy class
+    It is set to the method ``_sage_`` of the Sympy class
     :class:`sympy.core.symbol.Sympol`.
 
     EXAMPLES::

@@ -801,13 +801,14 @@ cdef class IntegerRing_class(CommutativeRing):
         cdef integer.Integer n_max, n_min, n_width
         cdef randstate rstate = current_randstate()
         cdef int den = rstate.c_random()-SAGE_RAND_MAX/2
-        if den == 0: den = 1
+        if den == 0:
+            den = 1
         if (distribution is None and x is None) or distribution == "1/n":
             mpz_set_si(value, (SAGE_RAND_MAX/5*2) / den)
         elif distribution is None or distribution == "uniform":
             if y is None:
                 if x is None:
-                    mpz_set_si(value, rstate.c_random()%5 - 2)
+                    mpz_set_si(value, rstate.c_random() % 5 - 2)
                 else:
                     n_max = x if isinstance(x, integer.Integer) else self(x)
                     mpz_urandomm(value, rstate.gmp_state, n_max.value)
@@ -876,7 +877,7 @@ cdef class IntegerRing_class(CommutativeRing):
             return True
         return super()._repr_option(key)
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``False`` since the integers are not a field.
 
@@ -1036,7 +1037,7 @@ cdef class IntegerRing_class(CommutativeRing):
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(p, names = None, check = check)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple ``(1,)`` containing a single element, the additive
         generator of the integers, which is 1.
@@ -1142,23 +1143,7 @@ cdef class IntegerRing_class(CommutativeRing):
         """
         return 1
 
-    def is_integrally_closed(self):
-        """
-        Return that the integer ring is, in fact, integrally closed.
-
-        .. NOTE::
-
-            This should rather be inherited from the category
-            of ``DedekindDomains``.
-
-        EXAMPLES::
-
-            sage: ZZ.is_integrally_closed()
-            True
-        """
-        return True
-
-    def completion(self, p, prec, extras = {}):
+    def completion(self, p, prec, extras={}):
         r"""
         Return the metric completion of the integers at the prime `p`.
 

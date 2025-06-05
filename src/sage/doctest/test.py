@@ -29,7 +29,7 @@ Check that :issue:`2235` has been fixed::
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 longtime.rst
-    [0 tests, ...s]
+    [0 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -40,7 +40,7 @@ Check that :issue:`2235` has been fixed::
     Running doctests...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 longtime.rst
-    [1 test, ...s]
+    [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -295,15 +295,21 @@ Test a doctest failing with ``abort()``::
     ...
     16
 
-A different kind of crash::
+A different kind of crash (also test printing of line continuation ``...:``,
+represented by ``<DOTSCOLON>`` below)::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
-    ....:      "--random-seed=0", "--optional=sage", "fail_and_die.rst"], **kwds)
+    sage: # long time
+    sage: proc = subprocess.run(["sage", "-t", "--warn-long", "0",
+    ....:      "--random-seed=0", "--optional=sage", "fail_and_die.rst"], **kwds,
+    ....:      stdout=subprocess.PIPE, text=True)
+    sage: # the replacements are needed to avoid the strings being interpreted
+    ....: # specially by the doctesting framework
+    sage: print(proc.stdout.replace('sage:', 'sage<COLON>').replace('....:', '<DOTSCOLON>'))
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst
     **********************************************************************
-    File "fail_and_die.rst", line 5, in sage.doctest.tests.fail_and_die
+    File "fail_and_die.rst", line 8, in sage.doctest.tests.fail_and_die
     Failed example:
         this_gives_a_NameError
     Exception raised:
@@ -313,11 +319,18 @@ A different kind of crash::
         Killed due to kill signal
     **********************************************************************
     Tests run before process (pid=...) failed:
-    ...
+    sage<COLON> import time, signal ## line 4 ##
+    sage<COLON> print(1,
+    <DOTSCOLON>       2) ## line 5 ##
+    1 2
+    sage<COLON> this_gives_a_NameError ## line 8 ##
+    sage<COLON> os.kill(os.getpid(), signal.SIGKILL) ## line 9 ##
+    **********************************************************************
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst  # Killed due to kill signal
     ----------------------------------------------------------------------
     ...
+    sage: proc.returncode
     16
 
 Test that ``sig_on_count`` is checked correctly::
@@ -442,7 +455,7 @@ Test running under gdb, without and with a timeout::
     Running doctests...
     Doctesting 1 file...
     sage -t... 1second.rst...
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -471,7 +484,7 @@ Test the ``--show-skipped`` option::
         1 long test not run
         1 not tested test not run
         0 tests not run because we ran out of time
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -488,7 +501,7 @@ Optional tests are run correctly::
         2 tests not run due to known bugs
         1 not tested test not run
         0 tests not run because we ran out of time
-        [4 tests, ... s]
+        [4 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -504,7 +517,7 @@ Optional tests are run correctly::
         1 not tested test not run
         2 sage tests not run
         0 tests not run because we ran out of time
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -533,7 +546,7 @@ Test ``atexit`` support in the doctesting framework::
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 atexit.rst
-        [3 tests, ... s]
+        [3 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -564,7 +577,7 @@ Test that random tests are reproducible::
     **********************************************************************
     1 item had failures:
        1 of   2 in sage.doctest.tests.random_seed
-        [1 test, 1 failure, ...s]
+        [1 test, 1 failure, ...s wall]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 random_seed.rst  # 1 doctest failed
     ----------------------------------------------------------------------
@@ -575,7 +588,7 @@ Test that random tests are reproducible::
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=1 random_seed.rst
-        [1 test, ...s]
+        [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------

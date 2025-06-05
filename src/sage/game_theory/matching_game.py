@@ -11,15 +11,15 @@ AUTHORS:
 - James Campbell and Vince Knight 06-2014: Original version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 James Campbell james.campbell@tanti.org.uk
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from copy import deepcopy
@@ -493,7 +493,7 @@ class MatchingGame(SageObject):
                         zip(set(self._suitors), set(other._suitors))))
 
     __hash__ = None
-   # not hashable because this is mutable.
+    # not hashable because this is mutable.
 
     def plot(self):
         r"""
@@ -939,7 +939,7 @@ class MatchingGame(SageObject):
         return {key: self._sol_dict[key][0] for key in self._suitors}
 
 
-class Player():
+class Player:
     r"""
     A class to act as a data holder for the players used of the
     matching games.

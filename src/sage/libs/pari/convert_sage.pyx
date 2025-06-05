@@ -379,7 +379,7 @@ cpdef set_integer_from_gen(Integer self, Gen x):
             sig_on()
             x = new_gen(FF_to_FpXQ_i((<Gen>x).g))
         else:
-            raise TypeError("Unable to coerce PARI %s to an Integer"%x)
+            raise TypeError("Unable to coerce PARI %s to an Integer" % x)
 
     # Now we have a true PARI integer, convert it to Sage
     INT_to_mpz(self.value, (<Gen>x).g)
@@ -573,17 +573,16 @@ cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
         sage: pari_prime_range(2, 19)
         [2, 3, 5, 7, 11, 13, 17]
     """
-    cdef long p = 0
-    cdef byteptr pari_prime_ptr = diffptr
+    cdef ulong i = 1
     res = []
-    while p < c_start:
-        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
-    while p < c_stop:
+    while pari_PRIMES[i] < c_start:
+        i+=1
+    while pari_PRIMES[i] < c_stop:
         if py_ints:
-            res.append(p)
+            res.append(pari_PRIMES[i])
         else:
             z = <Integer>PY_NEW(Integer)
-            mpz_set_ui(z.value, p)
+            mpz_set_ui(z.value, pari_PRIMES[i])
             res.append(z)
-        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+        i+=1
     return res
