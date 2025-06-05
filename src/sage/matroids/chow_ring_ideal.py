@@ -17,8 +17,8 @@ AUTHORS:
 
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from sage.matroids.utilities import cmp_elements_key
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.combinat.posets.posets import Poset
 from itertools import product, combinations
 
