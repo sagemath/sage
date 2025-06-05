@@ -793,7 +793,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
     compositional_inverse = revert
 
 
-class LazySpeciesElement_generating_series_mixin:
+class LazySpeciesElementGeneratingSeriesMixin:
     r"""
     A lazy species element whose generating series are obtained
     by specializing the cycle index series rather than the molecular
@@ -1431,7 +1431,7 @@ class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
         return "Oriented Set species"
 
 
-class GraphSpecies(LazySpeciesElement_generating_series_mixin,
+class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
                    LazySpeciesElement, UniqueRepresentation,
                    metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
