@@ -392,7 +392,6 @@ from sage.structure.element cimport Expression as Expression_abc
 from sage.symbolic.complexity_measures import string_length
 from sage.symbolic.function cimport SymbolicFunction
 from sage.rings.rational import Rational
-from sage.rings.real_mpfr cimport RealNumber
 from sage.misc.derivative import multi_derivative
 from sage.misc.decorators import sage_wraps
 from sage.misc.latex import latex_variable_name
@@ -2491,7 +2490,7 @@ cdef class Expression(Expression_abc):
         """
         pynac_forget_gdecl(self._gobj, str_to_bytes(decl))
 
-    def has_wild(self):
+    def has_wild(self) -> bool:
         """
         Return ``True`` if this expression contains a wildcard.
 
@@ -4757,7 +4756,7 @@ cdef class Expression(Expression_abc):
         return matrix([[g.derivative(x) for x in self.arguments()]
                        for g in self.gradient()])
 
-    def series(self, symbol, order=None):
+    def series(self, symbol, order=None, algorithm='ginac'):
         r"""
         Return the power series expansion of ``self`` in terms of the
         given variable to the given order.
@@ -4771,6 +4770,10 @@ cdef class Expression(Expression_abc):
         - ``order`` -- integer; if nothing given, it is set
           to the global default (``20``), which can be changed
           using :func:`set_series_precision`
+        - ``algorithm`` -- string (default: ``'ginac'``); one of the following:
+
+          * ``'ginac'``
+          * ``'maxima'``
 
         OUTPUT: a power series
 
@@ -4869,7 +4872,20 @@ cdef class Expression(Expression_abc):
 
             sage: ((1 - x)^-x).series(x, 8)
             1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
+
+        Try different algorithms::
+
+            sage: ((1 - x)^-x).series(x, 8, algorithm="maxima")
+            1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
+            sage: ((1 - x)^-x).series(x, 8, algorithm="ginac")
+            1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
         """
+        if algorithm == "maxima":
+            # call series() again to convert the result (a rational function in the symbol)
+            # to a SymbolicSeries with the correct order
+            return self.taylor(symbol, 0, order-1).series(symbol, order, algorithm="ginac")
+        if algorithm != "ginac":
+            raise ValueError("invalid algorithm")
         cdef Expression symbol0 = self.coerce_in(symbol)
         cdef GEx x
         cdef SymbolicSeries nex
@@ -4980,6 +4996,10 @@ cdef class Expression(Expression_abc):
            - ``x``, ``a``, ``n`` -- variable, point, degree
 
            - ``(x, a)``, ``(y, b)``, ``n`` -- variables with points, degree of polynomial
+
+        .. SEEALSO::
+
+            :meth:`series`
 
         EXAMPLES::
 
@@ -13735,6 +13755,7 @@ cpdef new_Expression(parent, x):
                                      unsigned_infinity)
     from sage.structure.factorization import Factorization
     from sage.categories.sets_cat import Sets
+    from sage.rings.real_mpfr import RealNumber
 
     if isinstance(x, RealNumber):
         if x.is_NaN():

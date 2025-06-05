@@ -299,7 +299,7 @@ class Rule(UniqueRepresentation):
 
           - any object ``obj1`` which has a method ``_rsk_iter()``,
             as long as this method returns an iterator yielding
-            pairs of numbers, which then are interperted as top
+            pairs of numbers, which then are interpreted as top
             entries and bottom entries in the biword (in this case,
             ``obj2`` is ``None``)
 
@@ -2173,7 +2173,7 @@ class RuleSuperRSK(RuleRSK):
 
           - any object ``obj1`` which has a method ``_rsk_iter()``,
             as long as this method returns an iterator yielding
-            pairs of numbers, which then are interperted as top
+            pairs of numbers, which then are interpreted as top
             entries and bottom entries in the biword (in this case,
             ``obj2`` is ``None``)
 

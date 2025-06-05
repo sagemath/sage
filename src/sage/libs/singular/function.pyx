@@ -612,7 +612,7 @@ cdef class Converter(SageObject):
             sage: Converter([a,b,c],ring=P) # indirect doctest
             Singular Converter in Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
         """
-        return "Singular Converter in %s"%(self._sage_ring)
+        return "Singular Converter in %s" % (self._sage_ring)
 
     def __dealloc__(self):
         cdef ring *r = access_singular_ring(self._sage_ring)
@@ -629,19 +629,19 @@ cdef class Converter(SageObject):
             3
         """
         cdef leftv * v
-        v=self.args
+        v = self.args
         cdef int l
-        l=0
+        l = 0
         while v != NULL:
-            l=l+1
-            v=v.next
+            l += 1
+            v = v.next
         return l
 
     cdef leftv* pop_front(self) except NULL:
         """
         Pop a Singular element from the front of the list.
         """
-        assert(self.args != NULL)
+        assert self.args != NULL
         cdef leftv *res = self.args
         self.args = self.args.next
         res.next = NULL
@@ -982,7 +982,7 @@ cdef class Converter(SageObject):
         elif rtyp == NONE:
             return None
         else:
-            raise NotImplementedError("rtyp %d not implemented."%(rtyp))
+            raise NotImplementedError("rtyp %d not implemented." % (rtyp))
 
 
 cdef class BaseCallHandler:
@@ -1194,7 +1194,7 @@ cdef class SingularFunction(SageObject):
             sage: SingularFunction('foobar') # indirect doctest
             foobar (singular function)
         """
-        return "%s (singular function)" %(self._name)
+        return "%s (singular function)" % (self._name)
 
     def __call__(self, *args, ring=None, bint interruptible=True, attributes=None):
         """
@@ -1356,7 +1356,7 @@ EXAMPLES::
      [x2, x1^2],
      [x2, x1^2]]
 
-"""%(self._name)
+""" % (self._name)
         from sage.interfaces.singular import get_docstring
         return prefix + get_docstring(self._name, prefix=True, code=True)
 
