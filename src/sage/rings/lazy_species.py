@@ -1189,11 +1189,11 @@ class LazySpeciesUnivariate(LazySpecies):
             sage: set(G.isotypes(4))
             {[1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4]}
             sage: sorted(G.structures(["a", 1, x]), key=str)
-            {{{'a', x}, {1}},
+            [{{'a', x}, {1}},
              {{'a'}, {1}, {x}},
              {{1, 'a', x}},
              {{1, 'a'}, {x}},
-             {{1, x}, {'a'}}}
+             {{1, x}, {'a'}}]
         """
         return SetPartitionSpecies(self)
 
