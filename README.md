@@ -217,12 +217,8 @@ in the Installation Guide.
       for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
-<<<<<<< HEAD
-      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`.
-=======
       `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`, `pkgconf` (also known as `pkg-config`).
 
->>>>>>> 82d0958ea87 (move pkgconf to prereqs)
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
