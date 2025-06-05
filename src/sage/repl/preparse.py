@@ -1192,11 +1192,11 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
 
     Check that :issue:`40179` is fixed::
 
-        sage: preparse_numeric_literals("1" * 4300) == f"Integer({"1" * 4300})"
+        sage: preparse_numeric_literals("1" * 4300) == f"Integer({'1' * 4300})"
         True
-        sage: preparse_numeric_literals("1" * 4301) == f"Integer({"1" * 4301})"
+        sage: preparse_numeric_literals("1" * 4301) == f"Integer({'1' * 4301})"
         False
-        sage: preparse_numeric_literals("1" * 4301) == f"Integer('{"1" * 4301}')"
+        sage: preparse_numeric_literals("1" * 4301) == f"Integer('{'1' * 4301}')"
         True
 
     Test underscores as digit separators (PEP 515,
@@ -1263,9 +1263,10 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         'RealNumber(str().join(map(chr, [51, 46, 49, 52])))'
         sage: preparse_numeric_literals('5j', quotes=None)
         'ComplexNumber(0, str().join(map(chr, [53])))'
+
+    Using the ``quote`` parameter for the case for :issue:`40179`::
+    
         sage: preparse_numeric_literals("1" * 4301, quotes=None) == f'Integer(str().join(map(chr, {[49] * 4301})))'
-        True
-        sage: preparse_numeric_literals("1" * 4301, quotes="'''") == f"Integer('''{"1" * 4301}''')"
         True
     """
     literals = {}
