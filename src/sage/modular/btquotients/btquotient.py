@@ -2254,13 +2254,31 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         col_vectors = [phi(b).column(0) for b in B]
         mat = column_matrix(col_vectors)
 
-        # Find a pair of linearly independent vectors
-        for i in range(4):
-            for j in range(i + 1, 4):
-                candidate = mat.matrix_from_columns([i, j])
-                if candidate.rank() == 2:
-                    m = column_matrix(QQp, [mat.column(i), mat.column(j)])
-                    break
+        def select_best_basis(mat):
+            """
+            Given a 2x4 matrix over Qp, return a pair of linearly independent columns
+            whose determinant has minimal p-adic valuation.
+            """
+            best_val = None
+            best_pair = None
+
+            for i in range(4):
+                for j in range(i + 1, 4):
+                    u = mat.column(i)
+                    v = mat.column(j)
+                    det = u[0] * v[1] - u[1] * v[0]
+                    if det != 0:
+                        val = det.valuation()
+                        if best_val is None or val < best_val:
+                            best_val = val
+                            best_pair = (u, v)
+
+            if best_pair is None:
+                raise ValueError("No linearly independent pair found")
+
+            return column_matrix(best_pair)
+
+        m =select_best_basis(mat)
 
         # Normalize m so that it lies in GL_2(Z_p)
         min_val = min(x.valuation() for x in m.list())
@@ -2272,7 +2290,6 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         self._II = M(g_inv * self._II * g)
         self._JJ = M(g_inv * self._JJ * g)
         self._KK = self._II * self._JJ
-
 
         return self._II, self._JJ, self._KK
 
