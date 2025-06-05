@@ -1063,8 +1063,8 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         gb = []  # reduced groebner basis with two eliminated cases
         E = list(self._matroid.groundset())
         poly_ring = self.ring()
-        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
 
+        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             gb.append(self._flats_generator[F] * self._flats_generator[G]) # non-nested flats
