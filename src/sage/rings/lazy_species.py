@@ -540,6 +540,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         multivariate = self.parent()._arity > 1
         shape = tuple(shape)
+        if not all(e in ZZ for e in shape):
+            raise NotImplementedError("isotypes with given labels are currently not supported")
         for M, c in self[sum(shape)]:
             if c not in ZZ or c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
@@ -1475,6 +1477,8 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
         """
         if labels in ZZ:
             yield from (G.canonical_label().copy(immutable=True) for G in graphs(labels))
+        else:
+            raise NotImplementedError("isotypes with given labels are currently not supported")
 
     def generating_series(self):
         r"""
@@ -1573,6 +1577,8 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
         """
         if labels in ZZ:
             yield from Partitions(labels)
+        else:
+            raise NotImplementedError("isotypes with given labels are currently not supported")
 
     def structures(self, labels):
         r"""
