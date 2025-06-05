@@ -534,7 +534,7 @@ class TropicalVariety(UniqueRepresentation, SageObject):
 
     def weight_vectors(self):
         r"""
-        Return the weight vectors for each unique intesection of
+        Return the weight vectors for each unique intersection of
         components of ``self``.
 
         Weight vectors are a list of vectors associated with each
@@ -758,7 +758,7 @@ class TropicalSurface(TropicalVariety):
         Set the default axes for ``self``.
 
         This default axes is used for the 3d plot. The axes is centered
-        around where the intersection of the components occured so it
+        around where the intersection of the components occurred so it
         gives a nice visual representation for the interactions between
         different components of the surface. Additionally, it enhances
         the visibility and interpretation of how the components align
