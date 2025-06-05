@@ -2318,12 +2318,12 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: x/P(3)
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
             sage: x/3
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
 
         TESTS::
 

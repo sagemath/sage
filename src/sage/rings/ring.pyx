@@ -563,35 +563,6 @@ cdef class CommutativeRing(Ring):
         Ring.__init__(self, base_ring, names=names, normalize=normalize,
                       category=category)
 
-    def fraction_field(self):
-        """
-        Return the fraction field of ``self``.
-
-        EXAMPLES::
-
-            sage: R = Integers(389)['x,y']
-            sage: Frac(R)
-            Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-            sage: R.fraction_field()
-            Fraction Field of Multivariate Polynomial Ring in x, y over Ring of integers modulo 389
-        """
-        try:
-            if self.is_field():
-                return self
-        except NotImplementedError:
-            pass
-
-        if not self.is_integral_domain():
-            raise TypeError("self must be an integral domain.")
-
-        if self.__fraction_field is not None:
-            return self.__fraction_field
-        else:
-            import sage.rings.fraction_field
-            K = sage.rings.fraction_field.FractionField_generic(self)
-            self.__fraction_field = K
-        return self.__fraction_field
-
     def _pseudo_fraction_field(self):
         r"""
         This method is used by the coercion model to determine if `a / b`
@@ -613,7 +584,7 @@ cdef class CommutativeRing(Ring):
             sage: Integers(15).fraction_field()
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
         """
         try:
             return self.fraction_field()

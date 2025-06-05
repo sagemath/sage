@@ -1397,26 +1397,17 @@ def _fraction_field(ring):
     r"""
     Return a fraction field of ``ring``.
 
-    EXAMPLES:
+    This workaround is no longer needed.
 
-    This works around some annoyances with ``ring.fraction_field()``::
+    EXAMPLES::
 
         sage: R.<x> = ZZ[]
         sage: S = R.quo(x^2 + 1)
         sage: S.fraction_field()
-        Fraction Field of Univariate Quotient Polynomial Ring in xbar over Integer Ring with modulus x^2 + 1
+        Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 + 1
 
         sage: from sage.rings.padics.padic_valuation import _fraction_field
         sage: _fraction_field(S)
         Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x^2 + 1
     """
-    from sage.categories.fields import Fields
-    if ring in Fields():
-        return ring
-
-    from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
-    if isinstance(ring, PolynomialQuotientRing_generic):
-        from sage.categories.integral_domains import IntegralDomains
-        if ring in IntegralDomains():
-            return ring.base().change_ring(ring.base_ring().fraction_field()).quo(ring.modulus())
     return ring.fraction_field()

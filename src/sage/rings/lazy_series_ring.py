@@ -4196,6 +4196,20 @@ class LazyDirichletSeriesRing(LazySeriesRing):
         c = self.base_ring().an_element()
         return self.element_class(self, Stream_exact([], constant=c, order=4))
 
+    def ngens(self):
+        r"""
+        Return the number of generators of ``self``.
+
+        This is always 1.
+
+        EXAMPLES::
+
+            sage: L = LazyDirichletSeriesRing(ZZ, 'z')
+            sage: L.ngens()
+            1
+        """
+        return 1
+
     def some_elements(self):
         """
         Return a list of elements of ``self``.
