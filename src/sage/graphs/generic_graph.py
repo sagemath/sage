@@ -125,6 +125,8 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :meth:`~GenericGraph.triangles_count` | Return the number of triangles in the (di)graph.
     :meth:`~GenericGraph.shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices.
+    :meth:`~GenericGraph.all_cycles_iterator` | Return an iterator over all cycles in the (di)graph.
+    :meth:`~GenericGraph.all_simple_cycles` | Return a list of all simple cycles in the (di)graph.
 
 **Linear algebra:**
 
@@ -242,6 +244,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`~GenericGraph.blocks_and_cut_vertices` | Compute the blocks and cut vertices of the graph.
     :meth:`~GenericGraph.blocks_and_cuts_tree` | Compute the blocks-and-cuts tree of the graph.
+    :meth:`~GenericGraph.biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
     :meth:`~GenericGraph.is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`~GenericGraph.is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`~GenericGraph.is_cut_vertex` | Check whether the input vertex is a cut-vertex.
@@ -25822,6 +25825,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.connectivity import connected_components_sizes
     from sage.graphs.connectivity import blocks_and_cut_vertices
     from sage.graphs.connectivity import blocks_and_cuts_tree
+    from sage.graphs.connectivity import biconnected_components_subgraphs
     from sage.graphs.connectivity import is_cut_edge
     from sage.graphs.connectivity import is_edge_cut
     from sage.graphs.connectivity import is_cut_vertex
@@ -25845,6 +25849,9 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.traversals import lex_DFS
     from sage.graphs.traversals import lex_DOWN
     is_geodetic = LazyImport('sage.graphs.convexity_properties', 'is_geodetic')
+    from sage.graphs.cycle_enumeration import _all_simple_cycles_iterator_edge
+    from sage.graphs.cycle_enumeration import all_cycles_iterator
+    from sage.graphs.cycle_enumeration import all_simple_cycles
 
     def katz_matrix(self, alpha, nonedgesonly=False, vertices=None):
         r"""

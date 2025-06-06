@@ -734,6 +734,12 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 10, 5],
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
+
+    No path between two vertices exists::
+
+        sage: g = Graph(2)
+        sage: list(yen_k_shortest_simple_paths(g, 0, 1))
+        []
     """
     if source not in self:
         raise ValueError("vertex '{}' is not in the graph".format(source))
@@ -784,10 +790,6 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
         path = shortest_path_func(source, target)
     # corner case
     if not path:
-        if report_weight:
-            yield (0, [])
-        else:
-            yield []
         return
 
     cdef dict edge_labels

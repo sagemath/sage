@@ -208,7 +208,7 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
                     heappush(heap_queue, (length + weight_function(e), path + [neighbor]))
 
 def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
-                                     remove_acyclic_edges=True,
+                                     remove_unnecessary_edges=True,
                                      weight_function=None, by_weight=False,
                                      check_weight=True, report_weight=False):
     r"""
@@ -223,9 +223,11 @@ def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
       maximum length of the enumerated paths. If set to ``None``, then all
       lengths are allowed.
 
-    - ``remove_acyclic_edges`` -- boolean (default: ``True``); whether
-      acyclic edges must be removed from the graph.  Used to avoid
-      recomputing it for each edge
+    - ``remove_unnecessary_edges`` -- boolean (default: ``True``); whether
+      unnecessary edges for enumerating simple cycles must be removed from the
+      graph. If ``self`` is directed, edges not in the strongly connected
+      component that contains ``edge`` are unnecessary. Otherwise, edges not in
+      the 2-connected component that contains ``edge`` are unnecessary.
 
     - ``weight_function`` -- function (default: ``None``); a function that
       takes as input an edge ``(u, v, l)`` and outputs its weight. If not
@@ -264,6 +266,16 @@ def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
         (8, [(0, 0), (0, 1), (0, 2), (0, 3), (1, 3), (1, 2), (1, 1), (1, 0), (0, 0)])
         (10, [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 4), (1, 3), (1, 2), (1, 1), (1, 0), (0, 0)])
 
+    The function works for undirected graphs as well::
+
+        sage: g = graphs.Grid2dGraph(2, 5)
+        sage: it = g._all_simple_cycles_iterator_edge(((0, 0), (0, 1), None), report_weight=True)
+        sage: for i in range(4): print(next(it))
+        (4, [(0, 0), (0, 1), (1, 1), (1, 0), (0, 0)])
+        (6, [(0, 0), (0, 1), (0, 2), (1, 2), (1, 1), (1, 0), (0, 0)])
+        (8, [(0, 0), (0, 1), (0, 2), (0, 3), (1, 3), (1, 2), (1, 1), (1, 0), (0, 0)])
+        (10, [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 4), (1, 3), (1, 2), (1, 1), (1, 0), (0, 0)])
+
     Each edge must have a positive weight::
 
         sage: g = DiGraph()
@@ -279,19 +291,31 @@ def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
 
         sage: g = DiGraph(loops=True)
         sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'a'), ('c', 'c')])
-        sage: it = g._all_simple_cycles_iterator_edge(('a', 'b'), remove_acyclic_edges=True)
+        sage: it = g._all_simple_cycles_iterator_edge(('a', 'b'), remove_unnecessary_edges=True)
         sage: next(it)
         ['a', 'b', 'c', 'a']
         sage: g = DiGraph(loops=True)
         sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'c')])
-        sage: it = g._all_simple_cycles_iterator_edge(('c', 'c'), remove_acyclic_edges=True)
+        sage: it = g._all_simple_cycles_iterator_edge(('c', 'c'), remove_unnecessary_edges=True)
         sage: next(it)
         ['c', 'c']
+
+    An undirected graph with 2 biconnected components::
+
+        sage: g = Graph()
+        sage: g.add_edges([('a', 'b'), ('b', 'c'), ('c', 'a'), ('a', 'd'), ('d', 'e'), ('e', 'a')])
+        sage: it = g._all_simple_cycles_iterator_edge(('a', 'b'), remove_unnecessary_edges=True)
+        sage: next(it)
+        ['a', 'b', 'c', 'a']
     """
     # First we remove vertices and edges that are not part of any cycle
-    if remove_acyclic_edges:
+    if remove_unnecessary_edges:
+        if self.is_directed():
+            components = self.strongly_connected_components_subgraphs()
+        else:
+            components = self.biconnected_components_subgraphs()
         h = None
-        for component in self.strongly_connected_components_subgraphs():
+        for component in components:
             if component.has_edge(edge):
                 h = component
         if h is None:
@@ -316,7 +340,7 @@ def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
                                  weight_function=weight_function,
                                  by_weight=by_weight,
                                  check_weight=check_weight,
-                                 algorithm='Feng',
+                                 algorithm=('Feng' if h.is_directed() else 'Yen'),
                                  report_edges=False,
                                  report_weight=True)
 
@@ -496,6 +520,14 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         ...
         ValueError: negative weight is not allowed
 
+    The algorithm ``'B'`` works for undirected graphs as well::
+
+        sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1, 3, 5], 3: [2, 4], 4: [3, 5], 5: [4, 2]})
+        sage: for cycle in g.all_cycles_iterator(algorithm='B', simple=True, by_weight=True):
+        ....:     print(cycle)
+        [0, 1, 2, 0]
+        [2, 3, 4, 5, 2]
+
     The algorithm ``'B'`` is available only when `simple=True`::
 
         sage: g = DiGraph()
@@ -505,18 +537,30 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         Traceback (most recent call last):
         ...
         ValueError: The algorithm 'B' is available only when simple=True.
+
+    The algorithm ``'A'`` is available only for directed graphs::
+
+        sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
+        sage: next(g.all_cycles_iterator(algorithm='A', simple=True))
+        Traceback (most recent call last):
+        ...
+        ValueError: The algorithm 'A' is available only for directed graphs.
     """
     if starting_vertices is None:
         starting_vertices = self
-    # Since a cycle is always included in a given strongly connected
-    # component, we may remove edges from the graph
-    sccs = self.strongly_connected_components()
-    d = {}
-    for id, component in enumerate(sccs):
-        for v in component:
-            d[v] = id
-    h = copy(self)
-    h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+
+    if self.is_directed():
+        # Since a cycle is always included in a given strongly connected
+        # component, we may remove edges from the graph
+        sccs = self.strongly_connected_components()
+        d = {}
+        for id, component in enumerate(sccs):
+            for v in component:
+                d[v] = id
+        h = copy(self)
+        h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+    else:
+        h = copy(self)
 
     by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                            weight_function=weight_function,
@@ -528,6 +572,8 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
                 raise ValueError("negative weight is not allowed")
 
     if algorithm == 'A':
+        if not self.is_directed():
+            raise ValueError("The algorithm 'A' is available only for directed graphs.")
         # We create one cycles iterator per vertex. This is necessary if we
         # want to iterate over cycles with increasing length.
         def cycle_iter(v):
@@ -550,21 +596,28 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         def simple_cycle_iter(hh, e):
             return hh._all_simple_cycles_iterator_edge(e,
                                                        max_length=max_length,
-                                                       remove_acyclic_edges=False,
+                                                       remove_unnecessary_edges=False,
                                                        weight_function=weight_function,
                                                        by_weight=by_weight,
                                                        check_weight=check_weight,
                                                        report_weight=True)
-        SCCS = h.strongly_connected_components_subgraphs()
+        if h.is_directed():
+            def decompose(hh):
+                return hh.strongly_connected_components_subgraphs()
+        else:
+            def decompose(hh):
+                return hh.biconnected_components_subgraphs()
+
+        components = decompose(h)
         iterators = dict()
-        while SCCS:
-            hh = SCCS.pop()
+        while components:
+            hh = components.pop()
             if not hh.size():
                 continue
             e = next(hh.edge_iterator())
             iterators[e] = simple_cycle_iter(hh, e)
             hh.delete_edge(e)
-            SCCS.extend(hh.strongly_connected_components_subgraphs())
+            components.extend(decompose(hh))
     else:
         raise ValueError(f"The algorithm {algorithm} is not valid. \
                             Use the algorithm 'A' or 'B'.")
@@ -785,6 +838,14 @@ def all_simple_cycles(self, starting_vertices=None, rooted=False,
          (12, [1, 2, 3, 1]), (12, [1, 3, 2, 1])]
         sage: cycles.sort() == cycles_B.sort()
         True
+
+    The algorithm ``'A'`` is available only for directed graphs::
+
+        sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
+        sage: g.all_simple_cycles(algorithm='A')
+        Traceback (most recent call last):
+        ...
+        ValueError: The algorithm 'A' is available only for directed graphs.
     """
     return list(self.all_cycles_iterator(starting_vertices=starting_vertices,
                                          simple=True, rooted=rooted,
