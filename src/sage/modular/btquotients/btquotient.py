@@ -2202,14 +2202,13 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             sage: phi(i)**2 == QQ(i**2)*phi(B(1))
             True
 
-        TESTS::
+        TESTS:
 
         Check that :issue:`40209` is solved::
 
             sage: X = BruhatTitsQuotient(7, 5*17*13)
             sage: X.genus_no_formula()
             385 
-
         """
         assert not self._use_magma
         if prec <= self._prec:
