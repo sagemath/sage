@@ -632,7 +632,7 @@ class GhLabelSynchronizer:
         issue = 'issue'
         if self._pr:
             issue = 'pr'
-        # workaround for gh bug, it cannot deduce repo from url automatically
+        # workaround for gh bug https://github.com/cli/cli/issues/11055, it cannot deduce repo from url automatically
         repo = '/'.join(self._url.split('/')[:5])
         if arg:
             cmd_str = 'gh --repo %s %s %s %s %s "%s"' % (repo, issue, cmd, self._url, option, arg)
