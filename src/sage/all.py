@@ -57,6 +57,7 @@ Check that :issue:`34506` is resolved::
 import os
 import operator
 import math
+import sys
 
 # ############### end setup warnings ###############################
 
@@ -158,7 +159,8 @@ from sage.knots.all import *
 
 from sage.manifolds.all import *
 
-from cysignals.alarm import alarm, cancel_alarm
+if sys.platform != 'win32':
+    from cysignals.alarm import alarm, cancel_alarm
 
 # Lazily import interacts (#15335)
 lazy_import('sage.interacts', 'all', 'interacts')

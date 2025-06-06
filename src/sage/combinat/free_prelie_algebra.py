@@ -377,8 +377,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         """
         return t.node_number()
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 

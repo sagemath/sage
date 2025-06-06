@@ -131,7 +131,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         cdef Py_ssize_t i, j, deb, k, r = self.parent()._order
         cdef Py_ssize_t d = self.degree ()
         cdef Parent base_ring = <Parent?>self.parent().base_ring()
-        cdef RingElement minusone = <RingElement?>base_ring(-1)
         cdef RingElement zero = <RingElement?>base_ring(0)
         cdef Polk = PolynomialRing (base_ring, 'xr')
         cdef list M = []
@@ -384,7 +383,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         for more details about this).
         The user can speciify different names if desired::
 
-            sage: a.reduced_charpoly(var='T')  # variable name for the caracteristic polynomial
+            sage: a.reduced_charpoly(var='T')  # variable name for the characteristic polynomial
             T^3 + (2*z + 1)*T^2 + (3*z^2 + 4*z)*T + 4*z^3 + z^2 + 1
 
             sage: a.reduced_charpoly(var=('T', 'c'))
@@ -395,8 +394,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             :meth:`reduced_trace`, :meth:`reduced_norm`
         """
         if self._charpoly is None:
-            parent = self._parent
-            section = parent._embed_constants.section()
             M = self._matmul_c()
             chi = M.charpoly()
             self._charpoly = [tuple(c.list()) for c in chi.list()]
@@ -406,7 +403,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         if var is None:
             varcharpoly = 'x'
         elif isinstance(var, (tuple, list)) and len(var) == 2:
-            (varcharpoly, varcenter) = var
+            varcharpoly, varcenter = var
         else:
             varcharpoly = var
         center = self.parent().center(name=varcenter)
