@@ -1198,6 +1198,8 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         False
         sage: preparse_numeric_literals("1" * 4301) == f"Integer('{'1' * 4301}')"
         True
+        sage: preparse_numeric_literals("1" * 4301, quotes=None) == f'Integer(str().join(map(chr, {[49] * 4301})))'
+        True
 
     Test underscores as digit separators (PEP 515,
     https://www.python.org/dev/peps/pep-0515/)::
@@ -1262,12 +1264,7 @@ def preparse_numeric_literals(code, extract=False, quotes="'"):
         sage: preparse_numeric_literals('3.14', quotes=None)
         'RealNumber(str().join(map(chr, [51, 46, 49, 52])))'
         sage: preparse_numeric_literals('5j', quotes=None)
-        'ComplexNumber(0, str().join(map(chr, [53])))'
-
-    Using the ``quote`` parameter for the case for :issue:`40179`::
-    
-        sage: preparse_numeric_literals("1" * 4301, quotes=None) == f'Integer(str().join(map(chr, {[49] * 4301})))'
-        True
+        'ComplexNumber(0, str().join(map(chr, [53])))'    
     """
     literals = {}
     last = 0
