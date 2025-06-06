@@ -2043,7 +2043,7 @@ class DocTestDispatcher(SageObject):
                             baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
-                            print(f"creating a worker ({source.path=})", flush=True)
+                            sys.stdout.flush()
                             w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
                             if not self.controller.options.only_errors:
@@ -2237,7 +2237,7 @@ class DocTestWorker(multiprocessing.Process):
         # doctest, this "queue" will contain only 1 element.
         self.result_queue = multiprocessing.Manager().Queue(1)
 
-        print(f"create queue for worker ({source.path=} {self.result_queue=})", flush=True)
+        sys.stdout.flush()
 
         # Temporary file for stdout/stderr of the child process.
         # Normally, this isn't used in the master process except to
@@ -2408,7 +2408,7 @@ class DocTestWorker(multiprocessing.Process):
             subprocess.
         """
         try:
-            print(f"read from result_queue {self.source.path=} {self.result_queue=} {self.result_queue.qsize()}", flush=True)
+            sys.stdout.flush()
             self.result = self.result_queue.get(block=False)
         except Empty:
             self.result = (0, DictAsObject({'err': 'noresult'}))
@@ -2639,7 +2639,7 @@ class DocTestTask:
 
         if result_queue is not None:
             size=result_queue.qsize()
-            print(f"put to result_queue {self.source.path=} {result_queue=} {size}", flush=True)
+            sys.stdout.flush()
             result_queue.put(result, False)
         return result
 
