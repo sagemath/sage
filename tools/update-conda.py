@@ -164,9 +164,9 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     # Fix requirements that are not available on conda
     all_requirements = {
         # Following can be removed once https://github.com/regro/cf-scripts/pull/2176 is used in grayskull
-        req.replace("lrcalc", "python-lrcalc").replace(
-            "symengine", "python-symengine"
-        ).replace("memory_allocator", "memory-allocator")
+        req.replace("lrcalc", "python-lrcalc")
+        .replace("symengine", "python-symengine")
+        .replace("memory_allocator", "memory-allocator")
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -174,9 +174,9 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "p_group_cohomology",
         "sage_numerical_backends_coin",
         "sagemath_giac",
-        "pynormaliz", # due to https://github.com/sagemath/sage/issues/40214
-        "rpy2", # due to https://github.com/sagemath/sage/issues/40215
-        "latte-integrale", # due to https://github.com/sagemath/sage/issues/40216
+        "pynormaliz",  # due to https://github.com/sagemath/sage/issues/40214
+        "rpy2",  # due to https://github.com/sagemath/sage/issues/40215
+        "latte-integrale",  # due to https://github.com/sagemath/sage/issues/40216
     }
     if platform in ("linux-aarch64", "osx-arm64"):
         exclude_packages |= {
@@ -188,56 +188,60 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         exclude_packages |= {
             "4ti2",
             "bc",
-                "brial",
-                "bliss",
-                "cddlib",
-                "cliquer",
-                "ecl",
-                "eclib",
-                "ecm",
-                "fflas-ffpack",
-                "fplll",
-                "gap-defaults",
-                "gengetopt",
-                "gfan",
-                "giac",
-                "givaro",
-                "iml",
-                "latte-integrale",
-                "lcalc",
-                "libatomic_ops",
-                "libbraiding",
-                "libhomfly",
-                "linbox",
-                "lrcalc",
-                "lrslib",
-                "m4",
-                "m4rie",
-                "maxima",
-                "mpfi",
-                "ncurses",
-                "ntl",
-                "palp",
-                "patch",
-                "ppl",
-                "primecount",
-                "pynormaliz",
-                "python-lrcalc",
-                "readline",
-                "rpy2",
-                "rw",
-                "singular",
-                "sirocco",
-                "sympow",
-                "tachyon",
-                "tar",
-                "texinfo",
+            "brial",
+            "bliss",
+            "cddlib",
+            "cliquer",
+            "ecl",
+            "eclib",
+            "ecm",
+            "fflas-ffpack",
+            "fplll",
+            "gap-defaults",
+            "gengetopt",
+            "gfan",
+            "giac",
+            "givaro",
+            "iml",
+            "latte-integrale",
+            "lcalc",
+            "libatomic_ops",
+            "libbraiding",
+            "libhomfly",
+            "linbox",
+            "lrcalc",
+            "lrslib",
+            "m4",
+            "m4rie",
+            "maxima",
+            "mpfi",
+            "ncurses",
+            "ntl",
+            "palp",
+            "patch",
+            "ppl",
+            "primecount",
+            "pynormaliz",
+            "python-lrcalc",
+            "readline",
+            "rpy2",
+            "rw",
+            "singular",
+            "sirocco",
+            "sympow",
+            "tachyon",
+            "tar",
+            "texinfo",
         }
     print(all_requirements)
     all_requirements = {
-            req for req in all_requirements
-            if not any(req == package or req.startswith(package + " ") for package in exclude_packages)
-        }
+        req
+        for req in all_requirements
+        if not any(
+            req == package or req.startswith(package + " ")
+            for package in exclude_packages
+        )
+    }
 
     # Remove virtual packages to not confuse 'filter_requirements'
     all_requirements.remove("{{ blas }}")
