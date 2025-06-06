@@ -2639,8 +2639,9 @@ class DocTestTask:
 
         if result_queue is not None:
             size=result_queue.qsize()
+            sys.stdout.write(f"put to result_queue {size}\n")
             sys.stdout.flush()
-            result_queue.put(result, False)
+            result_queue.put(result, block=False)
         return result
 
     def _run(self, runner, options, results):
