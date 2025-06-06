@@ -31,8 +31,11 @@ import sage.data_structures.blas_dict as blas
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialGen
+from sage.rings.integer_ring import ZZ
 from sage.structure.global_options import GlobalOptions
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
+from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 
 
 def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
@@ -1123,3 +1126,76 @@ class DifferentialWeylAlgebraAction(Action):
         D = {y: c for (y, dy), c in f.monomial_coefficients(copy=False).items()
              if all(dyi == 0 for dyi in dy)}
         return self.right_domain()(D)
+
+class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
+    # todo: port over _repr_ code from finite weyl algebra
+    # def _repr_(self):
+    #     pass
+    # def _latex_(self):
+    #     pass
+    def _r_mul_(self, other):
+        if other == 0:
+            return self.parent().zero()
+        M = self.monomial_coefficients
+        return self.__class__(self.parent(), {t: M[t] * other for t in M})
+    def _l_mul_(self,other):
+        if other == 0:
+            return self.parent().zero()
+        M = self.monomial_coefficients
+        return self.__class__(self.parent(), {t: other* M[t] for t in M})
+    def _mul_(self):
+        raise NotImplementedError # TODO: port over multiplication code from finite weyl algebra
+        pass
+    def __iter__(self):
+        return iter(self.list())
+    def list(self):
+        return list(self._monomial_coefficients) # TODO: sorting
+    pass
+class InfiniteDifferentialWeylAlgebra(Parent):
+    """
+    desired API:
+    sage: R.<x,dx> = InfiniteWeylAlgebra(QQ)
+    sage: R.an_element()
+        x[1]*dx[1] - 3*x[2]*dx[2]
+    """
+    def __init__(self, R, names = None):
+        if names is None:
+            names = ['x','dx']
+        self._var_index  = IndexedFreeAbelianMonoid(ZZ,prefix=names[0])
+        self._diff_index = IndexedFreeAbelianMonoid(ZZ,prefix=names[1])
+        Parent.__init__(self, base=R, names=names)
+        
+        pass
+    def _element_constructor_(self, x):
+
+        if x in self.base_ring():
+            if x == self.base_ring().zero():
+                return self.zero()
+            # print(self.element_class)
+            return self.element_class(self, {(self._var_index.one(), self._diff_index.one()): x})
+        #TODO: Implement construction from finite weyl algebra element
+        #TODO : Implement construction for things of type InfiniteDifferentialWeylAlgebraElement
+        # if isinstance(x, DifferentialWeylAlgebraElement):
+        #     R = self.base_ring()
+        #     if x.parent().base_ring() is R:
+        #         return self.element_class(self, dict(x))
+        #     zero = R.zero()
+        #     return self.element_class(self, {i: R(c) for i, c in x if R(c) != zero})
+        # x = self._poly_ring(x)
+        return self.element_class(self, {(self._var_index(m[0]), self._diff_index(m[1])): c for m, c in x.items()})
+        
+    @cached_method
+    def zero(self):
+        return self.element_class(self, {})
+    @cached_method
+    def one(self):
+        return self.element_class(self, {(self._var_index.one(), self._diff_index.one()): self.base_ring().one()})
+        
+    # This doesn't work, figure something else out
+    def polynomial_gens(self):
+        return InfinitePolynomialGen(self, name=self.variable_names()[0])
+    def differentials(self):
+        return InfinitePolynomialGen(self, name=self.variable_names()[1])
+    # todo: implement gens so we can inject variables
+    Element = InfiniteDifferentialWeylAlgebraElement
+
