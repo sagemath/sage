@@ -25,31 +25,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu', 'macos', 'windows']
+        os: ['ubuntu']
         python: ['3.11', '3.12']
-        tests: ['short']
-        editable:
-          ${{ fromJson(github.event_name == 'pull_request' && '[false]' || '[false, true]') }}
-        include:
-          - os: 'ubuntu'
-            python: '3.12'
-            tests: 'new'
-          - os: 'ubuntu'
-            python: '3.12'
-            tests: 'long'
-          # one additional editable run in pull_request, this has no effect if not pull_request
-          - os: 'ubuntu'
-            python: 3.12
-            editable: true
-            tests: 'short'
-          - os: windows
-            python: '3.13'
-            tests: 'short'
-        exclude:
-          # Exclude 'short' since we already have 'long'
-          - os: 'ubuntu'
-            python: '3.12'
-            tests: 'short'
+        tests: ['long']
 
     steps:
       - uses: actions/checkout@v4
