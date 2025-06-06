@@ -306,6 +306,16 @@ if test -z "$MAKE"; then
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
 
+# Check for bzip2 and libbz2 
+   AC_CHECK_HEADER(bzlib.h, [
+      AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
+        AC_PATH_PROG([bzip2_prog], [bzip2])
+        AS_IF([test x$bzip2_prog = x
+	], [AC_MSG_ERROR([could not find bzip2 executable])])
+      ], [AC_MSG_ERROR([could not find libbz2 library])])
+    ], [AC_MSG_ERROR([could not find bzlib.h, i.e. the header of libbz2 library])
+   ])
+
 # Check for system python
 AC_MSG_CHECKING([for Python])
 if SAGE_BOOTSTRAP_PYTHON=$(build/bin/sage-bootstrap-python -c "import sys; print(sys.executable)"); then
