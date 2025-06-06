@@ -2043,6 +2043,7 @@ class DocTestDispatcher(SageObject):
                             baseline = self.controller.source_baseline(source)
                             if target_endtime is not None:
                                 worker_options.target_walltime = (target_endtime - now) / (max(1, pending_tests / opt.nthreads))
+                            sys.stdout.write(f"creating a worker\n")
                             sys.stdout.flush()
                             w = DocTestWorker(source, options=worker_options, funclist=[sel_exit], baseline=baseline)
                             heading = self.controller.reporter.report_head(w.source)
@@ -2237,6 +2238,7 @@ class DocTestWorker(multiprocessing.Process):
         # doctest, this "queue" will contain only 1 element.
         self.result_queue = multiprocessing.Manager().Queue(1)
 
+        sys.stdout.write(f"create queue for worker\n")
         sys.stdout.flush()
 
         # Temporary file for stdout/stderr of the child process.
