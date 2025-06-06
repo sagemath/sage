@@ -15,7 +15,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import product
+from itertools import product, combinations
 
 from sage.combinat.posets.posets import Poset
 from sage.matroids.utilities import cmp_elements_key
@@ -47,14 +47,15 @@ class ChowRingIdeal(MPolynomialIdeal):
             sage: ch = matroids.catalog.NonFano().chow_ring(QQ, True, 'atom-free')
             sage: ch.defining_ideal()._lattice_flats()
             ({frozenset({'a'}): 1, frozenset({'b'}): 1, frozenset({'c'}): 1,
-            frozenset({'d'}): 1, frozenset({'e'}): 1, frozenset({'f'}): 1,
-            frozenset({'g'}): 1, frozenset({'d', 'e'}): 2,
-            frozenset({'d', 'f'}): 2, frozenset({'e', 'f'}): 2,
-            frozenset({'a', 'b', 'f'}): 2, frozenset({'a', 'c', 'e'}): 2,
-            frozenset({'a', 'd', 'g'}): 2, frozenset({'b', 'c', 'd'}): 2,
-            frozenset({'b', 'e', 'g'}): 2, frozenset({'c', 'f', 'g'}): 2,
-            frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): 3},
-            Set of chains of Finite poset containing 17 elements)
+              frozenset({'d'}): 1, frozenset({'e'}): 1, frozenset({'f'}): 1,
+              frozenset({'g'}): 1, frozenset({'d', 'e'}): 2,
+              frozenset({'d', 'f'}): 2, frozenset({'e', 'f'}): 2,
+              frozenset({'a', 'b', 'f'}): 2, frozenset({'a', 'c', 'e'}): 2,
+              frozenset({'a', 'd', 'g'}): 2, frozenset({'b', 'c', 'd'}): 2,
+              frozenset({'b', 'e', 'g'}): 2, frozenset({'c', 'f', 'g'}): 2,
+              frozenset({'a', 'b', 'c', 'd', 'e', 'f', 'g'}): 3},
+              Set of chains of Finite poset containing 17 elements with
+              distinguished linear extension)
         """
         LF = self._matroid.lattice_of_flats()
         H = LF.hasse_diagram()
@@ -334,23 +335,15 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1,
-            Ax2x3y1,
-            Ax1x3y2,
-            Ax1x2y3,
-            Ay1y2y3,
-            Atx1y1,
-            Atx2y2,
-            Atx3y3,
-            Atx1x2x3y1y2y3,
-            Atx1x2x3y1y2y3^2]
+            [1, Ax2x3y1, Ax1x3y2, Ay1y2y3, Ax1x2y3, Atx3y3, Atx2y2, Atx1y1,
+             Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
             sage: ch = matroids.AG(2,3).chow_ring(QQ, False, 'fy')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, A156, A236, A012, A046, A345, A057, A137, A247, A038, A148,
-             A258, A678, A012345678, A012345678^2]
+            [1, A012, A345, A236, A156, A046, A247, A137, A057, A678, A258,
+             A148, A038, A012345678, A012345678^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
         """
@@ -595,7 +588,7 @@ class ChowRingIdeal_nonaug_af(ChowRingIdeal):
             sage: ch = matroids.Uniform(3, 5).chow_ring(QQ, False, 'atom-free')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, A01, A02, A12, A03, A13, A23, A04, A14, A24, A34, A01234, A01234^2]
+            [1, A01, A12, A02, A23, A13, A03, A34, A24, A14, A04, A01234, A01234^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
         """
@@ -820,7 +813,7 @@ class ChowRingIdeal_nonaug_sp(ChowRingIdeal):
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'simplicial')
             sage: I = ch.defining_ideal()
             sage: I.normal_basis()
-            [1, Ax2x3y1, Ax1x3y2, Ax1x2y3, Ay1y2y3, Atx1y1, Atx2y2, Atx3y3,
+            [1, Ax2x3y1, Ax1x3y2, Ay1y2y3, Ax1x2y3, Atx3y3, Atx2y2, Atx1y1,
              Atx1x2x3y1y2y3, Atx1x2x3y1y2y3^2]
             sage: set(I.gens().ideal().normal_basis()) == set(I.normal_basis())
             True
