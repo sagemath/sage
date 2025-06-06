@@ -327,7 +327,7 @@ class FSymBases(Category_realization_of_parent):
 
                 sage: z = G[[1,3,5],[2,4]]
                 sage: all(F.duality_pairing(F[p1] * F[p2], z) == c
-                ....:     for ((p1, p2), c) in z.coproduct())
+                ....:     for (p1, p2), c in z.coproduct())
                 True
 
             TESTS:
@@ -341,7 +341,7 @@ class FSymBases(Category_realization_of_parent):
                 Rational Field
             """
             y = self.dual_basis()(y)
-            return self.base_ring().sum(coeff * y[t] for (t, coeff) in x)
+            return self.base_ring().sum(coeff * y[t] for t, coeff in x)
 
         def duality_pairing_matrix(self, basis, degree):
             r"""
@@ -1113,7 +1113,7 @@ def ascent_set(t):
         [2, 4, 5]
     """
     row_locations = {}
-    for (i, row) in enumerate(t):
+    for i, row in enumerate(t):
         for entry in row:
             row_locations[entry] = i
     n = len(row_locations)

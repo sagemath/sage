@@ -6186,7 +6186,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Relabeling using a dictionary::
 
             sage: P = Poset((divisors(12), attrcall("divides")), linear_extension=True, facade=False)
-            sage: relabeling = {c.element:i for (i,c) in enumerate(P)}
+            sage: relabeling = {c.element: i for i, c in enumerate(P)}
             sage: relabeling
             {1: 0, 2: 1, 3: 2, 4: 3, 6: 4, 12: 5}
             sage: Q = P.relabel(relabeling)

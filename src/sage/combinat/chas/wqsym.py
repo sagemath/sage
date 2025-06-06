@@ -761,7 +761,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.reversed()): c for A, c in self},
                                     remove_zeros=False)
 
             def coalgebraic_complement(self):
@@ -798,7 +798,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement()): c for A, c in self},
                                     remove_zeros=False)
 
             def star_involution(self):
@@ -834,7 +834,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                     remove_zeros=False)
 
     X = Characteristic
@@ -1280,7 +1280,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_fatter()}
-                return Q._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Q._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def coalgebraic_complement(self):
                 r"""
@@ -1328,7 +1328,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_fatter()}
-                return Q._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Q._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def star_involution(self):
                 r"""
@@ -1363,7 +1363,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Q = self.parent()
                 OSPs = Q.basis().keys()
-                return Q._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Q._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                     remove_zeros=False)
 
     Q = StronglyCoarser
@@ -1633,7 +1633,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return self.monomial(x)
             xlist = [(j, (k == 0))
                      for part in x
-                     for (k, j) in enumerate(sorted(part))]
+                     for k, j in enumerate(sorted(part))]
             # xlist is a list of the form
             # [(e_1, s_1), (e_2, s_2), ..., (e_n, s_n)],
             # where e_1, e_2, ..., e_n are the entries of the parts of
@@ -1643,7 +1643,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             m = max(max(part) for part in x)  # The degree of x
             ylist = [(m + j, (k == 0))
                      for part in y
-                     for (k, j) in enumerate(sorted(part))]
+                     for k, j in enumerate(sorted(part))]
             # ylist is like xlist, but for y instead of x, and with
             # a shift by m.
 
@@ -1748,7 +1748,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     deconcatenates.append((left, right))
             T = self.tensor_square()
             return T.sum_of_monomials((standardize(left), standardize(right))
-                                      for (left, right) in deconcatenates)
+                                      for left, right in deconcatenates)
 
         class Element(WQSymBasis_abstract.Element):
             def algebraic_complement(self):
@@ -1797,7 +1797,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_finer()}
-                return Phi._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Phi._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def coalgebraic_complement(self):
                 r"""
@@ -1845,7 +1845,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     return {OSPs(P): (one if (len(R) % 2 == len(P) % 2)
                                       else mine)
                             for R in Rs for P in R.strongly_finer()}
-                return Phi._from_dict(linear_combination((img(A), c) for (A, c) in self))
+                return Phi._from_dict(linear_combination((img(A), c) for A, c in self))
 
             def star_involution(self):
                 r"""
@@ -1880,7 +1880,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 # for the formula we're using here.
                 Phi = self.parent()
                 OSPs = Phi.basis().keys()
-                return Phi._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
+                return Phi._from_dict({OSPs(A.complement().reversed()): c for A, c in self},
                                       remove_zeros=False)
 
     Phi = StronglyFiner
@@ -2262,7 +2262,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.reversed(): coeff for (I, coeff) in M(self)}
+            dct = {I.reversed(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def coalgebraic_complement(self):
@@ -2427,7 +2427,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.complement(): coeff for (I, coeff) in M(self)}
+            dct = {I.complement(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def star_involution(self):
@@ -2555,7 +2555,7 @@ class WQSymBases(Category_realization_of_parent):
             # complement componentwise, then convert back.
             parent = self.parent()
             M = parent.realization_of().M()
-            dct = {I.reversed().complement(): coeff for (I, coeff) in M(self)}
+            dct = {I.reversed().complement(): coeff for I, coeff in M(self)}
             return parent(M._from_dict(dct, remove_zeros=False))
 
         def to_quasisymmetric_function(self):
@@ -2597,4 +2597,4 @@ class WQSymBases(Category_realization_of_parent):
             M = QuasiSymmetricFunctions(self.parent().base_ring()).Monomial()
             MW = self.parent().realization_of().M()
             return M.sum_of_terms((i.to_composition(), coeff)
-                                  for (i, coeff) in MW(self))
+                                  for i, coeff in MW(self))
