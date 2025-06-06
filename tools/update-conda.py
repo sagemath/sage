@@ -174,6 +174,9 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "p_group_cohomology",
         "sage_numerical_backends_coin",
         "sagemath_giac",
+        "pynormaliz", # due to https://github.com/sagemath/sage/issues/40214
+        "rpy2", # due to https://github.com/sagemath/sage/issues/40215
+        "latte-integrale", # due to https://github.com/sagemath/sage/issues/40216
     }
     if platform in ("linux-aarch64", "osx-arm64"):
         exclude_packages |= {
