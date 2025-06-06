@@ -628,8 +628,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
             Vn, from_Vn, to_Vn = (n * D0).function_space()
             self._V_cache[n] = (Vn, from_Vn, to_Vn)
-
-            return Vn, from_Vn, to_Vn
+            return self._V_cache[n]
 
         def mu(n, m, i, j):
             Vn, from_Vn, to_Vn = V(n)
