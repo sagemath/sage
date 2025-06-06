@@ -199,8 +199,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
                 "gfan",
                 "giac",
                 "givaro",
-                "gmp",
-                "gmpy2",
                 "iml",
                 "latte-integrale",
                 "lcalc",
@@ -232,9 +230,10 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
                 "tar",
                 "texinfo",
         }
+    print(all_requirements)
     all_requirements = {
             req for req in all_requirements
-            if not any(req.startswith(package) for package in exclude_packages)
+            if not any(req == package or req.startswith(package + " ") for package in exclude_packages)
         }
 
     # Remove virtual packages to not confuse 'filter_requirements'
