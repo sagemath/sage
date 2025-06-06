@@ -1058,7 +1058,7 @@ class AugmentedChowRingIdeal_fy(ChowRingIdeal):
         E = list(self._matroid.groundset())
         poly_ring = self.ring()
 
-        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
+        lattice_flats = self._matroid.lattice_of_flats()
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             # non-nested flats
@@ -1214,7 +1214,10 @@ class AugmentedChowRingIdeal_atom_free(ChowRingIdeal):
         for F in self._flats:
             for x in F:
                 flats_containing[x].append(F)
-        lattice_flats = Poset((self._flats, lambda x, y: x <= y))
+        F = self._matroid.lattice_of_flats()
+        H = F.hasse_diagram()
+        H.delete_vertex(self._matroid.flats(0)[0])  # remove empty flat
+        lattice_flats = Poset(H)
         antichains = lattice_flats.antichains().elements_of_depth_iterator(2)
         for F, G in antichains:
             Q.append(self._flats_generator[F] * self._flats_generator[G])
