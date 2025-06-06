@@ -921,14 +921,14 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         self._ftype = ftype
         self._index_set = {}
         self._size_set = {}
-        self._curr_excluded = theory._excluded
+        self._curr_excluded = theory.get_total_excluded()
         Parent.__init__(self, base)
     
     Element = FlagAlgebraElement
     
     def get_index_set(self, n):
-        if self._theory._excluded != self._curr_excluded:
-            self._curr_excluded = self._theory._excluded
+        if self._theory.get_total_excluded() != self._curr_excluded:
+            self._curr_excluded = self._theory.get_total_excluded()
             self._size_set = {}
             self._index_set = {}
         if n not in self._index_set:
@@ -948,8 +948,8 @@ class FlagAlgebra(Parent, UniqueRepresentation):
         return indn[flag]
 
     def get_size(self, n):
-        if self._theory._excluded != self._curr_excluded:
-            self._curr_excluded = self._theory._excluded
+        if self._theory.get_total_excluded() != self._curr_excluded:
+            self._curr_excluded = self._theory.get_total_excluded()
             self._size_set = {}
             self._index_set = {}
         if n not in self._size_set:

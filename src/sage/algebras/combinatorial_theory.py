@@ -2502,7 +2502,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                                  "if it is not part of the certificate!")
         else:
             target_vector_exact = (
-                target_element.project()*(mult)<<\
+                target_element.project()<<\
                     (target_size - target_element.size())
                     ).values()
             if not (target_element.ftype().afae()==1):
@@ -2510,6 +2510,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     target_element.ftype().project()<<\
                         (target_size - target_element.ftype().size())
                         ).values()
+        target_vector_exact *= mult
         ftype_data = list(certificate["typed flags"].keys())
         
         #
@@ -3183,7 +3184,7 @@ class BuiltTheory(_CombinatorialTheory):
 
     reset = reset_exclude
 
-    def get_total_excluded(self, n):
+    def get_total_excluded(self, n=100):
         if self._sources == None:
             ret = [xx for xx in self._excluded if xx.size()<=n]
         else:
