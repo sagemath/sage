@@ -63,7 +63,7 @@ dependencies:
   - curl=8.14.1=h332b0f4_0
   - cxx-compiler=1.9.0=h1a2810e_0
   - cycler=0.12.1=pyhd8ed1ab_1
-  - cypari2=2.2.1=py312hb7bab4f_1
+  - cypari2=2.2.2=py312hb7bab4f_0
   - cyrus-sasl=2.1.27=h54b06d7_7
   - cysignals=1.12.3=py312h2ec8cdc_0
   - cython=3.1.1=py312h2614dfc_1
@@ -379,7 +379,7 @@ dependencies:
   - toml=0.10.2=pyhd8ed1ab_1
   - tomli=2.2.1=pyhd8ed1ab_1
   - tomli-w=1.2.0=pyhd8ed1ab_0
-  - tomlkit=0.13.2=pyha770c72_1
+  - tomlkit=0.13.3=pyha770c72_0
   - tornado=6.5.1=py312h66e93f0_0
   - tqdm=4.67.1=pyhd8ed1ab_1
   - traitlets=5.14.3=pyhd8ed1ab_1
