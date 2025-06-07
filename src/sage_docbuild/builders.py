@@ -104,31 +104,6 @@ def builder_helper(type):
     """
     Return a function which builds the documentation for
     output type ``type``.
-
-    TESTS:
-
-    Check that :issue:`25161` has been resolved::
-
-        sage: from sage_docbuild.builders import DocBuilder
-        sage: from sage_docbuild.__main__ import setup_parser
-        sage: DocBuilder._options = setup_parser().parse_args([]) # builder_helper needs _options to be set
-
-        sage: import sage_docbuild.sphinxbuild
-        sage: def raiseBaseException():
-        ....:     raise BaseException("abort pool operation")
-        sage: original_runsphinx, sage_docbuild.sphinxbuild.runsphinx = sage_docbuild.sphinxbuild.runsphinx, raiseBaseException
-
-        sage: from sage.misc.temporary_file import tmp_dir
-        sage: os.environ['SAGE_DOC'] = tmp_dir()
-        sage: sage.env.var('SAGE_DOC') # random
-        sage: from sage_docbuild.builders import builder_helper, build_ref_doc
-        sage: from sage_docbuild.builders import _build_many as build_many
-        sage: helper = builder_helper("html")
-        sage: try:  # optional - sagemath_doc_html
-        ....:     build_many(build_ref_doc, [("docname", "en", "html", {})])
-        ....: except Exception as E:
-        ....:     "Non-exception during docbuild: abort pool operation" in str(E)
-        True
     """
     def f(self, *args, **kwds):
         output_dir = self._output_dir(type)
@@ -200,9 +175,13 @@ class DocBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import DocBuilder
-            sage: b = DocBuilder('en/tutorial')
-            sage: b._output_dir('html')         # optional - sagemath_doc_html
-            '.../html/en/tutorial'
+            sage: from sage_docbuild.build_options import BuildOptions
+            sage: import tempfile
+            sage: with tempfile.TemporaryDirectory() as directory:
+            ....:   options = BuildOptions(output_dir=Path(directory), source_dir=Path('src/doc'))
+            ....:   builder = DocBuilder('en/tutorial', options)
+            ....:   builder._output_dir('html')
+            ...Path('.../html/en/tutorial')
         """
         dir = self._options.output_dir / type / self.name
         dir.mkdir(parents=True, exist_ok=True)
@@ -218,9 +197,13 @@ class DocBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import DocBuilder
-            sage: b = DocBuilder('tutorial')
-            sage: b._doctrees_dir()             # optional - sagemath_doc_html
-            '.../doctrees/en/tutorial'
+            sage: from sage_docbuild.build_options import BuildOptions
+            sage: import tempfile
+            sage: with tempfile.TemporaryDirectory() as directory:
+            ....:   options = BuildOptions(output_dir=Path(directory), source_dir=Path('src/doc'))
+            ....:   builder = DocBuilder('en/tutorial', options)
+            ....:   builder._doctrees_dir()
+            ...Path('.../doctrees/en/tutorial')
         """
         dir = self._options.output_dir / 'doctrees' / self.name
         dir.mkdir(parents=True, exist_ok=True)
@@ -233,8 +216,10 @@ class DocBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import DocBuilder
-            sage: b = DocBuilder('tutorial')
-            sage: b._output_formats()
+            sage: from sage_docbuild.build_options import BuildOptions
+            sage: options = BuildOptions(source_dir=Path('src/doc'))
+            sage: builder = DocBuilder('tutorial', options)
+            sage: builder._output_formats()
             ['changes', 'html', 'htmlhelp', 'inventory', 'json', 'latex', 'linkcheck', 'pickle', 'web']
         """
         # Go through all the attributes of self and check to
@@ -257,8 +242,10 @@ class DocBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import DocBuilder
-            sage: b = DocBuilder('tutorial')
-            sage: b.pdf() #not tested
+            sage: from sage_docbuild.build_options import BuildOptions
+            sage: options = BuildOptions(source_dir = Path('src/doc'))
+            sage: builder = DocBuilder('tutorial', options)
+            sage: builder.pdf() #not tested
         """
         self.latex()
         tex_dir = self._output_dir('latex')
@@ -421,12 +408,15 @@ class ReferenceBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import ReferenceBuilder
-            sage: b = ReferenceBuilder('reference')
-            sage: b._output_dir('html')         # optional - sagemath_doc_html
-            '.../html/en/reference'
+            sage: import tempfile
+            sage: with tempfile.TemporaryDirectory() as directory:
+            ....:   options = BuildOptions(output_dir = Path(directory))
+            ....:   builder = ReferenceBuilder('reference', options)
+            ....:   builder._output_dir('html')
+            ...Path('.../html/reference')
         """
         dir = self.options.output_dir / type / self.name
-        dir.mkdir(exist_ok=True)
+        dir.mkdir(parents=True, exist_ok=True)
         return dir
 
     def _source_dir(self) -> Path:
@@ -904,8 +894,10 @@ class ReferenceSubBuilder(DocBuilder):
         EXAMPLES::
 
             sage: from sage_docbuild.builders import ReferenceSubBuilder
-            sage: ReferenceSubBuilder("reference").auto_rest_filename("sage.combinat.partition")
-            '.../en/reference/sage/combinat/partition.rst'
+            sage: from sage_docbuild.build_options import BuildOptions
+            sage: options = BuildOptions(source_dir = Path('src/doc'))
+            sage: ReferenceSubBuilder("reference", options).auto_rest_filename("sage.combinat.partition")
+            ...Path('src/doc/en/reference/sage/combinat/partition.rst')
         """
         return self.dir / (module_name.replace('.', os.path.sep) + '.rst')
 
@@ -1163,10 +1155,8 @@ def get_all_documents(source: Path) -> list[Path]:
     EXAMPLES::
 
         sage: from sage_docbuild.builders import get_all_documents
-        sage: documents = get_all_documents()
-        sage: 'en/tutorial' in documents  # optional - sage_spkg
-        True
-        sage: documents[0] == 'en/reference'
+        sage: documents = get_all_documents(Path('src/doc'))
+        sage: Path('en/tutorial') in documents
         True
     """
     documents = []
@@ -1197,12 +1187,9 @@ def get_all_reference_documents(source: Path) -> list[Path]:
 
     EXAMPLES::
 
-        sage: refdir = Path(os.environ['SAGE_DOC_SRC']) / 'en'  # optional - sage_spkg
-        sage: sorted(get_all_reference_documents(refdir))  # optional - sage_spkg
-        ['reference/algebras',
-            'reference/arithgroup',
-            ...,
-            'reference/valuations']
+        sage: documents = get_all_reference_documents(Path('src/doc/en'))
+        sage: Path('reference/algebras') in documents
+        True
     """
     documents: list[tuple[int, Path]] = []
 

@@ -180,7 +180,7 @@ def get_formats():
     Return a list of output formats the Sage documentation builder
     will accept on the command-line.
     """
-    tut_b = DocBuilder('en/tutorial')
+    tut_b = DocBuilder('en/tutorial', BuildOptions())
     formats = tut_b._output_formats()
     formats.remove('html')
     return ['html', 'pdf'] + formats
