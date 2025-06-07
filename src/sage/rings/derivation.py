@@ -649,7 +649,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
             raise NotImplementedError("generators are not implemented for this derivation module")
         return len(self._gens)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of this module of derivations.
 

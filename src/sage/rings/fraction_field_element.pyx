@@ -26,7 +26,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 
 import sage.misc.latex as latex
-
+import sage.misc.superseded
 
 def is_FractionFieldElement(x):
     """
@@ -348,9 +348,9 @@ cdef class FractionFieldElement(FieldElement):
         This function hashes in a special way to ensure that generators of
         a ring `R` and generators of a fraction field of `R` have the same
         hash. This enables them to be used as keys interchangeably in a
-        dictionary (since ``==`` will claim them equal). This is particularly
-        useful for methods like ``subs`` on ``ParentWithGens`` if you are
-        passing a dictionary of substitutions.
+        dictionary (since ``==`` will claim them equal).
+
+        This is useful for substitution using dicts.
 
         EXAMPLES::
 
@@ -406,6 +406,12 @@ cdef class FractionFieldElement(FieldElement):
             True
             sage: ((x+1)/(x^2+1)).subs({x: 1})
             1
+
+        Check that :issue:`35238` is fixed::
+
+            sage: K.<x,y>=ZZ[]
+            sage: hash(x/y) == hash((-x)/(-y))
+            True
         """
         if self._denominator.is_one():
             # Handle this case even over rings that don't support reduction, to
@@ -420,9 +426,21 @@ cdef class FractionFieldElement(FieldElement):
             # potentially inexact operations, there would be compatibility
             # issues even if we didn't...)
             self.reduce()
-        # Same algorithm as for elements of QQ
-        n = hash(self._numerator)
-        d = hash(self._denominator)
+            try:
+                can_associate = self._denominator.canonical_associate()
+            except AttributeError:
+                can_associate = NotImplemented
+            if can_associate is NotImplemented:
+                sage.misc.superseded.warning(40019, "Hashing for {} not implemented. Using constant value".format(self.parent()))
+                return 0
+            den = can_associate[0]
+            num = self._numerator * can_associate[1].inverse_of_unit()
+            n = hash(num)
+            d = hash(den)
+        else:
+            n = hash(self._numerator)
+            d = hash(self._denominator)
+
         if d == 1:
             return n
         else:
@@ -519,13 +537,15 @@ cdef class FractionFieldElement(FieldElement):
         """
         if self.is_zero():
             return "0"
-        s = "%s" % self._numerator
+        s = str(self._numerator)
         if self._denominator != 1:
-            denom_string = str( self._denominator )
+            denom_string = str(self._denominator)
             if self._denominator._is_atomic() and not ('*' in denom_string or '/' in denom_string):
-                s = "%s/%s"%(self._numerator._coeff_repr(no_space=False),denom_string)
+                s = "%s/%s" % (self._numerator._coeff_repr(no_space=False),
+                               denom_string)
             else:
-                s = "%s/(%s)"%(self._numerator._coeff_repr(no_space=False),denom_string)
+                s = "%s/(%s)" % (self._numerator._coeff_repr(no_space=False),
+                                 denom_string)
         return s
 
     def _latex_(self):
@@ -563,8 +583,8 @@ cdef class FractionFieldElement(FieldElement):
             return "0"
         if self._denominator == 1:
             return latex.latex(self._numerator)
-        return "\\frac{%s}{%s}"%(latex.latex(self._numerator),
-                                 latex.latex(self._denominator))
+        return "\\frac{%s}{%s}" % (latex.latex(self._numerator),
+                                   latex.latex(self._denominator))
 
     def _magma_init_(self, magma):
         """

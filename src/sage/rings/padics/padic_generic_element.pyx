@@ -115,7 +115,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         m = min(left.precision_absolute(), right.precision_absolute())
         x_ordp = left.valuation()
-        left_zero =  bool(x_ordp >= m)
+        left_zero = bool(x_ordp >= m)
         y_ordp = right.valuation()
         right_zero = bool(y_ordp >= m)
         # handle approximate zeros
@@ -1117,57 +1117,13 @@ cdef class pAdicGenericElement(LocalGenericElement):
         extdeg = parent.absolute_degree() // (base.absolute_degree() * polydeg)
         return -extdeg * poly[polydeg-1]
 
-    def algdep(self, n):
-        """
-        Return a polynomial of degree at most `n` which is approximately
-        satisfied by this number. Note that the returned polynomial need not be
-        irreducible, and indeed usually won't be if this number is a good
-        approximation to an algebraic number of degree less than `n`.
-
-        ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
-
-        INPUT:
-
-        - ``self`` -- a `p`-adic element
-        - ``n`` -- integer
-
-        OUTPUT: polynomial; degree `n` polynomial approximately satisfied by ``self``
-
-        EXAMPLES::
-
-            sage: K = Qp(3,20,'capped-rel','series'); R = Zp(3,20,'capped-rel','series')
-            sage: a = K(7/19); a
-            1 + 2*3 + 3^2 + 3^3 + 2*3^4 + 2*3^5 + 3^8 + 2*3^9 + 3^11 + 3^12
-              + 2*3^15 + 2*3^16 + 3^17 + 2*3^19 + O(3^20)
-            sage: a.algdep(1)
-            19*x - 7
-            sage: K2 = Qp(7,20,'capped-rel')
-            sage: b = K2.zeta(); b.algdep(2)
-            x^2 - x + 1
-            sage: K2 = Qp(11,20,'capped-rel')
-            sage: b = K2.zeta(); b.algdep(4)
-            x^4 - x^3 + x^2 - x + 1
-            sage: a = R(7/19); a
-            1 + 2*3 + 3^2 + 3^3 + 2*3^4 + 2*3^5 + 3^8 + 2*3^9 + 3^11 + 3^12
-              + 2*3^15 + 2*3^16 + 3^17 + 2*3^19 + O(3^20)
-            sage: a.algdep(1)
-            19*x - 7
-            sage: R2 = Zp(7,20,'capped-rel')
-            sage: b = R2.zeta(); b.algdep(2)
-            x^2 - x + 1
-            sage: R2 = Zp(11,20,'capped-rel')
-            sage: b = R2.zeta(); b.algdep(4)
-            x^4 - x^3 + x^2 - x + 1
-        """
-        # TODO: figure out if this works for extension rings.  If not, move this to padic_base_generic_element.
-        from sage.arith.misc import algdep
-        return algdep(self, n)
-
     def algebraic_dependency(self, n):
         """
         Return a polynomial of degree at most `n` which is approximately
-        satisfied by this number.  Note that the returned polynomial need not
-        be irreducible, and indeed usually won't be if this number is a good
+        satisfied by this number.
+
+        Note that the returned polynomial need not be irreducible, and
+        indeed usually will not be if this number is a good
         approximation to an algebraic number of degree less than `n`.
 
         ALGORITHM: Uses the PARI C-library :pari:`algdep` command.
@@ -1177,7 +1133,9 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - ``self`` -- a `p`-adic element
         - ``n`` -- integer
 
-        OUTPUT: polynomial; degree `n` polynomial approximately satisfied by ``self``
+        OUTPUT:
+
+        polynomial; degree `n` polynomial approximately satisfied by ``self``
 
         EXAMPLES::
 
@@ -1205,7 +1163,12 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: b = R2.zeta(); b.algebraic_dependency(4)
             x^4 - x^3 + x^2 - x + 1
         """
-        return self.algdep(n)
+        # TODO: figure out if this works for extension rings.
+        # If not, move this to padic_base_generic_element.
+        from sage.arith.misc import algebraic_dependency
+        return algebraic_dependency(self, n)
+
+    algdep = algebraic_dependency
 
     #def exp_artin_hasse(self):
     #    """
@@ -2400,7 +2363,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 inner_sum = R.zero()
                 for u in range(upper_u,0,-1):
                     # We want u to be a p-adic unit
-                    if u%p==0:
+                    if u % p == 0:
                         new_term = R.zero()
                     else:
                         new_term = ~R(u)
@@ -2959,6 +2922,14 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: x.exp(algorithm='generic')   # indirect doctest                       # needs sage.libs.ntl
             1 + w*7 + (4*w + 2)*7^2 + (w + 6)*7^3 + 5*7^4 + O(7^5)
 
+        TESTS:
+
+        Verify that :issue:`38037` is fixed::
+
+            sage: R.<a> = Zq(9)
+            sage: exp(R.zero())
+            1 + O(3^20)
+
         AUTHORS:
 
         - Genya Zaytman (2007-02-15)
@@ -2973,6 +2944,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         R=self.parent()
         p=self.parent().prime()
         e=self.parent().absolute_e()
+        if self._is_exact_zero():
+            return R.one()
         x_unit=self.unit_part()
         p_unit=R(p).unit_part().lift_to_precision()
         x_val=self.valuation()
@@ -2997,8 +2970,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         # we compute the value of N! as we go through the loop
         nfactorial_unit,nfactorial_val = R.one(),0
 
-        nmodp = N%p
-        for n in range(N,0,-1):
+        nmodp = N % p
+        for n in range(N, 0, -1):
             # multiply everything by x
             series_val += x_val
             series_unit *= x_unit
@@ -3514,7 +3487,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         ans = None
         if algorithm == "pari":
-            from sage.libs.pari.all import PariError
+            from cypari2.handle_error import PariError
             try:
                 # use pari
                 ans = parent(self.__pari__().sqrt())
@@ -4251,7 +4224,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         n = Integer(n)
 
         if z.valuation() < 0:
-            verbose("residue oo, using functional equation for reciprocal. %d %s"%(n,str(self)), level=2)
+            verbose("residue oo, using functional equation for reciprocal. %d %s" % (n, str(self)), level=2)
             return (-1)**(n+1)*(1/z).polylog(n)-(z.log(p_branch)**n)/K(n.factorial())
 
         zeta = K.teichmuller(z)
@@ -4260,7 +4233,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if zeta == 0:
             if z.precision_absolute() == PlusInfinity():
                 return K(0)
-            verbose("residue 0, using series. %d %s"%(n,str(self)), level=2)
+            verbose("residue 0, using series. %d %s" % (n, str(self)), level=2)
             M = ceil((prec/z.valuation()).log(p).n())
             N = prec - n*M
             ret = K(0)
@@ -4274,7 +4247,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if zeta == 1:
             if z == 1:
                 return Integer(2)**(n-1)*K(-1).polylog(n, p_branch=p_branch)/(1-Integer(2)**(n-1))
-            verbose("residue 1, using _polylog_res_1. %d %s"%(n,str(self)), level=2)
+            verbose("residue 1, using _polylog_res_1. %d %s" % (n, str(self)), level=2)
             return self._polylog_res_1(n, p_branch)
 
         # Set up precision bounds
@@ -4288,7 +4261,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         K = Qp(p, prec)
 
         # Residue disk around zeta
-        verbose("general case. %d %s"%(n, str(self)), level=2)
+        verbose("general case. %d %s" % (n, str(self)), level=2)
         Li_i_zeta = [0] + [p**i/(p**i-1)*gtr[i](1/(1-zeta)) for i in range(1,n+1)]
 
         T = PowerSeriesRing(K, default_prec=ceil(tsl), names='t')
@@ -4643,7 +4616,8 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
             k = r1 % p
             r1 = (r1 + k * q1) // p
             if use_longs: # Use Dwork expansion to compute p-adic Gamma
-                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2%q3, p, bd, k, q3)
+                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2 % q3,
+                                                  p, bd, k, q3)
                 s1 %= q3
             else:
                 s *= -evaluate_dwork_mahler(v, R1(r1)*d, p, bd, k)

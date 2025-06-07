@@ -142,7 +142,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             return repr_lincomb(zip(mons, cffs), strip_one=True)
 
     def _latex_(self):
-        """
+        r"""
         EXAMPLES::
 
             sage: H, (i,j,k) = sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)

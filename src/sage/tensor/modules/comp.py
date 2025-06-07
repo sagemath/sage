@@ -50,11 +50,7 @@ being some basis of the vector space::
     sage: from sage.tensor.modules.comp import Components
     sage: V = VectorSpace(QQ,3)
     sage: basis = V.basis() ; basis
-    [
-    (1, 0, 0),
-    (0, 1, 0),
-    (0, 0, 1)
-    ]
+    [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
     sage: c = Components(QQ, basis, 2) ; c
     2-indices components w.r.t. [
     (1, 0, 0),
@@ -236,7 +232,7 @@ In case of symmetries, only non-redundant components are stored::
     {(0, 1): 3}
 """
 
-# *****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015 Marco Mancini <marco.mancini@obspm.fr>
@@ -244,8 +240,8 @@ In case of symmetries, only non-redundant components are stored::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -290,11 +286,7 @@ class Components(SageObject):
         sage: from sage.tensor.modules.comp import Components
         sage: V = VectorSpace(QQ,3)
         sage: basis = V.basis() ; basis
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
         sage: c = Components(QQ, basis, 2) ; c
         2-indices components w.r.t. [
         (1, 0, 0),

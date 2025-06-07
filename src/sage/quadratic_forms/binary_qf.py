@@ -60,7 +60,8 @@ from sage.misc.cachefunc import cached_method
 
 
 try:
-    from sage.libs.pari.all import pari_gen, pari
+    from sage.libs.pari import pari
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -1213,7 +1214,7 @@ class BinaryQF(SageObject):
             self._cycle_list = C
         return self._cycle_list
 
-    def is_positive_definite(self):
+    def is_positive_definite(self) -> bool:
         """
         Return ``True`` if ``self`` is positive definite, i.e., has
         negative discriminant with `a > 0`.
@@ -1231,7 +1232,7 @@ class BinaryQF(SageObject):
 
     is_posdef = is_positive_definite
 
-    def is_negative_definite(self):
+    def is_negative_definite(self) -> bool:
         """
         Return ``True`` if ``self`` is negative definite, i.e., has
         negative discriminant with `a < 0`.
@@ -1248,7 +1249,7 @@ class BinaryQF(SageObject):
 
     is_negdef = is_negative_definite
 
-    def is_indefinite(self):
+    def is_indefinite(self) -> bool:
         """
         Return whether ``self`` is indefinite, i.e., has positive discriminant.
 
@@ -1262,7 +1263,7 @@ class BinaryQF(SageObject):
 
     is_indef = is_indefinite
 
-    def is_singular(self):
+    def is_singular(self) -> bool:
         """
         Return whether ``self`` is singular, i.e., has zero discriminant.
 
@@ -1277,7 +1278,7 @@ class BinaryQF(SageObject):
         """
         return self.discriminant().is_zero()
 
-    def is_nonsingular(self):
+    def is_nonsingular(self) -> bool:
         """
         Return whether this form is nonsingular, i.e., has nonzero discriminant.
 
@@ -1292,7 +1293,7 @@ class BinaryQF(SageObject):
         """
         return not self.discriminant().is_zero()
 
-    def is_equivalent(self, other, proper=True):
+    def is_equivalent(self, other, proper=True) -> bool:
         """
         Return whether ``self`` is equivalent to ``other``.
 
@@ -1422,7 +1423,7 @@ class BinaryQF(SageObject):
         return False
 
     @cached_method
-    def is_reduced(self):
+    def is_reduced(self) -> bool:
         r"""
         Return whether ``self`` is reduced.
 
@@ -1646,7 +1647,7 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF([1, 0, 12345])
             sage: n = 2^99 + 5273
             sage: Q.solve_integer(n)                                                    # needs sage.libs.pari
-            (-67446480057659, 7139620553488)
+            (67446480057659, 7139620553488)
             sage: Q.solve_integer(n, algorithm='cornacchia')                            # needs sage.libs.pari
             (67446480057659, 7139620553488)
             sage: timeit('Q.solve_integer(n)')                          # not tested
@@ -1661,7 +1662,7 @@ class BinaryQF(SageObject):
             sage: Qs
             [x^2 + x*y + 6*y^2, 2*x^2 - x*y + 3*y^2, 2*x^2 + x*y + 3*y^2]
             sage: [Q.solve_integer(3) for Q in Qs]
-            [None, (0, -1), (0, -1)]
+            [None, (0, 1), (0, 1)]
             sage: [Q.solve_integer(5) for Q in Qs]
             [None, None, None]
             sage: [Q.solve_integer(6) for Q in Qs]
@@ -1741,11 +1742,11 @@ class BinaryQF(SageObject):
             sage: # needs sage.libs.pari
             sage: Q = BinaryQF([1, 0, 5])
             sage: Q.solve_integer(126, _flag=1)
-            [(11, -1), (-1, -5), (-1, 5), (-11, -1)]
+            [(-11, -1), (-1, -5), (-1, 5), (11, -1)]
             sage: Q.solve_integer(126, _flag=2)
             (11, -1)
             sage: Q.solve_integer(126, _flag=3)
-            [(11, -1), (-1, -5), (-1, 5), (-11, -1), (-9, -3), (9, -3)]
+            [(-11, -1), (-9, -3), (-1, -5), (-1, 5), (9, -3), (11, -1)]
         """
         if self.is_negative_definite():  # not supported by PARI
             return (-self).solve_integer(-n)

@@ -1550,8 +1550,7 @@ class WordMorphism(SageObject):
         for image in self.images():
             if not dom_alphabet <= set(image):
                 return False
-        else:
-            return True
+        return True
 
     def is_primitive(self):
         r"""

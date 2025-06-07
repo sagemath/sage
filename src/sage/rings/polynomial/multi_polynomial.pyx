@@ -468,7 +468,7 @@ cdef class MPolynomial(CommutativePolynomial):
         del Z[ind]
 
         # Make polynomial ring over all variables except var.
-        S = R.base_ring()[tuple(Z)]
+        S = PolynomialRing(R.base_ring(), Z)
         ring = S[var]
         if not self:
             return ring(0)
@@ -784,7 +784,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 P = P.change_ring(names=P.variable_names() + [str(var)])
                 return P(self)._homogenize(len(V))
 
-        elif isinstance(var, int) or isinstance(var, Integer):
+        elif isinstance(var, (int, Integer)):
             if 0 <= var < P.ngens():
                 return self._homogenize(var)
             else:
@@ -884,7 +884,7 @@ cdef class MPolynomial(CommutativePolynomial):
         except AttributeError:
             raise NotImplementedError
         else:
-            q, r = quo_rem(other)
+            _, r = quo_rem(other)
             return r
 
     def change_ring(self, R):
@@ -2001,31 +2001,39 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives
+        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives,
+          or a single polynomial
 
         OUTPUT: a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
-           1/16*x1 + 3/16
-           sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
-           1
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
+            1/16*x1 + 3/16
+            sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
+            1
 
         Test a non-invertible element::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + x2
-           sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
-           Traceback (most recent call last):
-           ...
-           ArithmeticError: element is non-invertible
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + x2
+            sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is non-invertible
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: x.inverse_mod(x*y-1)
+            y
         """
         P = self.parent()
-        B = I.gens()
+        from sage.rings.ideal import Ideal_generic
+        B = I.gens() if isinstance(I, Ideal_generic) else (I,)
         try:
             XY = P.one().lift((self,) + tuple(B))
             return P(XY[0])
@@ -2422,7 +2430,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,h> = PolynomialRing(QQ)
             sage: f = 19*x^8 - 262*x^7*h + 1507*x^6*h^2 - 4784*x^5*h^3 + 9202*x^4*h^4\
-             -10962*x^3*h^5 + 7844*x^2*h^6 - 3040*x*h^7 + 475*h^8
+            ....: -10962*x^3*h^5 + 7844*x^2*h^6 - 3040*x*h^7 + 475*h^8
             sage: f.reduced_form(prec=200, smallest_coeffs=False)                       # needs sage.modules sage.rings.complex_interval_field
             (
             -x^8 - 2*x^7*h + 7*x^6*h^2 + 16*x^5*h^3 + 2*x^4*h^4 - 2*x^3*h^5 + 4*x^2*h^6 - 5*h^8,
@@ -2566,7 +2574,6 @@ cdef class MPolynomial(CommutativePolynomial):
 
         prec = kwds.get('prec', 300)
         return_conjugation = kwds.get('return_conjugation', True)
-        error_limit = kwds.get('error_limit', 0.000001)
         emb = kwds.get('emb', None)
 
         # getting a numerical approximation of the roots of our polynomial
@@ -2606,7 +2613,8 @@ cdef class MPolynomial(CommutativePolynomial):
             # since we are searching anyway, don't need the 'true' reduced covariant
             from sage.rings.polynomial.binary_form_reduce import smallest_poly
             norm_type = kwds.get('norm_type', 'norm')
-            sm_F, sm_m = smallest_poly(self(tuple(M * vector([x,y]))), prec=prec, norm_type=norm_type, emb=emb)
+            _, sm_m = smallest_poly(self(tuple(M * vector([x, y]))), prec=prec,
+                                    norm_type=norm_type, emb=emb)
             M = M*sm_m
         else:
             # solve the minimization problem for 'true' covariant
@@ -2631,7 +2639,7 @@ cdef class MPolynomial(CommutativePolynomial):
             return (self(tuple(M * vector([x,y]))), M)
         return self(tuple(M * vector([x,y])))
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a unit, that is, has a
         multiplicative inverse.
@@ -2891,8 +2899,24 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return result(True)
 
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
 
-def _is_M_convex_(points):
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]
+            sage: (-2*x^2+3*x+5*y).canonical_associate()
+            (x^2 - 3/2*x - 5/2*y, -2)
+            sage: R.<x,y>=ZZ[]
+            sage: (-2*x^2+3*x+5*y).canonical_associate()
+            (2*x^2 - 3*x - 5*y, -1)
+        """
+        lc = self.leading_coefficient()
+        n, u = lc.canonical_associate()
+        return (u.inverse_of_unit() * self, u)
+
+def _is_M_convex_(points) -> bool:
     r"""
     Return whether ``points`` represents a set of integer lattice points
     which are M-convex.
@@ -2961,7 +2985,6 @@ def _is_M_convex_(points):
         for p2 in points_set:
             if p2 == p1:
                 continue
-            delta = list(x2 - x1 for x1, x2 in zip(p1, p2))
             for i in range(dim):
                 if p2[i] > p1[i]:
                     # modify list_p1 to represent point p1 + e_i - e_j for various i, j

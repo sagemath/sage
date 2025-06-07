@@ -823,7 +823,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
         return Family(self._indices, self.monomial, name="monomial map")
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple whose entries are the generators for this
         object, in some order.

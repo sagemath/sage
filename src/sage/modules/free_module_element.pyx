@@ -104,13 +104,13 @@ This is a test from :issue:`20211`::
     [1]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
@@ -1055,7 +1055,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: pari(L)                                                               # needs sage.libs.pari
             [[0, 1, 2, 3], [0, 1, 8, 27], [0, 1, 32, 243]]
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return pari(self.list())
 
     def _pari_init_(self):
@@ -2214,8 +2214,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             else:
                 sep=", "
             entry = S[i]
-            #if i > 0:
-            #    entry = " "*(width-len(entry)) + entry
+            # if i > 0:
+            #     entry = " "*(width-len(entry)) + entry
             s = s + entry + sep
         s = s + ")"
         return s
@@ -2339,9 +2339,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 e[i] = c
         return e
 
-    #############################
+    # ############################
     # Plotting
-    #############################
+    # ############################
     def plot(self, plot_type=None, start=None, **kwds):
         """
         INPUT:
@@ -3619,9 +3619,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ArithmeticError: degrees (1 and 2) must be the same
         """
-        return (self.conjugate()).dot_product(right)
+        return self.conjugate().dot_product(right)
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if this is a dense vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3639,7 +3639,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_dense_c(self) noexcept:
         return self.parent().is_dense()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if this is a sparse vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3657,7 +3657,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_sparse_c(self) noexcept:
         return self.parent().is_sparse()
 
-    def is_vector(self):
+    def is_vector(self) -> bool:
         """
         Return ``True``, since this is a vector.
 
@@ -4272,9 +4272,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         return vector(coeffs)
 
 
-#############################################
+# ############################################
 # Generic dense element
-#############################################
+# ############################################
 
 @cython.binding(True)
 def make_FreeModuleElement_generic_dense(parent, entries, degree):
@@ -4734,9 +4734,9 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         return vector(CallableSymbolicExpressionRing(args), self.list())
 
 
-#############################################
+# ############################################
 # Generic sparse element
-#############################################
+# ############################################
 
 @cython.binding(True)
 def make_FreeModuleElement_generic_sparse(parent, entries, degree):

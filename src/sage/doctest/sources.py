@@ -85,7 +85,17 @@ def get_basename(path):
         sage: import os
         sage: get_basename(sage.doctest.sources.__file__)
         'sage.doctest.sources'
+
+    ::
+
+        sage: # optional - !meson_editable
         sage: get_basename(os.path.join(sage.structure.__path__[0], 'element.pxd'))
+        'sage.structure.element.pxd'
+
+    TESTS::
+
+        sage: # optional - meson_editable
+        sage: get_basename(os.path.join(os.path.dirname(sage.structure.__file__), 'element.pxd'))
         'sage.structure.element.pxd'
     """
     if path is None:
@@ -749,11 +759,11 @@ class FileDocTestSource(DocTestSource):
 
             sage: import sys
             sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: gp.get_precision() == 38                                              # needs sage.libs.pari
+            sage: sys.maxsize == 2^63 - 1
             False # 32-bit
             True  # 64-bit
             sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')                          # needs sage.libs.pari
+            sage: ((bitness == '64' and ex.want == 'True  \n')
             ....:  or (bitness == '32' and ex.want == 'False \n'))
             True
 

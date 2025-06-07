@@ -35,9 +35,9 @@ REFERENCES:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
 from sage.rings.polynomial.polynomial_element_generic import Polynomial_generic_sparse
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class TropicalPolynomial(Polynomial_generic_sparse):
@@ -107,7 +107,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
         [1, 1]
 
     Even though every tropical polynomials have tropical roots, this does not
-    neccessarily means it can be factored into its linear factors::
+    necessarily means it can be factored into its linear factors::
 
         sage: p1.factor()
         (0) * (0*x^3 + 4*x + 1)
@@ -371,9 +371,9 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             sage: p3.piecewise_function()
             3*x + 1
         """
-        from sage.symbolic.ring import SR
         from sage.functions.piecewise import piecewise
         from sage.sets.real_set import RealSet
+        from sage.symbolic.ring import SR
 
         x = SR.var('x')
         data = self.monomial_coefficients()
@@ -506,7 +506,7 @@ class TropicalPolynomial(Polynomial_generic_sparse):
             ...
             ValueError: expected 2 inputs for xmin and xmax, but got 1
 
-        Error also occured when ``xmin`` is greater or equal than``xmax``::
+        Error also occurred when ``xmin`` is greater or equal than``xmax``::
 
             sage: plot(p1, 5, 3)
             Traceback (most recent call last):
@@ -769,9 +769,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
         return self.gens()[n]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
-        Return a tuple whose entries are the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 
@@ -930,9 +930,9 @@ class TropicalPolynomialSemiring(UniqueRepresentation, Parent):
             ...
             ValueError: the slope is not an integer
 
-        For max-plus algebra, the slope of the componenets has to be
+        For max-plus algebra, the slope of the components has to be
         increasing as we move from left to right. Conversely for min-plus
-        algebra, the slope of the componenets has to be decreasing from
+        algebra, the slope of the components has to be decreasing from
         left to right::
 
             sage: T = TropicalSemiring(QQ, use_min=False)

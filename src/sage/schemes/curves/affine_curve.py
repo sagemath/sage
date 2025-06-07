@@ -141,7 +141,6 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
@@ -1593,10 +1592,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         t = 0
         # loop through the patches and blow up each until no patch has singular points
         while not_resolved:
-            [BC, t_maps, pi, pts] = [res[t][0], res[t][1], res[t][2], res[t][3]]
+            BC, t_maps, pi, pts = res[t][0], res[t][1], res[t][2], res[t][3]
             # check if there are any singular points in this patch
             if not pts:
-                t = t + 1
+                t += 1
                 if t == len(res):
                     not_resolved = False
                 continue
@@ -1763,7 +1762,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def has_vertical_asymptote(self):
+    def has_vertical_asymptote(self) -> bool:
         """
         Check if the curve is not a line and has vertical asymptotes.
 
@@ -1783,7 +1782,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         dxy = f.coefficient({y: dy}).degree()
         return dxy > 0 and f.degree() > 1
 
-    def is_vertical_line(self):
+    def is_vertical_line(self) -> bool:
         """
         Check if the curve is a vertical line.
 

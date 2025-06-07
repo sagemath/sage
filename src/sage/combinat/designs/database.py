@@ -1058,8 +1058,8 @@ def OA_11_185():
     assert all(len(B) in (11,13) or set(B) == set(special_set) for B in PBD)
 
     OA = OA_from_PBD(11,185,[B for B in PBD if len(B) < 17],check=False)[:-185]
-    OA.extend([[i]*11 for i in range(185) if i not in special_set])
-    OA.extend([[special_set[x] for x in B] for B in orthogonal_array(11,17)])
+    OA.extend([i]*11 for i in range(185) if i not in special_set)
+    OA.extend([special_set[x] for x in B] for B in orthogonal_array(11,17))
     return OA
 
 
@@ -1126,7 +1126,7 @@ def OA_10_205():
     GDD = [[relabel[xx] for xx in B if xx in relabel] for B in pplane if p not in B]
 
     # We turn the GDD into a PBD by extending the groups with a new point 204.
-    GDD.extend([[relabel[xx] for xx in G]+[204] for G in groups])
+    GDD.extend([relabel[xx] for xx in G]+[204] for G in groups)
 
     # We build the OA, knowing that the blocks of size 9 are disjoint
     blocks_of_size_9 = [B for B in GDD if len(B) == 9]
@@ -1134,13 +1134,13 @@ def OA_10_205():
 
     OA = OA_from_PBD(10,205,[B for B in GDD if len(B) != 9],check=False)[:-205]
 
-    OA.extend([[B[xx] for xx in R]
-               for R in orthogonal_array(10,9)
-               for B in blocks_of_size_9])
+    OA.extend([B[xx] for xx in R]
+              for R in orthogonal_array(10,9)
+              for B in blocks_of_size_9)
 
     # The missing [i,i,...] blocks
-    OA.extend([[i]*10
-               for i in set(range(205)).difference(blocks_of_size_9_union)])
+    OA.extend([i]*10
+              for i in set(range(205)).difference(blocks_of_size_9_union))
 
     return OA
 
@@ -1627,7 +1627,8 @@ def OA_10_796():
     OA = OA_relabel(OA,17,47,blocks=[OA[0]]) # making sure [46]*17 is a block
     PBD = [[i*47+x for i,x in enumerate(B) if (x < 46 or i < 13)] for B in OA]
     extra_point = 10000
-    PBD.extend([list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point] for i in range(17)]) # Adding the columns
+    PBD.extend(list(range(i*47,(i+1)*47-int(i >= 13)))+[extra_point]
+               for i in range(17))  # Adding the columns
 
     rel = {v:i for i,v in enumerate(set(range(17*47)).difference([(i+1)*47-1 for i in range(13,17)]))}
     rel[extra_point] = len(rel)
@@ -1645,7 +1646,7 @@ def OA_10_796():
     for B in PBD:
         if len(B) >= 47:
             B.sort(key=lambda x:int(x == extra_point))
-            OA.extend([[B[i] for i in BB] for BB in iOA[len(B)]])
+            OA.extend([B[i] for i in BB] for BB in iOA[len(B)])
             span.update(B[:-1])
         else:
             others.append(B)
@@ -2374,11 +2375,11 @@ def QDM_35_7_1_1_7():
     M = [
         [None,None,None,None,None,None,None],
         [   0,   0,   0,   0,   0,   0,   0],
-        [  18, -18,  11, -11,   5,  -5,   4],
+        [  18, -18,  11, -11,   5, -5,   4],
         [  26, -26,  10, -10,  30, -30,  23],
-        [  20, -20,   3,  -3,  33, -33,  23],
-        [   5,  -5,  25, -25,  24, -24,   4],
-        [  17, -17,   4,  -4,  22, -22,   0]
+        [  20, -20,   3, -3,  33, -33,  23],
+        [   5, -5,  25, -25,  24, -24,   4],
+        [  17, -17,   4, -4,  22, -22,   0]
         ]
 
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing as AdditiveCyclic
@@ -2415,10 +2416,10 @@ def QDM_45_7_1_1_9():
     M = [
         [None,None,None,None,None,None,None,None,None],
         [   0,   0,   0,   0,   0,   0,   0,   0,   0],
-        [   1,  27,  16,   7,  -1, -27, -16,  -7,   3],
-        [  24,  40,   1,  35, -24, -40,  -1, -35,   7],
+        [   1,  27,  16,   7, -1, -27, -16, -7,   3],
+        [  24,  40,   1,  35, -24, -40, -1, -35,   7],
         [  10,  30,  22,  44, -10, -30, -22, -44,   7],
-        [   5,  18,  14,  33,  -5, -18, -14, -33,   3],
+        [   5,  18,  14,  33, -5, -18, -14, -33,   3],
         [  30,  16,  33,  27, -30, -16, -33, -27,   0],
         ]
 

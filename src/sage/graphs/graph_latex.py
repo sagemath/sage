@@ -429,7 +429,7 @@ Visit 'https://www.ctan.org/pkg/tkz-berge'.
 """)
 
 
-def have_tkz_graph():
+def have_tkz_graph() -> bool:
     r"""
     Return ``True`` if the proper LaTeX packages for the ``tikzpicture``
     environment are installed in the user's environment, namely ``tikz``,
@@ -1201,7 +1201,7 @@ class GraphLatex(SageObject):
                     raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
-                        if not (type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and (p not in label_places):
+                        if not (isinstance(p, (float, RealLiteral)) and (0 <= p <= 1)) and (p not in label_places):
                             raise ValueError('%s option for %s needs to be a number between 0.0 and 1.0 or a place (like "above"), not %s' % (name, key, p))
             elif name == 'loop_placements':
                 if not isinstance(value, dict):

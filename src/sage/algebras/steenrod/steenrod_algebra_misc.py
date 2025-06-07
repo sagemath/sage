@@ -413,7 +413,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         sage: normalize_profile(lambda n: 3, precision=4, truncation_type=0)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid profile
+        ValueError: invalid profile
         sage: normalize_profile(lambda n: 3, precision=4, truncation_type = Infinity)
         ((3, 3, 3), +Infinity)
 
@@ -457,7 +457,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         sage: normalize_profile([[0,0,0], [1,2,3,2,1]], p=11)
         Traceback (most recent call last):
         ...
-        ValueError: Invalid profile
+        ValueError: invalid profile
     """
     from sage.rings.infinity import Infinity
     if truncation_type == 'zero':
@@ -500,7 +500,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         if is_valid_profile(new_profile, truncation_type, p):
             return new_profile, truncation_type
         else:
-            raise ValueError("Invalid profile")
+            raise ValueError("invalid profile")
     else: # p odd
         if profile is None or profile == Infinity:
             # no specified profile or infinite profile: return profile
@@ -560,14 +560,14 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         if is_valid_profile(new_profile, truncation_type, p, generic=True):
             return new_profile, truncation_type
         else:
-            raise ValueError("Invalid profile")
+            raise ValueError("invalid profile")
 
 ######################################################
 # string representations for elements
 
 
 def milnor_mono_to_string(mono, latex=False, generic=False):
-    """
+    r"""
     String representation of element of the Milnor basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -720,7 +720,7 @@ def serre_cartan_mono_to_string(mono, latex=False, generic=False):
 
 
 def wood_mono_to_string(mono, latex=False):
-    """
+    r"""
     String representation of element of Wood's Y and Z bases.
 
     This is used by the _repr_ and _latex_ methods.
@@ -806,7 +806,7 @@ def wall_mono_to_string(mono, latex=False):
 
 
 def wall_long_mono_to_string(mono, latex=False):
-    """
+    r"""
     Alternate string representation of element of Wall's basis.
 
     This is used by the _repr_ and _latex_ methods.
@@ -891,7 +891,7 @@ def arnonA_mono_to_string(mono, latex=False, p=2):
 
 
 def arnonA_long_mono_to_string(mono, latex=False, p=2):
-    """
+    r"""
     Alternate string representation of element of Arnon's A basis.
 
     This is used by the _repr_ and _latex_ methods.

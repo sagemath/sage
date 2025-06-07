@@ -116,7 +116,7 @@ lazy_import('sage.rings.number_field.number_field_ideal', 'NumberFieldFractional
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.qqbar', 'number_field_elements_from_algebraics')
 
-from sage.libs.pari.all import PariError
+from cypari2.handle_error import PariError
 
 
 class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
@@ -1791,7 +1791,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y> = ProjectiveSpace(K,1)
             sage: f = DynamicalSystem_projective([1/3*x^2+1/a*y^2, y^2])
             sage: f.primes_of_bad_reduction()                                           # needs sage.rings.function_field
-            [Fractional ideal (a), Fractional ideal (3)]
+            [Fractional ideal (-a), Fractional ideal (3)]
 
         This is an example where ``check=False`` returns extra primes::
 
@@ -2117,9 +2117,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                                 h = max([R(emb(c).abs()) for c in poly.coefficients()])
                         else: #non-archimedean
                             if BR == QQ:
-                                h = max([R(v)**(-R(c.valuation(v)))  for c in poly.coefficients()])
+                                h = max(R(v)**(-R(c.valuation(v))) for c in poly.coefficients())
                             else:
-                                h = max([R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients()])
+                                h = max(R(c.abs_non_arch(v, prec=prec)) for c in poly.coefficients())
                         maxh = max(h, maxh)
             if maxh == 0:
                 maxh = 1  #avoid division by 0
@@ -2259,10 +2259,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         ::
 
-            sage: RSA768 = 123018668453011775513049495838496272077285356959533479219732245215\
-            ....: 1726400507263657518745202199786469389956474942774063845925192557326303453731548\
-            ....: 2685079170261221429134616704292143116022212404792747377940806653514195974598569\
-            ....: 02143413
+            sage: RSA768 = Integer('123018668453011775513049495838496272077285356959533479219732245215'
+            ....: '1726400507263657518745202199786469389956474942774063845925192557326303453731548'
+            ....: '2685079170261221429134616704292143116022212404792747377940806653514195974598569'
+            ....: '02143413')
             sage: P.<x,y> = ProjectiveSpace(QQ,1)
             sage: f = DynamicalSystem_projective([RSA768*x^2 + y^2, x*y])
             sage: Q = P(RSA768,1)
@@ -4997,7 +4997,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         r"""
         Compute the ``n`` multiplier spectra of this dynamical system.
 
-        This is the set of multipliers of all peroidic points of
+        This is the set of multipliers of all periodic points of
         period ``n`` included with the appropriate multiplicity.
         User can also specify to compute the formal ``n`` multiplier spectra
         instead which includes the multipliers of all formal periodic points
@@ -5413,7 +5413,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             \prod_{P \text{ period n}} ( w - c(P,t)),
 
-        where `c(P,t)` is the charateristic polynomial (variable `t`) of the
+        where `c(P,t)` is the characteristic polynomial (variable `t`) of the
         multiplier at `P`. Note that in dimension 1, only the coefficients
         of the constant term is returned.
 
@@ -6843,14 +6843,14 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
     def Lattes_to_curve(self, return_conjugation=False, check_lattes=False):
         r"""
         Finds a Short Weierstrass Model Elliptic curve of self
-        self assumed to be Lattes map and not in charateristic 2 or 3
+        self assumed to be Lattes map and not in characteristic 2 or 3
 
         INPUT:
 
         ``return_conjugation`` -- (default: ``False``) if ``True``, then
         return the conjugation that moves self to a map that comes from a
         Short Weierstrass Model Elliptic curve
-        ``check_lattes``.-.(default:.``False``) if ``True``, then  will ValueError if not Lattes
+        ``check_lattes`` -- (default: ``False``) if ``True``, then  will ValueError if not Lattes
 
         OUTPUT: a Short Weierstrass Model Elliptic curve which is isogenous to
         the Elliptic curve of 'self',
