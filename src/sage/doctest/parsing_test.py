@@ -87,6 +87,19 @@ def test_parse_known_bug_with_description_returns_empty():
     parsed = parser.parse("sage: x = int('1'*4301) # known bug, #34506")
     assert parsed == ["", ""]
 
+def test_parse_abs_tolerance():
+    parser = SageDocTestParser(("sage",))
+    input = textwrap.dedent(
+        """
+        sage: print("1.00001")   # abs tol 1e-5
+            1.0
+        """
+    )
+    parsed = parser.parse(input)[1]
+    assert isinstance(parsed, doctest.Example)
+    assert parsed.want == MarkedOutput("    1.0\n").update(
+        abs_tol=1e-05
+    )
 
 def test_parse_bitness():
     parser = SageDocTestParser(("sage",))
