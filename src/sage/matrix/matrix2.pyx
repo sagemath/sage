@@ -1163,6 +1163,27 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solution
+
+        Random testing::
+
+            sage: n = randrange(1,100)
+            sage: m = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(m)] for _ in range(n)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(m)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^n))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^n).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_smith_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
         """
         S,U,V = self.smith_form()
 
@@ -1245,6 +1266,27 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solution
+
+        Random testing::
+
+            sage: n = randrange(1,100)
+            sage: m = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(m)] for _ in range(n)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(m)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^n))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^n).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_hermite_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
         """
         H,U = self.transpose().hermite_form(transformation=True)
         H = H.transpose()
