@@ -1251,22 +1251,27 @@ cdef class Matrix(Matrix1):
         U = U.transpose()
 
         n,m = self.dimensions()
-        k = min(n,m)
         r = B.ncols()
 
         from sage.matrix.constructor import matrix
         X_ = matrix(self.base_ring(), m, r)
-        for i in range(k):
-            v = B[i,:]
-            v -= H[i,:i] * X_[:i]
-            if v:
-                try:
-                    X_[i] = v / H[i][i]
-                except (ZeroDivisionError, TypeError):
+        j = 0  # current column
+        for i in range(n):
+            if j < m and H[i,j]:
+                # pivot for column j is in row i
+                v = B[i,:]
+                v -= H[i,:j] * X_[:j]
+                if v:
+                    try:
+                        X_[j] = v / H[i,j]
+                    except TypeError:
+                        raise ValueError("matrix equation has no solutions")
+                j += 1
+            else:
+                # pivot for column j is below row i
+                assert not H[i,j:]
+                if H[i] * X_ != B[i]:
                     raise ValueError("matrix equation has no solutions")
-
-        if B[k:] != H[k:] * X_:
-            raise ValueError("matrix equation has no solution")
 
         return U * X_
 
