@@ -330,10 +330,10 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9]).__repr__()
             'Gaussian Hidden Markov Model with 2 States\nTransition matrix:\n[0.1 0.9]\n[0.5 0.5]\nEmission parameters:\n[(1.0, 0.5), (-1.0, 3.0)]\nInitial probabilities: [0.1000, 0.9000]'
         """
-        s = "Gaussian Hidden Markov Model with %s States"%self.N
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission parameters:\n%s'%self.emission_parameters()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s = "Gaussian Hidden Markov Model with %s States" % self.N
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission parameters:\n%s' % self.emission_parameters()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         return s
 
     def generate_sequence(self, Py_ssize_t length, starting_state=None):
@@ -421,7 +421,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         else:
             q = starting_state
             if q < 0 or q>= self.N:
-                raise ValueError("starting state must be between 0 and %s"%(self.N-1))
+                raise ValueError("starting state must be between 0 and %s" % (self.N-1))
 
         states._values[0] = q
         obs._values[0] = self.random_sample(q, rstate)
@@ -1143,10 +1143,10 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
             sage: hmm.GaussianMixtureHiddenMarkovModel([[.9,.1],[.4,.6]], [[(.4,(0,1)), (.6,(1,0.1))],[(1,(0,1))]], [.7,.3]).__repr__()
             'Gaussian Mixture Hidden Markov Model with 2 States\nTransition matrix:\n[0.9 0.1]\n[0.4 0.6]\nEmission parameters:\n[0.4*N(0.0,1.0) + 0.6*N(1.0,0.1), 1.0*N(0.0,1.0)]\nInitial probabilities: [0.7000, 0.3000]'
         """
-        s = "Gaussian Mixture Hidden Markov Model with %s States"%self.N
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission parameters:\n%s'%self.emission_parameters()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s = "Gaussian Mixture Hidden Markov Model with %s States" % self.N
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission parameters:\n%s' % self.emission_parameters()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         return s
 
     def __reduce__(self):
