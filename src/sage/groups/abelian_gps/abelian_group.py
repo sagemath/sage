@@ -1144,6 +1144,33 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             Traceback (most recent call last):
             ...
             TypeError: Abelian group must be finite
+
+        Check that :issue:`39890` is fixed::
+
+            sage: G = AbelianGroup([6])
+            sage: H = G.permutation_group()
+            sage: tuple(gen.order() for gen in H.gens())
+            (6,)
+            sage: G = AbelianGroup([2, 5, 6, 4])
+            sage: H = G.permutation_group()
+            sage: tuple(gen.order() for gen in H.gens())
+            (2, 5, 6, 4)
+            sage: G = AbelianGroup([2, 5, 6, 1, 4])
+            sage: H = G.permutation_group()
+            sage: tuple(gen.order() for gen in H.gens())
+            (2, 5, 6, 1, 4)
+            sage: G = AbelianGroup([1])
+            sage: H = G.permutation_group()
+            sage: tuple(gen.order() for gen in H.gens())
+            (1,)
+            sage: G = AbelianGroup([2, 3, 2])
+            sage: H = G.permutation_group()
+            sage: tuple(gen.order() for gen in H.gens())
+            (2, 3, 2)
+            sage: G = AbelianGroup([2, 1, 1, 2])
+            sage: H = G.permutation_group()
+            sage: tuple(gen.order() for gen in H.gens())
+            (2, 1, 1, 2)
         """
         # GAP does not support infinite permutation groups
         if not self.is_finite():
