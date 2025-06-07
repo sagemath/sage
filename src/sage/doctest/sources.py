@@ -292,6 +292,7 @@ class DocTestSource:
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.util import NestedName
+            sage: import sage.doctest.sources
             sage: filename = sage.doctest.sources.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: FDS.qualified_name = NestedName('sage.doctest.sources')

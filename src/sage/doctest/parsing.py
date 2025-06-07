@@ -85,6 +85,9 @@ optional_file_directive_regex: Pattern[str] = re.compile(
 bitness_marker = re.compile('#.*(32|64)-bit')
 bitness_value = 64 if sys.maxsize > (1 << 32) else 32
 
+random_marker = re.compile('.*random', re.I)
+tolerance_pattern = re.compile(r'\b((?:abs(?:olute)?)|(?:rel(?:ative)?))? *?tol(?:erance)?\b( +[0-9.e+-]+)?')
+
 
 @overload
 def parse_optional_tags(string: str) -> dict[str, Union[str, None]]:
@@ -549,26 +552,26 @@ def update_optional_tags(line, tags=None, *, add_tags=None, remove_tags=None, fo
     return line
 
 
-def parse_tolerance(source: str, want: str) -> str | MarkedOutput:
+def parse_marked_output(source: str, want: str) -> str | MarkedOutput:
     r"""
-    Return a version of ``want`` marked up with the tolerance tags
+    Return a version of ``want`` marked up with the special tags
     specified in ``source``.
 
     INPUT:
 
-    - ``source`` -- string, the source of a doctest
-    - ``want`` -- string, the desired output of the doctest
+    - ``source`` -- the source of a doctest
+    - ``want`` -- the desired output of the doctest
 
-    OUTPUT: ``want`` if there are no tolerance tags specified; a
+    OUTPUT: ``want`` if there are no tags specified; a
     :class:`MarkedOutput` version otherwise
 
     EXAMPLES::
 
-        sage: from sage.doctest.parsing import parse_tolerance
-        sage: marked = parse_tolerance("sage: s.update(abs_tol = .0000001)", "")
+        sage: from sage.doctest.parsing import parse_marked_output
+        sage: marked = parse_marked_output("sage: s.update(abs_tol = .0000001)", "")
         sage: type(marked)
         <class 'str'>
-        sage: marked = parse_tolerance("sage: s.update(tol = 0.1); s.rel_tol # abs tol     0.01 ", "")
+        sage: marked = parse_marked_output("sage: s.update(tol = 0.1); s.rel_tol # abs tol     0.01 ", "")
         sage: marked.tol
         0
         sage: marked.rel_tol
@@ -576,10 +579,6 @@ def parse_tolerance(source: str, want: str) -> str | MarkedOutput:
         sage: marked.abs_tol
         0.010000000000000000000...?
     """
-    # regular expressions
-    random_marker = re.compile('.*random', re.I)
-    tolerance_pattern = re.compile(r'\b((?:abs(?:olute)?)|(?:rel(?:ative)?))? *?tol(?:erance)?\b( +[0-9.e+-]+)?')
-
     safe, literals, state = strip_string_literals(source)
     first_line = safe.split('\n', 1)[0]
     if '#' not in first_line:
@@ -688,6 +687,7 @@ class OriginalSource:
 
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.control import DocTestDefaults
+        sage: import sage.doctest.forker
         sage: filename = sage.doctest.forker.__file__
         sage: FDS = FileDocTestSource(filename, DocTestDefaults())
         sage: doctests, extras = FDS.create_doctests(globals())
@@ -713,6 +713,7 @@ class OriginalSource:
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
+            sage: import sage.doctest.forker
             sage: filename = sage.doctest.forker.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -729,6 +730,7 @@ class OriginalSource:
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
+            sage: import sage.doctest.forker
             sage: filename = sage.doctest.forker.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -747,6 +749,7 @@ class OriginalSource:
 
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
+            sage: import sage.doctest.forker
             sage: filename = sage.doctest.forker.__file__
             sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -798,6 +801,7 @@ class SageDocTestParser(doctest.DocTestParser):
 
         TESTS::
 
+            sage: from sage.misc.sage_unittest import TestSuite
             sage: TestSuite(DTP).run()
         """
         self.long = long
@@ -1166,18 +1170,17 @@ class SageDocTestParser(doctest.DocTestParser):
                     item.want = item.want.replace(ellipsis_tag, "...")
                     if item.exc_msg is not None:
                         item.exc_msg = item.exc_msg.replace(ellipsis_tag, "...")
-                item.want = parse_tolerance(item.source, item.want)
+                item.want = parse_marked_output(item.source, item.want)
                 if item.source.startswith("sage: "):
                     item.sage_source = item.source[6:]
                     if item.sage_source.lstrip().startswith('#'):
                         continue
                     item.source = preparse(item.sage_source)
-            else:
-                if '\n' in item:
-                    check_and_clear_tag_counts()
-                    persistent_optional_tags = self.file_optional_tags
-                    persistent_optional_tag_setter = first_example_in_block = None
-                    persistent_optional_tag_setter_index = first_example_in_block_index = None
+            elif '\n' in item:
+                check_and_clear_tag_counts()
+                persistent_optional_tags = self.file_optional_tags
+                persistent_optional_tag_setter = first_example_in_block = None
+                persistent_optional_tag_setter_index = first_example_in_block_index = None
             filtered.append(item)
 
         check_and_clear_tag_counts()

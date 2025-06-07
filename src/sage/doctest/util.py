@@ -23,9 +23,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from contextlib import contextmanager
 from os import times
 from time import time as walltime
-from contextlib import contextmanager
 
 
 def count_noun(number, noun, plural=None, pad_number=False, pad_noun=False):
@@ -171,7 +171,7 @@ class Timer:
             Traceback (most recent call last):
             ...
             OSError: unable to parse ...
-            sage: os.unlink(f.name)
+            sage: unlink(f.name)
             sage: with NamedTemporaryFile(delete=False, mode="w") as f:
             ....:     _ = f.write("1 2 3 4 5 6 7 8 9 10 11 12 w x y z 17")
             sage: cputime = Timer()._proc_stat_cpu_seconds(f.name)
@@ -306,9 +306,7 @@ class Timer:
                     # needs it), but it isn't explicitly listed as
                     # a dependency of sagelib.
                     try:
-                        from psutil import (NoSuchProcess,
-                                            Process,
-                                            ZombieProcess)
+                        from psutil import NoSuchProcess, Process, ZombieProcess
                         try:
                             cputime += sum(Process(S.pid()).cpu_times()[0:2])
                         except (ValueError, NoSuchProcess, ZombieProcess):
@@ -870,7 +868,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         sage: data  # abs tol 0.01
         {'alarm_raised': False, 'elapsed': 0.0}
     """
-    from cysignals.alarm import alarm, cancel_alarm, AlarmInterrupt
+    from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 
     seconds = float(seconds)
     max_wait_after_interrupt = float(max_wait_after_interrupt)

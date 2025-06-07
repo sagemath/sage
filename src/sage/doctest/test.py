@@ -10,6 +10,7 @@ EXAMPLES::
     sage: import signal
     sage: import subprocess
     sage: import time
+    sage: import os
     sage: from sage.env import SAGE_SRC
     sage: tests_dir = os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests')
     sage: tests_env = dict(os.environ)
