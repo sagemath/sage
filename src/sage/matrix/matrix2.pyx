@@ -1259,11 +1259,11 @@ cdef class Matrix(Matrix1):
         for i in range(k):
             v = B[i,:]
             v -= H[i,:i] * X_[:i]
-            d = H[i][i]
-            try:
-                X_[i] = v / d
-            except (ZeroDivisionError, TypeError) as e:
-                raise ValueError("matrix equation has no solutions")
+            if v:
+                try:
+                    X_[i] = v / H[i][i]
+                except (ZeroDivisionError, TypeError):
+                    raise ValueError("matrix equation has no solutions")
 
         if B[k:] != H[k:] * X_:
             raise ValueError("matrix equation has no solution")
