@@ -218,7 +218,6 @@ in the Installation Guide.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
       `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`, `pkgconf` (also known as `pkg-config`).
-
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 

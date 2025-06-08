@@ -20,15 +20,19 @@ computer:
 - **python**: Python 3.4 or later, or Python 2.7.
   (This range of versions is a minimal requirement for internal purposes of the SageMath
   build system, which is referred to as ``sage-bootstrap-python``.)
+- **patch**.
+- **pkgconf**, also known as ``pkg-config``.
 
 Other versions of these may work, but they are untested.
 
-On macOS, suitable versions of all of these tools are provided
+On macOS, suitable versions of most of these tools are provided
 by the Xcode Command Line Tools.  To install them, open a terminal
 window and run ``xcode-select --install``; then click "Install" in the
 pop-up window.  If the Xcode Command Line Tools are already installed,
 you may want to check if they need to be updated by typing
-``softwareupdate -l``.
+``softwareupdate -l``. The remaining are provided by either one of macOS's
+"missing package managers", such as Homebrew, or as standalone
+tools. In particular ``pkgconf`` is available as `pkg-config_pkg<https://github.com/donmccaughey/pkg-config_pkg>`_.
 
 On Linux, ``ar`` and ``ranlib`` are in the `binutils
 <https://www.gnu.org/software/binutils/>`_ package.  The other
