@@ -4966,27 +4966,102 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         """
         return self.submodule_with_basis(gens, check=check, already_echelonized=already_echelonized)
 
-    def complement(self):
+    def complement(self, *, orthogonal=None):
         r"""
-        Return the complement of ``self`` in the
+        Return a complementary subspace of ``self`` in the
         :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
 
         EXAMPLES::
 
+            sage: V = RR^3
+            sage: S = V.subspace([[1,0,0], [0,1,0]])
+            sage: C = S.complement(orthogonal=False)
+            sage: C
+            Vector space of degree 3 and dimension 1 over Real Field with 53
+            bits of precision
+            Basis matrix:
+            [0.000000000000000 0.000000000000000  1.00000000000000]
+            sage: C + S == V
+            True
+            sage: V = VectorSpace(GF(2), 3)
+            sage: S = V.subspace([[1,1,1], [0,0,1]])
+            sage: C = S.complement(orthogonal=False)
+            sage: C
+            Vector space of degree 3 and dimension 1 over Finite Field of size 2
+            Basis matrix:
+            [0 1 0]
+            sage: C + S == V
+            True
+            sage: C.complement(orthogonal=False) == S
+            False
+        """
+        if orthogonal is None:
+            from sage.misc.superseded import deprecation
+            deprecation(31487, "Use of the 'complement' method without specifying"
+                               + " a value for the 'orthogonal' keyword is"
+                               + " deprecated. Either specify 'orthogonal=False'"
+                               + " to obtain a complementary subspace, or use the"
+                               + " 'orthogonal_complement' method to obtain the"
+                               + " orthogonal complement.")
+            orthogonal = True
+        if orthogonal:
+            return self.orthogonal_complement()
+        pivot_set = self.basis_matrix().pivots()
+        ambient_basis_size = self.ambient_vector_space().dimension()
+        non_pivot_set = set(range(ambient_basis_size)).difference(pivot_set)
+        complement_basis = [self.ambient_vector_space().basis()[i] for i in
+        non_pivot_set]
+        return self.ambient_vector_space().subspace(complement_basis)
+
+    def orthogonal_complement(self):
+        r"""
+        Return the orthogonal complement of ``self`` in the
+        :meth:`~sage.modules.free_module.FreeModule_ambient_field.ambient_vector_space`.
+
+        .. WARNING::
+
+            All of these orthogonal complements are only done with respect to the inner
+            product in the usual basis. Therefore, even though "orthogonal complement"
+            has "complement" in its name, the subspace returned by this method may
+            not actually be a complementary subspace (unless the ``base_field`` is a
+            subfield of the real numbers). The following example is an illustration of this
+            over a finite field. ::
+
+                sage: F2 = GF(2, 'x')
+                sage: V = F2^6
+                sage: W = V.span([[1,1,0,0,0,0]]); W
+                Vector space of degree 6 and dimension 1 over Finite Field of size 2
+                Basis matrix:
+                [1 1 0 0 0 0]
+                sage: W.orthogonal_complement()
+                Vector space of degree 6 and dimension 5 over Finite Field of size 2
+                Basis matrix:
+                [1 1 0 0 0 0]
+                [0 0 1 0 0 0]
+                [0 0 0 1 0 0]
+                [0 0 0 0 1 0]
+                [0 0 0 0 0 1]
+                sage: W.intersection(W.orthogonal_complement())
+                Vector space of degree 6 and dimension 1 over Finite Field of size 2
+                Basis matrix:
+                [1 1 0 0 0 0]
+
+        EXAMPLES::
+
             sage: V = QQ^3
-            sage: V.complement()
+            sage: V.orthogonal_complement()
             Vector space of degree 3 and dimension 0 over Rational Field
             Basis matrix:
             []
-            sage: V == V.complement().complement()
+            sage: V == V.orthogonal_complement().orthogonal_complement()
             True
             sage: W = V.span([[1, 0, 1]])
-            sage: X = W.complement(); X
+            sage: X = W.orthogonal_complement(); X
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [ 1  0 -1]
             [ 0  1  0]
-            sage: X.complement() == W
+            sage: X.orthogonal_complement() == W
             True
             sage: X + W == V
             True
@@ -4998,35 +5073,11 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: V = QQ^3
             sage: W = V.subspace_with_basis([[1,0,1],[-1,1,0]])
             sage: X = W.subspace_with_basis([[1,0,1]])
-            sage: X.complement()
+            sage: X.orthogonal_complement()
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [ 1  0 -1]
             [ 0  1  0]
-
-        All these complements are only done with respect to the inner
-        product in the usual basis.  Over finite fields, this means
-        we can get complements which are only isomorphic to a vector
-        space decomposition complement. ::
-
-            sage: F2 = GF(2, 'x')
-            sage: V = F2^6
-            sage: W = V.span([[1,1,0,0,0,0]]); W
-            Vector space of degree 6 and dimension 1 over Finite Field of size 2
-            Basis matrix:
-            [1 1 0 0 0 0]
-            sage: W.complement()
-            Vector space of degree 6 and dimension 5 over Finite Field of size 2
-            Basis matrix:
-            [1 1 0 0 0 0]
-            [0 0 1 0 0 0]
-            [0 0 0 1 0 0]
-            [0 0 0 0 1 0]
-            [0 0 0 0 0 1]
-            sage: W.intersection(W.complement())
-            Vector space of degree 6 and dimension 1 over Finite Field of size 2
-            Basis matrix:
-            [1 1 0 0 0 0]
         """
         # Check simple cases
         if self.dimension() == 0:
