@@ -1257,11 +1257,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             - If ``kernel`` is a single point, or a list containing a single point:
 
-              - if the order of the point is unknown, ``'traditional'`` is selected.
+              - If the order is composite, ``'factored'`` is selected.
 
-              - If the order is known and composite, ``'factored'`` is selected.
-
-              - If the order is known and prime, a choice between ``'velusqrt'`` and
+              - If the order is prime, a choice between ``'velusqrt'`` and
                 ``'traditional'`` is done according to the ``velu_sqrt_bound``
                 parameter (see below).
 
@@ -1385,16 +1383,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               To:   Elliptic Curve defined by y^2 = x^3 + 95*x + 68 over Finite Field of size 97
             sage: _velu_sqrt_bound.set(1000) # Reset bound
 
-        If the order of the point is unknown, fall back to ``'traditional'``::
-
-            sage: E = EllipticCurve_from_j(GF(97)(42))
-            sage: P = E(2, 39)
-            sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
-            sage: _velu_sqrt_bound.set(1)
-            sage: E.isogeny(P)
-            Isogeny of degree 46 from Elliptic Curve defined by y^2 = x^3 + 6*x + 46 over Finite Field of size 97 to Elliptic Curve defined by y^2 = x^3 + 87*x + 47 over Finite Field of size 97
-            sage: _velu_sqrt_bound.set(1000) # Reset bound
-
         .. SEEALSO::
 
             - :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
@@ -1448,6 +1436,15 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Elliptic-curve isogeny (using square-root Vélu) of degree 103:
               From: Elliptic Curve defined by y^2 = x^3 + 277*x + 1710 over Finite Field of size 3217
               To:   Elliptic Curve defined by y^2 = x^3 + 2979*x + 1951 over Finite Field of size 3217
+
+        Check that default isogeny with easily factorizable curve order is fast::
+
+            sage: E = EllipticCurve(GF((60*2^200-1)^2), [1, 0])
+            sage: P = E.0+E.1
+            sage: hasattr(P, '_order')
+            False
+            sage: E.isogeny(P)
+            Composite morphism of degree 964162...
         """
         if algorithm is not None and degree is not None:
             raise TypeError('cannot pass "degree" and "algorithm" parameters simultaneously')
@@ -1467,14 +1464,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
                 return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
 
-            if not kernel_is_list or (len(kernel) == 1 and kernel[0] in self):
+            if kernel_is_list and len(kernel) == 1:
+                kernel = kernel[0]
+                kernel_is_list = False
+
+            if not kernel_is_list and kernel in self:
                 # Single point on the curve; unpack the list for compatibility with velusqrt
-                if kernel_is_list:
-                    kernel = kernel[0]
-
-                known_order = hasattr(kernel, "_order")
-
-                if known_order and kernel._order.is_pseudoprime():
+                if kernel.order(algorithm='hybrid').is_pseudoprime():
                     if not velu_sqrt_bound:
                         from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
                         velu_sqrt_bound = _velu_sqrt_bound.get()
@@ -1483,13 +1479,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                         from sage.schemes.elliptic_curves.hom_velusqrt import EllipticCurveHom_velusqrt
                         return EllipticCurveHom_velusqrt(self, kernel, codomain=codomain, model=model)
                     # Otherwise fall back to the standard case
-                elif known_order:
+                else:
                     from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
                     return EllipticCurveHom_composite(self, kernel, codomain=codomain, model=model, velu_sqrt_bound=velu_sqrt_bound)
-        try:
-            return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
-        except AttributeError as e:
-            raise RuntimeError("Unable to construct isogeny: %s" % e)
+        return EllipticCurveIsogeny(self, kernel, codomain, degree, model, check=check)
 
     def isogeny_codomain(self, kernel):
         r"""
