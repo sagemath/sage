@@ -25,6 +25,7 @@ computer:
 - **bzip2**: the executable ``bzip2`` and the library ``libbz2`` with its headers.
   (some Linux distros package these separately, e.g. Debian/Ubuntu needs
   packages ``bzip2`` and ``libbz2-dev``; Fedora needs ``bzip2`` and ``bzip2-devel``.)
+- **pkgconf**, also known as ``pkg-config``.
 
 Other versions of these may work, but they are untested.
 
