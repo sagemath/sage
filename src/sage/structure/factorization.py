@@ -1420,3 +1420,24 @@ class Factorization(SageObject):
             raise ValueError("all exponents in the factorization must be positive")
         from sage.misc.misc_c import prod
         return prod([p for p, _ in self.__x])
+
+    def is_complete_factorization(self):
+        """
+        Return whether this factorization is a complete rather than
+        a partial factorization, i.e., whether all the bases
+        are irreducible.
+
+        EXAMPLES::
+
+            sage: F = 143.factor(limit=9); F
+            143
+            sage: F.is_complete_factorization()
+            False
+            sage: F = 143.factor(limit=12); F
+            11 * 13
+            sage: F.is_complete_factorization()
+            True
+            sage: factor(-2006).is_complete_factorization()
+            True
+        """
+        return all(p.is_irreducible() or p.is_unit() for p, _ in self.__x)

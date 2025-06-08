@@ -757,10 +757,14 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         INPUT:
 
         - ``algorithm`` -- string (default: ``None``) -- the algorithm to use,
-          can be ``'pari'`` or ``'generic_small'``.
+          can be ``'pari'``, ``'generic'``, ``'generic_small'`` or ``'hybrid'``.
           ``'generic_small'`` may be preferable when the order of the point
           is very small compared to the order of the torsion,
           and the order of the torsion is hard to factorize.
+          ``'hybrid'`` uses a combination of ``'pari'`` and ``'generic_small'``
+          to ensure the complexity of computing the order is
+          roughly the square root of the order, and that it is still fast
+          if the order only have very small prime factors.
 
         EXAMPLES::
 
@@ -805,6 +809,23 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if algorithm == 'generic_small':
             return generic.order_from_bounds(self, None)
+        elif algorithm == 'hybrid':
+            lb = 1
+            sqrt_ub = 32
+            N = None
+            while True:
+                if N is None and sqrt_ub >= 5000:
+                    N = self.curve().order()
+                if isinstance(N, Integer):
+                    factorization = N.factor(limit=sqrt_ub)
+                    if factorization.is_complete_factorization():
+                        return self._compute_order(algorithm='pari')
+                try:
+                    ub = sqrt_ub**2
+                    return generic.order_from_bounds(self, (lb, ub))
+                except ValueError:
+                    lb = ub + 1
+                    sqrt_ub *= 4
         raise NotImplementedError(f"algorithm {algorithm!r} not implemented for "
                                   "order of a point on an elliptic curve over general fields")
 
@@ -2764,10 +2785,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         INPUT:
 
         - ``algorithm`` -- string (default: ``None``) -- the algorithm to use,
-          can be ``'pari'`` or ``'generic_small'``.
+          can be ``'pari'``, ``'generic'``, ``'generic_small'`` or ``'hybrid'``.
           ``'generic_small'`` may be preferable when the order of the point
           is very small compared to the order of the torsion,
           and the order of the torsion is hard to factorize.
+          ``'hybrid'`` uses a combination of ``'pari'`` and ``'generic_small'``
+          to ensure the complexity of computing the order is
+          roughly the square root of the order, and that it is still fast
+          if the order only have very small prime factors.
 
         EXAMPLES::
 
@@ -2828,7 +2853,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             # Finally we find the exact order using the generic code:
             return generic.order_from_multiple(self, N, operation='+')
 
-        if algorithm == 'generic_small':
+        if algorithm in ('generic_small', 'hybrid'):
             return super()._compute_order(algorithm)
 
         if algorithm is not None:
@@ -4715,10 +4740,14 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         INPUT:
 
         - ``algorithm`` -- string (default: ``None``) -- the algorithm to use,
-          can be ``'pari'`` or ``'generic_small'``.
+          can be ``'pari'``, ``'generic'``, ``'generic_small'`` or ``'hybrid'``.
           ``'generic_small'`` may be preferable when the order of the point
           is very small compared to the order of the torsion,
           and the order of the torsion is hard to factorize.
+          ``'hybrid'`` uses a combination of ``'pari'`` and ``'generic_small'``
+          to ensure the complexity of computing the order is
+          roughly the square root of the order, and that it is still fast
+          if the order only have very small prime factors.
 
         EXAMPLES::
 
@@ -4786,6 +4815,15 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         TESTS:
 
+        Tests ``algorithm='hybrid'``::
+
+            sage: # needs sage.rings.finite_rings
+            sage: P.order(algorithm='hybrid')
+            330
+            sage: E = EllipticCurve(GF(60*2^200-1), [1, 0])
+            sage: E.0._compute_order(algorithm='hybrid') == 60*2^200
+            True
+
         Check that the order actually gets cached (:issue:`32786`)::
 
             sage: # needs sage.rings.finite_rings
@@ -4832,7 +4870,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
             return Integer(E.pari_curve().ellorder(self, E._order))
 
-        if algorithm == 'generic_small':
+        if algorithm in ('generic_small', 'hybrid'):
             return super()._compute_order(algorithm)
 
         raise NotImplementedError(f"algorithm {algorithm!r} not implemented for "

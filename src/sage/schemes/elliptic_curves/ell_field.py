@@ -15,6 +15,7 @@ This module defines the class :class:`EllipticCurve_field`, based on
 import sage.rings.abc
 from sage.categories.number_fields import NumberFields
 from sage.categories.finite_fields import FiniteFields
+from sage.groups import generic
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
