@@ -1164,6 +1164,85 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
 
 class LazySpeciesUnivariate(LazySpecies):
+    def Sets(self):
+        r"""
+        Return the species of sets.
+
+        This species corresponds to the sequence of trivial group
+        actions.  Put differently, the stabilizers are the full
+        symmetric groups.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Sets()
+            sage: set(G.isotypes(4))
+            {(E_4,)}
+            sage: set(G.structures(["a", 1, x]))
+            {(1, 'a', x)}
+        """
+        return SetSpecies(self)
+
+    def Cycles(self):
+        r"""
+        Return the species of (oriented) cycles.
+
+        This species corresponds to the sequence of group actions
+        having the cyclic groups as stabilizers.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Cycles()
+            sage: set(G.isotypes(4))
+            {(C_4,)}
+            sage: set(G.structures(["a", 1, x]))
+            {(1, 'a', x), (1, x, 'a')}
+        """
+        return CycleSpecies(self)
+
+    def Polygons(self):
+        r"""
+        Return the species of polygons.
+
+        Polygons are cycles up to orientation.
+
+        This species corresponds to the sequence of group actions
+        having the dihedral groups as stabilizers.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Polygons()
+            sage: set(G.isotypes(5))
+            {(P_5,)}
+            sage: set(G.structures(["a", 1, "b", 2]))
+            {(E_2(E_2), ((1, 'a', 2, 'b'),)),
+             (E_2(E_2), ((1, 'b', 2, 'a'),)),
+             (E_2(E_2), ((1, 2, 'a', 'b'),))}
+        """
+        return PolygonSpecies(self)
+
+    def OrientedSets(self):
+        r"""
+        Return the species of oriented sets.
+
+        Oriented sets are total orders up to an even orientation.
+
+        This species corresponds to the sequence of group actions
+        having the alternating groups as stabilizers.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.OrientedSets()
+            sage: set(G.isotypes(5))
+            {(Eo_5,)}
+            sage: set(G.structures(["a", 1, "b", 2]))
+            {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
+        """
+        return OrientedSetSpecies(self)
+
     def Graphs(self):
         r"""
         Return the species of vertex labelled simple graphs.
@@ -1198,80 +1277,6 @@ class LazySpeciesUnivariate(LazySpecies):
              {{'a'}, {'b'}, {'c'}}]
         """
         return SetPartitionSpecies(self)
-
-    def Sets(self):
-        r"""
-        Return the species of sets.
-
-        This species corresponds to the symmetric groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Sets()
-            sage: set(G.isotypes(4))
-            {(E_4,)}
-            sage: set(G.structures(["a", 1, x]))
-            {(1, 'a', x)}
-        """
-        return SetSpecies(self)
-
-    def Cycles(self):
-        r"""
-        Return the species of (oriented) cycles.
-
-        This species corresponds to the cyclic groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Cycles()
-            sage: set(G.isotypes(4))
-            {(C_4,)}
-            sage: set(G.structures(["a", 1, x]))
-            {(1, 'a', x), (1, x, 'a')}
-        """
-        return CycleSpecies(self)
-
-    def Polygons(self):
-        r"""
-        Return the species of polygons.
-
-        Polygons are cycles up to orientation.
-
-        This species corresponds to the dihedral groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Polygons()
-            sage: set(G.isotypes(5))
-            {(P_5,)}
-            sage: set(G.structures(["a", 1, "b", 2]))
-            {(E_2(E_2), ((1, 'a', 2, 'b'),)),
-             (E_2(E_2), ((1, 'b', 2, 'a'),)),
-             (E_2(E_2), ((1, 2, 'a', 'b'),))}
-        """
-        return PolygonSpecies(self)
-
-    def OrientedSets(self):
-        r"""
-        Return the species of oriented sets.
-
-        Oriented sets are total orders up to an even orientation.
-
-        This species corresponds to the alternating groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.OrientedSets()
-            sage: set(G.isotypes(5))
-            {(Eo_5,)}
-            sage: set(G.structures(["a", 1, "b", 2]))
-            {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
-        """
-        return OrientedSetSpecies(self)
 
 
 class LazySpeciesMultivariate(LazySpecies):
