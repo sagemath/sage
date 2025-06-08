@@ -644,13 +644,13 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: iso1 = WeierstrassIsomorphism(E, (-1, 0, -i - 1, 0))
             sage: iso2 = psi.codomain().isomorphism_to(E)
             sage: psi * phi                 # indirect doctest
-            Composite morphism of degree 16 = 2^2*4:
+            Composite morphism of degree 16 = 2^4:
               From: Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-3331/4)*x + (-142593/8*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: iso2 * EllipticCurveHom_composite.from_factors([phi, psi]) # indirect doctest
-            Composite morphism of degree 16 = 4^2:
+            Composite morphism of degree 16 = 4^2*1:
               From: Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
@@ -662,7 +662,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (480*I-694)*x + (-7778*I+5556)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: iso2 * psi * phi * iso1   # indirect doctest
-            Composite morphism of degree 16 = 2^2*4:
+            Composite morphism of degree 16 = 2^4:
               From: Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
                     over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
               To:   Elliptic Curve defined by y^2 + (I+1)*x*y = x^3 + I*x^2 + (-4)*x + (-6*I)
