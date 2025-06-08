@@ -473,7 +473,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Check that structures and generating series are consistent.
 
-        We check all structures on 3 labels.
+        We check all structures with less than ``max_size`` labels.
 
         TESTS::
 
@@ -540,6 +540,8 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         multivariate = self.parent()._arity > 1
         shape = tuple(shape)
+        if not all(e in ZZ for e in shape):
+            raise NotImplementedError("isotypes with given labels are currently not supported")
         for M, c in self[sum(shape)]:
             if c not in ZZ or c < 0:
                 raise NotImplementedError("only implemented for proper non-virtual species")
@@ -907,7 +909,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         return FunctorialCompositionSpeciesElement(self, *args)
 
 
-class LazySpeciesElement_generating_series_mixin:
+class LazySpeciesElementGeneratingSeriesMixin:
     r"""
     A lazy species element whose generating series are obtained
     by specializing the cycle index series rather than the molecular
@@ -1326,6 +1328,85 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
 
 class LazySpeciesUnivariate(LazySpecies):
+    def Sets(self):
+        r"""
+        Return the species of sets.
+
+        This species corresponds to the sequence of trivial group
+        actions.  Put differently, the stabilizers are the full
+        symmetric groups.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Sets()
+            sage: set(G.isotypes(4))
+            {(E_4,)}
+            sage: set(G.structures(["a", 1, x]))
+            {(1, 'a', x)}
+        """
+        return SetSpecies(self)
+
+    def Cycles(self):
+        r"""
+        Return the species of (oriented) cycles.
+
+        This species corresponds to the sequence of group actions
+        having the cyclic groups as stabilizers.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Cycles()
+            sage: set(G.isotypes(4))
+            {(C_4,)}
+            sage: set(G.structures(["a", 1, x]))
+            {(1, 'a', x), (1, x, 'a')}
+        """
+        return CycleSpecies(self)
+
+    def Polygons(self):
+        r"""
+        Return the species of polygons.
+
+        Polygons are cycles up to orientation.
+
+        This species corresponds to the sequence of group actions
+        having the dihedral groups as stabilizers.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.Polygons()
+            sage: set(G.isotypes(5))
+            {(P_5,)}
+            sage: set(G.structures(["a", 1, "b", 2]))
+            {(E_2(E_2), ((1, 'a', 2, 'b'),)),
+             (E_2(E_2), ((1, 'b', 2, 'a'),)),
+             (E_2(E_2), ((1, 2, 'a', 'b'),))}
+        """
+        return PolygonSpecies(self)
+
+    def OrientedSets(self):
+        r"""
+        Return the species of oriented sets.
+
+        Oriented sets are total orders up to an even orientation.
+
+        This species corresponds to the sequence of group actions
+        having the alternating groups as stabilizers.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: G = L.OrientedSets()
+            sage: set(G.isotypes(5))
+            {(Eo_5,)}
+            sage: set(G.structures(["a", 1, "b", 2]))
+            {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
+        """
+        return OrientedSetSpecies(self)
+
     def Graphs(self):
         r"""
         Return the species of vertex labelled simple graphs.
@@ -1352,88 +1433,14 @@ class LazySpeciesUnivariate(LazySpecies):
             sage: G = L.SetPartitions()
             sage: set(G.isotypes(4))
             {[1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4]}
-            sage: set(G.structures(["a", 1, x]))
-            {{{'a', x}, {1}},
-             {{'a'}, {1}, {x}},
-             {{1, 'a', x}},
-             {{1, 'a'}, {x}},
-             {{1, x}, {'a'}}}
+            sage: list(G.structures(["a", "b", "c"]))
+            [{{'a', 'b', 'c'}},
+             {{'a', 'b'}, {'c'}},
+             {{'a', 'c'}, {'b'}},
+             {{'a'}, {'b', 'c'}},
+             {{'a'}, {'b'}, {'c'}}]
         """
         return SetPartitionSpecies(self)
-
-    def Sets(self):
-        r"""
-        Return the species of sets.
-
-        This species corresponds to the symmetric groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Sets()
-            sage: set(G.isotypes(4))
-            {(E_4,)}
-            sage: set(G.structures(["a", 1, x]))
-            {(1, 'a', x)}
-        """
-        return SetSpecies(self)
-
-    def Cycles(self):
-        r"""
-        Return the species of (oriented) cycles.
-
-        This species corresponds to the cyclic groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Cycles()
-            sage: set(G.isotypes(4))
-            {(C_4,)}
-            sage: set(G.structures(["a", 1, x]))
-            {(1, 'a', x), (1, x, 'a')}
-        """
-        return CycleSpecies(self)
-
-    def Polygons(self):
-        r"""
-        Return the species of polygons.
-
-        Polygons are cycles up to orientation.
-
-        This species corresponds to the dihedral groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.Polygons()
-            sage: set(G.isotypes(5))
-            {(P_5,)}
-            sage: set(G.structures(["a", 1, "b", 2]))
-            {(E_2(E_2), ((1, 'a', 2, 'b'),)),
-             (E_2(E_2), ((1, 'b', 2, 'a'),)),
-             (E_2(E_2), ((1, 2, 'a', 'b'),))}
-        """
-        return PolygonSpecies(self)
-
-    def OrientedSets(self):
-        r"""
-        Return the species of oriented sets.
-
-        Oriented sets are total orders up to an even orientation.
-
-        This species corresponds to the alternating groups.
-
-        EXAMPLES::
-
-            sage: L = LazySpecies(QQ, "X")
-            sage: G = L.OrientedSets()
-            sage: set(G.isotypes(5))
-            {(Eo_5,)}
-            sage: set(G.structures(["a", 1, "b", 2]))
-            {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
-        """
-        return OrientedSetSpecies(self)
 
 
 class LazySpeciesMultivariate(LazySpecies):
@@ -1595,7 +1602,7 @@ class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
         return "Oriented Set species"
 
 
-class GraphSpecies(LazySpeciesElement_generating_series_mixin,
+class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
                    LazySpeciesElement, UniqueRepresentation,
                    metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
@@ -1639,6 +1646,8 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin,
         """
         if labels in ZZ:
             yield from (G.canonical_label().copy(immutable=True) for G in graphs(labels))
+        else:
+            raise NotImplementedError("isotypes with given labels are currently not supported")
 
     def generating_series(self):
         r"""
@@ -1654,7 +1663,7 @@ class GraphSpecies(LazySpeciesElement_generating_series_mixin,
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
-        return L(lambda n: 2 ** binomial(n, 2) / factorial(n))
+        return L(lambda n: 2**binomial(n, 2) / factorial(n))
 
     def cycle_index_series(self):
         r"""
@@ -1737,6 +1746,8 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
         """
         if labels in ZZ:
             yield from Partitions(labels)
+        else:
+            raise NotImplementedError("isotypes with given labels are currently not supported")
 
     def structures(self, labels):
         r"""
