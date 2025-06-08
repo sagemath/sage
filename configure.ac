@@ -311,9 +311,9 @@ fi
       AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
         AC_PATH_PROG([bzip2_prog], [bzip2])
         AS_IF([test x$bzip2_prog = x
-	], [AC_MSG_ERROR([could not find bzip2 executable])])
-      ], [AC_MSG_ERROR([could not find libbz2 library])])
-    ], [AC_MSG_ERROR([could not find bzlib.h, i.e. the header of libbz2 library])
+	], [AC_MSG_ERROR([could not find bzip2 executable. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
+      ], [AC_MSG_ERROR([could not find libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
+    ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
    ])
 
 # Check for system python
