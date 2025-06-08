@@ -63,6 +63,7 @@ bi-point-determining graphs we use Corollary (4.6) in
 """
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
+from sage.libs.gap.libgap import libgap
 from sage.misc.lazy_list import lazy_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -84,6 +85,7 @@ from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
+from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
                                                   CyclicPermutationGroup,
                                                   DihedralGroup,
@@ -1212,7 +1214,6 @@ class FunctorialCompositionSpeciesElement(LazySpeciesElement):
             sage: G = subsets.functorial_composition(pairs)
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
         """
-        fP = left.parent()
         # Find a good parent for the result
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
@@ -1221,26 +1222,40 @@ class FunctorialCompositionSpeciesElement(LazySpeciesElement):
         args = [P(g) for g in args]
         if len(args) > 1:
             raise NotImplementedError("multisort functorial composition is not yet implemented")
-
-        R = P._internal_poly_ring.base_ring()
+        G = args[0]
+        R = P._laurent_poly_ring
 
         def coefficient(n):
-            G = args[0][n]
-            a, d = G.action(n) # a(i, pi) with 1 <= i <= N and pi in S_n
-            N = len(d)
-            S = SymmetricGroup(N)
-            F = left[N]
-            b, e = F.action(N) # b(i, pi) with 1 <= i <= G[N] and pi in S_N
-            M = len(e)
+            S_n = SymmetricGroup(n)
+            G_n = G[n]
+            g_n = factorial(n) * G.generating_series()[n]
+            result = R.zero()
+            for f, c in left[g_n]:
+                f_g_n = factorial(g_n) / f.permutation_group()[0].cardinality()
+                if f_g_n == 1:  # f is the trivial action
+                    result += c * R(S_n)
+                else:
+                    l_G = [H
+                           for g, c in G_n if (H := g.permutation_group()[0]) != S_n
+                           for _ in range(c)]
+                    g_act = libgap.FactorCosetAction(S_n, l_G)
+                    gens, images = libgap.MappingGeneratorsImages(g_act)
 
-            def c(i, pi):
-                # pi in S_n
-                # 1 <= i <= F[G[n]] = F[N]
-                G_pi = S([a(j, pi) for j in range(1, N+1)])
-                return b(i, G_pi)
+                    f_act = libgap.FactorCosetAction(SymmetricGroup(g_n),
+                                                     f.permutation_group()[0])
+                    f_images = [libgap.Image(f_act, image) for image in images]
 
-            return R((range(1, M+1), c), {0: list(range(1, n+1))},
-                     check=False)
+                    summands = []
+                    U = set(range(1, f_g_n + 1))
+                    while U:
+                        u = U.pop()
+                        OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
+                        summands.append(PermutationGroup(gap_group=OS["stabilizer"],
+                                                         domain=S_n.domain()))
+                        U.difference_update(OS["orbit"].sage())
+
+                    result += c * sum(map(R, summands))
+            return result
 
         coeff_stream = Stream_function(coefficient, P._sparse, 0)
         super().__init__(P, coeff_stream)
