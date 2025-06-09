@@ -1,6 +1,11 @@
 r"""
 Dimensions of spaces of Siegel modular forms
 
+.. WARNING::
+
+    This is in a very preliminary state, and should incorporate
+    more material from LMFDB.
+
 Let `\Gamma_2` denote the integral symplectic group `\operatorname{Sp}(4, \ZZ)`.
 
 This file is about the dimensions of the spaces of Siegel modular forms and
@@ -296,7 +301,7 @@ def generating_function_cusp_forms_sp4z_k(k):
     EXAMPLES::
 
         sage: generating_function_cusp_forms_sp4z_k(7)
-        ?
+        O(x^7)
     """
     R = LazyPowerSeriesRing(QQ, 'x')
     x = R.gen()
@@ -304,12 +309,12 @@ def generating_function_cusp_forms_sp4z_k(k):
     return R(lambda j: dimension_cusp_forms_sp4z(k, j)) * denom
 
 
-def generating_function_numerator_cusp_forms_sp4z_j(j):
+def generating_function_cusp_forms_sp4z_j(j):
     """
     EXAMPLES::
 
         sage: generating_function_cusp_forms_sp4z_j(7)
-        ?
+        O(x^7)
     """
     R = LazyPowerSeriesRing(QQ, 'x')
     x = R.gen()
