@@ -84,6 +84,7 @@ from sage.combinat.partition import _Partitions, Partitions
 from sage.combinat.permutation import CyclicPermutations
 from sage.combinat.set_partition import SetPartitions
 from sage.graphs.graph_generators import graphs
+from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
                                                   CyclicPermutationGroup,
                                                   DihedralGroup,
@@ -1243,6 +1244,25 @@ class LazySpeciesUnivariate(LazySpecies):
         """
         return OrientedSetSpecies(self)
 
+    def Chains(self):
+        r"""
+        Return the species of chains.
+
+        Chains are linear orders up to reversal.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: Ch = L.Chains()
+            sage: set(Ch.isotypes(4))
+            {(E_2(X^2),)}
+            sage: set(Ch.structures(["a", 1, x]))
+            {(X*E_2, (('a',), (1, x))),
+             (X*E_2, ((1,), ('a', x))),
+             (X*E_2, ((x,), (1, 'a')))}
+        """
+        return ChainSpecies(self)
+
     def Graphs(self):
         r"""
         Return the species of vertex labelled simple graphs.
@@ -1436,6 +1456,45 @@ class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
            Oriented Set species
         """
         return "Oriented Set species"
+
+
+class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
+                   metaclass=InheritComparisonClasscallMetaclass):
+    def __init__(self, parent):
+        r"""
+        Initialize the species of chains.
+
+        TESTS::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: Ch = L.Chains()
+            sage: TestSuite(Ch).run(skip=['_test_category', '_test_pickling'])
+
+            sage: Ch is L.Chains()
+            True
+        """
+        P = parent._laurent_poly_ring
+        def coefficient(n):
+            if not n:
+                return P.one()
+            if n % 2:
+                gen = [(i, i+1) for i in range(2, n+1, 2)]
+            else:
+                gen = [(i, i+1) for i in range(1, n+1, 2)]
+            return P(PermutationGroup([gen]))
+        S = parent(coefficient)
+        super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").Chains()  # indirect doctest
+           Chain species
+        """
+        return "Chain species"
 
 
 class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
