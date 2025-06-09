@@ -27,7 +27,7 @@ Helpers for tolerance checking in doctests
 from sage.doctest.marked_output import MarkedOutput
 from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement
 
-_RIFtol: RealIntervalField | None = None
+_RIFtol: 'RealIntervalField | None' = None
 
 
 def RIFtol(*args) -> RealIntervalFieldElement:
