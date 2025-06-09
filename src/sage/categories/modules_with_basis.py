@@ -1309,6 +1309,30 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 from sage.rings.integer_ring import ZZ
                 return ZZ(len(self.basis()))
 
+        def rank(self):
+            """
+            Return the rank of ``self``.
+
+            Since there is a (distinguished) basis, the rank of ``self``
+            is equal to the cardinality of the basis (which equals
+            the :meth:`dimension` of ``self``).
+
+            EXAMPLES::
+
+                sage: A.<x,y> = algebras.DifferentialWeyl(QQ)                           # needs sage.modules
+                sage: A.rank()                                                          # needs sage.modules
+                +Infinity
+
+                sage: R.<x,y> = QQ[]
+                sage: R.rank()
+                +Infinity
+
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: F.rank()
+                3
+            """
+            return self.dimension()
+
         def _from_dict(self, d, coerce=True, remove_zeros=True):
             """
             Construct an element of ``self`` from the dictionary ``d``.
@@ -1572,6 +1596,30 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if hasattr(C, "element_class") and not isinstance(m, C.element_class):
                 m = C(m)
             return self[m]
+
+        def items(self):
+            r"""
+            Return a list of pairs ``(i, c)``, where ``c`` is the
+            ``i``-th coefficient of ``i`` in the standard basis.
+
+
+            EXAMPLES::
+
+                sage: # needs sage.algebras
+                sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0], [0,1]]),
+                ....:                                   Matrix([[0,1], [-1,0]])])
+                sage: elt = B(Matrix([[1,2], [-2,1]]))
+                sage: elt.items()
+                dict_items([(0, 1), (1, 2)])
+
+            ::
+
+                sage: # needs sage.combinat sage.modules
+                sage: h = SymmetricFunctions(QQ).h()
+                sage: (h[2]+3*h[3]).items()
+                dict_items([([2], 1), ([3], 3)])
+            """
+            return self.monomial_coefficients(copy=False).items()
 
         def is_zero(self):
             """
@@ -2311,7 +2359,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms((f(m), c) for m, c in self)
+            return self.parent().sum_of_terms((f(m), c) for m, c in self.items())
 
         def map_support_skip_none(self, f):
             """
@@ -2346,7 +2394,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             return self.parent().sum_of_terms((fm, c)
-                                              for fm, c in ((f(m), c) for m, c in self)
+                                              for fm, c in ((f(m), c) for m, c in self.items())
                                               if fm is not None)
 
         def map_item(self, f):
@@ -2381,7 +2429,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
             """
-            return self.parent().sum_of_terms(f(m, c) for m, c in self)
+            return self.parent().sum_of_terms(f(m, c) for m, c in self.items())
 
         def tensor(*elements):
             """
@@ -2719,11 +2767,11 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 if codomain in ModulesWithBasis(K):
                     return codomain.linear_combination((f(*[module.monomial(t)
                                                             for module, t in zip(modules, m)]), c)
-                                                       for m, c in self)
+                                                       for m, c in self.items())
                 else:
                     return sum((c * f(*[module.monomial(t)
                                         for module, t in zip(modules, m)])
-                                for m, c in self),
+                                for m, c in self.items()),
                                codomain.zero())
 
     class DualObjects(DualObjectsCategory):

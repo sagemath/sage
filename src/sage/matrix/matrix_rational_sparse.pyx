@@ -236,7 +236,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpq_vector* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
         for i in range(right._nrows):
             v = &(right._matrix[i])
@@ -374,7 +374,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpz_t x, h
         mpz_init(x)
         mpz_init_set_si(h, 0)
-        cdef int i, j
+        cdef Py_ssize_t i, j
         sig_on()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
@@ -538,7 +538,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
         """
-        label = 'echelon_form_%s'%algorithm
+        label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
         if x is not None:
             return x

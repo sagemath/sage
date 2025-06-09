@@ -1,7 +1,6 @@
-r"""
-Nonnegative integer lists
 """
-
+Lists of nonnegative integers with constraints.
+"""
 from sage.sets.family import Family
 from sage.combinat.integer_lists import IntegerListsLex
 from sage.rings.semirings.non_negative_integer_semiring import NN

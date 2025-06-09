@@ -158,7 +158,8 @@ lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     PariError = ()
 
@@ -271,8 +272,8 @@ class EllipticCurvePoint(AdditiveGroupElement,
             ....:     if xs:
             ....:         pts.append(E(choice(xs), y, z))
             sage: P, Q = pts
-            sage: R = P + Q
-            sage: for d in N.divisors():
+            sage: R = P + Q  # not tested (:issue:`39191`)
+            sage: for d in N.divisors():  # not tested (:issue:`39191`)
             ....:     if d > 1:
             ....:         assert R.change_ring(Zmod(d)) == P.change_ring(Zmod(d)) + Q.change_ring(Zmod(d))
         """
@@ -2389,11 +2390,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             raise ValueError("The point P must be n-torsion")
 
         # NOTE: Pari returns the non-reduced Tate pairing, so we
-        # must perform the exponentation ourselves using the supplied
+        # must perform the exponentiation ourselves using the supplied
         # k value
         ePQ = pari.elltatepairing(E, P, Q, n)
         exp = Integer((q**k - 1)/n)
-        return K(ePQ**exp) # Cast the PARI type back to the base ring
+        return K(ePQ**exp)  # Cast the PARI type back to the base ring
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""
@@ -3052,9 +3053,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve(K, [0,1,0,-160,308])
             sage: P = E(26, -120)
             sage: E.discriminant().support()
-            [Fractional ideal (i + 1),
-             Fractional ideal (-i - 2),
-             Fractional ideal (2*i + 1),
+            [Fractional ideal (i - 1),
+             Fractional ideal (2*i - 1),
+             Fractional ideal (-2*i - 1),
              Fractional ideal (3)]
             sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]
             [1, 4, 4, 4]

@@ -308,6 +308,7 @@ Comprehensive module list
 .. toctree::
     :maxdepth: 1
 
+    sage/combinat/posets/bubble_shuffle
     sage/combinat/posets/cartesian_product
     sage/combinat/posets/poset_examples
     sage/combinat/posets/d_complete
@@ -382,6 +383,7 @@ Comprehensive module list
     sage/combinat/root_system/non_symmetric_macdonald_polynomials
     sage/combinat/root_system/pieri_factors
     sage/combinat/root_system/reflection_group_element
+    sage/combinat/root_system/reflection_group_c
     sage/combinat/root_system/root_lattice_realizations
     sage/combinat/root_system/root_space
     sage/combinat/root_system/type_A_affine
@@ -412,7 +414,6 @@ Comprehensive module list
     sage/combinat/root_system/type_Q
     sage/combinat/root_system/all
     sage/combinat/root_system/root_system
-    sage/combinat/root_system/reflection_group_c
     sage/combinat/root_system/plot
     sage/combinat/root_system/weight_lattice_realizations
     sage/combinat/root_system/weight_space
@@ -425,6 +426,7 @@ Comprehensive module list
 .. toctree::
     :maxdepth: 1
 
+    sage/combinat/sf/abreu_nigro
     sage/combinat/sf/character
     sage/combinat/sf/classical
     sage/combinat/sf/elementary
@@ -501,6 +503,7 @@ Comprehensive module list
     sage/combinat/words/word
     sage/combinat/words/morphism
     sage/combinat/words/paths
+
 
 See also
 --------

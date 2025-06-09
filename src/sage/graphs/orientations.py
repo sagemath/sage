@@ -186,22 +186,9 @@ def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
                 name=name,
                 hash_labels=hash_labels)
 
-    D.set_vertices(G.get_vertices())
-
-    attributes_to_copy = ('_assoc', '_embedding')
-    for attr in attributes_to_copy:
-        if hasattr(G, attr):
-            copy_attr = {}
-            old_attr = getattr(G, attr)
-            if isinstance(old_attr, dict):
-                for v, value in old_attr.items():
-                    try:
-                        copy_attr[v] = value.copy()
-                    except AttributeError:
-                        copy_attr[v] = copy(value)
-                setattr(D, attr, copy_attr)
-            else:
-                setattr(D, attr, copy(old_attr))
+    # Copy attributes '_assoc' and '_embedding' if set
+    D._copy_attribute_from(G, '_assoc')
+    D._copy_attribute_from(G, '_embedding')
 
     return D
 
@@ -557,13 +544,11 @@ def acyclic_orientations(G):
         # A graph without edge cannot be oriented
         return
 
-    from sage.rings.infinity import Infinity
     from sage.combinat.subset import Subsets
 
     def reorder_vertices(G):
         n = G.order()
         ko = n
-        k = n
         G_copy = G.copy()
         vertex_labels = {v: None for v in G_copy.vertices()}
 

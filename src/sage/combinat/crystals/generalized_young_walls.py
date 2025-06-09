@@ -154,15 +154,15 @@ class GeneralizedYoungWall(CombinatorialElement):
                                 ┤
                                 │
                     ┌───┬───┬───┐
-                    │ 1 │ 0 │ 2 │
+                    │ 2 │ 0 │ 1 │
                     └───┴───┼───┤
                             │ 0 │
                             └───┘
                                 │
             ┌───┬───┬───┬───┬───┐
-            │ 1 │ 0 │ 2 │ 1 │ 0 │
+            │ 0 │ 1 │ 2 │ 0 │ 1 │
             └───┴───┼───┼───┼───┤
-                    │ 0 │ 2 │ 1 │
+                    │ 1 │ 2 │ 0 │
                     └───┴───┴───┘
         """
         from sage.typeset.unicode_art import UnicodeArt
@@ -173,7 +173,8 @@ class GeneralizedYoungWall(CombinatorialElement):
         import unicodedata
         v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
         vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
-        table = [[None] * (self.cols - len(row)) + row for row in reversed(self)]
+        table = [[None] * (self.cols - len(row)) + list(reversed(row))
+                 for row in reversed(self)]
         ret = []
         for i, row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
             if row[-1] == " ":
@@ -424,7 +425,11 @@ class GeneralizedYoungWall(CombinatorialElement):
             15
         """
         n = self.parent().cartan_type().rank() - 1
-        m = lambda i: len([1 for r in self.data if r and r[0] == (i - 1) % (n + 1)])
+
+        def m(i):
+            mod = (i - 1) % (n + 1)
+            return len([1 for r in self.data if r and r[0] == mod])
+
         for r in self.data:
             if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
@@ -497,16 +502,17 @@ class GeneralizedYoungWall(CombinatorialElement):
             newdata.append([i])
         return self.__class__(self.parent(), newdata)
 
-    def latex_large(self):
+    def latex_large(self) -> str:
         r"""
         Generate LaTeX code for ``self`` but the output is larger.
-        Requires TikZ.
+
+        This requires TikZ.
 
         EXAMPLES::
 
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: x.latex_large()
-            '\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
+            '\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
         if not self.data:
@@ -515,18 +521,20 @@ class GeneralizedYoungWall(CombinatorialElement):
             s += "\\begin{tikzpicture}[baseline=5,scale=.45] \n \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
                                 for r in self.data) + "} \n"
-            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
+            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\scriptsize] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-,thick] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Generate LaTeX code for ``self``.  Requires TikZ.
+        Generate LaTeX code for ``self``.
+
+        This requires TikZ.
 
         EXAMPLES::
 
             sage: x = crystals.infinity.GeneralizedYoungWalls(3)([[],[1,0,3,2],[2,1],[3,2,1,0,3,2],[],[],[2]])
             sage: x._latex_()
-            '\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n'
+            '\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n{{},{1,0,3,2},{2,1},{3,2,1,0,3,2},{},{},{2}} \n{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n'
         """
         s = ""
         if not self.data:
@@ -535,7 +543,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             s += "\\begin{tikzpicture}[baseline=5,scale=.25] \\foreach \\x [count=\\s from 0] in \n"
             s += "{" + ','.join("{" + ','.join(str(i) for i in r) + "}"
                                 for r in self.data) + "} \n"
-            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\t-1,-.5); } \n \\end{tikzpicture} \n"
+            s += "{\\foreach \\y [count=\\t from 0] in \\x {  \\node[font=\\tiny] at (-\\t,\\s) {$\\y$}; \n \\draw (-\\t+.5,\\s+.5) to (-\\t-.5,\\s+.5); \n \\draw (-\\t+.5,\\s-.5) to (-\\t-.5,\\s-.5); \n \\draw (-\\t-.5,\\s-.5) to (-\\t-.5,\\s+.5);  } \n \\draw[-] (.5,\\s+1) to (.5,-.5) to (-\\s-1,-.5); } \n \\end{tikzpicture} \n"
         return s
 
     def weight(self, root_lattice=False):
@@ -1034,8 +1042,10 @@ class CrystalOfGeneralizedYoungWalls(InfinityCrystalOfGeneralizedYoungWalls):
 
             sage: TestSuite(YLa).run(skip=["_test_enumerated_set_contains","_test_stembridge_local_axioms"]) # long time
         """
+        cat = (RegularCrystals(), HighestWeightCrystals(),
+               InfiniteEnumeratedSets())
         InfinityCrystalOfGeneralizedYoungWalls.__init__(self, n,
-                category=(RegularCrystals(), HighestWeightCrystals(), InfiniteEnumeratedSets()))
+                                                        category=cat)
         self.hw = La
 
     Element = CrystalOfGeneralizedYoungWallsElement

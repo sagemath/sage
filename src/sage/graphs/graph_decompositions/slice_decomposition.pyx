@@ -27,6 +27,7 @@ AUTHORS:
 # ****************************************************************************
 
 from libcpp.algorithm cimport swap
+from cysignals.signals cimport sig_on, sig_off
 from cython.operator cimport dereference as deref
 
 from sage.graphs.base.c_graph cimport CGraphBackend
@@ -155,6 +156,19 @@ cdef void extended_lex_BFS(
         [0[1[2]] [3] [4]]
         sage: G.lex_BFS(algorithm="fast")
         [0, 1, 2, 3, 4]
+
+    Check that :issue:`39934` is fixed::
+
+        sage: G = Graph(graphs.HouseGraph(), immutable=True)
+        sage: G.slice_decomposition()
+        [0[1[2]] [3] [4]]
+        sage: G.lex_BFS(algorithm="fast")
+        [0, 1, 2, 3, 4]
+        sage: G = Graph(graphs.HouseGraph(), sparse=False)
+        sage: G.slice_decomposition()
+        [0[1[2]] [3] [4]]
+        sage: G.lex_BFS(algorithm="fast")
+        [0, 1, 2, 3, 4]
     """
     cdef int n = <int> cg.num_verts
     # Variables for the partition refinement algorithm
@@ -181,6 +195,7 @@ cdef void extended_lex_BFS(
         deref(xslice_len).resize(n)
         part_len.resize(max_nparts)
     if lex_label != NULL:
+        deref(lex_label).clear()
         deref(lex_label).resize(n)
 
     # Initialize the position of vertices in sigma (and compute max_degree)
@@ -196,7 +211,7 @@ cdef void extended_lex_BFS(
                 sigma[i] = v_int
                 deref(sigma_inv)[v_int] = i
                 i = i + 1
-            max_degree = max(max_degree, cg.out_degrees[v_int])
+            max_degree = max(max_degree, cg.out_degree(v_int))
 
     # Variables needed to iterate over neighbors of a vertex
     cdef int nneighbors
@@ -225,7 +240,7 @@ cdef void extended_lex_BFS(
         v_int = sigma[i]
 
         # Iterate over the neighbors of v
-        nneighbors = cg.out_neighbors_unsafe (v_int, neighbors.data(), max_degree)
+        nneighbors = cg.out_neighbors_unsafe(v_int, neighbors.data(), max_degree)
         for k in range(nneighbors):
             u_int = neighbors[k]
             j = deref(sigma_inv)[u_int]  # get the position of u
@@ -233,7 +248,7 @@ cdef void extended_lex_BFS(
                 continue  # already taken care of
 
             if lex_label != NULL:
-                deref(lex_label)[j].push_back (v_int)
+                deref(lex_label)[j].push_back(v_int)
 
             p = part_of[j]  # get the part of u
             l = part_head[p]  # get the beginning of the part containing u
@@ -338,6 +353,14 @@ def slice_decomposition(G, initial_vertex=None):
         Traceback (most recent call last):
         ...
         ValueError: parameter G must be an undirected graph
+
+    TESTS:
+
+    Check that :issue:`39934` is fixed::
+
+        sage: G = Graph(graphs.HouseGraph(), immutable=True)
+        sage: G.slice_decomposition()
+        [0[1[2]] [3] [4]]
     """
     return SliceDecomposition(G, initial_vertex=initial_vertex)
 
@@ -409,14 +432,17 @@ cdef class SliceDecomposition(SageObject):
         cdef vector[vector[int]] lex_label
 
         # Compute the slice decomposition using the extended lexBFS algorithm
+        sig_on()
         extended_lex_BFS(cg, sigma, NULL, initial_v_int, NULL,
                          &(self.xslice_len), &lex_label)
+        sig_off()
 
         # Translate the results with the actual vertices of the graph
         self.sigma = tuple(Gbackend.vertex_label(v_int) for v_int in sigma)
-        self.sigma_inv = {v: i  for i, v in enumerate(self.sigma)}
-        self.lex_label = {i: tuple(Gbackend.vertex_label(v_int) for v_int in lli)
-                                    for i, lli in enumerate(lex_label)}
+        self.sigma_inv = {v: i for i, v in enumerate(self.sigma)}
+        self.lex_label = {i: tuple(Gbackend.vertex_label(v_int)
+                                   for v_int in lli)
+                          for i, lli in enumerate(lex_label)}
 
     def __eq__(self, other):
         """
@@ -479,7 +505,7 @@ cdef class SliceDecomposition(SageObject):
 
         OUTPUT:
 
-        A dictionnary with the keys:
+        A dictionary with the keys:
 
         * ``"pivot"`` -- the vertex `v` given as parameter
 
@@ -522,7 +548,7 @@ cdef class SliceDecomposition(SageObject):
              'sequence': [['u'], ['y', 'z']],
              'slice': ['u', 'y', 'z']}
 
-        Some values of the returned dictionnary can be obtained via other
+        Some values of the returned dictionary can be obtained via other
         methods (:meth:`~slice`, :meth:`~xslice_sequence`,
         :meth:`~active_edges`, :meth:`~lexicographic_label`)::
 

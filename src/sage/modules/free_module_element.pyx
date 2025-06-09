@@ -1055,7 +1055,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: pari(L)                                                               # needs sage.libs.pari
             [[0, 1, 2, 3], [0, 1, 8, 27], [0, 1, 32, 243]]
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         return pari(self.list())
 
     def _pari_init_(self):
@@ -3619,9 +3619,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ArithmeticError: degrees (1 and 2) must be the same
         """
-        return (self.conjugate()).dot_product(right)
+        return self.conjugate().dot_product(right)
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if this is a dense vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3639,7 +3639,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_dense_c(self) noexcept:
         return self.parent().is_dense()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if this is a sparse vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3657,7 +3657,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_sparse_c(self) noexcept:
         return self.parent().is_sparse()
 
-    def is_vector(self):
+    def is_vector(self) -> bool:
         """
         Return ``True``, since this is a vector.
 

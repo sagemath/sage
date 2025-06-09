@@ -100,7 +100,7 @@ from sage.rings.number_field.totallyreal_data import ZZx, lagrange_degree_3, int
 from sage.rings.number_field.number_field import NumberField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.number_field.totallyreal import weed_fields, odlyzko_bound_totallyreal, enumerate_totallyreal_fields_prim
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
@@ -650,9 +650,9 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
 
     ::
 
-        a[d]*x^n + ... + a[0]*x^(n-d)
+        a[k]*x^m + ... + a[0]*x^(m-k)
 
-    if ``length(a) = d+1``, so in particular always ``a[d] = 1``.
+    if ``length(a) = k+1``, so in particular always ``a[k] = 1``.
 
     .. NOTE::
 
@@ -796,7 +796,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
                 counts[1] += 1
                 if nf.polisirreducible():
                     counts[2] += 1
-                    [zk,d] = nf.nfbasis_d()
+                    zk, d = nf.nfbasis_d()
 
                     if d <= B:
                         if verbose:

@@ -27,7 +27,7 @@ REFERENCES:
 # ****************************************************************************
 import operator
 
-from sage.arith.misc import binomial, bernoulli
+from sage.arith.misc import bernoulli
 from sage.categories.fields import Fields
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix cimport Matrix
@@ -211,7 +211,7 @@ cdef class Dist(ModuleElement):
             scalar = new_base(left)
             return V([scalar * new_base(self.moment(i)) for i in range(self.precision_absolute())])
 
-    def is_zero(self, p=None, M=None):
+    def is_zero(self, p=None, M=None) -> bool:
         r"""
         Return ``True`` if the `i`-th moment is zero for all `i` (case ``M`` is
         ``None``) or zero modulo `p^{M-i}` for all `i` (when ``M`` is not
@@ -1129,7 +1129,7 @@ cdef class Dist_vector(Dist):
         """
         # assert self._moments[0][0]==0, "not total measure zero"
         # print("result accurate modulo p^",self.moment(0).valuation(self.p) )
-        # v=[0 for j in range(0,i)]+[binomial(j,i)*bernoulli(j-i) for j in range(i,M)]
+        # v=[0 for j in range(i)]+[binomial(j,i)*bernoulli(j-i) for j in range(i,M)]
         M = self.precision_relative()
         R = self.parent().base_ring()
         K = R.fraction_field()
@@ -1142,7 +1142,7 @@ cdef class Dist_vector(Dist):
             # bernoulli(1) = -1/2; the only nonzero odd Bernoulli number
             v[m] += m * minhalf * scalar
             for j in range(m - 1, M, 2):
-                v[j] += binomial(j, m - 1) * bern[(j - m + 1) // 2] * scalar
+                v[j] += ZZ(j).binomial(m - 1) * bern[(j - m + 1) // 2] * scalar
         p = self.parent().prime()
         cdef Dist_vector ans
         if p == 0:

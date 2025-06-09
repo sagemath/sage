@@ -773,16 +773,17 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     except StopIteration:
                         it.pop()
                         if path:
-                            path.pop(0)
+                            path.pop()
                         continue
 
-                    b = self.element_class(self, [x] + path)
+                    path.append(x)
+                    b = self.element_class(self, reversed(path))
                     if not b.is_highest_weight(index_set=I0):
+                        path.pop()
                         continue
-                    path.insert(0, x)
                     if len(path) == n:
                         ret.append(b)
-                        path.pop(0)
+                        path.pop()
                     else:
                         it.append(iter(self.crystals[-len(path) - 1]))
                 return tuple(ret)

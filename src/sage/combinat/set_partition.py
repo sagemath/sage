@@ -1635,7 +1635,7 @@ class SetPartition(AbstractSetPartition,
         for S in self[1:]:
             if maximum_so_far < min(S):
                 return False
-            maximum_so_far = max(maximum_so_far, max(S))
+            maximum_so_far = max(maximum_so_far, *S)
         return True
 
     def standardization(self):
