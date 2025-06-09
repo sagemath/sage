@@ -137,6 +137,28 @@ def test_parse_bitness_with_tolerance():
     )
 
 
+def test_parse_bitness_multiline():
+    parser = SageDocTestParser(("sage",))
+    input = textwrap.dedent(
+        """
+        sage: sys.maxsize > (1 << 32)
+        something else
+        True # 64-bit
+        False # 32-bit
+        """
+    )
+    parsed = parser.parse(input)[1]
+    assert isinstance(parsed, doctest.Example)
+    assert (
+        parsed.want.bitness_64
+        == MarkedOutput("something else\nTrue # 64-bit\nFalse # 32-bit\n")
+        .update(
+            bitness_32="something else\nFalse \n", bitness_64="something else\nTrue \n"
+        )
+        .bitness_64
+    )
+
+
 def test_check_output_bitness():
     checker = SageOutputChecker()
     expected = MarkedOutput("True # 64-bit\nFalse # 32-bit\n").update(
@@ -155,3 +177,13 @@ def test_check_output_bitness_with_tolerance():
         abs_tol="0.001",
     )
     assert checker.check_output(expected, f"{sys.maxsize} \n", 0)
+
+
+def test_check_output_bitness_multiline():
+    checker = SageOutputChecker()
+    expected = MarkedOutput("something else\nTrue # 64-bit\nFalse # 32-bit\n").update(
+        bitness_32="something else\nFalse \n", bitness_64="something else\nTrue \n"
+    )
+    assert checker.check_output(
+        expected, f"something else\n{bitness_value == 64} \n", 0
+    )

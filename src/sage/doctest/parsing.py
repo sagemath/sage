@@ -592,7 +592,7 @@ def parse_marked_output(source: str, want: str) -> str | MarkedOutput:
         # strip_string_literals replaces comments
         comment = literals[comment]
         if random_marker.search(comment):
-            want = MarkedOutput(want).update(random=True)
+            return MarkedOutput(want).update(random=True)
         else:
             m = tolerance_pattern.search(comment)
             if m:
@@ -606,18 +606,25 @@ def parse_marked_output(source: str, want: str) -> str | MarkedOutput:
                     want = MarkedOutput(want).update(abs_tol=epsilon)
                 else:
                     raise RuntimeError
+            else:
+                want = MarkedOutput(want)
 
-    want_32 = ""
-    want_64 = ""
+    want_32 = []
+    want_64 = []
     for line in want.split("\n"):
         bitness = bitness_marker.search(line)
         if bitness:
             if bitness.groups()[0] == "32":
-                want_32 += line[: bitness.start()] + "\n"
+                want_32.append(line[: bitness.start()])
             else:
-                want_64 += line[: bitness.start()] + "\n"
-    if want_32 == "" and want_64 == "":
+                want_64.append(line[: bitness.start()])
+        else:
+            want_32.append(line)
+            want_64.append(line)
+    if want_32 == want_64:
         return want
+    want_32 = "\n".join(want_32)
+    want_64 = "\n".join(want_64)
     return want.update(bitness_32=want_32, bitness_64=want_64)
 
 
