@@ -1,14 +1,14 @@
 r"""
 Dimensions of spaces of Siegel modular forms
 
-Let `\Gamma_2` denote the integer symplectic group `\operatorname{Sp}(4, \ZZ)`.
+Let `\Gamma_2` denote the integral symplectic group `\operatorname{Sp}(4, \ZZ)`.
 
 This file is about the dimensions of the spaces of Siegel modular forms and
 Siegel cusp forms for the group `\Gamma_2`
 with respect to the representation `\det^k \operatorname{Sym}_j`
 of `\operatorname{GL(2)}`.
 
-They are denoted `A_{k,j}(\Gamma_2)` and `S_{k,j}(\Gamma_2)`.
+They are denoted `M_{k,j}(\Gamma_2)` and `S_{k,j}(\Gamma_2)`.
 
 Author:
 
@@ -16,30 +16,43 @@ Alex Ghitza
 
 REFERENCES:
 
-- [BFvdG2014] Bergstroem-Faber-van der Geer, *Siegel modular forms of
-    degree three and the cohomology of local systems* Sel. Math. New Ser.
-    (2014) 20:83-124.
+- [BFvdG2014] Jonas Bergström, Carel Faber, Gerard van der Geer,
+  *Siegel modular forms of degree three and the cohomology of local systems*,
+  Sel. Math. New Ser. (2014) 20:83-124.
+  :doi:`10.1007/s00029-013-0118-6`
 
-- [Ibu1] Ibukiyama *Lifting conjectures from vector valued Siegel
-    modular forms of degree two*
+- [Ibu2008] Tomoyoshi Ibukiyama,
+  *A conjecture on a Shimura type correspondence for Siegel modular forms,
+  and Harder’s conjecture on congruences*.
+  in Modular forms on Schiermonnikoog. 107-144 (2008).
+  `doi:`10.1017/CBO9780511543371.010`
 
-- [Ibu2] Ibukiyama *A conjecture on a Shimura type correspondence
-    for Siegel modular forms, and Harder's conjecture on congruences*
+- [Ibu2012] Tomoyoshi Ibukiyama,
+  *Lifting conjectures from vector valued Siegel modular forms of degree two*.
+  Comment. Math. Univ. St. Pauli 61, No. 1, 87-102 (2012).
 
-- [IbWa] Ibukiyama and Wakatsuki
+- [IbWa2009] Tomoyoshi Ibukiyama and Satoshi Wakatsuki,
+  *Siegel modular forms of small weight and the Witt operator*,
+  in Quadratic forms – algebra, arithmetic, and geometry. Contemporary Mathematics 493, 189-209 (2009).
 
-- [Peter] Petersen *Cohomology of
-    local systems on the moduli of principally polarized abelian surfaces*
+- [Peter2015] Dan Petersen, *Cohomology of
+  local systems on the moduli of principally polarized abelian surfaces*,
+  Pac. J. Math. 275, No. 1, 39-61 (2015).
+  :doi:`10.2140/pjm.2015.275.39`
 
-- [vdG] van der Geer, *Siegel modular forms*
+- [vdG2008] Gerard van der Geer, *Siegel modular forms and their applications*,
+  in The 1-2-3 of modular forms. Springer Universitext, 181-245 (2008).
+  :doi:`10.1007/978-3-540-74119-0_3`
 
-- [Tsu1983] Tsushima, *An explicit dimension formula for the spaces
-  of generalized automorphic forms with respect to Sp(2,Z)*
-  Proc. Japan Acad. 59 Ser A (1983).
+- [Tsu1983] Ryuji Tsushima, *An explicit dimension formula for the spaces
+  of generalized automorphic forms with respect to Sp(2,Z)*,
+  Proc. Japan Acad., Ser. A 59, 139-142 (1983).
+  :doi:`10.3792/pjaa.59.139`
 
-- [Take] Takemori *Structure theorems for vector valued Siegel
-    modular forms of degree 2 and weight det^k otimes Sym(10)*
-
+- [Take2016] Sho Takemori, *Structure theorems for vector valued Siegel
+  modular forms of degree 2 and weight det^k otimes Sym(10)*,
+  Int. J. Math. 27, No. 12, Article ID 1650101, 33 p. (2016).
+  :doi:`10.1142/S0129167X16501019`
 """
 from sage.modular.dims import dimension_cusp_forms, dimension_modular_forms
 from sage.rings.integer_ring import ZZ
@@ -54,16 +67,11 @@ def dimension_cusp_forms_sp4z(k, J):
     r"""
     Return the dimension of the space of cusps forms `S_{k,j}(\Gamma_2)`.
 
-    This uses Tsushima's formula from Theorem 4 of
-    'An explicit dimension formula
-    for the spaces of generalized automorphic forms with respect to Sp(2,Z)'
-    Proc. Japan Acad. 59 Ser A (1983).
+    This uses Tsushima's formula from Theorem 4 of [Tsu1983]_.
 
     Tsushima proves the correctness of his formula for (j = 0 and  k >= 4)
-    or (j >= 1 and k >= 5), but Bergstroem-Faber-van der Geer prove that it
-    holds for (j >= 0 and k >= 4), see page 97 of 'Siegel modular forms of
-    degree three and the cohomology of local systems' Sel. Math. New Ser.
-    (2014) 20:83-124.
+    or (j >= 1 and k >= 5), but Bergström-Faber-van der Geer prove that it
+    holds for (j >= 0 and k >= 4), see page 97 of [BFvdG2014]_.
 
     EXAMPLES::
 
@@ -114,9 +122,10 @@ def dimension_cusp_forms_sp4z(k, J):
 
 
 def generating_series_cusp_forms_sp4z_wt3():
-    """
-    From page 45 of Petersen 'Cohomology of
-    local systems on the moduli of principally polarized abelian surfaces'
+    r"""
+    Return the generating series for cusps forms `S_{3,j}(\Gamma_2)`.
+
+    This is taken from page 45 of [Peter2015]_.
 
     EXAMPLES::
 
@@ -129,9 +138,10 @@ def generating_series_cusp_forms_sp4z_wt3():
 
 
 def generating_series_modular_forms_sp4z_wt4():
-    """
-    From page 8 of Ibukiyama 'Lifting conjectures from vector valued Siegel
-    modular forms of degree two'
+    r"""
+    Return the generating series for modular forms `M_{4,j}(\Gamma_2)`. ??
+
+    This is taken from page 8 of [Ibu2012]_.
 
     EXAMPLES::
 
@@ -145,9 +155,10 @@ def generating_series_modular_forms_sp4z_wt4():
 
 
 def generating_series_cusp_forms_sp4z_wt4():
-    """
-    From page 8 of Ibukiyama 'Lifting conjectures from vector valued Siegel
-    modular forms of degree two'
+    r"""
+    Return the generating series for cusp forms `S_{4,j}(\Gamma_2)`.
+
+    This is taken from page 8 of [Ibu2012]_.
 
     EXAMPLES::
 
@@ -162,10 +173,9 @@ def generating_series_cusp_forms_sp4z_wt4():
 
 def generating_series_cusp_forms_sp4z_wt5():
     r"""
-    Formula for `S_{5,j}(\Gamma_2)`.
+    Return the generating series for cusp forms `S_{5,j}(\Gamma_2)`.
 
-    From page 115 of Ibukiyama "A conjecture on a Shimura type correspondence
-    for Siegel modular forms, and Harder's conjecture on congruences"
+    This is taken from page 115 of [Ibu2008]_.
 
     EXAMPLES::
 
@@ -180,10 +190,9 @@ def generating_series_cusp_forms_sp4z_wt5():
 
 def generating_series_cusp_forms_sp4z_wt7():
     r"""
-    Formula for `S_{7,j}(\Gamma_2)`.
+    Return the generating series for cusp forms `S_{7,j}(\Gamma_2)`.
 
-    From page 115 of Ibukiyama "A conjecture on a Shimura type correspondence
-    for Siegel modular forms, and Harder's conjecture on congruences"
+    This is taken from page 115 of [Ibu2008]_.
 
     EXAMPLES::
 
@@ -198,7 +207,7 @@ def generating_series_cusp_forms_sp4z_wt7():
 
 def generating_series_cusp_forms_sp4z_odd_wt(k, j):
     r"""
-    Formula for `S_{2j+3,2k-6}(\Gamma_2)`.
+    Return the generating series for cusp forms `S_{2j+3,2k-6}(\Gamma_2)`.
 
     From page 115 of Ibukiyama "A conjecture on a Shimura type correspondence
     for Siegel modular forms, and Harder's conjecture on congruences"
@@ -218,7 +227,7 @@ def generating_series_cusp_forms_sp4z_odd_wt(k, j):
 
 def generating_series_modular_forms_sp4z_j10_even_wt():
     r"""
-    Formula for `S_{k,10}(\Gamma_2)`.
+    Return the generating series for modular forms `M_{k,10}(\Gamma_2)`. ??
 
     From Lemma 7.1 of Takemori 'Structure theorems for vector valued Siegel
     modular forms of degree 2 and weight det**k otimes Sym(10)'
@@ -235,7 +244,9 @@ def generating_series_modular_forms_sp4z_j10_even_wt():
 
 
 def generating_series_modular_forms_sp4z_j10_odd_wt():
-    """
+    r"""
+    Return the generating series for modular forms `M_{k,10}(\Gamma_2)`. ??
+
     From Lemma 7.1 of Takemori 'Structure theorems for vector valued Siegel
     modular forms of degree 2 and weight det**k otimes Sym(10)'
 
@@ -254,7 +265,7 @@ def generating_series_modular_forms_sp4z_j10_odd_wt():
 
 def generating_series_modular_forms_sp4z_j0_even_wt():
     """
-    From Section 9 of van der Geer 'Siegel modular forms'
+    This is taken from Section 9 of [vdG2008]_.
 
     EXAMPLES::
 
@@ -268,7 +279,7 @@ def generating_series_modular_forms_sp4z_j0_even_wt():
 
 def generating_series_modular_forms_sp4z_j0_odd_wt():
     """
-    From Section 9 of van der Geer 'Siegel modular forms'
+    This is taken from Section 9 of [vdG2008]_.
 
     EXAMPLES::
 
@@ -293,24 +304,22 @@ def generating_function_cusp_forms_sp4z_k(k):
     return R(lambda j: dimension_cusp_forms_sp4z(k, j)) * denom
 
 
-def generating_function_numerator_cusp_forms_sp4z_j(j, prec=None):
+def generating_function_numerator_cusp_forms_sp4z_j(j):
+    """
+    EXAMPLES::
 
-    def generating_function_denominator_cusp_forms_sp4z_j():
-        x = PolynomialRing(ZZ).gen()
-        return (1 - x**4) * (1 - x**6) * (1 - x**10) * (1 - x**12)
-
-    denom = generating_function_denominator_cusp_forms_sp4z_j(j)
-    if prec is None:
-        prec = denom.degree()
-    lst = [dimension_cusp_forms_sp4z(k, j) for k in range(prec)]
-    R = PowerSeriesRing(QQ)
-    res = (R(lst) * denom).add_bigoh(prec)
-    return res.polynomial().change_ring(ZZ)
+        sage: generating_function_cusp_forms_sp4z_j(7)
+        ?
+    """
+    R = LazyPowerSeriesRing(QQ, 'x')
+    x = R.gen()
+    denom = (1 - x**4) * (1 - x**6) * (1 - x**10) * (1 - x**12)
+    return R(lambda k: dimension_cusp_forms_sp4z(k, j)) * denom
 
 
 def dimension_modular_forms_sp4z(k, j):
     r"""
-    Return the dimension of `A_{k,j}(\Gamma_2)`.
+    Return the dimension of `M_{k,j}(\Gamma_2)`.
 
     EXAMPLES::
 
@@ -340,7 +349,7 @@ def dimension_cusp_forms_Gamma_e(k, j):
     r"""
     What is `\Gamma_e` ?
 
-    From Theorem 6.2 in Ibukiyama and Wakatsuki
+    This is taken from Theorem 6.2 in [IbWa2009]_.
 
     EXAMPLES::
 
