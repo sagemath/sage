@@ -755,19 +755,6 @@ class FileDocTestSource(DocTestSource):
 
         TESTS:
 
-        We check that we correctly process results that depend on 32
-        vs 64 bit architecture::
-
-            sage: import sys
-            sage: bitness = '64' if sys.maxsize > (1 << 32) else '32'
-            sage: sys.maxsize == 2^63 - 1
-            False # 32-bit
-            True  # 64-bit
-            sage: ex = doctests[20].examples[11]
-            sage: ((bitness == '64' and ex.want == 'True  \n')
-            ....:  or (bitness == '32' and ex.want == 'False \n'))
-            True
-
         We check that lines starting with a # aren't doctested::
 
             #sage: raise RuntimeError

@@ -26,7 +26,6 @@ Helpers for tolerance checking in doctests
 
 from sage.doctest.marked_output import MarkedOutput
 
-
 _RIFtol = None
 
 
@@ -91,11 +90,11 @@ def add_tolerance(wantval, want: MarkedOutput):
         sage: want_tol = MarkedOutput().update(tol=0.0001)
         sage: want_abs = MarkedOutput().update(abs_tol=0.0001)
         sage: want_rel = MarkedOutput().update(rel_tol=0.0001)
-        sage: add_tolerance(RIF(pi.n(64)), want_tol).endpoints()                 # needs sage.symbolic
+        sage: add_tolerance(RIF(pi.n(64)), want_tol).endpoints()
         (3.14127849432443, 3.14190681285516)
-        sage: add_tolerance(RIF(pi.n(64)), want_abs).endpoints()                 # needs sage.symbolic
+        sage: add_tolerance(RIF(pi.n(64)), want_abs).endpoints()
         (3.14149265358979, 3.14169265358980)
-        sage: add_tolerance(RIF(pi.n(64)), want_rel).endpoints()                 # needs sage.symbolic
+        sage: add_tolerance(RIF(pi.n(64)), want_rel).endpoints()
         (3.14127849432443, 3.14190681285516)
         sage: add_tolerance(RIF(1e1000), want_tol)
         1.000?e1000

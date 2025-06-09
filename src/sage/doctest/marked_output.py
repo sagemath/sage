@@ -31,9 +31,9 @@ from typing_extensions import NotRequired, Unpack
 
 class MarkedOutputType(TypedDict):
     random: NotRequired[bool]
-    rel_tol: NotRequired[float]
-    abs_tol: NotRequired[float]
-    tol: NotRequired[float]
+    rel_tol: NotRequired[str]
+    abs_tol: NotRequired[str]
+    tol: NotRequired[str]
     bitness_32: NotRequired[str]
     bitness_64: NotRequired[str]
 

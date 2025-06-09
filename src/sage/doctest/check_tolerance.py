@@ -25,9 +25,9 @@ Check tolerance when parsing docstrings
 # ****************************************************************************
 
 import re
-from sage.doctest.rif_tol import RIFtol, add_tolerance
-from sage.doctest.marked_output import MarkedOutput
 
+from sage.doctest.marked_output import MarkedOutput
+from sage.doctest.rif_tol import RIFtol, add_tolerance
 
 # Regex pattern for float without the (optional) leading sign
 float_without_sign = r'((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?'
@@ -206,8 +206,8 @@ def check_tolerance_complex_domain(want: MarkedOutput, got: str) -> tuple[str, s
 
     INPUT:
 
-    - ``want`` -- a string, what you want
-    - ``got`` -- a string, what you got
+    - ``want`` -- what you want
+    - ``got`` -- what you got
 
     OUTPUT:
 
@@ -241,7 +241,10 @@ def check_tolerance_complex_domain(want: MarkedOutput, got: str) -> tuple[str, s
     for match in complex_regex.finditer(got):
         got_str.extend(complex_match_to_real_and_imag(match))
     if len(want_str) != len(got_str):
-        raise ToleranceExceededError()
+        raise ToleranceExceededError(
+            f"Number of digits in 'want' and 'got' do not match: "
+            f"{len(want_str)} != {len(got_str)}"
+        )
 
     # Then check the numbers
     want_values = [RIFtol(g) for g in want_str]

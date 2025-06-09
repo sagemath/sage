@@ -87,6 +87,7 @@ def test_parse_known_bug_with_description_returns_empty():
     parsed = parser.parse("sage: x = int('1'*4301) # known bug, #34506")
     assert parsed == ["", ""]
 
+
 def test_parse_abs_tolerance():
     parser = SageDocTestParser(("sage",))
     input = textwrap.dedent(
@@ -97,9 +98,8 @@ def test_parse_abs_tolerance():
     )
     parsed = parser.parse(input)[1]
     assert isinstance(parsed, doctest.Example)
-    assert parsed.want == MarkedOutput("    1.0\n").update(
-        abs_tol=1e-05
-    )
+    assert parsed.want == MarkedOutput("    1.0\n").update(abs_tol="1e-5")
+
 
 def test_parse_bitness():
     parser = SageDocTestParser(("sage",))
@@ -117,9 +117,41 @@ def test_parse_bitness():
     )
 
 
+def test_parse_bitness_with_tolerance():
+    parser = SageDocTestParser(("sage",))
+    input = textwrap.dedent(
+        """
+        sage: sys.maxsize  # abs tol 0.001
+        2147483646.999            # 32-bit
+        9223372036854775806.999   # 64-bit
+        """
+    )
+    parsed = parser.parse(input)[1]
+    assert isinstance(parsed, doctest.Example)
+    assert parsed.want == MarkedOutput(
+        "2147483646.999            # 32-bit\n9223372036854775806.999   # 64-bit\n"
+    ).update(
+        bitness_32="2147483646.999            \n",
+        bitness_64="9223372036854775806.999   \n",
+        abs_tol="0.001",
+    )
+
+
 def test_check_output_bitness():
     checker = SageOutputChecker()
     expected = MarkedOutput("True # 64-bit\nFalse # 32-bit\n").update(
         bitness_32="False \n", bitness_64="True \n"
     )
     assert checker.check_output(expected, str(bitness_value == 64) + " \n", 0)
+
+
+def test_check_output_bitness_with_tolerance():
+    checker = SageOutputChecker()
+    expected = MarkedOutput(
+        "2147483646.999 # 32-bit\n9223372036854775806.999 # 64-bit\n"
+    ).update(
+        bitness_32="2147483646.999 \n",
+        bitness_64="9223372036854775806.999 \n",
+        abs_tol="0.001",
+    )
+    assert checker.check_output(expected, f"{sys.maxsize} \n", 0)

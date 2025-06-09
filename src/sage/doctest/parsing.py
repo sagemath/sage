@@ -36,6 +36,7 @@ from __future__ import annotations
 
 import collections.abc
 import doctest
+import logging
 import platform
 import re
 import sys
@@ -577,49 +578,47 @@ def parse_marked_output(source: str, want: str) -> str | MarkedOutput:
         sage: marked.rel_tol
         0
         sage: marked.abs_tol
-        0.010000000000000000000...?
+        '0.01'
     """
     safe, literals, state = strip_string_literals(source)
     first_line = safe.split('\n', 1)[0]
     if '#' not in first_line:
         if "#" not in want:
             return want
-
-        want_32 = ""
-        want_64 = ""
-        for line in want.split("\n"):
-            bitness = bitness_marker.search(line)
-            if bitness:
-                if bitness.groups()[0] == "32":
-                    want_32 += line[:bitness.start()] + "\n"
-                else:
-                    want_64 += line[:bitness.start()] + "\n"
-        if want_32 == "" and want_64 == "":
-            return want
-        return MarkedOutput(want).update(bitness_32=want_32, bitness_64=want_64)
-    comment = first_line[first_line.find('#') + 1:]
-    comment = comment[comment.index('(') + 1: comment.rindex(')')]
-    # strip_string_literals replaces comments
-    comment = literals[comment]
-    if random_marker.search(comment):
-        want = MarkedOutput(want).update(random=True)
+        want = MarkedOutput(want)
     else:
-        m = tolerance_pattern.search(comment)
-        if m:
-            rel_or_abs, epsilon = m.groups()
-            if epsilon is None:
-                epsilon = RIFtol("1e-15")
+        comment = first_line[first_line.find('#') + 1:]
+        comment = comment[comment.index('(') + 1: comment.rindex(')')]
+        # strip_string_literals replaces comments
+        comment = literals[comment]
+        if random_marker.search(comment):
+            want = MarkedOutput(want).update(random=True)
+        else:
+            m = tolerance_pattern.search(comment)
+            if m:
+                rel_or_abs, epsilon = m.groups()
+                epsilon = (epsilon or "1e-15").strip()
+                if rel_or_abs is None:
+                    want = MarkedOutput(want).update(tol=epsilon)
+                elif rel_or_abs.startswith("rel"):
+                    want = MarkedOutput(want).update(rel_tol=epsilon)
+                elif rel_or_abs.startswith("abs"):
+                    want = MarkedOutput(want).update(abs_tol=epsilon)
+                else:
+                    raise RuntimeError
+
+    want_32 = ""
+    want_64 = ""
+    for line in want.split("\n"):
+        bitness = bitness_marker.search(line)
+        if bitness:
+            if bitness.groups()[0] == "32":
+                want_32 += line[: bitness.start()] + "\n"
             else:
-                epsilon = RIFtol(epsilon)
-            if rel_or_abs is None:
-                want = MarkedOutput(want).update(tol=epsilon)
-            elif rel_or_abs.startswith('rel'):
-                want = MarkedOutput(want).update(rel_tol=epsilon)
-            elif rel_or_abs.startswith('abs'):
-                want = MarkedOutput(want).update(abs_tol=epsilon)
-            else:
-                raise RuntimeError
-    return want
+                want_64 += line[: bitness.start()] + "\n"
+    if want_32 == "" and want_64 == "":
+        return want
+    return want.update(bitness_32=want_32, bitness_64=want_64)
 
 
 def pre_hash(s) -> str:
@@ -902,7 +901,7 @@ class SageDocTestParser(doctest.DocTestParser):
             sage: type(ex.want)
             <class 'sage.doctest.marked_output.MarkedOutput'>
             sage: ex.want.tol
-            2.000000000000000000...?e-11
+            '2.0e-11'
 
         You can use continuation lines::
 
@@ -1209,7 +1208,7 @@ class SageOutputChecker(doctest.OutputChecker):
         sage: type(ex.want)
         <class 'sage.doctest.marked_output.MarkedOutput'>
         sage: ex.want.tol
-        2.000000000000000000...?e-11
+        '2.0e-11'
         sage: OC.check_output(ex.want, '0.893515349287690', optflag)
         True
         sage: OC.check_output(ex.want, '0.8935153492877', optflag)
@@ -1383,15 +1382,22 @@ class SageOutputChecker(doctest.OutputChecker):
             if isinstance(want, MarkedOutput):
                 if want.random:
                     return True
-                elif want.tol or want.rel_tol:
+                elif want.bitness_32 and bitness_value == 32:
+                    want = MarkedOutput(want.bitness_32).update(
+                        tol=want.tol, rel_tol=want.rel_tol, abs_tol=want.abs_tol
+                    )
+                elif want.bitness_64 and bitness_value == 64:
+                    want = MarkedOutput(want.bitness_64).update(
+                        tol=want.tol, rel_tol=want.rel_tol, abs_tol=want.abs_tol
+                    )
+
+                if want.tol or want.rel_tol:
                     want, got = check_tolerance_real_domain(want, got)
                 elif want.abs_tol:
                     want, got = check_tolerance_complex_domain(want, got)
-                elif want.bitness_32 and bitness_value == 32:
-                    want = want.bitness_32
-                elif want.bitness_64 and bitness_value == 64:
-                    want = want.bitness_64
-        except ToleranceExceededError:
+        except ToleranceExceededError as e:
+            logger = logging.getLogger(__name__)
+            logger.debug(e)
             return False
 
         if doctest.OutputChecker.check_output(self, want, got, optionflags):
