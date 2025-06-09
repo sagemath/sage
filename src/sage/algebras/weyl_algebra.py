@@ -1138,19 +1138,53 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             return self.parent().zero()
         M = self.monomial_coefficients
         return self.__class__(self.parent(), {t: M[t] * other for t in M})
-    def _l_mul_(self,other):
+    def _l_mul_(self, other):
         if other == 0:
             return self.parent().zero()
         M = self.monomial_coefficients
         return self.__class__(self.parent(), {t: other* M[t] for t in M})
-    def _mul_(self):
-        raise NotImplementedError # TODO: port over multiplication code from finite weyl algebra
-        pass
+    def _mul_(self, other):
+        out = {}
+        zero = self.parent().base_ring().zero()
+        zero_m = self.parent()._diff_index.one()
+        # multiply each pair of monomials
+        for ml in self._monomial_coefficients:
+            cl = self._monomial_coefficients[ml]
+            for mr in other._monomial_coefficients:
+                cr = other._monomial_coefficients[mr]
+                # apply derivative terms of ml to mr and simplify
+                cur = [((mr[0], zero_m), cl*cr)]
+                ldd = ml[1].dict()
+
+                for i in ldd:
+                    p = ldd[i]
+                    # applying dx[i] p times
+                    for _ in range(p):
+                        next = []
+                        for m, c in cur:
+                            diff = dict(ldd)
+                            diff[i] = diff.get(i, zero) + 1
+                            next.append(((m[0], self.parent()._diff_index(diff)), c))
+                            # power rule if m has x[i] term
+                            poly = m[0].dict()
+                            if i in poly:
+                                c *= poly[i]
+                                poly[i] -= 1
+                                next.append(((self.parent()._var_index(poly), m[1]), c))
+                        cur = next
+                
+                for m, c in cur:
+                    m = (ml[0]* m[0], m[1]*mr[1])
+                    out[m] = out.get(m, zero) + c
+                    if out[m] == zero:
+                        del out[m]
+        return self.__class__(self.parent(), out)
+     
     def __iter__(self):
         return iter(self.list())
     def list(self):
         return list(self._monomial_coefficients) # TODO: sorting
-    pass
+
 class InfiniteDifferentialWeylAlgebra(Parent):
     """
     desired API:
@@ -1161,6 +1195,7 @@ class InfiniteDifferentialWeylAlgebra(Parent):
     def __init__(self, R, names = None):
         if names is None:
             names = ['x','dx']
+        # can probably get away with only using one copy.
         self._var_index  = IndexedFreeAbelianMonoid(ZZ,prefix=names[0])
         self._diff_index = IndexedFreeAbelianMonoid(ZZ,prefix=names[1])
         Parent.__init__(self, base=R, names=names)
@@ -1182,7 +1217,8 @@ class InfiniteDifferentialWeylAlgebra(Parent):
         #     zero = R.zero()
         #     return self.element_class(self, {i: R(c) for i, c in x if R(c) != zero})
         # x = self._poly_ring(x)
-        return self.element_class(self, {(self._var_index(m[0]), self._diff_index(m[1])): c for m, c in x.items()})
+        return self.element_class(self, 
+            {(self._var_index(m[0]), self._diff_index(m[1])): c for m, c in x.items()})
         
     @cached_method
     def zero(self):
