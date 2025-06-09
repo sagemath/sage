@@ -318,7 +318,8 @@ def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
         for component in components:
             if component.has_edge(edge):
                 h = component
-        if h is None:
+                break
+        else:
             # edge connects two strongly connected components, so
             # no simple cycle starting with edge exists.
             return
@@ -548,32 +549,47 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
     """
     if starting_vertices is None:
         starting_vertices = self
+    
+    if algorithm == 'A' and not self.is_directed():
+        raise ValueError("The algorithm 'A' is available only for directed graphs.")
+    if algorithm == 'B' and not simple:
+        raise ValueError("The algorithm 'B' is available only when simple=True.")
 
-    if self.is_directed():
-        # Since a cycle is always included in a given strongly connected
-        # component, we may remove edges from the graph
-        sccs = self.strongly_connected_components()
-        d = {}
-        for id, component in enumerate(sccs):
-            for v in component:
-                d[v] = id
-        h = copy(self)
-        h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
-    else:
-        h = copy(self)
+    # if self.is_directed():
+    #     # Since a cycle is always included in a given strongly connected
+    #     # component, we may remove edges from the graph
+    #     sccs = self.strongly_connected_components()
+    #     d = {}
+    #     for id, component in enumerate(sccs):
+    #         for v in component:
+    #             d[v] = id
+    #     h = copy(self)
+    #     h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+    # else:
+    #     h = copy(self)
 
     by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                            weight_function=weight_function,
                                                            check_weight=check_weight)
 
     if by_weight:
-        for e in h.edge_iterator():
+        for e in self.edge_iterator():
             if weight_function(e) < 0:
                 raise ValueError("negative weight is not allowed")
 
     if algorithm == 'A':
-        if not self.is_directed():
-            raise ValueError("The algorithm 'A' is available only for directed graphs.")
+        if self.is_directed():
+            # Since a cycle is always included in a given strongly connected
+            # component, we may remove edges from the graph
+            sccs = self.strongly_connected_components()
+            d = {}
+            for id, component in enumerate(sccs):
+                for v in component:
+                    d[v] = id
+            h = copy(self)
+            h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+        else:
+            h = self
         # We create one cycles iterator per vertex. This is necessary if we
         # want to iterate over cycles with increasing length.
         def cycle_iter(v):
@@ -591,8 +607,6 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
 
         iterators = {v: cycle_iter(v) for v in starting_vertices}
     elif algorithm == 'B':
-        if not simple:
-            raise ValueError("The algorithm 'B' is available only when simple=True.")
         def simple_cycle_iter(hh, e):
             return hh._all_simple_cycles_iterator_edge(e,
                                                        max_length=max_length,
@@ -601,14 +615,14 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
                                                        by_weight=by_weight,
                                                        check_weight=check_weight,
                                                        report_weight=True)
-        if h.is_directed():
+        if self.is_directed():
             def decompose(hh):
                 return hh.strongly_connected_components_subgraphs()
         else:
             def decompose(hh):
                 return hh.biconnected_components_subgraphs()
 
-        components = decompose(h)
+        components = decompose(self)
         iterators = dict()
         while components:
             hh = components.pop()

@@ -814,7 +814,7 @@ def blocks_and_cuts_tree(G):
     return g
 
 def biconnected_components_subgraphs(G):
-    """
+    r"""
     Return a list of biconnected components as graph objects.
 
     A biconnected component is a maximal subgraph that is biconnected, i.e.,
