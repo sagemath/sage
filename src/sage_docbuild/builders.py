@@ -408,6 +408,7 @@ class ReferenceBuilder():
         EXAMPLES::
 
             sage: from sage_docbuild.builders import ReferenceBuilder
+            sage: from sage_docbuild.build_options import BuildOptions
             sage: import tempfile
             sage: with tempfile.TemporaryDirectory() as directory:
             ....:   options = BuildOptions(output_dir = Path(directory))
@@ -1187,6 +1188,7 @@ def get_all_reference_documents(source: Path) -> list[Path]:
 
     EXAMPLES::
 
+        sage: from sage_docbuild.builders import get_all_reference_documents
         sage: documents = get_all_reference_documents(Path('src/doc/en'))
         sage: Path('reference/algebras') in documents
         True
