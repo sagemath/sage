@@ -9,32 +9,30 @@ in [San2009]_ for the study of free loop spaces in algebraic topology.
 The Hasse diagram of the Hochschild lattice is an orientation of the
 1-skeleton of the Hochschild polytope.
 
-For `n \geq 1`, the cardinality of the Hochschild lattice `H(n)` is
+For `n \geq 1`, the cardinality of the Hochschild lattice `H_n` is
 `2^{n - 2} \times (n + 3)`, starting with
 `2, 5, 12, 28, 64, 144, 320, 704, 1536, 3328, 7168, 15360, \ldots`.
 
-The underlying set of `H(n)` consists of some words in the alphabet `(0,1,2)`, whose precise description can be found in [Com2021]_.
+The underlying set of `H_n` consists of some words in the alphabet
+`(0,1,2)`, whose precise description can be found in [Com2021]_.
 """
 from typing import Iterator
 
 from sage.combinat.posets.lattices import LatticePoset
-from sage.misc.lazy_import import lazy_import
-from sage.modules.free_module_element import vector
 from sage.topology.simplicial_complex import SimplicialComplex
-
-lazy_import("sage.geometry.cone", "Cone")
-lazy_import("sage.geometry.fan", "Fan")
 
 
 def hochschild_lattice(n) -> LatticePoset:
     r"""
-    Return the Hochschild lattice `H(n)`.
+    Return the Hochschild lattice `H_n`.
 
     INPUT:
 
     - `n \geq 1` -- an integer
 
-    The cardinality of `H(n)` is `2^{n - 2} \times (n + 3)`.
+    The cardinality of `H_n` is `2^{n - 2} \times (n + 3)`.
+
+    .. SEEALSO:: :func:`hochschild_simplicial_complex`, :func:`hochschild_fan`
 
     EXAMPLES::
 
@@ -101,6 +99,10 @@ def hochschild_fan(n):
     The dual polytope is obtained from a standard simplex
     by a sequence of truncations.
 
+    .. SEEALSO::
+
+        :func:`hochschild_simplicial_complex`, :func:`hochschild_lattice`
+
     EXAMPLES::
 
         sage: from sage.combinat.posets.hochschild_lattice import hochschild_fan
@@ -109,6 +111,10 @@ def hochschild_fan(n):
         sage: F.f_vector()
         (1, 11, 39, 56, 28)
     """
+    from sage.geometry.cone import Cone
+    from sage.geometry.fan import Fan
+    from sage.modules.free_module_element import vector
+
     rays = [vector([1] * n)]
     rays.extend(vector([0 if j != i else -1 for j in range(n)])
                 for i in range(n))
@@ -117,7 +123,7 @@ def hochschild_fan(n):
              for i in range(n + 1)]
 
     # standard fan of projective space Pn
-    F = Fan(cones)
+    F = Fan(cones, check=False)
 
     # double sequence of blowups
     subdiv = [sum(r for r in rays[k + 1:]) for k in range(n - 1)]
@@ -128,15 +134,16 @@ def hochschild_fan(n):
 
 def hochschild_simplicial_complex(n) -> SimplicialComplex:
     """
-    Return a simplicial complex related to the Hochschild lattice `H_{n}`.
+    Return a simplicial complex related to the Hochschild lattice `H_n`.
 
     This is a pure spherical simplicial complex, whose flip graph
-    is isomorphic to the Hasse diagram of `H_{n}`.
+    is isomorphic to the Hasse diagram of `H_n`.
+
+    .. SEEALSO:: :func:`hochschild_fan`, :func:`hochschild_lattice`
 
     EXAMPLES::
 
-        sage: from sage.combinat.posets.hochschild_lattice import hochschild_simplicial_complex
-        sage: C = hochschild_simplicial_complex(3); C
+        sage: C = simplicial_complexes.HochschildSphere(3); C
         Simplicial complex with 8 vertices and 12 facets
         sage: H = C.flip_graph()
         sage: P = posets.HochschildLattice(3)
