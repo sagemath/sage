@@ -1197,8 +1197,8 @@ class LazySpeciesUnivariate(LazySpecies):
             sage: G = L.Cycles()
             sage: set(G.isotypes(4))
             {(C_4,)}
-            sage: set(G.structures(["a", 1, x]))
-            {(1, 'a', x), (1, x, 'a')}
+            sage: set(G.structures(["a", "b", "c"]))
+            {('a', 'b', 'c'), ('a', 'c', 'b')}
         """
         return CycleSpecies(self)
 
@@ -1256,10 +1256,8 @@ class LazySpeciesUnivariate(LazySpecies):
             sage: Ch = L.Chains()
             sage: set(Ch.isotypes(4))
             {(E_2(X^2),)}
-            sage: set(Ch.structures(["a", 1, x]))
-            {(X*E_2, (('a',), (1, x))),
-             (X*E_2, ((1,), ('a', x))),
-             (X*E_2, ((x,), (1, 'a')))}
+            sage: list(Ch.structures(["a", "b", "c"]))
+            [('a', 'c', 'b'), ('a', 'b', 'c'), ('b', 'a', 'c')]
         """
         return ChainSpecies(self)
 
@@ -1474,6 +1472,7 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
             True
         """
         P = parent._laurent_poly_ring
+
         def coefficient(n):
             if not n:
                 return P.one()
@@ -1482,6 +1481,7 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
             else:
                 gen = [(i, i+1) for i in range(1, n+1, 2)]
             return P(PermutationGroup([gen]))
+
         S = parent(coefficient)
         super().__init__(parent, S._coeff_stream)
 
@@ -1495,6 +1495,31 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
            Chain species
         """
         return "Chain species"
+
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(ZZ, "X")
+            sage: Ch = L.Chains()
+            sage: list(Ch.structures([1,2,3]))
+            [(1, 3, 2), (1, 2, 3), (2, 1, 3)]
+        """
+        labels = _label_sets(self.parent()._arity, [labels])[0]
+        n = len(labels)
+        if not n:
+            yield ()
+        elif n == 1:
+            yield labels
+        else:
+            for a, b in itertools.combinations(labels, 2):
+                ia = labels.index(a)
+                ib = labels.index(b)
+                rest = labels[:ia] + labels[ia+1:ib] + labels[ib+1:]
+                for pi in itertools.permutations(rest):
+                    yield (a,) + pi + (b,)
 
 
 class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
