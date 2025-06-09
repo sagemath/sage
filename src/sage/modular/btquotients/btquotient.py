@@ -2442,12 +2442,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 verbose('self._prec = %s, prec = %s' % (self._prec, prec))
                 Iotamod = self._compute_embedding_matrix(prec)
                 self._Iotainv_lift = Iotamod.inverse().lift()
-                self._Iota = Matrix(self._R, 4, 4, [Iotamod[ii, jj]
-                                                    for ii in range(4)
-                                                    for jj in range(4)])
+                self._Iota = Matrix(self._R, Iotamod)
 
             self._prec = prec
-            self._Iotainv = self._Mat_44([self._Iotainv_lift[ii, jj] % self._pN for ii in range(4) for jj in range(4)])
+            self._Iotainv = self._Mat_44(self._Iotainv_lift.apply_map(lambda x: x % self._pN))
             return self._Iota
 
     def embed_quaternion(self, g, exact=False, prec=None):
