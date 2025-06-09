@@ -1129,8 +1129,17 @@ class DifferentialWeylAlgebraAction(Action):
 
 class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     # todo: port over _repr_ code from finite weyl algebra
-    # def _repr_(self):
-    #     pass
+    def _repr_(self) -> str:
+        def term(m):
+            res = ''
+            if not m[0].is_one():
+                res += m[0]._repr_()
+            if not m[1].is_one():
+                if res != '':
+                    res += '*'
+                res += m[1]._repr_()
+            return res if res != '' else '1'
+        return repr_from_monomials(self.list(), term)
     # def _latex_(self):
     #     pass
     def _r_mul_(self, other):
@@ -1162,7 +1171,7 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
                     for _ in range(p):
                         next = []
                         for m, c in cur:
-                            diff = dict(ldd)
+                            diff = dict(m[1].dict())
                             diff[i] = diff.get(i, zero) + 1
                             next.append(((m[0], self.parent()._diff_index(diff)), c))
                             # power rule if m has x[i] term
@@ -1183,7 +1192,7 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     def __iter__(self):
         return iter(self.list())
     def list(self):
-        return list(self._monomial_coefficients) # TODO: sorting
+        return list(self._monomial_coefficients.items()) # TODO: sorting
 
 class InfiniteDifferentialWeylAlgebra(Parent):
     """
@@ -1199,14 +1208,13 @@ class InfiniteDifferentialWeylAlgebra(Parent):
         self._var_index  = IndexedFreeAbelianMonoid(ZZ,prefix=names[0])
         self._diff_index = IndexedFreeAbelianMonoid(ZZ,prefix=names[1])
         Parent.__init__(self, base=R, names=names)
-        
-        pass
+    def _repr_(self) -> str:
+        return f"Infinite differential Weyl algebra in countably many variables {self.variable_names()[0]} over {self.base_ring()}"
     def _element_constructor_(self, x):
 
         if x in self.base_ring():
             if x == self.base_ring().zero():
                 return self.zero()
-            # print(self.element_class)
             return self.element_class(self, {(self._var_index.one(), self._diff_index.one()): x})
         #TODO: Implement construction from finite weyl algebra element
         #TODO : Implement construction for things of type InfiniteDifferentialWeylAlgebraElement
@@ -1219,7 +1227,18 @@ class InfiniteDifferentialWeylAlgebra(Parent):
         # x = self._poly_ring(x)
         return self.element_class(self, 
             {(self._var_index(m[0]), self._diff_index(m[1])): c for m, c in x.items()})
-        
+    def gen(self, i):
+        """
+        Return the i'th polynomial generator
+        """
+        return self.element_class(self, {(self._var_index.gen(i), self._diff_index.one()) : 1})
+
+    def differential(self, i):
+        """
+        Return the i'th differential
+        """
+        return self.element_class(self, {(self._var_index.one(), self._diff_index.gen(i)) : 1})
+
     @cached_method
     def zero(self):
         return self.element_class(self, {})
