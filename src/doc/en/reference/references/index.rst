@@ -685,6 +685,10 @@ REFERENCES:
               ANTS XIV, Open Book Series Vol. 4, No. 1, 2020.
               :arxiv:`2003.10118`
 
+.. [BDLS2022] Alexander E. Black, Jesús A. De Loera, Niklas Lütjeharms,
+              and Raman Sanyal. *The Polyhedral Geometry of Pivot Rules and
+              Monotone Paths*. :arxiv:`2201.05134`
+
 .. [BD1989] \R. J. Bradford and J. H. Davenport, *Effective tests for
             cyclotomic polynomials*, Symbolic and Algebraic
             Computation (1989), pp. 244--251,
@@ -3117,6 +3121,9 @@ REFERENCES:
              Cryptographic
              Constructions*. STOC 2008. https://web.archive.org/web/20121015230036/http://www.cc.gatech.edu/~cpeikert/pubs/trap_lattice.pdf
 
+.. [GR1977] \D. Goldfarb and J. K. Reid, *A practicable steepest-edge simplex algorithm*
+            Mathematical Programming, Vol 12, pp. 361-371, 1997. :doi:`10.1007/BF01593804`
+
 .. [GR2001] Chris Godsil and Gordon Royle, *Algebraic Graph Theory*. Graduate
             Texts in Mathematics, Springer, 2001.
 
@@ -4094,6 +4101,11 @@ REFERENCES:
              modules for cyclotomic Hecke algebras*,
              Proc. London Math. Soc. (2012) 105 (6): 1245-1289.
              :arxiv:`1102.3519v1`
+
+.. [KMT2019] Tomonari Kitachara, Ryyhei Miyashiro, and Masaya Tano. *Steepest-edge rule
+             and its number of simplex iterations for a nondegenerate LP*
+             Operations Research Letters, Vol 47, pp 151-156, 2019.
+             :doi:`10.1016/j.orl.2019.02.003`
 
 .. [KN1963] \S. Kobayashi & K. Nomizu : *Foundations of Differential
             Geometry*, vol. 1, Interscience Publishers (New York)
@@ -6684,6 +6696,11 @@ REFERENCES:
             increasing tableaux, with applications to K-theoretic Schubert
             calculus*, Algebra and Number Theory 3 (2009), 121-148,
             https://projecteuclid.org/euclid.ant/1513797353
+
+.. [TZ1993] Tamás Terlaky and Shuzhong Zhang, *Pivot rules for linear
+            programming: A survey on recent theoretical developments*,
+            Annals of Operation Research, Vol 46, 203-223, 1993.
+            :doi:`10.1007/BF02096264`
 
 .. _ref-U:
 
