@@ -6077,8 +6077,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: m = matrix(2, range(24), sparse=True)
             sage: m.set_immutable()
             sage: hash(m)
-            3327233128576517516  # 64-bit
-            -373881460           # 32-bit
+            3327233128576517516
 
         ::
 

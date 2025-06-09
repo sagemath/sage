@@ -294,8 +294,7 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
     EXAMPLES::
 
         sage: RIF(RBF(2)**(2**100))
-        [5.8756537891115869e1388255822130839282 .. +infinity] # 64-bit
-        [2.098... .. +infinity]                               # 32-bit
+        [5.8756537891115869e1388255822130839282 .. +infinity]
     """
     cdef mpfr_t left
     cdef mpfr_t right
@@ -1139,8 +1138,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
         EXAMPLES::
 
             sage: RBF.maximal_accuracy()
-            9223372036854775807 # 64-bit
-            2147483647          # 32-bit
+            9223372036854775807
 
         .. SEEALSO:: :meth:`RealBall.accuracy`
         """
