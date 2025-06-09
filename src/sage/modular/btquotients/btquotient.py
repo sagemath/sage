@@ -45,6 +45,7 @@ from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminan
 from sage.interfaces.magma import magma
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
@@ -3153,8 +3154,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v1adj = v1.adjugate()
         R = self._Mat_44
         vecM = [v2 * X[ii] * v1adj for ii in range(4)]
-        M = self._Iotainv * R([[vecM[ii][jj, kk] for ii in range(4)]
-                               for jj in range(2) for kk in range(2)])
+        M = self._Iotainv * column_matrix(4, 4, [m.list() for m in vecM])
         M = M.augment(R(self._pN)).transpose()
         E = M.echelon_form().submatrix(0, 0, 4, 4)
         Et = E.transpose()
