@@ -2274,9 +2274,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         else:
             phi = self._local_splitting_map(prec)
             B = self.get_eichler_order_basis()
-            return Matrix(Zmod(self._p ** prec), 4, 4,
-                          [phi(B[kk])[ii, jj] for ii in range(2)
-                           for jj in range(2) for kk in range(4)])
+            return column_matrix(Zmod(self._p ** prec), 4, 4, [phi(b).list() for b in B])
 
     @cached_method
     def get_extra_embedding_matrices(self):
