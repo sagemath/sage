@@ -1,6 +1,6 @@
-*********************
+******
 表示论
-*********************
+******
 
 .. index:
    pair: ordinary representation; character
@@ -12,7 +12,7 @@
 
 如何在 Sage 中计算有限群的特征标表？可以使用 Sage-GAP 接口来计算特征标表。
 
-你可以使用 PermutationGroup 类的 ``character_table`` 方法，
+你可以使用 ``PermutationGroup`` 类的 ``character_table`` 方法，
 或通过 GAP 命令 ``CharacterTable`` 的接口，将置换群 `G` 的特征标值表构建为 Sage 矩阵。
 
 ::

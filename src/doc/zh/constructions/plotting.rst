@@ -1,8 +1,8 @@
 .. _chapter-plot:
 
-********
+****
 绘图
-********
+****
 
 Sage 可以使用 matplotlib, openmath, gnuplot 或 surf 进行绘图，
 但在标准发行版中只有 matplotlib 和 openmath 包含在内。
@@ -18,7 +18,7 @@ gnuplot 没有隐式绘图命令，所以如果你想使用隐式绘图绘制曲
 .. _section-piecewise:
 
 二维函数绘图
-========================
+============
 
 默认的绘图方法使用优秀的 ``matplotlib`` 包。
 
@@ -64,7 +64,7 @@ gnuplot 没有隐式绘图命令，所以如果你想使用隐式绘图绘制曲
 .. _section-curve:
 
 绘制曲线
-===============
+========
 
 在 Sage 中绘制曲线，可以使用 Singular 和 surf
 (http://surf.sourceforge.net/ 也可以作为实验包使用)
@@ -166,7 +166,9 @@ surf
 
 生成的图省略，但鼓励读者亲自尝试。
 
-..  s = singular
+::
+
+    s = singular
     s('LIB "surf.lib";')
     s("ring rr0 = 0,(x1,x2),dp;")
     s("ideal I = x13 - x22;")
@@ -219,7 +221,7 @@ Openmath 还可以绘制 `z=f(x,y)` 形式的三维曲面，其中 `x` 和 `y` �
 通过适当旋转，你可以查看轮廓图。
 
 Tachyon 3D 绘图
-===================
+===============
 
 光线追踪包 Tachyon 随 Sage 一起分发。3D 图看起来非常漂亮，但通常需要更多的配置。
 下面是一个参数空间曲线的示例：
@@ -303,7 +305,7 @@ gnuplot
 .. _section-surface:
 
 绘制曲面
-=================
+========
 
 绘制曲面与绘制曲线并无太大区别，尽管语法稍有不同。特别是，你需要加载 ``surf``。
 {plot!surface using surf}

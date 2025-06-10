@@ -1,12 +1,12 @@
-******************
+********
 代数几何
-******************
+********
 
 .. index::
    pair: elliptic curve; point counting
 
 曲线上点的计数
-========================
+==============
 
 如何在 Sage 中计算有限域上椭圆曲线上点的数量？
 
@@ -72,7 +72,7 @@
      (a^2 + a + 1 : a^2 + a + 1 : 1)]
 
 其他方法
--------------
+--------
 
 
 -  对于平面曲线，你可以使用 Singular 的 ``closed_points`` 命令。
@@ -380,7 +380,7 @@
    pair: codes; algebraic-geometric
 
 AG 码
---------
+-----
 
 Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空间 `L(D)=L_X(D)` 的基，
 从而计算 AG 码 `C=C_X(D,E)`。

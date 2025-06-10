@@ -1,6 +1,6 @@
-****************
+********
 接口问题
-****************
+********
 
 .. index::
    single: background, running Sage in
@@ -8,7 +8,7 @@
 .. _section-background:
 
 后台作业
-===============
+========
 
 没错，Sage 作业可以在 UNIX 系统上后台运行。通常做法是输入以下命令
 
@@ -25,12 +25,12 @@
    pair: referencing; Sage
 
 引用 Sage
-================
+=========
 
 请参阅 `citing Sage <https://doc.sagemath.org/html/en/faq/faq-general.html#i-want-to-cite-sage-in-a-publication-how-do-i-do-it>`_.
 
 将 Sage 会话保存到日志
-=========================
+======================
 
 没错，你可以将会话保存到日志。
 
@@ -48,7 +48,7 @@
 .. index:: LaTeX output
 
 LaTeX 转换
-================
+==========
 
 没错，你可以将某些结果输出为 LaTeX。
 
@@ -82,7 +82,7 @@ LaTeX 转换
     \frac{-2 x_{1} x_{2} + x_{0} + x_{1}}{x_{1} + x_{2}}
 
 Sage 与其他计算机代数系统
-=======================================
+=========================
 
 如果 ``foo`` 是 Pari、GAP（不以分号结尾）、Singular、Maxima 命令，
 对于 Pari，请输入 ``gp("foo")``，
@@ -95,7 +95,7 @@ Sage 与其他计算机代数系统
 .. index:: help in Sage
 
 命令行上的 Sage 帮助
-======================
+====================
 
 如果你只知道 Sage 命令的部分名称，但想知道它在 Sage 中的位置，只需输入
 ``sage -grep <string>`` 即可在 Sage 源代码中查找所有出现 ``<string>`` 的地方。例如，
@@ -147,7 +147,7 @@ Sage 与其他计算机代数系统
 .. index:: importing into Sage
 
 读取和导入文件到 Sage
-=====================================
+=====================
 
 导入到 Sage 的文件必须以 `.py`` 结尾，例如 ``foo.py``，并且包含合法的 Python 语法。
 前文 :ref:`section-permutation` 中的魔方群是一个简单示例。
@@ -226,7 +226,7 @@ Sage 命令的 Python 语言程序代码
 .. index:: special functions in Sage
 
 Sage 中的“特殊函数”
-===========================
+=====================
 
 Sage 有许多特殊函数（请参见参考手册 http://doc.sagemath.org/html/en/reference/functions/ ），
 并且大多数可以进行符号操作。如果尚未实现，则其他符号包可能具有此功能。
@@ -277,7 +277,7 @@ Sage 是一个用来进行数论、代数和几何计算的框架，最初设计
    pair: Sage; history
 
 Sage 的历史
----------------
+-----------
 
 Sage 由 William Stein 于 2004 年秋在哈佛大学创立，
 0.1 版于 2005 年 1 月发布。该版本包括 Pari，但不包括 GAP 或 Singular。
