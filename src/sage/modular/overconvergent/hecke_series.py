@@ -1047,7 +1047,7 @@ def level1_UpGj(p, klist, m, extra_data=False):
 # *** CODE FOR GENERAL LEVEL ***
 
 
-def is_valid_weight_list(klist, p):
+def is_valid_weight_list(klist, p) -> None:
     r"""
     This function checks that ``klist`` is a nonempty list of integers all of
     which are congruent modulo `(p-1)`. Otherwise, it will raise a
@@ -1075,7 +1075,7 @@ def is_valid_weight_list(klist, p):
     if len(klist) == 0:
         raise ValueError("List of weights must be non-empty")
     k0 = klist[0] % (p - 1)
-    for i in range(1,len(klist)):
+    for i in range(1, len(klist)):
         if (klist[i] % (p-1)) != k0:
             raise ValueError("List of weights must be all congruent modulo p-1 = %s, but given list contains %s and %s which are not congruent" % (p - 1, klist[0], klist[i]))
 

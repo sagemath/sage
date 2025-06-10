@@ -2851,16 +2851,26 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: ZZ(8).log(int(2))
             3
 
+        Check that negative bases yield complex logarithms (:issue:`39959`)::
+
+            sage: 8.log(-2)
+            3*log(2)/(I*pi + log(2))
+            sage: (-10).log(prec=53)
+            2.30258509299405 + 3.14159265358979*I
+
+        Check that zero base  yield complex logarithms (:issue:`39959`)::
+
+            sage: 8.log(0)
+            0
+
         TESTS::
 
             sage: (-2).log(3)                                                           # needs sage.symbolic
             (I*pi + log(2))/log(3)
         """
         cdef int self_sgn
-        if m is not None and m <= 0:
-            raise ValueError("log base must be positive")
         self_sgn = mpz_sgn(self.value)
-        if self_sgn < 0 and prec is None:
+        if (self_sgn < 0 or m is not None and m<=0) and prec is None:
             from sage.symbolic.ring import SR
             return SR(self).log(m)
         if prec:
@@ -6176,13 +6186,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return self % 4 in [0, 1]
 
-    def is_fundamental_discriminant(self):
+    def is_fundamental_discriminant(self) -> bool:
         """
         Return ``True`` if this integer is a fundamental discriminant.
 
         .. NOTE::
 
-            A fundamental discriminant is a discrimimant, not 0 or 1 and not a square multiple of a smaller discriminant.
+            A fundamental discriminant is a discriminant, not 0 or 1
+            and not a square multiple of a smaller discriminant.
 
         EXAMPLES::
 
@@ -6975,10 +6986,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def crt(self, y, m, n):
         """
-        Return the unique integer between `0` and `mn` that is congruent to
-        the integer modulo `m` and to `y` modulo `n`.
-
-        We assume that `m` and `n` are coprime.
+        Return the unique integer between `0` and `\\lcm(m,n)` that is congruent
+        to the integer modulo `m` and to `y` modulo `n`.
 
         EXAMPLES::
 
@@ -6989,6 +6998,16 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             17
             sage: m%11
             5
+
+        ``crt`` also works for some non-coprime moduli::
+
+            sage: 6.crt(0,10,4)
+            16
+            sage: 6.crt(0,10,10)
+            Traceback (most recent call last):
+            ...
+            ValueError: no solution to crt problem since gcd(10,10) does not
+            divide 6 - 0
         """
         cdef object g, s
         cdef Integer _y, _m, _n
@@ -6996,10 +7015,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         _m = Integer(m)
         _n = Integer(n)
         g, s, _ = _m.xgcd(_n)
-        if not g.is_one():
-            raise ArithmeticError("CRT requires that gcd of moduli is 1.")
-        # Now s*m + t*n = 1, so the answer is x + (y-x)*s*m, where x=self.
-        return (self + (_y - self) * s * _m) % (_m * _n)
+        if g.is_one():
+            # Now s*m + t*n = 1, so the answer is x + (y-x)*s*m, where x=self.
+            return (self + (_y - self) * s * _m) % (_m * _n)
+        if (self % g) != (_y % g):
+            raise ValueError(f"no solution to crt problem since gcd({_m},{_n}) does not divide {self} - {_y}")
+        return (self + g * Integer(0).crt((_y - self) // g, _m // g, _n // g)) % _m.lcm(_n)
 
     def test_bit(self, long index):
         r"""
@@ -7202,6 +7223,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             b'\xe8\x03'
         """
         return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: (-2).canonical_associate()
+            (2, -1)
+            sage: (0).canonical_associate()
+            (0, 1)
+            sage: a = -17
+            sage: b, u = a.canonical_associate()
+            sage: b*u == a
+            True
+        """
+        if self >= 0:
+            return (self, one)
+        return (-self, -one)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
