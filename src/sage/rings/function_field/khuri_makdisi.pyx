@@ -844,7 +844,10 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
         cdef Matrix w1, w2, w3, w4, w5
 
         w1 = self.mu_image(wd1, wd2, self.mu_mat33, 4*d0 - g + 1)
-        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat33, 2*d0)
+        # The row space of w2 represents H^0(O(3D_0 - D1 - D2)), whose dimension is
+        # at least d0 - g + 1, and hence the codimension is at most 2*d0. Thus,
+        # we cannot provide an expected_codim argument for mu_preimage.
+        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat33)
         w3 = self.mu_preimage(self.wV2, w1, self.mu_mat42, 2*d0)
         # efficient than
         #   wf = matrix(w2[0])
