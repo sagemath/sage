@@ -555,19 +555,6 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
     if algorithm == 'B' and not simple:
         raise ValueError("The algorithm 'B' is available only when simple=True.")
 
-    # if self.is_directed():
-    #     # Since a cycle is always included in a given strongly connected
-    #     # component, we may remove edges from the graph
-    #     sccs = self.strongly_connected_components()
-    #     d = {}
-    #     for id, component in enumerate(sccs):
-    #         for v in component:
-    #             d[v] = id
-    #     h = copy(self)
-    #     h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
-    # else:
-    #     h = copy(self)
-
     by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                            weight_function=weight_function,
                                                            check_weight=check_weight)
