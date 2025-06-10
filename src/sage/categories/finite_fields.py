@@ -16,6 +16,8 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
 
+from sage.misc.cachefunc import cached_method
+
 
 class FiniteFields(CategoryWithAxiom):
     """
@@ -243,5 +245,283 @@ class FiniteFields(CategoryWithAxiom):
                     return a
             raise AssertionError("no element found")
 
+        @cached_method
+        def quadratic_non_residue(self):
+            """
+            Returns a random non square element of the finite field
+
+            OUTPUTS:
+                - a non-square element of the finite field; raises an error if
+                  the finite field is of even order
+
+            EXAMPLES::
+                sage: k = GF((3, 10))
+                sage: k.quadratic_non_residue().is_square()
+                False
+                sage: k = GF((2, 10))
+                sage: k in Fields()  # to let k be a finite field
+                True
+                sage: k.quadratic_non_residue()
+                Traceback (most recent call last):
+                ...
+                ValueError: There are no non-squares in finite fields of even order
+            """
+            # if the order is an even power of two
+            # then every element is a square
+            if self.order() % 2 == 0:
+                raise ValueError("There are no non-squares in finite fields of even order")
+            # uniformly randomly select elements for a non-square
+            # with probablity 1/2 for a non-square
+            element = self.random_element()
+            while element.is_square():
+                element = self.random_element()
+            return element
+
     class ElementMethods:
-        pass
+        def is_square(self):
+            """
+            Tests if the element is a square or has
+            a square root element
+
+            OUTPUT:
+            - `True` if the element is a square `False` if not
+
+            EXAMPLES::
+                sage: S.<x> = GF(5)[]
+                sage: f = S.irreducible_element(20)
+                sage: k.<y> = S.quotient_ring(f)
+                sage: k in Fields()
+                True
+                sage: k(2).is_square()
+                True
+                sage: k.quadratic_non_residue().is_square()
+                False
+            """
+            if self.is_zero():
+                return True
+            q = self.parent().order()
+            if q % 2  == 0:
+                return True
+            character = self**((q-1)//2)
+            is_square = character == self.parent().one()
+            return is_square
+
+        def _tonelli(self):
+            """
+            Returns a square root of the element if it exists
+            using tonelli's algorithm
+
+            OUTPUT:
+
+            - A square root of the element; raises an error
+              if the element is not a square
+
+            EXAMPLES::
+                sage: k.<a> = GF((5, 10))
+                sage: k(2).is_square()
+                True
+                sage: k(2)._tonelli()^2 == k(2)
+                True
+                sage: k.quadratic_non_residue()._tonelli()
+                Traceback (most recent call last):
+                ...
+                ValueError: Element is not a square
+            """
+            q = self.parent().cardinality()
+            if not self.is_square():
+                raise ValueError("Element is not a square")
+            g = self.parent().quadratic_non_residue()
+            odd_order = (q - 1).odd_part()
+            even_exp = Integer.valuation(q-1, 2)
+            e = 0
+            for i in range(2, even_exp+1):
+                tmp = self * (pow(g, -e))
+
+                condition = tmp**((q-1)//(2**i)) != self.parent().one()
+                if condition:
+                    e = 2**(i-1) + e
+            h = self * (g**(-e))
+            b = g**(e//2) * h**((odd_order+1)//2)
+            return b
+
+        def _cipolla(self):
+            """
+            Returns a square root of the element if it exists
+            using cipolla's algorithm, more suited if order - 1
+            is highly divisible by 2
+
+            OUTPUT:
+
+            - A square root of the element; raises an error
+              if the element is not a square
+
+            EXAMPLES::
+                sage: k.<a> = GF((5, 10))
+                sage: k(2).is_square()
+                True
+                sage: k(2)._cipolla()^2 == k(2)
+                True
+                sage: k.quadratic_non_residue()._cipolla()
+                Traceback (most recent call last):
+                ...
+                ValueError: Element is not a square
+            """
+            parent = self.parent()
+            q = parent.cardinality()
+            if not self.is_square():
+                raise ValueError("Element is not a square")
+            t = parent.random_element()
+            root = t**2 - 4 * self
+            while root.is_square():
+                t = parent.random_element()
+                root = t**2 - 4 * self
+            from sage.rings.polynomial.polynomial_ring import polygen
+            X = polygen(parent)
+            f = X**2 - t*X + self
+            b = pow(X, (q+1)//2, f)
+            return b
+
+        def sqrt(self, all=False, algorithm='Tonelli'):
+            """
+            Returns the square root of the element if it exists
+
+            INPUT:
+
+            - ``all`` -- boolean (default: ``False``); whether to return a list of
+              all square roots or just a square root
+
+            - ``algorithm`` -- string (default: 'Tonelli'); The algorithm to use
+              among ``'Tonelli'``, ``'Cipolla'``. Most finite fields will have
+              Tonelli to run fast, but in the case where the order minus 1 is
+              highly divisible by 2 Cipolla's method could be faster.
+
+            OUTPUT:
+
+            - if ``all=False``, a square root; raises an error if the element is not
+              a square
+
+            - if ``all=True``, a 2-tuple of square roots; raises an error if the
+             element is not a square
+
+            EXAMPLES::
+                sage: S.<x> = GF(5)[]
+                sage: f = S.irreducible_element(20)
+                sage: k.<y> = S.quotient_ring(f)
+                sage: k in Fields()
+                True
+                sage: k(2).is_square()
+                True
+                sage: k(2).sqrt()^2 == k(2)
+                True
+                sage: k(4).sqrt(all=True)
+                (2, 3)
+                sage: k.quadratic_non_residue().sqrt()
+                Traceback (most recent call last):
+                ...
+                ValueError: Element is not a square
+
+            ALGORITHM:
+
+            The following algorithm comes from chapter 8 of [BS1996]_.
+
+            If `q = p^n` is the order of the finite field then if
+            `p = 2` or divisible by 2 then we can compute the
+            square root by `a^(q/2)` if q is 3 modulo 4 then we
+            can compute the square root by `a^((q+1)/4)` otherwise
+            we use tonelli's method for all other cases in general.
+            """
+            order = self.parent().order()
+            if not self.is_square():
+                raise ValueError("Element is not a square")
+            if order % 2 == 0:
+                exponent = order // 2
+                square_root = self**exponent
+                if all:
+                    # we return a 1-tuple because the GF implementation does it
+                    return (square_root)
+                else:
+                    return square_root
+            elif order % 4 == 3:
+                square_root = self**((order+1)//4)
+            elif algorithm == 'Cipolla':
+                square_root = self._cipolla()
+            else:
+                square_root = self._tonelli()
+            if all:
+                return (square_root, -square_root)
+            return square_root
+
+        def square_root(self, all=False, algorithm='Tonelli'):
+            """
+            Returns the square root of the element if it exists
+
+            INPUT:
+
+            - ``all`` -- boolean (default: ``False``); whether to return a list of
+              all square roots or just a square root
+
+            - ``algorithm`` -- string (default: 'Tonelli'); The algorithm to use
+              among ``'Tonelli'``, ``'Cipolla'``. Most finite fields will have
+              Tonelli to run fast, but in the case where the order minus 1 is
+              highly divisible by 2 Cipolla's method could be faster.
+
+            OUTPUT:
+
+            - if ``all=False``, a square root; raises an error if the element is not
+              a square
+
+            - if ``all=True``, a 2-tuple of square roots; raises an error if the
+             element is not a square
+
+            EXAMPLES::
+                sage: S.<x> = GF(5)[]
+                sage: f = S.irreducible_element(20)
+                sage: k.<y> = S.quotient_ring(f)
+                sage: k in Fields()
+                True
+                sage: k(2).is_square()
+                True
+                sage: k(2).square_root()^2 == k(2)
+                True
+                sage: k(4).square_root(all=True)[0]^2 == k(4)
+                True
+                sage: k(4).square_root(all=True)[1]^2 == k(4)
+                True
+                sage: k.quadratic_non_residue().sqrt()
+                Traceback (most recent call last):
+                ...
+                ValueError: Element is not a square
+
+            ALGORITHM:
+
+            The following algorithm comes from chapter 8 of [BS1996]_.
+
+            If `q = p^n` is the order of the finite field then if
+            `p = 2` or divisible by 2 then we can compute the
+            square root by `a^(q/2)` if q is 3 modulo 4 then we
+            can compute the square root by `a^((q+1)/4)` otherwise
+            we use tonelli's method for all other cases in general.
+            """
+            order = self.parent().order()
+            if not self.is_square():
+                raise ValueError("Element is not a square")
+            if order % 2 == 0:
+                exponent = order // 2
+                square_root = self**exponent
+                if all:
+                    # we return a 1-tuple because the GF implementation does it
+                    return (square_root)
+                else:
+                    return square_root
+            elif order % 4 == 3:
+                square_root = self**((order+1)//4)
+            elif algorithm == 'Cipolla':
+                square_root = self._cipolla()
+            else:
+                square_root = self._tonelli()
+            if all:
+                return (square_root, -square_root)
+            return square_root
+
+
+

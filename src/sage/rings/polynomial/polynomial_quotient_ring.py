@@ -338,8 +338,16 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         sage: isinstance(Q.an_element(), Q.element_class)
         True
         sage: [s for s in dir(Q.category().element_class) if not s.startswith('_')]
-        ['cartesian_product', 'inverse', 'inverse_of_unit', 'is_idempotent',
-         'is_one', 'is_unit', 'lift', 'powers']
+        ['cartesian_product',
+         'inverse',
+         'inverse_of_unit',
+         'is_idempotent',
+         'is_one',
+         'is_square',
+         'is_unit',
+         'lift',
+         'powers',
+         'sqrt']
         sage: first_class = Q.__class__
 
     We try to find out whether `Q` is a field. Indeed it is, and thus its category,
@@ -361,12 +369,14 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
          'inverse_of_unit',
          'is_idempotent',
          'is_one',
+         'is_square',
          'is_unit',
          'lcm',
          'lift',
          'powers',
          'quo_rem',
          'radical',
+         'sqrt',
          'squarefree_part',
          'xgcd']
 
