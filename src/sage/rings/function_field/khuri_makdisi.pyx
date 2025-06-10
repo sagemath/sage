@@ -847,13 +847,11 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
             sage: E.<y> = F.extension(t^3 + (x^2 + x + 1)*t^2 + (x^3 + x + 1)*t + x^5 + x^4)
             sage: O = E.maximal_order()
             sage: Oinf = E.maximal_order_infinite()
-            sage: D1 = (-5 * O.ideal(x, y).divisor() + O.ideal(x + 1, y^2 + y + 1).divisor()
+            sage: D1 = (-5*O.ideal(x, y).divisor() + O.ideal(x + 1, y^2 + y + 1).divisor()
             ....:   + O.ideal(x^3 + x^2 + 1, y + x + 1).divisor())
-            sage: D2 = (Oinf.ideal(1/x, y/x^2 + 1).divisor() - 5 * O.ideal(x, y).divisor()
+            sage: D2 = (Oinf.ideal(1/x, y/x^2 + 1).divisor() - 5*O.ideal(x, y).divisor()
             ....:   + O.ideal(x^4 + x^3 + 1, y + x).divisor())
-            sage: assert D1.degree() == 0
-            sage: assert D2.degree() == 0
-            sage: J = E.jacobian('km_small')
+            sage: J = E.jacobian('km_small', base_div=5*O.ideal(x, y).divisor())
             sage: JD1 = J(D1)
             sage: JD2 = J(D2)
             sage: JD1 + JD2 == JD2 + JD1
