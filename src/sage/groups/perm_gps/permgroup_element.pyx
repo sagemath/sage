@@ -1925,7 +1925,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             from sage.combinat.partition import _Partitions
             return _Partitions(cycle_type)
 
-    def has_descent(self, i, side='right', positive=False):
+    def has_descent(self, i, side='right', positive=False) -> bool:
         r"""
         Return whether ``self`` has a left (resp. right) descent at
         position ``i``. If ``positive`` is ``True``, then test for a non
@@ -2130,7 +2130,7 @@ cdef class SymmetricGroupElement(PermutationGroupElement):
         from sage.combinat.permutation import Permutation
         return Permutation(self).absolute_length()
 
-    def has_left_descent(self, i):
+    def has_left_descent(self, i) -> bool:
         r"""
         Return whether `i` is a left descent of ``self``.
 
