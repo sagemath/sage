@@ -165,12 +165,15 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
     # First we remove vertices and edges that are not part of any cycle
     if remove_acyclic_edges:
         sccs = self.strongly_connected_components()
-        d = {}
-        for id, component in enumerate(sccs):
-            for v in component:
-                d[v] = id
-        h = copy(self)
-        h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+        if len(sccs) == 1:
+            h = self
+        else:
+            d = {}
+            for id, component in enumerate(sccs):
+                for v in component:
+                    d[v] = id
+            h = copy(self)
+            h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
     else:
         h = self
 
@@ -569,12 +572,15 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
             # Since a cycle is always included in a given strongly connected
             # component, we may remove edges from the graph
             sccs = self.strongly_connected_components()
-            d = {}
-            for id, component in enumerate(sccs):
-                for v in component:
-                    d[v] = id
-            h = copy(self)
-            h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
+            if len(sccs) == 1:
+                h = self
+            else:
+                d = {}
+                for id, component in enumerate(sccs):
+                    for v in component:
+                        d[v] = id
+                h = copy(self)
+                h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
         else:
             h = self
         # We create one cycles iterator per vertex. This is necessary if we
