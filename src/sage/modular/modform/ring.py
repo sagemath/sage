@@ -1059,9 +1059,8 @@ class ModularFormsRing(Parent):
             V = _span_of_forms_in_weight(G, weight, prec=working_prec, use_random=use_random, stop_dim=d)
             if V.rank() == d and (self.base_ring().is_field() or V.index_in_saturation() == 1):
                 break
-            else:
-                gen_weight += 1
-                verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
+            gen_weight += 1
+            verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
 
         R = G[0][1].parent()
         return [R(list(x), prec=prec) for x in V.gens()]
@@ -1205,9 +1204,8 @@ class ModularFormsRing(Parent):
             W = A.span([A(f.padded_list(working_prec)) for f in flist])
             if W.rank() == d and (self.base_ring().is_field() or W.index_in_saturation() == 1):
                 break
-            else:
-                gen_weight += 1
-                verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
+            gen_weight += 1
+            verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
 
         R = G[0][1].parent()
         return [R(list(x), prec=prec) for x in W.gens()]

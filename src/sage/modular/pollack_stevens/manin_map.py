@@ -846,5 +846,4 @@ class ManinMap:
             # construction functor in order to scale by something
             # outside the base ring.
             D[g] = W(self._eval_sl2(g) - (self(pmat * g) * pmat).scale(scalar))
-        ans = self.__class__(W, manin, D, check=False)
-        return ans
+        return self.__class__(W, manin, D, check=False)

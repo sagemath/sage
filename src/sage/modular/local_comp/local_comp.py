@@ -800,8 +800,7 @@ class PrimitiveSupercuspidal(PrimitiveLocalComponent):
                             verbose("  chisB FAILED", level=1)
                             B_fail = 1
                             break
-                        else:
-                            verbose("  Trace identity check works for both", level=1)
+                        verbose("  Trace identity check works for both", level=1)
 
                 if B_fail and not A_fail:
                     chi1, chi2 = chisA

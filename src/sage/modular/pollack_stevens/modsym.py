@@ -106,13 +106,12 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
     verbose("Iterating U_p", level=2)
     Psi = apinv * Phi.hecke(p)
 
-    for attempts in range(M-1):
+    for attempts in range(M - 1):
         verbose("%s attempt (val = %s/%s)" % (attempts + 1,(Phi-Psi).valuation(),M), level=2)
         Phi = Psi
         Psi = apinv * Phi.hecke(p)
         Psi._normalize()
-    Phi = ~(q ** (k + 1) + 1 - aq) * Phi
-    return Phi
+    return ~(q ** (k + 1) + 1 - aq) * Phi
 
 
 class PSModSymAction(Action):
@@ -1100,8 +1099,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             Dist = V.coefficient_module()
             psi = K.hom([K.gen()], L)
             embedded_sym = self.parent().element_class(self._map.apply(psi, codomain=Dist, to_moments=True), V, construct=True)
-            ans = [embedded_sym, psi]
-            return ans
+            return [embedded_sym, psi]
         else:
             roots = [r[0] for r in v]
             ans = []
