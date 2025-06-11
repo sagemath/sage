@@ -2214,7 +2214,7 @@ class MatchingCoveredGraph(Graph):
         return B
 
     @doc_index('Overwritten methods')
-    def has_loops(self):
+    def has_loops(self) -> bool:
         r"""
         Check whether there are loops in the (matching covered) graph.
 
