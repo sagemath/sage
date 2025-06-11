@@ -460,7 +460,7 @@ class WeakReversePlanePartitions(Tableaux):
 
     Element = WeakReversePlanePartition
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
