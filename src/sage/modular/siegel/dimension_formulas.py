@@ -352,9 +352,13 @@ def dimension_modular_forms_sp4z(k, j):
 
 def dimension_cusp_forms_Gamma_e(k, j):
     r"""
-    What is `\Gamma_e` ?
-
     This is taken from Theorem 6.2 in [IbWa2009]_.
+
+    The group `\Gamma_e` is denoted `\Gamma_e(1)` in
+    [IbWa2009]_. Apparently the notation goes back to Igusa. It is
+    defined in the middle of page 198 of [IbWa2009]_ as a index two
+    subgroup of `\Gamma_2` that arises as the kernel of the ``sgn``
+    character on `\Gamma_2` (defined on the same page).
 
     EXAMPLES::
 
@@ -428,8 +432,11 @@ def dimension_cusp_forms_Gamma_e(k, j):
 
 
 def dimension_cusp_forms_sp4z_sgn(k, j):
-    """
-    What is this ?
+    r"""
+    Return the dimension of the space of holomorphic functions on which
+    the group `\Gamma_2` acts by the slash operator via the character ``sgn``.
+
+    This space is described in [IbWa2009]_.
     """
     d1 = dimension_cusp_forms_Gamma_e(k, j)
     d2 = dimension_cusp_forms_sp4z(k, j)
@@ -438,7 +445,9 @@ def dimension_cusp_forms_sp4z_sgn(k, j):
 
 def dimension_V(k, j):
     """
-    What is this ?
+    Return the dimension of the space `V_{k,j}`.
+
+    The space `V_{k,j}` is described in Theorem 6.1 of [IbWa2009]_.
     """
     if not k % 2:
         d1 = dimension_cusp_forms(1, k + j / 2)
@@ -451,8 +460,10 @@ def dimension_V(k, j):
 
 
 def dimension_V2(k, j):
-    """
-    What is this ?
+    r"""
+    Return the dimension of the space `\tilde{V}_{k,j}`.
+
+    The space `\tilde{V}_{k,j}` is described in Theorem 6.1 of [IbWa2009]_.
     """
     d1 = (-1)**k * dimension_cusp_forms(1, k + j / 2)
     d2 = sum(dimension_cusp_forms(1, k + j - a) * dimension_cusp_forms(1, k + a) for a in range(j + 1))
@@ -461,7 +472,9 @@ def dimension_V2(k, j):
 
 def dimension_W(k, j):
     """
-    What is this ?
+    Return the dimension of the space `W_{k,j}`.
+
+    The space `W_{k,j}` is described in Theorem 7.1 of [IbWa2009]_.
     """
     d1 = (-1)**(k + 1) * dimension_modular_forms(1, k + j / 2 - 6)
     d2 = sum(dimension_modular_forms(1, k + j - a - 6) * dimension_modular_forms(1, k + a - 6) for a in range(j + 1))
