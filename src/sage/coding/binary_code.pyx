@@ -131,7 +131,7 @@ def weight_dist(M):
         bitset_zero(&basis[i])
         for j in M.row(i).nonzero_positions():
             bitset_set(&basis[i], j)
-    for i from 0 <= i < deg+1:
+    for i in range(deg + 1):
         LL[i] = 0
     bitset_init(word, deg)
     bitset_zero(word)
@@ -147,9 +147,8 @@ def weight_dist(M):
             k += 1
         if k == dim:
             break
-        else:
-            j ^= (1 << k)
-            bitset_xor(word, word, &basis[k])
+        j ^= (1 << k)
+        bitset_xor(word, word, &basis[k])
     bitset_free(word)
     L = [int(LL[i]) for i from 0 <= i < deg+1]
     for i from 0 <= i < dim:
@@ -329,9 +328,8 @@ cdef WordPermutation *create_word_perm(object list_perm) noexcept:
                 j += 1
             if j == chunk_size:
                 break
-            else:
-                comb ^= (1 << j)
-                image ^= images_i[1 << j]
+            comb ^= (1 << j)
+            image ^= images_i[1 << j]
     return word_perm
 
 cdef WordPermutation *create_array_word_perm(int *array, int start, int degree) noexcept:
@@ -380,9 +378,8 @@ cdef WordPermutation *create_array_word_perm(int *array, int start, int degree) 
                 j += 1
             if j == chunk_size:
                 break
-            else:
-                comb ^= (1 << j)
-                image ^= images_i[1 << j]
+            comb ^= (1 << j)
+            image ^= images_i[1 << j]
     return word_perm
 
 cdef WordPermutation *create_id_word_perm(int degree) noexcept:
@@ -430,9 +427,8 @@ cdef WordPermutation *create_id_word_perm(int degree) noexcept:
                 j += 1
             if j == chunk_size:
                 break
-            else:
-                comb ^= (1 << j)
-                image ^= images_i[1 << j]
+            comb ^= (1 << j)
+            image ^= images_i[1 << j]
     return word_perm
 
 cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation *h) noexcept:
@@ -465,7 +461,7 @@ cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation 
             sig_free(word_perm)
             raise RuntimeError("Error allocating memory.")
         word_perm.images[i] = images_i
-        for j from 0 <= j < chunk_size:
+        for j in range(chunk_size):
             image = (<codeword>1) << (chunk_size*i + j)
             image = permute_word_by_wp(h, image)
             image = permute_word_by_wp(g, image)
@@ -483,9 +479,8 @@ cdef WordPermutation *create_comp_word_perm(WordPermutation *g, WordPermutation 
                 j += 1
             if j == chunk_size:
                 break
-            else:
-                comb ^= (1 << j)
-                image ^= images_i[1 << j]
+            comb ^= (1 << j)
+            image ^= images_i[1 << j]
     return word_perm
 
 cdef WordPermutation *create_inv_word_perm(WordPermutation *g) noexcept:
@@ -2008,12 +2003,12 @@ cdef class PartitionStack:
         length = 1 + nwords/radix
         if nwords % radix:
             length += 1
-        for i from 0 <= i < length:
+        for i in range(length):
             Omega[start+i] = 0
-        for i in range(ncols):
+        for i in range(1, ncols):
             Omega[start] += ((self_col_lvls[i-1] <= k) << self_col_ents[i])
         Omega[start+1] = (1 << self_wd_ents[0])
-        for i in range(nwords):
+        for i in range(1, nwords):
             if self_wd_lvls[i-1] <= k:
                 word = self_wd_lvls[i-1]
                 Omega[start+1+word/radix] += (1 << word % radix)
@@ -2873,7 +2868,7 @@ cdef class PartitionStack:
             0
         """
         cdef int i, j, l, m, ncols = self.ncols, nwords = self.nwords
-        for i in range(nwords):
+        for i in range(1, nwords):
             for j in range(ncols):
                 l = CG.is_one(self.wd_ents[i], self.col_ents[j])
                 m = CG.is_one(other.wd_ents[i], other.col_ents[j])
