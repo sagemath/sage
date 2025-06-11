@@ -387,12 +387,12 @@ class TernaryQF(SageObject):
         if d1 == 0:
             return False
         d2 = 4 * self._a * self._b - self._t**2
-        if d2 == 0:
+        if d2 <= 0:
             return False
         d3 = self.disc()
         if d3 == 0:
             return False
-        return d1 < 0 and d2 > 0 and d3 < 0
+        return d1 < 0 and d3 < 0
 
     def __neg__(self):
         """
