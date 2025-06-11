@@ -12644,6 +12644,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         self._coeffs = self._coeffs[:n]
         return self
 
+
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)
 
