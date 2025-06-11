@@ -684,6 +684,12 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 sage: s.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                R = self.base_ring()
+                mc = self.monomial_coefficients(copy=False).items()
+                return R.sum(c for partition, c in mc
+                             if len(partition) <= 1)
+
             def get_variable(ring, name):
                 try:
                     ring(name)

@@ -395,6 +395,12 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                 sage: e.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                R = self.base_ring()
+                mc = self.monomial_coefficients(copy=False).items()
+                return R.sum(c for partition, c in mc
+                             if not partition or partition[0] == 1)
+
             from sage.combinat.q_analogues import q_binomial
 
             def get_variable(ring, name):

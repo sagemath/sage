@@ -796,6 +796,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 sage: p.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                return self.base_ring().sum(self.coefficients(sort=False))
+
             def get_variable(ring, name):
                 try:
                     ring(name)
