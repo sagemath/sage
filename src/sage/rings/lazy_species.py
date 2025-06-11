@@ -64,6 +64,7 @@ bi-point-determining graphs we use Corollary (4.6) in
 
 from sage.functions.other import binomial, factorial
 from sage.misc.lazy_list import lazy_list
+from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.lazy_series import (LazyCompletionGradedAlgebraElement,
@@ -471,7 +472,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         yield from self[sum(map(len, labels))].structures(*labels)
 
-    def _test_structures(self, tester=None, max_size=4, **options):
+    def _test_structures(self, tester=None, max_size=5, **options):
         r"""
         Check that structures and generating series are consistent.
 
@@ -557,11 +558,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
                 for e in range(c):
                     yield (M, e)
 
-    def _test_isotypes(self, tester=None, max_size=4, **options):
+    def _test_isotypes(self, tester=None, max_size=5, **options):
         r"""
         Check that isotypes and generating series are consistent.
-
-        We check all structures on at most 3 labels.
 
         TESTS::
 
@@ -804,13 +803,57 @@ class LazySpeciesElementGeneratingSeriesMixin:
     A lazy species element whose generating series are obtained
     by specializing the cycle index series rather than the molecular
     expansion.
+
+    TESTS:
+
+    We check that the series are correct even if the cycle index
+    series are not in the powersum basis::
+
+        sage: from sage.rings.lazy_species import LazySpeciesElement, LazySpeciesElementGeneratingSeriesMixin
+        sage: class F(LazySpeciesElementGeneratingSeriesMixin, LazySpeciesElement):
+        ....:     def __init__(self, parent):
+        ....:         super().__init__(parent, parent(PermutationGroup([], domain=[1,2])))
+        ....:     def cycle_index_series(self):
+        ....:         s = SymmetricFunctions(QQ).s()
+        ....:         L = LazySymmetricFunctions(s)
+        ....:         return L(s[1, 1] + s[2])
+
+        sage: L = LazySpecies(QQ, "X")
+        sage: F(L).generating_series()
+        X^2 + O(X^7)
+
+        sage: F(L).isotype_generating_series()
+        X^2 + O(X^7)
+        sage: TestSuite(F(L)).run(skip=['_test_category', '_test_pickling'])
+
+
+        sage: class F(LazySpeciesElementGeneratingSeriesMixin, LazySpeciesElement):
+        ....:     def __init__(self, parent):
+        ....:         G = PermutationGroup([], domain=[1,2,3,4])
+        ....:         pi = {0:[1,2],1:[3,4]}
+        ....:         P = parent._laurent_poly_ring
+        ....:         super().__init__(parent, parent(P(G, pi)))
+        ....:     def cycle_index_series(self):
+        ....:         s = SymmetricFunctions(QQ).s()
+        ....:         L = LazySymmetricFunctions(tensor([s, s]))
+        ....:         return L(self[4].support()[0].cycle_index())
+
+        sage: L = LazySpecies(QQ, "X, Y")
+        sage: F(L).isotype_generating_series()
+        X^2*Y^2 + O(X,Y)^7
+
+        sage: F(L).generating_series()
+        X^2*Y^2 + O(X,Y)^7
+
+        sage: TestSuite(F(L)).run(skip=['_test_category', '_test_pickling'])
     """
     def isotype_generating_series(self):
         r"""
         Return the isotype generating series of ``self``.
 
-        The series is obtained by summing the coefficients of the
-        cycle index series.
+        The series is obtained by applying the principal
+        specialization of order `1` to the cycle index series, that
+        is, setting `x_1 = x` and `x_k = 0` for `k > 1`.
 
         EXAMPLES::
 
@@ -827,21 +870,28 @@ class LazySpeciesElementGeneratingSeriesMixin:
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
+        one = ZZ.one()
+
         if P._arity == 1:
-            def coefficient(n):
-                return sum(cis[n].coefficients())
-        else:
-            def coefficient(n):
-                return sum(c * P.base_ring().prod(v ** d.size() for v, d in zip(L.gens(), M))
-                           for M, c in cis[n].monomial_coefficients().items())
+            return L(lambda n: cis[n].principal_specialization(one, one))
+
+        vars = L._laurent_poly_ring.gens()
+        parents = cis.parent()._laurent_poly_ring.tensor_factors()
+
+        def coefficient(n):
+            return sum(c * prod(S(la).principal_specialization(one, one)
+                                * v**la.size()
+                                for v, S, la in zip(vars, parents, M))
+                       for M, c in cis[n].monomial_coefficients().items())
+
         return L(coefficient)
 
     def generating_series(self):
         r"""
         Return the (exponential) generating series of ``self``.
 
-        The series is obtained from the coefficient of `p_{1^n}` of the
-        cycle index series.
+        The series is obtained by applying the exponential
+        specialization to the cycle index series.
 
         EXAMPLES::
 
@@ -853,7 +903,21 @@ class LazySpeciesElementGeneratingSeriesMixin:
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
                                 P._laurent_poly_ring._indices._indices.variable_names())
         cis = self.cycle_index_series()
-        return L(lambda n: cis[n].coefficient(_Partitions([1]*n)))
+        one = ZZ.one()
+
+        if P._arity == 1:
+            return L(lambda n: cis[n].exponential_specialization(one, one))
+
+        vars = L._laurent_poly_ring.gens()
+        parents = cis.parent()._laurent_poly_ring.tensor_factors()
+
+        def coefficient(n):
+            return sum(c * prod(S(la).exponential_specialization(one, one)
+                                * v**la.size()
+                                for v, S, la in zip(vars, parents, M))
+                       for M, c in cis[n].monomial_coefficients().items())
+
+        return L(coefficient)
 
 
 class SumSpeciesElement(LazySpeciesElement):
