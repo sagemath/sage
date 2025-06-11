@@ -744,7 +744,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: f.characteristic_polynomial()
             X^3 + (T + 1)*X^2 + (2*T + 3)*X + 2*T^3 + T + 1
 
-        We verify, on an example, that the caracteristic polynomial
+        We verify, on an example, that the characteristic polynomial
         of a morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 
@@ -803,7 +803,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
               Defn: 0
 
-        We verify, on an example, that the caracteristic polynomial
+        We verify, on an example, that the characteristic polynomial
         of the morphism corresponding to `\phi_a` is `(X-a)^r` where `r`
         is the rank::
 
