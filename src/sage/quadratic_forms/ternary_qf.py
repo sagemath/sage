@@ -308,7 +308,8 @@ class TernaryQF(SageObject):
             sage: Q.matrix().det()
             -50
         """
-        return 4*self._a*self._b*self._c + self._r*self._s*self._t - self._a*self._r**2 - self._b*self._s**2 - self._c*self._t**2
+        return (4*self._a*self._b*self._c + self._r*self._s*self._t
+                - self._a*self._r**2 - self._b*self._s**2 - self._c*self._t**2)
 
     def is_definite(self) -> bool:
         """
@@ -329,18 +330,12 @@ class TernaryQF(SageObject):
         if d1 == 0:
             return False
         d2 = 4 * self._a * self._b - self._t**2
-        if d2 == 0:
+        if d2 <= 0:
             return False
         d3 = self.disc()
         if d3 == 0:
             return False
-        if d1 > 0:
-            if d2 > 0:
-                return d3 > 0
-            return False
-        if d2 > 0:
-            return d3 < 0
-        return False
+        return (d1 > 0) == (d3 > 0)
 
     def is_positive_definite(self) -> bool:
         """
@@ -366,12 +361,12 @@ class TernaryQF(SageObject):
         if d1 == 0:
             return False
         d2 = 4 * self._a * self._b - self._t**2
-        if d2 == 0:
+        if d2 <= 0:
             return False
         d3 = self.disc()
         if d3 == 0:
             return False
-        return d1 > 0 and d2 > 0 and d3 > 0
+        return d1 > 0 and d3 > 0
 
     def is_negative_definite(self) -> bool:
         """
@@ -1091,11 +1086,13 @@ class TernaryQF(SageObject):
         s = self(b1) * self(b2)
         return s.squarefree_part()
 
-    def _border(self, n):
+    def _border(self, n) -> bool:
         """
         Auxiliary function to find the automorphisms of a positive definite ternary quadratic form.
 
-        It returns a boolean whether the n-condition is true. If Q = TernaryQF([a,b,c,r,s,t]), the conditions are:
+        It returns a boolean whether the n-condition is true.
+
+        If Q = TernaryQF([a,b,c,r,s,t]), the conditions are:
 
         1.  a = t, s = 2r.
         2.  a = s, t = 2r.
