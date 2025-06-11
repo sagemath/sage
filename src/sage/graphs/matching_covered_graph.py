@@ -1413,7 +1413,6 @@ class MatchingCoveredGraph(Graph):
 
             if len(edge) == 2:
                 u, v = edge
-
             else:
                 u, v, l = edge
 
