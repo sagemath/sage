@@ -2433,6 +2433,48 @@ class HasseDiagram(DiGraph):
         """
         return chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
 
+    def linear_intervals_count(self):
+        """
+        Return the enumeration of linear intervals w.r.t. their cardinality.
+
+        An interval is linear if it is a total order.
+
+        OUTPUT: an iterator of integers
+
+        .. SEEALSO:: :meth:`is_linear_interval`
+
+        EXAMPLES::
+
+            sage: P = posets.BubblePoset(3,3)
+            sage: H = P._hasse_diagram
+            sage: list(H.linear_intervals_count())
+            [245, 735, 438, 144, 24]
+        """
+        if not self:
+            return
+        # precomputation helps for speed:
+        _ = self._leq_storage
+
+        stock = [(x, x, x) for x in self]
+        yield len(stock)
+        exposant = 0
+        while True:
+            exposant += 1
+            next_stock = []
+            short_stock = [(ch[0], ch[2]) for ch in stock]
+            for xmin, cov_xmin, xmax in stock:
+                for y in self.neighbor_out_iterator(xmax):
+                    if exposant == 1:
+                        next_stock.append((xmin, y, y))
+                    elif (cov_xmin, y) in short_stock:
+                        if self.is_linear_interval(xmin, y):
+                            next_stock.append((xmin, cov_xmin, y))
+            if next_stock:
+                yield len(next_stock)
+                stock = next_stock
+            else:
+                break
+
     def is_linear_interval(self, t_min, t_max) -> bool:
         """
         Return whether the interval ``[t_min, t_max]`` is linear.
@@ -2440,6 +2482,7 @@ class HasseDiagram(DiGraph):
         This means that this interval is a total order.
 
         EXAMPLES::
+
             sage: # needs sage.modules
             sage: P = posets.PentagonPoset()
             sage: H = P._hasse_diagram

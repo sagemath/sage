@@ -2772,31 +2772,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         if not self.cardinality():
             return []
-        # precomputation helps for speed:
-        if self.cardinality() > 60:
-            self.lequal_matrix()
-
-        H = self._hasse_diagram
-        stock = [(x, x, x) for x in H]
-        poly = [len(stock)]
-        exposant = 0
-        while True:
-            exposant += 1
-            next_stock = []
-            short_stock = [(ch[0], ch[2]) for ch in stock]
-            for xmin, cov_xmin, xmax in stock:
-                for y in H.neighbor_out_iterator(xmax):
-                    if exposant == 1:
-                        next_stock.append((xmin, y, y))
-                    elif (cov_xmin, y) in short_stock:
-                        if H.is_linear_interval(xmin, y):
-                            next_stock.append((xmin, cov_xmin, y))
-            if next_stock:
-                poly.append(len(next_stock))
-                stock = next_stock
-            else:
-                break
-        return poly
+        return list(self._hasse_diagram.linear_intervals_count())
 
     def is_linear_interval(self, x, y) -> bool:
         """
