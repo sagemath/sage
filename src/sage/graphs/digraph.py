@@ -3305,6 +3305,7 @@ class DiGraph(GenericGraph):
                                                            by_weight=by_weight,
                                                            check_weight=check_weight,
                                                            report_weight=True)
+
             SCCS = h.strongly_connected_components_subgraphs()
             iterators = dict()
             while SCCS:
