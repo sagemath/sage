@@ -2455,7 +2455,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` -- a row vector of size `4` whose entries represent a
+        - ``g`` -- a column vector of size `4` whose entries represent a
           quaternion in our basis
 
         - ``exact`` -- boolean (default: ``False``); if True, tries to embed
