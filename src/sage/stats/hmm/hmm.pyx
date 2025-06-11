@@ -443,13 +443,13 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             sage: m.__repr__()
             'Discrete Hidden Markov Model with 2 States and 2 Emissions\nTransition matrix:\n[0.4 0.6]\n[0.1 0.9]\nEmission matrix:\n[0.1 0.9]\n[0.5 0.5]\nInitial probabilities: [0.2000, 0.8000]'
         """
-        s = "Discrete Hidden Markov Model with %s States and %s Emissions"%(
+        s = "Discrete Hidden Markov Model with %s States and %s Emissions" % (
             self.N, self.n_out)
-        s += '\nTransition matrix:\n%s'%self.transition_matrix()
-        s += '\nEmission matrix:\n%s'%self.emission_matrix()
-        s += '\nInitial probabilities: %s'%self.initial_probabilities()
+        s += '\nTransition matrix:\n%s' % self.transition_matrix()
+        s += '\nEmission matrix:\n%s' % self.emission_matrix()
+        s += '\nInitial probabilities: %s' % self.initial_probabilities()
         if self._emission_symbols is not None:
-            s += '\nEmission symbols: %s'%self._emission_symbols
+            s += '\nEmission symbols: %s' % self._emission_symbols
         return s
 
     def _emission_symbols_to_IntList(self, obs):
@@ -773,7 +773,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         else:
             q = starting_state
             if q < 0 or q >= self.N:
-                raise ValueError("starting state must be between 0 and %s"%(self.N-1))
+                raise ValueError("starting state must be between 0 and %s" % (self.N-1))
 
         states._values[0] = q
         # Generate a symbol from state q
