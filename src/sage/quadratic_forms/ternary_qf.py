@@ -1025,7 +1025,7 @@ class TernaryQF(SageObject):
 
         return identity_matrix(3) - v.column()*matrix(v)*self.matrix()/self(v)
 
-    def automorphism_symmetries(self, A):
+    def automorphism_symmetries(self, A) -> list:
         """
         Given the automorphism `A`, if `A` is the identity, return the empty list.
         Otherwise, return a list of two vectors `v_1`, `v_2` such that the product of
@@ -1092,7 +1092,7 @@ class TernaryQF(SageObject):
 
         It returns a boolean whether the n-condition is true.
 
-        If Q = TernaryQF([a,b,c,r,s,t]), the conditions are:
+        If ``Q = TernaryQF([a,b,c,r,s,t])``, the conditions are:
 
         1.  a = t, s = 2r.
         2.  a = s, t = 2r.
