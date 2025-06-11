@@ -27,3 +27,26 @@ Within an active virtual environment where Meson is installed, run the following
 ```bash
 tools/update-meson.py
 ```
+
+## Find Outdated Deprecations
+
+Code that is deprecated can be safely removed one year after the first stable release containing the deprecation. This command searches for deprecated code in the source folder and prints all old deprecations.
+
+Within an active virtual environment where `pygithub` and `tqdm` is installed, run the following command:
+
+```bash
+tools/check_deprecations.py <optional path to source folder>
+```
+
+It is recommended to pass a subfolder of the source folder to the script to avoid checking the entire source folder, which most likely triggers a rate limit on the GitHub API.
+Alternatively, you can pass a [GitHub token](https://github.com/settings/tokens) via the `--token` argument to avoid the rate limit.
+
+## Update Version Number
+
+Increments the version number in the project. This command is useful when releasing a new version of the project.
+
+Set `SAGE_ROOT` to the root directory of the Sage project and run the following command:
+
+```bash
+tools/update_version
+```

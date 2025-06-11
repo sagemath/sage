@@ -100,7 +100,7 @@ cdef long yellow_code(unsigned long a) noexcept:
     cdef unsigned long s = (8*sizeof(unsigned long)) >> 1
     cdef unsigned long m = (~0UL) >> s
     cdef unsigned long r = a
-    while(s):
+    while s:
         sig_check()
         r ^= (r&m) << s
         s >>= 1
@@ -1209,7 +1209,7 @@ cdef class BooleanFunction(SageObject):
         except TypeError:
             raise TypeError("cannot compute is_linear_structure() using parameter %s" % (val,))
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         r"""
         Return ``True`` if this function has a linear structure.
 

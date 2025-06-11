@@ -1426,7 +1426,7 @@ def RandomTwoSphere(n):
     graph = RandomTriangulation(n)
 
     graph = graph.relabel(inplace=False)
-    triangles = [(u, v, w) for u, L in graph._embedding.items()
+    triangles = [(u, v, w) for u, L in graph.get_embedding().items()
                  for v, w in zip(L, L[1:] + [L[0]]) if u < v and u < w]
 
     return SimplicialComplex(triangles, maximality_check=False)
@@ -1471,10 +1471,10 @@ def ShiftedComplex(generators):
     """
     from sage.combinat.partition import Partitions
     Facets = []
-    for G in generators:
-        G = sorted(G, reverse=True)
+    for _G in generators:
+        G = sorted(_G, reverse=True)
         L = len(G)
-        for k in range(L * (L+1) // 2, sum(G) + 1):
+        for k in range(L * (L + 1) // 2, sum(G) + 1):
             for P in Partitions(k, length=L, max_slope=-1, outer=G):
                 Facets.append(list(reversed(P)))
     return SimplicialComplex(Facets)
