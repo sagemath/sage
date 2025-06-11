@@ -53,7 +53,7 @@ lazy_import('sage.algebras.octonion_algebra', 'OctonionAlgebra')
 lazy_import('sage.algebras.shuffle_algebra', 'ShuffleAlgebra')
 
 from sage.algebras.clifford_algebra import CliffordAlgebra, ExteriorAlgebra
-from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
+from sage.algebras.weyl_algebra import DifferentialWeylAlgebra, InfiniteDifferentialWeylAlgebra
 
 lazy_import('sage.algebras.commutative_dga', 'GradedCommutativeAlgebra')
 
