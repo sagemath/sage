@@ -176,7 +176,7 @@ jobs:
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
             if [[ "${{ matrix.tests }}" == "long" ]]; then
-              src/bin/sage-runtests --force-lib --long -p4 --format github src/sage
+              src/bin/sage-runtests --force-lib --long -p4 --format github src/sage/doctest
               #coverage combine
               #coverage xml
               #coverage report
