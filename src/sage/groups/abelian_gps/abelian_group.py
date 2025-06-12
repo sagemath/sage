@@ -1172,12 +1172,32 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: tuple(gen.order() for gen in H.gens())
             (2, 1, 1, 2)
         """
-        # GAP does not support infinite permutation groups
+        # we do not support infinite permutation groups
         if not self.is_finite():
             raise TypeError('Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
-        s = 'Image(IsomorphismPermGroup(%s))' % self._gap_init_()
-        return PermutationGroup(gap_group=s)
+        gens = []
+        current_degree = 1
+        for order in self.gens_orders():
+            original_order = order
+            gen = []
+            p = 2
+            while p*p <= order:
+                ppow = 1
+                while order % p == 0:
+                    ppow *= p
+                    order //= p
+                if ppow > 1:
+                    gen.append(tuple(range(current_degree, current_degree + ppow)))
+                    current_degree += ppow
+                p += 1
+            if order > 1:
+                gen.append(tuple(range(current_degree, current_degree + order)))
+                current_degree += order
+            assert (original_order==1 and len(gen) == 0) or prod(len(cycle) for cycle in gen) == original_order
+            gens.append(gen)
+            
+        return PermutationGroup(gens=gens, domain=list(range(current_degree)), canonicalize=False)
 
     def is_commutative(self):
         """
