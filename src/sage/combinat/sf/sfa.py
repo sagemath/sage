@@ -1673,9 +1673,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
                 sage: type(L)
                 <class 'sage.rings.lazy_series_ring.LazySymmetricFunctions_with_category'>
+                sage: s.completion() is s.formal_series_ring()
+                True
             """
             from sage.rings.lazy_series_ring import LazySymmetricFunctions
             return LazySymmetricFunctions(self)
+
+        completion = formal_series_ring
 
 
 class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
