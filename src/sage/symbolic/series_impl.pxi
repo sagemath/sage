@@ -126,6 +126,45 @@ Check that :issue:`22733` is fixed::
 # ****************************************************************************
 
 
+def _is_order(expr: Expression) -> bool:
+    """
+    Return whether ``expr`` has the form ``Order(...)``.
+
+    TESTS::
+
+        sage: from sage.symbolic.expression import _is_order
+        sage: s = (x^2).series(x,1)
+        sage: expr = Expression.coefficients(s)[0][0]; expr
+        Order(x)
+        sage: _is_order(expr)
+        True
+        sage: expr = Expression.coefficients(x.series(x, 0))[0][0]; expr
+        Order(1)
+        sage: _is_order(expr)
+        True
+        sage: expr = Expression.coefficients((x^5).series(x, 3))[0][0]; expr
+        Order(x^3)
+        sage: _is_order(expr)
+        True
+        sage: from sage.functions.other import Order; _is_order(Order(x))
+        True
+        sage: _is_order(Order(x) + 1)
+        False
+        sage: _is_order(Order(x) + 1 - 1)
+        True
+        sage: var("y")
+        y
+        sage: _is_order(Order(y))
+        True
+    """
+    from sage.functions.other import Order
+    # return bool(expr == Order(x))
+    from sage.symbolic.operators import add_vararg
+    if expr.operator() is add_vararg and len(expr.operands()) == 1:
+        expr = expr.operands()[0]
+    return expr.operator() is Order
+
+
 cdef class SymbolicSeries(Expression):
     def __init__(self, SR):
         """
@@ -198,6 +237,85 @@ cdef class SymbolicSeries(Expression):
         cdef GEx x = g_series_var(self._gobj)
         cdef Expression ex = new_Expression_from_GEx(self._parent, x)
         return ex
+
+    def coefficients(self, x=None, sparse=True):
+        r"""
+        Return the coefficients of this symbolic series. See :meth:`Expression.coefficients` for more details.
+
+        When ``sparse=False``, unlike :meth:`Expression.coefficients`, the dense list of coefficients
+        are padded to the degree of the asymptotic term of this series.
+        Also, this correctly handles the case where there is no term below the asymptotic term.
+
+        EXAMPLES::
+
+            sage: s = (1/(1-x)).series(x,6); s
+            1 + 1*x + 1*x^2 + 1*x^3 + 1*x^4 + 1*x^5 + Order(x^6)
+            sage: s.coefficients()
+            [[1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5]]
+            sage: s.coefficients(x, sparse=False)
+            [1, 1, 1, 1, 1, 1]
+            sage: x,y = var("x,y")
+            sage: s = (1/(1-y*x-x)).series(x,3); s
+            1 + (y + 1)*x + ((y + 1)^2)*x^2 + Order(x^3)
+            sage: s.coefficients(x, sparse=False)
+            [1, y + 1, (y + 1)^2]
+
+        TESTS::
+
+            sage: s = (x^-1 + x^2).series(x,6)
+            sage: s.coefficients()
+            [[1, -1], [1, 2]]
+            sage: s.coefficients(sparse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot return dense coefficient list with negative valuation
+            sage: Expression.coefficients(s)
+            [[1, -1], [1, 2]]
+            sage: Expression.coefficients(s, sparse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot return dense coefficient list with negative valuation
+
+            sage: s = (x+x^3).series(x,6)
+            sage: s.coefficients()
+            [[1, 1], [1, 3]]
+            sage: s.coefficients(sparse=False)
+            [0, 1, 0, 1, 0, 0]
+            sage: Expression.coefficients(s)
+            [[1, 1], [1, 3]]
+            sage: Expression.coefficients(s, sparse=False)
+            [0, 1, 0, 1]
+
+            sage: s = (x^5).series(x,1)
+            sage: s.coefficients()
+            []
+            sage: s.coefficients(sparse=False)
+            [0]
+            sage: Expression.coefficients(s)  # incorrect result here, but the user will not see this
+            [[Order(x), 0]]
+            sage: Expression.coefficients(s, sparse=False)
+            [Order(x)]
+
+            sage: s = (x^5).series(x,4)
+            sage: s.coefficients()
+            []
+            sage: s.coefficients(sparse=False)
+            [0, 0, 0, 0]
+            sage: Expression.coefficients(s)  # incorrect result here, but the user will not see this
+            [[Order(x^4), 0]]
+            sage: Expression.coefficients(s, sparse=False)
+            [Order(x^4)]
+        """
+        if x is None:
+            x = self.default_variable()
+        result = super().coefficients(x, sparse)
+        if sparse and len(result) == 1 and ZZ(result[0][1]) == 0 and _is_order(result[0][0]):
+            result = []
+        if sparse:
+            return result
+        if len(result) == 1 and _is_order(result[0]):
+            result = []
+        return result + [ZZ.zero()] * (self.degree(x) - len(result))
 
     def power_series(self, base_ring):
         """
