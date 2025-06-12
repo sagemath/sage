@@ -1571,9 +1571,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.weighted(list(range(5)))
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
             sage: h = copy(g)    # indirect doctest
             sage: h.add_vertex()
             5
@@ -1772,9 +1770,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G._scream_if_immutable()
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
             sage: G._scream_if_immutable('this short message')
             Traceback (most recent call last):
             ...
@@ -1783,16 +1779,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.copy()._scream_if_immutable()
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
             sage: G.copy(immutable=False)._scream_if_immutable()
         """
         if self.is_immutable():
             if message is None:
-                message = "This graph is immutable and can thus not be changed."
-                message += " Create a mutable copy, e.g., by `copy(g)`"
-                message += " or `g.copy(immutable=False)`"
+                message = "this graph is immutable and so cannot be changed"
             raise TypeError(message)
 
     def networkx_graph(self, weight_function=None):
@@ -4458,9 +4450,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G_imm.weighted(True)
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
             sage: G_mut = copy(G)
             sage: G_mut == G_imm
             True
@@ -19577,9 +19567,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(immutable=True).add_clique([1, 2, 3])
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
         """
         if vertices:
             self._scream_if_immutable()
@@ -19654,9 +19642,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(immutable=True).add_cycle([1, 2, 3])
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
         """
         if vertices:
             self._scream_if_immutable()
@@ -19703,9 +19689,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(immutable=True).add_path([1, 2, 3])
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-             Create a mutable copy, e.g., by `copy(g)` or
-             `g.copy(immutable=False)`
+            TypeError: this graph is immutable and so cannot be changed
         """
         if not vertices:
             return
