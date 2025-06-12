@@ -4207,7 +4207,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         Checking that the representation in not improved in a costly manner (see :issue:`39920`)::
 
-            sage: from sage.doctest.util import alarm
+            sage: from cysignals.alarm import alarm
             sage: K = NumberField(ZZ['x']([1]*200 + [2]), 'a')
             sage: QQasNF = NumberField(ZZ['x']([1,-1]), 'b')
             sage: alarm(0.5) # ensuring that a trivial isomorphism finishes in reasonable time
