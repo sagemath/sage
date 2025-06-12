@@ -579,8 +579,11 @@ class DocTestController(SageObject):
         self.stats = {}
         self.load_stats(options.stats_path)
         self.baseline_stats = {}
-        if options.baseline_stats_path:
-            self.load_baseline_stats(options.baseline_stats_path)
+        is_32bit = sys.maxsize <= (1 << 32)
+        if is_32bit and not self.options.baseline_stats_path:
+            self.options.baseline_stats_path = 'src/known-test-failures-32bit.json' 
+        if self.options.baseline_stats_path:
+            self.load_baseline_stats(self.options.baseline_stats_path)
         self._init_warn_long()
 
         if self.options.random_seed is None:

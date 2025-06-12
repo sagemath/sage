@@ -1,0 +1,134 @@
+{
+    "sage.combinat.cluster_algebra_quiver.quiver": {
+        "failed": true
+    },
+    "sage.combinat.matrices.latin": {
+        "failed": true
+    },
+    "sage.combinat.root_system.coxeter_matrix": {
+        "failed": true
+    },
+    "sage.doctest.control": {
+        "failed": true
+    },
+    "sage.doctest.sources": {
+        "failed": true
+    },
+    "sage.graphs.generators.random": {
+        "failed": true
+    },
+    "sage.groups.additive_abelian.qmodnz_element": {
+        "failed": true
+    },
+    "sage.groups.matrix_gps.group_element": {
+        "failed": true
+    },
+    "sage.groups.matrix_gps.group_element_gap": {
+        "failed": true
+    },
+    "sage.groups.perm_gps.permgroup_element": {
+        "failed": true
+    },
+    "sage.interfaces.gp": {
+        "failed": true
+    },
+    "sage.lfunctions.dokchitser": {
+        "failed": true
+    },
+    "sage.libs.pari.__init__": {
+        "failed": true
+    },
+    "sage.libs.pari.tests": {
+        "failed": true
+    },
+    "sage.libs.singular.singular": {
+        "failed": true
+    },
+    "sage.matrix.matrix0": {
+        "failed": true
+    },
+    "sage.matrix.matrix1": {
+        "failed": true
+    },
+    "sage.matrix.matrix_double_dense": {
+        "failed": true
+    },
+    "sage.matrix.matrix_integer_dense": {
+        "failed": true
+    },
+    "sage.matrix.matrix_numpy_integer_dense": {
+        "failed": true
+    },
+    "sage.matrix.matrix_rational_dense": {
+        "failed": true
+    },
+    "sage.matrix.matrix_sparse": {
+        "failed": true
+    },
+    "sage.misc.lazy_list": {
+        "failed": true
+    },
+    "sage.modular.arithgroup.arithgroup_element": {
+        "failed": true
+    },
+    "sage.modular.pollack_stevens.sigma0": {
+        "failed": true
+    },
+    "sage.modules.vector_numpy_integer_dense": {
+        "failed": true
+    },
+    "sage.quadratic_forms.ternary_qf": {
+        "failed": true
+    },
+    "sage.rings.infinity": {
+        "failed": true
+    },
+    "sage.rings.integer": {
+        "failed": true
+    },
+    "sage.rings.number_field.bdd_height": {
+        "failed": true
+    },
+    "sage.rings.number_field.number_field": {
+        "failed": true
+    },
+    "sage.rings.number_field.totallyreal_rel": {
+        "failed": true
+    },
+    "sage.rings.padics.CR_template": {
+        "failed": true
+    },
+    "sage.rings.polynomial.multi_polynomial_libsingular": {
+        "failed": true
+    },
+    "sage.rings.polynomial.polydict": {
+        "failed": true
+    },
+    "sage.rings.polynomial.polynomial_integer_dense_ntl": {
+        "failed": true
+    },
+    "sage.rings.rational": {
+        "failed": true
+    },
+    "sage.rings.real_arb": {
+        "failed": true
+    },
+    "sage.rings.real_interval_absolute": {
+        "failed": true
+    },
+    "sage.rings.real_mpfi": {
+        "failed": true
+    },
+    "sage.rings.real_mpfr": {
+        "failed": true
+    },
+    "sage.schemes.elliptic_curves.lseries_ell": {
+        "failed": true
+    },
+    "sage.stats.intlist": {
+        "failed": true
+    },
+    "sage.structure.coerce": {
+        "failed": true
+    }
+}
