@@ -285,7 +285,7 @@ $ADD pkgs /new/pkgs
 $ADD build /new/build
 $ADD .upstream.d /new/.upstream.d
 $ADD tools /new/tools
-ADD .ci /.ci
+$ADD .github/workflows /.github/workflows
 RUN if [ -d /sage ]; then \\
         echo "### Incremental build from \$(cat /sage/VERSION.txt)" && \\
         printf '/src/*\n!/src/doc/bootstrap\n!/src/bin\n!/src/*.m4\n!/src/*.toml\n!/src/VERSION.txt\n' >> /sage/.gitignore && \\
