@@ -158,7 +158,6 @@ def _is_order(expr: Expression) -> bool:
         True
     """
     from sage.functions.other import Order
-    # return bool(expr == Order(x))
     from sage.symbolic.operators import add_vararg
     if expr.operator() is add_vararg and len(expr.operands()) == 1:
         expr = expr.operands()[0]
