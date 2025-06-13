@@ -142,7 +142,10 @@ class ImageSubobject(Parent):
             from sage.misc.superseded import deprecation
             deprecation(40250, "passing inverse is deprecated, implement inverse_image() for map instead")
         if inverse is None:
-            inverse = map.inverse_image
+            try:
+                inverse = map.inverse_image
+            except AttributeError:
+                pass
         self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective
