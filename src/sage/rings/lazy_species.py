@@ -169,14 +169,14 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
 
     INPUT:
 
-    - ``n_vec`` -- a `k`-tuple of non-negative integers.
+    - ``n_vec`` -- a `k`-tuple of non-negative integers
 
     - ``d`` -- a non-negative integer, the total sum of the parts in
       all components
 
-    - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, an
-      iterable, ``weight_multiplicities_vec[j][i]`` is the number of
-      positions with weight `i+1` in the `j`-th component.
+    - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, where
+      ``weight_multiplicities_vec[j][i]`` is the number of
+      positions with weight `i+1` in the `j`-th component
 
     EXAMPLES::
 
@@ -1375,8 +1375,8 @@ class LazySpeciesUnivariate(LazySpecies):
             sage: G = L.Cycles()
             sage: set(G.isotypes(4))
             {(C_4,)}
-            sage: set(G.structures(["a", 1, x]))
-            {(1, 'a', x), (1, x, 'a')}
+            sage: set(G.structures(["a", "b", "c"]))
+            {('a', 'b', 'c'), ('a', 'c', 'b')}
         """
         return CycleSpecies(self)
 
@@ -1421,6 +1421,23 @@ class LazySpeciesUnivariate(LazySpecies):
             {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
         """
         return OrientedSetSpecies(self)
+
+    def Chains(self):
+        r"""
+        Return the species of chains.
+
+        Chains are linear orders up to reversal.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: Ch = L.Chains()
+            sage: set(Ch.isotypes(4))
+            {(E_2(X^2),)}
+            sage: list(Ch.structures(["a", "b", "c"]))
+            [('a', 'c', 'b'), ('a', 'b', 'c'), ('b', 'a', 'c')]
+        """
+        return ChainSpecies(self)
 
     def Graphs(self):
         r"""
@@ -1615,6 +1632,72 @@ class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
            Oriented Set species
         """
         return "Oriented Set species"
+
+
+class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
+                   metaclass=InheritComparisonClasscallMetaclass):
+    def __init__(self, parent):
+        r"""
+        Initialize the species of chains.
+
+        TESTS::
+
+            sage: L = LazySpecies(QQ, "X")
+            sage: Ch = L.Chains()
+            sage: TestSuite(Ch).run(skip=['_test_category', '_test_pickling'])
+
+            sage: Ch is L.Chains()
+            True
+        """
+        P = parent._laurent_poly_ring
+
+        def coefficient(n):
+            if not n:
+                return P.one()
+            if n % 2:
+                gen = [(i, i+1) for i in range(2, n+1, 2)]
+            else:
+                gen = [(i, i+1) for i in range(1, n+1, 2)]
+            return P(PermutationGroup([gen]))
+
+        S = parent(coefficient)
+        super().__init__(parent, S._coeff_stream)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+           sage: LazySpecies(QQ, "X").Chains()  # indirect doctest
+           Chain species
+        """
+        return "Chain species"
+
+    def structures(self, labels):
+        r"""
+        Iterate over the structures on the given set of labels.
+
+        EXAMPLES::
+
+            sage: L = LazySpecies(ZZ, "X")
+            sage: Ch = L.Chains()
+            sage: list(Ch.structures([1,2,3]))
+            [(1, 3, 2), (1, 2, 3), (2, 1, 3)]
+        """
+        labels = _label_sets(self.parent()._arity, [labels])[0]
+        n = len(labels)
+        if not n:
+            yield ()
+        elif n == 1:
+            yield labels
+        else:
+            for a, b in itertools.combinations(labels, 2):
+                ia = labels.index(a)
+                ib = labels.index(b)
+                rest = labels[:ia] + labels[ia+1:ib] + labels[ib+1:]
+                for pi in itertools.permutations(rest):
+                    yield (a,) + pi + (b,)
 
 
 class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
