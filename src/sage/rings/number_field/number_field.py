@@ -4218,6 +4218,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         g = self.absolute_polynomial()
         # make it integral
         g *= g.denominator()
+        g = g.change_ring(ZZ)
         scalar = g.leading_coefficient()
         if scalar != 1:
             # doing g = g(x/scalar) in linear time
@@ -4227,7 +4228,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             powers = accumulate([1/scalar] + [scalar] * g.degree(), mul)
             # need to double reverse
             g = g.parent()([c*p for c, p in zip(g.reverse(), powers)]).reverse()
-            g = g.change_ring(ZZ)
         g /= g.content()
         assert g.leading_coefficient() == 1
         f = g._pari_with_name('y')
