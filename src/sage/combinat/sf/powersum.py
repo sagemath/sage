@@ -924,12 +924,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                     t = get_variable(self.base_ring(), 't')
 
                 def f(partition):
-                    n = 0
-                    for part in partition:
-                        if part != 1:
-                            return 0
-                        n += 1
-                    return t**n
+                    if partition and partition[0] != 1:
+                        return 0
+                    return t**len(partition)
 
                 return self.parent()._apply_module_morphism(self, f, t.parent())
 
