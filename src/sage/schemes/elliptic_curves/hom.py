@@ -452,6 +452,29 @@ class EllipticCurveHom(Morphism):
         """
         raise NotImplementedError('children must implement')
 
+    def kernel_points(self):
+        """
+        Return an iterator over the points in the kernel of this
+        elliptic-curve morphism.
+
+        TESTS::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: set(f.kernel_points())
+            {(0 : 1 : 0), (4 : 4 : 1), (2*z2 + 4 : 4*z2 + 4 : 1), (3*z2 + 1 : z2 + 3 : 1)}
+
+        In the inseparable case::
+
+            sage: E = EllipticCurve(GF(23), [1,1])
+            sage: set(E.scalar_multiplication(23).kernel_points())
+            {(0 : 1 : 0)}
+        """
+        E = self.domain()
+        yield E.zero()
+        for x in self.kernel_polynomial().roots(multiplicities=False):
+            yield from E.lift_x(x, all=True)
+
     def dual(self):
         r"""
         Return the dual of this elliptic-curve morphism.
@@ -525,6 +548,34 @@ class EllipticCurveHom(Morphism):
         # TODO: could have a default implementation that simply
         # returns the first component of rational_maps()
         raise NotImplementedError('children must implement')
+
+    def inverse_image(self, Q, /):
+        """
+        Return an arbitrary element ``P`` in the domain such that
+        ``self(P) == Q``, or raise ``ValueError`` if no such
+        element exists.
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: f(f.inverse_image(f(Q))) == f(Q)
+            True
+            sage: E.scalar_multiplication(-1).inverse_image(P) == -P
+            True
+            sage: f.inverse_image(f.codomain().0)
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+        """
+        if not self.base_ring().is_exact():
+            from warnings import warn
+            warn('computing inverse image over inexact base ring is not guaranteed to be correct')
+        E = self.domain()
+        for P in E.lift_x((self.x_rational_map() - Q.x()).numerator().any_root(), all=True):
+            if self(P) == Q:
+                return P
+        raise NotImplementedError
 
     def scaling_factor(self):
         r"""
