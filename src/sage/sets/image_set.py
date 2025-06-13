@@ -80,6 +80,17 @@ class ImageSubobject(Parent):
             sage: Im = f.image()
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
+
+        TESTS:
+
+        Implementing ``inverse_image`` automatically makes :meth:`__contains__` work::
+
+            sage: R.<x> = QQ[]
+            sage: S.<y> = QQ[]
+            sage: R.hom([y^2]).inverse_image(y^4)
+            x^2
+            sage: y^4 in R.hom([y^2]).image()
+            True
         """
         if not isinstance(domain_subset, Parent):
             from sage.sets.set import Set
@@ -127,6 +138,11 @@ class ImageSubobject(Parent):
         Parent.__init__(self, category=category)
 
         self._map = map
+        if inverse is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(40250, "passing inverse is deprecated, implement inverse_image() for map instead")
+        if inverse is None:
+            inverse = map.inverse_image
         self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective
