@@ -169,14 +169,14 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
 
     INPUT:
 
-    - ``n_vec`` -- a `k`-tuple of non-negative integers.
+    - ``n_vec`` -- a `k`-tuple of non-negative integers
 
     - ``d`` -- a non-negative integer, the total sum of the parts in
       all components
 
-    - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, an
-      iterable, ``weight_multiplicities_vec[j][i]`` is the number of
-      positions with weight `i+1` in the `j`-th component.
+    - ``weight_multiplicities_vec`` -- `k`-tuple of iterables, where
+      ``weight_multiplicities_vec[j][i]`` is the number of
+      positions with weight `i+1` in the `j`-th component
 
     EXAMPLES::
 
