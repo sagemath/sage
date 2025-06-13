@@ -53,7 +53,9 @@ class ImageSubobject(Parent):
       - ``True``: ``map`` is known to be injective
       - ``'check'``: raise an error when ``map`` is not injective
 
-    - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
+    - ``inverse`` -- a function (optional); a map from `f(X)` to `X`.
+      It is not recommended to provide this, if ``map.inverse_image`` exists,
+      it will be used automatically.
 
     EXAMPLES::
 
@@ -138,9 +140,6 @@ class ImageSubobject(Parent):
         Parent.__init__(self, category=category)
 
         self._map = map
-        if inverse is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(40250, "passing inverse is deprecated, implement inverse_image() for map instead")
         if inverse is None:
             try:
                 inverse = map.inverse_image
