@@ -4227,7 +4227,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             powers = accumulate([1/scalar] + [scalar] * g.degree(), mul)
             # need to double reverse
             g = g.parent()([c*p for c, p in zip(g.reverse(), powers)]).reverse()
-        g /= gcd(g.coefficients())
+            g = g.change_ring(ZZ)
+        g /= g.content()
         assert g.leading_coefficient() == 1
         f = g._pari_with_name('y')
         y = f.variable()
