@@ -910,6 +910,25 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         return FunctorialCompositionSpeciesElement(self, *args)
 
+    def arithmetic_product(self, *args):
+        r"""
+        Return the arithmetic product of `F` and `G`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: E = L.Sets()
+            sage: Ep = E.restrict(1)
+            sage: Ep.arithmetic_product(Ep)
+            X + 2*E_2 + 2*E_3 + (2*E_4+Pb_4) + 2*E_5 + (2*E_6+2*P_6) + O^7
+            sage: C = L.Cycles()
+            sage: C.arithmetic_product(Ep)
+            X + 2*E_2 + (E_3+C_3) + (E_4+Pb_4+C_4) + (E_5+C_5) + (E_6+P_6+2*C_6) + O^7
+            sage: C.arithmetic_product(C)
+            X + 2*E_2 + 2*C_3 + (2*C_4+Pb_4) + 2*C_5 + 4*C_6 + O^7
+        """
+        return ArithmeticProductSpeciesElement(self, *args)
+
 
 class LazySpeciesElementGeneratingSeriesMixin:
     r"""
@@ -1255,6 +1274,59 @@ class FunctorialCompositionSpeciesElement(LazySpeciesElement):
                         U.difference_update(OS["orbit"].sage())
 
                     result += c * sum(map(R, summands))
+            return result
+
+        coeff_stream = Stream_function(coefficient, P._sparse, 0)
+        super().__init__(P, coeff_stream)
+        self._left = left
+        self._args = args
+
+
+class ArithmeticProductSpeciesElement(LazySpeciesElement):
+    def __init__(self, left, *args):
+        r"""
+        Initialize the arithmetic product of species.
+
+        TESTS::
+
+            sage: L.<X> = LazySpecies(QQ)
+            sage: (X^2).arithmetic_product(X^2)
+            X^4 + O^7
+            sage: E = L.Sets()
+            sage: Ep = E.restrict(1)
+            sage: Ep.arithmetic_product(Ep)
+            X + 2*E_2 + 2*E_3 + (2*E_4+Pb_4) + 2*E_5 + (2*E_6+2*P_6) + O^7
+            sage: C = L.Cycles()
+            sage: G = C.arithmetic_product(Ep)
+            sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+        """
+        # Find a good parent for the result
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
+
+        args = [P(g) for g in args]
+        if len(args) > 1:
+            raise NotImplementedError("multisort arithmetic product is not yet implemented")
+        G = args[0]
+        R = P._laurent_poly_ring
+
+        def coefficient(n):
+            if not n:
+                return 0
+            result = R.zero()
+            for k in divisors(n):
+                for m1, c1 in left[k]:
+                    D1, _ = m1.permutation_group()
+                    if D1.is_trivial():
+                        result += c1 * G[n//k](R.term(m1))
+                    else:
+                        for m2, c2 in G[n//k]:
+                            D2, _ = m2.permutation_group()
+                            D = D1.gap().DirectProduct(D2)
+                            X = libgap.Cartesian(list(range(1, k+1)), list(range(k+1, k+n//k+1)))
+                            hom = libgap.ActionHomomorphism(D, X, libgap.OnTuples, "surjective")
+                            result += c1 * c2 * R(PermutationGroup(gap_group=libgap.Image(hom)))
             return result
 
         coeff_stream = Stream_function(coefficient, P._sparse, 0)
