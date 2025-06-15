@@ -527,7 +527,7 @@ class Fields(CategoryWithAxiom):
                 True
             """
             return self
-        
+
         def _pseudo_fraction_field(self):
             """
             The fraction field of ``self`` is always available as ``self``.
