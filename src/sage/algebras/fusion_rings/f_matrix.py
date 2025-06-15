@@ -1379,7 +1379,7 @@ class FMatrix(SageObject):
         else:
             mapped = worker_pool.imap_unordered(executor, input_iter, chunksize=chunksize)
         # Reduce phase
-        results = {child_eqns for child_eqns in mapped
+        results = {eqn for child_eqns in mapped for eqn in child_eqns
                    if child_eqns is not None}
         return list(results)
 
