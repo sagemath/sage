@@ -8081,10 +8081,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             raise ValueError("the poset is not graded")
         levels = self._hasse_diagram.level_sets()
         h = len(levels)
-        for i in range(h // 2):
-            if len(levels[i]) != len(levels[h - 1 - i]):
-                return False
-        return True
+        return all(len(levels[i]) == len(levels[h - 1 - i]) for i in range(h // 2))
 
     def is_slender(self, certificate=False) -> bool | tuple:
         r"""

@@ -1004,10 +1004,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             return False
 
         def is_cycle_of_length(seq, n) -> bool:
-            for j in range(n, len(seq)):
-                if seq[j] != seq[j % n]:
-                    return False
-            return True
+            return all(seq[j] == seq[j % n] for j in range(n, len(seq)))
 
         j_list = range(1, self.n())
 

@@ -14152,11 +14152,7 @@ class GenericGraph(GenericGraph_pyx):
         if k is None:
             k = next(deg_it)
 
-        for d in deg_it:
-            if d != k:
-                return False
-
-        return True
+        return all(d == k for d in deg_it)
 
     # Substructures
 

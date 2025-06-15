@@ -2765,10 +2765,7 @@ class _BijectionistMILP:
         for lhs, rhs in constraint.equations():
             if evaluate(lhs - rhs):
                 return False
-        for lhs, rhs in constraint.inequalities():
-            if evaluate(lhs - rhs) > 0:
-                return False
-        return True
+        return all(evaluate(lhs - rhs) <= 0 for lhs, rhs in constraint.inequalities())
 
     def add_alpha_beta_constraints(self):
         r"""

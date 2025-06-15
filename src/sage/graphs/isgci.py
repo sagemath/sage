@@ -603,11 +603,7 @@ class GraphClass(SageObject, CachedRepresentation):
             raise NotImplementedError("No recognition algorithm is available "
                                       "for this class.")
 
-        for gg in excluded:
-            if g.subgraph_search(gg, induced=True):
-                return False
-
-        return True
+        return all(not g.subgraph_search(gg, induced=True) for gg in excluded)
 
     def description(self):
         r"""

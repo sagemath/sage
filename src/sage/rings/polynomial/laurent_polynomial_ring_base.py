@@ -412,11 +412,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             # we need that elements of the base ring
             # canonically coerce into codomain.
             return False
-        for a in im_gens:
-            # in addition, the image of each generator must be invertible.
-            if not a.is_unit():
-                return False
-        return True
+        return all(a.is_unit() for a in im_gens)
 
     def term_order(self):
         """

@@ -2489,10 +2489,7 @@ class GenusSymbol_global_ring:
         t = len(self._local_symbols)
         if t != len(other._local_symbols):
             return False
-        for i in range(t):
-            if self._local_symbols[i] != other._local_symbols[i]:
-                return False
-        return True
+        return all(self._local_symbols[i] == other._local_symbols[i] for i in range(t))
 
     def __ne__(self, other) -> bool:
         r"""

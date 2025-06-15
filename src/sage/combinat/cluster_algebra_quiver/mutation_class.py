@@ -554,10 +554,7 @@ def _has_two_cycles( dg ):
         False
     """
     edge_set = dg.edges(sort=True, labels=False)
-    for (v,w) in edge_set:
-        if (w,v) in edge_set:
-            return True
-    return False
+    return any((w, v) in edge_set for v, w in edge_set)
 
 
 def _is_valid_digraph_edge_set( edges, frozen=0 ):

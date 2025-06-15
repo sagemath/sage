@@ -342,10 +342,7 @@ def has_blum_prime(lbound, ubound) -> bool:
     if lbound > ubound:
         raise ValueError("The lower bound must be less than the upper bound.")
     # now test for presence of a Blum prime
-    for p in primes(lbound, ubound + 1):
-        if mod(p, 4).lift() == 3:
-            return True
-    return False
+    return any(mod(p, 4).lift() == 3 for p in primes(lbound, ubound + 1))
 
 
 def is_blum_prime(n):

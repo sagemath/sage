@@ -5087,10 +5087,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: J.is_homogeneous()
             True
         """
-        for f in self.gens():
-            if not f.is_homogeneous():
-                return False
-        return True
+        return all(f.is_homogeneous() for f in self.gens())
 
     def degree_of_semi_regularity(self):
         r"""

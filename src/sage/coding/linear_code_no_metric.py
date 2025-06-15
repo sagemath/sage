@@ -908,10 +908,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         H = self.parity_check_matrix()
         V = H.column_space()
         HGm = H*g.matrix()
-        for c in basis:
-            if HGm*c != V(0):
-                return False
-        return True
+        return all(HGm * c == V(0) for c in basis)
 
     def permuted_code(self, p):
         r"""
