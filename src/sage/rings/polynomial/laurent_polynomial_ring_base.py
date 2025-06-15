@@ -88,13 +88,21 @@ class LaurentPolynomialRing_generic(Parent):
     def gens(self) -> tuple:
         """
         Return the tuple of generators of ``self``⋅
+
+        EXAMPLES::
+
+            sage: LaurentPolynomialRing(ZZ, 2, 'x').gens()
+            (x0, x1)
+            sage: LaurentPolynomialRing(QQ, 1, 'x').gens()
+            (x,)
         """
         return tuple(self(x) for x in self._R.gens())
 
     def gen(self, i=0):
         r"""
-        Return the `i`-th generator of ``self``.  If `i` is not specified, then
-        the first generator will be returned.
+        Return the `i`-th generator of ``self``.
+
+        If `i` is not specified, then the first generator will be returned.
 
         EXAMPLES::
 
