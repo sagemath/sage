@@ -2455,7 +2455,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` -- a row vector of size `4` whose entries represent a
+        - ``g`` -- a column vector of size `4` whose entries represent a
           quaternion in our basis
 
         - ``exact`` -- boolean (default: ``False``); if True, tries to embed
@@ -3098,8 +3098,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             Vertex of Bruhat-Tits tree for p = 3
         """
         try:
-            tmp = self._cached_paths[v1]
-            return tmp
+            return self._cached_paths[v1]
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())

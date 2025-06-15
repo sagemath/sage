@@ -187,8 +187,7 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
     if D.dimension() != 0:
         raise ArithmeticError("Got non-cuspidal form!")
     verbose("Done", t=t, level=1)
-    qexps = Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
-    return qexps
+    return Sequence(A(x.list()).add_bigoh(R) for x in J.gens())
 
 
 @cached_function

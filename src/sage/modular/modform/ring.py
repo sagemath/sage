@@ -384,7 +384,7 @@ class ModularFormsRing(Parent):
         return PolynomialRing(self.base_ring(), len(gens), names,
                               order=TermOrder('wdeglex', degs))
 
-    def _generators_variables_dictionnary(self, poly_parent, gens):
+    def _generators_variables_dictionary(self, poly_parent, gens):
         r"""
         Return a dictionary giving an association between polynomial
         ring generators and generators of modular forms ring.
@@ -398,7 +398,7 @@ class ModularFormsRing(Parent):
 
             sage: M = ModularFormsRing(Gamma0(6))
             sage: P = QQ['x, y, z']
-            sage: M._generators_variables_dictionnary(P, M.gen_forms())
+            sage: M._generators_variables_dictionary(P, M.gen_forms())
             {z: q^2 - 2*q^3 + 3*q^4 + O(q^6),
              y: q + 5*q^3 - 2*q^4 + 6*q^5 + O(q^6),
              x: 1 + 24*q^3 + O(q^6)}
@@ -479,7 +479,7 @@ class ModularFormsRing(Parent):
             raise TypeError('`polynomial` must be a multivariate polynomial')
         if gens is None:
             gens = self.gen_forms()
-        dict = self._generators_variables_dictionnary(polynomial.parent(), gens)
+        dict = self._generators_variables_dictionary(polynomial.parent(), gens)
         if polynomial.is_constant():
             return self(polynomial.constant_coefficient())
         return polynomial.substitute(dict)
@@ -513,12 +513,12 @@ class ModularFormsRing(Parent):
             sage: M(f)
             Traceback (most recent call last):
             ...
-            ValueError: the group (Congruence Subgroup Gamma0(3)) and/or the base ring (Rational Field) of the given modular form is not consistant with the base space: Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
+            ValueError: the group (Congruence Subgroup Gamma0(3)) and/or the base ring (Rational Field) of the given modular form is not consistent with the base space: Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
             sage: M = ModularFormsRing(1, base_ring=ZZ)
             sage: M(ModularForms(1,4).0)
             Traceback (most recent call last):
             ...
-            ValueError: the group (Modular Group SL(2,Z)) and/or the base ring (Rational Field) of the given modular form is not consistant with the base space: Ring of Modular Forms for Modular Group SL(2,Z) over Integer Ring
+            ValueError: the group (Modular Group SL(2,Z)) and/or the base ring (Rational Field) of the given modular form is not consistent with the base space: Ring of Modular Forms for Modular Group SL(2,Z) over Integer Ring
             sage: M('x')
             Traceback (most recent call last):
             ...
@@ -538,7 +538,7 @@ class ModularFormsRing(Parent):
             if self.group().is_subgroup(forms_datum.group()) and self.base_ring().has_coerce_map_from(forms_datum.base_ring()):
                 forms_dictionary = {forms_datum.weight(): forms_datum}
             else:
-                raise ValueError('the group (%s) and/or the base ring (%s) of the given modular form is not consistant with the base space: %s' % (forms_datum.group(), forms_datum.base_ring(), self))
+                raise ValueError('the group (%s) and/or the base ring (%s) of the given modular form is not consistent with the base space: %s' % (forms_datum.group(), forms_datum.base_ring(), self))
         elif forms_datum in self.base_ring():
             forms_dictionary = {0: forms_datum}
         elif isinstance(forms_datum, MPolynomial):
@@ -1060,9 +1060,8 @@ class ModularFormsRing(Parent):
             V = _span_of_forms_in_weight(G, weight, prec=working_prec, use_random=use_random, stop_dim=d)
             if V.rank() == d and (self.base_ring().is_field() or V.index_in_saturation() == 1):
                 break
-            else:
-                gen_weight += 1
-                verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
+            gen_weight += 1
+            verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
 
         R = G[0][1].parent()
         return [R(list(x), prec=prec) for x in V.gens()]
@@ -1206,9 +1205,8 @@ class ModularFormsRing(Parent):
             W = A.span([A(f.padded_list(working_prec)) for f in flist])
             if W.rank() == d and (self.base_ring().is_field() or W.index_in_saturation() == 1):
                 break
-            else:
-                gen_weight += 1
-                verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
+            gen_weight += 1
+            verbose("Need more generators: trying again with generators of weight up to %s" % gen_weight)
 
         R = G[0][1].parent()
         return [R(list(x), prec=prec) for x in W.gens()]
