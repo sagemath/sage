@@ -901,10 +901,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             s = comm_long_mono_to_string(t, p, generic=self._generic)
         elif basis.find('comm') >= 0:
             s = comm_mono_to_string(t, generic=self._generic)
-        s = s.replace('{', '').replace('}', '')
-        return s
+        return s.replace('{', '').replace('}', '')
 
-    def _latex_term(self, t):
+    def _latex_term(self, t) -> str:
         r"""
         LaTeX representation of the monomial specified by the tuple ``t``.
 
@@ -949,8 +948,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         s = s.replace("Sq", "\\text{Sq}")
         if not self.basis_name().find('pst') >= 0:
             s = s.replace("P", "\\mathcal{P}")
-        s = s.replace("beta", "\\beta")
-        return s
+        return s.replace("beta", "\\beta")
 
     def profile(self, i, component=0):
         r"""
@@ -2403,22 +2401,22 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if not all(x in (0, 1) for x in nums):
             raise ValueError("the tuple %s should consist " % (nums,) +
                              "only of 0s and 1s")
-        else:
-            if self.basis_name() != 'milnor':
-                return self(SteenrodAlgebra(p=self.prime(),
-                                            generic=self._generic).Q_exp(*nums))
-            while nums[-1] == 0:
-                nums = nums[:-1]
-            if not self._generic:
-                return self.P(*nums)
-            else:
-                mono = ()
-                index = 0
-                for e in nums:
-                    if e == 1:
-                        mono = mono + (index,)
-                    index += 1
-                return self.Q(*mono)
+
+        if self.basis_name() != 'milnor':
+            return self(SteenrodAlgebra(p=self.prime(),
+                                        generic=self._generic).Q_exp(*nums))
+        while nums[-1] == 0:
+            nums = nums[:-1]
+        if not self._generic:
+            return self.P(*nums)
+
+        mono = ()
+        index = 0
+        for e in nums:
+            if e == 1:
+                mono = mono + (index,)
+            index += 1
+        return self.Q(*mono)
 
     def Q(self, *nums):
         r"""
