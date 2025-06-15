@@ -572,7 +572,7 @@ class CommutativeRings(CategoryWithAxiom):
             """
             try:
                 return self.fraction_field()
-            except (NotImplementedError,TypeError):
+            except (NotImplementedError, TypeError):
                 return coercion_model.division_parent(self)
 
     class ElementMethods:
