@@ -153,12 +153,12 @@ class WittVector(CommutativeRingElement):
         if self == P.one():
             return self
         if self._prec == 1:
-            return P((self[0]**-1, ))
+            return P((self[0]**-1,))
 
         if P.coefficient_ring().characteristic() == P.prime():
-            res = P(list([self[0]**-1])
-                    + list(P.coefficient_ring().zero()
-                           for _ in range(self._prec-1)))
+            res = P([self[0]**-1]
+                    + [P.coefficient_ring().zero()
+                       for _ in range(self._prec - 1)])
 
             for _ in range(log(self._prec, 2).n().ceil()):
                 res = 2*res - self*res*res
@@ -169,8 +169,8 @@ class WittVector(CommutativeRingElement):
         # to (1, 0, 0, ...), and solve.
         poly_ring = PolynomialRing(P.coefficient_ring(), 'x')
         x = poly_ring.gen()
-        inv_vec = (list([self[0]**-1])
-                   + list(poly_ring.zero() for _ in range(self._prec-1)))
+        inv_vec = ([self[0]**-1]
+                   + [poly_ring.zero() for _ in range(self._prec - 1)])
         # We'll fill this in one-by-one
 
         from sage.rings.padics.witt_vector_ring import WittVectorRing
