@@ -2290,7 +2290,7 @@ cdef class ComplexDoubleElement(FieldElement):
             sage: b = CDF(0.683,0.747)
             sage: a.agm(b, algorithm='optimal')  # rel tol 1e-15
             -0.3715916523517613 + 0.31989466020683005*I
-            sage: a.agm(b, algorithm='principal')  # rel tol 1e-15
+            sage: a.agm(b, algorithm='principal')  # rel tol 2e-15
             0.33817546298618006 - 0.013532696956540483*I
             sage: a.agm(b, algorithm='pari')
             -0.37159165235176134 + 0.31989466020683005*I

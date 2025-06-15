@@ -142,7 +142,7 @@ class DCompletePoset(FiniteJoinSemilattice):
         """
         return self._hooks[elmt]
 
-    def get_hooks(self):
+    def get_hooks(self) -> dict:
         r"""
         Return all the hook lengths as a dictionary.
 
