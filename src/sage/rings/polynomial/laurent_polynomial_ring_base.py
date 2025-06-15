@@ -48,7 +48,7 @@ class LaurentPolynomialRing_generic(Parent):
             and Category of infinite sets
         sage: TestSuite(R).run()
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         EXAMPLES::
 
@@ -87,7 +87,7 @@ class LaurentPolynomialRing_generic(Parent):
     @cached_method
     def gens(self) -> tuple:
         """
-        Return the tuple of generators of ``self``⋅
+        Return the tuple of generators of ``self``.
 
         EXAMPLES::
 
@@ -124,7 +124,7 @@ class LaurentPolynomialRing_generic(Parent):
             raise ValueError("generator not defined")
         return self.gens()[i]
 
-    def variable_names_recursive(self, depth=infinity):
+    def variable_names_recursive(self, depth=infinity) -> tuple[str]:
         r"""
         Return the list of variable names of this ring and its base rings,
         as if it were a single multi-variate Laurent polynomial.
@@ -155,7 +155,7 @@ class LaurentPolynomialRing_generic(Parent):
         except AttributeError:
             return my_vars
 
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         """
         Return ``True`` if ``self`` is an integral domain.
 
@@ -173,7 +173,7 @@ class LaurentPolynomialRing_generic(Parent):
         """
         return self.base_ring().is_integral_domain(proof)
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         Return ``True`` if ``self`` is Noetherian.
 
@@ -653,7 +653,7 @@ class LaurentPolynomialRing_generic(Parent):
             s = ~s
         return f * s
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Return ``True`` if the base ring is exact.
 
