@@ -1,0 +1,14 @@
+diff --git a/src/c/ffi/libraries.d b/src/c/ffi/libraries.d
+index 9973ae457181db24a128496faa73284bfd484809..098cd483d41c32f2e93eccbf25f3f9276a424016 100644
+--- a/src/c/ffi/libraries.d
++++ b/src/c/ffi/libraries.d
+@@ -44,9 +44,6 @@
+ # ifdef HAVE_DLFCN_H
+ #  include <dlfcn.h>
+ #  define INIT_PREFIX "init_fas_"
+-#  ifdef bool
+-#   undef bool
+-#  endif
+ # endif
+ # ifdef HAVE_MACH_O_DYLD_H
+ #  include <mach-o/dyld.h>
