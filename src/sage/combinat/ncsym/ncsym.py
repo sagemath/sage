@@ -399,7 +399,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             def lt(s, t):
                 if s == t:
                     return False
-                return all(len([z for z in t if z.intersection(p)]) == 1 for p in s)
+                return all(len([1 for z in t if z.intersection(p)]) == 1
+                           for p in s)
 
             p = self.realization_of().p()
             P = Poset((A.coarsenings(), lt))
@@ -1730,7 +1731,8 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             def lt(s, t):
                 if s == t:
                     return False
-                return all(len([z for z in t if z.intersection(p)]) == 1 for p in s)
+                return all(len([1 for z in t if z.intersection(p)]) == 1
+                           for p in s)
 
             p = self.realization_of().p()
             P_refine = Poset((A.refinements(), lt))

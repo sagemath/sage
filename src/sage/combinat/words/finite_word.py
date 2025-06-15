@@ -3581,10 +3581,9 @@ class FiniteWord_class(Word_class):
         """
         if p < 0:
             return False
-        elif p >= len(self):
+        if p >= len(self):
             return True
-        else:
-            return all(self[i] == self[i + p] for i in range(len(self) - p))
+        return all(self[i] == self[i + p] for i in range(len(self) - p))
 
     def periods(self, divide_length=False):
         r"""

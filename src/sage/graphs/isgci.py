@@ -564,7 +564,7 @@ class GraphClass(SageObject, CachedRepresentation):
 
         return [smallgraphs[g] for g in excluded]
 
-    def __contains__(self, g):
+    def __contains__(self, g) -> bool:
         r"""
         Check if ``g`` belongs to the graph class represented by ``self``.
 
@@ -603,7 +603,7 @@ class GraphClass(SageObject, CachedRepresentation):
             raise NotImplementedError("No recognition algorithm is available "
                                       "for this class.")
 
-        return all(not g.subgraph_search(gg, induced=True) for gg in excluded)
+        return not any(g.subgraph_search(gg, induced=True) for gg in excluded)
 
     def description(self):
         r"""

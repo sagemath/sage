@@ -191,7 +191,7 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         s = self.k + 1
         return "Set partitions of {1, ..., %s, -1, ..., -%s} with %s and -%s in the same block" % (s, s, s, s)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -207,7 +207,8 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         if x not in SetPartitionsAk_k(self.k + 1):
             return False
 
-        return all(not (self.k + 1 in part and -self.k - 1 not in part) for part in x)
+        return all(self.k + 1 not in part or -self.k - 1 in part
+                   for part in x)
 
     def __iter__(self):
         """

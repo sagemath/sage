@@ -847,7 +847,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return hash((Str, G)) ^ hash(Str) ^ hash(G)
 
-    def is_subcode(self, other):
+    def is_subcode(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subcode of ``other``.
 
@@ -880,7 +880,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self, g):
+    def is_permutation_automorphism(self, g) -> bool:
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.
@@ -907,8 +907,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         basis = self.generator_matrix().rows()
         H = self.parity_check_matrix()
         V = H.column_space()
-        HGm = H*g.matrix()
-        return all(HGm * c == V(0) for c in basis)
+        HGm = H * g.matrix()
+        V0 = V.zero()
+        return all(HGm * c == V0 for c in basis)
 
     def permuted_code(self, p):
         r"""
