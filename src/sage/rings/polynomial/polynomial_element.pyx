@@ -10993,7 +10993,7 @@ cdef class Polynomial(CommutativePolynomial):
             i += 1
         return ans // ans.leading_coefficient()
 
-    def has_cyclotomic_factor(self):
+    def has_cyclotomic_factor(self) -> bool:
         r"""
         Return ``True`` if the given polynomial has a nontrivial cyclotomic factor.
 
@@ -12643,6 +12643,7 @@ cdef class Polynomial_generic_dense(Polynomial):
                 n -= 1
         self._coeffs = self._coeffs[:n]
         return self
+
 
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)
