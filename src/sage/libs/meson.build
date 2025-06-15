@@ -15,12 +15,16 @@ if ecl_bin.found()
     '(quit)',
     check: false,
   )
-  maxima_bin = find_program('maxima', required: not is_windows, disabler: true)
+  maxima_bin = find_program('maxima', required: false, disabler: true)
   maxima_present = maxima_check.returncode() == 0 and maxima_bin.found()
 else
   maxima_present = false
 endif
 if not maxima_present
+  if is_windows
+    # We currently cannot build Maxima on Windows, so we disable it
+    maxima = disabler()
+  endif
   # ECL does not have Maxima support
   maxima_proj = subproject('maxima')
   maxima = maxima_proj.get_variable('maxima_dep')
