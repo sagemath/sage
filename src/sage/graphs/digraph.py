@@ -2773,7 +2773,6 @@ class DiGraph(GenericGraph):
             return []
         return [v for v in self if ecc[v] == d]
 
-
     def path_semigroup(self):
         """
         The partial semigroup formed by the paths of this quiver.

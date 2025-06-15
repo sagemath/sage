@@ -26,6 +26,7 @@ Functions
 # ****************************************************************************
 from copy import copy
 
+
 def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=False,
                                 rooted=False, max_length=None, trivial=False,
                                 remove_acyclic_edges=True,
@@ -210,6 +211,7 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
                    (rooted or neighbor not in starting_vertices or path[0] <= neighbor):
                     heappush(heap_queue, (length + weight_function(e), path + [neighbor]))
 
+
 def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
                                      remove_unnecessary_edges=True,
                                      weight_function=None, by_weight=False,
@@ -361,6 +363,7 @@ def _all_simple_cycles_iterator_edge(self, edge, max_length=None,
             yield length + edge_weight, [edge[0]] + path
         else:
             yield [edge[0]] + path
+
 
 def all_cycles_iterator(self, starting_vertices=None, simple=False,
                         rooted=False, max_length=None, trivial=False,
@@ -552,7 +555,7 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
     """
     if starting_vertices is None:
         starting_vertices = self
-    
+
     if algorithm == 'A' and not self.is_directed():
         raise ValueError("The algorithm 'A' is available only for directed graphs.")
     if algorithm == 'B' and not simple:
@@ -583,6 +586,7 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
                 h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
         else:
             h = self
+
         # We create one cycles iterator per vertex. This is necessary if we
         # want to iterate over cycles with increasing length.
         def cycle_iter(v):
@@ -629,7 +633,6 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         raise ValueError(f"The algorithm {algorithm} is not valid. \
                             Use the algorithm 'A' or 'B'.")
 
-
     cycles = []
     for key, it in iterators.items():
         try:
@@ -655,6 +658,7 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
             heappush(cycles, (length, cycle, key))
         except StopIteration:
             pass
+
 
 def all_simple_cycles(self, starting_vertices=None, rooted=False,
                       max_length=None, trivial=False,
@@ -862,4 +866,3 @@ def all_simple_cycles(self, starting_vertices=None, rooted=False,
                                          check_weight=check_weight,
                                          report_weight=report_weight,
                                          algorithm=algorithm))
-
