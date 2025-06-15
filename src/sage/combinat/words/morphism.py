@@ -2162,7 +2162,7 @@ class WordMorphism(SageObject):
         return WordMorphism({key: w.conjugate(pos)
                              for (key, w) in self._morph.items()})
 
-    def has_left_conjugate(self):
+    def has_left_conjugate(self) -> bool:
         r"""
         Return ``True`` if all the non empty images of ``self`` begins with
         the same letter.
@@ -2193,7 +2193,7 @@ class WordMorphism(SageObject):
         # Compare the first letter of all the non empty images
         return all(image[0] == letter for image in I)
 
-    def has_right_conjugate(self):
+    def has_right_conjugate(self) -> bool:
         r"""
         Return ``True`` if all the non empty images of ``self`` ends with the
         same letter.
@@ -2381,7 +2381,7 @@ class WordMorphism(SageObject):
 
         return False
 
-    def has_conjugate_in_classP(self, f=None):
+    def has_conjugate_in_classP(self, f=None) -> bool:
         r"""
         Return ``True`` if ``self`` has a conjugate in class `f`-`P`.
 
@@ -2408,9 +2408,9 @@ class WordMorphism(SageObject):
           spectrum for palindromic Schrödinger operators,
           Commun. Math. Phys.  174 (1995) 149-159.
 
-        - [2] Labbe, Sebastien. Proprietes combinatoires des
-          `f`-palindromes, Memoire de maitrise en Mathematiques,
-          Montreal, UQAM, 2008, 109 pages.
+        - [2] Labbé, Sébastien. Propriétés combinatoires des
+          `f`-palindromes, Mémoire de maitrise en Mathématiques,
+          Montréal, UQAM, 2008, 109 pages.
 
         EXAMPLES::
 

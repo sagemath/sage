@@ -17,11 +17,12 @@ Generic dual bases symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom
-from sage.matrix.constructor import matrix
 import sage.combinat.partition
 import sage.data_structures.blas_dict as blas
+from sage.categories.homset import Hom
+from sage.categories.morphism import SetMorphism
+from sage.matrix.constructor import matrix
+
 from . import classical
 
 
@@ -988,6 +989,7 @@ class DualBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.dual',
                            'SymmetricFunctionAlgebraElement_dual',
                            SymmetricFunctionAlgebra_dual.Element)

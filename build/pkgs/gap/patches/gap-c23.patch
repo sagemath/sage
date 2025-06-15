@@ -1,0 +1,34 @@
+Works around numerous errors of this form:
+
+src/bool.c: In function ‘InitKernel’:
+src/bool.c:332:22: error: passing argument 1 of ‘InitHandlerFunc’ from incompatible pointer type [-Wincompatible-pointer-types]
+  332 |     InitHandlerFunc( ReturnTrue1, "src/bool.c:ReturnTrue1" );
+      |                      ^~~~~~~~~~~
+      |                      |
+      |                      struct OpaqueBag * (*)(struct OpaqueBag *, struct OpaqueBag *)
+In file included from src/bool.c:20:
+src/calls.h:416:30: note: expected ‘ObjFunc’ {aka ‘struct OpaqueBag * (*)(void)’} but argument is of type ‘struct OpaqueBag * (*)(struct OpaqueBag *, struct OpaqueBag *)’
+  416 | void InitHandlerFunc(ObjFunc hdlr, const Char * cookie);
+      |                      ~~~~~~~~^~~~
+src/bool.c:172:12: note: ‘ReturnTrue1’ declared here
+  172 | static Obj ReturnTrue1(Obj self, Obj val1)
+      |            ^~~~~~~~~~~
+In file included from src/gasman.h:39,
+                 from src/objects.h:20,
+                 from src/bool.h:16,
+                 from src/bool.c:17:
+src/common.h:168:16: note: ‘ObjFunc’ declared here
+  168 | typedef Obj (* ObjFunc) (/*arguments*/);
+      |                ^~~~~~~
+
+--- a/src/common.h.orig	2024-12-05 02:15:31.000000000 -0700
++++ b/src/common.h	2025-01-16 19:37:36.186901774 -0700
+@@ -165,7 +165,7 @@ typedef Bag Obj;
+ #ifndef __cplusplus
+ #pragma GCC diagnostic ignored "-Wstrict-prototypes"
+ #endif
+-typedef Obj (* ObjFunc) (/*arguments*/);
++typedef void *ObjFunc;
+ #pragma GCC diagnostic pop
+ 
+ typedef Obj (* ObjFunc_0ARGS) (Obj self);

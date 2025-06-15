@@ -18,13 +18,14 @@ Power sum symmetric functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from . import sfa, multiplicative, classical
-from sage.combinat.partition import Partition
 from sage.arith.misc import divisors
-from sage.rings.infinity import infinity
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import classical, multiplicative, sfa
 
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -800,7 +801,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -911,7 +914,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -951,6 +956,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.powersum',
                            'SymmetricFunctionAlgebraElement_power',
                            SymmetricFunctionAlgebra_power.Element)

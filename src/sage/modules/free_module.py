@@ -7630,7 +7630,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         """
         return FreeModule(self.base_ring().fraction_field(), self.rank())(self.echelon_coordinates(v, check=check))
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         """
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -7780,7 +7780,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
         """
         return self.echelon_coordinate_vector(v, check=check)
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         r"""
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -8264,7 +8264,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
         """
         return self.echelon_coordinate_vector(v, check=check)
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         """
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon

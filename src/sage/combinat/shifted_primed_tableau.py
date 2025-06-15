@@ -264,7 +264,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: s.is_standard()
             True
         """
-        flattened = set([i for row in self for i in row if i is not None])
+        flattened = {i for row in self for i in row if i is not None}
         if len(flattened) != sum(len(row) - row.count(None) for row in self):
             return False
 

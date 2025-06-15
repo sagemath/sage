@@ -245,7 +245,7 @@ class LinearCodeAutGroupCanLabel:
         z.sort()
         z = [i for (p, i) in z]
 
-        normalization_factors = [ F.one() ] * mat.ncols()
+        normalization_factors = [F.one()] * mat.ncols()
         if algorithm_type == "permutational":
             for c in col_list:
                 c.set_immutable()
@@ -257,20 +257,20 @@ class LinearCodeAutGroupCanLabel:
 
         normalization = S(v=normalization_factors)
         normalization_inverse = normalization ** (-1)
-        col_set = list({col_list[y] for y in nz })
+        col_set = list({col_list[y] for y in nz})
         col2pos = []
         col2P = []
         for c in col_set:
-            X = [(pos2P[y], y) for y in range(mat.ncols()) if col_list[y] == c ]
+            X = [(pos2P[y], y) for y in range(mat.ncols()) if col_list[y] == c]
             X.sort()
-            col2pos.append([b for (a, b) in X ])
-            col2P.append([a for (a, b) in X ])
+            col2pos.append([b for _, b in X])
+            col2P.append([a for a, _ in X])
 
         zipped = sorted(zip(col2P, col_set, col2pos))
 
-        col2P = [qty for (qty, c, pos) in zipped]
-        col_set = [c for (qty, c, pos) in zipped]
-        col2pos = [pos for (qty, c, pos) in zipped]
+        col2P = [qty for qty, c, pos in zipped]
+        col_set = [c for qty, c, pos in zipped]
+        col2pos = [pos for qty, c, pos in zipped]
         P_refined = []
         p = [0]
         act_qty = col2P[0]
@@ -290,7 +290,9 @@ class LinearCodeAutGroupCanLabel:
             # the dimension of the dual code
             # in this case we work with the code itself.
             pr = PartitionRefinementLinearCode(len(col_set),
-                matrix(col_set).transpose(), P=P_refined, algorithm_type=algorithm_type)
+                                               matrix(col_set).transpose(),
+                                               P=P_refined,
+                                               algorithm_type=algorithm_type)
 
             # this command allows you some advanced debugging
             # it prints the backtrack tree -> must be activated when installing
@@ -298,8 +300,11 @@ class LinearCodeAutGroupCanLabel:
 
             can_transp = pr.get_transporter()
             can_col_set = pr.get_canonical_form().columns()
-            self._PGammaL_autom_gens = self._compute_PGammaL_automs(pr.get_autom_gens(),
-                normalization, normalization_inverse, col2pos)
+            self._PGammaL_autom_gens = self._compute_PGammaL_automs(
+                pr.get_autom_gens(),
+                normalization,
+                normalization_inverse, col2pos
+            )
             self._PGammaL_autom_size = pr.get_autom_order_permutation()
             self._PGammaL_autom_size *= pr.get_autom_order_inner_stabilizer()
             self._full_autom_order = self._PGammaL_autom_size
@@ -332,28 +337,27 @@ class LinearCodeAutGroupCanLabel:
                         A.append(S_short(perm=_cyclic_shift(n, p)))
                     self._full_autom_order *= factorial(len(p))
             self._PGammaL_autom_size = self._full_autom_order / (len(F) - 1)
-            self._PGammaL_autom_gens = self._compute_PGammaL_automs(A,
-                normalization, normalization_inverse, col2pos)
+            self._PGammaL_autom_gens = self._compute_PGammaL_automs(
+                A, normalization, normalization_inverse, col2pos)
         else:
             # use the dual code for the computations
             # this might have zero columns or multiple columns, hence
             # we call this algorithm again.
             short_dual_code = LinearCode(matrix(col_set).transpose()).dual_code()
             agcl = LinearCodeAutGroupCanLabel(short_dual_code,
-                P=P_refined, algorithm_type=algorithm_type)
+                                              P=P_refined,
+                                              algorithm_type=algorithm_type)
             can_transp = agcl.get_transporter()
             can_transp.invert_v()
             can_col_set = agcl.get_canonical_form().parity_check_matrix().columns()
             A = agcl.get_autom_gens()
             for a in A:
                 a.invert_v()
-            self._PGammaL_autom_gens = self._compute_PGammaL_automs(A,
-                normalization, normalization_inverse, col2pos)
+            self._PGammaL_autom_gens = self._compute_PGammaL_automs(
+                A, normalization, normalization_inverse, col2pos)
             self._PGammaL_autom_size = agcl.get_PGammaL_order()
             self._full_autom_order = agcl.get_autom_order()
 
-        count = 0
-        block_ptr = []
         canonical_form = matrix(F, mat.ncols(), mat.nrows())
 
         perm = [-1] * mat.ncols()
@@ -362,8 +366,8 @@ class LinearCodeAutGroupCanLabel:
         for i in range(len(can_col_set)):
             img = can_transp.get_perm()(i + 1)
             for j in col2pos[img - 1]:
-                pos = P[ pos2P[j] ].pop()
-                canonical_form[ pos ] = can_col_set[i]
+                pos = P[pos2P[j]].pop()
+                canonical_form[pos] = can_col_set[i]
                 mult[pos] = can_transp.get_v()[i]
                 perm[pos] = j + 1
 
@@ -375,14 +379,17 @@ class LinearCodeAutGroupCanLabel:
 
         self._canonical_form = LinearCode(canonical_form.transpose())
         self._transporter = S(perm=Permutation(perm), v=mult, autom=can_transp.get_autom()) * normalization
-        self._trivial_autom_gens, a = self._compute_trivial_automs(normalization,
-            normalization_inverse, z, [pos2P[x] for x in z], zero_column_case=True)
+        self._trivial_autom_gens, a = self._compute_trivial_automs(
+            normalization,
+            normalization_inverse, z, [pos2P[x] for x in z],
+            zero_column_case=True)
         self._full_autom_order *= a
 
         for i in range(len(col2P)):
             if len(col2P[i]) > 1:
                 A, a = self._compute_trivial_automs(normalization,
-                    normalization_inverse, col2pos[i], col2P[i])
+                                                    normalization_inverse,
+                                                    col2pos[i], col2P[i])
                 self._full_autom_order *= a
                 self._trivial_autom_gens += A
 
@@ -460,11 +467,13 @@ class LinearCodeAutGroupCanLabel:
                 aut_order *= factorial(j - beg)
                 # we append a transposition of the first two elements
                 A.append(normalization_inverse *
-                    S(perm=_cyclic_shift(n, col2pos[beg:beg + 2])) * normalization)
+                         S(perm=_cyclic_shift(n, col2pos[beg:beg + 2])) *
+                         normalization)
                 if j - beg > 2:
                     # we append a cycle on all elements
                     A.append(normalization_inverse *
-                        S(perm=_cyclic_shift(n, col2pos[beg:j])) * normalization)
+                             S(perm=_cyclic_shift(n, col2pos[beg:j])) *
+                             normalization)
             beg = j
         return A, aut_order
 

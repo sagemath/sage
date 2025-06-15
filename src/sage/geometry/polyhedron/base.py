@@ -917,8 +917,8 @@ class Polyhedron_base(Polyhedron_base7):
 
                 normal_vector = sum(normal_vectors)
                 B = - normal_vector * (face_vertices[0].vector())
-                linear_evaluation = set([-normal_vector * (v.vector())
-                                         for v in polar.vertices()])
+                linear_evaluation = {-normal_vector * v.vector()
+                                     for v in polar.vertices()}
 
                 if B == max(linear_evaluation):
                     C = max(linear_evaluation.difference(set([B])))

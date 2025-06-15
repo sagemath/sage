@@ -860,7 +860,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             self.cache('rank', r)
             self.cache('det', d)
             return d
-        
+
         if algorithm == 'generic':
             d = Matrix_sparse.determinant(self)
             self.cache('det', d)

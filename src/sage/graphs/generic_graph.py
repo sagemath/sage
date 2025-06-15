@@ -324,6 +324,7 @@ can be applied on both. Here is what it can do:
     :meth:`~GenericGraph.subgraph_search` | Return a copy of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_count` | Return the number of labelled occurrences of ``G`` in ``self``.
     :meth:`~GenericGraph.subgraph_search_iterator` | Return an iterator over the labelled copies of ``G`` in ``self``.
+    :meth:`~GenericGraph.subgraph_decompositions` | Return an iterator over the graph decompositions into isometric copies of another graph.
     :meth:`~GenericGraph.characteristic_polynomial` | Return the characteristic polynomial of the adjacency matrix of the (di)graph.
     :meth:`~GenericGraph.genus` | Return the minimal genus of the graph.
     :meth:`~GenericGraph.crossing_number` | Return the crossing number of the graph.
@@ -7102,7 +7103,7 @@ class GenericGraph(GenericGraph_pyx):
         verts = [tuple(f) for f in self.faces(embedding=embedding)]
         edges = []
         for v1, v2 in combinations(verts, 2):
-            e = set([tuple(reversed(e)) for e in v1]).intersection(v2)
+            e = {tuple(reversed(e)) for e in v1}.intersection(v2)
             if e:
                 e = e.pop()  # just one edge since self and its dual are simple
                 edges.append([v1, v2, self.edge_label(e[0], e[1])])
@@ -15087,6 +15088,118 @@ class GenericGraph(GenericGraph_pyx):
                     G_to_g = dict(zip(G, g))
                     yield self.subgraph(g, edges=[(G_to_g[u], G_to_g[v])
                                                   for u, v in G.edge_iterator(labels=False)])
+
+    def subgraph_decompositions(self, H, induced=False):
+        r"""
+        Return an iterator over the `H`-decompositions of a graph.
+
+        For a graph `G`, we say a collection of graphs `H_1,\dots,H_m` is a
+        *decomposition* of `G`, if `G` is an edge-disjoint union of
+        `H_1,\dots,H_m`. See :arxiv:`2308.11613`.
+
+        For graphs `G` and `H`, an `H`-*decomposition* of `G` is a
+        partition of the edges of `G` into subgraphs isomorphic to `H`.
+        See :arxiv:`1401.3665`.
+
+        INPUT:
+
+        - ``H`` -- the graph whose copies we are looking for in ``self``
+        - ``induced`` -- boolean (default: ``False``); whether or not to
+          consider only the isometric copies of ``H`` which are induced
+          subgraphs of the graph ``self``
+
+        OUTPUT:
+
+        An iterator of lists of lists of edges
+
+        EXAMPLES::
+
+            sage: G1 = Graph( [(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3),
+            ....: (1, 5), (2, 3), (2, 4), (3, 5), (4, 6), (4, 7), (5, 6), (5, 7), (6, 8),
+            ....: (6, 10), (7, 9), (7, 11), (8, 9), (8, 10), (9, 11), (10, 11)])
+            sage: claw = graphs.ClawGraph()
+            sage: list(G1.subgraph_decompositions(claw))
+            []
+
+        ::
+
+            sage: G2 = Graph([(0, 1), (0, 2), (0, 3), (0, 4), (1, 2), (1, 3), (1, 4),
+            ....:    (1, 5), (2, 4), (2, 5), (3, 5), (4, 5)])
+            sage: it = G2.subgraph_decompositions(claw)
+            sage: next(it)                           # random
+            [[(0, 1), (0, 2), (0, 3)],
+             [(0, 4), (1, 4), (2, 4)],
+             [(1, 2), (1, 3), (1, 5)],
+             [(2, 5), (3, 5), (4, 5)]]
+
+        It has no claw-decomposition if we restrict to claws that are
+        induced subraphs::
+
+            sage: list(G2.subgraph_decompositions(claw, induced=True))
+            []
+
+        It has no claw-decomposition if the number of edges of the graph is
+        not a multiple of the number of edges of the claw (3)::
+
+            sage: G = Graph([(0, 1), (0, 2), (0, 3), (0, 4)])
+            sage: list(G.subgraph_decompositions(claw))
+            []
+
+        Works for digraphs::
+
+            sage: G = DiGraph([(0,1), (1,2), (2,3), (3,4)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
+            [[[(0, 1), (1, 2)], [(2, 3), (3, 4)]]]
+
+        ::
+
+            sage: G = DiGraph([(0,1), (1,2), (2,3), (4,3)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
+            []
+
+        ::
+
+            sage: G = DiGraph([(0,1), (1,0), (1,2), (2,1)], format='list_of_edges')
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: sorted(sorted(edges) for edges in G.subgraph_decompositions(H))
+            [[[(0, 1), (1, 2)], [(1, 0), (2, 1)]]]
+
+        TESTS:
+
+        The graph ``G`` needs to be a simple graph::
+
+            sage: G = DiGraph([(0,1), (0,1), (1,2), (1,2), (2,3), (3,4)],
+            ....:             format='list_of_edges', multiedges=True)
+            sage: H = DiGraph([(0,1), (1,2)], format='list_of_edges')
+            sage: list(G.subgraph_decompositions(H))
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with
+            multiedges. Perhaps this method can be updated to handle them,
+            but in the meantime if you want to use it please disallow
+            multiedges using allow_multiple_edges().
+        """
+        # number of edges of H must divide the number of edges of self
+        if self.num_edges() % H.num_edges():
+            return
+
+        from sage.combinat.matrices.dancing_links import dlx_solver
+
+        edges = list(self.edges(labels=False))
+        edge_to_column_id = {edge:i for i, edge in enumerate(edges)}
+
+        rows = set()
+        for h in self.subgraph_search_iterator(H, induced=induced, return_graphs=True):
+            h_edges = h.edges(labels=False)
+            L = sorted(edge_to_column_id[edge] for edge in h_edges)
+            rows.add(tuple(L))
+        dlx = dlx_solver(rows)
+        rows = dlx.rows()  # the list of rows in the order used by the solver
+
+        for solution in dlx.solutions_iterator():
+            yield [[edges[j] for j in rows[i]] for i in solution]
 
     def random_subgraph(self, p, inplace=False):
         """
@@ -24203,8 +24316,9 @@ class GenericGraph(GenericGraph_pyx):
 
     def degree_to_cell(self, vertex, cell):
         """
-        Return the number of edges from vertex to an edge in cell. In the
-        case of a digraph, returns a tuple (in_degree, out_degree).
+        Return the number of edges from vertex to an edge in cell.
+
+        In the case of a digraph, this returns a tuple (in_degree, out_degree).
 
         EXAMPLES::
 
@@ -24227,8 +24341,9 @@ class GenericGraph(GenericGraph_pyx):
             (0, 2)
         """
         if self._directed:
-            in_neighbors_in_cell = set([a for a, _, _ in self.incoming_edges(vertex)]) & set(cell)
-            out_neighbors_in_cell = set([a for _, a, _ in self.outgoing_edges(vertex)]) & set(cell)
+            s_cell = set(cell)
+            in_neighbors_in_cell = s_cell.intersection(self.neighbor_in_iterator(vertex))
+            out_neighbors_in_cell = s_cell.intersection(self.neighbor_out_iterator(vertex))
             return (len(in_neighbors_in_cell), len(out_neighbors_in_cell))
 
         neighbors_in_cell = set(self.neighbors(vertex)) & set(cell)

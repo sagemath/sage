@@ -109,7 +109,6 @@ This base class provides a lot more methods than a general parent::
      '__len__',
      '__rxor__',
      '__xor__',
-     '_an_element_impl',
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',

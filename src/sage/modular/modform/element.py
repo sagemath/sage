@@ -3452,11 +3452,11 @@ class GradedModularFormElement(ModuleElement):
             sage: M([E4, ModularForms(3, 6).0])
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M({4:E4, 6:ModularForms(3, 6).0})
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M = ModularFormsRing(Gamma0(2))
             sage: E4 = ModularForms(1, 4).0
             sage: M(E4)[4].parent()
@@ -3479,7 +3479,7 @@ class GradedModularFormElement(ModuleElement):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                                 forms_dictionary[k] = M(f)
                             else:
-                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                         else:
                             raise ValueError('at least one key (%s) of the defining dictionary does not correspond to the weight of its value (%s). Real weight: %s' % (k, f, f.weight()))
                     else:
@@ -3496,7 +3496,7 @@ class GradedModularFormElement(ModuleElement):
                         M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                         forms_dictionary[f.weight()] = M(forms_dictionary.get(f.weight(), 0) + f)
                     else:
-                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                 else:
                     forms_dictionary[ZZ.zero()] = parent.base_ring().coerce(f)
         else:

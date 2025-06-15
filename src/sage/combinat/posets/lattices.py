@@ -1572,8 +1572,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         if all(self.is_left_modular_element(e) for e in chain):
             return (True, chain) if certificate else True
-        else:
-            return (False, None) if certificate else False
+        return (False, None) if certificate else False
 
     def is_complemented(self, certificate=False) -> bool | tuple:
         r"""
@@ -1997,9 +1996,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     if join(A) == j:
                         if all(join(A[:i] + A[i + 1:]) != j for i in range(B)):
                             if certificate:
-                                return (B, [self._vertex_to_element(e) for e in A])
-                            else:
-                                return B
+                                return (B, [self._vertex_to_element(e)
+                                            for e in A])
+                            return B
         raise RuntimeError("BUG: breadth() in lattices.py have an error")
 
     def complements(self, element=None):
@@ -3077,8 +3076,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() <= 2:
             if not elements_only:
                 return [self]
-            else:
-                return []
+            return []
         if elements_only:
             return [self[e] for e in
                     self._hasse_diagram.vertical_decomposition(return_list=True)]
