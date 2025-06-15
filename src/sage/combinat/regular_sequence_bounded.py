@@ -298,7 +298,7 @@ def is_bounded_via_mandel_simon_algorithm(matrices):
                    for M in phi)
 
 
-def has_bounded_matrix_powers(matrices):
+def has_bounded_matrix_powers(matrices) -> bool:
     r"""
     Return whether `M^n` is bounded for `n \to \infty`
     for all `M` in ``matrices``.
@@ -342,16 +342,13 @@ def has_bounded_matrix_powers(matrices):
         sage: has_bounded_matrix_powers(matrices)
         True
     """
-    from sage.matrix.constructor import Matrix
-    from sage.arith.srange import srange
-
     return all(abs(eVn[0]) < 1 or
-                (abs(eVn[0]) == 1 and len(eVn[1]) == eVn[2])
-                for mat in matrices
-                for eVn in mat.eigenvectors_right())
+               (abs(eVn[0]) == 1 and len(eVn[1]) == eVn[2])
+               for mat in matrices
+               for eVn in mat.eigenvectors_right())
 
 
-def make_positive(matrices):
+def make_positive(matrices) -> list:
     r"""
     Return a list of non-negative matrices
 

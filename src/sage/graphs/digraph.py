@@ -2931,7 +2931,7 @@ class DiGraph(GenericGraph):
                 if weight_function(e) < 0:
                     raise ValueError("negative weight is not allowed")
 
-        from heapq import heapify, heappop, heappush
+        from heapq import heappop, heappush
         heap_queue = [(0, [vertex])]
         if max_length is None:
             from sage.rings.infinity import Infinity
@@ -3281,21 +3281,22 @@ class DiGraph(GenericGraph):
             # want to iterate over cycles with increasing length.
             def cycle_iter(v):
                 return h._all_cycles_iterator_vertex(v,
-                                                    starting_vertices=starting_vertices,
-                                                    simple=simple,
-                                                    rooted=rooted,
-                                                    max_length=max_length,
-                                                    trivial=trivial,
-                                                    remove_acyclic_edges=False,
-                                                    weight_function=weight_function,
-                                                    by_weight=by_weight,
-                                                    check_weight=check_weight,
-                                                    report_weight=True)
+                                                     starting_vertices=starting_vertices,
+                                                     simple=simple,
+                                                     rooted=rooted,
+                                                     max_length=max_length,
+                                                     trivial=trivial,
+                                                     remove_acyclic_edges=False,
+                                                     weight_function=weight_function,
+                                                     by_weight=by_weight,
+                                                     check_weight=check_weight,
+                                                     report_weight=True)
 
             iterators = {v: cycle_iter(v) for v in starting_vertices}
         elif algorithm == 'B':
             if not simple:
                 raise ValueError("The algorithm 'B' is available only when simple=True.")
+
             def simple_cycle_iter(hh, e):
                 return hh._all_simple_cycles_iterator_edge(e,
                                                            max_length=max_length,
@@ -3304,6 +3305,7 @@ class DiGraph(GenericGraph):
                                                            by_weight=by_weight,
                                                            check_weight=check_weight,
                                                            report_weight=True)
+
             SCCS = h.strongly_connected_components_subgraphs()
             iterators = dict()
             while SCCS:
@@ -3317,7 +3319,6 @@ class DiGraph(GenericGraph):
         else:
             raise ValueError(f"The algorithm {algorithm} is not valid. \
                                Use the algorithm 'A' or 'B'.")
-
 
         cycles = []
         for key, it in iterators.items():

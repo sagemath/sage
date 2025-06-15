@@ -14,7 +14,7 @@ foreach name, pyx : extension_data
     subdir: 'sage/rings/convert',
     install: true,
     include_directories: [inc_cpython, inc_rings],
-    dependencies: [py_dep, cypari2, gmp, gsl, mpfi, mpfr, pari],
+    dependencies: [py_dep, gmp, gsl, mpfi, mpfr],
   )
 endforeach
 

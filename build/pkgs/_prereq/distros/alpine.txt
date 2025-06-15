@@ -19,3 +19,4 @@ g++
 ca-certificates
 coreutils
 patch
+bzip2

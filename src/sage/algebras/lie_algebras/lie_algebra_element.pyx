@@ -132,7 +132,7 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         s = codomain.zero()
         if not self:  # If we are 0
             return s
-        names = self.parent().variable_names()
+        names = self._parent.variable_names()
         if base_map is None:
             def base_map(x):
                 return x
@@ -542,10 +542,12 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
 
             sage: L.<X,Y,Z> = LieAlgebra(QQ, {('X','Y'): {'Z': 1}})
             sage: S = L.subalgebra([X, Y])
+            sage: S.indices()
+            {'X', 'Y', 'Z'}
             sage: el = S(2*Y + 9*Z)
-            sage: el[1]
+            sage: el['Y']
             2
-            sage: el[2]
+            sage: el['Z']
             9
         """
         if self._monomial_coefficients is None:
@@ -554,7 +556,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         try:
             return self._monomial_coefficients[i]
         except KeyError:
-            return self.parent().base_ring().zero()
+            return self._parent.base_ring().zero()
 
     def _bracket_(self, x):
         """
@@ -586,12 +588,12 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
             sage: S = L.subalgebra([X, Y])
             sage: S.basis()
-            Family (X, Y, 3*Z)
+            Finite family {'X': X, 'Y': Y, 'Z': 3*Z}
             sage: S(2*Y + 9*Z).to_vector()
             (0, 2, 9)
             sage: S2 = L.subalgebra([Y, Z])
             sage: S2.basis()
-            Family (Y, Z)
+            Finite family {'Y': Y, 'Z': Z}
             sage: S2(2*Y + 9*Z).to_vector()
             (0, 2, 9)
 
@@ -626,17 +628,18 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
             sage: S = L.subalgebra([X, Y])
             sage: S(2*Y + 9*Z).monomial_coefficients()
-            {1: 2, 2: 3}
+            {'Y': 2, 'Z': 3}
             sage: S2 = L.subalgebra([Y, Z])
             sage: S2(2*Y + 9*Z).monomial_coefficients()
-            {0: 2, 1: 9}
+            {'Y': 2, 'Z': 9}
         """
         cdef Py_ssize_t k
+        indices = self._parent._indices
         if self._monomial_coefficients is None:
-            sm = self.parent().module()
+            sm = self._parent.module()
             v = sm.coordinate_vector(self.to_vector())
-            self._monomial_coefficients = {k: v[k] for k in range(len(v))
-                                           if v[k]}
+            self._monomial_coefficients = {indices[k]: v[k]
+                                           for k in range(len(v)) if v[k]}
         if copy:
             return dict(self._monomial_coefficients)
         return self._monomial_coefficients
@@ -652,13 +655,13 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: a = S(2*Y + 12*Z)
             sage: b = S(X + 2*Y)
             sage: (a + b).monomial_coefficients()
-            {0: 1, 1: 4, 2: 4}
+            {'X': 1, 'Y': 4, 'Z': 4}
             sage: a.monomial_coefficients()        # We set a._monomial_coefficients
-            {1: 2, 2: 4}
+            {'Y': 2, 'Z': 4}
             sage: b.monomial_coefficients()        # We set b._monomial_coefficients
-            {0: 1, 1: 2}
+            {'X': 1, 'Y': 2}
             sage: (a + b).monomial_coefficients()  # This is now computed from a and b
-            {0: 1, 1: 4, 2: 4}
+            {'X': 1, 'Y': 4, 'Z': 4}
         """
         cdef LieSubalgebraElementWrapper ret, other = <LieSubalgebraElementWrapper> right
         ret = type(self)(self._parent, self.value + other.value)
@@ -678,13 +681,13 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: a = S(2*Y + 12*Z)
             sage: b = S(X + 2*Y)
             sage: (a - b).monomial_coefficients()
-            {0: -1, 2: 4}
+            {'X': -1, 'Z': 4}
             sage: a.monomial_coefficients()        # We set a._monomial_coefficients
-            {1: 2, 2: 4}
+            {'Y': 2, 'Z': 4}
             sage: b.monomial_coefficients()        # We set b._monomial_coefficients
-            {0: 1, 1: 2}
+            {'X': 1, 'Y': 2}
             sage: (a - b).monomial_coefficients()  # This is now computed from a and b
-            {0: -1, 2: 4}
+            {'X': -1, 'Z': 4}
         """
         cdef LieSubalgebraElementWrapper ret, other = <LieSubalgebraElementWrapper> right
         ret = type(self)(self._parent, self.value - other.value)
@@ -703,11 +706,11 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: S = L.subalgebra([X, Y])
             sage: a = S(2*Y + 12*Z)
             sage: (2*a).monomial_coefficients()
-            {1: 4, 2: 8}
+            {'Y': 4, 'Z': 8}
             sage: a.monomial_coefficients()      # We set a._monomial_coefficients
-            {1: 2, 2: 4}
+            {'Y': 2, 'Z': 4}
             sage: (2*a).monomial_coefficients()  # This is now computed from a
-            {1: 4, 2: 8}
+            {'Y': 4, 'Z': 8}
         """
         # This was copied and IDK if it still applies (TCS):
         # With the current design, the coercion model does not have

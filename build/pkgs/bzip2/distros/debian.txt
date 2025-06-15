@@ -1,3 +1,0 @@
-libbz2-dev
-# Debian bullseye does not have bzip2 as a dependency of above
-bzip2

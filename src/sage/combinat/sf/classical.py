@@ -17,18 +17,12 @@ Classical symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.combinat.partition import _Partitions
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.combinat.partition import _Partitions
 
-
-from . import hall_littlewood
-from . import sfa
-from . import llt
-from . import macdonald
-from . import jack
-from . import orthotriang
+from . import hall_littlewood, jack, llt, macdonald, orthotriang, sfa
 
 translate = {'monomial': 'MONOMIAL',
              'homogeneous': 'HOMSYM',

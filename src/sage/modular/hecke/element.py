@@ -24,8 +24,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.richcmp import richcmp, op_NE
+from typing import Self
+
 from sage.structure.element import ModuleElement
+from sage.structure.richcmp import op_NE, richcmp
 
 
 def is_HeckeModuleElement(x):
@@ -209,7 +211,7 @@ class HeckeModuleElement(ModuleElement):
         """
         return self.parent()(-self.element())
 
-    def _pos_(self):
+    def _pos_(self) -> Self:
         """
         EXAMPLES::
 

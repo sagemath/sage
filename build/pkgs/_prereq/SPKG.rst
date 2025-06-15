@@ -20,6 +20,10 @@ computer:
 - **python**: Python 3.4 or later, or Python 2.7.
   (This range of versions is a minimal requirement for internal purposes of the SageMath
   build system, which is referred to as ``sage-bootstrap-python``.)
+- **patch**.
+- **bzip2**: the executable ``bzip2`` and the library ``libbz2`` with its headers.
+  (some Linux distros package these separately, e.g. Debian/Ubuntu needs
+  packages ``bzip2`` and ``libbz2-dev``; Fedora needs ``bzip2`` and ``bzip2-devel``.)
 
 Other versions of these may work, but they are untested.
 

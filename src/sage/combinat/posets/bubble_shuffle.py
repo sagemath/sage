@@ -154,7 +154,9 @@ def BubblePoset(m, n) -> LatticePoset:
     The Bubble poset is an extension of the Shuffle poset, by adding the
     exchange of adjacent letters from `X` and `Y`, from `xy` to `yx`.
 
-    .. SEEALSO:: :func:`ShufflePoset`
+    .. SEEALSO::
+
+        :func:`ShufflePoset`, :func:`noncrossing_bipartite_complex`
 
     EXAMPLES::
 
@@ -207,10 +209,11 @@ def noncrossing_bipartite_complex(m, n):
     This is a pure spherical simplicial complex, whose flip graph
     is isomorphic to the Hasse diagram of `B_{m,n}`.
 
+    .. SEEALSO:: :func:`BubblePoset`
+
     EXAMPLES::
 
-        sage: from sage.combinat.posets.bubble_shuffle import noncrossing_bipartite_complex
-        sage: C = noncrossing_bipartite_complex(2,1)
+        sage: C = simplicial_complexes.NoncrossingBipartiteComplex(2,1)
         sage: H = C.flip_graph()
         sage: P = posets.BubblePoset(2,1)
         sage: H.is_isomorphic(P.hasse_diagram().to_undirected())

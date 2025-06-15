@@ -663,9 +663,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             B = [f for f in self._compute_q_expansion_basis(current_prec) if f != 0]
             if len(B) == d:
                 break
-            else:
-                tries += 1
-                current_prec += d
+            tries += 1
+            current_prec += d
             if tries > 5:
                 print("WARNING: possible bug in q_expansion_basis for modular forms space %s" % self)
         if prec == -1:

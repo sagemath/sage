@@ -9,16 +9,18 @@ Additive magmas
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.lazy_import import LazyImport
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.categories.category_with_axiom import CategoryWithAxiom
-from sage.categories.category_singleton import Category_singleton
+from typing import Self
+
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
+from sage.categories.category_singleton import Category_singleton
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.homsets import HomsetsCategory
-from sage.categories.with_realizations import WithRealizationsCategory
 from sage.categories.sets_cat import Sets
+from sage.categories.with_realizations import WithRealizationsCategory
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
 
 
 class AdditiveMagmas(Category_singleton):
@@ -384,8 +386,9 @@ class AdditiveMagmas(Category_singleton):
                 y| y z x
                 z| z x y
             """
-            from sage.matrix.operation_table import OperationTable
             import operator
+
+            from sage.matrix.operation_table import OperationTable
             return OperationTable(self, operation=operator.add,
                                   names=names, elements=elements)
 
@@ -596,7 +599,7 @@ class AdditiveMagmas(Category_singleton):
 
     class AdditiveUnital(CategoryWithAxiom):
 
-        def additional_structure(self):
+        def additional_structure(self) -> Self:
             r"""
             Return whether ``self`` is a structure category.
 

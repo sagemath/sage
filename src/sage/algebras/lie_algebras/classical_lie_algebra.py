@@ -1711,7 +1711,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
             sage: sl3 = LieAlgebra(GF(3), cartan_type=['A',2])
             sage: sl3.center().basis()
-            Family (2*h1 + h2,)
+            Finite family {alphacheck[2]: 2*h1 + h2}
             sage: sl4 = lie_algebras.sl(GF(3), 4)
             sage: sl4.center().dimension()
             0
@@ -1733,7 +1733,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
             sage: sl4 = LieAlgebra(GF(2), cartan_type=['A',3])
             sage: sl4.center().basis()
-            Family (h1 + h3,)
+            Finite family {alphacheck[3]: h1 + h3}
             sage: sp6 = LieAlgebra(GF(2), cartan_type=['C',3])
             sage: sp6.killing_form_matrix().det()
             0

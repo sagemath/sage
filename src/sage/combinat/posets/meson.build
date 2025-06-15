@@ -7,6 +7,7 @@ py.install_sources(
   'elements.py',
   'forest.py',
   'hasse_diagram.py',
+  'hochschild_lattice.py',
   'incidence_algebras.py',
   'lattices.py',
   'linear_extensions.py',

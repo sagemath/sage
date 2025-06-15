@@ -2441,7 +2441,7 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
     G, D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False, return_group=True)
     D_fixed = get_fixed_relative_difference_set(G, D)
     D_union = D_fixed + [q+1+el for el in D_fixed]
-    D_union = list(set([el % (4*(q+1)) for el in D_union]))
+    D_union = list({el % (4*(q+1)) for el in D_union})
 
     def find_a(i):
         for a in range(8):
@@ -3447,9 +3447,9 @@ def szekeres_difference_set_pair(m, check=True):
         from itertools import product, chain
         assert (len(A) == len(B) == m)
         if m > 1:
-            assert (sG == set([xy[0] / xy[1]
-                              for xy in chain(product(A, A), product(B, B))]))
-        assert (all(F.one() / b + F.one() in sG for b in B))
+            assert (sG == {xy[0] / xy[1]
+                           for xy in chain(product(A, A), product(B, B))})
+        assert all(F.one() / b + F.one() in sG for b in B)
         assert (not any(F.one() / a - F.one() in sG for a in A))
     return G, A, B
 

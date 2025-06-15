@@ -152,7 +152,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         1
 
     To obtain a generating set of the subspace of forms of a fixed
-    weight, use the methode :meth:`basis_of_weight`::
+    weight, use the method :meth:`basis_of_weight`::
 
         sage: M = DrinfeldModularForms(K, 2)
         sage: M.basis_of_weight(q^3 - 1)
