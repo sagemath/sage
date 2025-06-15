@@ -562,6 +562,7 @@ class CommutativeRings(CategoryWithAxiom):
                 Traceback (most recent call last):
                 ...
                 TypeError: self must be an integral domain.
+
             TESTS::
 
                 sage: R.<x> = QQ[[]]
