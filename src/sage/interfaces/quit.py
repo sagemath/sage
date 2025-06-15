@@ -37,12 +37,8 @@ def sage_spawned_process_file() -> str:
         sage: len(sage_spawned_process_file()) > 1
         True
     """
-    # This is the old value of SAGE_TMP. Until sage-cleaner is
-    # completely removed, we need to leave these spawned_processes
-    # files where sage-cleaner will look for them.
-    d = os.path.join(DOT_SAGE, "temp", HOSTNAME, str(os.getpid()))
-    os.makedirs(d, exist_ok=True)
-    return os.path.join(d, "spawned_processes")
+    from sage.misc.temporary_file import tmp_dir
+    return os.path.join(tmp_dir(), "spawned_processes")
 
 
 def register_spawned_process(pid: int, cmd: str = "") -> None:
@@ -58,13 +54,6 @@ def register_spawned_process(pid: int, cmd: str = "") -> None:
             file.write("%s %s\n" % (pid, cmd))
     except OSError:
         pass
-    else:
-        # If sage is being used as a python library, we need to launch
-        # the cleaner ourselves upon being told that there will be
-        # something to clean.
-        from sage.interfaces.cleaner import start_cleaner
-
-        start_cleaner()
 
 
 expect_objects: list[ReferenceType[Expect]] = []

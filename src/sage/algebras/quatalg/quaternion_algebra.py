@@ -543,7 +543,7 @@ class QuaternionAlgebra_abstract(Parent):
         This is the
         Gram matrix of the reduced norm as a quadratic form on ``self``.
         The standard basis `1`, `i`, `j`, `k` is orthogonal, so this matrix
-        is just the diagonal matrix with diagonal entries `2`, `2a`, `2b`,
+        is just the diagonal matrix with diagonal entries `2`, `-2a`, `-2b`,
         `2ab`.
 
         EXAMPLES::

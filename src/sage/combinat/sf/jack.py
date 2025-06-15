@@ -30,17 +30,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
 import sage.categories.all
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
+from sage.categories.homset import End, Hom
+from sage.categories.morphism import SetMorphism
+from sage.misc.misc_c import prod
+from sage.rings.fraction_field import FractionField, FractionField_generic
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.arith.misc import gcd
-from sage.arith.functions import lcm
-from sage.rings.fraction_field import FractionField_generic
-from sage.misc.misc_c import prod
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom, End
-from sage.rings.fraction_field import FractionField
+from sage.structure.unique_representation import UniqueRepresentation
+
 from . import sfa
 
 QQt = FractionField(QQ['t'])
@@ -1415,6 +1415,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_qp', JackPolynomials_qp.Element)
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_j', JackPolynomials_j.Element)
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_p', JackPolynomials_p.Element)

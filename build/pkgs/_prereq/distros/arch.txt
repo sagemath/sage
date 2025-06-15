@@ -15,6 +15,7 @@ python # system python for bootstrapping the build
 tar
 bc
 gcc
+bzip2
 # Needed for 4ti2:
 which
 patch

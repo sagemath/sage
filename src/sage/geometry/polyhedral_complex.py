@@ -292,10 +292,10 @@ class PolyhedralComplex(GenericCellComplex):
             cells_dict = cells_list_to_cells_dict(maximal_cells)
         elif isinstance(maximal_cells, dict):
             cells_dict = {}
-            for (k, l) in maximal_cells.items():
+            for k, l in maximal_cells.items():
                 if backend:
-                    cells_dict[k] = set([p.base_extend(p.base_ring(), backend)
-                                        for p in l])
+                    cells_dict[k] = {p.base_extend(p.base_ring(), backend)
+                                     for p in l}
                 else:
                     cells_dict[k] = set(l)
         else:

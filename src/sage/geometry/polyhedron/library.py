@@ -3129,7 +3129,8 @@ class Polytopes:
             for vect in full_perm_vectors:
                 cp = cartesian_product(vect)
                 # The group action creates duplicates, so we reduce it:
-                verts += list(set([tuple(p) for c in cp for p in Permutations(list(c))]))
+                verts += list({tuple(p) for c in cp
+                               for p in Permutations(list(c))})
 
             # The 96 even permutations of [0,±1/phi^2,±1,±phi^2]
             # The 96 even permutations of [0,±1/phi,±phi,±sqrt(5)]

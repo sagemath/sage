@@ -30,18 +30,23 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
-from sage.combinat.partition import Partition, Partitions, Partitions_all_bounded, PartitionsGreatestLE
+from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
+from sage.categories.realizations import Category_realization_of_parent, Realizations
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.categories.realizations import Realizations, Category_realization_of_parent
+from sage.combinat.partition import (
+    Partition,
+    Partitions,
+    Partitions_all_bounded,
+    PartitionsGreatestLE,
+)
+from sage.cpython.getattr import raw_getattr
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
-from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.cpython.getattr import raw_getattr
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class KBoundedQuotient(UniqueRepresentation, Parent):

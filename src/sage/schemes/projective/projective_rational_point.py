@@ -67,7 +67,6 @@ from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
-from sage.schemes.generic.scheme import is_Scheme
 
 lazy_import('sage.matrix.constructor', 'matrix')
 lazy_import('sage.rings.real_mpfr', 'RR')
@@ -75,7 +74,7 @@ lazy_import('sage.rings.real_mpfr', 'RR')
 
 def enum_projective_rational_field(X, B):
     r"""
-    Enumerates projective, rational points on scheme ``X`` of height up to
+    Enumerate projective, rational points on scheme ``X`` of height up to
     bound ``B``.
 
     INPUT:

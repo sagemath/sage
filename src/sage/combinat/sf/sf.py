@@ -20,26 +20,28 @@ Symmetric functions, with their multiple realizations
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.fields import Fields
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
-from sage.categories.fields import Fields
 from sage.categories.rings import Rings
-from sage.combinat.partition import Partitions
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import Partitions
 from sage.rings.rational_field import QQ
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
-from . import schur
-from . import monomial
-from . import powersum
-from . import elementary
-from . import homogeneous
-from . import hall_littlewood
-from . import jack
-from . import macdonald
-from . import llt
+from . import (
+    elementary,
+    hall_littlewood,
+    homogeneous,
+    jack,
+    llt,
+    macdonald,
+    monomial,
+    powersum,
+    schur,
+)
 
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
