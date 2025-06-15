@@ -187,6 +187,7 @@ docs = [
   "sphinx-copybutton",
   "sphinx-inline-tabs",
   "furo",
+  "python-dateutil",
 ]
 lint = [
   "relint",
