@@ -19214,6 +19214,144 @@ cdef class Matrix(Matrix1):
         
         return row_profile,pivot,col_profile
     
+    def krylov_rank_profile(self, J, degree, shift=None):
+        r"""
+        Compute the rank profile (row and column) of the striped Krylov matrix
+        built from ``self`` and matrix `J`.
+
+        INPUT:
+
+        - ``J`` -- square matrix used in the Krylov construction.
+        - ``degree`` -- maximum power of J in Krylov matrix.
+        - ``shift`` -- list of integers (optional): priority row shift.
+
+        OUTPUT:
+
+        - A tuple (row_profile, pivot_matrix, column_profile):
+            * row_profile: list of the first r row indices in the striped Krylov matrix `K` corresponding to independent rows
+            * pivot: the submatrix of `K` given by those rows
+            * column_profile: list of the first r independent column indices in ``pivot_matrix``
+          where r is the rank of `K`.
+        
+        EXAMPLES:
+        
+        sage: R.<x> = GF(97)[]
+        sage: E = matrix([[27,49,29],[50,58,0],[77,10,29]])
+        sage: E
+        [27 49 29]
+        [50 58  0]
+        [77 10 29]
+        sage: J = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
+        sage: J
+        [0 1 0]
+        [0 0 1]
+        [0 0 0]
+        sage: E.striped_krylov_matrix(J,3)
+        [27 49 29]
+        [50 58  0]
+        [77 10 29]
+        [ 0 27 49]
+        [ 0 50 58]
+        [ 0 77 10]
+        [ 0  0 27]
+        [ 0  0 50]
+        [ 0  0 77]
+        [ 0  0  0]
+        [ 0  0  0]
+        [ 0  0  0]
+        sage: E.naive_krylov_rank_profile(J,3)
+        (
+                   [27 49 29]
+                   [50 58  0]
+        (0, 1, 3), [ 0 27 49], (0, 1, 2)
+        )
+        sage: E.striped_krylov_matrix(J,3,[0,3,6])
+        [27 49 29]
+        [ 0 27 49]
+        [ 0  0 27]
+        [ 0  0  0]
+        [50 58  0]
+        [ 0 50 58]
+        [ 0  0 50]
+        [ 0  0  0]
+        [77 10 29]
+        [ 0 77 10]
+        [ 0  0 77]
+        [ 0  0  0]
+        sage: E.naive_krylov_rank_profile(J,3,[0,3,6])
+        (
+                   [27 49 29]
+                   [ 0 27 49]
+        (0, 1, 2), [ 0  0 27], (0, 1, 2)
+        )
+        sage: E.striped_krylov_matrix(J,3,[3,0,2])
+        [50 58  0]
+        [ 0 50 58]
+        [ 0  0 50]
+        [77 10 29]
+        [27 49 29]
+        [ 0  0  0]
+        [ 0 77 10]
+        [ 0 27 49]
+        [ 0  0 77]
+        [ 0  0 27]
+        [ 0  0  0]
+        [ 0  0  0]
+        sage: E.naive_krylov_rank_profile(J,3,[3,0,2])
+        (
+                   [50 58  0]
+                   [ 0 50 58]
+        (0, 1, 2), [ 0  0 50], (0, 1, 2)
+        )
+        """
+        from sage.matrix.constructor import matrix
+        import math
+        from sage.combinat.permutation import Permutation
+        
+        m = self.nrows()
+        
+        # calculate shift priority function and permutation
+        priority = lambda c,d : shift[c] + d
+        index = lambda i : (i%m,i//m)
+        index_inv = lambda c,d : c + d*m
+        
+        priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
+        priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
+        
+        # maps row c of EJ^d to position i in striped Krylov matrix
+        # +/- 1 as permutations are 1-indexed, matrices are 0-indexed
+        phi = lambda c,d : priority_permutation.inverse()(index_inv(c,d) + 1) - 1
+        phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
+        
+        row_profile_self = self.transpose().pivots()
+        r = len(row_profile_self)
+        row_profile_K = sorted([phi(row,0) for row in row_profile_self])
+        
+        M = matrix([self.row(index_inv(*phi_inv(i))) for i in row_profile_K])
+        
+        J_L = None
+        for l in range(math.ceil(math.log(degree,2)) + 1):
+            c,d = zip(*(phi_inv(i) for i in row_profile_K))
+            L = pow(2,l)
+            row_extension = sorted([phi(c[i],d[i] + L) for i in range(r)])
+            
+            k = sorted(row_profile_K + row_extension)
+            
+            if J_L is None:
+                J_L = J
+            else:
+                J_L = J_L * J_L
+            
+            M = matrix.block([[M],[M*J_L]],subdivide=False)
+            
+            row_profile_M = M.transpose().pivots()
+            M = matrix([M.row(i) for i in row_profile_M])
+            
+            row_profile_K = [k[i] for i in row_profile_M]
+            r = len(row_profile_K)
+            
+            print(c,d,L,row_extension,k)
+    
     def linear_interpolation_basis(self, J, degree, variable, shift=None):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
@@ -19278,6 +19416,7 @@ cdef class Matrix(Matrix1):
         # linear interpolation basis in shifted Popov form
         uncompressed_basis = matrix.block([[-relation,matrix.identity(m)]],subdivide=False)
         
+        # compression of basis into polynomial form
         basis_rows = [[0]*m for i in range(m)]
         for col in range(relation.ncols()):
             for row in range(m):
