@@ -371,8 +371,6 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
 
             sage: ch = matroids.Z(3).chow_ring(QQ, False, 'simplicial')
             sage: q = polygen(QQ, 'x')
-            sage: from sage.rings.rational_field import QQ
-            sage: q = QQ['q'].gen()
             sage: gchi = ch.graded_character(); gchi
             (q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1, q^2 + 8*q + 1,
              q^2 + 8*q + 1, q^2 + 8*q + 1)
@@ -383,7 +381,7 @@ class ChowRing(QuotientRing_generic, Representation_abstract):
         q = QQ['q'].gen()
         B = self.basis()
         from sage.modules.free_module_element import vector
-        return vector([sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
+        return vector(q.parent(), [sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
                        for g in G.conjugacy_classes_representatives()],
                       immutable=True)
 
