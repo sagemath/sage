@@ -230,10 +230,11 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             if (
-                file_path.name == "build_options.py"
+                file_path.name in ("build_options.py", "builders.py")
                 and file_path.parent.name == "sage_docbuild"
             ):
-                # Fails to import with Meson, and doesn't contain tests
+                # Fails to import with Meson
+                # TODO: Can be removed after https://github.com/sagemath/sage/pull/39973
                 return IgnoreCollector.from_parent(parent)
 
             if (
