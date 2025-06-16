@@ -112,15 +112,15 @@ cdef char *argv = "sage"
 
 # ECL signal handling
 
-def test_sigint_before_ecl_sig_on():
+def check_sigint_before_ecl_sig_on():
     """
     TESTS:
 
     If an interrupt arrives *before* ecl_sig_on(), we should get an
     ordinary KeyboardInterrupt::
 
-        sage: from sage.libs.ecl import test_sigint_before_ecl_sig_on
-        sage: test_sigint_before_ecl_sig_on()
+        sage: from sage.libs.ecl import check_sigint_before_ecl_sig_on
+        sage: check_sigint_before_ecl_sig_on()
         Traceback (most recent call last):
         ...
         KeyboardInterrupt
@@ -136,14 +136,14 @@ def test_sigint_before_ecl_sig_on():
     abort()
 
 
-def test_ecl_options():
+def check_ecl_options():
     """
     Print an overview of the ECL options.
 
     TESTS::
 
-        sage: from sage.libs.ecl import test_ecl_options
-        sage: test_ecl_options()
+        sage: from sage.libs.ecl import check_ecl_options
+        sage: check_ecl_options()
         ECL_OPT_INCREMENTAL_GC = 0
         ECL_OPT_TRAP_SIGSEGV = 1
         ECL_OPT_TRAP_SIGFPE = 1
