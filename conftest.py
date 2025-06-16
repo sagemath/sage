@@ -100,7 +100,7 @@ class SageDoctestModule(DoctestModule):
                 )
             except ImportError as exception:
                 if self.config.getvalue("doctest_ignore_import_errors"):
-                    pytest.skip("unable to import module %r" % self.path)
+                    pytest.skip(f"unable to import module {self.path}: {exception}")
                 else:
                     if isinstance(exception, ModuleNotFoundError):
                         # Ignore some missing features/modules for now
