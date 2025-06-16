@@ -112,30 +112,6 @@ cdef char *argv = "sage"
 
 # ECL signal handling
 
-def check_sigint_before_ecl_sig_on():
-    """
-    TESTS:
-
-    If an interrupt arrives *before* ecl_sig_on(), we should get an
-    ordinary KeyboardInterrupt::
-
-        sage: from sage.libs.ecl import check_sigint_before_ecl_sig_on
-        sage: check_sigint_before_ecl_sig_on()
-        Traceback (most recent call last):
-        ...
-        KeyboardInterrupt
-    """
-    # Raise a SIGINT *now*.  Since we are outside of sig_on() at this
-    # point, this SIGINT will not be seen yet.
-    signal_raise(SIGINT)
-    # An ordinary KeyboardInterrupt should be raised by ecl_sig_on()
-    # since ecl_sig_on() calls sig_on() before anything else.  This
-    # will catch the pending SIGINT.
-    ecl_sig_on()
-    # We should never get here.
-    abort()
-
-
 def check_ecl_options():
     """
     Print an overview of the ECL options.
