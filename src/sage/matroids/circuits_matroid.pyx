@@ -915,7 +915,7 @@ cdef class CircuitsMatroid(Matroid):
             return False if not certificate else (False, {"error": "the empty set can't be a circuit"})
         for C1, C2 in combinations(self._C, 2):
             I12 = C1 & C2
-            if C1 == I12 or C2 == I12:  # a circuit can't be a subset of another circuit
+            if len(C1) == len(I12) or len(C2) == len(I12):  # a circuit can't be a subset of another circuit
                 return False if not certificate else (False, {"error": "a circuit can't be a subset of another circuit", "circuit 1": C1, "circuit 2": C2})
             # check circuit elimination axiom
             U12 = C1 | C2
