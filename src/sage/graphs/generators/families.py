@@ -3130,7 +3130,10 @@ def p2_forbidden_minors():
     which is a result of Archdeacon and encoded them in graph6 format.
     The order of the graphs is the same as they appear in [WA2025]_.
 
-    We return the graphs using the Sage Graph constructor.
+    TESTS::
+
+    sage: len(graphs.families.p2_forbidden_minors())
+    35
     """
 
     p2_forbidden_minors_graph6 = [

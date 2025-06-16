@@ -9530,9 +9530,9 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        Return True if the graph is projective planar and False if not.  If the
-        parameter map_flag is True and the graph is not projective planar, then
-        the method returns False and a map from :meth:`~Graph.minor`
+        Return ``True`` if the graph is projective planar and ``False`` if not.  If the
+        parameter ``map_flag`` is ``True`` and the graph is not projective planar, then
+        the method returns ``False`` and a map from :meth:`~Graph.minor`
         indicating one of the forbidden graph minors.
 
         EXAMPLES:
