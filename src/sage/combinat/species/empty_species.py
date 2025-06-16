@@ -28,7 +28,7 @@ class EmptySpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
         sage: X = species.EmptySpecies(); X
         doctest:warning...
-        DeprecationWarning: combinat.species is superseded by LazySpecies
+        DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
         See https://github.com/sagemath/sage/issues/38544 for details.
         Empty species
         sage: X.structures([]).list()

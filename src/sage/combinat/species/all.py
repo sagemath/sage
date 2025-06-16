@@ -40,7 +40,7 @@ EXAMPLES:
 We define rooted ordered trees with leaves having weight `q`::
 
     sage: R.<q> = QQ[]
-    sage: L.<X> = LazySpecies(R)
+    sage: L.<X> = LazyCombinatorialSpecies(R)
     sage: leaf = X
     sage: node = q * X
     sage: linorder = X/(1 - X)
@@ -53,10 +53,10 @@ We define rooted ordered trees with leaves having weight `q`::
 We define rooted unordered trees with leaves of sort `Y`.  The
 standard representation of a species is its molecular decomposition::
 
-    sage: L = LazySpecies(R, "X")
+    sage: L = LazyCombinatorialSpecies(R, "X")
     sage: E = L.Sets()
     sage: Ep = E.restrict(1)
-    sage: M.<X, Y> = LazySpecies(R)
+    sage: M.<X, Y> = LazyCombinatorialSpecies(R)
     sage: A = M.undefined(valuation=1)
     sage: A.define(Y + X * Ep(A))
     sage: A.truncate(5)
@@ -104,9 +104,9 @@ install_doc(__package__, __doc__)
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.combinat.species.recursive_species", "CombinatorialSpecies",
-            deprecation=(38544, "combinat.species is superseded by LazySpecies"))
+            deprecation=(38544, "combinat.species is superseded by LazyCombinatorialSpecies"))
 
 lazy_import("sage.combinat.species", "library", as_='species',
-            deprecation=(38544, "combinat.species is superseded by LazySpecies"))
+            deprecation=(38544, "combinat.species is superseded by LazyCombinatorialSpecies"))
 del lazy_import
 del install_doc

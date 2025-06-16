@@ -32,7 +32,7 @@ class FunctorialCompositionSpecies(GenericCombinatorialSpecies):
 
             sage: E = species.SetSpecies()
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
             sage: E2 = species.SetSpecies(size=2)
             sage: WP = species.SubsetSpecies()

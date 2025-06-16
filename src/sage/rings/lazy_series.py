@@ -7126,7 +7126,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
 
             sage: # needs sage.modules
-            sage: c = LazySpecies(QQ, "X").Cycles().cycle_index_series()
+            sage: c = LazyCombinatorialSpecies(QQ, "X").Cycles().cycle_index_series()
             sage: Lplus = L(lambda n: p([1]*n), valuation=1)
             sage: r = c.arithmetic_product(Lplus); r                                    # needs sage.libs.pari
             m[1] + (3*m[1,1]+2*m[2])

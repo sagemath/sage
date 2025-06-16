@@ -2673,7 +2673,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: P = PolynomialSpecies(QQ, ["X"])
 
