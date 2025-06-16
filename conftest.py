@@ -174,6 +174,9 @@ def pytest_collect_file(
         return IgnoreCollector.from_parent(parent)
     if file_path.suffix == ".pyx":
         if parent.config.option.doctest:
+            if file_path.name == "atexit.pyx" and file_path.parent.name == "cpython":
+                # Fails with "Fatal Python error"
+                return IgnoreCollector.from_parent(parent)
             return SageDoctestModule.from_parent(parent, path=file_path)
         else:
             # We don't allow pytests to be defined in Cython files.
@@ -265,10 +268,6 @@ def pytest_collect_file(
                 or (
                     file_path.name == "classical_geometries.py"
                     and file_path.parent.name == "generators"
-                )
-                or (
-                    file_path.name == "atexit.pyx"
-                    and file_path.parent.name == "cpython"
                 )
             ):
                 # Fails with "Fatal Python error"
