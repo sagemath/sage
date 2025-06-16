@@ -2820,12 +2820,20 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve([0,0,1,-1,0])
             sage: P = E([0,0]); P
             (0 : 0 : 1)
-            sage: P._compute_order('pari')
+            sage: P._compute_order(algorithm='pari')
             +Infinity
-            sage: P._compute_order('unknown')
+            sage: P._compute_order(algorithm='generic')
+            +Infinity
+            sage: P._compute_order(algorithm='unknown')
             Traceback (most recent call last):
             ...
             NotImplementedError: unknown algorithm 'unknown'
+
+            sage: E = EllipticCurve([1, 2])
+            sage: E(1, 2).order(algorithm='generic')
+            4
+            sage: E(1, -2).order(algorithm='hybrid')
+            4
         """
         E = self.curve()
 
