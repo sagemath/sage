@@ -37,31 +37,33 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import gc
 import io
 import os
 import re
 import shlex
 import signal
 import sys
-import weakref
 import time
-import gc
-from . import quit
+import weakref
 from random import randrange
 
 import pexpect
 from pexpect import ExceptionPexpect
+
 import sage.interfaces.abc
-from sage.interfaces.interface import (Interface, InterfaceElement,
-            InterfaceFunction, InterfaceFunctionElement)
-
-from sage.structure.element import RingElement
-
-from sage.env import SAGE_EXTCODE, LOCAL_IDENTIFIER
-from sage.misc.object_multiplexer import Multiplex
+from sage.cpython.string import bytes_to_str, str_to_bytes
+from sage.env import LOCAL_IDENTIFIER, SAGE_EXTCODE
+from sage.interfaces import quit
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
-
-from sage.cpython.string import str_to_bytes, bytes_to_str
+from sage.misc.object_multiplexer import Multiplex
+from sage.structure.element import RingElement
 
 BAD_SESSION = -2
 
@@ -688,7 +690,7 @@ If this all works, you can then make calls like:
         self._reset_expect()
 
     def _quit_string(self):
-        """
+        r"""
         Return the string which will be used to quit the application.
 
         EXAMPLES::
@@ -1047,11 +1049,10 @@ If this all works, you can then make calls like:
                     out = self._before()
                 else:
                     out = self._before().rstrip('\n\r')
+            elif self._terminal_echo:
+                out = '\n\r'
             else:
-                if self._terminal_echo:
-                    out = '\n\r'
-                else:
-                    out = ''
+                out = ''
         except KeyboardInterrupt:
             self._keyboard_interrupt()
             raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
