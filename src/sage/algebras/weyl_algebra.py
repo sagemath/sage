@@ -5,7 +5,7 @@ Weyl Algebras
 AUTHORS:
 
 - Travis Scrimshaw (2013-09-06): Initial version
-- Joseph McDonough (2025-06-13): Added `InfiniteDifferentialWeylAlgebra`
+- Joseph McDonough (2025-06-13): Added ``InfiniteDifferentialWeylAlgebra``
 """
 
 # ****************************************************************************
