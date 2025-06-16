@@ -227,6 +227,13 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             if (
+                file_path.name == "macaulay2.py"
+                and file_path.parent.name == "interfaces"
+            ):
+                # TODO: Fix these (messes with the output stream)
+                return IgnoreCollector.from_parent(parent)
+
+            if (
                 file_path.name in ("forker.py", "reporting.py")
             ) and file_path.parent.name == "doctest":
                 # Fails with many errors due to different testing framework
