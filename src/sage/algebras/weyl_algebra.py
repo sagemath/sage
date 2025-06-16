@@ -5,6 +5,7 @@ Weyl Algebras
 AUTHORS:
 
 - Travis Scrimshaw (2013-09-06): Initial version
+- Joseph McDonough (2025-06-13): Added `InfiniteDifferentialWeylAlgebra`
 """
 
 # ****************************************************************************
@@ -34,7 +35,6 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_dense
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
-from sage.rings.integer_ring import ZZ
 from sage.sets.positive_integers import PositiveIntegers
 from sage.structure.global_options import GlobalOptions
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
@@ -905,13 +905,13 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
         def elt_map(u):
             return (tuple(u[:n]), tuple(u[n:]))
 
-        I = IntegerListsNN(length=2 * n, element_constructor=elt_map)
+        index_set = IntegerListsNN(length=2 * n, element_constructor=elt_map)
         one = self.base_ring().one()
 
         def f(x):
             return self.element_class(self, {(x[0], x[1]): one})
 
-        return Family(I, f, name="basis map")
+        return Family(index_set, f, name="basis map")
 
     @cached_method
     def algebra_generators(self):
@@ -1130,6 +1130,7 @@ class DifferentialWeylAlgebraAction(Action):
              if all(dyi == 0 for dyi in dy)}
         return self.right_domain()(D)
 
+
 class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     """
     An element in an infinite differential Weyl algebra
@@ -1143,9 +1144,9 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
         sage: W.one() == 1
         True
         sage: W.zero() == 1
-        False 
+        False
         sage: x[1] == 1
-        False 
+        False
         sage: W(x[1]) == x[1]
         True
         sage: W(dx[1]) == dx[1]
@@ -1176,7 +1177,7 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
                 res += m[1]._repr_()
             return res if res != '' else '1'
         return repr_from_monomials(self.list(), term)
-    
+
     def _r_mul_(self, other):
         """
         Multiply ``self`` on the right by element ``other`` of base ring
@@ -1192,7 +1193,7 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             return self.parent().zero()
         M = self.monomial_coefficients
         return self.__class__(self.parent(), {t: M[t] * other for t in M})
-    
+
     def _l_mul_(self, other):
         """
         Multiply ``self`` on the left by element ``other`` of base ring
@@ -1207,8 +1208,8 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
         if other == 0:
             return self.parent().zero()
         M = self.monomial_coefficients
-        return self.__class__(self.parent(), {t: other* M[t] for t in M})
-    
+        return self.__class__(self.parent(), {t: other * M[t] for t in M})
+
     def _mul_(self, other):
         """
         Multiply ``self`` by ``other``
@@ -1250,14 +1251,14 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
                                 poly[i] -= 1
                                 next.append(((self.parent()._var_index(poly), m[1]), c))
                         cur = next
-                
+
                 for m, c in cur:
-                    m = (ml[0]* m[0], m[1]*mr[1])
+                    m = (ml[0] * m[0], m[1] * mr[1])
                     out[m] = out.get(m, zero) + c
                     if out[m] == zero:
                         del out[m]
         return self.__class__(self.parent(), out)
-     
+
     def __iter__(self):
         """
         Return an iterator of ``self``.
@@ -1271,15 +1272,15 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             [((x[1], dx[1]), 1), ((x[5], 1), 1), ((1, 1), 1)]
         """
         return iter(self.list())
+
     def list(self):
         """
         Return ``self`` as a list.
 
-        This list consists of pairs `(m, c)` where `m` is a pair of 
-        IndexedFreeAbelianMonoid elements indexing a basis element of ``self``,
-        and `c` is the corresponding (nonzero) coefficient. The list is sorted 
-        using graded lex order on the differentials, followed by graded lex 
-        order on the polynomial generators.
+        This list consists of pairs `(m, c)` where `m` is a pair of :class:`IndexedFreeAbelianMonoid<sage.monoids.indexed_free_monoid.IndexedFreeAbelianMonoid>`
+        elements indexing a basis element of ``self``, and `c` is the corresponding (nonzero) coefficient.
+        The list is sorted using graded lex order on the differentials,
+        followed by graded lex order on the polynomial generators.
 
         EXAMPLES::
 
@@ -1289,8 +1290,8 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             sage: p.list()
             [((x[1], dx[1]), 1), ((x[5], 1), 1), ((1, 1), 1)]
         """
-        return sorted(self._monomial_coefficients.items(), 
-                      key = lambda x: (-x[0][1].length(), x[0][1], -x[0][0].length(), x[0][0])) 
+        return sorted(self._monomial_coefficients.items(),
+                      key=lambda x: (-x[0][1].length(), x[0][1], -x[0][0].length(), x[0][0]))
 
     # This is essentially copied from
     #   sage.combinat.free_module.CombinatorialFreeModuleElement
@@ -1319,22 +1320,25 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             return self.__class__(F, D)
 
         return self.__class__(F, {t: D[t]._divide_if_possible(x) for t in D})
-class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
+
+
+class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
     r"""
-    The differential Weyl algebra of the polynomial ring in countably many 
+    The differential Weyl algebra of the polynomial ring in countably many
     variables.
 
-    Let `R` be a commutative ring, and `\{x_i\}` a countable family of 
-    indeterminants. The differential Weyl algebra `W` is an `R`-algebra 
-    generated by symbols `x_i`, and `\partial_{x_i}`, subject to the relations 
-    `[x_i,x_j] = [\partial_{x_i}, \partial_{x_j}] = 0`, and 
+    Let `R` be a commutative ring, and `\{x_i\}` a countable family of
+    indeterminants. The differential Weyl algebra `W` is an `R`-algebra
+    generated by symbols `x_i`, and `\partial_{x_i}`, subject to the relations
+    `[x_i,x_j] = [\partial_{x_i}, \partial_{x_j}] = 0`, and
     `[\partial_{x_i}, x_j] = \delta_{ij}`
 
 
     INPUT:
 
     - ``R`` -- a commutative ring
-    - ``names`` -- (default: ``None``) A list consisting of a single string denoting the prefix for the variable names. If no name is provided, the default prefix is ``'x'``.
+    - ``names`` -- (default: ``None``) A list consisting of a single string denoting the prefix for the variable names.
+      If no name is provided, the default prefix is ``'x'``.
 
     EXAMPLES:
 
@@ -1343,7 +1347,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
         sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ); W
         Infinite differential Weyl algebra in countably many variables x over Rational Field
 
-    To access the variables, we can call ``W.inject_variables()``. The symbols 
+    To access the variables, we can call ``W.inject_variables()``. The symbols
     defined are families that allow you to access the `i`'th polynomial or differential
     generator for each positive integer `i`. Alternatively, we can access the families
     directly using the :meth:`polynomial_gens` and :meth:`differentials` methods
@@ -1357,11 +1361,11 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
         1
         sage: (dx[1] + x[1]*dx[2])*(x[5]*dx[1] + 1)
         x[5]*dx[1]^2 + x[1]*x[5]*dx[1]*dx[2] + dx[1] + x[1]*dx[2]
- 
+
     """
 
     @staticmethod
-    def __classcall__(cls, R, names = None):
+    def __classcall__(cls, R, names=None):
         """
         Normalize input to ensure a unique representation.
 
@@ -1381,8 +1385,8 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
         elif R not in Rings().Commutative():
             raise TypeError("argument R must be a commutative ring")
         return super().__classcall__(cls, R, names)
-    
-    def __init__(self, R, names = None):
+
+    def __init__(self, R, names=None):
         """
         Initialize ``self``.
 
@@ -1393,19 +1397,19 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             Defining x, dx
         """
         if names is None:
-            names = ['x','dx']
+            names = ['x', 'dx']
         elif len(names) != 1:
             raise ValueError("cannot specify more than one name")
         else:
             names = [names[0], 'd' + names[0]]
         # could probably get away with only using one copy, but the distinction is nice
-        self._var_index  = IndexedFreeAbelianMonoid(PositiveIntegers(),prefix=names[0])
-        self._diff_index = IndexedFreeAbelianMonoid(PositiveIntegers(),prefix=names[1])
+        self._var_index = IndexedFreeAbelianMonoid(PositiveIntegers(), prefix=names[0])
+        self._diff_index = IndexedFreeAbelianMonoid(PositiveIntegers(), prefix=names[1])
         if R.is_field():
             cat = AlgebrasWithBasis(R).NoZeroDivisors().Super()
         else:
             cat = AlgebrasWithBasis(R).Super()
-        Parent.__init__(self, base=R, names=names,category=cat)
+        Parent.__init__(self, base=R, names=names, category=cat)
 
     def _repr_(self) -> str:
         """
@@ -1417,7 +1421,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             Infinite differential Weyl algebra in countably many variables x over Rational Field
         """
         return f"Infinite differential Weyl algebra in countably many variables {self.variable_names()[0]} over {self.base_ring()}"
-    
+
     def _element_constructor_(self, x):
         """
         Construct an element of ``self`` from ``x``.
@@ -1434,13 +1438,13 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             if x == self.base_ring().zero():
                 return self.zero()
             return self.element_class(self, {(self._var_index.one(), self._diff_index.one()): x})
-
+        # TODO: Fix indexing issue caused by InfinitePolynomial starting with x[0].
         if isinstance(x, InfinitePolynomial):
             R = self.base_ring()
             if x.parent().base_ring() is R:
                 return self.element_class(self, {
-                    (prod(self._var_index.gen(len(m)-i-1)**m[i] for i in range(len(m))), 
-                     self._diff_index.one()) : c for m,c in x.monomial_coefficients().items()
+                    (prod(self._var_index.gen(len(m)-i-1)**m[i] for i in range(len(m))),
+                     self._diff_index.one()): c for m, c in x.monomial_coefficients().items()
                 })
         if isinstance(x, InfiniteDifferentialWeylAlgebraElement):
             R = self.base_ring()
@@ -1450,10 +1454,11 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             zero = R.zero()
             return self.element_class(self, {m: R(c) for m, c in x if R(c) != zero})
 
-        return self.element_class(self, 
-            {(self._var_index(m[0]), self._diff_index(m[1])): c for m, c in x.items()})
-    
-    
+        return self.element_class(self,
+                                  {(self._var_index(m[0]),
+                                    self._diff_index(m[1])): c
+                                      for m, c in x.items()})
+
     def _coerce_map_from_(self, R):
         """
         Return data which determines if there is a coercion map
@@ -1463,8 +1468,8 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
         or ``True``, which constructs a generic map. Otherwise the output
         must be ``False`` or ``None``.
 
-        EXAMPLES:: 
-        
+        EXAMPLES::
+
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
             sage: W2.<x> = InfiniteDifferentialWeylAlgebra(ZZ)
             sage: W._coerce_map_from_(W2)
@@ -1475,9 +1480,9 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
         """
         if isinstance(R, InfiniteDifferentialWeylAlgebra):
             return (self.variable_names() == R.variable_names()
-                and self.base_ring().has_coerce_map_from(R.base_ring()))
+                    and self.base_ring().has_coerce_map_from(R.base_ring()))
         return super()._coerce_map_from_(R)
-    
+
     @cached_method
     def gen(self, i):
         r"""
@@ -1497,9 +1502,9 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             sage: W.gen(1) == x[1]
             True
         """
-        return self.element_class(self, {(self._var_index.gen(i), 
-                                          self._diff_index.one()) : 1})
-    
+        return self.element_class(self, {(self._var_index.gen(i),
+                                          self._diff_index.one()): 1})
+
     @cached_method
     def polynomial_gens(self):
         r"""
@@ -1515,35 +1520,35 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             sage: x[3] == W.gen(3)
             True
         """
-        return Family(PositiveIntegers(), lambda x: self.gen(x), name = self.variable_names()[0])
-    
+        return Family(PositiveIntegers(), lambda x: self.gen(x), name=self.variable_names()[0])
+
     @cached_method
     def gens(self):
         """
         Return the algebra generators of ``self``
 
-        OUTPUT: an ordered pair (x, dx) containing families indexing each set 
+        OUTPUT: an ordered pair (x, dx) containing families indexing each set
         of generators.
 
         EXAMPLES::
-        
+
             sage: R = InfinitePolynomialRing(QQ)
             sage: W = InfiniteDifferentialWeylAlgebra(R)
             sage: x, dx = W.gens()
         """
         return (self.polynomial_gens(), self.differentials())
-    
+
     @cached_method
     def differential(self, i):
         r"""
         Return the i'th differential of ``self``
 
-        INPUT: 
+        INPUT:
 
         - ``i`` -- positive integer
 
         OUTPUT: The differential generator `\partial_{x_i}`
-        
+
         EXAMPLES::
 
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
@@ -1554,9 +1559,9 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             sage: W.differential(1) == dx[1]
             True
         """
-        return self.element_class(self, {(self._var_index.one(), 
-                                          self._diff_index.gen(i)) : 1})
-    
+        return self.element_class(self, {(self._var_index.one(),
+                                          self._diff_index.gen(i)): 1})
+
     @cached_method
     def differentials(self):
         r"""
@@ -1572,7 +1577,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             sage: dx[3] == W.differential(3)
             True
         """
-        return Family(PositiveIntegers(), lambda x: self.differential(x), name = self.variable_names()[1])
+        return Family(PositiveIntegers(), lambda x: self.differential(x), name=self.variable_names()[1])
 
     @cached_method
     def zero(self):
@@ -1583,12 +1588,12 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
 
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
             sage: x[1] + W.zero() == x[1]
-            True 
+            True
             sage: x[1]*W.zero() == W.zero()
             True
         """
         return self.element_class(self, {})
-    
+
     @cached_method
     def one(self):
         """
@@ -1601,16 +1606,17 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
             True
         """
         return self.element_class(self, {(self._var_index.one(), self._diff_index.one()): self.base_ring().one()})
-    
+
     @cached_method
     def basis(self):
         """
         Return a basis for ``self``
         """
-        I = cartesian_product([self._var_index, self._diff_index])
+        index_set = cartesian_product([self._var_index, self._diff_index])
         one = self.base_ring().one()
-        f = lambda x: self.element_class(self, {(x[0],x[1]):one})
-        return Family(I, f, name = 'basis map')
+        return Family(index_set,
+                      lambda x: self.element_class(self, {(x[0], x[1]): one}),
+                      name='basis map')
 
     def degree_on_basis(self, x):
         """
@@ -1620,7 +1626,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
 
         - ``x`` -- A basis element of W
 
-        OUTPUT: A nonnegative integer corresponding to the degree of ``x``. 
+        OUTPUT: A nonnegative integer corresponding to the degree of ``x``.
         This is the total degree of the polynomial and differential parts of ``x``.
 
         EXAMPLE::
@@ -1632,4 +1638,3 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation,Parent):
         """
         return x[0].length() + x[1].length()
     Element = InfiniteDifferentialWeylAlgebraElement
-
