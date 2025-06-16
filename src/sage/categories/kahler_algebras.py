@@ -141,7 +141,7 @@ class KahlerAlgebras(Category_over_base_ring):
 
                 sage: ch = matroids.Uniform(4, 6).chow_ring(QQ, False)
                 sage: ch.hodge_riemann_relations(1)
-                Quadratic form in 36 variables over Rational Field with coefficients: 
+                Quadratic form in 36 variables over Rational Field with coefficients:
                 [ 3 -1 -1 3 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 3 ]
                 [ * 3 -1 3 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 3 ]
                 [ * * 3 3 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 3 -1 -1 -1 3 ]
