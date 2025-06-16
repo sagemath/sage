@@ -230,6 +230,13 @@ def pytest_collect_file(
                 return IgnoreCollector.from_parent(parent)
 
             if (
+                file_path.name == "build_options.py"
+                and file_path.parent.name == "sage_docbuild"
+            ):
+                # Fails to import with Meson, and doesn't contain tests
+                return IgnoreCollector.from_parent(parent)
+
+            if (
                 (
                     file_path.name == "arithgroup_generic.py"
                     and file_path.parent.name == "arithgroup"
