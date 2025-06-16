@@ -266,6 +266,10 @@ def pytest_collect_file(
                     file_path.name == "classical_geometries.py"
                     and file_path.parent.name == "generators"
                 )
+                or (
+                    file_path.name == "atexit.pyx"
+                    and file_path.parent.name == "cpython"
+                )
             ):
                 # Fails with "Fatal Python error"
                 return IgnoreCollector.from_parent(parent)
