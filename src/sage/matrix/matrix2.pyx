@@ -19214,7 +19214,7 @@ cdef class Matrix(Matrix1):
         
         return row_profile,pivot,col_profile
     
-    def linear_interpolation_basis(self, J, degree, shift=None):
+    def linear_interpolation_basis(self, J, degree, variable, shift=None):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
 
@@ -19278,7 +19278,14 @@ cdef class Matrix(Matrix1):
         # linear interpolation basis in shifted Popov form
         uncompressed_basis = matrix.block([[-relation,matrix.identity(m)]],subdivide=False)
         
-        return uncompressed_basis
+        basis_rows = [[0]*m for i in range(m)]
+        for col in range(relation.ncols()):
+            for row in range(m):
+                basis_rows[row][c[col]] += uncompressed_basis[row][col] * variable**d[col]
+        for i in range(m):
+            basis_rows[i][i] += variable**degree_c[i]
+        
+        return matrix(basis_rows)
     
     # a limited number of access-only properties are provided for matrices
     @property
