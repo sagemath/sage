@@ -3473,6 +3473,21 @@ def compare_set_partitions(a, b):
         sage: all(compare_set_partitions(partitions[i], partitions[i + 1]) for i in range(len(partitions) - 1))
         True
 
+    UNIT TESTS:
+
+    ::
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: g = SetPartition([ [1,2],[3] ])
+        sage: h = SetPartition([ [1,2],[3] ])
+        sage: compare_set_partitions(g, h)
+        True
+
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: i = SetPartition([])
+        sage: j = SetPartition([ [1] ])
+        sage: compare_set_partitions(i, j)
+        True
+
     """
     if a.standard_form() == []:
         return True
