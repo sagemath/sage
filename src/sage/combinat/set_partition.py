@@ -52,6 +52,7 @@ from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
 from sage.sets.disjoint_set import DisjointSet
+from sage.misc.cachefunc import cached_method
 
 lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
 lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
@@ -73,11 +74,7 @@ class AbstractSetPartition(ClonableArray,
             sage: S([[1,3],[2,4]])
             {{1, 3}, {2, 4}}
         """
-        try:
-            s = [sorted(x) for x in self]
-        except TypeError:
-            s = [sorted(x, key=str) for x in self]
-        return '{' + ', '.join('{' + repr(x)[1:-1] + '}' for x in s) + '}'
+        return '{' + ', '.join('{' + repr(sorted(x))[1:-1] + '}' for x in self) + '}'
 
     def __hash__(self):
         """
@@ -491,9 +488,11 @@ class AbstractSetPartition(ClonableArray,
 
         INPUT:
 
-        - ``self`` -- set partition of an ordered set
+        - ``self`` -- a set partition of an ordered set
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        a set partition
 
         EXAMPLES::
 
@@ -536,7 +535,7 @@ class AbstractSetPartition(ClonableArray,
 
 
 class SetPartition(AbstractSetPartition,
-                   metaclass=InheritComparisonClasscallMetaclass):
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A partition of a set.
 
@@ -624,11 +623,7 @@ class SetPartition(AbstractSetPartition,
             {}
         """
         self._latex_options = {}
-        try:
-            s = sorted(map(frozenset, s), key=min)
-        except TypeError:
-            s = sorted(map(frozenset, s), key=lambda b: min(str(b)))
-        ClonableArray.__init__(self, parent, s, check=check)
+        ClonableArray.__init__(self, parent, sorted(map(frozenset, s), key=min), check=check)
 
     def check(self):
         """
@@ -658,7 +653,7 @@ class SetPartition(AbstractSetPartition,
 
     def set_latex_options(self, **kwargs):
         r"""
-        Set the latex options for use in the ``_latex_`` function.
+        Set the latex options for use in the ``_latex_`` function
 
         - ``tikz_scale`` -- (default: 1) scale for use with tikz package
 
@@ -668,14 +663,14 @@ class SetPartition(AbstractSetPartition,
 
         - ``color`` -- (default: ``'black'``) the arc colors
 
-        - ``fill`` -- boolean (default: ``False``); if ``True`` then fills
-          ``color``, else you can pass in a color to alter the fill color -
+        - ``fill`` -- (default: ``False``) if ``True`` then fills ``color``,
+          else you can pass in a color to alter the fill color -
           *only works with cyclic plot*
 
-        - ``show_labels`` -- boolean (default: ``True``); if ``True`` shows
-          labels (*only works with plots*)
+        - ``show_labels`` -- (default: ``True``) if ``True`` shows labels -
+          *only works with plots*
 
-        - ``radius`` -- (default: ``'1cm'``) radius of circle for cyclic
+        - ``radius`` -- (default: ``"1cm"``) radius of circle for cyclic
           plot - *only works with cyclic plot*
 
         - ``angle`` -- (default: 0) angle for linear plot
@@ -951,15 +946,15 @@ class SetPartition(AbstractSetPartition,
         """
         return Permutation(tuple(map(tuple, self.standard_form())))
 
-    def to_restricted_growth_word(self, bijection='blocks'):
+    def to_restricted_growth_word(self, bijection="blocks"):
         r"""
         Convert a set partition of `\{1,...,n\}` to a word of length `n`
-        with letters in the nonnegative integers such that each
+        with letters in the non-negative integers such that each
         letter is at most 1 larger than all the letters before.
 
         INPUT:
 
-        - ``bijection`` -- (default: ``blocks``) defines the map from
+        - ``bijection`` (default: ``blocks``) -- defines the map from
           set partitions to restricted growth functions.  These are
           currently:
 
@@ -967,7 +962,9 @@ class SetPartition(AbstractSetPartition,
 
           - ``intertwining``: :meth:`to_restricted_growth_word_intertwining`.
 
-        OUTPUT: a restricted growth word
+        OUTPUT:
+
+        A restricted growth word.
 
         .. SEEALSO::
 
@@ -1013,14 +1010,16 @@ class SetPartition(AbstractSetPartition,
     def to_restricted_growth_word_blocks(self):
         r"""
         Convert a set partition of `\{1,...,n\}` to a word of length `n`
-        with letters in the nonnegative integers such that each
+        with letters in the non-negative integers such that each
         letter is at most 1 larger than all the letters before.
 
         The word is obtained by sorting the blocks by their minimal
         element and setting the letters at the positions of the
         elements in the `i`-th block to `i`.
 
-        OUTPUT: a restricted growth word
+        OUTPUT:
+
+        a restricted growth word.
 
         .. SEEALSO::
 
@@ -1043,7 +1042,7 @@ class SetPartition(AbstractSetPartition,
     def to_restricted_growth_word_intertwining(self):
         r"""
         Convert a set partition of `\{1,...,n\}` to a word of length `n`
-        with letters in the nonnegative integers such that each
+        with letters in the non-negative integers such that each
         letter is at most 1 larger than all the letters before.
 
         The `i`-th letter of the word is the numbers of crossings of
@@ -1051,7 +1050,9 @@ class SetPartition(AbstractSetPartition,
         `i`, with arcs (or half-arcs) beginning at a smaller element
         and ending at a larger element.
 
-        OUTPUT: a restricted growth word
+        OUTPUT:
+
+        a restricted growth word.
 
         .. SEEALSO::
 
@@ -1098,7 +1099,7 @@ class SetPartition(AbstractSetPartition,
         """
         return sorted([max(B) for B in self])
 
-    def to_rook_placement(self, bijection='arcs'):
+    def to_rook_placement(self, bijection="arcs"):
         r"""
         Return a set of pairs defining a placement of non-attacking rooks
         on a triangular board.
@@ -1108,7 +1109,7 @@ class SetPartition(AbstractSetPartition,
 
         INPUT:
 
-        - ``bijection`` -- (default: ``arcs``) defines the bijection
+        - ``bijection`` (default: ``arcs``) -- defines the bijection
           from set partitions to rook placements.  These are
           currently:
 
@@ -1160,7 +1161,9 @@ class SetPartition(AbstractSetPartition,
         rook, which are not yet attacked by another rook, equals the
         index of the block to which `n+1-i` belongs.
 
-        OUTPUT: list of coordinates
+        OUTPUT:
+
+        A list of coordinates.
 
         .. SEEALSO::
 
@@ -1234,7 +1237,9 @@ class SetPartition(AbstractSetPartition,
         One can show that the precisely those rows which correspond
         to openers of the set partition remain empty.
 
-        OUTPUT: list of coordinates
+        OUTPUT:
+
+        A list of coordinates.
 
         .. SEEALSO::
 
@@ -1293,7 +1298,9 @@ class SetPartition(AbstractSetPartition,
         Return the rook diagram obtained by placing rooks according to
         Yip's bijection psi.
 
-        OUTPUT: list of coordinates
+        OUTPUT:
+
+        A list of coordinates.
 
         .. SEEALSO::
 
@@ -1638,7 +1645,7 @@ class SetPartition(AbstractSetPartition,
         for S in self[1:]:
             if maximum_so_far < min(S):
                 return False
-            maximum_so_far = max(maximum_so_far, *S)
+            maximum_so_far = max(maximum_so_far, max(S))
         return True
 
     def standardization(self):
@@ -2027,14 +2034,6 @@ class SetPartitions(UniqueRepresentation, Parent):
         sage: SetPartitions('aabcd').cardinality()                                      # needs sage.libs.flint
         15
 
-    If the number of parts exceeds the length of the set,
-    an empty iterator is returned (:issue:`37643`)::
-
-        sage: SetPartitions(range(3), 4).list()
-        []
-        sage: SetPartitions('abcd', 6).list()
-        []
-
     REFERENCES:
 
     - :wikipedia:`Partition_of_a_set`
@@ -2063,16 +2062,18 @@ class SetPartitions(UniqueRepresentation, Parent):
                 pass
             s = frozenset(s)
 
-        if part is None:
-            return SetPartitions_set(s)
-        else:
+        if part is not None:
             if isinstance(part, (int, Integer)):
+                if len(s) < part:
+                    raise ValueError("part must be <= len(set)")
                 return SetPartitions_setn(s, part)
             else:
                 part = sorted(part, reverse=True)
                 if part not in Partitions(len(s)):
                     raise ValueError("part must be an integer partition of %s" % len(s))
                 return SetPartitions_setparts(s, Partition(part))
+        else:
+            return SetPartitions_set(s)
 
     def __contains__(self, x):
         """
@@ -2111,7 +2112,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``s`` -- set of sets
+        - ``s`` -- a set of sets
 
         EXAMPLES::
 
@@ -2133,17 +2134,17 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     Element = SetPartition
 
-    def from_restricted_growth_word(self, w, bijection='blocks'):
+    def from_restricted_growth_word(self, w, bijection="blocks"):
         r"""
-        Convert a word of length `n` with letters in the nonnegative
+        Convert a word of length `n` with letters in the non-negative
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
         INPUT:
 
-        - ``w`` -- a restricted growth word
+        - ``w`` -- a restricted growth word.
 
-        - ``bijection`` -- (default: ``blocks``) defines the map from
+        - ``bijection`` (default: ``blocks``) -- defines the map from
           restricted growth functions to set partitions.  These are
           currently:
 
@@ -2151,7 +2152,9 @@ class SetPartitions(UniqueRepresentation, Parent):
 
           - ``intertwining``: :meth:`from_restricted_growth_word_intertwining`.
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        A set partition.
 
         .. SEEALSO::
 
@@ -2176,7 +2179,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     def from_restricted_growth_word_blocks(self, w):
         r"""
-        Convert a word of length `n` with letters in the nonnegative
+        Convert a word of length `n` with letters in the non-negative
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
@@ -2185,9 +2188,11 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``w`` -- a restricted growth word
+        - ``w`` -- a restricted growth word.
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        A set partition.
 
         .. SEEALSO::
 
@@ -2209,7 +2214,7 @@ class SetPartitions(UniqueRepresentation, Parent):
 
     def from_restricted_growth_word_intertwining(self, w):
         r"""
-        Convert a word of length `n` with letters in the nonnegative
+        Convert a word of length `n` with letters in the non-negative
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
@@ -2220,9 +2225,11 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``w`` -- a restricted growth word
+        - ``w`` -- a restricted growth word.
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        A set partition.
 
         .. SEEALSO::
 
@@ -2252,7 +2259,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             C = [i + 1] + C
         return self.element_class(self, R)
 
-    def from_rook_placement(self, rooks, bijection='arcs', n=None):
+    def from_rook_placement(self, rooks, bijection="arcs", n=None):
         r"""
         Convert a rook placement of the triangular grid to a set
         partition of `\{1,...,n\}`.
@@ -2263,10 +2270,10 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``rooks`` -- list of pairs `(i,j)` satisfying
-          `0 < i < j < n+1`
+        - ``rooks`` -- a list of pairs `(i,j)` satisfying
+          `0 < i < j < n+1`.
 
-        - ``bijection`` -- (default: ``arcs``) defines the map from
+        - ``bijection`` (default: ``arcs``) -- defines the map from
           rook placements to set partitions.  These are currently:
 
           - ``arcs``: :meth:`from_arcs`.
@@ -2274,7 +2281,7 @@ class SetPartitions(UniqueRepresentation, Parent):
           - ``rho``: :meth:`from_rook_placement_rho`.
           - ``psi``: :meth:`from_rook_placement_psi`.
 
-        - ``n`` -- (optional) the size of the ground set
+        - ``n`` -- (optional) the size of the ground set.
 
         .. SEEALSO::
 
@@ -2330,11 +2337,11 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- integer specifying the size of the set
-          partition to be produced
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
 
-        - ``arcs`` -- list of pairs specifying which elements are
-          in the same block
+        - ``arcs`` -- a list of pairs specifying which elements are
+          in the same block.
 
         .. SEEALSO::
 
@@ -2365,12 +2372,14 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- integer specifying the size of the set
-          partition to be produced
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
 
-        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
+        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        A set partition.
 
         .. SEEALSO::
 
@@ -2419,12 +2428,14 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- integer specifying the size of the set
-          partition to be produced
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
 
-        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
+        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j < n+1`.
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        A set partition.
 
         .. SEEALSO::
 
@@ -2483,12 +2494,15 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``n`` -- integer specifying the size of the set
-          partition to be produced
+        - ``n`` -- an integer specifying the size of the set
+          partition to be produced.
 
-        - ``rooks`` -- list of pairs `(i,j)` such that `0 < i < j < n+1`
+        - ``rooks`` -- a list of pairs `(i,j)` such that `0 < i < j <
+          n+1`.
 
-        OUTPUT: a set partition
+        OUTPUT:
+
+        A set partition.
 
         .. SEEALSO::
 
@@ -2829,11 +2843,7 @@ class SetPartitions_set(SetPartitions):
             sage: SetPartitions(["a", "b"]).list()
             [{{'a', 'b'}}, {{'a'}, {'b'}}]
         """
-        try:
-            s = sorted(self._set)
-        except TypeError:
-            s = sorted(self._set, key=str)
-        for sp in set_partition_iterator(s):
+        for sp in set_partition_iterator(sorted(self._set)):
             yield self.element_class(self, sp, check=False)
 
     def base_set(self):
@@ -2949,8 +2959,7 @@ class SetPartitions_setparts(SetPartitions_set):
 
         TESTS::
 
-            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality()
-            ....:     for size in range(8) for part in Partitions(size)))
+            sage: all((len(SetPartitions(size, part)) == SetPartitions(size, part).cardinality() for size in range(8) for part in Partitions(size)))
             True
             sage: sum((SetPartitions(13, p).cardinality()                               # needs sage.libs.flint
             ....:     for p in Partitions(13))) == SetPartitions(13).cardinality()
@@ -3191,11 +3200,7 @@ class SetPartitions_setn(SetPartitions_set):
             sage: SetPartitions(["a", "b", "c"], 2).list()
             [{{'a', 'c'}, {'b'}}, {{'a'}, {'b', 'c'}}, {{'a', 'b'}, {'c'}}]
         """
-        try:
-            s = sorted(self._set)
-        except TypeError:
-            s = sorted(self._set, key=str)
-        for sp in set_partition_iterator_blocks(s, self._k):
+        for sp in set_partition_iterator_blocks(sorted(self._set), self._k):
             yield self.element_class(self, sp, check=False)
 
     def __contains__(self, x):
@@ -3286,7 +3291,7 @@ def cyclic_permutations_of_set_partition(set_part):
 
 def cyclic_permutations_of_set_partition_iterator(set_part):
     """
-    Iterate over all combinations of cyclic permutations of each cell
+    Iterates over all combinations of cyclic permutations of each cell
     of the set partition.
 
     AUTHORS:
@@ -3318,3 +3323,278 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
         for right in cyclic_permutations_of_set_partition_iterator(set_part[1:]):
             for perm in CyclicPermutations(set_part[0]):
                 yield [perm] + right
+
+def compare_subsets(a, b):
+    """
+    Compare two subsets of integers `a` and `b` following the lexicographic order.
+    
+    INPUT:
+
+    - ``a`` -- a list of integers; the first subset
+    - ``b`` -- a list of integers; the second subset
+
+    OUTPUT:
+
+    Boolean -- returns True if `a` is less than or equal to `b` in the lexicographic order described.
+
+    EXAMPLES:
+
+    This function compares two sets based on a specialized total order relation. For example:
+    
+    The relation ≤ is a total order.
+    For example {1, 3} ≤ {1, 3, 4} and {1, 3} ≤ {1, 4}. But we also have {1, 3, 4} ≤ {1, 4}.
+        
+    
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 3, 4])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 4])
+        True
+    
+    - But `{1, 4}` is not less than `{1, 3, 4}`:
+
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 4], [1, 3, 4])
+        False
+        
+    """
+    def included_in(a, b):
+        """
+        Check if all elements of `a` are in `b`.
+        """
+        return all(x in b for x in a)
+    
+    def min_set_exclusive(a, b):
+        """
+        Return the minimum element of `a` not in `b`.
+        """
+        a_res = [x for x in a if x not in b]
+        return min(a_res) if a_res else None
+    min_a_b = min_set_exclusive(a, b)
+    min_b_a = min_set_exclusive(b, a)
+    max_a = max(a) if a else None
+    max_b = max(b) if b else None
+    return (a == b 
+            or (included_in(a, b) and max_a is not None and min_b_a is not None and max_a < min_b_a)
+            or (included_in(b, a) and min_a_b is not None and max_b is not None and min_a_b < max_b)
+            or (min_a_b is not None and min_b_a is not None and min_a_b < min_b_a))
+
+
+def compare_set_partitions(a, b):
+    """
+    Compare two set partitions `a` and `b` using a lexicographic order.
+
+    INPUT:
+
+    - ``a`` -- a SetPartition object; the first set partition
+    - ``b`` -- a SetPartition object; the second set partition
+
+    OUTPUT:
+
+    Boolean -- returns True if `a` is less than or equal to `b` in the lexicographic order.
+
+    EXAMPLES:
+
+    Compare a sequence of set partitions to ensure each partition is less than or equal to the next:
+
+    ::
+
+        sage: from sage.combinat.set_partition import SetPartitions, compare_set_partitions
+        sage: a = SetPartition([[1], [2, 3, 4], [5]])
+        sage: b = SetPartition([[1], [2], [3, 4, 5]])
+        sage: compare_set_partitions(a, b)
+        False
+
+    ::
+    
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: c = SetPartition([[1], [2, 3, 5] , [4]])
+        sage: d = SetPartition([[1, 2], [3] , [4, 5]])
+        sage: compare_set_partitions(c, d)
+        True
+        
+    :
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: e = SetPartition([[1], [2, 3, 4] , [5]])
+        sage: f = SetPartition([[1], [2, 3, 5] , [4] , [54]])
+        sage: compare_set_partitions(e, f)
+        True
+
+    TESTS:
+
+    We create a list of set partitions of the set {1, 2, 3, 4, 5} into 3 parts, sort them, and check that each partition is lexicographically less than or equal to the next. This confirms that `compare_set_partitions` correctly identifies the lexicographic ordering among a sorted list of set partitions:
+
+    ::
+    
+        sage: from sage.combinat.set_partition import SetPartitions, compare_set_partitions
+        sage: partitions = SetPartitions(5, 3).list()
+        sage: partitions.sort(key=lambda x: x.standard_form())
+        sage: all(compare_set_partitions(partitions[i], partitions[i + 1]) for i in range(len(partitions) - 1))
+        True
+
+    """
+    A_sequential_form = a.standard_form()
+    B_sequential_form = b.standard_form()
+    index_in_A = 0
+    index_in_B = 0
+    while index_in_A < len(A_sequential_form) and index_in_B < len(B_sequential_form):
+        if A_sequential_form[index_in_A] < B_sequential_form[index_in_B]:
+            return True
+        elif A_sequential_form[index_in_A] > B_sequential_form[index_in_B]:
+            return False
+        index_in_A += 1
+        index_in_B += 1
+    return index_in_A == len(A_sequential_form) and index_in_B == len(B_sequential_form)
+
+
+def unranking(n: int, k: int, r: int) -> list[list[int]]:
+    """
+    Given n, k, r, returns the r-th partition of the partition of n sets into k-part partitions,
+    following the lexicographic order ranking of the set partitions based on their sequential form.
+    
+    see : https://hal.science/hal-04411470
+    
+    EXAMPLES:
+ 
+    - `unranking(5,3,16)` returns the 16-th partition of the partition of 5 sets into 3-part partitions:
+    - `[[1, 3, 4], [2], [5]]`
+ 
+    ::
+
+        sage: from sage.combinat.set_partition import unranking 
+        sage: unranking(5,3,16)
+        [[1, 3, 4], [2], [5]]
+        
+    TESTS:
+
+        sage: from sage.combinat.set_partition import unranking, unrankPartitionTest, compare_set_partitions
+        sage: from sage.combinat.combinat import stirling_number2 as stirling2
+        sage: n_size = 5
+        sage: k_size = 3
+        sage: current_rank = 0
+        sage: partition_p1 = unranking(n_size, k_size, current_rank)
+        sage: unrankPartitionTest(partition_p1, n_size, k_size)  # expected output
+        True
+        sage: current_rank = 1
+        sage: total_partitions = stirling2(n_size, k_size)
+        sage: while current_rank < total_partitions:
+        ....:     partition_p2 = unranking(n_size, k_size, current_rank)
+        ....:     assert unrankPartitionTest(partition_p2, n_size, k_size)  # This should not output True directly; it's an assertion
+        ....:     assert compare_set_partitions(SetPartition(partition_p1), SetPartition(partition_p2))  # Same here
+        ....:     partition_p1 = partition_p2
+        ....:     current_rank += 1
+
+     
+    """
+    from collections import defaultdict
+ 
+    @cached_method
+    def stilde(n: int, k: int, d: int) -> int:
+        from math import comb
+ 
+        u = 0
+        end = min(n - k, d)
+        result = 0
+        sign = 1
+        while u <= end:
+            result += sign * stirling2(n + 1 - u, k + 1) * comb(d, u)
+            sign = -sign
+            u += 1
+        return result
+ 
+    @cached_method
+    def R_equation(l: int, d0: int, d1: int, n: int, k: int):
+        return stilde(n - l, k - 1, d0 - l) - stilde(n - l, k - 1, d1 + 1 - l)
+ 
+    @cached_method
+    def next_block(n: int, k: int, r: int) -> tuple[list[int], int]:
+        """
+        returns the first block of the r-th partition in P(n,k)
+        """
+        block = [0]
+        acc = stirling2(n - 1, k - 1)
+        if r < acc:
+            return block, 0
+        d0 = 1
+        index = 2
+        inf = 2
+        sup = n
+        complete = False
+        while not complete:
+            while inf < sup:
+                mid = (inf + sup) // 2
+                if r >= acc + R_equation(index - 1, d0, mid - 1, n, k):
+                    inf = mid + 1
+                else:
+                    sup = mid
+            mid = inf
+            threshold = stirling2(n - index, k - 1)
+            acc += R_equation(index - 1, d0, mid - 2, n, k)
+            block.append(mid - index)
+            if r < threshold + acc:
+                complete = True
+            else:
+                index += 1
+                d0 = mid
+                inf = d0 + 1
+                sup = n
+                acc += threshold
+        return block, acc
+ 
+    def extract(n: int, R: list):
+        L = list(range(1, n + 1))
+        P = []
+        for r in R:
+            p = []
+            for i in r:
+                p.append(L[i])
+                L.pop(i)
+            P.append(p)
+        return P
+ 
+    n_clone = n
+    Res = []
+    while k > 1:
+        (B, acc) = next_block(n, k, r)
+        Res.append(B)
+        r -= acc
+        n -= len(B)
+        k -= 1
+    res = []
+    for i in range(n):
+        res.append(0)
+    Res.append(res)
+    Res = extract(n_clone, Res)
+    return Res
+
+def unrankPartitionTest(partition: list[list[int]], n: int, k: int) -> bool:
+    """
+    checking if the partition result of is valid given the input n number of elements and k number of blocks.
+    """
+    # Checking whether all the blocks inside of the partitions are ordered
+    for i in range(len(partition) - 1):
+        assert compare_subsets(partition[i], partition[i + 1]) == True        
+
+    # Checking whether all of 1..n are present in all partitions
+    all_elements_from_1_to_n = set(range(1, n + 1))
+    flat_out_block = set()
+    for block in partition:
+        for element in block:
+            if element in flat_out_block:
+                return False
+            else:
+                flat_out_block.add(element)
+    assert flat_out_block == all_elements_from_1_to_n
+    
+    # Checking whether the number of blocks is equal to k
+    assert len(partition) == k
+    
+    # Checking whether the elements of each block are ordered ascendingly
+    for block in partition:
+        for i in range(len(block) - 1):
+            assert block[i] < block[i + 1]
+            
+    return True
