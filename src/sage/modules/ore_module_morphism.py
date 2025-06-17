@@ -77,7 +77,7 @@ define a morphism of Ore modules::
     ...
     ValueError: does not define a morphism of Ore modules
 
-.. RUBRIC: Kernels, images and related things
+.. RUBRIC:: Kernels, images and related things
 
 SageMath provides methods to compute kernels, cokernels,
 images and coimages. In order to illustrate this, we will
@@ -228,7 +228,7 @@ As a shortcut, we can use explicit conversions as follows::
     sage: h == h2
     True
 
-.. RUBRIC: Determinants and characteristic polynomials
+.. RUBRIC:: Determinants and characteristic polynomials
 
 For endomorphisms, one can compute classical invariants as
 determinants and characteristic polynomials.

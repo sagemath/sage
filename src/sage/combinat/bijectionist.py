@@ -2113,7 +2113,7 @@ class Bijectionist(SageObject):
         Suppose that `p_1`, `p_2` are blocks of `P`, and `a_1, a'_1
         \in p_1` and `a_2, a'_2\in p_2`.  Then,
 
-        .. MATH:
+        .. MATH::
 
             s(\pi(a_1, a_2))
             = \rho(s(a_1), s(a_2))
