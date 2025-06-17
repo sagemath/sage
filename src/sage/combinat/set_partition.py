@@ -3627,6 +3627,8 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
             P.append(p)
         return P
     
+    if r >= stirling2(n,k):
+        raise IndexError("R-th partition doesnt exist, r should be < stirling2(n,k)")
     n_clone = n
     Res = []
     while k > 1:
