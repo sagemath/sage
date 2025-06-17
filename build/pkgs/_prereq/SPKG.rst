@@ -35,7 +35,8 @@ pop-up window.  If the Xcode Command Line Tools are already installed,
 you may want to check if they need to be updated by typing
 ``softwareupdate -l``. The remaining are provided by either one of macOS's
 "missing package managers", such as Homebrew, or as standalone
-tools. In particular ``pkgconf`` is available as `pkg-config_pkg<https://github.com/donmccaughey/pkg-config_pkg>`_.
+tools. In particular ``pkgconf`` is available as `pkg-config_pkg
+<https://github.com/donmccaughey/pkg-config_pkg>`_.
 
 On Linux, ``ar`` and ``ranlib`` are in the `binutils
 <https://www.gnu.org/software/binutils/>`_ package.  The other
