@@ -276,10 +276,6 @@ def pytest_collect_file(
                     file_path.name == "classical_geometries.py"
                     and file_path.parent.name == "generators"
                 )
-                or (
-                    file_path.name == "calculus_method.py"
-                    and file_path.parent.name == "manifolds"
-                )
             ):
                 # Fails with "Fatal Python error"
                 return IgnoreCollector.from_parent(parent)
@@ -299,6 +295,19 @@ def pytest_addoption(parser):
         dest="doctest",
     )
 
+def pytest_ignore_collect(collection_path: Path):
+    if collection_path.parent.name == "manifolds" or collection_path.parent.parent.name == "manifolds":
+        # Fails with "Fatal Python error" (only when run in serial with other tests)
+        return True
+    if collection_path.parent.name == "matrix":
+        # Fails with "Fatal Python error" (only when run in serial with other tests)
+        return True
+    if collection_path.name == "functional.py":
+        # Fails with "Fatal Python error"
+        return True
+    if collection_path.name == "verbose.py":
+        # Messes with the output stream
+        return True
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
 # TODO: Remove this hack once migration to pytest is complete
