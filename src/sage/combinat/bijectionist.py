@@ -2762,9 +2762,8 @@ class _BijectionistMILP:
                        coeff * values[index_block_value_dict[index]]
                        for index, coeff in f.dict().items())
 
-        for lhs, rhs in constraint.equations():
-            if evaluate(lhs - rhs):
-                return False
+        if any(evaluate(lhs - rhs) for lhs, rhs in constraint.equations()):
+            return False
         return all(evaluate(lhs - rhs) <= 0 for lhs, rhs in constraint.inequalities())
 
     def add_alpha_beta_constraints(self):
