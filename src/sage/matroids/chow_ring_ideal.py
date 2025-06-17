@@ -376,7 +376,7 @@ class ChowRingIdeal_nonaug_fy(ChowRingIdeal):
 
 # Redirecting the unpickling of old class:
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.rings.chow_ring_ideal', 'ChowRingIdeal_nonaug', ChowRingIdeal_nonaug_fy)
+register_unpickle_override('sage.matroids.chow_ring_ideal', 'ChowRingIdeal_nonaug', ChowRingIdeal_nonaug_fy)
 
 
 class ChowRingIdeal_nonaug_af(ChowRingIdeal):
