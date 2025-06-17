@@ -3505,7 +3505,7 @@ def compare_set_partitions(a, b):
     return index_in_A == len(A_sequential_form) and index_in_B == len(B_sequential_form)
 
 
-def unranking(n: int, k: int, r: int) -> list[list[int]]:
+def unranking(n: int, k: int, r: int) -> list[list[int]]:   
     """
     Given n, k, r, returns the r-th partition of the partition of n sets into k-part partitions,
     following the lexicographic order ranking of the set partitions based on their sequential form.
@@ -3550,6 +3550,15 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
         ....:     partition_p1 = partition_p2
         ....:     current_rank += 1
 
+    UNITS TESTS:
+
+        assert unranking(0, 0, 0) == [[]]
+
+        assert unranking(1, 1, 0) == [[1]]
+
+        assert unranking(3, 1, 0) == [[1, 2, 3]]
+
+        assert unranking(3, 3, 0) == [[1], [2], [3]]
      
     """
     from collections import defaultdict
@@ -3617,7 +3626,7 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
                 L.pop(i)
             P.append(p)
         return P
- 
+    
     n_clone = n
     Res = []
     while k > 1:
