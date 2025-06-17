@@ -3511,7 +3511,15 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
     following the lexicographic order ranking of the set partitions based on their sequential form.
     
     see : https://hal.science/hal-04411470
+
+    INPUTS:
+        --n - int - number of elements in initial set
+        --k - int - how many final partitions we want
+        --r - int - r--th partition wanted
     
+    OUTPUT:
+        SetPartition
+
     EXAMPLES:
  
     - `unranking(5,3,16)` returns the 16-th partition of the partition of 5 sets into 3-part partitions:
