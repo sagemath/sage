@@ -9,6 +9,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cdef LeanMatrix _A, _representation
     cdef long *_prow
     cdef object _zero, _one
+    cdef dict _zonotopal_rho
 
     cpdef _forget(self)
     cpdef base_ring(self)
@@ -63,6 +64,9 @@ cdef class LinearMatroid(BasisExchangeMatroid):
     cpdef _is_4connected_shifting(self, certificate=*)
 
     cpdef is_valid(self, certificate=*)
+
+    cpdef dict line_flats(self)
+    cdef dict _zonotopal_rho_values(self)
 
 cdef class BinaryMatroid(LinearMatroid):
     cdef tuple _b_invariant, _b_partition
