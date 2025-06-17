@@ -3378,6 +3378,7 @@ def compare_subsets(a, b):
     max_a = max(a) if a else None
     max_b = max(b) if b else None
     return (a == b 
+            or (a == [])
             or (included_in(a, b) and max_a is not None and min_b_a is not None and max_a < min_b_a)
             or (included_in(b, a) and min_a_b is not None and max_b is not None and min_a_b < max_b)
             or (min_a_b is not None and min_b_a is not None and min_a_b < min_b_a))
