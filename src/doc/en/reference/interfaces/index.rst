@@ -88,7 +88,6 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/mathematica
    sage/interfaces/mathics
    sage/interfaces/matlab
-   sage/interfaces/maxima
    sage/interfaces/maxima_abstract
    sage/interfaces/maxima_lib
    sage/interfaces/mupad

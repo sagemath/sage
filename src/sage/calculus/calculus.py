@@ -395,7 +395,7 @@ the giac version, we simplify it (see :issue:`34037`)::
 Check if maxima has redundant variables defined after initialization,
 see :issue:`9538`::
 
-    sage: maxima = sage.interfaces.maxima.maxima
+    sage: maxima = sage.interfaces.maxima_lib.maxima
     sage: maxima('f1')
     f1
     sage: sage.calculus.calculus.maxima('f1')
@@ -419,24 +419,23 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
+
 from sage.arith.misc import algebraic_dependency
+from sage.misc.latex import latex
+from sage.misc.lazy_import import lazy_import
+from sage.misc.parser import LookupNameMaker, Parser
+from sage.rings.cc import CC
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
 from sage.rings.real_mpfr import RR, create_RealNumber
-from sage.rings.cc import CC
-
-from sage.misc.latex import latex
-from sage.misc.parser import Parser, LookupNameMaker
 from sage.structure.element import Expression
-from sage.symbolic.ring import var, SR
-from sage.symbolic.symbols import symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
-from sage.symbolic.integration.integral import (indefinite_integral,
-        definite_integral)
+from sage.symbolic.integration.integral import definite_integral, indefinite_integral
+from sage.symbolic.ring import SR, var
+from sage.symbolic.symbols import symbol_table
 
-from sage.misc.lazy_import import lazy_import
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
 from types import FunctionType
 
@@ -667,6 +666,7 @@ def symbolic_sum(expression, v, a, b, algorithm='maxima', hold=False):
     elif algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import summation
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = summation(expression, (v, a, b))
@@ -920,6 +920,7 @@ def symbolic_product(expression, v, a, b, algorithm='maxima', hold=False):
     elif algorithm == 'sympy':
         expression,v,a,b = (expr._sympy_() for expr in (expression, v, a, b))
         from sympy import product as sproduct
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = sproduct(expression, (v, a, b))
@@ -1674,7 +1675,11 @@ def mma_free_limit(expression, v, a, dir=None):
         sage: mma_free_limit(e^(-x), x, a=oo) # optional - internet
         0
     """
-    from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
+    from sage.interfaces.mathematica import (
+        parse_moutput_from_json,
+        request_wolfram_alpha,
+        symbolic_expression_from_mathematica_string,
+    )
     dir_plus = ['plus', '+', 'above', 'right']
     dir_minus = ['minus', '-', 'below', 'left']
     math_expr = expression._mathematica_init_()
@@ -1915,6 +1920,7 @@ def laplace(ex, t, s, algorithm='maxima'):
     elif algorithm == 'sympy':
         ex_sy, t, s = (expr._sympy_() for expr in (ex, t, s))
         from sympy import laplace_transform
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = laplace_transform(ex_sy, t, s)
@@ -2100,6 +2106,7 @@ def inverse_laplace(ex, s, t, algorithm='maxima'):
     elif algorithm == 'sympy':
         ex_sy, s, t = (expr._sympy_() for expr in (ex, s, t))
         from sympy import inverse_laplace_transform
+
         from sage.interfaces.sympy import sympy_init
         sympy_init()
         result = inverse_laplace_transform(ex_sy, s, t)

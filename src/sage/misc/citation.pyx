@@ -10,7 +10,7 @@ systems = {}
 systems['PARI'] = ['cypari2', 'sage.interfaces.gp']
 systems['Singular'] = ['sage.interfaces.singular', '_libsingular',
                        'sage.libs.singular']
-systems['Maxima'] = ['sage.interfaces.maxima']
+systems['Maxima'] = ['sage.interfaces.maxima_lib']
 systems['GAP'] = ['sage.interfaces.gap']
 systems['Magma'] = ['sage.interfaces.magma', 'sage.interfaces.magma_free']
 systems['Axiom'] = ['sage.interfaces.axiom']
