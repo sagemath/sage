@@ -35,7 +35,8 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_dense
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
-from sage.sets.positive_integers import PositiveIntegers
+# from sage.sets.positive_integers import PositiveIntegers
+from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.global_options import GlobalOptions
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
@@ -234,6 +235,11 @@ def repr_factored(w, latex_output=False) -> str:
     if latex_output:
         return LatexExpr(ret)
     return ret
+
+class AbstractDiffWeylAlgebraElement(IndexedFreeModuleElement):
+    pass
+class AbstractDiffWeylAlgebra():
+    pass
 
 
 class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
@@ -1178,7 +1184,7 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
             return res if res != '' else '1'
         return repr_from_monomials(self.list(), term)
 
-    def _r_mul_(self, other):
+    def _rmul_(self, other):
         """
         Multiply ``self`` on the right by element ``other`` of base ring
 
@@ -1191,10 +1197,10 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
         """
         if other == 0:
             return self.parent().zero()
-        M = self.monomial_coefficients
+        M = self.monomial_coefficients()
         return self.__class__(self.parent(), {t: M[t] * other for t in M})
 
-    def _l_mul_(self, other):
+    def _lmul_(self, other):
         """
         Multiply ``self`` on the left by element ``other`` of base ring
 
@@ -1207,7 +1213,7 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
         """
         if other == 0:
             return self.parent().zero()
-        M = self.monomial_coefficients
+        M = self.monomial_coefficients()
         return self.__class__(self.parent(), {t: other * M[t] for t in M})
 
     def _mul_(self, other):
@@ -1299,19 +1305,34 @@ class InfiniteDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
         """
         Division by coefficients.
 
-        EXAMPLES::
+        TESTS::
 
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
             sage: dx = W.differentials()
             sage: x[1] / 2
             1/2*x[1]
+            sage: x[1] / W(2)
+            1/2*x[1]
+            sage: W(2) / 2
+            1
+            sage: 2 / W(3)
+            2/3
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(ZZ)
             sage: a = 2*dx[1] + 4*x[3]
             sage: a / 2
             dx[1] + 2*x[3]
+            
         """
         F = self.parent()
         D = self._monomial_coefficients
+        # if x is just a constant term, we can treat it as an element of base_ring
+        if isinstance(x, InfiniteDifferentialWeylAlgebraElement):
+            one = (self.parent()._var_index.one(), self.parent()._diff_index.one())
+            supp = x.monomial_coefficients()
+            if len(supp) == 1 and one in supp:
+                x = supp[one]
+            else:
+                raise ValueError(f"Cannot divide by {x}")
         if F.base_ring().is_field():
             x = F.base_ring()(x)
             x_inv = x**-1
@@ -1349,14 +1370,14 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
     To access the variables, we can call ``W.inject_variables()``. The symbols
     defined are families that allow you to access the `i`'th polynomial or differential
-    generator for each positive integer `i`. Alternatively, we can access the families
+    generator for each nonnegative integer `i`. Alternatively, we can access the families
     directly using the :meth:`polynomial_gens` and :meth:`differentials` methods
     respectively.::
 
         sage: W.inject_variables()
         Defining x, dx
         sage: dx
-        Lazy family (dx(i))_{i in Positive integers}
+        Lazy family (dx(i))_{i in Non negative integers}
         sage: dx[1]*x[1] - x[1]*dx[1]
         1
         sage: (dx[1] + x[1]*dx[2])*(x[5]*dx[1] + 1)
@@ -1403,8 +1424,8 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
         else:
             names = [names[0], 'd' + names[0]]
         # could probably get away with only using one copy, but the distinction is nice
-        self._var_index = IndexedFreeAbelianMonoid(PositiveIntegers(), prefix=names[0])
-        self._diff_index = IndexedFreeAbelianMonoid(PositiveIntegers(), prefix=names[1])
+        self._var_index = IndexedFreeAbelianMonoid(NonNegativeIntegers(), prefix=names[0])
+        self._diff_index = IndexedFreeAbelianMonoid(NonNegativeIntegers(), prefix=names[1])
         if R.is_field():
             cat = AlgebrasWithBasis(R).NoZeroDivisors().Super()
         else:
@@ -1433,12 +1454,15 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             1
             sage: a = W(x[1]); a.parent() is W
             True
+            sage: R.<x> = InfinitePolynomialRing(QQ)
+            sage: W(x[0]^2 + x[1]*x[3] + x[2])
+            x[0]^2 + x[1]*x[3] + x[2]
         """
         if x in self.base_ring():
             if x == self.base_ring().zero():
                 return self.zero()
             return self.element_class(self, {(self._var_index.one(), self._diff_index.one()): x})
-        # TODO: Fix indexing issue caused by InfinitePolynomial starting with x[0].
+
         if isinstance(x, InfinitePolynomial):
             R = self.base_ring()
             if x.parent().base_ring() is R:
@@ -1471,16 +1495,28 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
+            sage: dx = W.differentials()
             sage: W2.<x> = InfiniteDifferentialWeylAlgebra(ZZ)
             sage: W._coerce_map_from_(W2)
             True
             sage: W3.<y> = InfiniteDifferentialWeylAlgebra(QQ)
             sage: W._coerce_map_from_(W3)
             False
+            sage: R.<x> = InfinitePolynomialRing(QQ)
+            sage: W._coerce_map_from_(R)
+            True
+            sage: dx[1]*R(x[1])
+            x[1]*dx[1] + 1
+
         """
         if isinstance(R, InfiniteDifferentialWeylAlgebra):
             return (self.variable_names() == R.variable_names()
                     and self.base_ring().has_coerce_map_from(R.base_ring()))
+        
+        if isinstance(R, InfinitePolynomialRing_dense):
+            return (self.variable_names()[:-1] == R.variable_names()
+                    and self.base_ring().has_coerce_map_from(R.base_ring()))
+
         return super()._coerce_map_from_(R)
 
     @cached_method
@@ -1490,7 +1526,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``i`` -- positive integer
+        - ``i`` -- non negative integer
 
         OUTPUT: The polynomial generator `x_i`
 
@@ -1516,11 +1552,11 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
             sage: x = W.polynomial_gens(); x
-            Lazy family (x(i))_{i in Positive integers}
+            Lazy family (x(i))_{i in Non negative integers}
             sage: x[3] == W.gen(3)
             True
         """
-        return Family(PositiveIntegers(), lambda x: self.gen(x), name=self.variable_names()[0])
+        return Family(NonNegativeIntegers(), lambda x: self.gen(x), name=self.variable_names()[0])
 
     @cached_method
     def gens(self):
@@ -1545,7 +1581,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``i`` -- positive integer
+        - ``i`` -- non negative integer
 
         OUTPUT: The differential generator `\partial_{x_i}`
 
@@ -1573,11 +1609,11 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
             sage: W.<x> = InfiniteDifferentialWeylAlgebra(QQ)
             sage: dx = W.differentials(); dx
-            Lazy family (dx(i))_{i in Positive integers}
+            Lazy family (dx(i))_{i in Non negative integers}
             sage: dx[3] == W.differential(3)
             True
         """
-        return Family(PositiveIntegers(), lambda x: self.differential(x), name=self.variable_names()[1])
+        return Family(NonNegativeIntegers(), lambda x: self.differential(x), name=self.variable_names()[1])
 
     @cached_method
     def zero(self):
