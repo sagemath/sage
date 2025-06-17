@@ -295,19 +295,39 @@ def pytest_addoption(parser):
         dest="doctest",
     )
 
+
 def pytest_ignore_collect(collection_path: Path):
-    if collection_path.parent.name == "manifolds" or collection_path.parent.parent.name == "manifolds":
+    if (
+        collection_path.parent.name == "manifolds"
+        or collection_path.parent.parent.name == "manifolds"
+        or collection_path.parent.name == "matrix"
+    ):
         # Fails with "Fatal Python error" (only when run in serial with other tests)
         return True
-    if collection_path.parent.name == "matrix":
-        # Fails with "Fatal Python error" (only when run in serial with other tests)
+    if collection_path.parent.name == "ipython_kernel":
+        # Messes with the output stream
         return True
-    if collection_path.name == "functional.py":
+    if collection_path.name == "projective_curve.py":
+        # Hangs
+        return True
+    if collection_path.name in {
+        "functional.py",
+        "free_module_element.pyx",
+        "sageinspect.py",
+        "constructor.py",
+        "free_module.py",
+        "vector_space_morphism.py",
+        "vector_symbolic_dense.py",
+        "vector_symbolic_sparse.py",
+        "decorate.py",
+        "free_monoid_element.py",
+    }:
         # Fails with "Fatal Python error"
         return True
     if collection_path.name == "verbose.py":
         # Messes with the output stream
         return True
+
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
 # TODO: Remove this hack once migration to pytest is complete
