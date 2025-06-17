@@ -3474,6 +3474,8 @@ def compare_set_partitions(a, b):
         True
 
     """
+    if a.standard_form() == []:
+        return True
     A_sequential_form = a.standard_form()
     B_sequential_form = b.standard_form()
     index_in_A = 0
