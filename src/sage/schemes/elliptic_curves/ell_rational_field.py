@@ -1863,7 +1863,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E = EllipticCurve('389a1')
             sage: E._known_points = []  # clear cached points
             sage: E.simon_two_descent()
-            (2, 2, [(5/4 : 5/8 : 1), (-3/4 : 7/8 : 1)])
+            (2, 2, [(-3/4 : 7/8 : 1), (5/4 : 5/8 : 1)])
             sage: E = EllipticCurve('5077a1')
             sage: E.simon_two_descent()
             (3, 3, [(1 : 0 : 1), (2 : 0 : 1), (0 : 2 : 1)])
@@ -3395,7 +3395,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             self.__tamagawa_product = Integer(self.pari_mincurve().ellglobalred()[2].sage())
             return self.__tamagawa_product
 
-    def real_components(self):
+    def real_components(self) -> int:
         r"""
         Return the number of real components.
 
@@ -3413,7 +3413,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         """
         return 2 if self.discriminant() > 0 else 1
 
-    def has_good_reduction_outside_S(self, S=None):
+    def has_good_reduction_outside_S(self, S=None) -> bool:
         r"""
         Test if this elliptic curve has good reduction outside ``S``.
 
@@ -4412,7 +4412,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         else:
             return Integer(e.ellrootno(p))
 
-    def has_cm(self):
+    def has_cm(self) -> bool:
         r"""
         Return whether or not this curve has a CM `j`-invariant.
 
@@ -4478,7 +4478,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         except KeyError:
             raise ValueError("%s does not have CM" % self)
 
-    def has_rational_cm(self, field=None):
+    def has_rational_cm(self, field=None) -> bool:
         r"""
         Return whether or not this curve has CM defined over `\QQ`
         or the given field.

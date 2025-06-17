@@ -109,7 +109,6 @@ This base class provides a lot more methods than a general parent::
      '__len__',
      '__rxor__',
      '__xor__',
-     '_an_element_impl',
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
@@ -120,7 +119,6 @@ This base class provides a lot more methods than a general parent::
      '_one_element',
      '_pseudo_fraction_field',
      '_zero_element',
-     'algebraic_closure',
      'an_embedding',
      'base_extend',
      'epsilon',
@@ -128,13 +126,10 @@ This base class provides a lot more methods than a general parent::
      'fraction_field',
      'gen',
      'gens',
-     'is_field',
      'ngens',
      'one',
      'order',
-     'zero',
-     'zeta',
-     'zeta_order']
+     'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
 be complemented later.

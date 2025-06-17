@@ -177,8 +177,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
              1 + q^3 + q^4 + 2*q^5 + O(q^6)]
         """
         from . import constructor
-        M = constructor.ModularForms(self.group(), self.weight(), base_ring, prec=self.prec(), eis_only=self._eis_only)
-        return M
+        return constructor.ModularForms(self.group(), self.weight(),
+                                        base_ring, prec=self.prec(),
+                                        eis_only=self._eis_only)
 
     @cached_method
     def dimension(self):
@@ -276,7 +277,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         return self
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this an ambient space of modular forms.
 

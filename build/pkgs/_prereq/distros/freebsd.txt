@@ -16,3 +16,5 @@ automake
 bash
 dash
 python # python metaport for bootstrapping the build
+patch
+bzip2

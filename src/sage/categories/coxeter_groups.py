@@ -1427,7 +1427,7 @@ class CoxeterGroups(Category_singleton):
                         tester.assertNotEqual(l**p, one, "unexpected relation")
 
     class ElementMethods:
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             """
             Return whether `i` is a (left/right) descent of ``self``.
 
@@ -1459,7 +1459,7 @@ class CoxeterGroups(Category_singleton):
             return self.has_left_descent(i) != positive
 
 #        @abstract_method(optional = True)
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
             Return whether `i` is a right descent of ``self``.
 
@@ -1478,7 +1478,7 @@ class CoxeterGroups(Category_singleton):
             """
             return (~self).has_left_descent(i)
 
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             """
             Return whether `i` is a left descent of ``self``.
 
@@ -1820,7 +1820,7 @@ class CoxeterGroups(Category_singleton):
             """
             return set(self.reduced_word())
 
-        def has_full_support(self):
+        def has_full_support(self) -> bool:
             r"""
             Return whether ``self`` has full support.
 

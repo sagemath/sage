@@ -759,7 +759,7 @@ cdef class IntegerMulAction(IntegerAction):
     def __init__(self, Z, M, is_left=True, m=None):
         if m is None:
             m = M.an_element()
-        test = m + (-m)  # make sure addition and negation is allowed
+        _ = m + (-m)  # make sure addition and negation is allowed
         super().__init__(Z, M, is_left, operator.mul)
 
     cpdef _act_(self, nn, a):

@@ -14,7 +14,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ################################################################################
 
@@ -140,7 +140,7 @@ class SL2Z_class(Gamma0_class):
         """
         return "Modular Group SL(2,Z)"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 
@@ -153,7 +153,7 @@ class SL2Z_class(Gamma0_class):
         """
         return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
-    def is_subgroup(self, right):
+    def is_subgroup(self, right) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``right``.
 

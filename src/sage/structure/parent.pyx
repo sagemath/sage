@@ -880,7 +880,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         """
         if self._element_constructor is None:
             raise NotImplementedError(f"cannot construct elements of {self}")
-        cdef Py_ssize_t i
         cdef R = parent(x)
         cdef bint no_extra_args = (not args and not kwds)
         if R is self and no_extra_args:
@@ -1657,6 +1656,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         assert not (self._coercions_used and D in self._coerce_from_hash and
                     self._coerce_from_hash.get(D) is not None), "coercion from {} to {} already registered or discovered".format(D, self)
+        assert not (self._coercions_used and D in self._convert_from_hash), "conversion from %s to %s already registered or discovered" % (D, self)
+
         mor._is_coercion = True
         self._coerce_from_list.append(mor)
         self._registered_domains.append(D)
@@ -2409,7 +2410,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         # setting this to 1 will make it return the first path found.
 
         cdef int mor_found = 0
-        cdef Parent R, D
+        cdef Parent D
         # Recurse.  Note that if S is the domain of one of the maps in self._coerce_from_list,
         # we will have stuck the map into _coerce_map_hash and thus returned it already.
         for mor in self._coerce_from_list:

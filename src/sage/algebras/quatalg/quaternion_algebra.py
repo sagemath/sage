@@ -14,6 +14,11 @@ AUTHORS:
 - Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`,
   :meth:`QuaternionFractionalIdeal_rational.minimal_element`
 
+- Sebastian A. Spindler (2024): extend ramification functionality to number fields,
+  adapt :meth:`QuaternionAlgebra_ab.maximal_order` to allow for extension of an order
+
+- Eloi Torrents (2024): construct quaternion algebras over number fields from ramification
+
 This code is partly based on Sage code by David Kohel from 2005.
 
 TESTS:
@@ -48,7 +53,6 @@ from sage.arith.misc import (hilbert_conductor_inverse,
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import RationalField, QQ
@@ -56,6 +60,7 @@ from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.qqbar import AA
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
@@ -79,11 +84,14 @@ from . import quaternion_algebra_cython
 from sage.modular.modsym.p1list import P1List
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.functional import is_odd
 
 from sage.categories.algebras import Algebras
 from sage.categories.number_fields import NumberFields
 
 from sage.structure.richcmp import richcmp_method
+from sage.libs.pari.all import pari
+from sage.combinat.words.word import Word
 
 ########################################################
 # Constructor
@@ -96,7 +104,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
     INPUT:
 
-    There are three input formats:
+    There are four input formats:
 
     - ``QuaternionAlgebra(a, b)``, where `a` and `b` can be coerced to
       units in a common field `K` of characteristic different from 2.
@@ -108,6 +116,15 @@ class QuaternionAlgebraFactory(UniqueFactory):
       integer.  This constructs a quaternion algebra of discriminant
       `D` over `K = \QQ`.  Suitable nonzero rational numbers `a`, `b`
       as above are deduced from `D`.
+
+    - ``QuaternionAlgebra(K, primes, inv_archimedean)``, where `K` is a
+      number field or `\QQ`, ``primes`` is a list of prime ideals of `K`
+      and ``inv_archimedean`` is a list of local invariants (`0` or
+      `\frac{1}{2}`) specifying the ramification at the (infinite) real
+      places of `K`. This constructs a quaternion algebra ramified exactly
+      at the places given by ``primes`` and those (algebraic) real
+      embeddings of `K` indexed in ``K.embeddings(AA)`` by ``l`` with
+      ``inv_archimedean[l] = 1/2``.
 
     OUTPUT:
 
@@ -185,6 +202,61 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: QuaternionAlgebra(2*3*5*7)
         Quaternion Algebra (-22, 210) with base ring Rational Field
 
+    ``QuaternionAlgebra(K, primes, inv_archimedean)`` -- return the
+    quaternion algebra over `K` with the ramification specified by
+    ``primes`` and ``inv_archimedean``::
+
+        sage: QuaternionAlgebra(QQ, [(2), (3)], [0])
+        Quaternion Algebra (-1, 3) with base ring Rational Field
+        sage: QuaternionAlgebra(QQ, [(2), (3)], [1/2])
+        Traceback (most recent call last):
+        ...
+        ValueError: quaternion algebra over the rationals must have an even number of ramified places
+
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<w> = NumberField(x^2-x-1)
+        sage: P = K.prime_above(2)
+        sage: Q = K.prime_above(3)
+        sage: A = QuaternionAlgebra(K, [P,Q], [0,0])
+        sage: A.discriminant()
+        Fractional ideal (6)
+        sage: A = QuaternionAlgebra(K, [P,Q], [1/2,0])
+        Traceback (most recent call last):
+        ...
+        ValueError: quaternion algebra over a number field must have an even number of ramified places
+
+    The construction via ramification fails if the base field is not
+    a number field::
+
+        sage: QuaternionAlgebra(RR, [], [])
+        Traceback (most recent call last):
+        ...
+        ValueError: quaternion algebra construction via ramification only works over a number field
+
+    The list of local invariants must specify the ramification data
+    at all real places of the number field `K`::
+
+        sage: QuaternionAlgebra(QuadraticField(5), [], [0])
+        Traceback (most recent call last):
+        ...
+        ValueError: must specify ramification at all real places of the number field
+
+    The list of local invariants specifying the ramification at the
+    real places may only contain `0` and `\frac{1}{2}`::
+
+        sage: QuaternionAlgebra(QuadraticField(5), [], [0,1])
+        Traceback (most recent call last):
+        ...
+        ValueError: list of local invariants specifying ramification should contain only 0 and 1/2
+
+    Similarly, the list of finite ramified places must consist
+    of primes or prime ideals of the number field `K`::
+
+        sage: QuaternionAlgebra(QuadraticField(5), ['water',2], [])
+        Traceback (most recent call last):
+        ...
+        ValueError: quaternion algebra constructor requires a list of primes specifying the ramification
+
     If the coefficients `a` and `b` in the definition of the quaternion
     algebra are not integral, then a slower generic type is used for
     arithmetic::
@@ -226,6 +298,31 @@ class QuaternionAlgebraFactory(UniqueFactory):
         Rational Field
         sage: parent(Q._b)
         Rational Field
+
+    Check that construction via ramification yields the correct algebra,
+    i.e. that the differences between Sage and PARI are accounted for::
+
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<v> = NumberField(-3*x^5 - 11*x^4 - 4*x^3 + 1)
+        sage: inv_arch = [1/2, 0, 1/2]
+        sage: emb_arch = K.embeddings(AA)[0:3:2]
+        sage: ram = QuaternionAlgebra(K, [], inv_arch).ramified_places()
+        sage: ram[0] == [] and ram[1] == emb_arch
+        True
+
+    Also check that the required Sage-PARI permutation is the correct way
+    around, i.e. that it does not need to be replaced by its inverse::
+
+        sage: x = polygen(ZZ, 'x')
+        sage: K.<j> = NumberField(5*x^4 - 50*x^2 + 5)
+        sage: P = K.prime_above(2)
+        sage: Q = K.prime_above(5)
+        sage: inv_arch = [1/2, 1/2, 0, 0]
+        sage: emb_arch = K.embeddings(AA)[0:2]
+        sage: ram = QuaternionAlgebra(K, [P,Q], inv_arch).ramified_places()
+        sage: set(ram[0]) == set([P,Q]) and ram[1] == emb_arch
+        True
+
     """
     def create_key(self, arg0, arg1=None, arg2=None, names='i,j,k'):
         """
@@ -241,8 +338,8 @@ class QuaternionAlgebraFactory(UniqueFactory):
             K = QQ
             D = Integer(arg0)
             a, b = hilbert_conductor_inverse(D)
-            a = Rational(a)
-            b = Rational(b)
+            a = QQ(a)
+            b = QQ(b)
 
         elif arg2 is None:
             # If arg0 or arg1 are Python data types, coerce them
@@ -264,8 +361,74 @@ class QuaternionAlgebraFactory(UniqueFactory):
             a = K(v[0])
             b = K(v[1])
 
-        # QuaternionAlgebra(K, a, b)
+        elif isinstance(arg1, list) and isinstance(arg2, list):
+            # QuaternionAlgebra(K, primes, inv_archimedean)
+            K = arg0
+            if K not in NumberFields():
+                raise ValueError("quaternion algebra construction via ramification only works over a number field")
+            if not set(arg2).issubset(set([0, QQ((1,2))])):
+                raise ValueError("list of local invariants specifying ramification should contain only 0 and 1/2")
+
+            # Check that the finite ramification is given by prime ideals
+            try:
+                if isinstance(K, RationalField):
+                    primes = set(ZZ.ideal(p) for p in arg1)
+                else:
+                    primes = set(K.ideal(p) for p in arg1)
+                assert all(p.is_prime() for p in primes)
+            except (AssertionError, TypeError, NameError):
+                raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
+
+            if isinstance(K, RationalField):
+                # Construct the quaternion algebra via ramification over the rationals
+                if len(arg2) > 1 or (len(arg2) == 1 and is_odd(len(primes) + 2*arg2[0])):
+                    raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
+                D = ZZ.ideal_monoid().prod(primes).gen()
+                a, b = hilbert_conductor_inverse(D)
+                a = QQ(a)
+                b = QQ(b)
+
+            else:
+                # Construct the quaternion algebra via ramification over a number field
+                if len(arg2) != len(K.real_places()):
+                    raise ValueError("must specify ramification at all real places of the number field")
+                if is_odd(len(primes) + 2 * sum(arg2)):
+                    raise ValueError("quaternion algebra over a number field must have an even number of ramified places")
+
+                # We want to compute the correct quaternion algebra over K with PARI
+                # As PARI computes an alternative representation of K given by an integral
+                # and monic defining polynomial, we precompute this representation and then
+                # permute the local invariants (using an isomorphism between the representations)
+                x = polygen(QQ, 'x')
+                g = K.pari_polynomial().sage({'x': x})
+                alpha = g.roots(ring=K, multiplicities=False)[0]
+
+                # Compute the number field PARI actually uses, together with isomorphisms to and from K
+                L, to_K, from_K = K.change_generator(alpha)
+
+                # This computation of the permutation relies on the fact that both
+                # Sage and PARI sort real roots of polynomials in increasing order
+                v = K.gen()
+                vals_embed = [sigma(from_K(v)) for sigma in L.embeddings(AA)]
+                perm = Word(vals_embed).standard_permutation()
+
+                # Transfer the primes to PARI and permute the local invariants
+                fin_places_pari = [I.pari_prime() for I in primes]
+                inv_arch_pari = [arg2[i-1] for i in perm]
+
+                # Compute the correct quaternion algebra over L in PARI
+                A = L.__pari__().alginit([2, [fin_places_pari, [QQ((1,2))] * len(fin_places_pari)],
+                                          inv_arch_pari], flag=0)
+
+                # Obtain representation of A in terms of invariants in L
+                a_L = L(A.algsplittingfield().disc()[1])
+                b_L = L(A.algb())
+
+                # Finally, transfer the result to K
+                a = to_K(a_L)
+                b = to_K(b_L)
         else:
+            # QuaternionAlgebra(K, a, b)
             K = arg0
             a = K(arg1)
             b = K(arg2)
@@ -380,7 +543,7 @@ class QuaternionAlgebra_abstract(Parent):
         This is the
         Gram matrix of the reduced norm as a quadratic form on ``self``.
         The standard basis `1`, `i`, `j`, `k` is orthogonal, so this matrix
-        is just the diagonal matrix with diagonal entries `2`, `2a`, `2b`,
+        is just the diagonal matrix with diagonal entries `2`, `-2a`, `-2b`,
         `2ab`.
 
         EXAMPLES::
@@ -1036,7 +1199,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #     # we do not know why magma does the following, so we do not do it.
         #     for p in self.ramified_primes():
         #         if not (level % p**2):
-        #             raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+        #             raise NotImplementedError("currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
 
         #     P = O._left_ideal_basis([N1] + [x * y - y * x
         #                                     for x in self.basis()
@@ -3276,7 +3439,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             1/2*i + j + 5/2*k
         """
         if not self.quaternion_algebra().is_definite():
-            raise TypeError("The quaternion algebra must be definite")
+            raise TypeError("the quaternion algebra must be definite")
 
         U = self.gram_matrix().LLL_gram().transpose()
         return tuple(sum(c * g for c, g in zip(row, self.basis())) for row in U)
@@ -4561,7 +4724,7 @@ def maxord_solve_aux_eq(a, b, p):
         ....:         assert mod(1 - a*y^2 - b*z^2 + a*b*w^2, 4) == 0
     """
     if p != ZZ(2):
-        raise NotImplementedError("Algorithm only implemented over ZZ at the moment")
+        raise NotImplementedError("algorithm only implemented over ZZ at the moment")
 
     v_a = a.valuation(p)
     v_b = b.valuation(p)

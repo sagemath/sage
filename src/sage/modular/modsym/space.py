@@ -406,7 +406,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         """
         return self.__group
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if ``self`` is an ambient space of modular symbols.
 
@@ -420,7 +420,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         from sage.modular.modsym.ambient import ModularSymbolsAmbient
         return isinstance(self, ModularSymbolsAmbient)
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
         Return ``True`` if ``self`` is a cuspidal space of modular symbols.
 
@@ -439,7 +439,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         """
         raise NotImplementedError("computation of cuspidal subspace not yet implemented for this class")
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return whether this modular symbols space is simple as a module
         over the anemic Hecke algebra adjoin \*.
@@ -1259,11 +1259,9 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             # should we perhaps check at this point if self is new?
             f = self.q_eigenform(prec, names)
             R = PowerSeriesRing(self.base_ring(), 'q')
-            B = [R([f[i][j] for i in range(prec)], prec)
-                 for j in range(self.rank())]
-            return B
-        else:
-            raise NotImplementedError
+            return [R([f[i][j] for i in range(prec)], prec)
+                    for j in range(self.rank())]
+        raise NotImplementedError
 
     #########################################################################
     #
@@ -2126,6 +2124,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
     # Cuspidal torsion groups
     #########################################################
 
+    @cached_method
     def abvarquo_cuspidal_subgroup(self):
         """
         Compute the rational subgroup of the cuspidal subgroup (as an
@@ -2150,10 +2149,6 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: [A.abvarquo_cuspidal_subgroup().invariants() for A in D]
             [(), (), ()]
         """
-        try:
-            return self.__abvarquo_cuspidal_subgroup
-        except AttributeError:
-            pass
         if self.base_ring() != QQ:
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
@@ -2162,7 +2157,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
         phi = self.integral_period_mapping()
 
         # Make a list of all the finite cusps.
-        P = [c for c in M.cusps() if not c.is_infinity()]
+        P = (c for c in M.cusps() if not c.is_infinity())
 
         # Compute the images of the cusp classes (c)-(oo) in the
         # rational homology of the quotient modular abelian variety.
@@ -2173,11 +2168,9 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         # The cuspidal subgroup is then the quotient of that module +
         # H_1(A) by H_1(A)
-        C = (A.ambient_module() + A) / A.ambient_module()
+        return (A.ambient_module() + A) / A.ambient_module()
 
-        self.__abvarquo_cuspidal_subgroup = C
-        return C
-
+    @cached_method
     def abvarquo_rational_cuspidal_subgroup(self):
         r"""
         Compute the rational subgroup of the cuspidal subgroup (as an
@@ -2241,10 +2234,6 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             sage: [A.abelian_variety().rational_torsion_subgroup().multiple_of_order() for A in D]
             [1, 5, 5]
         """
-        try:
-            return self.__abvarquo_rational_cuspidal_subgroup
-        except AttributeError:
-            pass
         if self.base_ring() != QQ:
             raise ValueError("base ring must be QQ")
         if self.weight() != 2:
@@ -2296,7 +2285,6 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             if CQ.cardinality() == 1:
                 break  # done -- no point in wasting more time shrinking CQ
 
-        self.__abvarquo_rational_cuspidal_subgroup = CQ
         return CQ
 
     def _matrix_of_galois_action(self, t, P):
