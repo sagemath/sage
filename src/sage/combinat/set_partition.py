@@ -3360,6 +3360,43 @@ def compare_subsets(a, b):
         sage: compare_subsets([1, 4], [1, 3, 4])
         False
         
+    TESTS:
+
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([2,5], [2,5])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([],[])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([], [1])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1], [])
+        False
+
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 2], [3, 4])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([4,5], [2,3])
+        False
+
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1], [1,2])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1,2], [1])
+        False
+
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1,3,5], [1,3])
+        False
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 3, 5])
+        True
+
     """
     def included_in(a, b):
         """
