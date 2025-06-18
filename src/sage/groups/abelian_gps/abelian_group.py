@@ -577,15 +577,50 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         OUTPUT: boolean; whether ``left`` and ``right`` are isomorphic as abelian groups
 
+        .. WARNING::
+
+           When ``right`` is not an instance of ``AbelianGroup`` and both ``left`` and ``right``
+           are infinite, this method will throw a ``GAPError``.
+
         EXAMPLES::
 
             sage: G1 = AbelianGroup([2,3,4,5])
             sage: G2 = AbelianGroup([2,3,4,5,1])
             sage: G1.is_isomorphic(G2)
             True
+
+        TESTS:
+
+        Check that :issue:`39893` is fixed::
+
+            sage: G = AbelianGroup([2, 3])
+            sage: H = G.permutation_group()
+            sage: G.is_isomorphic(H)
+            True
+            sage: G = AbelianGroup([2, 3])
+            sage: H = PermutationGroup([(1, 2, 3), (4, 5)])
+            sage: G.is_isomorphic(H)
+            True
+            sage: G = AbelianGroup([2, 3, 0])
+            sage: H = PermutationGroup([(1, 2, 3), (4, 5)])
+            sage: G.is_isomorphic(H)
+            False
+            sage: G = AbelianGroup([0])
+            sage: H = FreeGroup(1)
+            sage: G.is_isomorphic(H)
+            Traceback (most recent call last):
+            ...
+            sage.libs.gap.util.GAPError: Error, cannot test isomorphism of infinite groups
+            sage: G = AbelianGroup([2, 3, 0])
+            sage: H = FreeGroup(1)
+            sage: G.is_isomorphic(H)
+            Traceback (most recent call last):
+            ...
+            sage.libs.gap.util.GAPError: Error, cannot test isomorphism of infinite groups
         """
         if not isinstance(right, AbelianGroup_class):
-            return False
+            iso = left._libgap_().IsomorphismGroups(right)
+            return str(iso) != "fail"
         return left.elementary_divisors() == right.elementary_divisors()
 
     def is_subgroup(left, right):
