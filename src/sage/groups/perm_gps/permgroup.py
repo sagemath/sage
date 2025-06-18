@@ -137,7 +137,7 @@ from __future__ import annotations
 from functools import wraps
 
 from sage.misc.randstate import current_randstate
-from sage.groups.group import FiniteGroup
+from sage.groups.group import FiniteGroup, Group
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
@@ -4339,7 +4339,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         - ``self`` -- this group
 
-        - ``right`` -- a permutation group
+        - ``right`` -- a group
 
         OUTPUT: boolean; ``True`` if ``self`` and ``right`` are isomorphic
         groups; ``False`` otherwise
@@ -4355,9 +4355,24 @@ class PermutationGroup_generic(FiniteGroup):
             True
             sage: G.is_isomorphic(PermutationGroup(list(reversed(v))))
             True
+
+        Check that :issue:`39893` is fixed::
+
+            sage: G = AbelianGroup([2, 3])
+            sage: H = G.permutation_group()
+            sage: H.is_isomorphic(G)
+            True
+            sage: G = AbelianGroup([2, 3])
+            sage: H = PermutationGroup([(1, 2, 3), (4, 5)])
+            sage: H.is_isomorphic(G)
+            True
+            sage: G = AbelianGroup([2, 3, 0])
+            sage: H = PermutationGroup([(1, 2, 3), (4, 5)])
+            sage: H.is_isomorphic(G)
+            False
         """
-        if not isinstance(right, PermutationGroup_generic):
-            raise TypeError("right must be a permutation group")
+        if not isinstance(right, Group):
+            raise TypeError("right must be a group")
         iso = self._libgap_().IsomorphismGroups(right)
         return str(iso) != 'fail'
 
