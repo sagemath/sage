@@ -19259,7 +19259,7 @@ cdef class Matrix(Matrix1):
         [ 0  0  0]
         [ 0  0  0]
         [ 0  0  0]
-        sage: E.naive_krylov_rank_profile(J,3)
+        sage: E.krylov_rank_profile(J,3)
         (
                    [27 49 29]
                    [50 58  0]
@@ -19278,7 +19278,7 @@ cdef class Matrix(Matrix1):
         [ 0 77 10]
         [ 0  0 77]
         [ 0  0  0]
-        sage: E.naive_krylov_rank_profile(J,3,[0,3,6])
+        sage: E.krylov_rank_profile(J,3,[0,3,6])
         (
                    [27 49 29]
                    [ 0 27 49]
@@ -19297,7 +19297,7 @@ cdef class Matrix(Matrix1):
         [ 0  0 27]
         [ 0  0  0]
         [ 0  0  0]
-        sage: E.naive_krylov_rank_profile(J,3,[3,0,2])
+        sage: E.krylov_rank_profile(J,3,[3,0,2])
         (
                    [50 58  0]
                    [ 0 50 58]
@@ -19318,39 +19318,52 @@ cdef class Matrix(Matrix1):
         priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
         priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
         
-        # maps row c of EJ^d to position i in striped Krylov matrix
+        # maps row c of self*J^d to position i in striped Krylov matrix
         # +/- 1 as permutations are 1-indexed, matrices are 0-indexed
         phi = lambda c,d : priority_permutation.inverse()(index_inv(c,d) + 1) - 1
         phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
         
-        row_profile_self = self.transpose().pivots()
-        r = len(row_profile_self)
-        row_profile_K = sorted([phi(row,0) for row in row_profile_self])
+        # calculate row profile of self, with shift applied
+        self_permutation = Permutation([pair[1]+1 for pair in sorted([[phi(i,0),i] for i in range(m)])])
+        row_profile_self_permuted = self.with_permuted_rows(self_permutation).transpose().pivots()
+        row_profile_self = [self_permutation(i+1)-1 for i in row_profile_self_permuted]
+        
+        # base row_profile_K using row_profile_self
+        row_profile_K = sorted([phi(i,0) for i in row_profile_self])
+        r = len(row_profile_K)
         
         M = matrix([self.row(index_inv(*phi_inv(i))) for i in row_profile_K])
         
         J_L = None
         for l in range(math.ceil(math.log(degree,2)) + 1):
+            # row and degree of profile within unshifted expansion
             c,d = zip(*(phi_inv(i) for i in row_profile_K))
             L = pow(2,l)
-            row_extension = sorted([phi(c[i],d[i] + L) for i in range(r)])
+            # adding 2^l to each degree
+            row_extension = sorted([phi(c[i],d[i] + L) for i in range(r) if d[i] + L <= degree])
             
-            k = sorted(row_profile_K + row_extension)
+            # concatenate two sequences (order preserved)
+            k = row_profile_K + row_extension
+            # calculate sorting permutation
+            k_perm = Permutation([x[1] for x in sorted([k[i],i+1] for i in range(len(k)))])
             
+            # fast calculation of rows formed by indices in k
             if J_L is None:
                 J_L = J
             else:
                 J_L = J_L * J_L
-            
             M = matrix.block([[M],[M*J_L]],subdivide=False)
             
+            # sort rows of M, find profile, translate to k (indices of full krylov matrix)
+            M.permute_rows(k_perm)
             row_profile_M = M.transpose().pivots()
-            M = matrix([M.row(i) for i in row_profile_M])
-            
-            row_profile_K = [k[i] for i in row_profile_M]
             r = len(row_profile_K)
+            row_profile_K = [k[k_perm(i+1)-1] for i in row_profile_M]
             
-            print(c,d,L,row_extension,k)
+            # calculate new M for return value or next loop
+            M = matrix([M.row(i) for i in row_profile_M])
+        col_profile = M.pivots()
+        return tuple(row_profile_K), M, col_profile
     
     def linear_interpolation_basis(self, J, degree, variable, shift=None):
         r"""
