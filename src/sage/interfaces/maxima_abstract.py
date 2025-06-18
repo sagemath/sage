@@ -1409,9 +1409,9 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         ::
 
-            sage: f = maxima('x^2 + 17*y^2')
+            sage: f = maxima('x^3 + 17*y^2')
             sage: f.diff('x')
-            34*y*'diff(y,x,1)+2*x
+            3*x^2
             sage: f.diff('y')
             34*y
         """
@@ -1704,18 +1704,32 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         self._check_valid()
         P = self.parent()
-        s = P._eval_line('tex(%s);' % self.name(), reformat=False)
-        if '$$' not in s:
-            raise RuntimeError(f"Error texing Maxima object. Expected '$$' in output, got: {s!r}")
-        i = s.find('$$')
-        j = s.rfind('$$')
-        s = s[i+2:j]
-        s = multiple_replace({'\r\n': ' ',
-                              '\\%': '',
-                              '\\arcsin ': '\\sin^{-1} ',
-                              '\\arccos ': '\\cos^{-1} ',
-                              '\\arctan ': '\\tan^{-1} ',
-                              '\\_SAGE\\_VAR\\_': ''}, s)
+        s = P._eval_line(f"tex({self.name()}, false);", reformat=False)
+        if "$$" not in s:
+            raise RuntimeError(
+                f"Error texing Maxima object {self.name()}. Expected '$$' in output, got: {s!r}"
+            )
+        i = s.find("$$")
+        j = s.rfind("$$")
+        s = s[i + 2 : j]
+        s = multiple_replace(
+            {
+                "\r\n": " ",
+                "\\\\\\\\": "\\",
+                "\\\\\\": "\\",
+            },
+            s,
+        )
+        s = multiple_replace(
+            {
+                "\\%": "",
+                "\\arcsin ": "\\sin^{-1} ",
+                "\\arccos ": "\\cos^{-1} ",
+                "\\arctan ": "\\tan^{-1} ",
+                "\\_SAGE\\_VAR\\_": "",
+            },
+            s,
+        )
 
         # Fix a maxima bug, which gives a latex representation of multiplying
         # two numbers as a single space. This was really bad when 2*17^(1/3)

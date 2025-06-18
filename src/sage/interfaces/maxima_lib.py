@@ -163,6 +163,7 @@ except RuntimeError:
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defun add-lineinfo (x) x)")
+ecl_eval(r"(defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
