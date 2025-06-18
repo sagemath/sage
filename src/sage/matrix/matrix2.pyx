@@ -19409,16 +19409,37 @@ cdef class Matrix(Matrix1):
         c, d = zip(*(phi_inv(i) for i in row_profile))
         
         # degree_c = 0 or max d[k] such that c[k] = c
+        inv_c = [None]*m
         degree_c = [0]*m
         for k in range(len(row_profile)):
             if d[k] >= degree_c[c[k]]:
                 degree_c[c[k]] = d[k] + 1
+                inv_c[c[k]] = k
         
+        #################
+        # OPTIMISATION
+        #################
+        T_present = matrix([pivot.row(inv_c[i]) for i in range(m) if inv_c[i] is not None]) * J
+        T_absent = matrix([self.row(i) for i in range(m) if inv_c[i] is None])
+        T_rows = []
+        idx_p = 0
+        idx_a = 0
+        for i in range(m):
+            if inv_c[i] is None:
+                T_rows.append(T_absent[idx_a])
+                idx_a += 1
+            else:
+                T_rows.append(T_present[idx_p])
+                idx_p += 1
+        target = matrix(T_rows)
+        #################
+        # ELSE
         # compute striped Krylov matrix
-        K = self.striped_krylov_matrix(J,degree,shift)
+        #K = self.striped_krylov_matrix(J,degree,shift)
         
         # compute submatrix of target with rows phi(i,degree_c[i])
-        target = K.matrix_from_rows([phi(i,degree_c[i]) for i in range(m)])
+        #target = K.matrix_from_rows([phi(i,degree_c[i]) for i in range(m)])
+        #################
         
         # compute submatrices of pivot and target with col_profile
         C = pivot.matrix_from_columns(col_profile)
