@@ -11,18 +11,18 @@
 from sage.groups.perm_gps.partn_ref.data_structures cimport OrbitPartition
 from sage.structure.sage_object cimport SageObject
 
-cpdef DisjointSet(arg)
+cpdef DisjointSet(arg=*, dynamic=*)
 
 cdef class DisjointSet_class(SageObject):
     cdef OrbitPartition *_nodes
-    cpdef cardinality(self)
-    cpdef number_of_subsets(self)
+    cpdef Py_ssize_t cardinality(self) noexcept
+    cpdef Py_ssize_t number_of_subsets(self) noexcept
 
 cdef class DisjointSet_of_integers(DisjointSet_class):
-    cpdef int find(self, int i) except -1
+    cpdef int find(self, int i) except? -1
     cpdef void union(self, int i, int j) except *
-    cpdef root_to_elements_dict(self)
-    cpdef element_to_root_dict(self)
+    cpdef dict root_to_elements_dict(self)
+    cpdef dict element_to_root_dict(self)
     cpdef to_digraph(self)
 
 cdef class DisjointSet_of_hashables(DisjointSet_class):
@@ -30,6 +30,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
     cdef dict _el_to_int
     cpdef find(self, e)
     cpdef void union(self, e, f) except *
-    cpdef root_to_elements_dict(self)
-    cpdef element_to_root_dict(self)
+    cpdef dict root_to_elements_dict(self)
+    cpdef dict element_to_root_dict(self)
     cpdef to_digraph(self)
+
+cdef class DynamicDisjointSet_of_hashables(DisjointSet_of_hashables):
+    cpdef void union(self, e, f) except *
