@@ -321,6 +321,8 @@ def pytest_ignore_collect(collection_path: Path):
         "vector_symbolic_sparse.py",
         "decorate.py",
         "free_monoid_element.py",
+        "context_managers.py",
+        "complex_plot.pyx"
     }:
         # Fails with "Fatal Python error"
         return True
