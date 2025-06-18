@@ -31,14 +31,14 @@ AUTHORS:
 For this interface, Maxima is loaded into ECL which is itself loaded
 as a C library in Sage. Translations between Sage and Maxima objects
 (which are nothing but wrappers to ECL objects) is made as much as possible
-directly, but falls back to the string based conversion used by the
-classical Maxima Pexpect interface in case no new implementation has been made.
+directly, but falls back to the string based conversion in case no new implementation
+has been made.
 
 This interface is the one used for calculus by Sage
 and is accessible as ``maxima_calculus``::
 
     sage: maxima_calculus
-    Maxima_lib
+    Maxima
 
 Only one instance of this interface can be instantiated,
 so the user should not try to instantiate another one,
@@ -1052,6 +1052,7 @@ class MaximaLib(MaximaAbstract):
         outstr = outstr.replace('_SAGE_VAR_', '')
         raise ValueError(outstr)
 
+Maxima = MaximaLib
 
 def is_MaximaLibElement(x):
     r"""
@@ -1197,7 +1198,7 @@ def reduce_load_MaximaLib():
 
         sage: from sage.interfaces.maxima_lib import reduce_load_MaximaLib
         sage: reduce_load_MaximaLib()
-        Maxima_lib
+        Maxima
     """
     return maxima_lib
 

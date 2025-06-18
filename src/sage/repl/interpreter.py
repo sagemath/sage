@@ -140,21 +140,21 @@ We test that :issue:`16196` is resolved::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import re
-from traitlets import Bool, Type
+from ctypes import c_int, c_void_p, pythonapi
 
-from sage.repl.preparse import preparse, containing_block
-from sage.repl.prompts import InterfacePrompts
-from sage.repl.configuration import sage_ipython_config, SAGE_EXTENSION
-
-from IPython.core.interactiveshell import InteractiveShell
-from IPython.terminal.interactiveshell import TerminalInteractiveShell
+from IPython.core.crashhandler import CrashHandler
 from IPython.core.inputtransformer2 import PromptStripper
+from IPython.core.interactiveshell import InteractiveShell
 from IPython.core.prefilter import PrefilterTransformer
 from IPython.terminal.embed import InteractiveShellEmbed
-from IPython.terminal.ipapp import TerminalIPythonApp, IPAppCrashHandler
-from IPython.core.crashhandler import CrashHandler
+from IPython.terminal.interactiveshell import TerminalInteractiveShell
+from IPython.terminal.ipapp import IPAppCrashHandler, TerminalIPythonApp
+from traitlets import Bool, Type
 
-from ctypes import pythonapi, c_int, c_void_p
+from sage.repl.configuration import SAGE_EXTENSION, sage_ipython_config
+from sage.repl.preparse import containing_block, preparse
+from sage.repl.prompts import InterfacePrompts
+
 # The following functions are part of the stable ABI since python 3.2
 # See: https://docs.python.org/3/c-api/sys.html#c.PyOS_getsig
 
@@ -568,8 +568,8 @@ class InterfaceShellTransformer(PrefilterTransformer):
             '2 + sage0 '
             sage: maxima.eval('sage0')
             '3'
-            sage: ift.preparse_imports_from_sage('2 + maxima(a)') # maxima calls set_seed on startup which is why 'sage0' will becomes 'sage4' and not just 'sage1'
-            '2 +  sage4 '
+            sage: ift.preparse_imports_from_sage('2 + maxima(a)')
+            '2 +  sage1 '
             sage: ift.preparse_imports_from_sage('2 + gap(a)')
             '2 + gap(a)'
 

@@ -349,6 +349,10 @@ But this still uses Maxima::
 Note that ``x`` is still ``x``, since the
 maxima used by the calculus package is different than the one in
 the interactive interpreter.
+Clear the maxima variables to avoid interference with other tests::
+
+    sage: maxima('kill(x,y)')
+    done
 
 Check to see that the problem with the variables method mentioned
 in :issue:`3779` is actually fixed::
@@ -419,10 +423,11 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
+from types import FunctionType
 
 from sage.arith.misc import algebraic_dependency
+from sage.interfaces.maxima_lib import maxima
 from sage.misc.latex import latex
-from sage.misc.lazy_import import lazy_import
 from sage.misc.parser import LookupNameMaker, Parser
 from sage.rings.cc import CC
 from sage.rings.integer import Integer
@@ -435,9 +440,6 @@ from sage.symbolic.function_factory import function_factory
 from sage.symbolic.integration.integral import definite_integral, indefinite_integral
 from sage.symbolic.ring import SR, var
 from sage.symbolic.symbols import symbol_table
-
-lazy_import('sage.interfaces.maxima_lib', 'maxima')
-from types import FunctionType
 
 
 ########################################################
@@ -2467,10 +2469,12 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     Make sure that we don't accidentally pick up variables in the maxima namespace (:issue:`8734`)::
 
-        sage: sage.calculus.calculus.maxima('my_new_var : 2')
+        sage: maxima('my_new_var : 2')
         2
         sage: var('my_new_var').full_simplify()
         my_new_var
+        sage: maxima('kill(my_new_var)')
+        done
 
     ODE solution constants are treated differently (:issue:`16007`)::
 

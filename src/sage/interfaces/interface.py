@@ -41,14 +41,13 @@ AUTHORS:
 
 import operator
 
-from sage.structure.sage_object import SageObject
-from sage.structure.parent_base import ParentWithBase
-from sage.structure.element import Element, parent
-from sage.structure.richcmp import rich_to_bool
-
 import sage.misc.sage_eval
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.instancedoc import instancedoc
+from sage.structure.element import Element, parent
+from sage.structure.parent_base import ParentWithBase
+from sage.structure.richcmp import rich_to_bool
+from sage.structure.sage_object import SageObject
 
 
 class AsciiArtString(str):
@@ -73,15 +72,8 @@ class Interface(WithEqualityById, ParentWithBase):
 
         EXAMPLES::
 
-            sage: Maxima() == maxima
-            False
             sage: maxima == maxima
             True
-
-            sage: Maxima() != maxima
-            True
-            sage: maxima != maxima
-            False
         """
         self.__name = name
         self.__coerce_name = '_' + name.lower() + '_'
@@ -791,7 +783,7 @@ class InterfaceElement(Element):
         return len(self.sage())
 
     def __reduce__(self):
-        """
+        r"""
         The default linearisation is to return ``self``'s parent,
         which will then get the items returned by :meth:`_reduce`
         as arguments to reconstruct the element.
@@ -845,7 +837,7 @@ class InterfaceElement(Element):
             sage: loads(dumps(maxima('"abc"')))
             Traceback (most recent call last):
             ...
-            TypeError: unable to make sense of Maxima expression '"abc"' in Sage
+            TypeError: unable to make sense of Maxima expression '\"abc\"' in Sage
         """
         return self.parent(), (self._reduce(),)
 

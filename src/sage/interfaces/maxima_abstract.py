@@ -50,21 +50,26 @@ and library interfaces to Maxima.
 
 import os
 import re
-import sys
 import subprocess
+import sys
 
 from sage.env import DOT_SAGE, MAXIMA
+
 COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 from sage.cpython.string import bytes_to_str
-
-from sage.misc.multireplace import multiple_replace
-from sage.structure.richcmp import richcmp, rich_to_bool
-
-from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
-                        InterfaceFunction, AsciiArtString)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
+from sage.structure.richcmp import rich_to_bool, richcmp
+
+from .interface import (
+    AsciiArtString,
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 
 # The Maxima "apropos" command, e.g., apropos(det) gives a list
 # of all identifiers that begin in a certain way.  This could
@@ -85,12 +90,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
     EXAMPLES:
 
     This class should not be instantiated directly,
-    but through its subclasses Maxima (Pexpect interface)
-    or MaximaLib (library interface)::
+    but through its subclass MaximaLib (which is a singleton)::
 
-        sage: m = Maxima()
         sage: from sage.interfaces.maxima_abstract import MaximaAbstract
-        sage: isinstance(m,MaximaAbstract)
+        sage: from sage.interfaces.maxima_lib import maxima
+        sage: isinstance(maxima, MaximaAbstract)
         True
     """
 
@@ -102,7 +106,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: from sage.interfaces.maxima_abstract import MaximaAbstract
-            sage: isinstance(maxima,MaximaAbstract)
+            sage: from sage.interfaces.maxima_lib import maxima
+            sage: isinstance(maxima, MaximaAbstract)
             True
 
         TESTS::
@@ -113,24 +118,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Interface.__init__(self, name)
 
-    ###########################################
-    # System -- change directory, etc.
-    ###########################################
-    def chdir(self, dir):
-        r"""
-        Change Maxima's current working directory.
-
-        INPUT:
-
-        - ``dir`` -- string
-
-        OUTPUT: none
-
-        EXAMPLES::
-
-            sage: maxima.chdir('/')
-        """
-        self.lisp('(ext::cd "%s")' % dir)
 
     ###########################################
     # Interactive help
@@ -272,7 +259,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: sorted(maxima.completions('gc', verbose=False))
-            ['gcd', 'gcdex', 'gcfactor', 'gctime']
+            ['gc', 'gcd', 'gcdex', 'gcfactor', 'gctime']
         """
         if verbose:
             print(s, end="")
@@ -535,7 +522,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima._object_class()
-            <class 'sage.interfaces.maxima.MaximaElement'>
+            <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
         """
         return MaximaAbstractElement
 
@@ -561,7 +548,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima._object_function_class()
-            <class 'sage.interfaces.maxima.MaximaElementFunction'>
+            <class 'sage.interfaces.maxima_lib.MaximaLibElementFunction'>
         """
         return MaximaAbstractElementFunction
 
@@ -1073,12 +1060,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
     Elements of this class should not be created directly.
     The targeted parent of a concrete inherited class should be used instead::
 
-        sage: from sage.interfaces.maxima_lib import maxima_lib
         sage: xp = maxima(x)
         sage: type(xp)
-        <class 'sage.interfaces.maxima.MaximaElement'>
-        sage: xl = maxima_lib(x)
-        sage: type(xl)
         <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
     """
     _cached_repr = True
@@ -1225,7 +1208,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: maxima('true')._sage_(), maxima('false')._sage_()
             (True, False)
         """
-        import sage.calculus.calculus as calculus
+        from sage.calculus import calculus
         return calculus.symbolic_expression_from_maxima_string(self.name(),
                 maxima=self.parent())
 
@@ -1382,7 +1365,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: a = maxima('sqrt(2)').numer(); a
             1.41421356237309...
             sage: type(a)
-            <class 'sage.interfaces.maxima.MaximaElement'>
+            <class 'sage.interfaces.maxima_lib.MaximaLibElement'>
         """
         return self.comma('numer')
 
@@ -1723,7 +1706,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         P = self.parent()
         s = P._eval_line('tex(%s);' % self.name(), reformat=False)
         if '$$' not in s:
-            raise RuntimeError("Error texing Maxima object.")
+            raise RuntimeError(f"Error texing Maxima object. Expected '$$' in output, got: {s!r}")
         i = s.find('$$')
         j = s.rfind('$$')
         s = s[i+2:j]
