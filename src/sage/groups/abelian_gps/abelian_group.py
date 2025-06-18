@@ -207,7 +207,7 @@ from sage.arith.functions import lcm
 from sage.arith.misc import divisors, gcd
 from sage.categories.groups import Groups
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
-from sage.groups.group import AbelianGroup as AbelianGroupBase
+from sage.groups.group import AbelianGroup as AbelianGroupBase, Group
 from sage.matrix.constructor import matrix
 from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
@@ -573,9 +573,9 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         INPUT:
 
-        - ``right`` -- anything
+        - ``right`` -- a group
 
-        OUTPUT: boolean; whether ``left`` and ``right`` are isomorphic as abelian groups
+        OUTPUT: boolean; whether ``left`` and ``right`` are isomorphic as groups
 
         .. WARNING::
 
@@ -618,6 +618,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             ...
             sage.libs.gap.util.GAPError: Error, cannot test isomorphism of infinite groups
         """
+        if not isinstance(right, Group):
+            raise TypeError("right must be a group")
         if not isinstance(right, AbelianGroup_class):
             iso = left._libgap_().IsomorphismGroups(right)
             return str(iso) != "fail"
