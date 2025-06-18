@@ -1050,10 +1050,12 @@ class MaximaLib(MaximaAbstract):
 
         outstr = "Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume("\
             + errstr[jj + 1:k] + ">0)', see `assume?` for more details)\n" + errstr
-        outstr = outstr.replace('_SAGE_VAR_', '')
+        outstr = outstr.replace("_SAGE_VAR_", "")
         raise ValueError(outstr)
 
+
 Maxima = MaximaLib
+
 
 def is_MaximaLibElement(x):
     r"""

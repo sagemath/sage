@@ -118,7 +118,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         """
         Interface.__init__(self, name)
 
-
     ###########################################
     # Interactive help
     ###########################################
