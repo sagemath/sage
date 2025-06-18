@@ -13,6 +13,9 @@ AUTHORS:
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
 
+- Anciaux Hugo, Rachid Bouhmad, Elhadj Alseiny Diallo, Do Truong Thinh Truong ( Algorithms Design : Amaury Curiel, Genitrini Antoine ).
+  (2025-06-18): Algorithmic for lexicographic unranking.
+
 This module defines a class for immutable partitioning of a set. For
 mutable version see :func:`DisjointSet`.
 """
@@ -3510,12 +3513,14 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
     Given n, k, r, returns the r-th partition of the partition of n sets into k-part partitions,
     following the lexicographic order ranking of the set partitions based on their sequential form.
     
+    Lexicographic Unranking Algorithms for the Twelvefold Way.
+    A. Curiel and A. Genitrini. In proc. 35th International Conference on Probabilistic, Combinatorial and Asymptotic Methods for the Analysis of Algorithms (AofA'24), pp17:1--17:14, 2024.
     see : https://hal.science/hal-04411470
-
+    
     INPUTS:
         --n - int - number of elements in initial set
-        --k - int - how many final partitions we want
-        --r - int - r--th partition wanted
+        --k - int - number of blocks we want in the partition
+        --r - int - r--th partition wanted (in the lexicographic order)
     
     OUTPUT:
         SetPartition
