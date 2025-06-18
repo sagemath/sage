@@ -4356,6 +4356,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.is_isomorphic(PermutationGroup(list(reversed(v))))
             True
 
+        TESTS:
+
         Check that :issue:`39893` is fixed::
 
             sage: G = AbelianGroup([2, 3])
