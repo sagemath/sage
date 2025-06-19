@@ -14,6 +14,7 @@ Finite fields
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.rings.integer import Integer
 
 
 class FiniteFields(CategoryWithAxiom):
@@ -191,6 +192,56 @@ class FiniteFields(CategoryWithAxiom):
             if mg.cache is not None or co_order <= 500000:
                 return mg() ** co_order
             return self._element_of_factored_order(n.factor())
+
+        def _element_of_factored_order(self, F):
+            """
+            Return an element of ``self`` of order ``n`` where ``n`` is
+            given in factored form.
+
+            This is copied from the cython implementation in
+            ``finite_field_base.pyx`` which is kept as it may be faster.
+
+            INPUT:
+
+            - ``F`` -- the factorization of the required order. The order
+              must be a divisor of ``self.order() - 1`` but this is not
+              checked.
+
+            EXAMPLES::
+
+                sage: k = Zmod(1913)
+                sage: k in Fields()  # to let k be a finite field
+                True
+                sage: k._element_of_factored_order(factor(1912))
+                3
+            """
+            n = Integer(1)
+            primes = []
+            for p, e in F:
+                primes.append(p)
+                n *= p**e
+
+            N = self.order() - 1
+            c = N // n
+
+            # We check whether (x + g)^c has the required order, where
+            # x runs through the finite field.
+            # This has the advantage that g is the first element we try,
+            # so if that was a chosen to be a multiplicative generator,
+            # we are done immediately. Second, the PARI finite field
+            # iterator gives all the constant elements first, so we try
+            # (g+(constant))^c before anything else.
+            g = self.gen()
+            if g == self.one():
+                # this allows to handle the ring Integers(prime)
+                g = self.multiplicative_generator()
+            for x in self:
+                a = (g + x)**c
+                if not a:
+                    continue
+                if all(a**(n // p) != 1 for p in primes):
+                    return a
+            raise AssertionError("no element found")
 
     class ElementMethods:
         pass

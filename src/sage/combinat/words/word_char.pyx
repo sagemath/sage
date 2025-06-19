@@ -582,7 +582,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         return w._new_c(data, new_length, None)
 
-    def has_prefix(self, other):
+    def has_prefix(self, other) -> bool:
         r"""
         Test whether ``other`` is a prefix of ``self``.
 
@@ -642,9 +642,9 @@ cdef class WordDatatype_char(WordDatatype):
                     return False
             return True
 
-        raise TypeError("not able to initialize a word from {}".format(other))
+        raise TypeError(f"not able to initialize a word from {other}")
 
-    def is_square(self):
+    def is_square(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a square, and ``False`` otherwise.
 
