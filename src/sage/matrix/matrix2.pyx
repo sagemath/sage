@@ -19310,6 +19310,9 @@ cdef class Matrix(Matrix1):
         
         m = self.nrows()
         
+        if m == 0:
+            return (),self,()
+        
         # calculate shift priority function and permutation
         priority = lambda c,d : shift[c] + d
         index = lambda i : (i%m,i//m)
@@ -19332,7 +19335,10 @@ cdef class Matrix(Matrix1):
         row_profile_K = sorted([phi(i,0) for i in row_profile_self])
         r = len(row_profile_K)
         
-        M = matrix([self.row(index_inv(*phi_inv(i))) for i in row_profile_K])
+        if r == 0:
+            return (),self.matrix_from_rows([]),()
+        
+        M = self.matrix_from_rows([index_inv(*phi_inv(i)) for i in row_profile_K])
         
         J_L = None
         for l in range(math.ceil(math.log(degree,2)) + 1):
@@ -19357,7 +19363,7 @@ cdef class Matrix(Matrix1):
             # sort rows of M, find profile, translate to k (indices of full krylov matrix)
             M.permute_rows(k_perm)
             row_profile_M = M.transpose().pivots()
-            r = len(row_profile_K)
+            r = len(row_profile_M)
             row_profile_K = [k[k_perm(i+1)-1] for i in row_profile_M]
             
             # calculate new M for return value or next loop
@@ -19365,7 +19371,7 @@ cdef class Matrix(Matrix1):
         col_profile = M.pivots()
         return tuple(row_profile_K), M, col_profile
     
-    def linear_interpolation_basis(self, J, degree, variable, shift=None, opt=False):
+    def linear_interpolation_basis(self, J, degree, variable, shift=None):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
 
@@ -19403,7 +19409,10 @@ cdef class Matrix(Matrix1):
         phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
         
         # calculate krylov profile
-        row_profile, pivot, col_profile = self.naive_krylov_rank_profile(J,degree,shift)
+        row_profile, pivot, col_profile = self.krylov_rank_profile(J,degree,shift)
+        
+        if len(row_profile) == 0:
+            return matrix.identity(self.base_ring(),m)
         
         # (c_k, d_k) = phi^-1 (row_i)
         c, d = zip(*(phi_inv(i) for i in row_profile))
