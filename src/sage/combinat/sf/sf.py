@@ -1430,8 +1430,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         else:
             morphism.codomain().register_coercion(morphism)
 
-    _shorthands = ['e', 'f', 'h', 'm', 'p', 's']
-    _shorthands_all = sorted(_shorthands + ['ht', 'o', 'sp', 'st', 'w'])
+    _shorthands = ('e', 'f', 'h', 'm', 'p', 's')
+    _shorthands_all = tuple(sorted(_shorthands + ('ht', 'o', 'sp', 'st', 'w')))
 
     def __init_extra__(self):
         """

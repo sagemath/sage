@@ -481,16 +481,17 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             # Attach the generic Hecke algebra and the basis change maps
             self._root = root
             self._generic_iwahori_hecke_algebra = IwahoriHeckeAlgebra_nonstandard(W)
-            self._shorthands = ['C', 'Cp', 'T']
+            self._shorthands = ('C', 'Cp', 'T')
         else:
             # Can we actually remove the bases C and Cp in this case?
             self._root = None
-            self._shorthands = ['T']
+            self._shorthands = ('T',)
 
         # if 2 is a unit in the base ring then add th A and B bases
         try:
             base_ring(base_ring.one() / 2)
-            self._shorthands.extend(['A', 'B'])
+            sh = self._shorthands
+            self._shorthands = (*sh, 'A', 'B')
         except (TypeError, ZeroDivisionError):
             pass
 
@@ -2785,7 +2786,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         self.u_inv = normalized_laurent_polynomial(base_ring, u**-1)
         self.v_inv = normalized_laurent_polynomial(base_ring, v**-1)
 
-        self._shorthands = ['C', 'Cp', 'T']
+        self._shorthands = ('C', 'Cp', 'T',)
 
         if W.is_finite():
             self._category = FiniteDimensionalAlgebrasWithBasis(base_ring)
