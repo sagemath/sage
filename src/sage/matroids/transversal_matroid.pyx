@@ -41,19 +41,19 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from collections import Counter
 from copy import copy
 from cpython.object cimport Py_EQ, Py_NE
-from sage.graphs.graph import Graph
+import networkx as nx
+
 from sage.graphs.digraph import DiGraph
 from sage.graphs.bipartite_graph import BipartiteGraph
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.minor_matroid import MinorMatroid
 from sage.matroids.utilities import newlabel
-import networkx as nx
 
 
 cdef class TransversalMatroid(BasisExchangeMatroid):

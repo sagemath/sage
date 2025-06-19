@@ -327,7 +327,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.__character
 
-    def has_character(self):
+    def has_character(self) -> bool:
         r"""
         Return ``True`` if this space of modular forms has a specific
         character.
@@ -355,7 +355,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.character() is not None
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this an ambient space of modular forms.
 
@@ -663,9 +663,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             B = [f for f in self._compute_q_expansion_basis(current_prec) if f != 0]
             if len(B) == d:
                 break
-            else:
-                tries += 1
-                current_prec += d
+            tries += 1
+            current_prec += d
             if tries > 5:
                 print("WARNING: possible bug in q_expansion_basis for modular forms space %s" % self)
         if prec == -1:
@@ -1358,7 +1357,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         except IndexError:
             raise ValueError("Generator %s not defined" % n)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a complete set of generators for ``self``.
 
@@ -1366,13 +1365,13 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
             sage: N = ModularForms(6,4)
             sage: N.gens()
-            [q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
+            (q - 2*q^2 - 3*q^3 + 4*q^4 + 6*q^5 + O(q^6),
              1 + O(q^6),
              q - 8*q^4 + 126*q^5 + O(q^6),
              q^2 + 9*q^4 + O(q^6),
-             q^3 + O(q^6)]
+             q^3 + O(q^6))
         """
-        return self.basis()
+        return tuple(self.basis())
 
     def sturm_bound(self, M=None):
         r"""
@@ -1483,7 +1482,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         else:
             assert S.dimension() == self.dimension()
             self.__is_cuspidal = True
-        S.__is_eisenstein = (S.dimension() == 0)
+        S.is_eisenstein.set_cache(S.dimension() == 0)
         S.__is_cuspidal = True
         return S
 
@@ -1510,7 +1509,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.cuspidal_submodule()
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         r"""
         Return ``True`` if this space is cuspidal.
 
@@ -1524,7 +1523,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return (self.cuspidal_submodule() == self)
 
-    def is_eisenstein(self):
+    @cached_method
+    def is_eisenstein(self) -> bool:
         r"""
         Return ``True`` if this space is Eisenstein.
 
@@ -1658,28 +1658,25 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: W.eisenstein_submodule()
             Modular Forms subspace of dimension 0 of Modular Forms space of dimension 11 for Congruence Subgroup Gamma0(6) of weight 10 over Rational Field
         """
-        try:
-            if self.__is_eisenstein:
-                return self
-        except AttributeError:
-            pass
+        if self.is_eisenstein.cache is True:
+            return self
 
         if self.is_ambient():
             raise NotImplementedError("ambient modular forms spaces must override eisenstein_submodule")
         A = self.ambient_module().eisenstein_submodule()
         E = self.intersection(A)
         if E.dimension() < self.dimension():
-            self.__is_eisenstein = False
+            self.is_eisenstein.set_cache(False)
         else:
             assert E.dimension() == self.dimension()
-            self.__is_eisenstein = True
+            self.is_eisenstein.set_cache(True)
         E.__is_cuspidal = (E.dimension() == 0)
-        E.__is_eisenstein = True
+        E.is_eisenstein.set_cache(True)
         return E
 
     def eisenstein_subspace(self):
         """
-        Synonym for eisenstein_submodule.
+        Synonym for :meth:`eisenstein_submodule`.
 
         EXAMPLES::
 

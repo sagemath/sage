@@ -217,12 +217,13 @@ in the Installation Guide.
       for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
-      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`.
+      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`.
+
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
     - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.9.x, 3.10.x, 3.11.x, 3.12.x, which
+      `urllib`; but ideally version 3.11.x or later, which
       will avoid having to build Sage's own copy of Python 3.
       See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
       for more details.
@@ -334,12 +335,18 @@ in the Installation Guide.
 11. Optional, but highly recommended: Set some environment variables to
     customize the build.
 
-    For example, the `MAKE` environment variable controls whether to
-    run several jobs in parallel.  On a machine with 4 processors, say,
-    typing `export MAKE="make -j4"` will configure the build script to
-    perform a parallel compilation of Sage using 4 jobs. On some
-    powerful machines, you might even consider `-j16`, as building with
-    more jobs than CPU cores can speed things up further.
+    The `MAKEFLAGS` variable controls whether to run several jobs in parallel.
+    To saturate all the execution threads of your CPU, we recommend to run
+    `export MAKEFLAGS="-j$(nproc) -l$(nproc).5"` if you are on Linux, and
+    `export MAKEFLAGS="-j$(sysctl -n hw.ncpu) -l$(sysctl -n hw.ncpu).5"` if you
+    are on macOS.
+
+    Note that the compilation may nonetheless use a different number of
+    processes, e.g., for parts that are built with `ninja` which automatically
+    decides on the amount of parallelity to use. In practice, you might
+    therefore see twice as many processes during the build process than your
+    CPU has execution threads. Unless your system is low on RAM, this should
+    not affect the time the compilation takes substantially.
 
     To reduce the terminal output during the build, type `export V=0`.
     (`V` stands for "verbosity".)
@@ -551,11 +558,11 @@ SAGE_ROOT                 Root directory (create by git clone)
 │       │   ├── installed/
 │       │   │             Records of installed non-Python packages
 │       │   ├── scripts/  Scripts for uninstalling installed packages
-│       │   └── venv-python3.9  (SAGE_VENV)
+│       │   └── venv-python  (SAGE_VENV)
 │       │       │         Installation hierarchy (virtual environment)
 │       │       │         for Python packages
 │       │       ├── bin/  Executables and installed scripts
-│       │       ├── lib/python3.9/site-packages/
+│       │       ├── lib/python/site-packages/
 │       │       │         Python modules/packages are installed here
 │       │       └── var/lib/sage/
 │       │           └── wheels/

@@ -87,6 +87,7 @@ py.install_sources(
   'ranker.py',
   'recognizable_series.py',
   'regular_sequence.py',
+  'regular_sequence_bounded.py',
   'restricted_growth.py',
   'ribbon.py',
   'ribbon_shaped_tableau.py',

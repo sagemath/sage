@@ -919,11 +919,11 @@ class SimilarityClassType(CombinatorialElement):
         maximum_degree = max(list_of_degrees)
         numerator = prod([prod([primitives(d+1, invertible=invertible, q=q)-i for i in range(list_of_degrees.count(d+1))]) for d in range(maximum_degree)])
         tau_list = list(self)
-        D = dict((i, tau_list.count(i)) for i in tau_list)
+        D = {i: tau_list.count(i) for i in tau_list}
         denominator = prod(factorial(D[primary_type]) for primary_type in D)
         return numerator / denominator
 
-    def is_semisimple(self):
+    def is_semisimple(self) -> bool:
         """
         Return ``True`` if every primary similarity class type in ``self`` has
         all parts equal to ``1``.
@@ -939,7 +939,7 @@ class SimilarityClassType(CombinatorialElement):
         """
         return all(PT.partition().get_part(0) == 1 for PT in self)
 
-    def is_regular(self):
+    def is_regular(self) -> bool:
         """
         Return ``True`` if every primary type in ``self`` has partition with one
         part.
@@ -1325,8 +1325,9 @@ def dictionary_from_generator(gen):
         high.
     """
     L = list(gen)
-    setofkeys = list(set(item[0] for item in L))
-    return dict((key, sum(entry[1] for entry in (pair for pair in L if pair[0] == key))) for key in setofkeys)
+    setofkeys = set(item[0] for item in L)
+    return {key: sum(pair[1] for pair in L if pair[0] == key)
+            for key in setofkeys}
 
 
 def matrix_similarity_classes(n, q=None, invertible=False):

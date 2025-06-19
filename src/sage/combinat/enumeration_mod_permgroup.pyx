@@ -2,14 +2,14 @@
 r"""
 Tools for enumeration modulo the action of a permutation group
 """
-#*****************************************************************************
+# ***************************************************************************
 #    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #              The full text of the GPL is available at:
-#                    http://www.gnu.org/licenses/
-#*****************************************************************************
+#                    https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 

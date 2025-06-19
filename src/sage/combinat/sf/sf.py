@@ -20,26 +20,28 @@ Symmetric functions, with their multiple realizations
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.fields import Fields
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
-from sage.categories.fields import Fields
 from sage.categories.rings import Rings
-from sage.combinat.partition import Partitions
+from sage.categories.unique_factorization_domains import UniqueFactorizationDomains
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import Partitions
 from sage.rings.rational_field import QQ
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
-from . import schur
-from . import monomial
-from . import powersum
-from . import elementary
-from . import homogeneous
-from . import hall_littlewood
-from . import jack
-from . import macdonald
-from . import llt
+from . import (
+    elementary,
+    hall_littlewood,
+    homogeneous,
+    jack,
+    llt,
+    macdonald,
+    monomial,
+    powersum,
+    schur,
+)
 
 
 class SymmetricFunctions(UniqueRepresentation, Parent):
@@ -845,7 +847,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         - Devise a mechanism so that pickling bases of symmetric
           functions pickles the coercions which have a cache.
     """
-
     def __init__(self, R):
         r"""
         Initialization of ``self``.
@@ -1321,6 +1322,19 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Jack Qp basis
         """
         return jack.Jack( self, t=t )
+
+    def abreu_nigro(self, q='q'):
+        """
+        The Abreu-Nigro basis of the Symmetric Functions.
+
+        EXAMPLES::
+
+            sage: q = ZZ['q'].fraction_field().gen()
+            sage: SymmetricFunctions(q.parent()).abreu_nigro()
+            Symmetric Functions over Fraction Field of Univariate Polynomial Ring in q over Integer Ring in the Abreu-Nigro basis
+        """
+        from sage.combinat.sf.abreu_nigro import SymmetricFunctionAlgebra_AbreuNigro
+        return SymmetricFunctionAlgebra_AbreuNigro(self, q)
 
     def zonal(self):
         """
