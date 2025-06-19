@@ -1156,7 +1156,7 @@ class ManinRelations(PollackStevensModularDomain):
         # which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
         # thru the construction of a fundamental domain
 
-        # Includeds the coset repns formed by the original ideal triangle
+        # Includes the coset repns formed by the original ideal triangle
         # (with corners at -1, 0, infty)
 
         v[P.index(0, 1)] = True
