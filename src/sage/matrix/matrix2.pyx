@@ -19306,7 +19306,13 @@ cdef class Matrix(Matrix1):
         """
         from sage.matrix.constructor import matrix
         import math
+        import time
         from sage.combinat.permutation import Permutation
+        
+        #DEBUG
+        time_idx = 0
+        start = time.time()
+        #DEBUG
         
         m = self.nrows()
         
@@ -19320,14 +19326,16 @@ cdef class Matrix(Matrix1):
         
         priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
         priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
+        priority_permutation_inv = priority_permutation.inverse()
         
         # maps row c of self*J^d to position i in striped Krylov matrix
         # +/- 1 as permutations are 1-indexed, matrices are 0-indexed
-        phi = lambda c,d : priority_permutation.inverse()(index_inv(c,d) + 1) - 1
+        phi = lambda c,d : priority_permutation_inv(index_inv(c,d) + 1) - 1
         phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
         
         # calculate row profile of self, with shift applied
         self_permutation = Permutation([pair[1]+1 for pair in sorted([[phi(i,0),i] for i in range(m)])])
+        
         row_profile_self_permuted = self.with_permuted_rows(self_permutation).transpose().pivots()
         row_profile_self = [self_permutation(i+1)-1 for i in row_profile_self_permuted]
         
@@ -19402,10 +19410,11 @@ cdef class Matrix(Matrix1):
         
         priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
         priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
+        priority_permutation_inv = priority_permutation.inverse()
         
         # maps row c of EJ^d to position i in striped Krylov matrix
         # +/- 1 as permutations are 1-indexed, matrices are 0-indexed
-        phi = lambda c,d : priority_permutation.inverse()(index_inv(c,d) + 1) - 1
+        phi = lambda c,d : priority_permutation_inv(index_inv(c,d) + 1) - 1
         phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
         
         # calculate krylov profile
