@@ -337,7 +337,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if lens and lens[-1] == 0:
             raise ValueError("a tableau must not have empty rows")
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -357,7 +357,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         return self.parent().options._dispatch(self, '_repr_', 'display')
 
-    def _repr_list(self):
+    def _repr_list(self) -> str:
         """
         Return a string representation of ``self`` as a list.
 
@@ -374,7 +374,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     # CombinatorialObject is removed.
     __str__ = _repr_list
 
-    def _repr_diagram(self):
+    def _repr_diagram(self) -> str:
         """
         Return a string representation of ``self`` as an array.
 
@@ -441,7 +441,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                                     for i, e in enumerate(row))
                          for row in str_tab)
 
-    def _repr_compact(self):
+    def _repr_compact(self) -> str:
         """
         Return a compact string representation of ``self``.
 
@@ -657,7 +657,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         return ascii_art_table(self, use_unicode=use_unicode,
                                convention=self.parent().options('convention'))
 
-    def _ascii_art_compact(self):
+    def _ascii_art_compact(self) -> str:
         r"""
         TESTS:
 
@@ -710,7 +710,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                                     for i, e in enumerate(row))
                          + "|" for row in str_tab)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX version of ``self``.
 
@@ -750,7 +750,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
     _latex_list = _repr_list
 
-    def _latex_diagram(self):
+    def _latex_diagram(self) -> str:
         r"""
         Return a LaTeX representation of ``self`` as a Young diagram.
 
@@ -770,6 +770,21 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             return "{\\emptyset}"
         from sage.combinat.output import tex_from_array
         return tex_from_array(self)
+
+    def _repr_svg_(self) -> str:
+        """
+        Return the svg picture of the tableau.
+
+        This can be displayed by Jupyter.
+
+        EXAMPLES::
+
+            sage: T = Tableau([[2, 1, 1], [1, 1]])
+            sage: T._repr_svg_()
+            '<?xml...</g></svg>'
+        """
+        from sage.combinat.output import svg_from_array
+        return svg_from_array(self)
 
     def __truediv__(self, t):
         """
@@ -3190,7 +3205,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
             else:
                 tab_r = tab[r]
-                if c == len(tab_r):
+                if c == len(tab_r) and (r == 0 or len(tab_r) < len(tab[r-1])):
                     tab_r.append(m)
                 else:
                     raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
@@ -3201,7 +3216,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         else:
             try:
                 return self.parent().Element(tab)
-            except Exception:
+            except ValueError:
                 return Tableau(tab)
 
     ##############

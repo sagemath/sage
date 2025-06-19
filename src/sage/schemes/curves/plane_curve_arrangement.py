@@ -364,7 +364,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return prod(self.defining_polynomials())
 
-    def have_common_factors(self):
+    def have_common_factors(self) -> bool:
         r"""
         Check if the curves have common factors.
 
@@ -390,7 +390,7 @@ class PlaneCurveArrangementElement(Element):
         - ``clean`` -- boolean (default: ``False``); if ``False``
           and there are common factors it returns ``None`` and
           a warning message. If ``True``, the common factors are kept
-          only in the first occurance.
+          only in the first occurrence.
 
         EXAMPLES::
 
@@ -635,8 +635,9 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     def braid_monodromy(self, vertical=True):
         r"""
         Return the braid monodromy of the complement of the union
-        of affine plane curves in `\CC^2`. If there are vertical
-        asymptotes a change of variable is done.
+        of affine plane curves in `\CC^2`.
+
+        If there are vertical asymptotes a change of variable is done.
 
         INPUT:
 
@@ -646,7 +647,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         OUTPUT:
 
-        A braid monodromy with dictionnaries identifying strands with components
+        A braid monodromy with dictionaries identifying strands with components
         and braids with vertical lines.
 
         .. NOTE::
