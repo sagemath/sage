@@ -40,9 +40,10 @@ functions from this definition.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import sfa
-from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+from sage.categories.morphism import SetMorphism
+
+from . import sfa
 
 
 class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic):
@@ -348,4 +349,5 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.orthotriang', 'SymmetricFunctionAlgebraElement_orthotriang', SymmetricFunctionAlgebra_orthotriang.Element)
