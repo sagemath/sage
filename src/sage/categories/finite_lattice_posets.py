@@ -118,7 +118,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: L = LatticePoset({0:[1,2,3],1:[4],2:[4],3:[4]})                   # needs sage.graphs sage.modules
-                sage: L.join_irreducibles_poset()                                       # needs sage.graphs sage.modules
+                sage: L.meet_irreducibles_poset()                                       # needs sage.graphs sage.modules
                 Finite poset containing 3 elements
 
             .. SEEALSO::
@@ -372,6 +372,11 @@ class FiniteLatticePosets(CategoryWithAxiom):
             def is_stone(self):
                 """
                 Return whether ``self`` is a Stone lattice.
+
+                EXAMPLES::
+
+                    sage: posets.DivisorLattice(12).is_stone()
+                    True
                 """
                 return True
 
@@ -406,6 +411,12 @@ class FiniteLatticePosets(CategoryWithAxiom):
             def is_distributive(self):
                 """
                 Return whether ``self`` is a distributive lattice.
+
+                EXAMPLES::
+
+                    sage: P = posets.Crown(4).order_ideals_lattice()
+                    sage: P.is_distributive()
+                    True
                 """
                 return True
 
@@ -437,6 +448,11 @@ class FiniteLatticePosets(CategoryWithAxiom):
             def is_congruence_uniform(self):
                 """
                 Return whether ``self`` is a congruence uniform lattice.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_congruence_uniform()
+                    True
                 """
                 return True
 
@@ -457,6 +473,11 @@ class FiniteLatticePosets(CategoryWithAxiom):
             def is_semidistributive(self):
                 """
                 Return whether ``self`` is a semidistributive lattice.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_semidistributive()
+                    True
                 """
                 return True
 
@@ -487,6 +508,11 @@ class FiniteLatticePosets(CategoryWithAxiom):
             def is_trim(self):
                 """
                 Return whether ``self`` is a trim lattice.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_trim()
+                    True
                 """
                 return True
 
@@ -503,5 +529,10 @@ class FiniteLatticePosets(CategoryWithAxiom):
             def is_extremal(self):
                 """
                 Return whether ``self`` is an extremal lattice.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_extremal()
+                    True
                 """
                 return True
