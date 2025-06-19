@@ -19,12 +19,13 @@ Monomial symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import classical
 import sage.libs.symmetrica.all as symmetrica
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
+from sage.arith.misc import binomial, factorial, multinomial
 from sage.combinat.partition import _Partitions
-from sage.arith.misc import multinomial, factorial, binomial
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+
+from . import classical
 
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
@@ -492,7 +493,9 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -519,6 +522,5 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-
 
 register_unpickle_override('sage.combinat.sf.monomial', 'SymmetricFunctionAlgebraElement_monomial', SymmetricFunctionAlgebra_monomial.Element)

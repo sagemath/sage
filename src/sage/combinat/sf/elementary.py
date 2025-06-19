@@ -20,10 +20,9 @@ Elementary symmetric functions
 #*****************************************************************************
 from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
-from sage.combinat.sf import multiplicative, classical
+from sage.combinat.sf import classical, multiplicative
 from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
-
 
 ###################################
 #                                 #
@@ -407,7 +406,9 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -504,7 +505,9 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -545,6 +548,7 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.elementary',
                            'SymmetricFunctionAlgebraElement_elementary',
                            SymmetricFunctionAlgebra_elementary.Element)
