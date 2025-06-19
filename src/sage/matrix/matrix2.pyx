@@ -19365,7 +19365,7 @@ cdef class Matrix(Matrix1):
         col_profile = M.pivots()
         return tuple(row_profile_K), M, col_profile
     
-    def linear_interpolation_basis(self, J, degree, variable, shift=None):
+    def linear_interpolation_basis(self, J, degree, variable, shift=None, opt=False):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
 
@@ -19416,34 +19416,23 @@ cdef class Matrix(Matrix1):
                 degree_c[c[k]] = d[k] + 1
                 inv_c[c[k]] = k
         
-        #################
-        # OPTIMISATION
-        #################
-        T_present = matrix([pivot.row(inv_c[i]) for i in range(m) if inv_c[i] is not None]) * J
-        T_absent = matrix([self.row(i) for i in range(m) if inv_c[i] is None])
-        T_rows = []
+        T_absent_indices = [i for i in range(m) if inv_c[i] is None]
+        T_present_indices = [inv_c[i] for i in range(m) if inv_c[i] is not None]
+        D_absent = self.matrix_from_rows_and_columns(T_absent_indices, col_profile)
+        D_present = (pivot.matrix_from_rows(T_present_indices)*J).matrix_from_columns(col_profile)
+        D_rows = []
         idx_p = 0
         idx_a = 0
         for i in range(m):
-            if inv_c[i] is None:
-                T_rows.append(T_absent[idx_a])
-                idx_a += 1
-            else:
-                T_rows.append(T_present[idx_p])
-                idx_p += 1
-        target = matrix(T_rows)
-        #################
-        # ELSE
-        # compute striped Krylov matrix
-        #K = self.striped_krylov_matrix(J,degree,shift)
-        
-        # compute submatrix of target with rows phi(i,degree_c[i])
-        #target = K.matrix_from_rows([phi(i,degree_c[i]) for i in range(m)])
-        #################
-        
-        # compute submatrices of pivot and target with col_profile
+           if inv_c[i] is None:
+               D_rows.append(D_absent[idx_a])
+               idx_a += 1
+           else:
+               D_rows.append(D_present[idx_p])
+               idx_p += 1
+               
         C = pivot.matrix_from_columns(col_profile)
-        D = target.matrix_from_columns(col_profile)
+        D = matrix(D_rows)
         
         relation = D*C.inverse()
         
