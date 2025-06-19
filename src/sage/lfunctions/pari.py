@@ -276,7 +276,7 @@ def lfun_hecke(chi):
         sage: H = HeckeCharacterGroup(mf)
         sage: chi = H.gens()[1]
         sage: L = LFunction(lfun_hecke(chi))
-        sage: [L(-n) for n in range(3)]
+        sage: [L(-n) for n in range(3)]  # abs tol 1e-10
         [1.00000000000000, 0.000000000000000, 15.0000000000000]
     """
     if not chi.is_primitive():
