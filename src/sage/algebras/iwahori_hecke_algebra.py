@@ -2786,7 +2786,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         self.u_inv = normalized_laurent_polynomial(base_ring, u**-1)
         self.v_inv = normalized_laurent_polynomial(base_ring, v**-1)
 
-        self._shorthands = ('C', 'Cp', 'T',)
+        self._shorthands = ('C', 'Cp', 'T')
 
         if W.is_finite():
             self._category = FiniteDimensionalAlgebrasWithBasis(base_ring)

@@ -2,7 +2,7 @@
 """
 Symmetric functions, with their multiple realizations
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2009-2012 Jason Bandlow <jbandlow@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -18,8 +18,8 @@ Symmetric functions, with their multiple realizations
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from sage.categories.fields import Fields
 from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -885,7 +885,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.schur()
 
-    def _repr_(self): # could be taken care of by the category
+    def _repr_(self):  # could be taken care of by the category
         r"""
         Representation of ``self``
 
@@ -907,7 +907,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return schur.SymmetricFunctionAlgebra_schur(self)
     s = schur
-    Schur = schur # Currently needed by SymmetricFunctions.__init_extra__
+    Schur = schur  # Currently needed by SymmetricFunctions.__init_extra__
 
     def powersum(self):
         r"""
@@ -920,7 +920,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return powersum.SymmetricFunctionAlgebra_power(self)
     p = powersum
-    power = powersum # Todo: get rid of this one when it won't be needed anymore
+    power = powersum
+    # Todo: get rid of the line above when it won't be needed anymore
 
     def complete(self):
         r"""
@@ -1321,7 +1322,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: JQp = Sym.jack().Qp(); JQp
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the Jack Qp basis
         """
-        return jack.Jack( self, t=t )
+        return jack.Jack(self, t=t)
 
     def abreu_nigro(self, q='q'):
         """
@@ -1345,7 +1346,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: SymmetricFunctions(QQ).zonal()
             Symmetric Functions over Rational Field in the zonal basis
         """
-        return jack.SymmetricFunctionAlgebra_zonal( self )
+        return jack.SymmetricFunctionAlgebra_zonal(self)
 
     def llt(self, k, t='t'):
         """
@@ -1369,7 +1370,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: llt3.hcospin()
             Symmetric Functions over Fraction Field of Univariate Polynomial Ring in t over Rational Field in the level 3 LLT cospin basis
         """
-        return llt.LLT_class( self, k, t=t )
+        return llt.LLT_class(self, k, t=t)
 
     def from_polynomial(self, f):
         """
@@ -1430,8 +1431,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         else:
             morphism.codomain().register_coercion(morphism)
 
+    # keep them sorted in alphabetic order
     _shorthands = ('e', 'f', 'h', 'm', 'p', 's')
-    _shorthands_all = tuple(sorted(_shorthands + ('ht', 'o', 'sp', 'st', 'w')))
+    _shorthands_all = ('e', 'f', 'h', 'ht', 'm', 'o', 'p', 's', 'sp', 'st', 'w')
 
     def __init_extra__(self):
         """
@@ -1452,11 +1454,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: f(p.an_element()) == p.an_element()
             True
         """
-        #powersum   = self.powersum  ()
-        #complete   = self.complete  ()
-        #elementary = self.elementary()
-        #schur      = self.schur     ()
-        #monomial   = self.monomial  ()
+        # powersum   = self.powersum  ()
+        # complete   = self.complete  ()
+        # elementary = self.elementary()
+        # schur      = self.schur     ()
+        # monomial   = self.monomial  ()
 
         iso = self.register_isomorphism
 
@@ -1465,7 +1467,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         for (basis1_name, basis2_name) in conversion_functions:
             basis1 = getattr(self, basis1_name)()
             basis2 = getattr(self, basis2_name)()
-            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name,basis2_name], domain=basis1, codomain=basis2)
+            on_basis = SymmetricaConversionOnBasis(t=conversion_functions[basis1_name, basis2_name], domain=basis1, codomain=basis2)
             from sage.rings.rational_field import RationalField
             if basis2_name != "powersum" or self._base.has_coerce_map_from(RationalField()):
                 iso(basis1._module_morphism(on_basis, codomain=basis2))
