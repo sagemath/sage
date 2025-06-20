@@ -14,7 +14,7 @@ Here we define this species using the default structures::
 
     sage: ball = species.SingletonSpecies()
     doctest:warning...
-    DeprecationWarning: combinat.species is superseded by LazySpecies
+    DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
     See https://github.com/sagemath/sage/issues/38544 for details.
     sage: bar = species.EmptySetSpecies()
     sage: BB = CombinatorialSpecies()

@@ -33,7 +33,7 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
             sage: set_random_seed(0)
             sage: S = species.SubsetSpecies()
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = S.structures(["a","b","c"])[0]; a
             {}

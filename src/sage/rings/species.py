@@ -1574,6 +1574,16 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
                 sage: X^2*Pb_4 in d  # long time
                 True
 
+            Find two atomic species with the same cycle index::
+
+                sage: from sage.rings.species import AtomicSpecies
+                sage: A = AtomicSpecies("X")
+                sage: n = 8
+                sage: As = A.subset(n)  # long time
+                sage: Cs = [M({a: 1}).cycle_index() for a in As]  # long time
+                sage: len([a for a in As if Cs.count(M({a: 1}).cycle_index()) > 1])  # long time
+                10
+
             TESTS:
 
             Check that we support different parents::
@@ -2751,7 +2761,7 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L(lambda n: SymmetricGroup(n))
             sage: P = PolynomialSpecies(QQ, ["X"])
 
