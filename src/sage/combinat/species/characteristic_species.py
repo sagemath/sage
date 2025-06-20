@@ -30,7 +30,7 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
 
             sage: F = species.CharacteristicSpecies(3)
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = F.structures([1, 2, 3]).random_element(); a
             {1, 2, 3}

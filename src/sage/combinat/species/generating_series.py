@@ -217,7 +217,7 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
 
             sage: G = species.SimpleGraphSpecies()
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
             sage: g = G.generating_series()
             sage: [g.coefficient(i) for i in range(10)]

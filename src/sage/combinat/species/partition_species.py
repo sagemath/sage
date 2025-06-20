@@ -34,7 +34,7 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
             sage: from sage.combinat.species.partition_species import PartitionSpeciesStructure
             sage: P = species.PartitionSpecies()
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
             sage: s = PartitionSpeciesStructure(P, ['a','b','c'], [[1,2],[3]]); s
             {{'a', 'b'}, {'c'}}
