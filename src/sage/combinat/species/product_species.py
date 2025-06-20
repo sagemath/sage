@@ -28,7 +28,7 @@ class ProductSpeciesStructure(GenericSpeciesStructure):
 
             sage: S = species.SetSpecies()
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
             sage: F = S * S
             sage: a = F.structures(['a','b','c']).random_element()

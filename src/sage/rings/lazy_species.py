@@ -20,7 +20,7 @@ species of point determining graphs can be computed as the
 species of graphs composed with the compositional inverse of the
 species of non-empty sets::
 
-    sage: L.<X> = LazySpecies(QQ)
+    sage: L.<X> = LazyCombinatorialSpecies(QQ)
     sage: E = L.Sets()
     sage: Ep = E.restrict(1)
     sage: G = L.Graphs()
@@ -203,13 +203,13 @@ def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
 ######################################################################
 
 
-class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
+class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
     r"""
     EXAMPLES:
 
     Compute the molecular expansion of `E(-X)`::
 
-        sage: L = LazySpecies(ZZ, "X")
+        sage: L = LazyCombinatorialSpecies(ZZ, "X")
         sage: E = L(SymmetricGroup)
         sage: E_inv = 1 / E
         sage: E_inv
@@ -233,7 +233,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L(SymmetricGroup)
             sage: E.isotype_generating_series()
             1 + X + X^2 + X^3 + X^4 + X^5 + X^6 + O(X^7)
@@ -242,7 +242,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E(C).isotype_generating_series()
             1 + X + 2*X^2 + 3*X^3 + 5*X^4 + 7*X^5 + 11*X^6 + O(X^7)
 
-            sage: L2.<X, Y> = LazySpecies(QQ)
+            sage: L2.<X, Y> = LazyCombinatorialSpecies(QQ)
             sage: E(X + Y).isotype_generating_series()
             1 + (X+Y) + (X^2+X*Y+Y^2) + (X^3+X^2*Y+X*Y^2+Y^3)
             + (X^4+X^3*Y+X^2*Y^2+X*Y^3+Y^4)
@@ -275,7 +275,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L.Sets()
             sage: E.generating_series()
             1 + X + 1/2*X^2 + 1/6*X^3 + 1/24*X^4 + 1/120*X^5 + 1/720*X^6 + O(X^7)
@@ -284,7 +284,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: C.generating_series()
             X + 1/2*X^2 + 1/3*X^3 + 1/4*X^4 + 1/5*X^5 + 1/6*X^6 + O(X^7)
 
-            sage: L2.<X, Y> = LazySpecies(QQ)
+            sage: L2.<X, Y> = LazyCombinatorialSpecies(QQ)
             sage: E(X + Y).generating_series()
             1 + (X+Y) + (1/2*X^2+X*Y+1/2*Y^2)
             + (1/6*X^3+1/2*X^2*Y+1/2*X*Y^2+1/6*Y^3)
@@ -320,7 +320,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: h = SymmetricFunctions(QQ).h()
             sage: LazySymmetricFunctions(h)(E.cycle_index_series())
@@ -331,9 +331,9 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: s(C.cycle_index_series()[5])
             s[1, 1, 1, 1, 1] + s[2, 2, 1] + 2*s[3, 1, 1] + s[3, 2] + s[5]
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L.Sets()
-            sage: L2.<X, Y> = LazySpecies(QQ)
+            sage: L2.<X, Y> = LazyCombinatorialSpecies(QQ)
             sage: E(X + Y).cycle_index_series()[3]
             1/6*p[] # p[1, 1, 1] + 1/2*p[] # p[2, 1] + 1/3*p[] # p[3]
             + 1/2*p[1] # p[1, 1] + 1/2*p[1] # p[2] + 1/2*p[1, 1] # p[1]
@@ -369,7 +369,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: G = L.Graphs()
             sage: list(G.isotypes(2))
             [Graph on 2 vertices, Graph on 2 vertices]
@@ -385,7 +385,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: E = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
@@ -400,7 +400,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: E = L(SymmetricGroup)
             sage: sorted((E^2).structures([1,2,3]))
             [((1, ()), (E_3, ((1, 2, 3),))),
@@ -427,7 +427,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L(SymmetricGroup)
             sage: list(E.structures([1,2,3]))
             [(E_3, ((1, 2, 3),))]
@@ -453,7 +453,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
              (X^3, ((3,), (2,), (1,)))]
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: L = LazySpecies(QQ, "X, Y")
+            sage: L = LazyCombinatorialSpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
             sage: list((XY).structures([1], ["a"]))
@@ -479,7 +479,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         TESTS::
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: L = LazySpecies(QQ, "X, Y")
+            sage: L = LazyCombinatorialSpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2, 3]), {0: [1], 1: [2, 3]}))
             sage: XY._test_structures()
@@ -516,7 +516,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L(SymmetricGroup)
             sage: list(E.isotypes(3))
             [(E_3,)]
@@ -530,7 +530,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             [(E_3,), (X*E_2, 0), (X*E_2, 1), (X^3,)]
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: L = LazySpecies(QQ, "X, Y")
+            sage: L = LazyCombinatorialSpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
             sage: list((XY).isotypes(1, 1))
@@ -563,7 +563,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         TESTS::
 
             sage: from sage.rings.species import PolynomialSpecies
-            sage: L = LazySpecies(QQ, "X, Y")
+            sage: L = LazyCombinatorialSpecies(QQ, "X, Y")
             sage: P = PolynomialSpecies(QQ, "X, Y")
             sage: XY = L(P(PermutationGroup([], domain=[1, 2]), {0: [1], 1: [2]}))
             sage: XY._test_isotypes(max_size=5)
@@ -608,7 +608,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: E = L(SymmetricGroup)
             sage: E.polynomial(3)
             1 + X + E_2 + E_3
@@ -636,7 +636,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E2 = L(SymmetricGroup(2))
             sage: E2(E2)
             E_2(E_2) + O^11
@@ -656,7 +656,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
              from n points to themselves; number of unlabeled endofunctions.
 
             sage: R.<q> = QQ[]
-            sage: L = LazySpecies(R, "X")
+            sage: L = LazyCombinatorialSpecies(R, "X")
             sage: E = L.Sets()
             sage: E1 = E.restrict(1)
             sage: E(q*E1)[4]
@@ -664,7 +664,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         TESTS::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E2 = L(SymmetricGroup(2))
             sage: X(X + E2)
             X + E_2 + O^8
@@ -682,20 +682,20 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: (1+E2)(X)
             1 + E_2 + O^7
 
-            sage: L.<X,Y> = LazySpecies(QQ)
+            sage: L.<X,Y> = LazyCombinatorialSpecies(QQ)
             sage: X(Y, 0)
             Y + O^8
 
-            sage: L1 = LazySpecies(QQ, "X")
+            sage: L1 = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L1.Sets()
-            sage: L.<X,Y> = LazySpecies(QQ)
+            sage: L.<X,Y> = LazyCombinatorialSpecies(QQ)
             sage: E(X)
             1 + X + E_2(X) + E_3(X) + E_4(X) + E_5(X) + E_6(X) + O^7
 
         It would be extremely nice to allow the following, but this
         poses theoretical problems::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E1 = L.Sets().restrict(1)
             sage: Omega = L.undefined(1)
             sage: L.define_implicitly([Omega], [E1(Omega) - X])
@@ -737,7 +737,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E1 = L.Sets().restrict(1)
             sage: g = E1.revert()
             sage: g[:5]
@@ -847,7 +847,7 @@ class LazySpeciesElement(LazyCompletionGradedAlgebraElement):
         return F
 
 
-class LazySpeciesElementGeneratingSeriesMixin:
+class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
     r"""
     A lazy species element whose generating series are obtained
     by specializing the cycle index series rather than the molecular
@@ -862,7 +862,7 @@ class LazySpeciesElementGeneratingSeriesMixin:
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: L.Graphs().isotype_generating_series().truncate(8)
             1 + X + 2*X^2 + 4*X^3 + 11*X^4 + 34*X^5 + 156*X^6 + 1044*X^7
 
@@ -886,7 +886,7 @@ class LazySpeciesElementGeneratingSeriesMixin:
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: L.Graphs().generating_series().truncate(7)
             1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
         """
@@ -897,18 +897,18 @@ class LazySpeciesElementGeneratingSeriesMixin:
         return L(lambda n: cis[n].coefficient(_Partitions([1]*n)))
 
 
-class SumSpeciesElement(LazySpeciesElement):
+class SumSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, right):
         r"""
         Initialize the sum of two species.
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: F = L.Sets() + L.SetPartitions()
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
-        F = super(LazySpeciesElement, type(left))._add_(left, right)
+        F = super(LazyCombinatorialSpeciesElement, type(left))._add_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
         self._left = left
         self._right = right
@@ -919,7 +919,7 @@ class SumSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: F = L.Sets() + L.SetPartitions()
             sage: list(F.structures([1,2,3]))
             [((1, 2, 3), 'left'),
@@ -934,18 +934,18 @@ class SumSpeciesElement(LazySpeciesElement):
         yield from ((s, 'right') for s in self._right.structures(*labels))
 
 
-class ProductSpeciesElement(LazySpeciesElement):
+class ProductSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, right):
         r"""
         Initialize the product of two species.
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: F = L.Sets() * L.SetPartitions()
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
-        F = super(LazySpeciesElement, type(left))._mul_(left, right)
+        F = super(LazyCombinatorialSpeciesElement, type(left))._mul_(left, right)
         super().__init__(F.parent(), F._coeff_stream)
         self._left = left
         self._right = right
@@ -956,7 +956,7 @@ class ProductSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: C = L.Cycles()
             sage: P = E * C
@@ -967,7 +967,7 @@ class ProductSpeciesElement(LazySpeciesElement):
             sage: list(P.structures([1,2]))
             [((), (1, 2)), ((1,), (2,)), ((2,), (1,)), ((1, 2), ())]
 
-            sage: L.<X, Y> = LazySpecies(QQ)
+            sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
             sage: list((X*Y).structures([1], [2]))
             [((X, ((1,),)), (Y, ((2,),)))]
         """
@@ -982,14 +982,14 @@ class ProductSpeciesElement(LazySpeciesElement):
                                          self._right.structures(*[V for _, V in d]))
 
 
-class CompositionSpeciesElement(LazySpeciesElement):
+class CompositionSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, *args):
         r"""
         Initialize the composition of species.
 
         TESTS::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: L.zero()(X)
             0
             sage: X(L.zero())
@@ -997,7 +997,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
             sage: (1+X)(L.zero())
             1
 
-            sage: L2.<X,Y> = LazySpecies(QQ)
+            sage: L2.<X,Y> = LazyCombinatorialSpecies(QQ)
             sage: F = L.Sets()(X + 2*Y)
             sage: TestSuite(F).run(skip=['_test_category', '_test_pickling'])
         """
@@ -1077,7 +1077,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L.Sets()
             sage: E1 = L.Sets().restrict(1)
             sage: sorted(E(E1).structures([1,2,3]))
@@ -1088,7 +1088,7 @@ class CompositionSpeciesElement(LazySpeciesElement):
              ((((1, 'X'), (3, 'X')), ((2, 'X'),)), ((1, 3), (2,)))]
 
             sage: C = L.Cycles()
-            sage: L.<X, Y> = LazySpecies(QQ)
+            sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)
             sage: sum(1 for s in C(X*Y).structures([1,2,3], [1,2,3]))
             12
 
@@ -1136,8 +1136,8 @@ class CompositionSpeciesElement(LazySpeciesElement):
                 yield from itertools.product(F_s, itertools.product(*G_s))
 
 
-class LazySpecies(LazyCompletionGradedAlgebra):
-    Element = LazySpeciesElement
+class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
+    Element = LazyCombinatorialSpeciesElement
 
     @staticmethod
     def __classcall_private__(cls, base_ring, names, sparse=True):
@@ -1146,14 +1146,14 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         TESTS::
 
-            sage: LazySpecies(QQ, "X") is LazySpecies(QQ, "X")
+            sage: LazyCombinatorialSpecies(QQ, "X") is LazyCombinatorialSpecies(QQ, "X")
             True
         """
         from sage.structure.category_object import normalize_names
         names = normalize_names(-1, names)
         if len(names) == 1:
-            return LazySpeciesUnivariate(base_ring, names, sparse)
-        return LazySpeciesMultivariate(base_ring, names, sparse)
+            return LazyCombinatorialSpeciesUnivariate(base_ring, names, sparse)
+        return LazyCombinatorialSpeciesMultivariate(base_ring, names, sparse)
 
     def _first_ngens(self, n):
         r"""
@@ -1165,7 +1165,7 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         EXAMPLES::
 
-            sage: L.<X, Y> = LazySpecies(QQ)  # indirect doctest
+            sage: L.<X, Y> = LazyCombinatorialSpecies(QQ)  # indirect doctest
             sage: 1/(1-X-Y)
             1 + (X+Y) + (X^2+2*X*Y+Y^2) + (X^3+3*X^2*Y+3*X*Y^2+Y^3)
              + (X^4+4*X^3*Y+6*X^2*Y^2+4*X*Y^3+Y^4)
@@ -1183,16 +1183,16 @@ class LazySpecies(LazyCompletionGradedAlgebra):
         We provide univariate and multivariate (mostly known as
         multisort) species::
 
-            sage: LazySpecies(QQ, "X")
+            sage: LazyCombinatorialSpecies(QQ, "X")
             Lazy completion of Polynomial species in X over Rational Field
 
-            sage: LazySpecies(QQ, "X, Y")
+            sage: LazyCombinatorialSpecies(QQ, "X, Y")
             Lazy completion of Polynomial species in X, Y over Rational Field
 
         In the univariate case, several basic species are provided as
         methods::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: L.Sets()
             Set species
             sage: L.Cycles()
@@ -1208,14 +1208,14 @@ class LazySpecies(LazyCompletionGradedAlgebra):
 
         TESTS::
 
-            sage: LazySpecies(QQ, "X, Y, Z")._arity
+            sage: LazyCombinatorialSpecies(QQ, "X, Y, Z")._arity
             3
         """
         super().__init__(PolynomialSpecies(base_ring, names))
         self._arity = len(names)
 
 
-class LazySpeciesUnivariate(LazySpecies):
+class LazyCombinatorialSpeciesUnivariate(LazyCombinatorialSpecies):
     def Sets(self):
         r"""
         Return the species of sets.
@@ -1226,7 +1226,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.Sets()
             sage: set(G.isotypes(4))
             {(E_4,)}
@@ -1244,7 +1244,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.Cycles()
             sage: set(G.isotypes(4))
             {(C_4,)}
@@ -1264,7 +1264,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.Polygons()
             sage: set(G.isotypes(5))
             {(P_5,)}
@@ -1286,7 +1286,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.OrientedSets()
             sage: set(G.isotypes(5))
             {(Eo_5,)}
@@ -1303,7 +1303,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: Ch = L.Chains()
             sage: set(Ch.isotypes(4))
             {(E_2(X^2),)}
@@ -1318,7 +1318,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.Graphs()
             sage: set(G.isotypes(2))
             {Graph on 2 vertices, Graph on 2 vertices}
@@ -1334,7 +1334,7 @@ class LazySpeciesUnivariate(LazySpecies):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.SetPartitions()
             sage: set(G.isotypes(4))
             {[1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4]}
@@ -1348,11 +1348,11 @@ class LazySpeciesUnivariate(LazySpecies):
         return SetPartitionSpecies(self)
 
 
-class LazySpeciesMultivariate(LazySpecies):
+class LazyCombinatorialSpeciesMultivariate(LazyCombinatorialSpecies):
     pass
 
 
-class SetSpecies(LazySpeciesElement, UniqueRepresentation,
+class SetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                  metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1360,7 +1360,7 @@ class SetSpecies(LazySpeciesElement, UniqueRepresentation,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: E = L.Sets()
             sage: TestSuite(E).run(skip=['_test_category', '_test_pickling'])
 
@@ -1376,7 +1376,7 @@ class SetSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").Sets()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").Sets()  # indirect doctest
            Set species
         """
         return "Set species"
@@ -1387,7 +1387,7 @@ class SetSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: E = L.Sets()
             sage: list(E.structures([1,2,3]))
             [(1, 2, 3)]
@@ -1396,7 +1396,7 @@ class SetSpecies(LazySpeciesElement, UniqueRepresentation,
         yield labels[0]
 
 
-class CycleSpecies(LazySpeciesElement, UniqueRepresentation,
+class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                    metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1404,7 +1404,7 @@ class CycleSpecies(LazySpeciesElement, UniqueRepresentation,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: C = L.Cycles()
             sage: TestSuite(C).run(skip=['_test_category', '_test_pickling'])
 
@@ -1420,7 +1420,7 @@ class CycleSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").Cycles()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").Cycles()  # indirect doctest
            Cycle species
         """
         return "Cycle species"
@@ -1431,7 +1431,7 @@ class CycleSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: C = L.Cycles()
             sage: list(C.structures([]))
             []
@@ -1447,7 +1447,7 @@ class CycleSpecies(LazySpeciesElement, UniqueRepresentation,
         yield from map(tuple, CyclicPermutations(labels[0]))
 
 
-class PolygonSpecies(LazySpeciesElement, UniqueRepresentation,
+class PolygonSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                      metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1455,7 +1455,7 @@ class PolygonSpecies(LazySpeciesElement, UniqueRepresentation,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: P = L.Polygons()
             sage: TestSuite(P).run(skip=['_test_category', '_test_pickling'])
 
@@ -1471,13 +1471,13 @@ class PolygonSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").Polygons()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").Polygons()  # indirect doctest
            Polygon species
         """
         return "Polygon species"
 
 
-class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
+class OrientedSetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                          metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1485,7 +1485,7 @@ class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: Eo = L.OrientedSets()
             sage: TestSuite(Eo).run(skip=['_test_category', '_test_pickling'])
 
@@ -1501,13 +1501,13 @@ class OrientedSetSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").OrientedSets()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").OrientedSets()  # indirect doctest
            Oriented Set species
         """
         return "Oriented Set species"
 
 
-class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
+class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                    metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1515,7 +1515,7 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: Ch = L.Chains()
             sage: TestSuite(Ch).run(skip=['_test_category', '_test_pickling'])
 
@@ -1542,7 +1542,7 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").Chains()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").Chains()  # indirect doctest
            Chain species
         """
         return "Chain species"
@@ -1553,7 +1553,7 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: Ch = L.Chains()
             sage: list(Ch.structures([1,2,3]))
             [(1, 3, 2), (1, 2, 3), (2, 1, 3)]
@@ -1573,8 +1573,8 @@ class ChainSpecies(LazySpeciesElement, UniqueRepresentation,
                     yield (a,) + pi + (b,)
 
 
-class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
-                   LazySpeciesElement, UniqueRepresentation,
+class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
+                   LazyCombinatorialSpeciesElement, UniqueRepresentation,
                    metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1582,7 +1582,7 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.Graphs()
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
 
@@ -1599,7 +1599,7 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").Graphs()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").Graphs()  # indirect doctest
            Graph species
         """
         return "Graph species"
@@ -1610,7 +1610,7 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G = L.Graphs()
             sage: list(G.isotypes(2))
             [Graph on 2 vertices, Graph on 2 vertices]
@@ -1627,7 +1627,7 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: L.Graphs().generating_series().truncate(7)
             1 + X + X^2 + 4/3*X^3 + 8/3*X^4 + 128/15*X^5 + 2048/45*X^6
         """
@@ -1645,7 +1645,7 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: L.Graphs().cycle_index_series().truncate(4)
             p[] + p[1] + (p[1,1]+p[2]) + (4/3*p[1,1,1]+2*p[2,1]+2/3*p[3])
 
@@ -1674,7 +1674,7 @@ class GraphSpecies(LazySpeciesElementGeneratingSeriesMixin,
         return L(coefficient)
 
 
-class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
+class SetPartitionSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                           metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
@@ -1682,7 +1682,7 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: p = L.SetPartitions()
             sage: TestSuite(p).run(skip=['_test_category', '_test_pickling'])
 
@@ -1699,7 +1699,7 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-           sage: LazySpecies(QQ, "X").SetPartitions()  # indirect doctest
+           sage: LazyCombinatorialSpecies(QQ, "X").SetPartitions()  # indirect doctest
            Set Partition species
         """
         return "Set Partition species"
@@ -1710,7 +1710,7 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: p = L.SetPartitions()
             sage: list(p.isotypes(3))
             [[3], [2, 1], [1, 1, 1]]
@@ -1726,7 +1726,7 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: P = L.SetPartitions()
             sage: list(P.structures([]))
             [{}]
@@ -1741,14 +1741,14 @@ class SetPartitionSpecies(LazySpeciesElement, UniqueRepresentation,
         yield from SetPartitions(labels[0])
 
 
-class RestrictedSpeciesElement(LazySpeciesElement):
+class RestrictedSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, F, min_degree, max_degree):
         r"""
         Initialize the restriction of a species to the given degrees.
 
         TESTS::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: G3 = L.Graphs().restrict(3, 3)
             sage: TestSuite(G3).run(skip=['_test_category', '_test_pickling'])
         """
@@ -1780,7 +1780,7 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(QQ, "X")
+            sage: L = LazyCombinatorialSpecies(QQ, "X")
             sage: p = L.SetPartitions().restrict(2, 2)
             sage: list(p.isotypes(3))
             []
@@ -1796,7 +1796,7 @@ class RestrictedSpeciesElement(LazySpeciesElement):
 
         EXAMPLES::
 
-            sage: L = LazySpecies(ZZ, "X")
+            sage: L = LazyCombinatorialSpecies(ZZ, "X")
             sage: F = L.SetPartitions().restrict(3)
             sage: list(F.structures([1]))
             []

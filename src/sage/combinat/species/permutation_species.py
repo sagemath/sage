@@ -31,7 +31,7 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
 
             sage: P = species.PermutationSpecies()
             doctest:warning...
-            DeprecationWarning: combinat.species is superseded by LazySpecies
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
             See https://github.com/sagemath/sage/issues/38544 for details.
 
             sage: S = P.structures(["a", "b", "c"])
