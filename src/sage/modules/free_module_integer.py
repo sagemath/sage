@@ -173,7 +173,7 @@ def IntegerLattice(basis, lll_reduce=True):
         [      0       0       0       0       0       0 1048576       0]
         [      0       0       0       0       0       0       0 1048576]
 
-    We construct a large lattice, this lattice will not be constructible 
+    We construct a large lattice, this lattice will not be constructible
     if echelon form was also being computed::
 
         sage: n = 500

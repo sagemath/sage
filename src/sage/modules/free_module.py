@@ -6596,8 +6596,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
     - ``echelonize`` -- (default: ``False``) if ``True``, ``basis`` will be
       echelonized and the result will be used as the default basis of the
-      constructed submodule; if ``False``, ``basis`` will be not be 
-      echelonized during construction but will instead be echelonized on-demand
+      constructed submodule; if ``False``, ``basis`` will be not be echelonized
+      during construction but will instead be echelonized on-demand
 
     - ``echelonized_basis`` -- (default: ``None``) if not ``None``, must be
       the echelonized basis spanning the same submodule as ``basis``
@@ -6731,7 +6731,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             except TypeError:
                 raise TypeError("each element of basis must be in "
                                 "the ambient vector space")
-            
+
         # This is original basis converted to ambient module/vector space.
         # Without the conversion, the echelon form computation fails with
         # a segmentation fault, while clearing out the denominator via
@@ -6742,7 +6742,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         MS = sage.matrix.matrix_space.MatrixSpace(
             R_coord, len(basis), ambient.degree(), sparse=ambient.is_sparse())
-        
+
         A = MS(basis)
 
         # Rank computation is expected to be fast unlike echelon form computation
@@ -6763,7 +6763,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         FreeModule_generic_pid.__init__(self, base_ring=R, coordinate_ring=R_coord,
                                         rank=rank, degree=ambient.degree(),
                                         sparse=ambient.is_sparse(), category=category)
-        
+
         MS_ECH = sage.matrix.matrix_space.MatrixSpace(
                 R_coord, rank, ambient.degree(), sparse=ambient.is_sparse())
 
@@ -6787,15 +6787,15 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if has_echelonized_basis:
             if matrix is not None:
                 self.__echelonized_basis_matrix = matrix
-            
+
             elif echelonize or already_echelonized:
                 self.__echelonized_basis_matrix = MS_ECH(self.__basis)
-            
+
             elif echelonized_basis:
                 w = [C(self, x, coerce=False, copy=False) for x in echelonized_basis]
                 # Will throw error if matrix space and basis_seq have different sizes
                 matrix = MS_ECH(basis_seq(self, w))
-                
+
                 if check and rank != matrix.rank():
                     raise ValueError("the given echelonized basis vectors do not have the correct rank")
 
