@@ -3024,6 +3024,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``'pari'`` -- pari's qflll
 
+        - ``'flatter'`` -- external executable ``flatter``, requires manual install (see caveats below).
+          Note that sufficiently new version of ``pari`` also supports FLATTER algorithm, see
+          <https://pari.math.u-bordeaux.fr/dochtml/html/Vectors__matrices__linear_algebra_and_sets.html#qflll>_.
+
         OUTPUT: a matrix over the integers
 
         EXAMPLES::
@@ -3097,6 +3101,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [0 0 0]
             [0 0 0]
 
+        When ``algorithm='flatter'``, some matrices are not supported depends
+        on ``flatter``. For example::
+
+            sage: # needs flatter
+            sage: m = matrix.zero(3, 2)
+            sage: m.LLL(algorithm='flatter')
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+
         TESTS::
 
             sage: matrix(ZZ, 0, 0).LLL()
@@ -3153,6 +3167,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
             Although LLL is a deterministic algorithm, the output for
             different implementations and CPUs (32-bit vs. 64-bit) may
             vary, while still being correct.
+
+        Check ``flatter``::
+
+            sage: # needs flatter
+            sage: M = matrix(ZZ, 2, 2, [-1,1,1,1])
+            sage: L = M.LLL(algorithm="flatter")
+            sage: abs(M.det()) == abs(L.det())
+            True
+            sage: L = M.LLL(algorithm="flatter", delta=0.99)
+            sage: abs(M.det()) == abs(L.det())
+            True
         """
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
@@ -3176,6 +3201,21 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if prec < 0:
             raise TypeError("precision prec must be >= 0")
         prec = int(prec)
+
+        if algorithm == 'flatter':
+            import subprocess
+            cmd = ["flatter"]
+            if fp is not None or early_red or use_givens or transformation or eta is not None or use_siegel:
+                raise TypeError("flatter does not support fp, early_red, use_givens, transformation, eta or use_siegel")
+            if kwds:
+                raise TypeError("flatter does not support additional keywords")
+            if delta is not None:
+                cmd += ["-delta", str(delta)]
+            stdout = subprocess.run(
+                    cmd, input="[" + "\n".join('[' + ' '.join(str(x) for x in row) + ']' for row in self) + "]",
+                    text=True, encoding="utf-8", stdout=subprocess.PIPE).stdout
+            return self.new_matrix(entries=[[ZZ(x) for x in row.strip('[] ').split()]
+                                            for row in stdout.strip('[] \n').split('\n')])
 
         if algorithm == 'NTL:LLL':
             if fp is None:
