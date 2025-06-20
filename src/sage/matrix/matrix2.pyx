@@ -18939,7 +18939,7 @@ cdef class Matrix(Matrix1):
             U.rescale_col(n - 1, -1)
         return U
 
-    def polynomial_compression(self,degree,variable):
+    def polynomial_compression(self,degree,var_name):
         """
         Returns the corresponding polynomial matrix where the coefficient matrix of degree i is the ith block of ``self``.
         
@@ -18978,6 +18978,11 @@ cdef class Matrix(Matrix1):
         [  3*y + 13     y + 57          0]
         [        96         96          1]
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        
+        poly_ring = PolynomialRing(self.base_ring(),var_name)
+        variable = poly_ring.gen()
+        
         if self.ncols() % (degree+1) != 0:
             raise ValueError('The column number must be divisible by degree+1.')
         coeff_matrices = [self[:,i*(self.ncols()//(degree+1)):(i+1)*(self.ncols()//(degree+1))] for i in range(degree+1)]
@@ -19306,13 +19311,7 @@ cdef class Matrix(Matrix1):
         """
         from sage.matrix.constructor import matrix
         import math
-        import time
         from sage.combinat.permutation import Permutation
-        
-        #DEBUG
-        time_idx = 0
-        start = time.time()
-        #DEBUG
         
         m = self.nrows()
         
@@ -19379,7 +19378,7 @@ cdef class Matrix(Matrix1):
         col_profile = M.pivots()
         return tuple(row_profile_K), M, col_profile
     
-    def linear_interpolation_basis(self, J, degree, variable, shift=None):
+    def linear_interpolation_basis(self, J, degree, var_name, shift=None):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
 
@@ -19396,6 +19395,9 @@ cdef class Matrix(Matrix1):
         """
         from sage.combinat.permutation import Permutation
         from sage.matrix.constructor import matrix
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        
+        poly_ring = PolynomialRing(self.base_ring(),var_name)
         
         m = self.nrows()
         
@@ -19421,7 +19423,7 @@ cdef class Matrix(Matrix1):
         row_profile, pivot, col_profile = self.krylov_rank_profile(J,degree,shift)
         
         if len(row_profile) == 0:
-            return matrix.identity(self.base_ring(),m)
+            return matrix.identity(poly_ring,m)
         
         # (c_k, d_k) = phi^-1 (row_i)
         c, d = zip(*(phi_inv(i) for i in row_profile))
@@ -19456,6 +19458,9 @@ cdef class Matrix(Matrix1):
         
         # linear interpolation basis in shifted Popov form
         uncompressed_basis = matrix.block([[-relation,matrix.identity(m)]],subdivide=False)
+        
+        # construct variable
+        variable = poly_ring.gen()
         
         # compression of basis into polynomial form
         basis_rows = [[0]*m for i in range(m)]
