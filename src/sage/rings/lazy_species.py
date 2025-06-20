@@ -804,7 +804,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
         EXAMPLES::
 
-            sage: L.<X> = LazySpecies(QQ)
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: L.Sets().restrict(1).revert() - (1+X).combinatorial_logarithm()
             O^7
 
