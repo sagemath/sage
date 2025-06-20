@@ -1448,6 +1448,31 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         self._left = left
         self._args = args
 
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: subsets = E^2
+            sage: pairs = E*E.restrict(2, 2)
+            sage: G = subsets.functorial_composition(pairs)
+            sage: G.generating_series()[9]
+            536870912/2835
+        """
+        f = self._left.generating_series()
+        g = self._args[0].generating_series()
+
+        def coefficient(n):
+            fact = factorial(n)
+            g_count = g[n] * fact
+            f_count = f[g_count] * factorial(g_count)
+            return f_count / fact
+
+        return g.parent()(coefficient)
+
 
 class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
     def __init__(self, left, *args):
