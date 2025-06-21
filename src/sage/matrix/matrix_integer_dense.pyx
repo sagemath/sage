@@ -3458,6 +3458,84 @@ cdef class Matrix_integer_dense(Matrix_dense):
         from sage.matrix.misc_flint import matrix_integer_dense_rational_reconstruction
         return matrix_integer_dense_rational_reconstruction(self, N)
 
+    def _approximate_closest_vector_after_LLL(self, t, delta=None, algorithm='embedding', *args, **kwargs):
+        r"""
+        Compute a vector `w` in the lattice spanned by the rows of this matrix
+        which is close to the target vector `t`.
+        This matrix must already be LLL-reduced.
+
+        .. SEEALSO::
+
+            :meth:`~sage.modules.free_module_integer.FreeModule_integer.approximate_closest_vector`
+            for the details of the arguments.
+
+        TESTS::
+
+            sage: L = matrix([[101, 0, 0, 0], [0, 101, 0, 0],
+            ....:            [0, 0, 101, 0], [-28, 39, 45, 1]])
+            sage: t = vector([1337]*4)
+            sage: L.LLL()._approximate_closest_vector_after_LLL(t)
+            (1326, 1349, 1339, 1345)
+        """
+        from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
+        B = self
+        t = vector(t)
+
+        if algorithm == 'embedding':
+            L = matrix(QQ, B.nrows()+1, B.ncols()+1)
+            L.set_block(0, 0, B)
+            L.set_block(B.nrows(), 0, matrix(t))
+            weight = (B[-1]*B[-1]).isqrt()+1  # Norm of the largest vector
+            L[-1, -1] = weight
+
+            # The vector should be the last row but we iterate just in case
+            for v in reversed(L.LLL(delta=delta, *args, **kwargs).rows()):
+                if abs(v[-1]) == weight:
+                    return t - v[:-1]*v[-1].sign()
+            raise ValueError('No suitable vector found in basis.'
+                             'This is a bug, please report it.')
+
+        elif algorithm == 'nearest_plane':
+            G = B.gram_schmidt()[0]
+
+            b = t
+            for i in reversed(range(G.nrows())):
+                b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
+            return (t - b).change_ring(ZZ)
+
+        elif algorithm == 'rounding_off':
+            # t = x*B might not have a solution over QQ so we instead solve
+            # the system x*B*B^T = t*B^T which will be the "closest" solution
+            # if it does not exist, same effect as using the pseudo-inverse
+            sol = (B*B.T).solve_left(t*B.T)
+            return vector(ZZ, [QQ(x).round('even') for x in sol])*B
+
+        else:
+            raise ValueError("algorithm must be one of 'embedding', 'nearest_plane' or 'rounding_off'")
+
+    def approximate_closest_vector(self, t, delta=None, algorithm='embedding', *args, **kwargs):
+        """
+        Compute a vector `w` in the lattice spanned by the rows of this matrix
+        which is close to the target vector `t`.
+        This matrix must already be LLL-reduced.
+
+        The meaning of the arguments are explained in
+        :meth:`~sage.modules.free_module_integer.FreeModule_integer.approximate_closest_vector`.
+        Using that method is in fact more idiomatic, but the construction of a
+        :class:`~sage.modules.free_module_integer.IntegerLattice` has overheads.
+
+        TESTS::
+
+            sage: L = matrix([[101, 0, 0, 0], [0, 101, 0, 0],
+            ....:            [0, 0, 101, 0], [-28, 39, 45, 1]])
+            sage: t = vector([1337]*4)
+            sage: L.approximate_closest_vector(t)
+            (1326, 1349, 1339, 1345)
+        """
+        return self.LLL(*args, delta=delta, **kwargs)._approximate_closest_vector_after_LLL(
+                t, delta, algorithm, *args, **kwargs)
+
     def randomize(self, density=1, x=None, y=None, distribution=None,
                   nonzero=False):
         """
