@@ -6949,7 +6949,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         self.__echelonized_basis_matrix = self._echelonized_basis(self.ambient_module(), self.__converted_basis)
         return self.__echelonized_basis_matrix
 
-    # Expensive computation
+    # Expensive computation, invoked only once - either in constructor, or
+    # otherwise in echelonized_basis_matrix() method.
     # Cannot be cached currently because some downstream classes do not
     # provide hashable parameters
     # TODO: Make cached method
