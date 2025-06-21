@@ -6952,6 +6952,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
     # Expensive computation
     # Cannot be cached currently because some downstream classes do not
     # provide hashable parameters
+    # TODO: Make cached method
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
@@ -8102,6 +8103,7 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
     # Expensive computation
     # Cannot be cached currently because some downstream classes do not
     # provide hashable parameters
+    # TODO: Make cached method
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
