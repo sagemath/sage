@@ -3466,7 +3466,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         .. SEEALSO::
 
-            :meth:`~sage.modules.free_module_integer.FreeModule_integer.approximate_closest_vector`
+            :meth:`~sage.modules.free_module_integer.FreeModule_submodule_with_basis_integer.approximate_closest_vector`.
             for the details of the arguments.
 
         TESTS::
@@ -3518,12 +3518,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         Compute a vector `w` in the lattice spanned by the rows of this matrix
         which is close to the target vector `t`.
-        This matrix must already be LLL-reduced.
 
         The meaning of the arguments are explained in
-        :meth:`~sage.modules.free_module_integer.FreeModule_integer.approximate_closest_vector`.
+        :meth:`~sage.modules.free_module_integer.FreeModule_submodule_with_basis_integer.approximate_closest_vector`.
         Using that method is in fact more idiomatic, but the construction of a
-        :class:`~sage.modules.free_module_integer.IntegerLattice` has overheads.
+        :func:`~sage.modules.free_module_integer.IntegerLattice` has overheads.
 
         TESTS::
 
