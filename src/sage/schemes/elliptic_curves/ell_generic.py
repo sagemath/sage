@@ -1389,6 +1389,44 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         c4, _ = self.c_invariants()
         return c4**3 / self.discriminant()
 
+    def __truediv__(self, Y):
+        """
+        Return the base extension of ``self`` to ``Y``.
+        If ``Y`` is a point or a list/tuple of points on ``self``,
+        return the quotient of ``self`` by these points instead.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(41), [30, 12])
+            sage: E / GF(41^2)
+            Elliptic Curve defined by y^2 = x^3 + 30*x + 12 over Finite Field in z2 of size 41^2
+            sage: E / E(26, 0)
+            Elliptic Curve defined by y^2 = x^3 + 31*x + 32 over Finite Field of size 41
+            sage: E.isogeny(E(26, 0)).codomain()  # same as above
+            Elliptic Curve defined by y^2 = x^3 + 31*x + 32 over Finite Field of size 41
+
+        TESTS::
+
+            sage: (E / (E(26, 0), E(5, 0))).j_invariant()
+            5
+            sage: (E / E(26, 0)).j_invariant()
+            29
+            sage: (E / [E(26, 0)]).j_invariant()
+            29
+            sage: E / []
+            Elliptic Curve defined by y^2 = x^3 + 30*x + 12 over Finite Field of size 41
+            sage: E / ()
+            Elliptic Curve defined by y^2 = x^3 + 30*x + 12 over Finite Field of size 41
+        """
+        if isinstance(Y, ell_point.EllipticCurvePoint):
+            return self.isogeny(Y).codomain()
+        if isinstance(Y, (list, tuple)):
+            if not Y:
+                return self
+            if isinstance(Y[0], ell_point.EllipticCurvePoint):
+                return self.isogeny(Y).codomain()
+        return super().__truediv__(Y)
+
     def base_extend(self, R):
         r"""
         Return the base extension of ``self`` to `R`.
