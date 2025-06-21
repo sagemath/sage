@@ -6732,6 +6732,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 raise TypeError("each element of basis must be in "
                                 "the ambient vector space")
 
+        basis = basis_seq(self, basis)
+
         # This is original basis converted to ambient module/vector space.
         # Without the conversion, the echelon form computation fails with
         # a segmentation fault, while clearing out the denominator via
@@ -6942,7 +6944,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         self.__echelonized_basis_matrix = self._echelonized_basis(self.ambient_module(), self.__converted_basis)
         return self.__echelonized_basis_matrix
 
-    # Expensive computation, should be invoked only once
+    # Expensive computation, hence cached
+    @cached_method
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
@@ -7683,6 +7686,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         T = self.echelon_to_user_matrix()
         return T.linear_combination_of_rows(w)
 
+    @cached_method
     def echelonized_basis(self):
         """
         Return the basis for ``self`` in echelon form.
@@ -7698,16 +7702,11 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V.span(B) == M
             True
         """
-        try:
-            return self.__echelonized_basis
-        except AttributeError:
-            pass
         C = self.element_class
         echelonized_basis = self.echelonized_basis_matrix().rows()
         w = [C(self, x.list(), coerce=False, copy=True)
                 for x in echelonized_basis]
-        self.__echelonized_basis = basis_seq(self, w)
-        return self.__echelonized_basis
+        return basis_seq(self, w)
 
     def echelon_coordinate_vector(self, v, check=True):
         """
@@ -8094,6 +8093,8 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
         """
         return 1
 
+    # Expensive computation, hence cached
+    @cached_method
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
