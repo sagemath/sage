@@ -1940,6 +1940,22 @@ def block_matrix(*args, **kwds):
         [-----+-----]
         [ 1  0| 3  5]
         [ 0  1| 8 13]
+
+    Ensure errors are raised if vectors are passed in::
+
+        sage: matrix.block([
+        ....:     [matrix.zero(2), vector([0]*2)],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: block_matrix only accept matrices, not vectors
+        sage: matrix.block([
+        ....:     [matrix.zero(2), vector([0]*2)],
+        ....:     [0, matrix.zero(2)],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: block_matrix only accept matrices, not vectors
     """
     args = list(args)
     sparse = kwds.get('sparse', None)
@@ -2049,6 +2065,12 @@ def block_matrix(*args, **kwds):
                         for i in range(nrows)]
 
     # At this point sub_matrices is a list of lists
+
+    from sage.structure.element import Vector
+    for row in sub_matrices:
+        for M in row:
+            if isinstance(M, Vector):
+                raise ValueError("block_matrix only accept matrices, not vectors")
 
     # determine the base ring and sparsity
     if ring is None:
