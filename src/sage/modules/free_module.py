@@ -5871,6 +5871,7 @@ class FreeModule_ambient(FreeModule_generic):
             self.__basis = basis_seq(self, w)
             return self.__basis
 
+    @cached_method
     def echelonized_basis(self):
         """
         Return a basis for this ambient free module in echelon form.
@@ -6911,6 +6912,10 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         from sage.categories.pushout import SubspaceFunctor
         return SubspaceFunctor(self.basis()), self.ambient_module()
 
+    # echelonized_basis() method depends on this method because this method's
+    # corresponding attribute is stored during initialization as well
+    # Further, this method performs internal caching due to the corresponding
+    # attribute being stored in the constructor as well
     def echelonized_basis_matrix(self):
         """
         Return basis matrix for ``self`` in row echelon form.
@@ -6944,8 +6949,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         self.__echelonized_basis_matrix = self._echelonized_basis(self.ambient_module(), self.__converted_basis)
         return self.__echelonized_basis_matrix
 
-    # Expensive computation, hence cached
-    @cached_method
+    # Expensive computation
+    # Cannot be cached currently because some downstream classes do not
+    # provide hashable parameters
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
@@ -8093,8 +8099,9 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
         """
         return 1
 
-    # Expensive computation, hence cached
-    @cached_method
+    # Expensive computation
+    # Cannot be cached currently because some downstream classes do not
+    # provide hashable parameters
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
