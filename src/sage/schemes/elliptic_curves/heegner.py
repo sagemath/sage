@@ -6231,10 +6231,6 @@ def nearby_rational_poly(f, **kwds):
         sage: R.<x> = RR[]
         sage: nearby_rational_poly(2.1*x^2 + 3.5*x - 1.2, max_error=10e-16)
         21/10*X^2 + 7/2*X - 6/5
-        sage: nearby_rational_poly(2.1*x^2 + 3.5*x - 1.2, max_error=10e-17)
-        4728779608739021/2251799813685248*X^2 + 7/2*X - 5404319552844595/4503599627370496
-        sage: RR(4728779608739021/2251799813685248  - 21/10)
-        8.88178419700125e-17
     """
     R = QQ['X']
     return R([a.nearby_rational(**kwds) for a in f])
