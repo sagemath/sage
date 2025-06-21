@@ -3026,7 +3026,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``'flatter'`` -- external executable ``flatter``, requires manual install (see caveats below).
           Note that sufficiently new version of ``pari`` also supports FLATTER algorithm, see
-          <https://pari.math.u-bordeaux.fr/dochtml/html/Vectors__matrices__linear_algebra_and_sets.html#qflll>_.
+          https://pari.math.u-bordeaux.fr/dochtml/html/Vectors__matrices__linear_algebra_and_sets.html#qflll.
 
         OUTPUT: a matrix over the integers
 
