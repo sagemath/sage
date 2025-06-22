@@ -670,14 +670,6 @@ class FreeQuadraticModule_generic_pid(free_module.FreeModule_generic_pid,
             Traceback (most recent call last):
             ...
             ValueError: the given basis vectors must be linearly independent.
-
-        The input vectors need not be linearly independent when ``check`` is set to ``False``::
-
-            sage: W.span_of_basis([ [1,2,0], [2,4,0] ], check=False)
-            Free module of degree 3 and rank 1 over Integer Ring
-            User basis matrix:
-            [1 2 0]
-            [2 4 0]
         """
         return FreeQuadraticModule_submodule_with_basis_pid(
             self.ambient_module(), basis=basis, inner_product_matrix=self.inner_product_matrix(),

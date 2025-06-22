@@ -4266,14 +4266,6 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             Traceback (most recent call last):
             ...
             ValueError: the given basis vectors must be linearly independent.
-
-        The input vectors need not be linearly independent when ``check`` is set to ``False``::
-
-            sage: W.span_of_basis([ [1,2,0], [2,4,0] ], check=False)
-            Free module of degree 3 and rank 1 over Integer Ring
-            User basis matrix:
-            [1 2 0]
-            [2 4 0]
         """
         if isinstance(basis, FreeModule_generic):
             basis = basis.gens()
@@ -4819,14 +4811,6 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             Traceback (most recent call last):
             ...
             ValueError: the given basis vectors must be linearly independent.
-
-        The basis vectors can be linearly dependent when ``check`` is set to ``False``::
-
-            sage: W.span_of_basis([[2,2,2], [3,3,3]], check=False)
-            Vector space of degree 3 and dimension 1 over Finite Field of size 7
-            User basis matrix:
-            [2 2 2]
-            [3 3 3]
         """
         if isinstance(basis, FreeModule_generic):
             basis = basis.gens()
@@ -6736,11 +6720,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         basis = basis_seq(self, basis)
 
         # This is original basis converted to ambient module/vector space.
-        # Without the conversion, the echelon form computation fails with
-        # a segmentation fault, while clearing out the denominator via
-        # multiplication. This is probably due to different ring structures
-        # or different implementations of converted and non converted
-        # elements.
+        # Without the conversion, the echelon form computation fails with a
+        # segmentation fault because of issue 40282, while clearing out the
+        # denominator via multiplication.
         self.__converted_basis = basis
 
         MS = sage.matrix.matrix_space.MatrixSpace(
@@ -6799,6 +6781,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 # Will throw error if matrix space and basis_seq have different sizes
                 matrix = MS_ECH(basis_seq(self, w))
 
+                # TODO: check that span of echelonized_basis and self.__basis is same
                 if check and rank != matrix.rank():
                     raise ValueError("the given echelonized basis vectors do not have the correct rank")
 
