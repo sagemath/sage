@@ -567,12 +567,12 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         if isinstance(cons[0], (tuple, list)) or cons[0] is None:
             if gradient is not None:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, iprint=-1, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, **args)[0]
                 else:
                     min = optimize.fmin_tnc(f, x0, gradient, bounds=cons, messages=0, **args)[0]
             else:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, iprint=-1, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, **args)[0]
                 else:
                     min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
         elif isinstance(cons[0], (function_type, Expression)):
