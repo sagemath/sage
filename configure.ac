@@ -101,6 +101,23 @@ AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at bui
 
 #---------------------------------------------------------
 
+# Check for systems where Meson build is recommended
+AC_ARG_ENABLE([meson-check],
+  [AS_HELP_STRING([--disable-meson-check],
+    [do not fail the build if running on systems where Meson is preferred])],
+  [enable_meson_check=$enableval],
+  [enable_meson_check=yes])
+
+if test "$enable_meson_check" != no; then
+  AC_MSG_CHECKING([for Arch Linux])
+  if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
+    AC_MSG_RESULT([yes])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+  else
+    AC_MSG_RESULT([no])
+  fi
+fi
+
 AC_ARG_ENABLE([build-as-root],
               [AS_HELP_STRING([--enable-build-as-root],
                               [allow building Sage as root (for use in containers)])],
@@ -288,6 +305,16 @@ if test -z "$MAKE"; then
     AS_IF([test x$command_MAKE != x$ac_cv_path_MAKE],
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
+
+# Check for bzip2 and libbz2 
+   AC_CHECK_HEADER(bzlib.h, [
+      AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
+        AC_PATH_PROG([bzip2_prog], [bzip2])
+        AS_IF([test x$bzip2_prog = x
+	], [AC_MSG_ERROR([could not find bzip2 executable. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
+      ], [AC_MSG_ERROR([could not find libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
+    ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
+   ])
 
 # Check for system python
 AC_MSG_CHECKING([for Python])
