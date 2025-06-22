@@ -519,9 +519,9 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         sage: x, y = var('x y')
         sage: f(x,y) = (100 - x) + (1000 - y)
         sage: c(x,y) = x + y - 479  # > 0
-        sage: minimize_constrained(f, [c], [100, 300])
+        sage: minimize_constrained(f, [c], [100, 300]) # random
         (805.985..., 1005.985...)
-        sage: minimize_constrained(f, c, [100, 300])
+        sage: minimize_constrained(f, c, [100, 300])   # random
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
@@ -532,7 +532,7 @@ def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **a
         sage: f(y,x) = x - y
         sage: c1(y,x) = x
         sage: c2(y,x) = 1-y
-        sage: minimize_constrained(f, [c1, c2], (0,0))
+        sage: minimize_constrained(f, [c1, c2], (0,0)) # abs tol 1e-04
         (1.0, 0.0)
     """
     from sage.structure.element import Expression
