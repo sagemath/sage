@@ -1716,6 +1716,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
                 "\r\n": " ",
                 "\\\\\\\\": "\\",
                 "\\\\\\": "\\",
+                "\\\\": "\\",
             },
             s,
         )
