@@ -1514,6 +1514,17 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
     def basis(self):
         """
         Return a basis for ``self``
+
+        EXAMPLES::
+
+            sage: W = InfiniteDifferentialWeylAlgebra(QQ)
+            sage: B = W.basis(); B
+            Lazy family (basis map(i))_{i in The Cartesian product of
+             (Free abelian monoid indexed by Non negative integers,
+             Free abelian monoid indexed by Non negative integers)}
+            sage: idx = W._var_index
+            sage: B[(idx.an_element(), idx.one())]
+            x[0]*x[1]^2*x[2]^3*x[42]
         """
         index_set = cartesian_product([self._var_index, self._diff_index])
         one = self.base_ring().one()
