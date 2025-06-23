@@ -46,7 +46,7 @@ Array = multiprocessing.Array
 prefix = 'has_'
 
 
-def has_internet():
+def has_internet() -> bool:
     """
     Test if Internet is available.
 
@@ -63,7 +63,7 @@ def has_internet():
     return Internet().is_present()
 
 
-def has_latex():
+def has_latex() -> bool:
     """
     Test if Latex is available.
 
@@ -77,7 +77,7 @@ def has_latex():
     return latex().is_present()
 
 
-def has_xelatex():
+def has_xelatex() -> bool:
     """
     Test if xelatex is available.
 
@@ -91,7 +91,7 @@ def has_xelatex():
     return xelatex().is_present()
 
 
-def has_pdflatex():
+def has_pdflatex() -> bool:
     """
     Test if pdflatex is available.
 
@@ -105,7 +105,7 @@ def has_pdflatex():
     return pdflatex().is_present()
 
 
-def has_lualatex():
+def has_lualatex() -> bool:
     """
     Test if lualatex is available.
 
@@ -119,7 +119,7 @@ def has_lualatex():
     return lualatex().is_present()
 
 
-def has_magma():
+def has_magma() -> bool:
     """
     Test if Magma is available.
 
@@ -133,7 +133,7 @@ def has_magma():
     return Magma().is_present()
 
 
-def has_matlab():
+def has_matlab() -> bool:
     """
     Test if Matlab is available.
 
@@ -147,7 +147,7 @@ def has_matlab():
     return Matlab().is_present()
 
 
-def has_mathematica():
+def has_mathematica() -> bool:
     """
     Test if Mathematica is available.
 
@@ -161,7 +161,7 @@ def has_mathematica():
     return Mathematica().is_present()
 
 
-def has_maple():
+def has_maple() -> bool:
     """
     Test if Maple is available.
 
@@ -175,7 +175,7 @@ def has_maple():
     return Maple().is_present()
 
 
-def has_macaulay2():
+def has_macaulay2() -> bool:
     """
     Test if Macaulay2 is available.
 
@@ -189,7 +189,7 @@ def has_macaulay2():
     return Macaulay2().is_present()
 
 
-def has_octave():
+def has_octave() -> bool:
     """
     Test if Octave is available.
 
@@ -203,7 +203,7 @@ def has_octave():
     return Octave().is_present()
 
 
-def has_pandoc():
+def has_pandoc() -> bool:
     """
     Test if pandoc is available.
 
@@ -217,7 +217,7 @@ def has_pandoc():
     return Pandoc().is_present()
 
 
-def has_scilab():
+def has_scilab() -> bool:
     """
     Test if Scilab is available.
 
@@ -235,7 +235,7 @@ def has_scilab():
         return False
 
 
-def has_cplex():
+def has_cplex() -> bool:
     """
     Test if CPLEX is available.
 
@@ -249,7 +249,7 @@ def has_cplex():
     return CPLEX().is_present()
 
 
-def has_gurobi():
+def has_gurobi() -> bool:
     """
     Test if Gurobi is available.
 
@@ -263,7 +263,7 @@ def has_gurobi():
     return Gurobi().is_present()
 
 
-def has_graphviz():
+def has_graphviz() -> bool:
     """
     Test if graphviz (dot, twopi, neato) are available.
 
@@ -277,7 +277,7 @@ def has_graphviz():
     return Graphviz().is_present()
 
 
-def has_ffmpeg():
+def has_ffmpeg() -> bool:
     """
     Test if ffmpeg is available.
 
@@ -291,7 +291,7 @@ def has_ffmpeg():
     return FFmpeg().is_present()
 
 
-def has_imagemagick():
+def has_imagemagick() -> bool:
     """
     Test if ImageMagick (command magick or convert) is available.
 
@@ -305,7 +305,7 @@ def has_imagemagick():
     return ImageMagick().is_present()
 
 
-def has_dvipng():
+def has_dvipng() -> bool:
     """
     Test if dvipng is available.
 
@@ -319,7 +319,7 @@ def has_dvipng():
     return dvipng().is_present()
 
 
-def has_pdf2svg():
+def has_pdf2svg() -> bool:
     """
     Test if pdf2svg is available.
 
@@ -333,7 +333,7 @@ def has_pdf2svg():
     return pdf2svg().is_present()
 
 
-def has_rubiks():
+def has_rubiks() -> bool:
     """
     Test if the rubiks package (``cu2``, ``cubex``, ``dikcube``,
     ``mcube``, ``optimal``, and ``size222``) is available.
@@ -348,7 +348,7 @@ def has_rubiks():
     return Rubiks().is_present()
 
 
-def has_4ti2():
+def has_4ti2() -> bool:
     """
     Test if the 4ti2 package is available.
 

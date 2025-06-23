@@ -2625,7 +2625,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         try:
             from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
         except ImportError:
-            # Falback to using the KL polynomial
+            # Fallback to using the KL polynomial
             from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             q = PolynomialRing(R, 'q').gen()
@@ -2887,7 +2887,7 @@ def a(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    rd = dict((P(h), one) for h in rs)
+    rd = {P(h): one for h in rs}
     return sgalg._from_dict(rd)
 
 
@@ -2971,7 +2971,7 @@ def b(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    cd = dict((P(v), v.sign() * one) for v in cs)
+    cd = {P(v): v.sign() * one for v in cs}
     return sgalg._from_dict(cd)
 
 

@@ -648,7 +648,7 @@ class AbstractTree:
 
     def contour_traversal(self, first_action=None, middle_action=None, final_action=None, leaf_action=None):
         r"""
-        Run the counterclockwise countour traversal algorithm (iterative
+        Run the counterclockwise contour traversal algorithm (iterative
         implementation) and subject every node encountered
         to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it.
 
@@ -1156,6 +1156,23 @@ class AbstractTree:
                 for p in t.paths():
                     yield (i,) + p
 
+    def _require_mutable(self):
+        """
+        Internal function. Although the general usage of abstract tree is often
+        in a non-mutable way, mutable usage also exists. This would affect
+        precomputed number such as _node_number. This function clears out the
+        precomputed values when there is a mutable usage.
+        
+        Values cleared:
+        
+        - ``_node_number`` : number of nodes in the tree
+        """
+        super()._require_mutable()
+        try:
+            del self._node_number
+        except AttributeError:
+           pass
+
     def node_number(self):
         """
         Return the number of nodes of ``self``.
@@ -1215,8 +1232,8 @@ class AbstractTree:
                 # Using post-order
                 # Thus _node_number is computed for all non-empty subtrees
                 node._node_number = Integer(1)
-                node._node_number += sum([e._node_number for e in node
-                                             if not e.is_empty()])
+                node._node_number += sum(e._node_number for e in node
+                                         if not e.is_empty())
 
         self.iterative_post_order_traversal(count)
         return self._node_number
