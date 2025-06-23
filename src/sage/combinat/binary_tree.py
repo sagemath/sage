@@ -861,7 +861,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             return newtree
 
         return aux(self, self.parent().labelled_trees(), [shift])
-        
 
     def show(self, with_leaves=False):
         """

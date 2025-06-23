@@ -1162,16 +1162,16 @@ class AbstractTree:
         in a non-mutable way, mutable usage also exists. This would affect
         precomputed number such as _node_number. This function clears out the
         precomputed values when there is a mutable usage.
-        
+
         Values cleared:
-        
+
         - ``_node_number`` : number of nodes in the tree
         """
         super()._require_mutable()
         try:
             del self._node_number
         except AttributeError:
-           pass
+            pass
 
     def node_number(self):
         """
@@ -1222,11 +1222,11 @@ class AbstractTree:
             return self._node_number
         except AttributeError:
             pass
-        
+
         if self.is_empty():
             self._node_number = Integer(0)
             return self._node_number
-        
+
         def count(node):
             if not node.is_empty():
                 # Using post-order
