@@ -312,11 +312,16 @@ def differential_basis_baker(f):
     that is nonsingular outside the coordinate points at infinity
     (1:0:0), (0:1:0), and (0:0:1).
 
-    This method applies Baker's theorem, which states that if a curve's
-    singularities are restricted to the coordinate vertices in the projective
-    plane and it meets certain easily testable genericity criteria, a basis
-    for the regular differentials can be derived from the interior integral
-    points of its Newton polygon.
+    Baker's theorem tells us that if a curve has its singularities at 
+    the coordinate vertices and meets some further easily tested 
+    genericity criteria, then we can read off a basis for the regular 
+    differentials from the interior of the Newton polygon spanned by 
+    the monomials. While this theorem only applies to special plane curves 
+    it is worth implementing because the analysis is relatively cheap 
+    and it applies to a lot of commonly encountered curves (e.g., 
+    curves given by a hyperelliptic model). Other advantages include 
+    that we can do the computation over any exact base ring 
+    (the alternative Singular based method requires rationals).
 
     This approach is advantageous for curves meeting these criteria (e.g.,
     many hyperelliptic curves) because it is computationally inexpensive,
@@ -805,7 +810,7 @@ class RiemannSurface:
             sage: f = w^2 - z^4 + 1
             sage: S = RiemannSurface(f)
 
-        Find the w-values above the origin (i.e. solutions to `w^2 + 1 = 0`)::
+        Find the w-values above the origin, i.e. solutions to `w^2 + 1 = 0`::
 
             sage: S.w_values(0)  # abs tol 1e-14
             [-1.00000000000000*I, 1.00000000000000*I]
@@ -2886,10 +2891,11 @@ class RiemannSurface:
         Jacobian of the Riemann surface.
 
         .. NOTE::
-        The automorphism group of the Riemann surface itself can be
-        recovered from this: if the curve is hyperelliptic, this group is
-        isomorphic to the curve's automorphism group. Otherwise, one typically
-        quotients by the central element corresponding to multiplication by -1.
+        The symplectic automorphism group of the Jacobian of the Riemann
+        surface. The automorphism group of the Riemann surface itself can be
+        recovered from this; if the curve is hyperelliptic, then it is
+        identical, and if not, then one divides out by the central element
+        corresponding to multiplication by -1.
 
         EXAMPLES::
 
@@ -3963,9 +3969,9 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
 
     OUTPUT:
 
-    A list of `2*g1 \times 2*g2` integer matrices (where `g1` and `g2` are
-    the dimensions of `M1` and `M2` respectively). For sufficiently
-    chosen `r` and `b-r`, these matrices form a `\ZZ`-basis for the
+    A list of `2*g \times 2*h` integer matrices (where `g` and `h` are
+    the dimensions of `M1` and `M2` respectively). When `r` and `b-r` are 
+    chosen to be sufficiently large, these matrices form a `\ZZ`-basis for the
     module of transformations `(D, B; C, A)` satisfying the condition.
 
     EXAMPLES::
