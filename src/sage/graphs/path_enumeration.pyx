@@ -1383,6 +1383,7 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         for e in temp_dict:
             reduced_cost[e[0], e[1]] = temp_dict[e[0], e[1]]
 
+
 def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                                 by_weight=False, check_weight=True,
                                 report_edges=False,
@@ -1486,16 +1487,10 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     if self.has_loops() or self.allows_multiple_edges():
         G = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
     else:
-        G = self.copy()
+        G = self.copy(immutable=False)
 
     G.delete_edges(G.incoming_edges(source, labels=False))
     G.delete_edges(G.outgoing_edges(target, labels=False))
-
-    if weight_function is not None:
-        by_weight = True
-    if weight_function is None and by_weight:
-        def weight_function(e):
-            return e[2]
 
     by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                            weight_function=weight_function,
@@ -1517,14 +1512,15 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     reverse_graph = G.reverse()
     dist, successor = shortest_paths(reverse_graph, target, weight_function=reverse_weight_function,
                                      algorithm='Dijkstra_Boost')
-    cdef set unnecessary_vertices = set(G) - set(dist) # no path to target
-    if source in unnecessary_vertices: # no path from source to target
+    cdef set unnecessary_vertices = set(G) - set(dist)  # no path to target
+    if source in unnecessary_vertices:  # no path from source to target
         return
 
     # sidetrack cost
     cdef dict sidetrack_cost = {(e[0], e[1]): weight_function(e) + dist[e[1]] - dist[e[0]]
                                 for e in G.edge_iterator()
                                 if e[0] in dist and e[1] in dist}
+
     def sidetrack_length(path):
         return sum(sidetrack_cost[e] for e in zip(path[:-1], path[1:]))
 
@@ -1567,9 +1563,8 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
 
         # ancestor_idx_dict[v] := the first vertex reachable by edges of
         #                    first shortest path tree from v
-        ancestor_idx_dict = dict()
-        for i, v in enumerate(path):
-            ancestor_idx_dict[v] = i
+        ancestor_idx_dict = {v: i for i, v in enumerate(path)}
+
         def ancestor_idx_func(v):
             if v in ancestor_idx_dict:
                 return ancestor_idx_dict[v]
@@ -1596,7 +1591,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             original_cost = sidetrack_length(path[:dev_idx + 1])
             for deviation_i in range(dev_idx, len(path) - 1):
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
-                    if e[1] in path[:deviation_i + 2]: # e[1] is red or e in path
+                    if e[1] in path[:deviation_i + 2]:  # e[1] is red or e in path
                         continue
                     ancestor_idx = ancestor_idx_func(e[1])
                     if ancestor_idx == -1:
