@@ -6664,6 +6664,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
              Category of subobjects of sets
 
         Test for echelonization related parameters::
+
             sage: V = FreeModule_ambient_pid(ZZ, 3)
             sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]]) # echelonized is False by default
             sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
@@ -6688,6 +6689,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             [0 0 1]
 
         Test that error is thrown when echelonized basis has incorrect size::
+
             sage: V = FreeModule_ambient_pid(ZZ, 3)
             sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3]]); W
             Free module of degree 3 and rank 1 over Integer Ring
