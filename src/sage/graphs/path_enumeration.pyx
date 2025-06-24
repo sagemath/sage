@@ -1460,16 +1460,16 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         ....:                                  labels=True, report_edges=True))
         [(9.0, [(5, 2, 5), (2, 1, 4)]),
          (18.0, [(5, 2, 5), (2, 0, 5), (0, 3, 1), (3, 1, 7)]),
-         (19.0, [(5, 4, 9), (4, 1, 10)]),
          (19.0, [(5, 2, 5), (2, 0, 5), (0, 1, 9)]),
+         (19.0, [(5, 4, 9), (4, 1, 10)]),
          (19.0, [(5, 4, 9), (4, 3, 3), (3, 1, 7)]),
          (20.0, [(5, 4, 9), (4, 3, 3), (3, 2, 4), (2, 1, 4)]),
          (22.0, [(5, 2, 5), (2, 0, 5), (0, 4, 2), (4, 1, 10)]),
          (22.0, [(5, 2, 5), (2, 0, 5), (0, 4, 2), (4, 3, 3), (3, 1, 7)]),
          (23.0, [(5, 2, 5), (2, 0, 5), (0, 3, 1), (3, 4, 2), (4, 1, 10)]),
          (25.0, [(5, 4, 9), (4, 0, 8), (0, 3, 1), (3, 1, 7)]),
-         (26.0, [(5, 4, 9), (4, 0, 8), (0, 1, 9)]),
          (26.0, [(5, 4, 9), (4, 0, 8), (0, 3, 1), (3, 2, 4), (2, 1, 4)]),
+         (26.0, [(5, 4, 9), (4, 0, 8), (0, 1, 9)]),
          (30.0, [(5, 4, 9), (4, 3, 3), (3, 2, 4), (2, 0, 5), (0, 1, 9)])]
     """
     if not self.is_directed():
@@ -1543,20 +1543,16 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     # candidate_paths collects (cost, path_idx, dev_idx, is_simple)
     # + cost is sidetrack cost from the first shortest path tree T_0
     #   (i.e. real length = cost + shortest_path_length in T_0)
-    cdef priority_queue[PathCandidate] candidate_paths
+    cdef priority_queue[pair[pair[double, bint], pair[int, int]]] candidate_paths
 
     # shortest path function for weighted/unweighted graph using reduced weights
     shortest_path_func = G._backend.bidirectional_dijkstra_special
 
-    candidate_paths.push(PathCandidate(0, 0, 0, True))
+    candidate_paths.push(((0, True), (0, 0)))
     while candidate_paths.size():
-        path_candidate = candidate_paths.top()
+        (negative_cost, is_simple), (path_idx, dev_idx) = candidate_paths.top()
+        cost = -negative_cost
         candidate_paths.pop()
-
-        cost = path_candidate.cost
-        path_idx = path_candidate.path_idx
-        dev_idx = path_candidate.dev_idx
-        is_simple = path_candidate.is_simple
 
         path = idx_to_path[path_idx]
         del idx_to_path[path_idx]
@@ -1602,7 +1598,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                     idx += 1
                     new_cost = original_cost + sidetrack_cost[(e[0], e[1])]
                     new_is_simple = ancestor_idx > deviation_i
-                    candidate_paths.push(PathCandidate(new_cost, new_path_idx, deviation_i + 1, new_is_simple))
+                    candidate_paths.push(((-new_cost, new_is_simple), (new_path_idx, deviation_i + 1)))
                 original_cost += sidetrack_cost[(path[deviation_i], path[deviation_i + 1])]
         else:
             # get a path to target in G \ path[:dev_idx]
@@ -1614,7 +1610,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             idx_to_path[new_path_idx] = new_path
             idx += 1
             new_cost = sidetrack_length(new_path)
-            candidate_paths.push(PathCandidate(new_cost, new_path_idx, dev_idx, True))
+            candidate_paths.push(((-new_cost, True), (new_path_idx, dev_idx)))
 
 
 def _all_paths_iterator(self, vertex, ending_vertices=None,
