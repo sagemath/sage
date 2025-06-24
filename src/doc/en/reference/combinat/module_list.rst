@@ -197,6 +197,7 @@ Comprehensive Module List
     sage/combinat/permutation_cython
     sage/combinat/plane_partition
     sage/combinat/posets/all
+    sage/combinat/posets/bubble_shuffle
     sage/combinat/posets/cartesian_product
     sage/combinat/posets/d_complete
     sage/combinat/posets/elements
@@ -204,6 +205,7 @@ Comprehensive Module List
     sage/combinat/posets/hasse_cython
     sage/combinat/posets/hasse_cython_flint
     sage/combinat/posets/hasse_diagram
+    sage/combinat/posets/hochschild_lattice
     sage/combinat/posets/incidence_algebras
     sage/combinat/posets/lattices
     sage/combinat/posets/linear_extension_iterator
