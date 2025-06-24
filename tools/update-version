@@ -22,7 +22,7 @@ if [ $# -ne 1 ]; then
 fi
 
 if [ -z "$SAGE_ROOT" ]; then
-    die "must be run from within a Sage environment, or with SAGE_ROOT provided"
+    SAGE_ROOT="$(pwd)"
 fi
 
 if [ -z "$SAGE_SRC" ]; then
