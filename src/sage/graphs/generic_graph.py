@@ -1572,8 +1572,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: g.weighted(list(range(5)))
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-            Create a mutable copy, e.g., by `copy(g)`
+            TypeError: this graph is immutable and so cannot be changed
             sage: h = copy(g)    # indirect doctest
             sage: h.add_vertex()
             5
@@ -1751,6 +1750,43 @@ class GenericGraph(GenericGraph_pyx):
                    "meantime if you want to use it please disallow " + name + " using " +
                    functions + ".")
             raise ValueError(msg)
+
+    def _scream_if_immutable(self, message=None):
+        r"""
+        Raise an exception if the graph is immutable.
+
+        This is a helper method to avoid code duplication when trying to modify
+        the graph.
+
+        INPUT:
+
+        - ``message`` -- string (default: ``None``); specify the error message
+          to display instead of the default one
+
+        EXAMPLES::
+
+            sage: G = Graph(immutable=False)
+            sage: G._scream_if_immutable()
+            sage: G = Graph(immutable=True)
+            sage: G._scream_if_immutable()
+            Traceback (most recent call last):
+            ...
+            TypeError: this graph is immutable and so cannot be changed
+            sage: G._scream_if_immutable('this short message')
+            Traceback (most recent call last):
+            ...
+            TypeError: this short message
+            sage: copy(G)._scream_if_immutable()
+            sage: G.copy()._scream_if_immutable()
+            Traceback (most recent call last):
+            ...
+            TypeError: this graph is immutable and so cannot be changed
+            sage: G.copy(immutable=False)._scream_if_immutable()
+        """
+        if self.is_immutable():
+            if message is None:
+                message = "this graph is immutable and so cannot be changed"
+            raise TypeError(message)
 
     def networkx_graph(self, weight_function=None):
         """
@@ -4167,13 +4203,12 @@ class GenericGraph(GenericGraph_pyx):
             sage: gi.name("Hey")
             Traceback (most recent call last):
             ...
-            NotImplementedError: an immutable graph does not change name
+            TypeError: an immutable graph does not change name
         """
         if new is None:
             return getattr(self, '_name', "")
 
-        if self.is_immutable():
-            raise NotImplementedError("an immutable graph does not change name")
+        self._scream_if_immutable("an immutable graph does not change name")
 
         self._name = str(new)
 
@@ -4416,8 +4451,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G_imm.weighted(True)
             Traceback (most recent call last):
             ...
-            TypeError: This graph is immutable and can thus not be changed.
-            Create a mutable copy, e.g., by `copy(g)`
+            TypeError: this graph is immutable and so cannot be changed
             sage: G_mut = copy(G)
             sage: G_mut == G_imm
             True
@@ -4428,9 +4462,7 @@ class GenericGraph(GenericGraph_pyx):
             True
         """
         if new is not None:
-            if self.is_immutable():
-                raise TypeError("This graph is immutable and can thus not be changed. "
-                                "Create a mutable copy, e.g., by `copy(g)`")
+            self._scream_if_immutable()
             if new in [True, False]:
                 self._weighted = new
             else:
@@ -11574,6 +11606,7 @@ class GenericGraph(GenericGraph_pyx):
             0
             Digraph on 1 vertex
         """
+        self._scream_if_immutable()
         return self._backend.add_vertex(name)
 
     def add_vertices(self, vertices):
@@ -11611,6 +11644,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.add_vertices([4, None, None, 5])
             [0, 6]
         """
+        self._scream_if_immutable()
         return self._backend.add_vertices(vertices)
 
     def delete_vertex(self, vertex, in_order=False):
@@ -11670,6 +11704,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.is_planar()
             True
         """
+        self._scream_if_immutable()
         if in_order:
             vertex = self.vertices(sort=True)[vertex]
         if vertex not in self:
@@ -11721,6 +11756,9 @@ class GenericGraph(GenericGraph_pyx):
             True
         """
         vertices = list(vertices)
+        if not vertices:
+            return
+        self._scream_if_immutable()
         for v in vertices:
             if v not in self:
                 raise ValueError("vertex (%s) not in the graph" % str(v))
@@ -12467,6 +12505,7 @@ class GenericGraph(GenericGraph_pyx):
         """
         if len(vertices) <= 1:
             return None
+        self._scream_if_immutable()
         if vertices[0] is None:
             vertices[0] = self.add_vertex()
 
@@ -12545,6 +12584,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.vertices(sort=True)
             [0, 4]
         """
+        self._scream_if_immutable()
         if label is None:
             if v is None:
                 try:
@@ -12623,6 +12663,7 @@ class GenericGraph(GenericGraph_pyx):
             ...
             TypeError: object of type 'sage.rings.integer.Integer' has no len()
         """
+        self._scream_if_immutable()
         if loops is None:
             loops = self.allows_loops()
         self._backend.add_edges(edges, self._directed, remove_loops=not loops)
@@ -12712,6 +12753,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: 0 in F2.degree()
             False
         """
+        self._scream_if_immutable()
         if len(args) == 2:
             edge, k = args
 
@@ -12794,6 +12836,7 @@ class GenericGraph(GenericGraph_pyx):
 
             - :meth:`subdivide_edge` -- subdivides one edge
         """
+        self._scream_if_immutable()
         if isinstance(edges, EdgesView):
             edges = tuple(edges)
         for e in edges:
@@ -12861,6 +12904,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: C.has_edge( (4, 5, 'label') ) # correct!
             False
         """
+        self._scream_if_immutable()
         if label is None:
             if v is None:
                 try:
@@ -12895,6 +12939,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: K12.size()
             120
         """
+        self._scream_if_immutable()
         self._backend.del_edges(edges, self._directed)
 
     def contract_edge(self, u, v=None, label=None):
@@ -12960,6 +13005,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: G.contract_edge(0, 2, 4); G.edges(sort=True)
             [(0, 2, 2), (0, 2, 3), (0, 3, 3), (0, 3, 4), (2, 3, 5)]
         """
+        self._scream_if_immutable()
         # standard code to allow 3 arguments or a single tuple:
         if label is None:
             if v is None:
@@ -13069,6 +13115,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: H.contract_edges([(0, 1, 1), (0, 2, 3)]); H.edges(sort=True)
             [(0, 2, 2), (0, 2, 3), (0, 3, 3), (0, 3, 4), (2, 3, 5)]
         """
+        self._scream_if_immutable()
         if len(set(len(e) for e in edges)) > 1:
             raise ValueError("edge tuples in input should have the same length")
         edge_list = []
@@ -13138,6 +13185,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.edges(sort=True)
             [(1, 0, None), (1, 2, None), (2, 3, None)]
         """
+        self._scream_if_immutable()
         if self.allows_multiple_edges():
             for l in self.edge_label(u, v):
                 self.delete_edge(u, v, l)
@@ -13773,6 +13821,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.edges(sort=True, labels=False)
             [(0, 1), (1, 2)]
         """
+        self._scream_if_immutable()
         if self.allows_multiple_edges():
             if self._directed:
                 for v in self:
@@ -13819,6 +13868,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: D.has_loops()
             False
         """
+        self._scream_if_immutable()
         if vertices is None:
             vertices = self
         for v in vertices:
@@ -13857,6 +13907,7 @@ class GenericGraph(GenericGraph_pyx):
             ''
             sage: H.get_vertex(0)
         """
+        self._scream_if_immutable()
         self.name('')
         self.delete_vertices(self.vertex_iterator())
 
@@ -14618,6 +14669,7 @@ class GenericGraph(GenericGraph_pyx):
             Subgraph of (Petersen graph): Graph on 2 vertices
         """
         if inplace:
+            self._scream_if_immutable()
             G = self
             if vertices is not None:
                 vertices = set(vertices)
@@ -19628,10 +19680,10 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(immutable=True).add_clique([1, 2, 3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
-        if self.is_immutable():
-            raise ValueError("graph is immutable; please change a copy instead (use function copy())")
+        if vertices:
+            self._scream_if_immutable()
         import itertools
         if loops:
             if self.is_directed():
@@ -19703,9 +19755,10 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(immutable=True).add_cycle([1, 2, 3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         if vertices:
+            self._scream_if_immutable()
             self.add_path(vertices)
             if len(vertices) > 1:
                 self.add_edge(vertices[-1], vertices[0])
@@ -19749,10 +19802,11 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(immutable=True).add_path([1, 2, 3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         if not vertices:
             return
+        self._scream_if_immutable()
         self.add_vertices(vertices)
         self.add_edges(zip(vertices[:-1], vertices[1:]))
 
@@ -24209,7 +24263,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: Graph(graphs.PetersenGraph(), immutable=True).relabel({})
             Traceback (most recent call last):
             ...
-            ValueError: To relabel an immutable graph use inplace=False
+            TypeError: to relabel an immutable graph use inplace=False
 
         :issue:`16257`::
 
@@ -24242,8 +24296,7 @@ class GenericGraph(GenericGraph_pyx):
         if immutable:
             raise ValueError("To make an immutable copy use inplace=False")
 
-        if self.is_immutable():
-            raise ValueError("To relabel an immutable graph use inplace=False")
+        self._scream_if_immutable("to relabel an immutable graph use inplace=False")
 
         # If perm is not a dictionary, we build one !
 

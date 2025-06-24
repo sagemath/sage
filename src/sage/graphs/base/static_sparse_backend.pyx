@@ -1519,11 +1519,11 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.add_vertex(1)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
             sage: g.add_vertices([1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         (<StaticSparseCGraph> self._cg).add_vertex(v)
 
@@ -1537,11 +1537,11 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.delete_vertex(1)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
             sage: g.delete_vertices([1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         (<StaticSparseCGraph> self._cg).del_vertex(v)
 
