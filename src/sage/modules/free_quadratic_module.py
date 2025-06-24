@@ -802,14 +802,6 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             Traceback (most recent call last):
             ...
             ValueError: the given basis vectors must be linearly independent.
-
-        The basis vectors can be linearly dependent when ``check`` is set to ``False``::
-
-            sage: W.span_of_basis([[2,2,2], [3,3,3]], check=False)
-            Vector space of degree 3 and dimension 1 over Finite Field of size 7
-            User basis matrix:
-            [2 2 2]
-            [3 3 3]
         """
         return FreeQuadraticModule_submodule_with_basis_field(
             self.ambient_module(), basis=basis,
