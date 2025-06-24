@@ -400,7 +400,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.F()
 
-    _shorthands = tuple(['F', 'G', 'M'])
+    _shorthands = ('F', 'G', 'M')
 
     class F(FQSymBasis_abstract):
         r"""

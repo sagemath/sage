@@ -495,7 +495,7 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
         cat = HopfAlgebras(base_ring).Graded().Connected()
         Parent.__init__(self, base=base_ring, category=cat.WithRealizations())
 
-    _shorthands = ['G']
+    _shorthands = ('G',)
 
     def a_realization(self):
         r"""
@@ -790,7 +790,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         sage: TF(F[[5, 1, 4, 2, 3]])
         F[135|2|4]
     """
-    def __init__(self, base_ring):
+    def __init__(self, base_ring) -> None:
         r"""
         Initialize ``self``.
 
@@ -802,7 +802,7 @@ class FreeSymmetricFunctions_Dual(UniqueRepresentation, Parent):
         cat = HopfAlgebras(base_ring).Graded().Connected()
         Parent.__init__(self, base=base_ring, category=cat.WithRealizations())
 
-    _shorthands = ['F']
+    _shorthands = ('F',)
 
     def a_realization(self):
         r"""

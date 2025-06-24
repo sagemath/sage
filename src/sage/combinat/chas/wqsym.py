@@ -498,7 +498,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.M()
 
-    _shorthands = tuple(['M', 'X', 'C', 'Q', 'Phi'])
+    _shorthands = ('M', 'X', 'C', 'Q', 'Phi')
 
     # add options to class
     class options(GlobalOptions):
