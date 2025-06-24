@@ -34,3 +34,5 @@ zlib-devel
 libxcrypt-devel
 patch
 bzip2-devel
+patch
+pkgconf
