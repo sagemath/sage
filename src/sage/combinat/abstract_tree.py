@@ -1166,10 +1166,29 @@ class AbstractTree:
         Values cleared:
 
         - ``_node_number`` : number of nodes in the tree
+
+        EXAMPLES::
+
+            sage: T = OrderedTree()
+            sage: T._require_mutable()
+            Traceback (most recent call last):
+            ...
+            ValueError: This object is immutable.
+
+        EXAMPLES::
+
+            sage: T = LabelledRootedTree([]).clone()
+            sage: T.node_number()
+            1
+            sage: T._require_mutable()
+            sage: hasattr(T, '_node_number')
+            False
         """
+        if self.is_immutable():
+            raise ValueError("This object is immutable.")
         super()._require_mutable()
         try:
-            del self._node_number
+            delattr(self, '_node_number')
         except AttributeError:
             pass
 
@@ -2078,7 +2097,7 @@ class AbstractClonableTree(AbstractTree):
             sage: x[0] =  OrderedTree([[]])
             Traceback (most recent call last):
             ...
-            ValueError: object is immutable; please change a copy instead.
+            ValueError: This object is immutable.
 
         Here is the correct way to do it::
 
@@ -2548,7 +2567,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             sage: t.set_root_label(3)
             Traceback (most recent call last):
             ...
-            ValueError: object is immutable; please change a copy instead.
+            ValueError: This object is immutable.
             sage: with t.clone() as t:
             ....:     t.set_root_label(3)
             sage: t.label()
@@ -2562,7 +2581,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             sage: bt.set_root_label(3)
             Traceback (most recent call last):
             ...
-            ValueError: object is immutable; please change a copy instead.
+            ValueError: This object is immutable.
             sage: with bt.clone() as bt:
             ....:     bt.set_root_label(3)
             sage: bt.label()
@@ -2609,7 +2628,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             sage: t.set_label((0,), 4)
             Traceback (most recent call last):
             ...
-            ValueError: object is immutable; please change a copy instead.
+            ValueError: This object is immutable.
             sage: with t.clone() as t:
             ....:     t.set_label((0,), 4)
             sage: t
