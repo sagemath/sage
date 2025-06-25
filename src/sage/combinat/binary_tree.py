@@ -908,7 +908,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t.make_node([None, None])
             Traceback (most recent call last):
             ...
-            ValueError: object is immutable; please change a copy instead.
+            ValueError: This object is immutable.
             sage: with t.clone() as t1:
             ....:     t1.make_node([None, None])
             sage: t, t1
@@ -947,7 +947,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
             sage: t.make_leaf()
             Traceback (most recent call last):
             ...
-            ValueError: object is immutable; please change a copy instead.
+            ValueError: This object is immutable.
             sage: with t.clone() as t1:
             ....:     t1.make_leaf()
             sage: t, t1

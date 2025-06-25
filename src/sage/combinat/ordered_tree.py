@@ -86,7 +86,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         sage: tt1[1] = tt2
         Traceback (most recent call last):
         ...
-        ValueError: object is immutable; please change a copy instead.
+        ValueError: This object is immutable.
 
     Here is the correct way to do it::
 
