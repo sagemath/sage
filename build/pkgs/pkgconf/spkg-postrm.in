@@ -1,2 +1,0 @@
-# Delete generated pkg-config script
-rm -f "$SAGE_LOCAL/bin/pkg-config"
