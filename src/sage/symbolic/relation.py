@@ -1301,7 +1301,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     # check if all variables are assumed integer;
     # if so, we have a Diophantine
 
-    def has_integer_assumption(v):
+    def has_integer_assumption(v) -> bool:
         from sage.symbolic.assumptions import assumptions, GenericDeclaration
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
@@ -1698,7 +1698,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
             pairs = product(shifts, ans)
             possibles = (tuple(vector(t) + vector(shift) * (mrunning // p))
                          for shift, t in pairs)
-        ans = list(t for t in possibles if all(e(*t) == 0 for e in eqns_mod))
+        ans = [t for t in possibles if all(e(*t) == 0 for e in eqns_mod)]
         if not ans:
             return ans
 

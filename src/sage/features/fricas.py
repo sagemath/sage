@@ -14,6 +14,7 @@ Features for testing the presence of ``fricas``
 
 import subprocess
 from . import Executable, FeatureTestResult
+from packaging.version import Version
 
 
 class FriCAS(Executable):
@@ -26,6 +27,8 @@ class FriCAS(Executable):
         sage: FriCAS().is_present()  # optional - fricas
         FeatureTestResult('fricas', True)
     """
+    MINIMUM_VERSION = "1.3.8"
+
     def __init__(self):
         r"""
         TESTS::
@@ -37,6 +40,23 @@ class FriCAS(Executable):
         Executable.__init__(self, name='fricas', spkg='fricas',
                             executable='fricas',
                             url='https://fricas.github.io')
+
+    def get_version(self):
+        r"""
+        Retrieve the installed FriCAS version
+
+        EXAMPLES::
+            sage: from sage.features.fricas import FriCAS
+            sage: FriCAS().get_version() # optional - fricas
+            '1.3...'
+        """
+        try:
+            output = subprocess.check_output(['fricas', '--version'], stderr=subprocess.STDOUT)
+            version_line = output.decode('utf-8').strip()
+            version = version_line.split()[1]
+            return version
+        except subprocess.CalledProcessError:
+            return None
 
     def is_functional(self):
         r"""
@@ -53,14 +73,24 @@ class FriCAS(Executable):
             lines = subprocess.check_output(command, stderr=subprocess.STDOUT, shell=True)
         except subprocess.CalledProcessError as e:
             return FeatureTestResult(self, False,
-                    reason="Call `{command}` failed with exit code {e.returncode}".format(command=" ".join(command), e=e))
+                                     reason="Call `{command}` failed with exit code {e.returncode}".format(command=" ".join(command), e=e))
 
         expected = b"FriCAS"
         if lines.find(expected) == -1:
             return FeatureTestResult(self, False,
-                    reason="Call `{command}` did not produce output which contains `{expected}`".format(command=" ".join(command), expected=expected))
+                                     reason="Call `{command}` did not produce output which contains `{expected}`".format(command=" ".join(command),
+                                                                                                                         expected=expected))
+        version = self.get_version()
+        if version is None:
+            return FeatureTestResult(self, False,
+                                     reason="Could not determine FriCAS version")
 
-        return FeatureTestResult(self, True)
+        try:
+            if Version(version) < Version(self.MINIMUM_VERSION):
+                return FeatureTestResult(self, False, reason=f"FriCAS version {version} is too old; minimum required is {self.MINIMUM_VERSION}")
+            return FeatureTestResult(self, True)
+        except ValueError:
+            return FeatureTestResult(self, False, reason="Invalid Version Format")
 
 
 def all_features():

@@ -16,7 +16,6 @@ from cysignals.signals cimport sig_check
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
 from sage.categories.rings import Rings
-from sage.calculus.functional import derivative
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 
@@ -1150,7 +1149,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: (v * m).parent() is m.row(0).parent()
             True
             """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
@@ -1203,7 +1202,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: M*w
             (x*y)
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())

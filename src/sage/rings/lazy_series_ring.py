@@ -2386,6 +2386,321 @@ class LazyLaurentSeriesRing(LazySeriesRing):
             return (-1) ** ((m + 1) // 6)
         return self(coefficients=coeff, valuation=0)
 
+    def jacobi_theta(self, w, a=0, b=0):
+        r"""
+        Return the Jacobi function `\vartheta_{ab}(w; q)` as an
+        element of ``self``.
+
+        The *Jacobi theta functions* with nome `q = \exp(\pi i \tau)`
+        for `z \in \CC` and `\tau \in \RR + \RR_{>0} i`, are defined as
+
+        .. MATH::
+
+            \begin{aligned}
+            \vartheta_{00}(z; \tau) & = \sum_{n=0}^{\infty}
+            (w^{2n} + w^{-2n}) q^{n^2},
+            \|
+            \vartheta_{01}(z; \tau) & = \sum_{n=0}^{\infty}
+            (-1)^n (w^{2n} + w^{-2n}) q^{n^2},
+            \\
+            \vartheta_{10}(z; \tau) & = \sum_{n=0}^{\infty}
+            (w^{2n+1} + w^{-2n+1}) q^{n^2+n},
+            \\
+            \vartheta_{11}(z; \tau) & = \sum_{n=0}^{\infty}
+            (-1)^n (w^{2n+1} + w^{-2n+1}) q^{n^2+n},
+            \end{aligned}
+
+        where `w = \exp(\pi i z)`. We consider them as formal power
+        series in `q` with the coefficients in the Laurent polynomial
+        ring `R[w, w^{-1}]` (for a commutative ring `R`). Here, we
+        deviate from the standard definition of `\theta_{10}` and
+        `\theta_{11}` by removing the overall factor of `q^{1/4}`
+        and `i q^{1/4}`, respectively.
+
+        EXAMPLES::
+
+            sage: R.<w> = LaurentPolynomialRing(QQ)
+            sage: L.<q> = LazyPowerSeriesRing(R)
+            sage: L.options.display_length = 17  # to display more coefficients
+            sage: theta = q.jacobi_theta(w)
+            sage: theta
+            1 + ((w^-2+w^2)*q) + ((w^-4+w^4)*q^4) + ((w^-6+w^6)*q^9)
+             + ((w^-8+w^8)*q^16) + O(q^17)
+
+            sage: th3 = q.jacobi_theta(1, 0, 0); th3
+            1 + 2*q + 2*q^4 + 2*q^9 + 2*q^16 + O(q^17)
+            sage: th2 = q.jacobi_theta(1, 1, 0); th2
+            2 + 2*q^2 + 2*q^6 + 2*q^12 + O(q^17)
+            sage: th4 = q.jacobi_theta(1, 0, 1); th4
+            1 + (-2*q) + 2*q^4 + (-2*q^9) + 2*q^16 + O(q^17)
+            sage: th1 = -q.jacobi_theta(1, 1, 1); th1
+            -2 + 2*q^2 + (-2*q^6) + 2*q^12 + O(q^17)
+
+        We verify the Jacobi triple product formula::
+
+            sage: JTP = L.prod(lambda n: ((1 - q^(2*n)) * (1 + w^2*q^(2*n-1))
+            ....:                         * (1 + w^-2*q^(2*n-1))), 1, oo)
+            sage: JTP
+            1 + ((w^-2+w^2)*q) + ((w^-4+w^4)*q^4) + ((w^-6+w^6)*q^9)
+             + ((w^-8+w^8)*q^16) + O(q^17)
+            sage: JTP[:30] == theta[:30]
+            True
+
+        We verify the Jacobi identity::
+
+            sage: LHS = q.jacobi_theta(1, 0, 1)^4 + q*q.jacobi_theta(1, 1, 0)^4
+            sage: LHS
+            1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6 + 64*q^7
+             + 24*q^8 + 104*q^9 + 144*q^10 + 96*q^11 + 96*q^12 + 112*q^13
+             + 192*q^14 + 192*q^15 + 24*q^16 + O(q^17)
+            sage: RHS = q.jacobi_theta(1, 0, 0)^4
+            sage: RHS
+            1 + 8*q + 24*q^2 + 32*q^3 + 24*q^4 + 48*q^5 + 96*q^6 + 64*q^7
+             + 24*q^8 + 104*q^9 + 144*q^10 + 96*q^11 + 96*q^12 + 112*q^13
+             + 192*q^14 + 192*q^15 + 24*q^16 + O(q^17)
+            sage: LHS[:20] == RHS[:20]
+            True
+
+        We verify some relationships to the (rescaled) Dedekind eta function::
+
+            sage: eta = q.euler()
+            sage: RHS = 2 * eta(q^4)^2 / eta(q^2); RHS
+            2 + 2*q^2 + 2*q^6 + 2*q^12 + O(q^17)
+            sage: th2[:30] == RHS[:30]
+            True
+
+            sage: RHS = eta(q^2)^5 / (eta^2 * eta(q^4)^2); RHS
+            1 + 2*q + 2*q^4 + 2*q^9 + 2*q^16 + O(q^17)
+            sage: th3[:30] == RHS[:30]
+            True
+
+            sage: RHS = eta^2 / eta(q^2); RHS
+            1 + (-2*q) + 2*q^4 + (-2*q^9) + 2*q^16 + O(q^17)
+            sage: th4[:30] == RHS[:30]
+            True
+
+            sage: LHS = th2 * th3 * th4; LHS
+            2 + (-6*q^2) + 10*q^6 + (-14*q^12) + O(q^17)
+            sage: RHS = 2 * eta(q^2)^3; RHS
+            2 + (-6*q^2) + 10*q^6 + (-14*q^12) + O(q^17)
+            sage: LHS[:30] == RHS[:30]
+            True
+
+        We verify some derivative formulas (recall our conventions)::
+
+            sage: LHS = th4 * th3.derivative() - th3 * th4.derivative(); LHS
+            4 + (-24*q^4) + 36*q^8 + 40*q^12 + (-120*q^16) + O(q^17)
+            sage: RHS = th3 * th4 * (th3^4 - th4^4) / (4*q); RHS
+            4 + (-24*q^4) + 36*q^8 + 40*q^12 + O(q^16)
+            sage: LHS[:30] == RHS[:30]
+            True
+
+            sage: LHS = (th2 / th3) / (4*q) + (th2 / th3).derivative(); LHS
+            1/2/q - 5 + 45/2*q + (-65*q^2) + 153*q^3 + (-336*q^4) + 1375/2*q^5
+             + (-1305*q^6) + 2376*q^7 + (-4181*q^8) + 7093*q^9 + (-11745*q^10)
+             + 38073/2*q^11 + (-30157*q^12) + 46968*q^13 + (-72041*q^14)
+             + 108810*q^15 + O(q^16)
+            sage: RHS = th2 * th4^4 / (4 * q * th3); RHS
+            1/2/q - 5 + 45/2*q + (-65*q^2) + 153*q^3 + (-336*q^4) + 1375/2*q^5
+             + (-1305*q^6) + 2376*q^7 + (-4181*q^8) + 7093*q^9 + (-11745*q^10)
+             + 38073/2*q^11 + (-30157*q^12) + 46968*q^13 + (-72041*q^14)
+             + 108810*q^15 + O(q^16)
+            sage: LHS[:30] == RHS[:30]
+            True
+
+            sage: LHS = (th2 / th4) / (4*q) + (th2 / th4).derivative(); LHS
+            1/2/q + 5 + 45/2*q + 65*q^2 + 153*q^3 + 336*q^4 + 1375/2*q^5
+             + 1305*q^6 + 2376*q^7 + 4181*q^8 + 7093*q^9 + 11745*q^10
+             + 38073/2*q^11 + 30157*q^12 + 46968*q^13 + 72041*q^14
+             + 108810*q^15 + O(q^16)
+            sage: RHS = th2 * th3^4 / (4 * q * th4); RHS
+            1/2/q + 5 + 45/2*q + 65*q^2 + 153*q^3 + 336*q^4 + 1375/2*q^5
+             + 1305*q^6 + 2376*q^7 + 4181*q^8 + 7093*q^9 + 11745*q^10
+             + 38073/2*q^11 + 30157*q^12 + 46968*q^13 + 72041*q^14
+             + 108810*q^15 + O(q^16)
+            sage: LHS[:30] == RHS[:30]
+            True
+
+            sage: LHS = (th3 / th4).derivative(); LHS
+            4 + 16*q + 48*q^2 + 128*q^3 + 280*q^4 + 576*q^5 + 1120*q^6 + 2048*q^7
+             + 3636*q^8 + 6240*q^9 + 10384*q^10 + 16896*q^11 + 26936*q^12
+             + 42112*q^13 + 64800*q^14 + 98304*q^15 + 147016*q^16 + O(q^17)
+            sage: RHS = (th3^5 - th3 * th4^4) / (4 * q * th4); RHS
+            4 + 16*q + 48*q^2 + 128*q^3 + 280*q^4 + 576*q^5 + 1120*q^6 + 2048*q^7
+             + 3636*q^8 + 6240*q^9 + 10384*q^10 + 16896*q^11 + 26936*q^12
+             + 42112*q^13 + 64800*q^14 + 98304*q^15 + O(q^16)
+            sage: LHS[:30] == RHS[:30]
+            True
+
+        We have the partition generating function::
+
+            sage: P = th3^(-1/6) * th4^(-2/3) * ((th3^4 - th4^4)/(16*q))^(-1/24); P
+            1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + 15*q^7 + 22*q^8
+             + 30*q^9 + 42*q^10 + 56*q^11 + 77*q^12 + 101*q^13 + 135*q^14
+             + 176*q^15 + 231*q^16 + O(q^17)
+            sage: 1 / q.euler()
+            1 + q + 2*q^2 + 3*q^3 + 5*q^4 + 7*q^5 + 11*q^6 + 15*q^7 + 22*q^8
+             + 30*q^9 + 42*q^10 + 56*q^11 + 77*q^12 + 101*q^13 + 135*q^14
+             + 176*q^15 + 231*q^16 + O(q^17)
+            sage: oeis(P[:30])  # optional - internet
+            0: A000041: a(n) is the number of partitions of n (the partition numbers).
+            ...
+
+        We have the strict partition generating function::
+
+            sage: SP = th3^(1/6) * th4^(-1/3) * ((th3^4 - th4^4)/(16*q))^(1/24); SP
+            1 + q + q^2 + 2*q^3 + 2*q^4 + 3*q^5 + 4*q^6 + 5*q^7 + 6*q^8 + 8*q^9
+             + 10*q^10 + 12*q^11 + 15*q^12 + 18*q^13 + 22*q^14 + 27*q^15
+             + 32*q^16 + O(q^17)
+            sage: oeis(SP[:30])  # optional - internet
+            0: A000009: Expansion of Product_{m >= 1} (1 + x^m);
+             number of partitions of n into distinct parts;
+             number of partitions of n into odd parts.
+            1: A081360: Expansion of q^(-1/24) (m (1-m) / 16)^(1/24) in
+             powers of q, where m = k^2 is the parameter and q is the nome
+             for Jacobian elliptic functions.
+
+        We have the overpartition generating function::
+
+            sage: ~th4
+            1 + 2*q + 4*q^2 + 8*q^3 + 14*q^4 + 24*q^5 + 40*q^6 + 64*q^7 + 100*q^8
+             + 154*q^9 + 232*q^10 + 344*q^11 + 504*q^12 + 728*q^13 + 1040*q^14
+             + 1472*q^15 + 2062*q^16 + O(q^17)
+            sage: oeis((~th4)[:20])  # optional - internet
+            0: A015128: Number of overpartitions of n: ... overlined.
+            1: A004402: Expansion of 1 / Sum_{n=-oo..oo} x^(n^2).
+
+        We give an example over the :class:`SymbolicRing` with the input
+        `w = e^{\pi i z}` and verify the periodicity::
+
+            sage: L.<q> = LazyLaurentSeriesRing(SR)
+            sage: z = SR.var('z')
+            sage: theta = L.jacobi_theta(exp(pi*I*z))
+            sage: theta
+            1 + (e^(2*I*pi*z) + e^(-2*I*pi*z))*q
+             + (e^(4*I*pi*z) + e^(-4*I*pi*z))*q^4
+             + (e^(6*I*pi*z) + e^(-6*I*pi*z))*q^9
+             + (e^(8*I*pi*z) + e^(-8*I*pi*z))*q^16 + O(q^17)
+
+            sage: theta.map_coefficients(lambda c: c(z=z+1))
+            1 + (e^(2*I*pi*z) + e^(-2*I*pi*z))*q
+             + (e^(4*I*pi*z) + e^(-4*I*pi*z))*q^4
+             + (e^(6*I*pi*z) + e^(-6*I*pi*z))*q^9
+             + (e^(8*I*pi*z) + e^(-8*I*pi*z))*q^16 + O(q^17)
+
+            sage: L.options._reset()  # reset options
+
+        REFERENCES:
+
+        - :wikipedia:`Theta_function`
+        """
+        if a == 0 and b == 0:
+            def coeff(n):
+                if n == 0:
+                    return ZZ.one()
+                nrt, rem = ZZ(n).sqrtrem()
+                return (w**(2*nrt) + w**(-2*nrt)) if not rem else ZZ.zero()
+
+        if a == 0 and b == 1:
+            def coeff(n):
+                if n == 0:
+                    return ZZ.one()
+                nrt, rem = ZZ(n).sqrtrem()
+                return (-1)**nrt * (w**(2*nrt) + w**(-2*nrt)) if not rem else ZZ.zero()
+
+        if a == 1 and b == 0:
+            def coeff(n):
+                if n == 0:
+                    return w + ~w
+                nrt, rem = ZZ(n).sqrtrem()
+                return (w**(2*nrt+1) + w**(-2*nrt-1)) if rem == nrt else ZZ.zero()
+
+        if a == 1 and b == 1:
+            def coeff(n):
+                if n == 0:
+                    return w + ~w
+                nrt, rem = ZZ(n).sqrtrem()
+                return (-1)**nrt * (w**(2*nrt+1) + w**(-2*nrt-1)) if rem == nrt else ZZ.zero()
+
+        return self(coefficients=coeff, valuation=0)
+
+    def polylog(self, s):
+        r"""
+        Return the polylogarithm at ``s`` as an element in ``self``.
+
+        The *polylogarithm* at `s` is the power series in `z`
+
+        .. MATH::
+
+            \mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: L.polylog(1)
+            z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
+            sage: -log(1 - z)
+            z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
+            sage: L.polylog(2)
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+            sage: (-log(1-z) / z).integral()
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + O(z^7)
+            sage: L.polylog(0)
+            z + z^2 + z^3 + O(z^4)
+            sage: L.polylog(-1)
+            z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + O(z^8)
+            sage: z / (1-z)^2
+            z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + O(z^8)
+            sage: L.polylog(-2)
+            z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
+            sage: z * (1 + z) / (1 - z)^3
+            z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
+
+        We can compute the Eulerian numbers::
+
+            sage: [L.polylog(-n) * (1-z)^(n+1) for n in range(1, 6)]
+            [z + O(z^8),
+             z + z^2 + O(z^8),
+             z + 4*z^2 + z^3 + O(z^8),
+             z + 11*z^2 + 11*z^3 + z^4 + O(z^8),
+             z + 26*z^2 + 66*z^3 + 26*z^4 + z^5 + O(z^8)]
+
+        REFERENCES:
+
+        - :wikipedia:`Polylogarithm`
+        """
+        if not s:
+            coeff_stream = Stream_exact([], constant=self.base_ring().one(), order=1)
+            return self.element_class(self, coeff_stream)
+        R = self.base_ring()
+        return self(coefficients=lambda n: R(n) ** -s, valuation=1)
+
+    def dilog(self):
+        r"""
+        Return the dilogarithm as an element in ``self``.
+
+        .. SEEALSO::
+
+            :meth:`polylog`
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: L.dilog()
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+            sage: L.polylog(2)
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+
+            sage: L.<x> = LazyLaurentSeriesRing(SR)
+            sage: L.dilog()
+            x + 1/4*x^2 + 1/9*x^3 + 1/16*x^4 + 1/25*x^5 + 1/36*x^6 + 1/49*x^7 + O(x^8)
+
+        REFERENCES:
+
+        - :wikipedia:`Dilogarithm`
+        """
+        return self.polylog(2)
+
 ######################################################################
 
 
@@ -3942,6 +4257,44 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             Univariate Polynomial Ring in x over Integer Ring
         """
         return [R.one()]
+
+    def polylogarithm(self, z):
+        r"""
+        Return the polylogarithm at `z` considered as a Dirichlet series
+        in ``self``.
+
+        The *polylogarithm* at `z` is the Dirichlet series
+
+        .. MATH::
+
+            \mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}.
+
+        EXAMPLES::
+
+            sage: R.<z> = ZZ[]
+            sage: L = LazyDirichletSeriesRing(R, 's')
+            sage: L.polylogarithm(z)
+            z + z^2/2^s + z^3/3^s + z^4/4^s + z^5/5^s + z^6/6^s + z^7/7^s + O(1/(8^s))
+
+        At `z = 1`, this is the Riemann zeta function::
+
+            sage: L.polylogarithm(1)
+            1 + 1/(2^s) + 1/(3^s) + 1/(4^s) + 1/(5^s) + 1/(6^s) + 1/(7^s) + O(1/(8^s))
+
+        At `z = -1`, this is the negative of the Dirichlet eta function::
+
+            sage: -L.polylogarithm(-1)
+            1 - 1/(2^s) + 1/(3^s) - 1/(4^s) + 1/(5^s) - 1/(6^s) + 1/(7^s) + O(1/(8^s))
+
+        REFERENCES:
+
+        - :wikipedia:`Polylogarithm`
+        """
+        if self._arity != 1:
+            raise ValueError("must has arity 1")
+        return self(coefficients=lambda n: z ** n)
+
+    polylog = polylogarithm
 
 
 def _skip_leading_zeros(iterator):

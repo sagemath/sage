@@ -146,9 +146,11 @@ EOF
 
     st=$?
     case $st in
-        0) true;; # Success
+        0)  # Success
+            mv configure real_configure
+            cp configure_wrapper configure;;
 
-        179|16|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
+        179|16|17|63|127)  # no m4 for pkg-config|autotools not installed|or version too old
             if [ $DOWNLOAD = yes ]; then
                 echo >&2 "Bootstrap failed, downloading required files instead."
                 bootstrap_download || exit $?
@@ -157,6 +159,8 @@ EOF
                     verb="install"
                 elif [ $st -eq 16 ]; then
                     verb="install pkg-config m4 macros for"
+                elif [ $st -eq 17 ]; then
+                    verb="install pkg-config, a.k.a. as pkgconf"
                 else
                     verb="upgrade"
                 fi
@@ -220,7 +224,7 @@ save () {
     fi
     mkdir -p upstream
     tar zcf "$NEWCONFBALL" \
-	configure \
+	configure real_configure configure_wrapper \
 	config/install-sh config/compile config/config.guess config/config.sub config/missing \
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \

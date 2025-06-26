@@ -756,7 +756,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
     """
     Element = LatticePosetElement
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -776,7 +776,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             s += " with distinguished linear extension"
         return s
 
-    def double_irreducibles(self):
+    def double_irreducibles(self) -> list:
         """
         Return the list of double irreducible elements of this lattice.
 
@@ -810,7 +810,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return [self._vertex_to_element(e) for e in H
                 if H.in_degree(e) == 1 and H.out_degree(e) == 1]
 
-    def join_primes(self):
+    def join_primes(self) -> list:
         r"""
         Return the join-prime elements of the lattice.
 
@@ -847,7 +847,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return [self._vertex_to_element(v) for
                 v in self._hasse_diagram.prime_elements()[0]]
 
-    def meet_primes(self):
+    def meet_primes(self) -> list:
         r"""
         Return the meet-prime elements of the lattice.
 
@@ -884,7 +884,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         return [self._vertex_to_element(v) for
                 v in self._hasse_diagram.prime_elements()[1]]
 
-    def neutral_elements(self):
+    def neutral_elements(self) -> list:
         r"""
         Return the list of neutral elements of the lattice.
 
@@ -1572,8 +1572,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
         if all(self.is_left_modular_element(e) for e in chain):
             return (True, chain) if certificate else True
-        else:
-            return (False, None) if certificate else False
+        return (False, None) if certificate else False
 
     def is_complemented(self, certificate=False) -> bool | tuple:
         r"""
@@ -1892,7 +1891,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 return False
         return (True, None) if certificate else True
 
-    def breadth(self, certificate=False):
+    def breadth(self, certificate=False) -> int | tuple:
         r"""
         Return the breadth of the lattice.
 
@@ -1997,9 +1996,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                     if join(A) == j:
                         if all(join(A[:i] + A[i + 1:]) != j for i in range(B)):
                             if certificate:
-                                return (B, [self._vertex_to_element(e) for e in A])
-                            else:
-                                return B
+                                return (B, [self._vertex_to_element(e)
+                                            for e in A])
+                            return B
         raise RuntimeError("BUG: breadth() in lattices.py have an error")
 
     def complements(self, element=None):
@@ -2264,7 +2263,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 self._hasse_diagram.skeleton()]
         return LatticePoset(self.subposet(elms))
 
-    def is_orthocomplemented(self, unique=False):
+    def is_orthocomplemented(self, unique=False) -> bool:
         """
         Return ``True`` if the lattice admits an orthocomplementation, and
         ``False`` otherwise.
@@ -2912,7 +2911,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         next_ = [H.neighbor_in_iterator(cur)]
 
         @cached_function
-        def is_modular_elt(a):
+        def is_modular_elt(a) -> bool:
             return all(H._rank[a] + H._rank[b] ==
                        H._rank[mt[a, b]] + H._rank[jn[a, b]]
                        for b in range(n))
@@ -3077,8 +3076,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if self.cardinality() <= 2:
             if not elements_only:
                 return [self]
-            else:
-                return []
+            return []
         if elements_only:
             return [self[e] for e in
                     self._hasse_diagram.vertical_decomposition(return_list=True)]
@@ -4877,9 +4875,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         parts_H = [sorted([self._element_to_vertex(e) for e in part]) for
                    part in congruence]
         minimal_vertices = [part[0] for part in parts_H]
-        H = self._hasse_diagram.transitive_closure().subgraph(minimal_vertices).transitive_reduction()
+        H = self._hasse_diagram.transitive_closure().subgraph(minimal_vertices).transitive_reduction(immutable=False)
         if labels == 'integer':
-            H.relabel(list(range(len(minimal_vertices))))
+            H.relabel()
             return LatticePoset(H)
         part_dict = {m[0]: [self._vertex_to_element(x) for x in m] for m
                      in parts_H}
