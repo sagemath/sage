@@ -59,7 +59,7 @@ check this for permutations of size at most `3`::
     sage: def alpha1(p): return len(p.weak_excedences())
     sage: def alpha2(p): return len(p.fixed_points())
     sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-    sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: def beta2(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
     sage: tau = Permutation.longest_increasing_subsequence_length
     sage: def rotate_permutation(p):
     ....:     cycle = Permutation(tuple(range(1, len(p)+1)))
@@ -690,7 +690,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, fix)
             sage: bij.set_statistics((wex, des), (len, len))
             sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
@@ -800,7 +800,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((len, len), (wex, des), (fix, adj))
             sage: table([[key, AB[0], AB[1]] for key, AB in bij.statistics_fibers().items()])
@@ -844,7 +844,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((wex, des), (fix, adj))
             sage: a, b = bij.statistics_table()
@@ -1553,7 +1553,7 @@ class Bijectionist(SageObject):
             sage: def alpha1(p): return len(p.weak_excedences())
             sage: def alpha2(p): return len(p.fixed_points())
             sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:] + [0]) if e == f + 1])
+            sage: def beta2(p): return len([e for e, f in zip(p, p[1:] + [0]) if e == f + 1])
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: def rotate_permutation(p):
             ....:    cycle = Permutation(tuple(range(1, len(p) + 1)))
@@ -3169,7 +3169,7 @@ Our benchmark example::
     sage: def alpha1(p): return len(p.weak_excedences())
     sage: def alpha2(p): return len(p.fixed_points())
     sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-    sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: def beta2(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
     sage: gamma = Permutation.longest_increasing_subsequence_length
     sage: def rotate_permutation(p):
     ....:    cycle = Permutation(tuple(range(1, len(p)+1)))

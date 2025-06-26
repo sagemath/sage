@@ -105,15 +105,15 @@ def _digraph_mutate(dg, k, frozen=None):
     out_edges = list(edge_it)
 
     in_edges_new = [(v2, v1, (-label[1], -label[0]))
-                    for (v1, v2, label) in in_edges]
+                    for v1, v2, label in in_edges]
     out_edges_new = [(v2, v1, (-label[1], -label[0]))
-                     for (v1, v2, label) in out_edges]
+                     for v1, v2, label in out_edges]
     diag_edges_new = []
     diag_edges_del = []
 
-    for (v1, v2, label1) in in_edges:
+    for v1, v2, label1 in in_edges:
         l11, l12 = label1
-        for (w1, w2, label2) in out_edges:
+        for w1, w2, label2 in out_edges:
             if v1 in frozen and w2 in frozen:
                 continue
             l21, l22 = label2
@@ -138,8 +138,8 @@ def _digraph_mutate(dg, k, frozen=None):
     del_edges += diag_edges_del
     new_edges = in_edges_new + out_edges_new
     new_edges += diag_edges_new
-    new_edges += [(v1, v2, edges[(v1, v2)]) for (v1, v2) in edges
-                  if (v1, v2) not in del_edges]
+    new_edges += [(*ed, edges[ed]) for ed in edges
+                  if ed not in del_edges]
 
     dg_new = DiGraph()
     dg_new.add_vertices(list(dg))
@@ -553,11 +553,18 @@ def _has_two_cycles(dg) -> bool:
         sage: _has_two_cycles(ClusterQuiver(['A',3]).digraph())                         # needs sage.modules
         False
     """
+<<<<<<< ruff_SIM110
     edge_set = dg.edges(labels=False)
     return any((w, v) in edge_set for v, w in edge_set)
 
 
 def _is_valid_digraph_edge_set(edges, frozen=0):
+=======
+    return any(dg.has_edge(w, v) for v, w in dg.edge_iterator(labels=False))
+
+
+def _is_valid_digraph_edge_set(edges, frozen=0) -> bool:
+>>>>>>> develop
     """
     Return ``True`` if the input data is the edge set of a digraph for a quiver
     (no loops, no 2-cycles, edge-labels of the specified format), and return
@@ -582,40 +589,40 @@ def _is_valid_digraph_edge_set(edges, frozen=0):
     try:
         dg = DiGraph()
         dg.allow_multiple_edges(True)
-        dg.add_edges( edges )
-
-        # checks if the digraph contains loops
-        if dg.has_loops():
-            print("The given digraph or edge list contains loops")
-            return False
-
-        # checks if the digraph contains oriented 2-cycles
-        if _has_two_cycles( dg ):
-            print("The given digraph or edge list contains oriented 2-cycles.")
-            return False
-
-        # checks if all edge labels are 'None', positive integers or tuples of positive integers
-        if not all( i is None or ( i in ZZ and i > 0 ) or ( isinstance(i, tuple) and len(i) == 2 and i[0] in ZZ and i[1] in ZZ ) for i in dg.edge_labels() ):
-            print("The given digraph has edge labels which are not integral or integral 2-tuples.")
-            return False
-
-        # checks if all edge labels for multiple edges are 'None' or positive integers
-        if dg.has_multiple_edges():
-            for e in set( dg.multiple_edges(labels=False) ):
-                if not all( i is None or ( i in ZZ and i > 0 ) for i in dg.edge_label( e[0], e[1] ) ):
-                    print("The given digraph or edge list contains multiple edges with non-integral labels.")
-                    return False
-
-        n = dg.order() - frozen
-        if n < 0:
-            print("The number of frozen variables is larger than the number of vertices.")
-            return False
-
-        if any(e[0] >= n for e in dg.edges(sort=True, labels=False)):
-            print("The given digraph or edge list contains edges within the frozen vertices.")
-            return False
-
-        return True
-    except Exception:
+        dg.add_edges(edges)
+    except (TypeError, ValueError):
         print("Could not even build a digraph from the input data.")
         return False
+
+    # checks if the digraph contains loops
+    if dg.has_loops():
+        print("The given digraph or edge list contains loops")
+        return False
+
+    # checks if the digraph contains oriented 2-cycles
+    if _has_two_cycles(dg):
+        print("The given digraph or edge list contains oriented 2-cycles.")
+        return False
+
+    # checks if all edge labels are 'None', positive integers or tuples of positive integers
+    if not all(i is None or (i in ZZ and i > 0) or (isinstance(i, tuple) and len(i) == 2 and i[0] in ZZ and i[1] in ZZ ) for i in dg.edge_labels()):
+        print("The given digraph has edge labels which are not integral or integral 2-tuples.")
+        return False
+
+    # checks if all edge labels for multiple edges are 'None' or positive integers
+    if dg.has_multiple_edges():
+        for e in set(dg.multiple_edges(labels=False)):
+            if not all(i is None or (i in ZZ and i > 0) for i in dg.edge_label(e[0], e[1])):
+                print("The given digraph or edge list contains multiple edges with non-integral labels.")
+                return False
+
+    n = dg.order() - frozen
+    if n < 0:
+        print("The number of frozen variables is larger than the number of vertices.")
+        return False
+
+    if any(e[0] >= n for e in dg.edges(sort=True, labels=False)):
+        print("The given digraph or edge list contains edges within the frozen vertices.")
+        return False
+
+    return True
