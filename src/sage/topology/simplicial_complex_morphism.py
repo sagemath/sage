@@ -211,10 +211,10 @@ class SimplicialComplexMorphism(Morphism):
             sage: k == l
             True
         """
-        if not isinstance(x, SimplicialComplexMorphism) or self.codomain() != x.codomain() or self.domain() != x.domain() or self._vertex_dictionary != x._vertex_dictionary:
-            return False
-        else:
-            return True
+        return (isinstance(x, SimplicialComplexMorphism) and
+                self.codomain() == x.codomain() and
+                self.domain() == x.domain() and
+                self._vertex_dictionary == x._vertex_dictionary)
 
     def __call__(self, x, orientation=False):
         """

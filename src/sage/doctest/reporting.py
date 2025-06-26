@@ -157,9 +157,7 @@ class DocTestReporter(SageObject):
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
-        if tag in available_software.seen():
-            return True
-        return False
+        return tag in available_software.seen()
 
     def report_head(self, source, fail_msg=None):
         """

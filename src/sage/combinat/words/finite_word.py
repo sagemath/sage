@@ -7015,10 +7015,7 @@ class FiniteWord_class(Word_class):
         """
         if len(self) == 0 or len(self.letters()) > 2 or (self.is_palindrome() and len(self) > 1):
             return False
-        elif self.is_symmetric() and self[1:len(self) - 1].is_palindrome():
-            return True
-        else:
-            return False
+        return self.is_symmetric() and self[1:len(self) - 1].is_palindrome()
 
     def minimal_conjugate(self):
         r"""

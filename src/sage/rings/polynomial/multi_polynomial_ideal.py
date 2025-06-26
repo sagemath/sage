@@ -2149,9 +2149,7 @@ class MPolynomialIdeal_singular_repr(
                 M.set_immutable()
                 M = sing_reduce(M, self)
 
-            if any(M):
-                return False
-            return True
+            return not any(M)
         except TypeError:
             if singular is None:
                 singular = singular_default
