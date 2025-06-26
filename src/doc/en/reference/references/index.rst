@@ -3165,6 +3165,10 @@ REFERENCES:
             descent algebra.* Adv. Math. **77** (1989).
             https://web.archive.org/web/20210829143502/http://lacim-membre.uqam.ca/~christo/Publi%C3%A9s/1989/Decomposition%20Solomon.pdf
 
+.. [GL2011] Ira M. Gessel, Ji Li.
+            *Enumeration of point-determining graphs*. Journal of
+            Combinatorial Theory, Series A, 118 (2011), pp. 591--612.
+
 .. [GR1993] Ira M. Gessel, Christophe Reutenauer.
             *Counting Permutations with Given Cycle Structure and Descent Set*. Journal of
             Combinatorial Theory, Series A, 64 (1993), pp. 189--215.
