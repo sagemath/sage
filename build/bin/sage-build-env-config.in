@@ -19,7 +19,7 @@
 #
 ##########################################################################
 
-# The configured CXX without special flags added that enable C++11 support
+# The configured CXX without special flags added that enable C++17 support
 export SAGE_CXX_WITHOUT_STD="@SAGE_CXX_WITHOUT_STD@"
 
 # Export SAGE_FAT_BINARY if this was enabled during configure.

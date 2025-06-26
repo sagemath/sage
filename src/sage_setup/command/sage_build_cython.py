@@ -265,8 +265,6 @@ class sage_build_cython(Command):
 
         - Add some default compile/link args and directories
 
-        - Choose C99 standard for C code and C++11 for C++ code
-
         - Drop -std=c99 and similar from C++ extensions
 
         - Ensure that each flag, library, ... is listed at most once
