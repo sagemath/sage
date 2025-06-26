@@ -553,18 +553,10 @@ def _has_two_cycles(dg) -> bool:
         sage: _has_two_cycles(ClusterQuiver(['A',3]).digraph())                         # needs sage.modules
         False
     """
-<<<<<<< ruff_SIM110
-    edge_set = dg.edges(labels=False)
-    return any((w, v) in edge_set for v, w in edge_set)
-
-
-def _is_valid_digraph_edge_set(edges, frozen=0):
-=======
     return any(dg.has_edge(w, v) for v, w in dg.edge_iterator(labels=False))
 
 
 def _is_valid_digraph_edge_set(edges, frozen=0) -> bool:
->>>>>>> develop
     """
     Return ``True`` if the input data is the edge set of a digraph for a quiver
     (no loops, no 2-cycles, edge-labels of the specified format), and return
