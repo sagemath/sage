@@ -456,7 +456,7 @@ class SchurTensorModule(CombinatorialFreeModule_Tensor):
             sage: T = SchurTensorModule(QQ, 2, 3)
             sage: T.construction()
         """
-        return None
+        return
 
     def _monomial_product(self, xi, v):
         """
