@@ -354,20 +354,13 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
+    from distutils.log import set_verbosity
+
     import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
-
-    try:
-        from setuptools.dist import Distribution
-        from setuptools.extension import Extension
-    except ImportError:
-        # Fall back to distutils (stdlib); note that it is deprecated
-        # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
-        from distutils.core import Extension
-        from distutils.dist import Distribution
-
-    from distutils.log import set_verbosity
+    from setuptools.dist import Distribution
+    from setuptools.extension import Extension
     set_verbosity(verbose)
 
     Cython.Compiler.Options.annotate = annotate

@@ -1988,8 +1988,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
                 msg += "you can compute it by mutating from the initial seed along the sequence "
                 msg += str(self._path_dict[g_vector])
                 raise KeyError(msg)
-            else:
-                raise KeyError("the g-vector %s has not been found yet" % str(g_vector))
+            raise KeyError("the g-vector {} has not been found yet".format(g_vector))
 
     def find_g_vector(self, g_vector, depth=infinity):
         r"""
