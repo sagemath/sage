@@ -28,6 +28,7 @@ Comprehensive Module List
     sage/combinat/blob_algebra
     sage/combinat/cartesian_product
     sage/combinat/catalog_partitions
+    sage/rings/cfinite_sequence
     sage/combinat/chas/all
     sage/combinat/chas/fsym
     sage/combinat/chas/wqsym
@@ -154,6 +155,7 @@ Comprehensive Module List
     sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
     sage/combinat/k_tableau
+    sage/rings/lazy_species
     sage/combinat/lr_tableau
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links
@@ -408,4 +410,3 @@ Comprehensive Module List
     sage/combinat/words/word_options
     sage/combinat/words/words
     sage/combinat/yang_baxter_graph
-    sage/rings/cfinite_sequence

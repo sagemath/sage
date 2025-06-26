@@ -1085,6 +1085,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: B[2] == A[2]
             True
         """
+        if self._ncols == 0:
+            return
         mzed_row_swap(self._entries, row1, row2)
 
     cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
@@ -1123,6 +1125,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.column(14) == B.column(0)
             True
         """
+        if self._nrows == 0:
+            return
         mzed_col_swap(self._entries, col1, col2)
 
     def augment(self, right):

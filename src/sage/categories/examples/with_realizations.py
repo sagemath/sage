@@ -197,7 +197,7 @@ class SubsetAlgebra(UniqueRepresentation, Parent):
         F_to_Out   .register_as_coercion()
         (~F_to_Out).register_as_coercion()
 
-    _shorthands = ["F", "In", "Out"]
+    _shorthands = ("F", "In", "Out")
 
     def a_realization(self):
         r"""

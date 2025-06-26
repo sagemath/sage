@@ -8873,7 +8873,6 @@ cdef class Polynomial(CommutativePolynomial):
             sage: all(r.parent() is K for r in f.roots(multiplicities=False))           # needs sage.rings.finite_rings
             True
         """
-        from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
 
         # If the base ring has a method _roots_univariate_polynomial,

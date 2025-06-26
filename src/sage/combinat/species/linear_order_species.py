@@ -27,6 +27,9 @@ class LinearOrderSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.LinearOrderSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: s = P.structures(["a", "b", "c"]).random_element()
             sage: s.canonical_label()
             ['a', 'b', 'c']

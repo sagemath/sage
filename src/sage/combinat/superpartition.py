@@ -557,7 +557,7 @@ class SuperPartition(ClonableArray,
         """
         sd = self.to_circled_diagram()
         return SuperPartition.from_circled_diagram(sd[0].conjugate(),
-                                                   [(j, i) for (i, j) in sd[1]])
+                                                   [(j, i) for i, j in sd[1]])
 
     def zee(self) -> Integer:
         r"""

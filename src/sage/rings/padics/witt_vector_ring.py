@@ -217,7 +217,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
         """
         if coefficient_ring not in CommutativeRings():
             raise TypeError(f"{coefficient_ring} is not a commutative ring")
-        elif not (isinstance(prec, int) or isinstance(prec, Integer)):
+        elif not isinstance(prec, (int, Integer)):
             raise TypeError(f"{prec} is not an integer")
         elif prec <= 0:
             raise ValueError(f"{prec} must be positive")
@@ -801,7 +801,7 @@ class WittVectorRing_phantom(WittVectorRing):
         sage: W = WittVectorRing(QQ, p=23, prec=3, algorithm='phantom')
         Traceback (most recent call last):
         ...
-        ValueError: the 'phantom' algorithm only works when the coefficient ring is a finite field of p, or a polynomial ring on that field
+        ValueError: the 'phantom' algorithm only works when the coefficient ring is a finite field of char. p, or a polynomial ring on that field
     """
     Element = WittVector_phantom
 
@@ -819,15 +819,17 @@ class WittVectorRing_phantom(WittVectorRing):
 
             sage: TestSuite(W).run()
         """
-        if not (coefficient_ring.characteristic() == prime
-                and (coefficient_ring in Fields().Finite()
-                     or ((isinstance(coefficient_ring, PolynomialRing_generic)
-                          or isinstance(coefficient_ring,
-                                        MPolynomialRing_base))
-                         and coefficient_ring.base() in Fields().Finite()))):
-            raise ValueError("the 'phantom' algorithm only works when the "
-                             "coefficient ring is a finite field of "
-                             "p, or a polynomial ring on that field")
+        msg = "the 'phantom' algorithm only works when the coefficient ring is"\
+            " a finite field of char. p, or a polynomial ring on that field"
+
+        if coefficient_ring.characteristic() != prime:
+            raise ValueError(msg)
+
+        if not (coefficient_ring in Fields().Finite() or
+                (isinstance(coefficient_ring, (PolynomialRing_generic,
+                                               MPolynomialRing_base)) and
+                 coefficient_ring.base() in Fields().Finite())):
+            raise ValueError(msg)
 
         if (coefficient_ring in Fields().Finite()
             or isinstance(coefficient_ring,
