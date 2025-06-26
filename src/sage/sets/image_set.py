@@ -53,9 +53,9 @@ class ImageSubobject(Parent):
       - ``True``: ``map`` is known to be injective
       - ``'check'``: raise an error when ``map`` is not injective
 
-    - ``inverse`` -- a function (optional); a map from `f(X)` to `X`.
-      It is not recommended to provide this, if ``map.inverse_image`` exists,
-      it will be used automatically.
+    - ``inverse`` -- function (optional); a map from `f(X)` to `X`;
+      if ``map.inverse_image`` exists, it is not recommended to provide this
+      as it will be used automatically
 
     EXAMPLES::
 
