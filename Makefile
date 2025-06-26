@@ -123,7 +123,7 @@ sagelib-clean:
 	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
 	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
 	     cd sage/ext/interpreters/ && rm -f *.so *.c *.h *.py* *.pxd) \
-	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
+	    && rm -rf "$(SAGE_ROOT)"/build/pkgs/sagelib/src/build; \
 	fi
 
 sage_docbuild-clean:
