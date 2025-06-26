@@ -468,7 +468,6 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: Y = M2(SymmetricGroup(1), {1: [1]})
             sage: C3(X*Y)
             {((1,2,3)(4,5,6),): ({1, 2, 3}, {4, 5, 6})}
-
         """
         if sum(self._mc) == 1:
             raise ValueError("self must not be a singleton")
