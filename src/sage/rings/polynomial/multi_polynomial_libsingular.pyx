@@ -4606,6 +4606,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         A :exc:`ValueError` exception is raised if ``g (== self)`` does not belong to ``I``.
 
+        INPUT:
+
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
+
         EXAMPLES::
 
             sage: A.<x,y> = PolynomialRing(QQ,2,order='degrevlex')
