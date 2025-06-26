@@ -909,6 +909,15 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: [(X^factorial(k)).functorial_composition(X^k) - factorial(factorial(k)-1)*X^k for k in range(4)]
             [O^7, O^7, O^7, O^7]
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E2 = E.restrict(2,2)
+            sage: E3 = E.restrict(3,3)
+            sage: (E3^2).functorial_composition(E2^2)
+            (E_2(X^2)+2*X*E_3) + O^7
         """
         return FunctorialCompositionSpeciesElement(self, *args)
 
