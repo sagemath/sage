@@ -4296,6 +4296,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
     polylog = polylogarithm
 
+
 def _skip_leading_zeros(iterator):
     """
     Return an iterator which discards all leading zeros.

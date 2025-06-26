@@ -8,5 +8,4 @@
 # for use in "sage -info SPKG".
 #
 # Everything on a line after a # character is ignored.
-
-# No packages needed
+pkgconfig

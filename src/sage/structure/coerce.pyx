@@ -808,6 +808,9 @@ cdef class CoercionModel:
         elements or parents). If the parent of the result can be determined
         then it will be returned.
 
+        For programmatic usages, use :meth:`canonical_coercion` and
+        :meth:`common_parent` instead.
+
         EXAMPLES::
 
             sage: cm = sage.structure.element.get_coercion_model()
@@ -937,6 +940,9 @@ cdef class CoercionModel:
         The :meth:`explain` method is easier to use, but if one wants access to
         the actual morphism and action objects (rather than their string
         representations), then this is the function to use.
+
+        For programmatic usages, use :meth:`canonical_coercion` and
+        :meth:`common_parent` instead.
 
         EXAMPLES::
 

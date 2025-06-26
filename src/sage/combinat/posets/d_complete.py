@@ -127,7 +127,7 @@ class DCompletePoset(FiniteJoinSemilattice):
                     enqueued.add(c)
 
         return {self._vertex_to_element(key): ZZ(value)
-                for (key, value) in hooks.items()}
+                for key, value in hooks.items()}
 
     def get_hook(self, elmt):
         r"""

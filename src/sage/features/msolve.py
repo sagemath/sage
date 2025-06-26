@@ -59,8 +59,8 @@ class msolve(Executable):
 #        if msolve_out.returncode != 0:
 #            return FeatureTestResult(self, False, reason="msolve -h returned "
 #                                f"nonzero exit status {msolve_out.returncode}")
-        if (msolve_out.stdout[:46] !=
-              b'\nmsolve library for polynomial system solving\n'):
+        if (msolve_out.stdout[:45] !=
+              b'\nmsolve library for polynomial system solving'):
             return FeatureTestResult(self, False,
                                      reason="output of msolve -h not recognized")
         return FeatureTestResult(self, True)

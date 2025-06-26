@@ -328,9 +328,9 @@ class FusionDouble(CombinatorialFreeModule):
             [ 1/3  1/3 -1/3    0    0 -1/3  2/3 -1/3]
         """
         b = self.basis()
-        S = matrix([[self.s_ij(b[x], b[y], unitary=unitary, base_coercion=base_coercion)
-                     for x in self.get_order()] for y in self.get_order()])
-        return S
+        return matrix([[self.s_ij(b[x], b[y], unitary=unitary,
+                                  base_coercion=base_coercion)
+                        for x in self.get_order()] for y in self.get_order()])
 
     @cached_method
     def N_ijk(self, i, j, k):

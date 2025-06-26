@@ -75,7 +75,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         ...
         TypeError: argument R must be a commutative ring
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -88,7 +88,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
         cat = Algebras(R).Commutative().WithBasis()
         Parent.__init__(self, base=R, category=cat.WithRealizations())
 
-    _shorthands = ["B", "S"]
+    _shorthands = ("B", "S")
 
     def _repr_(self) -> str:
         r"""

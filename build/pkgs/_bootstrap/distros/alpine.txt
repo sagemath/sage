@@ -3,4 +3,3 @@ gettext-dev
 autoconf
 automake
 libtool
-pkgconf

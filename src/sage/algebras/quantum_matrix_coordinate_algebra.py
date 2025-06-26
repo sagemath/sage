@@ -282,7 +282,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
                 if ax[0] < bx[0]:
                     # In order, so nothing more to do
                     break
-                elif ax[0] == bx[0]:
+                if ax[0] == bx[0]:
                     if ax[1] > bx[1]:
                         # x_{it} x_{ij} = q^{-1} x_{ij} x_{it} if t < j
                         coeff *= qi ** (ae * be)

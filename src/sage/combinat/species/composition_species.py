@@ -27,6 +27,9 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
         TESTS::
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: L = E(C)
             sage: a = L.structures(['a','b','c']).random_element()                      # needs sage.libs.flint
             sage: a == loads(dumps(a))                                                  # needs sage.libs.flint

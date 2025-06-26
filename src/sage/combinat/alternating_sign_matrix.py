@@ -321,8 +321,8 @@ class AlternatingSignMatrix(Element,
         inversion_num = 0
         asm_matrix = self.to_matrix()
         nonzero_cells = asm_matrix.nonzero_positions()
-        for (i, j) in nonzero_cells:
-            for (k, l) in nonzero_cells:
+        for i, j in nonzero_cells:
+            for k, l in nonzero_cells:
                 if i > k and j < l:
                     inversion_num += asm_matrix[i][j] * asm_matrix[k][l]
         return inversion_num
@@ -926,7 +926,7 @@ class AlternatingSignMatrix(Element,
         if not self.is_permutation():
             raise ValueError('not a permutation matrix')
         asm_matrix = self.to_matrix()
-        return Permutation([j + 1 for (i, j) in asm_matrix.nonzero_positions()])
+        return Permutation([j + 1 for _, j in asm_matrix.nonzero_positions()])
 
     @combinatorial_map(name='to semistandard tableau')
     def to_semistandard_tableau(self):
@@ -1471,7 +1471,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         m.set_immutable()
         return self.element_class(self, m)
 
-    def _lattice_initializer(self):
+    def _lattice_initializer(self) -> tuple:
         r"""
         Return a 2-tuple to use in argument of ``LatticePoset``.
 
@@ -1492,7 +1492,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         mts, rels = MonotoneTriangles(self._n)._lattice_initializer()
         bij = {t: self.from_monotone_triangle(t) for t in mts}
-        return (bij.values(), [(bij[a], bij[b]) for (a, b) in rels])
+        return (bij.values(), [(bij[a], bij[b]) for a, b in rels])
 
     def cover_relations(self):
         r"""
@@ -1502,7 +1502,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: A = AlternatingSignMatrices(3)
-            sage: for (a,b) in A.cover_relations():
+            sage: for a, b in A.cover_relations():
             ....:   eval('a, b')
             (
             [1 0 0]  [0 1 0]
@@ -1734,7 +1734,7 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
         EXAMPLES::
 
             sage: M = MonotoneTriangles(3)
-            sage: for (a,b) in M.cover_relations():
+            sage: for a, b in M.cover_relations():
             ....:   eval('a, b')
             ([[3, 2, 1], [2, 1], [1]], [[3, 2, 1], [2, 1], [2]])
             ([[3, 2, 1], [2, 1], [1]], [[3, 2, 1], [3, 1], [1]])
@@ -1779,7 +1779,7 @@ def _is_a_cover(mt0, mt1):
         False
     """
     diffs = 0
-    for (a, b) in zip(flatten(mt0), flatten(mt1)):
+    for a, b in zip(flatten(mt0), flatten(mt1)):
         if a != b:
             if a + 1 == b:
                 diffs += 1

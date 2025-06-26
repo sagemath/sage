@@ -34,3 +34,4 @@ perl-IPC-Cmd
 # Needed to build gcc
 flex
 patch
+pkg-config

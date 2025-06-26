@@ -230,7 +230,7 @@ class QuantumValuedPolynomialRing(UniqueRepresentation, Parent):
         cat = Algebras(R).Commutative().WithBasis()
         Parent.__init__(self, base=R, category=cat.WithRealizations())
 
-    _shorthands = ["B", "S"]
+    _shorthands = ("B", "S")
 
     def _repr_(self) -> str:
         r"""

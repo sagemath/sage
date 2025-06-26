@@ -245,6 +245,12 @@ To compile the project, run the following command:
 
     $ meson compile -C builddir
 
+On Windows, you may encounter a linker error related to a missing
+``python_d.lib`` file. This typically indicates that your Python interpreter is
+not a debug build. To resolve this, it is recommended to use a release build
+by adding ``-Dbuildtype=release`` to the ``meson setup`` command, or
+alternatively, use a debug build of the Python interpreter.
+
 Installing is done with the following command:
 
 .. code-block:: shell-session
