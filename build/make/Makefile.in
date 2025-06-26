@@ -224,7 +224,7 @@ SAGE_I_TARGETS = sagelib doc
 
 # Tell make not to look for files with these names:
 .PHONY: all all-sage all-toolchain all-build all-sageruntime \
-	all-start build-start base toolchain toolchain-deps base-toolchain \
+	all-start build-start toolchain toolchain-deps base-toolchain \
 	pypi-sdists pypi-noarch-wheels pypi-wheels wheels \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
@@ -271,11 +271,11 @@ all-build: toolchain-deps
 # This used to do run "sage-starts" script, now it's just an alias
 build-start: all-build
 
-# The 2 preliminary build phases: base and toolchain.
-base-toolchain: _clean-broken-gcc base
+# The preliminary build phase: toolchain.
+base-toolchain: _clean-broken-gcc
 	+$(MAKE_REC) toolchain
 
-# All targets except for the base packages and except the documentation
+# All targets except for the documentation
 all-sage: \
 		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS) \
 		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
@@ -303,7 +303,7 @@ download-for-sdist:
 		$(SDIST_PACKAGES)
 
 # TOOLCHAIN consists of dependencies determined by configure.
-# These are built after the "base" target but before anything else.
+# These are built before anything else.
 toolchain: $(foreach pkgname,$(TOOLCHAIN),$(inst_$(pkgname))) $(PCFILES)
 
 # Build all packages that GCC links against serially, otherwise this
@@ -343,13 +343,6 @@ SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect)
 all-sageruntime: toolchain-deps
 	+$(MAKE_REC) $(SAGERUNTIME)
 
-
-###############################################################################
-# Building the base system
-#
-# This consists of packages which are required for the Sage build system.
-###############################################################################
-base: $(inst_pkgconf)
 
 ###############################################################################
 # Building the documentation

@@ -876,7 +876,7 @@ should be declared in a separate file ``dependencies_optional``.
 In order to check that the dependencies of your package are likely
 correct, the following command should work without errors::
 
-    [alice@localhost sage]$ make distclean && make base && make PACKAGE_NAME
+    [alice@localhost sage]$ make distclean && make PACKAGE_NAME
 
 Finally, note that standard packages should only depend on standard
 packages and optional packages should only depend on standard or

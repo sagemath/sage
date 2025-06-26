@@ -25,6 +25,7 @@ py.install_sources(
   'cographs.py',
   'connectivity.pxd',
   'convexity_properties.pxd',
+  'cycle_enumeration.py',
   'digraph.py',
   'digraph_generators.py',
   'distances_all_pairs.pxd',

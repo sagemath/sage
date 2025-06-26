@@ -38,6 +38,7 @@ py.install_sources(
   'laurent_series_ring_element.pxd',
   'lazy_series.py',
   'lazy_series_ring.py',
+  'lazy_species.py',
   'localization.py',
   'monomials.py',
   'morphism.pxd',

@@ -54,9 +54,9 @@
 # export CPUTHREADS=8                                                          #
 # export RAMTHREADS=8                                                          #
 # export RAMTHREADS_DOCBUILD=8                                                 #
-# . .ci/update-env.sh                                                          #
-# . .ci/setup-make-parallelity.sh                                              #
-# .ci/build-docker.sh                                                          #
+# . docker/update-env.sh                                                          #
+# . docker/setup-make-parallelity.sh                                              #
+# docker/build-docker.sh                                                          #
 #                                                                              #
 # Now you can push the relevant images to the Docker Hub:                      #
 #                                                                              #

@@ -1523,8 +1523,9 @@ General number fields::
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - 1/8)                                                # needs sage.rings.number_field
     sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))                                # needs sage.rings.number_field
-    doctest:...: DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
-    [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
+    doctest:warning...
+    DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
+    [x + Mod(-1/2*a, a^2 - 8), 1; x + Mod(1/2*a, a^2 - 8), 1]
 
     sage: K.<z> = QuadraticField(-23)                                                   # needs sage.rings.number_field
     sage: p = K.primes_above(3)[0]                                                      # needs sage.rings.number_field

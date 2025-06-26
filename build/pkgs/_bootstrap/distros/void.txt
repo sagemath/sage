@@ -4,4 +4,3 @@ automake
 libtool
 xtools
 mk-configure
-pkg-config

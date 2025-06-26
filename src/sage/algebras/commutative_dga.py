@@ -1286,8 +1286,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
-            x = self.element_class(self, x.sage_poly(self.cover_ring()))
-            return x
+            return self.element_class(self, x.sage_poly(self.cover_ring()))
 
         return self.element_class(self, x)
 
