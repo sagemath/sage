@@ -30,6 +30,10 @@ class PermutationSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.PermutationSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
+
             sage: S = P.structures(["a", "b", "c"])
             sage: [s.canonical_label() for s in S]
             [['a', 'b', 'c'],
