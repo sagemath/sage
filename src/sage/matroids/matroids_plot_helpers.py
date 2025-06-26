@@ -74,14 +74,17 @@ EXAMPLES::
 import scipy
 import scipy.interpolate
 import numpy as np
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.plot.all", ["Graphics", "line", "text", "polygon2d", "point", "points"])
-lazy_import("sage.plot.colors", "Color")
-from sage.sets.set import Set
+
 from sage.matroids.advanced import newlabel
+from sage.misc.lazy_import import lazy_import
+from sage.sets.set import Set
+
+lazy_import("sage.plot.all", ["Graphics", "line", "text",
+                              "polygon2d", "point", "points"])
+lazy_import("sage.plot.colors", "Color")
 
 
-def it(M, B1, nB1, lps):
+def it(M, B1, nB1, lps) -> tuple[dict, list, list, list]:
     r"""
     Return points on and off the triangle and lines to be drawn for a rank 3
     matroid.
@@ -178,7 +181,7 @@ def it(M, B1, nB1, lps):
     return pts, trilines, nontripts, curvedlines
 
 
-def trigrid(tripts):
+def trigrid(tripts) -> list[list]:
     """
     Return a grid of 4 points inside given 3 points as a list.
 
@@ -205,7 +208,7 @@ def trigrid(tripts):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     pairs = [[0, 1], [1, 2], [0, 2]]
     cpt = [float(tripts[0][0] + tripts[1][0] + tripts[2][0]) / 3,
@@ -218,7 +221,7 @@ def trigrid(tripts):
     return grid
 
 
-def addnontripts(tripts_labels, nontripts_labels, ptsdict):
+def addnontripts(tripts_labels, nontripts_labels, ptsdict) -> dict:
     """
     Return modified ``ptsdict`` with additional keys and values corresponding
     to ``nontripts``.
@@ -260,16 +263,16 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     tripts = [list(ptsdict[p]) for p in tripts_labels]
     pairs = [[0, 1], [1, 2], [0, 2]]
     q = [tripts]
     num = len(nontripts_labels)
-    gridpts = [[float((tripts[0][0]+tripts[1][0]+tripts[2][0])/3),
-               float(tripts[0][1]+tripts[1][1]+tripts[2][1])/3]]
+    gridpts = [[float((tripts[0][0] + tripts[1][0] + tripts[2][0]) / 3),
+               float(tripts[0][1] + tripts[1][1] + tripts[2][1]) / 3]]
     n = 0
-    while n < num+1:
+    while n < num + 1:
         g = trigrid(q[0])
         q.extend([[g[0], q[0][pairs[0][0]], q[0][pairs[0][1]]],
                   [g[0], q[0][pairs[1][0]], q[0][pairs[1][1]]],
@@ -285,7 +288,7 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
     return ptsdict
 
 
-def createline(ptsdict, ll, lineorders2=None):
+def createline(ptsdict, ll, lineorders2=None) -> tuple[list, list, list, list]:
     """
     Return ordered lists of coordinates of points to be traversed to draw a
     2D line.
@@ -334,7 +337,7 @@ def createline(ptsdict, ll, lineorders2=None):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     x, lo = line_hasorder(ll, lineorders2)
     flip = False
@@ -367,7 +370,7 @@ def createline(ptsdict, ll, lineorders2=None):
     return sortedx, sortedy, x_i, y_i
 
 
-def slp(M1, pos_dict=None, B=None):
+def slp(M1, pos_dict=None, B=None) -> tuple:
     """
     Return simple matroid, loops and parallel elements of given matroid.
 
@@ -395,7 +398,7 @@ def slp(M1, pos_dict=None, B=None):
         sage: M1 = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1,0,1],
         ....:                                  [0, 1, 0, 1, 0, 1, 1,0,0,1,0],
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
-        sage: [M,L,P] = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
+        sage: M, L, P = matroids_plot_helpers.slp(M1)                                   # needs sage.rings.finite_rings
         sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
         sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
@@ -405,7 +408,7 @@ def slp(M1, pos_dict=None, B=None):
         ....:                                  [0, 0, 1, 1, 1, 0, 1,0,0,0,0]])
         sage: posdict = {8: (0, 0),  1: (2, 0),  2: (1, 2),  3: (1.5, 1.0),
         ....:            4: (0.5, 1.0),  5: (1.0, 0.0), 6: (1.0, 0.6666666666666666)}
-        sage: [M,L,P] = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
+        sage: M, L, P = matroids_plot_helpers.slp(M1, pos_dict=posdict)                 # needs sage.rings.finite_rings
         sage: M.is_simple()                                                             # needs sage.rings.finite_rings
         True
         sage: setprint([L,P])                                                           # needs sage.rings.finite_rings
@@ -413,23 +416,23 @@ def slp(M1, pos_dict=None, B=None):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
-    P = set(M1.groundset())-nP
+    P = set(M1.groundset()) - nP
     if P:
         if pos_dict is not None:
-            pcls = list(set([frozenset(set(M1.closure([p])) - L)
-                             for p in list(P)]))
+            pcls = list({frozenset(set(M1.closure([p])) - L)
+                         for p in list(P)})
             newP = []
             for pcl in pcls:
                 pcl_in_dict = [p for p in list(pcl) if p in pos_dict.keys()]
-                newP.extend(list(pcl-set([pcl_in_dict[0]])))
+                newP.extend(list(pcl - set([pcl_in_dict[0]])))
             return [M1.delete(L | set(newP)), L, set(newP)]
         elif B is not None:
-            pcls = list(set([frozenset(set(M1.closure([p])) - L)
-                             for p in list(P)]))
+            pcls = list({frozenset(set(M1.closure([p])) - L)
+                         for p in list(P)})
             newP = []
             for pcl in pcls:
                 pcl_list = list(pcl)
@@ -445,7 +448,7 @@ def slp(M1, pos_dict=None, B=None):
         return [M1.delete(L | P), L, P]
 
 
-def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
+def addlp(M, M1, L, P, ptsdict, G=None, limits=None) -> tuple:
     """
     Return a graphics object containing loops (in inset) and parallel elements
     of matroid.
@@ -476,13 +479,13 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
         sage: M = Matroid(ring=GF(2), matrix=[[1, 0, 0, 0, 1, 1, 1,0,1],
         ....:                                 [0, 1, 0, 1, 0, 1, 1,0,0],
         ....:                                 [0, 0, 1, 1, 1, 0, 1,0,0]])
-        sage: [M1,L,P] = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
+        sage: M1, L, P = matroids_plot_helpers.slp(M)                                   # needs sage.rings.finite_rings
         sage: G, lims = matroids_plot_helpers.addlp(M,M1,L,P,{0:(0,0)})                 # needs sage.plot sage.rings.finite_rings
         sage: G.show(axes=False)                                                        # needs sage.plot sage.rings.finite_rings
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     if G is None:
         G = Graphics()
@@ -551,7 +554,7 @@ def addlp(M, M1, L, P, ptsdict, G=None, limits=None):
     return G, limits
 
 
-def line_hasorder(l, lodrs=None):
+def line_hasorder(l, lodrs=None) -> tuple[bool, list]:
     """
     Determine if an order is specified for a line.
 
@@ -581,7 +584,7 @@ def line_hasorder(l, lodrs=None):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     if lodrs is not None:
         set_l = Set(l)
@@ -592,7 +595,7 @@ def line_hasorder(l, lodrs=None):
     return False, []
 
 
-def lineorders_union(lineorders1, lineorders2):
+def lineorders_union(lineorders1, lineorders2) -> list:
     """
     Return a list of ordered lists of ground set elements that corresponds to
     union of two sets of ordered lists of ground set elements in a sense.
@@ -633,7 +636,7 @@ def lineorders_union(lineorders1, lineorders2):
         return None
 
 
-def posdict_is_sane(M1, pos_dict):
+def posdict_is_sane(M1, pos_dict) -> bool:
     """
     Return a boolean establishing sanity of ``posdict`` wrt matroid ``M``.
 
@@ -665,25 +668,24 @@ def posdict_is_sane(M1, pos_dict):
 
     .. NOTE::
 
-            This method does NOT do any checks. ``M1`` is assumed to be a
-            matroid and ``posdict`` is assumed to be a dictionary.
+        This method does NOT do any checks. ``M1`` is assumed to be a
+        matroid and ``posdict`` is assumed to be a dictionary.
     """
     L = set(M1.loops())
     nP = L | set(M1.simplify().groundset())
-    P = set(M1.groundset())-nP
-    pcls = list(set([frozenset(set(M1.closure([p])) - L) for p in list(P)]))
+    P = set(M1.groundset()) - nP
+    pcls = list({frozenset(set(M1.closure([p])) - L) for p in list(P)})
     for pcl in pcls:
-        pcl_list = list(pcl)
-        if not any(x in pos_dict for x in pcl_list):
+        if not any(x in pos_dict for x in pcl):
             return False
     allP = []
     for pcl in pcls:
-        allP.extend(list(pcl))
+        allP.extend(pcl)
     return all(x in pos_dict
                for x in list(set(M1.groundset()) - (L | set(allP))))
 
 
-def tracklims(lims, x_i=[], y_i=[]):
+def tracklims(lims, x_i=[], y_i=[]) -> list:
     """
     Return modified limits list.
 
@@ -704,7 +706,7 @@ def tracklims(lims, x_i=[], y_i=[]):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     if lims is not None and lims[0] is not None and lims[1] is not None and \
        lims[2] is not None and lims[3] is not None:
@@ -752,11 +754,11 @@ def geomrep(M1, B1=None, lineorders1=None, pd=None, sp=False):
 
     .. NOTE::
 
-            This method does NOT do any checks.
+        This method does NOT do any checks.
     """
     G = Graphics()
     # create lists of loops and parallel elements and simplify given matroid
-    [M, L, P] = slp(M1, pos_dict=pd, B=B1)
+    M, L, P = slp(M1, pos_dict=pd, B=B1)
     if B1 is None:
         B1 = list(M.basis())
     M._cached_info = M1._cached_info

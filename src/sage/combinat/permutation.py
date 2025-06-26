@@ -4452,7 +4452,7 @@ class Permutation(CombinatorialElement):
             raise ValueError("{} must be lower or equal than {} for the right permutohedron order".format(self, other))
         d = DiGraph()
         d.add_vertices(range(1, len(self) + 1))
-        d.add_edges([(j, i) for (i, j) in self.inverse().inversions()])
+        d.add_edges([(j, i) for i, j in self.inverse().inversions()])
         d.add_edges([(other[i], other[j]) for i in range(len(other) - 1)
                      for j in range(i, len(other)) if other[i] < other[j]])
         return d.topological_sort_generator()
@@ -7860,7 +7860,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         return self.element_class(self, data, check=False)
 
     class Element(Permutation):
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             r"""
             Check if ``i`` is a left descent of ``self``.
 
@@ -7898,7 +7898,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
                 if val == i + 1:
                     return True
 
-        def has_right_descent(self, i, mult=None):
+        def has_right_descent(self, i, mult=None) -> bool:
             r"""
             Check if ``i`` is a right descent of ``self``.
 
@@ -8375,7 +8375,7 @@ def bistochastic_as_sum_of_permutations(M, check=True):
         sage: L.append((6,Permutation([5, 3, 4, 1, 2])))
         sage: L.append((3,Permutation([3, 1, 4, 2, 5])))
         sage: L.append((2,Permutation([1, 4, 2, 3, 5])))
-        sage: M = sum([c * p.to_matrix() for (c,p) in L])
+        sage: M = sum([c * p.to_matrix() for c, p in L])
         sage: decomp = bistochastic_as_sum_of_permutations(M)
         sage: print(decomp)
         2*B[[1, 4, 2, 3, 5]] + 3*B[[3, 1, 4, 2, 5]]

@@ -117,7 +117,6 @@ from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.structure.element cimport Matrix
 
 ################
@@ -382,7 +381,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
                     if v.positions[k] in c:
                         y = get_entry(&right.rows[v.positions[k]], j)
                         x = v.entries[k] * y
-                        s = (s + x)%self.p
+                        s = (s + x) % self.p
                 ans.set_unsafe_int(i, j, s)
                 #ans._matrix[i][j] = s
         return ans
@@ -429,7 +428,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         for c from 0 <= c < self._ncols:
             if do_verb and (c % fifth == 0 and c>0):
-                tm = verbose('on column %s of %s'%(c, self._ncols),
+                tm = verbose('on column %s of %s' % (c, self._ncols),
                              level = 2,
                              caller_name = 'matrix_modn_sparse echelon')
             #end if
@@ -560,7 +559,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [1 0 0]
             [0 0 0]
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         cdef c_vector_modint row
         cdef Matrix_modn_sparse B
 
@@ -594,7 +593,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [6 7 8]
             [3 4 5]
         """
-        cdef int i,k
+        cdef Py_ssize_t i,k
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -632,7 +631,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             [5 4]
             [8 7]
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         cdef Matrix_modn_sparse A
         cdef c_vector_modint row
 
@@ -795,7 +794,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             return Matrix2.rank(self)
 
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
     def determinant(self, algorithm=None):
         r"""
@@ -847,6 +846,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         """
         if self._nrows != self._ncols:
             raise ValueError("self must be a square matrix")
+
         if self._nrows == 0:
             return self.base_ring().one()
 
@@ -859,9 +859,10 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             self.cache('rank', r)
             self.cache('det', d)
             return d
-        elif algorithm == 'generic':
+
+        if algorithm == 'generic':
             d = Matrix_sparse.determinant(self)
             self.cache('det', d)
             return d
-        else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+
+        raise ValueError("no algorithm '%s'" % algorithm)

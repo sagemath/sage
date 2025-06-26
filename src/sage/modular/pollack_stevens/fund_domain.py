@@ -1156,7 +1156,7 @@ class ManinRelations(PollackStevensModularDomain):
         # which right coset representatives we've found for Gamma_0(N)/SL_2(Z)
         # thru the construction of a fundamental domain
 
-        # Includeds the coset repns formed by the original ideal triangle
+        # Includes the coset repns formed by the original ideal triangle
         # (with corners at -1, 0, infty)
 
         v[P.index(0, 1)] = True
@@ -1257,10 +1257,9 @@ class ManinRelations(PollackStevensModularDomain):
 
         # Remove the (now superfluous) extra string characters that appear
         # in the odd list entries
-        C = [QQ(C[ss]) for ss in range(0, len(C), 2)]
-        return C
+        return [QQ(C[ss]) for ss in range(0, len(C), 2)]
 
-    def is_unimodular_path(self, r1, r2):
+    def is_unimodular_path(self, r1, r2) -> bool:
         r"""
         Determine whether two (non-infinite) cusps are connected by a
         unimodular path.

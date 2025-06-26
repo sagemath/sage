@@ -38,7 +38,7 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-.. WARNING:
+.. WARNING::
 
     Doing arithmetic in towers of relative fields that depends on canonical
     coercions is currently VERY SLOW.  It is much better to explicitly coerce
@@ -1922,11 +1922,11 @@ class NumberField_relative(NumberField_generic):
             sage: k.base_field().absolute_polynomial()
             x^2 + 1/4
             sage: k.pari_absolute_base_polynomial()
-            y^2 + 1
+            y^2 + 4
             sage: k.relative_polynomial()
             x^2 + 1/3
             sage: k.pari_relative_polynomial()
-            x^2 + Mod(-y, y^2 + 1)*x - 1
+            x^2 + Mod(-1/2*y, y^2 + 4)*x - 1
         """
         return QQ['x'](self._pari_rnfeq()[0])
 

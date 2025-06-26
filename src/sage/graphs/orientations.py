@@ -113,7 +113,7 @@ def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
         sage: D.add_edge((2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: this graph is immutable and so cannot be changed
         sage: G = Graph([(1, 2)])
         sage: D = _initialize_digraph(G, [])
         sage: D.vertices()
@@ -186,22 +186,9 @@ def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
                 name=name,
                 hash_labels=hash_labels)
 
-    D.set_vertices(G.get_vertices())
-
-    attributes_to_copy = ('_assoc', '_embedding')
-    for attr in attributes_to_copy:
-        if hasattr(G, attr):
-            copy_attr = {}
-            old_attr = getattr(G, attr)
-            if isinstance(old_attr, dict):
-                for v, value in old_attr.items():
-                    try:
-                        copy_attr[v] = value.copy()
-                    except AttributeError:
-                        copy_attr[v] = copy(value)
-                setattr(D, attr, copy_attr)
-            else:
-                setattr(D, attr, copy(old_attr))
+    # Copy attributes '_assoc' and '_embedding' if set
+    D._copy_attribute_from(G, '_assoc')
+    D._copy_attribute_from(G, '_embedding')
 
     return D
 

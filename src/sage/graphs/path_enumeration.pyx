@@ -734,6 +734,18 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 10, 5],
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
+
+    When ``s == t`` and ``report_edge == True`` and ``report_weight == True`` (:issue:`40247`)::
+
+        sage: g = DiGraph([(1, 2)])
+        sage: list(yen_k_shortest_simple_paths(g, 1, 1, report_edges=True, report_weight=True))
+        [(0, [])]
+
+    No path between two vertices exists::
+
+        sage: g = Graph(2)
+        sage: list(yen_k_shortest_simple_paths(g, 0, 1))
+        []
     """
     if source not in self:
         raise ValueError("vertex '{}' is not in the graph".format(source))
@@ -741,12 +753,8 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
         raise ValueError("vertex '{}' is not in the graph".format(target))
 
     if source == target:
-        if report_edges:
-            yield []
-        elif report_weight:
-            yield (0, [source])
-        else:
-            yield [source]
+        P = [] if report_edges else [source]
+        yield (0, P) if report_weight else P
         return
 
     if self.has_loops() or self.allows_multiple_edges():
@@ -784,10 +792,6 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
         path = shortest_path_func(source, target)
     # corner case
     if not path:
-        if report_weight:
-            yield (0, [])
-        else:
-            yield []
         return
 
     cdef dict edge_labels
@@ -1855,7 +1859,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
             idx_to_path[idx] = path
             pq.push((-len(path), idx))
             idx = idx + 1
-        except(StopIteration):
+        except StopIteration:
             pass
     # Since we always extract a shortest path, using a heap
     # can speed up the algorithm
@@ -1875,7 +1879,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
             idx_to_path[idx] = path
             pq.push((-len(path), idx))
             idx = idx + 1
-        except(StopIteration):
+        except StopIteration:
             pass
 
 

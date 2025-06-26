@@ -2,7 +2,7 @@
 .. _chapter-modularization:
 
 ===========================================
-Packaging the Sage Library for Distribution
+Modularized Distribution
 ===========================================
 
 
@@ -186,7 +186,7 @@ The source directory of a distribution package, such as
   in :sage_root:`src`
 
 - ``VERSION.txt`` -- package version. This file is updated by the release manager by
-  running the ``sage-update-version`` script.
+  running the ``update-version`` script.
 
   Sometimes it may be necessary to upload a hotfix for a distribution
   package to PyPI. These should be marked by adding a suffix
@@ -493,17 +493,6 @@ requiring all of Sage to be present.
 *Declaring doctest-only dependencies:* The
 `extras_require <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_
 mechanism mentioned above can also be used for this.
-
-
-Dependencies of the Sage documentation
---------------------------------------
-
-The documentation will not be modularized.
-
-However, some parts of the Sage reference manual may depend on functionality
-provided by optional packages. These portions of the reference manual
-should be conditionalized using the Sphinx directive ``.. ONLY::``,
-as explained in :ref:`section-documentation-conditional`.
 
 
 Version constraints of dependencies

@@ -695,7 +695,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.list() == l  # indirect doctest
             True
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         l = []
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
@@ -930,7 +930,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             self._echelon_in_place(algorithm='classical')
 
         else:
-            raise ValueError("No algorithm '%s'."%algorithm)
+            raise ValueError("No algorithm '%s'." % algorithm)
 
         self.cache('in_echelon_form',True)
         self.cache('rank', r)
@@ -1085,6 +1085,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: B[2] == A[2]
             True
         """
+        if self._ncols == 0:
+            return
         mzed_row_swap(self._entries, row1, row2)
 
     cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
@@ -1123,6 +1125,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.column(14) == B.column(0)
             True
         """
+        if self._nrows == 0:
+            return
         mzed_col_swap(self._entries, col1, col2)
 
     def augment(self, right):
@@ -1327,16 +1331,16 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef int highc = col + ncols
 
         if row < 0:
-            raise TypeError("Expected row >= 0, but got %d instead."%row)
+            raise TypeError("Expected row >= 0, but got %d instead." % row)
 
         if col < 0:
-            raise TypeError("Expected col >= 0, but got %d instead."%col)
+            raise TypeError("Expected col >= 0, but got %d instead." % col)
 
         if highc > self._entries.ncols:
-            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead."%(highc, self._entries.ncols))
+            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead." % (highc, self._entries.ncols))
 
         if highr > self._entries.nrows:
-            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
+            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead." % (highr, self._entries.nrows))
 
         cdef Matrix_gf2e_dense A = self.new_matrix(nrows=nrows, ncols=ncols)
         if ncols == 0 or nrows == 0:

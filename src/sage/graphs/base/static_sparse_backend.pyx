@@ -35,6 +35,7 @@ Classes and methods
 -------------------
 """
 
+cimport cython
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
@@ -141,7 +142,7 @@ cdef class StaticSparseCGraph(CGraph):
         bitset_set_first_n(self.active_vertices, self.g.n)
 
         self.num_verts = self.g.n
-        self.num_arcs = self.g.m
+        self.num_arcs = self.g.m if self._directed else (2 * self.g.m)
 
     def __dealloc__(self):
         r"""
@@ -395,7 +396,7 @@ cdef class StaticSparseCGraph(CGraph):
         if u < 0 or u >= self.g.n:
             raise LookupError("the vertex does not belong to the graph")
 
-        return self.g.neighbors[u+1] - self.g.neighbors[u]
+        return out_degree(self.g, u)
 
     cpdef int in_degree(self, int u) except -1:
         r"""
@@ -420,9 +421,8 @@ cdef class StaticSparseCGraph(CGraph):
             raise LookupError("the vertex does not belong to the graph")
 
         if not self._directed:
-            return self.g.neighbors[u+1] - self.g.neighbors[u]
-        else:
-            return self.g_rev.neighbors[u+1] - self.g_rev.neighbors[u]
+            return out_degree(self.g, u)
+        return out_degree(self.g_rev, u)
 
 
 cdef class StaticSparseBackend(CGraphBackend):
@@ -1519,11 +1519,11 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.add_vertex(1)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
             sage: g.add_vertices([1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         (<StaticSparseCGraph> self._cg).add_vertex(v)
 
@@ -1537,15 +1537,16 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.delete_vertex(1)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
             sage: g.delete_vertices([1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         (<StaticSparseCGraph> self._cg).del_vertex(v)
 
 
+@cython.binding(True)
 def _run_it_on_static_instead(f):
     r"""
     A decorator function to force the (Di)Graph functions to compute from a

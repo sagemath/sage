@@ -257,8 +257,8 @@ class FusionDouble(CombinatorialFreeModule):
         """
         sum_val = ZZ.zero()
         G = self._G
-        [i] = list(i._monomial_coefficients)
-        [j] = list(j._monomial_coefficients)
+        i, = list(i._monomial_coefficients)
+        j, = list(j._monomial_coefficients)
         a = self._elt[i]
         b = self._elt[j]
         for g in G:
@@ -328,9 +328,9 @@ class FusionDouble(CombinatorialFreeModule):
             [ 1/3  1/3 -1/3    0    0 -1/3  2/3 -1/3]
         """
         b = self.basis()
-        S = matrix([[self.s_ij(b[x], b[y], unitary=unitary, base_coercion=base_coercion)
-                     for x in self.get_order()] for y in self.get_order()])
-        return S
+        return matrix([[self.s_ij(b[x], b[y], unitary=unitary,
+                                  base_coercion=base_coercion)
+                        for x in self.get_order()] for y in self.get_order()])
 
     @cached_method
     def N_ijk(self, i, j, k):
