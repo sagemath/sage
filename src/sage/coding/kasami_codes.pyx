@@ -165,26 +165,25 @@ class KasamiCode(AbstractLinearCode):
             ValueError: The parameter t(=5) must be a power of 2
         """
         # Check validity of s and t
-        (p,i) = is_prime_power(t,get_data=True)
+        p, i = is_prime_power(t, get_data=True)
         if p != 2:
             raise ValueError(f"The parameter t(={t}) must be a power of 2")
 
-        if s != t*t:
+        if s != t * t:
             # then we must have s=q^{2j+1} and t = q^m
-            (p,k) = is_prime_power(s,get_data=True)
+            p, k = is_prime_power(s, get_data=True)
             if p != 2:
                 raise ValueError(f"The parameter s(={s}) must be a power of 2")
 
             # q= 2^l here l = gcd(k,i)
-            l = gcd(i,k)
-            q = 2**l
+            l = gcd(i, k)
             m = i // l
 
-            if (k//l) % 2 == 0:
+            if (k // l) % 2 == 0:
                 raise ValueError(
                     f"The parameter s(={s}) is invalid. Check the documentation")
 
-            j = ((k//l) - 1) // 2
+            j = ((k // l) - 1) // 2
 
             # gcd(m,2*j+1) = gcd( i/l, k/l) = 1
             if m > j:
@@ -219,7 +218,7 @@ class KasamiCode(AbstractLinearCode):
             sage: C.parameters()
             (8, 2)
         """
-        return (self._s,self._t)
+        return (self._s, self._t)
 
     def __eq__(self, other):
         r"""
@@ -239,10 +238,10 @@ class KasamiCode(AbstractLinearCode):
         # Check that s, t, extended values of both
         # objects are the same
         return isinstance(other, KasamiCode) \
-                and self.parameters() == other.parameters() \
-                and self._extended == other._extended
+            and self.parameters() == other.parameters() \
+            and self._extended == other._extended
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -251,13 +250,12 @@ class KasamiCode(AbstractLinearCode):
             sage: codes.KasamiCode(4,2,extended=True)
             [4, 0] Extended (4, 2)-Kasami code
         """
-        ext = ""
-        if self._extended:
-            ext = " Extended"
-        return "[%s, %s]%s (%s, %s)-Kasami code"\
-                % (self.length(),self.dimension(), ext, self._s, self._t)
+        ext = " Extended" if self._extended else ""
+        return "[%s, %s]%s (%s, %s)-Kasami code" % (self.length(),
+                                                    self.dimension(), ext,
+                                                    self._s, self._t)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -267,11 +265,9 @@ class KasamiCode(AbstractLinearCode):
             sage: latex(C)
             [16, 9]\textnormal{ Extended} (16, 4)\textnormal{-Kasami code}
         """
-        ext = ""
-        if self._extended:
-            ext = " Extended"
+        ext = " Extended" if self._extended else ""
         return "[%s, %s]\\textnormal{%s} (%s, %s)\\textnormal{-Kasami code}"\
-                % (self.length(), self.dimension(), ext, self._s, self._t)
+            % (self.length(), self.dimension(), ext, self._s, self._t)
 
     def generator_matrix(self):
         r"""
@@ -329,11 +325,11 @@ class KasamiCode(AbstractLinearCode):
 
         def exp(row):
             return matrix(F,
-                          [x + [0]*(m - len(x)) for x in
-                            [a.polynomial().list() for a in row]]).transpose()
+                          [x + [0] * (m - len(x)) for x in
+                           [a.polynomial().list() for a in row]]).transpose()
 
         # Parity check matrix over GF(s)
-        Hs = matrix(F, [[1]*self._s,
+        Hs = matrix(F, [[1] * self._s,
                         F.list(),
                         [a**(self._t + 1) for a in F]])
 
