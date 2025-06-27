@@ -4545,11 +4545,14 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         Check :issue:`40282` is fixed::
 
             sage: R.<x> = QQ[]
-            sage: M = span( [[x, x^2+1], [1/x, x^3]], R)
+            sage: M = span([[x, x^2+1], [1/x, x^3]], R)
             sage: x * M.basis()[0]
             (1, x^4)
         """
-        v = [left * x for x in self._entries]
+        if left._parent is self._parent._FreeModule_generic__coordinate_ring:
+            v = [left._mul_(<RingElement>x) for x in self._entries]
+        else:
+            v = [left * x for x in self._entries]
         return self._new_c(v)
 
     cpdef _lmul_(self, Element right):
@@ -4567,11 +4570,14 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         Check :issue:`40282` is fixed::
 
             sage: R.<x> = QQ[]
-            sage: M = span( [[x, x^2+1], [1/x, x^3]], R)
+            sage: M = span([[x, x^2+1], [1/x, x^3]], R)
             sage: M.basis()[0] * x
             (1, x^4)
         """
-        v = [x * right for x in self._entries]
+        if right._parent is self._parent._FreeModule_generic__coordinate_ring:
+            v = [(<RingElement>x)._mul_(right) for x in self._entries]
+        else:
+            v = [x * right for x in self._entries]
         return self._new_c(v)
 
     @cython.boundscheck(False)
