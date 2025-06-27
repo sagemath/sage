@@ -23,6 +23,7 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
+    :meth:`biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
@@ -812,6 +813,44 @@ def blocks_and_cuts_tree(G):
                 g.add_edge(('B', bloc), ('C', c))
     return g
 
+def biconnected_components_subgraphs(G):
+    r"""
+    Return a list of biconnected components as graph objects.
+
+    A biconnected component is a maximal subgraph that is biconnected, i.e.,
+    removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    EXAMPLES::
+
+        sage: from sage.graphs.connectivity import biconnected_components_subgraphs
+        sage: G = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]})
+        sage: L = biconnected_components_subgraphs(G)
+        sage: L
+        [Subgraph of (): Graph on 2 vertices, Subgraph of (): Graph on 3 vertices]
+        sage: L[0].edges()
+        [(2, 3, None)]
+        sage: L[1].edges()
+        [(0, 1, None), (0, 2, None), (1, 2, None)]
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: from sage.graphs.connectivity import biconnected_components_subgraphs
+        sage: biconnected_components_subgraphs('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    return [G.subgraph(c) for c in blocks_and_cut_vertices(G)[0]]
 
 def is_edge_cut(G, edges):
     """
