@@ -271,7 +271,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         levels = h.level_sets()
         letters_at_level = [set(self[i] for i in level) for level in levels]
 
-        for (level_zero_index, members) in enumerate(levels):
+        for level_zero_index, members in enumerate(levels):
             level = level_zero_index + 1
             for i in members:
                 x = self[i]
@@ -439,7 +439,7 @@ class FullyCommutativeElement(NormalizedClonableList):
         view = list(self) if side == 'left' else self[::-1]
         m = self.parent().coxeter_group().coxeter_matrix()
         out = set()
-        for (i, t) in enumerate(view):
+        for i, t in enumerate(view):
             if not any(m[x, t] > 2 for x in view[:i]):
                 out.add(t)
         return out
