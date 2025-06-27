@@ -549,16 +549,22 @@ class EllipticCurveHom(Morphism):
         # returns the first component of rational_maps()
         raise NotImplementedError('children must implement')
 
-    def inverse_image(self, Q, /):
+    def inverse_image(self, Q, /, *, all=False):
         """
         Return an arbitrary element ``P`` in the domain such that
         ``self(P) == Q``, or raise ``ValueError`` if no such
         element exists.
 
+        INPUT:
+
+        - ``Q`` -- a point
+        - ``all`` -- if true, returns an iterator over all points
+          in the inverse image
+
         EXAMPLES::
 
             sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
-            sage: f = E.isogeny([P*3, Q*3])
+            sage: f = E.isogeny([P*3])
             sage: f(f.inverse_image(f(Q))) == f(Q)
             True
             sage: E.scalar_multiplication(-1).inverse_image(P) == -P
@@ -567,14 +573,47 @@ class EllipticCurveHom(Morphism):
             Traceback (most recent call last):
             ...
             ValueError: ...
+            sage: len(list(f.inverse_image(f(Q), all=True)))
+            2
+
+        Points from wrong curves cannot be passed in::
+
+            sage: f.inverse_image(Q)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a point in the codomain
+
+        TESTS::
+
+            sage: f.inverse_image(E.zero())
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a point in the codomain
+            sage: f.inverse_image(f.codomain().zero())
+            (0 : 1 : 0)
         """
+        if Q not in self.codomain():
+            raise TypeError('input must be a point in the codomain')
+        if Q.is_zero():
+            if all:
+                return self.kernel_points()
+            else:
+                return Q
+        if all:
+            try:
+                P = self.inverse_image(Q)
+            except ValueError:
+                return ()
+            return (K + P for K in self.kernel_points())
         if not self.base_ring().is_exact():
             from warnings import warn
             warn('computing inverse image over inexact base ring is not guaranteed to be correct')
         E = self.domain()
         for P in E.lift_x((self.x_rational_map() - Q.x()).numerator().any_root(), all=True):
+            # any_root raise ValueError if there's no root
             if self(P) == Q:
                 return P
+        assert not self.base_ring().is_exact()
         raise NotImplementedError
 
     def scaling_factor(self):

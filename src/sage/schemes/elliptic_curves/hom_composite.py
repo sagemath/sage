@@ -14,7 +14,6 @@ straightforward :class:`EllipticCurveIsogeny` implementation, but
 decomposing into prime steps is exponentially faster::
 
     sage: # needs sage.rings.finite_rings
-    sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
     sage: p = 3 * 2^143 - 1
     sage: GF(p^2).inject_variables()
     Defining z2
@@ -22,13 +21,16 @@ decomposing into prime steps is exponentially faster::
     sage: P = E.lift_x(31415926535897932384626433832795028841971 - z2)
     sage: P.order().factor()
     2^143
-    sage: EllipticCurveHom_composite(E, P)
+    sage: E.isogeny(P, algorithm="factored")  # preferred API
     Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143:
       From: Elliptic Curve defined by y^2 = x^3 + x
             over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
       To:   Elliptic Curve defined by y^2 = x^3 + (18676616716352953484576727486205473216172067*z2+32690199585974925193292786311814241821808308)*x
             + (3369702436351367403910078877591946300201903*z2+15227558615699041241851978605002704626689722)
             over Finite Field in z2 of size 33451117797795934712303577408972542258970623^2
+    sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+    sage: EllipticCurveHom_composite(E, P)  # same as above but use internal API, construct the isogeny directly
+    Composite morphism of degree 11150372599265311570767859136324180752990208 = 2^143: ...
 
 Yet, the interface provided by :class:`EllipticCurveHom_composite`
 is identical to :class:`EllipticCurveIsogeny` and other instantiations
@@ -931,3 +933,76 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             1331
         """
         return prod(phi.inseparable_degree() for phi in self._phis)
+
+    @property
+    def _rest(self):
+        """
+        Internal property such that ``self == self._rest * self._phis[0]``.
+
+        TESTS::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: assert f == f._rest * f._phis[0]
+        """
+        return EllipticCurveHom_composite.from_factors(self._phis[1:], strict=False)
+
+    def kernel_points(self):
+        """
+        Return an iterator over the points in the kernel of this
+        elliptic-curve morphism.
+        """
+        yield from self.inverse_image(self.codomain().zero(), all=True)
+
+    def inverse_image(self, Q, /, *, all=False):
+        """
+        Return an arbitrary element ``P`` in the domain such that
+        ``self(P) == Q``, or raise ``ValueError`` if no such
+        element exists.
+
+        INPUT:
+
+        - ``Q`` -- a point
+        - ``all`` -- if true, returns an iterator over all points
+          in the inverse image
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: f
+            Composite morphism of degree 4 = 2^2:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 1 over Finite Field in z2 of size 5^2
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 3 over Finite Field in z2 of size 5^2
+            sage: f(f.inverse_image(f(Q))) == f(Q)
+            True
+            sage: E.scalar_multiplication(-1).inverse_image(P) == -P
+            True
+            sage: f.inverse_image(f.codomain().0)
+            Traceback (most recent call last):
+            ...
+            ValueError...
+            sage: len(list(f.inverse_image(f(Q), all=True)))
+            4
+
+        Test a large example. It should finish in a few seconds::
+
+            sage: p = 3 * 2^143 - 1
+            sage: GF(p^2).inject_variables()
+            Defining z2
+            sage: E = EllipticCurve(GF(p^2), [1,0])
+            sage: P = E.lift_x(31415926535897932384626433832795028841971 - z2)
+            sage: f = E.isogeny(P, algorithm="factored")
+            sage: Q = f(E.lift_x(2718281828459045235360287471352662497757 - z2)); Q
+            (14253459515090351074737629944491750308703143*z2 + 17548601963968266930680314841240982076784493 : ... : 1)
+            sage: f.inverse_image(Q)
+            (...)
+        """
+        if len(self._phis) == 1:
+            return self._phis[0].inverse_image(Q, all=all)
+        if all:
+            return (R for P in self._rest.inverse_image(Q, all=True) for R in self._phis[0].inverse_image(P, all=True))
+        try:
+            return next(self.inverse_image(Q, all=True))
+        except StopIteration:
+            raise ValueError
