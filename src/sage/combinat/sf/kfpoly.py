@@ -26,8 +26,8 @@ from sage.combinat.partition import _Partitions
 from sage.combinat.partitions import ZS1_iterator
 from sage.combinat.skew_partition import SkewPartitions
 from sage.combinat.skew_tableau import SemistandardSkewTableaux
-from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring import polygen
 
 
 def KostkaFoulkesPolynomial(mu, nu, t=None):
