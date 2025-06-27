@@ -3876,8 +3876,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sig_off()
             return x
 
-    def factor(self, algorithm='pari', proof=None, limit=None, int_=False,
-               verbose=0):
+    def factor(self, algorithm=None, proof=None, limit=None, int_=False,
+               verbose=0, flint_bits=None):
         """
         Return the prime factorization of this integer as a
         formal Factorization object.
@@ -3896,7 +3896,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
           - ``'magma'`` -- use the MAGMA computer algebra system (requires
             an installation of MAGMA)
 
-          - ``'qsieve'`` -- use Bill Hart's quadratic sieve code;
+          - ``'qsieve'`` -- use ``qsieve_factor`` in the FLINT library;
             WARNING: this may not work as expected, see qsieve? for
             more information
 
@@ -3909,6 +3909,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         - ``limit`` -- integer or ``None`` (default: ``None``); if limit is
           given it must fit in a ``signed int``, and the factorization is done
           using trial division and primes up to limit
+
+        - ``flint_bits`` -- integer or ``None`` (default: ``None``); if specified,
+          perform only a partial factorization, primes at most ``2^flint_bits``
+          have a high probability of being detected
 
         OUTPUT: a Factorization object containing the prime factors and
         their multiplicities
@@ -3958,6 +3962,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.factor(algorithm='flint')                                           # needs sage.libs.flint
             2 * 3 * 11 * 13 * 41 * 73 * 22650083 * 1424602265462161
 
+        Example with ``flint_bits``. The small prime factor is found since it is
+        much smaller than `2^{50}`, but not the large ones::
+
+            sage: n = next_prime(2^256) * next_prime(2^257) * next_prime(2^40)
+            sage: n.factor(algorithm='flint', flint_bits=50)                            # needs sage.libs.flint
+            1099511627791 * 2681...6291
+
         We factor using a quadratic sieve algorithm::
 
             sage: # needs sage.libs.pari
@@ -3985,13 +3996,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: n.factor(algorithm='foobar')
             Traceback (most recent call last):
             ...
-            ValueError: Algorithm is not known
+            ValueError: algorithm is not known
         """
         from sage.structure.factorization import Factorization
         from sage.structure.factorization_integer import IntegerFactorization
-
-        if algorithm not in ['pari', 'flint', 'kash', 'magma', 'qsieve', 'ecm']:
-            raise ValueError("Algorithm is not known")
 
         cdef Integer n, p, unit
 
@@ -4003,17 +4011,26 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             unit = one
         else:
             n = PY_NEW(Integer)
-            unit = PY_NEW(Integer)
             mpz_neg(n.value, self.value)
-            mpz_set_si(unit.value, -1)
-
-        if mpz_cmpabs_ui(n.value, 1) == 0:
-            return IntegerFactorization([], unit=unit, unsafe=True,
-                                        sort=False, simplify=False)
+            unit = smallInteger(-1)
 
         if limit is not None:
+            if algorithm is not None:
+                raise ValueError('trial division will always be used when when limit is provided')
             from sage.rings.factorint import factor_trial_division
             return factor_trial_division(self, limit)
+
+        if algorithm is None:
+            algorithm = 'pari'
+        elif algorithm not in ['pari', 'flint', 'kash', 'magma', 'qsieve', 'ecm']:
+            raise ValueError("algorithm is not known")
+
+        if algorithm != 'flint' and flint_bits is not None:
+            raise ValueError("cannot specify flint_bits when algorithm is not flint")
+
+        if n.is_one():
+            return IntegerFactorization([], unit=unit, unsafe=True,
+                                        sort=False, simplify=False)
 
         if mpz_fits_slong_p(n.value):
             global n_factor_to_list
@@ -4044,7 +4061,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                                         sort=False, simplify=False)
         elif algorithm == 'flint':
             from sage.rings.factorint_flint import factor_using_flint
-            F = factor_using_flint(n)
+            if flint_bits is not None and flint_bits <= 0:
+                raise ValueError('flint_bits must be positive or None')
+            F = factor_using_flint(n, flint_bits or 0)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
                                         sort=False, simplify=False)
@@ -6662,13 +6681,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if not mpz_sgn(n.value):
             mpz_set_ui(t.value, 0)
             mpz_abs(g.value, self.value)
-            mpz_set_si(s.value, 1 if mpz_sgn(self.value) >= 0 else -1)
+            s = smallInteger(1 if mpz_sgn(self.value) >= 0 else -1)
             return g, s, t
 
         if not mpz_sgn(self.value):
             mpz_set_ui(s.value, 0)
             mpz_abs(g.value, n.value)
-            mpz_set_si(t.value, 1 if mpz_sgn(n.value) >= 0 else -1)
+            t = smallInteger(1 if mpz_sgn(n.value) >= 0 else -1)
             return g, s, t
 
         # both n and self are nonzero, so we need to do a division and

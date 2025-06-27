@@ -2936,6 +2936,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
                           precision=precision)
 
             R = A.to_matrix(self.new_matrix())
+
+        else:
+            raise ValueError("unknown algorithm")
+
         return R
 
     def LLL(self, delta=None, eta=None, algorithm='fpLLL:wrapper', fp=None, prec=0, early_red=False, use_givens=False, use_siegel=False, transformation=False, **kwds):
