@@ -1479,7 +1479,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         [4.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 8.0, 8.0,
          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 10.0, 10.0, 10.0, 10.0]
 
-        Same tests as yen_k_shortest_simple_paths::
+    Same tests as yen_k_shortest_simple_paths::
 
         sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
         sage: g = DiGraph([(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 1),
