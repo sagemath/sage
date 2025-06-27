@@ -3499,3 +3499,175 @@ def compare_set_partitions(a, b):
         index_in_A += 1
         index_in_B += 1
     return index_in_A == len(A_sequential_form) and index_in_B == len(B_sequential_form)
+
+
+def unranking(n: int, k: int, r: int) -> list[list[int]]:   
+    """
+    Given n, k, r, returns the r-th partition of the partition of n sets into k-part partitions,
+    following the lexicographic order ranking of the set partitions based on their sequential form.
+    
+    Lexicographic Unranking Algorithms for the Twelvefold Way.
+    A. Curiel and A. Genitrini. In proc. 35th International Conference on Probabilistic, Combinatorial and Asymptotic Methods for the Analysis of Algorithms (AofA'24), pp17:1--17:14, 2024.
+    see : https://hal.science/hal-04411470
+    
+    INPUTS:
+        ``n`` -- an integer ; the number of elements in initial set
+        ``k`` -- an integer ; the number of blocks we want in the partition
+        ``r`` -- an integer ; the r--th partition wanted (in the lexicographic order)
+    
+    OUTPUT:
+        SetPartition
+
+    EXAMPLES:
+ 
+    - `unranking(5,3,16)` returns the 16-th partition of the partition of 5 sets into 3-part partitions:
+    - `[[1, 3, 4], [2], [5]]`
+ 
+    ::
+
+        sage: from sage.combinat.set_partition import unranking 
+        sage: unranking(5,3,16)
+        [[1, 3, 4], [2], [5]]
+        
+    TESTS:
+
+        sage: from sage.combinat.set_partition import unranking, unrankPartitionTest, compare_set_partitions
+        sage: from sage.combinat.combinat import stirling_number2 as stirling2
+        sage: n_size = 5
+        sage: k_size = 3
+        sage: current_rank = 0
+        sage: partition_p1 = unranking(n_size, k_size, current_rank)
+        sage: unrankPartitionTest(partition_p1, n_size, k_size)  # expected output
+        True
+        sage: current_rank = 1
+        sage: total_partitions = stirling2(n_size, k_size)
+        sage: while current_rank < total_partitions:
+        ....:     partition_p2 = unranking(n_size, k_size, current_rank)
+        ....:     assert unrankPartitionTest(partition_p2, n_size, k_size)  # This should not output True directly; it's an assertion
+        ....:     assert compare_set_partitions(SetPartition(partition_p1), SetPartition(partition_p2))  # Same here
+        ....:     partition_p1 = partition_p2
+        ....:     current_rank += 1
+
+    UNITS TESTS:
+
+        assert unranking(0, 0, 0) == [[]]
+
+        assert unranking(1, 1, 0) == [[1]]
+
+        assert unranking(3, 1, 0) == [[1, 2, 3]]
+
+        assert unranking(3, 3, 0) == [[1], [2], [3]]
+     
+    """
+    from collections import defaultdict
+ 
+    @cached_method
+    def stilde(n: int, k: int, d: int) -> int:
+        from math import comb
+ 
+        u = 0
+        end = min(n - k, d)
+        result = 0
+        sign = 1
+        while u <= end:
+            result += sign * stirling2(n + 1 - u, k + 1) * comb(d, u)
+            sign = -sign
+            u += 1
+        return result
+ 
+    @cached_method
+    def R_equation(l: int, d0: int, d1: int, n: int, k: int):
+        return stilde(n - l, k - 1, d0 - l) - stilde(n - l, k - 1, d1 + 1 - l)
+ 
+    @cached_method
+    def next_block(n: int, k: int, r: int) -> tuple[list[int], int]:
+        """
+        returns the first block of the r-th partition in P(n,k)
+        """
+        block = [0]
+        acc = stirling2(n - 1, k - 1)
+        if r < acc:
+            return block, 0
+        d0 = 1
+        index = 2
+        inf = 2
+        sup = n
+        complete = False
+        while not complete:
+            while inf < sup:
+                mid = (inf + sup) // 2
+                if r >= acc + R_equation(index - 1, d0, mid - 1, n, k):
+                    inf = mid + 1
+                else:
+                    sup = mid
+            mid = inf
+            threshold = stirling2(n - index, k - 1)
+            acc += R_equation(index - 1, d0, mid - 2, n, k)
+            block.append(mid - index)
+            if r < threshold + acc:
+                complete = True
+            else:
+                index += 1
+                d0 = mid
+                inf = d0 + 1
+                sup = n
+                acc += threshold
+        return block, acc
+ 
+    def extract(n: int, R: list):
+        L = list(range(1, n + 1))
+        P = []
+        for r in R:
+            p = []
+            for i in r:
+                p.append(L[i])
+                L.pop(i)
+            P.append(p)
+        return P
+    
+    if r >= stirling2(n,k):
+        raise IndexError("R-th partition doesnt exist, r should be < stirling2(n,k)")
+    n_clone = n
+    Res = []
+    while k > 1:
+        (B, acc) = next_block(n, k, r)
+        Res.append(B)
+        r -= acc
+        n -= len(B)
+        k -= 1
+    res = []
+    for i in range(n):
+        res.append(0)
+    Res.append(res)
+    Res = extract(n_clone, Res)
+    return Res
+
+
+def unrankPartitionTest(partition: list[list[int]], n: int, k: int) -> bool:
+    """
+    checking if the partition result of is valid given the input n number of elements and k number of blocks.
+    """
+    # Checking whether all the blocks inside of the partitions are ordered
+    for i in range(len(partition) - 1):
+        assert compare_subsets(partition[i], partition[i + 1]) == True        
+
+    # Checking whether all of 1..n are present in all partitions
+    all_elements_from_1_to_n = set(range(1, n + 1))
+    flat_out_block = set()
+    for block in partition:
+        for element in block:
+            if element in flat_out_block:
+                return False
+            else:
+                flat_out_block.add(element)
+    assert flat_out_block == all_elements_from_1_to_n
+    
+    # Checking whether the number of blocks is equal to k
+    assert len(partition) == k
+    
+    # Checking whether the elements of each block are ordered ascendingly
+    for block in partition:
+        for i in range(len(block) - 1):
+            assert block[i] < block[i + 1]
+            
+    return True
