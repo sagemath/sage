@@ -3415,3 +3415,87 @@ def compare_subsets(a, b):
             or (included_in(a, b) and max_a is not None and min_b_a is not None and max_a < min_b_a)
             or (included_in(b, a) and min_a_b is not None and max_b is not None and min_a_b < max_b)
             or (min_a_b is not None and min_b_a is not None and min_a_b < min_b_a))
+
+
+def compare_set_partitions(a, b):
+    """
+    Compare two set partitions `a` and `b` using a lexicographic order.
+
+    INPUT:
+
+    - ``a`` -- a SetPartition object; the first set partition
+    - ``b`` -- a SetPartition object; the second set partition
+
+    OUTPUT:
+
+    Boolean -- returns True if `a` is less than or equal to `b` in the lexicographic order.
+
+    EXAMPLES:
+
+    Compare a sequence of set partitions to ensure each partition is less than or equal to the next:
+
+    ::
+
+        sage: from sage.combinat.set_partition import SetPartitions, compare_set_partitions
+        sage: a = SetPartition([[1], [2, 3, 4], [5]])
+        sage: b = SetPartition([[1], [2], [3, 4, 5]])
+        sage: compare_set_partitions(a, b)
+        False
+
+    ::
+    
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: c = SetPartition([[1], [2, 3, 5] , [4]])
+        sage: d = SetPartition([[1, 2], [3] , [4, 5]])
+        sage: compare_set_partitions(c, d)
+        True
+        
+    :
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: e = SetPartition([[1], [2, 3, 4] , [5]])
+        sage: f = SetPartition([[1], [2, 3, 5] , [4] , [54]])
+        sage: compare_set_partitions(e, f)
+        True
+
+    TESTS:
+
+    We create a list of set partitions of the set {1, 2, 3, 4, 5} into 3 parts, sort them, and check that each partition is lexicographically less than or equal to the next. This confirms that `compare_set_partitions` correctly identifies the lexicographic ordering among a sorted list of set partitions:
+
+    ::
+    
+        sage: from sage.combinat.set_partition import SetPartitions, compare_set_partitions
+        sage: partitions = SetPartitions(5, 3).list()
+        sage: partitions.sort(key=lambda x: x.standard_form())
+        sage: all(compare_set_partitions(partitions[i], partitions[i + 1]) for i in range(len(partitions) - 1))
+        True
+
+    UNIT TESTS:
+
+    ::
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: g = SetPartition([ [1,2],[3] ])
+        sage: h = SetPartition([ [1,2],[3] ])
+        sage: compare_set_partitions(g, h)
+        True
+
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: i = SetPartition([])
+        sage: j = SetPartition([ [1] ])
+        sage: compare_set_partitions(i, j)
+        True
+
+    """
+    if a.standard_form() == []:
+        return True
+    A_sequential_form = a.standard_form()
+    B_sequential_form = b.standard_form()
+    index_in_A = 0
+    index_in_B = 0
+    while index_in_A < len(A_sequential_form) and index_in_B < len(B_sequential_form):
+        if A_sequential_form[index_in_A] < B_sequential_form[index_in_B]:
+            return True
+        elif A_sequential_form[index_in_A] > B_sequential_form[index_in_B]:
+            return False
+        index_in_A += 1
+        index_in_B += 1
+    return index_in_A == len(A_sequential_form) and index_in_B == len(B_sequential_form)
