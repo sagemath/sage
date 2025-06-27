@@ -259,9 +259,9 @@ class HasseDiagram(DiGraph):
         """
         if lin_ext is None or lin_ext == list(range(len(self))):
             return all(x < y for x, y in self.cover_relations_iterator())
-        else:
-            return all(lin_ext.index(x) < lin_ext.index(y)
-                       for x, y in self.cover_relations_iterator())
+        indices = {x: lin_ext.index(x) for x in self}
+        return all(indices[x] < indices[y]
+                   for x, y in self.cover_relations_iterator())
 
     def cover_relations_iterator(self):
         r"""
@@ -603,7 +603,7 @@ class HasseDiagram(DiGraph):
         self._intervals = [[sorted(up.intersection(down)) for down in v_down]
                            for up in v_up]
 
-    def interval(self, x, y):
+    def interval(self, x, y) -> list:
         r"""
         Return a list of the elements `z` of ``self`` such that
         `x \leq z \leq y`.
@@ -673,7 +673,7 @@ class HasseDiagram(DiGraph):
 
     closed_interval = interval
 
-    def open_interval(self, x, y):
+    def open_interval(self, x, y) -> list:
         """
         Return a list of the elements `z` of ``self`` such that `x < z < y`.
 
@@ -693,8 +693,7 @@ class HasseDiagram(DiGraph):
         ci = self.interval(x, y)
         if not ci:
             return []
-        else:
-            return ci[1:-1]
+        return ci[1:-1]
 
     def rank_function(self):
         r"""
@@ -841,8 +840,7 @@ class HasseDiagram(DiGraph):
         """
         if element is None:
             return len(self.level_sets()) - 1
-        else:
-            return self.rank_function()(element)
+        return self.rank_function()(element)
 
     def is_ranked(self) -> bool:
         r"""
@@ -1184,10 +1182,9 @@ class HasseDiagram(DiGraph):
         """
         if algorithm == 'matrix':
             return - self.lequal_matrix() * self.moebius_function_matrix().transpose()
-        elif algorithm == 'cython':
+        if algorithm == 'cython':
             return coxeter_matrix_fast(self._leq_storage)  # noqa: F821
-        else:
-            raise ValueError("unknown algorithm")
+        raise ValueError("unknown algorithm")
 
     def order_filter(self, elements):
         r"""
@@ -1403,8 +1400,7 @@ class HasseDiagram(DiGraph):
         """
         if boolean:
             return self._leq_matrix_boolean
-        else:
-            return self._leq_matrix
+        return self._leq_matrix
 
     def _alternate_is_lequal(self, i, j):
         r"""
@@ -1893,8 +1889,7 @@ class HasseDiagram(DiGraph):
         if n < 3:
             if return_list:
                 return []
-            else:
-                return None
+            return None
         result = []  # Never take the bottom element to list.
         m = 0
         for i in range(n - 1):
@@ -1904,8 +1899,7 @@ class HasseDiagram(DiGraph):
                 if not return_list:
                     if m < n - 1:
                         return m
-                    else:
-                        return None
+                    return None
                 result.append(m)
         result.pop()  # Remove the top element.
         return result
@@ -2433,6 +2427,48 @@ class HasseDiagram(DiGraph):
         """
         return chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
 
+    def linear_intervals_count(self):
+        """
+        Return the enumeration of linear intervals w.r.t. their cardinality.
+
+        An interval is linear if it is a total order.
+
+        OUTPUT: an iterator of integers
+
+        .. SEEALSO:: :meth:`is_linear_interval`
+
+        EXAMPLES::
+
+            sage: P = posets.BubblePoset(3,3)
+            sage: H = P._hasse_diagram
+            sage: list(H.linear_intervals_count())
+            [245, 735, 438, 144, 24]
+        """
+        if not self:
+            return
+        # precomputation helps for speed:
+        _ = self._leq_storage
+
+        stock = [(x, x, x) for x in self]
+        yield len(stock)
+        exposant = 0
+        while True:
+            exposant += 1
+            next_stock = []
+            short_stock = [(ch[0], ch[2]) for ch in stock]
+            for xmin, cov_xmin, xmax in stock:
+                for y in self.neighbor_out_iterator(xmax):
+                    if exposant == 1:
+                        next_stock.append((xmin, y, y))
+                    elif (cov_xmin, y) in short_stock:
+                        if self.is_linear_interval(xmin, y):
+                            next_stock.append((xmin, cov_xmin, y))
+            if next_stock:
+                yield len(next_stock)
+                stock = next_stock
+            else:
+                break
+
     def is_linear_interval(self, t_min, t_max) -> bool:
         """
         Return whether the interval ``[t_min, t_max]`` is linear.
@@ -2440,6 +2476,7 @@ class HasseDiagram(DiGraph):
         This means that this interval is a total order.
 
         EXAMPLES::
+
             sage: # needs sage.modules
             sage: P = posets.PentagonPoset()
             sage: H = P._hasse_diagram
