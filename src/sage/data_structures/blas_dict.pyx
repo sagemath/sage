@@ -348,12 +348,12 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
         sage: s2 = SGA([3, 1, 2]) # (1 3)
         sage: D1 = {0: s1}
         sage: blas.linear_combination([(D1, s2)], factor_on_left=False) # s1 * s2
-        {0: [1, 3, 2]} 
+        {0: [1, 3, 2]}
 
     Check left multiplication with coefficients in a noncommutative ring::
-    
+
         sage: blas.linear_combination([(D1, s2)], factor_on_left=True) # s2 * s1
-        {0: [3, 2, 1]} 
+        {0: [3, 2, 1]}
     """
     cdef dict result = {}
     cdef dict D
@@ -364,10 +364,11 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
         if not result and a == 1:
             result = D.copy()
         else:
-            iaxpy(a, D, result, remove_zeros=False, 
+            iaxpy(a, D, result, remove_zeros=False,
                   factor_on_left=factor_on_left)
 
     return remove_zeros(result)
+
 
 cpdef dict sum_of_monomials(monomials, scalar):
     r"""
