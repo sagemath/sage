@@ -309,7 +309,7 @@ class SetShuffleProduct(ShuffleProduct_abstract):
             return (ll1 + ll2).binomial(ll2)
 
         return sum(comp_binom(el1, el2)
-                   for (el1, el2) in itertools.product(self._l1, self._l2))
+                   for el1, el2 in itertools.product(self._l1, self._l2))
 
 
 class ShuffleProduct(ShuffleProduct_abstract):

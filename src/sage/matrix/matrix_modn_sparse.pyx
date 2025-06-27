@@ -117,7 +117,6 @@ from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.structure.element cimport Matrix
 
 ################
