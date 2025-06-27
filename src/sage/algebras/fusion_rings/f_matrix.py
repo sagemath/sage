@@ -1379,12 +1379,9 @@ class FMatrix(SageObject):
         else:
             mapped = worker_pool.imap_unordered(executor, input_iter, chunksize=chunksize)
         # Reduce phase
-        results = set()
-        for child_eqns in mapped:
-            if child_eqns is not None:
-                results.update(child_eqns)
-        results = list(results)
-        return results
+        results = {eqn for child_eqns in mapped for eqn in child_eqns
+                   if child_eqns is not None}
+        return list(results)
 
     ########################
     #   Equations set up   #
@@ -1770,8 +1767,7 @@ class FMatrix(SageObject):
                 small_comps.append(comp_eqns)
         input_iter = zip_longest(small_comps, [], fillvalue=term_order)
         small_comp_gb = self._map_triv_reduce('compute_gb', input_iter, worker_pool=self.pool, chunksize=1, mp_thresh=50)
-        ret = small_comp_gb + temp_eqns
-        return ret
+        return small_comp_gb + temp_eqns
 
     def _get_component_variety(self, var, eqns):
         r"""
@@ -1991,7 +1987,7 @@ class FMatrix(SageObject):
 
     def find_orthogonal_solution(self, checkpoint=False, save_results='', warm_start='', use_mp=True, verbose=True):
         r"""
-        Solve the the hexagon and pentagon relations, along with
+        Solve the hexagon and pentagon relations, along with
         orthogonality constraints, to evaluate an orthogonal F-matrix.
 
         INPUT:
@@ -2324,7 +2320,7 @@ class FMatrix(SageObject):
             []
         """
         if self._poly_ring.ngens() == 0:
-            return
+            return None
         self._reset_solver_state()
         self._var_to_sextuple = {self._poly_ring.gen(i): s for i, s in self._idx_to_sextuple.items()}
 

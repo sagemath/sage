@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abstract_method.py',
   'all.py',
   'all__sagemath_environment.py',
@@ -61,7 +62,6 @@ py.install_sources(
   'random_testing.py',
   'randstate.pxd',
   'remote_file.py',
-  'replace_dot_all.py',
   'repr.py',
   'rest_index_of_methods.py',
   'sage_eval.py',
@@ -124,6 +124,10 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows and (name == 'sage_ostools')
+    # Uses posix API
+    continue
+  endif
   deps = [py_dep, gmp]
   if name == 'binary_tree'
     deps += [cysignals]

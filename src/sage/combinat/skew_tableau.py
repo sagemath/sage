@@ -7,6 +7,7 @@ AUTHORS:
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
 - Trevor K. Karn (2022-08-03): added ``backward_slide``
+- Joseph McDonough (2025-04-09): added ``add_entry`` and ``anti_restrict``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -620,7 +621,7 @@ class SkewTableau(ClonableList,
 
     evaluation = weight
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         """
         Return ``True`` if ``self`` is a standard skew tableau and ``False``
         otherwise.
@@ -640,7 +641,7 @@ class SkewTableau(ClonableList,
         w = [i for row in self for i in row if i is not None]
         return sorted(w) == list(range(1, len(w) + 1)) and self.is_semistandard()
 
-    def is_semistandard(self):
+    def is_semistandard(self) -> bool:
         """
         Return ``True`` if ``self`` is a semistandard skew tableau and
         ``False`` otherwise.
@@ -1042,10 +1043,10 @@ class SkewTableau(ClonableList,
             # -1, which doesn't trigger the conditional
             if P_left > P_up:
                 new_st[i][j] = P_left
-                i, j = (i, j - 1)
+                j = j - 1
             else:  # if they are equal, we slide up
                 new_st[i][j] = P_up
-                i, j = (i - 1, j)
+                i = i - 1
         # We don't need to reset the intermediate cells inside the loop
         # because the conditional above will continue to overwrite it until
         # the while loop terminates. We do need to reset it at the end.
@@ -1119,6 +1120,147 @@ class SkewTableau(ClonableList,
         if self in SemistandardSkewTableaux():
             return SemistandardTableau(rect[:])
         return Tableau(rect)
+
+    def add_entry(self, cell, m):
+        """
+        Return the result of setting the entry in cell ``cell`` equal to ``m`` in the skew tableau ``self``.
+        If the cell is already part of ``self``, it replaces the current entry.
+        Otherwise, it attempts to add the cell to the skew tableau.
+
+        INPUT:
+
+        - ``cell`` -- a pair of nonnegative integers
+        - ``m`` -- a nonnegative integer
+
+        OUTPUT:
+
+        The skew tableau ``self`` with entry in cell ``cell`` set to ``m``.
+        This overwrites an existing entry if ``cell`` already belongs to ``self``,
+        otherwise it adds the cell to the shape.
+
+        .. NOTE::
+
+            Both coordinates of ``cell`` are interpreted as starting at `0`.
+            So, ``cell == (0, 0)`` corresponds to the northwesternmost cell
+
+        EXAMPLES::
+
+            sage: S = SkewTableau([[None, None,1],[1,2,5]]); S.pp()
+            .  .  1
+            1  2  5
+            sage: T = S.add_entry([0,1],1); T.pp()
+            .  1  1
+            1  2  5
+            sage: U = T.add_entry([2,0],3); U.pp()
+            .  1  1
+            1  2  5
+            3
+            sage: U.add_entry([1,3],4)
+            Traceback (most recent call last):
+            ...
+            IndexError: (1, 3) is not an addable cell of the tableau
+            sage: U.add_entry([0,3],4).pp()
+            .  1  1  4
+            1  2  5
+            3
+
+        TESTS::
+
+            sage: S = SkewTableau([[None, None, 1]])
+            sage: S.add_entry([0,0],1)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a valid skew tableau
+            sage: S.add_entry([0,1],1)
+            [[None, 1, 1]]
+            sage: S.add_entry([1,0],1)
+            [[None, None, 1], [1]]
+            sage: S.add_entry([1,1],1)
+            [[None, None, 1], [None, 1]]
+            sage: S.add_entry([1,2],1)
+            [[None, None, 1], [None, None, 1]]
+            sage: S.add_entry([2,0],1)
+            [[None, None, 1], [None], [1]]
+            sage: S.add_entry([2,1],1)
+            [[None, None, 1], [None, None], [None, 1]]
+            sage: S.add_entry([2,2],1)
+            Traceback (most recent call last):
+            ...
+            IndexError: (2, 2) is not an addable cell of the tableau
+            sage: S.add_entry([2,3],1)
+            Traceback (most recent call last):
+            ...
+            IndexError: (2, 3) is not an addable cell of the tableau
+            sage: S.add_entry([1000,1000], 3)
+            Traceback (most recent call last):
+            ...
+            IndexError: (1000, 1000) is not an addable cell of the tableau
+            sage: S.add_entry([0,1000],3)
+            Traceback (most recent call last):
+            ...
+            IndexError: (0, 1000) is not an addable cell of the tableau
+
+        """
+
+        tab = self.to_list()
+        r, c = cell
+        try:
+            tab[r][c] = m
+        except IndexError:
+            if r > len(tab):
+                if c < len(tab[-1]) and tab[-1][c] is None:
+                    tab += [[None]*(c+1) for i in range(r - len(tab))]
+                    tab.append([None]*(c) + [m])
+                else:
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
+            elif r == len(tab):
+                # a cell in the row directly below tab is addable if and only if
+                # c = 0 or the cell directly northwest is empty
+                if c == 0:
+                    tab.append([m])
+                elif c < len(tab[-1]) and tab[-1][c-1] is None:
+                    tab.append([None]*(c) + [m])
+                else:
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
+            else:
+                tab_r = tab[r]
+                if c == len(tab_r) and (r == 0 or len(tab_r) < len(tab[r-1])):
+                    tab_r.append(m)
+                else:
+                    raise IndexError('%s is not an addable cell of the tableau' % ((r, c),))
+
+        # attempt to return a skew tableau of the same type as self
+        if tab in self.parent():
+            return self.parent()(tab)
+        else:
+            try:
+                return self.parent().Element(tab)
+            except ValueError:
+                return SkewTableau(tab)
+
+    def anti_restrict(self, n):
+        """
+        Return the skew tableau formed by removing all of the cells from
+        ``self`` that are filled with a number at most ``n``.
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer
+
+        OUTPUT:
+
+        The skew tableau ``self`` with all entries less than or equal to ``n`` removed.
+
+        EXAMPLES::
+
+            sage: S = SkewTableau([[None,1,2,3],[4,5,6]])
+            sage: S.anti_restrict(2)
+            [[None, None, None, 3], [4, 5, 6]]
+            sage: S.anti_restrict(1).anti_restrict(2) == S.anti_restrict(2)
+            True
+        """
+        t_new = [[None if g <= n else g for g in row] for row in self]
+        return SkewTableau(t_new)
 
     def to_list(self):
         r"""
@@ -1324,7 +1466,7 @@ class SkewTableau(ClonableList,
             corner = self.cells_containing(i)[0]
 
             # slide t2_new backwards, record i in the vacated square
-            (t2_new, (x, y)) = t2_new.slide(corner, True)
+            t2_new, (x, y) = t2_new.slide(corner, True)
             t1_new[x][y] = i
 
         t1_new = SkewTableau(t1_new)
@@ -1582,10 +1724,12 @@ class SkewTableau(ClonableList,
         rows.reverse()
         return [self.inner_shape(), rows]
 
-    def is_ribbon(self):
+    def is_ribbon(self) -> bool:
         r"""
         Return ``True`` if and only if the shape of ``self`` is a
-        ribbon, that is, if it has exactly one cell in each of `q`
+        ribbon.
+
+        This means that it has exactly one cell in each of `q`
         consecutive diagonals for some nonnegative integer `q`.
 
         EXAMPLES::
@@ -1824,7 +1968,7 @@ class SkewTableau(ClonableList,
                     cell_list.append((r, c))
         return cell_list
 
-    def is_k_tableau(self, k):
+    def is_k_tableau(self, k) -> bool:
         r"""
         Check whether ``self`` is a valid skew weak `k`-tableau.
 
@@ -1857,11 +2001,9 @@ def _label_skew(list_of_cells, sk):
         sage: skew_tableau._label_skew(l, empty)
         [[1, 4], [3, 2]]
     """
-    i = 1
     skew = [list(row) for row in sk]
-    for row, column in list_of_cells:
+    for i, (row, column) in enumerate(list_of_cells, start=1):
         skew[row][column] = i
-        i += 1
     return skew
 
 

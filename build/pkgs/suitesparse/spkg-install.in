@@ -5,7 +5,7 @@ echo "Configuring suitesparse"
 # Hopefully these sill be normalised in the future.
 # * SUITESPARSE_INCLUDEDIR_POSTFIX sets the subfolder in which to install headers.
 # It default to "suitesparse" if not defined, which currently breaks dependencies.
-# * SUITESPARSE_USE_FORTRAN make sure the fortran interface is off. There is trouble when 
+# * SUITESPARSE_USE_FORTRAN make sure the fortran interface is off. There is trouble when
 # gcc and gfortran version are not matching.
 # * SUITESPARSE_ENABLE_PROJECTS semi column separated list of the desired packages. Default is
 # all the packages in the suitesparse tarball.
@@ -16,6 +16,7 @@ sdh_cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
           -DNSTATIC=ON \
           -DSUITESPARSE_USE_FORTRAN=OFF \
           -DSUITESPARSE_INCLUDEDIR_POSTFIX="" \
-          -DSUITESPARSE_ENABLE_PROJECTS="suitesparse_config;amd;camd;ccolamd;colamd;cholmod;umfpack"
+          -DSUITESPARSE_ENABLE_PROJECTS="suitesparse_config;amd;camd;ccolamd;colamd;cholmod;umfpack" \
+          .
 
 sdh_make_install

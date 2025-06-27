@@ -59,7 +59,7 @@ check this for permutations of size at most `3`::
     sage: def alpha1(p): return len(p.weak_excedences())
     sage: def alpha2(p): return len(p.fixed_points())
     sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-    sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: def beta2(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
     sage: tau = Permutation.longest_increasing_subsequence_length
     sage: def rotate_permutation(p):
     ....:     cycle = Permutation(tuple(range(1, len(p)+1)))
@@ -357,6 +357,7 @@ Value restrictions::
     sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
     sage: tau = Permutation.longest_increasing_subsequence_length
     sage: bij = Bijectionist(A, B, tau, value_restrictions=((Permutation([1, 2]), [4, 5]),))
+    sage: next(bij.solutions_iterator())
     Traceback (most recent call last):
     ...
     ValueError: no possible values found for singleton block [[1, 2]]
@@ -494,7 +495,7 @@ class Bijectionist(SageObject):
         Check that large input sets are handled well::
 
             sage: A = B = range(20000)
-            sage: bij = Bijectionist(A, B)                                      # long time
+            sage: bij = Bijectionist(A, B)
         """
         # glossary of standard letters:
         # A, B, Z, W ... finite sets
@@ -612,7 +613,7 @@ class Bijectionist(SageObject):
             for a in p:
                 self._P.union(p[0], a)
 
-        self._compute_possible_block_values()
+        self._possible_block_values = None
 
     def constant_blocks(self, singletons=False, optimal=False):
         r"""
@@ -689,7 +690,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, fix)
             sage: bij.set_statistics((wex, des), (len, len))
             sage: for solution in sorted(list(bij.solutions_iterator()), key=lambda d: tuple(sorted(d.items()))):
@@ -799,7 +800,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((len, len), (wex, des), (fix, adj))
             sage: table([[key, AB[0], AB[1]] for key, AB in bij.statistics_fibers().items()])
@@ -843,7 +844,7 @@ class Bijectionist(SageObject):
             sage: def wex(p): return len(p.weak_excedences())
             sage: def fix(p): return len(p.fixed_points())
             sage: def des(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def adj(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+            sage: def adj(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_statistics((wex, des), (fix, adj))
             sage: a, b = bij.statistics_table()
@@ -1093,8 +1094,7 @@ class Bijectionist(SageObject):
             if not self._possible_block_values[p]:
                 if len(block) == 1:
                     raise ValueError(f"no possible values found for singleton block {block}")
-                else:
-                    raise ValueError(f"no possible values found for block {block}")
+                raise ValueError(f"no possible values found for block {block}")
 
     def set_distributions(self, *elements_distributions):
         r"""
@@ -1553,7 +1553,7 @@ class Bijectionist(SageObject):
             sage: def alpha1(p): return len(p.weak_excedences())
             sage: def alpha2(p): return len(p.fixed_points())
             sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-            sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:] + [0]) if e == f + 1])
+            sage: def beta2(p): return len([e for e, f in zip(p, p[1:] + [0]) if e == f + 1])
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: def rotate_permutation(p):
             ....:    cycle = Permutation(tuple(range(1, len(p) + 1)))
@@ -1789,13 +1789,18 @@ class Bijectionist(SageObject):
                         # veto new value and try again
                         tmp_constraints.append(bmilp._x[p, solution[p]] == 0)
 
-        # create dictionary to return
-        possible_values = {}
-        for p in blocks:
-            for a in self._P.root_to_elements_dict()[p]:
-                if optimal:
+            # create dictionary to return
+            possible_values = {}
+            for p in blocks:
+                for a in self._P.root_to_elements_dict()[p]:
                     possible_values[a] = solutions[p]
-                else:
+        else:
+            # create dictionary to return
+            if self._possible_block_values is None:
+                self._compute_possible_block_values()
+            possible_values = {}
+            for p in blocks:
+                for a in self._P.root_to_elements_dict()[p]:
                     possible_values[a] = self._possible_block_values[p]
 
         return possible_values
@@ -2126,11 +2131,6 @@ class Bijectionist(SageObject):
 
         .. TODO::
 
-            create one test with one and one test with two
-            intertwining relations
-
-        .. TODO::
-
             it is not clear whether this method makes sense
 
         EXAMPLES::
@@ -2144,6 +2144,17 @@ class Bijectionist(SageObject):
             sage: bij._P
             {{'a'}, {'b'}, {'c'}, {'d'}}
 
+        However, adding that ``'a'`` and ``'c'`` are in the same block,
+        we can infer that also ``'b'`` and ``'d'`` are in the same
+        block::
+
+            sage: bij.set_constant_blocks([['a', 'c']])
+            sage: bij._P
+            {{'a', 'c'}, {'b'}, {'d'}}
+            sage: bij._preprocess_intertwining_relations()
+            sage: bij._P
+            {{'a', 'c'}, {'b', 'd'}}
+
         Let a group act on permutations::
 
             sage: A = B = Permutations(3)
@@ -2152,6 +2163,11 @@ class Bijectionist(SageObject):
             sage: bij._preprocess_intertwining_relations()
             sage: bij._P
             {{[1, 2, 3]}, {[1, 3, 2]}, {[2, 1, 3]}, {[2, 3, 1]}, {[3, 1, 2]}, {[3, 2, 1]}}
+
+        Thus, in this case we do not detect the constant blocks::
+
+           sage: bij.constant_blocks(optimal=True)
+           {{[1, 2, 3], [3, 2, 1]}, {[1, 3, 2], [2, 3, 1]}, {[2, 1, 3], [3, 1, 2]}}
         """
         A = self._A
         P = self._P
@@ -3157,7 +3173,7 @@ Our benchmark example::
     sage: def alpha1(p): return len(p.weak_excedences())
     sage: def alpha2(p): return len(p.fixed_points())
     sage: def beta1(p): return len(p.descents(final_descent=True)) if p else 0
-    sage: def beta2(p): return len([e for (e, f) in zip(p, p[1:]+[0]) if e == f+1])
+    sage: def beta2(p): return len([e for e, f in zip(p, p[1:]+[0]) if e == f+1])
     sage: gamma = Permutation.longest_increasing_subsequence_length
     sage: def rotate_permutation(p):
     ....:    cycle = Permutation(tuple(range(1, len(p)+1)))

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'f_matrix.py',
   'fast_parallel_fmats_methods.pxd',
@@ -22,8 +23,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/algebras/fusion_rings',
     install: true,
-    include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    include_directories: [inc_cpython, inc_ntl, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, numpy],
   )
 endforeach
 
@@ -40,8 +41,8 @@ foreach name, pyx : extension_data_cpp
     subdir: 'sage/algebras/fusion_rings',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [inc_cpython, inc_ntl, inc_numpy, inc_rings],
-    dependencies: [py_dep, cysignals, gmp, singular],
+    include_directories: [inc_cpython, inc_ntl, inc_rings],
+    dependencies: [py_dep, cysignals, gmp, numpy, singular],
   )
 endforeach
 

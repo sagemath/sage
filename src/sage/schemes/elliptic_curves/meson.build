@@ -1,6 +1,8 @@
 py.install_sources(
   'BSD.py',
   'Qcurves.py',
+  '__init__.py',
+  'addition_formulas_ring.py',
   'all.py',
   'cardinality.py',
   'cm.py',
@@ -64,8 +66,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/schemes/elliptic_curves',
     install: true,
-    include_directories: [inc_cpython, inc_flint, inc_numpy, inc_rings],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, pari],
+    include_directories: [inc_cpython, inc_flint, inc_rings],
+    dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfr, numpy, pari],
   )
 endforeach
 

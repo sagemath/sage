@@ -311,8 +311,7 @@ class LocalOptions:
             {'diagram': 'diagram representation',
             'list': 'list representation'}}
         """
-        for key in options:
-            value = options[key]
+        for key, value in options.items():
             self.__setitem__(key, value)
         for key in get_values:
             return self.__getitem__(key)
@@ -696,7 +695,7 @@ class _drawing_tool:
 
             The rotated position.
             """
-            [x, y] = pos
+            x, y = pos
             return [x*cos(angle) - y*sin(angle), x*sin(angle) + y*cos(angle)]
 
         def mirror(pos, axe):
@@ -771,8 +770,8 @@ class _drawing_tool:
             color = self._color_line
         if size is None:
             size = self._line_size
-        [x1, y1] = self.XY(v1)
-        [x2, y2] = self.XY(v2)
+        x1, y1 = self.XY(v1)
+        x2, y2 = self.XY(v2)
         return "\n  \\draw[color=%s, line width=%s] (%f, %f) -- (%f, %f);" % (
             color, size, float(x1), float(y1), float(x2), float(y2)
         )
@@ -845,14 +844,14 @@ class _drawing_tool:
             color = self._color_point
         if size is None:
             size = self._point_size
-        [x1, y1] = self.XY(p1)
+        x1, y1 = self.XY(p1)
         return "\n  \\filldraw[color=%s] (%f, %f) circle (%spt);" % (
             color, float(x1), float(y1), size
         )
 
 
 class ParallelogramPolyomino(ClonableList,
-        metaclass=InheritComparisonClasscallMetaclass):
+                             metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Parallelogram Polyominoes.
 
@@ -4077,7 +4076,7 @@ class ParallelogramPolyominoes_size(
         """
         return "Parallelogram polyominoes of size %s" % (self._size)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of a parallelogram polyomino of a given size.
 

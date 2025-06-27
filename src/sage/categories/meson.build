@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'action.pxd',
   'additive_groups.py',
   'additive_magmas.py',
@@ -119,6 +120,7 @@ py.install_sources(
   'isomorphic_objects.py',
   'j_trivial_semigroups.py',
   'kac_moody_algebras.py',
+  'kahler_algebras.py',
   'l_trivial_semigroups.py',
   'lambda_bracket_algebras.py',
   'lambda_bracket_algebras_with_basis.py',
@@ -146,6 +148,7 @@ py.install_sources(
   'noetherian_rings.py',
   'number_fields.py',
   'objects.py',
+  'ore_modules.py',
   'partially_ordered_monoids.py',
   'permutation_groups.py',
   'pointed_sets.py',

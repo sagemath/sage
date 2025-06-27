@@ -756,7 +756,7 @@ cdef class CategoryObject(SageObject):
                 pass
         except (AttributeError, KeyError):
             raise
-            #raise RuntimeError, "If you change the pickling code in parent or category_object, you need to update the _pickle_version field"
+            # raise RuntimeError("If you change the pickling code in parent or category_object, you need to update the _pickle_version field")
 
     def __hash__(self):
         """

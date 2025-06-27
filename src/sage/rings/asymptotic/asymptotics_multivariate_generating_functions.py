@@ -343,9 +343,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
         self._numerator = parent._numerator_ring(numerator)
-        self._denominator_factored = list(
-            (parent._denominator_ring(d), NN(n))
-            for d, n in denominator_factored)
+        self._denominator_factored = [(parent._denominator_ring(d), NN(n))
+                                      for d, n in denominator_factored]
 
         R = self.denominator_ring
         if numerator in R and reduce:
@@ -353,7 +352,7 @@ class FractionWithFactoredDenominator(RingElement):
             numer = R(self._numerator)
             df = self._denominator_factored
             new_df = []
-            for (q, e) in df:
+            for q, e in df:
                 ee = e
                 quo, rem = numer.quo_rem(q)
                 while rem == 0 and ee > 0:
@@ -502,10 +501,10 @@ class FractionWithFactoredDenominator(RingElement):
             sage: F.dimension()
             2
         """
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
         R = self.denominator_ring
-        if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             return R.ngens()
         raise NotImplementedError('only polynomial rings are supported as base')
 
@@ -3165,9 +3164,9 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
             p = numerator
             q = R(denominator)
 
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-            if isinstance(R, (PolynomialRing_general, MPolynomialRing_base)):
+            if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
                 if not R(q).is_unit():
                     # Factor denominator
                     try:
@@ -3233,11 +3232,10 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         from sage.rings.fraction_field import FractionField_generic
         if isinstance(P, FractionField_generic):
             B = P.base()
-            from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+            from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
             from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-            if isinstance(B, (PolynomialRing_general, MPolynomialRing_base)):
-                if self.base().has_coerce_map_from(B):
-                    return True
+            if isinstance(B, (PolynomialRing_generic, MPolynomialRing_base)) and self.base().has_coerce_map_from(B):
+                return True
 
         if self.base().has_coerce_map_from(P):
             return True

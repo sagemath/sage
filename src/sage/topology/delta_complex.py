@@ -304,7 +304,7 @@ class DeltaComplex(GenericCellComplex):
                     # else a dictionary indexed by simplices
                     dimension = max([f.dimension() for f in data])
                     old_data_by_dim = {}
-                    for dim in range(0, dimension+1):
+                    for dim in range(dimension + 1):
                         old_data_by_dim[dim] = []
                         new_data[dim] = []
                     for x in data:
@@ -466,7 +466,7 @@ class DeltaComplex(GenericCellComplex):
                         new_dict[d+1].append(tuple([translate[n] for n in f]))
                 new_dict[d].append(cells[d][x])
                 cells_to_add.update(cells[d][x])
-        new_cells = [new_dict[n] for n in range(0, max_dim+1)]
+        new_cells = [new_dict[n] for n in range(max_dim + 1)]
         sub = DeltaComplex(new_cells)
         sub._is_subcomplex_of = {self: new_data}
         return sub
@@ -564,7 +564,7 @@ class DeltaComplex(GenericCellComplex):
                 raise ValueError("this is not a subcomplex of self")
         else:
             subcomplex_cells = subcomplex._is_subcomplex_of[self]
-            for d in range(0, max(subcomplex_cells.keys())+1):
+            for d in range(max(subcomplex_cells.keys()) + 1):
                 L = list(cells[d])
                 for c in subcomplex_cells[d]:
                     L[c] = None
@@ -1009,10 +1009,10 @@ class DeltaComplex(GenericCellComplex):
                             # Simplex, as well as the function
                             # 'lattice_paths', in
                             # simplicial_complex.py.)
-                            for path in lattice_paths(list(range(k + 1)),
-                                                      list(range(n + 1)),
-                                                      length=d+1):
-                                path = tuple(path)
+                            for _path in lattice_paths(list(range(k + 1)),
+                                                       list(range(n + 1)),
+                                                       length=d+1):
+                                path = tuple(_path)
                                 new[(k, k_idx, n, n_idx, path)] = len(simplices)
                                 bdry_list = []
                                 for i in range(d+1):
@@ -1303,7 +1303,7 @@ class DeltaComplex(GenericCellComplex):
         # added_cells: dict indexed by (n-1)-cells, with value the
         # corresponding new n-cell.
         added_cells = {(): len(cells_dict[0])-1}
-        for n in range(0, dim):
+        for n in range(dim):
             new_cells = {}
             # for each n-cell in the standard simplex, add an
             # (n+1)-cell to the subdivided complex.

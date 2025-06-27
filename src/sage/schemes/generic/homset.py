@@ -32,7 +32,7 @@ AUTHORS:
 #   Distributed under the terms of the GNU General Public License (GPL)
 #   as published by the Free Software Foundation; either version 2 of
 #   the License, or (at your option) any later version.
-#                   http://www.gnu.org/licenses/
+#                   https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.categories.homset import HomsetWithBase
@@ -44,11 +44,11 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.ring import CommutativeRing
 from sage.categories.commutative_rings import CommutativeRings
 
-from sage.schemes.generic.scheme import AffineScheme, is_AffineScheme
+from sage.schemes.generic.scheme import AffineScheme
 from sage.schemes.generic.morphism import (
     SchemeMorphism,
     SchemeMorphism_structure_map,
-    SchemeMorphism_spec )
+    SchemeMorphism_spec)
 
 lazy_import('sage.schemes.affine.affine_space', 'AffineSpace_generic', as_='AffineSpace')
 lazy_import('sage.schemes.generic.algebraic_scheme', 'AlgebraicScheme_subscheme')
@@ -584,10 +584,10 @@ class SchemeHomset_points(SchemeHomset_generic):
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
-        #we are converting between scheme points
+            # we are converting between scheme points
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
-                #subscheme coerce when there is containment
+                # subscheme coerce when there is containment
                 if not isinstance(source, AlgebraicScheme_subscheme):
                     return False
                 if target.ambient_space() == source.ambient_space():
@@ -595,9 +595,9 @@ class SchemeHomset_points(SchemeHomset_generic):
                            for g in target.defining_polynomials()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
             else:
-                #if the target is an ambient space, we can coerce if the base rings coerce
-                #and they are the same type: affine, projective, etc and have the same
-                #variable names
+                # if the target is an ambient space, we can coerce if the base rings coerce
+                # and they are the same type: affine, projective, etc and have the same
+                # variable names
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()

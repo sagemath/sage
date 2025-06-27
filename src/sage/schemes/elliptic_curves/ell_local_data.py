@@ -531,7 +531,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type
 
-    def has_good_reduction(self):
+    def has_good_reduction(self) -> bool:
         r"""
         Return ``True`` if there is good reduction.
 
@@ -552,7 +552,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type is None
 
-    def has_bad_reduction(self):
+    def has_bad_reduction(self) -> bool:
         r"""
         Return ``True`` if there is bad reduction.
 
@@ -575,7 +575,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type is not None
 
-    def has_multiplicative_reduction(self):
+    def has_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is multiplicative reduction.
 
@@ -600,9 +600,9 @@ class EllipticCurveLocalData(SageObject):
             sage: [(p,E.local_data(p).has_multiplicative_reduction()) for p in [P17a,P17b]]
             [(Fractional ideal (4*a^2 - 2*a + 1), False), (Fractional ideal (2*a + 1), False)]
         """
-        return self._reduction_type in (-1,+1)
+        return self._reduction_type in (-1, 1)
 
-    def has_split_multiplicative_reduction(self):
+    def has_split_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is split multiplicative reduction.
 
@@ -625,9 +625,9 @@ class EllipticCurveLocalData(SageObject):
             [(Fractional ideal (4*a^2 - 2*a + 1), False),
              (Fractional ideal (2*a + 1), False)]
         """
-        return self._reduction_type == +1
+        return self._reduction_type == 1
 
-    def has_nonsplit_multiplicative_reduction(self):
+    def has_nonsplit_multiplicative_reduction(self) -> bool:
         r"""
         Return ``True`` if there is non-split multiplicative reduction.
 
@@ -651,7 +651,7 @@ class EllipticCurveLocalData(SageObject):
         """
         return self._reduction_type == -1
 
-    def has_additive_reduction(self):
+    def has_additive_reduction(self) -> bool:
         r"""
         Return ``True`` if there is additive reduction.
 
@@ -678,7 +678,7 @@ class EllipticCurveLocalData(SageObject):
         r"""
         Tate's algorithm for an elliptic curve over a number field.
 
-        Computes both local reduction data at a prime ideal and a
+        This computes both local reduction data at a prime ideal and a
         local minimal model.
 
         The model is not required to be integral on input.  If `P` is
@@ -1161,7 +1161,7 @@ def check_prime(K, P):
         sage: check_prime(K, a + 1)
         Fractional ideal (a + 1)
         sage: [check_prime(K, P) for P in K.primes_above(31)]
-        [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
+        [Fractional ideal (-5/2*a - 1/2), Fractional ideal (-5/2*a + 1/2)]
         sage: L.<b> = NumberField(x^2 + 3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):

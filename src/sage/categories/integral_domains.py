@@ -143,6 +143,37 @@ class IntegralDomains(CategoryWithAxiom):
             """
             return True
 
+        def is_field(self, proof=True):
+            r"""
+            Return ``True`` if this ring is a field.
+
+            EXAMPLES::
+
+                sage: ZZ['x'].is_field()
+                False
+            """
+            if self.is_finite():
+                return True
+            if proof:
+                raise NotImplementedError(f"unable to determine whether or not {self} is a field.")
+            return False
+
+        def localization(self, additional_units, names=None, normalize=True, category=None):
+            """
+            Return the localization of ``self`` at the given additional units.
+
+            EXAMPLES::
+
+                sage: R.<x, y> = GF(3)[]
+                sage: R.localization((x*y, x**2 + y**2))                                    # needs sage.rings.finite_rings
+                Multivariate Polynomial Ring in x, y over Finite Field of size 3
+                 localized at (y, x, x^2 + y^2)
+                sage: ~y in _                                                               # needs sage.rings.finite_rings
+                True
+            """
+            from sage.rings.localization import Localization
+            return Localization(self, additional_units, names=names, normalize=normalize, category=category)
+
         def _test_fraction_field(self, **options):
             r"""
             Test that the fraction field, if it is implemented, works

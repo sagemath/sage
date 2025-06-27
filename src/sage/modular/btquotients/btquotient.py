@@ -42,6 +42,7 @@ from copy import copy
 from collections import deque
 
 from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminant
+from sage.interfaces.magma import magma
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -66,7 +67,7 @@ lazy_import("sage.plot.colors", "rainbow")
 
 lazy_import('sage.algebras.quatalg.quaternion_algebra', 'QuaternionAlgebra')
 lazy_import('sage.graphs.graph', 'Graph')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.plot.colors', 'rainbow')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 lazy_import('sage.rings.padics.factory', ['Qp', 'Zp'])
@@ -1713,7 +1714,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute certain invariants from the level data of the quotient
         which allow one to compute the genus of the curve.
 
-        Details to be found in Theorem 9 of [FM2014]_.
+        Details to be found in Theorem 3.8 of [FM2014]_.
 
         EXAMPLES::
 
@@ -2119,7 +2120,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         my_args.update(kwargs)
         return S.plot(*args, **my_args)
 
-    def is_admissible(self, D):
+    def is_admissible(self, D) -> bool:
         r"""
         Test whether the imaginary quadratic field of
         discriminant `D` embeds in the quaternion algebra. It
@@ -2307,7 +2308,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             [1 0 2 0]
             [0 0 2 0]
             [0 0 0 0]
-            [1 0 2 2]
+            [1 2 2 0]
             ]
         """
         if not self._use_magma or len(self._extra_level) == 0:
@@ -2454,7 +2455,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` -- a row vector of size `4` whose entries represent a
+        - ``g`` -- a column vector of size `4` whose entries represent a
           quaternion in our basis
 
         - ``exact`` -- boolean (default: ``False``); if True, tries to embed
@@ -2700,7 +2701,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
             sage: X = BruhatTitsQuotient(5,11,use_magma=True) # optional - magma
             sage: X.get_splitting_field() # optional - magma
-            Number Field in a with defining polynomial X1^2 + 11
+            Number Field in a with defining polynomial x^2 + 11
         """
         if not self._use_magma:
             raise NotImplementedError('Sage does not know yet how to work with the kind of orders that you are trying to use. Try installing Magma first and set it up so that Sage can use it.')
@@ -3097,8 +3098,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             Vertex of Bruhat-Tits tree for p = 3
         """
         try:
-            tmp = self._cached_paths[v1]
-            return tmp
+            return self._cached_paths[v1]
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())

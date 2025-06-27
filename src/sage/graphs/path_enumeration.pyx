@@ -361,7 +361,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         ....:                              report_edges=True, report_weight=True))
         [(20, [(1, 3), (3, 5)]), (40, [(1, 2), (2, 5)]), (60, [(1, 4), (4, 5)])]
         sage: list(g.shortest_simple_paths(1, 5, report_edges=True, report_weight=True))
-        [(2, [(1, 4), (4, 5)]), (2, [(1, 3), (3, 5)]), (2, [(1, 2), (2, 5)])]
+        [(2, [(1, 2), (2, 5)]), (2, [(1, 3), (3, 5)]), (2, [(1, 4), (4, 5)])]
         sage: list(g.shortest_simple_paths(1, 5, by_weight=True, report_edges=True))
         [[(1, 3), (3, 5)], [(1, 2), (2, 5)], [(1, 4), (4, 5)]]
         sage: list(g.shortest_simple_paths(1, 5, by_weight=True, algorithm='Feng',
@@ -432,12 +432,12 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         ....:              (6, 9, 1), (9, 5, 1), (4, 2, 1), (9, 3, 1),
         ....:              (9, 10, 1), (10, 5, 1), (9, 11, 1), (11, 10, 1)])
         sage: list(g.shortest_simple_paths(1, 5, algorithm='Feng'))
-        [[1, 7, 8, 5],
-         [1, 6, 9, 5],
-         [1, 6, 9, 10, 5],
+        [[1, 6, 9, 5],
+         [1, 7, 8, 5],
          [1, 2, 3, 4, 5],
-         [1, 6, 9, 3, 4, 5],
-         [1, 6, 9, 11, 10, 5]]
+         [1, 6, 9, 10, 5],
+         [1, 6, 9, 11, 10, 5],
+         [1, 6, 9, 3, 4, 5]]
 
         sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2, 3)
@@ -734,6 +734,18 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
          [1, 6, 9, 10, 5],
          [1, 6, 9, 3, 4, 5],
          [1, 6, 9, 11, 10, 5]]
+
+    When ``s == t`` and ``report_edge == True`` and ``report_weight == True`` (:issue:`40247`)::
+
+        sage: g = DiGraph([(1, 2)])
+        sage: list(yen_k_shortest_simple_paths(g, 1, 1, report_edges=True, report_weight=True))
+        [(0, [])]
+
+    No path between two vertices exists::
+
+        sage: g = Graph(2)
+        sage: list(yen_k_shortest_simple_paths(g, 0, 1))
+        []
     """
     if source not in self:
         raise ValueError("vertex '{}' is not in the graph".format(source))
@@ -741,12 +753,8 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
         raise ValueError("vertex '{}' is not in the graph".format(target))
 
     if source == target:
-        if report_edges:
-            yield []
-        elif report_weight:
-            yield (0, [source])
-        else:
-            yield [source]
+        P = [] if report_edges else [source]
+        yield (0, P) if report_weight else P
         return
 
     if self.has_loops() or self.allows_multiple_edges():
@@ -784,10 +792,6 @@ def yen_k_shortest_simple_paths(self, source, target, weight_function=None,
         path = shortest_path_func(source, target)
     # corner case
     if not path:
-        if report_weight:
-            yield (0, [])
-        else:
-            yield []
         return
 
     cdef dict edge_labels
@@ -957,11 +961,11 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: list(feng_k_shortest_simple_paths(g, 1, 5, by_weight=True))
         [[1, 3, 5], [1, 2, 5], [1, 4, 5]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 5))
-        [[1, 4, 5], [1, 3, 5], [1, 2, 5]]
+        [[1, 2, 5], [1, 3, 5], [1, 4, 5]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 1))
         [[1]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 5, report_edges=True, labels=True))
-        [[(1, 4, 30), (4, 5, 30)], [(1, 3, 10), (3, 5, 10)], [(1, 2, 20), (2, 5, 20)]]
+        [[(1, 2, 20), (2, 5, 20)], [(1, 3, 10), (3, 5, 10)], [(1, 4, 30), (4, 5, 30)]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 5, report_edges=True, labels=True, by_weight=True))
         [[(1, 3, 10), (3, 5, 10)], [(1, 2, 20), (2, 5, 20)], [(1, 4, 30), (4, 5, 30)]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 5, report_edges=True, labels=True, by_weight=True, report_weight=True))
@@ -974,7 +978,7 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: list(feng_k_shortest_simple_paths(g, 1, 6, by_weight = True))
         [[1, 3, 5, 6], [1, 2, 5, 6], [1, 4, 5, 6], [1, 6]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 6))
-        [[1, 6], [1, 4, 5, 6], [1, 3, 5, 6], [1, 2, 5, 6]]
+        [[1, 6], [1, 2, 5, 6], [1, 3, 5, 6], [1, 4, 5, 6]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 6, report_edges=True, labels=True, by_weight=True, report_weight=True))
         [(25, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
          (45, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
@@ -982,9 +986,9 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
          (100, [(1, 6, 100)])]
         sage: list(feng_k_shortest_simple_paths(g, 1, 6, report_edges=True, labels=True, report_weight=True))
         [(1, [(1, 6, 100)]),
-         (3, [(1, 4, 30), (4, 5, 30), (5, 6, 5)]),
+         (3, [(1, 2, 20), (2, 5, 20), (5, 6, 5)]),
          (3, [(1, 3, 10), (3, 5, 10), (5, 6, 5)]),
-         (3, [(1, 2, 20), (2, 5, 20), (5, 6, 5)])]
+         (3, [(1, 4, 30), (4, 5, 30), (5, 6, 5)])]
         sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 5), (2, 3, 0), (1, 4, 2), (4, 5, 1), (5, 3, 0)])
         sage: list(feng_k_shortest_simple_paths(g, 1, 3, by_weight=True))
@@ -1031,30 +1035,30 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
          (27, [(1, 2, 1), (2, 3, 1), (3, 8, 5), (8, 9, 2), (9, 11, 10), (11, 6, 8)]),
          (105, [(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 2), (5, 6, 100)])]
         sage: list(feng_k_shortest_simple_paths(g, 1, 6))
-        [[1, 2, 3, 8, 9, 6],
+        [[1, 2, 3, 4, 5, 6],
          [1, 2, 3, 4, 7, 6],
-         [1, 2, 3, 4, 5, 6],
-         [1, 2, 3, 8, 9, 10, 6],
-         [1, 2, 3, 8, 9, 11, 6]]
+         [1, 2, 3, 8, 9, 6],
+         [1, 2, 3, 8, 9, 11, 6],
+         [1, 2, 3, 8, 9, 10, 6]]
         sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 1),
         ....:              (1, 7, 1), (7, 8, 1), (8, 5, 1), (1, 6, 1),
         ....:              (6, 9, 1), (9, 5, 1), (4, 2, 1), (9, 3, 1),
         ....:              (9, 10, 1), (10, 5, 1), (9, 11, 1), (11, 10, 1)])
         sage: list(feng_k_shortest_simple_paths(g, 1, 5))
-        [[1, 7, 8, 5],
-         [1, 6, 9, 5],
-         [1, 6, 9, 10, 5],
+        [[1, 6, 9, 5],
+         [1, 7, 8, 5],
          [1, 2, 3, 4, 5],
-         [1, 6, 9, 3, 4, 5],
-         [1, 6, 9, 11, 10, 5]]
+         [1, 6, 9, 10, 5],
+         [1, 6, 9, 11, 10, 5],
+         [1, 6, 9, 3, 4, 5]]
         sage: list(feng_k_shortest_simple_paths(g, 1, 5, by_weight=True))
-        [[1, 7, 8, 5],
-         [1, 6, 9, 5],
-         [1, 6, 9, 10, 5],
+        [[1, 6, 9, 5],
+         [1, 7, 8, 5],
          [1, 2, 3, 4, 5],
-         [1, 6, 9, 3, 4, 5],
-         [1, 6, 9, 11, 10, 5]]
+         [1, 6, 9, 10, 5],
+         [1, 6, 9, 11, 10, 5],
+         [1, 6, 9, 3, 4, 5]]
         sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 5), (6, 3, 0), (2, 6, 6), (1, 4, 15),
         ....:              (4, 5, 1), (4, 3, 0), (7, 1, 2), (8, 7, 1)])
@@ -1855,7 +1859,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
             idx_to_path[idx] = path
             pq.push((-len(path), idx))
             idx = idx + 1
-        except(StopIteration):
+        except StopIteration:
             pass
     # Since we always extract a shortest path, using a heap
     # can speed up the algorithm
@@ -1875,7 +1879,7 @@ def all_paths_iterator(self, starting_vertices=None, ending_vertices=None,
             idx_to_path[idx] = path
             pq.push((-len(path), idx))
             idx = idx + 1
-        except(StopIteration):
+        except StopIteration:
             pass
 
 

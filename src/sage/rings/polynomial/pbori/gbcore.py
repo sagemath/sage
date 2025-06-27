@@ -1,18 +1,28 @@
 import contextlib
 from copy import copy
-from itertools import chain
 from inspect import getfullargspec as getargspec
+from itertools import chain
 
-from .nf import GeneratorLimitExceeded, symmGB_F2_C, symmGB_F2_python
-from .pbori import GroebnerStrategy, ll_red_nf_redsb
-from .PyPolyBoRi import (Monomial, Polynomial,
-                         OrderCode)
-from .ll import eliminate, ll_encode
-from .statistics import used_vars_set
-from .heuristics import dense_system, gauss_on_linear
-from .easy_polynomials import easy_linear_polynomials
-from .interpolate import lex_groebner_basis_for_polynomial_via_variety
-from .fglm import _fglm
+from sage.rings.polynomial.pbori.easy_polynomials import easy_linear_polynomials
+from sage.rings.polynomial.pbori.fglm import _fglm
+from sage.rings.polynomial.pbori.heuristics import dense_system, gauss_on_linear
+from sage.rings.polynomial.pbori.interpolate import (
+    lex_groebner_basis_for_polynomial_via_variety,
+)
+from sage.rings.polynomial.pbori.ll import eliminate, ll_encode
+from sage.rings.polynomial.pbori.nf import (
+    GeneratorLimitExceeded,
+    symmGB_F2_C,
+    symmGB_F2_python,
+)
+from sage.rings.polynomial.pbori.pbori import (
+    GroebnerStrategy,
+    Monomial,
+    OrderCode,
+    Polynomial,
+    ll_red_nf_redsb,
+)
+from sage.rings.polynomial.pbori.statistics import used_vars_set
 
 
 def get_options_from_function(f):
@@ -319,7 +329,7 @@ def variety_size_from_gb(I):
         sage: variety_size_from_gb([x(1)*x(2), x(2)*x(3)])
         5.0
         sage: mons = [Monomial([r.variable(i) for i in range(100) if i!=j])\
-            for j in range(100)]
+        ....: for j in range(100)]
         sage: variety_size_from_gb(mons)
         1.2676506002282294e+30
     """

@@ -75,8 +75,7 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: print("dummy line"); shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code) # see #25320 for the reason of the `...` and the dummy line in this test
-    dummy line
+    sage: shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code)
     ...
     ZeroDivisionError...Traceback (most recent call last)
     ...
@@ -723,7 +722,7 @@ def get_test_shell():
 
     Check that :issue:`14070` has been resolved::
 
-        sage: from sage.tests.cmdline import test_executable
+        sage: from sage.tests import test_executable
         sage: cmd = 'from sage.repl.interpreter import get_test_shell; shell = get_test_shell()'
         sage: (out, err, ret) = test_executable(["sage", "-c", cmd])
         sage: out + err

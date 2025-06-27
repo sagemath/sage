@@ -494,11 +494,7 @@ Sage example in ./calculus.tex, line 2468::
 Sage example in ./calculus.tex, line 2487::
 
   sage: A.eigenvectors_right()
-  [(1, [
-  (1, -1, 1)
-  ], 1), (-2, [
-  (1, -1, 0)
-  ], 2)]
+  [(1, [(1, -1, 1)], 1), (-2, [(1, -1, 0)], 2)]
 
 Sage example in ./calculus.tex, line 2499::
 

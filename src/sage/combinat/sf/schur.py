@@ -18,14 +18,15 @@ Schur symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import classical
-from sage.misc.misc_c import prod
-from sage.misc.lazy_import import lazy_import
-from sage.data_structures.blas_dict import convert_remove_zeroes
-from sage.rings.infinity import infinity
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
+from sage.data_structures.blas_dict import convert_remove_zeroes
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import classical
 
 lazy_import('sage.libs.lrcalc', 'lrcalc')
 
@@ -223,6 +224,24 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             ga.sort(reverse=True)
             return (-1)**m * self([a+b for (a,b) in zip(ga, range(-r,0))])
         return self.zero()
+
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: S = SymmetricFunctions(QQ).s()
+            sage: t = 4*S[3,2]+9
+            sage: mt = magma(t); mt
+            9 + 4*$.[3,2]
+            sage: mt.sage()
+            9*s[] + 4*s[3, 2]
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraSchur({Bref})"
 
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def __pow__(self, n):
@@ -670,7 +689,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -810,7 +831,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -843,6 +866,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.schur',
                            'SymmetricFunctionAlgebraElement_schur',
                            SymmetricFunctionAlgebra_schur.Element)

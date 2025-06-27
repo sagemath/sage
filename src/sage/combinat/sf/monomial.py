@@ -19,12 +19,13 @@ Monomial symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import classical
 import sage.libs.symmetrica.all as symmetrica
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
+from sage.arith.misc import binomial, factorial, multinomial
 from sage.combinat.partition import _Partitions
-from sage.arith.misc import multinomial, factorial, binomial
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+
+from . import classical
 
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
@@ -276,6 +277,24 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         s = self.realization_of().schur()
         return self(s.antipode(s(element)))
 
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: M = SymmetricFunctions(QQ).m()
+            sage: t = 4*M[3,2]+9
+            sage: mt = magma(t); mt
+            9 + 4*$.[3,2]
+            sage: mt.sage()
+            9*m[] + 4*m[3, 2]
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraMonomial({Bref})"
+
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def expand(self, n, alphabet='x'):
             """
@@ -468,7 +487,9 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -495,6 +516,5 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
-
 
 register_unpickle_override('sage.combinat.sf.monomial', 'SymmetricFunctionAlgebraElement_monomial', SymmetricFunctionAlgebra_monomial.Element)

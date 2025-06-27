@@ -194,7 +194,11 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
 from sage.misc.randstate import current_randstate
-from sage.modules import free_module_element
+from sage.modules.free_module_element import (
+    FreeModuleElement,
+    FreeModuleElement_generic_dense,
+    FreeModuleElement_generic_sparse,
+)
 from sage.modules.module import Module
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.structure.factory import UniqueFactory
@@ -213,12 +217,12 @@ from sage.structure.richcmp import (
 )
 from sage.structure.sequence import Sequence
 
-
 ###############################################################################
 #
 # Constructor functions
 #
 ###############################################################################
+
 
 class FreeModuleFactory(UniqueFactory):
     r"""
@@ -589,11 +593,7 @@ def VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_mat
         sage: V
         Vector space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x over Integer Ring
         sage: V.basis()
-        [
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1)
-        ]
+        [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
 
     The base must be a field or a :exc:`TypeError` is raised.
 
@@ -780,7 +780,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         return FreeModule(R, 0)
     else:
         x = gens[0]
-        if isinstance(x, free_module_element.FreeModuleElement):
+        if isinstance(x, FreeModuleElement):
             M = x.parent()
         else:
             try:
@@ -824,10 +824,7 @@ def basis_seq(V, vecs):
         ...
         ValueError: vector is immutable; please change a copy instead (use copy())
         sage: sage.modules.free_module.basis_seq(V, V.gens())
-        [
-        (1, 0),
-        (0, 1)
-        ]
+        [(1, 0), (0, 1)]
     """
     for z in vecs:
         z.set_immutable()
@@ -897,10 +894,7 @@ class Module_free_ambient(Module):
         sage: M = S**2
         sage: N = M.submodule([vector([x - y, z]), vector([y * z, x * z])])
         sage: N.gens()
-        [
-        (x - y, z),
-        (y*z, x*z)
-        ]
+        [(x - y, z), (y*z, x*z)]
         sage: N.degree()
         2
     """
@@ -960,7 +954,7 @@ class Module_free_ambient(Module):
         """
         if isinstance(x, (int, sage.rings.integer.Integer)) and x == 0:
             return self.zero_vector()
-        elif isinstance(x, free_module_element.FreeModuleElement):
+        elif isinstance(x, FreeModuleElement):
             if x.parent() is self:
                 if copy:
                     return x.__copy__()
@@ -994,7 +988,7 @@ class Module_free_ambient(Module):
         """
         return self.__degree
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if the underlying representation of this module uses
         sparse vectors, and ``False`` otherwise.
@@ -1007,6 +1001,24 @@ class Module_free_ambient(Module):
             True
         """
         return self.__is_sparse
+
+    def is_exact(self) -> bool:
+        """
+        Test whether elements of this module are represented exactly.
+
+        OUTPUT:
+
+        Return ``True`` if elements of this module are represented exactly, i.e.,
+        there is no precision loss when doing arithmetic.
+
+        EXAMPLES::
+
+            sage: (ZZ^2).is_exact()
+            True
+            sage: (RR^2).is_exact()
+            False
+        """
+        return self._base.is_exact()
 
     def _an_element_(self):
         """
@@ -1509,7 +1521,7 @@ class Module_free_ambient(Module):
         # in the same ambient space
         return self.is_submodule(other) and other.is_submodule(self)
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -2215,7 +2227,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         if (isinstance(x, (int, sage.rings.integer.Integer)) and x == 0):
             return self.zero_vector()
-        if isinstance(x, free_module_element.FreeModuleElement):
+        if isinstance(x, FreeModuleElement):
             if x.parent() is self:
                 if copy:
                     return x.__copy__()
@@ -2295,7 +2307,7 @@ class FreeModule_generic(Module_free_ambient):
             return self.echelonized_basis_matrix() == other.echelonized_basis_matrix()
         return self.is_submodule(other) and other.is_submodule(self)
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -2567,11 +2579,7 @@ class FreeModule_generic(Module_free_ambient):
         EXAMPLES::
 
             sage: FreeModule(Integers(12),3).basis()
-            [
-            (1, 0, 0),
-            (0, 1, 0),
-            (0, 0, 1)
-            ]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
         """
         raise NotImplementedError
 
@@ -3109,6 +3117,131 @@ class FreeModule_generic(Module_free_ambient):
             codomain = R**n
         return super().hom(im_gens, codomain, **kwds)
 
+    def pseudoHom(self, twist, codomain=None):
+        r"""
+        Return the pseudo-Hom space corresponding to given data.
+
+        INPUT:
+
+        - ``twist`` -- the twisting morphism or the twisting derivation
+
+        - ``codomain`` -- (default: ``None``) the codomain of the pseudo
+          morphisms; if ``None``, the codomain is the same as the domain
+
+        EXAMPLES::
+
+            sage: F = GF(25)
+            sage: Frob = F.frobenius_endomorphism()
+            sage: M = F^2
+            sage: M.pseudoHom(Frob)
+            Set of Pseudoendomorphisms (twisted by z2 |--> z2^5) of Vector space of dimension 2 over Finite Field in z2 of size 5^2
+
+        .. SEEALSO::
+
+            :meth:`pseudohom`
+        """
+        from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
+        if codomain is None:
+            codomain = self
+        return FreeModulePseudoHomspace(self, codomain, twist)
+
+    def pseudohom(self, f, twist, codomain=None, side="left"):
+        r"""
+        Return the pseudohomomorphism corresponding to the given data.
+
+        We recall that, given two `R`-modules `M` and `M'` together with
+        a ring homomorphism `\theta: R \to R` and a `\theta`-derivation,
+        `\delta: R \to R` (that is, a map such that
+        `\delta(xy) = \theta(x)\delta(y) + \delta(x)y`), a
+        pseudomorphism `f : M \to M'` is an additive map such that
+
+        .. MATH::
+
+            f(\lambda x) = \theta(\lambda) f(x) + \delta(\lambda) x
+
+        When `\delta` is nonzero, this requires that `M` coerces into `M'`.
+
+        .. NOTE::
+
+            Internally, pseudomorphisms are represented by matrices with
+            coefficient in the base ring `R`. See class
+            :class:`sage.modules.free_module_pseudomorphism.FreeModulePseudoMorphism`
+            for details.
+
+        INPUT:
+
+        - ``f`` -- a matrix (or any other data) defining the
+          pseudomorphism
+
+        - ``twist`` -- the twisting morphism or the twisting derivation
+          (if a derivation is given, the corresponding morphism `\theta`
+          is automatically infered;
+          see also :class:`sage.rings.polynomial.ore_polynomial_ring.OrePolynomialRing`)
+
+        - ``codomain`` -- (default: ``None``) the codomain of the pseudo
+          morphisms; if ``None``, the codomain is the same than the domain
+
+        - ``side`` -- (default: ``left``) side of the vectors acted on by
+          the matrix
+
+        EXAMPLES::
+
+            sage: K.<z> = GF(5^5)
+            sage: Frob = K.frobenius_endomorphism()
+            sage: V = K^2; W = K^3
+            sage: f = V.pseudohom([[1, z, z^2], [1, z^2, z^4]], Frob, codomain=W)
+            sage: f
+            Free module pseudomorphism (twisted by z |--> z^5) defined by the matrix
+            [  1   z z^2]
+            [  1 z^2 z^4]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 5^5
+            Codomain: Vector space of dimension 3 over Finite Field in z of size 5^5
+
+        We check that `f` is indeed semi-linear::
+
+            sage: v = V([z+1, z+2])
+            sage: f(z*v)
+            (2*z^2 + z + 4, z^4 + 2*z^3 + 3*z^2 + z, 4*z^4 + 2*z^2 + 3*z + 2)
+            sage: z^5 * f(v)
+            (2*z^2 + z + 4, z^4 + 2*z^3 + 3*z^2 + z, 4*z^4 + 2*z^2 + 3*z + 2)
+
+        An example with a derivation::
+
+            sage: R.<t> = ZZ[]
+            sage: d = R.derivation()
+            sage: M = R^2
+            sage: Nabla = M.pseudohom([[1, t], [t^2, t^3]], d, side='right')
+            sage: Nabla
+            Free module pseudomorphism (twisted by d/dt) defined as left-multiplication by the matrix
+            [  1   t]
+            [t^2 t^3]
+            Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in t over Integer Ring
+            Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in t over Integer Ring
+
+            sage: v = M([1,1])
+            sage: Nabla(v)
+            (t + 1, t^3 + t^2)
+            sage: Nabla(t*v)
+            (t^2 + t + 1, t^4 + t^3 + 1)
+            sage: Nabla(t*v) == t * Nabla(v) + v
+            True
+
+        If the twisting derivation is not zero, the domain must
+        coerce into the codomain::
+
+            sage: N = R^3
+            sage: M.pseudohom([[1, t, t^2], [1, t^2, t^4]], d, codomain=N)
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain does not coerce into the codomain
+
+        .. SEEALSO::
+
+            :meth:`pseudoHom`
+        """
+        H = self.pseudoHom(twist, codomain)
+        return H(f, side)
+
     def inner_product_matrix(self):
         """
         Return the default identity inner product matrix associated to this
@@ -3156,7 +3289,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return True
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``False`` since this is not an ambient free module.
 
@@ -3181,7 +3314,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return False
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if the underlying representation of
         this module uses dense vectors, and ``False`` otherwise.
@@ -3195,7 +3328,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return not self.is_sparse()
 
-    def is_full(self):
+    def is_full(self) -> bool:
         """
         Return ``True`` if the rank of this module equals its
         degree.
@@ -3210,7 +3343,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         return self.rank() == self.degree()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if the underlying set of this free module is finite.
 
@@ -4625,7 +4758,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         B = [A1.linear_combination_of_rows(v.list()[:n]) for v in K.basis()]
         return self.ambient_vector_space().submodule(B, check=False)
 
-    def is_subspace(self, other):
+    def is_subspace(self, other) -> bool:
         """
         ``True`` if this vector space is a subspace of ``other``.
 
@@ -5011,9 +5144,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: v2 = vector(QQ, [1, 5, 2, -2])
             sage: V = QQ^4
             sage: V.linear_dependence([v1,v2])
-            [
-            <BLANKLINE>
-            ]
+            []
 
             sage: v3 = v1 + v2
             sage: v4 = 3*v1 - 4*v2
@@ -5022,21 +5153,13 @@ class FreeModule_generic_field(FreeModule_generic_pid):
 
             sage: relations = V.linear_dependence(L, zeros='left')
             sage: relations
-            [
-            (1, 0, 0, -1, -2),
-            (0, 1, 0, -1/2, -3/2),
-            (0, 0, 1, -3/2, -7/2)
-            ]
+            [(1, 0, 0, -1, -2), (0, 1, 0, -1/2, -3/2), (0, 0, 1, -3/2, -7/2)]
             sage: v2 + (-1/2)*v4 + (-3/2)*v5
             (0, 0, 0, 0)
 
             sage: relations = V.linear_dependence(L, zeros='right')
             sage: relations
-            [
-            (-1, -1, 1, 0, 0),
-            (-3, 4, 0, 1, 0),
-            (1, -2, 0, 0, 1)
-            ]
+            [(-1, -1, 1, 0, 0), (-3, 4, 0, 1, 0), (1, -2, 0, 0, 1)]
             sage: z = sum([relations[2][i]*L[i] for i in range(len(L))])
             sage: z == zero_vector(QQ, 4)
             True
@@ -5048,9 +5171,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: v2 = vector(QQ, [4,1,0])
             sage: V = QQ^3
             sage: relations = V.linear_dependence([v1, v2]); relations
-            [
-            <BLANKLINE>
-            ]
+            []
             sage: relations == []
             True
 
@@ -5066,19 +5187,13 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             True
             sage: L = [v1, v2, v3, 2*v1+v2, 3*v2+6*v3]
             sage: (F^5).linear_dependence(L)
-            [
-            (1, 0, 16, 8, 3),
-            (0, 1, 2, 0, 11)
-            ]
+            [(1, 0, 16, 8, 3), (0, 1, 2, 0, 11)]
             sage: v1 + 16*v3 + 8*(2*v1+v2) + 3*(3*v2+6*v3)
             (0, 0, 0, 0, 0)
             sage: v2 + 2*v3 + 11*(3*v2+6*v3)
             (0, 0, 0, 0, 0)
             sage: (F^5).linear_dependence(L, zeros='right')
-            [
-            (15, 16, 0, 1, 0),
-            (0, 14, 11, 0, 1)
-            ]
+            [(15, 16, 0, 1, 0), (0, 14, 11, 0, 1)]
 
         TESTS:
 
@@ -5689,7 +5804,7 @@ class FreeModule_ambient(FreeModule_generic):
             t = "(%s)" % t
         return "%s^{%s}" % (t, self.rank())
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` since this module is an ambient
         module.
@@ -5728,11 +5843,7 @@ class FreeModule_ambient(FreeModule_generic):
         EXAMPLES::
 
             sage: A = ZZ^3; B = A.basis(); B
-            [
-            (1, 0, 0),
-            (0, 1, 0),
-            (0, 0, 1)
-            ]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
             sage: B.universe()
             Ambient free module of rank 3 over the principal ideal domain Integer Ring
         """
@@ -5756,11 +5867,7 @@ class FreeModule_ambient(FreeModule_generic):
         EXAMPLES::
 
             sage: A = ZZ^3; A.echelonized_basis()
-            [
-            (1, 0, 0),
-            (0, 1, 0),
-            (0, 0, 1)
-            ]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
         """
         return self.basis()
 
@@ -7049,10 +7156,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: M.echelon_coordinates([8,10,12])
             [8, -2]
             sage: B = M.echelonized_basis(); B
-            [
-            (1, 2, 3/7),
-            (0, 3, -30/7)
-            ]
+            [(1, 2, 3/7), (0, 3, -30/7)]
             sage: 8*B[0] - 2*B[1]
             (8, 10, 12)
 
@@ -7061,14 +7165,11 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V = VectorSpace(QQ,5, sparse=True)
             sage: W = V.subspace_with_basis([[0,1,2,0,0], [0,-1,0,0,-1/2]])
             sage: W.echelonized_basis()
-            [
-            (0, 1, 0, 0, 1/2),
-            (0, 0, 1, 0, -1/4)
-            ]
+            [(0, 1, 0, 0, 1/2), (0, 0, 1, 0, -1/4)]
             sage: W.echelon_coordinates([0,0,2,0,-1/2])
             [0, 2]
         """
-        if not isinstance(v, free_module_element.FreeModuleElement):
+        if not isinstance(v, FreeModuleElement):
             v = self.ambient_vector_space()(v)
         elif v.degree() != self.degree():
             raise ArithmeticError("vector is not in free module")
@@ -7100,10 +7201,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: A = ZZ^3
             sage: M = A.span_of_basis([[1,2,3],[4,5,6]])
             sage: M.echelonized_basis()
-            [
-            (1, 2, 3),
-            (0, 3, 6)
-            ]
+            [(1, 2, 3), (0, 3, 6)]
             sage: M.user_to_echelon_matrix()
             [ 1  0]
             [ 4 -1]
@@ -7149,10 +7247,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V = QQ^3
             sage: W = V.span_of_basis([[1,2,3],[4,5,6]])
             sage: W.echelonized_basis()
-            [
-            (1, 0, -1),
-            (0, 1, 2)
-            ]
+            [(1, 0, -1), (0, 1, 2)]
             sage: A = W.echelon_to_user_matrix(); A
             [-5/3  2/3]
             [ 4/3 -1/3]
@@ -7388,16 +7483,10 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
             sage: V = ZZ^3
             sage: V.basis()
-            [
-            (1, 0, 0),
-            (0, 1, 0),
-            (0, 0, 1)
-            ]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
             sage: M = V.span_of_basis([['1/8',2,1]])
             sage: M.basis()
-            [
-            (1/8, 2, 1)
-            ]
+            [(1/8, 2, 1)]
         """
         return self.__basis
 
@@ -7506,15 +7595,9 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V = ZZ^3
             sage: M = V.span_of_basis([['1/2',3,1], [0,'1/6',0]])
             sage: M.basis()
-            [
-            (1/2, 3, 1),
-            (0, 1/6, 0)
-            ]
+            [(1/2, 3, 1), (0, 1/6, 0)]
             sage: B = M.echelonized_basis(); B
-            [
-            (1/2, 0, 1),
-            (0, 1/6, 0)
-            ]
+            [(1/2, 0, 1), (0, 1/6, 0)]
             sage: V.span(B) == M
             True
         """
@@ -7545,16 +7628,13 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V = ZZ^3
             sage: M = V.span_of_basis([['1/2',3,1], [0,'1/6',0]])
             sage: B = M.echelonized_basis(); B
-            [
-            (1/2, 0, 1),
-            (0, 1/6, 0)
-            ]
+            [(1/2, 0, 1), (0, 1/6, 0)]
             sage: M.echelon_coordinate_vector(['1/2', 3, 1])
             (1, 18)
         """
         return FreeModule(self.base_ring().fraction_field(), self.rank())(self.echelon_coordinates(v, check=check))
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         """
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -7704,7 +7784,7 @@ class FreeModule_submodule_pid(FreeModule_submodule_with_basis_pid):
         """
         return self.echelon_coordinate_vector(v, check=check)
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         r"""
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -7935,9 +8015,9 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
         # Return the first rank rows (i.e., the nonzero rows).
         return E.rows()[:E.rank()]
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
-        Return False since this is not an ambient module.
+        Return ``False`` since this is not an ambient module.
 
         EXAMPLES::
 
@@ -8118,7 +8198,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
             sage: vector(QQ, W.echelon_coordinates(v)) * W.basis_matrix()
             (1, 5, 9)
         """
-        if not isinstance(v, free_module_element.FreeModuleElement):
+        if not isinstance(v, FreeModuleElement):
             v = self.ambient_vector_space()(v)
         if v.degree() != self.degree():
             raise ArithmeticError("v (=%s) is not in self" % v)
@@ -8188,7 +8268,7 @@ class FreeModule_submodule_field(FreeModule_submodule_with_basis_field):
         """
         return self.echelon_coordinate_vector(v, check=check)
 
-    def has_user_basis(self):
+    def has_user_basis(self) -> bool:
         """
         Return ``True`` if the basis of this free module is
         specified by the user, as opposed to being the default echelon
@@ -8262,7 +8342,7 @@ def element_class(R, is_sparse):
         else:
             if R.order() < MAX_MODULUS:
                 return Vector_modn_dense
-        return free_module_element.FreeModuleElement_generic_dense
+        return FreeModuleElement_generic_dense
     elif isinstance(R, sage.rings.abc.RealDoubleField) and not is_sparse:
         try:
             from sage.modules.vector_real_double_dense import Vector_real_double_dense
@@ -8291,9 +8371,9 @@ def element_class(R, is_sparse):
             return sage.modules.vector_symbolic_sparse.Vector_symbolic_sparse
 
     if is_sparse:
-        return free_module_element.FreeModuleElement_generic_sparse
+        return FreeModuleElement_generic_sparse
     else:
-        return free_module_element.FreeModuleElement_generic_dense
+        return FreeModuleElement_generic_dense
 
 
 @richcmp_method

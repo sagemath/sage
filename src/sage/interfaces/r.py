@@ -6,10 +6,10 @@ This is the reference to the Sagemath R interface, usable from any
 Sage program.
 
 The %r interface creating an R cell in the sage
-notebook is decribed in the Notebook manual.
+notebook is described in the Notebook manual.
 
 The %R and %%R interface creating an R line or an R cell in the
-Jupyter notebook are briefly decribed at the end of this page. This
+Jupyter notebook are briefly described at the end of this page. This
 documentation will be expanded and placed in the Jupyter notebook
 manual when this manual exists.
 
@@ -894,7 +894,7 @@ class R(ExtraTabCompletion, Interface):
         # The following was more structural, but breaks on my machine.  (stein)
         # p = p._sage_()
         # s = p['_Dim'][0]
-        # l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
+        # l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(s)]
         # return l
 
     def _object_class(self):

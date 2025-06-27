@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'complex_double_vector.py',
   'diamond_cutting.py',
@@ -9,6 +10,8 @@ py.install_sources(
   'free_module_homspace.py',
   'free_module_integer.py',
   'free_module_morphism.py',
+  'free_module_pseudohomspace.py',
+  'free_module_pseudomorphism.py',
   'free_quadratic_module.py',
   'free_quadratic_module_integer_symmetric.py',
   'matrix_morphism.py',
@@ -16,6 +19,11 @@ py.install_sources(
   'module.pxd',
   'module_functors.py',
   'multi_filtered_vector_space.py',
+  'numpy_util.pxd',
+  'ore_module.py',
+  'ore_module_element.py',
+  'ore_module_homspace.py',
+  'ore_module_morphism.py',
   'quotient_module.py',
   'real_double_vector.py',
   'submodule.py',
@@ -65,14 +73,8 @@ foreach name, pyx : extension_data
     sources: pyx,
     subdir: 'sage/modules',
     install: true,
-    include_directories: [
-      inc_cpython,
-      inc_ext,
-      inc_numpy,
-      inc_rings,
-      inc_rings_finite,
-    ],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
+    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
 
@@ -82,20 +84,19 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  if is_windows
+    # sage_modules_vector_mod2_dense.pyx.cpp.obj : error LNK2019: unresolved external symbol "struct mzd_t * __cdecl mzd_init(int,int)"
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/modules',
     install: true,
     override_options: ['cython_language=cpp'],
-    include_directories: [
-      inc_cpython,
-      inc_ext,
-      inc_numpy,
-      inc_rings,
-      inc_rings_finite,
-    ],
-    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png],
+    include_directories: [inc_cpython, inc_ext, inc_rings, inc_rings_finite],
+    dependencies: [py_dep, cysignals, gd, gmp, m4ri, png, numpy],
   )
 endforeach
 

@@ -936,7 +936,7 @@ class FiniteWord_class(Word_class):
         """
         return self.is_suffix(other) and self.length() < other.length()
 
-    def has_suffix(self, other):
+    def has_suffix(self, other) -> bool:
         """
         Test whether ``self`` has ``other`` as a suffix.
 
@@ -1017,7 +1017,7 @@ class FiniteWord_class(Word_class):
         """
         return self.is_prefix(other) and self.length() < other.length()
 
-    def has_prefix(self, other):
+    def has_prefix(self, other) -> bool:
         r"""
         Test whether ``self`` has ``other`` as a prefix.
 
@@ -1684,9 +1684,9 @@ class FiniteWord_class(Word_class):
             g.allow_loops(True)
             g.allow_multiple_edges(True)
             for v in l:
-                [i] = g.neighbors_in(v)
-                [o] = g.neighbors_out(v)
-                g.add_edge(i, o, g.edge_label(i, v)[0]*g.edge_label(v, o)[0])
+                i = next(g.neighbor_in_iterator(v))
+                o = next(g.neighbor_out_iterator(v))
+                g.add_edge(i, o, g.edge_label(i, v)[0] * g.edge_label(v, o)[0])
                 g.delete_vertex(v)
         return g
 
@@ -2367,8 +2367,7 @@ class FiniteWord_class(Word_class):
         for i, (b, c) in iter:
             if b != c:
                 return self[-i:]
-        else:
-            return self[-i-1:]
+        return self[-i-1:]
 
     def is_palindrome(self, f=None):
         r"""
@@ -3549,7 +3548,7 @@ class FiniteWord_class(Word_class):
             return 0
         return self.length() // self.primitive_length()
 
-    def has_period(self, p):
+    def has_period(self, p) -> bool:
         r"""
         Return ``True`` if ``self`` has the period `p`,
         ``False`` otherwise.
@@ -3739,8 +3738,7 @@ class FiniteWord_class(Word_class):
             for e in other:
                 if s == e:
                     s = next(its)
-            else:
-                return False
+            return False
         except StopIteration:
             return True
 
@@ -3881,8 +3879,7 @@ class FiniteWord_class(Word_class):
             else:
                 # we found the first word in the lyndon factorization;
                 return False
-        else:
-            return i == 0
+        return i == 0
 
     def lyndon_factorization(self):
         r"""
@@ -5541,7 +5538,7 @@ class FiniteWord_class(Word_class):
                 abelian[lost] -= 1
                 abel_max[gain] = max(abel_max[gain], abelian[gain])
                 abel_min[lost] = min(abel_min[lost], abelian[lost])
-            best = max(best, max(abel_max[a] - abel_min[a] for a in alphabet))
+            best = max(best, *(abel_max[a] - abel_min[a] for a in alphabet))
         return best
 
     def is_balanced(self, q=1):

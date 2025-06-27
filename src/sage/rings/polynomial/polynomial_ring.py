@@ -141,6 +141,7 @@ Check that :issue:`5562` has been fixed::
 
 import sys
 
+from sage.misc.superseded import deprecation
 from sage.structure.element import Element
 from sage.structure.category_object import check_default_category
 
@@ -149,7 +150,7 @@ from sage.categories.morphism import IdentityMorphism
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.rings import Rings
 
-from sage.rings.ring import (Ring, IntegralDomain)
+from sage.rings.ring import Ring, CommutativeRing
 from sage.structure.element import RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
@@ -158,14 +159,13 @@ from sage.rings.integer import Integer
 from sage.rings.number_field.number_field_base import NumberField
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
 from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
 
 import sage.misc.latex as latex
-from sage.misc.prandom import randint
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -193,7 +193,7 @@ def is_PolynomialRing(x):
         sage: is_PolynomialRing(2)
         doctest:warning...
         DeprecationWarning: The function is_PolynomialRing is deprecated;
-        use 'isinstance(..., PolynomialRing_general)' instead.
+        use 'isinstance(..., PolynomialRing_generic)' instead.
         See https://github.com/sagemath/sage/issues/38266 for details.
         False
 
@@ -229,16 +229,15 @@ def is_PolynomialRing(x):
         sage: type(R)
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
-    from sage.misc.superseded import deprecation
     deprecation(38266,
                 "The function is_PolynomialRing is deprecated; "
-                "use 'isinstance(..., PolynomialRing_general)' instead.")
-    return isinstance(x, PolynomialRing_general)
+                "use 'isinstance(..., PolynomialRing_generic)' instead.")
+    return isinstance(x, PolynomialRing_generic)
 
 
 #########################################################################################
 
-class PolynomialRing_general(Ring):
+class PolynomialRing_generic(Ring):
     """
     Univariate polynomial ring over a ring.
     """
@@ -534,12 +533,12 @@ class PolynomialRing_general(Ring):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            sage: PolynomialRing_general._implementation_names(None, ZZ, True)
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            sage: PolynomialRing_generic._implementation_names(None, ZZ, True)
             [None, 'generic']
-            sage: PolynomialRing_general._implementation_names("generic", ZZ, True)
+            sage: PolynomialRing_generic._implementation_names("generic", ZZ, True)
             [None, 'generic']
-            sage: PolynomialRing_general._implementation_names("xyzzy", ZZ, True)
+            sage: PolynomialRing_generic._implementation_names("xyzzy", ZZ, True)
             Traceback (most recent call last):
             ...
             ValueError: unknown implementation 'xyzzy' for sparse polynomial rings over Integer Ring
@@ -563,8 +562,8 @@ class PolynomialRing_general(Ring):
 
         EXAMPLES::
 
-            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
-            sage: PolynomialRing_general._implementation_names_impl("xyzzy", ZZ, True)
+            sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+            sage: PolynomialRing_generic._implementation_names_impl("xyzzy", ZZ, True)
             NotImplemented
         """
         if implementation is None or implementation == "generic":
@@ -624,6 +623,24 @@ class PolynomialRing_general(Ring):
             self([2*one,0,2*one]), # an element with non-trivial content
         ]
 
+    def monomials_of_degree(self, degree):
+        r"""
+        Return the list of all monomials of the given total
+        degree in this univariate polynomial ring, which is simply the list with one element ``[self.gen()**degree]``.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.monomials_of_degree`
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: mons = R.monomials_of_degree(2)
+            sage: mons
+            [x^2]
+        """
+        return [self.gen()**degree]
+
     @cached_method
     def flattening_morphism(self):
         r"""
@@ -642,7 +659,7 @@ class PolynomialRing_general(Ring):
         """
         from .multi_polynomial_ring import MPolynomialRing_base
         base = self.base_ring()
-        if isinstance(base, (PolynomialRing_general, MPolynomialRing_base)):
+        if isinstance(base, (PolynomialRing_generic, MPolynomialRing_base)):
             from .flatten import FlatteningMorphism
             return FlatteningMorphism(self)
         else:
@@ -827,7 +844,7 @@ class PolynomialRing_general(Ring):
 
         # polynomial rings in the same variable over a base that canonically
         # coerces into self.base_ring()
-        if isinstance(P, PolynomialRing_general):
+        if isinstance(P, PolynomialRing_generic):
             if self.construction()[0] != P.construction()[0]:
                 # Construction (including variable names) must be the
                 # same to allow coercion
@@ -1262,7 +1279,7 @@ class PolynomialRing_general(Ring):
             raise IndexError("generator n not defined")
         return self.element_class(self, [0,1], is_gen=True)
 
-    def gens_dict(self):
+    def gens_dict(self) -> dict:
         """
         Return a dictionary whose entries are ``{name:variable,...}``,
         where ``name`` stands for the variable names of this
@@ -1590,7 +1607,7 @@ class PolynomialRing_general(Ring):
                     coeffs.reverse()
                     yield self(coeffs)
 
-    def _polys_max( self, max_degree ):
+    def _polys_max(self, max_degree):
         """
         Refer to polynomials() for full documentation.
         """
@@ -1617,7 +1634,7 @@ class PolynomialRing_general(Ring):
             0
         """
         base_ring = self.base_ring()
-        if isinstance(base_ring, PolynomialRing_general):
+        if isinstance(base_ring, PolynomialRing_generic):
             return 0
         try:
             from sage.matrix.matrix_space import MatrixSpace
@@ -1669,7 +1686,7 @@ class PolynomialRing_general(Ring):
         """
         self._Karatsuba_threshold = int(Karatsuba_threshold)
 
-    def polynomials( self, of_degree=None, max_degree=None ):
+    def polynomials(self, of_degree=None, max_degree=None):
         """
         Return an iterator over the polynomials of specified degree.
 
@@ -1733,7 +1750,7 @@ class PolynomialRing_general(Ring):
             return self._polys_max( max_degree )
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
-    def monics( self, of_degree=None, max_degree=None ):
+    def monics(self, of_degree=None, max_degree=None):
         """
         Return an iterator over the monic polynomials of specified degree.
 
@@ -1794,7 +1811,11 @@ class PolynomialRing_general(Ring):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general):
+# PolynomialRing_general is deprecated since 2024-12-03. See Issue #38207.
+PolynomialRing_general = PolynomialRing_generic
+
+
+class PolynomialRing_commutative(PolynomialRing_generic):
     """
     Univariate polynomial ring over a commutative ring.
     """
@@ -1808,7 +1829,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
         else:
             defaultcat = polynomial_default_category(base_ring.category(), 1)
             category = check_default_category(defaultcat, category)
-        PolynomialRing_general.__init__(self, base_ring, name=name,
+        PolynomialRing_generic.__init__(self, base_ring, name=name,
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
 
@@ -1923,8 +1944,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
         return roots
 
 
-class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr,
-                                     IntegralDomain):
+class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr, CommutativeRing):
     def __init__(self, base_ring, name='x', sparse=False, implementation=None,
             element_class=None, category=None):
         """
@@ -2328,7 +2348,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
         else:
             return [F[i][i] for i in range(n)]
 
-    def lagrange_polynomial(self, points, algorithm='divided_difference', previous_row=None):
+    def lagrange_polynomial(self, points, algorithm='divided_difference',
+                            previous_row=None):
         r"""
         Return the Lagrange interpolation polynomial through the
         given points.
@@ -2355,6 +2376,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
             this method is to only generate the last row of this
             table, instead of the full table itself.  Generating the
             full table can be memory inefficient.
+
+          - ``'pari'``: use Pari's function :pari:`polinterpolate`
 
         - ``previous_row`` -- (default: ``None``) this option is only
           relevant if used with ``algorithm='neville'``.  If provided,
@@ -2434,24 +2457,23 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
             ....:                       algorithm='neville', previous_row=p)[-1]
             a^2*x^2 + a^2*x + a^2
 
+        One can also use ``Pari``'s implementation::
+
+            sage: R = PolynomialRing(QQ, 'x')
+            sage: data = [(0,1), (2,5), (3,10)]
+            sage: p = R.lagrange_polynomial(data, algorithm='pari'); p
+            x^2 + 1
+
         TESTS:
 
         The value for ``algorithm`` must be either
-        ``'divided_difference'`` (default), or ``'neville'``::
+        ``'divided_difference'`` (default), ``'neville'`` or ``'pari'``::
 
             sage: R = PolynomialRing(QQ, 'x')
             sage: R.lagrange_polynomial([(0,1),(2,2),(3,-2),(-4,9)], algorithm='abc')
             Traceback (most recent call last):
             ...
-            ValueError: algorithm must be one of 'divided_difference' or 'neville'
-            sage: R.lagrange_polynomial([(0,1),(2,2),(3,-2),(-4,9)], algorithm='divided difference')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be one of 'divided_difference' or 'neville'
-            sage: R.lagrange_polynomial([(0,1),(2,2),(3,-2),(-4,9)], algorithm='')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be one of 'divided_difference' or 'neville'
+            ValueError: algorithm can be 'divided_difference', 'neville' or 'pari'
 
         Make sure that :issue:`10304` is fixed.  The return value
         should always be an element of ``self`` in the case of
@@ -2536,24 +2558,13 @@ class PolynomialRing_field(PolynomialRing_integral_domain):
                 P, Q = Q, P # the current row is complete, reuse the old P to hold the next row
             return P # return the last row in the Neville table
 
-#        # use the definition of Lagrange interpolation polynomial
-#        elif algorithm == "definition":
-#            def Pj(j):
-#                denom = 1
-#                divis = 1
-#                for i in range(len(points)):
-#                    if i!=j:
-#                        denom *= (var          - points[i][0])
-#                        divis *= (points[j][0] - points[i][0])
-#            return denom/divis
-#
-#            P = 0
-#            for j in range(len(points)):
-#                P += Pj(j)*points[j][1]
-#            return P
+        elif algorithm == "pari":
+            from sage.libs.pari import pari
+            positions = pari([a for a, b in points])
+            values = pari([b for a, b in points])
+            return self(pari.polinterpolate(positions, values))
 
-        else:
-            raise ValueError("algorithm must be one of 'divided_difference' or 'neville'")
+        raise ValueError("algorithm can be 'divided_difference', 'neville' or 'pari'")
 
     @cached_method
     def fraction_field(self):
@@ -3604,7 +3615,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         - Jeroen Demeyer (September 2014): add "ffprimroot" algorithm,
           see :issue:`8373`.
         """
-        from sage.libs.pari.all import pari
+        from sage.libs.pari import pari
         from sage.rings.finite_rings.conway_polynomials import (conway_polynomial,
                                                                 exists_conway_polynomial)
 

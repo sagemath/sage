@@ -747,7 +747,7 @@ class GrowthDiagram(SageObject):
             sage: G.out_labels() == G.conjugate().out_labels()[::-1]
             True
         """
-        F = {(j,i): v for (i,j),v in self._filling.items()}
+        F = {(j, i): v for (i, j), v in self._filling.items()}
         return GrowthDiagram(self.rule,
                              filling=F,
                              shape=self.shape().conjugate(),
@@ -802,7 +802,7 @@ class GrowthDiagram(SageObject):
         shape_lambda = [l - p for p in self._mu] + [l] * (h - len(self._mu))
         shape_mu = [l - p for p in self._lambda]
         shape = SkewPartition([shape_lambda[::-1], shape_mu[::-1]])
-        F = {(l-i-1, h-j-1): v for (i,j),v in self._filling.items()}
+        F = {(l-i-1, h-j-1): v for (i, j), v in self._filling.items()}
         return GrowthDiagram(self.rule,
                              filling=F,
                              shape=shape)
@@ -995,7 +995,7 @@ class GrowthDiagram(SageObject):
         if not self.is_rectangular():
             raise ValueError("can only convert fillings of rectangular shapes to words")
         w = [0] * self._lambda[0]
-        for ((i,j), v) in self._filling.items():
+        for (i, j), v in self._filling.items():
             if v != 0:
                 if v == 1:
                     if w[i] == 0:
@@ -1043,7 +1043,7 @@ class GrowthDiagram(SageObject):
             raise ValueError("can only convert fillings of rectangular shapes to words")
         w1 = []
         w2 = []
-        for ((i,j), v) in sorted(self._filling.items()):
+        for (i, j), v in sorted(self._filling.items()):
             if v >= 0:
                 w1.extend([i+1]*v)
                 w2.extend([j+1]*v)
@@ -1409,13 +1409,13 @@ class GrowthDiagram(SageObject):
                 if isinstance(v, dict):
                     # it is a dict of dicts
                     F = dict()
-                    for (i, row) in filling.items():
-                        for (j, v) in row.items():
+                    for i, row in filling.items():
+                        for j, v in row.items():
                             if v != 0:
-                                F[(i,j)] = int(v)
+                                F[(i, j)] = int(v)
                 else:
                     # it is dict of coordinates
-                    F = {(i,j): v for ((i,j), v) in filling.items()
+                    F = {(i, j): v for (i, j), v in filling.items()
                          if v != 0}
             except StopIteration:
                 # it is an empty dict of coordinates
@@ -2592,11 +2592,11 @@ class RuleLLMS(Rule):
             z, h = x, e
         elif x == t != y:
             z, h = y, e
-        else: #  x != t and y != t
+        else:   # x != t and y != t
             qx = SkewPartition([x.to_partition(), t.to_partition()])
             qy = SkewPartition([y.to_partition(), t.to_partition()])
             if not all(c in qx.cells() for c in qy.cells()):
-                res = [(j-i) % self.k for i,j in qx.cells()]
+                res = [(j-i) % self.k for i, j in qx.cells()]
                 assert len(set(res)) == 1
                 r = res[0]
                 z = y.affine_symmetric_group_simple_action(r)
@@ -4257,9 +4257,9 @@ class RuleDomino(Rule):
             r"""
             Return the union of the two partitions.
             """
-            return [max(p,q) for (p,q) in zip_longest(la, mu, fillvalue=0)]
+            return [max(p, q) for p, q in zip_longest(la, mu, fillvalue=0)]
 
-        if content not in [0,1,-1]:
+        if content not in [0, 1, -1]:
             raise ValueError("domino: the content of the filling must be in {-1,0,1}")
 
         if content == 1:

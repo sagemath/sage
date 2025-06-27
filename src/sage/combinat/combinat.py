@@ -170,21 +170,18 @@ from sage.arith.misc import bernoulli, factorial
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
 from sage.structure.sage_object import SageObject
-from sage.structure.parent import Parent
 from sage.misc.lazy_import import lazy_import
-from sage.misc.lazy_attribute import lazy_attribute
 from .combinat_cython import _stirling_number2
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
 
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 lazy_import('sage.misc.prandom', 'randint')
 
 
@@ -1946,7 +1943,7 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
         \end{aligned}
 
     Defining `g(z) = \sum_{n=1}^\infty x_{n-1} z^n`,
-    we have the analoguous alternative definitions
+    we have the analogous alternative definitions
 
     .. MATH::
 
@@ -1999,7 +1996,7 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
         sage: k = 4 # positive integer
         sage: R.<x> = InfinitePolynomialRing(QQ)
         sage: PR = PolynomialRing(QQ, 'x', n)
-        sage: d = {x[i]: PR.gen(i) for i in range(n)} #substitution dictionnary
+        sage: d = {x[i]: PR.gen(i) for i in range(n)}  # substitution dictionary
         sage: L.<z> = LazyPowerSeriesRing(R)
         sage: f = L(lambda i: x[i-1]/factorial(i), valuation=1)
         sage: all(exp(f)[i].subs(d) * factorial(i) == bell_polynomial(i) for i in range(n+1))

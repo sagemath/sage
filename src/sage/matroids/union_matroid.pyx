@@ -1,3 +1,6 @@
+"""
+Union of matroids
+"""
 from sage.matroids.matroid cimport Matroid
 
 cdef class MatroidUnion(Matroid):
@@ -31,7 +34,7 @@ cdef class MatroidUnion(Matroid):
     """
     def __init__(self, matroids):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -97,11 +100,11 @@ cdef class MatroidUnion(Matroid):
             summands.append(e.delete(e.groundset()-X))
         sum_matroid = MatroidSum(summands)
         d = {}
-        for (i,x) in sum_matroid.groundset():
+        for i, x in sum_matroid.groundset():
             if x not in d:
-                d[x]=set()
+                d[x] = set()
             d[x].add(i)
-        part_matroid = PartitionMatroid([[(i,x) for i in d[x]] for x in d])
+        part_matroid = PartitionMatroid([[(i, x) for i in d[x]] for x in d])
         return len(sum_matroid._intersection_unweighted(part_matroid))
 
     def _repr_(self):
@@ -140,7 +143,7 @@ cdef class MatroidSum(Matroid):
     """
     def __init__(self, summands):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -156,7 +159,7 @@ cdef class MatroidSum(Matroid):
         E = set()
         for i in range(len(self.summands)):
             g = self.summands[i].groundset()
-            E.update(zip([i]*len(g),g))
+            E.update(zip([i] * len(g), g))
         self._groundset = frozenset(E)
 
     def _repr_(self):
@@ -246,7 +249,7 @@ cdef class PartitionMatroid(Matroid):
     """
     def __init__(self, partition):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 

@@ -3,7 +3,7 @@ Comparison to Cython/Pyrex
 
 It is certainly possible to write a solver in Cython or Pyrex. From
 the
-http://www.scipy.org/PerformancePython?highlight=\%28performance\%29
+https://scipy.github.io/old-wiki/pages/PerformancePython.html
 website you can find an example. One potential downside to Cython over
 the previous solutions is it requires the user to understand how NumPy
 arrays or Sage matrices are implemented so as to be able to access

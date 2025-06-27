@@ -2,7 +2,7 @@
 """
 Plotting 3D fields
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Jason Grout <jason-sage@creativetrax.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +14,8 @@ Plotting 3D fields
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.srange import srange
 from sage.plot.misc import setup_for_eval_on_grid
@@ -143,16 +143,19 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
             from matplotlib.colors import LinearSegmentedColormap
             cm = LinearSegmentedColormap.from_list('mymap', colors)
         else:
-            cm = lambda x: colors
+            def cm(x):
+                return colors
 
     max_len = max(v.norm() for v in vectors)
-    scaled_vectors = [v/max_len for v in vectors]
+    scaled_vectors = [v / max_len for v in vectors]
 
     if center_arrows:
-        G = sum([plot(v, color=cm(v.norm()), **kwds).translate(p-v/2) for v, p in zip(scaled_vectors, points)])
+        G = sum(plot(v, color=cm(v.norm()), **kwds).translate(p - v / 2)
+                for v, p in zip(scaled_vectors, points))
         G._set_extra_kwds(kwds)
         return G
     else:
-        G = sum([plot(v, color=cm(v.norm()), **kwds).translate(p) for v, p in zip(scaled_vectors, points)])
+        G = sum(plot(v, color=cm(v.norm()), **kwds).translate(p)
+                for v, p in zip(scaled_vectors, points))
         G._set_extra_kwds(kwds)
         return G

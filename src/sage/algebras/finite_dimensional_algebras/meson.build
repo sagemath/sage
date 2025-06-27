@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'finite_dimensional_algebra.py',
   'finite_dimensional_algebra_element.pxd',

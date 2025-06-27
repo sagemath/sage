@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'conway_polynomials.py',
   'element_base.pxd',

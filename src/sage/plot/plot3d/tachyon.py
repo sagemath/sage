@@ -371,8 +371,8 @@ class Tachyon(WithEqualityById, SageObject):
                  antialiasing=False,
                  aspectratio=1.0,
                  raydepth=8,
-                 camera_position=None, # default value (-3, 0, 0),
-                 camera_center=None, # alternative equivalent name
+                 camera_position=None,  # default value (-3, 0, 0),
+                 camera_center=None,  # alternative equivalent name
                  updir=[0, 0, 1],
                  look_at=[0, 0, 0],
                  viewdir=None,
@@ -397,10 +397,10 @@ class Tachyon(WithEqualityById, SageObject):
         self._raydepth = raydepth
         if camera_position is not None:
             self._camera_position = camera_position
-        elif camera_center is not None: # make sure that old programs continue to work
+        elif camera_center is not None:  # make sure that old programs continue to work
             self._camera_position = camera_center
         else:
-            self._camera_position = (-3, 0, 0) # default value
+            self._camera_position = (-3, 0, 0)  # default value
         self._updir = updir
         self._projection = projection
         self._focallength = focallength
@@ -689,8 +689,8 @@ class Tachyon(WithEqualityById, SageObject):
         {}
         {}
         end_scene""".format(self._res(),
-                        self._camera(),
-                        '\n'.join(x.str() for x in self._objects))
+                            self._camera(),
+                            '\n'.join(x.str() for x in self._objects))
 
     def light(self, center, radius, color):
         r"""
@@ -1249,15 +1249,15 @@ class Texture:
         phong {} {} phong_size {}
         color {} texfunc {}
         """.format(self._name,
-               self._ambient,
-               self._diffuse,
-               self._specular,
-               self._opacity,
-               self._phongtype,
-               self._phong,
-               self._phongsize,
-               tostr(self._color),
-               self._texfunc)
+                   self._ambient,
+                   self._diffuse,
+                   self._specular,
+                   self._opacity,
+                   self._phongtype,
+                   self._phong,
+                   self._phongsize,
+                   tostr(self._color),
+                   self._texfunc)
 
 
 class Sphere:
@@ -1338,7 +1338,7 @@ class Ring:
         return r"""
         ring center {} normal {} inner {} outer {} {}
         """.format(tostr(self._center), tostr(self._normal),
-               self._inner, self._outer, self._texture)
+                   self._inner, self._outer, self._texture)
 
 
 class FractalLandscape:
@@ -1380,7 +1380,7 @@ class FractalLandscape:
         return r"""
         scape res {} scale {} center {} {}
         """.format(tostr(self._res, 2, int), tostr(self._scale, 2, int),
-               tostr(self._center), self._texture)
+                   tostr(self._center), self._texture)
 
 
 class Cylinder:

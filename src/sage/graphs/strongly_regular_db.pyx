@@ -957,7 +957,7 @@ def is_complete_multipartite(int v, int k, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_complete_multipartite
         sage: t = is_complete_multipartite(12,8,4,8); t
-        (<cyfunction is_complete_multipartite.<locals>.CompleteMultipartiteSRG at ...>,
+        (<...CompleteMultipartiteSRG...>,
          3,
          4)
         sage: g = t[0](*t[1:]); g
@@ -1068,25 +1068,25 @@ def is_polhill(int v, int k, int l, int mu):
     # We now define the P_{i,j}. see section 6.
 
     P = {}
-    P[0,1] = list(range((-1) + 1                  , 2**(s-2)+1))
-    P[1,1] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+1))
-    P[2,1] = list(range((-1) + 2**(s-1)+2         , 2**(s-1)+2**(s-2)+1))
-    P[3,1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
+    P[0, 1] = list(range((-1) + 1, 2**(s-2)+1))
+    P[1, 1] = list(range((-1) + 2**(s-2)+2, 2**(s-1)+1))
+    P[2, 1] = list(range((-1) + 2**(s-1)+2, 2**(s-1)+2**(s-2)+1))
+    P[3, 1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
 
-    P[0,2] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+2))
-    P[1,2] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    P[2,2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
-    P[3,2] = list(range((-1) + 2                  , 2**(s-2)+1))
+    P[0, 2] = list(range((-1) + 2**(s-2)+2, 2**(s-1)+2))
+    P[1, 2] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+2))
+    P[2, 2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
+    P[3, 2] = list(range((-1) + 2, 2**(s-2)+1))
 
-    P[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+3))
-    P[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
-    P[2,3] = list(range((-1) + 3                  , 2**(s-2)+2))
-    P[3,3] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+2))
+    P[0, 3] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+3))
+    P[1, 3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
+    P[2, 3] = list(range((-1) + 3, 2**(s-2)+2))
+    P[3, 3] = list(range((-1) + 2**(s-2)+3, 2**(s-1)+2))
 
-    P[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
-    P[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
-    P[2,4] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
-    P[3,4] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
+    P[0, 4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
+    P[1, 4] = list(range((-1) + 3, 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
+    P[2, 4] = list(range((-1) + 2**(s-2)+3, 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
+    P[3, 4] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
 
     R = {x: copy(P[x]) for x in P}
 
@@ -1100,10 +1100,10 @@ def is_polhill(int v, int k, int l, int mu):
 
     # We now define the R_{i,j}. see *end* of section 6.
 
-    R[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    R[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
-    R[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
-    R[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1]
+    R[0, 3] = list(range((-1) + 2**(s-1)+3, 2**(s-1)+2**(s-2)+2))
+    R[1, 3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
+    R[0, 4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
+    R[1, 4] = list(range((-1) + 3, 2**(s-2)+1)) + [2**(s-1)+1]
 
     for x in R:
         R[x] = [K[i] for i in R[x]]
@@ -1492,7 +1492,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
 
         sage: from sage.graphs.strongly_regular_db import is_twograph_descendant_of_srg
         sage: t = is_twograph_descendant_of_srg(27, 10, 1, 5); t                        # needs sage.rings.finite_rings
-        (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...
+        (<...is_twograph_descendant_of_srg...>, (8,))
         sage: g = t[0](*t[1:]); g                                                       # needs sage.rings.finite_rings
         descendant of complement(Johnson graph with parameters 8,2) at {0, 1}: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)                                    # needs sage.rings.finite_rings
@@ -1662,9 +1662,9 @@ def is_switch_OA_srg(int v, int k, int l, int mu):
         sage: t[0](*t[1:]).is_strongly_regular(parameters=True)                         # needs sage.schemes
         (290, 136, 63, 64)
         sage: is_switch_OA_srg(626, 300, 143, 144)                                      # needs sage.schemes
-        (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 12, 25)
+        (<...switch_OA_srg..., 12, 25)
         sage: is_switch_OA_srg(842, 406, 195, 196)                                      # needs sage.schemes
-        (<cyfunction is_switch_OA_srg.<locals>.switch_OA_srg at ..., 14, 29)
+        (<...switch_OA_srg..., 14, 29)
     """
     cdef int n_2_p_1 = v
     cdef int n = <int> floor(sqrt(n_2_p_1 - 1))
@@ -2617,8 +2617,8 @@ def SRG_630_85_20_10():
     hs = HoffmanSingletonGraph()
     P = list(range(5)) + list(range(30, 35))  # a Petersen in hs
     mc = [0, 1, 5, 6, 12, 13, 16, 17, 22, 23, 29, 33, 39, 42, 47]
-    assert(hs.subgraph(mc).is_regular(k=0))  # a maximum coclique
-    assert(hs.subgraph(P).is_regular(k=3))
+    assert hs.subgraph(mc).is_regular(k=0)  # a maximum coclique
+    assert hs.subgraph(P).is_regular(k=3)
     h = hs.automorphism_group().stabilizer(mc, action='OnSets')
     l = h.orbit(tuple((x[0], x[1]) for x in hs.subgraph(P).matching()),
                 "OnSetsSets")
@@ -2784,7 +2784,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
     - ``v``, ``k``, ``l``, ``mu`` -- ``integers`` -- note that ``mu``, if unspecified, is
       automatically determined from ``v``, ``k``, ``l``
 
-    - ``existence`` -- boolean;``False``; instead of building the graph,
+    - ``existence`` -- boolean (default: ``False``); instead of building the graph,
       return:
 
         - ``True`` -- meaning that a `(v,k,\lambda,\mu)`-strongly regular graph
@@ -2920,21 +2920,21 @@ def strongly_regular_graph_lazy(int v, int k, int l, int mu=-1, bint existence=F
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_graph_lazy
         sage: g,p=strongly_regular_graph_lazy(10,6,3); g,p
-        (<cyfunction is_johnson.<locals>.<lambda> at ...>, 5)
+        (<...is_johnson...>, 5)
         sage: g(p)
         Johnson graph with parameters 5,2: Graph on 10 vertices
         sage: g,p=strongly_regular_graph_lazy(10,3,0,1); g,p
-        (<cyfunction strongly_regular_graph_lazy.<locals>.<lambda> at...>,
+        (<...strongly_regular_graph_lazy...>,
          (5,))
         sage: g(p)
         complement(Johnson graph with parameters 5,2): Graph on 10 vertices
         sage: g,p=strongly_regular_graph_lazy(12,3,2); g,p
-        (<cyfunction strongly_regular_graph_lazy.<locals>.<lambda> at...>,
+        (<...strongly_regular_graph_lazy...>,
          (3, 4))
         sage: g(p)
         complement(Multipartite Graph with set sizes [4, 4, 4]): Graph on 12 vertices
         sage: g = strongly_regular_graph_lazy(539,250,105); g                           # needs sage.combinat sage.modules
-        (<cyfunction is_twograph_descendant_of_srg.<locals>.la at...>,
+        (<...is_twograph_descendant_of_srg...>,
          5,
          11)
         sage: g[0](*g[1:])                                                              # needs sage.combinat sage.modules
@@ -3295,11 +3295,11 @@ def _check_database():
         if _brouwer_database[params]['status'] != "impossible":
             raise RuntimeError("Brouwer's db does not seem to know that {} in unfeasible".format(params))
         comment = _brouwer_database[params]['comments']
-        if ('Krein'    in comment or
+        if ('Krein' in comment or
             'Absolute' in comment or
-            'Conf'     in comment or
-            'mu=1'     in comment or
-            '&mu;=2'   in comment):
+            'Conf' in comment or
+            'mu=1' in comment or
+            '&mu;=2' in comment):
             continue
         raise RuntimeError("We detected that {} was unfeasible, but maybe we should not have".format(params))
 

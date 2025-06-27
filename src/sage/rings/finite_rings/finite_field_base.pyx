@@ -139,19 +139,7 @@ cdef class FiniteField(Field):
             else:
                 return NotImplemented
 
-    def is_perfect(self):
-        r"""
-        Return whether this field is perfect, i.e., every element has a `p`-th
-        root. Always returns ``True`` since finite fields are perfect.
-
-        EXAMPLES::
-
-            sage: GF(2).is_perfect()
-            True
-        """
-        return True
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         String representation of this finite field.
 
@@ -174,11 +162,13 @@ cdef class FiniteField(Field):
             Finite Field in d of size 7^20
         """
         if self.degree()>1:
-            return "Finite Field in %s of size %s^%s"%(self.variable_name(),self.characteristic(),self.degree())
+            return "Finite Field in %s of size %s^%s" % (self.variable_name(),
+                                                         self.characteristic(),
+                                                         self.degree())
         else:
-            return "Finite Field of size %s"%(self.characteristic())
+            return "Finite Field of size %s" % (self.characteristic())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a string denoting the name of the field in LaTeX.
 
@@ -199,12 +189,12 @@ cdef class FiniteField(Field):
             \Bold{F}_{3}
         """
         if self.degree() > 1:
-            e = "^{%s}"%self.degree()
+            e = "^{%s}" % self.degree()
         else:
             e = ""
-        return "\\Bold{F}_{%s%s}"%(self.characteristic(), e)
+        return "\\Bold{F}_{%s%s}" % (self.characteristic(), e)
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         """
         Return string that initializes the GAP version of
         this finite field.
@@ -214,7 +204,7 @@ cdef class FiniteField(Field):
             sage: GF(9,'a')._gap_init_()
             'GF(9)'
         """
-        return 'GF(%s)'%self.order()
+        return 'GF(%s)' % self.order()
 
     def _magma_init_(self, magma):
         """
@@ -234,10 +224,10 @@ cdef class FiniteField(Field):
             a
         """
         if self.degree() == 1:
-            return 'GF(%s)'%self.order()
+            return 'GF(%s)' % self.order()
         B = self.base_ring()
         p = self.polynomial()
-        s = "ext<%s|%s>"%(B._magma_init_(magma),p._magma_init_(magma))
+        s = "ext<%s|%s>" % (B._magma_init_(magma),p._magma_init_(magma))
         return magma._with_names(s, self.variable_names())
 
     def _macaulay2_init_(self, macaulay2=None):
@@ -653,91 +643,6 @@ cdef class FiniteField(Field):
         """
         raise NotImplementedError
 
-    def zeta_order(self):
-        """
-        Return the order of the distinguished root of unity in ``self``.
-
-        EXAMPLES::
-
-            sage: GF(9,'a').zeta_order()
-            8
-            sage: GF(9,'a').zeta()
-            a
-            sage: GF(9,'a').zeta().multiplicative_order()
-            8
-        """
-        return self.order() - 1
-
-    def zeta(self, n=None):
-        """
-        Return an element of multiplicative order ``n`` in this finite
-        field. If there is no such element, raise :exc:`ValueError`.
-
-        .. WARNING::
-
-            In general, this returns an arbitrary element of the correct
-            order. There are no compatibility guarantees:
-            ``F.zeta(9)^3`` may not be equal to ``F.zeta(3)``.
-
-        EXAMPLES::
-
-            sage: k = GF(7)
-            sage: k.zeta()
-            3
-            sage: k.zeta().multiplicative_order()
-            6
-            sage: k.zeta(3)
-            2
-            sage: k.zeta(3).multiplicative_order()
-            3
-            sage: k = GF(49, 'a')
-            sage: k.zeta().multiplicative_order()
-            48
-            sage: k.zeta(6)
-            3
-            sage: k.zeta(5)
-            Traceback (most recent call last):
-            ...
-            ValueError: no 5th root of unity in Finite Field in a of size 7^2
-
-        Even more examples::
-
-            sage: GF(9,'a').zeta_order()
-            8
-            sage: GF(9,'a').zeta()
-            a
-            sage: GF(9,'a').zeta(4)
-            a + 1
-            sage: GF(9,'a').zeta()^2
-            a + 1
-
-        This works even in very large finite fields, provided that ``n``
-        can be factored (see :issue:`25203`)::
-
-            sage: k.<a> = GF(2^2000)
-            sage: p = 8877945148742945001146041439025147034098690503591013177336356694416517527310181938001
-            sage: z = k.zeta(p)
-            sage: z
-            a^1999 + a^1996 + a^1995 + a^1994 + ... + a^7 + a^5 + a^4 + 1
-            sage: z ^ p
-            1
-        """
-        if n is None:
-            return self.multiplicative_generator()
-
-        n = Integer(n)
-        grouporder = self.order() - 1
-        co_order = grouporder // n
-        if co_order * n != grouporder:
-            raise ValueError("no {}th root of unity in {}".format(n, self))
-
-        # If the co_order is small or we know a multiplicative
-        # generator, use a multiplicative generator
-        mg = self.multiplicative_generator
-        if mg.cache is not None or co_order <= 500000:
-            return mg() ** co_order
-        return self._element_of_factored_order(n.factor())
-
     @cached_method
     def multiplicative_generator(self):
         """
@@ -842,19 +747,6 @@ cdef class FiniteField(Field):
             1
         """
         return 1
-
-    def is_field(self, proof=True):
-        """
-        Return whether or not the finite field is a field, i.e.,
-        always returns ``True``.
-
-        EXAMPLES::
-
-            sage: k.<a> = FiniteField(3^4)
-            sage: k.is_field()
-            True
-        """
-        return True
 
     def order(self):
         """
@@ -1358,7 +1250,7 @@ cdef class FiniteField(Field):
             False
         """
         from sage.rings.integer_ring import ZZ
-        if R is int or R is long or R is ZZ:
+        if R is int or R is ZZ:
             return True
         if isinstance(R, sage.rings.abc.IntegerModRing) and self.characteristic().divides(R.characteristic()):
             return R.hom((self.one(),), check=False)

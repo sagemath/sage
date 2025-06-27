@@ -87,7 +87,8 @@ from sage.arith.long cimport (
 import sage.rings.rational as rational
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     class PariError(Exception):
         pass
@@ -545,7 +546,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
     # Interfaces
     #################################################################
     def _pari_init_(self):
-        return 'Mod(%s,%s)'%(str(self), self._modulus.sageInteger)
+        return 'Mod(%s,%s)' % (str(self), self._modulus.sageInteger)
 
     def __pari__(self):
         return self.lift().__pari__().Mod(self._modulus.sageInteger)
@@ -583,7 +584,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: b^2
             1
         """
-        return '%s!%s'%(self.parent()._magma_init_(magma), self)
+        return '%s!%s' % (self.parent()._magma_init_(magma), self)
 
     def _axiom_init_(self):
         """
@@ -606,7 +607,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: aa.typeOf()                   # optional - fricas
             IntegerMod(15)
         """
-        return '%s :: %s'%(self, self.parent()._axiom_init_())
+        return '%s :: %s' % (self, self.parent()._axiom_init_())
 
     _fricas_init_ = _axiom_init_
 
@@ -1173,6 +1174,19 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: Mod(1/25, next_prime(2^90)).sqrt()^(-2)
             25
 
+        Error message as requested in :issue:`38802`::
+
+            sage: sqrt(Mod(2, 101010), all=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).
+
+        Using the suggested ``extend=False`` works and returns an empty list
+        as expected::
+
+            sage: sqrt(Mod(2, 101010), all=True, extend=False)
+            []
+
         ::
 
             sage: a = Mod(3, 5); a
@@ -1259,7 +1273,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 z = Q.gen()
                 if all:
                     # TODO
-                    raise NotImplementedError
+                    raise NotImplementedError("Finding all square roots in extensions is not implemented; try extend=False to find only roots in the base ring Zmod(n).")
                 return z
             if all:
                 return []
@@ -1505,17 +1519,18 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         n = Integer(n)
         if n == 0:
             if self == 1:
-                if all: return [K(a) for a in range(1,K.order())]
-                else: return self
+                if all:
+                    return [K(a) for a in range(1, K.order())]
+                return self
             else:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
         F = K.factored_order()
         if len(F) == 0:
             if all:
                 return [self]
-            else:
-                return self
+            return self
         if len(F) != 1:
             if all:
                 # we should probably do a first pass to see if there are any solutions so that we don't get giant intermediate lists and waste time...
@@ -1533,33 +1548,31 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         p, k = F[0]
         if self.is_zero():
             if n < 0:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
             if all:
                 if k == 1:
                     return [self]
-                else:
-                    minval = max(1, (k/n).ceil())
-                    return [K(a*p**minval) for a in range(p**(k-minval))]
-            else:
-                return self
+                minval = max(1, (k/n).ceil())
+                return [K(a*p**minval) for a in range(p**(k-minval))]
+            return self
         if n < 0:
             try:
                 self = ~self
             except ZeroDivisionError:
-                if all: return []
-                else: raise ValueError
+                if all:
+                    return []
+                raise ValueError
             n = -n
         if p == 2 and k == 1:
-            if all: return [self]
-            else: return self
+            return [self] if all else self
         if k > 1:
             pval, upart = self.lift().val_unit(p)
             if not n.divides(pval):
                 if all:
                     return []
-                else:
-                    raise ValueError("no nth root")
+                raise ValueError("no nth root")
             if pval > 0:
                 if all:
                     return [K(a.lift()*p**(pval // n) + p**(k - (pval - pval//n)) * b) for a in mod(upart, p**(k-pval)).nth_root(n, all=True, algorithm=algorithm) for b in range(p**(pval - pval//n))]
@@ -1571,27 +1584,30 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 sign = [1]
                 if self % 4 == 3:
                     if n % 2 == 0:
-                        if all: return []
-                        else: raise ValueError("no nth root")
+                        if all:
+                            return []
+                        raise ValueError("no nth root")
                     else:
                         sign = [-1]
                         self = -self
                 elif n % 2 == 0:
                     if k > 2 and self % 8 == 5:
-                        if all: return []
-                        else: raise ValueError("no nth root")
+                        if all:
+                            return []
+                        raise ValueError("no nth root")
                     sign = [1, -1]
                 if k == 2:
-                    if all: return [K(s) for s in sign[:2]]
-                    else: return K(sign[0])
-                if all: modp = [mod(self,8)]
-                else: modp = mod(self,8)
+                    if all:
+                        return [K(s) for s in sign[:2]]
+                    return K(sign[0])
+                modp = [mod(self, 8)] if all else mod(self, 8)
             else:
                 sign = [1]
                 modp = self % p
                 self = self / K(R.teichmuller(modp))
                 modp = modp.nth_root(n, all=all, algorithm=algorithm)
-            # now self is congruent to 1 mod 4 or 1 mod p (for odd p), so the power series for p-adic log converges.
+            # now self is congruent to 1 mod 4 or 1 mod p (for odd p),
+            # so the power series for p-adic log converges.
             # Hensel lifting is probably better, but this is easier at the moment.
             plog = R(self).log()
             nval = n.valuation(p)
@@ -1599,11 +1615,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 if self == 1:
                     if all:
                         return [s*K(p*a+m.lift()) for a in range(p**(k-(2 if p==2 else 1))) for m in modp for s in sign]
-                    else:
-                        return K(modp.lift())
+                    return K(modp.lift())
                 else:
-                    if all: return []
-                    else: raise ValueError("no nth root")
+                    if all:
+                        return []
+                    raise ValueError("no nth root")
             if all:
                 ans = [plog // n + p**(k - nval) * i for i in range(p**nval)]
                 ans = [s*K(R.teichmuller(m) * a.exp()) for a in ans for m in modp for s in sign]
@@ -1768,9 +1784,9 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         n = self._modulus.sageInteger
         return sage.rings.integer.Integer(n // self.lift().gcd(n))
 
-    def is_primitive_root(self):
+    def is_primitive_root(self) -> bool:
         """
-        Determines whether this element generates the group of units modulo n.
+        Determine whether this element generates the group of units modulo n.
 
         This is only possible if the group of units is cyclic, which occurs if
         n is 2, 4, a power of an odd prime or twice a power of an odd prime.
@@ -1878,7 +1894,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
         try:
             return sage.rings.integer.Integer(self.__pari__().znorder())
         except PariError:
-            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s"%(
+            raise ArithmeticError("multiplicative order of %s not defined since it is not a unit modulo %s" % (
                 self, self._modulus.sageInteger))
 
     def valuation(self, p):
@@ -2039,8 +2055,12 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             sage: e = Mod(19, 10^10)
             sage: e << 102
             9443608576
+            sage: e << (2^200)
+            Traceback (most recent call last):
+            ...
+            OverflowError: Python int too large to convert to C long
         """
-        return self.shift(long(k))
+        return self.shift(k)
 
     def __rshift__(IntegerMod_gmp self, k):
         r"""
@@ -2053,8 +2073,12 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             sage: e = Mod(19, 10^10)
             sage: e >> 1
             9
+            sage: e << (2^200)
+            Traceback (most recent call last):
+            ...
+            OverflowError: Python int too large to convert to C long
         """
-        return self.shift(-long(k))
+        return self.shift(-k)
 
     cdef shift(IntegerMod_gmp self, long k):
         r"""
@@ -3185,10 +3209,12 @@ cdef int_fast32_t mod_pow_int(int_fast32_t base, int_fast32_t exp, int_fast32_t 
         if exp == 4: return (prod * prod) % n
 
     pow2 = base
-    if exp % 2: prod = base
-    else: prod = 1
+    if exp % 2:
+        prod = base
+    else:
+        prod = 1
     exp = exp >> 1
-    while(exp != 0):
+    while exp != 0:
         pow2 = pow2 * pow2
         if pow2 >= INTEGER_MOD_INT32_LIMIT: pow2 = pow2 % n
         if exp % 2:
@@ -3847,10 +3873,12 @@ cdef int_fast64_t mod_pow_int64(int_fast64_t base, int_fast64_t exp, int_fast64_
         if exp == 4: return (prod * prod) % n
 
     pow2 = base
-    if exp % 2: prod = base
-    else: prod = 1
+    if exp % 2:
+        prod = base
+    else:
+        prod = 1
     exp = exp >> 1
-    while(exp != 0):
+    while exp != 0:
         pow2 = pow2 * pow2
         if pow2 >= INTEGER_MOD_INT64_LIMIT: pow2 = pow2 % n
         if exp % 2:

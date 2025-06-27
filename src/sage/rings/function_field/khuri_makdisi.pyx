@@ -86,7 +86,6 @@ cdef class KhuriMakdisi_base(object):
 
         TESTS::
 
-            sage: # long time
             sage: k = GF(7)
             sage: A.<x,y> = AffineSpace(k,2)
             sage: C = Curve(y^2 + x^3 + 2*x + 1).projective_closure()
@@ -181,7 +180,6 @@ cdef class KhuriMakdisi_base(object):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -207,7 +205,6 @@ cdef class KhuriMakdisi_base(object):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -233,7 +230,6 @@ cdef class KhuriMakdisi_base(object):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -259,7 +255,6 @@ cdef class KhuriMakdisi_base(object):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -329,7 +324,6 @@ cdef class KhuriMakdisi_base(object):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -363,7 +357,6 @@ cdef class KhuriMakdisi_large(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -421,7 +414,6 @@ cdef class KhuriMakdisi_large(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: J = C.jacobian(model='km_large')
@@ -484,7 +476,6 @@ cdef class KhuriMakdisi_large(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: F = C.function_field()
@@ -516,7 +507,6 @@ cdef class KhuriMakdisi_large(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: k = GF(7)
             sage: A.<x,y> = AffineSpace(k,2)
             sage: C = Curve(y^2 + x^3 + 2*x + 1).projective_closure()
@@ -547,7 +537,6 @@ cdef class KhuriMakdisi_medium(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -599,7 +588,6 @@ cdef class KhuriMakdisi_medium(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -635,7 +623,6 @@ cdef class KhuriMakdisi_medium(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: h = C.function(y/x).divisor_of_poles()
@@ -655,7 +642,6 @@ cdef class KhuriMakdisi_medium(KhuriMakdisi_base):
 
         We check the computation in other model::
 
-            sage: # long time
             sage: J = C.jacobian(model='km_large', base_div=h)
             sage: G = J.group()
             sage: p1 = G.point(pl1 - b)
@@ -685,7 +671,6 @@ cdef class KhuriMakdisi_medium(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: k = GF(7)
             sage: A.<x,y> = AffineSpace(k,2)
             sage: C = Curve(y^2 + x^3 + 2*x + 1).projective_closure()
@@ -717,7 +702,6 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
@@ -775,7 +759,6 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
@@ -810,7 +793,6 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(17), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
@@ -830,7 +812,6 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
 
         We check the computation in other model::
 
-            sage: # long time
             sage: h = C.function(y/x).divisor_of_poles()
             sage: Jl = C.jacobian(model='km_large', base_div=h)
             sage: G = J.group()
@@ -838,13 +819,34 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
             sage: q2 = G.point(pl2 - b)
             sage: G.point(af.divisor()) == q1.addflip(p2)
             True
+
+        Check that :issue:`40237` is fixed::
+
+            sage: K = GF(2)
+            sage: F.<x> = FunctionField(K)
+            sage: t = polygen(F)
+            sage: E.<y> = F.extension(t^3 + (x^2 + x + 1)*t^2 + (x^3 + x + 1)*t + x^5 + x^4)
+            sage: O = E.maximal_order()
+            sage: Oinf = E.maximal_order_infinite()
+            sage: D1 = (-5*O.ideal(x, y).divisor() + O.ideal(x + 1, y^2 + y + 1).divisor()
+            ....:   + O.ideal(x^3 + x^2 + 1, y + x + 1).divisor())
+            sage: D2 = (Oinf.ideal(1/x, y/x^2 + 1).divisor() - 5*O.ideal(x, y).divisor()
+            ....:   + O.ideal(x^4 + x^3 + 1, y + x).divisor())
+            sage: J = E.jacobian('km_small', base_div=5*O.ideal(x, y).divisor())
+            sage: JD1 = J(D1)
+            sage: JD2 = J(D2)
+            sage: JD1 + JD2 == JD2 + JD1
+            True
         """
         cdef int d0 = self.d0
         cdef int g = self.g
         cdef Matrix w1, w2, w3, w4, w5
 
         w1 = self.mu_image(wd1, wd2, self.mu_mat33, 4*d0 - g + 1)
-        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat33, 2*d0)
+        # The row space of w2 represents H^0(O(3D_0 - D1 - D2)), whose
+        # dimension is at least d0 - g + 1. Hence the codimension is at most
+        # 2*d0, and we cannot provide an expected_codim argument for mu_preimage.
+        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat33)
         w3 = self.mu_preimage(self.wV2, w1, self.mu_mat42, 2*d0)
         # efficient than
         #   wf = matrix(w2[0])
@@ -859,7 +861,6 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
@@ -871,13 +872,30 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
             sage: p2 = G.point(pl2 - b)
             sage: -(-p1) == p1  # indirect doctest
             True
+
+        Check that :issue:`39148` is fixed::
+
+            sage: k.<x> = FunctionField(GF(17)); t = polygen(k)
+            sage: F.<y> = k.extension(t^4 + (14*x + 14)*t^3 + 9*t^2 + (10*x^2 + 15*x + 8)*t
+            ....:  + 7*x^3 + 15*x^2 + 6*x + 16)
+            sage: infty1, infty2 = F.places_infinite()
+            sage: O = F.maximal_order()
+            sage: P = O.ideal((x + 1, y + 7)).divisor()
+            sage: D1 = 3*infty2 + infty1 - 4*P
+            sage: D2 = F.divisor_group().zero()
+            sage: J = F.jacobian(model='km-small', base_div=4*P)
+            sage: J(D1) + J(D2) == J(D1)
+            True
         """
         cdef int d0 = self.d0
         cdef int g = self.g
         cdef Matrix w1, w2, w3, w4
 
         w1 = self.mu_image(self.wV2, wd, self.mu_mat23, 4*d0 - g + 1)
-        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat23, d0)
+        # The row space of w2 represents H^0(O(2D_0 - D)), whose dimension is
+        # at least d0 - g + 1. Hence the codimension is at most d0, and we
+        # cannot provide an expected_codim argument for mu_preimage.
+        w2 = self.mu_preimage(self.wV3, w1, self.mu_mat23)
         # efficient than
         #   wf = matrix(w2[0])
         #   w3 = self.mu_image(wf, self.wV4, self.mu_mat24, 4*d0 - g + 1)
@@ -894,7 +912,6 @@ cdef class KhuriMakdisi_small(KhuriMakdisi_base):
 
         TESTS::
 
-            sage: # long time
             sage: k = GF(7)
             sage: A.<x,y> = AffineSpace(k,2)
             sage: C = Curve(y^2 + x^3 + 2*x + 1).projective_closure()

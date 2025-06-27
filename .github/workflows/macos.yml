@@ -23,15 +23,9 @@ on:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
         description: 'Stringified JSON object'
         default: >-
-          [["12",     "",             "homebrew-macos-usrlocal-minimal"],
-           ["12",     "",             "homebrew-macos-usrlocal-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-maximal"],
-           ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
+          [
            ["latest", "",             "homebrew-macos-opthomebrew-standard"],
-           ["13",     "",             "conda-forge-macos-minimal"],
-           ["13",     "",             "conda-forge-macos-standard"],
-           ["latest", "",             "conda-forge-macos-standard"]]
+          ]
         type: string
       extra_sage_packages:
         description: 'Extra Sage packages to install as system packages'
@@ -72,7 +66,7 @@ jobs:
     env:
       TOX_ENV: local-${{ matrix.osversion_xcodeversion_toxenv[2] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
       LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}-stage${{ inputs.stage }}
     steps:
       - name: Check out SageMath
         uses: actions/checkout@v4
@@ -103,7 +97,7 @@ jobs:
 
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
@@ -169,4 +163,4 @@ jobs:
         with:
           path: sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ inputs.stage }}.tar
           name: ${{ env.LOCAL_ARTIFACT_NAME }}
-        if: always()
+        if: contains(inputs.stage, '1')

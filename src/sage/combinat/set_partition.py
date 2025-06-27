@@ -1638,7 +1638,7 @@ class SetPartition(AbstractSetPartition,
         for S in self[1:]:
             if maximum_so_far < min(S):
                 return False
-            maximum_so_far = max(maximum_so_far, max(S))
+            maximum_so_far = max(maximum_so_far, *S)
         return True
 
     def standardization(self):
@@ -2508,7 +2508,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         # Yip draws the diagram as an upper triangular matrix, thus
         # we refer to the cell in row i and column j with (i, j)
         P = []
-        rooks_by_column = {j: i for (i, j) in rooks}
+        rooks_by_column = {j: i for i, j in rooks}
         for c in range(1, n + 1):
             # determine the weight of column c
             try:
@@ -2517,7 +2517,7 @@ class SetPartitions(UniqueRepresentation, Parent):
                 ne = r - 1 + sum(1 for i, j in rooks if i > r and j < c)
             except KeyError:
                 n_rooks = 0
-                ne = sum(1 for i, j in rooks if j < c)
+                ne = sum(1 for _, j in rooks if j < c)
 
             b = c - n_rooks - ne
             if len(P) == b - 1:

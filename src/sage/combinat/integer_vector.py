@@ -363,14 +363,14 @@ def gale_ryser_theorem(p1, p2, algorithm='gale',
         k1, k2 = len(p1), len(p2)
         p = MixedIntegerLinearProgram(solver=solver)
         b = p.new_variable(binary=True)
-        for (i, c) in enumerate(p1):
+        for i, c in enumerate(p1):
             p.add_constraint(p.sum([b[i, j] for j in range(k2)]) == c)
-        for (i, c) in enumerate(p2):
+        for i, c in enumerate(p2):
             p.add_constraint(p.sum([b[j, i] for j in range(k1)]) == c)
         p.set_objective(None)
         p.solve()
         b = p.get_values(b, convert=ZZ, tolerance=integrality_tolerance)
-        M = [[0]*k2 for i in range(k1)]
+        M = [[0] * k2 for _ in range(k1)]
         for i in range(k1):
             for j in range(k2):
                 M[i][j] = b[i, j]
@@ -1043,8 +1043,19 @@ class IntegerVectors_k(UniqueRepresentation, IntegerVectors):
              [2, 1],
              [1, 2],
              [0, 3]]
+
+        TESTS:
+
+        Check corner case::
+
+            sage: IV = IntegerVectors(k=0)
+            sage: list(IV)
+            [[]]
         """
         n = 0
+        if self.k == 0:  # special case
+            yield self.element_class(self, [], check=False)
+            return
         while True:
             for iv in integer_vectors_nk_fast_iter(n, self.k):
                 yield self.element_class(self, iv, check=False)

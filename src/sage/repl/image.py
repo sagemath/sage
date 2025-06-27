@@ -113,7 +113,7 @@ class Image(SageObject):
             sage: from sage.repl.image import Image
             sage: img = Image('RGB', (16, 16), 'white')
             sage: img.pil
-            <PIL.Image.Image image mode=RGB size=16x16 at 0x...>
+            <PIL.Image.Image image mode=RGB size=16x16...>
         """
         return self._pil
 
