@@ -257,7 +257,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: P in FiniteLatticePosets().Stone()
                 True
             """
-            return self._with_axiom("Stone")
+            return self._with_axioms(["Distributive", "Stone"])
 
         def Distributive(self):
             r"""
@@ -290,7 +290,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: P in FiniteLatticePosets().CongruenceUniform()
                 True
             """
-            return self._with_axiom("CongruenceUniform")
+            return self._with_axioms(["Semidistributive", "CongruenceUniform"])
 
         def Semidistributive(self):
             r"""
@@ -327,7 +327,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: P in FiniteLatticePosets().Trim()
                 True
             """
-            return self._with_axiom("Trim")
+            return self._with_axioms(["Extremal", "Trim"])
 
         def Extremal(self):
             r"""
@@ -343,42 +343,99 @@ class FiniteLatticePosets(CategoryWithAxiom):
             """
             return self._with_axiom("Extremal")
 
-    class Stone(CategoryWithAxiom):
+    class Semidistributive(CategoryWithAxiom):
         """
-        The category of Stone lattices.
+        The category of semidistributive lattices.
 
         EXAMPLES::
 
-            sage: FiniteLatticePosets().Stone()
-            Category of finite distributive stone congruence uniform
-            semidistributive trim extremal lattice posets
+            sage: cat = FiniteLatticePosets().Semidistributive(); cat
+            Category of finite semidistributive lattice posets
+
+            sage: cat.super_categories()
+            [Category of finite lattice posets]
         """
-        @cached_method
-        def super_categories(self):
-            r"""
-            Return a list of the super categories of ``self``.
-
-            This encode implications between properties.
-
-            EXAMPLES::
-
-                sage: FiniteLatticePosets().Stone().super_categories()
-                [Category of finite distributive congruence uniform
-                 semidistributive trim extremal lattice posets]
-            """
-            return [FiniteLatticePosets().Distributive()]
-
         class ParentMethods:
-            def is_stone(self):
+            def is_semidistributive(self):
                 """
-                Return whether ``self`` is a Stone lattice.
+                Return whether ``self`` is a semidistributive lattice.
 
                 EXAMPLES::
 
-                    sage: posets.DivisorLattice(12).is_stone()
+                    sage: posets.TamariLattice(4).is_semidistributive()
                     True
                 """
                 return True
+
+        class CongruenceUniform(CategoryWithAxiom):
+            """
+            The category of congruence uniform lattices.
+
+            EXAMPLES::
+
+                sage: cat = FiniteLatticePosets().CongruenceUniform(); cat
+                Category of finite congruence uniform semidistributive lattice posets
+                sage: cat.super_categories()
+                [Category of finite semidistributive lattice posets]
+            """
+            class ParentMethods:
+                def is_congruence_uniform(self):
+                    """
+                    Return whether ``self`` is a congruence uniform lattice.
+
+                    EXAMPLES::
+
+                        sage: posets.TamariLattice(4).is_congruence_uniform()
+                        True
+                    """
+                    return True
+
+    class Extremal(CategoryWithAxiom):
+        """
+        The category of extremal uniform lattices.
+
+        EXAMPLES::
+
+            sage: cat = FiniteLatticePosets().Extremal(); cat
+            Category of finite extremal lattice posets
+
+            sage: cat.super_categories()
+            [Category of finite lattice posets]
+        """
+        class ParentMethods:
+            def is_extremal(self):
+                """
+                Return whether ``self`` is an extremal lattice.
+
+                EXAMPLES::
+
+                    sage: posets.TamariLattice(4).is_extremal()
+                    True
+                """
+                return True
+
+        class Trim(CategoryWithAxiom):
+            """
+            The category of trim uniform lattices.
+
+            EXAMPLES::
+
+                sage: cat = FiniteLatticePosets().Trim(); cat
+                Category of finite trim extremal lattice posets
+                sage: cat.super_categories()
+                [Category of finite extremal lattice posets]
+            """
+            class ParentMethods:
+                def is_trim(self):
+                    """
+                    Return whether ``self`` is a trim lattice.
+
+                    EXAMPLES::
+
+                        sage: posets.TamariLattice(4).is_trim()
+                        True
+                    """
+                    return True
 
     class Distributive(CategoryWithAxiom):
         """
@@ -386,12 +443,16 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         EXAMPLES::
 
-            sage: FiniteLatticePosets().Distributive()
+            sage: cat = FiniteLatticePosets().Distributive(); cat
             Category of finite distributive congruence uniform
             semidistributive trim extremal lattice posets
+
+            sage: cat.super_categories()
+            [Category of finite trim extremal lattice posets,
+             Category of finite congruence uniform semidistributive lattice posets]
         """
         @cached_method
-        def super_categories(self):
+        def extra_super_categories(self):
             r"""
             Return a list of the super categories of ``self``.
 
@@ -399,7 +460,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: FiniteLatticePosets().Distributive().super_categories()
+                sage: FiniteLatticePosets().Distributive().extra_super_categories()
                 [Category of finite congruence uniform
                  semidistributive lattice posets,
                  Category of finite trim extremal lattice posets]
@@ -420,119 +481,28 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 """
                 return True
 
-    class CongruenceUniform(CategoryWithAxiom):
-        """
-        The category of congruence uniform lattices.
-
-        EXAMPLES::
-
-            sage: FiniteLatticePosets().CongruenceUniform()
-            Category of finite congruence uniform semidistributive lattice posets
-        """
-        @cached_method
-        def super_categories(self):
-            r"""
-            Return a list of the super categories of ``self``.
-
-            This encode implications between properties.
+        class Stone(CategoryWithAxiom):
+            """
+            The category of Stone lattices.
 
             EXAMPLES::
 
-                sage: cat = FiniteLatticePosets().CongruenceUniform()
+                sage: cat = FiniteLatticePosets().Stone(); cat
+                Category of finite distributive stone congruence uniform
+                semidistributive trim extremal lattice posets
+
                 sage: cat.super_categories()
-                [Category of finite semidistributive lattice posets]
+                [Category of finite distributive congruence uniform
+                 semidistributive trim extremal lattice posets]
             """
-            return [FiniteLatticePosets().Semidistributive()]
+            class ParentMethods:
+                def is_stone(self):
+                    """
+                    Return whether ``self`` is a Stone lattice.
 
-        class ParentMethods:
-            def is_congruence_uniform(self):
-                """
-                Return whether ``self`` is a congruence uniform lattice.
+                    EXAMPLES::
 
-                EXAMPLES::
-
-                    sage: posets.TamariLattice(4).is_congruence_uniform()
-                    True
-                """
-                return True
-
-    class Semidistributive(CategoryWithAxiom):
-        """
-        The category of semidistributive lattices.
-
-        EXAMPLES::
-
-            sage: FiniteLatticePosets().Semidistributive()
-            Category of finite semidistributive lattice posets
-
-
-            sage: FiniteLatticePosets().Semidistributive().super_categories()
-            [Category of finite lattice posets]
-        """
-        class ParentMethods:
-            def is_semidistributive(self):
-                """
-                Return whether ``self`` is a semidistributive lattice.
-
-                EXAMPLES::
-
-                    sage: posets.TamariLattice(4).is_semidistributive()
-                    True
-                """
-                return True
-
-    class Trim(CategoryWithAxiom):
-        """
-        The category of trim uniform lattices.
-
-        EXAMPLES::
-
-            sage: FiniteLatticePosets().Trim()
-            Category of finite trim extremal lattice posets
-        """
-        @cached_method
-        def super_categories(self):
-            r"""
-            Return a list of the super categories of ``self``.
-
-            This encode implications between properties.
-
-            EXAMPLES::
-
-                sage: FiniteLatticePosets().Trim().super_categories()
-                [Category of finite extremal lattice posets]
-            """
-            return [FiniteLatticePosets().Extremal()]
-
-        class ParentMethods:
-            def is_trim(self):
-                """
-                Return whether ``self`` is a trim lattice.
-
-                EXAMPLES::
-
-                    sage: posets.TamariLattice(4).is_trim()
-                    True
-                """
-                return True
-
-    class Extremal(CategoryWithAxiom):
-        """
-        The category of extremal uniform lattices.
-
-        EXAMPLES::
-
-            sage: FiniteLatticePosets().Extremal()
-            Category of finite extremal lattice posets
-        """
-        class ParentMethods:
-            def is_extremal(self):
-                """
-                Return whether ``self`` is an extremal lattice.
-
-                EXAMPLES::
-
-                    sage: posets.TamariLattice(4).is_extremal()
-                    True
-                """
-                return True
+                        sage: posets.DivisorLattice(12).is_stone()
+                        True
+                    """
+                    return True
