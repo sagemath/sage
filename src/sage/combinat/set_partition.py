@@ -52,6 +52,7 @@ from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
 from sage.sets.disjoint_set import DisjointSet
+from sage.misc.cachefunc import cached_method
 
 lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
 lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
