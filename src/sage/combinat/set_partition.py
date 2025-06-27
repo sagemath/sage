@@ -3318,3 +3318,100 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
         for right in cyclic_permutations_of_set_partition_iterator(set_part[1:]):
             for perm in CyclicPermutations(set_part[0]):
                 yield [perm] + right
+
+
+def compare_subsets(a, b):
+    """
+    Compare two subsets of integers `a` and `b` following the lexicographic order.
+    
+    INPUT:
+
+    - ``a`` -- a list of integers; the first subset
+    - ``b`` -- a list of integers; the second subset
+
+    OUTPUT:
+
+    Boolean -- returns True if `a` is less than or equal to `b` in the lexicographic order described.
+
+    EXAMPLES:
+
+    This function compares two sets based on a specialized total order relation. For example:
+    
+    The relation ≤ is a total order.
+    For example {1, 3} ≤ {1, 3, 4} and {1, 3} ≤ {1, 4}. But we also have {1, 3, 4} ≤ {1, 4}.
+        
+    
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 3, 4])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 4])
+        True
+    
+    - But `{1, 4}` is not less than `{1, 3, 4}`:
+
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 4], [1, 3, 4])
+        False
+        
+    TESTS:
+
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([2,5], [2,5])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([],[])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([], [1])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1], [])
+        False
+
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 2], [3, 4])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([4,5], [2,3])
+        False
+
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1], [1,2])
+        True
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1,2], [1])
+        False
+
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1,3,5], [1,3])
+        False
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 3, 5])
+        True
+
+    """
+    def included_in(a, b):
+        """
+        Check if all elements of `a` are in `b`.
+        """
+        return all(x in b for x in a)
+    
+    def min_set_exclusive(a, b):
+        """
+        Return the minimum element of `a` not in `b`.
+        """
+        a_res = [x for x in a if x not in b]
+        return min(a_res) if a_res else None
+    min_a_b = min_set_exclusive(a, b)
+    min_b_a = min_set_exclusive(b, a)
+    max_a = max(a) if a else None
+    max_b = max(b) if b else None
+    return (a == b 
+            or (a == [])
+            or (included_in(a, b) and max_a is not None and min_b_a is not None and max_a < min_b_a)
+            or (included_in(b, a) and min_a_b is not None and max_b is not None and min_a_b < max_b)
+            or (min_a_b is not None and min_b_a is not None and min_a_b < min_b_a))
