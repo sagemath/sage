@@ -383,8 +383,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
                 break
 
         if V.rank() + self.rank() == A.rank():
-            C = A.submodule(V, check=False)
-            return C
+            return A.submodule(V, check=False)
 
         # first attempt to compute the complement failed, we now try
         # the following naive approach: decompose the ambient space,
@@ -519,8 +518,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         if self.complement.is_in_cache():
             verbose('This module knows its complement already -- cheating in dual_free_module')
             C = self.complement()
-            V = C.basis_matrix().right_kernel()
-            return V
+            return C.basis_matrix().right_kernel()
 
         verbose("computing dual")
 
