@@ -1078,7 +1078,7 @@ class PolynomialSequence_generic(Sequence_generic):
         R_monomials_of_degree = {}
         S_monomials_of_degree = {}
         if homogeneous:
-            for poly_deg in set([poly.degree() for poly in self]):
+            for poly_deg in {poly.degree() for poly in self}:
                 deg = target_degree - poly_deg
                 R_monomials_of_degree[deg] = R.monomials_of_degree(deg)
             S_monomials_of_degree[target_degree] = S.monomials_of_degree(target_degree)
