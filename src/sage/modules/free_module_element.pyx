@@ -4549,7 +4549,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: x * M.basis()[0]
             (1, x^4)
         """
-        if left._parent is self._parent._FreeModule_generic__coordinate_ring:
+        if left._parent is self._parent.coordinate_ring():
             v = [left._mul_(<RingElement>x) for x in self._entries]
         else:
             v = [left * x for x in self._entries]
@@ -4574,7 +4574,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: M.basis()[0] * x
             (1, x^4)
         """
-        if right._parent is self._parent._FreeModule_generic__coordinate_ring:
+        if right._parent is self._parent.coordinate_ring():
             v = [(<RingElement>x)._mul_(right) for x in self._entries]
         else:
             v = [x * right for x in self._entries]
