@@ -109,44 +109,41 @@ def _triangles(dg) -> list[tuple[list, bool]]:
         []
         sage: Q.mutate([0, 1])
         sage: _triangles(Q.digraph())
-        [([(2, 0), (0, 1), (1, 2)], True)]
+        [([(0, 1), (1, 2), (2, 0)], True)]
         sage: Q2 = ClusterQuiver(['A', [1, 2], 1])
         sage: _triangles(Q2.digraph())
-        [([(1, 2), (1, 0), (2, 0)], False)]
+        [([(1, 0), (1, 2), (2, 0)], False)]
         sage: Q2.mutate(2)
         sage: _triangles(Q2.digraph())
-        [([(1, 0), (0, 2), (2, 1)], True)]
+        [([(1, 0), (2, 1), (0, 2)], True)]
     """
-    E = dg.edges(sort=True, labels=False)
-    V = list(dg)
+    from itertools import combinations
     trians = []
-    flat_trians = []
-    for e in E:
-        v1, v2 = e
-        for v in V:
-            if v not in e:
-                if (v, v1) in E:
-                    if (v2, v) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v, v1), (v1, v2), (v2, v)], True))
-                    elif (v, v2) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v, v1), (v1, v2), (v, v2)], False))
-                if (v1, v) in E:
-                    if (v2, v) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v1, v), (v1, v2), (v2, v)], False))
-                    elif (v, v2) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v1, v), (v1, v2), (v, v2)], False))
+    for x in dg.vertices(sort=True):
+        nx = sorted(y for y in dg.neighbor_iterator(x) if x < y)
+        for y, z in combinations(nx, 2):
+            if dg.has_edge(y, z):
+                if dg.has_edge(x, y):
+                    if dg.has_edge(z, x):
+                        trians.append(([(x, y), (y, z), (z, x)], True))
+                    else:
+                        trians.append(([(x, y), (y, z), (x, z)], False))
+                else:
+                    if dg.has_edge(z, x):
+                        trians.append(([(y, x), (y, z), (z, x)], False))
+                    else:
+                        trians.append(([(y, x), (y, z), (x, z)], False))
+            elif dg.has_edge(z, y):
+                if dg.has_edge(x, y):
+                    if dg.has_edge(z, x):
+                        trians.append(([(x, y), (z, y), (z, x)], False))
+                    else:
+                        trians.append(([(x, y), (z, y), (x, z)], False))
+                else:
+                    if dg.has_edge(z, x):
+                        trians.append(([(y, x), (z, y), (z, x)], False))
+                    else:
+                        trians.append(([(y, x), (z, y), (x, z)], True))
     return trians
 
 
@@ -1014,9 +1011,10 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
         oriented_trian_edges.extend(oriented_trian)
 
     # test that no edge is in more than two oriented triangles
+    from collections import Counter
+    edge_count = Counter(oriented_trian_edges)
     multiple_trian_edges = []
-    for edge in oriented_trian_edges:
-        count = oriented_trian_edges.count(edge)
+    for edge, count in edge_count.items():
         if count > 2:
             return _false_return(17)
         elif count == 2:
