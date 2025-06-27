@@ -403,8 +403,7 @@ class IntegralHomology(Homology_abvar):
         """
         n = Integer(n)
         M = self.abelian_variety().modular_symbols(sign=1)
-        f = (M.hecke_polynomial(n, var)**2).change_ring(ZZ)
-        return f
+        return (M.hecke_polynomial(n, var)**2).change_ring(ZZ)
 
 
 class RationalHomology(Homology_abvar):

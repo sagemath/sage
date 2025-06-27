@@ -2696,7 +2696,7 @@ class DyckWord_complete(DyckWord):
                        bseq[bpeak[-i - 1]] - bseq[bpeak[-i - 1] + 1] + 1)
         return out
 
-    def tunnels(self):
+    def tunnels(self) -> Iterator[tuple[int, int]]:
         r"""
         Return an iterator of ranges of the matching parentheses in the Dyck
         word ``self``.
@@ -2746,15 +2746,14 @@ class DyckWord_complete(DyckWord):
         n = len(self)
         tunnels = self.tunnels()
         if tunnel_type == 'left':
-            return len([1 for (i, j) in tunnels if i + j < n])
-        elif tunnel_type == 'centered':
-            return len([1 for (i, j) in tunnels if i + j == n])
-        elif tunnel_type == 'right':
-            return len([1 for (i, j) in tunnels if i + j > n])
-        elif tunnel_type == 'all':
+            return len([1 for i, j in tunnels if i + j < n])
+        if tunnel_type == 'centered':
+            return len([1 for i, j in tunnels if i + j == n])
+        if tunnel_type == 'right':
+            return len([1 for i, j in tunnels if i + j > n])
+        if tunnel_type == 'all':
             return len(list(tunnels))
-        else:
-            raise ValueError("the given tunnel_type is not valid")
+        raise ValueError("the given tunnel_type is not valid")
 
     @combinatorial_map(order=2, name="Reverse path")
     def reverse(self) -> DyckWord:
