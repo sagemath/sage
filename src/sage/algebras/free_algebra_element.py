@@ -82,7 +82,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
         IndexedFreeModuleElement.__init__(self, A, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of ``self``.
 
@@ -104,10 +104,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         M = P.monoid()
         from sage.structure.parent_gens import localvars
         with localvars(M, P.variable_names(), normalize=False):
-            x = repr_lincomb(v, strip_one=True)
-        return x
+            return repr_lincomb(v, strip_one=True)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of ``self``.
 

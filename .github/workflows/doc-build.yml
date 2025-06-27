@@ -72,7 +72,7 @@ jobs:
       - name: Merge CI fixes from sagemath/sage
         run: |
           mkdir -p upstream
-          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
+          .github/workflows/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
@@ -198,7 +198,7 @@ jobs:
           export SAGE_USE_CDNS=yes
           export SAGE_DOCBUILD_OPTS="--include-tests-blocks"
           ./config.status && make sagemath_doc_html-no-deps
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy doc
         id: copy
@@ -239,7 +239,7 @@ jobs:
             (cd doc && git diff $(git rev-parse HEAD~2) -- "*.html") > diff.txt
             # Restore the new doc dropping changes by "wipe out"
             (cd doc && git checkout --quiet -f HEAD~1)
-            .ci/create-changes-html.sh diff.txt doc
+            .github/workflows/create-changes-html.sh diff.txt doc
             # Sometimes rm -rf .git errors out because of some diehard hidden files
             # So we simply move it out of the doc directory
             (cd doc && mv .git ../git && mv .gitattributes ../gitattributes)
@@ -288,7 +288,7 @@ jobs:
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
           ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
-        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
+        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
         id: copylivedoc

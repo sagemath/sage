@@ -117,7 +117,6 @@ from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.structure.element cimport Matrix
 
 ################
@@ -860,7 +859,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             self.cache('rank', r)
             self.cache('det', d)
             return d
-        
+
         if algorithm == 'generic':
             d = Matrix_sparse.determinant(self)
             self.cache('det', d)

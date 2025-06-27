@@ -343,9 +343,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
         self._numerator = parent._numerator_ring(numerator)
-        self._denominator_factored = list(
-            (parent._denominator_ring(d), NN(n))
-            for d, n in denominator_factored)
+        self._denominator_factored = [(parent._denominator_ring(d), NN(n))
+                                      for d, n in denominator_factored]
 
         R = self.denominator_ring
         if numerator in R and reduce:
@@ -353,7 +352,7 @@ class FractionWithFactoredDenominator(RingElement):
             numer = R(self._numerator)
             df = self._denominator_factored
             new_df = []
-            for (q, e) in df:
+            for q, e in df:
                 ee = e
                 quo, rem = numer.quo_rem(q)
                 while rem == 0 and ee > 0:

@@ -20,7 +20,7 @@ AUTHORS:
 
 from sage.categories.schemes import Jacobians
 from sage.categories.fields import Fields
-from sage.schemes.generic.scheme import Scheme, is_Scheme
+from sage.schemes.generic.scheme import Scheme
 from sage.structure.richcmp import richcmp_method, richcmp
 
 _Fields = Fields()

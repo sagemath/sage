@@ -29,7 +29,7 @@ Combinatorial objects::
 
 Constructions and Species::
 
-    sage: for (p, s) in cartesian_product([P,S]): print((p, s)) # not tested
+    sage: for ps in cartesian_product([P,S]): print(ps) # not tested
     sage: def IV_3(n):
     ....:     return IntegerVectors(n, 3)
     sage: DisjointUnionEnumeratedSets(Family(IV_3, NonNegativeIntegers))  # not tested

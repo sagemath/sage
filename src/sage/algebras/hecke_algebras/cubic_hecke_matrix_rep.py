@@ -708,7 +708,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             sage: MS = c1.matrix().parent()
             sage: MS._test_category()   # indirect doctest
         """
-        return None
+        return
 
     def __reduce__(self):
         r"""
@@ -894,8 +894,8 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             matri += cf2 * matr
             matri += cf3 * matr**2
             d1, d2 = matr.dimensions()
-            matrI = matrix(original_base_ring, d1, d2, lambda i, j: original_base_ring(matri[i, j]))
-            return matrI
+            return matrix(original_base_ring, d1, d2,
+                          lambda i, j: original_base_ring(matri[i, j]))
 
         if n == 2:
             if representation_type.is_split():

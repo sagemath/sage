@@ -35,7 +35,6 @@ from sage.graphs.base.c_graph cimport CGraph, CGraphBackend
 from sage.graphs.graph_decompositions.slice_decomposition cimport \
         extended_lex_BFS
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
-from sage.misc.lazy_import import lazy_import
 from sage.misc.random_testing import random_testing
 
 

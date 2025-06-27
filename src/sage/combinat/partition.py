@@ -946,7 +946,7 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
         exp = self.to_exp()
         return '%s' % ','.join('{}{}'.format(m + 1, '' if e == 1 else '^{%s}' % e)
-                               for (m, e) in enumerate(exp) if e > 0)
+                               for m, e in enumerate(exp) if e > 0)
 
     def _latex_exp_high(self):
         r"""
@@ -2347,8 +2347,8 @@ class Partition(CombinatorialElement):
             12
         """
         res = 1
-        for (i, j) in self.cells():
-            res *= (a - (i-1)/alpha + j-1)
+        for i, j in self.cells():
+            res *= (a - (i - 1) / alpha + j - 1)
         return res
 
     def get_part(self, i, default=Integer(0)):
@@ -2424,28 +2424,29 @@ class Partition(CombinatorialElement):
         if not self._list:
             if n is None:
                 return DyckWord([])
-            return DyckWord([1]*n + [0]*n)
+            return DyckWord([1] * n + [0] * n)
         list_of_word = []
         if n is None:
-            n = max(i + l + 1 for (i, l) in enumerate(self))
-            # This n is also max(i+j for (i,j) in self.cells()) + 2.
-        list_of_word.extend([1]*(n-self.length()))
+            n = max(i + l + 1 for i, l in enumerate(self))
+            # This n is also max(i+j for i, j in self.cells()) + 2.
+        list_of_word.extend([1] * (n - self.length()))
         copy_part = list(self)
         while copy_part:
             c = copy_part.pop()
-            list_of_word.extend([0]*c)
+            list_of_word.extend([0] * c)
             for i in range(len(copy_part)):
                 copy_part[i] -= c
             list_of_word.append(1)
-        list_of_word.extend([0]*(n-self[0]))
+        list_of_word.extend([0] * (n - self[0]))
         return DyckWord(list_of_word)
 
     @combinatorial_map(order=2, name="conjugate partition")
     def conjugate(self):
         """
-        Return the conjugate partition of the partition ``self``. This
-        is also called the associated partition or the transpose in the
-        literature.
+        Return the conjugate partition of the partition ``self``.
+
+        This is also called the associated partition or the transpose
+        in the literature.
 
         EXAMPLES::
 
@@ -3980,7 +3981,7 @@ class Partition(CombinatorialElement):
         """
         block = {}
         Ie = IntegerModRing(e)
-        for (r, c) in self.cells():
+        for r, c in self.cells():
             i = Ie(multicharge[0] + c - r)
             block[i] = block.get(i, 0) + 1
         return block

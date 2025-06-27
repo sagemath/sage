@@ -5412,7 +5412,7 @@ class FiniteStateMachine(SageObject):
     # properties (state and transitions)
     # ************************************************************************
 
-    def has_state(self, state):
+    def has_state(self, state) -> bool:
         """
         Return whether ``state`` is one of the states of the finite
         state machine.
@@ -5434,7 +5434,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             return False
 
-    def has_transition(self, transition):
+    def has_transition(self, transition) -> bool:
         """
         Return whether ``transition`` is one of the transitions of
         the finite state machine.
@@ -5460,7 +5460,7 @@ class FiniteStateMachine(SageObject):
             return transition in self.iter_transitions()
         raise TypeError("Transition is not an instance of FSMTransition.")
 
-    def has_initial_state(self, state):
+    def has_initial_state(self, state) -> bool:
         """
         Return whether ``state`` is one of the initial states of the
         finite state machine.
@@ -5482,7 +5482,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             return False
 
-    def has_initial_states(self):
+    def has_initial_states(self) -> bool:
         """
         Return whether the finite state machine has an initial state.
 
@@ -5495,7 +5495,7 @@ class FiniteStateMachine(SageObject):
         """
         return bool(self.initial_states())
 
-    def has_final_state(self, state):
+    def has_final_state(self, state) -> bool:
         """
         Return whether ``state`` is one of the final states of the
         finite state machine.
@@ -5516,7 +5516,7 @@ class FiniteStateMachine(SageObject):
         except LookupError:
             return False
 
-    def has_final_states(self):
+    def has_final_states(self) -> bool:
         """
         Return whether the finite state machine has a final state.
 

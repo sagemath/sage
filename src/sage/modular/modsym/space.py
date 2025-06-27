@@ -1259,11 +1259,9 @@ class ModularSymbolsSpace(HeckeModule_free_module):
             # should we perhaps check at this point if self is new?
             f = self.q_eigenform(prec, names)
             R = PowerSeriesRing(self.base_ring(), 'q')
-            B = [R([f[i][j] for i in range(prec)], prec)
-                 for j in range(self.rank())]
-            return B
-        else:
-            raise NotImplementedError
+            return [R([f[i][j] for i in range(prec)], prec)
+                    for j in range(self.rank())]
+        raise NotImplementedError
 
     #########################################################################
     #

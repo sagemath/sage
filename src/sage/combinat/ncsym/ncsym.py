@@ -293,7 +293,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         -4*p[] + 2*p[1] + p[2, 2]
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         Initialize ``self``.
 
@@ -309,7 +309,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         category = GradedHopfAlgebras(R).Cocommutative()
         Parent.__init__(self, category=category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -331,7 +331,7 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
         """
         return self.powersum()
 
-    _shorthands = tuple(['chi', 'cp', 'm', 'e', 'h', 'p', 'rho', 'x'])
+    _shorthands = ('chi', 'cp', 'm', 'e', 'h', 'p', 'rho', 'x')
 
     def dual(self):
         r"""

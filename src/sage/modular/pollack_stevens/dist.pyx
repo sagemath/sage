@@ -385,7 +385,7 @@ cdef class Dist(ModuleElement):
                         raise ValueError("not a scalar multiple")
                 v = a.valuation(p)
                 if n - i - v > relprec:
-                    verbose("Reseting alpha: relprec=%s, n-i=%s, v=%s" % (relprec, n - i, v), level = 2)
+                    verbose("Resetting alpha: relprec=%s, n-i=%s, v=%s" % (relprec, n - i, v), level = 2)
                     relprec = n - i - v
                     if padic:
                         alpha = (other._unscaled_moment(i) / a).add_bigoh(n - i)
