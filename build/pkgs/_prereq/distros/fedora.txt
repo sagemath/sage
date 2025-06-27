@@ -17,6 +17,8 @@ perl
 perl-ExtUtils-MakeMaker
 tar
 gcc
+bzip2
+bzip2-devel
 # On Fedora 26, need C++ even to survive 'configure'. Otherwise:
 # checking how to run the C++ preprocessor... /lib/cpp
 # configure: error: in `/sage':
@@ -32,3 +34,4 @@ perl-IPC-Cmd
 # Needed to build gcc
 flex
 patch
+pkg-config
