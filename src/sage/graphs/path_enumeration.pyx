@@ -36,7 +36,6 @@ from sage.misc.misc_c import prod
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from sage.rings.integer_ring import ZZ
-from sage.graphs.path_enumeration cimport PathCandidate
 import copy
 
 
@@ -1438,15 +1437,17 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
 
     This algorithm is based on the `feng_k_shortest_simple_paths` algorithm
     in [Feng2014]_, but postpones the shortest path tree computation when non-simple
-    deviations occur. See Postponed Node Classification algorithm in [ADN2023]_
+    deviations occur. See Postponed Node Classification algorithm in [ACN2023]_
     for the algorithm description.
 
     EXAMPLES:
 
         sage: from sage.graphs.path_enumeration import pnc_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
-        sage: list(pnc_k_shortest_simple_paths(g, 1, 5, by_weight=True))
-        [[1, 3, 5], [1, 2, 5], [1, 4, 5]]
+        sage: list(pnc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True))
+        [(20.0, [1, 3, 5]), (40.0, [1, 2, 5]), (60.0, [1, 4, 5])]
+        sage: list(pnc_k_shortest_simple_paths(g, 1, 5, report_weight=True))
+        [(2.0, [1, 2, 5]), (2.0, [1, 4, 5]), (2.0, [1, 3, 5])]
 
     TESTS:
 
@@ -1471,6 +1472,22 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
          (26.0, [(5, 4, 9), (4, 0, 8), (0, 3, 1), (3, 2, 4), (2, 1, 4)]),
          (26.0, [(5, 4, 9), (4, 0, 8), (0, 1, 9)]),
          (30.0, [(5, 4, 9), (4, 3, 3), (3, 2, 4), (2, 0, 5), (0, 1, 9)])]
+        sage: g = DiGraph(graphs.Grid2dGraph(2, 6).relabel(inplace=False))
+        sage: for u, v in g.edge_iterator(labels=False):
+        ....:     g.set_edge_label(u, v, 1)
+        sage: [w for  w, P in pnc_k_shortest_simple_paths(g, 5, 1, by_weight=True, report_weight=True)]
+        [4.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 8.0, 8.0,
+         8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 10.0, 10.0, 10.0, 10.0]
+
+        Same tests as yen_k_shortest_simple_paths::
+
+        sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
+        sage: g = DiGraph([(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 1),
+        ....:              (1, 7, 1), (7, 8, 1), (8, 5, 1), (1, 6, 1),
+        ....:              (6, 9, 1), (9, 5, 1), (4, 2, 1), (9, 3, 1),
+        ....:              (9, 10, 1), (10, 5, 1), (9, 11, 1), (11, 10, 1)])
+        sage: [w for w, P in pnc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True)]
+        [3.0, 3.0, 4.0, 4.0, 5.0, 5.0]
     """
     if not self.is_directed():
         raise ValueError("this algorithm works only for directed graphs")
@@ -1605,6 +1622,8 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             deviation = shortest_path_func(path[dev_idx], target,
                                            exclude_vertices=unnecessary_vertices.union(path[:dev_idx]),
                                            reduced_weight=sidetrack_cost)
+            if not deviation:
+                continue  # no path to target in G \ path[:dev_idx]
             new_path = path[:dev_idx] + deviation
             new_path_idx = idx
             idx_to_path[new_path_idx] = new_path

@@ -108,7 +108,7 @@ REFERENCES:
          *Coxeter submodular functions and deformations of Coxeter permutahedra*,
          Advances in Mathematics, Volume 365, 13 May 2020.
 
-.. [ADN2023] Ali Al Zoobi, David Coudert, Nicolas Nisse
+.. [ACN2023] Ali Al Zoobi, David Coudert, Nicolas Nisse
              Finding the k Shortest Simple Paths: Time and Space trade-offs
              ACM Journal of Experimental Algorithmics, 2023, 28, pp.23
 
