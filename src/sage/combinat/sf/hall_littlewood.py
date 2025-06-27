@@ -19,14 +19,15 @@ Notation used in the definitions follows mainly [Mac1995]_.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.libs.symmetrica.all import hall_littlewood
-from . import sfa
 import sage.combinat.partition
-from sage.matrix.constructor import matrix
-from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+from sage.categories.morphism import SetMorphism
+from sage.libs.symmetrica.all import hall_littlewood
+from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
+from sage.structure.unique_representation import UniqueRepresentation
+
+from . import sfa
 
 # P basis cache
 p_to_s_cache = {}
