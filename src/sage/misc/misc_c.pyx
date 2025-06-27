@@ -23,7 +23,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from copy import copy
 
 from cpython.sequence cimport *
 from cpython.list cimport *
