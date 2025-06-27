@@ -356,15 +356,15 @@ def T_sequences_construction_from_base_sequences(base_sequences, check=True):
 
     A, B, C, D = base_sequences
     n = len(C)
-    p = len(A)-n
+    p = len(A) - n
 
-    assert len(A) == len(B) == len(C)+p == len(D)+p
+    assert len(A) == len(B) == len(C) + p == len(D) + p
 
     def seq_sum(seq1, seq2):
-        return [(a+b)//2 for (a, b) in zip(seq1, seq2)]
+        return [(a + b) // 2 for a, b in zip(seq1, seq2)]
 
     def seq_subtract(seq1, seq2):
-        return [(a-b)//2 for (a, b) in zip(seq1, seq2)]
+        return [(a - b) // 2 for a, b in zip(seq1, seq2)]
 
     def zero_seq(n):
         return [0 for _ in range(n)]
