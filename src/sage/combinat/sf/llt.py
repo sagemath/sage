@@ -30,15 +30,16 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.structure.unique_representation import UniqueRepresentation
-from . import sfa
-import sage.combinat.ribbon_tableau as ribbon_tableau
 import sage.combinat.skew_partition
-from sage.rings.integer_ring import ZZ
-from sage.combinat.partition import Partition, Partitions, _Partitions
-from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
+from sage.categories.morphism import SetMorphism
+from sage.combinat import ribbon_tableau
+from sage.combinat.partition import Partition, Partitions, _Partitions
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.structure.unique_representation import UniqueRepresentation
+
+from . import sfa
 
 # cache for H spin basis
 hsp_to_m_cache = {}
@@ -764,5 +765,6 @@ class LLT_cospin(LLT_generic):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_spin', LLT_spin.Element)
 register_unpickle_override('sage.combinat.sf.llt', 'LLTElement_cospin', LLT_cospin.Element)

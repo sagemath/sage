@@ -374,14 +374,14 @@ class ClusterQuiver(SageObject):
                     self._mlist = user_labels[n:n+m]
                 self._digraph.relabel(self._nlist + self._mlist)
             else:
-                self._mlist = list(range(n, n+m))
+                self._mlist = list(range(n, n + m))
                 self._nlist = list(range(n))
-            if n+m == 0:
+            if n + m == 0:
                 self._description = 'Quiver without vertices'
-            elif n+m == 1:
+            elif n + m == 1:
                 self._description = 'Quiver on 1 vertex'
             else:
-                self._description = 'Quiver on %d vertices' % (n+m)
+                self._description = f'Quiver on {n + m} vertices'
 
         # constructs a quiver from a digraph
         elif isinstance(data, DiGraph):
@@ -409,7 +409,7 @@ class ClusterQuiver(SageObject):
                 raise ValueError("the input DiGraph contains a loop")
 
             edges = set(data.edge_iterator(labels=False))
-            if any((b, a) in edges for (a, b) in edges):
+            if any((b, a) in edges for a, b in edges):
                 raise ValueError("the input DiGraph contains two-cycles")
 
             dg_labelling = False
@@ -472,9 +472,9 @@ class ClusterQuiver(SageObject):
             if n + m == 0:
                 self._description = 'Quiver without vertices'
             elif n + m == 1:
-                self._description = 'Quiver on %d vertex' % (n+m)
+                self._description = 'Quiver on 1 vertex'
             else:
-                self._description = 'Quiver on %d vertices' % (n+m)
+                self._description = f'Quiver on {n + m} vertices'
             self._mutation_type = None
 
         # if data is a list of edges, the appropriate digraph is constructed.
@@ -1571,7 +1571,7 @@ class ClusterQuiver(SageObject):
             plot_obj = Graphics()
             for elem in sequence:
                 plot_obj += elem
-            plot_obj.show(axes=False, figsize=[fig_size*len(quiver_sequence),
+            plot_obj.show(axes=False, figsize=[fig_size * len(quiver_sequence),
                                                fig_size])
         return quiver_sequence
 
