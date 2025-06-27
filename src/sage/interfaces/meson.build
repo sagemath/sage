@@ -4,7 +4,6 @@ py.install_sources(
   'all.py',
   'all__sagemath_polyhedra.py',
   'axiom.py',
-  'cleaner.py',
   'ecm.py',
   'expect.py',
   'four_ti_2.py',
