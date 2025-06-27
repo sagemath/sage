@@ -179,7 +179,7 @@ class PuzzlePiece:
             else:
                 edges = self.edges()
             P = Graphics()
-            for (i, edge) in enumerate(edges):
+            for i, edge in enumerate(edges):
                 P += line([coords[i], coords[(i + 1) % 3]],
                           color=self.edge_color(edge),
                           thickness=border_thickness)
@@ -1365,9 +1365,9 @@ class PuzzleFilling:
         """
         P = Graphics()
         coords = [(k, -d) for d in range(self._n) for k in range(-d, d + 1, 2)]
-        for ((k, d), piece) in zip(coords, self):
+        for (k, d), piece in zip(coords, self):
             if isinstance(piece, RhombusPiece):
-                for (i, triangle) in enumerate(piece):
+                for i, triangle in enumerate(piece):
                     P += triangle._plot_piece([(k, d - 2 * i), (k - 1, d - 1), (k + 1, d - 1)], style=style)
                 if labels:
                     P += piece._plot_label(piece['north_west'], (k - 0.5, d - 0.5), rotation=60)
@@ -1449,10 +1449,10 @@ class PuzzleFilling:
             s += ";\n"
             return s
 
-        for ((k, d), piece) in zip(coords, self):
+        for (k, d), piece in zip(coords, self):
             for tikzcmd in (tikztriangle_fill, tikztriangle_edges, tikzlabels):
                 if isinstance(piece, RhombusPiece):
-                    for (i, triangle) in enumerate([piece.north_piece(), piece.south_piece()]):
+                    for i, triangle in enumerate([piece.north_piece(), piece.south_piece()]):
                         if i == 0:
                             s += tikzcmd(triangle.color(), k, d, i, *triangle.border())
                         else:

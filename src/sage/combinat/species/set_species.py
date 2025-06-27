@@ -29,6 +29,9 @@ class SetSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: S = species.SetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = S.structures(["a","b","c"]).random_element(); a
             {'a', 'b', 'c'}
         """

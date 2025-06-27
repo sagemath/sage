@@ -1,6 +1,14 @@
 Comprehensive module list
 =========================
 
+.. NOTE::
+
+    This list was initially created by running in a Sage shell (``sage -sh``)::
+
+    $ src/doc/en/reference/make_module_list.sh sage/combinat
+
+    and copy-pasting the result back here divided by packages.
+
 ``sage.combinat``
 -----------------
 
@@ -18,6 +26,7 @@ Comprehensive module list
     sage/combinat/binary_recurrence_sequences
     sage/combinat/binary_tree
     sage/combinat/blob_algebra
+    sage/combinat/regular_sequence_bounded
     sage/combinat/fast_vector_partitions
     sage/combinat/cartesian_product
     sage/combinat/cluster_complex
@@ -318,6 +327,7 @@ Comprehensive module list
     sage/combinat/posets/posets
     sage/combinat/posets/forest
     sage/combinat/posets/hasse_diagram
+    sage/combinat/posets/hochschild_lattice
     sage/combinat/posets/incidence_algebras
     sage/combinat/posets/linear_extensions
     sage/combinat/posets/mobile
@@ -512,11 +522,4 @@ See also
     :maxdepth: 1
 
     sage/rings/cfinite_sequence
-
-.. NOTE::
-
-    This list was initially created by running::
-
-    $ src/doc/en/reference/make_module_list.sh sage/combinat
-
-    in a Sage shell (``sage -sh``) and copy pasting the result back here.
+    sage/rings/lazy_species

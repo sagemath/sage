@@ -24,7 +24,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.combinat.partition import _Partitions, Partitions
+from sage.combinat.partition import Partitions, _Partitions
 from sage.combinat.sf.multiplicative import SymmetricFunctionAlgebra_multiplicative
 
 

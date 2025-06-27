@@ -140,7 +140,7 @@ We will now attempt a little numerical simulation. The following
 function tests whether a given hand is a flush or not::
 
     sage: def is_flush(hand):
-    ....:     return len(set(suit for (val, suit) in hand)) == 1
+    ....:     return len(set(suit for val, suit in hand)) == 1
 
 We now draw 10000 hands at random, and count the number of flushes
 obtained (this takes about 10 seconds)::
