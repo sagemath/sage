@@ -36,6 +36,7 @@ The infinite set of all posets can be used to find minimal examples::
     :meth:`~Posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
     :meth:`~Posets.DivisorLattice` | Return the divisor lattice of an integer.
     :meth:`~Posets.DoubleTailedDiamond` | Return the double tailed diamond poset on `2n + 2` elements.
+    :meth:`~Posets.HochschildLattice` | Return the Hochschild lattice for `n`.
     :meth:`~Posets.IntegerCompositions` | Return the poset of integer compositions of `n`.
     :meth:`~Posets.IntegerPartitions` | Return the poset of integer partitions of ``n``.
     :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions of the integer `n` ordered by dominance.
@@ -101,7 +102,7 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
-from sage.combinat.posets import bubble_shuffle
+from sage.combinat.posets import bubble_shuffle, hochschild_lattice
 from sage.combinat.posets.d_complete import DCompletePoset
 from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
@@ -286,6 +287,8 @@ class Posets(metaclass=ClasscallMetaclass):
     BubblePoset = staticmethod(bubble_shuffle.BubblePoset)
 
     ShufflePoset = staticmethod(bubble_shuffle.ShufflePoset)
+
+    HochschildLattice = staticmethod(hochschild_lattice.hochschild_lattice)
 
     @staticmethod
     def ChainPoset(n, facade=None):
@@ -1271,11 +1274,11 @@ class Posets(metaclass=ClasscallMetaclass):
         if 'labels' in labels:
             if labels['labels'] == 'integers':
                 labelcount = 0
-                for (i, j, k) in elem:
+                for i, j, k in elem:
                     elem_labels[(i, j, k)] = labelcount
                     labelcount += 1
         for c in colors:
-            for (i, j, k) in elem:
+            for i, j, k in elem:
                 if i + j + k < n - 1:
                     if c == 'green':
                         rels.append([(i, j, k), (i + 1, j, k)])
@@ -1476,16 +1479,16 @@ class Posets(metaclass=ClasscallMetaclass):
                 return ((a[0] == b[0] + 1 and a[1] == b[1]) or
                         (a[1] == b[1] + 1 and a[0] == b[0]))
             return JoinSemilattice((lam.cells(), cell_geq), cover_relations=True)
-        else:
-            def cell_leq(a, b):
-                """
-                Nested function that returns ``True`` if the cell `a` is
-                to the left or above
-                the cell `b` in the (English) Young diagram.
-                """
-                return ((a[0] == b[0] - 1 and a[1] == b[1]) or
-                        (a[1] == b[1] - 1 and a[0] == b[0]))
-            return MeetSemilattice((lam.cells(), cell_leq), cover_relations=True)
+
+        def cell_leq(a, b):
+            """
+            Nested function that returns ``True`` if the cell `a` is
+            to the left or above
+            the cell `b` in the (English) Young diagram.
+            """
+            return ((a[0] == b[0] - 1 and a[1] == b[1]) or
+                    (a[1] == b[1] - 1 and a[0] == b[0]))
+        return MeetSemilattice((lam.cells(), cell_leq), cover_relations=True)
 
     @staticmethod
     def YoungsLattice(n):
