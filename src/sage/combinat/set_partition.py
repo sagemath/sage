@@ -13,6 +13,9 @@ AUTHORS:
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
 
+- Anciaux Hugo, Rachid Bouhmad, Elhadj Alseiny Diallo, Do Truong Thinh Truong ( Algorithms Design : Amaury Curiel, Genitrini Antoine ).
+  (2025-06-18): Algorithmic for lexicographic unranking.
+  
 This module defines a class for immutable partitioning of a set. For
 mutable version see :func:`DisjointSet`.
 """
