@@ -1791,7 +1791,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
             pairs = product(shifts, ans)
             possibles = (tuple(vector(t) + vector(shift) * (mrunning // p))
                          for shift, t in pairs)
-        ans = list(t for t in possibles if all(e(*t) == 0 for e in eqns_mod))
+        ans = [t for t in possibles if all(e(*t) == 0 for e in eqns_mod)]
         if not ans:
             return ans
 
