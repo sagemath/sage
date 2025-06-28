@@ -1432,10 +1432,9 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
       returned.
 
     OUTPUT: iterator
-
     ALGORITHM:
 
-    This algorithm is based on the `feng_k_shortest_simple_paths` algorithm
+    This algorithm is based on the ``feng_k_shortest_simple_paths`` algorithm
     in [Feng2014]_, but postpones the shortest path tree computation when non-simple
     deviations occur. See Postponed Node Classification algorithm in [ACN2023]_
     for the algorithm description.
@@ -1469,8 +1468,8 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
          (22.0, [(5, 2, 5), (2, 0, 5), (0, 4, 2), (4, 3, 3), (3, 1, 7)]),
          (23.0, [(5, 2, 5), (2, 0, 5), (0, 3, 1), (3, 4, 2), (4, 1, 10)]),
          (25.0, [(5, 4, 9), (4, 0, 8), (0, 3, 1), (3, 1, 7)]),
-         (26.0, [(5, 4, 9), (4, 0, 8), (0, 3, 1), (3, 2, 4), (2, 1, 4)]),
          (26.0, [(5, 4, 9), (4, 0, 8), (0, 1, 9)]),
+         (26.0, [(5, 4, 9), (4, 0, 8), (0, 3, 1), (3, 2, 4), (2, 1, 4)]),
          (30.0, [(5, 4, 9), (4, 3, 3), (3, 2, 4), (2, 0, 5), (0, 1, 9)])]
         sage: g = DiGraph(graphs.Grid2dGraph(2, 6).relabel(inplace=False))
         sage: for u, v in g.edge_iterator(labels=False):
@@ -1479,15 +1478,22 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         [4.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 8.0, 8.0,
          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 10.0, 10.0, 10.0, 10.0]
 
-    Same tests as yen_k_shortest_simple_paths::
+    Same tests as ``yen_k_shortest_simple_paths``::
 
-        sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
         sage: g = DiGraph([(1, 2, 1), (2, 3, 1), (3, 4, 1), (4, 5, 1),
         ....:              (1, 7, 1), (7, 8, 1), (8, 5, 1), (1, 6, 1),
         ....:              (6, 9, 1), (9, 5, 1), (4, 2, 1), (9, 3, 1),
         ....:              (9, 10, 1), (10, 5, 1), (9, 11, 1), (11, 10, 1)])
         sage: [w for w, P in pnc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True)]
         [3.0, 3.0, 4.0, 4.0, 5.0, 5.0]
+
+    More tests::
+
+        sage: D = graphs.Grid2dGraph(5, 5).relabel(inplace=False).to_directed()
+        sage: A = [w for w, P in pnc_k_shortest_simple_paths(D, 0, 24, report_weight=True)]
+        sage: assert len(A) == 8512
+        sage: for i in range(len(A) - 1):
+        ....:     assert A[i] <= A[i + 1]
     """
     if not self.is_directed():
         raise ValueError("this algorithm works only for directed graphs")
@@ -1574,17 +1580,19 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         path = idx_to_path[path_idx]
         del idx_to_path[path_idx]
 
-        # ancestor_idx_dict[v] := the first vertex reachable by edges of
-        #                    first shortest path tree from v
+        # ancestor_idx_dict[v] := the first vertex of ``path[:t+1]`` or ``path[-1]`` reachable by
+        #                    edges of first shortest path tree from v when enumerating deviating edges
+        #                    from ``path[t]``.
         ancestor_idx_dict = {v: i for i, v in enumerate(path)}
 
-        def ancestor_idx_func(v):
-            if v in ancestor_idx_dict:
-                return ancestor_idx_dict[v]
+        def ancestor_idx_func(v, t):
             if v not in successor:
                 # target vertex is not reachable from v
                 return -1
-            ancestor_idx_dict[v] = ancestor_idx_func(successor[v])
+            if v in ancestor_idx_dict:
+                if ancestor_idx_dict[v] <= t or ancestor_idx_dict[v] == len(path) - 1:
+                    return ancestor_idx_dict[v]
+            ancestor_idx_dict[v] = ancestor_idx_func(successor[v], t)
             return ancestor_idx_dict[v]
 
         if is_simple:
@@ -1601,12 +1609,12 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 yield P
 
             # GET DEVIATION PATHS
-            original_cost = sidetrack_length(path[:dev_idx + 1])
-            for deviation_i in range(dev_idx, len(path) - 1):
+            original_cost = cost
+            for deviation_i in range(len(path) - 1, dev_idx - 1, -1):
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
                     if e[1] in path[:deviation_i + 2]:  # e[1] is red or e in path
                         continue
-                    ancestor_idx = ancestor_idx_func(e[1])
+                    ancestor_idx = ancestor_idx_func(e[1], deviation_i)
                     if ancestor_idx == -1:
                         continue
                     new_path = path[:deviation_i + 1] + tree_path(e[1])
@@ -1616,7 +1624,9 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                     new_cost = original_cost + sidetrack_cost[(e[0], e[1])]
                     new_is_simple = ancestor_idx > deviation_i
                     candidate_paths.push(((-new_cost, new_is_simple), (new_path_idx, deviation_i + 1)))
-                original_cost += sidetrack_cost[(path[deviation_i], path[deviation_i + 1])]
+                if deviation_i == dev_idx:
+                    continue
+                original_cost -= sidetrack_cost[(path[deviation_i - 1], path[deviation_i])]
         else:
             # get a path to target in G \ path[:dev_idx]
             deviation = shortest_path_func(path[dev_idx], target,
