@@ -145,7 +145,7 @@ We can solve equations::
     sage: solve(z^2 == sqrt(3),z)
     Traceback (most recent call last):
     ...
-    TypeError: 5 is not a valid variable.
+    TypeError: 5 is not a valid variable
 
 We can also solve equations involving matrices. The following
 example defines a multivariable function ``f(x,y)``, then solves
@@ -790,7 +790,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         sage: solve([8*z + y == 3, -z +7*y == 0],y,z)
         Traceback (most recent call last):
         ...
-        TypeError: 5 is not a valid variable.
+        TypeError: 5 is not a valid variable
 
     If we ask for dictionaries containing the solutions, we get them::
 
@@ -1077,22 +1077,22 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         sage: solve([a+b+a*b == 1], a)
         Traceback (most recent call last):
         ...
-        TypeError: a is not a valid variable.
+        TypeError: a is not a valid variable
         sage: a,b = var('a,b')
         sage: solve([a+b+a*b == 1], a)
         [a == -(b - 1)/(b + 1)]
         sage: solve([a, b], (1, a))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a valid variable
         sage: solve([x == 1], (1, a))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a valid variable
         sage: x.solve((1,2))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a valid variable
 
     Test that the original version of a system in the French Sage book
     now works (:issue:`14306`)::
@@ -1137,6 +1137,22 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
 
         sage: solve([], [])
         [[]]
+
+    Coverage test::
+
+        sage: y = function('y')(x)
+        sage: solve([diff(y)==x, diff(y)==x], y)
+        Traceback (most recent call last):
+        ...
+        TypeError: y(x) is not a valid variable
+        sage: solve([0==1], x, multiplicities=True)
+        ([], [])
+        sage: solve([0==0], [], multiplicities=True)
+        ([[]], [1])
+        sage: var("x y")
+        (x, y)
+        sage: solve([x==1, y==2], [x, y], algorithm="sympy")
+        [{x: 1, y: 2}]
     """
     from sage.structure.element import Expression
     f = _normalize_to_list_expressions(f)
@@ -1153,7 +1169,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
 
     require_all_variables_to_be_symbol = len(f) > 1
     # we support y = function('y')(x); solve(diff(y)==x, y), in this case y = y(x) is not a symbol
-    # but only if one equation is provided
+    # but only if one equation is provided, otherwise it's unimplemented
     # there is also desolve()
     for i in x:
         complain = False
@@ -1162,7 +1178,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         elif require_all_variables_to_be_symbol and not i.is_symbol():
             complain = True
         if complain:
-            raise TypeError(f"{i} is not a valid variable.")
+            raise TypeError(f"{i} is not a valid variable")
 
     # Handle special cases
     f = [s for s in f if s is not True]
@@ -1186,12 +1202,12 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         from sympy import solve as ssolve
         from sage.interfaces.sympy import sympy_set_to_list
         sympy_f = [s._sympy_() for s in f]
-        if isinstance(f, Expression) and f.is_symbol():
-            sympy_vars = (x._sympy_(),)
-        else:
-            sympy_vars = tuple([v._sympy_() for v in x])
+        sympy_vars = tuple([v._sympy_() for v in x])
         ret = ssolve(sympy_f, sympy_vars, dict=True)
         if isinstance(ret, dict):
+            # it is not clear how this branch could be reached
+            # because dict=True is passed above, however
+            # it is kept just in case
             if solution_dict:
                 l = []
                 for d in ret:
@@ -1213,6 +1229,9 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
                 l.append(r)
             return l
         else:
+            # it is not clear how this branch could be reached
+            # because dict=True is passed above, however
+            # it is kept just in case
             return sympy_set_to_list(ret, sympy_vars)
 
     if algorithm == 'giac':
@@ -1228,7 +1247,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
             s = m.to_poly_solve(x)
         except TypeError as mess:  # if that gives an error, raise an error.
             if "Error executing code in Maxima" in str(mess):
-                raise ValueError(f"Sage is unable to determine whether the system {f} can be solved for {x}")
+                raise ValueError(f"sage is unable to determine whether the system {f} can be solved for {x}")
             else:
                 raise
 
