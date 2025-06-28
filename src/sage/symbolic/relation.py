@@ -983,7 +983,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
     handled by Maxima::
 
         sage: _ = var('t')
-        sage: r = solve([x^2 - y^2/exp(x), y-1], x, y, algorithm='sympy')
+        sage: r = solve([x^2 - y^2/exp(x), y-1], x, y, algorithm='sympy', solution_dict=True)
         sage: (r[0][x], r[0][y])
         (2*lambert_w(-1/2), 1)
         sage: solve(-2*x**3 + 4*x**2 - 2*x + 6 > 0, x, algorithm='sympy')
@@ -992,10 +992,10 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         [x == -8, x == 2]
         sage: solve(sqrt(2*x + 9) - sqrt(x + 1) - sqrt(x + 4),x,algorithm='sympy')
         [x == 0]
-        sage: r = solve([x + y + z + t, -z - t], x, y, z, t, algorithm='sympy')
+        sage: r = solve([x + y + z + t, -z - t], x, y, z, t, algorithm='sympy', solution_dict=True)
         sage: (r[0][x], r[0][z])
         (-y, -t)
-        sage: r = solve([x^2+y+z, y+x^2+z, x+y+z^2], x, y,z, algorithm='sympy')
+        sage: r = solve([x^2+y+z, y+x^2+z, x+y+z^2], x, y,z, algorithm='sympy', solution_dict=True)
         sage: (r[0][x], r[0][y])
         (z, -(z + 1)*z)
         sage: (r[1][x], r[1][y])
@@ -1015,8 +1015,8 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
          ImageSet(Lambda(_n, 2*_n*pi + 5*pi/3), Integers),
          ImageSet(Lambda(_n, 2*_n*pi + pi/3), Integers)]
 
-        sage: solve(x^5 + 3*x^3 + 7, x, algorithm='sympy')[0] # known bug
-        complex_root_of(x^5 + 3*x^3 + 7, 0)
+        sage: solve(x^5 + 3*x^3 + 7, x, algorithm='sympy')[0]
+        x == complex_root_of(x^5 + 3*x^3 + 7, 0)
 
     A basic interface to Giac is provided::
 
@@ -1151,8 +1151,10 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         ([[]], [1])
         sage: var("x y")
         (x, y)
-        sage: solve([x==1, y==2], [x, y], algorithm="sympy")
+        sage: solve([x==1, y==2], [x, y], algorithm='sympy', solution_dict=True)
         [{x: 1, y: 2}]
+        sage: solve([x==1, y==2], [x, y], algorithm='sympy')
+        [[x == 1, y == 2]]
     """
     from sage.structure.element import Expression
     f = _normalize_to_list_expressions(f)
@@ -1221,13 +1223,12 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
                          for v, ex in d.items()]
                         for d in ret]
         elif isinstance(ret, list):
-            l = []
-            for sol in ret:
-                r = {}
-                for (v, ex) in sol.items():
-                    r[v._sage_()] = ex._sage_()
-                l.append(r)
-            return l
+            if solution_dict:
+                return [{v._sage_(): ex._sage_()
+                         for v, ex in d.items()} for d in ret]
+            else:
+                return [[v._sage_() == ex._sage_()
+                         for v, ex in d.items()] for d in ret]
         else:
             # it is not clear how this branch could be reached
             # because dict=True is passed above, however
