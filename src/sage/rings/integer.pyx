@@ -3877,7 +3877,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return x
 
     def factor(self, algorithm=None, proof=None, limit=None, int_=False,
-               verbose=0, flint_bits=None):
+               verbose=0, *, flint_bits=None):
         """
         Return the prime factorization of this integer as a
         formal Factorization object.
@@ -4016,7 +4016,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         if limit is not None:
             if algorithm is not None:
-                raise ValueError('trial division will always be used when when limit is provided')
+                raise ValueError('trial division will always be used when limit is provided')
             from sage.rings.factorint import factor_trial_division
             return factor_trial_division(self, limit)
 
