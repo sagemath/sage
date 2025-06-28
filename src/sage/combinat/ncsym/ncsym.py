@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Symmetric functions in noncommuting variables
+Symmetric functions in non-commuting variables
 
 AUTHORS:
 
