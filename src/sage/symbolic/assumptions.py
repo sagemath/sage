@@ -34,6 +34,7 @@ The default domain of a symbolic variable is the complex plane::
 
 Here is the list of acceptable features::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: ", ".join(map(str, maxima("features")._sage_()))
     'integer, noninteger, even, odd, rational, irrational, real, imaginary,
     complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
@@ -116,6 +117,7 @@ class GenericDeclaration(UniqueRepresentation):
 
     Here is the list of acceptable features::
 
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: ", ".join(map(str, maxima("features")._sage_()))
         'integer, noninteger, even, odd, rational, irrational, real, imaginary,
         complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
@@ -155,6 +157,7 @@ class GenericDeclaration(UniqueRepresentation):
 
         Here is the list of acceptable features::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: ", ".join(map(str, maxima("features")._sage_()))
             'integer, noninteger, even, odd, rational, irrational, real,
             imaginary, complex, analytic, increasing, decreasing, oddfun,

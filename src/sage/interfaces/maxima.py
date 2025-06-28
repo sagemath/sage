@@ -29,6 +29,14 @@ AUTHORS:
 - Robert Bradshaw, Nils Bruin, Jean-Pierre Flori (2010,2011): Binary library
   interface
 
+There is also an ECL-based version of the Maxima interface in
+:mod:`sage.interfaces.maxima_lib`.
+That ECL interface is used for all internal symbolic calculations in SageMath,
+providing a more direct and efficient connection to Maxima's core functionality.
+The Pexpect interface defined here is isolated from the ECL-based interface:
+it communicates with Maxima via a subprocess and text-based interaction, and is
+primarily intended for interactive use.
+
 This is the interface used by the maxima object::
 
     sage: from sage.interfaces.maxima import maxima

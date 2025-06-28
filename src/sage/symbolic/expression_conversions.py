@@ -533,6 +533,7 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = df.subs(x=exp(x)); a
             D[0](f)(e^x)
             sage: b = maxima(a); b
@@ -542,6 +543,7 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = df.subs(x=4); a
             D[0](f)(4)
             sage: b = maxima(a); b
@@ -562,6 +564,7 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = f_x.subs(x=4); a
             D[0](f)(4, y)
             sage: b = maxima(a); b
@@ -571,6 +574,7 @@ class InterfaceInit(Converter):
 
         ::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: a = f_x.subs(x=4).subs(y=8); a
             D[0](f)(4, 8)
             sage: b = maxima(a); b
