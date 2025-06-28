@@ -42,7 +42,7 @@ AUTHORS:
 # ****************************************************************************
 
 import re
-from sys import stdout
+from sys import argv, stdout
 from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
                     SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
 from sage.structure.sage_object import SageObject
@@ -183,17 +183,17 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: print(DTR.report_head(FDS))
-            sage -t .../sage/doctest/reporting.py
+            .../sage/doctest/reporting.py
 
         The same with various options::
 
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
-            sage -t --long .../sage/doctest/reporting.py
+            ... --long .../sage/doctest/reporting.py
             sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
-            sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
+            ... --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
-        cmd = "sage -t"
+        cmd = "sage-runtests" if "sage-runtests" in argv[0] else "python3 -m sage.doctest"
         if self.controller.options.long:
             cmd += " --long"
 
@@ -695,9 +695,9 @@ class DocTestReporter(SageObject):
             sage: DC.sources = [None] * 4 # to fool the finalize method
             sage: DTR.finalize()
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds
                 cpu time: 0.0 seconds
@@ -710,9 +710,9 @@ class DocTestReporter(SageObject):
             sage: DTR.finalize()
             <BLANKLINE>
             ----------------------------------------------------------------------
-            sage -t .../sage/doctest/reporting.py  # Timed out
-            sage -t .../sage/doctest/reporting.py  # Bad exit: 3
-            sage -t .../sage/doctest/reporting.py  # 1 doctest failed
+            .../sage/doctest/reporting.py  # Timed out
+            .../sage/doctest/reporting.py  # Bad exit: 3
+            .../sage/doctest/reporting.py  # 1 doctest failed
             Doctests interrupted: 4/6 files tested
             ----------------------------------------------------------------------
             Total time for all tests: 0.0 seconds
