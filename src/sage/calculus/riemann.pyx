@@ -240,10 +240,10 @@ cdef class Riemann_Map:
         if self.exterior and (self.B > 1):
             raise ValueError(
                 "The exterior map is undefined for multiply connected domains")
-        cdef np.ndarray[COMPLEX_T,ndim=2] cps = np.zeros([self.B, N],
-                                                         dtype=COMPLEX)
-        cdef np.ndarray[COMPLEX_T,ndim=2] dps = np.zeros([self.B, N],
-                                                         dtype=COMPLEX)
+        cdef np.ndarray[COMPLEX_T, ndim=2] cps = np.zeros([self.B, N],
+                                                          dtype=COMPLEX)
+        cdef np.ndarray[COMPLEX_T, ndim=2] dps = np.zeros([self.B, N],
+                                                          dtype=COMPLEX)
         # Find the points on the boundaries and their derivatives.
         if self.exterior:
             for k in range(self.B):
@@ -324,11 +324,11 @@ cdef class Riemann_Map:
         C = I / N * sadp  # equivalent to -TWOPI / N * 1 / (TWOPI * I) * sadp
         errinvalid = np.geterr()['invalid']  # checks the current error handling for invalid
         errdivide = np.geterr()['divide']  # checks the current error handling for divide
-        np.seterr(divide='ignore',invalid='ignore')
+        np.seterr(divide='ignore', invalid='ignore')
         K = np.array([C * sadp[t] * (normalized_dp/(cp-cp[t]) -
                                      (normalized_dp[t]/(cp-cp[t])).conjugate())
                       for t in np.arange(NB)], dtype=np.complex128)
-        np.seterr(divide=errdivide,invalid=errinvalid)  # resets the error handling
+        np.seterr(divide=errdivide, invalid=errinvalid)  # resets the error handling
         for i in range(NB):
             K[i, i] = 1
         # Nystrom Method for solving 2nd kind integrals
@@ -562,7 +562,7 @@ cdef class Riemann_Map:
                 p_vector[k, N] = (I / (3*N) * dps[k, 0] *
                                   exp(I * theta_array[k, 0]))
         self.p_vector = p_vector.flatten()
-        cdef np.ndarray[double complex, ndim=1] pq = self.cps[:,list(range(N))+[0]].flatten()
+        cdef np.ndarray[double complex, ndim=1] pq = self.cps[:, list(range(N))+[0]].flatten()
         self.pre_q_vector = pq
 
     cpdef riemann_map(self, COMPLEX_T pt):
@@ -819,12 +819,12 @@ cdef class Riemann_Map:
             for i in range(x_points):
                 for j in range(y_points):
                     pt = 1/(xmin + 0.5*xstep + i*xstep + I*(ymin + 0.5*ystep + j*ystep))
-                    z_values[j, i] = 1/(-np.dot(p_vector,1/(pre_q_vector - pt)))
+                    z_values[j, i] = 1/(-np.dot(p_vector, 1/(pre_q_vector - pt)))
         else:
             for i in range(x_points):
                 for j in range(y_points):
                     pt = xmin + 0.5*xstep + i*xstep + I*(ymin + 0.5*ystep + j*ystep)
-                    z_values[j, i] = -np.dot(p_vector,1/(pre_q_vector - pt))
+                    z_values[j, i] = -np.dot(p_vector, 1/(pre_q_vector - pt))
         return z_values, xmin, xmax, ymin, ymax
 
     @options(interpolation='catrom')
@@ -1014,7 +1014,7 @@ cdef class Riemann_Map:
                                                              thickness,
                                                              withcolor,
                                                              min_mag),
-                                        (xmin, xmax), (ymin, ymax),options))
+                                        (xmin, xmax), (ymin, ymax), options))
             return g + self.plot_boundaries(thickness = thickness)
 
     @options(interpolation='catrom')
@@ -1153,12 +1153,12 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values,
     cdef np.ndarray[COMPLEX_T, ndim=2] xderiv
     cdef np.ndarray[FLOAT_T, ndim = 2] dr, dtheta, zabs
     # (f(x+delta)-f(x-delta))/2delta
-    xderiv = (z_values[1:-1,2:]-z_values[1:-1,:-2])/(2*xstep)
+    xderiv = (z_values[1:-1, 2:]-z_values[1:-1, :-2]) / (2 * xstep)
     # b/c the function is analytic, we know the magnitude of its
     # derivative is equal in all directions
     dr = np.abs(xderiv)
     # the abs(derivative) scaled by distance from origin
-    zabs = np.abs(z_values[1:-1,1:-1])
+    zabs = np.abs(z_values[1:-1, 1:-1])
     dtheta = np.divide(dr, zabs)
     return dr, dtheta
 
@@ -1259,26 +1259,26 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
         circ_radii = []
     if spokes != 0:
         # both -pi and pi are included
-        spoke_angles = srange(-PI,PI+TWOPI/spokes,TWOPI/spokes)
+        spoke_angles = srange(-PI, PI+TWOPI/spokes, TWOPI/spokes)
     else:
         spoke_angles = []
     for i in range(imax-2):  # the d arrays are 1 smaller on each side
         for j in range(jmax-2):
-            z = z_values[i+1,j+1]
+            z = z_values[i+1, j+1]
             mag = abs(z)
             arg = phase(z)
-            dmag = dr[i,j]
-            darg = dtheta[i,j]
+            dmag = dr[i, j]
+            darg = dtheta[i, j]
             # points that change too rapidly are presumed to be borders
             # points that are too small are presumed to be outside
             if darg < DMAX and mag > min_mag:
                 for target in circ_radii:
                     if abs(mag - target)/dmag < precision:
-                        rgb[i+1,j+1] = rgbcolor
+                        rgb[i+1, j+1] = rgbcolor
                         break
                 for target in spoke_angles:
                     if abs(arg - target)/darg < precision:
-                        rgb[i+1,j+1] = rgbcolor
+                        rgb[i+1, j+1] = rgbcolor
                         break
     return rgb
 
@@ -1472,7 +1472,7 @@ cpdef cauchy_kernel(t, args):
     cdef COMPLEX_T z = args[1]
     cdef int n = args[2]
     part = args[3]
-    result = exp(I*analytic_boundary(t,n, epsilon))/(exp(I*t)+epsilon*exp(-I*t)-z) *  \
+    result = exp(I*analytic_boundary(t, n, epsilon))/(exp(I*t)+epsilon*exp(-I*t)-z) *  \
         (I*exp(I*t)-I*epsilon*exp(-I*t))
     if part == 'c':
         return result
@@ -1513,8 +1513,8 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
     """
     # evaluates the Cauchy integral of the boundary, split into the real
     # and imaginary results because numerical_integral can't handle complex data.
-    rp = 1/(TWOPI)*numerical_integral(cauchy_kernel,0,2*pi,
-                                      params = [epsilon,z,n,'i'])[0]
-    ip = 1/(TWOPI*I)*numerical_integral(cauchy_kernel,0,2*pi,
-                                        params = [epsilon,z,n,'r'])[0]
+    rp = 1 / (TWOPI)*numerical_integral(cauchy_kernel, 0, 2*pi,
+                                        params = [epsilon, z, n, 'i'])[0]
+    ip = 1 / (TWOPI*I)*numerical_integral(cauchy_kernel, 0, 2*pi,
+                                          params = [epsilon, z, n, 'r'])[0]
     return rp + ip
