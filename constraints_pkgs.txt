@@ -22,7 +22,6 @@
 # Reference on the format:
 # https://pip.pypa.io/en/stable/user_guide/#constraints-files
 #
-sage_conf            @ file://${SAGE_ROOT}/pkgs/sage-conf
 sage_docbuild        @ file://${SAGE_ROOT}/pkgs/sage-docbuild
 sage_setup           @ file://${SAGE_ROOT}/pkgs/sage-setup
 sage_sws2rst         @ file://${SAGE_ROOT}/pkgs/sage-sws2rst

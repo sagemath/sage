@@ -30,7 +30,7 @@ export SAGE_PKGCONFIG=/doesnotexist
 export SAGE_SHARE=/doesnotexist
 
 # However, we only unset SAGE_LOCAL and SAGE_PKG_CONFIG_PATH.
-# sage_setup.setenv receives them from sage_conf via sage.env;
+# sage_setup.setenv receives them from sage.env;
 # the poisoned environment variables would override them.
 unset SAGE_LOCAL
 unset SAGE_PKG_CONFIG_PATH

@@ -60,7 +60,7 @@ ecm_bin = find_program(
 conf_data.set('SAGE_ECMBIN', ecm_bin.full_path())
 
 config_file = configure_file(
-  input: '../../pkgs/sage-conf/_sage_conf/_conf.py.in',
+  input: 'config.py.in',
   output: 'config.py',
   install_dir: sage_install_dir,
   install: true,

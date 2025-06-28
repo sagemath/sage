@@ -537,10 +537,6 @@ Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
 Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
 Not shown in the diagram are build dependencies and optional dependencies for testing.
 
-- `sage_conf <https://pypi.org/project/sage-conf/>`_ is a configuration
-  module. It provides the configuration variable settings determined by the
-  ``configure`` script.
-
 - `sagemath-environment <https://pypi.org/project/sagemath-environment/>`_
   provides the connection to the system and software environment. It includes
   :mod:`sage.env`, :mod:`sage.features`, :mod:`sage.misc.package_dir`, etc.
@@ -654,10 +650,6 @@ To create these wheels, use the command ``make wheels``::
 
 (You can also use ``./configure --enable-wheels`` to ensure that
 these wheels are always available and up to date.)
-
-Note in particular the wheel for **sage-conf**, which provides
-configuration variable settings and the connection to the non-Python
-packages installed in ``SAGE_LOCAL``.
 
 We can now set up a separate virtual environment, in which we install
 these wheels and our distribution to be tested.  This is where
