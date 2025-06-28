@@ -195,7 +195,7 @@ from $distutils_extension import Extension
 from sys import exit
 modules = list((Extension("config_check_distutils_cxx", list(("conftest.cpp",)),
                           extra_compile_args=list(("-std=c++11",)), language="c++"),))
-setup(name="config_check_distutils_cxx", ext_modules=modules)
+setup(name="config_check_distutils_cxx", ext_modules=modules, py_modules=["conftest"])
 exit(0)
 EOF
 ])

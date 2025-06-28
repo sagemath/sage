@@ -143,14 +143,43 @@ extension_data_cpp = {
 foreach name, pyx : extension_data_cpp
   override_options = ['cython_language=cpp']
   if name in [
+    'matrix_gf2e_dense',
     'matrix_integer_dense',
     'matrix_integer_sparse',
     'matrix_modn_dense_float',
     'matrix_modn_dense_double',
     'matrix_modn_sparse',
   ]
-    # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
+    # Temporary workaround for https://github.com/linbox-team/linbox/issues/306 and https://github.com/malb/m4rie/pull/6
     override_options += ['cpp_std=c++11']
+  endif
+
+  deps = [
+    py_dep,
+    blas,
+    cypari2,
+    cysignals,
+    fflas,
+    flint,
+    gd,
+    givaro,
+    gmp,
+    gmpxx,
+    iml,
+    linbox,
+    m,
+    m4ri,
+    mpfi,
+    mpfr,
+    ntl,
+    numpy,
+    pari,
+    png,
+    singular,
+    zlib,
+  ]
+  if name == 'matrix_gf2e_dense'
+    deps += [m4rie]
   endif
 
   py.extension_module(
@@ -167,31 +196,7 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      blas,
-      cypari2,
-      cysignals,
-      fflas,
-      flint,
-      gd,
-      givaro,
-      gmp,
-      gmpxx,
-      iml,
-      linbox,
-      m,
-      m4ri,
-      m4rie,
-      mpfi,
-      mpfr,
-      ntl,
-      numpy,
-      pari,
-      png,
-      singular,
-      zlib,
-    ],
+    dependencies: deps,
   )
 endforeach
 

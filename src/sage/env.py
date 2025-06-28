@@ -48,6 +48,7 @@ from typing import Optional
 
 from platformdirs import site_data_dir, user_data_dir
 
+import sage.config
 from sage import version
 
 # All variables set by var() appear in this SAGE_ENV dict
@@ -149,15 +150,7 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
     else:
         value = os.environ.get(key)
     if value is None:
-        try:
-            import sage_conf
-            value = getattr(sage_conf, key, None)
-        except ImportError:
-            try:
-                import sage.config
-                value = getattr(sage.config, key, None)
-            except ImportError:
-                pass
+        value = getattr(sage.config, key, None)
 
     # Try all fallbacks in order as long as we don't have a value
     for f in fallbacks:

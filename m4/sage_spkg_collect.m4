@@ -173,7 +173,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
         dnl sage repository (and thus the release tarball). As a result,
         dnl we do not need to download the sources, which is what
         dnl "in_sdist" really means. At the time of this writing, the
-        dnl only standard script packages are sage_conf and sagelib.
+        dnl only standard script packages are sagelib.
         dnl The sources of these packages are in subdirectories of
         dnl $SAGE_ROOT/pkgs.
         m4_define([in_sdist], [no])dnl

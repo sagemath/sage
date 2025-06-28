@@ -4,11 +4,14 @@ cpp = meson.get_compiler('cpp')
 cython = meson.get_compiler('cython')
 
 # Setup dependencies that are needed by many modules
-inc_numpy = run_command(
-  py,
-  [
-    '-c',
-    '''
+numpy = dependency('numpy', required: false)
+if not numpy.found()
+  # Older versions of numpy don't have a pkg-config file
+  inc_numpy = run_command(
+    py,
+    [
+      '-c',
+      '''
 from os.path import relpath
 import numpy
 path = numpy.get_include()
@@ -16,11 +19,12 @@ try:
   print(relpath(path))
 except Exception:
   print(path)
-    '''.strip(),
-  ],
-  check: true,
-).stdout().strip()
-numpy = declare_dependency(include_directories: inc_numpy)
+      '''.strip(),
+    ],
+    check: true,
+  ).stdout().strip()
+  numpy = declare_dependency(include_directories: inc_numpy)
+endif
 
 inc_cysignals = run_command(
   py,
