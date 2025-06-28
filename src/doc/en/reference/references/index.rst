@@ -110,7 +110,7 @@ REFERENCES:
 
 .. [ACN2023] Ali Al Zoobi, David Coudert, Nicolas Nisse
              Finding the k Shortest Simple Paths: Time and Space trade-offs
-             ACM Journal of Experimental Algorithmics, 2023, 28, pp.23
+             ACM Journal of Experimental Algorithmics, 2023, 28, pp.23 :doi:`10.1145/3626567`.
 
 .. [ALL2002] P. Auger, G. Labelle and P. Leroux, *Combinatorial
              addition formulas and applications*, Advances in Applied
