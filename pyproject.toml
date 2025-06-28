@@ -201,6 +201,7 @@ dev = [
   "conda-lock",
   "grayskull",
   "toml",
+  "python-build",
 ]
 
 [tool.ruff]
