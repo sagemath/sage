@@ -113,8 +113,7 @@ clean:
 	fi
 
 # "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
-# Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
-# Also cython_debug is for editable installs.
+# Cleaning .so files (and .c and .cpp files associated with .pyx files), cython_debug and "sagelib/src/build" is for old editable installs.
 sagelib-clean:
 	@echo "Deleting Sage library build artifacts..."
 	if [ -d "$(SAGE_SRC)" ]; then \
@@ -125,6 +124,12 @@ sagelib-clean:
 	     cd sage/ext/interpreters/ && rm -f *.so *.c *.h *.py* *.pxd) \
 	    && rm -rf "$(SAGE_ROOT)"/build/pkgs/sagelib/src/build; \
 	fi
+	@echo "Wiping meson build directories..."
+	@for d in "$(SAGE_ROOT)"/build/cp[0-9]*; do \
+		if [ -d "$$d" ]; then \
+			meson setup --wipe "$$d"; \
+		fi; \
+	done
 
 sage_docbuild-clean:
 	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
