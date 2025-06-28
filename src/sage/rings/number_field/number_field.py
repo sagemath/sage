@@ -112,6 +112,7 @@ from sage.structure.proof.proof import get_flag
 from . import maps
 from . import structure
 from . import number_field_morphisms
+from . import number_field_base
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -121,6 +122,29 @@ from sage.rings.real_mpfr import RR
 
 from sage.interfaces.abc import GapElement
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
+
+from sage.misc.latex import latex
+
+import sage.rings.infinity as infinity
+from sage.rings.rational import Rational
+from sage.rings.integer import Integer
+import sage.rings.polynomial.polynomial_element as polynomial_element
+import sage.groups.abelian_gps.abelian_group
+import sage.rings.complex_interval_field
+
+from sage.structure.factory import UniqueFactory
+from . import number_field_element
+from . import number_field_element_quadratic
+from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
+from sage.libs.pari import pari
+from cypari2.gen import Gen as pari_gen
+
+from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.cif import CIF
+from sage.rings.real_double import RDF
+from sage.rings.real_lazy import RLF, CLF
+from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 lazy_import('sage.libs.gap.element', 'GapElement', as_='LibGapElement')
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicFieldElement')
@@ -192,28 +216,6 @@ def proof_flag(t):
         'banana'
     """
     return get_flag(t, "number_field")
-
-
-from sage.misc.latex import latex
-
-import sage.rings.infinity as infinity
-from sage.rings.rational import Rational
-from sage.rings.integer import Integer
-import sage.rings.polynomial.polynomial_element as polynomial_element
-
-from sage.structure.factory import UniqueFactory
-from . import number_field_element
-from . import number_field_element_quadratic
-from .number_field_ideal import NumberFieldIdeal, NumberFieldFractionalIdeal
-from sage.libs.pari import pari
-from cypari2.gen import Gen as pari_gen
-
-from sage.rings.rational_field import QQ
-from sage.rings.integer_ring import ZZ
-from sage.rings.cif import CIF
-from sage.rings.real_double import RDF
-from sage.rings.real_lazy import RLF, CLF
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 
 
 def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
@@ -422,12 +424,12 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
         sage: K.<a> = NumberField(2*x^3 + x + 1)
         sage: K.pari_polynomial()
-        x^3 - x^2 - 2
+        x^3 + 2*x + 4
 
     Elements and ideals may be converted to and from PARI as follows::
 
         sage: pari(a)
-        Mod(-1/2*y^2 + 1/2*y, y^3 - y^2 - 2)
+        Mod(1/2*y, y^3 + 2*y + 4)
         sage: K(pari(a))
         a
         sage: I = K.ideal(a); I
@@ -1190,9 +1192,6 @@ class CyclotomicFieldFactory(UniqueFactory):
 CyclotomicField = CyclotomicFieldFactory("sage.rings.number_field.number_field.CyclotomicField")
 
 
-from . import number_field_base
-
-
 is_NumberField = number_field_base.is_NumberField
 
 
@@ -1657,10 +1656,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         a warning is printed unless ``check=False`` is specified::
 
             sage: b = pari(a); b                                                        # needs sage.libs.pari
-            Mod(-1/12*y^2 - 1/12*y + 1/6, y^3 - 3*y - 22)
+            Mod(1/6*y, y^3 - 18*y + 72)
             sage: K(b.lift())                                                           # needs sage.libs.pari
-            doctest:...: UserWarning: interpreting PARI polynomial -1/12*y^2 - 1/12*y + 1/6
-            relative to the defining polynomial x^3 - 3*x - 22 of the PARI number field
+            doctest:warning...
+            UserWarning: interpreting PARI polynomial 1/6*y relative to the defining polynomial x^3 - 18*x + 72 of the PARI number field
             a
             sage: K(b.lift(), check=False)                                              # needs sage.libs.pari
             a
@@ -2600,11 +2599,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         f = x**2 + x
         while w < u and not w % 2:
             s = F.lift(q((a - 1) / pi**w).sqrt())
-            a = a / (1 + s*(pi**(w/2)))**2
+            a = a / (1 + s * (pi**(w / 2)))**2
             w = (a - 1).valuation(p)
         if w < u and w % 2:
             return v + w
-        if w == u and (f + F((a-1) / 4)).is_irreducible():
+        if w == u and (f + F((a - 1) / 4)).is_irreducible():
             return v + w
         return Infinity
 
@@ -3415,7 +3414,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
                     H.append(chi)
         return H
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return string representation of this number field.
 
@@ -3435,7 +3434,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             result += " with {} = {}".format(self.variable_name(), gen)
         return result
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of this number field. This is viewed as
         a polynomial quotient ring over a field.
@@ -4203,16 +4202,40 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.<a> = NumberField(2*x^2 + 1/3)
             sage: K._pari_absolute_structure()
             (y^2 + 6, Mod(1/6*y, y^2 + 6), Mod(6*y, y^2 + 1/6))
+
+        TESTS:
+
+        Checking that the representation in not improved in a costly manner (see :issue:`39920`)::
+
+            sage: from cysignals.alarm import alarm
+            sage: K = NumberField(ZZ['x']([1]*200 + [2]), 'a')
+            sage: QQasNF = NumberField(ZZ['x']([1,-1]), 'b')
+            sage: alarm(0.5) # ensuring that a trivial isomorphism finishes in reasonable time
+            sage: K.is_isomorphic(QQasNF)
+            False
+            sage: cancel_alarm()
         """
-        f = self.absolute_polynomial()._pari_with_name('y')
-        f = f * f.content().denominator()
-        if f.pollead() == 1:
-            g = f
-            alpha = beta = g.variable().Mod(g)
-        else:
-            g, alpha = f.polredbest(flag=1)
-            beta = alpha.modreverse()
-        return g, alpha, beta
+        g = self.absolute_polynomial()
+        # make it integral
+        g *= g.denominator()
+        g = g.change_ring(ZZ)
+        scalar = g.leading_coefficient()
+        if scalar != 1:
+            # doing g = g(x/scalar) in linear time
+            from operator import mul
+            from itertools import accumulate
+            # scalar^i
+            powers = accumulate([1/scalar] + [scalar] * g.degree(), mul)
+            # need to double reverse
+            g = g.parent()([c*p for c, p in zip(g.reverse(), powers)]).reverse()
+        g /= g.content()
+        assert g.leading_coefficient() == 1
+        f = g._pari_with_name('y')
+        y = f.variable()
+        alpha = (y/scalar).Mod(f)
+        beta = alpha.modreverse()
+        return f, alpha, beta
+
 
     def pari_polynomial(self, name='x'):
         """
@@ -4237,11 +4260,11 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: y = polygen(QQ)
             sage: k.<a> = NumberField(y^2 - 3/2*y + 5/3)
             sage: k.pari_polynomial()
-            x^2 - x + 40
+            x^2 - 9*x + 60
             sage: k.polynomial().__pari__()
             x^2 - 3/2*x + 5/3
             sage: k.pari_polynomial('a')
-            a^2 - a + 40
+            a^2 - 9*a + 60
 
         Some examples with relative number fields::
 
@@ -6526,10 +6549,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         # faster than computing all the conjugates, etc ...
 
         # flag to disable FLATTER, which is much more unstable than fplll
-        flag = 1 if pari.version() >= (2,17) else 0
+        flag = 1 if pari.version() >= (2, 17) else 0
         if self.is_totally_real():
             from sage.matrix.constructor import matrix
-            M = matrix(ZZ, d, d, [[(x*y).trace() for x in ZK] for y in ZK])
+            M = matrix(ZZ, d, d, [[(x * y).trace() for x in ZK] for y in ZK])
             T = pari(M).qflllgram(flag=flag)
         else:
             M = self.minkowski_embedding(ZK, prec=prec)
@@ -10841,7 +10864,6 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             from sage.rings.complex_double import CDF
 
             self._standard_embedding = not CDF.has_coerce_map_from(self) or CDF(self.gen()).imag() > 0
-            self._cache_an_element = None
 
             if n == 4:
                 self._element_class = number_field_element_quadratic.NumberFieldElement_gaussian
@@ -10997,7 +11019,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         from sage.libs.gap.libgap import libgap
         return libgap.CyclotomicField(self.__n)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return string representation of this cyclotomic field.
 
@@ -11029,7 +11051,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         """
         return self.__n
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of this cyclotomic field.
 

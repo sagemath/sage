@@ -196,7 +196,7 @@ cdef class LibSingularOptions_abstract:
         try:
             return bool(self.global_options[0] & self.name_map[name])
         except KeyError:
-            raise NameError("Option '%s' unknown."%(name,))
+            raise NameError("Option '%s' unknown." % (name,))
 
     def __setitem__(self, name, value):
         """
@@ -226,7 +226,7 @@ cdef class LibSingularOptions_abstract:
                 global Kstd1_mu
                 Kstd1_mu = value
         except KeyError:
-            raise NameError("Option '%s' unknown."%(name,))
+            raise NameError("Option '%s' unknown." % (name,))
 
     def __int__(self):
         """
@@ -295,7 +295,7 @@ cdef class LibSingularOptions_abstract:
             sage: sopt
             general options for libSingular (current value 0x06000082)
         """
-        return "%s options for libSingular (current value 0x%08x)"%(self.name, self.global_options[0])
+        return "%s options for libSingular (current value 0x%08x)" % (self.name, self.global_options[0])
 
 
 cdef class LibSingularOptions(LibSingularOptions_abstract):
@@ -651,7 +651,7 @@ cdef class LibSingularOptionsContext:
         Kstd1_deg = self.bck_degBound.pop()
         Kstd1_mu  = self.bck_multBound.pop()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         EXAMPLES::
 
@@ -659,7 +659,7 @@ cdef class LibSingularOptionsContext:
             sage: opt_ctx
             general options context for libSingular
         """
-        return "%s options context for libSingular"%(self.opt.name)
+        return "%s options context for libSingular" % (self.opt.name)
 
 
 opt = LibSingularOptions()
