@@ -1,0 +1,14 @@
+--- a/pkg/digraphs/src/planar.c
++++ b/pkg/digraphs/src/planar.c
+@@ -38,10 +38,7 @@
+ #include "c/graphK33Search.h"
+ #include "c/graphK4Search.h"
+ #else
+-#include "planarity/graph.h"
+-#include "planarity/graphK23Search.h"
+-#include "planarity/graphK33Search.h"
+-#include "planarity/graphK4Search.h"
++#include "planarity/graphLib.h"
+ #endif
+ #if defined(__clang__)
+ #pragma clang diagnostic pop

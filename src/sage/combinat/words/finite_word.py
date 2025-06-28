@@ -936,7 +936,7 @@ class FiniteWord_class(Word_class):
         """
         return self.is_suffix(other) and self.length() < other.length()
 
-    def has_suffix(self, other):
+    def has_suffix(self, other) -> bool:
         """
         Test whether ``self`` has ``other`` as a suffix.
 
@@ -1017,7 +1017,7 @@ class FiniteWord_class(Word_class):
         """
         return self.is_prefix(other) and self.length() < other.length()
 
-    def has_prefix(self, other):
+    def has_prefix(self, other) -> bool:
         r"""
         Test whether ``self`` has ``other`` as a prefix.
 
@@ -3548,7 +3548,7 @@ class FiniteWord_class(Word_class):
             return 0
         return self.length() // self.primitive_length()
 
-    def has_period(self, p):
+    def has_period(self, p) -> bool:
         r"""
         Return ``True`` if ``self`` has the period `p`,
         ``False`` otherwise.
