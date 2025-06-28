@@ -432,7 +432,7 @@ def groebner_basis_buchberger(I, prec, py_integral):
          ...0000000001*x^2*y + ...1210121020 + O(3^10 * <x, y>),
          ...000000001*y^2 + ...210121020*x + O(3^9 * <x, y>)]
     """
-    cdef list gb, rgb, indices, ts, S = [ ]
+    cdef list gb, rgb, indices, S = [ ]
     cdef int i, j, l
     cdef TateAlgebraTerm ti, tj, t
     cdef TateAlgebraElement f, g, r, s
@@ -642,7 +642,6 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
     cdef list terms = v._terms_c()
     cdef int index = 0
     cdef int i
-    cdef bint in_rem
 
     f = v._new_c()
     f._poly = PolyDict(v._poly.__repn, None)
@@ -872,7 +871,6 @@ def groebner_basis_pote(I, prec, verbose=0):
         # we add signatures
         sgb = [ (None, g) for g in gb if g ]
         # We compute initial J-pairs
-        l = len(sgb)
         p = (term_one, f.add_bigoh(prec))
         Jpairs = [ ]
         for P in sgb:
@@ -1159,7 +1157,6 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
         # we add signatures
         sgb = [ (None, g) for g in gb if g ]
         # We compute initial J-pairs
-        l = len(sgb)
         p = (term_one, f.add_bigoh(prec))
         Jpairs = [ ]
         for P in sgb:

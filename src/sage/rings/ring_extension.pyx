@@ -479,16 +479,16 @@ class RingExtensionFactory(UniqueFactory):
             sage: RingExtension.create_object((8,9,0), key, **extra_args)
             Rational Field over its base
         """
-        defining_morphism, gens, names = key
+        defining_morphism, _, _ = key
         constructors = extra_args['constructors']
         if len(constructors) == 0:
             raise NotImplementedError("no constructor available for this extension")
-        for (constructor, kwargs) in constructors[:-1]:
+        for constructor, kwargs in constructors[:-1]:
             try:
                 return constructor(defining_morphism, **kwargs)
             except (NotImplementedError, ValueError, TypeError):
                 pass
-        (constructor, kwargs) = constructors[-1]
+        constructor, kwargs = constructors[-1]
         return constructor(defining_morphism, **kwargs)
 
 
