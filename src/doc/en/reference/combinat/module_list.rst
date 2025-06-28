@@ -1,14 +1,6 @@
 Comprehensive module list
 =========================
 
-.. NOTE::
-
-    This list was initially created by running in a Sage shell (``sage -sh``)::
-
-    $ src/doc/en/reference/make_module_list.sh sage/combinat
-
-    and copy-pasting the result back here divided by packages.
-
 ``sage.combinat``
 -----------------
 
@@ -523,3 +515,12 @@ See also
 
     sage/rings/cfinite_sequence
     sage/rings/lazy_species
+
+.. NOTE::
+
+    This list was initially created by executing in a Sage shell (``sage -sh``)::
+
+    $ src/doc/en/reference/make_module_list.sh sage/combinat
+
+    The result was copy-pasted here, grouped by package.
+
