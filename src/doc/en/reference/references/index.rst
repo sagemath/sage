@@ -143,7 +143,7 @@ REFERENCES:
             *Dyson's crank of a partition*.
             Bull. Amer. Math. Soc. (N.S.) Volume 18, Number 2 (1988),
             167-171.
-            http://projecteuclid.org/euclid.bams/1183554533
+            :doi:`10.1090/S0273-0979-1988-15637-6`
 
 .. [AGHJLPR2017] Benjamin Assarf, Ewgenij Gawrilow, Katrin Herr, Michael Joswig,
                  Benjamin Lorenz, Andreas Paffenholz, and Thomas Rehn,
@@ -279,7 +279,7 @@ REFERENCES:
 
 .. [Ang1997] B. Anglès. 1997. *On some characteristic polynomials attached to
              finite Drinfeld modules.* manuscripta mathematica 93, 1 (01 Aug 1997),
-             369–379. https://doi.org/10.1007/BF02677478
+             369–379. :doi:`10.1007/BF02677478`
 
 .. [ANR2023] Robert Angarone, Anastasia Nathanson, and Victor Reiner. *Chow rings of
              matroids as permutation representations*, 2023. :arxiv:`2309.14312`.
@@ -1353,7 +1353,7 @@ REFERENCES:
              *On the poset of all posets on* `n` *elements*
              Volume 50, Issue 2, 6 May 1994, Pages 111-123
              Discrete Applied Mathematics
-             http://www.sciencedirect.com/science/article/pii/0166218X9200169M
+             :doi:`10.1016/0166-218X(92)00169-M`
 
 .. [Bru1998] \J. Brundan. *Modular branching rules and the Mullineux map
              for Hecke algebras of type* `A`.
@@ -1418,7 +1418,7 @@ REFERENCES:
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
              Springer, 1989.
-             :doi:`https://doi.org/10.1007/978-1-4612-4542-1`
+             :doi:`10.1007/978-1-4612-4542-1`
 
 .. [BV2004] Jean-Luc Baril, Vincent Vajnovszki. *Gray code for derangements*.
             Discrete Applied Math. 140 (2004)
@@ -1878,7 +1878,7 @@ REFERENCES:
             *On blocks of Deligne's category*
             `\underline{\mathrm{Rep}}(S_t)`.
             :arxiv:`0910.5695v2`,
-            https://doi.org/10.1016/j.aim.2010.08.010
+            :doi:`10.1016/j.aim.2010.08.010`
 
 .. [Coh1981] \A. M. Cohen,
              *A synopsis of known distance-regular graphs with large diameters*,
@@ -1946,7 +1946,7 @@ REFERENCES:
 .. [Coo2006] \K. Coolsaet,
              *The uniqueness of the strongly regular graph srg(105,32,4,12)*,
              Bull. Belg. Math. Soc. 12(2006), 707-718.
-             http://projecteuclid.org/euclid.bbms/1136902608
+             https://projecteuclid.org/euclid.bbms/1136902608
 
 .. [Cou2014] Alain Couvreur, *Codes and the Cartier operator*,
              Proceedings of the American Mathematical Society 142.6 (2014): 1983-1996.
@@ -2287,7 +2287,7 @@ REFERENCES:
 
 .. [Dil1940] Lattice with Unique Irreducible Decompositions
              \R. P. Dilworth, 1940 (Annals of Mathematics 41, 771-777)
-             https://doi.org/10.2307/1968857
+             :doi:`10.2307/1968857`
 
 .. [Di2000] \L. Dissett, Combinatorial and computational aspects of
             finite geometries, 2000,
@@ -2499,11 +2499,11 @@ REFERENCES:
 .. [DW1995] Andreas W.M. Dress and Walter Wenzel, *A Simple Proof of
             an Identity Concerning Pfaffians of Skew Symmetric
             Matrices*, Advances in Mathematics, volume 112, Issue 1,
-            April 1995,
-            pp. 120-134. http://www.sciencedirect.com/science/article/pii/S0001870885710298
+            April 1995, pp. 120-134.
+            :doi:`10.1006/aima.1995.1029`
 
-.. [DW2007] \I. Dynnikov and B. Wiest, On the complexity of
-            braids, J. Europ. Math. Soc. 9 (2007)
+.. [DW2007] \I. Dynnikov and B. Wiest, *On the complexity of
+            braids*, J. Europ. Math. Soc. 9 (2007)
 
 .. [Dy1993] \M. J. Dyer. *Hecke algebras and shellings of Bruhat
             intervals*. Compositio Mathematica, 1993, 89(1): 91-115.
@@ -2542,10 +2542,9 @@ REFERENCES:
           graduate course, Leiden
           (notes: https://www.math.leidenuniv.nl/~edix/oww/mathofcrypt/carls_edixhoven/kedlaya.pdf)
 
-.. [Ega1981] Yoshimi Egawa, Characterization of H(n, q) by the parameters,
+.. [Ega1981] Yoshimi Egawa, *Characterization of H(n, q) by the parameters*,
              Journal of Combinatorial Theory, Series A, Volume 31, Issue 2,
-             1981, Pages 108-125, ISSN 0097-3165,:doi:`10.1016/0097-3165(81)90007-8`.
-             (http://www.sciencedirect.com/science/article/pii/0097316581900078)
+             1981, Pages 108-125. :doi:`10.1016/0097-3165(81)90007-8`.
 
 .. [EGNO2015] Pavel Etingof, Shlomo Gelaki, Dmitri Nikshych and Victor Ostrik,
                *Tensor Categories*, AMS Mathematical Surveys and Monographs 205 (2015).
@@ -3200,7 +3199,7 @@ REFERENCES:
 .. [GS1984] \A. M. Garsia, Dennis Stanton.
             *Group actions on Stanley-Reisner rings and invariants of
             permutation groups*. Adv. in Math. **51** (1984), 107-201.
-            http://www.sciencedirect.com/science/article/pii/0001870884900057
+            :doi:`10.1016/0001-8708(84)90005-7`
 
 .. [GS1999] Venkatesan Guruswami and Madhu Sudan, Improved Decoding of
             Reed-Solomon Codes and Algebraic-Geometric Codes, 1999
@@ -3614,8 +3613,8 @@ REFERENCES:
 .. [HT1972] Samuel Huang and Dov Tamari.
             *Problems of associativity: A simple proof for the lattice property
             of systems ordered by a semi-associative law*.
-            J. Combinatorial Theory Ser. A. (1972).
-            http://www.sciencedirect.com/science/article/pii/0097316572900039 .
+            \J. Combinatorial Theory Ser. A. (1972).
+            :doi:`10.1016/0097-3165(72)90003-9`
 
 .. [Hub1975] \X. L. Hubaut.
              *Strongly regular graphs*.
@@ -4202,7 +4201,7 @@ REFERENCES:
 .. [Kra1999] \C. Krattenthaler,
            *Another Involution Principle-Free Bijective Proof of Stanley's Hook Content Formula*,
            Journal of Combinatorial Theory, Series A, **88** (1999), 66-92,
-           http://www.sciencedirect.com/science/article/pii/0012365X9290368P
+           :doi:`10.1006/jcta.1999.2979`
 
 .. [Kra1999det] \C. Krattenthaler, *Advanced determinant calculus*,
                 Sém. Lothar. Combin. **42** (1999), Art. B42q, 67pp.
@@ -4221,7 +4220,7 @@ REFERENCES:
 
 .. [Krumm2016] Daid Krumm, *Computing Points of Bounded Height in Projective Space over a Number Field*,
                MATHEMATICS OF COMPUTATION, Volume 85, Number 297, January 2016, Pages 423–447.
-               http://dx.doi.org/10.1090/mcom/2984
+               :doi:`10.1090/mcom/2984`
 
 .. [KR2001] \J. Kahane and A. Ryba. *The hexad game*, Electronic
             Journal of Combinatorics, **8**
@@ -4654,7 +4653,7 @@ REFERENCES:
             *Hopf algebra of the planar binary trees*,
             Advances in Mathematics, volume 139, issue 2,
             10 November 1998, pp. 293-309.
-            http://www.sciencedirect.com/science/article/pii/S0001870898917595
+            :doi:`10.1006/aima.1998.1759`
 
 .. [LR0102066] Jean-Louis Loday and Maria O. Ronco.
                Order structure on the algebra of permutations
@@ -5148,7 +5147,7 @@ REFERENCES:
              *Alternating sign matrices and descending plane partitions*,
              Journal of Combinatorial Theory, Series A,
              Volume 34, Issue 3, May 1983, Pages 340--359.
-             http://www.sciencedirect.com/science/article/pii/0097316583900687
+             :doi:`10.1016/0097-3165(83)90068-7`
 
 .. [MR2016] \B. Malmskog, C. Rasmussen, *Picard curves over Q
             with good reduction away from 3*. LMS Journal of Computation and
@@ -6214,7 +6213,7 @@ REFERENCES:
 .. [Sq1998] Matthew B. Squire.
             *Generating the acyclic orientations of a graph*.
             Journal of Algorithms, Volume 26, Issue 2, Pages 275 - 290, 1998.
-            (https://doi.org/10.1006/jagm.1997.0891)
+            :doi:`10.1006/jagm.1997.0891`
 
 .. [SS1983] Shorey and Stewart. "On the Diophantine equation a
             x^{2t} + b x^t y + c y^2 = d and pure powers in recurrence
@@ -6466,7 +6465,7 @@ REFERENCES:
 .. [Sut2002] Ruedi Suter.
              *Young's Lattice and Dihedral Symmetries*.
              Europ. J. Combinatorics (2002) 23, 233--238.
-             http://www.sciencedirect.com/science/article/pii/S0195669801905414
+             :doi:`10.1006/eujc.2001.0541`
 
 .. [Sut2012] Sutherland. A local-global principle for rational
              isogenies of prime degree. Journal de Théorie des Nombres de Bordeaux,
@@ -6700,8 +6699,8 @@ REFERENCES:
 
 .. [TY2009] Hugh Thomas and Alexander Yong, *A jeu de taquin theory for
             increasing tableaux, with applications to K-theoretic Schubert
-            calculus*, Algebra and Number Theory 3 (2009), 121-148,
-            https://projecteuclid.org/euclid.ant/1513797353
+            calculus*, Algebra and Number Theory 3 (2009), 121-148.
+            :doi:`10.2140/ant.2009.3.121`
 
 .. _ref-U:
 
