@@ -402,7 +402,7 @@ REFERENCES:
             computation. Birkhauser Basel, 2000.
 
 .. [Ava2007] \J.-C. Aval. *Keys and alternating sign matrices*.
-            Sem. Lothar. Combin. 59 (2007/10), Art. B59f, 13 pp.
+            Sém. Lothar. Combin. 59 (2007/10), Art. B59f, 13 pp.
 
 .. [Ava2017] \R. Avanzi,
              *The QARMA block cipher family*; in ToSC, (2017.1), pp. 4-44.
@@ -5464,7 +5464,7 @@ REFERENCES:
 
 .. [Pak2002] Igor Pak,
              *Hook length formula and geometric combinatorics*,
-             Seminaire Lotharingien de Combinatoire, 46 (2001),
+             Séminaire Lotharingien de Combinatoire, 46 (2001),
              B46f,
              https://eudml.org/doc/121696
 
@@ -6605,7 +6605,7 @@ REFERENCES:
               Lecture Notes in Math., Vol. 476, Springer, Berlin, 1975.
 
 .. [Tate1966] John Tate, *On the conjectures of Birch and Swinnerton-Dyer and
-              a geometric analog*. Seminaire Bourbaki, Vol. 9,
+              a geometric analog*. Séminaire Bourbaki, Vol. 9,
               Exp. No. 306, 1966.
 
 .. [Tate1966b] John Tate, *Endomorphisms of Abelian Varieties over
