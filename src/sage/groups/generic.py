@@ -1716,7 +1716,7 @@ def structure_description(G, latex=False):
     def correct_dihedral_degree(match):
         return "%sD%d" % (match.group(1), int(match.group(2)) // 2)
 
-    description = str(G._gap_().StructureDescription())
+    description = str(G._libgap_().StructureDescription())
 
     description = re.sub(r"(\A|\W)D(\d+)", correct_dihedral_degree, description)
     if not latex:

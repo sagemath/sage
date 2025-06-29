@@ -144,7 +144,7 @@ class ClassFunction_gap(SageObject):
         """
         return str(self._gap_classfunction)
 
-    def _gap_(self, gap):
+    def _gap_(self, gap=None):
         r"""
         Coerce ``self`` into a GAP element.
 
@@ -156,7 +156,7 @@ class ClassFunction_gap(SageObject):
             Character of Cyclic group of order 4 as a permutation group
             sage: type(_)
             <class 'sage.groups.class_function.ClassFunction_gap'>
-            sage: chi._gap_()
+            sage: gap(chi)
             ClassFunction( CharacterTable( Group( [ (1,2,3,4) ] ) ), [ 1, -1, 1, -1 ] )
             sage: type(_)
             <class 'sage.interfaces.gap.GapElement'>
