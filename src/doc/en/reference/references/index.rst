@@ -1109,7 +1109,7 @@ REFERENCES:
         :arxiv:`1805.05736`.
 
 .. [BM2004] John M. Boyer and Wendy J. Myrvold, *On the Cutting Edge:
-            *Simplified `O(n)` Planarity by Edge Addition*. Journal of Graph
+            *Simplified* `O(n)` *Planarity by Edge Addition*. Journal of Graph
             Algorithms and Applications, Vol. 8, No. 3, pp. 241-273,
             2004. :doi:`10.7155/jgaa.00091`.
 
@@ -1155,7 +1155,7 @@ REFERENCES:
               :arxiv:`cs/0609020`
 
 .. [BN2010] \D. Bump and M. Nakasuji.
-            *Integration on `p`-adic groups and crystal bases*.
+            *Integration on p-adic groups and crystal bases*.
             Proc. Amer. Math. Soc. 138(5), pp. 1595--1605.
 
 .. [BN2008] Victor V. Batyrev and Benjamin Nill. Combinatorial aspects
@@ -1204,7 +1204,7 @@ REFERENCES:
             Communications*. John Wiley and Sons, 1982.
 
 .. [BP1993] Dominique Bernardi and Bernadette Perrin-Riou,
-            *Variante `p`-adique de la conjecture de Birch et
+            *Variante p-adique de la conjecture de Birch et
             Swinnerton-Dyer (le cas supersingulier)*,
             C. R. Acad. Sci. Paris, Sér I. Math., 317 (1993), no. 3,
             227-232.
@@ -2128,7 +2128,7 @@ REFERENCES:
 
 .. [DJS2003] \M. Davis, T. Januszkiewicz, and R. Scott.
              *Fundamental groups of blow-ups*. Selecta Math.,
-             Adv. Math. ***177** no. 1 (2002) pp. 115-179.
+             Adv. Math. **177** no. 1 (2002) pp. 115-179.
              :arxiv:`math/0203127`.
 
 .. [Day1979] Alan Day, *Characterizations of Finite Lattices that are
@@ -3929,8 +3929,8 @@ REFERENCES:
              Princeton University Press, Princeton NJ, 1991.
 
 .. [Kat2004] Kayuza Kato, `p`-*adic Hodge theory and values of zeta
-             functions of modular forms, Cohomologies `p`-adiques et
-             applications arithmétiques III*, Astérisque vol 295, SMF,
+             functions of modular forms*, Cohomologies `p`-adiques et
+             applications arithmétiques III, Astérisque vol 295, SMF,
              Paris, 2004.
 
 .. [Kau1968] \W. H. Kautz. "Bounds on directed (d, k) graphs". Theory of
@@ -5099,7 +5099,7 @@ REFERENCES:
               of polynomial maps. Proc. London Math. Soc., 68 (1994), 225-263.
 
 .. [Morris1981] \A. O. Morris. *Representations of Weyl groups over an arbitrary field*.
-                Asterisque. **87-88** (1981) pp. 267-287.
+                Astérisque. **87-88** (1981) pp. 267-287.
                 http://www.numdam.org/article/AST_1981__87-88__267_0.pdf
 
 .. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
@@ -5201,11 +5201,11 @@ REFERENCES:
              Theory*. Cambridge: Cambridge University Press,
              (2013). ISBN 9781107005488.
 
-.. [MT1991] Mazur, B., & Tate, J. (1991). *The `p`-adic sigma
+.. [MT1991] Mazur, B., & Tate, J. (1991). *The p-adic sigma
             function*. Duke Mathematical Journal, **62** (3), 663-688.
 
 .. [MTT1986] \B. Mazur, J. Tate, and J. Teitelbaum,
-             *On `p`-adic analogues of the conjectures of Birch and
+             *On p-adic analogues of the conjectures of Birch and
              Swinnerton-Dyer*,
              Inventiones Mathematicae **84**, (1986), 1-48.
 
@@ -5535,7 +5535,7 @@ REFERENCES:
 .. [PM2019] \D. Penazzi, M. Montes. "Shamash (and Shamashash)"
             https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/ShamashAndShamashash-spec.pdf
 
-.. [Pol2003] Robert Pollack, *On the `p`-adic `L`-function of a modular form
+.. [Pol2003] Robert Pollack, *On the p-adic L-function of a modular form
             at a supersingular prime*, Duke Math. J. 118 (2003), no. 3, 523-558.
 
 .. [Pol2009] \J. Polhill,
@@ -5595,7 +5595,7 @@ REFERENCES:
               RIMS Kôkyûroku, 1913:120-140, 2014.
 
 .. [PR2003] Perrin-Riou, *Arithmétique des courbes elliptiques à
-            réduction supersingulière en `p`*,
+            réduction supersingulière en p*,
             Experiment. Math. 12 (2003), no. 2, 155-186.
 
 .. [PR2015] \P. Pilarczyk and P. Réal, *Computation of cubical
@@ -6281,7 +6281,7 @@ REFERENCES:
 .. [Sta1979] Richard Stanley. *Invariants of Finite Groups and their,
             applications to combinatorics*.
             Bulletin (New Series) of the American Mathematical Society,
-            ***1*** no.3 (1979), 457-511.
+            **1** no.3 (1979), 457-511.
 
 .. [St1986] Richard Stanley. *Two poset polytopes*,
             Discrete Comput. Geom. (1986), :doi:`10.1007/BF02187680`
@@ -6298,7 +6298,7 @@ REFERENCES:
              Jones & Bartlett Learning, 1993. ISBN 086720298X, 9780867202984
 
 .. [Sta1995] \R. P. Stanley, *A symmetric function generalization
-             of the chromatic polynomial of a graph*, Adv. Math., ***111***
+             of the chromatic polynomial of a graph*, Adv. Math., **111**
              no.1 (1995), 166-194. :doi:`10.1006/aima.1995.1020`.
 
 .. [Sta1998] \R. P. Stanley, *Graph colorings and related symmetric functions:
@@ -6517,8 +6517,8 @@ REFERENCES:
             (2012) pp. 433-460. :doi:`10.1007/978-88-7642-431-1_20`.
             http://www.math.miami.edu/~wachs/papers/chrom.pdf
 
-.. [SW2013] \W. Stein and C. Wuthrich, Algorithms
-            for the Arithmetic of Elliptic Curves using Iwasawa Theory
+.. [SW2013] \W. Stein and C. Wuthrich, *Algorithms
+            for the Arithmetic of Elliptic Curves using Iwasawa Theory*.
             Mathematics of Computation 82 (2013), 1757-1792.
 
 .. [St1922] Ernst Steinitz, *Polyeder und Raumeinteilungen*.
