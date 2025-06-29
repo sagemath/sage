@@ -836,7 +836,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         from sage.rings.ring_extension import common_base
         base = common_base(K, L, False)
         EK, iK, _ = K.free_module(base, map=True)
-        _, _, jL = L.free_module(base, map=True)
+        jL = L.free_module(base, map=True)[2]
 
         self._dimK = EK.dimension()
         self._iK = iK

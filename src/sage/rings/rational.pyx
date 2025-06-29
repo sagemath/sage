@@ -2043,8 +2043,8 @@ cdef class Rational(sage.structure.element.FieldElement):
             3.1415094339622641509433962264150943396226415094339622641509
         """
         d = self.denominator()
-        _, d = d.val_unit(2)
-        _, d  = d.val_unit(5)
+        d = d.val_unit(2)[1]
+        d = d.val_unit(5)[1]
         from sage.rings.finite_rings.integer_mod import Mod
         return Mod(10, d).multiplicative_order()
 
