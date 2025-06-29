@@ -13,6 +13,7 @@ This module is meant for all functions related to path enumeration in graphs.
     :func:`all_paths` | Return the list of all paths between a pair of vertices.
     :func:`yen_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
     :func:`feng_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
+    :func:`pnc_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
     :func:`all_paths_iterator` | Return an iterator over the paths of ``self``.
     :func:`all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :func:`shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices.
