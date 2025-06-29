@@ -1486,9 +1486,11 @@ cpdef cauchy_kernel(t, args):
 
 cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
     """
-    Provides a nearly exact computation of the Riemann Map of an interior
-    point of the ellipse with axes 1 + epsilon and 1 - epsilon. It is
-    primarily useful for testing the accuracy of the numerical Riemann Map.
+    Provide a nearly exact computation of the Riemann Map of an interior
+    point of the ellipse with axes 1 + epsilon and 1 - epsilon.
+
+    It is primarily useful for testing the accuracy of the numerical
+    Riemann Map.
 
     INPUT:
 
@@ -1511,10 +1513,10 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
         sage: abs(m.riemann_map(.5)-analytic_interior(.5, 20, .3)) < 10^-6
         True
     """
-    # evaluates the Cauchy integral of the boundary, split into the real
-    # and imaginary results because numerical_integral can't handle complex data.
-    rp = 1 / (TWOPI)*numerical_integral(cauchy_kernel, 0, 2*pi,
-                                        params = [epsilon, z, n, 'i'])[0]
-    ip = 1 / (TWOPI*I)*numerical_integral(cauchy_kernel, 0, 2*pi,
-                                          params = [epsilon, z, n, 'r'])[0]
+    # evaluates the Cauchy integral of the boundary, split into the real and
+    # imaginary results because numerical_integral cannot handle complex data.
+    rp = 1 / (TWOPI) * numerical_integral(cauchy_kernel, 0, 2 * pi,
+                                          params=[epsilon, z, n, 'i'])[0]
+    ip = 1 / (TWOPI*I) * numerical_integral(cauchy_kernel, 0, 2 * pi,
+                                            params=[epsilon, z, n, 'r'])[0]
     return rp + ip
