@@ -1764,7 +1764,7 @@ REFERENCES:
 
 .. [CKWL2019] Marcelo H. de Carvalho, Nishad Kothari, Xiumei Wang and Yixun
               Linc. *Birkhoff-von Neumann graphs that are PM-compact*. 2019.
-              :doi:`10.48550/arXiv.1807.07339`.
+              :arxiv:`1807.07339`.
 
 .. [CL1996] Chartrand, G. and Lesniak, L.: *Graphs and Digraphs*.
             Chapman and Hall/CRC, 1996.
@@ -2341,7 +2341,7 @@ REFERENCES:
 
 .. [Djo2023a]  \D. Đoković.
             *Skew-Hadamard matrices of order 276*.
-            :arxiv:`10.48550/ARXIV.2301.02751`
+            :arxiv:`2301.02751`
 
 .. [Djo2023b] \D. Đoković, Email Communication. 26 January 2023.
 
