@@ -1431,7 +1431,6 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
       a path is returned. Otherwise a tuple of path length and path is
       returned.
 
-    OUTPUT: iterator
     ALGORITHM:
 
     This algorithm is based on the ``feng_k_shortest_simple_paths`` algorithm
@@ -1439,7 +1438,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     deviations occur. See Postponed Node Classification algorithm in [ACN2023]_
     for the algorithm description.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.graphs.path_enumeration import pnc_k_shortest_simple_paths
         sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
@@ -1448,7 +1447,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: list(pnc_k_shortest_simple_paths(g, 1, 5, report_weight=True))
         [(2.0, [1, 2, 5]), (2.0, [1, 4, 5]), (2.0, [1, 3, 5])]
 
-    TESTS:
+    TESTS::
 
         sage: from sage.graphs.path_enumeration import pnc_k_shortest_simple_paths
         sage: g = DiGraph([(0, 1, 9), (0, 3, 1), (0, 4, 2), (1, 6, 4),
@@ -1515,9 +1514,9 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     G.delete_edges(G.incoming_edges(source, labels=False))
     G.delete_edges(G.outgoing_edges(target, labels=False))
 
-    by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
-                                                           weight_function=weight_function,
-                                                           check_weight=check_weight)
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
 
     def reverse_weight_function(e):
         return weight_function((e[1], e[0], e[2]))
@@ -1545,7 +1544,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                                 if e[0] in dist and e[1] in dist}
 
     def sidetrack_length(path):
-        return sum(sidetrack_cost[e] for e in zip(path[:-1], path[1:]))
+        return sum(sidetrack_cost[e] for e in zip(path, path[1:]))
 
     # v-t path in the first shortest path tree T_0
     def tree_path(v):
@@ -1585,22 +1584,22 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         #                    from ``path[t]``.
         ancestor_idx_dict = {v: i for i, v in enumerate(path)}
 
-        def ancestor_idx_func(v, t):
+        def ancestor_idx_func(v, t, len_path):
             if v not in successor:
                 # target vertex is not reachable from v
                 return -1
             if v in ancestor_idx_dict:
-                if ancestor_idx_dict[v] <= t or ancestor_idx_dict[v] == len(path) - 1:
+                if ancestor_idx_dict[v] <= t or ancestor_idx_dict[v] == len_path - 1:
                     return ancestor_idx_dict[v]
-            ancestor_idx_dict[v] = ancestor_idx_func(successor[v], t)
+            ancestor_idx_dict[v] = ancestor_idx_func(successor[v], t, len_path)
             return ancestor_idx_dict[v]
 
         if is_simple:
             # output
             if report_edges and labels:
-                P = [edge_labels[e] for e in zip(path[:-1], path[1:])]
+                P = [edge_labels[e] for e in zip(path, path[1:])]
             elif report_edges:
-                P = list(zip(path[:-1], path[1:]))
+                P = list(zip(path, path[1:]))
             else:
                 P = path
             if report_weight:
@@ -1614,7 +1613,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
                     if e[1] in path[:deviation_i + 2]:  # e[1] is red or e in path
                         continue
-                    ancestor_idx = ancestor_idx_func(e[1], deviation_i)
+                    ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path))
                     if ancestor_idx == -1:
                         continue
                     new_path = path[:deviation_i + 1] + tree_path(e[1])
