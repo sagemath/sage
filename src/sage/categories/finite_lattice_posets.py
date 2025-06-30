@@ -280,7 +280,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         def CongruenceUniform(self):
             r"""
-            A lattice `(L, \vee, \wedge)` is congruence uniform if it
+            A finite lattice `(L, \vee, \wedge)` is congruence uniform if it
             can be constructed by a sequence of interval doublings
             starting with the lattice with one element.
 
@@ -294,10 +294,10 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         def Semidistributive(self):
             r"""
-            A lattice `(L, \vee, \wedge)` is semidistributive if
+            A finite lattice `(L, \vee, \wedge)` is semidistributive if
             it is both join-semidistributive and meet-semidistributive.
 
-            A lattice is join-semidistributive if
+            A finite lattice is join-semidistributive if
             for all elements `e, x, y` in the lattice we have
 
             .. MATH::
@@ -316,7 +316,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         def Trim(self):
             r"""
-            A lattice `(L, \vee, \wedge)` is trim if it is extremal
+            A finite lattice `(L, \vee, \wedge)` is trim if it is extremal
             and left modular.
 
             This notion is defined in [Thom2006]_.
@@ -331,9 +331,11 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
         def Extremal(self):
             r"""
-            A lattice `(L, \vee, \wedge)` is extremal if
+            A finite lattice `(L, \vee, \wedge)` is extremal if
             if it has a chain of length `n` (containing `n+1` elements)
             and exactly `n` join-irreducibles and `n` meet-irreducibles.
+
+            This notion was defined by George Markowsky.
 
             EXAMPLES::
 
@@ -444,15 +446,13 @@ class FiniteLatticePosets(CategoryWithAxiom):
         EXAMPLES::
 
             sage: cat = FiniteLatticePosets().Distributive(); cat
-            Category of finite distributive congruence uniform
-            semidistributive trim extremal lattice posets
+            Category of finite distributive lattice posets
 
             sage: cat.super_categories()
-            [Category of finite trim extremal lattice posets,
-             Category of finite congruence uniform semidistributive lattice posets]
+            [Category of finite lattice posets]
         """
         @cached_method
-        def extra_super_categories(self):
+        def Finite_extra_super_categories(self):
             r"""
             Return a list of the super categories of ``self``.
 
@@ -460,10 +460,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
 
             EXAMPLES::
 
-                sage: FiniteLatticePosets().Distributive().extra_super_categories()
-                [Category of finite congruence uniform
-                 semidistributive lattice posets,
-                 Category of finite trim extremal lattice posets]
+                sage: FiniteLatticePosets().Distributive().super_categories()
+                [Category of finite lattice posets]
             """
             return [FiniteLatticePosets().CongruenceUniform(),
                     FiniteLatticePosets().Trim()]
@@ -488,12 +486,10 @@ class FiniteLatticePosets(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: cat = FiniteLatticePosets().Stone(); cat
-                Category of finite distributive stone congruence uniform
-                semidistributive trim extremal lattice posets
+                Category of finite distributive stone lattice posets
 
                 sage: cat.super_categories()
-                [Category of finite distributive congruence uniform
-                 semidistributive trim extremal lattice posets]
+                [Category of finite distributive lattice posets]
             """
             class ParentMethods:
                 def is_stone(self):

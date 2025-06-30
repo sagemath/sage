@@ -32,7 +32,10 @@ class LatticePosets(Category):
         sage: LatticePosets().example()
         NotImplemented
 
-    .. SEEALSO:: :class:`~sage.categories.posets.Posets`, :class:`FiniteLatticePosets`, :func:`LatticePoset`
+    .. SEEALSO::
+
+        - :class:`~sage.categories.posets.Posets`
+        - :class:`FiniteLatticePosets`, :func:`LatticePoset`
 
     TESTS::
 
