@@ -3331,12 +3331,9 @@ REFERENCES:
              SIAM Review 4 (1962), pp. 202-210.
              :doi:`10.1137/1004057`
 
-.. [Har1969] Frank Harary, *Graph Theory*,
-             Addison-Wesley, 1969.
+.. [Har1969] Frank Harary, *Graph Theory*, Addison-Wesley, 1969.
 
 .. [Har1977] \R. Hartshorne. *Algebraic Geometry*. Springer-Verlag, New York, 1977.
-
-.. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
 
 .. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
              LMS J. Comput. Math. **11** (2008), 40–59.
