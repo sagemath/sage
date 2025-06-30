@@ -227,29 +227,16 @@ from sage.structure.sequence import Sequence
 
 def vector_random(R, n, *args, **kwargs):
     r"""
-    Return a random vector over the ring ``R`` of length ``n``.
-
-    This wraps ``FreeModule(R, n).random_element(*args, **kwargs)``, and mirrors
-    the ``matrix.random()`` function for API consistency.
-
-    INPUT:
-
-    - ``R`` -- base ring (e.g., ``ZZ``, ``QQ``, ``GF(p)``)
-    - ``n`` -- integer (dimension of the vector)
-    - ``*args, **kwargs`` -- passed to ``random_element``
-
-    OUTPUT:
-
-    A randomly generated vector of dimension ``n`` over ``R``.
+    Return a random element of the free module of rank ``n`` over ``R``.
 
     EXAMPLES::
 
         sage: from sage.modules.free_module import vector_random
-        sage: v = vector_random(ZZ, 3, bound=10)
+        sage: v = vector_random(ZZ, 3)
         sage: len(v)
         3
-        sage: v.parent().base_ring()
-        Integer Ring
+        sage: v.parent().base_ring() is ZZ
+        True
     """
     return FreeModule(R, n).random_element(*args, **kwargs)
 
@@ -263,6 +250,7 @@ class FreeModuleFactory(UniqueFactory):
         TESTS::
 
             sage: loads(dumps(ZZ^6)) is ZZ^6
+
             True
             sage: loads(dumps(RDF^3)) is RDF^3
             True
