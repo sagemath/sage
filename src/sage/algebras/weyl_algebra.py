@@ -628,15 +628,34 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
             sage: W2 = DifferentialWeylAlgebra(QQ['x,y,z'])
             sage: W1 is W2
             True
+
+        TESTS::
+
+            sage: R1 = InfinitePolynomialRing(QQ)
+            sage: W = DifferentialWeylAlgebra(R1['y']); W
+            Differential Weyl algebra of polynomials in y over Infinite polynomial
+             ring in x over Rational Field
+            sage: W.inject_variables(verbose=False); R1.inject_variables(verbose=False)
+            sage: dy*x[1]*y
+            x_1*y*dy + x_1
+            sage: R2 = InfinitePolynomialRing(QQ['y'])
+            sage: W = DifferentialWeylAlgebra(R2); W
+            Differential Weyl algebra in countably many variables x over Univariate
+             Polynomial Ring in y over Rational Field
+            sage: W.differential(1)*R2.base_ring()('y')*W.gen(1)
+            y*x[1]*dx[1] + y
+
         """
         if n is PlusInfinity():  # hook for Infinite weyl algebra
+            if names is None:
+                names = ('x',)
             return InfiniteDifferentialWeylAlgebra(R, names)
         if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             if names is None:
                 names = R.variable_names()
                 R = R.base_ring()
-        elif isinstance(R, InfinitePolynomialRing_dense):
-            return InfiniteDifferentialWeylAlgebra(R, names)
+        elif isinstance(R, InfinitePolynomialRing_dense) and names is None:
+            return InfiniteDifferentialWeylAlgebra(R.base_ring(), R.variable_names())
         elif names is None:
             raise ValueError("the names must be specified")
         elif R not in Rings().Commutative():
@@ -1237,7 +1256,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
     INPUT:
 
     - ``R`` -- a commutative ring
-    - ``names`` -- (default: ``['x']``) A list of strings denoting the prefix
+    - ``names`` -- length 1 tuple of strings denoting the prefix
       for the variable names
 
     EXAMPLES:
@@ -1289,8 +1308,6 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             if len(names) > 1:
                 raise NotImplementedError("only one set of variables supported")
             R = R.base_ring()
-        elif names is None:
-            names = ('x',)
         if R not in Rings().Commutative():
             raise TypeError("argument R must be a commutative ring")
         return super().__classcall__(cls, R, tuple(names))
@@ -1404,7 +1421,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
     def gen(self, i):
         r"""
-        Return the ``i``'th polynomial generator of ``self``
+        Return the ``i``-th polynomial generator of ``self``
 
         INPUT:
 
@@ -1458,7 +1475,7 @@ class InfiniteDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
     def differential(self, i):
         r"""
-        Return the i'th differential of ``self``
+        Return the ``i``-th differential of ``self``
 
         INPUT:
 
