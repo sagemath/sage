@@ -67,7 +67,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         raise NotImplementedError("Coxeter types not from Cartan types not yet implemented")
 
     @classmethod
-    def samples(self, finite=None, affine=None, crystallographic=None):
+    def samples(self, finite=None, affine=None, crystallographic=None, hyperbolic=None):
         """
         Return a sample of the available Coxeter types.
 
@@ -78,6 +78,8 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         - ``affine`` -- boolean or ``None`` (default: ``None``)
 
         - ``crystallographic`` -- boolean or ``None`` (default: ``None``)
+
+        - ``hyperbolic`` -- boolean or ``None`` (default: ``None``)
 
         The sample contains all the exceptional finite and affine
         Coxeter types, as well as typical representatives of the
@@ -152,6 +154,8 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             result = [t for t in result if t.is_finite() == finite]
         if affine is not None:
             result = [t for t in result if t.is_affine() == affine]
+        if hyperbolic is not None:
+            result = [t for t in result if t.is_hyperbolic() == hyperbolic]
         return result
 
     @cached_method
