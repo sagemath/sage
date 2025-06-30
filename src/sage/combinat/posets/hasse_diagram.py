@@ -435,6 +435,8 @@ class HasseDiagram(DiGraph):
             sage: Q.bottom()
             0
         """
+        if not self:
+            return None
         min_elms = (x for x in self if not self.in_degree(x))
         bottom = next(min_elms)
         try:
@@ -472,6 +474,8 @@ class HasseDiagram(DiGraph):
             sage: Q.top()
             1
         """
+        if not self:
+            return None
         max_elms = (x for x in self if not self.out_degree(x))
         top = next(max_elms)
         try:
