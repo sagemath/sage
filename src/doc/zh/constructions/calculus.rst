@@ -254,6 +254,8 @@ Sage 还可以计算涉及极限的符号定积分。
 
 使用 Sage 接口与 Maxima 可以符号化地求解常微分方程。参见
 
+.. skip
+
 ::
 
     sage: desolvers?
