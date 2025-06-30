@@ -1868,12 +1868,12 @@ def check_signed_infinity(pos_inf):
 
     EXAMPLES::
 
-        sage: from sage.rings.infinity import test_signed_infinity
-        sage: test_signed_infinity(oo)
-        sage: test_signed_infinity(float('+inf'))
-        sage: test_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
-        sage: test_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
-        sage: test_signed_infinity(SR(oo))                                              # needs sage.symbolic
+        sage: from sage.rings.infinity import check_signed_infinity
+        sage: check_signed_infinity(oo)
+        sage: check_signed_infinity(float('+inf'))
+        sage: check_signed_infinity(RLF(oo))                                             # needs sage.rings.real_interval_field
+        sage: check_signed_infinity(RIF(oo))                                             # needs sage.rings.real_interval_field
+        sage: check_signed_infinity(SR(oo))                                              # needs sage.symbolic
     """
     msg = f'testing {pos_inf} ({type(pos_inf)})'
     assert InfinityRing(pos_inf) is infinity, msg

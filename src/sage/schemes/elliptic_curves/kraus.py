@@ -296,11 +296,11 @@ def check_b2_local(c4, c6, P, b2, debug=False):
     E = c4c6_model(c4,c6).rst_transform(b2/12,0,0)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print("test_b2_local: wrong c-invariants at P=%s" % P)
+            print("check_b2_local: wrong c-invariants at P=%s" % P)
         return False
     if not E.is_local_integral_model(P):
         if debug:
-            print("test_b2_local: not integral at %s" % P)
+            print("check_b2_local: not integral at %s" % P)
         return False
     return E
 
@@ -344,12 +344,12 @@ def check_b2_global(c4, c6, b2, debug=False):
     E = c4c6_model(c4,c6).rst_transform(b2/12,0,0)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print("test_b2_global: wrong c-invariants")
+            print("check_b2_global: wrong c-invariants")
         return False
     if not all(E.is_local_integral_model(P)
                for P in c4.parent().primes_above(3)):
         if debug:
-            print("test_b2_global: not integral at all primes dividing 3")
+            print("check_b2_global: not integral at all primes dividing 3")
         return False
     return E
 
@@ -464,11 +464,11 @@ def check_a1a3_local(c4, c6, P, a1, a3, debug=False):
     E = c4c6_model(c4,c6).rst_transform(a1**2/12,a1/2,a3/2)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print("test_a1a3_local: wrong c-invariants at P=%s" % P)
+            print("check_a1a3_local: wrong c-invariants at P=%s" % P)
         return False
     if not E.is_local_integral_model(P):
         if debug:
-            print("test_a1a3_local: not integral at %s" % P)
+            print("check_a1a3_local: not integral at %s" % P)
         return False
     return E
 

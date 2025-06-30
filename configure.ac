@@ -239,7 +239,11 @@ dnl Exit autoconf with exit code 16 in this case. This will be
 dnl caught by the bootstrap script.
 m4_exit(16)])
 
-PKG_PROG_PKG_CONFIG([0.29], [PKG_CONFIG=])
+PKG_PROG_PKG_CONFIG([0.29], [
+    AC_MSG_NOTICE([Sorry, the 'pkg-config' command version 0.29 or better must be in the path to build AC_PACKAGE_NAME])
+    AC_MSG_NOTICE([Please install 'pkg-config' (also known as 'pkgconf'), e.g. from http://pkgconf.org/.])
+    AC_MSG_ERROR([Exiting, as 'pkg-config' cannot be found.])
+])
 
 AC_CHECK_PROG(found_ranlib, ranlib, yes, no)
 if test x$found_ranlib != xyes
@@ -310,8 +314,8 @@ fi
    AC_CHECK_HEADER(bzlib.h, [
       AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
         AC_PATH_PROG([bzip2_prog], [bzip2])
-        AS_IF([test x$bzip2_prog = x
-	], [AC_MSG_ERROR([could not find bzip2 executable. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
+        AS_IF([test x$bzip2_prog = x],
+              [AC_MSG_ERROR([could not find bzip2 executable. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
       ], [AC_MSG_ERROR([could not find libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
     ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
    ])
@@ -543,6 +547,8 @@ dnl when the system package is not usable.
 AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
+
+AC_SUBST(SAGE_PKG_CONFIG_PATH, ['$SAGE_LOCAL/lib/pkgconfig'])
 
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
