@@ -323,6 +323,23 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              [['I', 5], False], [['H', 3], False], [['H', 4], False]]
         """
         return False
+    
+    def is_hyperbolic(self):
+        """
+        Return whether ``self`` is hyperbolic.
+
+        This returns ``False`` by default. Derived class should override this 
+        appropriately.
+
+        EXAMPLES::
+        
+            sage: CoxeterType(['A', 3]).is_hyperbolic()
+            False
+            sage: CoxeterType(['Hyp', (141, 1, 3)]).is_hyperbolic()
+            True
+        """
+
+        return False
 
     def is_simply_laced(self):
         """
