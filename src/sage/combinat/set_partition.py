@@ -13,7 +13,7 @@ AUTHORS:
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
 
-- Anciaux Hugo, Rachid Bouhmad, Elhadj Alseiny Diallo, Do Truong Thinh Truong ( Algorithms Design : Amaury Curiel, Genitrini Antoine ).
+- Hugo Anciaux, Rachid Bouhmad, Elhadj Alseiny Diallo, Do Truong Thinh Truong ( Algorithms Design : Amaury Curiel, Antoine Genitrini ).
   (2025-06-18): Algorithmic for lexicographic unranking.
   
 This module defines a class for immutable partitioning of a set. For
@@ -3342,61 +3342,47 @@ def compare_subsets(a, b):
     This function compares two sets based on a specialized total order relation. For example:
     
     The relation ≤ is a total order.
-    For example {1, 3} ≤ {1, 3, 4} and {1, 3} ≤ {1, 4}. But we also have {1, 3, 4} ≤ {1, 4}.
-        
+    For example `\{1, 3\} \leq \{1, 3, 4\} \leq \{1, 4\}`.        
     
     ::
         sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1, 3], [1, 3, 4])
         True
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1, 3], [1, 4])
         True
     
     - But `{1, 4}` is not less than `{1, 3, 4}`:
 
     ::
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1, 4], [1, 3, 4])
         False
         
     TESTS:
 
     ::
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([2,5], [2,5])
         True
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([],[])
         True
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([], [1])
         True
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1], [])
         False
 
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1, 2], [3, 4])
         True
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([4,5], [2,3])
         False
 
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1], [1,2])
         True
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1,2], [1])
         False
 
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1,3,5], [1,3])
         False
-        sage: from sage.combinat.set_partition import compare_subsets
         sage: compare_subsets([1, 3], [1, 3, 5])
         True
-
     """
     def included_in(a, b):
         """
@@ -3436,26 +3422,19 @@ def compare_set_partitions(a, b):
 
     EXAMPLES:
 
-    Compare a sequence of set partitions to ensure each partition is less than or equal to the next:
-
-    ::
-
-        sage: from sage.combinat.set_partition import SetPartitions, compare_set_partitions
+    Compare a sequence of set partitions to ensure each partition is less than or equal to the next::
+        
+        sage: from sage.combinat.set_partition import compare_set_partitions, SetPartition
         sage: a = SetPartition([[1], [2, 3, 4], [5]])
         sage: b = SetPartition([[1], [2], [3, 4, 5]])
         sage: compare_set_partitions(a, b)
         False
 
-    ::
-    
-        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
         sage: c = SetPartition([[1], [2, 3, 5] , [4]])
         sage: d = SetPartition([[1, 2], [3] , [4, 5]])
         sage: compare_set_partitions(c, d)
         True
-        
-    :
-        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+
         sage: e = SetPartition([[1], [2, 3, 4] , [5]])
         sage: f = SetPartition([[1], [2, 3, 5] , [4] , [54]])
         sage: compare_set_partitions(e, f)
@@ -3463,19 +3442,17 @@ def compare_set_partitions(a, b):
 
     TESTS:
 
-    We create a list of set partitions of the set {1, 2, 3, 4, 5} into 3 parts, sort them, and check that each partition is lexicographically less than or equal to the next. This confirms that `compare_set_partitions` correctly identifies the lexicographic ordering among a sorted list of set partitions:
+    We create a list of set partitions of the set {1, 2, 3, 4, 5}
+    into 3 parts, sort them, and check that each partition is
+    lexicographically less than or equal to the next. This
+    confirms that `compare_set_partitions` correctly identifies the
+    lexicographic ordering among a sorted list of set partitions::
 
-    ::
-    
-        sage: from sage.combinat.set_partition import SetPartitions, compare_set_partitions
         sage: partitions = SetPartitions(5, 3).list()
         sage: partitions.sort(key=lambda x: x.standard_form())
         sage: all(compare_set_partitions(partitions[i], partitions[i + 1]) for i in range(len(partitions) - 1))
         True
 
-    UNIT TESTS:
-
-    ::
         sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
         sage: g = SetPartition([ [1,2],[3] ])
         sage: h = SetPartition([ [1,2],[3] ])
@@ -3487,7 +3464,6 @@ def compare_set_partitions(a, b):
         sage: j = SetPartition([ [1] ])
         sage: compare_set_partitions(i, j)
         True
-
     """
     if a.standard_form() == []:
         return True
@@ -3552,16 +3528,14 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
         ....:     partition_p1 = partition_p2
         ....:     current_rank += 1
 
-    UNITS TESTS:
-
-        assert unranking(0, 0, 0) == [[]]
-
-        assert unranking(1, 1, 0) == [[1]]
-
-        assert unranking(3, 1, 0) == [[1, 2, 3]]
-
-        assert unranking(3, 3, 0) == [[1], [2], [3]]
-     
+        sage: unranking(0, 0, 0) == [[]]
+        True
+        sage: unranking(1, 1, 0) == [[1]]
+        True
+        sage: unranking(3, 1, 0) == [[1, 2, 3]]
+        True
+        sage: unranking(3, 3, 0) == [[1], [2], [3]]
+        True
     """
     from collections import defaultdict
  
