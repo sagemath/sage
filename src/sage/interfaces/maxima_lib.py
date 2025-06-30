@@ -31,14 +31,14 @@ AUTHORS:
 For this interface, Maxima is loaded into ECL which is itself loaded
 as a C library in Sage. Translations between Sage and Maxima objects
 (which are nothing but wrappers to ECL objects) is made as much as possible
-directly, but falls back to the string based conversion used by the
-classical Maxima Pexpect interface in case no new implementation has been made.
+directly, but falls back to the string based conversion in case no new implementation
+has been made.
 
 This interface is the one used for calculus by Sage
 and is accessible as ``maxima_calculus``::
 
     sage: maxima_calculus
-    Maxima_lib
+    Maxima
 
 Only one instance of this interface can be instantiated,
 so the user should not try to instantiate another one,
@@ -113,24 +113,23 @@ in ``DOT_SAGE`` since we expect it to have more latency than ``/tmp``.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import Expression
-from sage.symbolic.ring import SR
-
-from sage.libs.ecl import EclObject, ecl_eval
-
-from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                              MaximaAbstractElement, MaximaAbstractFunctionElement,
-                              MaximaAbstractElementFunction)
-from sage.misc.instancedoc import instancedoc
-from sage.env import MAXIMA_FAS
-
 import sage.rings.real_double
 import sage.symbolic.expression
 import sage.symbolic.integration.integral
-
+from sage.env import MAXIMA_FAS
+from sage.interfaces.maxima_abstract import (
+    MaximaAbstract,
+    MaximaAbstractElement,
+    MaximaAbstractElementFunction,
+    MaximaAbstractFunction,
+    MaximaAbstractFunctionElement,
+)
+from sage.libs.ecl import EclObject, ecl_eval
+from sage.misc.instancedoc import instancedoc
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
+from sage.structure.element import Expression
 from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
-
+from sage.symbolic.ring import SR
 
 # We begin here by initializing Maxima in library mode
 # i.e. loading it into ECL
@@ -164,6 +163,7 @@ except RuntimeError:
 ecl_eval("(initialize-runtime-globals)")
 ecl_eval("(setq $nolabels t))")
 ecl_eval("(defun add-lineinfo (x) x)")
+ecl_eval(r"(defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
 ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
@@ -385,7 +385,7 @@ class MaximaLib(MaximaAbstract):
         global init_code
         self.__init_code = init_code
 
-        MaximaAbstract.__init__(self, "maxima_lib")
+        MaximaAbstract.__init__(self, "maxima")
         self.__seq = 0
 
     def _coerce_from_special_method(self, x):
@@ -1050,8 +1050,11 @@ class MaximaLib(MaximaAbstract):
 
         outstr = "Computation failed since Maxima requested additional constraints; using the 'assume' command before evaluation *may* help (example of legal syntax is 'assume("\
             + errstr[jj + 1:k] + ">0)', see `assume?` for more details)\n" + errstr
-        outstr = outstr.replace('_SAGE_VAR_', '')
+        outstr = outstr.replace("_SAGE_VAR_", "")
         raise ValueError(outstr)
+
+
+Maxima = MaximaLib
 
 
 def is_MaximaLibElement(x):
@@ -1198,7 +1201,7 @@ def reduce_load_MaximaLib():
 
         sage: from sage.interfaces.maxima_lib import reduce_load_MaximaLib
         sage: reduce_load_MaximaLib()
-        Maxima_lib
+        Maxima
     """
     return maxima_lib
 
@@ -1573,7 +1576,9 @@ def pyobject_to_max(obj):
     if isinstance(obj, sage.rings.rational.Rational):
         return EclObject(obj) if (obj.denom().is_one()) else EclObject([[rat], obj.numer(), obj.denom()])
     elif isinstance(obj, NumberFieldElement_base):
-        from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+        from sage.rings.number_field.number_field_element_quadratic import (
+            NumberFieldElement_quadratic,
+        )
         if isinstance(obj, NumberFieldElement_quadratic) and obj.parent().defining_polynomial().list() == [1, 0, 1]:
             re, im = obj.list()
             return EclObject([[mplus], pyobject_to_max(re), [[mtimes], pyobject_to_max(im), max_i]])
@@ -1686,6 +1691,7 @@ def sr_to_max(expr):
 
 # This goes from EclObject to SR
 from sage.symbolic.expression import symbol_table
+
 max_to_pynac_table = symbol_table['maxima']
 
 

@@ -642,17 +642,17 @@ If this all works, you can then make calls like:
 
         EXAMPLES::
 
-            sage: a = maxima('y')
-            sage: maxima.quit(verbose=True)
-            Exiting Maxima with PID ... running ...maxima...
+            sage: a = gap('(1,2)(3,7)(4,6)(5,8)')
+            sage: gap.quit(verbose=True)
+            Exiting Gap with PID ... running ...gap...
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
-            ValueError: The maxima session in which this object was defined is no longer running.
+            ValueError: The gap session in which this object was defined is no longer running.
 
         Calling ``quit()`` a second time does nothing::
 
-            sage: maxima.quit(verbose=True)
+            sage: gap.quit(verbose=True)
         """
         if self._expect is not None:
             if verbose:
@@ -670,18 +670,18 @@ If this all works, you can then make calls like:
 
         EXAMPLES::
 
-            sage: a = maxima('y')
-            sage: saved_expect = maxima._expect  # Save this to close later
-            sage: maxima.detach()
+            sage: a = gap('(1,2)(3,7)(4,6)(5,8)')
+            sage: saved_expect = gap._expect  # Save this to close later
+            sage: gap.detach()
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
-            ValueError: The maxima session in which this object was defined is no longer running.
+            ValueError: The gap session in which this object was defined is no longer running.
             sage: saved_expect.close()  # Close child process
 
         Calling ``detach()`` a second time does nothing::
 
-            sage: maxima.detach()
+            sage: gap.detach()
         """
         try:
             self._expect._keep_alive()
@@ -697,8 +697,6 @@ If this all works, you can then make calls like:
 
             sage: gp._quit_string()
             '\\q'
-            sage: maxima._quit_string()
-            'quit();'
         """
         return 'quit'
 
@@ -1433,7 +1431,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._object_class(maxima)
+            sage: Expect._object_class(gap)
             <class 'sage.interfaces.expect.ExpectElement'>
         """
         return ExpectElement
@@ -1443,7 +1441,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._function_class(maxima)
+            sage: Expect._function_class(gap)
             <class 'sage.interfaces.expect.ExpectFunction'>
         """
         return ExpectFunction
@@ -1453,7 +1451,7 @@ If this all works, you can then make calls like:
         EXAMPLES::
 
             sage: from sage.interfaces.expect import Expect
-            sage: Expect._function_element_class(maxima)
+            sage: Expect._function_element_class(gap)
             <class 'sage.interfaces.expect.FunctionElement'>
         """
         return FunctionElement
