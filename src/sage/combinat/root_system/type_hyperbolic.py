@@ -555,16 +555,19 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C = CoxeterType(["Hyp", (142, 1, 3)])
             sage: C
             Coxeter type with Humphrey's datum (142, 1, 3)
+        
+            sage: TestSuite(C).run()
+            
         """
         self._acronym = accronym
-        self._position = position
+        self._position = tuple(position)
 
         if position not in hyperbolic_coxeter_matrices:
             raise ValueError(f"Position {position} is not a valid hyperbolic Coxeter type position.")
         super().__init__()
 
     def __repr__(self):
-        return f"Coxeter type with Humphrey's datum ({self._position[0]}, {self._position[1]}, {self._position[2]})"
+        return f"Coxeter type with Humphrey's datum (Page : {self._position[0]}, Column : {self._position[1]}, Row : {self._position[2]})"
     
 
     def rank(self):
@@ -609,7 +612,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             'Page : 142, Column : 1, Row : 3'
         """
 
-        return f"Page : {self._position[0]}, Column : {self._position[1]}, Row : {self._position[2]}"
+        return self._position
 
     
     def coxeter_graph(self):
@@ -663,7 +666,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C.is_affine()
             False
         """
-        return self.coxeter_matrix().is_affine()
+        return False
     
     def is_finite(self):
         """
@@ -675,7 +678,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C.is_finite()
             False
         """
-        return self.coxeter_matrix().is_finite()
+        return False
     
     def is_crystallographic(self):
         """
@@ -693,4 +696,21 @@ class CoxeterType_Hyperbolic(CoxeterType):
             False
         """
         return self.coxeter_matrix().is_crystallographic()
+    
+    def __eq__(self, other):
+        """
+        Return whether ``self`` is equal to ``other``.
+
+        EXAMPLES::
+
+            sage: C1 = CoxeterType(["Hyp", (142, 1, 3)])
+            sage: C2 = CoxeterType(["Hyp", (142, 1, 3)])
+            sage: C1 == C2
+            True
+
+            sage: C3 = CoxeterType(["Hyp", (141, 1, 1)])
+            sage: C1 == C3
+            False
+        """
+        return isinstance(other, CoxeterType_Hyperbolic) and self._position == other._position
     
