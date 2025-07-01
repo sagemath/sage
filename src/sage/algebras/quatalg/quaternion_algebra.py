@@ -2934,7 +2934,7 @@ class QuaternionOrder(Parent):
         ALGORITHM:
 
         Find a generator of the principal lattice `N\cdot O\cdot O'`
-        where `N = [O : O cap O']` using
+        where `N = [O : O \cap O']` using
         :meth:`QuaternionFractionalIdeal_rational.minimal_element()`.
         An isomorphism is given by conjugation by such an element.
         Works providing reduced norm of conjugation element is not
