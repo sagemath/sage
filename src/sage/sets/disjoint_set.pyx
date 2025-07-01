@@ -286,14 +286,14 @@ cdef class DisjointSet_class(SageObject):
 
             sage: d = DisjointSet(5)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 3, 4])
+            (<cyfunction DisjointSet at ...>, (5,), [0, 1, 2, 3, 4])
 
         ::
 
             sage: d.union(2, 4)
             sage: d.union(1, 3)
             sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 1, 2])
+            (<cyfunction DisjointSet at ...>, (5,), [0, 1, 2, 1, 2])
         """
         return DisjointSet, (self._nodes.degree,), self.__getstate__()
 
