@@ -443,8 +443,7 @@ class HasseDiagram(DiGraph):
             next(min_elms)
         except StopIteration:
             return bottom
-        else:
-            return None
+        return None
 
     def has_bottom(self) -> bool:
         """
@@ -482,8 +481,7 @@ class HasseDiagram(DiGraph):
             next(max_elms)
         except StopIteration:
             return top
-        else:
-            return None
+        return None
 
     def has_top(self) -> bool:
         """
