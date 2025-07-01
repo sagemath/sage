@@ -3121,6 +3121,51 @@ def petersen_family(generate=False):
         l.append(g)
         return l
 
+    def DeltaYTrans(G, triangle):
+        """
+        Apply a Delta-Y transformation to a given triangle of G.
+        """
+        a, b, c = triangle
+        G = G.copy()
+        G.delete_edges([(a, b), (b, c), (c, a)])
+        v = G.order()
+        G.add_edges([(a, v), (b, v), (c, v)])
+        return G.canonical_label()
+
+    def YDeltaTrans(G, v):
+        """
+        Apply a Y-Delta transformation to a given vertex v of G.
+        """
+        G = G.copy()
+        a, b, c = G.neighbors(v)
+        G.delete_vertex(v)
+        G.add_cycle([a, b, c])
+        return G.canonical_label()
+
+    # We start from the Petersen Graph, and apply Y-Delta transform
+    # for as long as we generate new graphs.
+    P = PetersenGraph()
+
+    l = set()
+    l_new = [P.canonical_label().graph6_string()]
+
+    while l_new:
+        g = l_new.pop(0)
+        if g in l:
+            continue
+        l.add(g)
+        g = Graph(g)
+        # All possible Delta-Y transforms
+        for t in g.subgraph_search_iterator(Graph({1: [2, 3], 2: [3]}), return_graphs=False):
+            l_new.append(DeltaYTrans(g, t).graph6_string())
+        # All possible Y-Delta transforms
+        for v in g:
+            if g.degree(v) == 3:
+                l_new.append(YDeltaTrans(g, v).graph6_string())
+
+    return [Graph(x) for x in l]
+
+
 def p2_forbidden_minors():
     r"""
     Return an array containing the 35 minimal forbidden excluded minors
@@ -3175,51 +3220,6 @@ def p2_forbidden_minors():
     ]
 
     return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
-
-    def DeltaYTrans(G, triangle):
-        """
-        Apply a Delta-Y transformation to a given triangle of G.
-        """
-        a, b, c = triangle
-        G = G.copy()
-        G.delete_edges([(a, b), (b, c), (c, a)])
-        v = G.order()
-        G.add_edges([(a, v), (b, v), (c, v)])
-        return G.canonical_label()
-
-    def YDeltaTrans(G, v):
-        """
-        Apply a Y-Delta transformation to a given vertex v of G.
-        """
-        G = G.copy()
-        a, b, c = G.neighbors(v)
-        G.delete_vertex(v)
-        G.add_cycle([a, b, c])
-        return G.canonical_label()
-
-    # We start from the Petersen Graph, and apply Y-Delta transform
-    # for as long as we generate new graphs.
-    P = PetersenGraph()
-
-    l = set()
-    l_new = [P.canonical_label().graph6_string()]
-
-    while l_new:
-        g = l_new.pop(0)
-        if g in l:
-            continue
-        l.add(g)
-        g = Graph(g)
-        # All possible Delta-Y transforms
-        for t in g.subgraph_search_iterator(Graph({1: [2, 3], 2: [3]}), return_graphs=False):
-            l_new.append(DeltaYTrans(g, t).graph6_string())
-        # All possible Y-Delta transforms
-        for v in g:
-            if g.degree(v) == 3:
-                l_new.append(YDeltaTrans(g, v).graph6_string())
-
-    return [Graph(x) for x in l]
-
 
 def SierpinskiGasketGraph(n):
     """
