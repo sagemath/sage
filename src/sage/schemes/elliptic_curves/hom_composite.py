@@ -951,6 +951,17 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         Return an iterator over the points in the kernel of this
         elliptic-curve morphism.
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: f
+            Composite morphism of degree 4 = 2^2:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 1 over Finite Field in z2 of size 5^2
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 3*x + 3 over Finite Field in z2 of size 5^2
+            sage: set(f.kernel_points())
+            {(0 : 1 : 0), (4 : 4 : 1), (2*z2 + 4 : 4*z2 + 4 : 1), (3*z2 + 1 : z2 + 3 : 1)}
         """
         yield from self.inverse_image(self.codomain().zero(), all=True)
 
@@ -963,7 +974,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         INPUT:
 
         - ``Q`` -- a point
-        - ``all`` -- if true, returns an iterator over all points
+        - ``all`` -- (boolean) if ``True``, returns an iterator over all points
           in the inverse image
 
         EXAMPLES::
@@ -995,7 +1006,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: f = E.isogeny(P, algorithm="factored")
             sage: Q = f(E.lift_x(2718281828459045235360287471352662497757 - z2)); Q
             (14253459515090351074737629944491750308703143*z2 + 17548601963968266930680314841240982076784493 : ... : 1)
-            sage: f.inverse_image(Q)
+            sage: f.inverse_image(Q)  # long time
             (...)
         """
         if len(self._phis) == 1:

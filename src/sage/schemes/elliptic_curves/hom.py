@@ -457,7 +457,7 @@ class EllipticCurveHom(Morphism):
         Return an iterator over the points in the kernel of this
         elliptic-curve morphism.
 
-        TESTS::
+        EXAMPLES::
 
             sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
             sage: f = E.isogeny([P*3, Q*3])
@@ -613,7 +613,7 @@ class EllipticCurveHom(Morphism):
             # any_root raise ValueError if there's no root
             if self(P) == Q:
                 return P
-        assert not self.base_ring().is_exact()
+        assert not self.base_ring().is_exact(), f"BUG: computation over an exact ring did not find the inverse image of {Q}"
         raise NotImplementedError
 
     def scaling_factor(self):
