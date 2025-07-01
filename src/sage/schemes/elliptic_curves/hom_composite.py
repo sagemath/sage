@@ -1008,6 +1008,37 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             (14253459515090351074737629944491750308703143*z2 + 17548601963968266930680314841240982076784493 : ... : 1)
             sage: f.inverse_image(Q)  # long time
             (...)
+
+        TESTS:
+
+        Normally, a :class:`EllipticCurveHom_composite` has ``len(self._phis) > 1``,
+        but if :meth:`from_factors` is called with ``strict=True``, or if the user
+        constructs a :class:`EllipticCurveHom_composite` object directly, then it is
+        possible to violate this condition. We test for this case::
+
+            sage: E.<P> = EllipticCurve(GF(5), [1, 2])
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: f = EllipticCurveHom_composite(E, P*2); f
+            Composite morphism of degree 2:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
+              To:   Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 5
+            sage: len(f._phis)
+            1
+            sage: f(f.inverse_image(f(P))) == f(P)
+            True
+            sage: set(f.inverse_image(f(P), all=True))
+            {(1 : 2 : 1), (1 : 3 : 1)}
+
+        The current implementation guarantees :attr:`_phis` is not empty::
+
+            sage: f = EllipticCurveHom_composite.from_factors((), E); f
+            Composite morphism of degree 1:
+              From: Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
+              To:   Elliptic Curve defined by y^2 = x^3 + x + 2 over Finite Field of size 5
+            sage: len(f._phis)
+            1
+            sage: f.inverse_image(P) == P
+            True
         """
         if len(self._phis) == 1:
             return self._phis[0].inverse_image(Q, all=all)
