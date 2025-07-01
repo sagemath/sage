@@ -11,7 +11,7 @@ Finite lattice posets
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.misc.cachefunc import cached_method
-
+from sage.categories.category_singleton import Category_singleton
 
 class FiniteLatticePosets(CategoryWithAxiom):
     r"""
@@ -257,7 +257,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: P in FiniteLatticePosets().Stone()
                 True
             """
-            return self._with_axioms(["Distributive", "Stone"])
+            return self._with_axioms(("Semidistributive", "CongruenceUniform",
+                                      "Distributive", "Stone"))
 
         def Distributive(self):
             r"""
@@ -276,7 +277,8 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: P in FiniteLatticePosets().Distributive()
                 True
             """
-            return self._with_axiom("Distributive")
+            return self._with_axioms(("Semidistributive", "CongruenceUniform",
+                                     "Distributive"))
 
         def CongruenceUniform(self):
             r"""
@@ -290,7 +292,7 @@ class FiniteLatticePosets(CategoryWithAxiom):
                 sage: P in FiniteLatticePosets().CongruenceUniform()
                 True
             """
-            return self._with_axioms(["Semidistributive", "CongruenceUniform"])
+            return self._with_axioms(("Semidistributive", "CongruenceUniform"))
 
         def Semidistributive(self):
             r"""
@@ -392,6 +394,69 @@ class FiniteLatticePosets(CategoryWithAxiom):
                     """
                     return True
 
+            class Distributive(CategoryWithAxiom):
+                """
+                The category of distributive lattices.
+
+                EXAMPLES::
+
+                    sage: cat = FiniteLatticePosets().Distributive(); cat
+                    Category of finite distributive lattice posets
+
+                    sage: cat.super_categories()
+                    [Category of finite lattice posets]
+                """
+                @cached_method
+                def extra_super_categories(self):
+                    r"""
+                    Return a list of the super categories of ``self``.
+
+                    This encode implications between properties.
+
+                    EXAMPLES::
+
+                        sage: FiniteLatticePosets().Distributive().super_categories()
+                        [Category of finite lattice posets]
+                    """
+                    return [FiniteLatticePosets().Trim()]
+
+                class ParentMethods:
+                    def is_distributive(self):
+                        """
+                        Return whether ``self`` is a distributive lattice.
+
+                        EXAMPLES::
+
+                            sage: P = posets.Crown(4).order_ideals_lattice()
+                            sage: P.is_distributive()
+                            True
+                        """
+                        return True
+
+                class Stone(CategoryWithAxiom):
+                    """
+                    The category of Stone lattices.
+
+                    EXAMPLES::
+
+                        sage: cat = FiniteLatticePosets().Stone(); cat
+                        Category of finite distributive stone lattice posets
+
+                        sage: cat.super_categories()
+                        [Category of finite distributive lattice posets]
+                    """
+                    class ParentMethods:
+                        def is_stone(self):
+                            """
+                            Return whether ``self`` is a Stone lattice.
+
+                            EXAMPLES::
+
+                                sage: posets.DivisorLattice(12).is_stone()
+                                True
+                            """
+                            return True
+
     class Extremal(CategoryWithAxiom):
         """
         The category of extremal uniform lattices.
@@ -435,70 +500,6 @@ class FiniteLatticePosets(CategoryWithAxiom):
                     EXAMPLES::
 
                         sage: posets.TamariLattice(4).is_trim()
-                        True
-                    """
-                    return True
-
-    class Distributive(CategoryWithAxiom):
-        """
-        The category of distributive lattices.
-
-        EXAMPLES::
-
-            sage: cat = FiniteLatticePosets().Distributive(); cat
-            Category of finite distributive lattice posets
-
-            sage: cat.super_categories()
-            [Category of finite lattice posets]
-        """
-        @cached_method
-        def Finite_extra_super_categories(self):
-            r"""
-            Return a list of the super categories of ``self``.
-
-            This encode implications between properties.
-
-            EXAMPLES::
-
-                sage: FiniteLatticePosets().Distributive().super_categories()
-                [Category of finite lattice posets]
-            """
-            return [FiniteLatticePosets().CongruenceUniform(),
-                    FiniteLatticePosets().Trim()]
-
-        class ParentMethods:
-            def is_distributive(self):
-                """
-                Return whether ``self`` is a distributive lattice.
-
-                EXAMPLES::
-
-                    sage: P = posets.Crown(4).order_ideals_lattice()
-                    sage: P.is_distributive()
-                    True
-                """
-                return True
-
-        class Stone(CategoryWithAxiom):
-            """
-            The category of Stone lattices.
-
-            EXAMPLES::
-
-                sage: cat = FiniteLatticePosets().Stone(); cat
-                Category of finite distributive stone lattice posets
-
-                sage: cat.super_categories()
-                [Category of finite distributive lattice posets]
-            """
-            class ParentMethods:
-                def is_stone(self):
-                    """
-                    Return whether ``self`` is a Stone lattice.
-
-                    EXAMPLES::
-
-                        sage: posets.DivisorLattice(12).is_stone()
                         True
                     """
                     return True
