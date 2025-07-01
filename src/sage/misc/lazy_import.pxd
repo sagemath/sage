@@ -1,5 +1,5 @@
 cdef class LazyImport:
-    cdef readonly object _object
+    cdef readonly object _object   # The actual object if imported, None otherwise
     cdef object _module
     cdef object _name
     cdef object _as_name
