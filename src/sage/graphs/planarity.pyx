@@ -57,7 +57,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, immutable
 
     - ``immutable`` -- boolean (default: ``None``); whether to create a
       mutable/immutable graph. ``immutable=None`` (default) means that
-      the graph and the kuratowski subgraph will behave the same way.
+      the graph and the Kuratowski subgraph will behave the same way.
       This parameter is ignored when ``kuratowski=False``.
 
     EXAMPLES::
@@ -157,7 +157,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, immutable
                 gp_Free(&theGraph)
                 return False
             # With just the current edges, we have a nonplanar graph,
-            # so to isolate a kuratowski subgraph, just keep going.
+            # so to isolate a Kuratowski subgraph, just keep going.
             break
 
     status = gp_Embed(theGraph, EMBEDFLAGS_PLANAR)
