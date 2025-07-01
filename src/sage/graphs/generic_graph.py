@@ -5799,7 +5799,7 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``immutable`` -- boolean (default: ``None``); whether to create a
           mutable/immutable graph. ``immutable=None`` (default) means that the
-          graph and the kuratowski subgraph will behave the same way.
+          graph and the Kuratowski subgraph will behave the same way.
           This parameter is ignored when ``kuratowski=False``.
 
         EXAMPLES::
