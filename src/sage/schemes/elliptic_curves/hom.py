@@ -589,11 +589,14 @@ class EllipticCurveHom(Morphism):
             Traceback (most recent call last):
             ...
             TypeError: input must be a point in the codomain
+            sage: f.inverse_image((0, 2))
+            (2 : 3*z2 + 1 : 1)
             sage: f.inverse_image(f.codomain().zero())
             (0 : 1 : 0)
         """
         if Q not in self.codomain():
             raise TypeError('input must be a point in the codomain')
+        Q = self.codomain()(Q)
         if Q.is_zero():
             if all:
                 return self.kernel_points()
