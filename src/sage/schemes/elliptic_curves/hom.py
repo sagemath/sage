@@ -598,6 +598,25 @@ class EllipticCurveHom(Morphism):
             (2 : 3*z2 + 1 : 1)
             sage: f(f.inverse_image((0, 2)))
             (0 : 2 : 1)
+
+        Stress test::
+
+            sage: # long time
+            ....: for p in primes(2, 12):
+            ....:     for a in range(p):
+            ....:         for b in range(p):
+            ....:             try: E = EllipticCurve(GF(p), [a, b]); P = E.0
+            ....:             except: continue  # maybe singular curve or E.0 doesn't exist
+            ....:             for n in P.order().divisors():
+            ....:                 f = E.isogeny(P*n)
+            ....:                 for R in E:
+            ....:                     Q = f(R)
+            ....:                     assert f(f.inverse_image(Q)) == Q
+            ....:                 for Q in f.codomain():
+            ....:                     try:
+            ....:                         ignore = f.inverse_image(Q)
+            ....:                     except ValueError:  # no inverse image found
+            ....:                         continue
         """
         if Q not in self.codomain():
             raise TypeError('input must be a point in the codomain')
@@ -617,12 +636,14 @@ class EllipticCurveHom(Morphism):
             from warnings import warn
             warn('computing inverse image over inexact base ring is not guaranteed to be correct')
         E = self.domain()
-        for P in E.lift_x((self.x_rational_map() - Q.x()).numerator().any_root(), all=True):
-            # any_root raise ValueError if there's no root
-            if self(P) == Q:
-                return P
-        assert not self.base_ring().is_exact(), f"BUG: computation over an exact ring did not find the inverse image of {Q}"
-        raise NotImplementedError
+        for Px in (self.x_rational_map() - Q.x()).numerator().roots(multiplicities=False):
+            for P in E.lift_x(Px, all=True):
+                if self(P) == Q:
+                    return P
+        if self.base_ring().is_exact():
+            raise ValueError('no inverse image found')
+        else:
+            raise NotImplementedError
 
     def scaling_factor(self):
         r"""
