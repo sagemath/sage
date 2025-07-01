@@ -124,10 +124,11 @@ sagelib-clean:
 	     cd sage/ext/interpreters/ && rm -f *.so *.c *.h *.py* *.pxd) \
 	    && rm -rf "$(SAGE_ROOT)"/build/pkgs/sagelib/src/build; \
 	fi
+# Don't use "meson setup --wipe "$$d";" due to https://github.com/sagemath/sage/pull/39030#issuecomment-3021583924
 	@echo "Wiping meson build directories..."
 	@for d in "$(SAGE_ROOT)"/build/cp[0-9]*; do \
 		if [ -d "$$d" ]; then \
-			meson setup --wipe "$$d"; \
+			rm -rf "$$d"
 		fi; \
 	done
 
