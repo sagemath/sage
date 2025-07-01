@@ -45,7 +45,7 @@ comp_other = bz2
 
 from sage.misc.sage_unittest import TestSuite
 from sage.misc.superseded import deprecation
-from sage.misc.lazy_import import LazyImport
+from sage.misc.lazy_import cimport LazyImport
 
 # We define two global dictionaries `already_pickled` and
 # `already_unpickled`, which are intended to help you to implement
@@ -334,7 +334,7 @@ def dumps(obj, compress=True):
     try:
         type_obj = type(obj)
         if type_obj is LazyImport:
-            type_obj = type(obj.get_object())
+            type_obj = type((<LazyImport>obj).get_object())
         ans = type_obj.dumps(obj, compress)
     except (AttributeError, RuntimeError, TypeError):
         ans = _base_dumps(obj, compress=compress)
