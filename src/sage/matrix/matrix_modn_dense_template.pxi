@@ -204,12 +204,13 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
 
     applyP(F[0], FflasRight, FflasNoTrans, nrows, 0, r, <ModField.Element*>entries, ncols, Q)
 
-    cdef list pivots = [int(Q[i]) for i in range(r)]
+    cdef list column_pivots = [int(Q[i]) for i in range(r)]
+    cdef list row_pivots = sorted([int(P[i]) for i in range(r)])
 
     sig_free(P)
     sig_free(Q)
     del F
-    return r, pivots
+    return r, column_pivots, row_pivots
 
 cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
     # See trac #13878: This is to avoid sending invalid data to linbox,
@@ -1788,8 +1789,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             r, pivots = linbox_echelonize_efd(self.p, self._entries,
                                               self._nrows, self._ncols)
         else:
-            r, pivots = linbox_echelonize(self.p, self._entries,
+            r, pivots, row_pivots = linbox_echelonize(self.p, self._entries,
                                           self._nrows, self._ncols)
+            self.cache('pivot_rows',tuple(row_pivots))
         verbose('done with echelonize', t)
         self.cache('in_echelon_form', True)
         self.cache('rank', r)
