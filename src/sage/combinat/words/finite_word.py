@@ -4153,71 +4153,6 @@ class FiniteWord_class(Word_class):
         d.update((letter, i) for i, letter in enumerate(self))
         return d
 
-    def _pos_in(self, other, p):
-        r"""
-        Return the position of the first occurrence of ``self`` starting at
-        position ``p`` in ``other``.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`first_occurrence` instead.
-
-        EXAMPLES::
-
-            sage: Word('12')._pos_in(Word('131231'), 2)
-            doctest:warning
-            ...
-            DeprecationWarning: f._pos_in(w, start) is deprecated.
-            Use w.first_occurrence(f, start) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            2
-            sage: Word('12')._pos_in(Word('131231'), 3) is None
-            True
-            sage: Word('32')._pos_in(Word('131231'), 0) is None
-            True
-
-        The empty word occurs in a word::
-
-            sage: Word('')._pos_in(Word('123'), 0)
-            0
-            sage: Word('')._pos_in(Word(''), 0)
-            0
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f._pos_in(w, start) is deprecated.'
-                    ' Use w.first_occurrence(f, start) instead.')
-        return other.first_occurrence(self, p)
-
-    def first_pos_in(self, other):
-        r"""
-        Return the position of the first occurrence of ``self`` in ``other``,
-        or ``None`` if ``self`` is not a factor of ``other``.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`first_occurrence` instead.
-
-        EXAMPLES::
-
-            sage: Word('12').first_pos_in(Word('131231'))
-            doctest:warning
-            ...
-            DeprecationWarning: f.first_pos_in(w) is deprecated.
-            Use w.first_occurrence(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            2
-            sage: Word('32').first_pos_in(Word('131231')) is None
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.first_pos_in(w) is deprecated.'
-                    ' Use w.first_occurrence(f) instead.')
-        return other.first_occurrence(self)
-
     def find(self, sub, start=0, end=None):
         r"""
         Return the index of the first occurrence of ``sub`` in ``self``,
@@ -4410,138 +4345,6 @@ class FiniteWord_class(Word_class):
             True
         """
         return other.first_occurrence(self) is not None
-
-    def factor_occurrences_in(self, other):
-        r"""
-        Return an iterator over all occurrences (including overlapping ones)
-        of ``self`` in ``other`` in their order of appearance.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`factor_occurrences_iterator` instead.
-
-        EXAMPLES::
-
-            sage: u = Word('121')
-            sage: w = Word('121213211213')
-            sage: list(u.factor_occurrences_in(w))
-            doctest:warning
-            ...
-            DeprecationWarning: f.factor_occurrences_in(w) is deprecated.
-            Use w.factor_occurrences_iterator(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            [0, 2, 8]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.factor_occurrences_in(w) is deprecated.'
-                    ' Use w.factor_occurrences_iterator(f) instead.')
-        return other.factor_occurrences_iterator(self)
-
-    def nb_factor_occurrences_in(self, other):
-        r"""
-        Return the number of times ``self`` appears as a factor
-        in ``other``.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`number_of_factor_occurrences` instead.
-
-        EXAMPLES::
-
-            sage: Word('123').nb_factor_occurrences_in(Word('112332312313112332121123'))
-            doctest:warning
-            ...
-            DeprecationWarning: f.nb_factor_occurrences_in(w) is deprecated.
-            Use w.number_of_factor_occurrences(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            4
-            sage: Word('321').nb_factor_occurrences_in(Word('11233231231311233221123'))
-            0
-
-        An error is raised for the empty word::
-
-            sage: Word().nb_factor_occurrences_in(Word('123'))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: The factor must be non empty
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.nb_factor_occurrences_in(w) is deprecated.'
-                    ' Use w.number_of_factor_occurrences(f) instead.')
-        return other.number_of_factor_occurrences(self)
-
-    def nb_subword_occurrences_in(self, other):
-        r"""
-        Return the number of times ``self`` appears in ``other`` as a subword.
-
-        This corresponds to the notion of `binomial coefficient` of two
-        finite words whose properties are presented in the chapter of
-        Lothaire's book written by Sakarovitch and Simon [Lot1997]_.
-
-        .. WARNING::
-
-            This method is deprecated since 2020 and will be removed in a
-            later version of SageMath.
-            Use :meth:`number_of_subword_occurrences` instead.
-
-        INPUT:
-
-        - ``other`` -- finite word
-
-        EXAMPLES::
-
-            sage: tm = words.ThueMorseWord()
-
-            sage: u = Word([0,1,0,1])
-            sage: u.nb_subword_occurrences_in(tm[:1000])
-            doctest:warning
-            ...
-            DeprecationWarning: f.nb_subword_occurrences_in(w) is deprecated.
-            Use w.number_of_subword_occurrences(f) instead.
-            See https://github.com/sagemath/sage/issues/30187 for details.
-            2604124996
-
-            sage: u = Word([0,1,0,1,1,0])
-            sage: u.nb_subword_occurrences_in(tm[:100])
-            20370432
-
-        .. NOTE::
-
-            This code, based on [MSSY2001]_, actually compute the number of
-            occurrences of all prefixes of ``self`` as subwords in all
-            prefixes of ``other``.  In particular, its complexity is
-            bounded by ``len(self) * len(other)``.
-
-        TESTS::
-
-            sage: Word('').nb_subword_occurrences_in(Word(''))
-            1
-            sage: parent(_)
-            Integer Ring
-            sage: v,u = Word(), Word('123')
-            sage: v.nb_subword_occurrences_in(u)
-            1
-            sage: v,u = Word('123'), Word('1133432311132311112')
-            sage: v.nb_subword_occurrences_in(u)
-            11
-            sage: v,u = Word('4321'), Word('1132231112233212342231112')
-            sage: v.nb_subword_occurrences_in(u)
-            0
-            sage: v,u = Word('3'), Word('122332112321213')
-            sage: v.nb_subword_occurrences_in(u)
-            4
-            sage: v,u = Word([]), words.ThueMorseWord()[:1000]
-            sage: v.nb_subword_occurrences_in(u)
-            1
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(30187, 'f.nb_subword_occurrences_in(w) is deprecated.'
-                    ' Use w.number_of_subword_occurrences(f) instead.')
-        return other.number_of_subword_occurrences(self)
 
     def number_of_factor_occurrences(self, other):
         r"""
@@ -5856,7 +5659,7 @@ class FiniteWord_class(Word_class):
                     desubstitued_word = desubstitued_word + w_running ** (current_run_length - min_run)
             return desubstitued_word.sturmian_desubstitute_as_possible()
 
-    def is_sturmian_factor(self):
+    def is_sturmian_factor(self) -> bool:
         r"""
         Tell whether ``self`` is a factor of a Sturmian word.
 
@@ -5914,7 +5717,7 @@ class FiniteWord_class(Word_class):
         """
         return self.sturmian_desubstitute_as_possible().is_empty()
 
-    def is_tangent(self):
+    def is_tangent(self) -> bool:
         r"""
         Tell whether ``self`` is a tangent word.
 
@@ -6493,7 +6296,7 @@ class FiniteWord_class(Word_class):
             res = res.delta_inv(s=tab[i])
         return res
 
-    def is_smooth_prefix(self):
+    def is_smooth_prefix(self) -> bool:
         r"""
         Return ``True`` if ``self`` is the prefix of a smooth word, and ``False``
         otherwise.
@@ -6812,7 +6615,7 @@ class FiniteWord_class(Word_class):
         rep.axes(False)
         return rep
 
-    def is_square(self):
+    def is_square(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a square, and ``False`` otherwise.
 
@@ -6835,7 +6638,7 @@ class FiniteWord_class(Word_class):
             l = self.length() // 2
             return self[:l] == self[l:]
 
-    def is_square_free(self):
+    def is_square_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` does not contain squares, and ``False``
         otherwise.
@@ -6882,7 +6685,7 @@ class FiniteWord_class(Word_class):
         T = DecoratedSuffixTree(self)
         return set(T.square_vocabulary(output='word'))
 
-    def is_cube(self):
+    def is_cube(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a cube, and ``False`` otherwise.
 
@@ -6902,7 +6705,7 @@ class FiniteWord_class(Word_class):
         l = self.length() // 3
         return self[:l] == self[l:2*l] == self[2*l:]
 
-    def is_cube_free(self):
+    def is_cube_free(self) -> bool:
         r"""
         Return ``True`` if ``self`` does not contain cubes, and ``False`` otherwise.
 
@@ -6965,7 +6768,7 @@ class FiniteWord_class(Word_class):
         M = FreeMonoid(len(l), l)
         return M(self)
 
-    def is_christoffel(self):
+    def is_christoffel(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a Christoffel word, and ``False`` otherwise.
 
