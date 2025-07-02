@@ -96,8 +96,6 @@ cannot be an ``__init__.py`` file.
 
 For example,
 
-- **sagemath-tdlib** will provide :mod:`sage.graphs.graph_decompositions.tdlib`,
-
 - **sagemath-rw** will provide :mod:`sage.graphs.graph_decompositions.rankwidth`,
 
 - **sagemath-graphs** will provide all of the rest of
@@ -264,10 +262,7 @@ modules into distribution packages has to respect the hard constraints
 that are imposed by the build-time dependencies.
 
 We can define some meaningful small distributions that just consist of
-a single or a few Cython modules. For example, **sagemath-tdlib**
-(:issue:`29864`) would just package the single
-Cython module that must be linked with ``tdlib``,
-:mod:`sage.graphs.graph_decompositions.tdlib`. Starting with the Sage
+a single or a few Cython modules. Starting with the Sage
 9.6 development cycle, as soon as namespace packages are activated, we
 can start to create these distributions. This is quite a mechanical
 task.

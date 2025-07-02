@@ -19,13 +19,13 @@ Recursive Directory Contents
 
 import importlib.machinery
 import importlib.util
-
 import os
-
 from collections import defaultdict
 
-from sage.misc.package_dir import is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir
-from sage.misc.package_dir import read_distribution, SourceDistributionFilter
+from sage.misc.package_dir import SourceDistributionFilter, read_distribution
+from sage.misc.package_dir import (
+    is_package_or_sage_namespace_package_dir as is_package_or_namespace_package_dir,
+)
 
 assert read_distribution  # unused in this file, re-export for compatibility
 
@@ -115,11 +115,6 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         sage: ['sage.ext_data.nbconvert.postprocess' in L for L in (py_packages, py_modules)]
         [False, False]
 
-    Filtering by distribution (distribution package)::
-
-        sage: find_python_sources(SAGE_SRC, distributions=['sagemath-tdlib'])
-        ([], [], [<setuptools.extension.Extension('sage.graphs.graph_decompositions.tdlib')...>])
-
     Benchmarking::
 
         sage: timeit('find_python_sources(SAGE_SRC)',         # random output
@@ -188,28 +183,6 @@ def filter_cython_sources(src_dir, distributions, exclude_distributions=None):
       ``distributions``.
 
     OUTPUT: list of absolute paths to Cython files (``*.pyx``)
-
-    EXAMPLES::
-
-        sage: from sage.env import SAGE_SRC
-        sage: from sage_setup.find import filter_cython_sources
-        sage: cython_modules = filter_cython_sources(SAGE_SRC, ["sagemath-tdlib"])
-
-    Cython module relying on tdlib::
-
-        sage: any(f.endswith('sage/graphs/graph_decompositions/tdlib.pyx') for f in cython_modules)
-        True
-
-    Cython module not relying on tdlib::
-
-        sage: any(f.endswith('sage/structure/sage_object.pyx') for f in cython_modules)
-        False
-
-    Benchmarking::
-
-        sage: timeit('filter_cython_sources(SAGE_SRC, ["sagemath-tdlib"])', # random output
-        ....:        number=1, repeat=1)
-        1 loops, best of 1: 850 ms per loop
     """
     files: list[str] = []
     distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
@@ -247,6 +220,7 @@ def _cythonized_dir(src_dir=None, editable_install=None):
     """
     from importlib import import_module
     from pathlib import Path
+
     from sage.env import SAGE_ROOT, SAGE_SRC
     if editable_install is None:
         if src_dir is None:
