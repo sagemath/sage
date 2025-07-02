@@ -128,7 +128,7 @@ sagelib-clean:
 	@echo "Wiping meson build directories..."
 	@for d in "$(SAGE_ROOT)"/build/cp[0-9]*; do \
 		if [ -d "$$d" ]; then \
-			rm -rf "$$d"
+			rm -rf "$$d"; \
 		fi; \
 	done
 
