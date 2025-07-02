@@ -132,4 +132,3 @@ coxeter3 = SPKG_INSTALL_REQUIRES_sagemath_coxeter3
 mcqd     = SPKG_INSTALL_REQUIRES_sagemath_mcqd
 meataxe  = SPKG_INSTALL_REQUIRES_sagemath_meataxe
 sirocco  = SPKG_INSTALL_REQUIRES_sagemath_sirocco
-tdlib    = SPKG_INSTALL_REQUIRES_sagemath_tdlib

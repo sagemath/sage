@@ -143,7 +143,6 @@ PYPI_WHEEL_PACKAGES = $(PYPI_NOARCH_WHEEL_PACKAGES) \
 	sagemath_categories			\
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
-	sagemath_tdlib				\
 	sagemath_coxeter3 			\
 	sagemath_sirocco			\
 	sagemath_meataxe

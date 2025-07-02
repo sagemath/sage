@@ -10,7 +10,6 @@ rw = cc.find_library('rw', required: false, disabler: true)
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_tdlib.py',
   'fast_digraph.pxd',
   'modular_decomposition.pxd',
   'rankwidth.pxd',

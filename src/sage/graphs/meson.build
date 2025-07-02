@@ -19,7 +19,6 @@ py.install_sources(
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_mcqd.py',
-  'all__sagemath_tdlib.py',
   'bipartite_graph.py',
   'cliquer.pxd',
   'cographs.py',
