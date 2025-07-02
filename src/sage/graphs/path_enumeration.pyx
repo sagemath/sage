@@ -1619,12 +1619,13 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                     ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path), ancestor_idx_dict)
                     if ancestor_idx == -1:
                         continue
-                    new_path = path[:deviation_i + 1] + tree_path(e[1])
+                    new_is_simple = ancestor_idx > deviation_i
+                    # no need to compute tree_path if new_is_simple is False
+                    new_path = path[:deviation_i + 1] + (tree_path(e[1]) if new_is_simple else [e[1]])
                     new_path_idx = idx
                     idx_to_path[new_path_idx] = new_path
                     idx += 1
                     new_cost = original_cost + sidetrack_cost[(e[0], e[1])]
-                    new_is_simple = ancestor_idx > deviation_i
                     candidate_paths.push(((-new_cost, new_is_simple), (new_path_idx, deviation_i + 1)))
                 if deviation_i == dev_idx:
                     continue
