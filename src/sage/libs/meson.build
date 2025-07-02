@@ -33,7 +33,6 @@ py.install_sources(
   'all__sagemath_coxeter3.py',
   'all__sagemath_meataxe.py',
   'all__sagemath_objects.py',
-  'all__sagemath_sirocco.py',
   'ecl.pxd',
   'eclsig.h',
   'gmpxx.pxd',
