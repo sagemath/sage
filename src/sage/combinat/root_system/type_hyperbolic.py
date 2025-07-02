@@ -1,4 +1,3 @@
-
 """
 Hyperbolic Coxeter matrices for hyperbolic Coxeter types.
 
