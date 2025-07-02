@@ -469,6 +469,12 @@ class EllipticCurveHom(Morphism):
             sage: E = EllipticCurve(GF(23), [1,1])
             sage: set(E.scalar_multiplication(23).kernel_points())
             {(0 : 1 : 0)}
+
+        Check that the result is consistent with
+        :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
+
+            sage: set(E.scalar_multiplication(4).kernel_points()) == set(E(0).division_points(4))
+            True
         """
         E = self.domain()
         yield E.zero()
@@ -575,6 +581,17 @@ class EllipticCurveHom(Morphism):
             ValueError: ...
             sage: len(list(f.inverse_image(f(Q), all=True)))
             2
+
+        Check that the result is consistent with
+        :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
+
+            sage: E = EllipticCurve('37a'); E
+            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+            sage: P = E(0, -1)
+            sage: (P * 5).division_points(5)
+            [(0 : -1 : 1)]
+            sage: E.scalar_multiplication(5).inverse_image(P * 5)
+            (0 : -1 : 1)
 
         Points from wrong curves cannot be passed in::
 
