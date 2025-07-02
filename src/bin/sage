@@ -508,10 +508,6 @@ usage_advanced() {
     echo "                         (not installed currently, run sage -i rst2ipynb)"
     echo "  --ipynb2rst [...]   -- Generates a reStructuredText source file from"
     echo "                         a Jupyter notebook (.ipynb)."
-    echo "  --sws2rst <sws doc> -- Generates a reStructuredText source file from"
-    echo "                         a Sage worksheet (.sws) document."
-    command -v sage-sws2rst >&/dev/null || \
-    echo "                         (not installed currently, run sage -i sage_sws2rst)"
     echo
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
