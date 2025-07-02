@@ -172,7 +172,8 @@ def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
 
     - an upper bound on the rank of Sha[2]
 
-    - a list of the generators found (currently None, since we don't store them)
+    - a list of the generators found
+      (currently ``None``, since we do not store them)
 
     EXAMPLES::
 
@@ -185,12 +186,12 @@ def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
         (1, 1, 0, 0, None)
     """
     from sage.schemes.elliptic_curves.descent_two_isogeny import two_descent_by_two_isogeny
-    n1, n2, n1p, n2p = two_descent_by_two_isogeny(E)
-    # bring n1 and n1p up to the nearest power of two
-    e1 = ZZ(n1).log(2, prec=53).ceil()
-    e1p = ZZ(n1p).log(2, prec=53).ceil()
-    e2 = ZZ(n2).log(2)
-    e2p = ZZ(n2p).log(2)
+    result_two_descent = [ZZ(n) for n in two_descent_by_two_isogeny(E)]
+    # safety check that all numbers in the result are powers of two
+    if not all(n.is_power_of(2) for n in result_two_descent):
+        raise RuntimeError("not a power of 2 in two-descent")
+
+    e1, e2, e1p, e2p = [n.valuation(2) for n in result_two_descent]
     rank_lower_bd = e1 + e1p - 2
     rank_upper_bd = e2 + e2p - 2
     sha_upper_bd = e2 + e2p - e1 - e1p
@@ -200,7 +201,7 @@ def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
 
 def heegner_index_work(E) -> tuple:
     """
-    Prepare the input and output for computing the heegner index.
+    Prepare the input and output for computing the Heegner index.
 
     INPUT:
 
