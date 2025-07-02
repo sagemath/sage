@@ -1,6 +1,6 @@
 
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
-from sage.combinat.root_system.coxeter_type import CoxeterType 
+from sage.combinat.root_system.coxeter_type import CoxeterType
 
 """
 Hyperbolic Coxeter matrices for hyperbolic Coxeter types.
@@ -248,21 +248,21 @@ hyperbolic_coxeter_matrices = {
                 [3, 1, 3, 2, 2],
                 [2, 3, 1, 4, 3],
                 [2, 2, 4, 1, 2],
-                [2, 2, 3, 2, 1]       
+                [2, 2, 3, 2, 1] 
             ]),
     (142, 3, 3): CoxeterMatrix([
                 [1, 3, 2, 2, 2],
                 [3, 1, 4, 2, 2],
                 [2, 4, 1, 3, 3],
                 [2, 2, 3, 1, 2],
-                [2, 2, 3, 2, 1]       
+                [2, 2, 3, 2, 1]
             ]),
     (142, 3, 4): CoxeterMatrix([
                 [1, 4, 2, 2, 2],
                 [4, 1, 3, 2, 2],
                 [2, 3, 1, 4, 3],
                 [2, 2, 4, 1, 2],
-                [2, 2, 3, 2, 1]       
+                [2, 2, 3, 2, 1]
             ]),
     (142, 3, 5): CoxeterMatrix([
                 [1, 3, 2, 2, 2],
@@ -420,7 +420,7 @@ hyperbolic_coxeter_matrices = {
                 [2, 3, 1, 2, 3, 2],
                 [2, 3, 2, 1, 2, 3],
                 [2, 2, 3, 2, 1, 3],
-                [2, 2, 2, 3, 3, 1] 
+                [2, 2, 2, 3, 3, 1]
             ]),
     (144, 1, 1): CoxeterMatrix([
                 [1, 3, 2, 2, 2, 2, 2, 2],
@@ -543,6 +543,7 @@ hyperbolic_coxeter_matrices = {
             ]),
 }
 
+
 class CoxeterType_Hyperbolic(CoxeterType):
     r"""
     Coxeter type hyperbolic.
@@ -571,7 +572,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
     def __repr__(self):
         a, b, c = self._position
         return f"Coxeter type with Humphrey's datum (Page : {a}, Column : {b}, Row : {c})"
-    
 
     def rank(self):
         """
@@ -587,7 +587,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             4
         """
         return hyperbolic_coxeter_matrices[self._position].rank()
-    
+
     def coxeter_matrix(self):
         """
         Return the Coxeter matrix of ``self``.
@@ -602,7 +602,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             [2 4 3 1]
         """
         return hyperbolic_coxeter_matrices[self._position]
-    
+
     def humphreys_reference(self):
         """
         Return a string with the reference to Humphreys' Reflection groups and Coxeter groups.
@@ -632,7 +632,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             Graph on 8 vertices
         """
         return self.coxeter_matrix().coxeter_graph()
-    
+
     def is_hyperbolic(self):
         """
         Return ``True`` since ``self`` is a hyperbolic Coxeter type.
@@ -647,7 +647,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             False
         """
         return True
-    
+
     def index_set(self):
         """
         Return the index set for ``self``.
@@ -665,7 +665,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             (1, 2, 3, 4, 5, 6)
         """
         return self.coxeter_matrix().index_set()
-    
+
     def is_affine(self):
         """
         Return ``False`` because hyperbolic Coxeter graphs are never affine.
@@ -677,7 +677,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             False
         """
         return False
-    
+
     def is_finite(self):
         """
         Return ``False`` since all hyperbolic coxeter matrix is not finite.
@@ -689,7 +689,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             False
         """
         return False
-    
+
     def is_crystallographic(self):
         """
         Return whether ``self`` is crystallographic.
@@ -705,7 +705,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             False
         """
         return self.coxeter_matrix().is_crystallographic()
-    
+
     def __eq__(self, other):
         """
         Return whether ``self`` is equal to ``other``.
@@ -722,4 +722,3 @@ class CoxeterType_Hyperbolic(CoxeterType):
             False
         """
         return isinstance(other, CoxeterType_Hyperbolic) and self._position == other._position
-    
