@@ -26,4 +26,3 @@ Thematic tutorial document tree
    numerical_sage/index
    explicit_methods_in_number_theory/index
    profiling
-   sws2rst
