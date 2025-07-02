@@ -145,7 +145,6 @@ PYPI_WHEEL_PACKAGES = $(PYPI_NOARCH_WHEEL_PACKAGES) \
 	sagemath_mcqd 				\
 	sagemath_tdlib				\
 	sagemath_coxeter3 			\
-	sagemath_sirocco			\
 	sagemath_meataxe
 
 # sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib

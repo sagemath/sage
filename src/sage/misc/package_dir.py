@@ -12,11 +12,10 @@ Recognizing package directories
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
 import glob
+import os
 import re
 import sys
-
 from collections import defaultdict
 from contextlib import contextmanager
 
@@ -335,8 +334,8 @@ def cython_namespace_package_support():
 
     See https://github.com/cython/cython/issues/2918#issuecomment-991799049
     """
-    import Cython.Build.Dependencies
     import Cython.Build.Cythonize
+    import Cython.Build.Dependencies
     import Cython.Utils
     orig_is_package_dir = Cython.Utils.is_package_dir
     Cython.Utils.is_package_dir = Cython.Build.Cythonize.is_package_dir = Cython.Build.Dependencies.is_package_dir = Cython.Utils.cached_function(is_package_or_sage_namespace_package_dir)
@@ -386,7 +385,7 @@ def walk_packages(path=None, prefix='', onerror=None):
         """
         Yield :class:`ModuleInfo` for all submodules on ``path``.
         """
-        from pkgutil import get_importer, iter_importers, ModuleInfo
+        from pkgutil import ModuleInfo, get_importer, iter_importers
 
         if path is None:
             importers = iter_importers()
@@ -522,7 +521,6 @@ if __name__ == '__main__':
                          "sagemath-coxeter3",
                          "sagemath-mcqd",
                          "sagemath-meataxe",
-                         "sagemath-sirocco",
                          "sagemath-tdlib",
                          "sagemath-environment",
                          "sagemath-categories",

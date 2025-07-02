@@ -100,7 +100,6 @@ py.install_sources(
   'all__sagemath_meataxe.py',
   'all__sagemath_objects.py',
   'all__sagemath_repl.py',
-  'all__sagemath_sirocco.py',
   'all__sagemath_tdlib.py',
   'all_cmdline.py',
   'env.py',
