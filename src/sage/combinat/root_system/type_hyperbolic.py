@@ -1,14 +1,14 @@
 
-from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
-from sage.combinat.root_system.coxeter_type import CoxeterType
-
 """
 Hyperbolic Coxeter matrices for hyperbolic Coxeter types.
 
-These matrices are defined by there position in the Humphreys book. The first number in the parenthesis is the
+These matrices are defined by their position in the Humphreys book. The first number in the parenthesis is the
 page, the second number is the column and the third number is the row.
-
 """
+
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
+from sage.combinat.root_system.coxeter_type import CoxeterType
+
 hyperbolic_coxeter_matrices = {
     (141, 1, 1): CoxeterMatrix([
                 [1, 4, 2, 2],
@@ -681,7 +681,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
     def is_finite(self):
         """
-        Return ``False`` since all hyperbolic coxeter matrix is not finite.
+        Return ``False`` because hyperbolic Coxeter graphs are never finite.
 
         EXAMPLES::
 
