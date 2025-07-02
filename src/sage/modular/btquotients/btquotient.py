@@ -225,9 +225,7 @@ class DoubleCosetReduction(SageObject):
             return False
         if self._t_prec != other._t_prec:
             return False
-        if self._igamma_prec != other._igamma_prec:
-            return False
-        return True
+        return self._igamma_prec == other._igamma_prec
 
     def __ne__(self, other):
         """
@@ -1188,9 +1186,7 @@ class Vertex(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
@@ -1327,9 +1323,7 @@ class Edge(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
@@ -1557,9 +1551,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return False
         if self._Nplus != other._Nplus:
             return False
-        if self._character != other._character:
-            return False
-        return True
+        return self._character == other._character
 
     def __ne__(self, other):
         r"""

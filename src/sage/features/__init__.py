@@ -347,7 +347,7 @@ class Feature(TrivialUniqueRepresentation):
             return True
         return self._spkg_type() == 'standard'
 
-    def is_optional(self):
+    def is_optional(self) -> bool:
         r"""
         Return whether this feature corresponds to an optional SPKG.
 
@@ -359,7 +359,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         return self._spkg_type() == 'optional'
 
-    def hide(self):
+    def hide(self) -> None:
         r"""
         Hide this feature. For example this is used when the doctest option
         ``--hide`` is set. Setting an installed feature as hidden pretends
@@ -385,7 +385,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         self._hidden = True
 
-    def unhide(self):
+    def unhide(self) -> None:
         r"""
         Revert what :meth:`hide` did.
 
@@ -401,7 +401,7 @@ class Feature(TrivialUniqueRepresentation):
         """
         self._hidden = False
 
-    def is_hidden(self):
+    def is_hidden(self) -> bool:
         r"""
         Return whether ``self`` is present but currently hidden.
 
@@ -415,9 +415,7 @@ class Feature(TrivialUniqueRepresentation):
             sage: sage__plot().is_hidden()
             False
         """
-        if self._hidden and self._is_present():
-            return True
-        return False
+        return bool(self._hidden and self._is_present())
 
 
 class FeatureNotPresentError(RuntimeError):

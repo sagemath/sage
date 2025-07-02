@@ -1281,10 +1281,8 @@ class InfinityRing_class(Singleton, CommutativeRing):
         from sage.structure.coerce import parent_is_real_numerical
         if parent_is_real_numerical(R):
             return True
-        if isinstance(R, (sage.rings.abc.RealIntervalField,
-                          sage.rings.abc.RealBallField)):
-            return True
-        return False
+        return isinstance(R, (sage.rings.abc.RealIntervalField,
+                              sage.rings.abc.RealBallField))
 
     def _pushout_(self, other):
         r"""

@@ -4773,9 +4773,7 @@ class HeegnerQuatAlg(SageObject):
             return False
         if not satisfies_weak_heegner_hypothesis(self.__level, D):
             return False
-        if not is_inert(D, self.__ell):
-            return False
-        return True
+        return is_inert(D, self.__ell)
 
     def heegner_discriminants(self, n=5):
         r"""

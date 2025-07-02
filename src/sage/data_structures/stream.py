@@ -2538,9 +2538,7 @@ class Stream_binaryCommutative(Stream_binary):
             return False
         if self._left == other._left and self._right == other._right:
             return True
-        if self._left == other._right and self._right == other._left:
-            return True
-        return False
+        return self._left == other._right and self._right == other._left
 
 
 class Stream_zero(Stream):
@@ -4943,9 +4941,8 @@ class Stream_infinite_operator(Stream):
         if not isinstance(other, type(self)):
             return True
         ao = min(self._approximate_order, other._approximate_order)
-        if any(self[i] != other[i] for i in range(ao, min(self._cur_order, other._cur_order))):
-            return True
-        return False
+        return any(self[i] != other[i]
+                   for i in range(ao, min(self._cur_order, other._cur_order)))
 
     def is_nonzero(self):
         r"""

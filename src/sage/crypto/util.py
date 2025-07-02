@@ -375,10 +375,7 @@ def is_blum_prime(n):
     if n < 0:
         return False
     if is_prime(n):
-        if mod(n, 4).lift() == 3:
-            return True
-        else:
-            return False
+        return mod(n, 4).lift() == 3
     else:
         return False
 

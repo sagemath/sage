@@ -853,10 +853,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if len(ass) != 1:
             return False
-        if self == ass[0]:
-            return True
-        else:
-            return False
+        return self == ass[0]
 
     def associated_primes(self):
         r"""

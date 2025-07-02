@@ -220,7 +220,7 @@ class DocTestDefaults(SageObject):
         return not (self == other)
 
 
-def skipdir(dirname):
+def skipdir(dirname) -> bool:
     """
     Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
@@ -233,9 +233,8 @@ def skipdir(dirname):
         sage: skipdir(os.path.join(sage.env.SAGE_SRC, "sage", "doctest", "tests"))
         True
     """
-    if os.path.exists(os.path.join(dirname, "nodoctest.py")) or os.path.exists(os.path.join(dirname, "nodoctest")):
-        return True
-    return False
+    return (os.path.exists(os.path.join(dirname, "nodoctest.py")) or
+            os.path.exists(os.path.join(dirname, "nodoctest")))
 
 
 def skipfile(filename, tested_optional_tags=False, *,

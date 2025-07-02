@@ -1307,9 +1307,7 @@ def _is_periodic_sequence(seq, period):
                 break
         if periodic:
             return False
-    if seq[:period] != seq[period : 2*period]:
-        return False
-    return True
+    return seq[:period] == seq[period:2 * period]
 
 
 def _create_m_sequence(q, n, check=True):

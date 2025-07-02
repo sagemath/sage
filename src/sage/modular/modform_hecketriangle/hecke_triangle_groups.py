@@ -1237,10 +1237,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D in self._conj_prim:
             return True
-        elif not primitive and D in self._conj_nonprim:
-            return True
-        else:
-            return False
+        return not primitive and D in self._conj_nonprim
 
     def list_discriminants(self, D, primitive=True, hyperbolic=True, incomplete=False):
         r"""
