@@ -41,6 +41,7 @@ py.install_sources(
   'type_G.py',
   'type_G_affine.py',
   'type_H.py',
+  'type_hyperbolic.py',
   'type_I.py',
   'type_Q.py',
   'type_affine.py',
