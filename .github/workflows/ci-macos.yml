@@ -74,32 +74,3 @@ jobs:
       stage: "2-experimental-p-z"
     needs: [stage-2-experimental-0-o]
     if: ${{ success() || failure() }}
-
-  dist:
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 500
-      - name: fetch tags
-        run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-      - name: Install bootstrap prerequisites
-        run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
-      - name: Bootstrap with update-version
-        # We set SAGE_ROOT and SAGE_SRC by hand
-        # because 'sage -sh' does not work with an unconfigured tree,
-        # giving: Error: SAGE_SCRIPTS_DIR is set to a bad value
-        run: |
-          git config --global user.email "nobody@example.com"
-          git config --global user.name "Sage GitHub CI"
-          SAGE_ROOT=. SAGE_SRC=./src tools/update-version $(cat src/VERSION.txt).dev0 || echo "(ignoring error)"
-      - name: make dist
-        run: |
-          ./configure --enable-download-from-upstream-url && make dist
-      - uses: actions/upload-artifact@v4
-        with:
-          path: "dist/*.tar.gz"
-          name: dist
