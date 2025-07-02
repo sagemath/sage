@@ -1538,6 +1538,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     cdef set unnecessary_vertices = set(G) - set(dist)  # no path to target
     if source in unnecessary_vertices:  # no path from source to target
         return
+    G.delete_vertices(unnecessary_vertices)
 
     # sidetrack cost
     cdef dict sidetrack_cost = {(e[0], e[1]): weight_function(e) + dist[e[1]] - dist[e[0]]
@@ -1571,6 +1572,17 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     # shortest path function for weighted/unweighted graph using reduced weights
     shortest_path_func = G._backend.bidirectional_dijkstra_special
 
+    # See explanation of ancestor_idx_dict below
+    def ancestor_idx_func(v, t, len_path, ancestor_idx_dict):
+        if v not in successor:
+            # target vertex is not reachable from v
+            return -1
+        if v in ancestor_idx_dict:
+            if ancestor_idx_dict[v] <= t or ancestor_idx_dict[v] == len_path - 1:
+                return ancestor_idx_dict[v]
+        ancestor_idx_dict[v] = ancestor_idx_func(successor[v], t, len_path, ancestor_idx_dict)
+        return ancestor_idx_dict[v]
+
     candidate_paths.push(((0, True), (0, 0)))
     while candidate_paths.size():
         (negative_cost, is_simple), (path_idx, dev_idx) = candidate_paths.top()
@@ -1579,21 +1591,6 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
 
         path = idx_to_path[path_idx]
         del idx_to_path[path_idx]
-
-        # ancestor_idx_dict[v] := the first vertex of ``path[:t+1]`` or ``path[-1]`` reachable by
-        #                    edges of first shortest path tree from v when enumerating deviating edges
-        #                    from ``path[t]``.
-        ancestor_idx_dict = {v: i for i, v in enumerate(path)}
-
-        def ancestor_idx_func(v, t, len_path):
-            if v not in successor:
-                # target vertex is not reachable from v
-                return -1
-            if v in ancestor_idx_dict:
-                if ancestor_idx_dict[v] <= t or ancestor_idx_dict[v] == len_path - 1:
-                    return ancestor_idx_dict[v]
-            ancestor_idx_dict[v] = ancestor_idx_func(successor[v], t, len_path)
-            return ancestor_idx_dict[v]
 
         if is_simple:
             # output
@@ -1608,13 +1605,18 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             else:
                 yield P
 
+            # ancestor_idx_dict[v] := the first vertex of ``path[:t+1]`` or ``path[-1]`` reachable by
+            #                    edges of first shortest path tree from v when enumerating deviating edges
+            #                    from ``path[t]``.
+            ancestor_idx_dict = {v: i for i, v in enumerate(path)}
+
             # GET DEVIATION PATHS
             original_cost = cost
             for deviation_i in range(len(path) - 1, dev_idx - 1, -1):
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
                     if e[1] in path[:deviation_i + 2]:  # e[1] is red or e in path
                         continue
-                    ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path))
+                    ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path), ancestor_idx_dict)
                     if ancestor_idx == -1:
                         continue
                     new_path = path[:deviation_i + 1] + tree_path(e[1])
@@ -1630,7 +1632,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         else:
             # get a path to target in G \ path[:dev_idx]
             deviation = shortest_path_func(path[dev_idx], target,
-                                           exclude_vertices=unnecessary_vertices.union(path[:dev_idx]),
+                                           exclude_vertices=path[:dev_idx],
                                            reduced_weight=sidetrack_cost)
             if not deviation:
                 continue  # no path to target in G \ path[:dev_idx]
