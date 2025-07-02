@@ -444,10 +444,7 @@ class Ideal_generic(MonoidElement):
             sage: bool(I)
             False
         """
-        for g in self.gens():
-            if not g.is_zero():
-                return True
-        return False
+        return any(not g.is_zero() for g in self.gens())
 
     def base_ring(self):
         r"""

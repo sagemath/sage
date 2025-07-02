@@ -2145,10 +2145,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         for f in self.level().factor():
             if kronecker_symbol(disc, f[0]) != -1:
                 return False
-        for f in self._Nplus.factor():
-            if kronecker_symbol(disc, f[0]) != 1:
-                return False
-        return True
+        return all(kronecker_symbol(disc, f[0]) == 1 for f in self._Nplus.factor())
 
     def _local_splitting_map(self, prec):
         r"""

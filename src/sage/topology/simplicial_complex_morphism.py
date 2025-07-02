@@ -550,10 +550,7 @@ class SimplicialComplexMorphism(Morphism):
             True
         """
         v = [self._vertex_dictionary[i[0]] for i in self.domain().faces()[0]]
-        for i in v:
-            if v.count(i) > 1:
-                return False
-        return True
+        return all(v.count(i) <= 1 for i in v)
 
     def is_identity(self) -> bool:
         """
