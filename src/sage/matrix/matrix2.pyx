@@ -878,6 +878,33 @@ cdef class Matrix(Matrix1):
             sage: v = vector(GF(3), [1,1])
             sage: m.solve_right(v)
             (2, 1)
+
+        Test ``extend``::
+
+            sage: matrix(ZZ, [[2]]).solve_right(vector(ZZ, [1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [1, 1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 4]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 2]), extend=False)
+            (1)
+            sage: matrix(QQ, [[2]]).solve_right(vector(QQ, [1]), extend=False)
+            (1/2)
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=True)  # <1s
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
+            sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
+            sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: matrix.identity(ZZ, 500).hermite_form()  # not tested (slow)
+            sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
+            sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
         """
         try:
             L = B.base_ring()
@@ -944,11 +971,22 @@ cdef class Matrix(Matrix1):
 
         C = B.column() if b_is_vec else B
 
-        if not extend:
-            try:
-                X = self._solve_right_hermite_form(C)
-            except NotImplementedError:
-                X = self._solve_right_smith_form(C)
+        if P not in _Fields and not extend:
+            if self.rank() == self.ncols():
+                # hermite_form is slow, avoid if possible
+                if self.is_square():
+                    X = self._solve_right_nonsingular_square(C, check_rank=False)
+                else:
+                    X = self._solve_right_general(C)
+                try:
+                    X = X.change_ring(P)
+                except TypeError:
+                    raise ValueError('matrix equation has no solutions')
+            else:
+                try:
+                    X = self._solve_right_hermite_form(C)
+                except NotImplementedError:
+                    X = self._solve_right_smith_form(C)
             return X.column(0) if b_is_vec else X
 
         if not self.is_square():
@@ -1199,7 +1237,7 @@ cdef class Matrix(Matrix1):
             try:
                 X_[i] = v / d
             except (ZeroDivisionError, TypeError) as e:
-                raise ValueError("matrix equation has no solution")
+                raise ValueError("matrix equation has no solutions")
 #        assert H*X_ == B
 
         return U * X_
