@@ -560,19 +560,6 @@ class QuaternionAlgebra_abstract(Parent):
         M.set_immutable()
         return M
 
-    def is_commutative(self) -> bool:
-        """
-        Return ``False`` always, since all quaternion algebras are
-        noncommutative.
-
-        EXAMPLES::
-
-            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -3,-7)
-            sage: Q.is_commutative()
-            False
-        """
-        return False
-
     def is_division_algebra(self) -> bool:
         """
         Check whether this quaternion algebra is a division algebra,
@@ -871,6 +858,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             Traceback (most recent call last):
             ...
             ValueError: 2 is not invertible in Integer Ring
+
+        Check for category::
+
+            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -3,-7)
+            sage: Q.is_commutative()
+            False
         """
         cat = Algebras(base_ring).Division().FiniteDimensional()
         Parent.__init__(self, base=base_ring, names=names, category=cat)

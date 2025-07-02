@@ -459,6 +459,15 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             sage: R.<q1,q2> = QQ[]
             sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2, base_ring=Frac(R))
             sage: TestSuite(H).run()
+
+        TESTS::
+
+            sage: T = IwahoriHeckeAlgebra("B2", 1).T()
+            sage: T.is_commutative()
+            False
+            sage: T = IwahoriHeckeAlgebra("A1", 1).T()
+            sage: T.is_commutative()
+            True
         """
         self._W = W
         self._coxeter_type = W.coxeter_type()
@@ -499,7 +508,12 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             self._category = FiniteDimensionalAlgebrasWithBasis(base_ring)
         else:
             self._category = AlgebrasWithBasis(base_ring)
-        Parent.__init__(self, base=base_ring, category=self._category.WithRealizations())
+
+        if base_ring.is_commutative() and W.is_commutative():
+            self._category = self._category.Commutative()
+
+        Parent.__init__(self, base=base_ring,
+                        category=self._category.WithRealizations())
 
         self._is_generic = False  # needed for initialisation of _KLHeckeBasis
 
@@ -766,19 +780,6 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     False
                 """
                 return False
-
-            def is_commutative(self) -> bool:
-                """
-                Return whether this Iwahori-Hecke algebra is commutative.
-
-                EXAMPLES::
-
-                    sage: T = IwahoriHeckeAlgebra("B2", 1).T()
-                    sage: T.is_commutative()
-                    False
-                """
-                return self.base_ring().is_commutative() \
-                    and self.realization_of().coxeter_group().is_commutative()
 
             @cached_method
             def one_basis(self):
