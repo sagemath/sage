@@ -162,8 +162,8 @@ following code is equivalent to ``tau = findstat(397)``::
     sage: list(bij.solutions_iterator())
     []
 
-Next we demonstrate how to search for a bijection, instead An example
-identifying `s` and `S`::
+Next we demonstrate how to search for a bijection.  To do so, we identify `s`
+and `S`::
 
     sage: N = 4
     sage: A = [dyck_word for n in range(1, N) for dyck_word in DyckWords(n)]
