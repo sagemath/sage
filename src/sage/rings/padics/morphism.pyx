@@ -259,12 +259,11 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             sage: f * g
             Frobenius endomorphism on 5-adic Unramified Extension ... lifting a |--> a^(5^7) on the residue field
         """
-        if isinstance(right,FrobeniusEndomorphism_padics):
-            return self.__class__(self.domain(), self._power+right.power())
-        else:
-            return RingHomomorphism._composition(self,right)
+        if isinstance(right, FrobeniusEndomorphism_padics):
+            return self.__class__(self.domain(), self._power + right.power())
+        return RingHomomorphism._composition(self, right)
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Return ``True`` since any power of the Frobenius endomorphism
         over an unramified `p`-adic field is always injective.
@@ -278,7 +277,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return True
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Return ``True`` since any power of the Frobenius endomorphism
         over an unramified `p`-adic field is always surjective.
@@ -292,7 +291,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         """
         return True
 
-    def is_identity(self):
+    def is_identity(self) -> bool:
         """
         Return ``True`` if this morphism is the identity morphism.
 
