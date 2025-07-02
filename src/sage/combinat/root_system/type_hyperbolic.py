@@ -4,7 +4,8 @@ from sage.combinat.root_system.coxeter_type import CoxeterType
 
 """
 Hyperbolic Coxeter matrices for hyperbolic Coxeter types.
-These matrices are defined by there position in the humphreys book. The first number in the parenthesis is the
+
+These matrices are defined by there position in the Humphreys book. The first number in the parenthesis is the
 page, the second number is the column and the third number is the row.
 
 """
