@@ -3297,22 +3297,23 @@ REFERENCES:
 
 .. [HaHo2017] Nate Harman and Sam Hopkins,
               *Quantum integer-valued polynomials*,
-              J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
+              \J. Alg. Comb. 2017, :doi:`10.1007/s10801-016-0717-3`
 
 .. [Hai1989] M.D. Haiman, *On mixed insertion, symmetry, and shifted
              Young tableaux*. Journal of Combinatorial Theory, Series
              A Volume 50, Number 2 (1989), pp. 196-225.
+             :doi:`10.1016/0097-3165(89)90015-0`
 
 .. [Hai1992] Mark D. Haiman,
              *Dual equivalence with applications, including a conjecture of Proctor*,
              Discrete Mathematics 99 (1992), 79-113,
-             http://www.sciencedirect.com/science/article/pii/0012365X9290368P
+             :doi:`10.1016/0012-365X(92)90368-P`
 
 .. [Haj2000] \M. Hajiaghayi, *Consecutive Ones Property*, 2000.
              https://web.archive.org/web/20040401033532/http://www-math.mit.edu/~hajiagha/pp11.ps
 
 .. [HAM1985] Hoffman, Alan J., Anthonius Wilhelmus Johannes Kolen, and Michel Sakarovitch.
-             Totally-balanced and greedy matrices.
+             *Totally-balanced and greedy matrices*.
              SIAM Journal on Algebraic Discrete Methods 6.4 (1985): 721-730.
 
 .. [Han2016] \G.-N. Han, *Hankel continued fraction and its applications*,
@@ -3325,16 +3326,18 @@ REFERENCES:
              1960
              https://web.archive.org/web/20141206163905/http://cms.math.ca/cjm/v12/cjm1960v12.0145-0157.pdf
 
+.. [Hanke2004] Jonathan Hanke. *Local densities and explicit bounds
+               for representability by a quadratic form.*
+               Duke Math. J. 124, No. 2, 351-388 (2004).
+               :doi:`10.1215/S0012-7094-04-12424-8`
+
 .. [Har1962] Frank Harary. *The determinant of the adjacency matrix of a graph*.
              SIAM Review 4 (1962), pp. 202-210.
              :doi:`10.1137/1004057`
 
-.. [Har1969] Frank Harary, *Graph Theory*,
-             Addison-Wesley, 1969.
+.. [Har1969] Frank Harary, *Graph Theory*, Addison-Wesley, 1969.
 
-.. [Har1977] \R. Hartshorne. Algebraic Geometry. Springer-Verlag, New York, 1977.
-
-.. [Har1994] Frank Harary. *Graph Theory*. Reading, MA: Addison-Wesley, 1994.
+.. [Har1977] \R. Hartshorne. *Algebraic Geometry*. Springer-Verlag, New York, 1977.
 
 .. [Har2009] Harvey, David. *Efficient computation of p-adic heights*.
              LMS J. Comput. Math. **11** (2008), 40–59.
@@ -3343,8 +3346,8 @@ REFERENCES:
                 case of Kontsevich's symplectic derivation Lie algebra*.
                 Preprint, 2020, :arxiv:`2006.06064`.
 
-.. [HarPri] F. Harary and G. Prins. The block-cutpoint-tree of
-            a graph. Publ. Math. Debrecen 13 1966 103-107.
+.. [HarPri] F. Harary and G. Prins. *The block-cutpoint-tree of
+            a graph*. Publ. Math. Debrecen 13 1966 103-107.
 
 .. [Harv2007] David Harvey. *Kedlaya's algorithm in larger characteristic*,
               :arxiv:`math/0610973`.
@@ -3354,15 +3357,15 @@ REFERENCES:
              Cartier-Manin operator*, SIAM Journal on Computing 36 (2007), no. 6,
              1777-1806
 
-.. [Hat2002] Allen Hatcher, "Algebraic Topology", Cambridge University
+.. [Hat2002] Allen Hatcher, *Algebraic Topology*, Cambridge University
              Press (2002).
 
 .. [Hayashi1990] \T. Hayashi. `q`-*analogues of Clifford and Weyl algebras -
                  spinor and oscillator representations of quantum enveloping
                  algebras*. Comm. Math. Phys. **127** (1990) pp. 129-144.
 
-.. [HC2006] Mark van Hoeij and John Cremona, Solving Conics over
-            function fields. J. Théor. Nombres Bordeaux, 2006.
+.. [HC2006] Mark van Hoeij and John Cremona, *Solving Conics over
+            function fields*. J. Théor. Nombres Bordeaux, 2006.
 
 .. [He2006] Pinar Heggernes. *Minimal triangulations of graphs: A survey*.
             Discrete Mathematics, 306(3):297-317, 2006.
@@ -3372,14 +3375,14 @@ REFERENCES:
             Cryptanalysis* ; 2002' available at
             http://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf
 
-.. [Hes2004] Florian Hess, "Computing relations in divisor class groups of
-              algebraic curves over finite fields," Preprint, 2004.
+.. [Hes2004] Florian Hess, *Computing relations in divisor class groups of
+              algebraic curves over finite fields*, Preprint, 2004.
 
-.. [Hes2002] Florian Hess, "Computing Riemann-Roch spaces in algebraic
-             function fields and related topics," J. Symbolic
+.. [Hes2002] Florian Hess, *Computing Riemann-Roch spaces in algebraic
+             function fields and related topics*, J. Symbolic
              Comput. 33 (2002), no. 4, 425--445.
 
-.. [Hes2002b] Florian Hess, "An algorithm for computing Weierstrass points,"
+.. [Hes2002b] Florian Hess, *An algorithm for computing Weierstrass points*,
               International Algorithmic Number Theory Symposium (pp. 357-371).
               Springer Berlin Heidelberg, 2002.
 
@@ -3393,19 +3396,19 @@ REFERENCES:
              In: Recent Developments in Algebra and Related Areas, ALM vol. 8,
              pp. 129--153. International Press, Somerville (2009).
 
-.. [Hig2002] Nicholas J. Higham. Accuracy and Stability of Numerical Algorithms,
+.. [Hig2002] Nicholas J. Higham. *Accuracy and Stability of Numerical Algorithms*,
              Second Edition. Society for Industrial and Applied Mathematics,
              Philadelphia, 2002.
 
-.. [Hig2008] \N. J. Higham, "Functions of matrices: theory and computation",
+.. [Hig2008] \N. J. Higham, *Functions of matrices: theory and computation*,
              Society for Industrial and Applied Mathematics (2008).
 
 .. [HIK2011] R. Hammack, W. Imrich, S. Klavzar,
              *Handbook of Product Graphs*,
              CRC press, 2011
 
-.. [HJ2004] Tom Hoeholdt and Joern Justesen, A Course In
-            Error-Correcting Codes, EMS, 2004
+.. [HJ2004] Tom Hoeholdt and Joern Justesen, *A Course In
+            Error-Correcting Codes*, EMS, 2004
 
 .. [HK2002a] Holme, P. and Kim, B.J. *Growing scale-free networks
              with tunable clustering*, Phys. Rev. E (2002). vol 65, no 2, 026107.
