@@ -292,7 +292,7 @@ def skipfile(filename, tested_optional_tags=False, *,
     if filename.endswith('.rst.txt'):
         ext = '.rst.txt'
     else:
-        _ , ext = os.path.splitext(filename)
+        _, ext = os.path.splitext(filename)
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         if log:
@@ -628,44 +628,7 @@ class DocTestController(SageObject):
         if self.options.long:
             self.options.warn_long = 30.0
 
-    def second_on_modern_computer(self):
-        """
-        Return the wall time equivalent of a second on a modern computer.
-
-        OUTPUT:
-
-        Float. The wall time on your computer that would be equivalent
-        to one second on a modern computer. Unless you have kick-ass
-        hardware this should always be >= 1.0. This raises a
-        :exc:`RuntimeError` if there are no stored timings to use as
-        benchmark.
-
-        EXAMPLES::
-
-            sage: from sage.doctest.control import DocTestDefaults, DocTestController
-            sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: DC.second_on_modern_computer()   # not tested
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(32981, "this method is no longer used by the sage library and will eventually be removed")
-
-        if len(self.stats) == 0:
-            raise RuntimeError('no stored timings available')
-        success = []
-        failed = []
-        for mod in self.stats.values():
-            if mod.get('failed', False):
-                failed.append(mod['walltime'])
-            else:
-                success.append(mod['walltime'])
-        if len(success) < 2500:
-            raise RuntimeError('too few successful tests, not using stored timings')
-        if len(failed) > 20:
-            raise RuntimeError('too many failed tests, not using stored timings')
-        expected = 12800.0       # Core i7 Quad-Core 2014
-        return sum(success) / expected
-
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -1042,7 +1005,8 @@ class DocTestController(SageObject):
                                             if_installed=self.options.if_installed):
                                 yield os.path.join(root, file)
                 elif not skipfile(path, bool(self.options.optional),
-                                if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
+                                  if_installed=self.options.if_installed,
+                                  log=self.log):  # log when directly specified filenames are skipped
                     yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
 
