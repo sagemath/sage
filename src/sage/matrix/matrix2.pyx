@@ -19235,7 +19235,7 @@ cdef class Matrix(Matrix1):
         
         return row_profile,pivot,col_profile
     
-    def krylov_rank_profile(self, J, degree, shift=None):
+    def krylov_rank_profile(self, J, degree, shift=None, output_pairs=False):
         r"""
         Compute the rank profile (row and column) of the striped Krylov matrix
         built from ``self`` and matrix `J`.
@@ -19376,11 +19376,16 @@ cdef class Matrix(Matrix1):
             
             # calculate new M for return value or next loop
             M = matrix([M.row(i) for i in row_profile_M])
+        
+        col_profile = M.col_rank_profile()
+        
+        if output_pairs:
+            return tuple(row_profile_self), M, col_profile
+            
         # convert c,d to actual position in striped Krylov matrix
         phi = lambda c,d : sum(min(max(shift[c] - shift[i] + d + (i < c and shift[i] <= shift[c] + degree),0),degree+1) for i in range(len(shift)))
         row_profile_K = [phi(*row) for row in row_profile_self]
         
-        col_profile = M.col_rank_profile()
         return tuple(row_profile_K), M, col_profile
     
     def linear_interpolation_basis(self, J, degree, var_name, shift=None):
@@ -19456,6 +19461,101 @@ cdef class Matrix(Matrix1):
                D_rows.append(D_present[idx_p])
                idx_p += 1
                
+        C = pivot.matrix_from_columns(col_profile)
+        D = matrix(D_rows)
+        
+        relation = D*C.inverse()
+        
+        # linear interpolation basis in shifted Popov form
+        uncompressed_basis = matrix.block([[-relation,matrix.identity(m)]],subdivide=False)
+        
+        # construct variable
+        variable = poly_ring.gen()
+        
+        # compression of basis into polynomial form
+        basis_rows = [[0]*m for i in range(m)]
+        for col in range(relation.ncols()):
+            for row in range(m):
+                basis_rows[row][c[col]] += uncompressed_basis[row][col] * variable**d[col]
+        for i in range(m):
+            basis_rows[i][i] += variable**degree_c[i]
+        
+        return matrix(basis_rows)
+
+    def linear_interpolation_basis_fast_perm(self, J, degree, var_name, shift=None):
+        r"""
+        Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
+
+        INPUT:
+
+        - ``J`` -- square matrix for Krylov construction.
+        - ``degree`` -- upper bound on degree of minpoly(`J`), power of 
+        - ``shift`` -- list of integers (optional): controls priority of rows.
+
+        OUTPUT:
+
+        - Matrix whose rows form an interpolation basis.
+
+        """
+        from sage.combinat.permutation import Permutation
+        from sage.matrix.constructor import matrix
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        
+        poly_ring = PolynomialRing(self.base_ring(),var_name)
+        
+        m = self.nrows()
+        
+        # if no shift, this is equivalent to 0s
+        if shift is None:
+            shift = [0]*self.nrows()
+        
+        # # calculate shift priority function and permutation
+        # priority = lambda c,d : shift[c] + d
+        # index = lambda i : (i%m,i//m)
+        # index_inv = lambda c,d : c + d*m
+        
+        # priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
+        # priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
+        # priority_permutation_inv = priority_permutation.inverse()
+        
+        # # maps row c of EJ^d to position i in striped Krylov matrix
+        # # +/- 1 as permutations are 1-indexed, matrices are 0-indexed
+        # phi = lambda c,d : priority_permutation_inv(index_inv(c,d) + 1) - 1
+        # phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
+        
+        # calculate krylov profile
+        row_profile, pivot, col_profile = self.krylov_rank_profile(J,degree,shift,output_pairs=True)
+        
+        if len(row_profile) == 0:
+            return matrix.identity(poly_ring,m)
+        
+        # (c_k, d_k) = phi^-1 (row_i)
+        #c, d = zip(*(phi_inv(i) for i in row_profile))
+        c, d = zip(*(row for row in row_profile))
+        
+        # degree_c = 0 or max d[k] such that c[k] = c
+        inv_c = [None]*m
+        degree_c = [0]*m
+        for k in range(len(row_profile)):
+            if d[k] >= degree_c[c[k]]:
+                degree_c[c[k]] = d[k] + 1
+                inv_c[c[k]] = k
+        
+        T_absent_indices = [i for i in range(m) if inv_c[i] is None]
+        T_present_indices = [inv_c[i] for i in range(m) if inv_c[i] is not None]
+        D_absent = self.matrix_from_rows_and_columns(T_absent_indices, col_profile)
+        D_present = (pivot.matrix_from_rows(T_present_indices)*J).matrix_from_columns(col_profile)
+        D_rows = []
+        idx_p = 0
+        idx_a = 0
+        for i in range(m):
+            if inv_c[i] is None:
+                D_rows.append(D_absent[idx_a])
+                idx_a += 1
+            else:
+                D_rows.append(D_present[idx_p])
+                idx_p += 1
+        
         C = pivot.matrix_from_columns(col_profile)
         D = matrix(D_rows)
         
