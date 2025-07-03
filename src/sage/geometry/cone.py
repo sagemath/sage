@@ -6334,6 +6334,334 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         from sage.geometry.cone_critical_angles import max_angle
         return max_angle(self, other, exact, epsilon)
 
+    def linear_isomorphisms(self, other):
+        r"""
+        Yield invertible linear transformations mapping ``self``
+        onto ``other``.
+
+        In general, if ``self`` and ``other`` are isomorphic, there
+        will be an infinite number of isomorphisms between them. For
+        example, any positive scalar multiple of a cone isomorphism is
+        itself a cone isomorphism. As such we do not return *every*
+        isomorphism, only a "generating set." For the precise meaning
+        of this, please see the description of the algorithm below.
+
+        INPUT:
+
+        - ``other`` -- :class:`ConvexRationalPolyhedralCone`; the cone
+          to generate isomorphisms with
+
+        OUTPUT:
+
+        A generator that yields linear isomorphisms between ``self``
+        and ``other``, one at a time. The isomorphisms consist of
+        invertible rational matrices that map the rays of ``self``
+        onto a set of generators for ``other``, acting on the
+        right. (The image of the rays :meth:`is_equivalent` to
+        ``other``.) The right-action is mainly for compatibility with
+        the ray matrices of cones and the basis matrices of vector
+        spaces, which in Sage are "lists of rows."
+
+        The returned matrices are immutable so that they may be hashed,
+        and, for example, de-duplicated using ``set()``.
+
+        ALGORITHM:
+
+        Linear isomorphisms between cones that
+        :meth:`is_strictly_convex` must map extreme rays of the
+        original cone (which exist, because it is strictly convex) to
+        extreme rays of the target cone (which had better exist,
+        otherwise the cones are not isomorphic) [GulTunc1998]_. If
+        moreover ``self`` :meth:`is_solid`, then it has at least `n`
+        extreme rays, where `n` is the dimension of its ambient space,
+        and likewise for ``other`` (otherwise, again, they are not
+        isomorphic). As a result, if ``self`` is both strictly convex
+        and solid, any isomorphism must map a basis consisting of
+        extreme rays of ``self`` to a basis of extreme rays of
+        ``other``. In this scenario we generate all such maps, and
+        yield the ones that turn out to be isomorphisms.
+
+        If the cones are both solid and strictly convex, the generated
+        isomorphisms are unique up to positive row scalings. When
+        there are exactly `n` extreme rays (that is, when the cone
+        :meth:`is_simplicial`), each row of an isomorphism can be
+        scaled independently without destroying the isomorphism
+        property. But when there are more than `n` extreme rays, it is
+        typically only safe to scale the entire isomorphism by a
+        single positive amount.
+
+        If ``self`` and ``other`` are *not* pointed, then in addition
+        to the procedure above, we map a basis for the
+        :meth:`linear_subspace` of ``self`` to a basis for the
+        :meth:`linear_subspace` of ``other``. Similarly, if ``self``
+        and ``other`` are not solid, we map bases for their orthogonal
+        complements to one another. There are many isomorphisms
+        (corresponding to many choices of bases) between two vector
+        subspaces of the same dimension, so in this case, the cone
+        isomorphisms we generate should be considered unique only up
+        to vector-space isomorphisms of the lineality spaces and
+        othogonal complements.
+
+        Every closed convex cone is a direct sum of three components,
+        themselves closed convex cones [StoerWitz1970]_:
+
+        #. Its lineal part (:meth:`linear_subspace`)
+        #. Its non-lineal part (in the cone but orthogonal to
+           :meth:`linear_subspace`)
+        #. The trivial (zero) cone in a subspace orthogonal
+           to the original cone
+
+        By requiring that each of these components is mapped
+        isomorphically between ``self`` and ``other``, we ensure that
+        the entire cone is mapped isomorphically.
+
+        .. SEEALSO::
+
+            :func:`sage.geometry.fan_isomorphism.fan_isomorphism_generator`
+
+        EXAMPLES:
+
+        In this example, the lower half-space is obtained from the
+        upper half space by flipping the `y`-coordinate. Note that the
+        `x`-axis is mapped to the `x`-axis via the canonical basis (the
+        ``1`` in the top-left corner), but any other non-zero number
+        would suffice there. This is discussed in the description of
+        the algorithm::
+
+            sage: K1 = Cone([(0,1),(1,0),(-1,0)])
+            sage: K2 = Cone([(0,-1),(1,0),(-1,0)])
+            sage: set(K1.linear_isomorphisms(K2))
+            {[ 1  0]
+             [ 0 -1]}
+            sage: A = matrix(QQ, [[-6, 0],
+            ....:                 [ 0,-1]])
+            sage: Cone(K1.rays()*A).is_equivalent(K2)
+            True
+
+        A randomly-generated example constructed to be isomorphic::
+
+            sage: K1 = Cone( [(17,  55, -13,  0),
+            ....:             (-9, -32, 914,  0),
+            ....:             ( 1,  16,  -2,  7),
+            ....:             (-1, -16,   2, -7)])
+            sage: A = matrix(QQ, [[  1,   4,   7,  43],
+            ....:                 [  0,   1,   3,  16],
+            ....:                 [  2,   6,   9,  58],
+            ....:                 [ -1,  -7, -16, -90]])
+            sage: K2 = Cone(K1.rays()*A, K1.lattice())
+            sage: g = next(K1.linear_isomorphisms(K2))
+            sage: Cone(K1.rays()*g).is_equivalent(K2)
+            True
+
+        Automorphisms can be obtained by passing ``other=self``. There
+        are often many duplicates, so we use ``set()`` to obtain
+        distinct transformations. Gowda and Trott [GowdaTrott2014]_
+        have computed the automorphism groups of these cones, and we
+        recover them all up to a positive scalar::
+
+            sage: # long time
+            sage: K1 = Cone([(1,0,1), (-1,0,1), (0,1,1), (0,-1,1)])
+            sage: G = set(K1.linear_isomorphisms(K1)); G
+            {[-1  0  0]
+             [ 0 -1  0]
+             [ 0  0  1],
+             [-1  0  0]
+             [ 0  1  0]
+             [ 0  0  1],
+             [ 0 -1  0]
+             [-1  0  0]
+             [ 0  0  1],
+             [ 0 -1  0]
+             [ 1  0  0]
+             [ 0  0  1],
+             [ 0  1  0]
+             [-1  0  0]
+             [ 0  0  1],
+             [0 1 0]
+             [1 0 0]
+             [0 0 1],
+             [ 1  0  0]
+             [ 0 -1  0]
+             [ 0  0  1],
+             [1 0 0]
+             [0 1 0]
+             [0 0 1]}
+            sage: K2 = Cone([(1,1,1), (-1,1,1), (-1,-1,1), (1,-1,1)])
+            sage: H = set(K2.linear_isomorphisms(K2))
+            sage: G == H
+            True
+
+        Up to a positive row-scalings, the automorphism group of the
+        nonnegative orthant is the set of all permutation matrices. Only
+        the permutations (not the scalar factors) are returned; this is
+        discussed in the description of the algorithm::
+
+            sage: K1 = cones.nonnegative_orthant(3)
+            sage: set(K1.linear_isomorphisms(K1))
+            {[0 0 1]
+             [0 1 0]
+             [1 0 0],
+             [0 0 1]
+             [1 0 0]
+             [0 1 0],
+             [0 1 0]
+             [0 0 1]
+             [1 0 0],
+             [0 1 0]
+             [1 0 0]
+             [0 0 1],
+             [1 0 0]
+             [0 0 1]
+             [0 1 0],
+             [1 0 0]
+             [0 1 0]
+             [0 0 1]}
+
+        TESTS:
+
+        Every cone should be isomorphic to itself under (at least) the
+        identity transformation::
+
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: I = matrix.identity(QQ, K.lattice_dim())
+            sage: I in K.linear_isomorphisms(K)
+            True
+
+        Check the properties of the generated isomorphisms. We build
+        ``K2`` from ``K1`` using an invertible rational matrix, so we know
+        that there is at least one isomorphism between them::
+
+            sage: # long time
+            sage: K1 = random_cone(max_ambient_dim=5)
+            sage: L = K1.lattice()
+            sage: R = L.vector_space().base_ring()
+            sage: n = L.dimension()
+            sage: A = matrix.random(R, n, algorithm='unimodular')
+            sage: q = QQ.random_element()
+            sage: while q.is_zero():
+            ....:     q = QQ.random_element()
+            sage: K2 = Cone(K1.rays()*A, L)
+            sage: all(
+            ....:   g.is_invertible()
+            ....:   and
+            ....:   g.is_immutable()
+            ....:   and
+            ....:   Cone(K1.rays()*g, L).is_equivalent(K2)
+            ....:   and
+            ....:   Cone(K2.rays()*g.inverse(), L).is_equivalent(K1)
+            ....:   for g in K1.linear_isomorphisms(K2)
+            ....: )
+            True
+
+        """
+        # There are no invertible maps between vector spaces of
+        # different dimensions.
+        if self.lattice_dim() != other.lattice_dim():
+            return
+
+        # Create two vector spaces V and W (resp.) to hold self and
+        # other, and find their lineality / perp subspaces. See
+        # [StoerWitz1970] for the lineal/non-lineal decomposition
+        # theorem.
+        V = self.lattice().vector_space()
+        L = self.linear_subspace()
+        self_perp = self.span().vector_space().complement()
+        W = other.lattice().vector_space()
+        M = other.linear_subspace()
+        other_perp = other.span().vector_space().complement()
+
+        if L.dimension() != M.dimension():
+            # Linealities don't match, not isomorphic.
+            return
+
+        if self_perp.dimension() != other_perp.dimension():
+            # Cone dimensions don't match, not isomorphic.
+            return
+
+        # Standard trick for orthogonal projections onto L and M.
+        A = L.basis_matrix()
+        L_proj = A.T * (A*A.T).inverse() * A
+        B = M.basis_matrix()
+        M_proj = B.T * (B*B.T).inverse() * B
+
+        # Project onto the lineality space and subtract to obtain the
+        # "pointed parts" of each generator...
+        L_perps = [ r - r*L_proj for r in self ]
+        M_perps = [ r - r*M_proj for r in other ]
+
+        # ...which need to be immutable to be put into sets.
+        for i in range(len(L_perps)):
+            L_perps[i].set_immutable()
+        for j in range(len(M_perps)):
+            M_perps[j].set_immutable()
+
+        # Our generators are assumed to be minimal, so none should be
+        # eliminated by the Cone(...) below, although some may be
+        # reordered (which is why we still use L_perps/M_perps
+        # directly even after constructing these cones). In any case,
+        # if we wind up with different numbers of rays here, we aren't
+        # going to get any isomorphisms. This is slow, but it's the
+        # most common case (cones not isomorphic), so probably worth
+        # doing before proceeding.
+        from sage.geometry.cone import Cone
+        self_pointed = Cone(L_perps, self.lattice())
+        other_pointed = Cone(M_perps, other.lattice())
+        if not self_pointed.nrays() == other_pointed.nrays():
+            return
+
+        # The dimension of the non-lineal part of our cones. Needs to
+        # be a python int for the sake of itertools.permutations().
+        n = int(self.dim() - self.lineality())
+
+        # The base ring of the matrices we'll construct later. We pass
+        # it explicitly to avoid the rare situation where our rational
+        # matrices all contain integral entries, making sage think
+        # that we want an integral matrix. This becomes important when
+        # passing extend=False to solve_right().
+        R = V.base_ring()
+
+        # Compute these outside of the loop. These are extra rows that
+        # we append the the system of equations to ensure that the
+        # lineality and perp spaces of "self" get mapped to those of
+        # "other".
+        self_extra_rows = A.rows() + self_perp.basis_matrix().rows()
+        other_extra_rows = B.rows() + other_perp.basis_matrix().rows()
+
+        # Now try to find isomorphisms. We attempt to map each size-n
+        # subset of rays of the pointed component of "self" to a
+        # similar subset of rays of "other". We augment the system
+        # with extra rows (computed a moment ago) ensuring that bases
+        # for the lineality and perp spaces of "self" get mapped to
+        # bases for the lineality and perp spaces of "other". If all
+        # goes well, we obtain a map that works for all three
+        # components of the cone:
+        #
+        #   1. The lineal part
+        #   2. The non-lineal part (othogonal to the lineal part)
+        #   3. The trivial part {0} in a subspace orthogonal to the
+        #      original cone
+        #
+        MS = V.basis_matrix().matrix_space()
+        from itertools import permutations
+        for rs1 in permutations(L_perps, n):
+            for rs2 in permutations(M_perps, n):
+                A = MS(list(rs1) + self_extra_rows)
+                B = MS(list(rs2) + other_extra_rows)
+                try:
+                    X = A.solve_right(B, extend=False)
+                except ValueError:
+                    continue
+
+                # We still need to check that this is actually an
+                # isomorphism. When there are more extreme rays than
+                # the dimension of the ambient space, a solution to
+                # the equation above (for a subset of extreme rays)
+                # does not guarantee an isomorphism between _all_
+                # extreme rays.
+                if Cone(self.rays()*X, self.lattice()).is_equivalent(other):
+                    X.set_immutable()
+                    yield X
+
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
