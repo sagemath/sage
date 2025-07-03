@@ -53,7 +53,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         if isinstance(x, CoxeterType):
             return x
 
-        if isinstance(x, list) and (x[0] == "Hyp" or x[0] == "Hyperbolic"):
+        if isinstance(x, (list, tuple)) and (x[0] == "Hyp" or x[0] == "Hyperbolic"):
             return CoxeterType_Hyperbolic(*x)
 
         try:

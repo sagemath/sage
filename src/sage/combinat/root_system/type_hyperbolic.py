@@ -1,8 +1,8 @@
 """
 Hyperbolic Coxeter matrices for hyperbolic Coxeter types.
 
-These matrices are defined by their position in the Humphreys book. The first number in the parenthesis is the
-page, the second number is the column and the third number is the row.
+These matrices are defined by their position in the Humphreys book "Reflection groups and Coxeter groups". 
+The first number in the parenthesis is the page, the second number is the column and the third number is the row.
 """
 
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
@@ -547,29 +547,35 @@ hyperbolic_coxeter_matrices = {
 class CoxeterType_Hyperbolic(CoxeterType):
     r"""
     Coxeter type hyperbolic.
-
     """
-
     def __init__(self, accronym, position):
         """
         EXAMPLES::
 
             sage: C = CoxeterType(["Hyp", (142, 1, 3)])
             sage: C
-            Coxeter type with Humphrey's datum (142, 1, 3)
+            Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 3)
 
         TESTS::
 
-            sage: TestSuite(e).run()
+            sage: TestSuite(C).run()
         """
         self._acronym = accronym
         self._position = tuple(position)
 
         if position not in hyperbolic_coxeter_matrices:
-            raise ValueError(f"Position {position} is not a valid hyperbolic Coxeter type position")
+            raise ValueError(f"position {position} is not a valid hyperbolic Coxeter type position")
         super().__init__()
 
-    def __repr__(self):
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: CoxeterType(['Hyp', (142, 1, 3)])
+            Coxeter type with Humphrey's datum (Page : 142, Column : 1, Row : 3)
+        """
         a, b, c = self._position
         return f"Coxeter type with Humphrey's datum (Page : {a}, Column : {b}, Row : {c})"
 
