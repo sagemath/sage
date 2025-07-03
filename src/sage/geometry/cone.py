@@ -6662,6 +6662,94 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                     X.set_immutable()
                     yield X
 
+    def is_linearly_isomorphic(self, other):
+        r"""
+        Return ``True`` if ``self`` and ``other`` are linearly isomorphic
+        over the rationals, and ``False`` otherwise.
+
+        INPUT:
+
+        - ``other`` -- :class:`ConvexRationalPolyhedralCone`;
+          the cone to check for isomorphism with ``self``
+
+        OUTPUT:
+
+        ``True`` if there exists an invertible linear matrix with rational
+        entries mapping ``self`` to ``other``, and ``False`` otherwise.
+
+        ALGORITHM:
+
+        We attempt to construct an explicit isomorphism using
+        :meth:`linear_isomorphisms`. For more information, see the
+        documentation of that method.
+
+        .. SEEALSO::
+
+            :meth:`linear_isomorphisms`, :meth:`is_isomorphic`,
+            :meth:`is_equivalent`
+
+        EXAMPLES:
+
+        Two different descriptions of the plane should be isomorphic::
+
+            sage: K1 = Cone([(1,0), (-1,0), (0,1), (0,-1)])
+            sage: K2 = Cone([(1,1), (-1,1), (0,-1)])
+            sage: K1.is_equivalent(K2)
+            True
+            sage: K1.is_linearly_isomorphic(K2)
+            True
+
+        All simplicial cones with the same number of rays are isomorphic::
+
+            sage: K1 = random_cone(max_ambient_dim=5)
+            sage: while not K1.is_simplicial():
+            ....:     K1 = random_cone(max_ambient_dim=5)
+            sage: n = K1.lattice_dim()
+            sage: r = K1.nrays()
+            sage: K2 = random_cone(min_ambient_dim=n,
+            ....:                  max_ambient_dim=n,
+            ....:                  min_rays=r,
+            ....:                  max_rays=r,
+            ....:                  strictly_convex=True)
+            sage: K2.is_simplicial()
+            True
+            sage: K1.is_linearly_isomorphic(K2)
+            True
+
+        TESTS:
+
+        Every cone is isomorphic to itself::
+
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: K.is_linearly_isomorphic(K)
+            True
+
+        Isomorphism is symmetric::
+
+            sage: K = random_cone(max_ambient_dim=5)
+            sage: J = random_cone(min_ambient_dim=K.lattice_dim(),
+            ....:                 max_ambient_dim=K.lattice_dim(),
+            ....:                 min_rays=K.nrays(),
+            ....:                 max_rays=K.nrays())
+            sage: K.is_linearly_isomorphic(J) == J.is_linearly_isomorphic(K)
+            True
+
+        Isomorphism is symmetric in the example from :issue:`37957`::
+
+            sage: K1 = Cone([(1,-5,8), (-1,4,8), (3,2,19)])
+            sage: K2 = Cone([(1,0,0), (0,1,0), (1,1,3)])
+            sage: K1.is_linearly_isomorphic(K2)
+            True
+            sage: K2.is_linearly_isomorphic(K1)
+            True
+
+        """
+        try:
+            next(self.linear_isomorphisms(other))
+            return True
+        except StopIteration:
+            return False
+
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
