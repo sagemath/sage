@@ -435,7 +435,9 @@ class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     def _rmul_(self, other):
         """
         Multiply ``self`` on the right side of ``other``.
+
         EXAMPLES::
+
             sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
             sage: dx,dy,dz = W.differentials()
             sage: a = (x*y + z) * dx
@@ -450,7 +452,9 @@ class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     def _lmul_(self, other):
         """
         Multiply ``self`` on the left side of ``other``.
+
         EXAMPLES::
+
             sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
             sage: dx,dy,dz = W.differentials()
             sage: a = (x*y + z) * dx
