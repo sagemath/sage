@@ -858,6 +858,22 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         r = r+'\\rangle'
         return r
 
+    def _regina_(self, regina):
+        r"""
+        Return the string used to construct the object in Regina.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(3)
+            sage: regina(B)        # optional regina
+            <regina.GroupPresentation: < a b | a b a b^-1 a^-1 b^-1 >>
+        """
+        F = regina(self._free_group)
+        new = F.__deepcopy__()
+        for r in self.relations():
+            new.addRelation(regina(r))
+        return new
+
     def free_group(self):
         """
         Return the free group (without relations).

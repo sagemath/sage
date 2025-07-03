@@ -601,6 +601,24 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         s = s.replace(" -1*", " -")
         return s[1:]
 
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = LaurentPolynomialRing(ZZ)
+            sage: p = v^(-3) + 3*v + 5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Laurent: 3 x + 5 + x^-3>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Laurent'>)
+        """
+        from sage.rings.integer_ring import ZZ
+        if self.base_ring() != ZZ:
+            raise NotImplementedError('only integral Laurent polynomials available in Regina!')
+        return regina.Laurent(int(self.valuation()), list(self))
+
     def _latex_(self):
         r"""
         EXAMPLES::

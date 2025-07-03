@@ -100,6 +100,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/psage
    sage/interfaces/qepcad
    sage/interfaces/r
+   sage/interfaces/regina
    sage/interfaces/rubik
    sage/interfaces/sage0
    sage/interfaces/scilab

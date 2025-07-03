@@ -7291,6 +7291,21 @@ cdef class Polynomial(CommutativePolynomial):
                                   m._repr(g)) for m in self.monomials())
         return s if s else '0'
 
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<v> = QQ[]
+            sage: p = v^3 + 3*v + 1/5
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Polynomial: x^3 + 3 x + 1/5>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Polynomial'>)
+        """
+        return regina.Polynomial(list(self))
+
     ######################################################################
 
     @coerce_binop

@@ -373,6 +373,27 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         return self._prod.poly_repr(self.parent().variable_names(),
                                     atomic_coefficients=atomic, sortkey=key)
 
+    def _regina_(self, regina):
+        r"""
+        Return polynomial as a Regina object.
+
+        EXAMPLES::
+
+            sage: R.<u, v> = LaurentPolynomialRing(ZZ)
+            sage: p = u*v^(-3) + 3*v*u^(-1) + 5*u - 7
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            (<regina.Laurent2: 5 x + x y^-3 - 7 + 3 x^-1 y>,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Laurent2'>)
+        """
+        from sage.rings.integer_ring import ZZ
+        if self.base_ring() != ZZ:
+            raise NotImplementedError('only integral Laurent polynomials available in Regina!')
+        if self.parent().ngens() != 2:
+            raise NotImplementedError('only two-variate Laurent polynomials available in Regina!')
+        pl = [(k[0], k[1], v) for k, v in self.monomial_coefficients().items()]
+        return regina.Laurent2(pl)
+
     def _latex_(self):
         r"""
         EXAMPLES::

@@ -384,7 +384,7 @@ def external_features():
     yield from sage.features.ffmpeg.all_features()
     import sage.features.interfaces
     for feature in sage.features.interfaces.all_features():
-        if feature.name != 'mathics':
+        if feature.name not in ('mathics', 'regina'):
             yield feature
     from sage.features.mip_backends import CPLEX, Gurobi
     yield CPLEX()

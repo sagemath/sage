@@ -985,3 +985,13 @@ cdef class SageObject:
     def _pari_init_(self):
         from sage.interfaces.gp import gp
         return self._interface_init_(gp)
+
+    def _regina_(self, G=None):
+        if G is None:
+            import sage.interfaces.regina
+            G = sage.interfaces.regina.regina
+        return self._interface_(G)
+
+    def _regina_init_(self):
+        from sage.interfaces.regina import regina
+        return self._interface_init_(regina)
