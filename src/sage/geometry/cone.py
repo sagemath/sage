@@ -6439,7 +6439,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         .. SEEALSO::
 
-            :func:`sage.geometry.fan_isomorphism.fan_isomorphism_generator`
+            :func:`sage.geometry.fan_isomorphism.fan_isomorphism_generator`,
+            :meth:`is_linearly_isomorphic`
 
         EXAMPLES:
 
