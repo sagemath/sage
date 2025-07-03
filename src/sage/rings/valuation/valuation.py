@@ -257,12 +257,15 @@ class DiscretePseudoValuation(Morphism):
         `u` is an element with valuation `-v(f)`, ensuring the result has valuation 0.
 
         INPUT:
+
         - ``f`` -- an element of the domain
 
         OUTPUT:
+
         The reduction of `f * u`, where `u` is an element with valuation `-v(f)`.
 
         EXAMPLES:
+
         For a Gauss valuation on a polynomial ring::
 
             sage: R.<x> = QQ[]
@@ -299,12 +302,11 @@ class DiscretePseudoValuation(Morphism):
             sage: v.reduce_to_unit(0)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot compute unit part for zero element
-
+            ValueError: cannot compute unit part for zero element
         """
         s = self(f)
         if s == infinity:
-            raise ValueError("Cannot compute unit part for zero element")
+            raise ValueError("cannot compute unit part for zero element")
         u = self.equivalence_unit(-s)
         return self.reduce(f * u)
 
