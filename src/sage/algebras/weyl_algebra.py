@@ -510,7 +510,9 @@ class DifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     def __truediv__(self, x):
         """
         Division by coefficients.
+
         EXAMPLES::
+
             sage: W.<x,y,z> = DifferentialWeylAlgebra(QQ)
             sage: x / 2
             1/2*x
