@@ -3142,6 +3142,12 @@ REFERENCES:
              fundamental domains for the subgroups of the modular
              group*, preprint :arxiv:`0901.1340`
 
+.. [GowdaTrott2014] Muddappa Seetharama Gowda and David Trott. On the
+                    irreducibility, Lyapunov rank, and automorphisms
+                    of special Bishop–Phelps cones. Journal of
+                    Mathematical Analysis and Applications,
+                    419(1):172-184, 2014.
+
 .. [GP2012] Eddy Godelle and Luis Paris.
             *Basic questions on Artin-Tits groups*. A. Björner et al. (eds)
             Configuration spaces, CRM series. (2012) pp. 299--311.
