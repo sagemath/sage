@@ -1015,8 +1015,7 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
         n = -1
 
     if names is None:
-       raise TypeError("you must specify the names of the variables")
-
+        raise TypeError("you must specify the names of the variables")
 
     names = normalize_names(n, names)
     n = len(names)
