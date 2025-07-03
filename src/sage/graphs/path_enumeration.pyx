@@ -1612,9 +1612,10 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
 
             # GET DEVIATION PATHS
             original_cost = cost
-            for deviation_i in range(len(path) - 1, dev_idx - 1, -1):
+            former_part = set(path)
+            for deviation_i in range(len(path) - 2, dev_idx - 1, -1):
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
-                    if e[1] in path[:deviation_i + 2]:  # e[1] is red or e in path
+                    if e[1] in former_part:  # e[1] is red or e in path
                         continue
                     ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path), ancestor_idx_dict)
                     if ancestor_idx == -1:
@@ -1630,6 +1631,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 if deviation_i == dev_idx:
                     continue
                 original_cost -= sidetrack_cost[(path[deviation_i - 1], path[deviation_i])]
+                former_part.remove(path[deviation_i + 1])
         else:
             # get a path to target in G \ path[:dev_idx]
             deviation = shortest_path_func(path[dev_idx], target,
