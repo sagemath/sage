@@ -459,6 +459,14 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             sage: R.<q1,q2> = QQ[]
             sage: H = IwahoriHeckeAlgebra("A2", q1, q2=q2, base_ring=Frac(R))
             sage: TestSuite(H).run()
+
+        TESTS::
+
+            sage: IwahoriHeckeAlgebra('A3', x+1, base_ring=SR).T().an_element()**2
+            doctest:warning
+            ...
+            UserWarning: Cannot determine if -q1*q2 is a square in the base ring since is_square is not implemented for this ring. Kazhdan-Lusztig bases will not be available.
+            x*T[1,2,3,1,2] + (x+1)*T[2,3,1,2] + 5*T[1,2,3,1] + 3*T[1,2,3,2] + (2*x+2)*T[1,2,3] + 6*T[2,1] + 6*T[1,2] + (2*x+2)*T[2,3] + (4*x+4)*T[1] + (9*x+6)*T[2] + (13*x+14)
         """
         self._W = W
         self._coxeter_type = W.coxeter_type()
@@ -476,7 +484,12 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         # basis of the Iwhaori-Hecke algebra. In this case we set
         # self._root=\sqrt{q1*q2}. The Kazhdan-Lusztig bases will be computed in
         # the generic case behind the scenes and then specialized to this # algebra.
-        is_Square, root = is_square(self._q_prod, root=True)
+        try:
+            is_Square, root = is_square(self._q_prod, root=True)
+        except NotImplementedError:
+            is_Square = False
+            from warnings import warn
+            warn("Cannot determine if -q1*q2 is a square in the base ring since is_square is not implemented for this ring. Kazhdan-Lusztig bases will not be available. ")
         if is_Square:
             # Attach the generic Hecke algebra and the basis change maps
             self._root = root
@@ -507,7 +520,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
         try:
             self._inverse_base_ring_generators = {g: self.base_ring()(g) ** -1
                     for g in self.base_ring().variable_names()}
-        except TypeError:
+        except (TypeError, ValueError):
             self._inverse_base_ring_generators = {}
 
     def _repr_(self):
