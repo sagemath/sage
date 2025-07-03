@@ -3067,16 +3067,26 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - ``True`` if ``self`` and ``other`` define the same cones as sets of
           points in the same lattice, ``False`` otherwise.
 
-        There are three different equivalences between cones `C_1` and `C_2`
-        in the same lattice:
+        .. NOTE::
 
-        #. They have the same generating rays in the same order.
-           This is tested by ``C1 == C2``.
-        #. They describe the same sets of points.
-           This is tested by ``C1.is_equivalent(C2)``.
-        #. They are in the same orbit of `GL(n,\ZZ)` (and, therefore,
-           correspond to isomorphic affine toric varieties).
-           This is tested by ``C1.is_isomorphic(C2)``.
+            There are four different equivalences between cones `C_1`
+            and `C_2` in the same lattice:
+
+            #. They have the same generating rays in the same order.
+               This is tested by ``C1 == C2``.
+            #. They describe the same sets of points. This is tested
+               by ``C1.is_equivalent(C2)``.
+            #. They are in the same orbit of `GL(n,\ZZ)` (and,
+               therefore, correspond to isomorphic affine toric
+               varieties).  This is tested by
+               ``C1.is_isomorphic(C2)``.
+            #. They are equivalent under an invertible linear map of
+               their ambient vector spaces. This is tested by
+               ``C1.is_linearly_isomorphic(C2)``.
+
+        .. SEEALSO::
+
+            :meth:`is_isomorphic`, :meth:`is_linearly_isomorphic`
 
         EXAMPLES::
 
@@ -3188,19 +3198,31 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - ``other`` -- cone
 
-        OUTPUT: ``True`` if ``self`` and ``other`` are in the same
+        OUTPUT:
+
+        ``True`` if ``self`` and ``other`` are in the same
         `GL(n, \ZZ)`-orbit, ``False`` otherwise
 
-        There are three different equivalences between cones `C_1` and `C_2`
-        in the same lattice:
+        .. NOTE::
 
-        #. They have the same generating rays in the same order.
-           This is tested by ``C1 == C2``.
-        #. They describe the same sets of points.
-           This is tested by ``C1.is_equivalent(C2)``.
-        #. They are in the same orbit of `GL(n,\ZZ)` (and, therefore,
-           correspond to isomorphic affine toric varieties).
-           This is tested by ``C1.is_isomorphic(C2)``.
+            There are four different equivalences between cones `C_1`
+            and `C_2` in the same lattice:
+
+            #. They have the same generating rays in the same order.
+               This is tested by ``C1 == C2``.
+            #. They describe the same sets of points. This is tested
+               by ``C1.is_equivalent(C2)``.
+            #. They are in the same orbit of `GL(n,\ZZ)` (and,
+               therefore, correspond to isomorphic affine toric
+               varieties).  This is tested by
+               ``C1.is_isomorphic(C2)``.
+            #. They are equivalent under an invertible linear map of
+               their ambient vector spaces. This is tested by
+               ``C1.is_linearly_isomorphic(C2)``.
+
+        .. SEEALSO::
+
+            :meth:`is_equivalent`, :meth:`is_linearly_isomorphic`
 
         EXAMPLES::
 
@@ -6676,6 +6698,23 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         ``True`` if there exists an invertible linear matrix with rational
         entries mapping ``self`` to ``other``, and ``False`` otherwise.
+
+        .. NOTE::
+
+            There are four different equivalences between cones `C_1`
+            and `C_2` in the same lattice:
+
+            #. They have the same generating rays in the same order.
+               This is tested by ``C1 == C2``.
+            #. They describe the same sets of points. This is tested
+               by ``C1.is_equivalent(C2)``.
+            #. They are in the same orbit of `GL(n,\ZZ)` (and,
+               therefore, correspond to isomorphic affine toric
+               varieties).  This is tested by
+               ``C1.is_isomorphic(C2)``.
+            #. They are equivalent under an invertible linear map of
+               their ambient vector spaces. This is tested by
+               ``C1.is_linearly_isomorphic(C2)``.
 
         ALGORITHM:
 
