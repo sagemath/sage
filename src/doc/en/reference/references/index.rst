@@ -3286,6 +3286,12 @@ REFERENCES:
              of SPQR-Trees*, International Symposium on Graph Drawing,
              (2001) 77-90
 
+.. [GulTunc1998] Osman Güler and Levent Tunçel.
+                 Characterization of the barrier parameter of
+                 homogenous convex cones.
+                 Mathematical Programming, 81(1):55-76, 1998,
+                 :doi:`10.1007/BF01584844`.
+
 .. [GW1999] Frederick M. Goodman and Hans Wenzl. *Crystal bases of quantum
             affine algebras and affine Kazhdan-Lusztig polyonmials*.
             Int. Math. Res. Notices **5** (1999), 251-275.
