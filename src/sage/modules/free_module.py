@@ -5542,10 +5542,9 @@ class FreeModule_ambient(FreeModule_generic):
 
     def random(self, *args, **kwargs):
         """
-        Return a random element (i.e., a vector) from this free module.
+        Return a random element of this free module.
 
-        This method is available on all free modules and serves as a shortcut
-        to calling ``V.random_element()``.
+        Equivalent to ``self.random_element()``.
 
         EXAMPLES::
 
