@@ -5544,7 +5544,7 @@ class FreeModule_ambient(FreeModule_generic):
         """
         Return a random element of this free module.
 
-        Equivalent to ``self.random_element()``.
+        Equal to ``self.random_element()``.
 
         EXAMPLES::
 
