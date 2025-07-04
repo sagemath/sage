@@ -6285,6 +6285,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         equal in the next two cases without a little nudge in the
         right direction, and, moreover, it's crashy about it::
 
+            sage: # long time
             sage: n = 4
             sage: K = cones.schur(n)
             sage: actual = K.max_angle()[0].simplify()._sympy_()._sage_()
