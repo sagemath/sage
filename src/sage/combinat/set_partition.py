@@ -3542,17 +3542,8 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
  
     @cached_method
     def stilde(n: ZZ, k: ZZ, d: ZZ):
-        from math import comb
- 
-        u = 0
-        end = min(n - k, d)
-        result = 0
-        sign = 1
-        while u <= end:
-            result += sign * stirling2(n + 1 - u, k + 1) * comb(d, u)
-            sign = -sign
-            u += 1
-        return result
+        return ZZ.sum((-1)**u * stirling2(n + 1 - u, k + 1) * d.binomial(u)
+                      for u in range(min(n-k, d)+1))
  
     @cached_method
     def R_equation(l: int, d0: int, d1: int, n: int, k: int):
