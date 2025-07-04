@@ -6451,6 +6451,12 @@ REFERENCES:
 
 .. [Sto2011] \A. Storjohann, Email Communication. 30 May 2011.
 
+.. [StoerWitz1970] Josef Stoer and Christoph Witzgall.
+                   Convexity and Optimization in Finite Dimensions I, vol.
+                   163 of Grundlehren der mathematischen Wissenschaften.
+                   Springer-Verlag, New York, 1970. ISBN 9783642462184,
+                   :doi:`10.1007/978-3-642-46216-0`.
+
 .. [Str1969] Volker Strassen. *Gaussian elimination is not
              optimal*. Numerische Mathematik, 13:354-356, 1969.
 
