@@ -19415,20 +19415,6 @@ cdef class Matrix(Matrix1):
         if shift is None:
             shift = [0]*self.nrows()
         
-        # # calculate shift priority function and permutation
-        # priority = lambda c,d : shift[c] + d
-        # index = lambda i : (i%m,i//m)
-        # index_inv = lambda c,d : c + d*m
-        
-        # priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
-        # priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
-        # priority_permutation_inv = priority_permutation.inverse()
-        
-        # # maps row c of EJ^d to position i in striped Krylov matrix
-        # # +/- 1 as permutations are 1-indexed, matrices are 0-indexed
-        # phi = lambda c,d : priority_permutation_inv(index_inv(c,d) + 1) - 1
-        # phi_inv = lambda i : index(priority_permutation(i + 1) - 1)
-        
         # calculate krylov profile
         row_profile, pivot, col_profile = self.krylov_rank_profile(J,degree,shift,output_pairs=True)
         
@@ -19467,19 +19453,36 @@ cdef class Matrix(Matrix1):
         
         relation = D*C.inverse()
         
-        # linear interpolation basis in shifted Popov form
-        uncompressed_basis = matrix.block([[-relation,matrix.identity(m)]],subdivide=False)
+        coeffs_map = {}
+        for i in range(m):
+            coeffs_map[i] = {}
+            for j in range(m):
+                coeffs_map[i][j] = {}
         
-        # construct variable
-        variable = poly_ring.gen()
+        for i in range(m):
+            coeffs_map[i][i][degree_c[i]] = poly_ring.base_ring().one()
         
-        # compression of basis into polynomial form
-        basis_rows = [[0]*m for i in range(m)]
         for col in range(relation.ncols()):
             for row in range(m):
-                basis_rows[row][c[col]] += uncompressed_basis[row][col] * variable**d[col]
-        for i in range(m):
-            basis_rows[i][i] += variable**degree_c[i]
+                coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col],poly_ring.base_ring().zero()) - relation[row][col]
+        
+        basis_rows = [[None for _ in range(m)] for _ in range(m)]
+        
+        monomial_cache = {}
+        for row in range(m):
+            for col in range(m):
+                if not coeffs_map[row][col]:
+                    basis_rows[row][col] = poly_ring.zero()
+                elif len(coeffs_map[row][col]) == 1:
+                    deg, coeff = coeffs_map[row][col].popitem()
+                    if coeff not in monomial_cache:
+                        monomial_cache[coeff] = poly_ring(coeff)
+                    basis_rows[row][col] = monomial_cache[coeff].shift(deg)
+                else:
+                    coeffs = [poly_ring.base_ring().zero()] * (max(coeffs_map[row][col].keys()) + 1)
+                    for deg, coeff in coeffs_map[row][col].items():
+                        coeffs[deg] = coeff
+                    basis_rows[row][col] = poly_ring(coeffs)
         
         return matrix(basis_rows)
     
