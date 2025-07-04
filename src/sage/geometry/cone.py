@@ -6717,16 +6717,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                their ambient vector spaces. This is tested by
                ``C1.is_linearly_isomorphic(C2)``.
 
+        .. SEEALSO::
+
+            :meth:`linear_isomorphisms`, :meth:`is_isomorphic`,
+            :meth:`is_equivalent`
+
         ALGORITHM:
 
         We attempt to construct an explicit isomorphism using
         :meth:`linear_isomorphisms`. For more information, see the
         documentation of that method.
-
-        .. SEEALSO::
-
-            :meth:`linear_isomorphisms`, :meth:`is_isomorphic`,
-            :meth:`is_equivalent`
 
         EXAMPLES:
 
