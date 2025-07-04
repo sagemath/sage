@@ -225,20 +225,6 @@ from sage.structure.sequence import Sequence
 #
 ###############################################################################
 
-def vector_random(R, n, *args, **kwargs):
-    r"""
-    Return a random element of the free module of rank ``n`` over ``R``.
-
-    EXAMPLES::
-
-        sage: from sage.modules.free_module import vector_random
-        sage: v = vector_random(ZZ, 3)
-        sage: len(v)
-        3
-        sage: v.parent().base_ring() is ZZ
-        True
-    """
-    return FreeModule(R, n).random_element(*args, **kwargs)
 
 
 class FreeModuleFactory(UniqueFactory):
@@ -5530,6 +5516,8 @@ class FreeModule_ambient(FreeModule_generic):
                                     coordinate_ring=coordinate_ring,
                                     category=category)
 
+
+
     def __hash__(self):
         """
         The hash is obtained from the rank and the base ring.
@@ -5551,6 +5539,22 @@ class FreeModule_ambient(FreeModule_generic):
             # reconstruction (unpickle), and the above fields haven't been
             # filled in yet.
             return 0
+
+    def random(self, *args, **kwargs):
+        """
+        Return a random element (i.e., a vector) from this free module.
+
+        This method is available on all free modules and serves as a shortcut
+        to calling ``V.random_element()``.
+
+        EXAMPLES::
+
+            sage: V = FreeModule(ZZ, 3)
+            sage: v = V.random()
+            sage: v in V
+            True
+        """
+        return self.random_element(*args, **kwargs)
 
     def _coerce_map_from_(self, M):
         """
