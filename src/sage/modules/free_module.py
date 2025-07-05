@@ -6705,7 +6705,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         """
         if not isinstance(ambient, FreeModule_ambient_pid):
             raise TypeError("ambient (=%s) must be ambient." % ambient)
-        self.__ambient_module = ambient
+        V = self.__ambient_module = ambient
         R = ambient.base_ring()
         R_coord = R
 
@@ -6722,7 +6722,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 raise TypeError("each element of basis must be in "
                                 "the ambient vector space")
 
-        basis = basis_seq(self, basis)
+        basis = basis_seq(V, basis)
 
         # normalize the parameters. We have (basis, echelonize, echelonized_basis, already_echelonized)
         if already_echelonized:
@@ -6933,12 +6933,17 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: N = M.submodule_with_basis([[1,1,0],[0,2,1]])
             sage: N._echelonized_basis(M,N.basis())
             [(1, 1, 0), (0, 2, 1)]
-            sage: V = SR^3                                                              # needs sage.symbolic
+
+            sage: # needs sage.symbolic
+            sage: V = SR^3
             sage: W = V.submodule_with_basis([[1,0,1]])
             sage: W._echelonized_basis(V, W.basis())
             [(1, 0, 1)]
         """
-        d = self._denominator(basis)
+        if basis.universe().coordinate_ring() == ambient.base_ring():
+            d = 1
+        else:
+            d = self._denominator(basis)
         if d != 1:
             basis = [x * d for x in basis]
         A = self._matrix_space(len(basis))(basis)
@@ -6967,7 +6972,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             Echelon basis matrix:
             [ 1/5 19/6 37/3]
             [   0 23/6 46/3]
-            sage: L._denominator(L.echelonized_basis_matrix().list())
+            sage: L._denominator(L.echelonized_basis_matrix().rows())
             30
         """
         from sage.arith.functions import lcm
