@@ -1048,6 +1048,16 @@ class PolynomialRing_generic(Ring):
         h = self._cached_hash = hash((self.base_ring(),self.variable_name()))
         return h
 
+    def _an_element_(self):
+        """
+        Return an arbitrary element of this polynomial ring.
+
+        Strictly speaking this is not necessary because it is already provided by the category
+        framework, but before :issue:`39399` this returns the generator, we keep the behavior
+        because it is more convenient.
+        """
+        return self.gen()
+
     def _repr_(self):
         try:
             return self._cached_repr

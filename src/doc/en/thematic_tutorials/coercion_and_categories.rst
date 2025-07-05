@@ -106,7 +106,6 @@ as this base class still provides a few more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
     ['_CommutativeRing__fraction_field',
-     '__iter__',
      '__len__',
      '__rxor__',
      '__xor__',
