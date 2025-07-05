@@ -3513,7 +3513,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         [ 2  0 -1 -2  0  1]
         [ 2  0 -1  2  0 -1]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
-        sage: all(SmallPermutationGroup(n,k).id() == [n,k]  # long time (180s)
+        sage: all(SmallPermutationGroup(n,k).id() == [n,k]  # long time (limit 180s)
         ....:     for n in [1..64] for k in [1..numgps(n)])
         True
         sage: H = SmallPermutationGroup(6,1)

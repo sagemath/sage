@@ -534,14 +534,16 @@ def _parse_example_timeout(source: str, default_timeout: float) -> float:
     TESTS::
 
         sage: from sage.doctest.forker import _parse_example_timeout
-        sage: _parse_example_timeout("sleep(10)  # long time (10s)", 5.0r)
+        sage: _parse_example_timeout("sleep(10)  # long time (limit 10s)", 5.0r)
         10.0
-        sage: _parse_example_timeout("sleep(10)  # long time", 5.0r)
+        sage: _parse_example_timeout("sleep(10)  # long time (limit 10s, possible regression)", 5.0r)
+        10.0
+        sage: _parse_example_timeout("sleep(10)  # long time (20s)", 5.0r)
         5.0
-        sage: _parse_example_timeout("sleep(10)  # long time (1a2s)", 5.0r)
+        sage: _parse_example_timeout("sleep(10)  # long time (limit 1a2s)", 5.0r)
         Traceback (most recent call last):
         ...
-        ValueError: malformed optional tag '# long time (1a2s)', should be <number>s
+        ValueError: malformed optional tag '# long time (limit 1a2s)', should be '# long time (limit <number>s)'
         sage: _parse_example_timeout("sleep(10)  # long time (:issue:`12345`)", 5.0r)
         5.0
     """
@@ -554,12 +556,12 @@ def _parse_example_timeout(source: str, default_timeout: float) -> float:
         # or tag not present
         return default_timeout
     assert isinstance(value, str)
-    match = re.fullmatch(r'(\S*\d)\s*s', value.strip())
+    match = re.fullmatch(r'\s*limit\s+(\S+)s(\s*,.*)?', value.strip())
     if match:
         try:
             return float(match[1])
         except ValueError:
-            raise ValueError(f"malformed optional tag '# long time ({value})', should be <number>s")
+            raise ValueError(f"malformed optional tag '# long time ({value})', should be '# long time (limit <number>s)'")
     else:
         return default_timeout
 
@@ -2205,7 +2207,7 @@ class DocTestDispatcher(SageObject):
             sage: DC.reporter = DR
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
-            sage: DD.dispatch()  # long time (20s)
+            sage: DD.dispatch()  # long time (limit 20s)
             sage -t .../sage/modules/free_module_homspace.py
                 [... tests, ...s wall]
             sage -t .../sage/rings/big_oh.py

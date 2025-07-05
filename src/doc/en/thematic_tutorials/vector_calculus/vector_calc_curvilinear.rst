@@ -233,7 +233,7 @@ The Laplacian of a scalar field::
 The Laplacian of a vector field::
 
     sage: # long time
-    sage: Du = laplacian(u)  # long time (20s)
+    sage: Du = laplacian(u)  # long time (limit 20s)
     sage: Du.display()
     Delta(u) = ((r^2*d^2(u_r)/dr^2 + 2*r*d(u_r)/dr - 2*u_r(r, th, ph)
      + d^2(u_r)/dth^2 - 2*d(u_theta)/dth)*sin(th)^2 - ((2*u_theta(r, th, ph)
