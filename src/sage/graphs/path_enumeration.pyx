@@ -36,6 +36,8 @@ from itertools import product
 from sage.misc.misc_c import prod
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
+from libcpp.vector cimport vector
+from libcpp.map cimport map as cmap
 from sage.rings.integer_ring import ZZ
 import copy
 
@@ -1515,35 +1517,46 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     G.delete_edges(G.incoming_edges(source, labels=False))
     G.delete_edges(G.outgoing_edges(target, labels=False))
 
+    # relabel the graph so that vertices are named with integers
+    cdef list int_to_vertex = list(G)
+    cdef dict vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
+    G.relabel(perm=vertex_to_int, inplace=True)
+    cdef int id_source = vertex_to_int[source]
+    cdef int id_target = vertex_to_int[target]
+
+    def relabeled_weight_function(e, wf=weight_function):
+        return wf((int_to_vertex[e[0]], int_to_vertex[e[1]], e[2]))
+
     by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
-                                                        weight_function=weight_function,
+                                                        weight_function=(relabeled_weight_function if weight_function else None),
                                                         check_weight=check_weight)
 
     def reverse_weight_function(e):
         return weight_function((e[1], e[0], e[2]))
 
-    cdef dict edge_labels
-    edge_labels = {(e[0], e[1]): e for e in G.edge_iterator()}
+    cdef dict original_edge_labels = {(e[0], e[1]): (int_to_vertex[e[0]], int_to_vertex[e[1]], e[2])
+                                      for e in G.edge_iterator()}
+    cdef dict original_edges = {(e[0], e[1]): (int_to_vertex[e[0]], int_to_vertex[e[1]])
+                                for e in G.edge_iterator(labels=False)}
+    cdef dict original_vertices = {i: int_to_vertex[i] for i in range(len(int_to_vertex))}
 
-    cdef dict edge_wt
-    edge_wt = {(e[0], e[1]): weight_function(e) for e in G.edge_iterator()}
+    cdef dict edge_wt = {(e[0], e[1]): weight_function(e) for e in G.edge_iterator()}
 
     # The first shortest path tree T_0
     from sage.graphs.base.boost_graph import shortest_paths
     cdef dict dist
     cdef dict successor
     reverse_graph = G.reverse()
-    dist, successor = shortest_paths(reverse_graph, target, weight_function=reverse_weight_function,
+    dist, successor = shortest_paths(reverse_graph, id_target, weight_function=reverse_weight_function,
                                      algorithm='Dijkstra_Boost')
     cdef set unnecessary_vertices = set(G) - set(dist)  # no path to target
-    if source in unnecessary_vertices:  # no path from source to target
+    if id_source in unnecessary_vertices:  # no path from source to target
         return
     G.delete_vertices(unnecessary_vertices)
 
     # sidetrack cost
     cdef dict sidetrack_cost = {(e[0], e[1]): weight_function(e) + dist[e[1]] - dist[e[0]]
-                                for e in G.edge_iterator()
-                                if e[0] in dist and e[1] in dist}
+                                for e in G.edge_iterator() if e[0] in dist and e[1] in dist}
 
     def sidetrack_length(path):
         return sum(sidetrack_cost[e] for e in zip(path, path[1:]))
@@ -1551,14 +1564,14 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     # v-t path in the first shortest path tree T_0
     def tree_path(v):
         path = [v]
-        while v != target:
+        while v != id_target:
             v = successor[v]
             path.append(v)
         return path
 
     # shortest path
-    shortest_path = tree_path(source)
-    cdef double shortest_path_length = dist[source]
+    shortest_path = tree_path(id_source)
+    cdef double shortest_path_length = dist[id_source]
 
     # idx of paths
     cdef dict idx_to_path = {0: shortest_path}
@@ -1572,16 +1585,18 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     # shortest path function for weighted/unweighted graph using reduced weights
     shortest_path_func = G._backend.bidirectional_dijkstra_special
 
-    # See explanation of ancestor_idx_dict below
-    def ancestor_idx_func(v, t, len_path, ancestor_idx_dict):
+    # See explanation of ancestor_idx_vec below
+    cdef vector[int] ancestor_idx_vec = [-1 for _ in range(len(G))]
+
+    def ancestor_idx_func(v, t, len_path):
         if v not in successor:
             # target vertex is not reachable from v
             return -1
-        if v in ancestor_idx_dict:
-            if ancestor_idx_dict[v] <= t or ancestor_idx_dict[v] == len_path - 1:
-                return ancestor_idx_dict[v]
-        ancestor_idx_dict[v] = ancestor_idx_func(successor[v], t, len_path, ancestor_idx_dict)
-        return ancestor_idx_dict[v]
+        if ancestor_idx_vec[v] != -1:
+            if ancestor_idx_vec[v] <= t or ancestor_idx_vec[v] == len_path - 1:
+                return ancestor_idx_vec[v]
+        ancestor_idx_vec[v] = ancestor_idx_func(successor[v], t, len_path)
+        return ancestor_idx_vec[v]
 
     candidate_paths.push(((0, True), (0, 0)))
     while candidate_paths.size():
@@ -1595,20 +1610,23 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         if is_simple:
             # output
             if report_edges and labels:
-                P = [edge_labels[e] for e in zip(path, path[1:])]
+                P = [original_edge_labels[e] for e in zip(path, path[1:])]
             elif report_edges:
-                P = list(zip(path, path[1:]))
+                P = [original_edges[e] for e in zip(path, path[1:])]
             else:
-                P = path
+                P = [original_vertices[v] for v in path]
             if report_weight:
                 yield (shortest_path_length + cost, P)
             else:
                 yield P
 
-            # ancestor_idx_dict[v] := the first vertex of ``path[:t+1]`` or ``path[-1]`` reachable by
+            # ancestor_idx_vec[v] := the first vertex of ``path[:t+1]`` or ``path[-1]`` reachable by
             #                    edges of first shortest path tree from v when enumerating deviating edges
             #                    from ``path[t]``.
-            ancestor_idx_dict = {v: i for i, v in enumerate(path)}
+            for i in range(ancestor_idx_vec.size()):
+                ancestor_idx_vec[i] = -1
+            for i, v in enumerate(path):
+                ancestor_idx_vec[v] = i
 
             # GET DEVIATION PATHS
             original_cost = cost
@@ -1617,7 +1635,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
                     if e[1] in former_part:  # e[1] is red or e in path
                         continue
-                    ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path), ancestor_idx_dict)
+                    ancestor_idx = ancestor_idx_func(e[1], deviation_i, len(path))
                     if ancestor_idx == -1:
                         continue
                     new_is_simple = ancestor_idx > deviation_i
@@ -1634,7 +1652,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 former_part.remove(path[deviation_i + 1])
         else:
             # get a path to target in G \ path[:dev_idx]
-            deviation = shortest_path_func(path[dev_idx], target,
+            deviation = shortest_path_func(path[dev_idx], id_target,
                                            exclude_vertices=path[:dev_idx],
                                            reduced_weight=sidetrack_cost)
             if not deviation:
