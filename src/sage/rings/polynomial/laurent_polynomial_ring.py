@@ -453,6 +453,15 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
         from sage.rings.integer_ring import IntegerRing
         self._indices = IntegerRing()
 
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: sage_input(LaurentPolynomialRing(QQ, 'x'))
+            LaurentPolynomialRing(QQ, 'x')
+        """
+        return sib.name('LaurentPolynomialRing')(self.base_ring(), self.variable_name())
+
     Element = LaurentPolynomial_univariate
 
     def _repr_(self):

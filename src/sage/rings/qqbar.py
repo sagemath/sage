@@ -1677,7 +1677,15 @@ class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicF
             True
             sage: pi in QQbar                                                           # needs sage.symbolic
             False
+
+        TESTS::
+
+            sage: QQbar(CLF(QQbar(I)))
+            I
         """
+        from sage.rings.real_lazy import LazyWrapper
+        if isinstance(x, LazyWrapper):
+            x = x._value
         if isinstance(x, AlgebraicNumber):
             return x
         elif isinstance(x, AlgebraicReal):

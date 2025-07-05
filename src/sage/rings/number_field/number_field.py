@@ -8115,6 +8115,25 @@ class NumberField_absolute(NumberField_generic):
 
         self._init_embedding_approx()
 
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: x = polygen(QQ, 'x')
+            sage: K = NumberField(x^17 + 3, 'a')
+            sage: sage_input(K)
+            R.<x> = QQ[]
+            NumberField(x^17 + 3, 'a')
+            sage: sage_input(QQ[I], verify=True)
+            # Verified
+            ...
+        """
+        embedding = self.coerce_embedding()
+        if embedding is None:
+            return sib.name('NumberField')(self.polynomial(), self.variable_name())
+        from sage.rings.qqbar import QQbar
+        return sib.name('NumberField')(self.polynomial(), self.variable_name(), embedding=embedding.gen_image())
+
     def _coerce_from_other_number_field(self, x):
         r"""
         Coerce a number field element x into this number field.
