@@ -259,20 +259,6 @@ cdef class Ring(ParentWithGens):
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
 
-    def __iter__(self):
-        r"""
-        Return an iterator through the elements of ``self``.
-        Not implemented in general.
-
-        EXAMPLES::
-
-            sage: sage.rings.ring.Ring.__iter__(ZZ)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: object does not support iteration
-        """
-        raise NotImplementedError("object does not support iteration")
-
     def __len__(self):
         r"""
         Return the cardinality of this ring if it is finite, else raise

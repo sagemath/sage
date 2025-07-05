@@ -1056,19 +1056,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 1
             """
             from sage.rings.infinity import Infinity
+            b = self.base_ring().cardinality()
+            if b.is_one():
+                return b
             if self.dimension() == Infinity:
                 return Infinity
             if self.dimension() == 0:
                 from sage.rings.integer_ring import ZZ
                 return ZZ.one()
-            return self.base_ring().cardinality() ** self.dimension()
+            return b ** self.dimension()
 
         def is_finite(self):
             r"""
             Return whether ``self`` is finite.
-
-            This is true if and only if ``self.basis().keys()`` and
-            ``self.base_ring()`` are both finite.
 
             EXAMPLES::
 
@@ -1079,7 +1079,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: GroupAlgebra(AbelianGroup(1), IntegerModRing(10)).is_finite()     # needs sage.groups sage.modules
                 False
             """
-            return (self.base_ring().is_finite() and self.basis().keys().is_finite())
+            R = self.base_ring()
+            return R.is_zero() or (R.is_finite() and self.basis().is_finite())
 
         def monomial(self, i):
             """
@@ -1437,6 +1438,72 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     a += self.term(indices.random_element(),
                                    self.base_ring().random_element())
             return a
+
+        def __iter__(self):
+            r"""
+            Return iterator over the elements of this free module.
+            The base ring must be finite and the basis must be countable.
+
+            In the future, the implementation may be generalized
+            to require the base ring to be countable only.
+
+            EXAMPLES::
+
+                sage: from itertools import islice
+                sage: R.<x> = GF(3)[]
+                sage: list(islice(iter(R), 10))
+                [0, 1, 2, x, x + 1, x + 2, 2*x, 2*x + 1, 2*x + 2, x^2]
+
+            TESTS::
+
+                sage: R.<x> = Integers(1)[]
+                sage: [*R]
+                [0]
+                sage: R.<x> = QQ[]
+                sage: list(islice(iter(R), 10))  # when this is implemented add Enumerated() to category(R)
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: iteration over infinite base ring not yet implemented
+                sage: R.<x> = LaurentPolynomialRing(Zmod(4))
+                sage: list(islice(iter(R), 20))
+                [0, 1, 2, 3, x, 1 + x, 2 + x, 3 + x, 2*x, 1 + 2*x, 2 + 2*x, 3 + 2*x,
+                 3*x, 1 + 3*x, 2 + 3*x, 3 + 3*x, x^-1, x^-1 + 1, x^-1 + 2, x^-1 + 3]
+            """
+            from sage.rings.infinity import Infinity
+            R = self.base_ring()
+            if R.cardinality() == Infinity:
+                raise NotImplementedError("iteration over infinite base ring not yet implemented")
+            iters = []
+            zero = R.zero()
+            v = []
+            n = 0
+            yield self.zero()
+            if R.is_zero():
+                return
+            basis_elements = []
+            basis_iter = iter(self.basis())
+            while True:
+                if n == len(iters):
+                    iters.append(iter(R))
+                    v.append(next(iters[n]))
+                    assert v[n] == zero, ("first element of iteration must be zero otherwise result "
+                                          "of this and free module __iter__ will be incorrect")
+                    try:
+                        basis_elements.append(next(basis_iter))
+                    except StopIteration:
+                        return
+                try:
+                    v[n] = next(iters[n])
+                    # yield self(v)  # works and is faster with e.g. polynomial ring or FreeModule_generic, but
+                    # fails with e.g. Laurent polynomial ring
+                    yield self.sum([coefficient * basis_element for coefficient, basis_element
+                                       in zip(v, basis_elements)])
+                    n = 0
+                except StopIteration:
+                    iters[n] = iter(R)
+                    v[n] = next(iters[n])
+                    assert v[n] == zero
+                    n += 1
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
