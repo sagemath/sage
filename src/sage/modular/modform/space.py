@@ -1855,7 +1855,4 @@ def contains_each(V, B):
         sage: contains_each( range(20), range(30) )
         False
     """
-    for b in B:
-        if b not in V:
-            return False
-    return True
+    return all(b in V for b in B)

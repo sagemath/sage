@@ -613,9 +613,7 @@ class ModularFormsRing(Parent):
         if isinstance(M, ModularFormsSpace):
             if M.group() == self.group() and self.has_coerce_map_from(M.base_ring()):
                 return True
-        if self.base_ring().has_coerce_map_from(M):
-            return True
-        return False
+        return self.base_ring().has_coerce_map_from(M)
 
     def __richcmp__(self, other, op):
         r"""
