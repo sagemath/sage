@@ -1084,7 +1084,7 @@ def setup(app):
     app.add_transform(SagemathTransform)
     if SAGE_LIVE_DOC == 'yes' or SAGE_PREPARSED_DOC == 'yes':
         app.add_transform(SagecodeTransform)
-    if not JupyterSphinx().is_present():
+    if not app.builder.tags.has('htmls') or not JupyterSphinx().is_present():
         app.add_directive("jupyter-execute", Ignore)
         app.add_directive("jupyter-kernel", Ignore)
         app.add_directive("jupyter-input", Ignore)
