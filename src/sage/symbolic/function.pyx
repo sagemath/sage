@@ -1356,6 +1356,15 @@ cdef class SymbolicFunction(Function):
             foo(x)^2 + foo(0) + 1
             sage: u.subs(y=0).n()                                                       # needs sage.symbolic
             43.0000000000000
+
+        Check that :issue:`40292` is fixed::
+
+            sage: # needs sage.symbolic
+            sage: var('x,y')
+            (x, y)
+            sage: u = function('u')(x, y)
+            sage: loads(dumps(u))
+            u(x, y)
         """
         return (2, self._name, self._nargs, self._latex_name, self._conversions,
                 self._evalf_params_first,
