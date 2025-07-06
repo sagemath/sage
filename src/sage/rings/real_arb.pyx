@@ -1374,6 +1374,26 @@ cdef class RealBall(RingElement):
             Traceback (most recent call last):
             ...
             TypeError: no canonical coercion...
+
+        Check that if ``a`` is a ball then ``parent(a)(a.mid(), a.rad())`` is exactly ``a``
+        (this behavior is not guaranteed by flint, but it is useful for us).
+        Also check the same when ``rad`` is an integer no more than ``2^29``::
+
+            sage: for prec1 in (5, 30, 53):
+            ....:     RB = RealBallField(prec1)
+            ....:     for prec2 in (5, 29, 30, 53):
+            ....:         R = RealField(prec2)
+            ....:         for i in range(100):
+            ....:             mid = R.random_element()
+            ....:             for rad in (R.random_element(), R(ZZ.random_element(0, 2**prec2-1))):
+            ....:                 a = RB(mid, rad)
+            ....:                 if prec2 <= 30: assert a.rad() == abs(rad)
+            ....:                 assert RB(a.mid(), a.rad()).rad() == a.rad(), (a.mid().str(), a.rad().str())
+            ....:             for rad in (ZZ.random_element(0, 2**prec2-1),):
+            ....:                 assert ZZ(R(rad)) == rad
+            ....:                 a = RB(mid, rad)
+            ....:                 if prec2 <= 29: assert ZZ(a.rad()) == abs(rad)  # strangely enough this doesn't work with 30
+            ....:                 assert RB(a.mid(), a.rad()).rad() == a.rad(), (a.mid().str(), a.rad().str())
         """
         cdef fmpz_t tmpz
         cdef fmpq_t tmpq
@@ -1464,15 +1484,22 @@ cdef class RealBall(RingElement):
         if rad is not None:
             mag_init(tmpm)
             if isinstance(rad, RealNumber):
-                arf_init(tmpr)
-                arf_set_mpfr(tmpr, (<RealNumber> rad).value)
-                arf_get_mag(tmpm, tmpr)
-                arf_clear(tmpr)
+                if rad.parent().prec() <= 62:
+                    sign, mantissa, exponent = rad.sign_mantissa_exponent()
+                    t = mantissa.trailing_zero_bits()
+                    mantissa >>= t
+                    exponent += t
+                    mag_set_ui_2exp_si(tmpm, <Integer> mantissa, <Integer> exponent)
+                else:
+                    arf_init(tmpr)
+                    arf_set_mpfr(tmpr, (<RealNumber> rad).value)
+                    arf_get_mag(tmpm, tmpr)
+                    arf_clear(tmpr)
             elif isinstance(rad, Integer):
-                arf_init(tmpr)
-                arf_set_mpz(tmpr, (<Integer> rad).value)
-                arf_get_mag(tmpm, tmpr)
-                arf_clear(tmpr)
+                fmpz_init(tmpz)
+                fmpz_set_mpz(tmpz, (<Integer> rad).value)
+                mag_set_fmpz(tmpm, tmpz)
+                fmpz_clear(tmpz)
             elif isinstance(rad, Rational):
                 arf_init(tmpr)
                 arf_set_mpz(tmpr, (<Integer> rad.numerator()).value)
