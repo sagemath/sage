@@ -148,6 +148,7 @@ jobs:
           if [ -d "doc/html" ]; then
               rm -rf doc/html
           fi
+          mkdir -p doc
           cp -r builddir/src/doc/* doc/
           # Check if we are on pull request event
           PR_NUMBER=""
