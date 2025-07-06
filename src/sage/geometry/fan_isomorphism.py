@@ -48,9 +48,7 @@ def fan_isomorphic_necessary_conditions(fan1, fan2):
         return False
     if fan1.ngenerating_cones() != fan2.ngenerating_cones():
         return False
-    if fan1.is_complete() != fan2.is_complete():
-        return False
-    return True
+    return fan1.is_complete() == fan2.is_complete()
 
 
 def fan_isomorphism_generator(fan1, fan2):

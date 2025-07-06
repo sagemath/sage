@@ -157,9 +157,11 @@ cdef class PowComputer_flint(PowComputer_class):
         """
         Return ceil(n / e).
         """
-        if self.e == 1: return n
-        if n == 0: return 0
-        return (n-1) / self.e + 1
+        if self.e == 1:
+            return n
+        if n == 0:
+            return 0
+        return (n - 1) / self.e + 1
 
     def polynomial(self, n=None, var='x'):
         """

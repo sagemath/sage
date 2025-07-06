@@ -539,10 +539,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         # shuffle algebras in the same variable over any base that coerces in:
         if isinstance(R, ShuffleAlgebra):
             if R.variable_names() == self.variable_names():
-                if self.base_ring().has_coerce_map_from(R.base_ring()):
-                    return True
-                else:
-                    return False
+                return self.base_ring().has_coerce_map_from(R.base_ring())
 
         if isinstance(R, DualPBWBasis):
             return self.has_coerce_map_from(R._alg)

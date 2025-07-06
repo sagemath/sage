@@ -471,8 +471,14 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: A = algebras.WQSym(QQ)
             sage: TestSuite(A).run()  # long time
+
+            sage: M = algebras.WQSym(ZZ).M()
+            sage: M.is_commutative()
+            False
         """
         category = HopfAlgebras(R).Graded().Connected()
+        if R.is_zero():
+            category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
     def _repr_(self):
@@ -2040,18 +2046,6 @@ class WQSymBases(Category_realization_of_parent):
                 False
             """
             return False
-
-        def is_commutative(self):
-            """
-            Return whether ``self`` is commutative.
-
-            EXAMPLES::
-
-                sage: M = algebras.WQSym(ZZ).M()
-                sage: M.is_commutative()
-                False
-            """
-            return self.base_ring().is_zero()
 
         def one_basis(self):
             """

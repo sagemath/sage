@@ -812,10 +812,10 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             False
         """
         if not isinstance(positive, bool):
-            raise TypeError("%s is not a boolean" % (bool))
+            raise TypeError(f"{positive} is not a boolean")
 
         if i not in self._parent.index_set():
-            raise ValueError("the given index %s is not in the index set" % i)
+            raise ValueError(f"the given index {i} is not in the index set")
 
         negative = not positive
 

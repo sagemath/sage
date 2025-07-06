@@ -292,9 +292,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         if all(f is True for f in finites):
             return True
         lens = [_len(L) for L in self.iters]
-        if any(l == 0 for l in lens):
-            return True
-        return False
+        return any(l == 0 for l in lens)
 
     def unrank(self, x):
         """

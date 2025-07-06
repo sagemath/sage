@@ -1097,9 +1097,7 @@ class Cusps_class(Singleton, Parent):
     def _coerce_map_from_(self, R):
         if QQ.has_coerce_map_from(R):
             return True
-        if R is InfinityRing:
-            return True
-        return False
+        return R is InfinityRing
 
     def _element_constructor_(self, x):
         return Cusp(x)

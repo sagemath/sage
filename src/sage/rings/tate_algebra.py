@@ -810,10 +810,7 @@ class TateAlgebra_generic(Parent):
                 and self._names == R.variable_names()
                 and self._order == R.term_order()):
                 ratio = base.absolute_e() // Rbase.absolute_e()
-                for i in range(self._ngens) :
-                    if logs[i] != ratio * Rlogs[i]:
-                        return False
-                return True
+                return all(logs[i] == ratio * Rlogs[i] for i in range(self._ngens))
         return False
 
     def _pushout_(self, R):

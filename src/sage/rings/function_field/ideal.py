@@ -1000,11 +1000,8 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         if self.ring() != other.ring():
             raise ValueError("rings must be the same")
 
-        if (self.module().is_submodule(other.module()) and
-            other.module().is_submodule(self.module())):
-            return True
-        else:
-            return False
+        return (self.module().is_submodule(other.module()) and
+                other.module().is_submodule(self.module()))
 
     def module(self):
         """

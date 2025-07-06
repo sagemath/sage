@@ -991,9 +991,7 @@ class FractionField_generic(ring.Field):
         # is invertible.  Checking that the image of each generator
         # is a unit is not sufficient.  So we just give up and check
         # that elements of the base ring coerce to the codomain
-        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
-            return False
-        return True
+        return not (base_map is None and not codomain.has_coerce_map_from(self.base_ring()))
 
     def random_element(self, *args, **kwds):
         """

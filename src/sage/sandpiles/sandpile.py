@@ -3732,10 +3732,7 @@ class SandpileConfig(dict):
             sage: (S.max_stable() & S.max_stable()).is_stable()
             True
         """
-        for v in self._vertices:
-            if self[v] >= self._sandpile.out_degree(v):
-                return False
-        return True
+        return all(self[v] < self._sandpile.out_degree(v) for v in self._vertices)
 
     def _set_equivalent_recurrent(self):
         r"""

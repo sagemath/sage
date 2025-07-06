@@ -728,10 +728,7 @@ class LatinSquare:
             return False
 
         # By necessity self must be a partial latin square:
-        if not self.is_partial_latin_square():
-            return False
-
-        return True
+        return self.is_partial_latin_square()
 
     def permissable_values(self, r, c):
         """
