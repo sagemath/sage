@@ -18,10 +18,10 @@ clean:
 	rm -f common/*.pyc
 
 doc-html:
-	meson compile -C build/sage-distro doc-html
+	meson compile -C ../../build/sage-distro doc-html
 
 doc-pdf:
-	meson compile -C build/sage-distro doc-pdf
+	meson compile -C ../../build/sage-distro doc-pdf
 
 .PHONY: all clean \
 	doc-src \
