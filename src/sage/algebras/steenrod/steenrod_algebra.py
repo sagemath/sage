@@ -2966,7 +2966,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: A=SteenrodAlgebra(2, profile=(3,2,1), basis='pst')
+            sage: A = SteenrodAlgebra(2, profile=(3,2,1), basis='pst')
             sage: A.top_class().parent() is A
             True
         """

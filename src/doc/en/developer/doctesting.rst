@@ -365,8 +365,8 @@ as taking a long time:
         on machines with "only" 2GB of RAM, we test ``max_n`` = 1, which
         has a more reasonable memory usage. ::
 
-            sage: from sage.crypto.mq.sr import test_consistency
-            sage: test_consistency(1)  # long time (80s on sage.math, 2011)
+            sage: from sage.crypto.mq.sr import check_consistency
+            sage: check_consistency(1)  # long time (80s on sage.math, 2011)
             True
         """
 
@@ -794,9 +794,9 @@ You can also pass in an explicit amount of time::
         sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
     Test ran for 13.36 cpu seconds
     **********************************************************************
-    File "tests.py", line 283, in sage.rings.tests.test_random_arith
+    File "tests.py", line 283, in sage.rings.tests.check_random_arith
     Failed example:
-        sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
+        sage.rings.tests.check_random_arith(trials=1000)   # long time (5 seconds?)
     Test ran for 12.42 cpu seconds
     **********************************************************************
     ----------------------------------------------------------------------

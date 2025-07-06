@@ -518,8 +518,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         If the base ring is a polynomial ring, then the option
         ``implementation='mpoly'`` causes computations to be done with
         multivariate polynomials instead of a univariate polynomial
-        ring over the base ring.  Only use this for dense power series
-        where you won't do too much arithmetic, but the arithmetic you
+        ring over the base ring. Only use this for dense power series
+        where you will not do too much arithmetic, but the arithmetic you
         do must be fast.  You must explicitly call
         ``f.do_truncation()`` on an element for it to truncate away
         higher order terms (this is called automatically before
@@ -527,9 +527,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         EXAMPLES:
 
-        This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-        Since :issue:`11900`, it is also initialised as such, and since :issue:`14084`
-        it is actually initialised as an integral domain::
+        Since :issue:`11900`, it is in the category of commutative rings,
+        and since :issue:`14084` it is actually an integral domain::
 
             sage: R.<x> = ZZ[[]]
             sage: R.category()

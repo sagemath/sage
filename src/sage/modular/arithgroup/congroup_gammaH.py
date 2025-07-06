@@ -1040,10 +1040,7 @@ class GammaH_class(CongruenceSubgroup):
         else:
             # difficult case
             t = other._list_of_elements_in_H()
-            for x in self._generators_for_H():
-                if x not in t:
-                    return False
-            return True
+            return all(x in t for x in self._generators_for_H())
 
     def index(self):
         r"""

@@ -18,6 +18,7 @@ if [ -z "$SAGE_ROOT" ]; then
 fi
 
 cd "$SAGE_ROOT"
+export PATH=build/bin:$PATH
 
 OUTPUT_DIR="src/doc/en/installation"
 mkdir -p "$OUTPUT_DIR"

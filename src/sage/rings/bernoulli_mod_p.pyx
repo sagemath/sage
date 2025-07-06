@@ -145,7 +145,6 @@ def bernoulli_mod_p(int p):
     g = primitive_root(p)
     gInv = arith_int.c_inverse_mod_int(g, p)
     gSqr = ((<llong> g) * g) % p
-    gInvSqr = ((<llong> gInv) * gInv) % p
     isOdd = ((p-1)/2) % 2
 
     # STEP 1: compute the polynomials G(X) and J(X)

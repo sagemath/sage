@@ -1165,7 +1165,6 @@ cdef class ComplexIntervalFieldElement(FieldElement):
 
         - [RL1971]_
         """
-        cdef ComplexIntervalFieldElement result
         x = self._new()
 
         if mpfi_nan_p(self.__re) or mpfi_nan_p(self.__im):

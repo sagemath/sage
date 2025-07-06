@@ -101,10 +101,7 @@ class JmolData(SageObject):
         if not JmolDataJar().is_present():
             return False
 
-        if not self.is_jvm_available():
-            return False
-
-        return True
+        return self.is_jvm_available()
 
     def export_image(self,
                      targetfile,

@@ -265,6 +265,7 @@ AUTHORS:
 #
 # ************************************************************************
 import os
+import logging
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
@@ -298,6 +299,8 @@ RFilteredPackages = ['.GlobalEnv']
 # but package:base should cover this. i think.
 RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
 
+# silence rpy2 warnings
+logging.getLogger('rpy2.rinterface_lib.callbacks').setLevel(logging.ERROR)
 
 def _setup_r_to_sage_converter():
     """

@@ -719,10 +719,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         """
         p = C_Polyhedron(point(Linear_Expression(list(point_coordinates), 1)))
         is_included = Poly_Con_Relation.is_included()
-        for c in self.constraints():
-            if not p.relation_with(c).implies(is_included):
-                return False
-        return True
+        return all(p.relation_with(c).implies(is_included) for c in self.constraints())
 
     @cached_method
     def contains_origin(self):

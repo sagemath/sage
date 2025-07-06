@@ -16,6 +16,7 @@ Hasse diagrams of posets
 from __future__ import annotations
 
 from collections import deque
+from typing import Iterator
 
 from sage.arith.misc import binomial
 from sage.combinat.posets.hasse_cython import IncreasingChains
@@ -102,7 +103,7 @@ class HasseDiagram(DiGraph):
         """
         return "Hasse diagram of a poset containing %s elements" % self.order()
 
-    def linear_extension(self):
+    def linear_extension(self) -> list[int]:
         r"""
         Return a linear extension.
 
@@ -116,7 +117,7 @@ class HasseDiagram(DiGraph):
         # Recall: we assume range(n) is a linear extension.
         return list(range(len(self)))
 
-    def linear_extensions(self):
+    def linear_extensions(self) -> Iterator[list[int]]:
         r"""
         Return an iterator over all linear extensions.
 
@@ -130,7 +131,7 @@ class HasseDiagram(DiGraph):
         from sage.combinat.posets.linear_extension_iterator import linear_extension_iterator
         return linear_extension_iterator(self)
 
-    def greedy_linear_extensions_iterator(self):
+    def greedy_linear_extensions_iterator(self) -> Iterator[list[int]]:
         r"""
         Return an iterator over greedy linear extensions of the Hasse diagram.
 
@@ -181,7 +182,7 @@ class HasseDiagram(DiGraph):
 
         return greedy_rec(self, [])
 
-    def supergreedy_linear_extensions_iterator(self):
+    def supergreedy_linear_extensions_iterator(self) -> Iterator[list[int]]:
         r"""
         Return an iterator over supergreedy linear extensions of the Hasse diagram.
 
@@ -263,7 +264,7 @@ class HasseDiagram(DiGraph):
         return all(indices[x] < indices[y]
                    for x, y in self.cover_relations_iterator())
 
-    def cover_relations_iterator(self):
+    def cover_relations_iterator(self) -> Iterator[tuple[int, int]]:
         r"""
         Iterate over cover relations.
 
@@ -276,7 +277,7 @@ class HasseDiagram(DiGraph):
         """
         yield from self.edge_iterator(labels=False)
 
-    def cover_relations(self):
+    def cover_relations(self) -> list[tuple[int, int]]:
         r"""
         Return the list of cover relations.
 
@@ -392,7 +393,7 @@ class HasseDiagram(DiGraph):
         """
         return self.is_less_than(y, x)
 
-    def minimal_elements(self):
+    def minimal_elements(self) -> list[int]:
         """
         Return a list of the minimal elements of the poset.
 
@@ -408,7 +409,7 @@ class HasseDiagram(DiGraph):
         """
         return self.sources()
 
-    def maximal_elements(self):
+    def maximal_elements(self) -> list[int]:
         """
         Return a list of the maximal elements of the poset.
 
@@ -421,7 +422,7 @@ class HasseDiagram(DiGraph):
         return self.sinks()
 
     @cached_method
-    def bottom(self):
+    def bottom(self) -> int | None:
         """
         Return the bottom element of the poset, if it exists.
 
@@ -434,9 +435,14 @@ class HasseDiagram(DiGraph):
             sage: Q.bottom()
             0
         """
-        min_elms = self.minimal_elements()
-        if len(min_elms) == 1:
-            return min_elms[0]
+        if not self:
+            return None
+        min_elms = (x for x in self if not self.in_degree(x))
+        bottom = next(min_elms)
+        try:
+            next(min_elms)
+        except StopIteration:
+            return bottom
         return None
 
     def has_bottom(self) -> bool:
@@ -454,7 +460,7 @@ class HasseDiagram(DiGraph):
         """
         return self.bottom() is not None
 
-    def top(self):
+    def top(self) -> int | None:
         """
         Return the top element of the poset, if it exists.
 
@@ -467,9 +473,14 @@ class HasseDiagram(DiGraph):
             sage: Q.top()
             1
         """
-        max_elms = self.maximal_elements()
-        if len(max_elms) == 1:
-            return max_elms[0]
+        if not self:
+            return None
+        max_elms = (x for x in self if not self.out_degree(x))
+        top = next(max_elms)
+        try:
+            next(max_elms)
+        except StopIteration:
+            return top
         return None
 
     def has_top(self) -> bool:
@@ -578,7 +589,7 @@ class HasseDiagram(DiGraph):
         H.relabel(perm=list(range(H.num_verts() - 1, -1, -1)), inplace=True)
         return HasseDiagram(H)
 
-    def _precompute_intervals(self):
+    def _precompute_intervals(self) -> None:
         """
         Precompute all intervals of the poset.
 
@@ -603,7 +614,7 @@ class HasseDiagram(DiGraph):
         self._intervals = [[sorted(up.intersection(down)) for down in v_down]
                            for up in v_up]
 
-    def interval(self, x, y) -> list:
+    def interval(self, x, y) -> list[int]:
         r"""
         Return a list of the elements `z` of ``self`` such that
         `x \leq z \leq y`.
@@ -639,7 +650,7 @@ class HasseDiagram(DiGraph):
         except AttributeError:
             return list(self.interval_iterator(x, y))
 
-    def interval_iterator(self, x, y):
+    def interval_iterator(self, x, y) -> Iterator[int]:
         r"""
         Return an iterator of the elements `z` of ``self`` such that
         `x \leq z \leq y`.
@@ -673,7 +684,7 @@ class HasseDiagram(DiGraph):
 
     closed_interval = interval
 
-    def open_interval(self, x, y) -> list:
+    def open_interval(self, x, y) -> list[int]:
         """
         Return a list of the elements `z` of ``self`` such that `x < z < y`.
 
@@ -861,7 +872,7 @@ class HasseDiagram(DiGraph):
         """
         return bool(self.rank_function())
 
-    def covers(self, x, y):
+    def covers(self, x, y) -> bool:
         """
         Return ``True`` if y covers x and ``False`` otherwise.
 
@@ -875,7 +886,7 @@ class HasseDiagram(DiGraph):
         """
         return self.has_edge(x, y)
 
-    def upper_covers_iterator(self, element):
+    def upper_covers_iterator(self, element) -> Iterator[int]:
         r"""
         Return the list of elements that cover ``element``.
 
@@ -890,7 +901,7 @@ class HasseDiagram(DiGraph):
         """
         yield from self.neighbor_out_iterator(element)
 
-    def lower_covers_iterator(self, element):
+    def lower_covers_iterator(self, element) -> Iterator[int]:
         r"""
         Return the list of elements that are covered by ``element``.
 
@@ -1186,7 +1197,7 @@ class HasseDiagram(DiGraph):
             return coxeter_matrix_fast(self._leq_storage)  # noqa: F821
         raise ValueError("unknown algorithm")
 
-    def order_filter(self, elements):
+    def order_filter(self, elements) -> list[int]:
         r"""
         Return the order filter generated by a list of elements.
 
@@ -1201,7 +1212,7 @@ class HasseDiagram(DiGraph):
         """
         return sorted(self.depth_first_search(elements))
 
-    def principal_order_filter(self, i):
+    def principal_order_filter(self, i) -> list[int]:
         """
         Return the order filter generated by ``i``.
 
@@ -1213,7 +1224,7 @@ class HasseDiagram(DiGraph):
         """
         return self.order_filter([i])
 
-    def order_ideal(self, elements):
+    def order_ideal(self, elements) -> list[int]:
         r"""
         Return the order ideal generated by a list of elements.
 
@@ -1255,7 +1266,7 @@ class HasseDiagram(DiGraph):
 
         return ZZ(size)
 
-    def principal_order_ideal(self, i):
+    def principal_order_ideal(self, i) -> list[int]:
         """
         Return the order ideal generated by `i`.
 
@@ -1268,11 +1279,13 @@ class HasseDiagram(DiGraph):
         return self.order_ideal([i])
 
     @lazy_attribute
-    def _leq_storage(self):
+    def _leq_storage(self) -> list[set[int]]:
         """
         Store the comparison relation as a list of Python sets.
 
         The `i`-th item in the list is the set of elements greater than `i`.
+
+        Once computed, this is used to speed up the comparison.
 
         EXAMPLES::
 
@@ -1359,8 +1372,7 @@ class HasseDiagram(DiGraph):
     def lequal_matrix(self, boolean=False):
         r"""
         Return a matrix whose ``(i,j)`` entry is 1 if ``i`` is less
-        than ``j`` in the poset, and 0 otherwise; and redefines
-        ``__lt__`` to use the boolean version of this matrix.
+        than ``j`` in the poset, and 0 otherwise.
 
         INPUT:
 
@@ -1402,14 +1414,14 @@ class HasseDiagram(DiGraph):
             return self._leq_matrix_boolean
         return self._leq_matrix
 
-    def _alternate_is_lequal(self, i, j):
+    def _alternate_is_lequal(self, i, j) -> bool:
         r"""
         Return ``True`` if ``i`` is less than or equal to ``j`` in
         ``self``, and ``False`` otherwise.
 
         .. NOTE::
 
-            If the :meth:`lequal_matrix` has been computed, then
+            If the dictionary :meth:`_leq_storage` has been computed, then
             :meth:`is_lequal` is redefined to use the cached data.
 
         EXAMPLES::
@@ -1436,7 +1448,7 @@ class HasseDiagram(DiGraph):
         """
         return j in self._leq_storage[i]
 
-    def prime_elements(self):
+    def prime_elements(self) -> tuple[list[int], list[int]]:
         r"""
         Return the join-prime and meet-prime elements of the bounded poset.
 
@@ -1807,7 +1819,7 @@ class HasseDiagram(DiGraph):
         else:
             return True
 
-    def find_nonsemidistributive_elements(self, meet_or_join):
+    def find_nonsemidistributive_elements(self, meet_or_join) -> None | tuple:
         r"""
         Check if the lattice is semidistributive or not.
 
@@ -1939,7 +1951,7 @@ class HasseDiagram(DiGraph):
 
         return None
 
-    def pseudocomplement(self, element):
+    def pseudocomplement(self, element) -> int | None:
         """
         Return the pseudocomplement of ``element``, if it exists.
 
@@ -1978,7 +1990,7 @@ class HasseDiagram(DiGraph):
             e1 -= 1
         return e
 
-    def orthocomplementations_iterator(self):
+    def orthocomplementations_iterator(self) -> Iterator[list[int]]:
         r"""
         Return an iterator over orthocomplementations of the lattice.
 
@@ -2151,7 +2163,7 @@ class HasseDiagram(DiGraph):
 
         yield from recursive_fit(start, start_unbinded)
 
-    def find_nonsemimodular_pair(self, upper):
+    def find_nonsemimodular_pair(self, upper) -> tuple[int, int]:
         """
         Return pair of elements showing the lattice is not modular.
 
@@ -2198,7 +2210,7 @@ class HasseDiagram(DiGraph):
                         return (a, b)
         return None
 
-    def antichains_iterator(self):
+    def antichains_iterator(self) -> Iterator[list[int]]:
         r"""
         Return an iterator over the antichains of the poset.
 
@@ -2242,9 +2254,9 @@ class HasseDiagram(DiGraph):
         # Indeed, if a appears before b in antichains_queues, then
         # the largest element of a is strictly smaller than that of b.
         antichains_queues = [([], list(range(self.cardinality() - 1, -1, -1)))]
-        leq = self.lequal_matrix()
+        leq = self._leq_storage
         while antichains_queues:
-            (antichain, queue) = antichains_queues.pop()
+            antichain, queue = antichains_queues.pop()
             # Invariant:
             #  - the elements of antichain are independent
             #  - the elements of queue are independent from those of antichain
@@ -2252,10 +2264,11 @@ class HasseDiagram(DiGraph):
             while queue:
                 x = queue.pop()
                 new_antichain = antichain + [x]
-                new_queue = [t for t in queue if not (leq[t, x] or leq[x, t])]
+                new_queue = [t for t in queue
+                             if not (x in leq[t] or t in leq[x])]
                 antichains_queues.append((new_antichain, new_queue))
 
-    def are_incomparable(self, i, j):
+    def are_incomparable(self, i, j) -> bool:
         """
         Return whether ``i`` and ``j`` are incomparable in the poset.
 
@@ -2276,12 +2289,12 @@ class HasseDiagram(DiGraph):
         """
         if i == j:
             return False
+        leq = self._leq_storage
         if i > j:
-            i, j = j, i
-        mat = self._leq_matrix_boolean
-        return not mat[i, j]
+            return i not in leq[j]
+        return j not in leq[i]
 
-    def are_comparable(self, i, j):
+    def are_comparable(self, i, j) -> bool:
         """
         Return whether ``i`` and ``j`` are comparable in the poset.
 
@@ -2304,10 +2317,10 @@ class HasseDiagram(DiGraph):
         """
         if i == j:
             return True
+        leq = self._leq_storage
         if i > j:
-            i, j = j, i
-        mat = self._leq_matrix_boolean
-        return bool(mat[i, j])
+            return i in leq[j]
+        return j in leq[i]
 
     def antichains(self, element_class=list):
         """
@@ -2427,7 +2440,7 @@ class HasseDiagram(DiGraph):
         """
         return chain_poly(self._leq_storage)._sage_('q')  # noqa: F821
 
-    def linear_intervals_count(self):
+    def linear_intervals_count(self) -> Iterator[int]:
         """
         Return the enumeration of linear intervals w.r.t. their cardinality.
 
@@ -2528,7 +2541,7 @@ class HasseDiagram(DiGraph):
             return True
         return False
 
-    def diamonds(self) -> tuple:
+    def diamonds(self) -> tuple[list[tuple[int]], bool]:
         r"""
         Return the list of diamonds of ``self``.
 
@@ -2573,7 +2586,7 @@ class HasseDiagram(DiGraph):
                     diamonds.extend((w, x, y, z) for z in zs)
         return (diamonds, all_diamonds_completed)
 
-    def common_upper_covers(self, vertices):
+    def common_upper_covers(self, vertices) -> list[int]:
         r"""
         Return the list of all common upper covers of ``vertices``.
 
@@ -2594,7 +2607,7 @@ class HasseDiagram(DiGraph):
             covers = covers.intersection(self.neighbor_out_iterator(v))
         return list(covers)
 
-    def common_lower_covers(self, vertices):
+    def common_lower_covers(self, vertices) -> list[int]:
         r"""
         Return the list of all common lower covers of ``vertices``.
 
@@ -2615,7 +2628,7 @@ class HasseDiagram(DiGraph):
             covers = covers.intersection(self.neighbor_in_iterator(v))
         return list(covers)
 
-    def _trivial_nonregular_congruence(self):
+    def _trivial_nonregular_congruence(self) -> tuple[int, int] | None:
         """
         Return a pair of elements giving "trivial" non-regular congruence.
 
@@ -2664,7 +2677,7 @@ class HasseDiagram(DiGraph):
                     return (v, v_)
         return None
 
-    def sublattices_iterator(self, elms, min_e):
+    def sublattices_iterator(self, elms, min_e) -> Iterator[set[int]]:
         """
         Return an iterator over sublattices of the Hasse diagram.
 
@@ -2707,7 +2720,7 @@ class HasseDiagram(DiGraph):
             else:
                 yield from self.sublattices_iterator(current_set, e + 1)
 
-    def maximal_sublattices(self):
+    def maximal_sublattices(self) -> list[set[int]]:
         """
         Return maximal sublattices of the lattice.
 
@@ -2811,7 +2824,7 @@ class HasseDiagram(DiGraph):
 
         return result
 
-    def frattini_sublattice(self):
+    def frattini_sublattice(self) -> list[int]:
         """
         Return the list of elements of the Frattini sublattice of the lattice.
 
@@ -2831,7 +2844,7 @@ class HasseDiagram(DiGraph):
         return [e for e in range(self.cardinality()) if
                 all(e in ms for ms in max_sublats)]
 
-    def kappa_dual(self, a):
+    def kappa_dual(self, a) -> int | None:
         r"""
         Return the minimum element smaller than the element covering
         ``a`` but not smaller than ``a``.
@@ -2882,7 +2895,7 @@ class HasseDiagram(DiGraph):
                 result = e
         return result
 
-    def skeleton(self):
+    def skeleton(self) -> list[int]:
         """
         Return the skeleton of the lattice.
 
@@ -2982,7 +2995,7 @@ class HasseDiagram(DiGraph):
 
         return True
 
-    def neutral_elements(self) -> set:
+    def neutral_elements(self) -> set[int]:
         """
         Return the list of neutral elements of the lattice.
 
@@ -3071,7 +3084,7 @@ class HasseDiagram(DiGraph):
 
         return neutrals
 
-    def kappa(self, a):
+    def kappa(self, a) -> int | None:
         r"""
         Return the maximum element greater than the element covered
         by ``a`` but not greater than ``a``.
@@ -3461,7 +3474,7 @@ class HasseDiagram(DiGraph):
         P = DiGraph([D, lambda a, b: T.is_less_than(P[a], P[b])])
         return (Poset(P), D)
 
-    def congruences_iterator(self):
+    def congruences_iterator(self) -> Iterator:
         """
         Return an iterator over all congruences of the lattice.
 
@@ -3703,7 +3716,7 @@ class HasseDiagram(DiGraph):
             b = upper_covers[0]
             orientation = True
         else:
-            (a, b) = (lower_covers[0], a)
+            a, b = lower_covers[0], a
             orientation = False
         P, Q = self._split(a, b)
         a_spec = P._spectrum_of_tree(a)

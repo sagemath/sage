@@ -56,11 +56,11 @@ TESTS:
 
 Run Sage itself with various options::
 
-    sage: from sage.tests import test_executable
+    sage: from sage.tests import check_executable
 
     sage: # long time
     sage: from sage.version import banner
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage"], pydebug_ignore_warnings=True)
     sage: out.find(banner) >= 0
     True
@@ -70,7 +70,7 @@ Run Sage itself with various options::
     0
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage"], "3^33\n", pydebug_ignore_warnings=True)
     sage: out.find(banner) >= 0
     True
@@ -82,7 +82,7 @@ Run Sage itself with various options::
     0
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "-q"], "3^33\n", pydebug_ignore_warnings=True)
     sage: out.find(banner) >= 0
     False
@@ -94,7 +94,7 @@ Run Sage itself with various options::
     0
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "-c", "print(3^33)"])
     sage: print(out)
     5559060566555523
@@ -104,7 +104,7 @@ Run Sage itself with various options::
     0
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "--min", "-c", "print(3^33)"])
     sage: print(out)
     5559060566555523
@@ -114,7 +114,7 @@ Run Sage itself with various options::
     0
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "--startuptime"])
     sage: out.find("Slowest module import") >= 0
     True
@@ -125,7 +125,7 @@ Run Sage itself with various options::
 
 Test help::
 
-    sage: (out, err, ret) = test_executable(["sage", "-h"])
+    sage: (out, err, ret) = check_executable(["sage", "-h"])
     sage: out.find("evaluate cmd as sage") >= 0
     True
     sage: err
@@ -133,7 +133,7 @@ Test help::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--help"])
+    sage: (out, err, ret) = check_executable(["sage", "--help"])
     sage: out.find("evaluate cmd as sage") >= 0
     True
     sage: err
@@ -141,7 +141,7 @@ Test help::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--advanced"])
+    sage: (out, err, ret) = check_executable(["sage", "--advanced"])
     sage: out.find("run the Sage cleaner.") >= 0
     True
     sage: err
@@ -155,7 +155,7 @@ Test help::
 
 Basic information about the Sage installation::
 
-    sage: (out, err, ret) = test_executable(["sage", "-v"])
+    sage: (out, err, ret) = check_executable(["sage", "-v"])
     sage: from sage.version import banner
     sage: out.find(banner) >= 0
     True
@@ -165,7 +165,7 @@ Basic information about the Sage installation::
     0
 
     sage: # optional - sage_spkg
-    sage: (out, err, ret) = test_executable(["sage", "--root"])
+    sage: (out, err, ret) = check_executable(["sage", "--root"])
     sage: len(out) >= 2
     True
     sage: err
@@ -176,7 +176,7 @@ Basic information about the Sage installation::
 Test ``sage --info [packages]``::
 
     sage: # optional - sage_spkg
-    sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])
+    sage: out, err, ret = check_executable(["sage", "--info", "sqlite"])
     sage: print(out)
     sqlite...
     SQLite is a software library that implements a self-contained,
@@ -195,8 +195,8 @@ Test ``sage-run`` on a Python file, both with an absolute and with a relative pa
     ....:     fullname = os.path.join(dir, name)
     ....:     with open(fullname, 'w') as F:
     ....:         _ = F.write("print(3^33)\n")
-    ....:     test_executable(["sage", fullname])
-    ....:     test_executable(["sage", name], cwd=dir)
+    ....:     check_executable(["sage", fullname])
+    ....:     check_executable(["sage", name], cwd=dir)
     ('34\n', '', 0)
     ('34\n', '', 0)
 
@@ -209,8 +209,8 @@ also tests the preparser::
     ....:     fullname = os.path.join(dir, name)
     ....:     with open(fullname, 'w') as F:
     ....:         _ = F.write("k.<a> = GF(5^3); print(a^124)\n")
-    ....:     test_executable(["sage", fullname])
-    ....:     test_executable(["sage", name], cwd=dir)
+    ....:     check_executable(["sage", fullname])
+    ....:     check_executable(["sage", name], cwd=dir)
     ('1\n', '', 0)
     ('1\n', '', 0)
 
@@ -228,8 +228,8 @@ Test running a ``.spyx`` file::
     ....:         _ = F.write("for i in range(5): s += i\n")
     ....:         _ = F.write("sig_off()\n")
     ....:         _ = F.write("print(Integer(s))")
-    ....:     test_executable(["sage", fullname], pydebug_ignore_warnings=True)
-    ....:     test_executable(["sage", name], cwd=dir, pydebug_ignore_warnings=True)
+    ....:     check_executable(["sage", fullname], pydebug_ignore_warnings=True)
+    ....:     check_executable(["sage", name], cwd=dir, pydebug_ignore_warnings=True)
     ('10\n', 'Compiling .../sage_test_file.spyx...\n', 0)
     ('10\n', 'Compiling sage_test_file.spyx...\n', 0)
 
@@ -242,7 +242,7 @@ a file and preparse it::
     sage: F = open(script, 'w')
     sage: _ = F.write(s)
     sage: F.close()
-    sage: (out, err, ret) = test_executable(["sage", "--preparse", script])
+    sage: (out, err, ret) = check_executable(["sage", "--preparse", script])
     sage: ret
     0
     sage: os.path.isfile(script_py)
@@ -251,13 +251,13 @@ a file and preparse it::
 Now test my_script.sage and the preparsed version my_script.sage.py::
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "-t", "--optional=sage", script])
     sage: ret
     0
     sage: out.find("All tests passed!") >= 0
     True
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "-t", "--optional=sage", script_py])
     sage: ret
     0
@@ -280,7 +280,7 @@ Now for a file which should fail tests::
     sage: F = open(script, 'w')
     sage: _ = F.write(s)
     sage: F.close()
-    sage: (out, err, ret) = test_executable([           # long time
+    sage: (out, err, ret) = check_executable([           # long time
     ....:     "sage", "-t", "--optional=sage", script])
     sage: ret                                           # long time
     1
@@ -295,7 +295,7 @@ be ignored. In Pdb, we run the ``help`` command::
     sage: F = open(script, 'w')
     sage: _ = F.write(s)
     sage: F.close()
-    sage: (out, err, ret) = test_executable([           # long time
+    sage: (out, err, ret) = check_executable([           # long time
     ....:     "sage", "-t", "--optional=sage", "--debug",
     ....:     "-p", "2", "--warn-long", "0", script], "help")
     sage: print(out)                                    # long time
@@ -348,7 +348,7 @@ lengths to doctest the output.::
     sage: F = open(test_file, 'w')
     sage: _ = F.write(test)
     sage: F.close()
-    sage: (out, err, ret) = test_executable(["sage", "--fixdoctests", test_file])       # long time
+    sage: (out, err, ret) = check_executable(["sage", "--fixdoctests", test_file])       # long time
     sage: with open(test_file, 'r') as f:                                               # long time
     ....:     fixed_test = f.read()
     sage: import difflib                                                                # long time
@@ -385,20 +385,20 @@ lengths to doctest the output.::
 
 Test external programs being called by Sage::
 
-    sage: (out, err, ret) = test_executable(["sage", "--sh"], "echo Hello World\nexit 42\n")
+    sage: (out, err, ret) = check_executable(["sage", "--sh"], "echo Hello World\nexit 42\n")
     sage: out.find("Hello World\n") >= 0
     True
     sage: ret
     42
 
-    sage: (out, err, ret) = test_executable(["sage", "--sh", "-c", "echo Hello World; exit 42"])
+    sage: (out, err, ret) = check_executable(["sage", "--sh", "-c", "echo Hello World; exit 42"])
     sage: out.find("Hello World\n") >= 0
     True
     sage: ret
     42
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "--ipython"], "\n3**33\n", pydebug_ignore_warnings=True)
     sage: out.find("5559060566555523") >= 0
     True
@@ -407,7 +407,7 @@ Test external programs being called by Sage::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--python"], "print(3^33)\n")
+    sage: (out, err, ret) = check_executable(["sage", "--python"], "print(3^33)\n")
     sage: out
     '34\n'
     sage: err
@@ -415,7 +415,7 @@ Test external programs being called by Sage::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--python3"], "print(3^33)\n")
+    sage: (out, err, ret) = check_executable(["sage", "--python3"], "print(3^33)\n")
     sage: out
     '34\n'
     sage: err
@@ -423,7 +423,7 @@ Test external programs being called by Sage::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--cython"])
+    sage: (out, err, ret) = check_executable(["sage", "--cython"])
     sage: print(err)
     ...
     cython: error: cython: Need at least one source file
@@ -434,7 +434,7 @@ Test external programs being called by Sage::
     ....:         return True
     ....:     except OSError:
     ....:         return False
-    sage: (out, err, ret) = test_executable(["sage", "--ecl"], "(* 12345 54321)\n")
+    sage: (out, err, ret) = check_executable(["sage", "--ecl"], "(* 12345 54321)\n")
     sage: out.find("Embeddable Common-Lisp") >= 0
     True
     sage: out.find("670592745") >= 0
@@ -444,7 +444,7 @@ Test external programs being called by Sage::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--lisp"], "(* 12345 54321)\n")
+    sage: (out, err, ret) = check_executable(["sage", "--lisp"], "(* 12345 54321)\n")
     sage: out.find("Embeddable Common-Lisp") >= 0
     True
     sage: out.find("670592745") >= 0
@@ -455,7 +455,7 @@ Test external programs being called by Sage::
     0
 
     sage: # long time
-    sage: (out, err, ret) = test_executable([
+    sage: (out, err, ret) = check_executable([
     ....:     "sage", "--gap", "-q"], "Size(SymmetricGroup(5));\n")
     sage: out
     '120\n'
@@ -464,14 +464,14 @@ Test external programs being called by Sage::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable([                   # long time  # optional - gdb
+    sage: (out, err, ret) = check_executable([                   # long time  # optional - gdb
     ....:     "sage", "--gdb"], 'quit\n')
     sage: out.find('(gdb) ') >= 0                               # long time  # optional - gdb
     True
     sage: ret                                                   # long time  # optional - gdb
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--mwrank", "-v0", "-q"], "0 0 0 0 1\n")
+    sage: (out, err, ret) = check_executable(["sage", "--mwrank", "-v0", "-q"], "0 0 0 0 1\n")
     sage: out
     'Curve [0,0,0,0,1] :\tRank = 0\n\n'
     sage: err
@@ -479,7 +479,7 @@ Test external programs being called by Sage::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--singular"], "12345*54321;\n")
+    sage: (out, err, ret) = check_executable(["sage", "--singular"], "12345*54321;\n")
     sage: out.find("A Computer Algebra System for Polynomial Computations") >= 0
     True
     sage: out.find("670592745") >= 0
@@ -492,7 +492,7 @@ Test external programs being called by Sage::
 Test GP using the ``-f`` option which prevents the reading of a ``.gprc``
 configuration file::
 
-    sage: (out, err, ret) = test_executable(["sage", "--gp", "-f"], "3^33\nquit(42)\n")
+    sage: (out, err, ret) = check_executable(["sage", "--gp", "-f"], "3^33\nquit(42)\n")
     sage: out.find("PARI/GP") >= 0
     True
     sage: out.find("5559060566555523") >= 0
@@ -504,7 +504,7 @@ configuration file::
 
 Some programs of which we check functionality using only ``--version``::
 
-    sage: (out, err, ret) = test_executable(["sage", "--maxima", "--version"])
+    sage: (out, err, ret) = check_executable(["sage", "--maxima", "--version"])
     sage: out.find("Maxima ") >= 0
     True
     sage: err
@@ -513,7 +513,7 @@ Some programs of which we check functionality using only ``--version``::
     0
 
     sage: # optional - r
-    sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])
+    sage: (out, err, ret) = check_executable(["sage", "--R", "--version"])
     sage: out.find("R version ") >= 0
     True
     sage: err
@@ -521,7 +521,7 @@ Some programs of which we check functionality using only ``--version``::
     sage: ret
     0
 
-    sage: (out, err, ret) = test_executable(["sage", "--sqlite3", "--version"])
+    sage: (out, err, ret) = check_executable(["sage", "--sqlite3", "--version"])
     sage: out.startswith("3.")
     True
     sage: err
@@ -532,7 +532,7 @@ Some programs of which we check functionality using only ``--version``::
 Check some things requiring an internet connection::
 
     sage: # optional - internet
-    sage: (out, err, ret) = test_executable(["sage", "--standard"])
+    sage: (out, err, ret) = check_executable(["sage", "--standard"])
     sage: out.find("cython") >= 0
     True
     sage: err
@@ -541,7 +541,7 @@ Check some things requiring an internet connection::
     0
 
     sage: # optional - internet
-    sage: (out, err, ret) = test_executable(["sage", "--optional"])
+    sage: (out, err, ret) = check_executable(["sage", "--optional"])
     sage: out.find("database_cremona_ellcurve") >= 0
     True
     sage: err
@@ -550,7 +550,7 @@ Check some things requiring an internet connection::
     0
 
     sage: # optional - internet
-    sage: (out, err, ret) = test_executable(["sage", "--experimental"])
+    sage: (out, err, ret) = check_executable(["sage", "--experimental"])
     sage: out.find("valgrind") >= 0
     True
     sage: err
@@ -561,7 +561,7 @@ Check some things requiring an internet connection::
 Check an illegal command line option.  This outputs an error to stdout,
 but we allow stderr in case this changes in the future::
 
-    sage: (out, err, ret) = test_executable(["sage", "--zzfoobar"])
+    sage: (out, err, ret) = check_executable(["sage", "--zzfoobar"])
     sage: (out+err).find("unknown option: --zzfoobar") >= 0
     True
     sage: ret > 0
@@ -574,7 +574,7 @@ Test ``sage --rst2ipynb file.rst`` on a ReST file::
     sage: with open(input, 'w') as F:
     ....:     _ = F.write(s)
     sage: L = ["sage", "--rst2ipynb", input]
-    sage: (out, err, ret) = test_executable(L)           # optional - rst2ipynb
+    sage: (out, err, ret) = check_executable(L)           # optional - rst2ipynb
     sage: err                                            # optional - rst2ipynb
     ''
     sage: ret                                            # optional - rst2ipynb
@@ -596,7 +596,7 @@ Test ``sage --rst2ipynb file.rst file.ipynb`` on a ReST file::
     sage: with open(input, 'w') as F:
     ....:     _ = F.write(s)
     sage: L = ["sage", "--rst2ipynb", input, output]
-    sage: test_executable(L)                              # optional - rst2ipynb
+    sage: check_executable(L)                              # optional - rst2ipynb
     ('', '', 0)
     sage: import json                                     # optional - rst2ipynb
     sage: d = json.load(open(output,'r'))                 # optional - rst2ipynb
@@ -670,7 +670,7 @@ Test ``sage --ipynb2rst file.ipynb file.rst`` on a ipynb file::
     sage: with open(input, 'w') as F:
     ....:     _ = F.write(s)
     sage: L = ["sage", "--ipynb2rst", input, output]
-    sage: _ = test_executable(L)                # long time  # optional - pandoc
+    sage: _ = check_executable(L)                # long time  # optional - pandoc
     sage: print(open(output, 'r').read() == t)  # long time  # optional - pandoc  # known bug #32697
     True
 """

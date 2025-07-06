@@ -427,10 +427,7 @@ class RegularCrystals(Category_singleton):
                 index_set = self.index_set()
 
             def wt_zero(x):
-                for i in index_set:
-                    if x.epsilon(i) != x.phi(i):
-                        return False
-                return True
+                return all(x.epsilon(i) == x.phi(i) for i in index_set)
 
             if X is None:
                 X = [x for x in self if wt_zero(x)]
