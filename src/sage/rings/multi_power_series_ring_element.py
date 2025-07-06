@@ -1512,11 +1512,8 @@ class MPowerSeries(PowerSeries):
         """
         if self.prec() < infinity and self.valuation() > 0:
             return True
-        elif self == self.constant_coefficient() and \
-           self.base_ring()(self.constant_coefficient()).is_nilpotent():
-            return True
-        else:
-            return False
+        return (self == self.constant_coefficient() and
+                self.base_ring()(self.constant_coefficient()).is_nilpotent())
 
     def degree(self):
         """

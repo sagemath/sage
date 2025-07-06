@@ -1324,10 +1324,7 @@ class WordMorphism(SageObject):
             sage: WordMorphism('').is_erasing()
             False
         """
-        for image in self.images():
-            if image.is_empty():
-                return True
-        return False
+        return any(image.is_empty() for image in self.images())
 
     def is_identity(self):
         r"""
@@ -1547,10 +1544,7 @@ class WordMorphism(SageObject):
         """
         dom_alphabet = set(self.domain().alphabet())
 
-        for image in self.images():
-            if not dom_alphabet <= set(image):
-                return False
-        return True
+        return all(dom_alphabet <= set(image) for image in self.images())
 
     def is_primitive(self):
         r"""
@@ -2422,10 +2416,7 @@ class WordMorphism(SageObject):
             sage: (fibo^2).has_conjugate_in_classP()
             True
         """
-        for k in self.list_of_conjugates():
-            if k.is_in_classP(f=f):
-                return True
-        return False
+        return any(k.is_in_classP(f=f) for k in self.list_of_conjugates())
 
     def dual_map(self, k=1):
         r"""
