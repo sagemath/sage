@@ -184,7 +184,8 @@ test = [
 ]
 docs = [
   "sphinx", 
-  "sphinx-inline-tabs", 
+  "sphinx-copybutton",
+  "sphinx-inline-tabs",
   "furo",
   "python-dateutil",
 ]
@@ -201,6 +202,7 @@ dev = [
   "conda-lock",
   "grayskull",
   "toml",
+  "uv",
 ]
 
 [tool.ruff]

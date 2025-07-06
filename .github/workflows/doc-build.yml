@@ -16,15 +16,6 @@ on:
       - develop
   workflow_dispatch:
     # Allow to run manually
-    inputs:
-      platform:
-        description: 'Platform'
-        required: true
-        default: 'ubuntu-noble-standard'
-      docker_tag:
-        description: 'Docker tag'
-        required: true
-        default: 'dev'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -32,101 +23,60 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Same as in build.yml
-  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-incremental"
-  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-with-targets:ci"
-  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
-  FROM_DOCKER_TARGET:     "with-targets"
-  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
-  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+  PYTHON_VERSION: 3.11
 
 jobs:
   build-doc:
     runs-on: ubuntu-latest
-    services:
-      # https://docs.docker.com/build/ci/github-actions/local-registry/
-      registry:
-        image: registry:2
-        ports:
-          - 5000:5000
     steps:
-      - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
-        with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install test prerequisites
-        # From docker.yml
-        run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
-          sudo apt-get clean
-          df -h
+
       - name: Merge CI fixes from sagemath/sage
         run: |
-          mkdir -p upstream
-          .github/workflows/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-      # Building
-
-      - name: Generate Dockerfile
-        # From docker.yml
-        run: |
-          tox -e ${{ env.TOX_ENV }}
-          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
-        env:
-          # Only generate the Dockerfile, do not run 'docker build' here
-          DOCKER_TARGETS: ""
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Cache conda packages
+        uses: actions/cache@v4
         with:
-          driver-opts: network=host
-
-      - name: Build Docker image
-        id: image
-        uses: docker/build-push-action@v6
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
+  
+      - name: Compiler cache
+        uses: hendrikmuhs/ccache-action@v1.2
         with:
-          # push and load may not be set together at the moment
-          push:       true
-          load:       false
-          context:    .
-          tags:       ${{ env.BUILD_IMAGE }}
-          target:     with-targets
-          cache-from: type=gha
-          cache-to:   type=gha,mode=max
-          build-args: |
-            NUMPROC=6
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
-            TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
+          key: ${{ runner.os }}-meson-${{ env.PYTHON_VERSION }}
 
-      - name: Start container
-        id: container
-        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          # Disabled for now due to
+          # https://github.com/conda-incubator/setup-miniconda/issues/379
+          # miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
+        
+      - name: Build Sage
+        shell: bash -l {0}
         run: |
-          docker run --name BUILD -dit \
-                     --mount type=bind,src=$(pwd),dst=$(pwd) \
-                     --workdir $(pwd) \
-                     ${{ env.BUILD_IMAGE }} /bin/sh
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          export CC="ccache $CC"
+          export CXX="ccache $CXX"
+          pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
 
       #
-      # On pull request and push to develop events
+      # For pull requests
       #
-
       - name: Get workflow run-id
         id: get_run_id
-        if: steps.container.outcome == 'success' && !startsWith(github.ref, 'refs/tags/') && github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request'
         run: |
           RESPONSE=$(curl -s -L \
             -H "Accept: application/vnd.github+json" \
@@ -149,6 +99,7 @@ jobs:
       - name: Store old doc
         id: worktree
         if: steps.download-doc.outcome == 'success'
+        shell: bash -l {0}
         run: |
           git config --global --add safe.directory $(pwd)
           git config --global user.email "ci-sage@example.com"
@@ -164,8 +115,8 @@ jobs:
             # mathjax path in old doc (regex)
             mathjax_path_from="[-./A-Za-z_]*/tex-chtml[.]js?v=[0-9a-f]*"
             # mathjax path in new doc
-            mathjax_path_to=$(docker exec -e SAGE_USE_CDNS=yes BUILD /sage/sage -python -c "from sage_docbuild.conf import mathjax_path; print(mathjax_path)")
-            new_version=$(docker exec BUILD cat VERSION.txt)
+            mathjax_path_to=$(SAGE_USE_CDNS=yes python -c "from src.sage_docbuild.conf import mathjax_path; print(mathjax_path)")
+            new_version=$(cat VERSION.txt)
             # Wipe out chronic diffs between old doc and new doc
             (cd doc && \
              find . -name "*.html" | xargs sed -i -e '/class="sidebar-brand-text"/ s/Sage [0-9a-z.]* /Sage '"$new_version"' /' \
@@ -185,20 +136,15 @@ jobs:
              git add -A && git commit --quiet -m 'old')
           fi
 
-      - name: Build doc
+      - name: Build documentation
         id: docbuild
-        if: steps.container.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
-        # Always non-incremental because of the concern that
-        # incremental docbuild may introduce broken links (inter-file references) though build succeeds
+        if: steps.worktree.outcome == 'success'
+        shell: bash -l {0}
         run: |
-          export GITHUB_REF=${{ github.ref }}
-          export PR_SHA=${{ github.event.pull_request.head.sha }}
-          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
-          make doc-clean doc-uninstall
-          export SAGE_USE_CDNS=yes
-          export SAGE_DOCBUILD_OPTS="--include-tests-blocks"
-          ./config.status && make sagemath_doc_html-no-deps
-        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
+          meson compile -C builddir doc-html
+        env:
+          SAGE_USE_CDNS: yes
+          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
       - name: Copy doc
         id: copy
@@ -209,12 +155,7 @@ jobs:
           if [ -d "doc/html" ]; then
               rm -rf doc/html
           fi
-          # Simpler "docker cp --follow-link ... doc" does not work
-          mkdir -p doc
-          mkdir -p temp
-          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html temp
-          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html temp
-          cp -r -L temp/* doc/
+          cp -r builddir/src/doc/* doc/
           # Check if we are on pull request event
           PR_NUMBER=""
           if [[ -n "$GITHUB_REF" ]]; then
@@ -275,6 +216,7 @@ jobs:
       - name: Build live doc
         id: buildlivedoc
         if: startsWith(github.ref, 'refs/tags/')
+        shell: bash -l {0}
         run: |
           # Avoid running out of disk space
           rm -rf upstream
@@ -288,7 +230,7 @@ jobs:
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
           make doc-clean doc-uninstall
           ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
-        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
+        shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
         id: copylivedoc
@@ -296,9 +238,9 @@ jobs:
         run: |
           mkdir -p ./livedoc
           # We copy everything to a local folder
-          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html livedoc
-          docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf livedoc
-          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html livedoc
+            cp -r builddir/src/doc/html livedoc/
+            cp -r builddir/src/doc/pdf livedoc/
+            cp builddir/src/doc/index.html livedoc/
           zip -r livedoc.zip livedoc
 
       - name: Upload live doc

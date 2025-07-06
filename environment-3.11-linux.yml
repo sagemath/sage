@@ -336,6 +336,7 @@ dependencies:
   - soupsieve=2.5=pyhd8ed1ab_1
   - sphinx=8.2.3=pyhd8ed1ab_0
   - sphinx-basic-ng=1.0.0b2=pyhd8ed1ab_3
+  - sphinx-copybutton=0.5.2=pyhd8ed1ab_1
   - sphinx-inline-tabs=2023.4.21=pyhd8ed1ab_1
   - sphinxcontrib-applehelp=2.0.0=pyhd8ed1ab_1
   - sphinxcontrib-devhelp=2.0.0=pyhd8ed1ab_1
