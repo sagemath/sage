@@ -10403,23 +10403,6 @@ cdef class Expression(Expression_abc):
         return [self.parent()(ex)
                 for ex in self._maxima_().partfrac(var).args()]
 
-    def maxima_methods(self):
-        """
-        Provide easy access to maxima methods, converting the result to a
-        Sage expression automatically.
-
-        EXAMPLES::
-
-            sage: t = log(sqrt(2) - 1) + log(sqrt(2) + 1); t
-            log(sqrt(2) + 1) + log(sqrt(2) - 1)
-            sage: res = t.maxima_methods().logcontract(); res
-            log((sqrt(2) + 1)*(sqrt(2) - 1))
-            sage: type(res)
-            <class 'sage.symbolic.expression.Expression'>
-        """
-        from sage.symbolic.maxima_wrapper import MaximaWrapper
-        return MaximaWrapper(self)
-
     def rectform(self):
         r"""
         Convert this symbolic expression to rectangular form; that
@@ -10505,7 +10488,7 @@ cdef class Expression(Expression_abc):
             sage: abs(SR(z).rectform() - (a + b*I))  # abs tol 1e-16
             0.0
         """
-        return self.maxima_methods().rectform()
+        return self._maxima_().rectform()._sage_()
 
     def unhold(self, exclude=None):
         """

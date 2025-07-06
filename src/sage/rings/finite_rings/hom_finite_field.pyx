@@ -162,7 +162,10 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
             sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
             sage: g = f.section()
             sage: g._repr_() # random
-            'Section of Ring morphism:\n  From: Finite Field in t of size 3^7\n  To:   Finite Field in T of size 3^21\n  Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T'
+            Section of Ring morphism:
+              From: Finite Field in t of size 3^7
+              To:   Finite Field in T of size 3^21
+              Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
         """
         return "Section of %s" % self._inverse
 

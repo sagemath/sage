@@ -1,14 +1,8 @@
 # interfaces to other interpreters
 
-# import problems
-try:
-    # from maxima_lib import maxima_lib
-    from sage.interfaces.maxima import maxima, Maxima
-except ImportError:
-    pass
-
 from sage.misc.lazy_import import lazy_import
 
+lazy_import('sage.interfaces.maxima', 'maxima')
 lazy_import('sage.interfaces.sage0', ['sage0', 'sage0_version', 'Sage'])
 lazy_import('sage.interfaces.axiom', ['Axiom', 'axiom'])
 lazy_import('sage.interfaces.ecm', ['ECM', 'ecm'])

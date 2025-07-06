@@ -1,8 +1,17 @@
 # sage_setup: distribution = sagemath-repl
+import doctest
 import sys
+import textwrap
 
 import pytest
-from sage.doctest.parsing import SageDocTestParser, parse_optional_tags
+
+from sage.doctest.marked_output import MarkedOutput
+from sage.doctest.parsing import (
+    SageDocTestParser,
+    SageOutputChecker,
+    bitness_value,
+    parse_optional_tags,
+)
 
 onlyLinux = pytest.mark.skipif(
     sys.platform != "linux",
@@ -77,3 +86,27 @@ def test_parse_known_bug_with_description_returns_empty():
     parser = SageDocTestParser(("sage",))
     parsed = parser.parse("sage: x = int('1'*4301) # known bug, #34506")
     assert parsed == ["", ""]
+
+
+def test_parse_bitness():
+    parser = SageDocTestParser(("sage",))
+    input = textwrap.dedent(
+        """
+        sage: sys.maxsize > (1 << 32)
+        True # 64-bit
+        False # 32-bit
+        """
+    )
+    parsed = parser.parse(input)[1]
+    assert isinstance(parsed, doctest.Example)
+    assert parsed.want == MarkedOutput("True # 64-bit\nFalse # 32-bit\n").update(
+        bitness_32="False \n", bitness_64="True \n"
+    )
+
+
+def test_check_output_bitness():
+    checker = SageOutputChecker()
+    expected = MarkedOutput("True # 64-bit\nFalse # 32-bit\n").update(
+        bitness_32="False \n", bitness_64="True \n"
+    )
+    assert checker.check_output(expected, str(bitness_value == 64) + " \n", 0)

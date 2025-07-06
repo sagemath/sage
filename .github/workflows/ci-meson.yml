@@ -39,7 +39,7 @@ jobs:
             python: 3.12
             editable: true
             tests: 'all'
-          - os: windows
+          - os: 'windows'
             python: '3.13'
             tests: 'all'
 
@@ -163,12 +163,11 @@ jobs:
           # If editable then deleting the directory will cause sage to detect rebuild, which will cause ninja to fail
           # so we don't delete the directory in this case
           ${{ matrix.editable && 'true' || 'rm -R ./src/sage_setup/' }}
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            # Ignore errors on Windows, for now
-            pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
-          else
-            ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+          pip install coverage pytest-xdist pytest-github-actions-annotate-failures
+            if [[ "${{ matrix.os }}" != "windows" ]]; then
+            pip install pytest-isolate
           fi
+          pytest --doctest-ignore-import-errors --doctest --full-trace -rfEs -s src
 
       - name: Check that all modules can be imported
         shell: bash -l {0}

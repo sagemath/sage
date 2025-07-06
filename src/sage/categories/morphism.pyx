@@ -119,7 +119,8 @@ cdef class Morphism(Map):
             sage: R.<t> = ZZ[]
             sage: f = R.hom([t+1])
             sage: f._default_repr_()
-            'Ring endomorphism of Univariate Polynomial Ring in t over Integer Ring\n  Defn: t |--> t + 1'
+            Ring endomorphism of Univariate Polynomial Ring in t over Integer Ring
+              Defn: t |--> t + 1
         """
         D = self.domain()
         if D is None:

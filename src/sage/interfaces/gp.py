@@ -140,7 +140,6 @@ AUTHORS:
 import os
 
 import sage.interfaces.abc
-
 from sage.env import DOT_SAGE
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari import pari
@@ -150,7 +149,12 @@ from sage.misc.verbose import verbose
 
 lazy_import('sage.rings.cc', 'CC')
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -308,7 +312,7 @@ class Gp(ExtraTabCompletion, Expect):
         return GpFunction
 
     def _quit_string(self):
-        """
+        r"""
         Return the string used to quit the GP interpreter.
 
         EXAMPLES::

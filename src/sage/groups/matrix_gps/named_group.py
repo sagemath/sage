@@ -256,7 +256,7 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
         return self._name_string
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation.
 
         OUTPUT: string

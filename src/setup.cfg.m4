@@ -92,9 +92,6 @@ scripts =
 sage.libs.gap =
     sage.gaprc
 
-sage.interfaces =
-    sage-maxima.lisp
-
 sage.doctest =
     tests/*
 

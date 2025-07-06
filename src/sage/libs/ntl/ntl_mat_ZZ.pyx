@@ -134,7 +134,10 @@ cdef class ntl_mat_ZZ():
         EXAMPLES::
 
             sage: M = ntl.mat_ZZ(2,3,[5..10]) ; M.__repr__()
-            '[\n[5 6 7]\n[8 9 10]\n]'
+            [
+            [5 6 7]
+            [8 9 10]
+            ]
         """
         return ccrepr(self.x).replace('[[','[\n[',1)
 
