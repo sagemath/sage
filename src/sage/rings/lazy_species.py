@@ -647,8 +647,10 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E = L.Sets()
             sage: A = L.undefined(1)
             sage: A.define(X*E(A))
-            sage: A[5]
+            sage: A[5]  # random
             X*E_4 + X^2*E_3 + 3*X^3*E_2 + X*E_2(X^2) + 3*X^5
+            sage: A[5] == X*E[4] + X^2*E[3] + 3*X^3*E[2] + X*E[2](X[1]^2) + 3*X^5
+            True
 
             sage: C = L.Cycles()
             sage: F = E(C(A))
