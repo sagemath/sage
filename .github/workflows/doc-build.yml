@@ -218,18 +218,12 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         shell: bash -l {0}
         run: |
-          # Avoid running out of disk space
-          rm -rf upstream
-          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
-          export SAGE_USE_CDNS=yes
-          export SAGE_LIVE_DOC=yes
-          export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
-          make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+          meson compile -C builddir doc-html
+        env:
+          SAGE_USE_CDNS: yes
+          SAGE_LIVE_DOC: yes
+          SAGE_JUPYTER_SERVER: binder:sagemath/sage-binder-env/dev
+          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
       - name: Copy live doc
         id: copylivedoc
