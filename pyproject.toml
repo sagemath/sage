@@ -85,8 +85,14 @@ urls = {Homepage = "https://www.sagemath.org"}
 requires-python = ">=3.11, <3.14"
 
 [project.optional-dependencies]
-R = [
-    'rpy2 >=3.3',
+R = ['rpy2 >=3.3']
+extra = [
+  'p_group_cohomology >=3.3', # Only used in tests
+  'pycosat >=0.6.3',
+  'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
+  'igraph',
+  'sage_numerical_backends_coin',
+  'symengine >= 0.6.1', # Only used in tests
 ]
 giac = [
     'sagemath_giac',
@@ -118,7 +124,7 @@ consider_namespace_packages = true
 build-requires = [
   "virtual:compiler/c",
   "virtual:compiler/cpp",
-  "pkg:generic/pkg-config"
+  "pkg:generic/pkg-config",
 ]
 
 host-requires = [
@@ -176,6 +182,31 @@ dependencies = [
   "pkg:generic/tachyon",
 ]
 
+[external.optional-host-requires]
+extra = [
+  "pkg:generic/bliss",
+  "pkg:generic/coxeter3",
+  "pkg:generic/mcqd",
+  "pkg:generic/meataxe",
+  "pkg:generic/sirocco",
+  "pkg:generic/tdlib",
+]
+
+[external.optional-dependencies]
+extra = [
+  "pkg:generic/4ti2",
+  "pkg:generic/benzene",
+  "pkg:generic/buckygen",
+  "pkg:generic/csdp",
+  "pkg:generic/frobby",
+  "pkg:generic/kenzo",
+  "pkg:generic/latte-integrale",
+  "pkg:generic/lrslib",
+  "pkg:generic/plantri",
+  "pkg:generic/qepcad",
+  "pkg:generic/tides",
+]
+
 [dependency-groups]
 test = [
   "pytest",
@@ -184,7 +215,8 @@ test = [
 ]
 docs = [
   "sphinx", 
-  "sphinx-inline-tabs", 
+  "sphinx-copybutton",
+  "sphinx-inline-tabs",
   "furo",
   "python-dateutil",
 ]
@@ -201,6 +233,7 @@ dev = [
   "conda-lock",
   "grayskull",
   "toml",
+  "uv",
 ]
 
 [tool.ruff]
