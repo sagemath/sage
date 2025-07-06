@@ -245,5 +245,8 @@ inc_ext = include_directories('sage/ext')
 inc_partn_ref2 = include_directories('sage/groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
 
+src = meson.current_source_dir()
+
 # Submodules
 subdir('sage')
+subdir('doc')
