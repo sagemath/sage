@@ -51,6 +51,10 @@ if [ "$SAGE_EDITABLE" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
         cd $SAGE_PKGS/sagelib/src && time sdh_build_and_store_wheel --no-build-isolation .
     fi
+
+    # Install jupyter kernelspecs
+    # (needed since in editable mode the kernel spec is not copied to the correct location in the meson build)
+    jupyter kernelspec install --name=sagemath --user build/sage-distro/src/sage
 else
     # Now implied: "$SAGE_WHEELS" = yes
     # We should remove the egg-link that may have been installed previously.
