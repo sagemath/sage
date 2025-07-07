@@ -10,7 +10,9 @@ on:
       - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
       - '[0-9]+.[0-9]+.rc[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
-
+  pull_request:
+    paths:
+      - '.github/workflows/dist.yml'
   workflow_dispatch:
     # Allow to run manually
 
@@ -35,7 +37,7 @@ jobs:
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
       - name: make dist (--disable-download-from-upstream-url)
         id: make_dist
         run: |
@@ -80,24 +82,42 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
-      - name: Install bootstrap prerequisites
+    
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: 3.12
+          miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-3.12-linux.yml
+
+      - name: Create source distribution
+        shell: bash -l {0}
+        run: |
+          conda install --yes python-build
+          python -m build --sdist --no-isolation --outdir dist .
+
+      - name: Old sagemath-standard
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
-      - name: make pypi-sdists
-        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
           ./bootstrap
           ./configure
           make pypi-sdists V=0
-          (mkdir dist && mv upstream/sage*.tar.gz dist/)
+          mv upstream/sage*.tar.gz dist/
           ls -l dist
+
       - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
+
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
@@ -161,13 +181,13 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
       - name: make pypi-noarch-wheels
         run: |
           ./bootstrap
@@ -246,7 +266,7 @@ jobs:
       - name: Bootstrap
         run: |
           export PATH=$(pwd)/build/bin:$PATH
-          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap)
+          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap _prereq)
           ./bootstrap
 
       - name: Unpack and prepare
@@ -304,7 +324,7 @@ jobs:
     needs: build_wheels
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' && github.event_name != 'pull_request' }}
     steps:
 
       - uses: actions/download-artifact@v4

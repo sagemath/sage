@@ -20,6 +20,7 @@ on:
     paths:
       - '.github/workflows/ci-linux-incremental.yml'
       - 'build/pkgs/**'
+      - 'configure.ac'
       - '!build/pkgs/sage_conf/**'
       - '!build/pkgs/sage_docbuild/**'
       - '!build/pkgs/sage_setup/**'
@@ -93,7 +94,7 @@ jobs:
       from_docker_target: "with-targets"
       from_docker_tag: "dev"
       docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
+      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback ptest-nodoc"
       tox_system_factors: >-
         ["ubuntu-focal",
          "ubuntu-jammy",
