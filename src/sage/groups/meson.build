@@ -25,7 +25,6 @@ py.install_sources(
   'libgap_mixin.py',
   'libgap_morphism.py',
   'libgap_wrapper.pxd',
-  'old.pxd',
   'pari_group.py',
   'raag.py',
   subdir: 'sage/groups',
@@ -34,7 +33,6 @@ py.install_sources(
 extension_data = {
   'group' : files('group.pyx'),
   'libgap_wrapper' : files('libgap_wrapper.pyx'),
-  'old' : files('old.pyx'),
 }
 
 foreach name, pyx : extension_data
