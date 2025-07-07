@@ -883,7 +883,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                     break
             if cont:
                 continue
-            for j from i<j<nbheads:
+            for j in range(i + 1, nbheads):
                 if O_key in tailsets[j]:
                     cont = True
                     break

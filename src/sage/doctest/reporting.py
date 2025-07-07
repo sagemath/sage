@@ -42,16 +42,19 @@ AUTHORS:
 # ****************************************************************************
 
 import re
+import sys
+from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
 from sys import stdout
-from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
-                    SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
-from sage.structure.sage_object import SageObject
-from sage.doctest.util import count_noun
+
+from sage.doctest.external import available_software
 from sage.doctest.sources import DictAsObject
-from .external import available_software
+from sage.doctest.util import count_noun
+from sage.structure.sage_object import SageObject
 
+if sys.platform != "win32":
+    from signal import SIGALRM, SIGBUS, SIGHUP, SIGKILL, SIGPIPE, SIGQUIT
 
-def signal_name(sig):
+def signal_name(sig: int | Signals) -> str:  # noqa: PLR0911
     """
     Return a string describing a signal number.
 
@@ -157,9 +160,7 @@ class DocTestReporter(SageObject):
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
-        if tag in available_software.seen():
-            return True
-        return False
+        return tag in available_software.seen()
 
     def report_head(self, source, fail_msg=None):
         """
@@ -606,17 +607,15 @@ class DocTestReporter(SageObject):
                         elif tag == "not implemented":
                             if self.controller.options.show_skipped:
                                 log("    %s for not implemented functionality not run" % (count_noun(nskipped, "test")))
-                        else:
-                            if not self.were_doctests_with_optional_tag_run(tag):
-                                if tag == "bug":
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
-                                elif tag == "":
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
-                                else:
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run" % (count_noun(nskipped, tag + " test")))
+                        elif not self.were_doctests_with_optional_tag_run(tag):
+                            if tag == "bug":
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
+                            elif tag == "":
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
+                            elif self.controller.options.show_skipped:
+                                log("    %s not run" % (count_noun(nskipped, tag + " test")))
 
                     nskipped = result_dict.walltime_skips
                     if self.controller.options.show_skipped:
