@@ -213,6 +213,12 @@ def matching_polynomial(G, complement=True, name=None):
         sage: G.add_vertex('X')
         sage: G.matching_polynomial()
         x^12
+
+    Check that :issue:`39930` is fixed::
+
+        sage: G = Graph([(0, 1), (1, 2), (2, 2)], immutable=True, loops=True)
+        sage: G.matching_polynomial()
+        x^3 - 3*x
     """
     if G.has_multiple_edges():
         raise NotImplementedError
@@ -236,12 +242,11 @@ def matching_polynomial(G, complement=True, name=None):
     # Relabelling the vertices of the graph as [0...n-1] so that they are sorted
     # in increasing order of degree
 
-    cdef list L = []
-    for v, d in G.degree_iterator(labels=True):
-        L.append((d, v))
+    cdef list L = [(d, v) for v, d in G.degree_iterator(labels=True)]
     L.sort(key=lambda pair: pair[0])
-    G = G.relabel(perm={L[i][1]: i for i in range(nverts)}, inplace=False)
-    G.allow_loops(False)
+    Gint = G.relabel(perm={v: i for i, (_, v) in enumerate(L)},
+                     inplace=False, immutable=False)
+    Gint.allow_loops(False)
 
     # Initialization of pol, edges* variables.
 
@@ -264,7 +269,7 @@ def matching_polynomial(G, complement=True, name=None):
     cdef int* edges2 = edges_mem + nedges  # edges[1]
 
     cdef int cur = 0
-    for i, j in sorted(map(sorted, G.edge_iterator(labels=False))):
+    for i, j in Gint.edges(labels=False, sort=True, sort_vertices=True):
         edges1[cur] = i
         edges2[cur] = j
         cur += 1
