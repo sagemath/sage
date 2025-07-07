@@ -528,12 +528,28 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: ba = Cl.basis().keys()
             sage: all(FrozenBitset(format(i,'b')[::-1]) in ba for i in range(2**9))
             True
+
+        Check for the category::
+
+            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
+            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
+            sage: Cl.is_commutative()
+            False
+            sage: Q = QuadraticForm(ZZ, 1, [1])
+            sage: Cl.<x> = CliffordAlgebra(Q)
+            sage: Cl.is_commutative()
+            True
         """
         self._quadratic_form = Q
         R = Q.base_ring()
         category = AlgebrasWithBasis(R.category()).Super().Filtered().FiniteDimensional().or_subcategory(category)
+
+        if self._quadratic_form.dim() < 2:
+            category = category.Commutative()
+
         indices = CliffordAlgebraIndices(Q.dim())
-        CombinatorialFreeModule.__init__(self, R, indices, category=category, sorting_key=tuple)
+        CombinatorialFreeModule.__init__(self, R, indices, category=category,
+                                         sorting_key=tuple)
         self._assign_names(names)
 
     def _repr_(self):
@@ -843,19 +859,6 @@ class CliffordAlgebra(CombinatorialFreeModule):
             0
         """
         return FrozenBitset()
-
-    def is_commutative(self) -> bool:
-        """
-        Check if ``self`` is a commutative algebra.
-
-        EXAMPLES::
-
-            sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
-            sage: Cl.<x,y,z> = CliffordAlgebra(Q)
-            sage: Cl.is_commutative()
-            False
-        """
-        return self._quadratic_form.dim() < 2
 
     def quadratic_form(self):
         """

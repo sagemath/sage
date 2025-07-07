@@ -172,7 +172,7 @@ To compile and install Sage in editable install, then just use:
         memory_allocator \
         "numpy >=1.25" \
         jinja2 \
-        setuptool
+        setuptools
     $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``
