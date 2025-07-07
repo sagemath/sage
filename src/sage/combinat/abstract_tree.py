@@ -2231,6 +2231,7 @@ class AbstractClonableTree(AbstractTree):
         except AttributeError:
             pass
 
+
 class AbstractLabelledTree(AbstractTree):
     """
     Abstract Labelled Tree.
