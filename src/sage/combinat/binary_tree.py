@@ -839,7 +839,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         INPUT:
 
-        - ``shift`` -- (int, optional) the smallest label in the tree labelling
+        - ``shift`` -- integer (optional); the smallest label in the tree labelling
 
         EXAMPLES::
 
