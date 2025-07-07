@@ -806,10 +806,7 @@ class PolyhedronFace(ConvexSet_closed):
         if not self.polyhedron().contains(p):
             return False
 
-        for H in self.ambient_Hrepresentation():
-            if H.eval(p) != 0:
-                return False
-        return True
+        return all(H.eval(p) == 0 for H in self.ambient_Hrepresentation())
 
     __contains__ = contains
 

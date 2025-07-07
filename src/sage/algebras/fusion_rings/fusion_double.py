@@ -286,7 +286,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: P=FusionDouble(CyclicPermutationGroup(3),prefix='p',inject_variables=True)
+            sage: P = FusionDouble(CyclicPermutationGroup(3),prefix='p',inject_variables=True)
             sage: P.s_ij(p1,p3)
             zeta3
             sage: P.s_ijconj(p1,p3)
@@ -695,7 +695,7 @@ class FusionDouble(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: Q=FusionDouble(SymmetricGroup(3),prefix='q',inject_variables=True)
+            sage: Q = FusionDouble(SymmetricGroup(3),prefix='q',inject_variables=True)
             sage: q3*q4
             q1 + q2 + q5 + q6 + q7
             sage: Q._names
@@ -820,7 +820,7 @@ class FusionDouble(CombinatorialFreeModule):
 
             EXAMPLES::
 
-                sage: Q=FusionDouble(CyclicPermutationGroup(3))
+                sage: Q = FusionDouble(CyclicPermutationGroup(3))
                 sage: [x.twist() for x in Q.basis()]
                 [0, 0, 0, 0, 2/3, 4/3, 0, 4/3, 2/3]
                 sage: [x.ribbon() for x in Q.basis()]

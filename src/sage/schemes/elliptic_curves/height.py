@@ -1755,9 +1755,7 @@ class EllipticCurveCanonicalHeight:
                     start, end = z00, z11
                 else:
                     start, end = z01, z10
-                if wp(start) > B and wp(end) > B:
-                    return True
-                return False
+                return wp(start) > B and wp(end) > B
 
             # This step here is the bottleneck.
             while not T.verify(check_line):

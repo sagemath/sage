@@ -586,7 +586,6 @@ cdef class Rational(sage.structure.element.FieldElement):
     cdef __set_value(self, x, unsigned int base):
         cdef int n
         cdef Rational temp_rational
-        cdef integer.Integer a, b
 
         if isinstance(x, Rational):
             set_from_Rational(self, x)
@@ -610,7 +609,6 @@ cdef class Rational(sage.structure.element.FieldElement):
                 xstr = x.str(base, truncate=(base == 10))
                 if '.' in xstr:
                     exp = (len(xstr) - (xstr.index('.') +1))
-                    p = base**exp
                     pstr = '1'+'0'*exp
                     s = xstr.replace('.','') +'/'+pstr
                     n = mpq_set_str(self.value, str_to_bytes(s), base)
@@ -1880,7 +1878,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             return self
         a = self
         for p in S:
-            e, a = a.val_unit(p)
+            _, a = a.val_unit(p)
         return a
 
     def sqrt(self, prec=None, extend=True, all=False):
@@ -2044,10 +2042,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: RealField(200)(x)                                                     # needs sage.rings.real_mpfr
             3.1415094339622641509433962264150943396226415094339622641509
         """
-        cdef unsigned int alpha, beta
         d = self.denominator()
-        alpha, d = d.val_unit(2)
-        beta, d  = d.val_unit(5)
+        d = d.val_unit(2)[1]
+        d = d.val_unit(5)[1]
         from sage.rings.finite_rings.integer_mod import Mod
         return Mod(10, d).multiplicative_order()
 
@@ -2810,7 +2807,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ...
             ArithmeticError: The inverse of 0 modulo 17 is not defined.
         """
-        cdef unsigned int num, den, a
+        cdef unsigned int num, den
 
         # Documentation from GMP manual:
         # "For the ui variants the return value is the remainder, and

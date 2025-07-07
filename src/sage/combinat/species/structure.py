@@ -204,10 +204,7 @@ class GenericSpeciesStructure(CombinatorialObject):
             return False
 
         #We don't care about the labels for isomorphism testing
-        if self.canonical_label()._list == x.canonical_label()._list:
-            return True
-        else:
-            return False
+        return self.canonical_label()._list == x.canonical_label()._list
 
 
 #For backward compatibility.  This should be removed in the near

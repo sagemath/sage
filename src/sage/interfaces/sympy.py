@@ -1237,14 +1237,14 @@ def check_expression(expr, var_symbols, only_from_sympy=False):
     assert e_sage == SR(e_sympy)
 
 
-def test_all():
+def check_all():
     """
     Call some tests that were originally in SymPy.
 
     EXAMPLES::
 
-        sage: from sage.interfaces.sympy import test_all
-        sage: test_all()
+        sage: from sage.interfaces.sympy import check_all
+        sage: check_all()
     """
     def test_basics():
         check_expression("x", "x")

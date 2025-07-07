@@ -85,9 +85,7 @@ def _is_finite(L, fallback=True):
         return fallback
 
     from sage.rings.infinity import infinity
-    if n is infinity:
-        return False
-    return True
+    return n is not infinity
 
 
 def _xmrange_iter(iter_list, typ=list):

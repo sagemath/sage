@@ -111,9 +111,7 @@ class GaloisGroup_v1(SageObject):
             return False
         if self.__number_field == other.__number_field:
             return True
-        if self.__group == other.__group:
-            return True
-        return False
+        return self.__group == other.__group
 
     def __ne__(self, other):
         """

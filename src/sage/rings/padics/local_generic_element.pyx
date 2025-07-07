@@ -377,7 +377,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         # make sure that start and stop are nonnegative
         if start<0:
-            i += -start # fix the value of ppow below
+            i += -start  # fix the value of ppow below
             start = 0
         stop = max(stop, 0)
 

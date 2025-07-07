@@ -1046,10 +1046,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             return False
         elif self.Element is sage.matrix.matrix_rational_dense.Matrix_rational_dense:
             return False
-        elif self.__nrows > 40 and self.__ncols > 40:
-            return False
-        else:
-            return True
+        return self.__nrows <= 40 or self.__ncols <= 40
 
     def _element_constructor_(self, entries, **kwds):
         """

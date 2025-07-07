@@ -311,10 +311,7 @@ class CoveringDesign(SageObject):
             for z in Skt:
                 y = (a[x] for x in z)
                 tset[tuple(y)] = True
-        for i in Svt:
-            if not tset[tuple(i)]:  # uncovered
-                return False
-        return True                 # everything was covered
+        return all(tset[tuple(i)] for i in Svt)                 # everything was covered
 
     def v(self):
         """

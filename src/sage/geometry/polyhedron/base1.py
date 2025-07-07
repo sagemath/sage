@@ -657,10 +657,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         if len(p) != self.ambient_dim():
             return False
 
-        for H in self.Hrep_generator():
-            if not H.contains(p):
-                return False
-        return True
+        return all(H.contains(p) for H in self.Hrep_generator())
 
     __contains__ = contains
 
@@ -758,10 +755,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
         if len(p) != self.ambient_dim():
             return False
 
-        for H in self.Hrep_generator():
-            if not H.interior_contains(p):
-                return False
-        return True
+        return all(H.interior_contains(p) for H in self.Hrep_generator())
 
     def is_relatively_open(self):
         r"""
@@ -878,8 +872,4 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             if not eq.contains(p):
                 return False
 
-        for ine in self.inequality_generator():
-            if not ine.interior_contains(p):
-                return False
-
-        return True
+        return all(ine.interior_contains(p) for ine in self.inequality_generator())

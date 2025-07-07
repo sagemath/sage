@@ -153,11 +153,9 @@ cdef class KhuriMakdisi_base(object):
         """
         cdef Matrix mat, perp, vmu
         cdef FreeModuleElement v
-        cdef Py_ssize_t nd, ne, nde, r
+        cdef Py_ssize_t ne, r
 
         ne = we.ncols()
-        nde = wde.ncols()
-        nd = nde - ne
 
         perp = wde.right_kernel_matrix()
         mat = matrix(0, mu_mat.nrows())

@@ -381,7 +381,7 @@ class FusionRing(WeylCharacterRing):
         tester.assertTrue(tqo.is_real_positive())
         tester.assertEqual(tqo**2, self.global_q_dimension(base_coercion=False))
 
-    def test_braid_representation(self, max_strands=6, anyon=None):
+    def check_braid_representation(self, max_strands=6, anyon=None):
         """
         Check that we can compute valid braid group representations.
 
@@ -402,10 +402,10 @@ class FusionRing(WeylCharacterRing):
         EXAMPLES::
 
             sage: A21 = FusionRing("A2", 1)
-            sage: A21.test_braid_representation(max_strands=4)
+            sage: A21.check_braid_representation(max_strands=4)
             True
             sage: F41 = FusionRing("F4", 1)            # long time
-            sage: F41.test_braid_representation()      # long time
+            sage: F41.check_braid_representation()      # long time
             True
         """
         if not self.is_multiplicity_free(): # Braid group representation is not available if self is not multiplicity free

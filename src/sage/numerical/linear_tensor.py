@@ -447,9 +447,7 @@ class LinearTensorParent_class(Parent):
         """
         if self.free_module().has_coerce_map_from(R):
             return True
-        if self.linear_functions().has_coerce_map_from(R):
-            return True
-        return False
+        return self.linear_functions().has_coerce_map_from(R)
 
     def _an_element_(self):
         """

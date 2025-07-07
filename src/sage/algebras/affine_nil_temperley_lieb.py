@@ -221,7 +221,7 @@ class AffineNilTemperleyLiebTypeA(CombinatorialFreeModule):
 
             sage: A = AffineNilTemperleyLiebTypeA(5)
             sage: W = A.weyl_group()
-            sage: s=W.simple_reflections()
+            sage: s = W.simple_reflections()
             sage: A.has_no_braid_relation(s[2]*s[1]*s[0]*s[4]*s[3],0)
             False
             sage: A.has_no_braid_relation(s[2]*s[1]*s[0]*s[4]*s[3],2)

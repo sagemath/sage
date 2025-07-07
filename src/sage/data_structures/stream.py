@@ -2538,9 +2538,7 @@ class Stream_binaryCommutative(Stream_binary):
             return False
         if self._left == other._left and self._right == other._right:
             return True
-        if self._left == other._right and self._right == other._left:
-            return True
-        return False
+        return self._left == other._right and self._right == other._left
 
 
 class Stream_zero(Stream):
@@ -4279,7 +4277,7 @@ class Stream_truncated(Stream_unary):
             3
         """
         super().__init__(series, series._is_sparse, False)
-        assert isinstance(series, Stream_inexact)
+        assert isinstance(series, (Stream_inexact, Stream_uninitialized))
         # We share self._series._cache but not self._series._approximate order
         # self._approximate_order cannot be updated by self._series.__getitem__
         self._cache = series._cache
@@ -4943,9 +4941,8 @@ class Stream_infinite_operator(Stream):
         if not isinstance(other, type(self)):
             return True
         ao = min(self._approximate_order, other._approximate_order)
-        if any(self[i] != other[i] for i in range(ao, min(self._cur_order, other._cur_order))):
-            return True
-        return False
+        return any(self[i] != other[i]
+                   for i in range(ao, min(self._cur_order, other._cur_order)))
 
     def is_nonzero(self):
         r"""

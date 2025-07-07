@@ -671,7 +671,8 @@ class ZinbielFunctor(ConstructionFunctor):
         Functor.__init__(self, Rings(), Magmas())
         self.vars = variables
         self._side = side
-        self._finite_vars = bool(isinstance(variables, (list, tuple)) or variables in Sets().Finite())
+        self._finite_vars = (isinstance(variables, (list, tuple))
+                             or variables in Sets().Finite())
 
     def _apply_functor(self, R):
         """
