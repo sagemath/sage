@@ -6575,27 +6575,21 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         generators. Please decrease min_rays.
 
     Ensure that we can obtain a cone in three dimensions with a large
-    number (in particular, more than 2*dim) rays. The ``max_rays`` is
-    not strictly necessary, but it minimizes the number of times that
-    we will loop with an absurd, unattainable, number of rays::
+    number (in particular, more than 2*dim) rays. Note that at least
+    dimension three is required for seven rays; we should throw out
+    cones in zero/one/two dimensions until we get lucky. We set the
+    random seed manually to ensure that the test completes in a
+    reasonable amount of time::
 
-        sage: K = random_cone(min_ambient_dim=3, # long time
-        ....:                 max_ambient_dim=3,
-        ....:                 min_rays=7,
-        ....:                 max_rays=9)
-        sage: K.nrays() >= 7                     # long time
-        True
-        sage: K.lattice_dim()                    # long time
-        3
-
-    We need three dimensions to obtain five rays; we should throw out
-    cones in zero/one/two dimensions until we get lucky::
-
-        sage: K = random_cone(max_ambient_dim=3, min_rays=5)
-        sage: K.nrays() >= 5
+        sage: # long time
+        sage: _initial_seed = initial_seed()
+        sage: set_random_seed(8)
+        sage: K = random_cone(max_ambient_dim=3, min_rays=7)
+        sage: K.nrays() >= 7
         True
         sage: K.lattice_dim()
         3
+        sage: set_random_seed(_initial_seed)
 
     It is an error to request a non-strictly-convex trivial cone::
 
