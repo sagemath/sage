@@ -13,6 +13,9 @@ AUTHORS:
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
 
+- Hugo Anciaux, Rachid Bouhmad, Elhadj Alseiny Diallo, Do Truong Thinh Truong ( Algorithms Design : Amaury Curiel, Antoine Genitrini ).
+  (2025-06-18): Algorithmic for lexicographic unranking.
+  
 This module defines a class for immutable partitioning of a set. For
 mutable version see :func:`DisjointSet`.
 """
@@ -52,6 +55,7 @@ from sage.combinat.permutation import Permutation
 from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint, sample
 from sage.sets.disjoint_set import DisjointSet
+from sage.misc.cachefunc import cached_method
 
 lazy_import('sage.combinat.posets.hasse_diagram', 'HasseDiagram')
 lazy_import('sage.probability.probability_distribution', 'GeneralDiscreteDistribution')
@@ -3314,3 +3318,322 @@ def cyclic_permutations_of_set_partition_iterator(set_part):
         for right in cyclic_permutations_of_set_partition_iterator(set_part[1:]):
             for perm in CyclicPermutations(set_part[0]):
                 yield [perm] + right
+
+
+def compare_subsets(a, b):
+    """
+    Compare two subsets of integers `a` and `b` following the lexicographic order.
+    
+    INPUT:
+
+    - ``a`` -- a list of integers; the first subset
+    - ``b`` -- a list of integers; the second subset
+
+    OUTPUT:
+
+    Boolean -- returns True if `a` is less than or equal to `b` in the lexicographic order described.
+
+    EXAMPLES:
+
+    This function compares two sets based on a specialized total order relation. For example:
+    
+    The relation ≤ is a total order.
+    For example `\{1, 3\} \leq \{1, 3, 4\} \leq \{1, 4\}`.        
+    
+    ::
+        sage: from sage.combinat.set_partition import compare_subsets
+        sage: compare_subsets([1, 3], [1, 3, 4])
+        True
+        sage: compare_subsets([1, 3], [1, 4])
+        True
+    
+    - But `{1, 4}` is not less than `{1, 3, 4}`:
+
+    ::
+        sage: compare_subsets([1, 4], [1, 3, 4])
+        False
+        
+    TESTS:
+
+    ::
+        sage: compare_subsets([2,5], [2,5])
+        True
+        sage: compare_subsets([],[])
+        True
+        sage: compare_subsets([], [1])
+        True
+        sage: compare_subsets([1], [])
+        False
+
+        sage: compare_subsets([1, 2], [3, 4])
+        True
+        sage: compare_subsets([4,5], [2,3])
+        False
+
+        sage: compare_subsets([1], [1,2])
+        True
+        sage: compare_subsets([1,2], [1])
+        False
+
+        sage: compare_subsets([1,3,5], [1,3])
+        False
+        sage: compare_subsets([1, 3], [1, 3, 5])
+        True
+    """
+    def included_in(a, b):
+        """
+        Check if all elements of `a` are in `b`.
+        """
+        return all(x in b for x in a)
+    
+    def min_set_exclusive(a, b):
+        """
+        Return the minimum element of `a` not in `b`.
+        """
+        a_res = [x for x in a if x not in b]
+        return min(a_res) if a_res else None
+    min_a_b = min_set_exclusive(a, b)
+    min_b_a = min_set_exclusive(b, a)
+    max_a = max(a) if a else None
+    max_b = max(b) if b else None
+    return (a == b 
+            or (a == [])
+            or (included_in(a, b) and max_a is not None and min_b_a is not None and max_a < min_b_a)
+            or (included_in(b, a) and min_a_b is not None and max_b is not None and min_a_b < max_b)
+            or (min_a_b is not None and min_b_a is not None and min_a_b < min_b_a))
+
+
+def compare_set_partitions(a, b):
+    """
+    Compare two set partitions `a` and `b` using a lexicographic order.
+
+    INPUT:
+
+    - ``a`` -- a SetPartition object; the first set partition
+    - ``b`` -- a SetPartition object; the second set partition
+
+    OUTPUT:
+
+    Boolean -- returns True if `a` is less than or equal to `b` in the lexicographic order.
+
+    EXAMPLES:
+
+    Compare a sequence of set partitions to ensure each partition is less than or equal to the next::
+        
+        sage: from sage.combinat.set_partition import compare_set_partitions, SetPartition
+        sage: a = SetPartition([[1], [2, 3, 4], [5]])
+        sage: b = SetPartition([[1], [2], [3, 4, 5]])
+        sage: compare_set_partitions(a, b)
+        False
+
+        sage: c = SetPartition([[1], [2, 3, 5] , [4]])
+        sage: d = SetPartition([[1, 2], [3] , [4, 5]])
+        sage: compare_set_partitions(c, d)
+        True
+
+        sage: e = SetPartition([[1], [2, 3, 4] , [5]])
+        sage: f = SetPartition([[1], [2, 3, 5] , [4] , [54]])
+        sage: compare_set_partitions(e, f)
+        True
+
+    TESTS:
+
+    We create a list of set partitions of the set {1, 2, 3, 4, 5}
+    into 3 parts, sort them, and check that each partition is
+    lexicographically less than or equal to the next. This
+    confirms that `compare_set_partitions` correctly identifies the
+    lexicographic ordering among a sorted list of set partitions::
+
+        sage: partitions = SetPartitions(5, 3).list()
+        sage: partitions.sort(key=lambda x: x.standard_form())
+        sage: all(compare_set_partitions(partitions[i], partitions[i + 1]) for i in range(len(partitions) - 1))
+        True
+
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: g = SetPartition([ [1,2],[3] ])
+        sage: h = SetPartition([ [1,2],[3] ])
+        sage: compare_set_partitions(g, h)
+        True
+
+        sage: from sage.combinat.set_partition import SetPartition, compare_set_partitions
+        sage: i = SetPartition([])
+        sage: j = SetPartition([ [1] ])
+        sage: compare_set_partitions(i, j)
+        True
+    """
+    if a.standard_form() == []:
+        return True
+    A_sequential_form = a.standard_form()
+    B_sequential_form = b.standard_form()
+    index_in_A = 0
+    index_in_B = 0
+    while index_in_A < len(A_sequential_form) and index_in_B < len(B_sequential_form):
+        if A_sequential_form[index_in_A] < B_sequential_form[index_in_B]:
+            return True
+        elif A_sequential_form[index_in_A] > B_sequential_form[index_in_B]:
+            return False
+        index_in_A += 1
+        index_in_B += 1
+    return index_in_A == len(A_sequential_form) and index_in_B == len(B_sequential_form)
+
+
+def unranking(n: int, k: int, r: int) -> list[list[int]]:   
+    """
+    Given n, k, r, returns the r-th partition of the partition of n sets into k-part partitions,
+    following the lexicographic order ranking of the set partitions based on their sequential form.
+    
+    Lexicographic Unranking Algorithms for the Twelvefold Way.
+    A. Curiel and A. Genitrini. In proc. 35th International Conference on Probabilistic, Combinatorial and Asymptotic Methods for the Analysis of Algorithms (AofA'24), pp17:1--17:14, 2024.
+    see : https://hal.science/hal-04411470
+    
+    INPUTS:
+        ``n`` -- an integer ; the number of elements in initial set
+        ``k`` -- an integer ; the number of blocks we want in the partition
+        ``r`` -- an integer ; the r--th partition wanted (in the lexicographic order)
+    
+    OUTPUT:
+        SetPartition
+
+    EXAMPLES:
+ 
+    - `unranking(5,3,16)` returns the 16-th partition of the partition of 5 sets into 3-part partitions:
+    - `[[1, 3, 4], [2], [5]]`
+ 
+    ::
+
+        sage: from sage.combinat.set_partition import unranking 
+        sage: unranking(5,3,16)
+        [[1, 3, 4], [2], [5]]
+        
+    TESTS:
+
+        sage: from sage.combinat.set_partition import unranking, unrankPartitionTest, compare_set_partitions
+        sage: from sage.combinat.combinat import stirling_number2 as stirling2
+        sage: n_size = 5
+        sage: k_size = 3
+        sage: current_rank = 0
+        sage: partition_p1 = unranking(n_size, k_size, current_rank)
+        sage: unrankPartitionTest(partition_p1, n_size, k_size)  # expected output
+        True
+        sage: current_rank = 1
+        sage: total_partitions = stirling2(n_size, k_size)
+        sage: while current_rank < total_partitions:
+        ....:     partition_p2 = unranking(n_size, k_size, current_rank)
+        ....:     assert unrankPartitionTest(partition_p2, n_size, k_size)  # This should not output True directly; it's an assertion
+        ....:     assert compare_set_partitions(SetPartition(partition_p1), SetPartition(partition_p2))  # Same here
+        ....:     partition_p1 = partition_p2
+        ....:     current_rank += 1
+
+        sage: unranking(0, 0, 0) == [[]]
+        True
+        sage: unranking(1, 1, 0) == [[1]]
+        True
+        sage: unranking(3, 1, 0) == [[1, 2, 3]]
+        True
+        sage: unranking(3, 3, 0) == [[1], [2], [3]]
+        True
+    """
+    from collections import defaultdict
+    from sage.rings.integer_ring import ZZ
+ 
+    @cached_method
+    def stilde(n: ZZ, k: ZZ, d: ZZ):
+        return ZZ.sum((-1)**u * stirling2(n + 1 - u, k + 1) * d.binomial(u)
+                      for u in range(min(n-k, d)+1))
+ 
+    @cached_method
+    def R_equation(l: int, d0: int, d1: int, n: int, k: int):
+        return stilde(n - l, k - 1, d0 - l) - stilde(n - l, k - 1, d1 + 1 - l)
+ 
+    @cached_method
+    def next_block(n: int, k: int, r: int) -> tuple[list[int], int]:
+        """
+        returns the first block of the r-th partition in P(n,k)
+        """
+        block = [0]
+        acc = stirling2(n - 1, k - 1)
+        if r < acc:
+            return block, 0
+        d0 = 1
+        index = 2
+        inf = 2
+        sup = n
+        complete = False
+        while not complete:
+            while inf < sup:
+                mid = (inf + sup) // 2
+                if r >= acc + R_equation(index - 1, d0, mid - 1, n, k):
+                    inf = mid + 1
+                else:
+                    sup = mid
+            mid = inf
+            threshold = stirling2(n - index, k - 1)
+            acc += R_equation(index - 1, d0, mid - 2, n, k)
+            block.append(mid - index)
+            if r < threshold + acc:
+                complete = True
+            else:
+                index += 1
+                d0 = mid
+                inf = d0 + 1
+                sup = n
+                acc += threshold
+        return block, acc
+ 
+    def extract(n: int, R: list):
+        L = list(range(1, n + 1))
+        P = []
+        for r in R:
+            p = []
+            for i in r:
+                p.append(L[i])
+                L.pop(i)
+            P.append(p)
+        return P
+    
+    if r >= stirling2(n,k):
+        raise IndexError("R-th partition doesnt exist, r should be < stirling2(n,k)")
+    n_clone = n
+    Res = []
+    while k > 1:
+        (B, acc) = next_block(n, k, r)
+        Res.append(B)
+        r -= acc
+        n -= len(B)
+        k -= 1
+    res = []
+    for i in range(n):
+        res.append(0)
+    Res.append(res)
+    Res = extract(n_clone, Res)
+    return Res
+
+
+def unrankPartitionTest(partition: list[list[int]], n: int, k: int) -> bool:
+    """
+    checking if the partition result of is valid given the input n number of elements and k number of blocks.
+    """
+    # Checking whether all the blocks inside of the partitions are ordered
+    for i in range(len(partition) - 1):
+        assert compare_subsets(partition[i], partition[i + 1]) == True        
+
+    # Checking whether all of 1..n are present in all partitions
+    all_elements_from_1_to_n = set(range(1, n + 1))
+    flat_out_block = set()
+    for block in partition:
+        for element in block:
+            if element in flat_out_block:
+                return False
+            else:
+                flat_out_block.add(element)
+    assert flat_out_block == all_elements_from_1_to_n
+    
+    # Checking whether the number of blocks is equal to k
+    assert len(partition) == k
+    
+    # Checking whether the elements of each block are ordered ascendingly
+    for block in partition:
+        for i in range(len(block) - 1):
+            assert block[i] < block[i + 1]
+            
+    return True
