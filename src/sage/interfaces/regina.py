@@ -143,8 +143,6 @@ This method will not work when Regina's output includes:
 AUTHORS:
 
 - Sebastian Oehms (2025): first version.
-
-
 """
 
 ##############################################################################
@@ -178,7 +176,7 @@ class Regina(ExtraTabCompletion, Interface):
     r"""
     Interface to the Regina interpreter.
 
-    ::
+    EXAMPLES::
 
         sage: K = Knots().from_table(8, 21)
         sage: Kr = regina(K); Kr
@@ -196,7 +194,6 @@ class Regina(ExtraTabCompletion, Interface):
 
             sage: TestSuite(regina).run(skip=['_test_pickling', '_test_category'])
         """
-
         Interface.__init__(self, name='regina')
         self._initialized = False  # done lazily
         self._regina_globals = None
@@ -318,7 +315,7 @@ optional Sage package Regina installed.
 
     def get(self, var):
         """
-        Get the value of the variable var.
+        Get the value of the variable ``var``.
 
         EXAMPLES::
 
@@ -329,7 +326,7 @@ optional Sage package Regina installed.
 
     def set(self, var, value):
         """
-        Set the variable var to the given value.
+        Set the variable ``var`` to the given ``value``.
 
         EXAMPLES::
 
@@ -351,7 +348,7 @@ optional Sage package Regina installed.
 
     def _regina_object(self, x) -> bool:
         r"""
-        Return ``True`` if x is an instance of a class
+        Return ``True`` if ``x`` is an instance of a class
         from Regina's namespace.
 
         EXAMPLES::
@@ -377,7 +374,7 @@ optional Sage package Regina installed.
         """
         Try to coerce to ``self`` by calling a special underscore method.
 
-        This method is overloaded to record the Sage parent of x in the
+        This method is overloaded to record the Sage parent of ``x`` in the
         interface element.
 
         EXAMPLES::
@@ -533,7 +530,7 @@ optional Sage package Regina installed.
         dic = self._namespace.__dict__
         if cmd in dic:
             return print(dic[cmd].__doc__)
-        raise NotImplementedError('no documentation available for %s!' % cmd)
+        raise NotImplementedError('no documentation available for %s' % cmd)
 
     def _tab_completion(self):
         r"""
@@ -875,11 +872,12 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
 
         - numbers, i.e. integers, floats, complex numbers;
         - functions and named constants also present in Sage, where:
-            - Sage knows how to translate the function or constant's name
-              from Regina's naming scheme, or
-            - you provide a translation dictionary `locals`, or
-            - the Sage name for the function or constant is simply the
-              Regina name in lower case;
+
+          * Sage knows how to translate the function or constant's name
+            from Regina's naming scheme, or
+          * you provide a translation dictionary `locals`, or
+          * the Sage name for the function or constant is simply the
+            Regina name in lower case;
 
         - symbolic variables whose names do not pathologically overlap with
           objects already defined in Sage.
