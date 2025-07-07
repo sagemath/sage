@@ -1170,8 +1170,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: A(x + 2*x^2 + x^3, prec=5)
             ...00001*x^3 + ...00001*x + ...00010*x^2 + O(2^5 * <x, y>)
         """
-        base = self._parent.base_ring()
-        nvars = self._parent.ngens()
         vars = self._parent.variable_names()
         s = ""
         for t in self._terms_c():
@@ -1229,9 +1227,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f._latex_()
             '...0000000001x^{3} + ...0000000001x + ...00000000010x^{2}'
         """
-        base = self._parent.base_ring()
-        nvars = self._parent.ngens()
-        vars = self._parent.variable_names()
         s = ""
         for t in self.terms():
             if t.valuation() >= self._prec:
@@ -1246,7 +1241,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         if self._prec is not Infinity:
             if s != "":
                 s += " + "
-            sv = ",".join(vars)
             if self._prec == 0:
                 s += "O\\left(%s\\right)" % self._parent.integer_ring()._latex_()
             elif self._prec == 1:
@@ -1968,16 +1962,15 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
         parent = self._parent
         base = parent.base_ring()
         if base.is_field():
-            for (e,c) in self._poly.__repn.items():
+            for e, c in self._poly.__repn.items():
                 coeffs[e] = c << n
             ans._prec = self._prec + n
         else:
             field = base.fraction_field()
-            ngens = parent.ngens()
-            for (e,c) in self._poly.__repn.items():
+            for e, c in self._poly.__repn.items():
                 minval = ZZ(e.dotprod(<ETuple>parent._log_radii)).ceil()
                 coeffs[e] = field(base(c) >> (minval-n)) << minval
-            ans._prec = max(ZZ(0), self._prec + n)
+            ans._prec = max(ZZ.zero(), self._prec + n)
         ans._poly = PolyDict(coeffs, None)
         return ans
 
@@ -2453,12 +2446,10 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: f.valuation()
             -4
         """
-        cdef TateAlgebraTerm t
         cdef list terms = self._terms_c()
         if terms:
             return min(terms[0].valuation(), self._prec)
-        else:
-            return self._prec
+        return self._prec
 
     def precision_relative(self):
         """
@@ -3244,7 +3235,6 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             divisors = [divisors]
             onedivisor = True
         A = _pushout_family(divisors, self._parent)
-        f = A(self)
         divisors = [A(d) for d in divisors]
         q, r = (<TateAlgebraElement>self)._quo_rem_c(divisors, quo, rem, False)
         if quo and onedivisor:

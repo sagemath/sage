@@ -1781,9 +1781,7 @@ class Graph(GenericGraph):
         """
         if self.order() < 2 or not self.is_connected():
             return False
-        if self.blocks_and_cut_vertices()[1]:
-            return False
-        return True
+        return not self.blocks_and_cut_vertices()[1]
 
     @doc_index("Graph properties")
     def is_block_graph(self):
