@@ -1156,42 +1156,6 @@ class AbstractTree:
                 for p in t.paths():
                     yield (i,) + p
 
-    def _require_mutable(self):
-        """
-        Internal function. Although the general usage of abstract tree is often
-        in a non-mutable way, mutable usage also exists. This would affect
-        precomputed number such as _node_number. This function clears out the
-        precomputed values when there is a mutable usage.
-
-        Values cleared:
-
-        - ``_node_number`` : number of nodes in the tree
-
-        EXAMPLES::
-
-            sage: T = OrderedTree()
-            sage: T._require_mutable()
-            Traceback (most recent call last):
-            ...
-            ValueError: This object is immutable.
-
-        EXAMPLES::
-
-            sage: T = LabelledRootedTree([]).clone()
-            sage: T.node_number()
-            1
-            sage: T._require_mutable()
-            sage: hasattr(T, '_node_number')
-            False
-        """
-        if self.is_immutable():
-            raise ValueError("This object is immutable.")
-        super()._require_mutable()
-        try:
-            delattr(self, '_node_number')
-        except AttributeError:
-            pass
-
     def node_number(self):
         """
         Return the number of nodes of ``self``.
@@ -2097,7 +2061,7 @@ class AbstractClonableTree(AbstractTree):
             sage: x[0] =  OrderedTree([[]])
             Traceback (most recent call last):
             ...
-            ValueError: This object is immutable.
+            ValueError: object is immutable; please change a copy instead.
 
         Here is the correct way to do it::
 
@@ -2232,6 +2196,40 @@ class AbstractClonableTree(AbstractTree):
         else:
             return ClonableArray._getitem(self, i)
 
+    def _require_mutable(self):
+        """
+        Internal function. Although the general usage of abstract tree is often
+        in a non-mutable way, mutable usage also exists, especially through
+        abstract clonable trees. This would affect precomputed number such as
+        _node_number. This function clears out the precomputed values when
+        there is a mutable usage.
+
+        Values cleared:
+
+        - ``_node_number`` : number of nodes in the tree
+
+        EXAMPLES::
+
+            sage: T = OrderedTree()
+            sage: T._require_mutable()
+            Traceback (most recent call last):
+            ...
+            ValueError: object is immutable; please change a copy instead.
+
+        EXAMPLES::
+
+            sage: T = LabelledRootedTree([]).clone()
+            sage: T.node_number()
+            1
+            sage: T._require_mutable()
+            sage: hasattr(T, '_node_number')
+            False
+        """
+        super()._require_mutable()
+        try:
+            delattr(self, '_node_number')
+        except AttributeError:
+            pass
 
 class AbstractLabelledTree(AbstractTree):
     """
@@ -2567,7 +2565,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             sage: t.set_root_label(3)
             Traceback (most recent call last):
             ...
-            ValueError: This object is immutable.
+            ValueError: object is immutable; please change a copy instead.
             sage: with t.clone() as t:
             ....:     t.set_root_label(3)
             sage: t.label()
@@ -2581,7 +2579,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             sage: bt.set_root_label(3)
             Traceback (most recent call last):
             ...
-            ValueError: This object is immutable.
+            ValueError: object is immutable; please change a copy instead.
             sage: with bt.clone() as bt:
             ....:     bt.set_root_label(3)
             sage: bt.label()
@@ -2628,7 +2626,7 @@ class AbstractLabelledClonableTree(AbstractLabelledTree,
             sage: t.set_label((0,), 4)
             Traceback (most recent call last):
             ...
-            ValueError: This object is immutable.
+            ValueError: object is immutable; please change a copy instead.
             sage: with t.clone() as t:
             ....:     t.set_label((0,), 4)
             sage: t
