@@ -1,10 +1,10 @@
-from subprocess import Popen, PIPE
 import os
-import sys
 import select
+import sys
+from subprocess import PIPE, Popen
 
 
-def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False, **kwds):
+def check_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False, **kwds):
     r"""
     Run the program defined by ``args`` using the string ``input`` on
     the standard input.
@@ -35,8 +35,8 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
 
     EXAMPLES::
 
-        sage: from sage.tests import test_executable
-        sage: (out, err, ret) = test_executable(["cat"], "Hello World!")
+        sage: from sage.tests import check_executable
+        sage: (out, err, ret) = check_executable(["cat"], "Hello World!")
         sage: out
         'Hello World!'
         sage: err
@@ -46,10 +46,10 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
 
     We test the timeout option::
 
-        sage: (out, err, ret) = test_executable(["sleep", "1"], timeout=0.1)
+        sage: (out, err, ret) = check_executable(["sleep", "1"], timeout=0.1)
         Traceback (most recent call last):
         ...
-        RuntimeError: timeout in test_executable()
+        RuntimeError: timeout in check_executable()
     """
     pexpect_env = dict(os.environ)
     try:
@@ -91,7 +91,7 @@ def test_executable(args, input='', timeout=100.0, pydebug_ignore_warnings=False
         if len(rlist) == 0:
             # Timeout!
             p.terminate()
-            raise RuntimeError("timeout in test_executable()")
+            raise RuntimeError("timeout in check_executable()")
         if fdout in rlist:
             s = p.stdout.read(1024)
             if not s:
