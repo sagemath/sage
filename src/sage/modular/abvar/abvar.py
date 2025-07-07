@@ -830,9 +830,8 @@ class ModularAbelianVariety_abstract(Parent):
             return False
         if self.groups() != other.groups():
             return False
-        if not self.is_subvariety_of_ambient_jacobian() or not other.is_subvariety_of_ambient_jacobian():
-            return False
-        return True
+        return (self.is_subvariety_of_ambient_jacobian() and
+                other.is_subvariety_of_ambient_jacobian())
 
     def modular_kernel(self):
         """

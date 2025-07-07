@@ -2277,10 +2277,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: G.U().is_identity()
             False
         """
-        if self == self.parent().I() or self == -self.parent().I():
-            return True
-        else:
-            return False
+        return self == self.parent().I() or self == -self.parent().I()
 
     def is_elliptic(self) -> bool:
         r"""
