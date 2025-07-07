@@ -1551,10 +1551,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         if x[1] not in p:
             return False
 
-        if not p(x[0]).contains(p(x[1])):
-            return False
-
-        return True
+        return p(x[0]).contains(p(x[1]))
 
     def from_row_and_column_length(self, rowL, colL):
         """
