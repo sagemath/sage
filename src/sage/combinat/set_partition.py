@@ -2099,11 +2099,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             return False
 
         # Check to make sure each element of x is a set
-        for s in x:
-            if not isinstance(s, (set, frozenset, Set_generic)):
-                return False
-
-        return True
+        return all(isinstance(s, (set, frozenset, Set_generic)) for s in x)
 
     def _element_constructor_(self, s, check=True):
         """

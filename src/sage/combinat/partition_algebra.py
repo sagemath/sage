@@ -191,7 +191,7 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         s = self.k + 1
         return "Set partitions of {1, ..., %s, -1, ..., -%s} with %s and -%s in the same block" % (s, s, s, s)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -207,11 +207,8 @@ class SetPartitionsAkhalf_k(SetPartitions_set):
         if x not in SetPartitionsAk_k(self.k + 1):
             return False
 
-        for part in x:
-            if self.k + 1 in part and -self.k - 1 not in part:
-                return False
-
-        return True
+        return all(self.k + 1 not in part or -self.k - 1 in part
+                   for part in x)
 
     def __iter__(self):
         """
@@ -325,10 +322,7 @@ class SetPartitionsSk_k(SetPartitionsAk_k):
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
 
-        if propagating_number(x) != self.k:
-            return False
-
-        return True
+        return propagating_number(x) == self.k
 
     def cardinality(self):
         """
@@ -384,9 +378,7 @@ class SetPartitionsSkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        if propagating_number(x) != self.k + 1:
-            return False
-        return True
+        return propagating_number(x) == self.k + 1
 
     def _repr_(self):
         """
@@ -505,9 +497,7 @@ class SetPartitionsIk_k(SetPartitionsAk_k):
         """
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
-        if propagating_number(x) >= self.k:
-            return False
-        return True
+        return propagating_number(x) < self.k
 
     def cardinality(self):
         """
@@ -558,9 +548,7 @@ class SetPartitionsIkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        if propagating_number(x) >= self.k + 1:
-            return False
-        return True
+        return propagating_number(x) < self.k + 1
 
     def _repr_(self):
         """
@@ -668,11 +656,7 @@ class SetPartitionsBk_k(SetPartitionsAk_k):
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
 
-        for part in x:
-            if len(part) != 2:
-                return False
-
-        return True
+        return all(len(part) == 2 for part in x)
 
     def cardinality(self):
         r"""
@@ -764,10 +748,7 @@ class SetPartitionsBkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        for part in x:
-            if len(part) != 2:
-                return False
-        return True
+        return all(len(part) == 2 for part in x)
 
     def cardinality(self):
         """
@@ -879,10 +860,7 @@ class SetPartitionsPk_k(SetPartitionsAk_k):
         if not SetPartitionsAk_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def cardinality(self):
         """
@@ -938,10 +916,7 @@ class SetPartitionsPkhalf_k(SetPartitionsAkhalf_k):
         """
         if not SetPartitionsAkhalf_k.__contains__(self, x):
             return False
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def _repr_(self):
         """
@@ -1045,10 +1020,7 @@ class SetPartitionsTk_k(SetPartitionsBk_k):
         if not SetPartitionsBk_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def cardinality(self):
         """
@@ -1097,10 +1069,7 @@ class SetPartitionsTkhalf_k(SetPartitionsBkhalf_k):
         """
         if not SetPartitionsBkhalf_k.__contains__(self, x):
             return False
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def _repr_(self):
         """
@@ -1390,10 +1359,7 @@ class SetPartitionsPRk_k(SetPartitionsRk_k):
         if not SetPartitionsRk_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def cardinality(self):
         """
@@ -1449,10 +1415,7 @@ class SetPartitionsPRkhalf_k(SetPartitionsRkhalf_k):
         if not SetPartitionsRkhalf_k.__contains__(self, x):
             return False
 
-        if not is_planar(x):
-            return False
-
-        return True
+        return is_planar(x)
 
     def _repr_(self):
         """
