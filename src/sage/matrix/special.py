@@ -3215,11 +3215,16 @@ def random_unitary_matrix(parent):
     A = random_matrix(F,n)
     S = A - A.conjugate_transpose()
     U = (S-I).inverse()*(S+I)
-    D = identity_matrix(F,n)
+
+    # Scale the rows of U by plus/minus one with equal probability.
+    # This generates the equivalence class of U according to the
+    # Liebeck/Osborne paper.
+    from random import random
     for i in range(n):
-        if ZZ.random_element(2).is_zero():
-            D[i,i] *= F(-1)
-    return D*U
+        if random() < 0.5:
+            U.set_row_to_multiple_of_row(i, i, -1)
+
+    return U
 
 
 @matrix_method
