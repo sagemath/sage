@@ -69,7 +69,7 @@ jobs:
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           export CC="ccache $CC"
           export CXX="ccache $CXX"
-          pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
+          pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
       #
       # For pull requests
