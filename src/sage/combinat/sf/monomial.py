@@ -398,6 +398,12 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 sage: m.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                R = self.base_ring()
+                mc = self.monomial_coefficients(copy=False).items()
+                return R.sum(c for partition, c in mc
+                             if len(partition) <= 1)
+
             if q == 1:
                 if n == infinity:
                     raise ValueError("the stable principal specialization at q=1 is not defined")

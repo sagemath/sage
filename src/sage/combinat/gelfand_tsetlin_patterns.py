@@ -704,10 +704,9 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                    for i in range(1, len(gt)) for j in range(len(gt[i]))):
             return False
         # Check if it is strict if applicable
-        if self._strict and any(gt[i][j] == gt[i][j-1] for i in range(len(gt))
-                                for j in range(1, len(gt[i]))):
-            return False
-        return True
+        return not (self._strict and any(gt[i][j] == gt[i][j - 1]
+                                         for i in range(len(gt))
+                                         for j in range(1, len(gt[i]))))
 
     def _repr_(self):
         """
