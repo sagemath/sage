@@ -390,12 +390,30 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
     mat_recover = image_space.T * norm_factor.inverse()
     return kernel_removed_mat, mat_recover
 
-def custom_psd_test(mat):
-    dim = mat.nrows()
-    for ii in range(dim):
-        pmin = mat[:ii+1, :ii+1]
-        if pmin.det()<0:
+def custom_psd_test(M):
+    if not M.is_symmetric():
+        return False
+    R = M.base_ring()
+    n = M.nrows()
+    L = matrix.identity(R, n)
+    d_diag = vector(R, n)
+
+    for j in range(n):
+        v = vector([L[j, k] * d_diag[k] for k in range(j)])
+        sum_ldl = L[j, :j] * v
+        d_j = M[j, j] - sum_ldl[0]
+        if d_j<0:
             return False
+        d_diag[j] = d_j
+        if d_j.is_zero():
+            for i in range(j + 1, n):
+                s_ij = sum(L[i, k] * L[j, k] * d_diag[k] for k in range(j))
+                if not (M[i, j] - s_ij).is_zero():
+                    return False
+        else:
+            for i in range(j + 1, n):
+                sum_ldl_ij = sum(L[i, k] * L[j, k] * d_diag[k] for k in range(j))
+                L[i, j] = (M[i, j] - sum_ldl_ij) / d_j
     return True
 
 class _CombinatorialTheory(Parent, UniqueRepresentation):
@@ -841,11 +859,19 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                         Zm[ii] += mat*phi_vector[gg]
             Zs.append(Zm)
             for Zii in Zm:
-                if test and (not Zii.is_positive_semidefinite()):
-                    self.fprint("Construction based Z matrix for " + 
-                                "{} is not semidef: {}".format(
-                                    ftype, min(Zii.eigenvalues())
-                                    ))
+                if test:
+                    try:
+                        if not Zii.is_positive_semidefinite():
+                            self.fprint("Construction based Z matrix for " + 
+                                        "{} is not semidef: {}".format(
+                                            ftype, min(Zii.eigenvalues())
+                                            ))
+                    except:
+                        if not custom_psd_test(Zii):
+                            self.fprint("Construction based Z matrix for " + 
+                                        "{} is not semidef: {}".format(
+                                            ftype, min(Zii.eigenvalues())
+                                            ))
         return Zs
 
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, 
@@ -1458,8 +1484,8 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         result = min([slacks[ii]/oveii \
                     for ii, oveii in enumerate(one_vector_exact) if \
                         oveii!=0])
-        # pad the slacks, so it is all positive where it counts
         slacks -= result*one_vector_exact
+        # pad the slacks, so it is all positive where it counts
         self.fprint("This took {}s".format(time.time() - start_time))
         start_time = time.time()
 
@@ -2471,8 +2497,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     self.fprint("Matrix {} is not semidefinite".format(ii))
                     return -1
             except:
-                RFF = RealField(prec=100)
-                if not matrix(RFF, X).is_positive_semidefinite():
+                if not custom_psd_test(X):
                     print("Solution is not valid!")
                     self.fprint("Matrix {} is not semidefinite".format(ii))
                     return -1
@@ -2490,7 +2515,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             else:
                 raise ValueError("Target size must be specified "+
                                  "if it is not part of the certificate!")
-
+        maximize = maximize and certificate.get("maximize", True)
         mult = -1 if maximize else 1
         base_flags = certificate["base flags"]
         one_vector = vector([1]*len(base_flags))
@@ -2558,7 +2583,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             e_values = vector(e_values[:len(positives_list_exact)])
         else:
             if "positives" in certificate:
-                posls = to_sage(2, certificate["positives"])[:-2]
+                posls = to_sage(2, certificate["positives"])
                 positives_matrix_exact = matrix(len(posls), len(base_flags), posls)
                 e_values = vector(e_values[:len(posls)])
             else:
@@ -2574,6 +2599,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
         self.fprint("Calculating the bound provided by the certificate")
         
         slacks = target_vector_exact - positives_matrix_exact.T*e_values
+        
         if self._printlevel > 0:
             iterator = tqdm(enumerate(table_list))
         else:
