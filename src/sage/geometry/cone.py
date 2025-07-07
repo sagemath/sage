@@ -4436,40 +4436,39 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The primal Normaliz algorithm, see [Normaliz]_.
         """
+
         if self.is_strictly_convex():
-
-            def not_in_linear_subspace(x):
-                return True
+            # Used in lieu of our linear_subspace() for containment
+            # testing. None of the points we test can be zero, so
+            # checking the empty tuple is equivalent to checking a
+            # trivial subspace, and the empty tuple is faster.
+            L = ()
         else:
-            linear_subspace = self.linear_subspace()
-
-            def not_in_linear_subspace(x):
-                # "x in linear_subspace" does not work, due to absence
-                # of coercion maps as of Github issue #10513.
-                try:
-                    linear_subspace(x)
-                    return False
-                except (TypeError, ValueError):
-                    return True
+            # Our linear_subspace(), but as a cone, so that
+            # containment testing using "in" works properly.
+            L = Cone( (c*r for c in (1,-1) for r in self.lines()),
+                      self.lattice() )
 
         irreducible = list(self.rays())  # these are irreducible for sure
-        gens = list(self.semigroup_generators())
-        for x in irreducible:
-            try:
-                gens.remove(x)
-            except ValueError:
-                pass
+        irr_modified = False  # have we appended to "irreducible"?
+        gens = [ x for x in self.semigroup_generators()
+                 if x not in irreducible ]
 
+        from itertools import chain
         while gens:
             x = gens.pop()
-            if any(not_in_linear_subspace(y) and x-y in self
-                   for y in irreducible+gens):
-                continue
-            irreducible.append(x)
-        if len(irreducible) == self.nrays():
-            return self.rays()
-        else:
+            if all( (y in L) or (x-y not in self)
+                    for y in chain(irreducible,gens) ):
+                irreducible.append(x)
+                irr_modified = True
+
+        if irr_modified:
             return PointCollection(irreducible, self.lattice())
+        else:
+            # Avoid the PointCollection overhead if nothing was
+            # added to the irreducible list beyond self.rays().
+            return self.rays()
+
 
     def Hilbert_coefficients(self, point, solver=None, verbose=0,
                              *, integrality_tolerance=1e-3):
