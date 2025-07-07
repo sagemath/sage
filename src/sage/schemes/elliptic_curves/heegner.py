@@ -1149,10 +1149,7 @@ class GaloisGroup(SageObject):
             return False
         if not c.is_squarefree():
             return False
-        for p in c.prime_divisors():
-            if not is_inert(D,p):
-                return False
-        return True
+        return all(is_inert(D, p) for p in c.prime_divisors())
 
     def _base_is_hilbert_class_field(self):
         """
@@ -4776,9 +4773,7 @@ class HeegnerQuatAlg(SageObject):
             return False
         if not satisfies_weak_heegner_hypothesis(self.__level, D):
             return False
-        if not is_inert(D, self.__ell):
-            return False
-        return True
+        return is_inert(D, self.__ell)
 
     def heegner_discriminants(self, n=5):
         r"""
@@ -7307,10 +7302,7 @@ def satisfies_heegner_hypothesis(self, D):
         return False
     if D.gcd(self.conductor()) != 1:
         return False
-    for p, _ in self.conductor().factor():
-        if D.kronecker(p) != 1:
-            return False
-    return True
+    return all(D.kronecker(p) == 1 for p, _ in self.conductor().factor())
 
 
 #####################################################################
