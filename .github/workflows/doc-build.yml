@@ -70,8 +70,6 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
-          # Remove sage src directory to avoid shadowing conflicts
-          rm -rf src/sage
 
       #
       # For pull requests
