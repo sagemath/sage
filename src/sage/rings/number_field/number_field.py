@@ -4236,7 +4236,6 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         beta = alpha.modreverse()
         return f, alpha, beta
 
-
     def pari_polynomial(self, name='x'):
         """
         Return the PARI polynomial corresponding to this number field.
