@@ -4369,7 +4369,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(1, 1)
             in 2-d lattice N
 
-        Two more complicated example from GAP/toric::
+        A more complicated example from GAP/toric::
 
             sage: Cone([[1,0], [3,4]]).dual().Hilbert_basis()
             M(0,  1),
@@ -4378,38 +4378,51 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             M(2, -1),
             M(3, -2)
             in 2-d lattice M
-            sage: cone = Cone([[1,2,3,4], [0,1,0,7], [3,1,0,2], [0,0,1,0]]).dual()
-            sage: cone.Hilbert_basis()           # long time
-            M(10,  -7,  0,  1),
-            M(-5,  21,  0, -3),
-            M( 0,  -2,  0,  1),
-            M(15, -63, 25,  9),
-            M( 2,  -3,  0,  1),
-            M( 1,  -4,  1,  1),
-            M( 4,  -4,  0,  1),
-            M(-1,   3,  0,  0),
-            M( 1,  -5,  2,  1),
-            M( 3,  -5,  1,  1),
-            M( 6,  -5,  0,  1),
-            M( 3, -13,  5,  2),
-            M( 2,  -6,  2,  1),
-            M( 5,  -6,  1,  1),
-            M( 8,  -6,  0,  1),
-            M( 0,   1,  0,  0),
-            M(-2,   8,  0, -1),
-            M(10, -42, 17,  6),
-            M( 7, -28, 11,  4),
-            M( 5, -21,  9,  3),
-            M( 6, -21,  8,  3),
-            M( 5, -14,  5,  2),
-            M( 2,  -7,  3,  1),
-            M( 4,  -7,  2,  1),
-            M( 7,  -7,  1,  1),
-            M( 0,   0,  1,  0),
-            M( 1,   0,  0,  0),
-            M(-1,   7,  0, -1),
-            M(-3,  14,  0, -2)
-            in 4-d lattice M
+
+        Examples verified independently using [Normaliz]_::
+
+            sage: cones.rearrangement(3,4).Hilbert_basis()
+            N(-2,  1,  1,  1),
+            N( 1,  1,  1, -2),
+            N( 1,  1, -2,  1),
+            N( 1, -2,  1,  1),
+            N( 1,  0,  0,  0),
+            N(-1,  1,  1,  0),
+            N(-1,  1,  0,  1),
+            N( 0, -1,  1,  1),
+            N( 1,  0, -1,  1),
+            N( 1,  0,  1, -1),
+            N(-1,  0,  1,  1),
+            N( 0,  1, -1,  1),
+            N( 1, -1,  0,  1),
+            N( 0,  1,  1, -1),
+            N( 1, -1,  1,  0),
+            N( 0,  1,  0,  0),
+            N( 1,  1,  0, -1),
+            N( 1,  1, -1,  0),
+            N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1)
+            in 4-d lattice N
+
+            sage: # long time
+            sage: K = Cone([(1,0,1), (-1,0,1), (0,1,1), (0,-1,1)])
+            sage: K.Hilbert_basis()
+            N( 1,  0, 1),
+            N(-1,  0, 1),
+            N( 0,  1, 1),
+            N( 0, -1, 1),
+            N( 0,  0, 1)
+            in 3-d lattice N
+
+            sage: # long time
+            sage: K = Cone([(1,0,1,0), (-1,0,1,0), (0,1,1,0), (0,-1,1,0)])
+            sage: K.Hilbert_basis()
+            N( 1,  0, 1, 0),
+            N(-1,  0, 1, 0),
+            N( 0,  1, 1, 0),
+            N( 0, -1, 1, 0),
+            N( 0,  0, 1, 0)
+            in 4-d lattice N
 
         Not a strictly convex cone::
 
