@@ -223,7 +223,6 @@ jobs:
           mkdir -p ./livedoc
           # We copy everything to a local folder
             cp -r builddir/src/doc/html livedoc/
-            cp -r builddir/src/doc/pdf livedoc/
             cp builddir/src/doc/index.html livedoc/
           zip -r livedoc.zip livedoc
 
