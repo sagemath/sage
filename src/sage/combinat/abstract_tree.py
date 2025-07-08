@@ -2216,7 +2216,7 @@ class AbstractClonableTree(AbstractTree):
             ...
             ValueError: object is immutable; please change a copy instead.
 
-        EXAMPLES::
+        ::
 
             sage: T = LabelledRootedTree([]).clone()
             sage: T.node_number()
