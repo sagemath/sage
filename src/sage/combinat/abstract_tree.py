@@ -2198,11 +2198,11 @@ class AbstractClonableTree(AbstractTree):
 
     def _require_mutable(self):
         """
-        Internal function. Although the general usage of abstract tree is often
-        in a non-mutable way, mutable usage also exists, especially through
-        abstract clonable trees. This would affect precomputed number such as
-        _node_number. This function clears out the precomputed values when
-        there is a mutable usage.
+        Check that ``self`` is mutable and clear the ``_node_number`` parameter.
+
+        The mutation could affect a precomputed ``_node_number``,
+        and so we clear this when this is called, which is done in
+        preparation for mutating the tree.
 
         Values cleared:
 
