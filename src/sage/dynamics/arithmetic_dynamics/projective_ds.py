@@ -4089,9 +4089,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         crit_orbit = []
         for i in crit_list:
             crit_orbit += f.orbit(i, 4)
-        if len(set(crit_orbit)) > 3:
-            return False
-        return True
+        return len(set(crit_orbit)) <= 3
 
     def critical_point_portrait(self, check=True, use_algebraic_closure=True):
         r"""

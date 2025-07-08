@@ -1817,7 +1817,7 @@ class FMatrix(SageObject):
     # TODO: this can probably be improved by constructing a set of defining polynomials
     # and checking, one by one, if it's irreducible over the current field.
     # If it is, we construct an extension. Perhaps it's best to go one by one here...
-    def attempt_number_field_computation(self):
+    def attempt_number_field_computation(self) -> bool:
         r"""
         Based on the ``CartanType`` of ``self`` and data
         known on March 17, 2021, determine whether to attempt

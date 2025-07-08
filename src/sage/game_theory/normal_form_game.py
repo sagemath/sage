@@ -2234,11 +2234,8 @@ class NormalFormGame(SageObject, MutableMapping):
         if not any(i in p1_support for i, x in enumerate(p1_payoffs)
                    if x == max(p1_payoffs)):
             return False
-        if not any(i in p2_support for i, x in enumerate(p2_payoffs)
-                   if x == max(p2_payoffs)):
-            return False
-
-        return True
+        return any(i in p2_support for i, x in enumerate(p2_payoffs)
+                   if x == max(p2_payoffs))
 
     def _lrs_nash_format(self, m1, m2):
         r"""

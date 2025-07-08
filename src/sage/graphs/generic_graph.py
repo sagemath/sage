@@ -5742,7 +5742,8 @@ class GenericGraph(GenericGraph_pyx):
 
     # Planarity
 
-    def is_planar(self, on_embedding=None, kuratowski=False, set_embedding=False, set_pos=False):
+    def is_planar(self, on_embedding=None, kuratowski=False, set_embedding=False,
+                  set_pos=False, immutable=None):
         r"""
         Check whether the graph is planar.
 
@@ -5795,6 +5796,11 @@ class GenericGraph(GenericGraph_pyx):
           embedding.  Note that this value will default to False if set_emb is
           set to False. Also, the position dictionary will only be updated if a
           planar embedding is found.
+
+        - ``immutable`` -- boolean (default: ``None``); whether to create a
+          mutable/immutable graph. ``immutable=None`` (default) means that the
+          graph and the Kuratowski subgraph will behave the same way.
+          This parameter is ignored when ``kuratowski=False``.
 
         EXAMPLES::
 
@@ -5956,6 +5962,21 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: Graph(1).is_planar()
             True
+
+        Check the behavior of parameter ``immutable``::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_planar(kuratowski=True)
+            (False, Kuratowski subgraph of (Petersen graph): Graph on 9 vertices)
+            sage: G.is_planar(kuratowski=True)[1].is_immutable()
+            False
+            sage: G.is_planar(kuratowski=True, immutable=True)[1].is_immutable()
+            True
+            sage: G = G.copy(immutable=True)
+            sage: G.is_planar(kuratowski=True)[1].is_immutable()
+            True
+            sage: G.is_planar(kuratowski=True, immutable=False)[1].is_immutable()
+            False
         """
         # Quick check first
         if (on_embedding is None and not kuratowski and not set_embedding and not set_pos
@@ -5979,10 +6000,11 @@ class GenericGraph(GenericGraph_pyx):
             return (0 == self.genus(minimal=False, set_embedding=False, on_embedding=on_embedding))
 
         # We take the underlying undirected and simple graph
-        G = self.to_simple(to_undirected=True, immutable=False)
+        G = self.to_simple(to_undirected=True)
         # And check if it is planar
         from sage.graphs.planarity import is_planar
-        planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos, set_embedding=set_embedding)
+        planar = is_planar(G, kuratowski=kuratowski, set_pos=set_pos,
+                           set_embedding=set_embedding, immutable=immutable)
         if kuratowski:
             bool_result = planar[0]
         else:
@@ -14206,11 +14228,7 @@ class GenericGraph(GenericGraph_pyx):
         if k is None:
             k = next(deg_it)
 
-        for d in deg_it:
-            if d != k:
-                return False
-
-        return True
+        return all(d == k for d in deg_it)
 
     # Substructures
 

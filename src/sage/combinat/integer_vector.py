@@ -1310,10 +1310,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         if sum(x) != self.n:
             return False
 
-        if len(x) > 0 and min(x) < 0:
-            return False
-
-        return True
+        return not x or min(x) >= 0
 
     def rank(self, x):
         """

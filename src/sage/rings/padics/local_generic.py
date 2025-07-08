@@ -1304,6 +1304,10 @@ class LocalGeneric(Parent):
             sage: M.smith_form(transformation=False, exact=False)  # indirect doctest
             [O(5^10) O(5^10)]
             [O(5^10) O(5^10)]
+
+            sage: A = Zp(5)
+            sage: matrix(A,[1,1]).smith_form(transformation=False, integral=False, exact=False)
+            [1 + O(5^20)     O(5^20)]
         """
         from sage.rings.infinity import infinity
         from .precision_error import PrecisionError
@@ -1460,8 +1464,8 @@ class LocalGeneric(Parent):
                 if exact:
                     smith[i,i] = self(1)
                 else:
-                    for j in range(n):
-                        smith[i,j] = smith[i,j] >> v
+                    for j in range(m):
+                        smith[i,j] >>= v
             if transformation:
                 for i in range(n):
                     for j in range(n):

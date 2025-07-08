@@ -435,10 +435,7 @@ class SymmetryMutant(Enum):
         achp = link.is_amphicheiral(positive=True)
         ach = link.is_amphicheiral()
         if self is SymmetryMutant.unknown:
-            if rev is None or ach is None or achp is None:
-                return True
-            else:
-                return False
+            return rev is None or ach is None or achp is None
         res = []
         if rev:
             res.append(self.rev())
@@ -1082,9 +1079,7 @@ class KnotInfoBase(Enum):
             symmetry_type = self.symmetry_type()
             if symmetry_type == 'reversible':
                 return True
-            if symmetry_type == 'fully amphicheiral':
-                return True
-            return False
+            return symmetry_type == 'fully amphicheiral'
 
         # revert orientation
         b = self.braid()
@@ -1150,9 +1145,7 @@ class KnotInfoBase(Enum):
                 if symmetry_type == 'negative amphicheiral':
                     return True
 
-            if symmetry_type == 'fully amphicheiral':
-                return True
-            return False
+            return symmetry_type == 'fully amphicheiral'
 
         h = self.homfly_polynomial()
         v, z = h.parent().gens()
@@ -1196,9 +1189,7 @@ class KnotInfoBase(Enum):
             True
         """
         geometric_type = self[self.items.geometric_type]
-        if geometric_type == 'hyperbolic':
-            return True
-        return False
+        return geometric_type == 'hyperbolic'
 
     @cached_method
     def is_alternating(self) -> bool:

@@ -120,7 +120,7 @@ jobs:
           case "${{ inputs.stage }}" in
             1)               export TARGETS_PRE="all-sage-local" TARGETS="all-sage-local" TARGETS_OPTIONAL="build/make/Makefile"
                              ;;
-            2)               export TARGETS_PRE="all-sage-local" TARGETS="build doc-html" TARGETS_OPTIONAL="ptest"
+            2)               export TARGETS_PRE="all-sage-local" TARGETS="build" TARGETS_OPTIONAL="ptest"
                              ;;
             2-optional*)     export TARGETS_PRE="build/make/Makefile" TARGETS="build/make/Makefile"
                              targets_pattern="${{ inputs.stage }}"

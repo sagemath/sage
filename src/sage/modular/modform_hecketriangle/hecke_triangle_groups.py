@@ -1004,10 +1004,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
             return False
 
         def is_cycle_of_length(seq, n) -> bool:
-            for j in range(n, len(seq)):
-                if seq[j] != seq[j % n]:
-                    return False
-            return True
+            return all(seq[j] == seq[j % n] for j in range(n, len(seq)))
 
         j_list = range(1, self.n())
 
@@ -1240,10 +1237,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
 
         if D in self._conj_prim:
             return True
-        elif not primitive and D in self._conj_nonprim:
-            return True
-        else:
-            return False
+        return not primitive and D in self._conj_nonprim
 
     def list_discriminants(self, D, primitive=True, hyperbolic=True, incomplete=False):
         r"""

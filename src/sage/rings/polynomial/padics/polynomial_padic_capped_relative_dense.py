@@ -1258,9 +1258,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             else:
                 if valaddeds[i] < compval:
                     return False
-        if valaddeds[deg] != -self._valbase:
-            return False
-        return True
+        return valaddeds[deg] == -self._valbase
 
     def newton_slopes(self, repetition=True):
         """

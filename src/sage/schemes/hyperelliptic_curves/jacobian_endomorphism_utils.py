@@ -100,7 +100,7 @@ lazy_import('sage.interfaces.genus2reduction', ['genus2reduction', 'Genus2reduct
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
 
-def satisfies_coefficient_condition(g, p):
+def satisfies_coefficient_condition(g, p) -> bool:
     """
     This is the coefficient condition in the definition of Omega_K'
     on page 912 of the published version of paper.
@@ -116,14 +116,11 @@ def satisfies_coefficient_condition(g, p):
         sage: satisfies_coefficient_condition(f,23)
         True
     """
-
     if g[0] != p**2:
         return False
-    if g[3]*p != g[1]:
+    if g[3] * p != g[1]:
         return False
-    if g[2] % p == 0:
-        return False
-    return True
+    return bool(g[2] % p)
 
 
 def get_is_geom_field(f, C, bad_primes, B=200):

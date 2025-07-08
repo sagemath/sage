@@ -370,9 +370,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         if isinstance(M, (ModularFormsRing, ModularFormsSpace)):
             if M.group() == self.group() and self.has_coerce_map_from(M.base_ring()):
                 return True
-        if self.base_ring().has_coerce_map_from(M):
-            return True
-        return False
+        return self.base_ring().has_coerce_map_from(M)
 
     def _element_constructor_(self, datum):
         r"""

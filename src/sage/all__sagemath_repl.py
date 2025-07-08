@@ -100,6 +100,11 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message=r"Pickle, copy, and deepcopy support will be "
                                 r"removed from itertools in Python 3.14.")
 
+# rpy2>=3.6 emits warnings for R modifying LD_LIBRARY_PATH
+warnings.filterwarnings('ignore', category=UserWarning,
+                        message=r".*redefined by R and overriding existing variable.*",
+                        module='rpy2.robjects')
+
 from sage.all__sagemath_objects import *
 from sage.all__sagemath_environment import *
 
