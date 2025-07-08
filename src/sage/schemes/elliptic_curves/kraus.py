@@ -232,7 +232,7 @@ def sqrt_mod_4(x, P):
 # Kraus test and check for primes dividing 3:
 
 
-def test_b2_local(c4, c6, P, b2, debug=False):
+def check_b2_local(c4, c6, P, b2, debug=False):
     r"""
     Test if `b_2` gives a valid model at a prime dividing 3.
 
@@ -257,25 +257,25 @@ def test_b2_local(c4, c6, P, b2, debug=False):
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P3a, P3b = K.primes_above(3)
-        sage: from sage.schemes.elliptic_curves.kraus import test_b2_local
+        sage: from sage.schemes.elliptic_curves.kraus import check_b2_local
 
     `b_2=0` works at the first prime but not the second::
 
         sage: b2 = 0
-        sage: test_b2_local(c4,c6,P3a,b2)                                               # needs sage.rings.number_field
+        sage: check_b2_local(c4,c6,P3a,b2)                                               # needs sage.rings.number_field
         Elliptic Curve defined by
          y^2 = x^3 + (3784/3*a-96449/12)*x + (1743740/27*a-32765791/108)
          over Number Field in a with defining polynomial x^2 - 10
-        sage: test_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
+        sage: check_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
         False
 
     `b_2=-a` works at the second prime but not the first::
 
         sage: b2 = -a                                                                   # needs sage.rings.number_field
-        sage: test_b2_local(c4,c6,P3a,b2,debug=True)                                    # needs sage.rings.number_field
-        test_b2_local: not integral at Fractional ideal (3, a + 1)
+        sage: check_b2_local(c4,c6,P3a,b2,debug=True)                                    # needs sage.rings.number_field
+        check_b2_local: not integral at Fractional ideal (3, a + 1)
         False
-        sage: test_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
+        sage: check_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
         Elliptic Curve defined by
          y^2 = x^3 + (-1/4*a)*x^2 + (3784/3*a-192893/24)*x + (56378369/864*a-32879311/108)
          over Number Field in a with defining polynomial x^2 - 10
@@ -284,11 +284,11 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
         sage: b2 = K.solve_CRT([0,-a],[P3a,P3b]); b2                                    # needs sage.rings.number_field
         a + 1
-        sage: test_b2_local(c4,c6,P3a,b2)                                               # needs sage.rings.number_field
+        sage: check_b2_local(c4,c6,P3a,b2)                                               # needs sage.rings.number_field
         Elliptic Curve defined by
          y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64)
          over Number Field in a with defining polynomial x^2 - 10
-        sage: test_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
+        sage: check_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
         Elliptic Curve defined
          by y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64)
          over Number Field in a with defining polynomial x^2 - 10
@@ -296,16 +296,16 @@ def test_b2_local(c4, c6, P, b2, debug=False):
     E = c4c6_model(c4,c6).rst_transform(b2/12,0,0)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print("test_b2_local: wrong c-invariants at P=%s" % P)
+            print("check_b2_local: wrong c-invariants at P=%s" % P)
         return False
     if not E.is_local_integral_model(P):
         if debug:
-            print("test_b2_local: not integral at %s" % P)
+            print("check_b2_local: not integral at %s" % P)
         return False
     return E
 
 
-def test_b2_global(c4, c6, b2, debug=False):
+def check_b2_global(c4, c6, b2, debug=False):
     r"""
     Test if `b_2` gives a valid model at all primes dividing 3.
 
@@ -329,27 +329,27 @@ def test_b2_global(c4, c6, b2, debug=False):
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: b2 = a+1
-        sage: from sage.schemes.elliptic_curves.kraus import test_b2_global
-        sage: test_b2_global(c4,c6,b2)
+        sage: from sage.schemes.elliptic_curves.kraus import check_b2_global
+        sage: check_b2_global(c4,c6,b2)
         Elliptic Curve defined by
          y^2 = x^3 + (1/4*a+1/4)*x^2 + (10091/8*a-128595/16)*x + (4097171/64*a-19392359/64)
          over Number Field in a with defining polynomial x^2 - 10
-        sage: test_b2_global(c4,c6,0,debug=True)
-        test_b2_global: not integral at all primes dividing 3
+        sage: check_b2_global(c4,c6,0,debug=True)
+        check_b2_global: not integral at all primes dividing 3
         False
-        sage: test_b2_global(c4,c6,-a,debug=True)
-        test_b2_global: not integral at all primes dividing 3
+        sage: check_b2_global(c4,c6,-a,debug=True)
+        check_b2_global: not integral at all primes dividing 3
         False
     """
     E = c4c6_model(c4,c6).rst_transform(b2/12,0,0)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print("test_b2_global: wrong c-invariants")
+            print("check_b2_global: wrong c-invariants")
         return False
     if not all(E.is_local_integral_model(P)
                for P in c4.parent().primes_above(3)):
         if debug:
-            print("test_b2_global: not integral at all primes dividing 3")
+            print("check_b2_global: not integral at all primes dividing 3")
         return False
     return E
 
@@ -405,12 +405,12 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
     if c4.valuation(P) == 0:
         b2 = (-c6*c4.inverse_mod(P3)).mod(P3)
         if debug:
-            assert test_b2_local(c4,c6,P,b2)
+            assert check_b2_local(c4,c6,P,b2)
         return True, b2
     if c6.valuation(P) >= 3*e:
         b2 = c6.parent().zero()
         if debug:
-            assert test_b2_local(c4,c6,P,b2)
+            assert check_b2_local(c4,c6,P,b2)
         return True, b2
     # check for a solution x to x^3-3*x*c4-26=0 (27), such an x must
     # also satisfy x*c4+c6=0 (3) and x^2=c4 (3) and x^3=-c6 (9), and
@@ -420,14 +420,14 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
         if (x*c4+c6).valuation(P) >= e:
             if (x*(x*x-3*c4)-2*c6).valuation(P) >= 3*e:
                 if debug:
-                    assert test_b2_local(c4,c6,P,x)
+                    assert check_b2_local(c4,c6,P,x)
                 return True, x
     return False, 0
 
 # Kraus test and check for primes dividing 2:
 
 
-def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
+def check_a1a3_local(c4, c6, P, a1, a3, debug=False):
     r"""
     Test if `a_1`, `a_3` are valid at a prime `P` dividing `2`.
 
@@ -447,33 +447,33 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
     EXAMPLES::
 
         sage: # needs sage.rings.number_field
-        sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_local
+        sage: from sage.schemes.elliptic_curves.kraus import check_a1a3_local
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
         sage: P = K.primes_above(2)[0]
-        sage: test_a1a3_local(c4,c6,P,a,0)
+        sage: check_a1a3_local(c4,c6,P,a,0)
         Elliptic Curve defined by
          y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9)
          over Number Field in a with defining polynomial x^2 - 10
-        sage: test_a1a3_local(c4,c6,P,a,a,debug=True)
-        test_a1a3_local: not integral at Fractional ideal (2, a)
+        sage: check_a1a3_local(c4,c6,P,a,a,debug=True)
+        check_a1a3_local: not integral at Fractional ideal (2, a)
         False
     """
     E = c4c6_model(c4,c6).rst_transform(a1**2/12,a1/2,a3/2)
     if not (c4,c6) == E.c_invariants():
         if debug:
-            print("test_a1a3_local: wrong c-invariants at P=%s" % P)
+            print("check_a1a3_local: wrong c-invariants at P=%s" % P)
         return False
     if not E.is_local_integral_model(P):
         if debug:
-            print("test_a1a3_local: not integral at %s" % P)
+            print("check_a1a3_local: not integral at %s" % P)
         return False
     return E
 
 
-def test_a1a3_global(c4, c6, a1, a3, debug=False):
+def check_a1a3_global(c4, c6, a1, a3, debug=False):
     r"""
     Test if `a_1`, `a_3` are valid at all primes `P` dividing 2.
 
@@ -492,14 +492,14 @@ def test_a1a3_global(c4, c6, a1, a3, debug=False):
     EXAMPLES::
 
         sage: # needs sage.rings.number_field
-        sage: from sage.schemes.elliptic_curves.kraus import test_a1a3_global
+        sage: from sage.schemes.elliptic_curves.kraus import check_a1a3_global
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2 - 10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
-        sage: test_a1a3_global(c4,c6,a,a,debug=False)
+        sage: check_a1a3_global(c4,c6,a,a,debug=False)
         False
-        sage: test_a1a3_global(c4,c6,a,0)
+        sage: check_a1a3_global(c4,c6,a,0)
         Elliptic Curve defined by
          y^2 + a*x*y = x^3 + (3784/3*a-24106/3)*x + (1772120/27*a-2790758/9)
          over Number Field in a with defining polynomial x^2 - 10
@@ -517,7 +517,7 @@ def test_a1a3_global(c4, c6, a1, a3, debug=False):
     return E
 
 
-def test_rst_global(c4, c6, r, s, t, debug=False):
+def check_rst_global(c4, c6, r, s, t, debug=False):
     r"""
     Test if the `(r,s,t)`-transform of the standard `c_4,c_6`-model is integral.
 
@@ -536,16 +536,16 @@ def test_rst_global(c4, c6, r, s, t, debug=False):
     EXAMPLES::
 
         sage: # needs sage.rings.number_field
-        sage: from sage.schemes.elliptic_curves.kraus import test_rst_global
+        sage: from sage.schemes.elliptic_curves.kraus import check_rst_global
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^2-10)
         sage: c4 = -60544*a + 385796
         sage: c6 = -55799680*a + 262126328
-        sage: test_rst_global(c4,c6,1/3*a - 133/6, 3/2*a, -89/2*a + 5)
+        sage: check_rst_global(c4,c6,1/3*a - 133/6, 3/2*a, -89/2*a + 5)
         Elliptic Curve defined by
          y^2 + 3*a*x*y + (-89*a+10)*y = x^3 + (a-89)*x^2 + (1202*a-5225)*x + (34881*a-151813)
          over Number Field in a with defining polynomial x^2 - 10
-        sage: test_rst_global(c4,c6,a, 3, -89*a, debug=False)
+        sage: check_rst_global(c4,c6,a, 3, -89*a, debug=False)
         False
     """
     E = c4c6_model(c4,c6).rst_transform(r,s,t)
@@ -633,7 +633,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
             a1 = make_integral(c4/t,P,e)
         a13 = a1**3
         a3 = make_integral((c6+a13**2)/(4*a13),P,2*e)
-        if test_a1a3_local(c4,c6,P,a1,a3):
+        if check_a1a3_local(c4,c6,P,a1,a3):
             return True, a1,a3
         else:
             raise RuntimeError("check_Kraus_local_2 fails")
@@ -643,7 +643,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
             a1 = c4.parent().zero() # 0
         flag, a3 = sqrt_mod_4(c6/8,P)
         if flag:
-            if test_a1a3_local(c4,c6,P,a1,a3):
+            if check_a1a3_local(c4,c6,P,a1,a3):
                 return True, a1,a3
             else:
                 raise RuntimeError("check_Kraus_local_2 fails")
@@ -660,7 +660,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
             if flag:
                 a1sq = a1*a1
                 if (4*a1sq*Px-(a1sq**2-c4)**2).valuation(P) >= 8*e:  # (iii)
-                    if test_a1a3_local(c4,c6,P,a1,a3):
+                    if check_a1a3_local(c4,c6,P,a1,a3):
                         return True, a1, a3
                     else:
                         raise RuntimeError("check_Kraus_local_2 fails")
@@ -731,14 +731,14 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
     if K(2).valuation(P) > 0:
         flag, a1, a3 = check_Kraus_local_2(c4,c6,P,None,True)
         if flag:
-            E = test_a1a3_local(c4,c6,P,a1,a3)
+            E = check_a1a3_local(c4,c6,P,a1,a3)
             if E:
                 return (True, E)
         return (False, None)
     if K(3).valuation(P) > 0:
         flag, b2 = check_Kraus_local_3(c4,c6,P,True)
         if flag:
-            E = test_b2_local(c4,c6,P,b2)
+            E = check_b2_local(c4,c6,P,b2)
             if E:
                 return (True, E)
         return (False, None)
@@ -832,7 +832,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
 
     # test that this b2 value works at all P|3:
     if debug:
-        E = test_b2_global(c4,c6,b2)
+        E = check_b2_global(c4,c6,b2)
         if E:
             print("Using b2=%s gives a model integral at 3:\n%s" % (b2,E.ainvs()))
         else:
@@ -868,7 +868,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
 
     # test that these a1,a3 values work at all P|2:
     if debug:
-        E = test_a1a3_global(c4,c6,a1,a3,debug)
+        E = check_a1a3_global(c4,c6,a1,a3,debug)
         if E:
             print("Using (a1,a3)=(%s,%s) gives a model integral at 2:\n%s" % (a1,a3,E.ainvs()))
         else:
@@ -900,7 +900,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         print("Using (r, s, t)=(%s, %s, %s) should give a global integral model..." % (r,s,t))
 
     # Final computation of the curve E:
-    E = test_rst_global(c4,c6,r,s,t,debug)
+    E = check_rst_global(c4,c6,r,s,t,debug)
     if not E:
         if debug:
             print("Error in check_Kraus_global with combining mod-2 and mod-3 transforms")

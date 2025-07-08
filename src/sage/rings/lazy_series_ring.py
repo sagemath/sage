@@ -2624,6 +2624,82 @@ class LazyLaurentSeriesRing(LazySeriesRing):
 
         return self(coefficients=coeff, valuation=0)
 
+    def polylog(self, s):
+        r"""
+        Return the polylogarithm at ``s`` as an element in ``self``.
+
+        The *polylogarithm* at `s` is the power series in `z`
+
+        .. MATH::
+
+            \mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: L.polylog(1)
+            z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
+            sage: -log(1 - z)
+            z + 1/2*z^2 + 1/3*z^3 + 1/4*z^4 + 1/5*z^5 + 1/6*z^6 + 1/7*z^7 + O(z^8)
+            sage: L.polylog(2)
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+            sage: (-log(1-z) / z).integral()
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + O(z^7)
+            sage: L.polylog(0)
+            z + z^2 + z^3 + O(z^4)
+            sage: L.polylog(-1)
+            z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + O(z^8)
+            sage: z / (1-z)^2
+            z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + 7*z^7 + O(z^8)
+            sage: L.polylog(-2)
+            z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
+            sage: z * (1 + z) / (1 - z)^3
+            z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
+
+        We can compute the Eulerian numbers::
+
+            sage: [L.polylog(-n) * (1-z)^(n+1) for n in range(1, 6)]
+            [z + O(z^8),
+             z + z^2 + O(z^8),
+             z + 4*z^2 + z^3 + O(z^8),
+             z + 11*z^2 + 11*z^3 + z^4 + O(z^8),
+             z + 26*z^2 + 66*z^3 + 26*z^4 + z^5 + O(z^8)]
+
+        REFERENCES:
+
+        - :wikipedia:`Polylogarithm`
+        """
+        if not s:
+            coeff_stream = Stream_exact([], constant=self.base_ring().one(), order=1)
+            return self.element_class(self, coeff_stream)
+        R = self.base_ring()
+        return self(coefficients=lambda n: R(n) ** -s, valuation=1)
+
+    def dilog(self):
+        r"""
+        Return the dilogarithm as an element in ``self``.
+
+        .. SEEALSO::
+
+            :meth:`polylog`
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: L.dilog()
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+            sage: L.polylog(2)
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+
+            sage: L.<x> = LazyLaurentSeriesRing(SR)
+            sage: L.dilog()
+            x + 1/4*x^2 + 1/9*x^3 + 1/16*x^4 + 1/25*x^5 + 1/36*x^6 + 1/49*x^7 + O(x^8)
+
+        REFERENCES:
+
+        - :wikipedia:`Dilogarithm`
+        """
+        return self.polylog(2)
 
 ######################################################################
 
@@ -3977,9 +4053,7 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             sage: L.has_coerce_map_from(QQ)
             False
         """
-        if self.base_ring().has_coerce_map_from(S):
-            return True
-        return False
+        return self.base_ring().has_coerce_map_from(S)
 
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, coefficients=None):
         r"""
@@ -4181,6 +4255,44 @@ class LazyDirichletSeriesRing(LazySeriesRing):
             Univariate Polynomial Ring in x over Integer Ring
         """
         return [R.one()]
+
+    def polylogarithm(self, z):
+        r"""
+        Return the polylogarithm at `z` considered as a Dirichlet series
+        in ``self``.
+
+        The *polylogarithm* at `z` is the Dirichlet series
+
+        .. MATH::
+
+            \mathrm{Li}_s(z) = \sum_{k=1}^{\infty} \frac{z^k}{k^s}.
+
+        EXAMPLES::
+
+            sage: R.<z> = ZZ[]
+            sage: L = LazyDirichletSeriesRing(R, 's')
+            sage: L.polylogarithm(z)
+            z + z^2/2^s + z^3/3^s + z^4/4^s + z^5/5^s + z^6/6^s + z^7/7^s + O(1/(8^s))
+
+        At `z = 1`, this is the Riemann zeta function::
+
+            sage: L.polylogarithm(1)
+            1 + 1/(2^s) + 1/(3^s) + 1/(4^s) + 1/(5^s) + 1/(6^s) + 1/(7^s) + O(1/(8^s))
+
+        At `z = -1`, this is the negative of the Dirichlet eta function::
+
+            sage: -L.polylogarithm(-1)
+            1 - 1/(2^s) + 1/(3^s) - 1/(4^s) + 1/(5^s) - 1/(6^s) + 1/(7^s) + O(1/(8^s))
+
+        REFERENCES:
+
+        - :wikipedia:`Polylogarithm`
+        """
+        if self._arity != 1:
+            raise ValueError("must has arity 1")
+        return self(coefficients=lambda n: z ** n)
+
+    polylog = polylogarithm
 
 
 def _skip_leading_zeros(iterator):
