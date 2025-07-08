@@ -19349,7 +19349,7 @@ cdef class Matrix(Matrix1):
         M = self_permuted.matrix_from_rows(row_profile_self_permuted)
         
         J_L = None
-
+        
         for l in range(math.ceil(math.log(degree,2)) + 1):
             L = pow(2,l)
             # adding 2^l to each degree
@@ -19366,16 +19366,19 @@ cdef class Matrix(Matrix1):
                 J_L = J
             else:
                 J_L = J_L * J_L
+            
             M = M.stack(M*J_L,subdivide=False)
             
             # sort rows of M, find profile, translate to k (indices of full krylov matrix)
             M.permute_rows(k_perm)
+            
             row_profile_M = M.row_rank_profile()
+            
             r = len(row_profile_M)
             row_profile_self = sorted([k[k_perm(i+1)-1] for i in row_profile_M],key=lambda x: (shift[x[0]]+x[1],x[0]))
             
             # calculate new M for return value or next loop
-            M = matrix([M.row(i) for i in row_profile_M])
+            M = M.matrix_from_rows(row_profile_M)
         
         col_profile = M.col_rank_profile()
         
@@ -19383,12 +19386,12 @@ cdef class Matrix(Matrix1):
             return tuple(row_profile_self), M, col_profile
             
         # convert c,d to actual position in striped Krylov matrix
-        phi = lambda c,d : sum(min(max(shift[c] - shift[i] + d + (i < c and shift[i] <= shift[c] + degree),0),degree+1) for i in range(len(shift)))
+        phi = lambda c,d : sum(min(max(shift[c] - shift[i] + d + (i < c and shift[i] <= shift[c] + degree),0),degree+1) for i in range(m))
         row_profile_K = [phi(*row) for row in row_profile_self]
         
         return tuple(row_profile_K), M, col_profile
 
-    def linear_interpolation_basis(self, J, degree, var_name, shift=None):
+    def linear_interpolation_basis(self, J, degree, var_name, shift=None, polynomial_output=True):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
 
@@ -19449,42 +19452,73 @@ cdef class Matrix(Matrix1):
                 idx_p += 1
         
         C = pivot.matrix_from_columns(col_profile)
+        
         D = matrix(D_rows)
         
         relation = D*C.inverse()
         
-        coeffs_map = {}
-        for i in range(m):
-            coeffs_map[i] = {}
-            for j in range(m):
-                coeffs_map[i][j] = {}
+        if polynomial_output:
+            # construct polynomial matrix - potentially costly at polynomial construction stage for extension fields
+            coeffs_map = [[{} for _ in range(m)] for _ in range(m)]
+            # add identity part of basis
+            for i in range(m):
+                coeffs_map[i][i][degree_c[i]] = poly_ring.base_ring().one()
+            # add relation part of basis
+            for col in range(relation.ncols()):
+                for row in range(m):
+                    coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col],poly_ring.base_ring().zero()) - relation[row,col]
+            # construct rows
+            basis_rows = [[None for _ in range(m)] for _ in range(m)]
+            if poly_ring.base_ring().degree() <= 1 or m*m > poly_ring.base_ring().order():
+                # if base field is large, don't bother caching monomials
+                # or if polynomial construction is efficient (order = 1)
+                for row in range(m):
+                    for col in range(m):
+                        if not coeffs_map[row][col]:
+                            basis_rows[row][col] = poly_ring.base_ring().zero()
+                        else:
+                            # construct a small polynomial (less costly), then shift
+                            mindeg = min(coeffs_map[row][col].keys())
+                            maxdeg = max(coeffs_map[row][col].keys())
+                            entries = [poly_ring.base_ring().zero()] * (maxdeg-mindeg+1)
+                            for deg, coeff in coeffs_map[row][col].items():
+                                entries[deg-mindeg] = coeff
+                            basis_rows[row][col] = poly_ring(entries).shift(mindeg)
+            else:
+                # if base field is small, cache monomials to minimise number of constructions
+                monomial_cache = {}
+                for row in range(m):
+                    for col in range(m):
+                        if not coeffs_map[row][col]:
+                            basis_rows[row][col] = poly_ring.zero()
+                        elif len(coeffs_map[row][col]) == 1:
+                            # monomial case
+                            deg, coeff = coeffs_map[row][col].popitem()
+                            if coeff not in monomial_cache:
+                                monomial_cache[coeff] = poly_ring(coeff)
+                            basis_rows[row][col] = monomial_cache[coeff].shift(deg)
+                        else:
+                            # dense case
+                            mindeg = min(coeffs_map[row][col].keys())
+                            maxdeg = max(coeffs_map[row][col].keys())
+                            entries = [poly_ring.base_ring().zero()] * (maxdeg-mindeg+1)
+                            for deg, coeff in coeffs_map[row][col].items():
+                                entries[deg-mindeg] = coeff
+                            basis_rows[row][col] = poly_ring(entries).shift(mindeg)
+            # convert to matrix
+            output = matrix(poly_ring,basis_rows)
+        else:
+            # expected output is expanded matrix
+            row_width = m * (max(degree_c) + 1)
+            basis_rows = [[poly_ring.base_ring().zero()]*row_width for i in range(m)]
+            for i in range(m):
+                basis_rows[i][i+degree_c[i]*m] = poly_ring.base_ring().one()
+            for col in range(relation.ncols()):
+                for row in range(m):
+                    basis_rows[row][c[col]+d[col]*m] -= relation[row,col]
+            output = matrix(poly_ring.base_ring(),basis_rows)
         
-        for i in range(m):
-            coeffs_map[i][i][degree_c[i]] = poly_ring.base_ring().one()
-        
-        for col in range(relation.ncols()):
-            for row in range(m):
-                coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col],poly_ring.base_ring().zero()) - relation[row][col]
-        
-        basis_rows = [[None for _ in range(m)] for _ in range(m)]
-        
-        monomial_cache = {}
-        for row in range(m):
-            for col in range(m):
-                if not coeffs_map[row][col]:
-                    basis_rows[row][col] = poly_ring.zero()
-                elif len(coeffs_map[row][col]) == 1:
-                    deg, coeff = coeffs_map[row][col].popitem()
-                    if coeff not in monomial_cache:
-                        monomial_cache[coeff] = poly_ring(coeff)
-                    basis_rows[row][col] = monomial_cache[coeff].shift(deg)
-                else:
-                    coeffs = [poly_ring.base_ring().zero()] * (max(coeffs_map[row][col].keys()) + 1)
-                    for deg, coeff in coeffs_map[row][col].items():
-                        coeffs[deg] = coeff
-                    basis_rows[row][col] = poly_ring(coeffs)
-        
-        return matrix(basis_rows)
+        return output
     
     # a limited number of access-only properties are provided for matrices
     @property
