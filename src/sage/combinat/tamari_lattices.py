@@ -226,8 +226,18 @@ def GeneralizedTamariLattice(a, b, m=1):
     def covers(p):
         return [swap(p, i, m) for i in range(len(p) - 1)
                 if not p[i] and p[i + 1]]
+
+    # TODO check the exact best categories to use
+    if m == 0:  # generalized Dyck lattices
+        cat = FiniteLatticePosets().Distributive()
+    elif m == 1 and a == b + 1:  # Tamari lattices
+        cat = FiniteLatticePosets().Trim().CongruenceUniform()
+    else:
+        cat = FiniteLatticePosets()
+
     return LatticePoset({p: covers(p)
-                         for p in paths_in_triangle(a, b, a, b)}, check=False)
+                         for p in paths_in_triangle(a, b, a, b)},
+                        check=False, category=cat)
 
 
 def TamariLattice(n, m=1):
@@ -264,12 +274,7 @@ def TamariLattice(n, m=1):
 
     - [BMFPR2011]_
     """
-    T = GeneralizedTamariLattice(m * n + 1, n, m)
-    if m == 1:
-        T._refine_category_(FiniteLatticePosets().Trim().CongruenceUniform())
-    else:
-        T._refine_category_(FiniteLatticePosets().Semidistributive())
-    return T
+    return GeneralizedTamariLattice(m * n + 1, n, m)
 
 
 # a variation : the Dexter meet-semilattices
