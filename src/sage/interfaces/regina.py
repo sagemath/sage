@@ -249,6 +249,8 @@ class Regina(ExtraTabCompletion, Interface):
             <class 'regina.engine.Cyclotomic'>
         """
         if not self._regina_globals:
+            from sage.features.interfaces import Regina
+            Regina().module.require()
             import regina
             self._namespace = regina.engine
             d = self._namespace.__dict__

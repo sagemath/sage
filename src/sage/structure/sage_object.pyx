@@ -987,11 +987,33 @@ cdef class SageObject:
         return self._interface_init_(gp)
 
     def _regina_(self, G=None):
+        r"""
+        Convert ``self`` to an interface element for Regina.
+
+        EXAMPLES::
+
+            sage: type(1.2._regina_()._inst)   # optional regina
+            <class 'float'>
+        """
         if G is None:
             import sage.interfaces.regina
             G = sage.interfaces.regina.regina
         return self._interface_(G)
 
     def _regina_init_(self):
+        r"""
+        Convert ``self`` to a string representation for the Regina
+        interface.
+
+        EXAMPLES::
+
+            sage: # optional regina
+            sage: (~7)._regina_init_()
+            '1/7'
+            sage: t = regina((~7)._regina_init_()); t
+            0.14285714285714285
+            sage: type(t), type(t._inst)
+            (<class 'sage.interfaces.regina.ReginaElement'>, <class 'float'>)
+        """
         from sage.interfaces.regina import regina
         return self._interface_init_(regina)

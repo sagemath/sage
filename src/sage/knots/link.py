@@ -4822,23 +4822,6 @@ class Link(SageObject):
         Return an isotopic Link with less crossings or ``None`` if the
         calculation was not successful.
 
-        INPUT:
-
-          - ``exhaustive`` -- boolean (default ``True``) if set to
-            ``False`` a faster but less successful algorithm is
-            used; this does not apply to multicomponent links (here
-            ``exhaustive=False`` is automatically set)
-          - ``height`` -- integer (default ``1``) the maximum number
-            of additional crossings to allow beyond the number of
-            crossings originally present in this diagram, or a
-            negative number if this should not be bounded; this
-            does not apply if `exhaustive=False``
-            argument is not applied if ``exhaustive=False``
-          - ``threads`` -- integer (default ``1``) the number of
-            threads to use. If this is 1 or smaller then the
-            routine will run single-threaded; this
-            does not apply if `exhaustive=False``
-
         .. NOTE::
 
             This method is taken from the Regina methods ``simplifyExhaustive``
@@ -4847,6 +4830,23 @@ class Link(SageObject):
             the optional package ``regina``. More information on the usage of
             the method can be found
             `here <https://regina-normal.github.io/engine-docs/classregina_1_1Link.html#a60fe044c436e5e1a8861de2ccb106e1c>`__.
+
+        INPUT:
+
+        - ``exhaustive`` -- boolean (default ``True``) if set to
+          ``False`` a faster but less successful algorithm is
+          used; this does not apply to multicomponent links (here
+          ``exhaustive=False`` is automatically set)
+        - ``height`` -- integer (default ``1``) the maximum number
+          of additional crossings to allow beyond the number of
+          crossings originally present in this diagram, or a
+          negative number if this should not be bounded; this
+          does not apply if `exhaustive=False``
+          argument is not applied if ``exhaustive=False``
+        - ``threads`` -- integer (default ``1``) the number of
+          threads to use. If this is 1 or smaller then the
+          routine will run single-threaded; this
+          does not apply if `exhaustive=False``
 
         OUTPUT: an instance of class :class:`Link` or ``None``
 

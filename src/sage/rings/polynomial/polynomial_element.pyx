@@ -7303,8 +7303,19 @@ cdef class Polynomial(CommutativePolynomial):
             (<regina.Polynomial: x^3 + 3 x + 1/5>,
             <class 'sage.interfaces.regina.ReginaElement'>,
             <class 'regina.engine.Polynomial'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral or rational polynomials available in Regina
         """
-        return regina.Polynomial(list(self))
+        try:
+            p = self.change_ring(ZZ)
+        except TypeError:
+            try:
+                p = self.change_ring(QQ)
+            except TypeError:
+                raise TypeError('only integral or rational polynomials available in Regina')
+        return regina.Polynomial(list(p))
 
     ######################################################################
 

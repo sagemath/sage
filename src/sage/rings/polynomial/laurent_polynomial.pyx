@@ -613,11 +613,17 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             (<regina.Laurent: 3 x + 5 + x^-3>,
             <class 'sage.interfaces.regina.ReginaElement'>,
             <class 'regina.engine.Laurent'>)
+            sage: regina(p.change_ring(CC))                      # optional regina
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral Laurent polynomials available in Regina
         """
         from sage.rings.integer_ring import ZZ
-        if self.base_ring() != ZZ:
-            raise NotImplementedError('only integral Laurent polynomials available in Regina!')
-        return regina.Laurent(int(self.valuation()), list(self))
+        try:
+            p = self.change_ring(ZZ)
+        except TypeError:
+            raise TypeError('only integral Laurent polynomials available in Regina')
+        return regina.Laurent(int(p.valuation()), list(p))
 
     def _latex_(self):
         r"""

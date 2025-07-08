@@ -379,19 +379,31 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         EXAMPLES::
 
+            sage: # optional regina
             sage: R.<u, v> = LaurentPolynomialRing(ZZ)
             sage: p = u*v^(-3) + 3*v*u^(-1) + 5*u - 7
-            sage: rp = regina(p); (rp, type(rp), type(rp._inst)) # optional regina
+            sage: rp = regina(p); (rp, type(rp), type(rp._inst))
             (<regina.Laurent2: 5 x + x y^-3 - 7 + 3 x^-1 y>,
             <class 'sage.interfaces.regina.ReginaElement'>,
             <class 'regina.engine.Laurent2'>)
+            sage: regina(p.change_ring(CC))
+            Traceback (most recent call last):
+            ...
+            TypeError: only integral Laurent polynomials available in Regina
+            sage: R.<u, v, w> = LaurentPolynomialRing(ZZ)
+            sage: regina(R.an_element())
+            Traceback (most recent call last):
+            ...
+            TypeError: only two-variate Laurent polynomials available in Regina
         """
         from sage.rings.integer_ring import ZZ
-        if self.base_ring() != ZZ:
-            raise NotImplementedError('only integral Laurent polynomials available in Regina!')
-        if self.parent().ngens() != 2:
-            raise NotImplementedError('only two-variate Laurent polynomials available in Regina!')
-        pl = [(k[0], k[1], v) for k, v in self.monomial_coefficients().items()]
+        try:
+            p = self.change_ring(ZZ)
+        except TypeError:
+            raise TypeError('only integral Laurent polynomials available in Regina')
+        if p.parent().ngens() > 2:
+            raise TypeError('only two-variate Laurent polynomials available in Regina')
+        pl = [(k[0], k[1], v) for k, v in p.monomial_coefficients().items()]
         return regina.Laurent2(pl)
 
     def _latex_(self):

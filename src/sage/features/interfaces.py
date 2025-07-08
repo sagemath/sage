@@ -122,7 +122,24 @@ class Regina(InterfaceFeature):
 
     @staticmethod
     def __classcall__(cls):
-        return InterfaceFeature.__classcall__(cls, 'regina', 'sage.interfaces.regina')
+        r"""
+        TESTS::
+
+            sage: from sage.features.interfaces import Regina
+            sage: F = Regina()
+            sage: F.module.hide()
+            sage: regina(~7)
+            Traceback (most recent call last):
+            ...
+            FeatureNotPresentError: sage.interfaces.regina is not available.
+            Feature `sage.interfaces.regina` is hidden.
+            Use method `unhide` to make it available again.
+            sage: F.module.unhide()
+        """
+        from sage.features.join_feature import JoinFeature
+        interface = 'sage.interfaces.regina'
+        mod = JoinFeature(interface, (PythonModule('regina'), PythonModule(interface)))
+        return InterfaceFeature.__classcall__(cls, 'regina', mod)
 
 
 # The following are provided by external software only (no SPKG)
