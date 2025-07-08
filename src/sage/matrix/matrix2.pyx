@@ -19391,6 +19391,186 @@ cdef class Matrix(Matrix1):
         
         return tuple(row_profile_K), M, col_profile
 
+    def krylov_rank_profile_early_exit(self, J, degree, shift=None, output_pairs=False):
+        r"""
+        Compute the rank profile (row and column) of the striped Krylov matrix
+        built from ``self`` and matrix `J`.
+
+        INPUT:
+
+        - ``J`` -- square matrix used in the Krylov construction.
+        - ``degree`` -- maximum power of J in Krylov matrix.
+        - ``shift`` -- list of integers (optional): priority row shift.
+
+        OUTPUT:
+
+        - A tuple (row_profile, pivot_matrix, column_profile):
+            * row_profile: list of the first r row indices in the striped Krylov matrix `K` corresponding to independent rows
+            * pivot: the submatrix of `K` given by those rows
+            * column_profile: list of the first r independent column indices in ``pivot_matrix``
+          where r is the rank of `K`.
+        
+        EXAMPLES:
+        
+        sage: R.<x> = GF(97)[]
+        sage: E = matrix([[27,49,29],[50,58,0],[77,10,29]])
+        sage: E
+        [27 49 29]
+        [50 58  0]
+        [77 10 29]
+        sage: J = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
+        sage: J
+        [0 1 0]
+        [0 0 1]
+        [0 0 0]
+        sage: E.striped_krylov_matrix(J,3)
+        [27 49 29]
+        [50 58  0]
+        [77 10 29]
+        [ 0 27 49]
+        [ 0 50 58]
+        [ 0 77 10]
+        [ 0  0 27]
+        [ 0  0 50]
+        [ 0  0 77]
+        [ 0  0  0]
+        [ 0  0  0]
+        [ 0  0  0]
+        sage: E.krylov_rank_profile(J,3)
+        (
+                   [27 49 29]
+                   [50 58  0]
+        (0, 1, 3), [ 0 27 49], (0, 1, 2)
+        )
+        sage: E.striped_krylov_matrix(J,3,[0,3,6])
+        [27 49 29]
+        [ 0 27 49]
+        [ 0  0 27]
+        [ 0  0  0]
+        [50 58  0]
+        [ 0 50 58]
+        [ 0  0 50]
+        [ 0  0  0]
+        [77 10 29]
+        [ 0 77 10]
+        [ 0  0 77]
+        [ 0  0  0]
+        sage: E.krylov_rank_profile(J,3,[0,3,6])
+        (
+                   [27 49 29]
+                   [ 0 27 49]
+        (0, 1, 2), [ 0  0 27], (0, 1, 2)
+        )
+        sage: E.striped_krylov_matrix(J,3,[3,0,2])
+        [50 58  0]
+        [ 0 50 58]
+        [ 0  0 50]
+        [77 10 29]
+        [27 49 29]
+        [ 0  0  0]
+        [ 0 77 10]
+        [ 0 27 49]
+        [ 0  0 77]
+        [ 0  0 27]
+        [ 0  0  0]
+        [ 0  0  0]
+        sage: E.krylov_rank_profile(J,3,[3,0,2])
+        (
+                   [50 58  0]
+                   [ 0 50 58]
+        (0, 1, 2), [ 0  0 50], (0, 1, 2)
+        )
+        """
+        from sage.matrix.constructor import matrix
+        import math
+        from sage.combinat.permutation import Permutation
+        
+        m = self.nrows()
+        
+        if m == 0:
+            return (),self,()
+        
+        # calculate row profile of self, with shift applied
+        self_permutation = Permutation(sorted([i+1 for i in range(m)],key=lambda x:(shift[x-1],x-1)))
+        
+        self_permuted = self.with_permuted_rows(self_permutation)
+        row_profile_self_permuted = self_permuted.row_rank_profile()
+        row_profile_self = [(self_permutation(i+1)-1,0) for i in row_profile_self_permuted]
+        
+        exhausted = matrix.zero(self.base_ring(), 0, self.ncols())
+        row_profile_exhausted = []
+        excluded_rows = set()
+        
+        r = len(row_profile_self)
+        
+        if r == 0:
+            return (),self.matrix_from_rows([]),()
+        
+        M = self_permuted.matrix_from_rows(row_profile_self_permuted)
+        
+        J_L = None
+        
+        for l in range(math.ceil(math.log(degree,2)) + 1):
+            L = pow(2,l)
+            # adding 2^l to each degree
+            row_extension = [(x[0],x[1] + L) for x in row_profile_self if x[1] + L <= degree]
+            if len(row_extension) == 0:
+                break
+            
+            # concatenate two sequences (order preserved)
+            k = row_profile_exhausted + row_profile_self + row_extension
+            
+            # calculate sorting permutation, sort k by (shift[c]+d, c)
+            k_perm = Permutation(sorted([i+1 for i in range(len(k))],key=lambda x: (shift[k[x-1][0]] + k[x-1][1],k[x-1][0])))
+            
+            # fast calculation of rows formed by indices in k
+            if J_L is None:
+                J_L = J
+            else:
+                J_L = J_L * J_L
+            
+            M = matrix.block([[exhausted],[M],[M*J_L]],subdivide=False)
+            
+            # sort rows of M, find profile, translate to k (indices of full krylov matrix)
+            M.permute_rows(k_perm)
+            
+            row_profile_M = M.row_rank_profile()
+            r = len(row_profile_M)
+            
+            if r == self.ncols():
+                tail = list(range(row_profile_M[-1]+1,M.nrows()))
+                excluded_rows.update(set([k[k_perm(i+1)-1][0] for i in tail if i < len(k)]))
+                
+                xmi = [i for i in row_profile_M if k[k_perm(i+1)-1][0] in excluded_rows]
+                imi = [i for i in row_profile_M if k[k_perm(i+1)-1][0] not in excluded_rows]
+                
+                row_profile_exhausted = [k[k_perm(i+1)-1] for i in xmi]
+                row_profile_self = [k[k_perm(i+1)-1] for i in imi]
+                
+                exhausted = M.matrix_from_rows(xmi)
+                M = M.matrix_from_rows(imi)
+            else:
+                row_profile_self = [k[k_perm(i+1)-1] for i in row_profile_M]
+                # calculate new M for return value or next loop
+                M = M.matrix_from_rows(row_profile_M)
+        if exhausted.nrows() != 0:
+            k = row_profile_exhausted + row_profile_self
+            M = exhausted.stack(M)
+            k_perm = Permutation(sorted([i+1 for i in range(len(k))],key=lambda x: (shift[k[x-1][0]] + k[x-1][1],k[x-1][0])))
+            
+            M.permute_rows(k_perm)
+            row_profile_self = [k[k_perm(i+1)-1] for i in range(len(k))]
+        col_profile = M.col_rank_profile()
+        
+        if output_pairs:
+            return tuple(row_profile_self), M, col_profile
+            
+        # convert c,d to actual position in striped Krylov matrix
+        phi = lambda c,d : sum(min(max(shift[c] - shift[i] + d + (i < c and shift[i] <= shift[c] + degree),0),degree+1) for i in range(m))
+        row_profile_K = [phi(*row) for row in row_profile_self]
+        
+        return tuple(row_profile_K), M, col_profile
+
     def linear_interpolation_basis(self, J, degree, var_name, shift=None, polynomial_output=True):
         r"""
         Construct a linear interpolant basis for (``self``,`J`) in `s`-Popov form.
