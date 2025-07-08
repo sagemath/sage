@@ -1940,8 +1940,8 @@ class FinitePosets(CategoryWithAxiom):
                 ideals = [Set(self.order_ideal(antichain))
                           for antichain in self.antichains()]
                 T = LatticePoset((ideals, attrcall("issubset")),
-                                 facade=facade)
-                T._refine_category_(FiniteLatticePosets().Distributive())
+                                 facade=facade,
+                                 category=FiniteLatticePosets().Distributive())
                 return T
 
             from sage.misc.cachefunc import cached_function
@@ -1954,8 +1954,8 @@ class FinitePosets(CategoryWithAxiom):
             def compare(a, b):
                 return all(is_above(a, xb) for xb in b)
 
-            T = LatticePoset((antichains, compare), facade=facade)
-            T._refine_category_(FiniteLatticePosets().Distributive())
+            T = LatticePoset((antichains, compare), facade=facade,
+                             category=FiniteLatticePosets().Distributive())
             return T
 
         @abstract_method(optional=True)
