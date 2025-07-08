@@ -126,11 +126,7 @@ sagelib-clean:
 	fi
 # Don't use "meson setup --wipe "$$d";" due to https://github.com/sagemath/sage/pull/39030#issuecomment-3021583924
 	@echo "Wiping meson build directories..."
-	@for d in "$(SAGE_ROOT)"/build/cp[0-9]*; do \
-		if [ -d "$$d" ]; then \
-			rm -rf "$$d"; \
-		fi; \
-	done
+	rm -rf "$(SAGE_ROOT)/build/sage-distro"
 
 sage_docbuild-clean:
 	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
