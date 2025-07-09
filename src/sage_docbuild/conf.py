@@ -28,11 +28,19 @@ from sphinx.transforms import SphinxTransform
 from sphinx.util.docutils import SphinxDirective
 
 import sage.version
-from sage.env import MATHJAX_DIR, PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
+from sage.env import PPLPY_DOCS, SAGE_DOC, SAGE_DOC_SRC
 from sage.features.sphinx import JupyterSphinx
 from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
 from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
+
+# Import MathJax configuration from the build system
+try:
+    from sage_docbuild.mathjax_config import MATHJAX_DIR
+except ImportError:
+    # Fallback to default location if config file is not available
+    import os
+    MATHJAX_DIR = os.path.join(os.environ.get('SAGE_LOCAL', '/usr/local'), 'share', 'mathjax')
 
 # ---------------------
 # General configuration

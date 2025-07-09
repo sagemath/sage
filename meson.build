@@ -218,4 +218,37 @@ run_command(create_files_command, check: true)
 
 root = meson.current_source_dir()
 
+# MathJax detection logic
+# Check for system-wide MathJax installation
+mathjax_dir = ''
+mathjax_found = false
+
+# Check common system locations for MathJax
+foreach dir : ['/usr/share/mathjax', '/usr/local/share/mathjax']
+  if not mathjax_found and fs.is_file(dir / 'tex-chtml.js')
+    mathjax_dir = dir
+    mathjax_found = true
+    message('Found MathJax at: ' + dir)
+  endif
+endforeach
+
+# If not found, use the bundled/prefix location
+if not mathjax_found
+  mathjax_dir = get_option('prefix') / 'share' / 'mathjax' / 'mathjax'
+  message('Using bundled MathJax location: ' + mathjax_dir)
+endif
+
+# Generate the configuration template
+mathjax_config_data = configuration_data()
+mathjax_config_data.set('MATHJAX_DIR', mathjax_dir)
+
+# Create config file in the build directory
+configure_file(
+  input: 'src/sage_docbuild/mathjax_config.py.in',
+  output: 'mathjax_config.py',
+  configuration: mathjax_config_data,
+  install: true,
+  install_dir: get_option('prefix') / 'lib' / 'python' + py.language_version() / 'site-packages' / 'sage_docbuild'
+)
+
 subdir('src')

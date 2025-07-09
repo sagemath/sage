@@ -228,7 +228,6 @@ POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR")
 
 # installation directories for various packages
 JMOL_DIR = var("JMOL_DIR")
-MATHJAX_DIR = var("MATHJAX_DIR", join(SAGE_SHARE, "mathjax"))
 MTXLIB = var("MTXLIB", join(SAGE_SHARE, "meataxe"))
 THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
