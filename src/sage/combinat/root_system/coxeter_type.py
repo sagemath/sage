@@ -30,9 +30,9 @@ from sage.structure.sage_object import SageObject
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from sage.misc.lazy_import import lazy_import
 
-
 lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
 lazy_import('sage.combinat.root_system.type_hyperbolic', 'CoxeterType_Hyperbolic')
+
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
     """
