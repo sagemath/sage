@@ -1682,6 +1682,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             raise ValueError("%s is an unknown region of the cone!" % region)
         if region == "interior" and self.dim() < self.lattice_dim():
             return False
+        if self.is_trivial():
+            # We always have whole cone = relative interior = {0} for
+            # the trivial cone, and in addition we have interior = {0}
+            # when the ambient space is trivial (the preceding "if"
+            # ensures this).
+            return point.is_zero()
+
         need_strict = region.endswith("interior")
         M = self.dual_lattice()
         for c in self._PPL_cone().minimized_constraints():
