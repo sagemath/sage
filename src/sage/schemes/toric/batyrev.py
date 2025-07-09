@@ -1,26 +1,10 @@
-#!/usr/bin/env sage -python
-# IMPORTANT: Place this file outside the Sage source tree (e.g., in a separate project folder).
-# Run with Sage's Python: `sage -python batyrev.py` or import in a Sage session after cd into the directory.
-import sys
-if 'sage' not in sys.executable.lower():
-    sys.exit("Error: run with Sage's Python (e.g. `sage -python batyrev.py`).")
-import sys
-# Ensure running under Sage Python
-if 'sage' not in sys.executable.lower():
-    sys.exit("Error: Please run this script using Sage's Python (e.g. via `./batyrev.py` or `sage -python batyrev.py`).")
-
-r"""
-Library for Batyrev's construction of smooth complete toric varieties of Picard rank 3. [Batyrev1991]
-TODO: Batyrev's construction for 18 toric Fano 4-folds [Batyrev1999]
-TODO: Batyrev's construction for 123 toric Fano 4-folds [Batyrev1999]
-"""
-
 
 from sage.structure.sage_object import SageObject
 
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
-from sage.geometry.fan import Fan
+from sage.geometry.cone import Cone
+from sage.geometry.fan import Fan, FaceFan
 from sage.geometry.lattice_polytope import LatticePolytope
 from sage.geometry.toric_lattice import ToricLattice
 from sage.rings.integer_ring import ZZ
@@ -30,110 +14,221 @@ from sage.schemes.toric.variety import (DEFAULT_PREFIX,
                                         ToricVariety,
                                         normalize_names)
 
-# from sage.schemes.toric.fano_variety import CPRFanoToricVariety AL: so far, seems not used in this work
+from sage.categories.fields import Fields
+_Fields = Fields()
 
 
 
-class BatyrevToricFactory(SageObject):
+# TODO: add the method to fix a basis of the Picard group, and express divisors in this basis
+class SmoothFanoToricVariety_field(ToricVariety_field):
     r"""
-    The methods of this class construct Batyrev' classification of smooth and complete toric varieties.`
+    Construct a Fano smooth toric variety from a reflexive polytope.
+
+    INPUT:
+    - ``P`` -- reflexive polytope
+
+    - ``fan`` -- rational polyhedral fan subdividing the face fan of
+      ``Delta_polar``
+
+    - ``coordinate_points`` -- list of indices of points of ``Delta_polar``
+      used for rays of ``fan``
+
+    - ``coordinate_names`` -- names of the variables of the coordinate ring in
+      the format accepted by
+      :func:`~sage.schemes.toric.variety.normalize_names`
+
+    - ``coordinate_name_indices`` -- indices for indexed variables,
+      if ``None``, will be equal to ``coordinate_points``
+
+    - ``base_field`` -- base field of the smooth toric variety
+
+    OUTPUT: :class:`smooth Fano toric variety <SmoothFanoToricVariety_field>`
     """
 
-    _check = True # AL: what does this do?
-
-    def __init__(self):
-        self.toric_varieties_rays_cones = {}
-
-    def _make_ToricVariety(self, name, coordinate_names, base_ring):
+    def __init__(self, Delta_polar, fan, coordinate_points, point_to_ray,
+                 coordinate_names, coordinate_name_indices, base_field):
         r"""
-        Construct a toric variety and cache the result.
+        See :class:`SmoothFanoToricVariety_field` for documentation.
+
+        Use ``SmoothFanoToricVariety`` to construct a smooth Fano toric variety.
+
+        TESTS:
+
+            sage: 
+        """
+        self._Delta_polar = Delta_polar
+        self._coordinate_points = tuple(coordinate_points)
+        self._point_to_ray = point_to_ray # AL: I may want to drop this later, 
+        if coordinate_name_indices is None:
+            coordinate_name_indices = coordinate_points
+        super().__init__(fan, coordinate_names, 
+                         coordinate_name_indices, base_field)
+        
+        # TODO: the _latex_ and _repr_ methods
+
+
+    def change_ring(self, F):
+        r"""
+        Return a smooth Fano toric variety over field ``F``, otherwise the same
+        as ``self``.
 
         INPUT:
 
-        - ``name`` -- string; one of the pre-defined names in the
-          ``toric_varieties_rays_cones`` data structure
+        - ``F`` -- field
 
-        - ``coordinate_names`` -- string describing the names of the
-          homogeneous coordinates of the toric variety
+        OUTPUT: :class:`smooth Fano toric variety <SmoothFanoToricVariety_field>` over ``F``
 
-        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
-          the toric variety
+        .. NOTE::
 
-        OUTPUT: a :class:`toric variety
-        <sage.schemes.toric.variety.ToricVariety_field>`.
+            There is no need to have any relation between ``F`` and the base
+            field of ``self``. If you do want to have such a relation, use
+            :meth:`base_extend` instead.
 
         EXAMPLES::
 
-            sage: toric_varieties.A1()           # indirect doctest
-            1-d affine toric variety
         """
-        rays, cones = self.toric_varieties_rays_cones[name]
-        if coordinate_names is None:
-            dict_key = (name, base_ring)
+        if self.base_ring() == F:
+            return self
+        elif F not in _Fields:
+            raise TypeError("need a field to construct a Fano toric variety!"
+                            "\n Got %s" % F)
         else:
-            coordinate_names = normalize_names(coordinate_names, len(rays),
-                                               DEFAULT_PREFIX)
-            dict_key = (name, base_ring) + tuple(coordinate_names)
-        if dict_key not in self.__dict__:
-            fan = Fan(cones, rays, check=self._check)
-            self.__dict__[dict_key] = \
-                ToricVariety(fan,
-                             coordinate_names=coordinate_names,
-                             base_ring=base_ring)
-        return self.__dict__[dict_key]
+            return SmoothFanoToricVariety_field(self._P, self._fan,
+                self._coordinate_points, self._point_to_ray,
+                self.variable_names(), None, F)
+                # coordinate_name_indices do not matter, we give explicit
+                # names for all variables
 
-    def _make_batyrev_matrix(self, P, B, C):
-        p0, p1, p2, p3, p4 = P
-        Cprime = [0] + list(C)
-        R1 = ([1]*p0) + ([1]*p1) + ([-c for c in Cprime]) + ([-(b+1) for b in B]) + ([0]*p4)
-        R2 = ([0]*p0) + ([1]*p1) + ([1]*p2) + ([0]*p3) + ([-1]*p4)
-        R3 = ([0]*p0) + ([0]*p1) + ([1]*p2) + ([1]*p3) + ([0]*p4)
-        R4 = ([0]*p0) + ([-1]*p1) + ([0]*p2) + ([1]*p3) + ([1]*p4)
-        R5 = ([1]*p0) + ([0]*p1) + ([-c for c in Cprime]) + ([-b for b in B]) + ([1]*p4)
-        return matrix(ZZ, [R1, R2, R3, R4, R5])
+    def coordinate_point_to_coordinate(self, point):
+        # TODO: if this is necessary
+        pass
 
-    def add_family(self, name, P, B, C):
+    def coordinate_points(self):
+        r"""
+        Return indices of points of :meth:`Delta_polar` used for coordinates.
+
+        OUTPUT: :class:`tuple` of integers
         """
-        Register a family by its Batyrev parameters P, B, C.
-        P = [p0, p1, p2, p3, p4]
-        B is a list of length p3
-        C is a list of length p2 - 1
+        return self._coordinate_points
+
+    def Delta(self):
+        r"""
+        Return the reflexive polytope <sage.geometry.lattice_polytope.LatticePolytopeClass>` 
+        defining ``self``.
+
+        OUTPUT: 
+        
+        - reflexive :class:`lattice polytope`
+
+        EXAMPLES::
+
         """
-        A = self._make_batyrev_matrix(P, B, C)
-        K = A.right_kernel()
-        rays = [v for v in K.basis()]
-        p0, p1, p2, p3, p4 = P
-        X0 = list(range(p0))
-        X1 = list(range(p0, p0+p1))
-        X2 = list(range(p0+p1, p0+p1+p2))
-        X3 = list(range(p0+p1+p2, p0+p1+p2+p3))
-        X4 = list(range(p0+p1+p2+p3, p0+p1+p2+p3+p4))
-        X5 = X0 + X4
-        primitive_cols = [X0, X1, X2, X3, X5]
-        d = len(rays[0])
-        cones = []
-        from itertools import combinations
-        for combo in combinations(range(len(rays)), d):
-            if any(set(pc) <= set(combo) for pc in primitive_cols):
-                continue
-            cones.append(list(combo))
-        self.toric_varieties_rays_cones[name] = (rays, cones)
+        return self._Delta_polar.polar()
+    
+    def Delta_polar(self):
+        r"""
+        Return polar of :meth:`Delta`.
 
-    def make_variety(self, name, P, B, C, coordinate_names=None, base_ring=QQ):
+        OUTPUT: 
+        
+        - reflexive :class:`lattice polytope`
+
+        EXAMPLES::
+
         """
-        Convenience method: add the family and return its ToricVariety.
-        """
-        self.add_family(name, P, B, C)
-        return self._make_ToricVariety(name, coordinate_names, base_ring)
+        return self._Delta_polar
 
-# # instantiate and register example families
-# btf = BatyrevToricFactory()
-# # rank-3 Fano 3-folds examples
-# btf.add_family('Batyrev_3_26', [2,1,1,1,1], [-2], [])
-# btf.add_family('Batyrev_3_29', [1,1,1,1,1], [2], [])
+def SmoothFanoToricVariety(Delta=None,
+                        Delta_polar=None,
+                        coordinate_points=None,
+                        charts=None,
+                        coordinate_names=None,
+                        names=None,
+                        coordinate_name_indices=None,
+                        make_simplicial=False,
+                        base_ring=None,
+                        base_field=None,
+                        check=True):
+    r"""
+    Construct a CPR-Fano toric variety.
+    """
+    if (Delta is None) == (Delta_polar is None):
+        raise ValueError("exactly one of Delta and Delta_polar must be given")
+    if Delta_polar is None:
+        Delta_polar = Delta.polar()
 
+    # AL: maybe not checking reflexivity here, since we already have a database of smooth reflexive polytopes
+    #     unless the reflexivity check is not expensive here, we can add it for future more general use
+    # if not Delta_polar.is_reflexive():
+    #     raise ValueError("Delta_polar must be reflexive")
 
-if __name__ == '__main__':
-    # simple test
-    X = btf.make_variety('Test', [2,1,1,1,1], [-2], [])
-    print('smooth?', X.is_smooth(), 'rho=', X.picard_number(), 'dim=', X.dimension())
+    # Check/normalize coordinate_points and construct fan rays
+    if coordinate_points is None:
+        coordinate_points = list(range(Delta_polar.nvertices()))
+        if charts is not None:
+            for chart in charts:
+                for point in chart:
+                    if point not in coordinate_points:
+                        coordinate_points.append(point)
+    elif coordinate_points == "vertices":
+        coordinate_points = list(range(Delta_polar.nvertices()))
+    elif coordinate_points == "all":
+        coordinate_points = list(range(Delta_polar.npoints()))
+        coordinate_points.remove(Delta_polar.origin())
+    elif coordinate_points == "all but facets":
+        coordinate_points = Delta_polar.skeleton_points(Delta_polar.dim() - 2)
+    elif isinstance(coordinate_points, str):
+        raise ValueError("unrecognized description of the coordinate points!"
+                         "\nGot: %s" % coordinate_points)
+    elif check:
+        cp_set = set(coordinate_points)
+        if len(cp_set) != len(coordinate_points):
+            raise ValueError(
+                "no repetitions are allowed for coordinate points!\nGot: %s"
+                % coordinate_points)
+        if not cp_set.issuperset(list(range(Delta_polar.nvertices()))):
+            raise ValueError("all %d vertices of Delta_polar must be used "
+                "for coordinates!\nGot: %s"
+                % (Delta_polar.nvertices(), coordinate_points))
+        if Delta_polar.origin() in cp_set:
+            raise ValueError("the origin (point #%d) cannot be used for a "
+                "coordinate!\nGot: %s"
+                % (Delta_polar.origin(), coordinate_points))
+    point_to_ray = {point: n
+                    for n, point in enumerate(coordinate_points)}
+    
+    # This can be simplified if LatticePolytopeClass is adjusted.
+    rays = [Delta_polar.point(p) for p in coordinate_points]
+    # Check/normalize charts and construct the fan based on them.
+    if charts is None:
+        # Start with the face fan
+        fan = FaceFan(Delta_polar)
+    else:
+        # First of all, check that each chart is completely contained in a
+        # single facet of Delta_polar, otherwise they do not form a
+        # subdivision of the face fan of Delta_polar
+        if check:
+            facet_sets = [frozenset(facet.ambient_point_indices())
+                          for facet in Delta_polar.facets()]
+            for chart in charts:
+                is_bad = True
+                for fset in facet_sets:
+                    if fset.issuperset(chart):
+                        is_bad = False
+                        break
+                if is_bad:
+                    raise ValueError(
+                        "%s does not form a chart of a subdivision of the "
+                        "face fan of %s!" % (chart, Delta_polar))
+        # AL: maybe skip this logic
+        cones = [Cone((rays[point_to_ray[point]] for point in chart),
+                      check=check)
+                 for chart in charts]
+        fan = Fan(cones, check=check)
+        if check and not fan.is_complete():
+            raise ValueError("given charts do not form a complete fan!")
+
+    return SmoothFanoToricVariety_field(
+        Delta_polar, fan, coordinate_points,
+        point_to_ray, coordinate_names, coordinate_name_indices, base_ring)
+
