@@ -19537,7 +19537,7 @@ cdef class Matrix(Matrix1):
             row_profile_M = M.row_rank_profile()
             r = len(row_profile_M)
             
-            if r == self.ncols():
+            if r == self.ncols() and l < math.ceil(math.log(degree,2)):
                 tail = list(range(row_profile_M[-1]+1,M.nrows()))
                 excluded_rows.update(set([k[k_perm(i+1)-1][0] for i in tail if i < len(k)]))
                 
@@ -19550,10 +19550,16 @@ cdef class Matrix(Matrix1):
                 exhausted = M.matrix_from_rows(xmi)
                 M = M.matrix_from_rows(imi)
             else:
+                if l == math.ceil(math.log(degree,2)):
+                    row_profile_exhausted = []
+                    exhausted = matrix.zero(self.base_ring(), 0, self.ncols())
                 row_profile_self = [k[k_perm(i+1)-1] for i in row_profile_M]
                 # calculate new M for return value or next loop
                 M = M.matrix_from_rows(row_profile_M)
-        if exhausted.nrows() != 0:
+        if M.nrows() == 0:
+            M = exhausted
+            row_profile_self = row_profile_exhausted
+        elif exhausted.nrows() != 0:
             k = row_profile_exhausted + row_profile_self
             M = exhausted.stack(M)
             k_perm = Permutation(sorted([i+1 for i in range(len(k))],key=lambda x: (shift[k[x-1][0]] + k[x-1][1],k[x-1][0])))
