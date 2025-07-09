@@ -25,12 +25,10 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
-from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.type_hyperbolic import CoxeterType_Hyperbolic
-
-lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
+from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -55,7 +53,12 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         if isinstance(x, CoxeterType):
             return x
 
-        if isinstance(x, (list, tuple)) and (x[0] == "Hyperbolic" or x[0] in hyperbolic_prefix):
+        if (
+            isinstance(x, (list, tuple))
+            and (
+                x[0] == "Hyperbolic" or x[0] in hyperbolic_prefix
+                )
+        ):
             return CoxeterType_Hyperbolic(x)
 
         try:
