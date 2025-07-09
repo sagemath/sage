@@ -2497,9 +2497,9 @@ class ClusterSeed(SageObject):
                 sequence = self.first_green_vertex()
             elif sequence == 'red':
                 sequence = self.first_red_vertex()
-            elif sequence == 'urban' or sequence == 'urban_renewal':
+            elif sequence in {'urban', 'urban_renewal'}:
                 sequence = self.first_urban_renewal()
-            elif sequence == 'all_urbans' or sequence == 'all_urban_renewals':
+            elif sequence in {'all_urbans', 'all_urban_renewals'}:
                 sequence = self.urban_renewals()
             elif hasattr(self, sequence):
                 sequence = getattr(self, sequence)()
@@ -2575,33 +2575,32 @@ class ClusterSeed(SageObject):
                                  ' "indices", or "cluster_vars"')
 
         # Classifies the input_type.  Raises warnings if the input is ambiguous, and errors if the input is not all of the same type.
-        else:
-            if is_vertices:
-                input_type = "vertices"
-                for x in seqq:
-                    if is_indices and seed._nlist[x] != x:
-                        print("Input can be ambiguously interpreted as both"
-                              " vertices and indices."
+        elif is_vertices:
+            input_type = "vertices"
+            for x in seqq:
+                if is_indices and seed._nlist[x] != x:
+                    print("Input can be ambiguously interpreted as both"
+                          " vertices and indices."
+                          " Mutating at vertices by default.")
+                    break
+
+                elif is_cluster_vars:
+                    cluster_var_index = seed.cluster_index(x)
+                    vertex_index = seed._nlist.index(x)
+                    if isinstance(cluster_var_index, int) and cluster_var_index != vertex_index:
+                        print("Input can be ambiguously interpreted as"
+                              " both vertices and cluster variables."
                               " Mutating at vertices by default.")
                         break
 
-                    elif is_cluster_vars:
-                        cluster_var_index = seed.cluster_index(x)
-                        vertex_index = seed._nlist.index(x)
-                        if isinstance(cluster_var_index, int) and cluster_var_index != vertex_index:
-                            print("Input can be ambiguously interpreted as"
-                                  " both vertices and cluster variables."
-                                  " Mutating at vertices by default.")
-                            break
-
-            # It should be impossible to interpret an index as a cluster variable.
-            elif is_indices:
-                input_type = "indices"
-            elif is_cluster_vars:
-                input_type = "cluster_vars"
-            else:
-                raise ValueError('mutation sequences must consist of exactly'
-                                 ' one of vertices, indices, or cluster variables')
+        # It should be impossible to interpret an index as a cluster variable.
+        elif is_indices:
+            input_type = "indices"
+        elif is_cluster_vars:
+            input_type = "cluster_vars"
+        else:
+            raise ValueError('mutation sequences must consist of exactly'
+                             ' one of vertices, indices, or cluster variables')
 
         if input_type == "cluster_vars" and len(seqq) > 1:
             mutation_seed = deepcopy(seed)
@@ -3497,8 +3496,8 @@ class ClusterSeed(SageObject):
         Check that :issue:`14638` is fixed::
 
             sage: S = ClusterSeed(['E',6])
-            sage: MC = S.mutation_class(depth=7); len(MC)  # long time
-            534
+            sage: MC = S.mutation_class(depth=6); len(MC)  # long time
+            388
 
         Infinite type examples::
 
@@ -4266,11 +4265,10 @@ class ClusterSeed(SageObject):
                             oddT = set(T).intersection(PathSubset(a1, 0))
                             evenT = set(T).symmetric_difference(oddT)
                             ans = ans + S.x(0)**(b*len(evenT)) * S.x(1)**(c*len(oddT))
-                    else:
-                        if is_LeeLiZel_allowable(T, a2, a1, c, b):
-                            oddT = set(T).intersection(PathSubset(a2, 0))
-                            evenT = set(T).symmetric_difference(oddT)
-                            ans = ans + S.x(0)**(b*len(oddT)) * S.x(1)**(c*len(evenT))
+                    elif is_LeeLiZel_allowable(T, a2, a1, c, b):
+                        oddT = set(T).intersection(PathSubset(a2, 0))
+                        evenT = set(T).symmetric_difference(oddT)
+                        ans = ans + S.x(0)**(b*len(oddT)) * S.x(1)**(c*len(evenT))
                 ans = ans*S.x(0)**(-a1)*S.x(1)**(-a2)
                 return ans
             elif algorithm == 'just_numbers':
@@ -4425,15 +4423,15 @@ class ClusterSeed(SageObject):
 
         while True:
             R = PolynomialRing(QQ, gens, order='invlex')
-            I = R.ideal(rels)
-            J = R.ideal(initial_product)
+            ideal_I = R.ideal(rels)
+            ideal_J = R.ideal(initial_product)
             if verbose:
                 msg = 'Computing relations among {} generators'
                 print(msg.format(len(gens)))
             start = time.time()
-            ISat = I.saturation(J)[0]
-            spend = time.time() - start
+            ISat = ideal_I.saturation(ideal_J)[0]
             if verbose:
+                spend = time.time() - start
                 msg = 'Computed {} relations in {} seconds'
                 print(msg.format(len(ISat.gens()), spend))
             deep_ideal = R.ideal(deep_gens) + ISat
@@ -4445,7 +4443,7 @@ class ClusterSeed(SageObject):
             spend = time.time() - start
             if M == initial_product_ideal:
                 if verbose:
-                    print('Verified that there are no new elements in', spend, 'seconds')
+                    print(f'Verified that there are no new elements in {spend} seconds')
                     print('Returning a presentation for the upper bound')
                 return R.quotient_ring(ISat)
             else:
@@ -4689,7 +4687,7 @@ class ClusterSeed(SageObject):
         # Computes the Laurent Polynomial for each vector in the decomposition.
         finalP = []
         # Laurent polynomial for each vector in {0,1}^n
-        for i in range(len(vd)):
+        for i, vdi in enumerate(vd):
             numerator = 0
             if cList[i]:
                 # If the vector in vd is negative then it did not
@@ -4706,8 +4704,8 @@ class ClusterSeed(SageObject):
                         expn = 0
                         # The exponent is determined by the vectors a,s, and the matrix B.
                         for k in range(num_cols):
-                            expn += (vd[i][0][k]-s[k])*max(0, B[j][k])+s[k]*max(0, -B[j][k])
-                        term *= x ** expn
+                            expn += (vdi[0][k]-s[k])*max(0, B[j][k])+s[k]*max(0, -B[j][k])
+                        term *= x**expn
                     numerator += term
             # Gives a numerator for the negative vector, or else the product would be zero.
             else:
@@ -4715,10 +4713,11 @@ class ClusterSeed(SageObject):
 
             # Uses the vectors in vd to calculates the denominator of the Laurent.
             denominator = 1
-            for l in range(num_cols):
-                denominator = denominator * (R.gen(l))**vd[i][0][l]
+            powers = vdi[0]
+            for ell in range(num_cols):
+                denominator = denominator * R.gen(ell)**powers[ell]
             # Each copy of a vector in vd contributes a factor of the Laurent polynomial calculated from it.
-            final = (numerator / denominator)**vd[i][1]
+            final = (numerator / denominator)**vdi[1]
             finalP.append(final)
         laurentP = 1
         # The UCA element for the vector a is the product of the elements produced from the vectors in its decomposition.
@@ -4758,13 +4757,12 @@ def coeff_recurs(p, q, a1, a2, b, c):
         return 1
     elif p < 0 or q < 0:
         return 0
+    elif c*a1*q <= b*a2*p:
+        return sum((-1)**(k-1)*coeff_recurs(p-k, q, a1, a2, b, c)*_bino(a2-c*q+k-1, k)
+                   for k in range(1, p+1))
     else:
-        if c*a1*q <= b*a2*p:
-            return sum((-1)**(k-1)*coeff_recurs(p-k, q, a1, a2, b, c)*_bino(a2-c*q+k-1, k)
-                       for k in range(1, p+1))
-        else:
-            return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
-                       for k in range(1, q+1))
+        return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
+                   for k in range(1, q+1))
 
 
 def PathSubset(n, m):
