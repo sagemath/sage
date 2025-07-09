@@ -1147,7 +1147,7 @@ class InfGenDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
     """
     An element of an infinitely generated differential Weyl algebra.
 
-    TESTS::
+    EXAMPLES::
 
         sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo)
         sage: W.inject_variables(verbose=False)
@@ -1229,7 +1229,7 @@ class InfGenDifferentialWeylAlgebraElement(IndexedFreeModuleElement):
                     for _ in range(p):
                         next = []
                         for m, c in cur:
-                            diff = dict(m[1].dict())
+                            diff = m[1].dict()
                             diff[i] = diff.get(i, zero) + 1
                             next.append(((m[0], self.parent()._diff_index(diff)), c))
                             # power rule if m has x[i] term
@@ -1303,8 +1303,8 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
     EXAMPLES:
 
-    We can construct an Infinite Weyl algebra by using the ``n=oo`` parameter in
-    the constructor for DifferentialWeylAlgebra::
+    We construct an infinite Weyl algebra by using ``n=oo`` in
+    :class:`DifferentialWeylAlgebra`::
 
         sage: W.<y> = DifferentialWeylAlgebra(QQ, n=oo); W
         Differential Weyl algebra in countably many variables y over Rational Field
@@ -1317,17 +1317,17 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
         sage: W = DifferentialWeylAlgebra(R); W
         Differential Weyl algebra in countably many variables x over Rational Field
 
-    .. WARNING:
+    .. WARNING::
 
-    Due to a bug in ``InfinitePolynomialRing`` (see :issue:`36788`) trying to define the infinite Weyl
-    algebra of an infinite polynomial ring with coefficients in another infinite
-    polynomial ring will result in unexpected behavior::
+        Due to a bug in ``InfinitePolynomialRing`` (:issue:`36788`) trying to define the infinite Weyl
+        algebra of an infinite polynomial ring with coefficients in another infinite
+        polynomial ring will result in unexpected behavior::
 
-        sage: R.<x> = InfinitePolynomialRing(QQ)
-        sage: R2.<y> = InfinitePolynomialRing(R)
-        sage: W = DifferentialWeylAlgebra(R2); W # known bug
-        Differential Weyl algebra in countably many variables z over Infinite
-         polynomial ring in x over Rational Field
+            sage: R.<x> = InfinitePolynomialRing(QQ)
+            sage: R2.<y> = InfinitePolynomialRing(R)
+            sage: W = DifferentialWeylAlgebra(R2); W # known bug
+            Differential Weyl algebra in countably many variables y over Infinite
+            polynomial ring in x over Rational Field
 
 
     To access the variables, we can call ``W.inject_variables()``. The symbols
@@ -1647,7 +1647,7 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
 
         OUTPUT: A nonnegative integer
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo)
             sage: W.inject_variables(verbose=False);
