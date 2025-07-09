@@ -25,10 +25,11 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
+from sage.misc.lazy_import import lazy_import
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
-from sage.combinat.root_system.type_hyperbolic import CoxeterType_Hyperbolic
-from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -45,21 +46,11 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             sage: CoxeterType(['A',3])
             Coxeter type of ['A', 3]
         """
-        hyperbolic_prefix = ("Ah", "Bh", "Dh", "Eh", "K", "L", "Q", "X")
-
         if len(x) == 1:
             x = x[0]
 
         if isinstance(x, CoxeterType):
             return x
-
-        if (
-            isinstance(x, (list, tuple))
-            and (
-                x[0] == "Hyperbolic" or x[0] in hyperbolic_prefix
-                )
-        ):
-            return CoxeterType_Hyperbolic(x)
 
         try:
             return CoxeterTypeFromCartanType(CartanType(x))
@@ -72,7 +63,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         raise NotImplementedError("Coxeter types not from Cartan types not yet implemented")
 
     @classmethod
-    def samples(self, finite=None, affine=None, crystallographic=None, hyperbolic=None):
+    def samples(self, finite=None, affine=None, crystallographic=None):
         """
         Return a sample of the available Coxeter types.
 
@@ -83,8 +74,6 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
         - ``affine`` -- boolean or ``None`` (default: ``None``)
 
         - ``crystallographic`` -- boolean or ``None`` (default: ``None``)
-
-        - ``hyperbolic`` -- boolean or ``None`` (default: ``None``)
 
         The sample contains all the exceptional finite and affine
         Coxeter types, as well as typical representatives of the
@@ -159,8 +148,6 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
             result = [t for t in result if t.is_finite() == finite]
         if affine is not None:
             result = [t for t in result if t.is_affine() == affine]
-        if hyperbolic is not None:
-            result = [t for t in result if t.is_hyperbolic() == hyperbolic]
         return result
 
     @cached_method
@@ -199,12 +186,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                                            ['E', 7, 1], ['E', 8, 1], ['F', 4, 1],
                                            ['G', 2, 1], ['A', 1, 1]]]
 
-        hyperbolic = [CoxeterType(t) for t in [['Hyperbolic', (141, 1, 3)], ['Hyperbolic', (141, 1, 4)],
-                                               ['Hyperbolic', (141, 2, 5)], ['Hyperbolic', (142, 1, 6)],
-                                               ['Hyperbolic', (142, 1, 7)], ['Hyperbolic', (142, 1, 8)],
-                                               ['Hyperbolic', (144, 1, 3)]]]
-
-        return finite + affine + hyperbolic
+        return finite + affine
 
     @abstract_method
     def rank(self):
@@ -330,22 +312,6 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
              [['E', 6], True], [['E', 7], True], [['E', 8], True],
              [['F', 4], True], [['G', 2], True],
              [['I', 5], False], [['H', 3], False], [['H', 4], False]]
-        """
-        return False
-
-    def is_hyperbolic(self):
-        """
-        Return whether ``self`` is hyperbolic.
-
-        This returns ``False`` by default. Derived class should override this
-        appropriately.
-
-        EXAMPLES::
-
-            sage: CoxeterType(['A', 3]).is_hyperbolic()
-            False
-            sage: CoxeterType(['Hyp', (141, 1, 3)]).is_hyperbolic()
-            True
         """
         return False
 
