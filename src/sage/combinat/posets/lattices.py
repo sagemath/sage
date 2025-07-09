@@ -734,6 +734,7 @@ def LatticePoset(data=None, *args, **options):
                 error.x = P._vertex_to_element(error.x)
                 error.y = P._vertex_to_element(error.y)
                 raise
+    from sage.categories.posets import Posets
     cat = Posets().or_subcategory(options.get('category', None))
     cat = cat & FiniteLatticePosets()
     return FiniteLatticePoset(P, category=cat, facade=P._is_facade)
