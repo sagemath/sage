@@ -4461,7 +4461,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             # Our linear_subspace(), but as a cone, so that
             # containment testing using "in" works properly.
             L = Cone((c*r for c in (1, -1) for r in self.lines()),
-                     self.lattice())
+                     self.lattice(),
+                     check=False)
 
         irreducible = list(self.rays())  # these are irreducible for sure
         irr_modified = False  # have we appended to "irreducible"?
