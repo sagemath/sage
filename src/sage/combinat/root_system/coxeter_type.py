@@ -27,9 +27,12 @@ from sage.matrix.args import SparseEntry
 from sage.matrix.constructor import Matrix
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
-from sage.combinat.root_system.type_hyperbolic import CoxeterType_Hyperbolic
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.misc.lazy_import import lazy_import
 
+
+lazy_import('sage.rings.universal_cyclotomic_field', 'UniversalCyclotomicField')
+lazy_import('sage.combinat.root_system.type_hyperbolic', 'CoxeterType_Hyperbolic')
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
     """
