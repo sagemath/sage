@@ -13,6 +13,7 @@ py.install_sources(
   'extended_affine_weyl_group.py',
   'fundamental_group.py',
   'hecke_algebra_representation.py',
+  'hyperbolic_coxeter_matrices.py',
   'integrable_representations.py',
   'non_symmetric_macdonald_polynomials.py',
   'pieri_factors.py',
