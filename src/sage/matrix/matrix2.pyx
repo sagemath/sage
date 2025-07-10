@@ -1166,14 +1166,14 @@ cdef class Matrix(Matrix1):
 
         Random testing::
 
-            sage: n = randrange(1,100)
             sage: m = randrange(1,100)
-            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(m)] for _ in range(n)])
-            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(m)])
-            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^n))
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
             sage: if unsolvable:
             ....:     while y in A.column_space():
-            ....:         y += (ZZ^n).random_element()
+            ....:         y += (ZZ^m).random_element()
             sage: y = y.column()
             sage: try:
             ....:     x = A._solve_right_smith_form(y)
@@ -1187,11 +1187,11 @@ cdef class Matrix(Matrix1):
         """
         S,U,V = self.smith_form()
 
-        n,m = self.dimensions()
+        m,n = self.dimensions()
         r = B.ncols()
 
         UB = U * B
-        if UB[m:]:
+        if UB[n:]:
             raise ValueError("matrix equation has no solutions")
 
         X_ = []
@@ -1203,11 +1203,11 @@ cdef class Matrix(Matrix1):
             else:
                 X_.append([0] * r)
 
-        X_ += [[0] * r] * (m - n)  # arbitrary
+        X_ += [[0] * r] * (n - m)  # arbitrary
 
         from sage.matrix.constructor import matrix
         try:
-            X_ = matrix(self.base_ring(), m, r, X_)
+            X_ = matrix(self.base_ring(), n, r, X_)
         except TypeError:
             raise ValueError("matrix equation has no solutions")
 
@@ -1269,14 +1269,14 @@ cdef class Matrix(Matrix1):
 
         Random testing::
 
-            sage: n = randrange(1,100)
             sage: m = randrange(1,100)
-            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(m)] for _ in range(n)])
-            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(m)])
-            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^n))
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
             sage: if unsolvable:
             ....:     while y in A.column_space():
-            ....:         y += (ZZ^n).random_element()
+            ....:         y += (ZZ^m).random_element()
             sage: y = y.column()
             sage: try:
             ....:     x = A._solve_right_hermite_form(y)
@@ -1292,14 +1292,14 @@ cdef class Matrix(Matrix1):
         H = H.transpose()
         U = U.transpose()
 
-        n,m = self.dimensions()
+        m,n = self.dimensions()
         r = B.ncols()
 
         from sage.matrix.constructor import matrix
-        X_ = matrix(self.base_ring(), m, r)
+        X_ = matrix(self.base_ring(), n, r)
         j = 0  # current column
-        for i in range(n):
-            if j < m and H[i,j]:
+        for i in range(m):
+            if j < n and H[i,j]:
                 # pivot for column j is in row i
                 v = B[i,:]
                 v -= H[i,:j] * X_[:j]
