@@ -2155,13 +2155,35 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
     @coerce_binop
     def divides(self, other):
-        # Handle special cases
-        if other.is_zero():
-            return True
-        if self.is_zero():
-            return other.is_zero()
-        if self.is_unit():
-            return True
-        # General case: check if remainder is zero
-        q, r = other.quo_rem(self)
-        return r.is_zero()
+        r"""
+        Return ``True`` if ``self`` divides ``other``.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: (2*x**-1 + 1).divides(4*x**-2 - 1)
+            True
+            sage: (2*x + 1).divides(4*x**2 + 1)
+            False
+            sage: (2*x + x**-1).divides(R(0))
+            True
+            sage: R(0).divides(2*x ** -1 + 1)
+            False
+            sage: R(0).divides(R(0))
+            True
+            sage: R.<x> = LaurentPolynomialRing(Zmod(6))
+            sage: p = 4*x + 3*x^-1
+            sage: q = 5*x^2 + x + 2*x^-2
+            sage: p.divides(q)
+            False
+
+            sage: R.<x,y> = GF(2)[]
+            sage: S.<z> = LaurentPolynomialRing(R)
+            sage: p = (x+y+1) * z**-1 + x*y
+            sage: q = (y^2-x^2) * z**-2 + z + x-y
+            sage: p.divides(q), p.divides(p*q)                                          # needs sage.libs.singular
+            (False, True)
+        """
+        p = self.polynomial_construction()[0]
+        q = other.polynomial_construction()[0]
+        return p.divides(q)
