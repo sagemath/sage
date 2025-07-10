@@ -19,8 +19,8 @@ from sage.schemes.toric.variety import (DEFAULT_PREFIX,
                                         normalize_names)
 from sage.schemes.toric.batyrev import SmoothFanoToricVariety
 
-from poly_db_3d import polytopes_3d
-from poly_db_4d import polytopes_4d
+from .poly_db_3d import polytopes_3d
+from .poly_db_4d import polytopes_4d
 
 class BatyrevToricFactory(SageObject):
     r"""
@@ -91,7 +91,6 @@ class BatyrevToricFactory(SageObject):
 
         EXAMPLES::
 
-            sage: smooth_fano_toric_varieties = BatyrevToricFactory()
             sage: Fano3fold000 = smooth_fano_toric_varieties.Fano3fold000()
             sage: Fano3fold000.is_smooth()
             True
@@ -116,7 +115,6 @@ class BatyrevToricFactory(SageObject):
 
         EXAMPLES::
 
-            sage: smooth_fano_toric_varieties = BatyrevToricFactory()
             sage: Fano4fold000 = smooth_fano_toric_varieties.Fano4fold000()
             sage: Fano4fold000.is_smooth()
             True
