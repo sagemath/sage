@@ -6706,7 +6706,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         return S
 
     @cached_method
-    def narrow_class_group(self, proof=None):
+    def narrow_class_group(self, proof=None, names='c'):
         r"""
         Return the narrow class group of this field.
 
@@ -6726,12 +6726,25 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: QuadraticField(3, 'a').narrow_class_group()
             Multiplicative Abelian group isomorphic to C2
         """
-        from sage.groups.abelian_gps.abelian_group import AbelianGroup
+        from .class_group import NarrowClassGroup
 
         proof = proof_flag(proof)
+        try:
+            return self.__narrow_class_group[proof, names]
+        except KeyError:
+            pass
+        except AttributeError:
+            self.__narrow_class_group = {}
         k = self.pari_bnf(proof)
-        s = k.bnfnarrow().sage()
-        return AbelianGroup(s[1])
+        s = k.bnfnarrow()
+        cycle_structure = tuple(s[1].sage())
+
+        # Gens is a list of ideals (the generators)
+        gens = tuple(self.ideal(hnf) for hnf in s[2])
+
+        G = NarrowClassGroup(cycle_structure, names, self, gens, proof=proof)
+        self.__narrow_class_group[proof, names] = G
+        return G
 
     def ngens(self):
         """
