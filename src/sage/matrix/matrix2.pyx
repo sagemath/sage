@@ -1162,7 +1162,7 @@ cdef class Matrix(Matrix1):
             sage: A._solve_right_smith_form(B)
             Traceback (most recent call last):
             ...
-            ValueError: matrix equation has no solution
+            ValueError: matrix equation has no solutions
 
         Random testing::
 
@@ -1192,14 +1192,14 @@ cdef class Matrix(Matrix1):
 
         UB = U * B
         if UB[m:]:
-            raise ValueError("matrix equation has no solution")
+            raise ValueError("matrix equation has no solutions")
 
         X_ = []
         for d, v in zip(S.diagonal(), UB):
             if d:
                 X_.append(v / d)
             elif v:
-                raise ValueError("matrix equation has no solution")
+                raise ValueError("matrix equation has no solutions")
             else:
                 X_.append([0] * r)
 
@@ -1209,7 +1209,7 @@ cdef class Matrix(Matrix1):
         try:
             X_ = matrix(self.base_ring(), m, r, X_)
         except TypeError:
-            raise ValueError("matrix equation has no solution")
+            raise ValueError("matrix equation has no solutions")
 
         return V * X_
 
@@ -1265,7 +1265,7 @@ cdef class Matrix(Matrix1):
             sage: A._solve_right_hermite_form(B)
             Traceback (most recent call last):
             ...
-            ValueError: matrix equation has no solution
+            ValueError: matrix equation has no solutions
 
         Random testing::
 
