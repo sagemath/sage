@@ -1534,12 +1534,10 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     def reverse_weight_function(e):
         return weight_function((e[1], e[0], e[2]))
 
-    cdef dict original_edge_labels = {(e[0], e[1]): (int_to_vertex[e[0]], int_to_vertex[e[1]], e[2])
-                                      for e in G.edge_iterator()}
-    cdef dict original_edges = {(e[0], e[1]): (int_to_vertex[e[0]], int_to_vertex[e[1]])
-                                for e in G.edge_iterator(labels=False)}
-    cdef dict original_vertices = {i: int_to_vertex[i] for i in range(len(int_to_vertex))}
-
+    cdef dict original_edge_labels = {(u, v): (int_to_vertex[u], int_to_vertex[v], label)
+                                      for u, v, label in G.edge_iterator()}
+    cdef dict original_edges = {(u, v): (int_to_vertex[u], int_to_vertex[v])
+                                for u, v in G.edge_iterator(labels=False)}
     cdef dict edge_wt = {(e[0], e[1]): weight_function(e) for e in G.edge_iterator()}
 
     # The first shortest path tree T_0
@@ -1614,7 +1612,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             elif report_edges:
                 P = [original_edges[e] for e in zip(path, path[1:])]
             else:
-                P = [original_vertices[v] for v in path]
+                P = [int_to_vertex[v] for v in path]
             if report_weight:
                 yield (shortest_path_length + cost, P)
             else:
