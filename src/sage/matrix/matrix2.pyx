@@ -1185,15 +1185,19 @@ cdef class Matrix(Matrix1):
             sage: not solved or A * x == y
             True
         """
-        S,U,V = self.smith_form()
+        S,U,V = self.smith_form()  # S == U * self * V
 
         m,n = self.dimensions()
         r = B.ncols()
 
+        # we will solve S * X_ == U * B
         UB = U * B
+
+        # S is zero past the nth row; check if this already renders the system unsolvable
         if UB[n:]:
             raise ValueError("matrix equation has no solutions")
 
+        # solve the system, detecting inconsistencies up to the nth row along the way
         X_ = []
         for d, v in zip(S.diagonal(), UB):
             if d:
@@ -1211,6 +1215,7 @@ cdef class Matrix(Matrix1):
         except TypeError:
             raise ValueError("matrix equation has no solutions")
 
+        # now V * X_ is a solution since self * V * X_ = U^-1 * S * X_ = U^-1 * U * B = B
         return V * X_
 
     def _solve_right_hermite_form(self, B):
