@@ -472,7 +472,10 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     - ``b`` -- (optional) upper endpoint of definite integral
 
-    - ``algorithm`` -- (default: ``'maxima'``, ``'libgiac'`` and ``'sympy'``) one of
+    - ``algorithm`` -- string (default: None); one of
+
+      - ``None`` -- try all of ``'maxima'``, ``'giac'`` (if available),
+        and ``'sympy'``, in order
 
       - ``'maxima'`` -- use maxima
 
@@ -482,9 +485,11 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
       - ``'fricas'`` -- use FriCAS (the optional fricas spkg has to be installed)
 
-      - ``'giac'`` -- use libgiac
+      - ``'giac'`` -- use libgiac (needs the optional sagemath-giac package
+        to be installed)
 
-      - ``'libgiac'`` -- use libgiac (alias for ``'giac'``)
+      - ``'libgiac'`` -- use libgiac (alias for ``'giac'``, needs the
+        optional sagemath-giac package to be installed)
 
     To prevent automatic evaluation, use the ``hold`` argument.
 
