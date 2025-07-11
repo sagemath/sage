@@ -309,6 +309,7 @@ build/cp*
 /subprojects/*
 !/subprojects/*.wrap
 !/subprojects/packagefiles
+!/subprojects/README.md
 
 # Meson temporary files
 subprojects/wrapdb.json
