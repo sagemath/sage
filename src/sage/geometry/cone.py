@@ -6423,7 +6423,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         subspaces of the same dimension, so in this case, the cone
         isomorphisms we generate should be considered unique only up
         to vector-space isomorphisms of the lineality spaces and
-        othogonal complements.
+        orthogonal complements.
 
         Every closed convex cone is a direct sum of three components,
         themselves closed convex cones [StoerWitz1970]_:
