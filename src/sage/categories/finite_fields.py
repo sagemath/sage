@@ -400,8 +400,9 @@ class FiniteFields(CategoryWithAxiom):
             - if ``all=False``, a square root; raises an error if the element is not
               a square
 
-            - if ``all=True``, a 2-tuple of square roots; raises an error if the
-             element is not a square
+            - if ``all=True``, a tuple of all distinct square roots. This tuple can have
+              length 0, 1, or 2 depending on how many distinct square roots the
+              element has.
 
             EXAMPLES::
                 sage: S.<x> = GF(5)[]
