@@ -31,6 +31,7 @@ from sage.rings.integer_ring import IntegerRing
 
 from .mwrank import _Curvedata, _two_descent, _mw, parse_point_list
 
+
 class mwrank_EllipticCurve(SageObject):
     r"""
     The :class:`mwrank_EllipticCurve` class represents an elliptic
@@ -154,7 +155,7 @@ class mwrank_EllipticCurve(SageObject):
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.saturate() # no output
             sage: E.gens()
-            [[0, -1, 1]]
+            ([0, -1, 1],)
 
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.set_verbose(1)
@@ -246,8 +247,11 @@ class mwrank_EllipticCurve(SageObject):
         """
         a1, a2, a3, a4, a6 = self.__ainvs
         # we do not assume a1, a2, a3 are reduced to {0,1}, {-1,0,1}, {0,1}
-        coeff = lambda a: ''.join([" +" if a > 0 else " -",
-                                   " " + str(abs(a)) if abs(a) > 1 else ""])
+
+        def coeff(a):
+            return ''.join([" +" if a > 0 else " -",
+                            " " + str(abs(a)) if abs(a) > 1 else ""])
+
         return ''.join(['y^2',
                         ' '.join([coeff(a1), 'xy']) if a1 else '',
                         ' '.join([coeff(a3), 'y']) if a3 else '',
@@ -267,21 +271,28 @@ class mwrank_EllipticCurve(SageObject):
 
         - ``selmer_only`` -- boolean (default: ``False``); ``selmer_only`` switch
 
-        - ``first_limit`` -- integer (default: 20); bound on `|x|+|z|` in
-          quartic point search
+        - ``first_limit`` -- integer (default: 20); naive height bound on
+          first point search on quartic homogeneous spaces (before
+          testing local solubility; very simple search with no
+          overheads).
 
-        - ``second_limit`` -- integer (default: 8); bound on
-          `\log \max(|x|,|z|)`, i.e. logarithmic
+        - ``second_limit`` -- integer (default: 8); logarithmic height bound on
+          second point search on quartic homogeneous spaces (after
+          testing local solubility; sieve-assisted search)
 
-        - ``n_aux`` -- integer (default: -1); (only relevant for general
-          2-descent when 2-torsion trivial) number of primes used for
-          quartic search.  ``n_aux=-1`` causes default (8) to be used.
-          Increase for curves of higher rank.
+        - ``n_aux`` -- integer (default: -1); if positive, the number of
+          auxiliary primes used in sieve-assisted search for quartics.
+          If -1 (the default) use a default value (set in the eclib
+          code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
+          Only relevant for curves with no 2-torsion, where full
+          2-descent is carried out.  Worth increasing for curves
+          expected to be of rank > 6 to one or two more than the
+          expected rank.
 
-        - ``second_descent`` -- boolean (default: ``True``); (only relevant
-          for curves with 2-torsion, where mwrank uses descent via
-          2-isogeny) flag determining whether or not to do second
-          descent.  *Default strongly recommended.*
+        - ``second_descent`` -- boolean (default: ``True``); flag specifying
+          whether or not a second descent will be carried out.  Only relevant
+          for curves with 2-torsion.  Recommended left as the default except for
+          experts interested in details of Selmer groups.
 
         OUTPUT: nothing
 
@@ -540,10 +551,10 @@ class mwrank_EllipticCurve(SageObject):
 
             sage: E = mwrank_EllipticCurve([0, 0, 0, -1002231243161, 0])
             sage: E.gens()
-            [[-1001107, -4004428, 1]]
+            ([-1001107, -4004428, 1],)
             sage: E.saturate()
             sage: E.gens()
-            [[-1001107, -4004428, 1]]
+            ([-1001107, -4004428, 1],)
 
         Check that :issue:`18031` is fixed::
 
@@ -558,18 +569,18 @@ class mwrank_EllipticCurve(SageObject):
             self.__two_descent_data().saturate(bound, lower)
             self.__saturate = bound
 
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         """
-        Return a list of the generators for the Mordell-Weil group.
+        Return a tuple of the generators for the Mordell-Weil group.
 
         EXAMPLES::
 
             sage: E = mwrank_EllipticCurve([0, 0, 1, -1, 0])
             sage: E.gens()
-            [[0, -1, 1]]
+            ([0, -1, 1],)
         """
         self.saturate()
-        return parse_point_list(self.__two_descent_data().getbasis())
+        return tuple(parse_point_list(self.__two_descent_data().getbasis()))
 
     def certain(self):
         r"""
@@ -606,12 +617,14 @@ class mwrank_EllipticCurve(SageObject):
         """
         return bool(self.__two_descent_data().getcertain())
 
-    #def fullmw(self):
-    #    return self.__two_descent_data().getfullmw()
+    # def fullmw(self):
+    #     return self.__two_descent_data().getfullmw()
 
     def CPS_height_bound(self):
         r"""
-        Return the Cremona-Prickett-Siksek height bound.  This is a
+        Return the Cremona-Prickett-Siksek height bound.
+
+        This is a
         floating point number `B` such that if `P` is a point on the
         curve, then the naive logarithmic height `h(P)` is less than
         `B+\hat{h}(P)`, where `\hat{h}(P)` is the canonical height of
@@ -856,7 +869,7 @@ class mwrank_MordellWeil(SageObject):
 
             sage: E = mwrank_EllipticCurve([0,0,1,-7,6])
             sage: E.gens()
-            [[1, -1, 1], [-2, 3, 1], [-14, 25, 8]]
+            ([1, -1, 1], [-2, 3, 1], [-14, 25, 8])
             sage: EQ = mwrank_MordellWeil(E)
             sage: EQ.process([[1, -1, 1], [-2, 3, 1], [-14, 25, 8]])
             P1 = [1:-1:1]         is generator number 1
@@ -1282,9 +1295,9 @@ class mwrank_MordellWeil(SageObject):
         """
         height_limit = float(height_limit)
         int_bits = sys.maxsize.bit_length()
-        max_height_limit = int_bits * 0.693147 # log(2.0) = 0.693147 approx
+        max_height_limit = int_bits * 0.693147  # log(2.0) = 0.693147 approx
         if height_limit >= max_height_limit:
-            raise ValueError("The height limit must be < {} = {}log(2) on a {}-bit machine.".format(max_height_limit, int_bits, int_bits+1))
+            raise ValueError("The height limit must be < {} = {}log(2) on a {}-bit machine.".format(max_height_limit, int_bits, int_bits + 1))
 
         moduli_option = 0  # Use Stoll's sieving program... see strategies in ratpoints-1.4.c
 

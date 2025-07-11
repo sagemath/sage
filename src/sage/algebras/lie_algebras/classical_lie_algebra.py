@@ -1711,7 +1711,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
             sage: sl3 = LieAlgebra(GF(3), cartan_type=['A',2])
             sage: sl3.center().basis()
-            Family (2*h1 + h2,)
+            Finite family {alphacheck[2]: 2*h1 + h2}
             sage: sl4 = lie_algebras.sl(GF(3), 4)
             sage: sl4.center().dimension()
             0
@@ -1733,7 +1733,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
 
             sage: sl4 = LieAlgebra(GF(2), cartan_type=['A',3])
             sage: sl4.center().basis()
-            Family (h1 + h3,)
+            Finite family {alphacheck[3]: h1 + h3}
             sage: sp6 = LieAlgebra(GF(2), cartan_type=['C',3])
             sage: sp6.killing_form_matrix().det()
             0
@@ -2170,7 +2170,7 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         return Family(I, d.__getitem__)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` in the order of `e_i`, `f_i`,
         and `h_i`.
@@ -2359,7 +2359,6 @@ class LieAlgebraChevalleyBasis_simply_laced(LieAlgebraChevalleyBasis):
                                    for ii, ca in r._monomial_coefficients.items()
                                    for jj, cb in s._monomial_coefficients.items())
                     s_coeffs[r, s] = {r+s: coeff}
-                    ht = sum(r.coefficients()) + sum(s.coefficients())
                     s_coeffs[-r, -s] = {-r-s: -coeff}
                 if r - s in p_roots_set or s - r in p_roots_set:
                     coeff = R.prod((-1)**(ca*cb) if (ii, jj) in self._epsilon or ii == jj else 1

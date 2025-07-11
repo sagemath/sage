@@ -87,7 +87,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     .. NOTE::
 
-        This class should not be directly instanciated, instead create
+        This class should not be directly instantiated, instead create
         an instance of the parent
         :class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`
         and access its elements using the relevant methods.
@@ -254,7 +254,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self.parent()._rank
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return ``True`` whether this graded Drinfeld form is the
         multiplicative identity.
@@ -271,7 +271,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return self._polynomial.is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` whether this graded Drinfeld form is the
         additive identity.
@@ -293,7 +293,7 @@ class DrinfeldModularFormsElement(ModuleElement):
         """
         return not bool(self)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return whether the graded form is homogeneous in the weight.
 

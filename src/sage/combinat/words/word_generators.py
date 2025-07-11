@@ -589,7 +589,7 @@ class WordGenerator:
         else:
             raise NotImplementedError
 
-    def _FibonacciWord_RecursiveConstructionIterator(self,alphabet=(0,1)):
+    def _FibonacciWord_RecursiveConstructionIterator(self, alphabet=(0, 1)):
         r"""
         Iterate over the symbols of the Fibonacci word, as defined by
         the following recursive construction: the Fibonacci word is the
@@ -612,8 +612,7 @@ class WordGenerator:
             for i in it:
                 n += 1
                 yield alphabet[i]
-            else:
-                Fib1, Fib0 = Fib1 + Fib0, Fib1
+            Fib1, Fib0 = Fib1 + Fib0, Fib1
 
     def FixedPointOfMorphism(self, morphism, first_letter):
         r"""
@@ -659,7 +658,7 @@ class WordGenerator:
         """
         return WordMorphism(morphism).fixed_point(letter=first_letter)
 
-    def CodingOfRotationWord(self, alpha, beta, x=0, alphabet=(0,1)):
+    def CodingOfRotationWord(self, alpha, beta, x=0, alphabet=(0, 1)):
         r"""
         Return the infinite word obtained from the coding of rotation of
         parameters `(\alpha,\beta, x)` over the given two-letter alphabet.
@@ -695,7 +694,7 @@ class WordGenerator:
         w = InfiniteWords(alphabet)(f, datatype='callable')
         return w
 
-    def _CodingOfRotationWord_function(self, n, alpha, beta, x=0, alphabet=(0,1)):
+    def _CodingOfRotationWord_function(self, n, alpha, beta, x=0, alphabet=(0, 1)):
         r"""
         Internal function that returns the symbol in position `n` of the
         coding of rotation word corresponding to the parameters `\alpha`,
@@ -901,7 +900,7 @@ class WordGenerator:
                    datatype='iter')
         return w
 
-    def _CharacteristicSturmianWord_LetterIterator(self, cf, alphabet=(0,1)):
+    def _CharacteristicSturmianWord_LetterIterator(self, cf, alphabet=(0, 1)):
         r"""
         Return an iterator over the symbols of the characteristic
         Sturmian word of slope ``cf``.
@@ -962,12 +961,11 @@ class WordGenerator:
                 for i in s1[n:]:
                     n += 1
                     yield alphabet[i]
-                else:
-                    s1, s0 = s1*next(cf) + s0, s1
+                s1, s0 = s1*next(cf) + s0, s1
             except StopIteration:
                 return
 
-    def KolakoskiWord(self, alphabet=(1,2)):
+    def KolakoskiWord(self, alphabet=(1, 2)):
         r"""
         Return the Kolakoski word over the given alphabet and
         starting with the first letter of the alphabet.
@@ -1306,8 +1304,7 @@ class WordGenerator:
             for x in w[n:]:
                 n += 1
                 yield x
-            else:
-                w = W(w * W(next(d))).palindromic_closure()
+            w = W(w * W(next(d))).palindromic_closure()
 
     def MinimalSmoothPrefix(self, n):
         r"""
@@ -1392,7 +1389,7 @@ class WordGenerator:
 
     ChristoffelWord = LowerChristoffelWord
 
-    def UpperChristoffelWord(self, p, q, alphabet=(0,1)):
+    def UpperChristoffelWord(self, p, q, alphabet=(0, 1)):
         r"""
         Return the upper Christoffel word of slope `p/q`, where
         `p` and `q` are relatively prime nonnegative

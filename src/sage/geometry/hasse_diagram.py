@@ -7,13 +7,13 @@ partially ordered sets where any two elements have meet and joint. For
 example, the face lattice of a polyhedron.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.graphs.digraph import DiGraph
 from sage.combinat.posets.lattices import FiniteLatticePoset
@@ -146,7 +146,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 atoms = atoms.intersection(coatom_to_atoms[coatom])
             H[atom] = (atoms, coatoms)
         # 8: compute the set G of minimal sets in H
-        minimals = set([])
+        minimals = set()
         while candidates:
             candidate = candidates.pop()
             atoms = H[candidate][0]
@@ -188,9 +188,7 @@ def lattice_from_incidences(atom_to_coatoms, coatom_to_atoms,
                 if required_atoms is None or atom in required_atoms)
     new_order = head + [n for n in new_order if n not in head]
     # "Invert" this list to a dictionary
-    labels = {}
-    for new, old in enumerate(new_order):
-        labels[old] = new
+    labels = {old: new for new, old in enumerate(new_order)}
     L.relabel(labels)
     # Construct the actual poset elements
     elements = [None] * next_index

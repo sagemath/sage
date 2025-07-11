@@ -7,19 +7,19 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Léo Brunswic (2019): add multiple symmetries and multiple contractions
 """
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import combinations
+import re
 
 from sage.structure.sage_object import SageObject
-import re
-from itertools import combinations
 
 # Regular expression for the allowed characters in index notation.
 # This includes Unicode word constituents but excludes digits and underscores.
@@ -692,7 +692,7 @@ class TensorWithIndices(SageObject):
             sage: b[:] = [[-1,2,-3], [-4,5,6], [7,-8,9]]
             sage: T = a*a*b*b
             sage: 1/4*(T["ijkl_abcd"] + T["jikl_abcd"] + T["ijkl_abdc"]\
-             + T["jikl_abdc"]) == T["(..).._..(..)"]["ijkl_abcd"]
+            ....: + T["jikl_abdc"]) == T["(..).._..(..)"]["ijkl_abcd"]
             True
         """
         # Check tensor types are compatible
@@ -770,7 +770,7 @@ class TensorWithIndices(SageObject):
             sage: b[:] = [[-1,2,-3], [-4,5,6], [7,-8,9]]
             sage: T = a*a*b*b
             sage: 1/4*(T["ijkl_abcd"]-T["jikl_abcd"] - T["ijkl_abdc"]\
-                + T["jikl_abdc"] ) == T["[..].._..[..]"]["ijkl_abcd"]
+            ....: + T["jikl_abdc"] ) == T["[..].._..[..]"]["ijkl_abcd"]
             True
         """
         return self + (-other)
@@ -937,7 +937,7 @@ class TensorWithIndices(SageObject):
         swap_params = list(combinations(range(self._tensor.tensor_rank()+1), 3))
 
         # The associated permutation is as follows
-        def swap(param,N):
+        def swap(param, N):
             i,j,k = param
             L = list(range(1,N+1))
             L = L[:i] + L[j:k] + L[i:j] + L[k:]

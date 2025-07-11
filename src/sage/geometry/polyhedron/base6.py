@@ -37,6 +37,7 @@ from sage.modules.free_module_element import vector
 from sage.geometry.convex_set import AffineHullProjectionData
 from .base5 import Polyhedron_base5
 
+
 class Polyhedron_base6(Polyhedron_base5):
     r"""
     Methods related to plotting including affine hull projection.

@@ -244,7 +244,7 @@ class Gamma0_class(GammaH_class):
         """
         return [Gamma0_constructor(M) for M in self.level().divisors()]
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return ``True`` precisely if this subgroup contains the matrix -1.
 
@@ -260,7 +260,7 @@ class Gamma0_class(GammaH_class):
         """
         return True
 
-    def is_subgroup(self, right):
+    def is_subgroup(self, right) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``right``.
 
@@ -414,7 +414,7 @@ class Gamma0_class(GammaH_class):
         R = IntegerModRing(N)
         return [GammaH(N, H) for H in R.multiplicative_subgroups()]
 
-    def _contains_sl2(self, a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether x is an element of this group.
 

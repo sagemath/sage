@@ -359,7 +359,7 @@ cdef class Cache_givaro(Cache_base):
             else:
                 raise TypeError("unable to coerce from a finite field other than the prime subfield")
 
-        elif isinstance(e, (int, Integer)) or isinstance(e, IntegerMod_abstract):
+        elif isinstance(e, (int, Integer, IntegerMod_abstract)):
             try:
                 e_int = e % self.characteristic()
                 self.objectptr.initi(res, e_int)

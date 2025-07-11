@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -10,8 +10,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 r"""
 Utility functions for making derivative() behave uniformly across Sage.
@@ -163,7 +163,7 @@ def derivative_parse(args):
                 raise ValueError("derivative counts must be nonnegative")
             if not got_var:
                 var = None
-            for i from 0 <= i < count:
+            for i in range(count):
                 output.append(var)
             got_var = 0
         else:

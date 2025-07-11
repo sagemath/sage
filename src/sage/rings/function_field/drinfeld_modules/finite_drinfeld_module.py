@@ -127,8 +127,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         """
         Initialize ``self``.
 
-        Validity of the input is checked in `__classcall_private__`. The
-        `__init__` just saves attributes.
+        Validity of the input is checked in ``__classcall_private__``. The
+        ``__init__`` just saves attributes.
 
         INPUT:
 
@@ -469,7 +469,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Compute the characteristic polynomial of the Frobenius from
         the reduced characteristic polynomial of the Ore polynomial
-        `phi_T`. This algorithm is particularly interesting when the
+        `\phi_T`. This algorithm is particularly interesting when the
         rank of the Drinfeld module is large compared to the degree
         of the extension `K/\mathbb F_q`. See [CL2023]_.
         """
@@ -571,7 +571,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Instead, use :meth:`frobenius_charpoly` with the option
         `algorithm='gekeler'`.
 
-        .. WARNING:
+        .. WARNING::
 
             This algorithm only works in the generic case when the
             corresponding linear system is invertible. Notable cases

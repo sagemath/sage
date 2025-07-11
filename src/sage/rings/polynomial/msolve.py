@@ -33,6 +33,7 @@ from sage.rings.real_mpfr import RealField_class
 from sage.rings.real_mpfi import RealIntervalField_class, RealIntervalField
 from sage.structure.sequence import Sequence
 
+
 def _run_msolve(ideal, options):
     r"""
     Internal utility function
@@ -62,6 +63,7 @@ def _run_msolve(ideal, options):
     msolve_out.check_returncode()
 
     return msolve_out.stdout
+
 
 def groebner_basis_degrevlex(ideal, proof=True):
     r"""
@@ -110,6 +112,7 @@ def groebner_basis_degrevlex(ideal, proof=True):
     msolve_out = _run_msolve(ideal, ["-g", "2"])
     gbasis = sage_eval(msolve_out[:-2], locals=drlpolring.gens_dict())
     return Sequence(gbasis)
+
 
 def variety(ideal, ring, *, proof=True):
     r"""
@@ -264,7 +267,7 @@ def variety(ideal, ring, *, proof=True):
             return upol(p[1])/d
 
         try:
-            [char, nvars, deg, vars, _, [one, [elim, den, param]]] = data[1]
+            char, nvars, deg, vars, _, [one, [elim, den, param]] = data[1]
         except (IndexError, ValueError):
             raise NotImplementedError(
                 f"unsupported msolve output format: {data}")

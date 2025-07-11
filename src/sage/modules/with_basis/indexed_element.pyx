@@ -405,7 +405,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             pass
 
         for monomial, c in terms:
-            b = repr_monomial(monomial) # PCR
+            b = repr_monomial(monomial)  # PCR
             if c != 0:
                 break_points = []
                 coeff = coeff_repr(c, False)
@@ -416,17 +416,17 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                         coeff = "-"
                     elif b._l > 0:
                         if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
-                            b = empty_ascii_art # ""
+                            b = empty_ascii_art  # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
                     if not first:
                         if len(coeff) > 0 and coeff[0] == "-":
-                            coeff = " - %s"%coeff[1:]
+                            coeff = " - %s" % coeff[1:]
                         else:
-                            coeff = " + %s"%coeff
+                            coeff = " + %s" % coeff
                         break_points = [2]
                     else:
-                        coeff = "%s"%coeff
+                        coeff = "%s" % coeff
                 if coeff:
                     chunks.append(AsciiArt([coeff], break_points))
                 if b._l:
@@ -435,10 +435,9 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         s = ascii_art(*chunks)
         if first:
             return AsciiArt(["0"])
-        elif s == empty_ascii_art:
+        if s == empty_ascii_art:
             return AsciiArt(["1"])
-        else:
-            return s
+        return s
 
     def _unicode_art_(self):
         r"""
@@ -859,7 +858,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         zero = free_module.base_ring().zero()
         if sparse:
             if order is None:
-                order = {k: i for i,k in enumerate(self._parent.get_order())}
+                order = {k: i for i, k in enumerate(self._parent.get_order())}
             return free_module.element_class(free_module,
                                              {order[k]: c for k, c in d.items()},
                                              coerce=True, copy=False)
@@ -1020,6 +1019,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         x_inv = B(x) ** -1
         return type(self)(F, scal(x_inv, D))
+
+    def _magma_init_(self, magma):
+        r"""
+        Convert ``self`` to Magma.
+        """
+        # Get a reference to Magma version of parent.
+        R = magma(self.parent()).name()
+        # use dict {key: coefficient}.
+        return '+'.join(f"({c._magma_init_(magma)})*{R}.{m._magma_init_(magma)}"
+                        for m, c in self.monomial_coefficients().items())
 
 
 def _unpickle_element(C, d):

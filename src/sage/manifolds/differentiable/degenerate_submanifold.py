@@ -156,21 +156,22 @@ REFERENCES:
 # *****************************************************************************
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.manifolds.differentiable.pseudo_riemannian import \
-    PseudoRiemannianManifold
-from sage.manifolds.differentiable.degenerate import (DegenerateManifold,
-                                                      TangentTensor)
-from sage.manifolds.differentiable.differentiable_submanifold import \
-    DifferentiableSubmanifold
+from sage.manifolds.differentiable.degenerate import DegenerateManifold, TangentTensor
+from sage.manifolds.differentiable.differentiable_submanifold import (
+    DifferentiableSubmanifold,
+)
+from sage.manifolds.differentiable.pseudo_riemannian import PseudoRiemannianManifold
 from sage.manifolds.differentiable.vectorfield_module import VectorFieldModule
-from sage.rings.infinity import infinity
 from sage.matrix.constructor import matrix
+from sage.rings.infinity import infinity
 from sage.symbolic.expression import Expression
 
 if TYPE_CHECKING:
     from sage.manifolds.differentiable.metric import DegenerateMetric
+
 
 class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
     r"""
@@ -1393,10 +1394,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         for u in rad:
             if not g.along(im)(u.along(im),v).is_zero():
                 return False
-        for u in normal:
-            if not g.along(im)(u.along(im),v).is_zero():
-                return False
-        return True
+        return all(g.along(im)(u.along(im), v).is_zero() for u in normal)
 
 
 #**************************************************************************************

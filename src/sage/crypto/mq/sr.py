@@ -462,7 +462,7 @@ class SR_generic(MPolynomialSystemGenerator):
         self._reverse_variables = bool(kwargs.get("reverse_variables", True))
 
         with AllowZeroInversionsContext(self):
-            sub_byte_lookup = dict([(v, self.sub_byte(v)) for v in self._base])
+            sub_byte_lookup = {v: self.sub_byte(v) for v in self._base}
         self._sub_byte_lookup = sub_byte_lookup
 
         if self._gf2:
@@ -2248,8 +2248,8 @@ class SR_gf2n(SR_generic):
         bs = r*c*e
         shift_rows = matrix(k, bs, bs)
         I = MatrixSpace(k, e, e)(1)
-        for x in range(0, c):
-            for y in range(0, r):
+        for x in range(c):
+            for y in range(r):
                 _r = ((x*r)+y) * e
                 _c = (((x*r)+((r+1)*y)) * e) % bs
                 self._insert_matrix_into_matrix(shift_rows, I, _r, _c)
@@ -2290,14 +2290,14 @@ class SR_gf2n(SR_generic):
         if e == 4:
             l = [k.from_integer(x) for x in (5, 1, 12, 5)]
             for k in range( 0, length ):
-                for i in range(0, 4):
-                    for j in range(0, 4):
+                for i in range(4):
+                    for j in range(4):
                         lin[k*4+j, k*4+i] = l[(i-j) % 4] ** (2**j)
         elif e == 8:
             l = [k.from_integer(x) for x in (5, 9, 249, 37, 244, 1, 181, 143)]
             for k in range( 0, length ):
-                for i in range(0, 8):
-                    for j in range(0, 8):
+                for i in range(8):
+                    for j in range(8):
                         lin[k*8+j, k*8+i] = l[(i-j) % 8] ** (2**j)
 
         return lin
@@ -2651,8 +2651,8 @@ class SR_gf2(SR_generic):
         k = self.k
         bs = r*c
         shift_rows = matrix(k, r*c, r*c)
-        for x in range(0, c):
-            for y in range(0, r):
+        for x in range(c):
+            for y in range(r):
                 _r = ((x*r)+y)
                 _c = ((x*r)+((r+1)*y)) % bs
                 shift_rows[_r, _c] = 1
@@ -3298,7 +3298,7 @@ class AllowZeroInversionsContext:
         self.sr._allow_zero_inversions = self.allow_zero_inversions
 
 
-def test_consistency(max_n=2, **kwargs):
+def check_consistency(max_n=2, **kwargs):
     r"""
     Test all combinations of ``r``, ``c``, ``e`` and ``n`` in ``(1,
     2)`` for consistency of random encryptions and their polynomial
@@ -3317,8 +3317,8 @@ def test_consistency(max_n=2, **kwargs):
     on machines with "only" 2GB of RAM, we test ``max_n`` = 1, which
     has a more reasonable memory usage. ::
 
-        sage: from sage.crypto.mq.sr import test_consistency
-        sage: test_consistency(1)  # long time (65s on sage.math, 2012)
+        sage: from sage.crypto.mq.sr import check_consistency
+        sage: check_consistency(1)  # long time (65s on sage.math, 2012)
         True
     """
     consistent = True

@@ -381,7 +381,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
         ....:    return sum(100.0r*(x[1r:]-x[:-1r]**2.0r)**2.0r + (1r-x[:-1r])**2.0r)
         sage: import numpy
         sage: if int(numpy.version.short_version[0]) > 1:
-        ....:     numpy.set_printoptions(legacy="1.25")
+        ....:     _ = numpy.set_printoptions(legacy="1.25")
         sage: from numpy import zeros
         sage: def rosen_der(x):
         ....:    xm = x[1r:-1r]
@@ -442,7 +442,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm='default',
     return vector(RDF, min)
 
 
-def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args):
+def minimize_constrained(func, cons, x0, gradient=None, algorithm='default', **args):
     r"""
     Minimize a function with constraints.
 
@@ -519,9 +519,9 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: x, y = var('x y')
         sage: f(x,y) = (100 - x) + (1000 - y)
         sage: c(x,y) = x + y - 479  # > 0
-        sage: minimize_constrained(f, [c], [100, 300])
+        sage: minimize_constrained(f, [c], [100, 300]) # random
         (805.985..., 1005.985...)
-        sage: minimize_constrained(f, c, [100, 300])
+        sage: minimize_constrained(f, c, [100, 300])   # random
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
@@ -532,7 +532,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: f(y,x) = x - y
         sage: c1(y,x) = x
         sage: c2(y,x) = 1-y
-        sage: minimize_constrained(f, [c1, c2], (0,0))
+        sage: minimize_constrained(f, [c1, c2], (0,0)) # abs tol 1e-04
         (1.0, 0.0)
     """
     from sage.structure.element import Expression
@@ -567,17 +567,17 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         if isinstance(cons[0], (tuple, list)) or cons[0] is None:
             if gradient is not None:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, iprint=-1, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, gradient, bounds=cons, **args)[0]
                 else:
                     min = optimize.fmin_tnc(f, x0, gradient, bounds=cons, messages=0, **args)[0]
             else:
                 if algorithm == 'l-bfgs-b':
-                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, iprint=-1, **args)[0]
+                    min = optimize.fmin_l_bfgs_b(f, x0, approx_grad=True, bounds=cons, **args)[0]
                 else:
                     min = optimize.fmin_tnc(f, x0, approx_grad=True, bounds=cons, messages=0, **args)[0]
         elif isinstance(cons[0], (function_type, Expression)):
             min = optimize.fmin_cobyla(f, x0, cons, **args)
-    elif isinstance(cons, function_type) or isinstance(cons, Expression):
+    elif isinstance(cons, (function_type, Expression)):
         min = optimize.fmin_cobyla(f, x0, cons, **args)
     return vector(RDF, min)
 

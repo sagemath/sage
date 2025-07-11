@@ -143,10 +143,8 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
     Check that ``ecmfactor`` can be interrupted (factoring a large
     prime number)::
 
-        sage: alarm(0.5); ecmfactor(2^521-1, 1e7)
-        Traceback (most recent call last):
-        ...
-        AlarmInterrupt
+        sage: from sage.doctest.util import ensure_interruptible_after
+        sage: with ensure_interruptible_after(0.5): ecmfactor(2^521-1, 1e7)
 
     Some special cases::
 
@@ -169,7 +167,7 @@ def ecmfactor(number, double B1, verbose=False, sigma=0):
     sage_int_sigma = Integer(sigma)
 
     if number <= 1:
-        raise ValueError("Input number (%s) must be greater than 1"%number)
+        raise ValueError("Input number (%s) must be greater than 1" % number)
 
     if verbose:
         print("Performing one curve with B1=%1.0f" % B1)

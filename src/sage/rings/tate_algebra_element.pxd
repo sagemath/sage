@@ -46,4 +46,3 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
     cdef _quo_rem_c(self, list divisors, bint quo, bint rem, bint integral)
     cdef _quo_rem_check(self, divisors, bint quo, bint rem)
     cdef TateAlgebraElement _Spoly_c(self, TateAlgebraElement other)
-

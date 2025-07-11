@@ -3,6 +3,7 @@ from sage.numerical.backends.generic_backend import GenericBackend
 from sage.structure.sage_object import SageObject
 from sage.structure.sage_object_test import SageObjectTests
 
+
 class GenericBackendTests(SageObjectTests):
 
     @pytest.fixture

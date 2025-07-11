@@ -192,8 +192,20 @@ class Fields(CategoryWithAxiom):
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
     class ParentMethods:
+        def krull_dimension(self):
+            """
+            Return the Krull dimension of this field, which is 0.
 
-        def is_field( self, proof=True ):
+            EXAMPLES::
+
+                sage: QQ.krull_dimension()
+                0
+                sage: Frac(QQ['x,y']).krull_dimension()
+                0
+            """
+            return 0
+
+        def is_field(self, proof=True):
             r"""
             Return ``True`` as ``self`` is a field.
 
@@ -203,14 +215,18 @@ class Fields(CategoryWithAxiom):
                 True
                 sage: Parent(QQ,category=Fields()).is_field()
                 True
+
+                sage: Frac(ZZ['x,y']).is_field()
+                True
             """
             return True
 
-        def is_integrally_closed(self):
+        def is_integrally_closed(self) -> bool:
             r"""
-            Return ``True``, as per :meth:`IntegralDomain.is_integrally_closed`:
-            for every field `F`, `F` is its own field of fractions,
-            hence every element of `F` is integral over `F`.
+            Return whether ``self`` is integrally closed.
+
+            For every field `F`, `F` is its own field of fractions.
+            Therefore every element of `F` is integral over `F`.
 
             EXAMPLES::
 
@@ -222,7 +238,83 @@ class Fields(CategoryWithAxiom):
                 Finite Field of size 5
                 sage: Z5.is_integrally_closed()
                 True
+                sage: Frac(ZZ['x,y']).is_integrally_closed()
+                True
             """
+            return True
+
+        def integral_closure(self):
+            """
+            Return this field, since fields are integrally closed in their
+            fraction field.
+
+            EXAMPLES::
+
+                sage: QQ.integral_closure()
+                Rational Field
+                sage: Frac(ZZ['x,y']).integral_closure()
+                Fraction Field of Multivariate Polynomial Ring in x, y
+                over Integer Ring
+            """
+            return self
+
+        def algebraic_closure(self):
+            """
+            Return the algebraic closure of ``self``.
+
+            .. NOTE::
+
+               This is only implemented for certain classes of field.
+
+            EXAMPLES::
+
+                sage: K = PolynomialRing(QQ,'x').fraction_field(); K
+                Fraction Field of Univariate Polynomial Ring in x over Rational Field
+                sage: K.algebraic_closure()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: algebraic closures of general fields not implemented
+            """
+            raise NotImplementedError("algebraic closures of general fields not implemented")
+
+        def prime_subfield(self):
+            """
+            Return the prime subfield of ``self``.
+
+            EXAMPLES::
+
+                sage: k = GF(9, 'a')                                                        # needs sage.rings.finite_rings
+                sage: k.prime_subfield()                                                    # needs sage.rings.finite_rings
+                Finite Field of size 3
+            """
+            if self.characteristic() == 0:
+                import sage.rings.rational_field
+                return sage.rings.rational_field.RationalField()
+
+            from sage.rings.finite_rings.finite_field_constructor import GF
+            return GF(self.characteristic())
+
+        def divides(self, x, y, coerce=True):
+            """
+            Return ``True`` if ``x`` divides ``y`` in this field.
+
+            This is usually ``True`` in a field!.
+
+            If ``coerce`` is ``True`` (the default), first coerce
+            ``x`` and ``y`` into ``self``.
+
+            EXAMPLES::
+
+                sage: QQ.divides(2, 3/4)
+                True
+                sage: QQ.divides(0, 5)
+                False
+            """
+            if coerce:
+                x = self(x)
+                y = self(y)
+            if x.is_zero():
+                return y.is_zero()
             return True
 
         def _gcd_univariate_polynomial(self, a, b):
@@ -384,18 +476,18 @@ class Fields(CategoryWithAxiom):
                 if not a:
                     return (zero, zero, zero)
                 c = ~a.leading_coefficient()
-                return (c*a, R(c), zero)
+                return (c * a, R(c), zero)
             elif not a:
                 c = ~b.leading_coefficient()
-                return (c*b, zero, R(c))
-            (u, d, v1, v3) = (R.one(), a, zero, b)
+                return (c * b, zero, R(c))
+            u, d, v1, v3 = (R.one(), a, zero, b)
             while v3:
                 q, r = d.quo_rem(v3)
-                (u, d, v1, v3) = (v1, v3, u - v1*q, r)
-            v = (d - a*u) // b
+                u, d, v1, v3 = (v1, v3, u - v1 * q, r)
+            v = (d - a * u) // b
             if d:
                 c = ~d.leading_coefficient()
-                d, u, v = c*d, c*u, c*v
+                d, u, v = c * d, c * u, c * v
             return d, u, v
 
         def is_perfect(self):
@@ -448,15 +540,75 @@ class Fields(CategoryWithAxiom):
                 return
 
         def fraction_field(self):
-            r"""
+            """
             Return the *fraction field* of ``self``, which is ``self``.
+
+            EXAMPLES:
+
+            Since fields are their own field of fractions, we simply get the
+            original field in return::
+
+                sage: QQ.fraction_field()
+                Rational Field
+                sage: RR.fraction_field()                                                   # needs sage.rings.real_mpfr
+                Real Field with 53 bits of precision
+                sage: CC.fraction_field()                                                   # needs sage.rings.real_mpfr
+                Complex Field with 53 bits of precision
+
+                sage: x = polygen(ZZ, 'x')
+                sage: F = NumberField(x^2 + 1, 'i')                                         # needs sage.rings.number_field
+                sage: F.fraction_field()                                                    # needs sage.rings.number_field
+                Number Field in i with defining polynomial x^2 + 1
+            """
+            return self
+
+        def _pseudo_fraction_field(self):
+            """
+            The fraction field of ``self`` is always available as ``self``.
 
             EXAMPLES::
 
-                sage: QQ.fraction_field() is QQ
+                sage: QQ._pseudo_fraction_field()
+                Rational Field
+                sage: K = GF(5)
+                sage: K._pseudo_fraction_field()
+                Finite Field of size 5
+                sage: K._pseudo_fraction_field() is K
                 True
             """
             return self
+
+        def ideal(self, *gens, **kwds):
+            """
+            Return the ideal generated by ``gens``.
+
+            INPUT:
+
+            - an element or a list/tuple/sequence of elements, the generators
+
+            Any named arguments are ignored.
+
+            EXAMPLES::
+
+                sage: QQ.ideal(2)
+                Principal ideal (1) of Rational Field
+                sage: QQ.ideal(0)
+                Principal ideal (0) of Rational Field
+
+            TESTS::
+
+                sage: QQ.ideal(2, 4)
+                Principal ideal (1) of Rational Field
+
+                sage: QQ.ideal([2, 4])
+                Principal ideal (1) of Rational Field
+            """
+            if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
+                gens = gens[0]
+            for x in gens:
+                if not self(x).is_zero():
+                    return self.unit_ideal()
+            return self.zero_ideal()
 
         def _squarefree_decomposition_univariate_polynomial(self, f):
             r"""
@@ -547,6 +699,22 @@ class Fields(CategoryWithAxiom):
             """
             return self.free_module(*args, **kwds)
 
+        def _pseudo_fraction_field(self):
+            """
+            The fraction field of ``self`` is always available as ``self``.
+
+            EXAMPLES::
+
+                sage: QQ._pseudo_fraction_field()
+                Rational Field
+                sage: K = GF(5)
+                sage: K._pseudo_fraction_field()
+                Finite Field of size 5
+                sage: K._pseudo_fraction_field() is K
+                True
+            """
+            return self
+
     class ElementMethods:
         def euclidean_degree(self):
             r"""
@@ -583,9 +751,9 @@ class Fields(CategoryWithAxiom):
             """
             if other.is_zero():
                 raise ZeroDivisionError
-            return (self/other, self.parent().zero())
+            return (self / other, self.parent().zero())
 
-        def is_unit( self ):
+        def is_unit(self):
             r"""
             Return ``True`` if ``self`` has a multiplicative inverse.
 
@@ -602,7 +770,7 @@ class Fields(CategoryWithAxiom):
         # Of course, in general gcd and lcm in a field are not very interesting.
         # However, they should be implemented!
         @coerce_binop
-        def gcd(self,other):
+        def gcd(self, other):
             """
             Greatest common divisor.
 
@@ -638,6 +806,11 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
+            TESTS::
+
+                sage: QQbar(0).gcd(QQbar.zeta(3))
+                1
+
             AUTHOR:
 
             - Simon King (2011-02) -- :issue:`10771`
@@ -652,7 +825,7 @@ class Fields(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 try:
                     return P(ZZ(self).gcd(ZZ(other)))
-                except TypeError:
+                except (TypeError, ValueError):
                     pass
 
             if self == P.zero() and other == P.zero():

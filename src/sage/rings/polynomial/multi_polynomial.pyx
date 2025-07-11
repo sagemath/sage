@@ -11,14 +11,14 @@ Base class for elements of multivariate polynomial rings
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ********************************************************************
+from itertools import chain
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
-from itertools import chain
-
 from sage.misc.misc_c import prod
+from sage.misc.superseded import deprecated_function_alias
 
 
 def is_MPolynomial(x):
@@ -207,6 +207,56 @@ cdef class MPolynomial(CommutativePolynomial):
         if var in self._parent.variable_names():
             return R(self.polynomial(self._parent(var)))
         return R([self])
+
+    def leading_support(self, *args, **kwds):
+        r"""
+        Return the maximal element of the support of ``self``,
+        according to the term order.
+
+        If the term ordering of the basis elements is not what is
+        desired, a comparison key, ``key(x)``, can be provided.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_support()
+            (0, 4, 0)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_support()
+            (1, 2, 0)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).leading_support()
+            (0, 1, 3)
+        """
+        if 'key' in kwds:
+            return max(self.support(), *args, **kwds)
+        kwds['key'] = self._parent.term_order().sortkey
+        return max(self.support(), *args, **kwds)
+
+    def trailing_support(self, *args, **kwds):
+        r"""
+        Return the minimal element of the support of ``self``,
+        according to the term order.
+
+        If the term ordering of the basis elements is not what is
+        desired, a comparison key, ``key(x)``, can be provided.
+
+        EXAMPLES::
+
+            sage: R.<x,y,z> = PolynomialRing(QQ)
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_support()
+            (1, 1, 1)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='lex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_support()
+            (0, 1, 3)
+            sage: R.<x,y,z> = PolynomialRing(QQ, order='invlex')
+            sage: (3*x*y^2 + 2*y*z^3 + y^4 + 4*x*y*z).trailing_support()
+            (1, 2, 0)
+        """
+        if 'key' in kwds:
+            return min(self.support(), *args, **kwds)
+        kwds['key'] = self._parent.term_order().sortkey
+        return min(self.support(), *args, **kwds)
 
     def coefficients(self):
         r"""
@@ -418,7 +468,7 @@ cdef class MPolynomial(CommutativePolynomial):
         del Z[ind]
 
         # Make polynomial ring over all variables except var.
-        S = R.base_ring()[tuple(Z)]
+        S = PolynomialRing(R.base_ring(), Z)
         ring = S[var]
         if not self:
             return ring(0)
@@ -429,7 +479,7 @@ cdef class MPolynomial(CommutativePolynomial):
              for e, val in self.monomial_coefficients().items() if not e[ind]}
         v = [B(w)]  # coefficients that don't involve var
         z = var
-        for i in range(1,d+1):
+        for i in range(1, d+1):
             c = <dict> self.coefficient(z).monomial_coefficients()
             w = {remove_from_tuple(e, ind): val for e, val in c.items()}
             v.append(B(w))
@@ -487,7 +537,7 @@ cdef class MPolynomial(CommutativePolynomial):
         elif my_vars[-1] not in vars:
             x = base_ring(self) if base_ring is not None else self
             const_ix = ETuple((0,)*len(vars))
-            return { const_ix: x }
+            return {const_ix: x}
         elif not set(my_vars).issubset(set(vars)):
             # we need to split it up
             p = self.polynomial(self._parent.gen(len(my_vars)-1))
@@ -734,7 +784,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 P = P.change_ring(names=P.variable_names() + [str(var)])
                 return P(self)._homogenize(len(V))
 
-        elif isinstance(var, int) or isinstance(var, Integer):
+        elif isinstance(var, (int, Integer)):
             if 0 <= var < P.ngens():
                 return self._homogenize(var)
             else:
@@ -769,7 +819,7 @@ cdef class MPolynomial(CommutativePolynomial):
             subclasses.
         """
         M = self.monomials()
-        if M==[]:
+        if M == []:
             return True
         d = M.pop().degree()
         for m in M:
@@ -834,7 +884,7 @@ cdef class MPolynomial(CommutativePolynomial):
         except AttributeError:
             raise NotImplementedError
         else:
-            q, r = quo_rem(other)
+            _, r = quo_rem(other)
             return r
 
     def change_ring(self, R):
@@ -1099,14 +1149,14 @@ cdef class MPolynomial(CommutativePolynomial):
         g = R.gen_names()
         v = []
         for m, c in zip(self.monomials(), self.coefficients()):
-            v.append('(%s)*%s'%( c._magma_init_(magma),
-                                 m._repr_with_changed_varnames(g)))
+            v.append('(%s)*%s' % (c._magma_init_(magma),
+                                  m._repr_with_changed_varnames(g)))
         if len(v) == 0:
             s = '0'
         else:
             s = '+'.join(v)
 
-        return '%s!(%s)'%(R.name(), s)
+        return '%s!(%s)' % (R.name(), s)
 
     def _giac_init_(self):
         r"""
@@ -1114,7 +1164,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS::
 
-            sage: # needs sage.libs.giac
+            sage: # needs giac
             sage: R.<x,y,z> = GF(101)['e,i'][]
             sage: f = R('e*i') * x + y^2
             sage: f._giac_init_()
@@ -1183,7 +1233,7 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         e = self.exponents()
-        P = Polyhedron(vertices = e, base_ring=ZZ)
+        P = Polyhedron(vertices=e, base_ring=ZZ)
         return P
 
     def __iter__(self):
@@ -1284,28 +1334,39 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         return self.base_ring().ideal(self.coefficients())
 
-    def is_generator(self):
+    def is_gen(self):
         r"""
         Return ``True`` if this polynomial is a generator of its parent.
 
         EXAMPLES::
 
             sage: R.<x,y> = ZZ[]
-            sage: x.is_generator()
+            sage: x.is_gen()
             True
-            sage: (x + y - y).is_generator()
+            sage: (x + y - y).is_gen()
             True
-            sage: (x*y).is_generator()
+            sage: (x*y).is_gen()
             False
             sage: R.<x,y> = QQ[]
-            sage: x.is_generator()
+            sage: x.is_gen()
             True
-            sage: (x + y - y).is_generator()
+            sage: (x + y - y).is_gen()
             True
-            sage: (x*y).is_generator()
+            sage: (x*y).is_gen()
             False
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: x.is_generator()
+            doctest:warning...:
+            DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
+            See https://github.com/sagemath/sage/issues/38942 for details.
+            True
         """
-        return (self in self.parent().gens())
+        return self in self.parent().gens()
+
+    is_generator = deprecated_function_alias(38942, is_gen)
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""
@@ -1388,10 +1449,10 @@ cdef class MPolynomial(CommutativePolynomial):
             raise TypeError("k must be a finite field")
         p = k.characteristic()
         e = k.degree()
-        v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1,e)]
+        v = [self] + [self.map_coefficients(k.hom([k.gen()**(p**i)])) for i in range(1, e)]
         return prod(v).change_ring(k.prime_subfield())
 
-    def sylvester_matrix(self, right, variable = None):
+    def sylvester_matrix(self, right, variable=None):
         r"""
         Given two nonzero polynomials ``self`` and ``right``, return the Sylvester
         matrix of the polynomials with respect to a given variable.
@@ -1545,7 +1606,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return M
 
-    def discriminant(self,variable):
+    def discriminant(self, variable):
         r"""
         Return the discriminant of ``self`` with respect to the given variable.
 
@@ -1843,7 +1904,7 @@ cdef class MPolynomial(CommutativePolynomial):
             for y in x:
                 d = d.lcm(y.denominator())
             return d
-        except(AttributeError):
+        except AttributeError:
             return self.base_ring().one()
 
     def numerator(self):
@@ -1919,6 +1980,10 @@ cdef class MPolynomial(CommutativePolynomial):
         Given an ideal `I = (f_1,\dots,f_r)` that contains ``self``,
         find `s_1,\dots,s_r` such that ``self`` `= s_1 f_1 + ... + s_r f_r`.
 
+        INPUT:
+
+        - ``I`` -- an ideal in ``self.parent()`` or tuple of generators of that ideal
+
         EXAMPLES::
 
             sage: # needs sage.rings.real_mpfr
@@ -1940,31 +2005,39 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives
+        - ``I`` -- an ideal of the polynomial ring in which ``self`` lives,
+          or a single polynomial
 
         OUTPUT: a multivariate polynomial representing the inverse of ``f`` modulo `I`
 
         EXAMPLES::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
-           1/16*x1 + 3/16
-           sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
-           1
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + 3*x2^2; g = f.inverse_mod(I); g                               # needs sage.libs.singular
+            1/16*x1 + 3/16
+            sage: (f*g).reduce(I)                                                        # needs sage.libs.singular
+            1
 
         Test a non-invertible element::
 
-           sage: R.<x1,x2> = QQ[]
-           sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
-           sage: f = x1 + x2
-           sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
-           Traceback (most recent call last):
-           ...
-           ArithmeticError: element is non-invertible
+            sage: R.<x1,x2> = QQ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = x1 + x2
+            sage: f.inverse_mod(I)                                                       # needs sage.libs.singular
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: element is non-invertible
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: x.inverse_mod(x*y-1)
+            y
         """
         P = self.parent()
-        B  = I.gens()
+        from sage.rings.ideal import Ideal_generic
+        B = I.gens() if isinstance(I, Ideal_generic) else (I,)
         try:
             XY = P.one().lift((self,) + tuple(B))
             return P(XY[0])
@@ -2050,7 +2123,7 @@ cdef class MPolynomial(CommutativePolynomial):
             #Corner case, note that the degree of zero is an Integer
             return Integer(-1)
 
-        if len(weights) ==  1:
+        if len(weights) == 1:
             # First unwrap it if it is given as one element argument
             weights = weights[0]
 
@@ -2071,9 +2144,9 @@ cdef class MPolynomial(CommutativePolynomial):
         for i in range(n):
             l += weights[i]*m[i]
         deg = l
-        for j in range(1,len(A)):
+        for j in range(1, len(A)):
             l = Integer(0)
-            m = <tuple>A[j]
+            m = <tuple> A[j]
             for i in range(n):
                 l += weights[i]*m[i]
             if deg < l:
@@ -2361,7 +2434,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
             sage: R.<x,h> = PolynomialRing(QQ)
             sage: f = 19*x^8 - 262*x^7*h + 1507*x^6*h^2 - 4784*x^5*h^3 + 9202*x^4*h^4\
-             -10962*x^3*h^5 + 7844*x^2*h^6 - 3040*x*h^7 + 475*h^8
+            ....: -10962*x^3*h^5 + 7844*x^2*h^6 - 3040*x*h^7 + 475*h^8
             sage: f.reduced_form(prec=200, smallest_coeffs=False)                       # needs sage.modules sage.rings.complex_interval_field
             (
             -x^8 - 2*x^7*h + 7*x^6*h^2 + 16*x^5*h^3 + 2*x^4*h^4 - 2*x^3*h^5 + 4*x^2*h^6 - 5*h^8,
@@ -2499,27 +2572,26 @@ cdef class MPolynomial(CommutativePolynomial):
         from sage.rings.real_mpfr import RealField
 
         if self.parent().ngens() != 2:
-            raise ValueError("(=%s) must have two variables"%self)
+            raise ValueError("(=%s) must have two variables" % self)
         if not self.is_homogeneous():
-            raise ValueError("(=%s) must be homogeneous"%self)
+            raise ValueError("(=%s) must be homogeneous" % self)
 
         prec = kwds.get('prec', 300)
-        return_conjugation  =kwds.get('return_conjugation', True)
-        error_limit = kwds.get('error_limit', 0.000001)
+        return_conjugation = kwds.get('return_conjugation', True)
         emb = kwds.get('emb', None)
 
         # getting a numerical approximation of the roots of our polynomial
         CF = ComplexIntervalField(prec=prec)  # keeps trac of our precision error
         RF = RealField(prec=prec)
         R = self.parent()
-        x,y = R.gens()
+        x, y = R.gens()
 
         # finding quadratic Q_0, gives us our covariant, z_0
         from sage.rings.polynomial.binary_form_reduce import covariant_z0
         try:
             z, th = covariant_z0(self, prec=prec, emb=emb, z0_cov=True)
         except ValueError:# multiple roots
-            F = self.lc()*prod([p for p,e in self.factor()])
+            F = self.lc()*prod([p for p, e in self.factor()])
             z, th = covariant_z0(F, prec=prec, emb=emb, z0_cov=True)
         z = CF(z)
         # this moves z_0 to our fundamental domain using the three steps laid
@@ -2533,11 +2605,11 @@ cdef class MPolynomial(CommutativePolynomial):
                 # moves z into fundamental domain by m
                 m = zc.real().round() # finds amount to move z's real part by
                 Qm = QQ(m)
-                M = M * matrix(QQ, [[1,Qm], [0,1]]) # move
+                M = M * matrix(QQ, [[1, Qm], [0, 1]]) # move
                 z -= m  # M.inverse()*z is supposed to move z by m
             elif (zc.real() <= RF(0) and zc.abs() < RF(1)) or (zc.real() > RF(0) and zc.abs() <= RF(1)): # flips z
                 z = -1/z
-                M = M * matrix(QQ, [[0,-1], [1,0]])# multiply on left because we are taking inverse matrices
+                M = M * matrix(QQ, [[0, -1], [1, 0]])# multiply on left because we are taking inverse matrices
             zc = z.center()
 
         smallest_coeffs = kwds.get('smallest_coeffs', True)
@@ -2545,7 +2617,8 @@ cdef class MPolynomial(CommutativePolynomial):
             # since we are searching anyway, don't need the 'true' reduced covariant
             from sage.rings.polynomial.binary_form_reduce import smallest_poly
             norm_type = kwds.get('norm_type', 'norm')
-            sm_F, sm_m = smallest_poly(self(tuple(M * vector([x,y]))), prec=prec, norm_type=norm_type, emb=emb)
+            _, sm_m = smallest_poly(self(tuple(M * vector([x, y]))), prec=prec,
+                                    norm_type=norm_type, emb=emb)
             M = M*sm_m
         else:
             # solve the minimization problem for 'true' covariant
@@ -2570,7 +2643,7 @@ cdef class MPolynomial(CommutativePolynomial):
             return (self(tuple(M * vector([x,y]))), M)
         return self(tuple(M * vector([x,y])))
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return ``True`` if ``self`` is a unit, that is, has a
         multiplicative inverse.
@@ -2830,8 +2903,56 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return result(True)
 
+    def crt(self, y, m, n):
+        """
+        Return a polynomial congruent to ``self`` modulo ``m`` and
+        to ``y`` modulo ``n``.
 
-def _is_M_convex_(points):
+        INPUT:
+
+        - ``y`` -- a polynomial in the same ring as ``self``
+        - ``m``, ``n`` -- polynomials or ideals in the same ring as ``self``; ideals
+          may also be specified as a list/tuple of generators
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(QQ, implementation="singular")
+            sage: f = R(3)
+            sage: f.crt(5, x-1, x-2) % ((x-1)*(x-2))
+            2*x + 1
+            sage: f.crt(5, R.ideal(x-1), [x-2]) % ((x-1)*(x-2))
+            2*x + 1
+        """
+        # could be moved up to ModuleElement as long as lift() is defined
+        # the current definition of lift() requires ideal(), so maybe only RingElement
+        R = self._parent
+        y = R(y)
+        m = R.ideal(m).gens()
+        n = R.ideal(n).gens()
+        # result == self - sum a_i * m_i == y + sum b_i * n_i
+        # self - y == sum b_i * n_i + sum a_i * m_i
+        ab_values = (self - y).lift(m + n)
+        return R.sum([y] + [bi * ni for bi, ni in zip(ab_values[len(m):], n)])
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]
+            sage: (-2*x^2+3*x+5*y).canonical_associate()
+            (x^2 - 3/2*x - 5/2*y, -2)
+            sage: R.<x,y>=ZZ[]
+            sage: (-2*x^2+3*x+5*y).canonical_associate()
+            (2*x^2 - 3*x - 5*y, -1)
+        """
+        lc = self.leading_coefficient()
+        _, u = lc.canonical_associate()
+        return (u.inverse_of_unit() * self, u)
+
+
+def _is_M_convex_(points) -> bool:
     r"""
     Return whether ``points`` represents a set of integer lattice points
     which are M-convex.
@@ -2900,7 +3021,6 @@ def _is_M_convex_(points):
         for p2 in points_set:
             if p2 == p1:
                 continue
-            delta = list(x2 - x1 for x1, x2 in zip(p1, p2))
             for i in range(dim):
                 if p2[i] > p1[i]:
                     # modify list_p1 to represent point p1 + e_i - e_j for various i, j

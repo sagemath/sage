@@ -67,7 +67,7 @@ See also the functions :func:`cremona_curves` and :func:`cremona_optimal_curves`
 which enable easy looping through the Cremona elliptic curve database.
 """
 
-import os
+from pathlib import Path
 from ast import literal_eval
 
 from .constructor import EllipticCurve
@@ -132,10 +132,9 @@ class EllipticCurves:
         """
         from sage.features.databases import DatabaseEllcurves
         db = DatabaseEllcurves()
-        data = os.path.join(os.path.dirname(db.absolute_filename()),
-                            f'rank{rank}')
+        data = Path(db.absolute_filename()).parent / f'rank{rank}'
         try:
-            f = open(data)
+            f = data.open()
         except OSError:
             return []
         v = []

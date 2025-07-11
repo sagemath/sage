@@ -1775,8 +1775,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(x^2*z - y^3)
             sage: C.fundamental_group()                                 # needs sirocco
             Finitely presented group < x0 | x0^3 >
-            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()          # needs sirocco
-            Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
+            sage: g = P.curve(z*(x^2*z - y^3)).fundamental_group()      # needs sirocco
+            sage: g.sorted_presentation()                               # needs sirocco
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1^-1*x0*x1*x0 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
@@ -1805,7 +1806,6 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
             sage: G0 = C.fundamental_group()                    # needs sirocco
             sage: G.is_isomorphic(G0)                           # needs sirocco
-            #I  Forcing finiteness test
             True
             sage: C = P.curve(z)
             sage: C.fundamental_group()                         # needs sirocco
@@ -2301,7 +2301,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
                 self._open_affine_index = i
                 break
         else:
-            assert "no projective curve defined"
+            raise ValueError("no projective curve defined")
 
     def function_field(self):
         """
@@ -2521,7 +2521,6 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: C.function(C._map_from_function_field(f)) == f
             True
         """
-        F = self._function_field
         S = self.ambient_space().coordinate_ring()
         phi = self._open_affine._nonsingular_model[2]
         i = self._open_affine_index

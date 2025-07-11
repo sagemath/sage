@@ -53,7 +53,7 @@ def simplify(f, algorithm='maxima', **kwds):
         sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
         sage: simplify(ex)
         1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
-        sage: simplify(ex, algorithm='giac')
+        sage: simplify(ex, algorithm='giac')  # needs giac
         I*sqrt(x^2 - 1)
     """
     try:

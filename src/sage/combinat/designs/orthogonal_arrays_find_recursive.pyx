@@ -116,7 +116,7 @@ def find_recursive_construction(k, n):
     return False
 
 
-cpdef find_product_decomposition(int k,int n):
+cpdef find_product_decomposition(int k, int n):
     r"""
     Find `n_1n_2=n` to obtain an `OA(k,n)` by the product construction.
 
@@ -146,18 +146,19 @@ cpdef find_product_decomposition(int k,int n):
     """
     cdef int n1,n2
     for n1 in range(2, n):
-        n2 = n/n1  # n2 is decreasing along the loop
+        if n % n1:
+            # we want to iterate only through divisors of n1... it seems
+            # faster to use that rather than calling the divisors function
+            continue
+        n2 = n // n1  # n2 is decreasing along the loop
         if n2 < n1:
             break
-        if n%n1:  # we want to iterate only through divisors of n1... it seems
-                  # faster to use that rather than calling the divisors function
-            continue
         if is_available(k, n1) and is_available(k, n2):
             from sage.combinat.designs.orthogonal_arrays import wilson_construction
             return wilson_construction, (None,k,n1,n2,(),False)
     return False
 
-cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
+cpdef find_wilson_decomposition_with_one_truncated_group(int k, int n):
     r"""
     Find `rm+u=n` to obtain an `OA(k,n)` by Wilson's construction with one truncated column.
 
@@ -187,11 +188,11 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
     """
     cdef int r,u,m
     # If there exists a TD(k+1,t) then k+1 < t+2, i.e. k <= t
-    for r in range(max(1,k),n-1):
-        u = n%r
+    for r in range(max(1, k), n - 1):
+        u = n % r
         # We ensure that 1<=u, and that there can exists a TD(k,u), i.e k<u+2
         # (unless u == 1)
-        if u == 0 or (u>1 and k >= u+2):
+        if u == 0 or (u > 1 and k >= u + 2):
             continue
 
         m = n // r
@@ -206,7 +207,7 @@ cpdef find_wilson_decomposition_with_one_truncated_group(int k,int n):
 
     return False
 
-cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
+cpdef find_wilson_decomposition_with_two_truncated_groups(int k, int n):
     r"""
     Find `rm+r_1+r_2=n` to obtain an `OA(k,n)` by Wilson's construction with two truncated columns.
 
@@ -268,7 +269,7 @@ cpdef find_wilson_decomposition_with_two_truncated_groups(int k,int n):
                     return wilson_construction, (None,k,r,m,(r1,r2),False)
     return False
 
-cpdef find_construction_3_3(int k,int n):
+cpdef find_construction_3_3(int k, int n):
     r"""
     Find a decomposition for construction 3.3 from [AC07]_.
 
@@ -291,9 +292,9 @@ cpdef find_construction_3_3(int k,int n):
         (11, 11, 16, 1)
         sage: find_construction_3_3(12,11)
     """
-    cdef int mm,nn,i
+    cdef int mm, nn, i
     for mm in range(k-1, n//2+1):
-        if not(is_available(k, mm) and is_available(k, mm + 1)):
+        if not (is_available(k, mm) and is_available(k, mm + 1)):
             continue
 
         for nn in range(2, n//mm+1):
@@ -391,14 +392,14 @@ cpdef find_construction_3_5(int k, int n):
             for s in range(min(i+1,nn)):
                 for r in range(max(0,i-nn-s), min(s+1,i-s+1,nn)):
                     t = i - r - s
-                    if ((nn-r-1)*(nn-s) < t         and
-                        (r==0 or is_available(k,r)) and
-                        (s==0 or is_available(k,s)) and
-                        (t==0 or is_available(k,t))):
+                    if ((nn-r-1)*(nn-s) < t and
+                        (r==0 or is_available(k, r)) and
+                        (s==0 or is_available(k, s)) and
+                        (t==0 or is_available(k, t))):
                         from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_5
                         return construction_3_5, (k,nn,mm,r,s,t)
 
-cpdef find_construction_3_6(int k,int n):
+cpdef find_construction_3_6(int k, int n):
     r"""
     Find a decomposition for construction 3.6 from [AC07]_.
 
@@ -439,7 +440,7 @@ cpdef find_construction_3_6(int k,int n):
                 from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_3_6
                 return construction_3_6, (k,nn,mm,i)
 
-cpdef find_q_x(int k,int n):
+cpdef find_q_x(int k, int n):
     r"""
     Find integers `q,x` such that the `q-x` construction yields an `OA(k,n)`.
 
@@ -481,18 +482,18 @@ cpdef find_q_x(int k,int n):
         x = (n-q**2+q-2)/(2-q)
         if (x < q and
             0 < x and
-            n == (q-1)*(q-x)+x+2             and
-            is_available(k+1,q-x-1)          and
-            is_available(k+1,q-x+1)          and
+            n == (q-1)*(q-x)+x+2 and
+            is_available(k+1, q-x-1) and
+            is_available(k+1, q-x+1) and
             # The next is always True, because q is a prime power
             # is_available(k+1,q) and
-            is_available(k, x+2 )            and
+            is_available(k, x+2 ) and
             smallInteger(q).is_prime_power()):
             from sage.combinat.designs.orthogonal_arrays_build_recursive import construction_q_x
-            return construction_q_x, (k,q,x)
+            return construction_q_x, (k, q, x)
     return False
 
-cpdef find_thwart_lemma_3_5(int k,int N):
+cpdef find_thwart_lemma_3_5(int k, int N):
     r"""
     Find the values on which Lemma 3.5 from [Thwarts]_ applies.
 
@@ -613,7 +614,7 @@ cpdef find_thwart_lemma_3_5(int k,int N):
 
     return False
 
-cpdef find_thwart_lemma_4_1(int k,int n):
+cpdef find_thwart_lemma_4_1(int k, int n):
     r"""
     Find a decomposition for Lemma 4.1 from [Thwarts]_.
 
@@ -662,7 +663,7 @@ cpdef find_thwart_lemma_4_1(int k,int n):
 
     return False
 
-cpdef find_three_factor_product(int k,int n):
+cpdef find_three_factor_product(int k, int n):
     r"""
     Find `n_1n_2n_3=n` to obtain an `OA(k,n)` by the three-factor product from [DukesLing14]_.
 
@@ -707,7 +708,7 @@ cpdef find_three_factor_product(int k,int n):
 
     return False
 
-cpdef find_brouwer_separable_design(int k,int n):
+cpdef find_brouwer_separable_design(int k, int n):
     r"""
     Find `t(q^2+q+1)+x=n` to obtain an `OA(k,n)` by Brouwer's separable design construction.
 
@@ -865,11 +866,11 @@ def int_as_sum(int value, list S, int k_max):
                 vv = v-i
                 if vv == 0:
                     return D[v] + (i,)
-                if (vv > 0            and   # The new integer i is too big
+                if (vv > 0 and              # The new integer i is too big
                     vv <= j*max_value and   # The new integer i is too small
-                    vv not in D       and   # We had it in D     already
+                    vv not in D and         # We had it in D     already
                     vv not in new_D):       # We had it in new_D already
-                    new_D[vv] = D[v]+(i,)
+                    new_D[vv] = D[v] + (i,)
         if not new_D:
             break
         D.update(new_D)
@@ -878,7 +879,7 @@ def int_as_sum(int value, list S, int k_max):
     return None
 
 
-cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
+cpdef find_brouwer_van_rees_with_one_truncated_column(int k, int n):
     r"""
     Find `rm+x_1+...+x_c=n` such that the Brouwer-van Rees constructions yields a `OA(k,n)`.
 
@@ -947,7 +948,7 @@ cpdef find_brouwer_van_rees_with_one_truncated_column(int k,int n):
     return False
 
 from sage.combinat.designs.designs_pyx cimport _OA_cache, _OA_cache_size
-cdef int is_available(int k,int n) except -1:
+cdef int is_available(int k, int n) except -1:
     r"""
     Return whether Sage can build an OA(k,n)
 

@@ -832,13 +832,13 @@ class YangianLevel(Yangian):
             0
         """
         if i is None and j is None:
-            r,i,j = r
+            r, i, j = r
         if r > self._level:
             return self.zero()
         return Yangian.gen(self, r, i, j)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

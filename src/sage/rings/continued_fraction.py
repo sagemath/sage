@@ -663,7 +663,7 @@ class ContinuedFraction_base(SageObject):
             ....:         fields.append(RealField(prec=prec, rnd=rnd))
             sage: for n in range(3000):  # long time, not tested, known bug (see :issue:`29957`)
             ....:     a = QQ.random_element(num_bound=2^(n%100))
-            ....:     if a.denominator() % 8 == 0:  # not precices enough  # :issue:`29957`
+            ....:     if a.denominator() % 8 == 0:  # not precise enough  # :issue:`29957`
             ....:         continue
             ....:     cf = continued_fraction(a)
             ....:     for R in fields:
@@ -2375,7 +2375,7 @@ def continued_fraction_list(x, type='std', partial_convergents=False,
 
     OUTPUT:
 
-    A lits of integers, the coefficients in the continued fraction expansion of
+    A list of integers, the coefficients in the continued fraction expansion of
     ``x``. If ``partial_convergents`` is set to ``True``, then return a pair
     containing the coefficient list and the partial convergents list is
     returned.

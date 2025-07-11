@@ -1271,7 +1271,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         C, E, fwd_defining_poly, fwd_post, inv_defining_poly, inv_post)
 
 
-def tangent_at_smooth_point(C,P):
+def tangent_at_smooth_point(C, P):
     r"""Return the tangent at the smooth point `P` of projective curve `C`.
 
     INPUT:

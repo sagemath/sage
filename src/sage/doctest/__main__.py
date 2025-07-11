@@ -64,7 +64,7 @@ def _make_parser():
                         help="run as many doctests as possible in about 300 seconds (or the number of seconds given as an optional argument)")
     parser.add_argument("--warn-long", dest="warn_long", nargs='?',
                         type=float, default=-1.0, const=1.0, metavar="SECONDS",
-                        help="warn if tests take more time than SECONDS")
+                        help="warn if tests take more CPU time than SECONDS")
     # By default, include all tests marked 'sagemath_doc_html' -- see
     # https://github.com/sagemath/sage/issues/25345 and
     # https://github.com/sagemath/sage/issues/26110:
@@ -141,7 +141,7 @@ def _make_parser():
                         choices=["DEFAULT", "ALWAYS", "NEVER"],
                         default=0,
                         action=GCAction,
-                        help="control garbarge collection "
+                        help="control garbage collection "
                         "(ALWAYS: collect garbage before every test; NEVER: disable gc; DEFAULT: Python default)")
 
     # The --serial option is only really for internal use, better not

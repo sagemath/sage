@@ -20,15 +20,13 @@ fields (generally `\RR` or `\CC`).
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.rings.complex_double
-
 from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 from sage.categories.pushout import pushout
 
+from sage.rings.complex_double import CDF
 from sage.rings.real_lazy import RLF, CLF, LazyField, LazyAlgebraic
-
 
 cdef class NumberFieldEmbedding(Morphism):
 
@@ -239,12 +237,12 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
         """
         if ambient_field is None:
             if K.coerce_embedding() is None:
-                raise TypeError("No embedding available for %s"%K)
+                raise TypeError("No embedding available for %s" % K)
             Kemb = K
             while Kemb.coerce_embedding() is not None:
                 Kemb = Kemb.coerce_embedding().codomain()
             if L.coerce_embedding() is None:
-                raise TypeError("No embedding available for %s"%L)
+                raise TypeError("No embedding available for %s" % L)
             Lemb = L
             while Lemb.coerce_embedding() is not None:
                 Lemb = Lemb.coerce_embedding().codomain()
@@ -254,7 +252,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
                 candidate_ambient_fields.append(ambient_field.algebraic_closure())
             except NotImplementedError:
                 pass
-            candidate_ambient_fields.append(sage.rings.complex_double.CDF)
+            candidate_ambient_fields.append(CDF)
         else:
             candidate_ambient_fields = [ambient_field]
 
@@ -494,10 +492,10 @@ def root_from_approx(f, a):
         return LazyAlgebraic(CLF, f, a, prec=0)
     # p-adic lazy, when implemented, would go here
     else:
-        from sage.symbolic.relation import test_relation_maxima
+        from sage.symbolic.relation import check_relation_maxima
         rel = (f(a) != 0)
         if (rel is True
-            or (not isinstance(rel, bool) and test_relation_maxima(rel))):
+            or (not isinstance(rel, bool) and check_relation_maxima(rel))):
             raise ValueError("{} is not a root of {}".format(a, f))
         return a
 

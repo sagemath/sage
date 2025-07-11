@@ -934,9 +934,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         if isinstance(polynomials, Ideal_generic):
             I = polynomials
             polynomials = I.gens()
-            if I.ring() is R: # Otherwise we will recompute I later after
+            if I.ring() is R:  # Otherwise we will recompute I later after
                 self.__I = I  # converting generators to the correct ring
-        if isinstance(polynomials, tuple) or isinstance(polynomials, PolynomialSequence_generic) or is_iterator(polynomials):
+        if isinstance(polynomials, (tuple, PolynomialSequence_generic)) or is_iterator(polynomials):
             polynomials = list(polynomials)
         elif not isinstance(polynomials, list):
             # Looks like we got a single polynomial
@@ -976,13 +976,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         coords = list(v)
         for f in self.defining_polynomials():
-            if f(coords) != 0:   # it must be "!=0" instead of "if f(v)", e.g.,
-                                 # because of p-adic base rings.
-                raise TypeError("Coordinates %s do not define a point on %s" % (coords,self))
+            if f(coords) != 0:
+                # it must be "!=0" instead of "if f(v)", e.g.,
+                # because of p-adic base rings.
+                raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
         try:
             return self.ambient_space()._check_satisfies_equations(coords)
         except TypeError:
-            raise TypeError("Coordinates %s do not define a point on %s" % (coords,self))
+            raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
 
     def base_extend(self, R):
         """
@@ -1121,7 +1122,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             initial_polys = list(self.__polys)
 
             for P in initial_polys:
-                # stores value which need to be mutliplied to make all coefficient integers
+                # stores value which need to be multiplied to make all coefficient integers
                 mult = lcm([c.denominator() for c in P.coefficients()])
                 P = mult*P
                 # stores the common factor from all coefficients
@@ -1196,16 +1197,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: PP.<x,y,z,w,v> = ProjectiveSpace(4, QQ)
             sage: V = PP.subscheme((x^2 - y^2 - z^2) * (w^5 - 2*v^2*z^3) * w * (v^3 - x^2*z))
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              w,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              x^2 - y^2 - z^2,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              x^2*z - v^3,
-            Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
-              w^5 - 2*z^3*v^2
-            ]
+            [Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               w,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               x^2 - y^2 - z^2,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               x^2*z - v^3,
+             Closed subscheme of Projective Space of dimension 4 over Rational Field defined by:
+               w^5 - 2*z^3*v^2]
 
         We verify that the irrelevant ideal is not accidentally returned
         (see :issue:`6920`)::
@@ -1216,9 +1215,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: I = [f] + [f.derivative(zz) for zz in PP.gens()]
             sage: V = PP.subscheme(I)
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            <BLANKLINE>
-            ]
+            []
 
         The same polynomial as above defines a scheme with a
         nontrivial irreducible component in affine space (instead of
@@ -1227,13 +1224,11 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             sage: AA.<x,y,z,w> = AffineSpace(4, QQ)
             sage: V = AA.subscheme(I)
             sage: V.irreducible_components()                                            # needs sage.libs.singular
-            [
-            Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
-              w,
-              z,
-              y,
-              x
-            ]
+            [Closed subscheme of Affine Space of dimension 4 over Rational Field defined by:
+               w,
+               z,
+               y,
+               x]
         """
         try:
             return self.__irreducible_components
@@ -1363,7 +1358,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         d = self.codimension()
         minors = self.Jacobian_matrix().minors(d)
         I = self.defining_ideal()
-        minors = tuple([ I.reduce(m) for m in minors ])
+        minors = tuple([I.reduce(m) for m in minors])
         return I.ring().ideal(I.gens() + minors)
 
     def reduce(self):

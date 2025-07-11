@@ -208,7 +208,7 @@ cdef class _bigint:
         if s.isdigit() or s[0] == "-" and s[1:].isdigit():
             self.x = str_to_bigint(str_to_bytes(s))
         else:
-            raise ValueError("invalid _bigint: %r"%x)
+            raise ValueError("invalid _bigint: %r" % x)
 
     def __dealloc__(self):
         """
@@ -992,29 +992,11 @@ cdef class _two_descent:
           points.  Useful as a faster way of getting an upper bound on
           the rank.
 
-        - ``firstlim`` -- integer (default: 20); naive height bound on
-          first point search on quartic homogeneous spaces (before
-          testing local solubility; very simple search with no
-          overheads).
-
-        - ``secondlim`` -- integer (default: 8); naive height bound on
-          second point search on quartic homogeneous spaces (after
-          testing local solubility; sieve-assisted search)
-
-        - ``n_aux`` -- integer (default: -1); if positive, the number of
-          auxiliary primes used in sieve-assisted search for quartics.
-          If -1 (the default) use a default value (set in the eclib
-          code in ``src/qrank/mrank1.cc`` in DEFAULT_NAUX: currently 8).
-          Only relevant for curves with no 2-torsion, where full
-          2-descent is carried out.  Worth increasing for curves
-          expected to be of rank > 6 to one or two more than the
-          expected rank.
-
-        - ``second_descent`` -- integer (default: 1); flag specifying
-          whether or not a second descent will be carried out (yes if
-          1, the default; no if 0).  Only relevant for curves with
-          2-torsion.  Recommended left as the default except for
-          experts interested in details of Selmer groups.
+        - ``firstlim``, ``secondlim``, ``n_aux``, ``second_descent`` --
+          see ``first_limit``, ``second_limit``, ``n_aux``, ``second_descent``
+          respectively in :meth:`~sage.libs.eclib.interface.mwrank_EllipticCurve.two_descent`
+          (although ``second_descent`` here is ``1`` or ``0`` instead of ``True`` or ``False``
+          respectively)
 
         OUTPUT: none
 

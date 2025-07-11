@@ -1321,7 +1321,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         class ElementMethods:
 
             @abstract_method
-            def has_descent(self, i, side='right', positive=False):
+            def has_descent(self, i, side='right', positive=False) -> bool:
                 r"""
                 Return whether ``self`` * `s_i` < ``self`` where `s_i` is the `i`-th simple
                 reflection in the realized group.
@@ -1918,7 +1918,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the "PW0" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2035,7 +2035,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             """
             # note that we have to use the multiplicative version of the translation lattice
             # and change the twist to deal with this
-            def twist(w,l):
+            def twist(w, l):
                 return E.exp_lattice()(w.action(l.value))
 
             GroupSemidirectProduct.__init__(self, E.exp_lattice(), E.classical_weyl(), twist=twist, act_to_right=False, prefix0=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())
@@ -2128,7 +2128,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the W0P realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2220,7 +2220,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: W0P = ExtendedAffineWeylGroup(['D',3,2]).W0P()
                 sage: TestSuite(W0P).run()
             """
-            def twist(w,l):
+            def twist(w, l):
                 return E.exp_lattice()(w.action(l.value))
 
             GroupSemidirectProduct.__init__(self, E.classical_weyl(), E.exp_lattice(), twist=twist, act_to_right=True, prefix1=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())
@@ -2307,7 +2307,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         Element class for the "WF" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2418,7 +2418,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: WF = ExtendedAffineWeylGroup(['D',3,2]).WF()
                 sage: TestSuite(WF).run()
             """
-            def twist(g,w):
+            def twist(g, w):
                 return g.act_on_affine_weyl(w)
 
             GroupSemidirectProduct.__init__(self, E.affine_weyl(), E.fundamental_group(), twist=twist, act_to_right=False, print_tuple=E._print_tuple, category=E.Realizations())
@@ -2481,7 +2481,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the "FW" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has descent at `i`.
 
@@ -2579,7 +2579,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: FW = ExtendedAffineWeylGroup(['D',3,2]).FW()
                 sage: TestSuite(FW).run()
             """
-            def twist(g,w):
+            def twist(g, w):
                 return g.act_on_affine_weyl(w)
 
             GroupSemidirectProduct.__init__(self, E.fundamental_group(), E.affine_weyl(), twist=twist, act_to_right=True, print_tuple=E._print_tuple, category=E.Realizations())
@@ -2641,7 +2641,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         The element class for the "PvW0" realization.
         """
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2753,7 +2753,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             """
             # note that we have to use the multiplicative version of the translation lattice
             # and change the twist to deal with this
-            def twist(w,l):
+            def twist(w, l):
                 return E.exp_dual_lattice()(w.action(l.value))
 
             GroupSemidirectProduct.__init__(self, E.exp_dual_lattice(), E.dual_classical_weyl(), twist=twist, act_to_right=False, prefix0=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())
@@ -2836,7 +2836,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             assert la in w.parent().domain()
             return w.action(self.cartesian_projection(1).value + la)
 
-        def has_descent(self, i, side='right', positive=False):
+        def has_descent(self, i, side='right', positive=False) -> bool:
             r"""
             Return whether ``self`` has `i` as a descent.
 
@@ -2924,7 +2924,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
             """
             # note that we have to use the multiplicative version of the translation lattice
             # and change the twist to deal with this
-            def twist(w,l):
+            def twist(w, l):
                 return E.exp_dual_lattice()(w.action(l.value))
 
             GroupSemidirectProduct.__init__(self, E.dual_classical_weyl(), E.exp_dual_lattice(), twist=twist, act_to_right=True, prefix1=E._prefixt, print_tuple=E._print_tuple, category=E.Realizations())

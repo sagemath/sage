@@ -1286,8 +1286,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         if isinstance(x, sage.interfaces.abc.SingularElement):
             # self._singular_().set_ring()
-            x = self.element_class(self, x.sage_poly(self.cover_ring()))
-            return x
+            return self.element_class(self, x.sage_poly(self.cover_ring()))
 
         return self.element_class(self, x)
 
@@ -1559,7 +1558,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                     res[deg] = term
             return {i: res[i] for i in sorted(res.keys())}
 
-        def monomial_coefficients(self):
+        def monomial_coefficients(self, copy=True):
             r"""
             A dictionary that determines the element.
 
@@ -1578,7 +1577,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: sorted(elt.dict().items())
                 [((0, 1, 1, 0), -5), ((1, 1, 0, 0), 1), ((1, 2, 3, 1), 7)]
             """
-            return self.lift().monomial_coefficients()
+            return self.lift().monomial_coefficients(copy=copy)
 
         dict = monomial_coefficients
 

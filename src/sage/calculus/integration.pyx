@@ -31,7 +31,10 @@ from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
 
 from sage.rings.real_double import RDF
-from sage.libs.gsl.all cimport *
+from sage.libs.gsl.errno cimport gsl_set_error_handler_off
+from sage.libs.gsl.integration cimport *
+from sage.libs.gsl.monte cimport *
+from sage.libs.gsl.rng cimport *
 from sage.misc.sageinspect import sage_getargspec
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
@@ -56,7 +59,13 @@ cdef double c_f(double t, void *params) noexcept:
         else:
             value = wrapper.the_function(t)
     except Exception as msg:
-        print(msg)
+        try:
+            if str(msg).strip():
+                print(msg)
+            else:
+                print(f"Unable to evaluate function at {t}")
+        except Exception:
+            pass
         return 0
 
     return value
@@ -64,7 +73,7 @@ cdef double c_f(double t, void *params) noexcept:
 
 def numerical_integral(func, a, b=None,
                        algorithm='qag',
-                       max_points=87, params=[], eps_abs=1e-6,
+                       max_points=87, params=None, eps_abs=1e-6,
                        eps_rel=1e-6, rule=6):
     r"""
     Return the numerical integral of the function on the interval
@@ -141,17 +150,19 @@ def numerical_integral(func, a, b=None,
     For a Python function with parameters::
 
         sage: f(x,a) = 1/(a+x^2)
-        sage: [numerical_integral(f, 1, 2, max_points=100, params=[n]) for n in range(10)]  # random output (architecture and os dependent)
-        [(0.49999999999998657, 5.5511151231256336e-15),
-         (0.32175055439664557, 3.5721487367706477e-15),
-         (0.24030098317249229, 2.6678768435816325e-15),
-         (0.19253082576711697, 2.1375215571674764e-15),
-         (0.16087527719832367, 1.7860743683853337e-15),
-         (0.13827545676349412, 1.5351659583939151e-15),
-         (0.12129975935702741, 1.3466978571966261e-15),
-         (0.10806674191683065, 1.1997818507228991e-15),
-         (0.09745444625548845, 1.0819617008493815e-15),
-         (0.088750683050217577, 9.8533051773561173e-16)]
+        sage: [numerical_integral(f, 1, 2, max_points=100, params=[n])[0]  # abs tol 1.0e-6
+        ....:           for n in range(10)]
+        [0.5000000000000000,
+         0.3217505543966422,
+         0.24030098317248832,
+         0.19253082576711372,
+         0.1608752771983211,
+         0.138275456763492,
+         0.1212997593570257,
+         0.10806674191683492,
+         0.09745444625553161,
+         0.08875068305030848]
+
         sage: y = var('y')
         sage: numerical_integral(x*y, 0, 1)
         Traceback (most recent call last):
@@ -256,8 +267,6 @@ def numerical_integral(func, a, b=None,
     """
     cdef double abs_err  # step size
     cdef double result
-    cdef int i
-    cdef int j
     cdef double _a, _b
     cdef PyFunctionWrapper wrapper  # struct to pass information into GSL C function
 
@@ -276,6 +285,9 @@ def numerical_integral(func, a, b=None,
     cdef gsl_function F
     cdef gsl_integration_workspace* W
     W = NULL
+
+    if params is None:
+        params = []
 
     if True:
         from sage.rings.infinity import Infinity
@@ -320,6 +332,9 @@ def numerical_integral(func, a, b=None,
                     if ell.is_numeric() and not ell.is_zero():
                         raise ValueError('integral does not converge at infinity')
             func = fast_callable(func, vars=[v], domain=float)
+            # `func` is now a function of one variable,
+            # so it no longer needs any parameters
+            params = []
 
     if not isinstance(func, compiled_integrand):
         wrapper = PyFunctionWrapper()
@@ -379,7 +394,8 @@ def numerical_integral(func, a, b=None,
             _b = b
             W = <gsl_integration_workspace*> gsl_integration_workspace_alloc(n)
             sig_on()
-            gsl_integration_qag(&F,_a,_b,eps_abs,eps_rel,n,rule,W,&result,&abs_err)
+            gsl_integration_qag(&F, _a, _b, eps_abs, eps_rel,
+                                n, rule, W, &result, &abs_err)
             sig_off()
 
     elif algorithm == "qags":
@@ -498,7 +514,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         (4.0, 0.0)
         sage: monte_carlo_integral(lambda u,v: u*v, [0,0], [2,2], 10000)  # abs tol 0.1
         (4.0, 0.0)
-        sage: def f(x1,x2,x3,x4): return x1*x2*x3*x4
+        sage: def f(x1, x2, x3, x4): return x1*x2*x3*x4
         sage: monte_carlo_integral(f, [0,0], [2,2], 1000, params=[0.6,2])  # abs tol 0.2
         (4.8, 0.0)
 
@@ -522,7 +538,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         ValueError: The function to be integrated depends on 2 variables (x, y),
         and so cannot be integrated in 3 dimensions. Please fix additional
         variables with the 'params' argument
-        sage: def f(x,y): return x*y
+        sage: def f(x, y): return x*y
         sage: monte_carlo_integral(f, [0,0,0], [2,2,2], 100)
         Traceback (most recent call last):
         ...
@@ -605,7 +621,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         if len(vars) < target_dim:
             raise ValueError(("The function to be integrated depends on "
                               "{} variables {}, and so cannot be "
-                                 "integrated in {} dimensions. Please fix "
+                              "integrated in {} dimensions. Please fix "
                               "additional variables with the 'params' "
                               "argument").format(len(vars), tuple(vars),
                                                  target_dim))
@@ -614,7 +630,7 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
                               "{} variables {}, and so cannot be "
                               "integrated in {} dimensions. Please add "
                               "more items in upper and lower limits"
-                             ).format(len(vars), tuple(vars), target_dim))
+                              ).format(len(vars), tuple(vars), target_dim))
 
         from sage.structure.element import Expression
         if isinstance(func, Expression):

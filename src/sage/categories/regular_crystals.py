@@ -427,10 +427,7 @@ class RegularCrystals(Category_singleton):
                 index_set = self.index_set()
 
             def wt_zero(x):
-                for i in index_set:
-                    if x.epsilon(i) != x.phi(i):
-                        return False
-                return True
+                return all(x.epsilon(i) == x.phi(i) for i in index_set)
 
             if X is None:
                 X = [x for x in self if wt_zero(x)]
@@ -587,7 +584,7 @@ class RegularCrystals(Category_singleton):
                     l.append(element)
                 return - C.sum_of_monomials(l)
 
-        def stembridgeDelta_depth(self,i,j):
+        def stembridgeDelta_depth(self, i, j):
             r"""
             Return the difference in the `j`-depth of ``self`` and `e_i`
             of ``self``, where `i` and `j` are in the index set of the
@@ -610,7 +607,7 @@ class RegularCrystals(Category_singleton):
                 return 0
             return -self.e(i).epsilon(j) + self.epsilon(j)
 
-        def stembridgeDelta_rise(self,i,j):
+        def stembridgeDelta_rise(self, i, j):
             r"""
             Return the difference in the `j`-rise of ``self`` and `e_i` of
             ``self``, where `i` and `j` are in the index set of the
@@ -633,7 +630,7 @@ class RegularCrystals(Category_singleton):
                 return 0
             return self.e(i).phi(j) - self.phi(j)
 
-        def stembridgeDel_depth(self,i,j):
+        def stembridgeDel_depth(self, i, j):
             r"""
             Return the difference in the `j`-depth of ``self`` and `f_i` of
             ``self``, where `i` and `j` are in the index set of the
@@ -656,7 +653,7 @@ class RegularCrystals(Category_singleton):
                 return 0
             return -self.epsilon(j) + self.f(i).epsilon(j)
 
-        def stembridgeDel_rise(self,i,j):
+        def stembridgeDel_rise(self, i, j):
             r"""
             Return the difference in the `j`-rise of ``self`` and `f_i` of
             ``self``, where `i` and `j` are in the index set of the
@@ -679,7 +676,7 @@ class RegularCrystals(Category_singleton):
                 return 0
             return self.phi(j)-self.f(i).phi(j)
 
-        def stembridgeTriple(self,i,j):
+        def stembridgeTriple(self, i, j):
             r"""
             Let `A` be the Cartan matrix of the crystal, `x` a crystal element,
             and let `i` and `j` be in the index set of the crystal.

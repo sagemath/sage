@@ -21,6 +21,7 @@ from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from .finite_field_base import FiniteField
 from .finite_field_constructor import GF
 
+
 class FiniteField_pari_ffelt(FiniteField):
     """
     Finite fields whose cardinality is a prime power (not a prime),

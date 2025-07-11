@@ -19,4 +19,3 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
     # cdef'd methods
     cdef _new_c(self, object v)
-

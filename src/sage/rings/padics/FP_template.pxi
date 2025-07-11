@@ -862,7 +862,7 @@ cdef class FPElement(pAdicTemplateElement):
         """
         return very_pos_val(self.ordp)
 
-    def is_zero(self, absprec = None):
+    def is_zero(self, absprec=None):
         r"""
         Return whether ``self`` is zero modulo `\pi^{\mbox{absprec}}`.
 

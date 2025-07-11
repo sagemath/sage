@@ -83,32 +83,32 @@ In Sage, a "Parent" is an object of a category and contains elements.  Parents
 should inherit from :class:`sage.structure.parent.Parent` and their elements
 from :class:`sage.structure.element.Element`.
 
-Sage provides appropriate sub\--classes of
-:class:`~sage.structure.parent.Parent` and
-:class:`~sage.structure.element.Element` for a variety of more concrete
-algebraic structures, such as groups, rings, or fields, and of their
-elements. But some old stuff in Sage doesn't use it.  **Volunteers for
-refactoring are welcome!**
-
+Sage provides sub\--classes of :class:`~sage.structure.parent.Parent`
+and :class:`~sage.structure.element.Element` for a variety of more
+concrete algebraic structures, such as groups, rings, or fields, and
+of their elements. Some of them are not recommended anymore, namely
+the class :class:`sage.rings.ring.Ring` and all its sub-classes.
 
 The parent
 ----------
 
-Since we wish to implement a special kind of fields, namely fraction fields,
-it makes sense to build on top of the base class
-:class:`sage.rings.ring.Field` provided by Sage.  ::
+Since we wish to implement a special kind of fields, namely fraction
+fields, it would make sense to build on top of the base class
+:class:`sage.rings.ring.Field` provided by Sage. As said before, it is
+now recommended in that case to just use
+:class:`~sage.structure.parent.Parent` and set the category instead.
+
+Let us nevertheless provide an example using::
 
     sage: from sage.rings.ring import Field
 
-
-This base class provides a lot more methods than a general parent::
+as this base class still provides a few more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
     ['_CommutativeRing__fraction_field',
      '__iter__',
      '__rxor__',
      '__xor__',
-     '_an_element_impl',
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
@@ -119,31 +119,17 @@ This base class provides a lot more methods than a general parent::
      '_one_element',
      '_pseudo_fraction_field',
      '_zero_element',
-     'algebraic_closure',
+     'an_embedding',
      'base_extend',
-     'divides',
      'epsilon',
      'extension',
      'fraction_field',
      'gen',
      'gens',
-     'ideal',
-     'integral_closure',
-     'is_commutative',
-     'is_field',
-     'is_integrally_closed',
-     'is_prime_field',
-     'is_subring',
-     'krull_dimension',
-     'localization',
      'ngens',
      'one',
      'order',
-     'prime_subfield',
-     'random_element',
-     'zero',
-     'zeta',
-     'zeta_order']
+     'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
 be complemented later.
@@ -162,7 +148,7 @@ be complemented later.
     ....:     def characteristic(self):
     ....:         return self.base().characteristic()
 
-.. end ouf output
+.. end of output
 
 This basic implementation is formed by the following steps:
 
@@ -201,7 +187,7 @@ This basic implementation is formed by the following steps:
   error if the given ring does not belong to the category of integral
   domains. This is our first use case of categories.
 
-- Last, we add a method that returns the characteristic of the field. We don't
+- Last, we add a method that returns the characteristic of the field. We do not
   go into details, but some automated tests that we study below implicitly
   rely on this method.
 
@@ -1649,7 +1635,7 @@ it appears that it is not tested.
 
 Normally, a test for a method defined by a category should be provided by the
 same category. Hence, since ``factor`` is defined in the category of quotient
-fields, a test should be added there. But we won't change source code here and
+fields, a test should be added there. But we will not change source code here and
 will instead create a sub\--category.
 
 Apparently, If `e` is an element of a quotient field, the product of the

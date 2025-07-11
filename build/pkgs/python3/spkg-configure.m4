@@ -1,8 +1,8 @@
 SAGE_SPKG_CONFIGURE([python3], [
-   m4_pushdef([MIN_VERSION],               [3.9.0])
-   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.9.0])
-   m4_pushdef([LT_STABLE_VERSION],         [3.13.0])
-   m4_pushdef([LT_VERSION],                [3.13.0])
+   m4_pushdef([MIN_VERSION],               [3.11.0])
+   m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.11.0])
+   m4_pushdef([LT_STABLE_VERSION],         [3.14.0])
+   m4_pushdef([LT_VERSION],                [3.14.0])
    AC_ARG_WITH([python],
                [AS_HELP_STRING([--with-python=PYTHON3],
                                [Python 3 executable to use for the Sage venv; default: python3])])
@@ -20,7 +20,7 @@ SAGE_SPKG_CONFIGURE([python3], [
    dnl
    dnl However, if we add another package (providing a shared library linked into a Python module)
    dnl that also uses libsqlite3, then we will have to put the DEPCHECK back in.
-   SAGE_SPKG_DEPCHECK([bzip2 liblzma libffi zlib], [
+   SAGE_SPKG_DEPCHECK([liblzma libffi zlib], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
       dnl  Issue #31160: We no longer check for readline here.
@@ -70,12 +70,6 @@ SAGE_SPKG_CONFIGURE([python3], [
           sage_spkg_install_python3=yes
       ])
     ])
-    AS_CASE([$host],
-            [*-*-cygwin*], [AS_VAR_IF([sage_spkg_install_python3], [yes], [
-                                AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
-  On Cygwin, python3 must be installed as a system package. This is an error."])
-                            ])
-                           ])
 ],, [
     dnl PRE
 ], [

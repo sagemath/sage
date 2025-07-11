@@ -862,7 +862,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         # return BruhatTitsHarmonicCocyclesSubmodule(self, v)
         raise NotImplementedError
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Whether ``self`` is irreducible.
 
@@ -870,14 +870,14 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: X = BruhatTitsQuotient(3,29)
-            sage: H = X.harmonic_cocycles(4,prec =10)
+            sage: X = BruhatTitsQuotient(3, 29)
+            sage: H = X.harmonic_cocycles(4, prec=10)
             sage: H.rank()
             14
             sage: H.is_simple()
             False
-            sage: X = BruhatTitsQuotient(7,2)
-            sage: H = X.harmonic_cocycles(2,prec=10)
+            sage: X = BruhatTitsQuotient(7, 2)
+            sage: H = X.harmonic_cocycles(2, prec=10)
             sage: H.rank()
             1
             sage: H.is_simple()
@@ -949,9 +949,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         if isinstance(S, (BruhatTitsHarmonicCocycles, pAdicAutomorphicForms)):
             if S._k != self._k:
                 return False
-            if S._X != self._X:
-                return False
-            return True
+            return S._X == self._X
         return False
 
     def __eq__(self, other):
@@ -1161,7 +1159,7 @@ class BruhatTitsHarmonicCocycles(AmbientHeckeModule, UniqueRepresentation):
         d = self._k - 1
         for e in self._E:
             try:
-                g = next((g for g in S[e.label] if g[2]))
+                g = next(g for g in S[e.label] if g[2])
                 C = self._U.acting_matrix(self._Sigma0(self.embed_quaternion(g[0])), d).transpose()  # Warning - Need to allow the check = True
                 C -= self._U.acting_matrix(self._Sigma0(Matrix(QQ, 2, 2, p ** g[1])), d).transpose()  # Warning - Need to allow the check = True
                 stab_conds.append([e.label, C])
@@ -2113,7 +2111,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
                     assert 0
                 value += new
                 if mult:
-                    value_exp *= K.teichmuller(((b - d * t1) / (b - d * t2))) ** Integer(c_e.moment(0).rational_reconstruction())
+                    value_exp *= K.teichmuller((b - d * t1) / (b - d * t2)) ** Integer(c_e.moment(0).rational_reconstruction())
 
         else:
             print('The available methods are either "moments" or "riemann_sum". The latter is only provided for consistency check, and should not be used in practice.')
@@ -2355,15 +2353,11 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
         if isinstance(S, BruhatTitsHarmonicCocycles):
             if S.weight() - 2 != self._n:
                 return False
-            if S._X != self._source:
-                return False
-            return True
+            return S._X == self._source
         if isinstance(S, pAdicAutomorphicForms):
             if S._n != self._n:
                 return False
-            if S._source != self._source:
-                return False
-            return True
+            return S._source == self._source
         return False
 
     def _element_constructor_(self, data):
@@ -2497,7 +2491,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
             sage: H = X.harmonic_cocycles(2,prec = 5)
             sage: A = X.padic_automorphic_forms(2,prec = 5)
             sage: h = H.basis()[0]
-            sage: A.lift(h) # indirect doctest long time
+            sage: A.lift(h)  # indirect doctest, long time
             p-adic automorphic form of cohomological weight 0
         """
         S = self._source.get_stabilizers()

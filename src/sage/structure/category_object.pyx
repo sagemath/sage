@@ -78,7 +78,7 @@ cdef class CategoryObject(SageObject):
     """
     An object in some category.
     """
-    def __init__(self, category = None, base = None):
+    def __init__(self, category=None, base=None):
         """
         Initialize an object in a category.
 
@@ -722,7 +722,7 @@ cdef class CategoryObject(SageObject):
 
         return d
 
-    def __setstate__(self,d):
+    def __setstate__(self, d):
         try:
             version = d['_pickle_version']
         except KeyError:
@@ -756,7 +756,7 @@ cdef class CategoryObject(SageObject):
                 pass
         except (AttributeError, KeyError):
             raise
-            #raise RuntimeError, "If you change the pickling code in parent or category_object, you need to update the _pickle_version field"
+            # raise RuntimeError("If you change the pickling code in parent or category_object, you need to update the _pickle_version field")
 
     def __hash__(self):
         """

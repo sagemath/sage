@@ -42,15 +42,19 @@ AUTHORS:
 # ****************************************************************************
 
 import re
+import sys
+from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
 from sys import stdout
-from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
-                    SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
-from sage.structure.sage_object import SageObject
-from sage.doctest.util import count_noun
-from sage.doctest.sources import DictAsObject
-from .external import available_software
 
-def signal_name(sig):
+from sage.doctest.external import available_software
+from sage.doctest.sources import DictAsObject
+from sage.doctest.util import count_noun
+from sage.structure.sage_object import SageObject
+
+if sys.platform != "win32":
+    from signal import SIGALRM, SIGBUS, SIGHUP, SIGKILL, SIGPIPE, SIGQUIT
+
+def signal_name(sig: int | Signals) -> str:  # noqa: PLR0911
     """
     Return a string describing a signal number.
 
@@ -90,6 +94,7 @@ def signal_name(sig):
     if sig == SIGBUS:
         return "bus error"
     return "signal %s" % sig
+
 
 class DocTestReporter(SageObject):
     """
@@ -155,9 +160,7 @@ class DocTestReporter(SageObject):
         """
         if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
-        if tag in available_software.seen():
-            return True
-        return False
+        return tag in available_software.seen()
 
     def report_head(self, source, fail_msg=None):
         """
@@ -403,7 +406,7 @@ class DocTestReporter(SageObject):
             0
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Good tests")
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage: DTR.stats
             {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
 
@@ -414,7 +417,7 @@ class DocTestReporter(SageObject):
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Doctest output including the failure...")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
 
         If the user has requested that we report on skipped doctests,
         we do so::
@@ -433,7 +436,7 @@ class DocTestReporter(SageObject):
                 5 magma tests not run
                 2 not tested tests not run
                 0 tests not run because we ran out of time
-                [... tests, ... s]
+                [... tests, ...s wall]
 
         Test an internal error in the reporter::
 
@@ -466,7 +469,7 @@ class DocTestReporter(SageObject):
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Failed test")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
         """
         log = self.controller.log
         process_name = 'process (pid={0})'.format(pid) if pid else 'process'
@@ -596,17 +599,15 @@ class DocTestReporter(SageObject):
                         elif tag == "not implemented":
                             if self.controller.options.show_skipped:
                                 log("    %s for not implemented functionality not run" % (count_noun(nskipped, "test")))
-                        else:
-                            if not self.were_doctests_with_optional_tag_run(tag):
-                                if tag == "bug":
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
-                                elif tag == "":
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
-                                else:
-                                    if self.controller.options.show_skipped:
-                                        log("    %s not run" % (count_noun(nskipped, tag + " test")))
+                        elif not self.were_doctests_with_optional_tag_run(tag):
+                            if tag == "bug":
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
+                            elif tag == "":
+                                if self.controller.options.show_skipped:
+                                    log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
+                            elif self.controller.options.show_skipped:
+                                log("    %s not run" % (count_noun(nskipped, tag + " test")))
 
                     nskipped = result_dict.walltime_skips
                     if self.controller.options.show_skipped:
@@ -625,7 +626,7 @@ class DocTestReporter(SageObject):
                     else:
                         total = count_noun(ntests, "test")
                     if not (self.controller.options.only_errors and not f):
-                        log("    [%s, %s%.2f s]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
+                        log("    [%s, %s%.2fs wall]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
 
             self.sources_completed += 1
 
@@ -680,13 +681,13 @@ class DocTestReporter(SageObject):
             0
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Good tests")
-                [... tests, ... s]
+                [... tests, ...s wall]
             sage: runner.failures = 1
             sage: runner.update_results(D)
             1
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
             ....:            "Doctest output including the failure...")
-                [... tests, 1 failure, ... s]
+                [... tests, 1 failure, ...s wall]
 
         Now we can show the output of finalize::
 

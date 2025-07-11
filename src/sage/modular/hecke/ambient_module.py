@@ -242,10 +242,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         try:
             return self.__decomposition_matrix_cache
         except AttributeError:
-            rows = []
-            for A in self.decomposition():
-                for x in A.basis():
-                    rows.append(x.list())
+            rows = [x.list() for A in self.decomposition()
+                    for x in A.basis()]
             A = matrix_space.MatrixSpace(self.base_ring(), self.rank())(rows)
             self.__decomposition_matrix_cache = A
             return self.__decomposition_matrix_cache
@@ -347,14 +345,8 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
 
             sage: D = ModularSymbols(10,4).cuspidal_submodule().decomposition()
             sage: D
-            [
-             Modular Symbols subspace of dimension 2 of
-              Modular Symbols space of dimension 10 for
-               Gamma_0(10) of weight 4 with sign 0 over Rational Field,
-             Modular Symbols subspace of dimension 4 of
-              Modular Symbols space of dimension 10 for
-               Gamma_0(10) of weight 4 with sign 0 over Rational Field
-            ]
+            [Modular Symbols subspace of dimension 2 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field,
+             Modular Symbols subspace of dimension 4 of Modular Symbols space of dimension 10 for Gamma_0(10) of weight 4 with sign 0 over Rational Field]
             sage: D[1].degeneracy_map(5)
             Hecke module morphism defined by the matrix
             [   0    0   -1    1]
@@ -666,7 +658,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         AmbientHeckeModule.new_submodule(self, p)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         r"""
         Return ``True`` if this module is entirely old.
 
@@ -685,7 +677,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         self.old_submodule(p)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of ``V``.
 

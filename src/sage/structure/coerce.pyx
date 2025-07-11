@@ -521,7 +521,7 @@ cdef class CoercionModel:
 
         sage: import numpy                                                              # needs numpy
         sage: if int(numpy.version.short_version[0]) > 1:                               # needs numpy
-        ....:     numpy.set_printoptions(legacy="1.25")                                 # needs numpy
+        ....:     __ = numpy.set_printoptions(legacy="1.25")                            # needs numpy
 
         sage: # needs sage.rings.real_mpfr
         sage: x = polygen(RR)
@@ -685,7 +685,7 @@ cdef class CoercionModel:
             sage: cm.record_exceptions()
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
-            ['Traceback (most recent call last):\n  File "sage/structure/coerce.pyx", line ...TypeError: just a test']
+            ['Traceback (most recent call last):\n  File "...coerce.pyx", line ...TypeError: just a test']
             sage: cm.record_exceptions(False)
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
@@ -713,7 +713,7 @@ cdef class CoercionModel:
             []
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
-            ['Traceback (most recent call last):\n  File "sage/structure/coerce.pyx", line ...TypeError: just a test']
+            ['Traceback (most recent call last):\n  File "...coerce.pyx", line ...TypeError: just a test']
 
         The function _test_exception_stack is executing the following code::
 
@@ -743,7 +743,7 @@ cdef class CoercionModel:
             []
             sage: cm._test_exception_stack()
             sage: cm.exception_stack()
-            ['Traceback (most recent call last):\n  File "sage/structure/coerce.pyx", line ...TypeError: just a test']
+            ['Traceback (most recent call last):\n  File "...coerce.pyx", line ...TypeError: just a test']
         """
         try:
             raise TypeError("just a test")
@@ -807,6 +807,9 @@ cdef class CoercionModel:
         for an arithmetic operation between xp and yp (which may be either
         elements or parents). If the parent of the result can be determined
         then it will be returned.
+
+        For programmatic usages, use :meth:`canonical_coercion` and
+        :meth:`common_parent` instead.
 
         EXAMPLES::
 
@@ -937,6 +940,9 @@ cdef class CoercionModel:
         The :meth:`explain` method is easier to use, but if one wants access to
         the actual morphism and action objects (rather than their string
         representations), then this is the function to use.
+
+        For programmatic usages, use :meth:`canonical_coercion` and
+        :meth:`common_parent` instead.
 
         EXAMPLES::
 
@@ -1271,7 +1277,7 @@ cdef class CoercionModel:
 
         if not isinstance(y, Element):
             op_name = op.__name__
-            mul_method = getattr(y, '__r%s__'%op_name, None)
+            mul_method = getattr(y, '__r%s__' % op_name, None)
             if mul_method is not None:
                 res = mul_method(x)
                 if res is not None and res is not NotImplemented:
@@ -1425,7 +1431,7 @@ cdef class CoercionModel:
             except Exception:
                 self._record_exception()
 
-        raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'"%(xp, yp))
+        raise TypeError("no common canonical parent for objects with parents: '%s' and '%s'" % (xp, yp))
 
     cpdef coercion_maps(self, R, S):
         r"""
@@ -1600,7 +1606,7 @@ cdef class CoercionModel:
         """
         if homs is None:
             return None
-        cdef Map x_map, y_map
+        cdef Map R_map, S_map
         R_map, S_map = homs
         if isinstance(R, type):
             R = Set_PythonType(R)
@@ -1891,7 +1897,7 @@ cdef class CoercionModel:
             1/2*x
             sage: cm.discover_action(F, ZZ, operator.truediv)
             Right inverse action by Rational Field on
-             Free Algebra on 1 generators (x,) over Rational Field
+             Free Algebra on 1 generator (x,) over Rational Field
              with precomposition on right by Natural morphism:
               From: Integer Ring
               To:   Rational Field

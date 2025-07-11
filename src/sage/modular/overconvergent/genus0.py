@@ -194,6 +194,7 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Iterator
 
 import weakref
 
@@ -278,7 +279,7 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
         Space of 3-adic 1/2-overconvergent modular forms
          of weight-character (3, 3, [-1]) over Rational Field
     """
-    if isinstance(prime, Gamma0_class) or isinstance(prime, Gamma1_class):
+    if isinstance(prime, (Gamma0_class, Gamma1_class)):
         prime = prime.level()
     else:
         prime = ZZ(prime)
@@ -428,7 +429,7 @@ class OverconvergentModularFormsSpace(Module):
     # Boring functions that access internal data #
     ##############################################
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this space are represented exactly.
 
@@ -693,7 +694,7 @@ class OverconvergentModularFormsSpace(Module):
         """
         return self._radius
 
-    def gens(self):
+    def gens(self) -> Iterator:
         r"""
         Return a generator object that iterates over the (infinite) set of
         basis vectors of ``self``.
@@ -1187,7 +1188,7 @@ class OverconvergentModularFormsSpace(Module):
             F = self.base_ring()
 
         if F.is_exact():
-            # raise TypeError, "cannot calculate eigenfunctions over exact base fields"
+            # raise TypeError("cannot calculate eigenfunctions over exact base fields")
             F = pAdicField(self.prime(), 100)  # noqa:F821
 
         m = self.hecke_matrix(self.prime(), n, use_recurrence=True, exact_arith=exact_arith)
@@ -1500,7 +1501,7 @@ class OverconvergentModularFormElement(ModuleElement):
         """
         return self.gexp().prec()
 
-    def is_eigenform(self):
+    def is_eigenform(self) -> bool:
         r"""
         Return ``True`` if this is an eigenform.
 
@@ -1667,7 +1668,7 @@ class OverconvergentModularFormElement(ModuleElement):
         self._eigenvalue = eigenvalue
         self._slope = eigenvalue.normalized_valuation()
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Test whether this element has `q`-expansion coefficients that are `p`-adically integral.
 

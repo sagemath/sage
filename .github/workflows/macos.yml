@@ -23,15 +23,9 @@ on:
         # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
         description: 'Stringified JSON object'
         default: >-
-          [["12",     "",             "homebrew-macos-usrlocal-minimal"],
-           ["12",     "",             "homebrew-macos-usrlocal-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-python3_xcode-standard"],
-           ["12",     "",             "homebrew-macos-usrlocal-maximal"],
-           ["13",     "xcode_15.0",   "homebrew-macos-usrlocal-standard"],
+          [
            ["latest", "",             "homebrew-macos-opthomebrew-standard"],
-           ["13",     "",             "conda-forge-macos-minimal"],
-           ["13",     "",             "conda-forge-macos-standard"],
-           ["latest", "",             "conda-forge-macos-standard"]]
+          ]
         type: string
       extra_sage_packages:
         description: 'Extra Sage packages to install as system packages'
@@ -72,7 +66,7 @@ jobs:
     env:
       TOX_ENV: local-${{ matrix.osversion_xcodeversion_toxenv[2] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
       LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.osversion_xcodeversion_toxenv[2] }}-macos-${{ matrix.osversion_xcodeversion_toxenv[0] }}${{ matrix.osversion_xcodeversion_toxenv[1] && format('-{0}', matrix.osversion_xcodeversion_toxenv[1]) }}-stage${{ inputs.stage }}
     steps:
       - name: Check out SageMath
         uses: actions/checkout@v4
@@ -91,7 +85,7 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m pip install pipx
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -103,12 +97,12 @@ jobs:
 
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: sage-local-artifact
           name: ${{ env.LOCAL_ARTIFACT_NAME }}
@@ -126,7 +120,7 @@ jobs:
           case "${{ inputs.stage }}" in
             1)               export TARGETS_PRE="all-sage-local" TARGETS="all-sage-local" TARGETS_OPTIONAL="build/make/Makefile"
                              ;;
-            2)               export TARGETS_PRE="all-sage-local" TARGETS="build doc-html" TARGETS_OPTIONAL="ptest"
+            2)               export TARGETS_PRE="all-sage-local" TARGETS="build" TARGETS_OPTIONAL="ptest"
                              ;;
             2-optional*)     export TARGETS_PRE="build/make/Makefile" TARGETS="build/make/Makefile"
                              targets_pattern="${{ inputs.stage }}"
@@ -147,7 +141,7 @@ jobs:
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
@@ -165,8 +159,8 @@ jobs:
         run: |
           mkdir -p sage-local-artifact && (cd .tox/$TOX_ENV && rm -f "local/lib64" && tar -cf - $(pwd)) > sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ inputs.stage }}.tar
         if: contains(inputs.stage, '1')
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: sage-local-artifact/sage-${{ env.TOX_ENV }}-${{ inputs.stage }}.tar
           name: ${{ env.LOCAL_ARTIFACT_NAME }}
-        if: always()
+        if: contains(inputs.stage, '1')

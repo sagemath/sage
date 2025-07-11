@@ -57,7 +57,7 @@ cdef class CircuitsMatroid(Matroid):
 
     def __init__(self, M=None, groundset=None, circuits=None, nsc_defined=False):
         """
-        Initialization of the matroid. See class docstring for full
+        Initialization of the matroid. See the class docstring for full
         documentation.
 
         TESTS::
@@ -75,11 +75,9 @@ cdef class CircuitsMatroid(Matroid):
         # k-circuits
         self._k_C = {}
         for C in self._C:
-            try:
-                self._k_C[len(C)].add(C)
-            except KeyError:
+            if len(C) not in self._k_C:
                 self._k_C[len(C)] = set()
-                self._k_C[len(C)].add(C)
+            self._k_C[len(C)].add(C)
         self._sorted_C_lens = sorted(self._k_C)
         self._matroid_rank = self.rank(self._groundset)
         self._nsc_defined = nsc_defined
@@ -186,7 +184,6 @@ cdef class CircuitsMatroid(Matroid):
             6
         """
         cdef set XX = set(X)
-        cdef int i
         cdef frozenset C
         while True:
             try:
@@ -321,9 +318,9 @@ cdef class CircuitsMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should
-            (and in Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -869,13 +866,17 @@ cdef class CircuitsMatroid(Matroid):
 
     # verification
 
-    cpdef bint is_valid(self) noexcept:
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if ``self`` obeys the matroid axioms.
 
         For a matroid defined by its circuits, we check the circuit axioms.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -901,29 +902,24 @@ cdef class CircuitsMatroid(Matroid):
             False
             sage: C = [[1, 2, 3], [3, 4, 5]]
             sage: M = Matroid(circuits=C)
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False,
+             {'circuit 1': frozenset({...}),
+              'circuit 2': frozenset({...}),
+              'element': 3,
+              'error': 'elimination axiom failed'})
         """
-        from itertools import combinations_with_replacement
-        cdef int i, j
+        from itertools import combinations
         cdef frozenset C1, C2, I12, U12
-        for (i, j) in combinations_with_replacement(self._sorted_C_lens, 2):
-            # loop through all circuit length pairs (i, j) with i <= j
-            for C1 in self._k_C[i]:
-                if not C1:  # the empty set can't be a circuit
-                    return False
-                for C2 in self._k_C[j]:
-                    I12 = C1 & C2
-                    if not I12:  # C1 and C2 are disjoint; nothing to test
-                        continue
-                    if len(I12) == len(C1):
-                        if len(C1) == len(C2):  # they are the same circuit
-                            break
-                        # C1 < C2; a circuit can't be a subset of another circuit
-                        return False
-                    # check circuit elimination axiom
-                    U12 = C1 | C2
-                    for e in I12:
-                        if self._is_independent(U12 - {e}):
-                            return False
-        return True
+        if 0 in self._k_C:  # the empty set can't be a circuit
+            return False if not certificate else (False, {"error": "the empty set can't be a circuit"})
+        for C1, C2 in combinations(self._C, 2):
+            I12 = C1 & C2
+            if len(C1) == len(I12) or len(C2) == len(I12):  # a circuit can't be a subset of another circuit
+                return False if not certificate else (False, {"error": "a circuit can't be a subset of another circuit", "circuit 1": C1, "circuit 2": C2})
+            # check circuit elimination axiom
+            U12 = C1 | C2
+            for e in I12:
+                if self._is_independent(U12 - {e}):
+                    return False if not certificate else (False, {"error": "elimination axiom failed", "circuit 1": C1, "circuit 2": C2, "element": e})
+        return True if not certificate else (True, {})

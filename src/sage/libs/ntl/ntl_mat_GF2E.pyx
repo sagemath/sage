@@ -49,7 +49,7 @@ cdef class ntl_mat_GF2E():
     r"""
     The \class{mat_GF2E} class implements arithmetic with matrices over `GF(2**x)`.
     """
-    def __init__(self, modulus = None, nrows=0, ncols=0, v=None):
+    def __init__(self, modulus=None, nrows=0, ncols=0, v=None):
         """
         Construct a matrix over ntl.GF2E.
 
@@ -377,10 +377,10 @@ cdef class ntl_mat_GF2E():
 
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows()==1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -411,10 +411,10 @@ cdef class ntl_mat_GF2E():
         cdef int i, j
         if isinstance(ij, tuple) and len(ij) == 2:
             i, j = ij
-        elif self.x.NumCols() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumCols() == 1 and isinstance(ij, (Integer, int)):
             i = ij
             j = 0
-        elif self.x.NumRows() == 1 and (isinstance(ij, Integer) or isinstance(ij, int)):
+        elif self.x.NumRows() == 1 and isinstance(ij, (Integer, int)):
             i = 0
             j = ij
         else:
@@ -585,7 +585,7 @@ cdef class ntl_mat_GF2E():
         sig_off()
         return r
 
-    def IsIdent(self, n = -1):
+    def IsIdent(self, n=-1):
         r"""
         Test if `A` is the `n \times n` identity matrix.
 

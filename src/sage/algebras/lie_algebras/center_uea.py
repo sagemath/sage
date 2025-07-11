@@ -225,8 +225,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         ret = set(gens)
         ret.update([self.prod(gens), gens[1] * gens[3]**4, gens[1]**4 * gens[2]**3])
         # Sort the output for uniqueness
-        ret = sorted(ret, key=lambda m: (self.degree(m), m.to_word_list()))
-        return ret
+        return sorted(ret, key=lambda m: (self.degree(m), m.to_word_list()))
 
     def degree(self, m):
         r"""
@@ -419,7 +418,6 @@ class SimpleLieCenterIndices(CenterIndices):
         n = len(self._gen_degrees)
         wts = sorted(self._gen_degrees.values(), reverse=True)
         while True:
-            total = 0
             for exps in intvecwt_iterator(deg, wts):
                 yield self.element_class(self, {n-1-i: e for i, e in enumerate(exps) if e})
             deg += 1

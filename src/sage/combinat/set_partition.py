@@ -73,7 +73,11 @@ class AbstractSetPartition(ClonableArray,
             sage: S([[1,3],[2,4]])
             {{1, 3}, {2, 4}}
         """
-        return '{' + ', '.join('{' + repr(sorted(x))[1:-1] + '}' for x in self) + '}'
+        try:
+            s = [sorted(x) for x in self]
+        except TypeError:
+            s = [sorted(x, key=str) for x in self]
+        return '{' + ', '.join('{' + repr(x)[1:-1] + '}' for x in s) + '}'
 
     def __hash__(self):
         """
@@ -532,7 +536,7 @@ class AbstractSetPartition(ClonableArray,
 
 
 class SetPartition(AbstractSetPartition,
-        metaclass=InheritComparisonClasscallMetaclass):
+                   metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A partition of a set.
 
@@ -620,7 +624,11 @@ class SetPartition(AbstractSetPartition,
             {}
         """
         self._latex_options = {}
-        ClonableArray.__init__(self, parent, sorted(map(frozenset, s), key=min), check=check)
+        try:
+            s = sorted(map(frozenset, s), key=min)
+        except TypeError:
+            s = sorted(map(frozenset, s), key=lambda b: min(str(b)))
+        ClonableArray.__init__(self, parent, s, check=check)
 
     def check(self):
         """
@@ -1630,7 +1638,7 @@ class SetPartition(AbstractSetPartition,
         for S in self[1:]:
             if maximum_so_far < min(S):
                 return False
-            maximum_so_far = max(maximum_so_far, max(S))
+            maximum_so_far = max(maximum_so_far, *S)
         return True
 
     def standardization(self):
@@ -2091,11 +2099,7 @@ class SetPartitions(UniqueRepresentation, Parent):
             return False
 
         # Check to make sure each element of x is a set
-        for s in x:
-            if not isinstance(s, (set, frozenset, Set_generic)):
-                return False
-
-        return True
+        return all(isinstance(s, (set, frozenset, Set_generic)) for s in x)
 
     def _element_constructor_(self, s, check=True):
         """
@@ -2500,7 +2504,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         # Yip draws the diagram as an upper triangular matrix, thus
         # we refer to the cell in row i and column j with (i, j)
         P = []
-        rooks_by_column = {j: i for (i, j) in rooks}
+        rooks_by_column = {j: i for i, j in rooks}
         for c in range(1, n + 1):
             # determine the weight of column c
             try:
@@ -2509,7 +2513,7 @@ class SetPartitions(UniqueRepresentation, Parent):
                 ne = r - 1 + sum(1 for i, j in rooks if i > r and j < c)
             except KeyError:
                 n_rooks = 0
-                ne = sum(1 for i, j in rooks if j < c)
+                ne = sum(1 for _, j in rooks if j < c)
 
             b = c - n_rooks - ne
             if len(P) == b - 1:
@@ -2821,7 +2825,11 @@ class SetPartitions_set(SetPartitions):
             sage: SetPartitions(["a", "b"]).list()
             [{{'a', 'b'}}, {{'a'}, {'b'}}]
         """
-        for sp in set_partition_iterator(sorted(self._set)):
+        try:
+            s = sorted(self._set)
+        except TypeError:
+            s = sorted(self._set, key=str)
+        for sp in set_partition_iterator(s):
             yield self.element_class(self, sp, check=False)
 
     def base_set(self):
@@ -3179,7 +3187,11 @@ class SetPartitions_setn(SetPartitions_set):
             sage: SetPartitions(["a", "b", "c"], 2).list()
             [{{'a', 'c'}, {'b'}}, {{'a'}, {'b', 'c'}}, {{'a', 'b'}, {'c'}}]
         """
-        for sp in set_partition_iterator_blocks(sorted(self._set), self._k):
+        try:
+            s = sorted(self._set)
+        except TypeError:
+            s = sorted(self._set, key=str)
+        for sp in set_partition_iterator_blocks(s, self._k):
             yield self.element_class(self, sp, check=False)
 
     def __contains__(self, x):

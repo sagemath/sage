@@ -71,7 +71,7 @@ AUTHORS:
 from cypari2.gen cimport Gen as pari_gen
 from cypari2.pari_instance cimport get_var
 from cypari2.paridecl cimport gel, typ, lg, valp, varn, t_POL, t_SER, t_RFRAC, t_VEC
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 from sage.rings.power_series_ring_element cimport PowerSeries
@@ -416,7 +416,7 @@ cdef class PowerSeries_pari(PowerSeries):
         # to an ideal I, and the element a lies in I.  Here we only
         # implement a few special cases.
         from sage.rings.padics.padic_generic import pAdicGeneric
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         from sage.rings.laurent_series_ring import LaurentSeriesRing
         if isinstance(Q, pAdicGeneric):
@@ -433,7 +433,7 @@ cdef class PowerSeries_pari(PowerSeries):
             # subst(1 + O(x), x, 1/y) yields O(y^-1).
             if a.valuation() <= 0:
                 raise ValueError("can only substitute elements of positive valuation")
-        elif isinstance(Q, PolynomialRing_general):
+        elif isinstance(Q, PolynomialRing_generic):
             Q = Q.completion(Q.gen())
         elif Q.is_exact() and not a:
             pass
@@ -734,7 +734,7 @@ cdef class PowerSeries_pari(PowerSeries):
         else:
             return [R(g)] + [R.zero()] * (n - 1)
 
-    def monomial_coefficients(self):
+    def monomial_coefficients(self, copy=None):
         """
         Return a dictionary of coefficients for ``self``.
 

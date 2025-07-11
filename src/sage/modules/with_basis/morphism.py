@@ -515,7 +515,7 @@ class TriangularModuleMorphism(ModuleMorphism):
     A lower triangular (but not unitriangular) morphism::
 
         sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X'); x = X.basis()
-        sage: def lt(i): return sum(j*x[j] for j in range(i,4))
+        sage: def lt(i): return sum(j*x[j] for j in range(i, 4))
         sage: phi = X.module_morphism(lt, triangular='lower', codomain=X)
         sage: phi(x[2])
         2*B[2] + 3*B[3]
@@ -635,7 +635,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         TESTS::
 
             sage: X = CombinatorialFreeModule(QQ, [1, 2, 3]); X.rename('X'); x = X.basis()
-            sage: def lt(i): return sum(j*x[j] for j in range(i,4))
+            sage: def lt(i): return sum(j*x[j] for j in range(i, 4))
             sage: import __main__; __main__.lt = lt  # Fake lt being defined in a python module
             sage: phi = X.module_morphism(lt, triangular='lower', codomain=X)
             sage: phi.__class__
@@ -1180,7 +1180,7 @@ class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularM
 
             sage: X = CombinatorialFreeModule(QQ, ZZ)
             sage: from sage.modules.with_basis.morphism import TriangularModuleMorphismByLinearity
-            sage: def on_basis(i): return X.sum_of_monomials(range(i-2,i+1))
+            sage: def on_basis(i): return X.sum_of_monomials(range(i-2, i+1))
             sage: import __main__; __main__.on_basis = on_basis  # Fake on_basis being defined in a python module
             sage: phi = TriangularModuleMorphismByLinearity(
             ....:           X, on_basis=on_basis, codomain=X)
@@ -1198,7 +1198,7 @@ class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularM
 
             sage: X = CombinatorialFreeModule(QQ, ZZ)
             sage: from sage.modules.with_basis.morphism import TriangularModuleMorphismByLinearity
-            sage: def on_basis(i): return X.sum_of_monomials(range(i-2,i+1))
+            sage: def on_basis(i): return X.sum_of_monomials(range(i-2, i+1))
             sage: phi = TriangularModuleMorphismByLinearity(
             ....:           X, on_basis=on_basis, codomain=X)
             sage: phi == phi

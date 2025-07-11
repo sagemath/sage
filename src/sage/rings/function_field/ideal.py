@@ -723,7 +723,7 @@ class FunctionFieldIdeal_module(FunctionFieldIdeal, Ideal_generic):
         """
         return self._module
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a set of generators of this ideal.
 
@@ -1000,11 +1000,8 @@ class FunctionFieldIdealInfinite_module(FunctionFieldIdealInfinite, Ideal_generi
         if self.ring() != other.ring():
             raise ValueError("rings must be the same")
 
-        if (self.module().is_submodule(other.module()) and
-            other.module().is_submodule(self.module())):
-            return True
-        else:
-            return False
+        return (self.module().is_submodule(other.module()) and
+                other.module().is_submodule(self.module()))
 
     def module(self):
         """
@@ -1066,7 +1063,7 @@ class IdealMonoid(UniqueRepresentation, Parent):
             sage: M = O.ideal_monoid()
             sage: TestSuite(M).run()
         """
-        self.Element = R._ideal_class
+        self.Element = R._ideal_class_
         Parent.__init__(self, category=Monoids())
 
         self.__R = R

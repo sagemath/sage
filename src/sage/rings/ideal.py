@@ -280,7 +280,7 @@ class Ideal_generic(MonoidElement):
             gens = [ring(x) for x in gens]
 
         gens = tuple(gens)
-        if len(gens) == 0:
+        if not gens:
             gens = (ring.zero(),)
         self.__gens = gens
         MonoidElement.__init__(self, ring.ideal_monoid())
@@ -444,10 +444,7 @@ class Ideal_generic(MonoidElement):
             sage: bool(I)
             False
         """
-        for g in self.gens():
-            if not g.is_zero():
-                return True
-        return False
+        return any(not g.is_zero() for g in self.gens())
 
     def base_ring(self):
         r"""
@@ -622,7 +619,7 @@ class Ideal_generic(MonoidElement):
         """
         return f       # default
 
-    def gens(self):
+    def gens(self):  # -> tuple | PolynomialSequence
         """
         Return a set of generators / a basis of ``self``.
 
@@ -856,10 +853,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if len(ass) != 1:
             return False
-        if self == ass[0]:
-            return True
-        else:
-            return False
+        return self == ass[0]
 
     def associated_primes(self):
         r"""
@@ -1457,6 +1451,7 @@ class Ideal_principal(Ideal_generic):
             return self.gen().divides(other.gen())
         raise NotImplementedError
 
+
 class Ideal_pid(Ideal_principal):
     """
     An ideal of a principal ideal domain.
@@ -1694,6 +1689,18 @@ class Ideal_pid(Ideal_principal):
             return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
 
+    def radical(self):
+        r"""
+        Return the radical of this ideal.
+
+        EXAMPLES::
+
+            sage: ZZ.ideal(12).radical()
+            Principal ideal (6) of Integer Ring
+        """
+        return self.ring().ideal(self.gen().radical())
+
+
 class Ideal_fractional(Ideal_generic):
     """
     Fractional ideal of a ring.
@@ -1716,6 +1723,7 @@ class Ideal_fractional(Ideal_generic):
 
 # constructors for standard (benchmark) ideals, written uppercase as
 # these are constructors
+
 
 def Cyclic(R, n=None, homog=False, singular=None):
     """
@@ -1782,6 +1790,7 @@ def Cyclic(R, n=None, homog=False, singular=None):
         I = singular.cyclic(n).homog(R2.gen(n-1))
     return R2.ideal(I).change_ring(R)
 
+
 def Katsura(R, n=None, homog=False, singular=None):
     r"""
     `n`-th katsura ideal of `R` if `R` is coercible to
@@ -1831,6 +1840,7 @@ def Katsura(R, n=None, homog=False, singular=None):
     else:
         I = singular.katsura(n).homog(R2.gen(n-1))
     return R2.ideal(I).change_ring(R)
+
 
 def FieldIdeal(R):
     r"""

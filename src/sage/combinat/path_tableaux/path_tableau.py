@@ -52,7 +52,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
     This is the abstract base class for a path tableau.
     """
     @abstract_method
-    def local_rule(self,i):
+    def local_rule(self, i):
         r"""
         This is the abstract local rule defined in any coboundary category.
 
@@ -216,7 +216,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
 
         return (P(path[:m]), P(path[m-1:]))
 
-    def cactus(self,i,j):
+    def cactus(self, i, j):
         r"""
         Return the action of the generator `s_{i,j}` of the cactus
         group on ``self``.

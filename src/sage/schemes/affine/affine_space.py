@@ -15,7 +15,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_base
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.categories.map import Map
@@ -109,7 +109,7 @@ def AffineSpace(n, R=None, names=None, ambient_projective_space=None,
         ...
         NameError: variable names passed to AffineSpace conflict with names in ring
     """
-    if (isinstance(n, MPolynomialRing_base) or isinstance(n, PolynomialRing_general)) and R is None:
+    if isinstance(n, (MPolynomialRing_base, PolynomialRing_generic)) and R is None:
         R = n
         if names is not None:
             # Check for the case that the user provided a variable name

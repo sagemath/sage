@@ -28,7 +28,7 @@ symmetric functions `h_\lambda`, not an arbitrary graded basis.
 ####################################
 from sage.arith.misc import binomial, factorial
 from sage.combinat.partition import Partition
-from sage.combinat.sf import multiplicative, classical
+from sage.combinat.sf import classical, multiplicative
 from sage.misc.misc_c import prod
 from sage.rings.infinity import infinity
 
@@ -124,6 +124,24 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             return Partition([i]) if i else Partition([])
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
+
+    def _magma_init_(self, magma):
+        """
+        Used in converting this ring to the corresponding ring in MAGMA.
+
+        EXAMPLES::
+
+            sage: # optional - magma
+            sage: H = SymmetricFunctions(QQ).h()
+            sage: t = 4*H[3,2]+9
+            sage: mt = magma(t); mt
+            9 + 4*$.[3,2]
+            sage: mt.sage()
+            9*h[] + 4*h[3, 2]
+        """
+        B = magma(self.base_ring())
+        Bref = B._ref()
+        return f"SymmetricFunctionAlgebraHomogeneous({Bref})"
 
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):
@@ -286,13 +304,18 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 sage: s = x.principal_specialization(3); s
                 0
             """
+            if n == 1:
+                return self.base_ring().sum(self.coefficients(sort=False))
+
             from sage.combinat.q_analogues import q_binomial
 
             def get_variable(ring, name):
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -395,7 +418,9 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -435,6 +460,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.homogeneous',
                            'SymmetricFunctionAlgebraElement_homogeneous',
                            SymmetricFunctionAlgebra_homogeneous.Element)

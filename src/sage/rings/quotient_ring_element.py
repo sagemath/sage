@@ -18,11 +18,12 @@ AUTHORS:
 
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp, rich_to_bool
+from sage.features import FeatureNotPresentError
 
 
 try:
     from sage.interfaces.singular import singular as singular_default
-except ImportError:
+except (ImportError, FeatureNotPresentError):
     singular_default = None
 
 
@@ -813,8 +814,8 @@ class QuotientRingElement(RingElement):
             sage: Q = P.quo(I)
             sage: Q._singular_()
             polynomial ring, over a field, global ordering
-            //   coefficients: ZZ/2
-            //   number of vars : 2
+            // coefficients: ZZ/2...
+            // number of vars : 2
             //        block   1 : ordering dp
             //                  : names    x y
             //        block   2 : ordering C

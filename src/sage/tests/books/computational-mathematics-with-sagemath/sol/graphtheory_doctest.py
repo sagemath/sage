@@ -9,7 +9,7 @@ document.
 
 Sage example in ./sol/graphtheory.tex, line 5::
 
-  sage: def circulant(n,d):
+  sage: def circulant(n, d):
   ....:    g = Graph(n)
   ....:    for u in range(n):
   ....:        for c in range(d):
@@ -18,7 +18,7 @@ Sage example in ./sol/graphtheory.tex, line 5::
 
 Sage example in ./sol/graphtheory.tex, line 19::
 
-  sage: def kneser(n,k):
+  sage: def kneser(n, k):
   ....:    g = Graph()
   ....:    g.add_vertices(Subsets(n,k))
   ....:    for u in g:
@@ -29,7 +29,7 @@ Sage example in ./sol/graphtheory.tex, line 19::
 
 Sage example in ./sol/graphtheory.tex, line 33::
 
-  sage: def kneser(n,k):
+  sage: def kneser(n, k):
   ....:    g = Graph()
   ....:    sommets = Set(range(n))
   ....:    g.add_vertices(Subsets(sommets,k))

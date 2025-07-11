@@ -27,7 +27,7 @@ AUTHORS:
 - David Roe
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -36,7 +36,7 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 import weakref
 from cysignals.memory cimport sig_malloc, sig_free
@@ -638,7 +638,7 @@ cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec
 
 # To speed up the creation of PowComputers with the same m, we might eventually want to copy over data from an existing PowComputer.
 
-def PowComputer(m, cache_limit, prec_cap, in_field = False, prec_type=None):
+def PowComputer(m, cache_limit, prec_cap, in_field=False, prec_type=None):
     r"""
     Return a ``PowComputer`` that caches the values `1, m, m^2, \ldots, m^{C}`,
     where `C` is ``cache_limit``.

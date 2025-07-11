@@ -75,13 +75,13 @@ Check that Cython source code appears in tracebacks::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
-    sage: print("dummy line"); shell.run_cell('1/0') # see #25320 for the reason of the `...` and the dummy line in this test
-    dummy line
+    sage: shell.run_cell('1/0') # known bug (meson doesn't include the Cython source code)
     ...
     ZeroDivisionError...Traceback (most recent call last)
     ...
     ----> 1 Integer(1)/Integer(0)
-    .../sage/rings/integer.pyx... in sage.rings.integer.Integer...div...
+    ...
+    ...integer.pyx... in sage.rings.integer.Integer...div...
     ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
@@ -140,21 +140,21 @@ We test that :issue:`16196` is resolved::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import re
-from traitlets import Bool, Type
+from ctypes import c_int, c_void_p, pythonapi
 
-from sage.repl.preparse import preparse, containing_block
-from sage.repl.prompts import InterfacePrompts
-from sage.repl.configuration import sage_ipython_config, SAGE_EXTENSION
-
-from IPython.core.interactiveshell import InteractiveShell
-from IPython.terminal.interactiveshell import TerminalInteractiveShell
+from IPython.core.crashhandler import CrashHandler
 from IPython.core.inputtransformer2 import PromptStripper
+from IPython.core.interactiveshell import InteractiveShell
 from IPython.core.prefilter import PrefilterTransformer
 from IPython.terminal.embed import InteractiveShellEmbed
-from IPython.terminal.ipapp import TerminalIPythonApp, IPAppCrashHandler
-from IPython.core.crashhandler import CrashHandler
+from IPython.terminal.interactiveshell import TerminalInteractiveShell
+from IPython.terminal.ipapp import IPAppCrashHandler, TerminalIPythonApp
+from traitlets import Bool, Type
 
-from ctypes import pythonapi, c_int, c_void_p
+from sage.repl.configuration import SAGE_EXTENSION, sage_ipython_config
+from sage.repl.preparse import containing_block, preparse
+from sage.repl.prompts import InterfacePrompts
+
 # The following functions are part of the stable ABI since python 3.2
 # See: https://docs.python.org/3/c-api/sys.html#c.PyOS_getsig
 
@@ -197,7 +197,7 @@ def preparser(on=True):
 ##############################
 # Sage[Terminal]InteractiveShell
 ##############################
-class SageShellOverride():
+class SageShellOverride:
     """
     Mixin to override methods in IPython's [Terminal]InteractiveShell
     classes.
@@ -722,9 +722,9 @@ def get_test_shell():
 
     Check that :issue:`14070` has been resolved::
 
-        sage: from sage.tests.cmdline import test_executable
+        sage: from sage.tests import check_executable
         sage: cmd = 'from sage.repl.interpreter import get_test_shell; shell = get_test_shell()'
-        sage: (out, err, ret) = test_executable(["sage", "-c", cmd])
+        sage: (out, err, ret) = check_executable(["sage", "-c", cmd])
         sage: out + err
         ''
     """
@@ -771,7 +771,8 @@ class SageCrashHandler(IPAppCrashHandler):
         contact_email = 'sage-support@googlegroups.com'
         bug_tracker = 'https://github.com/sagemath/sage/issues'
         CrashHandler.__init__(self,
-            app, contact_name, contact_email, bug_tracker, show_crash_traceback=True)
+                              app, contact_name, contact_email,
+                              bug_tracker, show_crash_traceback=True)
         self.crash_report_fname = 'Sage_crash_report.txt'
 
 
