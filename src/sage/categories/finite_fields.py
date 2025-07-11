@@ -432,13 +432,13 @@ class FiniteFields(CategoryWithAxiom):
 
             ALGORITHM:
 
-            The following algorithm comes from chapter 8 of [BS1996]_.
-
-            If `q = p^n` is the order of the finite field then if
-            `p = 2` or divisible by 2 then we can compute the
-            square root by `a^(q/2)` if q is 3 modulo 4 then we
-            can compute the square root by `a^((q+1)/4)` otherwise
-            we use tonelli's method for all other cases in general.
+            The algorithms used come from chapter 6 of [BS1996]_.
+            Let `q = p^n` be the order of the finite field, let `a` be the finite field element
+            that we wish to find the square root of.
+            
+            - If `p = 2` then `a` is always a square, and the square root of `\sqrt{a} = a^{(q / 2)}`.
+            - If `q \equiv 3 \pmod{4}` then if `a` is a square `\sqrt{a} = {a^((q+1) / 4)}`
+            - For all other cases we use the algorithm given by the ``algorithm`` parameter.
             """
             cardinality = self.parent().order()
             if self.parent().characteristic() == 2:
