@@ -272,14 +272,14 @@ class FiniteFields(CategoryWithAxiom):
             if self.order() % 2 == 0:
                 raise ValueError("There are no non-squares in finite fields of even order")
             # uniformly randomly select elements for a non-square
-            # with probablity 1/2 for a non-square
+            # with probability 1/2 for a non-square
             element = self.random_element()
             while element.is_square():
                 element = self.random_element()
             return element
 
     class ElementMethods:
-        def is_square(self):
+        def is_square(self) -> bool:
             """
             Tests if the element is a square or has
             a square root element
@@ -382,7 +382,7 @@ class FiniteFields(CategoryWithAxiom):
             b = pow(X, (q+1)//2, f)
             return b
 
-        def sqrt(self, all=False, algorithm='tonelli'):
+        def sqrt(self, all:bool =False, algorithm: str ='tonelli'):
             """
             Returns the square root of the element if it exists
 
@@ -465,6 +465,3 @@ class FiniteFields(CategoryWithAxiom):
             return square_root
 
         square_root = sqrt
-
-
-
