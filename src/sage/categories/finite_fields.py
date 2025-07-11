@@ -331,8 +331,7 @@ class FiniteFields(CategoryWithAxiom):
             if not self.is_square():
                 raise ValueError("Element is not a square")
             g = self.parent().quadratic_non_residue()
-            odd_order = (q - 1).odd_part()
-            even_exp = Integer.valuation(q-1, 2)
+            even_exp, odd_order = (q - ZZ.one()).val_unit(2)
             e = 0
             for i in range(2, even_exp+1):
                 tmp = self * (pow(g, -e))
@@ -381,7 +380,7 @@ class FiniteFields(CategoryWithAxiom):
             b = pow(X, (q+1)//2, f)
             return b
 
-        def sqrt(self, all=False, algorithm='Tonelli'):
+        def sqrt(self, all=False, algorithm='tonelli'):
             """
             Returns the square root of the element if it exists
 
@@ -390,10 +389,11 @@ class FiniteFields(CategoryWithAxiom):
             - ``all`` -- boolean (default: ``False``); whether to return a list of
               all square roots or just a square root
 
-            - ``algorithm`` -- string (default: 'Tonelli'); The algorithm to use
-              among ``'Tonelli'``, ``'Cipolla'``. Most finite fields will have
-              Tonelli to run fast, but in the case where the order minus 1 is
-              highly divisible by 2 Cipolla's method could be faster.
+            - ``algorithm`` -- string (default: 'tonelli'); the algorithm to use
+              among ``'tonelli'``, ``'cipolla'``. Tonelli is typically faster but has
+              a worse worst-case complexity than Cipolla. In particular, if the
+              field cardinality minus 1 is highly divisible by 2 and has a large
+              odd factor then Cipolla may perform better.
 
             OUTPUT:
 
@@ -443,85 +443,15 @@ class FiniteFields(CategoryWithAxiom):
                     return square_root
             elif order % 4 == 3:
                 square_root = self**((order+1)//4)
-            elif algorithm == 'Cipolla':
-                square_root = self._cipolla()
-            else:
+            elif algorithm == 'tonelli':
                 square_root = self._tonelli()
+            else:
+                square_root = self._cipolla()
             if all:
                 return (square_root, -square_root)
             return square_root
 
-        def square_root(self, all=False, algorithm='Tonelli'):
-            """
-            Returns the square root of the element if it exists
-
-            INPUT:
-
-            - ``all`` -- boolean (default: ``False``); whether to return a list of
-              all square roots or just a square root
-
-            - ``algorithm`` -- string (default: 'Tonelli'); The algorithm to use
-              among ``'Tonelli'``, ``'Cipolla'``. Most finite fields will have
-              Tonelli to run fast, but in the case where the order minus 1 is
-              highly divisible by 2 Cipolla's method could be faster.
-
-            OUTPUT:
-
-            - if ``all=False``, a square root; raises an error if the element is not
-              a square
-
-            - if ``all=True``, a 2-tuple of square roots; raises an error if the
-             element is not a square
-
-            EXAMPLES::
-                sage: S.<x> = GF(5)[]
-                sage: f = S.irreducible_element(20)
-                sage: k.<y> = S.quotient_ring(f)
-                sage: k in Fields()
-                True
-                sage: k(2).is_square()
-                True
-                sage: k(2).square_root()^2 == k(2)
-                True
-                sage: k(4).square_root(all=True)[0]^2 == k(4)
-                True
-                sage: k(4).square_root(all=True)[1]^2 == k(4)
-                True
-                sage: k.quadratic_non_residue().sqrt()
-                Traceback (most recent call last):
-                ...
-                ValueError: Element is not a square
-
-            ALGORITHM:
-
-            The following algorithm comes from chapter 8 of [BS1996]_.
-
-            If `q = p^n` is the order of the finite field then if
-            `p = 2` or divisible by 2 then we can compute the
-            square root by `a^(q/2)` if q is 3 modulo 4 then we
-            can compute the square root by `a^((q+1)/4)` otherwise
-            we use tonelli's method for all other cases in general.
-            """
-            order = self.parent().order()
-            if not self.is_square():
-                raise ValueError("Element is not a square")
-            if order % 2 == 0:
-                exponent = order // 2
-                square_root = self**exponent
-                if all:
-                    # we return a 1-tuple because the GF implementation does it
-                    return (square_root)
-                else:
-                    return square_root
-            elif order % 4 == 3:
-                square_root = self**((order+1)//4)
-            elif algorithm == 'Cipolla':
-                square_root = self._cipolla()
-            else:
-                square_root = self._tonelli()
-            if all:
-                return (square_root, -square_root)
-            return square_root
+        square_root = sqrt
 
 
 
