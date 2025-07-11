@@ -238,4 +238,5 @@ src = meson.current_source_dir()
 
 # Submodules
 subdir('sage')
+subdir('sage_docbuild')
 subdir('doc')

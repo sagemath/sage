@@ -34,13 +34,7 @@ from sage.misc.latex_macros import sage_mathjax_macros
 from sage.misc.sagedoc import extlinks as extlinks  # noqa: PLC0414
 from sage.misc.sagedoc_conf import *  # Load configuration shared with sage.misc.sphinxify
 
-# Import MathJax configuration from the build system
-try:
-    from sage_docbuild.mathjax_config import MATHJAX_DIR
-except ImportError:
-    # Fallback to default location if config file is not available
-    import os
-    MATHJAX_DIR = os.path.join(os.environ.get('SAGE_LOCAL', '/usr/local'), 'share', 'mathjax')
+from .config import MATHJAX_PATH
 
 # ---------------------
 # General configuration
@@ -558,7 +552,7 @@ mathjax3_config = {
 if os.environ.get('SAGE_USE_CDNS', 'no') == 'yes':
     mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
 else:
-    mathjax_path = os.path.join(MATHJAX_DIR, 'tex-chtml.js')
+    mathjax_path = MATHJAX_PATH
 
 # A list of glob-style patterns that should be excluded when looking for source
 # files. They are matched against the source file names relative to the
