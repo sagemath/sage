@@ -7,6 +7,7 @@ Finite fields
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2025      Brian Heckel <heckelbri@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -15,7 +16,7 @@ Finite fields
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.rings.integer import Integer
-
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
 
@@ -299,9 +300,10 @@ class FiniteFields(CategoryWithAxiom):
             """
             if self.is_zero():
                 return True
-            q = self.parent().order()
-            if q % 2  == 0:
+            char = self.parent().characteristic()
+            if char == 2:
                 return True
+            q = self.parent().order()
             character = self**((q-1)//2)
             is_square = character == self.parent().one()
             return is_square
@@ -414,12 +416,19 @@ class FiniteFields(CategoryWithAxiom):
                 True
                 sage: k(2).sqrt()^2 == k(2)
                 True
-                sage: k(4).sqrt(all=True)
-                (2, 3)
+                sage: my_sqrts = k(4).sqrt(all=True)
+                sage: len(k(4).sqrt(all=True))
+                2
+                sage: 2 in my_sqrts
+                True
+                sage: 3 in my_sqrts
+                True
                 sage: k.quadratic_non_residue().sqrt()
                 Traceback (most recent call last):
                 ...
                 ValueError: Element is not a square
+                sage: k.quadratic_non_residue().sqrt(all=True)
+                ()
 
             ALGORITHM:
 
@@ -431,19 +440,22 @@ class FiniteFields(CategoryWithAxiom):
             can compute the square root by `a^((q+1)/4)` otherwise
             we use tonelli's method for all other cases in general.
             """
-            order = self.parent().order()
-            if not self.is_square():
-                raise ValueError("Element is not a square")
-            if order % 2 == 0:
-                exponent = order // 2
+            cardinality = self.parent().order()
+            if self.parent().characteristic() == 2:
+                exponent = cardinality // 2
                 square_root = self**exponent
                 if all:
                     # we return a 1-tuple because the GF implementation does it
                     return (square_root)
                 else:
                     return square_root
-            elif order % 4 == 3:
-                square_root = self**((order+1)//4)
+            if not self.is_square():
+                if all:
+                    return ()
+                else:
+                    raise ValueError("Element is not a square")
+            if cardinality % 4 == 3:
+                square_root = self**((cardinality+1)//4)
             elif algorithm == 'tonelli':
                 square_root = self._tonelli()
             else:
