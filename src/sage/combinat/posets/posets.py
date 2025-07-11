@@ -715,8 +715,7 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
         if len(data) == 2:  # types 1 or 2
             if callable(data[1]):  # type 2
                 elements, function = data
-                relations = ((x, y) for x in elements for y in elements
-                             if function(x, y))
+                sorted_list, relations = sort_via_callable(elements, function)
             else:  # type 1
                 elements, relations = data
                 # check that relations are relations
@@ -774,6 +773,74 @@ def Poset(data=None, element_labels=None, cover_relations=False, linear_extensio
     else:
         elements = None
     return FinitePoset(D, elements=elements, category=category, facade=facade, key=key)
+
+
+def sort_via_callable(elements, less):
+    """
+    Extract a linear extension using only a comparison function.
+
+    INPUT:
+
+    - ``elements`` -- list or tuple of elements
+
+    - ``less`` -- comparison function for elements with boolean values
+
+    OUTPUT:
+
+    a linear extension and the list of relations
+    for the partial order defined by ``less``
+
+    EXAMPLES::
+
+        sage: from sage.combinat.posets.posets import sort_via_callable
+        sage: L = [(0,0),(1,0),(0,2),(1,2)]
+        sage: def compare(a, b):
+        ....:     return all(xi <= yi for xi, yi in zip(a, b))
+        sage: sort_via_callable(L, compare)
+        ([(0, 0), (1, 0), (0, 2), (1, 2)],
+        [((0, 0), (1, 0)),
+        ((0, 0), (0, 2)),
+        ((0, 0), (1, 2)),
+        ((1, 0), (1, 2)),
+        ((0, 2), (1, 2))])
+
+    TESTS::
+
+        sage: sort_via_callable([(0,0)], compare)
+        ([(0, 0)], [])
+        sage: sort_via_callable([(0,0),(1,1)], compare)
+        ([(0, 0), (1, 1)], [((0, 0), (1, 1))])
+        sage: sort_via_callable([(1,1),(0,1)], compare)
+        ([(0, 1), (1, 1)], [((0, 1), (1, 1))])
+    """
+    elements = list(elements)
+    if len(elements) <= 1:
+        return elements, []
+
+    a, b = elements[:2]
+    if less(a, b):
+        sorted_list = [a, b]
+        relations = [(a, b)]
+    else:
+        sorted_list = [b, a]
+        relations = [(b, a)] if less(b, a) else []
+
+    for elt in elements[2:]:
+        found = False
+        for i, ai in enumerate(sorted_list):
+            if less(elt, ai):
+                down = sorted_list[:i]
+                up = sorted_list[i:]
+                relations.extend((a, elt) for a in down if less(a, elt))
+                relations.extend((elt, b) for b in up if less(elt, b))
+                sorted_list = down + [elt] + up
+                found = True
+                break
+        if not found:
+            # adding a top element
+            relations.extend((a, elt) for a in sorted_list if less(a, elt))
+            sorted_list.append(elt)
+    return sorted_list, relations
 
 
 class FinitePoset(UniqueRepresentation, Parent):
