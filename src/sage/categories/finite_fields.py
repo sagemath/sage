@@ -248,7 +248,7 @@ class FiniteFields(CategoryWithAxiom):
 
         @cached_method
         def quadratic_non_residue(self):
-            """
+            r"""
             Returns a random non square element of the finite field
 
             OUTPUTS:
@@ -256,6 +256,7 @@ class FiniteFields(CategoryWithAxiom):
                   the finite field is of even order
 
             EXAMPLES::
+
                 sage: k = GF((3, 10))
                 sage: k.quadratic_non_residue().is_square()
                 False
@@ -280,14 +281,15 @@ class FiniteFields(CategoryWithAxiom):
 
     class ElementMethods:
         def is_square(self) -> bool:
-            """
+            r"""
             Tests if the element is a square or has
             a square root element
 
             OUTPUT:
-            - `True` if the element is a square `False` if not
+            - ``True`` if the element is a square ``False`` if not
 
             EXAMPLES::
+
                 sage: S.<x> = GF(5)[]
                 sage: f = S.irreducible_element(20)
                 sage: k.<y> = S.quotient_ring(f)
@@ -309,7 +311,7 @@ class FiniteFields(CategoryWithAxiom):
             return is_square
 
         def _tonelli(self):
-            """
+            r"""
             Returns a square root of the element if it exists
             using tonelli's algorithm
 
@@ -319,6 +321,7 @@ class FiniteFields(CategoryWithAxiom):
               if the element is not a square
 
             EXAMPLES::
+
                 sage: k.<a> = GF((5, 10))
                 sage: k(2).is_square()
                 True
@@ -346,7 +349,7 @@ class FiniteFields(CategoryWithAxiom):
             return b
 
         def _cipolla(self):
-            """
+            r"""
             Returns a square root of the element if it exists
             using cipolla's algorithm, more suited if order - 1
             is highly divisible by 2
@@ -357,6 +360,7 @@ class FiniteFields(CategoryWithAxiom):
               if the element is not a square
 
             EXAMPLES::
+
                 sage: k.<a> = GF((5, 10))
                 sage: k(2).is_square()
                 True
@@ -383,7 +387,7 @@ class FiniteFields(CategoryWithAxiom):
             return b
 
         def sqrt(self, all:bool =False, algorithm: str ='tonelli'):
-            """
+            r"""
             Returns the square root of the element if it exists
 
             INPUT:
@@ -407,6 +411,7 @@ class FiniteFields(CategoryWithAxiom):
               element has.
 
             EXAMPLES::
+
                 sage: S.<x> = GF(5)[]
                 sage: f = S.irreducible_element(20)
                 sage: k.<y> = S.quotient_ring(f)
