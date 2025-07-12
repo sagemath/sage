@@ -6668,8 +6668,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         MS = V.basis_matrix().matrix_space()
         from itertools import permutations
         for rs1 in permutations(L_perps, n):
+            A = MS(list(rs1) + self_extra_rows)
             for rs2 in permutations(M_perps, n):
-                A = MS(list(rs1) + self_extra_rows)
                 B = MS(list(rs2) + other_extra_rows)
                 try:
                     X = A.solve_right(B, extend=False)
