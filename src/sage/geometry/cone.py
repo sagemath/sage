@@ -6609,29 +6609,38 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         M_proj = B.T * (B*B.T).inverse() * B
 
         # Project onto the lineality space and subtract to obtain the
-        # "pointed parts" of each generator...
-        L_perps = [ r - r*L_proj for r in self ]
-        M_perps = [ r - r*M_proj for r in other ]
+        # "pointed parts" of each generator. Any zeros that arise
+        # correspond to vectors that were in the lineality space of
+        # the cone. By removing them we leave only the extreme rays
+        # of a pointed cone...
+        L_perps = [ x for r in self if not (x := r - r*L_proj).is_zero() ]
+        M_perps = [ x for r in other if not (x := r - r*M_proj).is_zero() ]
+
+        # but there is a subtle issue here: we need to know that --
+        # except for the zeros we've already removed -- no new
+        # redundancies in the generators arise from projecting out the
+        # lineal parts. Basically, we need to know that Cone(L_perps)
+        # would not eliminate any of the rays in L_perps at this
+        # point. This isn't obvious, but an old result of
+        # Wets/Witzgall in "Algorithms for frames and lineality spaces
+        # of cones" states that the generators of any given cone
+        # contain a generating set of its linear_subspace(). Using
+        # this it is straightforward to show that if L_perps or
+        # M_perps is conically-dependent, then so was the original set
+        # of generators (and we know that they were not).
+
+        num_extreme = len(L_perps)
+        if len(M_perps) != num_extreme:
+            # Different extreme rays for the pointed componenents
+            # means no isomorphism.
+            return
 
         # ...which need to be immutable to be put into sets.
-        for i in range(len(L_perps)):
+        for i in range(num_extreme):
             L_perps[i].set_immutable()
-        for j in range(len(M_perps)):
-            M_perps[j].set_immutable()
+            M_perps[i].set_immutable()
 
-        # Our generators are assumed to be minimal, so none should be
-        # eliminated by the Cone(...) below, although some may be
-        # reordered (which is why we still use L_perps/M_perps
-        # directly even after constructing these cones). In any case,
-        # if we wind up with different numbers of rays here, we aren't
-        # going to get any isomorphisms. This is slow, but it's the
-        # most common case (cones not isomorphic), so probably worth
-        # doing before proceeding.
         from sage.geometry.cone import Cone
-        self_pointed = Cone(L_perps, self.lattice())
-        other_pointed = Cone(M_perps, other.lattice())
-        if not self_pointed.nrays() == other_pointed.nrays():
-            return
 
         # The dimension of the non-lineal part of our cones. Needs to
         # be a python int for the sake of itertools.permutations().
