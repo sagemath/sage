@@ -10,6 +10,7 @@ from __future__ import annotations
 import doctest
 import inspect
 import sys
+import traceback
 import warnings
 from pathlib import Path
 from typing import Any, Iterable, Optional
@@ -26,11 +27,12 @@ from _pytest.doctest import (
 )
 from _pytest.pathlib import ImportMode, import_path
 
-from sage.doctest.forker import (
-    init_sage,
-    showwarning_with_traceback,
-)
+import sage.repl.ipython_kernel.all_jupyter_kernel
+from sage.doctest.forker import init_sage, showwarning_with_traceback
 from sage.doctest.parsing import SageDocTestParser, SageOutputChecker
+from sage.features import FeatureNotPresentError
+from sage.repl.rich_output import get_display_manager
+from sage.repl.user_globals import set_globals
 
 
 class SageDoctestModule(DoctestModule):
@@ -42,7 +44,6 @@ class SageDoctestModule(DoctestModule):
     """
 
     def collect(self) -> Iterable[DoctestItem]:
-        import doctest
 
         class MockAwareDocTestFinder(doctest.DocTestFinder):
             """A hackish doctest finder that overrides stdlib internals to fix a stdlib bug.
@@ -72,9 +73,9 @@ class SageDoctestModule(DoctestModule):
                     source_lines,
                 )
 
-            def _find(
+            def find(  # type: ignore[override]
                 self, tests, obj, name, module, source_lines, globs, seen
-            ) -> None:
+            ):
                 if _is_mocked(obj):
                     return
                 with _patch_unwrap_mock_aware():
@@ -117,8 +118,6 @@ class SageDoctestModule(DoctestModule):
         # Uses internal doctest module parsing mechanism.
         finder = MockAwareDocTestFinder()
         optionflags = get_optionflags(self.config)
-        from sage.features import FeatureNotPresentError
-
         runner = _get_runner(
             verbose=False,
             optionflags=optionflags,
@@ -273,7 +272,6 @@ def pytest_addoption(parser):
 
 # Monkey patch exception printing to replace the full qualified name of the exception by its short name
 # TODO: Remove this hack once migration to pytest is complete
-import traceback
 
 old_format_exception_only = traceback.format_exception_only
 
@@ -308,8 +306,6 @@ def doctest_run(
     out: Any = None,
     clear_globs: bool = True,
 ) -> doctest.TestResults:
-    from sage.repl.rich_output import get_display_manager
-    from sage.repl.user_globals import set_globals
 
     traceback.format_exception_only = format_exception_only
 
@@ -333,9 +329,8 @@ def add_imports(doctest_namespace: dict[str, Any]):
     See `pytest documentation <https://docs.pytest.org/en/stable/doctest.html#doctest-namespace-fixture>`.
     """
     # Inject sage.all into each doctest
-    import sage.repl.ipython_kernel.all_jupyter
 
-    dict_all = sage.repl.ipython_kernel.all_jupyter.__dict__
+    dict_all = sage.repl.ipython_kernel.all_jupyter_kernel.__dict__
 
     # Remove '__package__' item from the globals since it is not
     # always in the globals in an actual Sage session.
