@@ -11,7 +11,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.misc import GCD as gcd
 from sage.schemes.toric.variety import (DEFAULT_PREFIX,
-                                        ToricVariety,
+                                        ToricVariety_field,
                                         normalize_names)
 
 from sage.categories.fields import Fields
