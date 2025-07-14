@@ -466,7 +466,9 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             ....:     def is_finite(self):
             ....:         return False
             sage: [*UnknowinglyFiniteSet([1, 2, 3])]
+            [1, 2, 3]
             sage: [*iter(UnknowinglyFiniteSet([1, 2, 3]))]
+            [1, 2, 3]
             sage: list(islice(DisjointUnionEnumeratedSets(
             ....:     (UnknowinglyFiniteSet(frozenset([1,2,3])), UnknowinglyFiniteSet(frozenset([4,5,6])))), 7))
             [1, 2, 4, 3, 5, 6]
