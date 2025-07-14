@@ -47,6 +47,7 @@ py.install_sources(
   'quit.py',
   'r.py',
   'read_data.py',
+  'regina.py',
   'rubik.py',
   'sage-maxima.lisp',
   'sage0.py',
