@@ -126,7 +126,7 @@ Check that :issue:`22733` is fixed::
 # ****************************************************************************
 
 
-def _is_order(expr: Expression) -> bool:
+cpdef bint _is_order(Expression expr):
     """
     Return whether ``expr`` has the form ``Order(...)``.
 
