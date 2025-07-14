@@ -6483,7 +6483,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         have computed the automorphism groups of these cones, and we
         recover them all up to a positive scalar::
 
-            sage: # long time
             sage: K1 = Cone([(1,0,1), (-1,0,1), (0,1,1), (0,-1,1)])
             sage: G = set(K1.linear_isomorphisms(K1)); G
             {[-1  0  0]
