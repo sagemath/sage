@@ -655,17 +655,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: g.integrate(x).sort()          # optional - maple
         x*y^z+1/2*2^(1/2)*Pi^(1/2)*FresnelS(2^(1/2)/Pi^(1/2)*x)
 
-    We next integrate a function with no closed form integral. Notice
-    that the answer comes back as an expression that contains an
-    integral itself. ::
+    We next integrate a function with no closed-form integral. The
+    integral has been evaluated to some extent, but the answer itself
+    contains an integration. We specify the maxima backend because the
+    other implementations can produce slightly different results::
 
-        sage: A = integral(1/ ((x-4) * (x^4+x+1)), x); A
-        integrate(1/((x^4 + x + 1)*(x - 4)), x)
-
-    Sometimes, in this situation, using the algorithm "maxima"
-    gives instead a partially integrated answer::
-
-        sage: integral(1/(x**7-1),x,algorithm='maxima')
+        sage: integral(1/(x**7-1), x, algorithm='maxima')
         -1/7*integrate((x^5 + 2*x^4 + 3*x^3 + 4*x^2 + 5*x + 6)/(x^6 + x^5 + x^4 + x^3 + x^2 + x + 1), x) + 1/7*log(x - 1)
 
     We now show that floats are not converted to rationals
