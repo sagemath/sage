@@ -386,7 +386,7 @@ class FiniteFields(CategoryWithAxiom):
             b = pow(X, (q+1)//2, f)
             return b
 
-        def sqrt(self, all:bool =False, algorithm: str ='tonelli'):
+        def sqrt(self, all: bool = False, algorithm: str = 'tonelli'):
             r"""
             Returns the square root of the element if it exists
 
@@ -440,7 +440,7 @@ class FiniteFields(CategoryWithAxiom):
             The algorithms used come from chapter 6 of [BS1996]_.
             Let `q = p^n` be the order of the finite field, let `a` be the finite field element
             that we wish to find the square root of.
-            
+
             - If `p = 2` then `a` is always a square, and the square root of `\sqrt{a} = a^{(q / 2)}`.
             - If `q \equiv 3 \pmod{4}` then if `a` is a square `\sqrt{a} = {a^((q+1) / 4)}`
             - For all other cases we use the algorithm given by the ``algorithm`` parameter.

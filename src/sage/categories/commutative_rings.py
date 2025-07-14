@@ -729,7 +729,7 @@ class CommutativeRings(CategoryWithAxiom):
                 if all:
                     if P not in IntegralDomains():
                         raise NotImplementedError('sqrt() with all=True is only implemented for integral domains, not for %s' % P)
-                    if P.characteristic()==2 or sq_rt==0:
+                    if P.characteristic() == 2 or sq_rt == 0:
                         # 0 has only one square root, and in characteristic 2 everything also has only 1 root
                         return [sq_rt]
                     return [sq_rt, -sq_rt]
@@ -748,7 +748,7 @@ class CommutativeRings(CategoryWithAxiom):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             PY = PolynomialRing(P, 'y')
             y = PY.gen()
-            sq_rt = PY.quotient(y**2-self, names = name)(y)
+            sq_rt = PY.quotient(y**2-self, names=name)(y)
             if all:
                 if P.characteristic() == 2:
                     return [sq_rt]
