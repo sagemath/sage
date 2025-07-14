@@ -774,7 +774,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: P.order()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algorithm None not implemented for order of a point on an elliptic curve over general fields
+            NotImplementedError: default algorithm not available...
             sage: E(0).additive_order()
             1
             sage: E(0).order() == 1
@@ -805,7 +805,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: P._compute_order(algorithm=None)
             Traceback (most recent call last):
             ...
-            NotImplementedError: algorithm None not implemented for order of a point on an elliptic curve over general fields
+            NotImplementedError: default algorithm not available...
         """
         if algorithm == 'generic_small':
             return generic.order_from_bounds(self, None)
@@ -826,6 +826,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
                 except ValueError:
                     lb = ub + 1
                     sqrt_ub *= 4
+        elif algorithm is None:
+            raise NotImplementedError(
+                    "default algorithm not available for order of a point on "
+                    "an elliptic curve over general fields; you may try algorithm=generic_small "
+                    "if you are sure the order is finite and small")
         raise NotImplementedError(f"algorithm {algorithm!r} not implemented for "
                                   "order of a point on an elliptic curve over general fields")
 
@@ -965,7 +970,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: P.has_finite_order()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algorithm None not implemented for order of a point on an elliptic curve over general fields
+            NotImplementedError: default algorithm not available...
             sage: (2*P).is_zero()
             True
         """
@@ -994,7 +999,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             sage: P.has_infinite_order()
             Traceback (most recent call last):
             ...
-            NotImplementedError: algorithm None not implemented for order of a point on an elliptic curve over general fields
+            NotImplementedError: default algorithm not available...
             sage: (2*P).is_zero()
             True
         """
