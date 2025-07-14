@@ -37,7 +37,6 @@ from sage.misc.misc_c import prod
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
-from libcpp.map cimport map as cmap
 from sage.rings.integer_ring import ZZ
 import copy
 
