@@ -6640,8 +6640,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             L_perps[i].set_immutable()
             M_perps[i].set_immutable()
 
-        from sage.geometry.cone import Cone
-
         # The dimension of the non-lineal part of our cones. Needs to
         # be a python int for the sake of itertools.permutations().
         n = int(self.dim() - self.lineality())
@@ -6677,9 +6675,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         MS = V.basis_matrix().matrix_space()
         from itertools import permutations
         for rs1 in permutations(L_perps, n):
-            A = MS(list(rs1) + self_extra_rows)
+            rs1 = list(rs1)
+            A = MS(rs1 + self_extra_rows)
             for rs2 in permutations(M_perps, n):
-                B = MS(list(rs2) + other_extra_rows)
+                rs2 = list(rs2)
+                B = MS(rs2 + other_extra_rows)
                 try:
                     X = A.solve_right(B, extend=False)
                 except ValueError:
@@ -6691,7 +6691,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                 # the equation above (for a subset of extreme rays)
                 # does not guarantee an isomorphism between _all_
                 # extreme rays.
-                if Cone(self.rays()*X, self.lattice()).is_equivalent(other):
+                qs1 = ( r for r in L_perps if r not in rs1 )
+                qs2 = ( r for r in M_perps if r not in rs2 )
+                qs1_images = [ r*X for r in qs1 ]
+                for idx in range(num_extreme - n):
+                    # Have to do this again, because matrix-vector
+                    # multiplications create mutable vectors.
+                    qs1_images[idx].set_immutable()
+
+                if set(qs1_images) == set(qs2):
                     X.set_immutable()
                     yield X
 
