@@ -563,7 +563,7 @@ REFERENCES:
             Bulletin of the American Mathematical Society 71(1):169-170, 1965.
 
 .. [Bodin2007] \A. Bodin:
-            Number of irreducible polynomials in several variables over finite fields,
+            *Number of irreducible polynomials in several variables over finite fields*,
             The American Mathematical Monthly 115(7), pp. 653-660, 2008.
             :arxiv:`0706.0157`
 
@@ -571,6 +571,7 @@ REFERENCES:
             *Spectra of graphs*,
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
+            :doi:`10.1007/978-1-4614-1939-6`
 
 .. [BMFPR2011] \M. Bousquet-Mélou, É. Fusy, L.-F. Préville-Ratelle,
                 *The number of intervals in the m-Tamari lattices*.
