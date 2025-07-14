@@ -46,7 +46,6 @@ method :meth:`realloc <sage.graphs.base.c_graph.CGraph.realloc>`.
 from cysignals.memory cimport check_allocarray, sig_free
 from libcpp.pair cimport pair
 from libcpp.queue cimport queue
-from libcpp.queue cimport priority_queue
 from libcpp.stack cimport stack
 
 from sage.arith.long cimport pyobject_to_long
