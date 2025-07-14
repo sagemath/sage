@@ -1313,6 +1313,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         modules (which are the :meth:`Specht modules <specht_module>`
         and also projective modules)::
 
+            sage: # long time
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
             ....:     idem = SGA.ladder_idempotent(la)
