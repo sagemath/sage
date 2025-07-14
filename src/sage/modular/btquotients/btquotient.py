@@ -2927,8 +2927,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                     if n[j] != len(v):
                         add_new = False
                         break
-                    else:
-                        n[j] = 0
+                    n[j] = 0
                 if add_new:
                     n.append(0)
                 yield [v[x] for x in n]
