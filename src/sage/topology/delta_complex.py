@@ -466,7 +466,7 @@ class DeltaComplex(GenericCellComplex):
         sub._is_subcomplex_of = {self: new_data}
         return sub
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         TESTS::
 
@@ -477,7 +477,7 @@ class DeltaComplex(GenericCellComplex):
         """
         return hash(frozenset(self._cells_dict.items()))
 
-    def __eq__(self, right):
+    def __eq__(self, right) -> bool:
         r"""
         Two `\Delta`-complexes are equal, according to this, if they have
         the same ``_cells_dict``.
@@ -494,7 +494,7 @@ class DeltaComplex(GenericCellComplex):
         """
         return self._cells_dict == right._cells_dict
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` and ``other`` are not equal.
 
@@ -1464,7 +1464,7 @@ class DeltaComplex(GenericCellComplex):
         # store each n-simplex as a pair (n, idx).
         for n in range(dim, 0, -1):
             for idx, s in enumerate(self.n_cells(n)):
-                covers[(n, idx)] = list({(n - 1, i) for i in s})
+                covers[(n, idx)] = [(n - 1, i) for i in set(s)]
         # deal with vertices separately: they have no covers (in the
         # dual poset).
         for idx, s in enumerate(self.n_cells(0)):
