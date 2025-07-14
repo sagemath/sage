@@ -4755,14 +4755,15 @@ def coeff_recurs(p, q, a1, a2, b, c):
     """
     if p == 0 and q == 0:
         return 1
-    elif p < 0 or q < 0:
+    if p < 0 or q < 0:
         return 0
-    elif c*a1*q <= b*a2*p:
-        return sum((-1)**(k-1)*coeff_recurs(p-k, q, a1, a2, b, c)*_bino(a2-c*q+k-1, k)
-                   for k in range(1, p+1))
-    else:
-        return sum((-1)**(k-1)*coeff_recurs(p, q-k, a1, a2, b, c)*_bino(a1-b*p+k-1, k)
-                   for k in range(1, q+1))
+    if c * a1 * q <= b * a2 * p:
+        return sum((-1)**(k - 1) * coeff_recurs(p - k, q, a1, a2, b, c)
+                   *_bino(a2 - c * q + k - 1, k)
+                   for k in range(1, p + 1))
+    return sum((-1)**(k - 1) * coeff_recurs(p, q - k, a1, a2, b, c)
+               *_bino(a1 - b * p + k - 1, k)
+               for k in range(1, q + 1))
 
 
 def PathSubset(n, m):

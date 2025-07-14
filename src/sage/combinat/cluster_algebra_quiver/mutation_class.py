@@ -310,7 +310,7 @@ def _mutation_class_iter(dg, n, m, depth=infinity, return_dig6=False, show_depth
     depth_counter = 0
     if up_to_equivalence:
         iso, orbits = _dg_canonical_form(dg, mlist)
-        iso_inv = {iso[a]: a for a in iso}
+        iso_inv = {iso_a: a for a, iso_a in iso.items()}
 
     dig6 = _digraph_to_dig6(dg, hashable=True)
     dig6s = {}
@@ -346,7 +346,7 @@ def _mutation_class_iter(dg, n, m, depth=infinity, return_dig6=False, show_depth
                     if up_to_equivalence:
                         iso, orbits = _dg_canonical_form(dg_new, mlist)
                         i_new = iso[i]
-                        iso_inv = {iso[a]: a for a in iso}
+                        iso_inv = {iso_a: a for a, iso_a in iso.items()}
                     else:
                         i_new = i
                     dig6_new = _digraph_to_dig6(dg_new, hashable=True)
@@ -357,7 +357,8 @@ def _mutation_class_iter(dg, n, m, depth=infinity, return_dig6=False, show_depth
                         gets_bigger = True
                         if up_to_equivalence:
                             orbits = [orbit[0] for orbit in orbits if i_new not in orbit]
-                            iso_history = {a: dig6s[key][2][iso_inv[a]] for a in iso}
+                            d6_key = dig6s[key][2]
+                            iso_history = {a: d6_key[iso_inv[a]] for a in iso}
                             i_history = iso_history[i_new]
                             history = dig6s[key][1] + [i_history]
                             dig6s[dig6_new] = [orbits, history, iso_history]

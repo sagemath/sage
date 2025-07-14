@@ -707,8 +707,7 @@ def _connected_mutation_type(dg):
                         return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'], [[v]])
                     else:
                         return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'])
-                else:
-                    return mt_tmp
+                return mt_tmp
             elif label1 == (1, -2) and label2 == (2, -1):
                 if n == 4 and (nr_same_neighbors == 2 or nr_other_neighbors == 1):
                     return QuiverMutationType(['BD', n - 1, 1])
@@ -724,8 +723,7 @@ def _connected_mutation_type(dg):
                     if nr_same_neighbors + nr_other_neighbors > 1:
                         # _reset_dg(dg, vertices, dict_in_out, [v])
                         return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'], [[v]])
-                    else:
-                        return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'])
+                    return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'])
                 else:
                     return mt_tmp
             else:
@@ -733,26 +731,24 @@ def _connected_mutation_type(dg):
         elif dict_in_out[v1][2] == 1 and dict_in_out[v2][2] == 1:
             if label1 == (1, -2) and label2 == (1, -2):
                 return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-            elif label1 == (2, -1) and label2 == (2, -1):
+            if label1 == (2, -1) and label2 == (2, -1):
                 return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-            elif label1 == (1, -2) and label2 == (2, -1):
+            if label1 == (1, -2) and label2 == (2, -1):
                 return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-            elif label1 == (2, -1) and label2 == (1, -2):
+            if label1 == (2, -1) and label2 == (1, -2):
                 return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-            else:
-                return _false_return()
+            return _false_return()
         elif dict_in_out[v][0] == dict_in_out[v][1] == 1 and dict_in_out[v1][0] == dict_in_out[v1][1] == 1 and dict_in_out[v2][0] == dict_in_out[v2][1] == 1:
             _reset_dg(dg, vertices, dict_in_out, [v])
             if n == 4 and (label1, label2) == ((2, -1), (1, -2)):
                 return _check_special_BC_cases(dg, n, ['CD'], [1], ['A'])
-            elif n > 4 and (label1, label2) == ((2, -1), (1, -2)):
+            if n > 4 and (label1, label2) == ((2, -1), (1, -2)):
                 return _check_special_BC_cases(dg, n, ['CD'], [1], ['D'])
-            elif n == 4 and (label1, label2) == ((1, -2), (2, -1)):
+            if n == 4 and (label1, label2) == ((1, -2), (2, -1)):
                 return _check_special_BC_cases(dg, n, ['BD'], [1], ['A'])
-            elif n > 4 and (label1, label2) == ((1, -2), (2, -1)):
+            if n > 4 and (label1, label2) == ((1, -2), (2, -1)):
                 return _check_special_BC_cases(dg, n, ['BD'], [1], ['D'])
-            else:
-                return _false_return()
+            return _false_return()
         else:
             return _false_return()
 
