@@ -457,6 +457,19 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: list(islice(iter(U), 5))  # not tested, hangs
             sage: list(islice(iter(U), 4))
             [(0, 1), (0, 2), (1, 1), (1, 2)]
+
+        Coverage test in case some element sets does not know it is finite
+        but correctly raises :exc:`StopIteration` during iteration::
+
+            sage: from sage.sets.set import Set_object
+            sage: class UnknowinglyFiniteSet(Set_object):
+            ....:     def is_finite(self):
+            ....:         return False
+            sage: [*UnknowinglyFiniteSet([1, 2, 3])]
+            sage: [*iter(UnknowinglyFiniteSet([1, 2, 3]))]
+            sage: list(islice(DisjointUnionEnumeratedSets(
+            ....:     (UnknowinglyFiniteSet(frozenset([1,2,3])), UnknowinglyFiniteSet(frozenset([4,5,6])))), 7))
+            [1, 2, 4, 3, 5, 6]
         """
         def wrap_element(el, k):
             nonlocal self
@@ -481,7 +494,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                     el_set = self._family[k]
                     try:
                         is_finite = el_set.is_finite()
-                    except (AttributeError, NotImplementedError):
+                    except (AttributeError, TypeError, NotImplementedError):
                         is_finite = False
                     if is_finite:
                         for el in el_set:
