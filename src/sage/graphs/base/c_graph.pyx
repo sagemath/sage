@@ -57,6 +57,7 @@ from sage.rings.integer cimport smallInteger
 
 from sage.rings.integer_ring import ZZ
 
+from collections.abc import Iterable
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -3629,16 +3630,16 @@ cdef class CGraphBackend(GenericGraphBackend):
             return Infinity
         return []
 
-    def shortest_path_to_set(self, x, y_set, by_weight=False, edge_weight=None,
+    def shortest_path_to_set(self, source, targets, by_weight=False, edge_weight=None,
                              exclude_vertices=None, report_weight=False,):
         r"""
-        Return the shortest path from ``x`` to any vertex in ``y_set``.
+        Return the shortest path from ``source`` to any vertex in ``targets``.
 
         INPUT:
 
-        - ``x`` -- the starting vertex.
+        - ``source`` -- the starting vertex.
 
-        - ``y_set`` -- iterable container; the set of end vertices.
+        - ``targets`` -- iterable container; the set of end vertices.
 
         - ``edge_weight`` -- dictionary (default: ``None``); a dictionary
           that takes as input an edge ``(u, v)`` and outputs its weight.
@@ -3651,7 +3652,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         - ``exclude_vertices`` -- iterable container (default: ``None``);
           iterable of vertices to exclude from the graph while calculating the
-          shortest path from ``x`` to any vertex in ``y_set``.
+          shortest path from ``source`` to any vertex in ``targets``.
 
         - ``report_weight`` -- boolean (default: ``False``); if ``False``, just
           a path is returned. Otherwise a tuple of path length and path is
@@ -3659,8 +3660,8 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         OUTPUT:
 
-        - A list of vertices in the shortest path from ``x`` to any vertex
-          in ``y_set`` or  a tuple of path lengh and path is returned
+        - A list of vertices in the shortest path from ``source`` to any vertex
+          in ``targets`` or  a tuple of path lengh and path is returned
           depending upon the value of parameter ``report_weight``.
 
         EXAMPLES::
@@ -3671,13 +3672,36 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: g = Graph([(1, 2, 10), (2, 3, 10), (1, 4, 20), (4, 5, 20), (1, 6, 30), (6, 7, 30)])
             sage: g._backend.shortest_path_to_set(1, {5, 7}, by_weight=True, exclude_vertices=[4], report_weight=True)
             (60.0, [1, 6, 7])
+
+        TESTS::
+
+            sage: g = Graph([(1, 2, 10), (1, 3, 20), (1, 4, 30)])
+            sage: assert g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[1]) is None
+            sage: assert g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3, 4]) is None
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3], by_weight=True)
+            [1, 4]
+            sage: g._backend.shortest_path_to_set(1, {1, 3, 4}, by_weight=True)
+            [1]
+
+        ``exclude_vertices`` must be iterable::
+
+            sage: g._backend.shortest_path_to_set(1, {1, 3, 4}, exclude_vertices=100)
+            Traceback (most recent call last):
+            ...
+            TypeError: exclude_vertices (100) are not iterable.
         """
         if not exclude_vertices:
-            exclude_vertices = []
+            exclude_vertices = set()
+        elif not isinstance(exclude_vertices, Iterable):
+            raise TypeError(f"exclude_vertices ({exclude_vertices}) are not iterable.")
+        elif not isinstance(exclude_vertices, set):
+            exclude_vertices = set(exclude_vertices)
+        if source in exclude_vertices:
+            return
         cdef priority_queue[pair[double, int]] pq
         cdef dict dist = {}
         cdef dict pred = {}
-        cdef int x_int = self.get_vertex(x)
+        cdef int x_int = self.get_vertex(source)
         pq.push((0, x_int))
         dist[x_int] = 0
 
@@ -3687,26 +3711,26 @@ cdef class CGraphBackend(GenericGraphBackend):
             pq.pop()
             v = self.vertex_label(v_int)
 
-            if v in y_set:
-                # found a vertex in y_set
+            if v in targets:
+                # found a vertex in targets
                 path = []
                 while v_int in pred:
                     path.append(self.vertex_label(v_int))
                     v_int = pred[v_int]
-                path.append(x)
+                path.append(source)
                 path.reverse()
                 return (d, path) if report_weight else path
 
             if d > dist.get(v_int, float('inf')):
                 continue  # already found a better path
 
-            for _, u, l in self.iterator_out_edges([v], labels=True):
+            for _, u, label in self.iterator_out_edges([v], labels=True):
                 if u in exclude_vertices:
                     continue
                 if edge_weight:
                     e_weight = edge_weight[(v, u)]
                 elif by_weight:
-                    e_weight = l
+                    e_weight = label
                 else:
                     e_weight = 1
                 new_dist = d + e_weight
