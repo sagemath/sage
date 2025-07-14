@@ -83,14 +83,14 @@ class IndefiniteIntegral(BuiltinFunction):
         # The automatic evaluation routine will try these integrators
         # in the given order. This is an attribute of the class instead of
         # a global variable in this module to enable customization by
-        # creating a subclasses which define a different set of integrators
-        #
-        # The libgiac integrator may immediately return a symbolic
-        # (unevaluated) answer if libgiac is unavailable. This essentially
-        # causes it to be skipped.
-        self.integrators = [external.maxima_integrator,
-                            external.libgiac_integrator,
-                            external.sympy_integrator]
+        # creating a subclasses which define a different set of integrators.
+        self.integrators = [external.maxima_integrator]
+        from sage.features.sagemath import sage__libs__giac
+        if sage__libs__giac().is_present():
+            # Only try Giac if sagemath-giac is installed; it raises
+            # a FeatureNotPresentError otherwise.
+            self.integrators.append(external.libgiac_integrator)
+        self.integrators.append(external.sympy_integrator)
 
         BuiltinFunction.__init__(self, "integrate", nargs=2, conversions={'sympy': 'Integral',
                                                                           'giac': 'integrate'})
@@ -221,9 +221,13 @@ class DefiniteIntegral(BuiltinFunction):
         # in the given order. This is an attribute of the class instead of
         # a global variable in this module to enable customization by
         # creating a subclasses which define a different set of integrators
-        self.integrators = [external.maxima_integrator,
-                            external.libgiac_integrator,
-                            external.sympy_integrator]
+        self.integrators = [external.maxima_integrator]
+        from sage.features.sagemath import sage__libs__giac
+        if sage__libs__giac().is_present():
+            # Only try Giac if sagemath-giac is installed; it raises
+            # a FeatureNotPresentError otherwise.
+            self.integrators.append(external.libgiac_integrator)
+        self.integrators.append(external.sympy_integrator)
 
         BuiltinFunction.__init__(self, "integrate", nargs=4, conversions={'sympy': 'Integral',
                                                                           'giac': 'integrate'})
@@ -1064,7 +1068,14 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         integrator = available_integrators.get(algorithm)
         if not integrator:
             raise ValueError("Unknown algorithm: %s" % algorithm)
-        return integrator(expression, v, a, b)
+        from sage.features import FeatureNotPresentError
+        try:
+            return integrator(expression, v, a, b)
+        except FeatureNotPresentError as e:
+            # Try to be more helpful if the algorithm was valid but
+            # the backend is not installed.
+            e.reason = f"Optional backend for {algorithm} integration not installed."
+            raise e
     if a is None:
         return indefinite_integral(expression, v, hold=hold)
     else:
