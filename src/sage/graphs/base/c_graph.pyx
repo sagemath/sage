@@ -3698,16 +3698,15 @@ cdef class CGraphBackend(GenericGraphBackend):
             exclude_vertices = set(exclude_vertices)
         if source in exclude_vertices:
             return
-        cdef priority_queue[pair[double, int]] pq
+        cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
         cdef dict dist = {}
         cdef dict pred = {}
         cdef int x_int = self.get_vertex(source)
-        pq.push((0, x_int))
+        pq.push(x_int, 0)
         dist[x_int] = 0
 
         while not pq.empty():
-            negative_d, v_int = pq.top()
-            d = -negative_d
+            v_int, d = pq.top()
             pq.pop()
             v = self.vertex_label(v_int)
 
@@ -3738,7 +3737,11 @@ cdef class CGraphBackend(GenericGraphBackend):
                 if new_dist < dist.get(u_int, float('inf')):
                     dist[u_int] = new_dist
                     pred[u_int] = v_int
-                    pq.push((-new_dist, u_int))
+                    if pq.contains(u_int):
+                        if pq.value(u_int) > new_dist:
+                            pq.decrease(u_int, new_dist)
+                    else:
+                        pq.push(u_int, new_dist)
 
         return
 
