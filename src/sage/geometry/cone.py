@@ -6673,11 +6673,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         #      original cone
         #
         MS = V.basis_matrix().matrix_space()
-        from itertools import permutations
+        from itertools import combinations, permutations
         for rs1 in permutations(L_perps, n):
             rs1 = list(rs1)
             A = MS(rs1 + self_extra_rows)
-            for rs2 in permutations(M_perps, n):
+
+            # We don't need the reorderings of the second set because
+            # we're trying all possible orderings of the first.
+            for rs2 in combinations(M_perps, n):
                 rs2 = list(rs2)
                 B = MS(rs2 + other_extra_rows)
                 try:
