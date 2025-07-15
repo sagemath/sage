@@ -270,7 +270,7 @@ class FiniteFields(CategoryWithAxiom):
             """
             # if the order is an even power of two
             # then every element is a square
-            if self.order() % 2 == 0:
+            if self.characteristic() == 2:
                 raise ValueError("There are no non-squares in finite fields of even order")
             # uniformly randomly select elements for a non-square
             # with probability 1/2 for a non-square
@@ -302,8 +302,7 @@ class FiniteFields(CategoryWithAxiom):
             """
             if self.is_zero():
                 return True
-            char = self.parent().characteristic()
-            if char == 2:
+            if self.parent().characteristic() == 2:
                 return True
             q = self.parent().order()
             character = self**((q-1)//2)
@@ -313,7 +312,7 @@ class FiniteFields(CategoryWithAxiom):
         def _tonelli(self):
             r"""
             Returns a square root of the element if it exists
-            using tonelli's algorithm
+            using Tonelli's algorithm
 
             OUTPUT:
 
@@ -351,7 +350,7 @@ class FiniteFields(CategoryWithAxiom):
         def _cipolla(self):
             r"""
             Returns a square root of the element if it exists
-            using cipolla's algorithm, more suited if order - 1
+            using Cipolla's algorithm, more suited if order - 1
             is highly divisible by 2
 
             OUTPUT:
@@ -437,7 +436,7 @@ class FiniteFields(CategoryWithAxiom):
 
             ALGORITHM:
 
-            The algorithms used come from chapter 6 of [BS1996]_.
+            The algorithms used come from chapter 7 of [BS1996]_.
             Let `q = p^n` be the order of the finite field, let `a` be the finite field element
             that we wish to find the square root of.
 
