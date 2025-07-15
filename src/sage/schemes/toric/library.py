@@ -52,7 +52,7 @@ from sage.arith.misc import GCD as gcd
 from sage.schemes.toric.variety import (DEFAULT_PREFIX,
                                         ToricVariety,
                                         normalize_names)
-from sage.schemes.toric.fano_variety import CPRFanoToricVariety
+from sage.schemes.toric.cpr_fano_variety import CPRFanoToricVariety
 
 
 # The combinatorial data of the toric varieties is stored separately here
