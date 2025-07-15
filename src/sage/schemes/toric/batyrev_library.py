@@ -1,8 +1,6 @@
 r"""
 Library for Batyrev's classification of smooth toric varieties.
 TODO: Batyrev's construction for complete toric varieties of Picard rank 3. [Batyrev1991]
-TODO: Batyrev's construction for 18 toric Fano 4-folds [Batyrev1999]
-TODO: Batyrev's construction for 123 toric Fano 4-folds [Batyrev1999]
 TODO: Maybe add the correspoding well-known name for each variety.
 """
 
@@ -27,7 +25,8 @@ class BatyrevToricFactory(SageObject):
     The methods of this class construct Batyrev' classification of smooth and complete toric varieties.`
     """
 
-    _check = True # AL: what does this do?
+    # whether to check the input data when constructing a variety, here we by default trust the database of smooth Fano polytopes
+    _check = False 
 
     def _make_SmoothFanoToricVariety(self, name, coordinate_names, base_ring):
         r"""
@@ -66,112 +65,55 @@ class BatyrevToricFactory(SageObject):
                                                DEFAULT_PREFIX)
             dict_key = (name, base_ring) + tuple(coordinate_names)
         if dict_key not in self.__dict__:
-            # TODO: to define the points, ray2point, charts etc explicitly
             self.__dict__[dict_key] = \
                 SmoothFanoToricVariety(Delta=Delta,
                                     coordinate_names=coordinate_names,
                                     base_ring=base_ring,
                                     check=self._check)
         return self.__dict__[dict_key]
-    
-    def Fano3fold000(self, coordinate_names=None, base_ring=QQ):
-        r"""
-        Return the smooth toric Fano 3-fold of type `\mathrm{F}.3\mathrm{D}.0000`.
+       
+    def get_smooth_fano(self, dim: int, index: int, coordinate_names=None, base_ring=QQ):
+      r"""
+      Return the smooth toric Fano ``dim``-fold with the given index.
 
-        INPUT:
+      The dataset includes all smooth toric Fano 3-folds (124 in total) and 4-folds (124 known examples).
+      These varieties are indexed in the Batyrev database using the label format ``F.{dim}D.{index:04d}``.
 
-        - ``coordinate_names`` -- string describing the names of the
-          homogeneous coordinates of the toric variety
+      INPUT:
 
-        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
-          the toric variety
+      - ``dim`` -- dimension of the Fano toric variety (either 3 or 4)
 
-        OUTPUT: a :class:`toric variety
-        <sage.schemes.toric.variety.ToricVariety_field>`.
+      - ``index`` -- integer index for the Fano variety (e.g., 0 for F.3D.0000)
 
-        EXAMPLES::
+      - ``coordinate_names`` -- optional names for homogeneous coordinates
 
-            sage: Fano3fold000 = smooth_fano_toric_varieties.Fano3fold000()
-            sage: Fano3fold000.is_smooth()
-            True
+      - ``base_ring`` -- base ring (default: `\QQ`)
 
-        """
-        return self._make_SmoothFanoToricVariety('F.3D.0000', coordinate_names, base_ring)
+      OUTPUT:
 
-    def Fano4fold000(self, coordinate_names=None, base_ring=QQ):
-        r"""
-        Return the smooth toric Fano 4-fold of type `\mathrm{F}.4\mathrm{D}.0000`.
+      - A smooth Fano toric variety of the specified dimension and index.
 
-        INPUT:
+      EXAMPLES::
 
-        - ``coordinate_names`` -- string describing the names of the
-          homogeneous coordinates of the toric variety
+          sage: X = BTF.get_smooth_fano(3, 14)
+          sage: X
+          3-d smooth Fano toric variety covered by ...
+          sage: X.is_smooth()
+          True
 
-        - ``base_ring`` -- a ring (default: `\QQ`); the base ring for
-          the toric variety
+          sage: Y = BTF.get_smooth_fano(4, 23)
+          sage: Y.dimension()
+          4
+      """
+      if dim not in (3, 4):
+          raise ValueError("Only dimensions 3 and 4 are supported.")
+      if dim == 3 and not (0 <= index < 18):
+          raise ValueError("Index for 3D must be in the range [0, 18).")
+      if dim == 4 and not (0 <= index < 124):
+          raise ValueError("Index for 4D must be in the range [0, 124).")  
+      
+      label = f"F.{dim}D.{index:04d}"
+      return self._make_SmoothFanoToricVariety(label, coordinate_names, base_ring)
+      
 
-        OUTPUT: a :class:`toric variety
-        <sage.schemes.toric.variety.ToricVariety_field>`.
-
-        EXAMPLES::
-
-            sage: Fano4fold000 = smooth_fano_toric_varieties.Fano4fold000()
-            sage: Fano4fold000.is_smooth()
-            True
-        """
-        return self._make_SmoothFanoToricVariety('F.4D.0000', coordinate_names, base_ring)
-    
-
-smooth_fano_toric_varieties = BatyrevToricFactory()
-
-
-### AL: change it to the other construction of Batyrev for smooth toric varieties of Picard rank 3 because they use different logic
-# def _make_batyrev_matrix(self, P, B, C):
-#     p0, p1, p2, p3, p4 = P
-#     Cprime = [0] + list(C)
-#     R1 = ([1]*p0) + ([1]*p1) + ([-c for c in Cprime]) + ([-(b+1) for b in B]) + ([0]*p4)
-#     R2 = ([0]*p0) + ([1]*p1) + ([1]*p2) + ([0]*p3) + ([-1]*p4)
-#     R3 = ([0]*p0) + ([0]*p1) + ([1]*p2) + ([1]*p3) + ([0]*p4)
-#     R4 = ([0]*p0) + ([-1]*p1) + ([0]*p2) + ([1]*p3) + ([1]*p4)
-#     R5 = ([1]*p0) + ([0]*p1) + ([-c for c in Cprime]) + ([-b for b in B]) + ([1]*p4)
-#     return matrix(ZZ, [R1, R2, R3, R4, R5])
-
-# def add_family(self, name, P, B, C):
-#     """
-#     Register a family by its Batyrev parameters P, B, C.
-#     P = [p0, p1, p2, p3, p4]
-#     B is a list of length p3
-#     C is a list of length p2 - 1
-#     """
-#     A = self._make_batyrev_matrix(P, B, C)
-#     K = A.right_kernel()
-#     rays = [v for v in K.basis()]
-#     p0, p1, p2, p3, p4 = P
-#     X0 = list(range(p0))
-#     X1 = list(range(p0, p0+p1))
-#     X2 = list(range(p0+p1, p0+p1+p2))
-#     X3 = list(range(p0+p1+p2, p0+p1+p2+p3))
-#     X4 = list(range(p0+p1+p2+p3, p0+p1+p2+p3+p4))
-#     X5 = X0 + X4
-#     primitive_cols = [X0, X1, X2, X3, X5]
-#     d = len(rays[0])
-#     cones = []
-#     from itertools import combinations
-#     for combo in combinations(range(len(rays)), d):
-#         if any(set(pc) <= set(combo) for pc in primitive_cols):
-#             continue
-#         cones.append(list(combo))
-#     self.toric_varieties_rays_cones[name] = (rays, cones)
-
-# def make_variety(self, name, P, B, C, coordinate_names=None, base_ring=QQ):
-#     """
-#     Convenience method: add the family and return its ToricVariety.
-#     """
-#     self.add_family(name, P, B, C)
-#     return self._make_ToricVariety(name, coordinate_names, base_ring)
-
-# # instantiate and register example families
-# btf = BatyrevToricFactory()
-# # rank-3 Fano 3-folds examples
-# btf.add_family('Batyrev_3_26', [2,1,1,1,1], [-2], [])
-# btf.add_family('Batyrev_3_29', [1,1,1,1,1], [2], [])
+BTF = BatyrevToricFactory()
