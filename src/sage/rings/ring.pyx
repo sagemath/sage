@@ -239,7 +239,7 @@ cdef class Ring(ParentWithGens):
 
         sage: len(Integers(24))
         24
-        sage: len(RR)   # known bug
+        sage: len(RR)
         Traceback (most recent call last):
         ...
         ValueError: infinite set
