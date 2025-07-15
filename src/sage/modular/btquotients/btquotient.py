@@ -45,6 +45,7 @@ from sage.arith.misc import gcd, xgcd, kronecker_symbol, fundamental_discriminan
 from sage.interfaces.magma import magma
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
@@ -224,9 +225,7 @@ class DoubleCosetReduction(SageObject):
             return False
         if self._t_prec != other._t_prec:
             return False
-        if self._igamma_prec != other._igamma_prec:
-            return False
-        return True
+        return self._igamma_prec == other._igamma_prec
 
     def __ne__(self, other):
         """
@@ -1187,9 +1186,7 @@ class Vertex(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
@@ -1326,9 +1323,7 @@ class Edge(SageObject):
             return False
         if self.valuation != other.valuation:
             return False
-        if self.parity != other.parity:
-            return False
-        return True
+        return self.parity == other.parity
 
     def __ne__(self, other):
         """
@@ -1556,9 +1551,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             return False
         if self._Nplus != other._Nplus:
             return False
-        if self._character != other._character:
-            return False
-        return True
+        return self._character == other._character
 
     def __ne__(self, other):
         r"""
@@ -1714,7 +1707,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         Compute certain invariants from the level data of the quotient
         which allow one to compute the genus of the curve.
 
-        Details to be found in Theorem 9 of [FM2014]_.
+        Details to be found in Theorem 3.8 of [FM2014]_.
 
         EXAMPLES::
 
@@ -2144,10 +2137,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         for f in self.level().factor():
             if kronecker_symbol(disc, f[0]) != -1:
                 return False
-        for f in self._Nplus.factor():
-            if kronecker_symbol(disc, f[0]) != 1:
-                return False
-        return True
+        return all(kronecker_symbol(disc, f[0]) == 1 for f in self._Nplus.factor())
 
     def _local_splitting_map(self, prec):
         r"""
@@ -2273,9 +2263,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         else:
             phi = self._local_splitting_map(prec)
             B = self.get_eichler_order_basis()
-            return Matrix(Zmod(self._p ** prec), 4, 4,
-                          [phi(B[kk])[ii, jj] for ii in range(2)
-                           for jj in range(2) for kk in range(4)])
+            return column_matrix(Zmod(self._p ** prec), 4, 4, [phi(b).list() for b in B])
 
     @cached_method
     def get_extra_embedding_matrices(self):
@@ -2441,12 +2429,10 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                 verbose('self._prec = %s, prec = %s' % (self._prec, prec))
                 Iotamod = self._compute_embedding_matrix(prec)
                 self._Iotainv_lift = Iotamod.inverse().lift()
-                self._Iota = Matrix(self._R, 4, 4, [Iotamod[ii, jj]
-                                                    for ii in range(4)
-                                                    for jj in range(4)])
+                self._Iota = Matrix(self._R, Iotamod)
 
             self._prec = prec
-            self._Iotainv = self._Mat_44([self._Iotainv_lift[ii, jj] % self._pN for ii in range(4) for jj in range(4)])
+            self._Iotainv = self._Mat_44(self._Iotainv_lift.apply_map(lambda x: x % self._pN))
             return self._Iota
 
     def embed_quaternion(self, g, exact=False, prec=None):
@@ -2455,7 +2441,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``g`` -- a row vector of size `4` whose entries represent a
+        - ``g`` -- a column vector of size `4` whose entries represent a
           quaternion in our basis
 
         - ``exact`` -- boolean (default: ``False``); if True, tries to embed
@@ -3098,8 +3084,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
             Vertex of Bruhat-Tits tree for p = 3
         """
         try:
-            tmp = self._cached_paths[v1]
-            return tmp
+            return self._cached_paths[v1]
         except KeyError:
             pass
         chain, v = self._BT.find_path(v1, self.get_vertex_dict())
@@ -3153,8 +3138,7 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
         v1adj = v1.adjugate()
         R = self._Mat_44
         vecM = [v2 * X[ii] * v1adj for ii in range(4)]
-        M = self._Iotainv * R([[vecM[ii][jj, kk] for ii in range(4)]
-                               for jj in range(2) for kk in range(2)])
+        M = self._Iotainv * column_matrix(4, 4, [m.list() for m in vecM])
         M = M.augment(R(self._pN)).transpose()
         E = M.echelon_form().submatrix(0, 0, 4, 4)
         Et = E.transpose()

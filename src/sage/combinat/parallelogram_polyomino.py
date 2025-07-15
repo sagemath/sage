@@ -3143,9 +3143,7 @@ class ParallelogramPolyomino(ClonableList,
             return False
         if self[pos[0] - 1][pos[1]] == 0:
             return True
-        if self[pos[0]][pos[1] - 1] == 0:
-            return True
-        return False
+        return self[pos[0]][pos[1] - 1] == 0
 
     def box_is_root(self, box) -> bool:
         r"""
@@ -4076,7 +4074,7 @@ class ParallelogramPolyominoes_size(
         """
         return "Parallelogram polyominoes of size %s" % (self._size)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of a parallelogram polyomino of a given size.
 

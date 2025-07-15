@@ -6,10 +6,10 @@ This is the reference to the Sagemath R interface, usable from any
 Sage program.
 
 The %r interface creating an R cell in the sage
-notebook is decribed in the Notebook manual.
+notebook is described in the Notebook manual.
 
 The %R and %%R interface creating an R line or an R cell in the
-Jupyter notebook are briefly decribed at the end of this page. This
+Jupyter notebook are briefly described at the end of this page. This
 documentation will be expanded and placed in the Jupyter notebook
 manual when this manual exists.
 
@@ -265,6 +265,7 @@ AUTHORS:
 #
 # ************************************************************************
 import os
+import logging
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
@@ -298,6 +299,8 @@ RFilteredPackages = ['.GlobalEnv']
 # but package:base should cover this. i think.
 RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
 
+# silence rpy2 warnings
+logging.getLogger('rpy2.rinterface_lib.callbacks').setLevel(logging.ERROR)
 
 def _setup_r_to_sage_converter():
     """

@@ -517,7 +517,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         return super().__classcall__(self, p=p, basis=std_basis, profile=std_profile,
                                      truncation_type=std_type, generic=std_generic)
 
-    def __init__(self, p=2, basis='milnor', **kwds):
+    def __init__(self, p=2, basis='milnor', **kwds) -> None:
         r"""
         INPUT:
 
@@ -692,7 +692,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self._prime
 
-    def basis_name(self):
+    def basis_name(self) -> str:
         r"""
         The basis name associated to ``self``.
 
@@ -707,7 +707,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self.prefix()
 
-    def _has_nontrivial_profile(self):
+    def _has_nontrivial_profile(self) -> bool:
         r"""
         Return ``True`` if the profile function for this algebra seems to be that
         for a proper sub-Hopf algebra of the Steenrod algebra.
@@ -744,7 +744,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                   or (profile[1] and min(profile[1]) == 1)))
                 or (trunc < Infinity))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Printed representation of the Steenrod algebra.
 
@@ -799,7 +799,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return "sub-Hopf algebra of %smod %d Steenrod algebra, %s basis, profile function %s" % (genprefix, self.prime(), self._basis_name, pro_str)
         return "%smod %d Steenrod algebra, %s basis" % (genprefix, self.prime(), self._basis_name)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of the Steenrod algebra.
 
@@ -813,7 +813,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return "\\mathcal{A}_{%s}" % self.prime()
 
-    def _repr_term(self, t):
+    def _repr_term(self, t) -> str:
         r"""
         String representation of the monomial specified by the tuple ``t``.
 
@@ -901,10 +901,9 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             s = comm_long_mono_to_string(t, p, generic=self._generic)
         elif basis.find('comm') >= 0:
             s = comm_mono_to_string(t, generic=self._generic)
-        s = s.replace('{', '').replace('}', '')
-        return s
+        return s.replace('{', '').replace('}', '')
 
-    def _latex_term(self, t):
+    def _latex_term(self, t) -> str:
         r"""
         LaTeX representation of the monomial specified by the tuple ``t``.
 
@@ -949,8 +948,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         s = s.replace("Sq", "\\text{Sq}")
         if not self.basis_name().find('pst') >= 0:
             s = s.replace("P", "\\mathcal{P}")
-        s = s.replace("beta", "\\beta")
-        return s
+        return s.replace("beta", "\\beta")
 
     def profile(self, i, component=0):
         r"""
@@ -2343,7 +2341,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
-            return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).P(*nums))
+            return self(SteenrodAlgebra(p=self.prime(),
+                                        generic=self._generic).P(*nums))
         while nums and nums[-1] == 0:
             nums = nums[:-1]
         if len(nums) == 0 or (len(nums) == 1 and nums[0] == 0):
@@ -2359,7 +2358,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         else:
             t = ((), nums)
         if self._check_profile_on_basis(t):
-            A = SteenrodAlgebra_generic(p=self.prime(),generic=self._generic)
+            A = SteenrodAlgebra_generic(p=self.prime(),
+                                        generic=self._generic)
             a = A.monomial(t)
             return self(a)
         raise ValueError("element not in this algebra")
@@ -2401,22 +2401,20 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if not all(x in (0, 1) for x in nums):
             raise ValueError("the tuple %s should consist " % (nums,) +
                              "only of 0s and 1s")
-        else:
-            if self.basis_name() != 'milnor':
-                return self(SteenrodAlgebra(p=self.prime(),
-                                            generic=self._generic).Q_exp(*nums))
-            while nums[-1] == 0:
-                nums = nums[:-1]
-            if not self._generic:
-                return self.P(*nums)
-            else:
-                mono = ()
-                index = 0
-                for e in nums:
-                    if e == 1:
-                        mono = mono + (index,)
-                    index += 1
-                return self.Q(*mono)
+
+        if self.basis_name() != 'milnor':
+            return self(SteenrodAlgebra(p=self.prime(),
+                                        generic=self._generic).Q_exp(*nums))
+
+        lnums = list(nums)
+        while lnums[-1] == 0:
+            lnums.pop()
+
+        if not self._generic:
+            return self.P(*lnums)
+
+        mono = (index for index, e in enumerate(lnums) if e == 1)
+        return self.Q(*mono)
 
     def Q(self, *nums):
         r"""
@@ -2477,7 +2475,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                     return answer
                 raise ValueError("element not in this algebra")
 
-    def an_element(self):
+    def _an_element_(self):
         """
         An element of this Steenrod algebra.
 
@@ -2510,29 +2508,32 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 return self.one()
 
         if basis == 'milnor' and not self._generic:
-            return self.monomial((2,1))
+            return self.monomial((2, 1))
         if basis == 'milnor' and self._generic:
-            return self.term(((1,3), (2,1)), GF(p)(p-1))
+            return self.term(((1, 3), (2, 1)), GF(p)(p - 1))
         if basis == 'serre-cartan' and not self._generic:
-            return self.monomial((4,2,1))
+            return self.monomial((4, 2, 1))
         if basis == 'serre-cartan' and self._generic:
-            return self.term((1,p,0,1,0), GF(p)(p-1))
+            return self.term((1, p, 0, 1, 0), GF(p)(p - 1))
         if basis == 'woody' or basis == 'woodz':
-            return self._from_dict({((3,0),): 1, ((1, 1), (1, 0)): 1}, coerce=True)
+            return self._from_dict({((3, 0),): 1,
+                                    ((1, 1), (1, 0)): 1}, coerce=True)
         if basis.find('wall') >= 0:
-            return self._from_dict({((1,1), (1,0)): 1, ((2, 2), (0, 0)): 1}, coerce=True)
+            return self._from_dict({((1, 1), (1, 0)): 1,
+                                    ((2, 2), (0, 0)): 1}, coerce=True)
         if basis.find('arnona') >= 0:
-            return self._from_dict({((3,3),): 1, ((1, 1), (2, 1)): 1}, coerce=True)
+            return self._from_dict({((3, 3),): 1,
+                                    ((1, 1), (2, 1)): 1}, coerce=True)
         if basis == 'arnonc':
             return self._from_dict({(8,): 1, (4, 4): 1}, coerce=True)
         if basis.find('pst') >= 0:
             if not self._generic:
                 return self.monomial(((3, 1),))
-            return self.term(((1,), (((1,1), 2),)), GF(p)(p-1))
+            return self.term(((1,), (((1, 1), 2),)), GF(p)(p - 1))
         if basis.find('comm') >= 0:
             if not self._generic:
                 return self.monomial(((1, 2),))
-            return self.term(((), (((1,2), 1),)), GF(p)(p-1))
+            return self.term(((), (((1, 2), 1),)), GF(p)(p - 1))
 
     def pst(self, s, t):
         r"""
@@ -2565,7 +2566,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
-            return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
+            return self(SteenrodAlgebra(p=self.prime(),
+                                        generic=self._generic).pst(s, t))
         if not isinstance(s, (Integer, int)) and s >= 0:
             raise ValueError("%s is not a nonnegative integer" % s)
         if not isinstance(t, (Integer, int)) and t > 0:
@@ -2765,7 +2767,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # check to see if equal to A(n) for some n.
             n = self.profile(1)
             if not self._generic and self._profile == AA(n-1, p=p)._profile:
-                return self.pst(i,1)
+                return self.pst(i, 1)
             if self._generic and self._profile == AA(n, p=p)._profile:
                 if i == 0:
                     return self.Q(0)
@@ -2964,7 +2966,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: A=SteenrodAlgebra(2, profile=(3,2,1), basis='pst')
+            sage: A = SteenrodAlgebra(2, profile=(3,2,1), basis='pst')
             sage: A.top_class().parent() is A
             True
         """
@@ -3053,7 +3055,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self.is_field()
 
-    def is_noetherian(self):
+    def is_noetherian(self) -> bool:
         """
         This algebra is Noetherian if and only if it is finite.
 

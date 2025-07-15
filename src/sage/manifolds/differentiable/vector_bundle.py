@@ -20,14 +20,14 @@ AUTHORS:
 - Michael Jung (2019) : initial version
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung at uni-potsdam.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# ****************************************************************************
 
 from sage.categories.vector_bundles import VectorBundles
 from sage.manifolds.vector_bundle import TopologicalVectorBundle
@@ -317,18 +317,20 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: M = Manifold(3, 'M')
             sage: E = M.vector_bundle(2, 'E')
             sage: E.total_space()
-            6-dimensional differentiable manifold E
+            5-dimensional differentiable manifold E
         """
         if self._total_space is None:
             from sage.manifolds.manifold import Manifold
             base_space = self._base_space
-            dim = base_space._dim * self._rank
+            dim = base_space._dim + self._rank
             sindex = base_space.start_index()
-            self._total_space = Manifold(dim, self._name,
-                                latex_name=self._latex_name,
-                                field=self._field, structure='differentiable',
-                                diff_degree=self._diff_degree,
-                                start_index=sindex)
+            self._total_space = Manifold(
+                dim, self._name,
+                latex_name=self._latex_name,
+                field=self._field, structure='differentiable',
+                diff_degree=self._diff_degree,
+                start_index=sindex
+            )
 
         # TODO: if update_atlas: introduce charts via self._atlas
 
@@ -634,9 +636,10 @@ class TensorBundle(DifferentiableVectorBundle):
             base_space = self.base_space()
             return base_space.tensor_field_module(self._tensor_type,
                                                   dest_map=self._dest_map)
-        else:
-            return domain.tensor_field_module(self._tensor_type,
-                                      dest_map=self._dest_map.restrict(domain))
+        return domain.tensor_field_module(
+            self._tensor_type,
+            dest_map=self._dest_map.restrict(domain)
+        )
 
     def section(self, *args, **kwargs):
         r"""
@@ -1302,10 +1305,7 @@ class TensorBundle(DifferentiableVectorBundle):
                 return True
             # Otherwise check whether a global frame on the pullback bundle is
             # defined:
-            for frame in self.frames():
-                if frame._domain is self._base_space:
-                    return True
-            return False
+            return any(frame._domain is self._base_space for frame in self.frames())
 
     def local_frame(self, *args, **kwargs):
         r"""
