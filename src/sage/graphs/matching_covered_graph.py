@@ -3603,6 +3603,7 @@ class MatchingCoveredGraph(Graph):
 
             sage: P = graphs.PetersenGraph()
             sage: G = MatchingCoveredGraph(P)
+            sage: from collections import Counter
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: M = set(G.get_matching())
             sage: G.subdivide_edge(0, 1, 4)
@@ -3610,7 +3611,8 @@ class MatchingCoveredGraph(Graph):
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
             [10, 11, 12, 13]
-            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            sage: sorted(list((Counter(F) - Counter(E)).elements())), \
+            ....: sorted(list((Counter(E) - Counter(F)).elements()))
             ([(0, 10, None), (1, 13, None), (10, 11, None), (11, 12, None),
              (12, 13, None)], [(0, 1, None)])
             sage: if (0, 1, None) in M:
@@ -3627,6 +3629,7 @@ class MatchingCoveredGraph(Graph):
             sage: K.add_edges([(0, 1, 2), (0, 1, 3), (0, 1, 0.5)])
             sage: K.delete_edge(0, 1, None)
             sage: G = MatchingCoveredGraph(K)
+            sage: from collections import Counter
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: G.edge_label(0, 1)
             [2, 3, 0.500000000000000]
@@ -3636,7 +3639,8 @@ class MatchingCoveredGraph(Graph):
             sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: sorted(W - V)
             [4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            sage: sorted(list((Counter(F) - Counter(E)).elements())), \
+            ....: sorted(list((Counter(E) - Counter(F)).elements()))
             ([(0, 4, 2), (0, 10, 3), (1, 9, 2), (1, 11, 3), (1, 12, None), (2, 13, None),
               (4, 5, 2), (5, 6, 2), (6, 7, 2), (7, 8, 2), (8, 9, 2), (10, 11, 3),
               (12, 13, None)], [(0, 1, 2), (0, 1, 3), (1, 2, None)])
@@ -3837,6 +3841,7 @@ class MatchingCoveredGraph(Graph):
 
             sage: C = graphs.CycleGraph(4)
             sage: G = MatchingCoveredGraph(C)
+            sage: from collections import Counter
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: M = set(G.get_matching())
             sage: G.subdivide_edges(E, 2)
@@ -3844,7 +3849,8 @@ class MatchingCoveredGraph(Graph):
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
             [4, 5, 6, 7, 8, 9, 10, 11]
-            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            sage: sorted(list((Counter(F) - Counter(E)).elements())), \
+            ....: sorted(list((Counter(E) - Counter(F)).elements()))
             ([(0, 4, None), (0, 6, None), (1, 5, None), (1, 8, None),
               (2, 9, None), (2, 10, None), (3, 7, None), (3, 11, None),
               (4, 5, None), (6, 7, None), (8, 9, None), (10, 11, None)],
@@ -3865,6 +3871,7 @@ class MatchingCoveredGraph(Graph):
             sage: G = MatchingCoveredGraph(C)
             sage: G.allow_multiple_edges(True)
             sage: G.add_edges([(0, 1)] * 3)
+            sage: from collections import Counter
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: M = list(G.get_matching())
             sage: G.subdivide_edges([(0, 1), (0, 1, None)], 2)
@@ -3872,7 +3879,8 @@ class MatchingCoveredGraph(Graph):
             sage: N = set(G.get_matching())
             sage: sorted(W - V)
             [4, 5, 6, 7]
-            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            sage: sorted(list((Counter(F) - Counter(E)).elements())), \
+            ....: sorted(list((Counter(E) - Counter(F)).elements()))
             ([(0, 4, None), (0, 6, None), (1, 5, None), (1, 7, None),
               (4, 5, None), (6, 7, None)], [(0, 1, None), (0, 1, None)])
             sage: if (0, 1, None) in M:
@@ -3891,13 +3899,15 @@ class MatchingCoveredGraph(Graph):
             ....:     (2, 3, 0.5), (2, 3, 4)
             ....: ])
             sage: G.delete_edge(0, 1, None)
+            sage: from collections import Counter
             sage: V, E = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: G.subdivide_edges([(0, 1), (1, 2), (2, 3)], 4)
             ....: # edges considered: (0, 1, 2), (1, 2, None), (2, 3, None)
             sage: W, F = set(G.vertices()), list(G.edges(sort=True, sort_vertices=True))
             sage: sorted(W - V)
             [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
-            sage: sorted([f for f in F if f not in E]), sorted([e for e in E if e not in F])
+            sage: sorted(list((Counter(F) - Counter(E)).elements())), \
+            ....: sorted(list((Counter(E) - Counter(F)).elements()))
             ([(0, 10, 2), (1, 13, 2), (1, 14, None), (2, 17, None),
               (2, 18, None), (3, 21, None), (10, 11, 2), (11, 12, 2),
               (12, 13, 2), (14, 15, None), (15, 16, None), (16, 17, None),
