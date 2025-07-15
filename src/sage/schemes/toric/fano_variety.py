@@ -324,11 +324,11 @@ class FanoToricVariety_field(ToricVariety_field):
             sage: P1xP1 = FanoToricVariety(
             ....:     Delta_polar=lattice_polytope.cross_polytope(2))
             sage: P1xP1
-            2-d CPR-Fano toric variety covered by 4 affine patches
+            2-d Fano toric variety covered by 4 affine patches
         """
         self._Delta_polar = Delta_polar
         # AL: we want to use the anticanonical surface and nef complete intersection functions for general Fano toric varieties
-        self._coordinate_points = tuple(range(fan.rays()))
+        self._coordinate_points = tuple(range(len(fan.rays())))
         self._point_to_ray = {i: i for i in self._coordinate_points}
         super().__init__(fan, coordinate_names,
                          coordinate_name_indices, base_field)
@@ -355,7 +355,8 @@ class FanoToricVariety_field(ToricVariety_field):
 
         TESTS::
 
-            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: P1xP1 = FanoToricVariety(
+            ....:     Delta_polar=lattice_polytope.cross_polytope(2))
             sage: print(P1xP1._repr_())
             2-d Fano toric variety covered by 4 affine patches
         """
@@ -480,6 +481,41 @@ class FanoToricVariety_field(ToricVariety_field):
         else:
             return FanoToricVariety_field(self._Delta_polar, self._fan,
                 self.variable_names(), None, F)
+        
+    def coordinate_point_to_coordinate(self, point):
+        r"""
+        Return the coordinate of the point in the coordinate ring of ``self``.
+
+        INPUT:
+
+        - ``point`` -- integer, index of a coordinate point of ``self``
+          (see :meth:`coordinate_points`)
+
+        OUTPUT: :class:`sage.rings.polynomial.polynomial_element.Polynomial_generic`
+
+        EXAMPLES::
+
+            sage: P1xP1 = FanoToricVariety(Delta_polar=lattice_polytope.cross_polytope(2))
+            sage: P1xP1.coordinate_point_to_coordinate(0)
+            z0
+            sage: P1xP1.coordinate_point_to_coordinate(3)
+            z3
+        """
+        return self.gen(self._point_to_ray[point])
+                        
+    def coordinate_points(self):
+        r"""
+        Return the list of indices of coordinate points of ``self``.
+
+        OUTPUT: list of integers
+
+        EXAMPLES::
+
+            sage: P1xP1 = FanoToricVariety(Delta_polar=lattice_polytope.cross_polytope(2))
+            sage: P1xP1.coordinate_points()
+            (0, 1, 2, 3)
+        """
+        return self._coordinate_points
         
     def Delta(self):
         r"""
@@ -618,16 +654,21 @@ class FanoToricVariety_field(ToricVariety_field):
 
         EXAMPLES::
 
-            sage: P1 = toric_varieties.P1()
-            sage: P2 = toric_varieties.P2()
+            sage: P1_poly = lattice_polytope.cross_polytope(1)
+            sage: P2_simplex = LatticePolytope([(1,0), (0,1), (-1,-1)])
+            sage: P1 = FanoToricVariety(Delta=P1_poly)
+            sage: P2 = FanoToricVariety(Delta_polar=P2_simplex)
             sage: P1xP2 = P1.cartesian_product(P2); P1xP2
             3-d Fano toric variety covered by 6 affine patches
             sage: P1xP2.fan().rays()
-            N+N( 1,  0,  0),        N+N(-1,  0,  0),        N+N( 0,  1,  0),
-            N+N( 0,  0,  1),        N+N( 0, -1, -1)
-            in 3-d lattice N+N
+            N+M(-1,  0,  0),
+            N+M( 1,  0,  0),
+            N+M( 0,  1,  0),
+            N+M( 0,  0,  1),
+            N+M( 0, -1, -1)
+            in 3-d lattice N+M
             sage: P1xP2.Delta_polar()
-            3-d reflexive polytope in 3-d lattice N+N
+            3-d reflexive polytope in 3-d lattice N+M
         """
         if isinstance(other, FanoToricVariety_field) and not isinstance(other, CPRFanoToricVariety_field):
             # and not isinstance(other, SmoothFanoToricVariety_field): we will include this in the future if necessary
@@ -1149,13 +1190,14 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
             2-d CPR-Fano toric variety covered by 4 affine patches
         """
         self._Delta_polar = Delta_polar
-        self._coordinate_points = tuple(coordinate_points)
-        self._point_to_ray = point_to_ray
         # Check/normalize coordinate_indices
         if coordinate_name_indices is None:
             coordinate_name_indices = coordinate_points
         super().__init__(Delta_polar, fan, coordinate_names,
                          coordinate_name_indices, base_field)
+        # AL: we add the trivial attributes for the general case, so we need to update after super().__init__
+        self._coordinate_points = tuple(coordinate_points)
+        self._point_to_ray = point_to_ray
 
     def _latex_(self):
         r"""
@@ -1767,12 +1809,13 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
 
     EXAMPLES::
 
-        sage: P1xP1 = toric_varieties.P1xP1()
+        sage: diamond = lattice_polytope.cross_polytope(2)
+        sage: P1xP1 = FanoToricVariety(Delta_polar=diamond)
         sage: import sage.schemes.toric.fano_variety as ftv
         sage: ftv.AnticanonicalHypersurface(P1xP1)
-        Closed subscheme of 2-d Fano toric variety
-         covered by 4 affine patches defined by:
-          a0*s^2*x^2 + a3*t^2*x^2 + a6*s*t*x*y + a1*s^2*y^2 + a2*t^2*y^2
+        Closed subscheme of 2-d Fano toric variety covered by 4 affine patches defined by:
+        a0*z0^2*z1^2 + a3*z1^2*z2^2 + a6*z0*z1*z2*z3 + a1*z0^2*z3^2 + a2*z2^2*z3^2
+
 
     See :meth:`~FanoToricVariety_field.anticanonical_hypersurface()` for a
     more elaborate example.
@@ -1785,12 +1828,12 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
 
         TESTS::
 
-            sage: P1xP1 = toric_varieties.P1xP1()
+            sage: diamond = lattice_polytope.cross_polytope(2)
+            sage: P1xP1 = FanoToricVariety(Delta_polar=diamond)
             sage: import sage.schemes.toric.fano_variety as ftv
             sage: ftv.AnticanonicalHypersurface(P1xP1)
-            Closed subscheme of 2-d Fano toric variety
-             covered by 4 affine patches defined by:
-              a0*s^2*x^2 + a3*t^2*x^2 + a6*s*t*x*y + a1*s^2*y^2 + a2*t^2*y^2
+            Closed subscheme of 2-d Fano toric variety covered by 4 affine patches defined by:
+            a0*z0^2*z1^2 + a3*z1^2*z2^2 + a6*z0*z1*z2*z3 + a1*z0^2*z3^2 + a2*z2^2*z3^2
 
         Check that finite fields are handled correctly :issue:`14899`::
 
@@ -1798,10 +1841,9 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             sage: X = P1xP1.change_ring(F)                                              # needs sage.rings.finite_rings
             sage: X.anticanonical_hypersurface(monomial_points='all',                   # needs sage.rings.finite_rings
             ....:                   coefficients=[1]*X.Delta().npoints())
-            Closed subscheme of 2-d Fano toric variety
-             covered by 4 affine patches defined by:
-              s^2*x^2 + s*t*x^2 + t^2*x^2 + s^2*x*y + s*t*x*y
-              + t^2*x*y + s^2*y^2 + s*t*y^2 + t^2*y^2
+            Closed subscheme of 2-d Fano toric variety covered by 4 affine patches defined by:
+            z0^2*z1^2 + z0*z1^2*z2 + z1^2*z2^2 + z0^2*z1*z3 + z0*z1*z2*z3 + z1*z2^2*z3 + z0^2*z3^2 + z0*z2*z3^2 + z2^2*z3^2
+
         """
         if not isinstance(P_Delta, FanoToricVariety_field):
             raise TypeError("anticanonical hypersurfaces can only be "
