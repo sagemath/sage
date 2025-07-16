@@ -1501,7 +1501,8 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         A._entries = mzd_transpose(A._entries, self._entries)
         if self._subdivisions is not None:
-            A.subdivide(*self.subdivisions())
+            row_divs, col_divs = self.subdivisions()
+            A.subdivide(col_divs, row_divs)
         return A
 
     cpdef _richcmp_(self, right, int op):
