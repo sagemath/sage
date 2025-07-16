@@ -4460,7 +4460,7 @@ class ClusterSeed(SageObject):
                         new_gen_found = True
                         if verbose:
                             print('Found a new element in', spend, 'seconds!')
-                            print('')
+                            print()
                     i += 1
 
     def get_upper_cluster_algebra_element(self, a):
