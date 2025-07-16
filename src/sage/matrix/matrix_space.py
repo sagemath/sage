@@ -1747,7 +1747,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: a = list(MS)
             Traceback (most recent call last):
             ...
-            NotImplementedError: object does not support iteration
+            ValueError: infinite set
         """
         # Make sure that we can iterate over the base ring
         base_ring = self.base_ring()
