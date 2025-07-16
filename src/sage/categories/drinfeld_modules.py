@@ -171,8 +171,6 @@ class DrinfeldModules(Category_over_base_ring):
         ...
         TypeError: base field must be a ring extension
 
-    ::
-
     Note that `C.base_morphism()` has codomain `K` while
     the defining morphism of `C.base()` has codomain `K` viewed
     as an `A`-field. Thus, they differ::
