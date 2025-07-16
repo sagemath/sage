@@ -1171,7 +1171,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     def is_prime_field(self, proof=True):
         """
-        Return `True` if ``self`` is a prime field, that is, if it is a finite
+        Return ``True`` if ``self`` is a prime field, that is, if it is a finite
         field of prime cardinality.
 
         INPUT:
@@ -1213,6 +1213,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             False
 
         We check that bug :issue:`40426` is fixed::
+
             sage: K = GF(4)
             sage: A.<x> = K[]
             sage: L = K.extension(x+1)
