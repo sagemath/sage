@@ -1129,6 +1129,68 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             return
         mzed_col_swap(self._entries, col1, col2)
 
+    def transpose(self):
+        """
+        Return the transpose of ``self``, without changing ``self``.
+
+        EXAMPLES:
+
+        We create a matrix, compute its transpose, and note that
+        the original matrix is not changed. ::
+
+            sage: M = matrix(GF(4),[[0,[0,1],0],[0,[1,1],1],[0,0,0]])
+            sage: M
+            [     0     z2      0]
+            [     0 z2 + 1      1]
+            [     0      0      0]
+            sage: N = M.transpose()
+            sage: N
+            [     0      0      0]
+            [    z2 z2 + 1      0]
+            [     0      1      0]
+            sage: M
+            [     0     z2      0]
+            [     0 z2 + 1      1]
+            [     0      0      0]
+
+        ``.T`` is a convenient shortcut for the transpose::
+
+            sage: M.T
+            [     0      0      0]
+            [    z2 z2 + 1      0]
+            [     0      1      0]
+
+        ::
+
+            sage: M.subdivide(None, 1)
+            sage: M
+            [     0|    z2      0]
+            [     0|z2 + 1      1]
+            [     0|     0      0]
+            sage: M.transpose()
+            [     0      0      0]
+            [--------------------]
+            [    z2 z2 + 1      0]
+            [     0      1      0]
+        """
+        # temporary until mzed_transpose from M4RIE makes its way into Sage
+        cdef Py_ssize_t nrows = self._nrows
+        cdef Py_ssize_t ncols = self._ncols
+        
+        cdef Matrix_gf2e_dense A = self.new_matrix(ncols=nrows,
+                                                   nrows=ncols)
+        if nrows == 0 or ncols == 0:
+            return A
+        
+        cdef Py_ssize_t i, j
+        for i from 0 <= i < ncols:
+            for j from 0 <= j < nrows:
+                mzed_write_elem(A._entries, i, j, mzed_read_elem(self._entries, j, i))
+        if self._subdivisions is not None:
+            row_divs, col_divs = self.subdivisions()
+            A.subdivide(col_divs, row_divs)
+        return A
+
     def augment(self, right):
         """
         Augments ``self`` with ``right``.
