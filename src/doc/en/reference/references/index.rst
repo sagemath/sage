@@ -246,7 +246,7 @@ REFERENCES:
 
 .. [AM1969] \M. F. Atiyah and I. G. Macdonald, *Introduction to commutative algebra*, Addison-Wesley, 1969.
 
- .. [AM1990] \R. Abraham and J. E. Marsden, *Foundations of Mechanics*,
+.. [AM1990] \R. Abraham and J. E. Marsden, *Foundations of Mechanics*,
             Addison-Wesley, 1980.
 
 .. [AM1974] \J. F. Adams and H. R. Margolis, *Sub-Hopf-algebras of the
