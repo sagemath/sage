@@ -3675,12 +3675,24 @@ cdef class CGraphBackend(GenericGraphBackend):
         TESTS::
 
             sage: g = Graph([(1, 2, 10), (1, 3, 20), (1, 4, 30)])
-            sage: assert g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[1]) is None
-            sage: assert g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3, 4]) is None
             sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3], by_weight=True)
             [1, 4]
             sage: g._backend.shortest_path_to_set(1, {1, 3, 4}, by_weight=True)
             [1]
+
+        ``source`` must not be in ``exclude_vertices``::
+
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[1])
+            Traceback (most recent call last):
+            ...
+            ValueError: source must not be in exclude_vertices.
+
+        When no path exists from ``source`` to ``targets``, raise an error.
+
+            sage: g._backend.shortest_path_to_set(1, {3, 4}, exclude_vertices=[3, 4])
+            Traceback (most recent call last):
+            ...
+            ValueError: no path found from source to targets.
 
         ``exclude_vertices`` must be iterable::
 
@@ -3696,7 +3708,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         elif not isinstance(exclude_vertices, set):
             exclude_vertices = set(exclude_vertices)
         if source in exclude_vertices:
-            return
+            raise ValueError(f"source must not be in exclude_vertices.")
         cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
         cdef dict dist = {}
         cdef dict pred = {}
@@ -3742,7 +3754,8 @@ cdef class CGraphBackend(GenericGraphBackend):
                     else:
                         pq.push(u_int, new_dist)
 
-        return
+        # no path found
+        raise ValueError(f"no path found from source to targets.")
 
     def bidirectional_dijkstra_special(self, x, y, weight_function=None,
                                        exclude_vertices=None, exclude_edges=None,

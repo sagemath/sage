@@ -1669,13 +1669,16 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         else:
             green = green_vertices(path[:dev_idx + 1])
             # get a path to target in G \ path[:dev_idx] to one of green vertices
-            path2green = shortest_path_func(path[dev_idx], green,
-                                            report_weight=True,
-                                            exclude_vertices=set(path[:dev_idx]),
-                                            edge_weight=sidetrack_cost)
-            if not path2green:
-                continue  # no path to target in G \ path[:dev_idx]
-            deviation_weight, deviation = path2green
+            try:
+                deviation_weight, deviation = shortest_path_func(path[dev_idx], green,
+                                                                 report_weight=True,
+                                                                 exclude_vertices=set(path[:dev_idx]),
+                                                                 edge_weight=sidetrack_cost)
+            except ValueError as e:
+                if str(e) == "no path found from source to targets.":
+                    continue  # no path to target in G \ path[:dev_idx]
+                else:
+                    raise
             new_path = path[:dev_idx] + deviation[:-1] + tree_path(deviation[-1])
             new_path_idx = idx
             idx_to_path[new_path_idx] = new_path
