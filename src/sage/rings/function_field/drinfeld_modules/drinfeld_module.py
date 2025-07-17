@@ -2084,3 +2084,67 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if not self.function_ring().has_coerce_map_from(x.parent()):
             raise ValueError("%s is not element of the function ring" % x)
         return self.Hom(self)(x)
+
+    def frobenius_relative(self, n=1):
+        r"""
+        Return the `n`-th iterate relative Frobenius of this Drinfeld module.
+
+        By definition, the relative Frobenius is the isogeny represented by
+        the Ore polynomial `tau^d` where `d` is the degree of the characteristic
+        of this Drinfeld module (which is also the degree of `\gamma(T)` over
+        the `\mathbb F_q`).
+
+        INPUT:
+
+        - ``n`` -- a nonnegative integer (default: ``1``)
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [1, z, z])
+            sage: phi.frobenius_relative()
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^2 + z*t + 1
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (2*z^2 + 4*z + 4)*t + 1
+              Defn: t
+            sage: phi.frobenius_relative(2)
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^2 + z*t + 1
+              To:   Drinfeld module defined by T |--> (3*z^2 + 1)*t^2 + (3*z^2 + 1)*t + 1
+              Defn: t^2
+
+        When `n` is the degree of `F` over `\FF_q(\gamma(T))`, we obtain
+        the Frobenius endomorphism::
+
+            sage: phi.frobenius_relative(3) == phi.frobenius_endomorphism()
+            True
+
+        In particular, when `\gamma(T)` generates the field `K`, the relative
+        Frobenius is the same as the Frobenius endomorphism::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1])
+            sage: psi.frobenius_relative()
+            Endomorphism of Drinfeld module defined by T |--> t^2 + z*t + z
+              Defn: t^3
+            sage: psi.frobenius_endomorphism()
+            Endomorphism of Drinfeld module defined by T |--> t^2 + z*t + z
+              Defn: t^3
+
+        When the characteristic is zero, the relative Frobenius is not defined
+        and an error is raised::
+
+            sage: R.<z> = Fq[]
+            sage: K.<z> = Frac(R)
+            sage: phi = DrinfeldModule(A, [1, z])
+            sage: phi.frobenius_relative()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: function ring characteristic not implemented in this case
+        """
+        tau = self.ore_variable()
+        d = self.characteristic().degree()
+        if d < 0:
+            raise ValueError("the characteristic of the Drinfeld module must be nonzero")
+        return self.hom(tau**(n*d))
