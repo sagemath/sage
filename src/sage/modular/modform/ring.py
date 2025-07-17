@@ -410,7 +410,7 @@ class ModularFormsRing(Parent):
             raise ValueError('the number of variables (%s) must be equal to'
                              ' the number of generators of the modular forms'
                              ' ring (%s)' % (nb_var, self.ngens()))
-        return {poly_parent.gen(i): self(gens[i]) for i in range(0, nb_var)}
+        return {poly_parent.gen(i): self(gens[i]) for i in range(nb_var)}
 
     def from_polynomial(self, polynomial, gens=None):
         r"""

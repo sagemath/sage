@@ -4006,7 +4006,7 @@ class GradedModularFormElement(ModuleElement):
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
-        coef_self = vector(self[k].coefficients(range(0, sturm_bound + 1))).column()
+        coef_self = vector(self[k].coefficients(range(sturm_bound + 1))).column()
 
         # solve the linear system: mat * X = coef_self
         soln = mat.solve_right(coef_self)
