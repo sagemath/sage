@@ -22,14 +22,14 @@ jobs:
         container:
           - fedora:41
           - fedora:42
-          - ghcr.io/void-linux/void-glibc-full
+          - ghcr.io/void-linux/void-musl-full
     container:
       image: ${{ matrix.container }}
 
     steps:
       - name: Prepare container
         run: |
-          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-glibc-full" ]; then
+          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-musl-full" ]; then
             xbps-install -Syu xbps
             xbps-install -yu
             # node-based actions require libstdc++.so.6

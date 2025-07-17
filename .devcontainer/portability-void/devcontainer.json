@@ -2,7 +2,7 @@
 {
     "name": "void",
     // Doesn't include 'bash', so we use a custom dockerfile
-    // "image": "ghcr.io/void-linux/void-glibc-full",
+    // "image": "ghcr.io/void-linux/void-musl-full",
     "dockerFile": "Dockerfile",
     "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
     "features": {
