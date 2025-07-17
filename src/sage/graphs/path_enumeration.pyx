@@ -1590,12 +1590,13 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         ancestor_idx_vec[v] = ancestor_idx_func(successor[v], t, target_idx)
         return ancestor_idx_vec[v]
 
-    # used inside shortest_path_func
+    # used inside shortest_path_to_green
     cdef PairingHeap[int, double] pq = PairingHeap[int, double]()
     cdef dict dist_in_func = {}
     cdef dict pred = {}
 
-    def shortest_path_func(dev, exclude_vertices):
+    # calculate shortest path from dev to one of green vertices
+    def shortest_path_to_green(dev, exclude_vertices):
         t = len(exclude_vertices)
         ancestor_idx_vec[id_target] = t + 1
         # clear
@@ -1686,7 +1687,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 original_cost -= sidetrack_cost[(path[deviation_i - 1], path[deviation_i])]
                 former_part.remove(path[deviation_i + 1])
         else:
-            deviations = shortest_path_func(path[dev_idx], set(path[:dev_idx]))
+            deviations = shortest_path_to_green(path[dev_idx], set(path[:dev_idx]))
             if not deviations:
                 continue  # no path to target in G \ path[:dev_idx]
             deviation_weight, deviation = deviations
