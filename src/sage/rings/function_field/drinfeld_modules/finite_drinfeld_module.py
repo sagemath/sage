@@ -907,6 +907,42 @@ class DrinfeldModule_finite(DrinfeldModule):
         # If all fail, we raise an error
         raise NotImplementedError(f'algorithm "{algorithm}" not implemented')
 
+    def frobenius_relative(self):
+        r"""
+        Return the relative Frobenius of this Drinfeld module, that is
+        the isogeny of the form `\tau^d` with `d` minimal.
+
+        We note that `d` is the degree of `\gamma(T)` over the `\mathbb F_q`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [1, z, z])
+            sage: phi.frobenius_relative()
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> z*t^2 + z*t + 1
+              To:   Drinfeld module defined by T |--> (2*z^2 + 4*z + 4)*t^2 + (2*z^2 + 4*z + 4)*t + 1
+              Defn: t
+
+        When the constant coefficient generates the field `K`, the relative
+        Frobenius is the same as the Frobenius endomorphism::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1])
+            sage: psi.frobenius_relative()
+            Endomorphism of Drinfeld module defined by T |--> t^2 + z*t + z
+              Defn: t^3
+            sage: psi.frobenius_endomorphism()
+            Endomorphism of Drinfeld module defined by T |--> t^2 + z*t + z
+              Defn: t^3
+        """
+        E = self.base_over_constants_field()
+        z = E(self.constant_coefficient())
+        d = z.minpoly().degree()
+        tau = self.ore_variable()
+        return self.hom(tau**d)
+
     def invert(self, ore_pol):
         r"""
         Return the preimage of the input under the Drinfeld module, if it
