@@ -29,6 +29,7 @@ from sage.functions.other import ceil, sqrt
 from sage.matrix.constructor import Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import companion_matrix
+from sage.misc.functional import log
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
@@ -158,7 +159,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         # added one to ensure that DrinfeldModule_finite would always
         # have _frobenius_norm and _frobenius_trace attributes.
         super().__init__(gen, category)
-        self._base_degree_over_constants = self.base_over_constants_field().degree(self._Fq)
+        self._base_degree_over_constants = log(self._base.cardinality(), self._Fq.cardinality())
         self._frobenius_norm = None
         self._frobenius_trace = None
         self._frobenius_charpoly = None
@@ -255,7 +256,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             True
         """
         t = self.ore_polring().gen()
-        deg = self.base_over_constants_field().degree_over()
+        deg = self._base_degree_over_constants
         return self._Hom_(self, category=self.category())(t**deg)
 
     def frobenius_charpoly(self, var='X', algorithm=None):
