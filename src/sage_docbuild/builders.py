@@ -474,7 +474,7 @@ class ReferenceTopBuilder(DocBuilder):
     This class builds the top-level page of the reference manual.
     """
     def __init__(self, name: str, options: BuildOptions):
-        super().__init__(self, 'en/reference', options)
+        DocBuilder.__init__(self, 'en/reference', options)
 
     def html(self):
         """
@@ -583,7 +583,7 @@ class ReferenceSubBuilder(DocBuilder):
     _cache = None
 
     def __init__(self, name: str, options: BuildOptions):
-        super().__init__(self, "en/" + name, options)
+        DocBuilder.__init__(self, "en/" + name, options)
         self._wrap_builder_helpers()
 
     def _wrap_builder_helpers(self):
