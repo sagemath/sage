@@ -436,16 +436,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ...
         ValueError: generator must have positive degree
 
-    The constant coefficient must be nonzero::
-
-        sage: Fq = GF(2)
-        sage: K.<z> = Fq.extension(2)
-        sage: A.<T> = Fq[]
-        sage: DrinfeldModule(A, [K(0), K(1)])
-        Traceback (most recent call last):
-        ...
-        ValueError: constant coefficient must be nonzero
-
     The coefficients of the generator must lie in an
     `\mathbb{F}_q[T]`-field, where `\mathbb{F}_q[T]` is the function
     ring of the Drinfeld module::
@@ -584,13 +574,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         elif isinstance(gen, (list, tuple)):
             ore_polring = None
             # Base ring without morphism structure:
-            base_field_noext = Sequence(gen).universe()
+            base_field_noext = Sequence(gen).universe().fraction_field()
         else:
             raise TypeError('generator must be list of coefficients or Ore '
                             'polynomial')
-        # Constant coefficient must be nonzero:
-        if gen[0].is_zero():
-            raise ValueError('constant coefficient must be nonzero')
         # The coefficients are in a base field that has coercion from Fq:
         if not (hasattr(base_field_noext, 'has_coerce_map_from') and
                 base_field_noext.has_coerce_map_from(function_ring.base_ring())):
