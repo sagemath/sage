@@ -573,6 +573,16 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: u.right_gcd(v)
             Identity morphism of Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
 
+        We underline that the right gcd of isogenies does not make sense
+        when the isogenies have different domains::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1, 1])
+            sage: w = psi.hom(tau + 1)
+            sage: u.right_gcd(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the two morphisms must have the same domain
+
         SEEALSO::
 
             :meth:`left_lcm`
@@ -606,6 +616,16 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
               From: Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
               To:   Drinfeld module defined by T |--> τ^3 + z*τ^2 + (6*z + 1)*τ + z
               Defn: τ^2 + τ + 1
+
+        We underline that the left lcm of isogenies does not make sense
+        when the isogenies have different domains::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1, 1])
+            sage: w = psi.hom(tau + 1)
+            sage: v.left_lcm(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the two morphisms must have the same domain
 
         SEEALSO::
 
