@@ -571,7 +571,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: u = phi.hom(tau + 3)
             sage: v = phi.hom(tau + 5)
             sage: u.right_gcd(v)
-            Identity morphism of Drinfeld module defined by T |--> t^3 + z*t^2 + z*t + z
+            Identity morphism of Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
 
         SEEALSO::
 
@@ -603,9 +603,9 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
             sage: v = phi.hom(tau + 5)
             sage: u.left_lcm(v)
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> t^3 + z*t^2 + z*t + z
-              To:   Drinfeld module defined by T |--> t^3 + z*t^2 + (6*z + 1)*t + z
-              Defn: t^2 + t + 1
+              From: Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
+              To:   Drinfeld module defined by T |--> τ^3 + z*τ^2 + (6*z + 1)*τ + z
+              Defn: τ^2 + τ + 1
 
         SEEALSO::
 
