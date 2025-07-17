@@ -551,6 +551,71 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         H = self.codomain().Hom(self.domain())
         return H(~(self.ore_polynomial()[0]))
 
+    def right_gcd(self, other):
+        r"""
+        Return the right gcd of this isogeny and ``other``.
+
+        INPUT:
+
+        - ``other`` -- an isogeny of Drinfeld modules with the
+          same domain
+
+        EXAMPLES::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: F.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z, z, 1])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 3)
+            sage: v = phi.hom(tau + 5)
+            sage: u.right_gcd(v)
+            Identity morphism of Drinfeld module defined by T |--> t^3 + z*t^2 + z*t + z
+
+        SEEALSO::
+
+            :meth:`left_lcm`
+        """
+        if (not isinstance(other, DrinfeldModuleMorphism)
+         or other.domain() is not self.domain()):
+            raise ValueError("the two morphisms must have the same domain")
+        u = self.ore_polynomial().right_gcd(other.ore_polynomial())
+        return self.domain().hom(u)
+
+    def left_lcm(self, other):
+        r"""
+        Return the left lcm of this isogeny and ``other``.
+
+        INPUT:
+
+        - ``other`` -- an isogeny of Drinfeld modules with the
+          same domain
+
+        EXAMPLES::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: F.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z, z, 1])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 3)
+            sage: v = phi.hom(tau + 5)
+            sage: u.left_lcm(v)
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> t^3 + z*t^2 + z*t + z
+              To:   Drinfeld module defined by T |--> t^3 + z*t^2 + (6*z + 1)*t + z
+              Defn: t^2 + t + 1
+
+        SEEALSO::
+
+            :meth:`right_gcd`
+        """
+        if (not isinstance(other, DrinfeldModuleMorphism)
+         or other.domain() is not self.domain()):
+            raise ValueError("the two morphisms must have the same domain")
+        u = self._ore_polynomial.left_lcm(other._ore_polynomial)
+        return self.domain().hom(u)
+
     def _motive_matrix(self):
         r"""
         Return the matrix giving the action of this morphism
