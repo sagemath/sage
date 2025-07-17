@@ -1624,7 +1624,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             if d > dist_in_func.get(v, float('inf')):
                 continue  # already found a better path
 
-            for _, u, _ in G.outgoing_edge_iterator(v):
+            for u in G.neighbor_out_iterator(v):
                 if u in exclude_vertices:
                     continue
                 new_dist = d + sidetrack_cost[(v, u)]
