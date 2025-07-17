@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 The module action induced by a Drinfeld module
@@ -60,7 +61,7 @@ class DrinfeldModuleAction(Action):
         sage: action = phi.action()
         sage: action
         Action on Finite Field in z of size 11^2 over its base
-         induced by Drinfeld module defined by T |--> t^3 + z
+         induced by Drinfeld module defined by T |--> τ^3 + z
 
     The action on elements is computed as follows::
 
@@ -154,7 +155,7 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: latex(action)
-            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\phi: T \mapsto t^{3} + z
+            \text{Action{ }on{ }}\Bold{F}_{11^{2}}\text{{ }induced{ }by{ }}\phi: T \mapsto τ^{3} + z
         """
         return f'\\text{{Action{{ }}on{{ }}}}' \
                f'{latex(self._base)}\\text{{{{ }}' \
@@ -174,7 +175,7 @@ class DrinfeldModuleAction(Action):
             sage: phi = DrinfeldModule(A, [z, 0, 0, 1])
             sage: action = phi.action()
             sage: action
-            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> t^3 + z
+            Action on Finite Field in z of size 11^2 over its base induced by Drinfeld module defined by T |--> τ^3 + z
         """
         return f'Action on {self._base} induced by ' \
                f'{self._drinfeld_module}'
