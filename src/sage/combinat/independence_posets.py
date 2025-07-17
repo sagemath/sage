@@ -31,6 +31,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Iterator
 
 from sage.combinat.posets.posets import Poset
 from sage.combinat.subset import Subsets
@@ -42,8 +43,8 @@ from sage.sets.set import Set
 ##############################################################
 
 
-def orthogonal_pairs(G):
-    """
+def orthogonal_pairs(G: DiGraph) -> Iterator[tuple]:
+    r"""
     Iterate over all orthogonal pairs of `G`.
 
     An orthogonal pair is a pair
@@ -56,7 +57,7 @@ def orthogonal_pairs(G):
 
     OUTPUT:
 
-    all orthogonal pairs of `G``
+    all orthogonal pairs of ``G``
 
     .. NOTE::
 
@@ -88,8 +89,8 @@ def orthogonal_pairs(G):
             yield (s, t)
 
 
-def poset_of_orthogonal_pairs(G):
-    """
+def poset_of_orthogonal_pairs(G: DiGraph) -> Poset:
+    r"""
     Return the poset of orthogonal pairs.
 
     INPUT:
@@ -122,8 +123,8 @@ def poset_of_orthogonal_pairs(G):
     return Poset([list(orthogonal_pairs(G)), inc])
 
 
-def mops(G) -> list:
-    """
+def mops(G: DiGraph) -> list[tuple]:
+    r"""
     Return the maximal orthogonal pairs in ``G``.
 
     INPUT:
@@ -148,14 +149,14 @@ def mops(G) -> list:
     The maximal orthogonal pairs for a completely connected 3 vertex graph ::
 
         sage: G = digraphs.TransitiveTournament(3)
-        sage: mops(G)
-        [({}, {0, 1, 2}), ({2}, {0, 1}), ({1, 2}, {0}), ({0, 1, 2}, {})]
+        sage: sorted(mops(G))
+        [({0, 1, 2}, {}), ({2}, {0, 1}), ({1, 2}, {0}), ({}, {0, 1, 2})]
     """
     return poset_of_orthogonal_pairs(G).maximal_elements()
 
 
-def poset_of_mops(G):
-    """
+def poset_of_mops(G: DiGraph) -> Poset:
+    r"""
     Return the poset of maximal orthogonal pairs in ``G``.
 
     INPUT:
@@ -186,7 +187,7 @@ def poset_of_mops(G):
     return Poset([mops(G), lambda a, b: a[0].issubset(b[0])])
 
 
-def complete_mop(G, S):
+def complete_mop(G: DiGraph, S) -> list[tuple]:
     r"""
     Return a list of maximal orthogonal pairs in ``G`` extending ``S``.
 
@@ -256,8 +257,8 @@ def join_irr_label(L, c, j):
         sage: join_irr_label(L, chain, 5)
         3
     """
-    for i in range(len(c)):
-        if L.le(j, c[i]):
+    for i, ci in enumerate(c):
+        if L.le(j, ci):
             return i
 
 
@@ -275,7 +276,8 @@ def meet_irr_label(L, c, m):
 
     OUTPUT:
 
-    The label is the maximum index `i` such that `m > x_{i-1}`, where `x_{i-1} \in c`.
+    The label is the maximum index `i` such that `m > x_{i-1}`,
+    where `x_{i-1} \in c`.
 
     EXAMPLES::
 
@@ -409,8 +411,8 @@ def cover_label(L, c, edge):
 ##############################################################
 # tight orthogonal pairs (tops)
 ##############################################################
-def complete_top(G, u):
-    """
+def complete_top(G: DiGraph, u) -> tuple:
+    r"""
     Return the completion into a tight orthogonal pair.
 
     INPUT:
@@ -453,8 +455,8 @@ def complete_top(G, u):
     return (m, u)
 
 
-def top_to_mop(G, du):
-    """
+def top_to_mop(G: DiGraph, du) -> tuple:
+    r"""
     Transform a tight orthogonal pair into a maximal orthogonal pair.
 
     INPUT:
@@ -465,7 +467,8 @@ def top_to_mop(G, du):
 
     OUTPUT:
 
-    a maximal orthogonal pair corresponding to the given tight orthogonal pair (``d``, ``u``)
+    a maximal orthogonal pair corresponding to the given
+    tight orthogonal pair (``d``, ``u``)
 
     EXAMPLES::
 
@@ -488,8 +491,8 @@ def top_to_mop(G, du):
     return (X, Y)
 
 
-def maximal_top(G):
-    """
+def maximal_top(G: DiGraph) -> tuple:
+    r"""
     Return the maximal tight orthogonal pair.
 
     INPUT:
@@ -516,8 +519,8 @@ def maximal_top(G):
     return complete_top(G, Set())
 
 
-def minimal_top(G):
-    """
+def minimal_top(G: DiGraph) -> tuple:
+    r"""
     Return the minimal tight orthogonal pair.
 
     INPUT:
@@ -548,7 +551,7 @@ def minimal_top(G):
     return (Set(), m)
 
 
-def flip(G, du, j):
+def flip(G: DiGraph, du: tuple, j) -> tuple:
     r"""
     Perform a flip if `j \in D` or `j \in U`.
 
@@ -620,7 +623,7 @@ def flip(G, du, j):
     return (a2, b2)
 
 
-def flip_up(G, du, j):
+def flip_up(G: DiGraph, du: tuple, j) -> tuple:
     r"""
     Perform a flip only if `j \in U`.
 
@@ -671,7 +674,7 @@ def flip_up(G, du, j):
     return flip(G, du, j)
 
 
-def flips(G, du, s):
+def flips(G: DiGraph, du: tuple, s) -> tuple:
     r"""
     Perform a sequence of flips.
 
@@ -687,7 +690,8 @@ def flips(G, du, s):
 
     a new top ``(d, u)`` after flipping on each element in ``s``
 
-    This applies `\displaystyle{ \left( \prod_{j \in s} \text{flip}_j \right)(D, U) }`.
+    This applies
+    `\displaystyle{ \left( \prod_{j \in s} \text{flip}_j \right)(D, U) }`.
 
     EXAMPLES::
 
@@ -710,8 +714,8 @@ def flips(G, du, s):
     return dv
 
 
-def make_flip_poset(G):
-    """
+def make_flip_poset(G: DiGraph) -> Poset:
+    r"""
     Return the independence poset corresponding to the graph ``G``.
 
     INPUT:
@@ -751,7 +755,7 @@ def make_flip_poset(G):
 
 
 def rowmotion(L, x):
-    """
+    r"""
     Perform the rowmotion of element `x` in lattice `L`.
 
     INPUT:
@@ -775,14 +779,14 @@ def rowmotion(L, x):
         sage: L = make_flip_poset(G)
         sage: x = L.list()[3]
         sage: rowmotion(L, x)
-        ({1, 3}, {4})
+        ({4}, {1})
     """
     lower_x = x[0]
     return next(elt for elt in L if elt[1] == lower_x)
 
 
-def toggle(G, x):
-    """
+def toggle(G: DiGraph, x) -> DiGraph:
+    r"""
     Toggle the vertex ``x`` in the graph ``G``.
 
     INPUT:
@@ -793,7 +797,8 @@ def toggle(G, x):
 
     OUTPUT:
 
-    the directed acyclic graph given by reversing all edges incident to ``x`` in ``G``
+    the directed acyclic graph given by reversing all edges incident
+    to ``x`` in ``G``
 
     EXAMPLES:
 
@@ -815,8 +820,8 @@ def toggle(G, x):
     return H
 
 
-def toggles(G, s):
-    """
+def toggles(G: DiGraph, s) -> DiGraph:
+    r"""
     Toggle all elements of ``s`` in ``G``.
 
     INPUT:
@@ -827,8 +832,8 @@ def toggles(G, s):
 
     OUTPUT:
 
-    This toggles all elements `x` in the graph `G` (i.e. this reverses all edges
-    incident to `x`) as they appear in the sequence `s`.
+    This toggles all elements `x` in the graph `G` (i.e. this reverses
+    all edges incident to `x`) as they appear in the sequence `s`.
 
     EXAMPLES:
 
@@ -837,7 +842,8 @@ def toggles(G, s):
     once manually using ``toggle`` and once using ``toggles`` ::
 
         sage: from sage.combinat.independence_posets import toggle, toggles, make_flip_poset
-        sage: G = DiGraph([[1, 2, 3, 4, 5, 6], [[6, 5], [6, 4], [5, 4], [5, 3], [5, 2], [4, 2], [4, 1], [3, 2], [2, 1]]])
+        sage: G = DiGraph([[1, 2, 3, 4, 5, 6], [[6, 5], [6, 4], [5, 4],
+        ....:             [5, 3], [5, 2], [4, 2], [4, 1], [3, 2], [2, 1]]])
         sage: P = make_flip_poset(G)
         sage: G_2 = toggle(G, 2)
         sage: G_24_1 = toggle(G_2, 4)
