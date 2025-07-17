@@ -142,6 +142,7 @@ Comprehensive Module List
     sage/combinat/growth
     sage/combinat/hall_polynomial
     sage/combinat/hillman_grassl
+    sage/combinat/independence_posets
     sage/combinat/integer_lists/base
     sage/combinat/integer_lists/invlex
     sage/combinat/integer_lists/lists
