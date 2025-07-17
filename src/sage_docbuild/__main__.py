@@ -471,22 +471,23 @@ def main():
             print(d.as_posix())
         sys.exit(0)
 
-    # Check that the docs output directory exists
-    if args.output_dir is None:
-        args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))    
-    args.output_dir = args.output_dir.absolute()
-    if not args.output_dir.exists():
-        try:
-            args.output_dir.mkdir(parents=True)
-        except Exception as e:
-            parser.error(f"Failed to create output directory {args.output_dir}: {e}")
-
     # Get the name and type (target format) of the document we are
     # trying to build.
     name, typ = args.document, args.format
     if not name or not typ:
         parser.print_help()
         sys.exit(1)
+
+    # Check that the docs output directory exists
+    if not name.startswith("file="):
+        if args.output_dir is None:
+            args.output_dir = Path(os.environ.get('SAGE_DOC', 'src/doc'))
+        args.output_dir = args.output_dir.absolute()
+        if not args.output_dir.exists():
+            try:
+                args.output_dir.mkdir(parents=True)
+            except Exception as e:
+                parser.error(f"Failed to create output directory {args.output_dir}: {e}")
 
     # Set up module-wide logging.
     setup_logger(args.verbose, args.color)
