@@ -1478,9 +1478,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 def check_word(w):
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
-                        return False
-                    return True
+                    return sum(1 for i in range(n - 1) if w[i] == w[i + 1]) == s
             elif comparison == -1:
                 def check_word(w):
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
@@ -1672,9 +1670,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
                 sage: type(L)
                 <class 'sage.rings.lazy_series_ring.LazySymmetricFunctions_with_category'>
+                sage: s.completion() is s.formal_series_ring()
+                True
             """
             from sage.rings.lazy_series_ring import LazySymmetricFunctions
             return LazySymmetricFunctions(self)
+
+        completion = formal_series_ring
 
 
 class FilteredSymmetricFunctionsBases(Category_realization_of_parent):
