@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Finite Drinfeld modules

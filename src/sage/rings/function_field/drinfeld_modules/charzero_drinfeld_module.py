@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # sage.doctest: optional - sage.rings.finite_rings
 r"""
 Drinfeld modules over rings of characteristic zero
