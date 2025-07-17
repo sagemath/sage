@@ -2289,7 +2289,7 @@ class SR_gf2n(SR_generic):
         lin = matrix(self.base_ring(), length*e, length*e)
         if e == 4:
             l = [k.from_integer(x) for x in (5, 1, 12, 5)]
-            for k in range( length ):
+            for k in range(length):
                 for i in range(4):
                     for j in range(4):
                         lin[k*4+j, k*4+i] = l[(i-j) % 4] ** (2**j)
