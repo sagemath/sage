@@ -28,6 +28,7 @@ Comprehensive Module List
     sage/combinat/blob_algebra
     sage/combinat/cartesian_product
     sage/combinat/catalog_partitions
+    sage/rings/cfinite_sequence
     sage/combinat/chas/all
     sage/combinat/chas/fsym
     sage/combinat/chas/wqsym
@@ -154,6 +155,7 @@ Comprehensive Module List
     sage/combinat/key_polynomial
     sage/combinat/knutson_tao_puzzles
     sage/combinat/k_tableau
+    sage/rings/lazy_species
     sage/combinat/lr_tableau
     sage/combinat/matrices/all
     sage/combinat/matrices/dancing_links
@@ -197,6 +199,7 @@ Comprehensive Module List
     sage/combinat/permutation_cython
     sage/combinat/plane_partition
     sage/combinat/posets/all
+    sage/combinat/posets/bubble_shuffle
     sage/combinat/posets/cartesian_product
     sage/combinat/posets/d_complete
     sage/combinat/posets/elements
@@ -204,6 +207,7 @@ Comprehensive Module List
     sage/combinat/posets/hasse_cython
     sage/combinat/posets/hasse_cython_flint
     sage/combinat/posets/hasse_diagram
+    sage/combinat/posets/hochschild_lattice
     sage/combinat/posets/incidence_algebras
     sage/combinat/posets/lattices
     sage/combinat/posets/linear_extension_iterator
@@ -309,6 +313,7 @@ Comprehensive Module List
     sage/combinat/set_partition
     sage/combinat/set_partition_iterator
     sage/combinat/set_partition_ordered
+    sage/combinat/sf/abreu_nigro
     sage/combinat/sf/all
     sage/combinat/sf/character
     sage/combinat/sf/classical
@@ -405,4 +410,3 @@ Comprehensive Module List
     sage/combinat/words/word_options
     sage/combinat/words/words
     sage/combinat/yang_baxter_graph
-    sage/rings/cfinite_sequence

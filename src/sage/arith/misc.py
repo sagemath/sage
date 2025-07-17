@@ -3600,6 +3600,13 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
+
+    Tests for call with length 1 lists (:issue:`40074`)::
+
+        sage: x = CRT_list([1], [2]); x
+        1
+        sage: x = CRT_list([int(1)], [int(2)]); x
+        1
     """
     if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
@@ -3621,10 +3628,11 @@ def CRT_list(values, moduli=None):
         if not values:
             return ZZ.zero()
         if len(values) == 1:
-            return moduli[0].parent()(values[0])
+            return parent(moduli[0])(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
+    # See also sage.misc.misc_c.balanced_list_prod
     from sage.arith.functions import lcm
     while len(values) > 1:
         vs, ms = values[::2], moduli[::2]
@@ -3638,20 +3646,29 @@ def CRT_list(values, moduli=None):
         return values[0] % moduli[0]
 
 
-def CRT_basis(moduli):
+def CRT_basis(moduli, *, require_coprime_moduli=True):
     r"""
     Return a CRT basis for the given moduli.
 
     INPUT:
 
-    - ``moduli`` -- list of pairwise coprime moduli `m` which admit an
+    - ``moduli`` -- list of moduli `m` which admit an
       extended Euclidean algorithm
+
+    - ``require_coprime_moduli`` -- boolean (default: ``True``); whether the moduli
+      must be pairwise coprime.
 
     OUTPUT:
 
-    - a list of elements `a_i` of the same length as `m` such that
-      `a_i` is congruent to 1 modulo `m_i` and to 0 modulo `m_j` for
-      `j\not=i`.
+    - a list of integers `a_i` of the same length as `m` such that
+      if `r` is any list of integers of the same length as `m`, and we
+      let `x = \sum r_j a_j`, then `x \equiv r_i \pmod{m_i}` for all `i`
+      (if a solution of the system of congruences exists). When the
+      moduli are pairwise coprime, this implies that `a_i` is
+      congruent to 1 modulo `m_i` and to 0 modulo `m_j` for `j \neq i`.
+
+    - if ``require_coprime_moduli`` is ``False``, also returns a boolean value
+      that is ``True`` if the given moduli are pairwise coprime
 
     EXAMPLES::
 
@@ -3674,22 +3691,44 @@ def CRT_basis(moduli):
     n = len(moduli)
     if n == 0:
         return []
-    M = prod(moduli)
     cs = []
-    for m in moduli:
-        Mm = M // m
-        d, _, v = xgcd(m, Mm)
-        if not d.is_one():
-            raise ValueError('moduli must be coprime')
-        cs.append((v * Mm) % M)
-    return cs
+    try:
+        M = prod(moduli)
+        for m in moduli:
+            Mm = M // m
+            d, _, v = xgcd(m, Mm)
+            if not d.is_one():
+                raise ValueError('moduli must be coprime')
+            cs.append((v * Mm) % M)
+        if require_coprime_moduli:
+            return cs
+        # also return a boolean flag to report that the moduli are coprime
+        return [cs, True]
+    except ValueError:
+        if require_coprime_moduli:
+            raise
+        e = [1]
+        M_i = moduli[0]
+        for i in range(1, n):
+            m_i = moduli[i]
+            d_i = gcd(M_i, m_i)
+            e_i = CRT(0, 1, M_i // d_i, m_i // d_i)
+            e.append(e_i)
+            M_i = M_i.lcm(m_i)
+        partial_prod_table = [1]
+        for i in range(1, n):
+            partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
+        for i in range(n):
+            cs.append(e[i] * partial_prod_table[-i - 1])
+        # also return a boolean flag to report that the moduli are not coprime
+        return [cs, False]
 
 
 def CRT_vectors(X, moduli):
     r"""
     Vector form of the Chinese Remainder Theorem: given a list of integer
-    vectors `v_i` and a list of coprime moduli `m_i`, find a vector `w` such
-    that `w = v_i \pmod m_i` for all `i`.
+    vectors `v_i` and a list of moduli `m_i`, find a vector `w` such
+    that `w = v_i \pmod{m_i}` for all `i`.
 
     This is more efficient than applying :func:`CRT` to each entry.
 
@@ -3708,6 +3747,15 @@ def CRT_vectors(X, moduli):
 
         sage: CRT_vectors([vector(ZZ, [2,3,1]), Sequence([1,7,8], ZZ)], [8,9])          # needs sage.modules
         [10, 43, 17]
+
+    ``CRT_vectors`` also works for some non-coprime moduli::
+
+        sage: CRT_vectors([[6],[0]],[10, 4])
+        [16]
+        sage: CRT_vectors([[6],[0]],[10, 10])
+        Traceback (most recent call last):
+        ...
+        ValueError: solution does not exist
     """
     # First find the CRT basis:
     if not X or len(X[0]) == 0:
@@ -3715,10 +3763,16 @@ def CRT_vectors(X, moduli):
     n = len(X)
     if n != len(moduli):
         raise ValueError("number of moduli must equal length of X")
-    a = CRT_basis(moduli)
-    modulus = prod(moduli)
-    return [sum(a[i] * X[i][j] for i in range(n)) % modulus
-            for j in range(len(X[0]))]
+    res = CRT_basis(moduli, require_coprime_moduli=False)
+    a = res[0]
+    modulus = LCM_list(moduli)
+    candidate = [sum(a[i] * X[i][j] for i in range(n)) % modulus
+                 for j in range(len(X[0]))]
+    if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
+                          for i in range(n)
+                          for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
+    return candidate
 
 
 def binomial(x, m, **kwds):

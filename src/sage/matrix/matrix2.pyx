@@ -878,6 +878,33 @@ cdef class Matrix(Matrix1):
             sage: v = vector(GF(3), [1,1])
             sage: m.solve_right(v)
             (2, 1)
+
+        Test ``extend``::
+
+            sage: matrix(ZZ, [[2]]).solve_right(vector(ZZ, [1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [1, 1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 4]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 2]), extend=False)
+            (1)
+            sage: matrix(QQ, [[2]]).solve_right(vector(QQ, [1]), extend=False)
+            (1/2)
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=True)  # <1s
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
+            sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
+            sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: matrix.identity(ZZ, 500).hermite_form()  # not tested (slow)
+            sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
+            sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
         """
         try:
             L = B.base_ring()
@@ -944,11 +971,22 @@ cdef class Matrix(Matrix1):
 
         C = B.column() if b_is_vec else B
 
-        if not extend:
-            try:
-                X = self._solve_right_hermite_form(C)
-            except NotImplementedError:
-                X = self._solve_right_smith_form(C)
+        if P not in _Fields and not extend:
+            if self.rank() == self.ncols():
+                # hermite_form is slow, avoid if possible
+                if self.is_square():
+                    X = self._solve_right_nonsingular_square(C, check_rank=False)
+                else:
+                    X = self._solve_right_general(C)
+                try:
+                    X = X.change_ring(P)
+                except TypeError:
+                    raise ValueError('matrix equation has no solutions')
+            else:
+                try:
+                    X = self._solve_right_hermite_form(C)
+                except NotImplementedError:
+                    X = self._solve_right_smith_form(C)
             return X.column(0) if b_is_vec else X
 
         if not self.is_square():
@@ -1199,7 +1237,7 @@ cdef class Matrix(Matrix1):
             try:
                 X_[i] = v / d
             except (ZeroDivisionError, TypeError) as e:
-                raise ValueError("matrix equation has no solution")
+                raise ValueError("matrix equation has no solutions")
 #        assert H*X_ == B
 
         return U * X_
@@ -1545,13 +1583,11 @@ cdef class Matrix(Matrix1):
         m = self._nrows
         n = self._ncols
         if not m <= n:
-            raise ValueError("must have m <= n, but m (=%s) and n (=%s)"%(m, n))
+            raise ValueError(f"must have m <= n, but m (={m}) and n (={n})")
 
         for r from 1 <= r < m+1:
             lst = _choose(n, r)
-            tmp = []
-            for cols in lst:
-                tmp.append(self.prod_of_row_sums(cols))
+            tmp = [self.prod_of_row_sums(cols) for cols in lst]
             s = sum(tmp)
             # sn = (-1)^(m-r)
             if (m - r) % 2 == 0:
@@ -3610,6 +3646,42 @@ cdef class Matrix(Matrix1):
                 s += self.get_unsafe(i, j) * other.get_unsafe(j, i)
         return s
 
+    def get_bandwidth(self):
+        """
+        Return the bandwidth of ``self``, which is the maximum `i` such that
+        the `i` superdiagonal or subdiagonal contains a nonzero entry.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,0,0],[0,1,0],[0,0,1]]); A
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: A.get_bandwidth()
+            0
+
+            sage: B = matrix([[1,2,3],[0,4,5],[0,0,6]]); B
+            [1 2 3]
+            [0 4 5]
+            [0 0 6]
+            sage: B.get_bandwidth()
+            2
+
+            sage: C = matrix(3, 2, range(6)); C
+            [0 1]
+            [2 3]
+            [4 5]
+            sage: C.get_bandwidth()
+            2
+        """
+        cdef Py_ssize_t i
+        diag_range = max(self.nrows(), self.ncols()) - 1
+
+        for i in range(diag_range, 0, -1):
+            if any(self.diagonal(i)) or any(self.diagonal(-i)):
+                return ZZ(i)
+        return ZZ.zero()
+
     #####################################################################################
     # Generic Hessenberg Form and charpoly algorithm
     #####################################################################################
@@ -3646,7 +3718,7 @@ cdef class Matrix(Matrix1):
                 H = self.change_ring(K)
                 H.hessenbergize()
             except TypeError as msg:
-                raise TypeError("%s\nHessenberg form only possible for matrices over a field"%msg)
+                raise TypeError("%s\nHessenberg form only possible for matrices over a field" % msg)
         else:
             H = self.__copy__()
             H.hessenbergize()
@@ -5717,7 +5789,7 @@ cdef class Matrix(Matrix1):
                 return X, Y
             return X
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
     def _decomposition_spin_generic(self, is_diagonalizable=False):
         r"""
@@ -5780,14 +5852,16 @@ cdef class Matrix(Matrix1):
                 v = h.list()
 
                 while len(S) < tries:
-                    t = verbose('%s-spinning %s-th random vector'%(num_iterates, len(S)), level=2, caller_name='generic spin decomp')
+                    t = verbose('%s-spinning %s-th random vector' % (num_iterates, len(S)),
+                                level=2, caller_name='generic spin decomp')
                     S.append(self.iterates(V.random_element(), num_iterates))
-                    verbose('done spinning', level=2, t=t, caller_name='generic spin decomp')
+                    verbose('done spinning',
+                            level=2, t=t, caller_name='generic spin decomp')
 
                 for j in range(0 if W is None else W.nrows() // g.degree(), len(S)):
                     # Compute one element of the kernel of g(A)**m.
-                    t = verbose('compute element of kernel of g(A), for g of degree %s'%g.degree(), level=2,
-                                caller_name='generic spin decomp')
+                    t = verbose('compute element of kernel of g(A), for g of degree %s' % g.degree(),
+                                level=2, caller_name='generic spin decomp')
                     w = S[j].linear_combination_of_rows(h.list())
                     t = verbose('done computing element of kernel of g(A)', t=t, level=2, caller_name='generic spin decomp')
 
@@ -5806,7 +5880,7 @@ cdef class Matrix(Matrix1):
                     verbose('computed row space', level=2, t=t, caller_name='generic spin decomp')
                     break
                 else:
-                    verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)'%(
+                    verbose('we have not yet generated all the kernel (rank so far=%s, target rank=%s)' % (
                         W.rank(), m*g.degree()), level=2, caller_name='generic spin decomp')
                     tries += 1
                     if tries > 1000*m:  # avoid an insanely long infinite loop
@@ -5842,12 +5916,13 @@ cdef class Matrix(Matrix1):
                 return decomp_seq([(V, m==1)])
         F.sort()
         for g, m in f.factor():
-            t = verbose('decomposition -- Computing g(self) for an irreducible factor g of degree %s'%g.degree(), level=2)
+            t = verbose('decomposition -- Computing g(self) for an irreducible factor g of degree %s' % g.degree(), level=2)
             if is_diagonalizable:
                 B = g(self)
             else:
                 B = g(self)
-                t2 = verbose('decomposition -- raising g(self) to the power %s'%m, level=2)
+                t2 = verbose('decomposition -- raising g(self) to the power %s' % m,
+                             level=2)
                 B = B ** m
                 verbose('done powering', level=2, t=t2)
             t = verbose('decomposition -- done computing g(self)', level=2, t=t)
@@ -5938,7 +6013,7 @@ cdef class Matrix(Matrix1):
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")
         if M.base_ring() != self.base_ring():
-            raise ArithmeticError("base rings must be the same, but self is over %s and module is over %s"%(
+            raise ArithmeticError("base rings must be the same, but self is over %s and module is over %s" % (
                 self.base_ring(), M.base_ring()))
         if M.degree() != self.ncols():
             raise ArithmeticError("M must be a subspace of an %s-dimensional space" % self.ncols())
@@ -5955,7 +6030,7 @@ cdef class Matrix(Matrix1):
         sum_dim = sum([A.dimension() for A, _ in D])
         assert sum_dim == M.dimension(), \
                "bug in decomposition; " + \
-               "the sum of the dimensions (=%s) of the factors must equal the dimension (%s) of the acted on space:\nFactors found: %s\nSpace: %s"%(sum_dim, M.dimension(), D, M)
+               "the sum of the dimensions (=%s) of the factors must equal the dimension (%s) of the acted on space:\nFactors found: %s\nSpace: %s" % (sum_dim, M.dimension(), D, M)
 
         # 3. Lift decomposition to subspaces of ambient vector space.
         # Each basis vector for an element of D defines a linear
@@ -7022,6 +7097,53 @@ cdef class Matrix(Matrix1):
                     self._eigenvectors_left(
                         extend=extend, algorithm=algorithm,
                         suppress_future_warning=False))
+
+    def singular_values(self) -> Sequence:
+        """
+        Return a sequence of singular values of a matrix.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1, 2], [3, 4]])
+            sage: A.singular_values()
+            [0.3659661906262578?, 5.464985704219043?]
+
+        TESTS::
+
+            sage: type(A.singular_values())
+            <class 'sage.structure.sequence.Sequence_generic'>
+
+        Ensure floating point error does not cause trouble::
+
+            sage: set_random_seed(100)
+            sage: A = matrix.random(CC, 5)
+            sage: Sequence((A*A.H).eigenvalues(), universe=RR)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert ... to an element of Real Field with 53 bits of precision
+            sage: A.singular_values()  # abs tol 1e-13
+            [0.317896596475411, 1.25232496300299, 1.48403213017074, 2.08062167993720, 2.59091978815526]
+
+        Ensure all returned values are real::
+
+            sage: set_random_seed(100)
+            sage: m = matrix.random(RR, 5, 4) * matrix.random(RR, 4, 5)
+            sage: l = (m*m.H).eigenvalues(); l  # abs tol 1e-13
+            [-2.25142178936519049e-17, 0.128915466573149680, 0.754320277644353032, 1.04552196882464885, 5.11544233853116598]
+            sage: min(l) < 0
+            True
+            sage: m.singular_values()  # abs tol 1e-13
+            [0.000000000000000000, 0.359048000374810165, 0.868516135511800973, 1.02250768643793033, 2.26173436515678516]
+        """
+        from sage.rings.abc import ComplexField
+        e: Sequence = (self*self.H).eigenvalues()  # guaranteed to be real nonnegative
+        from sage.rings.abc import RealField, ComplexField
+        if isinstance(self.base_ring(), (RealField, ComplexField)):
+            # because of floating point error e may not be all real nonnegative
+            e = Sequence([x.real() for x in e])
+            zero = e.universe().zero()
+            e = Sequence([max(x, zero) for x in e], universe=e.universe())
+        return Sequence([x.sqrt() for x in e])
 
     def _eigenvectors_result_to_eigenvalues(self, eigenvectors: list) -> Sequence:
         """
@@ -8143,7 +8265,7 @@ cdef class Matrix(Matrix1):
             try:
                 a, d, p = self._echelon_form_PID()
             except TypeError as msg:
-                raise NotImplementedError("%s\nechelon form over %s not yet implemented"%(msg, self.base_ring()))
+                raise NotImplementedError("%s\nechelon form over %s not yet implemented" % (msg, self.base_ring()))
 
             for c from 0 <= c < self.ncols():
                 for r from 0 <= r < self.nrows():
@@ -8347,7 +8469,7 @@ cdef class Matrix(Matrix1):
                     kwds['algorithm'] = algorithm
                 return self._echelonize_ring(**kwds)
         except ArithmeticError as msg:
-            raise NotImplementedError("%s\nEchelon form not implemented over '%s'."%(msg, basring))
+            raise NotImplementedError("%s\nEchelon form not implemented over '%s'." % (msg, basring))
 
     def echelon_form(self, algorithm='default', cutoff=0, **kwds):
         r"""
@@ -9332,7 +9454,8 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  0]
             [ 0  0  0  0]
         """
-        tm = verbose('strassen echelon of %s x %s matrix'%(self._nrows, self._ncols), level=2)
+        tm = verbose('strassen echelon of %s x %s matrix' % (self._nrows, self._ncols),
+                     level=2)
 
         self.check_mutability()
 
@@ -9610,7 +9733,7 @@ cdef class Matrix(Matrix1):
         """
         if self._subdivisions is None:
             self._subdivisions = ([0, self._nrows], [0, self._ncols])
-        key = "subdivision %s %s"%(i, j)
+        key = "subdivision %s %s" % (i, j)
         sd = self.fetch(key)
         if sd is None:
             sd = self[self._subdivisions[0][i]:self._subdivisions[0][i+1],
@@ -9658,10 +9781,10 @@ cdef class Matrix(Matrix1):
             if not i and not j:
                 return self[x, y]
             else:
-                raise IndexError("No such submatrix %s, %s"%(i, j))
+                raise IndexError("No such submatrix %s, %s" % (i, j))
         if x >= self._subdivisions[0][i+1]-self._subdivisions[0][i] or \
            y >= self._subdivisions[1][j+1]-self._subdivisions[1][j]:
-            raise IndexError("Submatrix %s,%s has no entry %s,%s"%(i, j, x, y))
+            raise IndexError("Submatrix %s,%s has no entry %s,%s" % (i, j, x, y))
         return self[self._subdivisions[0][i] + x, self._subdivisions[1][j] + y]
 
     def _subdivide_on_augment(self, left, right):
@@ -10839,7 +10962,7 @@ cdef class Matrix(Matrix1):
             raise ValueError("self must be a square matrix")
 
         A = self.charpoly().shift(-1)(self)
-        return A if n%2 else -A
+        return A if n % 2 else -A
 
     def QR(self, full=True):
         r"""

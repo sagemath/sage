@@ -912,9 +912,7 @@ class PlanePartition(ClonableArray,
             sage: PlanePartition([]).is_CSPP()
             True
         """
-        if self.z_tableau() == self.y_tableau():
-            return True
-        return False
+        return self.z_tableau() == self.y_tableau()
 
     def is_TSPP(self) -> bool:
         r"""
@@ -2180,7 +2178,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
     def from_order_ideal(self, I) -> PP:
         r"""
-        Return the cylically symmetric plane partition corresponding
+        Return the cyclically symmetric plane partition corresponding
         to an order ideal in the poset given in :meth:`to_poset`.
 
         EXAMPLES::

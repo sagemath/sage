@@ -33,6 +33,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Self
+
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.manifolds.utilities import ExpressionNice
 from sage.misc.cachefunc import cached_method
@@ -2426,7 +2428,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         """
         self._der = None  # reset of the partial derivatives
 
-    def simplify(self):
+    def simplify(self) -> Self:
         r"""
         Simplify the coordinate expression of ``self``.
 
@@ -2548,7 +2550,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         self._del_derived()
         return self
 
-    def factor(self):
+    def factor(self) -> Self:
         r"""
         Factorize the coordinate expression of ``self``.
 
@@ -2585,7 +2587,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         self._del_derived()
         return self
 
-    def expand(self):
+    def expand(self) -> Self:
         r"""
         Expand the coordinate expression of ``self``.
 
@@ -2620,7 +2622,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         self._del_derived()
         return self
 
-    def collect(self, s):
+    def collect(self, s) -> Self:
         r"""
         Collect the coefficients of `s` in the expression of ``self``
         into a group.
@@ -2665,7 +2667,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
         self._del_derived()
         return self
 
-    def collect_common_factors(self):
+    def collect_common_factors(self) -> Self:
         r"""
         Collect common factors in the expression of ``self``.
 

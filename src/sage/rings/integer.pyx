@@ -2851,16 +2851,26 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: ZZ(8).log(int(2))
             3
 
+        Check that negative bases yield complex logarithms (:issue:`39959`)::
+
+            sage: 8.log(-2)
+            3*log(2)/(I*pi + log(2))
+            sage: (-10).log(prec=53)
+            2.30258509299405 + 3.14159265358979*I
+
+        Check that zero base  yield complex logarithms (:issue:`39959`)::
+
+            sage: 8.log(0)
+            0
+
         TESTS::
 
             sage: (-2).log(3)                                                           # needs sage.symbolic
             (I*pi + log(2))/log(3)
         """
         cdef int self_sgn
-        if m is not None and m <= 0:
-            raise ValueError("log base must be positive")
         self_sgn = mpz_sgn(self.value)
-        if self_sgn < 0 and prec is None:
+        if (self_sgn < 0 or m is not None and m<=0) and prec is None:
             from sage.symbolic.ring import SR
             return SR(self).log(m)
         if prec:
@@ -6176,13 +6186,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return self % 4 in [0, 1]
 
-    def is_fundamental_discriminant(self):
+    def is_fundamental_discriminant(self) -> bool:
         """
         Return ``True`` if this integer is a fundamental discriminant.
 
         .. NOTE::
 
-            A fundamental discriminant is a discrimimant, not 0 or 1 and not a square multiple of a smaller discriminant.
+            A fundamental discriminant is a discriminant, not 0 or 1
+            and not a square multiple of a smaller discriminant.
 
         EXAMPLES::
 
@@ -7212,6 +7223,25 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             b'\xe8\x03'
         """
         return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: (-2).canonical_associate()
+            (2, -1)
+            sage: (0).canonical_associate()
+            (0, 1)
+            sage: a = -17
+            sage: b, u = a.canonical_associate()
+            sage: b*u == a
+            True
+        """
+        if self >= 0:
+            return (self, one)
+        return (-self, -one)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
