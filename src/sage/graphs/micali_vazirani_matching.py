@@ -260,7 +260,7 @@ def get_maximum_cardinality_matching(G: Graph) -> EdgesView:
                     edge = (vertex, neighbor, H.edge_label(vertex, neighbor))
 
                     # In the case were the tenacity of a tenacity_bridges_map was not yet found
-                    if not is_prop[edge] == False:
+                    if not is_prop[edge]:
                         tenacity_bridges_map[max_level[vertex] + level[neighbor][0] + 1].append(edge)
         search_level_vertices += next_search_level_vertices
 
@@ -485,7 +485,7 @@ def get_maximum_cardinality_matching(G: Graph) -> EdgesView:
             next_petal_vertex = None
             wrong_petal_vertex = None
             for vertex in predecessor_list:
-                if vertex_petal_map[vertex] != None:
+                if vertex_petal_map[vertex] is not None:
                     if vertex == end_vertex:
                         current_vertex = vertex
                         path.append(end_vertex)
@@ -502,12 +502,12 @@ def get_maximum_cardinality_matching(G: Graph) -> EdgesView:
                         path.append(end_vertex)
                         break
             if previous_vertex == current_vertex:
-                if next_petal_vertex != None:
+                if next_petal_vertex is not None:
                     current_vertex = next_petal_vertex
                     path.append(current_vertex)
-                elif wrong_petal_vertex != None:
+                elif wrong_petal_vertex is not None:
                     current_vertex = vertex
-                    if vertex_petal_map[vertex] != petal and vertex_petal_map[vertex] != None:
+                    if vertex_petal_map[vertex] != petal and vertex_petal_map[vertex] is not None:
                         petal_path = unfold_petal(current_vertex, vertex_petal_map[vertex].base)
                         path += petal_path
                         current_vertex = path[-1]
