@@ -5227,6 +5227,9 @@ REFERENCES:
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
 
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+             PhD thesis, University of Waterloo, 2023.
+
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
               Electron. J. Combin. **26** (2019), no. 2, Paper 2.27, 29 pp.
               https://www.combinatorics.org/ojs/index.php/eljc/article/view/v26i2p27,

@@ -543,7 +543,7 @@ class DrinfeldModuleHomset(Homset):
         The algorithm consists in solving the above system
         viewed as a linear system over `\mathbb F_q[T]`.
 
-        We refer to []_ for details.
+        We refer to [Mus2023]_, Section 7.3 for more details.
 
         TESTS::
 
@@ -650,9 +650,9 @@ class DrinfeldModuleHomset(Homset):
 
         ALGORITHM:
 
-            We return the basis of the kernel of a matrix derived from the
-            constraint that `f \phi_T = \psi_T f`. See [Wes2022]_ for
-            details on this algorithm.
+        We return the basis of the kernel of a matrix derived from the
+        constraint that `f \phi_T = \psi_T f`. See [Wes2022]_ for
+        details on this algorithm.
 
         TESTS::
 
@@ -827,9 +827,10 @@ class DrinfeldModuleHomset(Homset):
 
         ALGORITHM:
 
-            We return the basis of the kernel of a matrix derived from the
-            constraint that `\iota \phi_T = \psi_T \iota` for any morphism
-            `iota: \phi \to \psi`.
+        We return the basis of the kernel of a matrix derived from the
+        constraint that `\iota \phi_T = \psi_T \iota` for any morphism
+        `iota: \phi \to \psi`.
+        We refer to [Mus2023]_, Section 7.3 for more details.
 
         EXAMPLES::
 
