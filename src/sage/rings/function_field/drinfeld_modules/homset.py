@@ -444,9 +444,9 @@ class DrinfeldModuleHomset(Homset):
             sage: H = Hom(phi, psi)
             sage: H.an_element()
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z + 1)*t + z
-              To:   Drinfeld module defined by T |--> (z^2 + z + 1)*t^2 + (z + 1)*t + z
-              Defn: z^2*t^3
+              From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+              To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
+              Defn: z^2*τ^3
 
         Below, `\phi` and `\psi` are not isogenous, so :meth:`an_element`
         returns the zero morphism (which is the unique element in the
@@ -456,9 +456,9 @@ class DrinfeldModuleHomset(Homset):
             sage: H = Hom(phi, psi)
             sage: H.an_element()
             Drinfeld Module morphism:
-              From: Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z + 1)*t + z
-              To:   Drinfeld module defined by T |--> t^2 + (z + 1)*t + z
-              Defn: (z + 1)*t^2 + (z^2 + z + 1)*t + z^2 + 1
+              From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+              To:   Drinfeld module defined by T |--> τ^2 + (z + 1)*τ + z
+              Defn: (z + 1)*τ^2 + (z^2 + z + 1)*τ + z^2 + 1
         """
         basis = self._A_basis()
         if len(basis) == 0:
@@ -724,11 +724,11 @@ class DrinfeldModuleHomset(Homset):
             sage: K.<z> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [z, 0, 1, z])
             sage: End(phi).basis()
-            [Identity morphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z,
-             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               Defn: t^2,
-             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               Defn: 2*t^4 + z*t^3 + z]
+            [Identity morphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z,
+             Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               Defn: τ^2,
+             Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               Defn: 2*τ^4 + z*τ^3 + z]
 
         If we specify a degree, a basis over `\FF_q` is computed::
 
@@ -741,17 +741,17 @@ class DrinfeldModuleHomset(Homset):
             sage: H = Hom(phi, psi)
             sage: H.basis()
             [Drinfeld Module morphism:
-               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
                Defn: t + 1,
              Drinfeld Module morphism:
-               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: 3*t^3 + (z + 2)*t^2 + 4*z*t + z + 4,
+               From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
+               Defn: 3*τ^3 + (z + 2)*τ^2 + 4*z*τ + z + 4,
              Drinfeld Module morphism:
-               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: (z + 4)*t^2 + 4*z*t + z + 4]
+               From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
+               Defn: (z + 4)*τ^2 + 4*z*τ + z + 4]
 
             sage: H.basis(degree=2)
 
@@ -824,9 +824,9 @@ class DrinfeldModuleHomset(Homset):
             sage: phi = DrinfeldModule(A, [z, z^4 + z^3 + 1, 1])
             sage: H = Hom(phi, psi)
             sage: H.basis_over_frobenius()
-            [... Defn: t^2 + (z^5 + z^4 + z^3 + z^2)*t + z^5 + z^4 + z^3 + 1,
-             ... Defn: (z^3 + z^2 + z + 1)*t^2 + (z^5 + z^4 + z^3 + 1)*t + z^4 + z^3 + z,
-             ... Defn: (z^3 + z^2 + z + 1)*t^5 + (z^5 + z^4 + z^3)*t^4 + z^2*t^3 + (z^3 + 1)*t^2 + (z^5 + z^4 + z^2 + 1)*t + z^2]
+            [... Defn: τ^2 + (z^5 + z^4 + z^3 + z^2)*τ + z^5 + z^4 + z^3 + 1,
+             ... Defn: (z^3 + z^2 + z + 1)*τ^2 + (z^5 + z^4 + z^3 + 1)*τ + z^4 + z^3 + z,
+             ... Defn: (z^3 + z^2 + z + 1)*τ^5 + (z^5 + z^4 + z^3)*τ^4 + z^2*τ^3 + (z^3 + 1)*τ^2 + (z^5 + z^4 + z^2 + 1)*τ + z^2]
             sage: basis[2].ore_polynomial()*phi.gen() - psi.gen()*basis[2].ore_polynomial()
             0
 
