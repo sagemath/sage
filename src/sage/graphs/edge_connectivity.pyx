@@ -86,7 +86,7 @@ cdef class GabowEdgeConnectivity:
 
     TESTS:
 
-    :trac:`32169`::
+    :issue:`32169`::
 
         sage: dig6_string = r'[E_S?_hKIH@eos[BSg???Q@FShGC?hTHUGM?IPug?'
         sage: dig6_string += r'JOEYCdOzdkQGo@ADA@AAg?GAQW?'
@@ -300,7 +300,7 @@ cdef class GabowEdgeConnectivity:
         _ = self.compute_edge_connectivity()
         sig_check()
 
-    cdef build_graph_data_structure(self) noexcept:
+    cdef build_graph_data_structure(self):
         r"""
         Build graph data structures.
 
@@ -452,7 +452,7 @@ cdef class GabowEdgeConnectivity:
         Allocate data structure for the new tree/forest.
 
         This method also initializes data structures for this tree index. Data
-        structures for a given tree index are allocatated only once.
+        structures for a given tree index are allocated only once.
 
         INPUT:
 
@@ -1024,7 +1024,7 @@ cdef class GabowEdgeConnectivity:
             e = ep
             ep = self.labels[e]
 
-    cdef re_init(self, int tree) noexcept:
+    cdef re_init(self, int tree):
         """
         Make f_trees active (except the f_tree of the root), update depths and
         parent values, and clear the labels.

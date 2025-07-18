@@ -33,9 +33,9 @@ class AffineCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``parent`` -- an ``AffineCryptosystem`` object.
+        - ``parent`` -- an ``AffineCryptosystem`` object
 
-        - ``key`` -- a secret key. Let `N` be the size of the cipher domain.
+        - ``key`` -- a secret key; let `N` be the size of the cipher domain.
           A key of this affine cipher is an ordered pair
           `(a, b) \in \ZZ_N \times \ZZ_N` such that `\gcd(a, N) = 1`.
 
@@ -58,12 +58,10 @@ class AffineCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``other`` -- another object to compare with.
+        - ``other`` -- another object to compare with
 
-        OUTPUT:
-
-        - ``True`` if ``self`` and ``other`` are the same ``AffineCipher``
-          object; ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` and ``other`` are the same
+        ``AffineCipher`` object; ``False`` otherwise
 
         EXAMPLES::
 
@@ -89,15 +87,13 @@ class AffineCipher(SymmetricKeyCipher):
           behaviour is that the plaintext and ciphertext alphabets are the
           same alphabet.
 
-        - ``algorithm`` -- (default ``"encrypt"``) whether to use the
-          encryption or decryption algorithm on ``M``. The flag ``"encrypt"``
-          signifies using the encryption algorithm, while ``"decrypt"``
+        - ``algorithm`` -- (default: ``'encrypt'``) whether to use the
+          encryption or decryption algorithm on ``M``. The flag ``'encrypt'``
+          signifies using the encryption algorithm, while ``'decrypt'``
           signifies using the decryption algorithm. The only acceptable
-          values for ``algorithm`` are: ``"encrypt"`` and ``"decrypt"``.
+          values for ``algorithm`` are: ``'encrypt'`` and ``'decrypt'``.
 
-        OUTPUT:
-
-        - The ciphertext or plaintext corresponding to ``M``.
+        OUTPUT: the ciphertext or plaintext corresponding to ``M``
 
         EXAMPLES::
 
@@ -164,8 +160,6 @@ class HillCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a Hill cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 
@@ -238,6 +232,7 @@ class HillCipher(SymmetricKeyCipher):
             raise ValueError("Argument\n\n%s\n\nmust be an invertible cipher." % self)
         return E(B)
 
+
 class ShiftCipher(SymmetricKeyCipher):
     r"""
     Shift cipher class. This is the class that does the actual work of
@@ -254,9 +249,9 @@ class ShiftCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``parent`` -- a ``ShiftCryptosystem`` object.
+        - ``parent`` -- a ``ShiftCryptosystem`` object
 
-        - ``key`` -- a secret key.
+        - ``key`` -- a secret key
 
         EXAMPLES::
 
@@ -283,12 +278,10 @@ class ShiftCipher(SymmetricKeyCipher):
 
         INPUT:
 
-        - ``other`` -- another object to compare with.
+        - ``other`` -- another object to compare with
 
-        OUTPUT:
-
-        - ``True`` if ``self`` and ``other`` are the same ``ShiftCipher``
-          object; ``False`` otherwise.
+        OUTPUT: ``True`` if ``self`` and ``other`` are the same ``ShiftCipher``
+        object; ``False`` otherwise.
 
         EXAMPLES::
 
@@ -316,9 +309,7 @@ class ShiftCipher(SymmetricKeyCipher):
           behaviour is that the plaintext and ciphertext alphabets are the
           same alphabet.
 
-        OUTPUT:
-
-        - The ciphertext or plaintext corresponding to ``M``.
+        OUTPUT: the ciphertext or plaintext corresponding to ``M``
 
         EXAMPLES:
 
@@ -384,6 +375,7 @@ class ShiftCipher(SymmetricKeyCipher):
         # as the alphabet used for the plaintext and ciphertext spaces.
         return "Shift cipher on %s" % self.parent().cipher_domain()
 
+
 class SubstitutionCipher(SymmetricKeyCipher):
     """
     Substitution cipher class
@@ -391,8 +383,6 @@ class SubstitutionCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a substitution cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 
@@ -459,6 +449,7 @@ class SubstitutionCipher(SymmetricKeyCipher):
         K = E.inverse_key(self.key())
         return E(K)
 
+
 class TranspositionCipher(SymmetricKeyCipher):
     """
     Transition cipher class
@@ -466,8 +457,6 @@ class TranspositionCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a transposition cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 
@@ -508,7 +497,7 @@ class TranspositionCipher(SymmetricKeyCipher):
             raise ValueError("key (= %s) must have block length %s" % (key, n))
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)
@@ -531,6 +520,7 @@ class TranspositionCipher(SymmetricKeyCipher):
         K = E.inverse_key(self.key())
         return E(K)
 
+
 class VigenereCipher(SymmetricKeyCipher):
     """
     Vigenere cipher class
@@ -538,8 +528,6 @@ class VigenereCipher(SymmetricKeyCipher):
     def __init__(self, parent, key):
         """
         Create a Vigenere cipher.
-
-        INPUT: Parent and key
 
         EXAMPLES::
 
@@ -560,7 +548,7 @@ class VigenereCipher(SymmetricKeyCipher):
         """
         SymmetricKeyCipher.__init__(self, parent, key)
 
-    def __call__(self, M, mode="ECB"):
+    def __call__(self, M, mode='ECB'):
         S = self.domain() # = plaintext_space = ciphertext_space
         if not isinstance(M, StringMonoidElement) and M.parent() == S:
             raise TypeError("Argument M (= %s) must be a string in the plaintext space." % M)

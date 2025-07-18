@@ -20,6 +20,12 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, 'blob/develop/src/doc/fr/tutorial', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, 'edit/develop/src/doc/fr/tutorial', '{filename}'),
+})
+
 # General information about the project.
 project = "Tutoriel Sage"
 name = 'tutorial-fr'
@@ -38,7 +44,3 @@ latex_documents = [
   ('index', name + '.tex', project,
    'The Sage Group', 'manual'),
 ]
-
-# the definition of \\at in the standard preamble of the sphinx doc
-# conflicts with that in babel/french[b]
-latex_elements['preamble'] += '\\let\\at\\undefined'

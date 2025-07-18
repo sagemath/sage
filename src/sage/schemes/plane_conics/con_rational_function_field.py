@@ -44,7 +44,7 @@ from sage.schemes.plane_conics.con_field import ProjectiveConic_field
 from sage.arith.functions import lcm
 from sage.arith.misc import GCD as gcd
 from sage.modules.free_module_element import vector
-from sage.rings.fraction_field import is_FractionField
+from sage.rings.fraction_field import FractionField_generic
 
 
 class ProjectiveConic_rational_function_field(ProjectiveConic_field):
@@ -88,7 +88,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
     def has_rational_point(self, point=False, algorithm='default',
                            read_cache=True):
         r"""
-        Returns True if and only if the conic ``self``
+        Return ``True`` if and only if the conic ``self``
         has a point over its base field `F(t)`, which is a field of rational
         functions.
 
@@ -128,7 +128,7 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: K.<t> = FractionField(PolynomialRing(QQ, 't'))
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True)                                      # needs sage.libs.singular
-            (True, (-3 : (t + 1)/t : 1))
+            (True, (3 : (t + 1)/t : 1))
 
             sage: R.<t> = FiniteField(23)[]
             sage: C = Conic([2, t^2 + 1, t^2 + 5])
@@ -214,19 +214,19 @@ class ProjectiveConic_rational_function_field(ProjectiveConic_field):
             sage: b = (-3*t^3 + 8*t + 1/2)/(-1/3*t^3 + 3/2*t^2 + 1/12*t + 1/2)
             sage: c = (1232009/225*t^25 - 1015925057/8100*t^24 + 1035477411553/1458000*t^23 + 7901338091/30375*t^22 - 1421379260447/729000*t^21 + 266121260843/972000*t^20 + 80808723191/486000*t^19 - 516656082523/972000*t^18 + 21521589529/40500*t^17 + 4654758997/21600*t^16 - 20064038625227/9720000*t^15 - 173054270347/324000*t^14 + 536200870559/540000*t^13 - 12710739349/50625*t^12 - 197968226971/135000*t^11 - 134122025657/810000*t^10 + 22685316301/120000*t^9 - 2230847689/21600*t^8 - 70624099679/270000*t^7 - 4298763061/270000*t^6 - 41239/216000*t^5 - 13523/36000*t^4 + 493/36000*t^3 + 83/2400*t^2 + 1/300*t + 1/200)/(-27378/125*t^17 + 504387/500*t^16 - 97911/2000*t^15 + 1023531/4000*t^14 + 1874841/8000*t^13 + 865381/12000*t^12 + 15287/375*t^11 + 6039821/6000*t^10 + 599437/1500*t^9 + 18659/250*t^8 + 1218059/6000*t^7 + 2025127/3000*t^6 + 1222759/6000*t^5 + 38573/200*t^4 + 8323/125*t^3 + 15453/125*t^2 + 17031/500*t + 441/10)
             sage: C = Conic([a,b,c])
-            sage: C.has_rational_point(point=True)  # long time (4 seconds)             # needs sage.libs.singular
+            sage: C.has_rational_point(point=True)      # long time (4 seconds)         # needs sage.libs.singular
             (True,
-             ((-2/117*t^8 + 304/1053*t^7 + 40/117*t^6 - 1/27*t^5 - 110/351*t^4 - 2/195*t^3 + 11/351*t^2 + 1/117)/(t^4 + 2/39*t^3 + 4/117*t^2 + 2/39*t + 14/39) : -5/3*t^4 + 19*t^3 : 1))
+            ((-86/9*t^17 + 1907490361/17182854*t^16 - 1363042615/206194248*t^15 - 4383072337/17182854*t^14 + 80370059033/618582744*t^13 + 62186354267/3092913720*t^12 - 1809118729/15861096*t^11 + 1002057383551/6185827440*t^10 - 483841158703/12371654880*t^9 - 627776378677/2061942480*t^8 - 197829033097/6185827440*t^7 + 386127705377/4123884960*t^6 - 5215102697/137462832*t^5 - 35978456911/317221920*t^4 - 1157738773/171828540*t^3 + 27472621/206194248*t^2 + 82006/2863809*t + 2808401/68731416)/(t^13 + 50677847/1272804*t^12 - 3017827697/15273648*t^11 - 144120133/5727618*t^10 - 3819228607/45820944*t^9 + 13738260095/274925664*t^8 - 10164360733/137462832*t^7 - 23583281/3818412*t^6 - 3902993449/137462832*t^5 + 1816361849/137462832*t^4 - 8343925/11455236*t^3 + 7102163/17182854*t^2 - 15173719/11455236*t - 19573057/11455236) : (655/351*t^17 + 4642530179/103097124*t^16 - 149195572469/137462832*t^15 + 1532672896471/412388496*t^14 + 46038188783/137462832*t^13 + 1373933278223/824776992*t^12 - 881883150035/824776992*t^11 + 47830791587/34365708*t^10 + 29359089785/412388496*t^9 + 58511538875/103097124*t^8 - 8651292257/34365708*t^7 + 647251073/51548562*t^6 - 424282657/45820944*t^5 + 212494760/8591427*t^4 + 746976293/22910472*t^3 - 1085/195816*t^2 - 1085/954603*t - 1085/636402)/(t^13 + 50677847/1272804*t^12 - 3017827697/15273648*t^11 - 144120133/5727618*t^10 - 3819228607/45820944*t^9 + 13738260095/274925664*t^8 - 10164360733/137462832*t^7 - 23583281/3818412*t^6 - 3902993449/137462832*t^5 + 1816361849/137462832*t^4 - 8343925/11455236*t^3 + 7102163/17182854*t^2 - 15173719/11455236*t - 19573057/11455236) : 1))
+
 
         ``has_rational_point`` used to fail for some conics over function fields
-        over finite fields, due to :trac:`20003`::
+        over finite fields, due to :issue:`20003`::
 
             sage: K.<t> = PolynomialRing(GF(7))
             sage: C = Conic([5*t^2 + 4, t^2 + 3*t + 3, 6*t^2 + 3*t + 2,
             ....:            5*t^2 + 5, 4*t + 3, 4*t^2 + t + 5])
             sage: C.has_rational_point()
             True
-
         """
         from .constructor import Conic
 
@@ -338,14 +338,14 @@ for function field of characteristic 2.")
         `K=F(t)` and coefficients `a,b,c` such that `a,b,c \in F[t]`,
         `\gcd(a,b)=\gcd(b,c)=\gcd(c,a)=1` and `abc` is square-free.
 
-        Assumes `self` is in diagonal form.
+        Assumes ``self`` is in diagonal form.
 
         OUTPUT:
 
         A tuple (coefficients, multipliers), the coefficients of the conic
         in reduced form and multipliers `\lambda, \mu, \nu \in F(t)^*` such
         that `(x,y,z) \in F(t)` is a solution of the reduced conic if and only
-        if `(\lambda x, \mu y, \nu z)` is a solution of `self`.
+        if `(\lambda x, \mu y, \nu z)` is a solution of ``self``.
 
         ALGORITHM:
 
@@ -392,7 +392,7 @@ for function field of characteristic 2.")
 
         # remove squares
         for i, x in enumerate(coeff):
-            if is_FractionField(x.parent()):
+            if isinstance(x.parent(), FractionField_generic):
                 # go to base ring of fraction field
                 x = self.base().base()(x)
 
@@ -429,14 +429,14 @@ for function field of characteristic 2.")
 
         INPUT:
 
-        - ``self`` -- conic in reduced form.
+        - ``self`` -- conic in reduced form
         - ``supports`` -- 3-tuple where ``supports[i]`` is a list of all monic
-          irreducible `p \in F[t]` that divide the `i`'th of the 3 coefficients.
+          irreducible `p \in F[t]` that divide the `i`-th of the 3 coefficients
         - ``roots`` -- 3-tuple containing lists of roots of all elements of
-          ``supports[i]``, in the same order.
-        - ``case`` -- 1 or 0, as in [HC2006]_.
+          ``supports[i]``, in the same order
+        - ``case`` -- 1 or 0, as in [HC2006]_
         - ``solution`` -- (default: 0) a solution of (5) in [HC2006]_, if
-          case = 0, 0 otherwise.
+          ``case`` = 0, 0 otherwise
 
         OUTPUT:
 
@@ -453,7 +453,7 @@ for function field of characteristic 2.")
             sage: K.<t> = FractionField(QQ['t'])
             sage: C = Conic(K, [t^2 - 2, 2*t^3, -2*t^3 - 13*t^2 - 2*t + 18])
             sage: C.has_rational_point(point=True)  # indirect test                     # needs sage.libs.singular
-            (True, (-3 : (t + 1)/t : 1))
+            (True, (3 : (t + 1)/t : 1))
 
         Different solubility certificates give different points::
 
@@ -504,12 +504,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + B + 2] = vector(F, d, lastpoly.dict())
+            phi_p[A + B + 2] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[1]):
@@ -526,12 +526,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(C):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + B + 3 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[0] = vector(F, d, lastpoly.dict())
+            phi_p[0] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         for (i, p) in enumerate(supports[2]):
@@ -548,12 +548,12 @@ for function field of characteristic 2.")
             lastpoly = F(1)
             for n in range(A):
                 lastpoly = (lastpoly * t) % p
-                phi_p[1 + n] = vector(F, d, lastpoly.dict())
+                phi_p[1 + n] = vector(F, d, lastpoly.monomial_coefficients())
             lastpoly = -alpha % p
-            phi_p[A + 1] = vector(F, d, lastpoly.dict())
+            phi_p[A + 1] = vector(F, d, lastpoly.monomial_coefficients())
             for n in range(B):
                 lastpoly = (lastpoly * t) % p
-                phi_p[A + 2 + n] = vector(F, d, lastpoly.dict())
+                phi_p[A + 2 + n] = vector(F, d, lastpoly.monomial_coefficients())
             phi_p[A + B + C + 3] = vector(F, d)
             phi.append(matrix(phi_p).transpose())
         if case == 0:

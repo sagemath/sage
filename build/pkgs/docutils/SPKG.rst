@@ -12,12 +12,11 @@ plaintext markup syntax.
 License
 -------
 
-Modified BSD
-
+public domain, Python, 2-Clause BSD, GPL 3 (see COPYING.txt)
 
 Upstream Contact
 ----------------
 
-Author: David Goodger
+https://pypi.org/project/docutils/
 
 Home Page: http://docutils.sourceforge.net/

@@ -8,24 +8,24 @@ the face lattice of a polyhedron.
 
 Terminology in this module:
 
-- Vrep -- ``[vertices, rays, lines]`` of the polyhedron.
+- Vrep -- ``[vertices, rays, lines]`` of the polyhedron
 
-- Hrep -- inequalities and equations of the polyhedron.
+- Hrep -- inequalities and equations of the polyhedron
 
-- Facets -- facets of the polyhedron.
+- Facets -- facets of the polyhedron
 
 - Coatoms -- the faces from which all others are constructed in the face
   iterator. This will be facets or Vrep.  In non-dual mode, faces are
   constructed as intersections of the facets. In dual mode, the are constructed
-  theoretically as joins of vertices.  The coatoms are repsented as incidences
+  theoretically as joins of vertices.  The coatoms are represented as incidences
   with the atoms they contain.
 
 - Atoms -- facets or Vrep depending on application of algorithm.  Atoms are
-  repsented as incidences of coatoms they are contained in.
+  represented as incidences of coatoms they are contained in.
 
-- Vrepresentation -- represents a face by a list of Vrep it contains.
+- Vrepresentation -- represents a face by a list of Vrep it contains
 
-- Hrepresentation -- represents a face by a list of Hrep it is contained in.
+- Hrepresentation -- represents a face by a list of Hrep it is contained in
 
 - bit representation -- represents incidences as ``uint64_t``-array, where each
   bit represents one incidence. There might be trailing zeros, to fit alignment
@@ -313,7 +313,7 @@ cdef class PolyhedronFaceLattice:
 
         return find_face(face, self.faces[dimension+1])
 
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept:
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index):
         r"""
         Return the face of dimension ``dimension`` and index ``index``.
 

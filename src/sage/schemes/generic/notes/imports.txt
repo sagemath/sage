@@ -26,6 +26,3 @@ hierarchy, you should defer the import. That is, put the import at the
 class/method level and not in the module scope. For example, scheme.py
 needs spec.py for the default base scheme but contains no "import
 spec" at the module level.
-
-
-

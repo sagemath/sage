@@ -12,11 +12,11 @@ Rings
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from sage.rings.all__sagemath_categories import *
-
 # Ring base classes
 from sage.rings.ring import (Ring, Field, CommutativeRing, IntegralDomain,
-                             DedekindDomain, PrincipalIdealDomain)
+                             PrincipalIdealDomain)
+
+lazy_import("sage.rings.ring", "DedekindDomain")
 
 # Ring element base classes
 from sage.structure.element import (CommutativeAlgebraElement,
@@ -122,6 +122,9 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 # Lazy Laurent series ring
 lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyPowerSeriesRing',
                                             'LazySymmetricFunctions', 'LazyDirichletSeriesRing'])
+
+# Lazy combinatorial species
+lazy_import('sage.rings.lazy_species', 'LazyCombinatorialSpecies')
 
 # Tate algebras
 from sage.rings.tate_algebra import TateAlgebra

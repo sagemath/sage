@@ -22,23 +22,25 @@ import weakref
 from .expect import Expect
 
 instances = {}
-def Mwrank(options="", server=None, server_tmpdir=None):
+
+
+def Mwrank(options='', server=None, server_tmpdir=None):
     """
     Create and return an mwrank interpreter, with given options.
 
     INPUT:
 
-    -  ``options`` - string; passed when starting mwrank.
-       The format is::
+    - ``options`` -- string; passed when starting mwrank.
+      The format is::
 
        -h       help            prints this info and quits
        -q       quiet           turns OFF banner display and prompt
        -v n     verbosity       sets verbosity to n (default=1)
-       -o       PARI/GP output  turns ON extra PARI/GP short output (default is OFF)
+       -o       PARI/GP output  turns ON extra PARI/GP short output (default: OFF)
        -p n     precision       sets precision to n decimals (default=15)
        -b n     quartic bound   bound on quartic point search (default=10)
        -x n     n aux           number of aux primes used for sieving (default=6)
-       -l       list            turns ON listing of points (default ON unless v=0)
+       -l       list            turns ON listing of points (default: ON, unless v=0)
        -s       selmer_only     if set, computes Selmer rank only (default: not set)
        -d       skip_2nd_descent        if set, skips the second descent for curves with 2-torsion (default: not set)
        -S n     sat_bd          upper bound on saturation primes (default=100, -1 for automatic)
@@ -54,7 +56,6 @@ def Mwrank(options="", server=None, server_tmpdir=None):
         Curve [0,0,1,-1,0] :    Rank = 1
         Generator 1 is [0:-1:1]; height 0.051...
         Regulator = 0.051...
-
     """
     global instances
     try:
@@ -63,7 +64,7 @@ def Mwrank(options="", server=None, server_tmpdir=None):
             return X
     except KeyError:
         pass
-    X = Mwrank_class(options, server=server,server_tmpdir=server_tmpdir)
+    X = Mwrank_class(options, server=server, server_tmpdir=server_tmpdir)
     instances[options] = weakref.ref(X)
     return X
 
@@ -77,11 +78,11 @@ AINVS_PLAIN_RE = re.compile(r'^(\s*)([+-]?(\d+)(\s+)){4}([+-]?(\d+))(\s*)$')
 
 def validate_mwrank_input(s):
     r"""
-    Returns a string suitable for mwrank input, or raises an error.
+    Return a string suitable for mwrank input, or raises an error.
 
     INPUT:
 
-    - `s` -- one of the following:
+    - ``s`` -- one of the following:
 
         - a list or tuple of 5 integers [a1,a2,a3,a4,a6] or (a1,a2,a3,a4,a6)
         - a string of the form '[a1,a2,a3,a4,a6]' or 'a1 a2 a3 a4 a6' where a1, a2, a3, a4, a6 are integers
@@ -89,7 +90,7 @@ def validate_mwrank_input(s):
     OUTPUT:
 
     For valid input, a string of the form '[a1,a2,a3,a4,a6]'.
-    For invalid input a :class:`ValueError` is raised.
+    For invalid input a :exc:`ValueError` is raised.
 
     EXAMPLES:
 
@@ -122,47 +123,46 @@ def validate_mwrank_input(s):
         Traceback (most recent call last):
         ...
         ValueError: 0 -1 1 -7  is not valid input to mwrank
-
     """
-    if isinstance(s,(list,tuple)):
+    if isinstance(s, (list, tuple)):
         from sage.rings.integer_ring import ZZ
         if len(s) != 5:
             raise ValueError("%s is not valid input to mwrank (should have 5 entries)" % s)
         try:
             ai = [ZZ(a) for a in s]
             return str(ai)
-        except (TypeError,ValueError):
+        except (TypeError, ValueError):
             raise ValueError("%s is not valid input to mwrank (entries should be integers)" % s)
 
-    if isinstance(s,str):
+    if isinstance(s, str):
         if AINVS_PLAIN_RE.match(s):
             ai = s.split()
-            return "["+",".join(ai)+"]"
-        ss = s.replace(' ','').replace('\n','').replace('\t','')
+            return "[" + ",".join(ai) + "]"
+        ss = s.replace(' ', '').replace('\n', '').replace('\t', '')
         if AINVS_LIST_RE.match(ss):
             return ss
     raise ValueError("%s is not valid input to mwrank" % s)
+
 
 class Mwrank_class(Expect):
     """
     Interface to the Mwrank interpreter.
     """
-    def __init__(self, options="", server=None,server_tmpdir=None):
+    def __init__(self, options='', server=None, server_tmpdir=None):
         """
         INPUT:
 
-
-        -  ``options`` - string; passed when starting mwrank.
-           The format is::
+        - ``options`` -- string; passed when starting mwrank.
+          The format is::
 
            -h       help            prints this info and quits
            -q       quiet           turns OFF banner display and prompt
            -v n     verbosity       sets verbosity to n (default=1)
-           -o       PARI/GP output  turns ON extra PARI/GP short output (default is OFF)
+           -o       PARI/GP output  turns ON extra PARI/GP short output (default: OFF)
            -p n     precision       sets precision to n decimals (default=15)
            -b n     quartic bound   bound on quartic point search (default=10)
            -x n     n aux           number of aux primes used for sieving (default=6)
-           -l       list            turns ON listing of points (default ON unless v=0)
+           -l       list            turns ON listing of points (default: ON, unless v=0)
            -s       selmer_only     if set, computes Selmer rank only (default: not set)
            -d       skip_2nd_descent        if set, skips the second descent for curves with 2-torsion (default: not set)
            -S n     sat_bd          upper bound on saturation primes (default=100, -1 for automatic)
@@ -243,8 +243,8 @@ class Mwrank_class(Expect):
 
         TESTS:
 
-        Invalid input raises an ValueError (see :trac:`10108`); this includes
-        syntactically valid input which defines a singular curve::
+        Invalid input raises an :exc:`ValueError` (see :issue:`10108`); this
+        includes syntactically valid input which defines a singular curve::
 
             sage: mwrank(10)
             Traceback (most recent call last):
@@ -260,7 +260,6 @@ class Mwrank_class(Expect):
             Traceback (most recent call last):
             ...
             ValueError: Invalid input ([0,0,0,-3,2]) to mwrank (singular curve)
-
         """
         try:
             s = validate_mwrank_input(cmd)
@@ -279,7 +278,7 @@ class Mwrank_class(Expect):
 
         INPUT:
 
-        - ``s`` (str) - a Sage object which when converted to a string
+        - ``s`` -- string; a Sage object which when converted to a string
           gives valid input to ``mwrank``.  The conversion is done by
           :meth:`validate_mwrank_input`.  Possible formats are:
 
@@ -294,7 +293,7 @@ class Mwrank_class(Expect):
 
         .. NOTE::
 
-           If a :class:`RuntimeError` exception is raised, then the mwrank
+           If a :exc:`RuntimeError` exception is raised, then the mwrank
            interface is restarted and the command is retried once.
 
         EXAMPLES::
@@ -330,7 +329,6 @@ class Mwrank_class(Expect):
 
             sage: mwrank.console() # not tested: expects console input
             Program mwrank: ...
-
         """
         mwrank_console()
 
@@ -338,9 +336,10 @@ class Mwrank_class(Expect):
 # An instance
 mwrank = Mwrank()
 
+
 def _reduce_load_mwrank():
     """
-    Return the standard mwrank instance
+    Return the standard mwrank instance.
 
     EXAMPLES::
 

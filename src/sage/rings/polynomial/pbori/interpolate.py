@@ -1,14 +1,21 @@
 # Copyright (c) 2005-2007 by The PolyBoRi Team
-from time import process_time as clock
 from random import Random
+from time import process_time as clock
 
-from .PyPolyBoRi import (Polynomial, Variable, Monomial,
-                         BoolePolynomialVector)
-from .randompoly import gen_random_poly
-from .pbori import (BooleSet, add_up_polynomials, interpolate_smallest_lex,
-                    interpolate)
-from .blocks import Block, declare_ring
-
+from sage.rings.polynomial.pbori.blocks import Block, declare_ring
+from sage.rings.polynomial.pbori.pbori import (
+    BooleSet,
+    Monomial,
+    Polynomial,
+    Variable,
+    add_up_polynomials,
+    interpolate,
+    interpolate_smallest_lex,
+)
+from sage.rings.polynomial.pbori.PyPolyBoRi import (
+    BoolePolynomialVector,
+)
+from sage.rings.polynomial.pbori.randompoly import gen_random_poly
 
 generator = Random()
 
@@ -89,7 +96,7 @@ def lex_groebner_basis_points(points, variables):
 def lex_groebner_basis_for_polynomial_via_variety(p):
     variables = p.vars_as_monomial()
     return lex_groebner_basis_points(p.zeros_in(variables.divisors()),
-        variables)
+                                     variables)
 
 
 if __name__ == '__main__':

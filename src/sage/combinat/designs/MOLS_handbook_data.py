@@ -21,7 +21,6 @@ the table as printed in the second edition::
     5
     sage: MOLS_handbook_data.lower_bound(7968)
     31
-
 """
 
 _LOWER_BOUNDS: tuple[int, ...]
@@ -566,6 +565,5 @@ def lower_bound(order: int) -> int:
         sage: from sage.combinat.designs import MOLS_handbook_data
         sage: MOLS_handbook_data.lower_bound(0)
         0
-
     """
     return _LOWER_BOUNDS[order]

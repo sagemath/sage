@@ -1,12 +1,12 @@
 cd src
 
-# Use newer version of config.guess and config.sub (see Trac #19727)
+# Use newer version of config.guess and config.sub (see Issue #19727)
 cp "$SAGE_ROOT"/config/config.* config
 
 if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building a debug version of gf2x."
 elif $CC --version 2>/dev/null |grep 'gcc.* 5[.][12]' >/dev/null; then
-    echo "Using compiler flags to work around problems with GCC 5.1/5.2 (Trac #18580,#18978)"
+    echo "Using compiler flags to work around problems with GCC 5.1/5.2 (Issue #18580,#18978)"
     export CFLAGS="-fno-forward-propagate $CFLAGS"
 fi
 

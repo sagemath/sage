@@ -16,7 +16,6 @@ Note that because they are called by the constructors of :class:`Graph` and
 
 Functions
 ---------
-
 """
 from sage.cpython.string import bytes_to_str
 from sage.misc.rest_index_of_methods import gen_rest_table_index
@@ -104,8 +103,8 @@ def from_sparse6(G, g6_string):
         k = int((ZZ(n) - 1).nbits())
         ords = [ord(i) for i in s]
         if any(o > 126 or o < 63 for o in ords):
-            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join([chr(i) for i in range(63, 127)]))
-        bits = ''.join([int_to_binary_string(o-63).zfill(6) for o in ords])
+            raise RuntimeError("the string seems corrupt: valid characters are \n" + ''.join(chr(i) for i in range(63, 127)))
+        bits = ''.join(int_to_binary_string(o-63).zfill(6) for o in ords)
         if not k:
             b = [int(x) for x in bits]
             x = [0] * len(b)
@@ -145,6 +144,13 @@ def from_dig6(G, dig6_string):
         sage: from_dig6(g, digraphs.Circuit(10).dig6_string())
         sage: g.is_isomorphic(digraphs.Circuit(10))
         True
+
+    The string may represent a directed graph with loops::
+
+        sage: L = DiGraph(loops=True)
+        sage: from_dig6(L, 'CW`C')
+        sage: L.edges(labels=False, sort=True)
+        [(0, 1), (0, 2), (1, 2), (2, 3), (3, 3)]
     """
     from .generic_graph_pyx import length_and_string_from_graph6, binary_string_from_dig6
     if isinstance(dig6_string, bytes):
@@ -190,9 +196,9 @@ def from_seidel_adjacency_matrix(G, M):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.integer_ring import ZZ
-    assert is_Matrix(M)
+    assert isinstance(M, Matrix)
 
     if M.base_ring() != ZZ:
         try:
@@ -240,9 +246,9 @@ def from_adjacency_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
+    from sage.structure.element import Matrix
     from sage.rings.integer_ring import ZZ
-    assert is_Matrix(M)
+    assert isinstance(M, Matrix)
     # note: the adjacency matrix might be weighted and hence not
     # necessarily consists of integers
     if not weighted and M.base_ring() != ZZ:
@@ -316,8 +322,8 @@ def from_incidence_matrix(G, M, loops=False, multiedges=False, weighted=False):
         sage: g.is_isomorphic(graphs.PetersenGraph())                                   # needs sage.modules
         True
     """
-    from sage.structure.element import is_Matrix
-    assert is_Matrix(M)
+    from sage.structure.element import Matrix
+    assert isinstance(M, Matrix)
 
     oriented = any(M[pos] < 0 for pos in M.nonzero_positions(copy=False))
 
@@ -385,14 +391,14 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
 
     TESTS:
 
-    Fix bug reported in :trac:`22985`::
+    Fix bug reported in :issue:`22985`::
 
         sage: DiGraph(matrix ([[1,0,0,1],[0,0,1,1],[0,0,1,1]]).transpose())             # needs sage.modules
         Traceback (most recent call last):
         ...
         ValueError: each column represents an edge: -1 goes to 1
 
-    Handle incidence matrix containing a column with only zeros (:trac:`29275`)::
+    Handle incidence matrix containing a column with only zeros (:issue:`29275`)::
 
         sage: m = Matrix([[0,1],[0,-1],[0,0]]); m                                       # needs sage.modules
         [ 0  1]
@@ -402,7 +408,7 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         sage: list(G.edges(sort=True, labels=False))                                    # needs sage.modules
         [(1, 0)]
 
-    Handle incidence matrix [[1],[-1]] (:trac:`29275`)::
+    Handle incidence matrix [[1],[-1]] (:issue:`29275`)::
 
         sage: m = Matrix([[1],[-1]]); m                                                 # needs sage.modules
         [ 1]
@@ -411,8 +417,8 @@ def from_oriented_incidence_matrix(G, M, loops=False, multiedges=False, weighted
         sage: list(G.edges(sort=True, labels=False))                                    # needs sage.modules
         [(1, 0)]
     """
-    from sage.structure.element import is_Matrix
-    assert is_Matrix(M)
+    from sage.structure.element import Matrix
+    assert isinstance(M, Matrix)
 
     positions = []
     for c in M.columns():
@@ -445,7 +451,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     - ``G`` -- a graph
 
-    - ``M`` -- a dictionary of dictionaries
+    - ``M`` -- dictionary of dictionaries
 
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights
@@ -462,9 +468,17 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
 
+    The resulting order of vertices is unspecified but deterministic::
+
+        sage: from sage.graphs.graph_input import from_dict_of_dicts
+        sage: g = Graph()
+        sage: from_dict_of_dicts(g, {i: {} for i in range(99, 90, -1)})
+        sage: g.vertices(sort=False)
+        [99, 98, 97, 96, 95, 94, 93, 92, 91]
+
     TESTS:
 
-    :trac:`32831` is fixed::
+    :issue:`32831` is fixed::
 
         sage: DiGraph({0: {}, 1: {}, 2: {}, 3: {}, 4: {}})
         Digraph on 5 vertices
@@ -493,8 +507,11 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
-    verts = set().union(M.keys(), *M.values())
-    G.add_vertices(verts)
+    # Use keys of a dictionary instead of a set, to preserve insertion order
+    verts = dict(M)
+    for d in M.values():
+        verts.update(d)
+    G.add_vertices(verts.keys())
     if convert_empty_dict_labels_to_None:
         def relabel(x):
             return x if x != {} else None
@@ -504,7 +521,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
 
     is_directed = G.is_directed()
     if not is_directed and multiedges:
-        v_to_id = {v: i for i, v in enumerate(verts)}
+        v_to_id = {v: i for i, v in enumerate(verts.keys())}
         for u in M:
             for v in M[u]:
                 if v_to_id[u] <= v_to_id[v] or v not in M or u not in M[v] or u == v:
@@ -531,7 +548,7 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
 
     - ``G`` -- a :class:`Graph` or :class:`DiGraph`
 
-    - ``D`` -- a dictionary of lists
+    - ``D`` -- dictionary of lists
 
     - ``loops``, ``multiedges``, ``weighted`` -- booleans (default: ``False``);
       whether to consider the graph as having loops, multiple edges, or weights
@@ -543,8 +560,18 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
         sage: from_dict_of_lists(g, graphs.PetersenGraph().to_dictionary())
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
+
+    The resulting order of vertices is unspecified but deterministic::
+
+        sage: from sage.graphs.graph_input import from_dict_of_lists
+        sage: g = Graph()
+        sage: from_dict_of_lists(g, {i: [] for i in range(99, 90, -1)})
+        sage: g.vertices(sort=False)
+        [99, 98, 97, 96, 95, 94, 93, 92, 91]
     """
-    verts = set().union(D.keys(), *D.values())
+    # Use keys of a dictionary instead of a set, to preserve insertion order
+    verts = dict(D)
+    verts.update({v: None for l in D.values() for v in l})
     if not loops:
         if any(u in neighb for u, neighb in D.items()):
             if loops is False:
@@ -567,11 +594,11 @@ def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
             multiedges = False
     G.allow_loops(loops, check=False)
     G.allow_multiple_edges(multiedges, check=False)
-    G.add_vertices(verts)
+    G.add_vertices(verts.keys())
 
     is_directed = G.is_directed()
     if not is_directed and multiedges:
-        v_to_id = {v: i for i, v in enumerate(verts)}
+        v_to_id = {v: i for i, v in enumerate(verts.keys())}
         for u in D:
             for v in D[u]:
                 if (v_to_id[u] <= v_to_id[v] or

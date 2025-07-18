@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional algebras with basis
 
@@ -32,9 +33,13 @@ from sage.categories.algebras import Algebras
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.tensor import TensorProductsCategory
 
+
 class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
     The category of finite dimensional algebras with a distinguished basis.
+
+    These algebras are assumed to be associative and
+    unital.
 
     EXAMPLES::
 
@@ -72,9 +77,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                characteristic `p` in which we can compute `x^{1/p}`
                [FR1985]_, [Eb1989]_.
 
-            OUTPUT:
-
-            - a list of elements of ``self``.
+            OUTPUT: list of elements of ``self``
 
             .. SEEALSO:: :meth:`radical`, :class:`Algebras.Semisimple`
 
@@ -134,7 +137,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 ....:         return self.basis()[self.base_ring().one()]
                 ....:     def product_on_basis(self, w1, w2):
                 ....:         return self.from_vector(vector(w1*w2))
-                sage: AnAlgebra(GF(3)).radical_basis()
+                sage: AnAlgebra(GF(3)).radical_basis()                                  # needs sage.libs.pari
                 (B[1] + 2*B[xbar^2], B[xbar] + 2*B[xbar^2])
                 sage: AnAlgebra(GF(16,'a')).radical_basis()                             # needs sage.rings.finite_rings
                 (B[1] + B[xbar],)
@@ -142,16 +145,28 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (B[1] + 6*B[xbar^6], B[xbar] + 6*B[xbar^6], B[xbar^2] + 6*B[xbar^6],
                  B[xbar^3] + 6*B[xbar^6], B[xbar^4] + 6*B[xbar^6], B[xbar^5] + 6*B[xbar^6])
 
+            We compute the radical basis in a subalgebra using
+            the inherited product::
+
+                sage: # needs sage.modules
+                sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
+                ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: MS = MatrixSpace(QQ, 5)
+                sage: A = MS.subalgebra([bg.adjoint_matrix() for bg in L.lie_algebra_generators()])
+                sage: A.radical_basis()
+                (B[1], B[2], B[3], B[4], B[5])
+
             TESTS::
 
-                sage: A = KleinFourGroup().algebra(GF(2))                               # needs sage.groups sage.modules
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
+                sage: # needs sage.groups sage.modules
+                sage: A = KleinFourGroup().algebra(GF(2))
+                sage: A.radical_basis()
                 (() + (1,2)(3,4), (3,4) + (1,2)(3,4), (1,2) + (1,2)(3,4))
-
-                sage: A = KleinFourGroup().algebra(QQ, category=Monoids())              # needs sage.groups sage.modules
-                sage: A.radical_basis.__module__                                        # needs sage.groups sage.modules
+                sage: A = KleinFourGroup().algebra(QQ, category=Monoids())
+                sage: A.radical_basis.__module__
                 'sage.categories.finite_dimensional_algebras_with_basis'
-                sage: A.radical_basis()                                                 # needs sage.groups sage.modules
+                sage: A.radical_basis()
                 ()
             """
             F = self.base_ring()
@@ -161,19 +176,23 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.matrix.constructor import matrix
             from sage.modules.free_module_element import vector
 
-            product_on_basis = self.product_on_basis
-
             if p == 0:
-                keys = list(self.basis().keys())
-                cache = [{(i,j): c
-                    for i in keys
-                    for j,c in product_on_basis(y,i)}
-                    for y in keys]
-                mat = [ [ sum(x.get((j, i), 0) * c for (i,j),c in y.items())
-                    for x in cache]
-                    for y in cache]
+                B = self.basis()
+                product_on_basis = self.product_on_basis
+                if product_on_basis is NotImplemented:
+                    def product_on_basis(i, j):
+                        return B[i] * B[j]
 
-                mat = matrix(self.base_ring(), mat)
+                zero = F.zero()
+                keys = B.keys()
+                cache = [{(i, j): c for i in keys
+                         for j, c in product_on_basis(y, i).monomial_coefficients().items()}
+                         for y in keys]
+                mat = [[F.sum(x.get((j, i), zero) * c for (i,j), c in y.items())
+                        for x in cache]
+                       for y in cache]
+
+                mat = matrix(F, mat)
                 rad_basis = mat.kernel().basis()
 
             else:
@@ -182,25 +201,31 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 # some only have a ``nth_root`` element such as ``GF(2)``
                 # I imagine that ``pth_root`` would be fastest, but it is not
                 # always available....
-                if hasattr(self.base_ring().one(), 'nth_root'):
-                    root_fcn = lambda s, x : x.nth_root(s)
+                if hasattr(F.one(), 'nth_root'):
+                    def root_fcn(s, x):
+                        return x.nth_root(s)
                 else:
-                    root_fcn = lambda s, x : x**(1/s)
+                    def root_fcn(s, x):
+                        return x ** (1 / s)
 
-                s, n = 1, self.dimension()
+                s = 1
+                n = self.dimension()
                 B = [b.on_left_matrix() for b in self.basis()]
-                I = B[0].parent().one()
                 while s <= n:
-                    BB = B + [I]
-                    G = matrix([ [(-1)**s * (b*bb).characteristic_polynomial()[n-s]
-                                    for bb in BB] for b in B])
-                    C = G.left_kernel().basis()
+                    # we use that p_{AB}(x) = p_{BA}(x) here
+                    data = [[None]*(len(B)+1) for _ in B]
+                    for i, b in enumerate(B):
+                        for j, bb in enumerate(B[i:], start=i):
+                            val = (-1)**s * (b*bb).charpoly()[n-s]
+                            data[i][j] = data[j][i] = val
+                        data[i][-1] = (-1)**s * b.charpoly()[n-s]
+                    C = matrix(data).left_kernel().basis()
                     if 1 < s < F.order():
                         C = [vector(F, [root_fcn(s, ci) for ci in c]) for c in C]
-                    B = [ sum(ci*b for (ci,b) in zip(c,B)) for c in C ]
+                    B = [sum(ci * b for (ci, b) in zip(c, B)) for c in C]
                     s = p * s
                 e = vector(self.one())
-                rad_basis = [b*e for b in B]
+                rad_basis = [b * e for b in B]
 
             return tuple([self.from_vector(vec) for vec in rad_basis])
 
@@ -259,7 +284,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: # needs sage.graphs sage.modules
                 sage: TestSuite(radical).run()
             """
-            category = AssociativeAlgebras(self.base_ring()).WithBasis().FiniteDimensional().Subobjects()
+            category = AssociativeAlgebras(self.category().base_ring()).WithBasis().FiniteDimensional().Subobjects()
             radical = self.submodule(self.radical_basis(),
                                      category=category,
                                      already_echelonized=True)
@@ -299,7 +324,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             descent algebra of the symmetric group is of dimension the
             number of partitions of `n`::
 
-                sage: [ DescentAlgebra(QQ,n).B().semisimple_quotient().dimension()      # needs sage.combinat sage.modules
+                sage: [ DescentAlgebra(QQ,n).B().semisimple_quotient().dimension()      # needs sage.combinat sage.groups sage.modules
                 ....:   for n in range(6) ]
                 [1, 1, 2, 3, 5, 7]
                 sage: [Partitions(n).cardinality() for n in range(10)]                  # needs sage.combinat
@@ -325,9 +350,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             r"""
             Return a basis of the center of ``self``.
 
-            OUTPUT:
-
-            - a list of elements of ``self``.
+            OUTPUT: list of elements of ``self``
 
             .. SEEALSO:: :meth:`center`
 
@@ -396,15 +419,116 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             center.rename("Center of {}".format(self))
             return center
 
-        def principal_ideal(self, a, side='left'):
+        def subalgebra(self, gens, category=None, *args, **opts):
+            r"""
+            Return the subalgebra of ``self`` generated by ``gens``.
+
+            Here, ``gens`` is an iterable containing elements of
+            ``self``.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
+                ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: MS = MatrixSpace(QQ, 5)
+                sage: A = MS.subalgebra([bg.adjoint_matrix() for bg in L.lie_algebra_generators()])
+                sage: A.dimension()
+                7
+
+                sage: # needs sage.modules
+                sage: L.<x,y,z> = LieAlgebra(GF(3), {('x','z'): {'x':1, 'y':1}, ('y','z'): {'y':1}})
+                sage: MS = MatrixSpace(L.base_ring(), L.dimension())
+                sage: gens = [b.adjoint_matrix() for b in L.basis()]
+                sage: A = MS.subalgebra(gens)
+                sage: A.dimension()
+                5
+            """
+            # add the unit to make sure it is unital
+            basis = []
+            new_elts = [self(g) for g in gens] + [self.one()]
+            while new_elts:
+                basis = self.echelon_form(basis + new_elts)
+                trailsupp = {b.trailing_support(): b for b in basis}
+                sortsupp = sorted(trailsupp)
+                new_elts = []
+                # We (re)implement the reduction here
+                for b in basis:
+                    for bp in basis:
+                        elt = b * bp
+                        for s in sortsupp:
+                            c = elt[s]
+                            if c:
+                                elt -= c / trailsupp[s].trailing_coefficient() * trailsupp[s]
+                        if elt:
+                            new_elts.append(elt)
+            C = FiniteDimensionalAlgebrasWithBasis(self.category().base_ring())
+            category = C.Subobjects().or_subcategory(category)
+            return self.submodule(basis, check=False, already_echelonized=True,
+                                  category=category)
+
+        def ideal_submodule(self, gens, side='left', category=None, *args, **opts):
+            r"""
+            Return the ``side`` ideal of ``self`` generated by ``gens``
+            as a submodule.
+
+            Here, ``gens`` is an iterable containing elements of
+            ``self`` or a single element of ``self``,
+            and ``side`` is either ``'left'`` or
+            ``'right'`` or ``'twosided'``.
+
+            .. TODO::
+
+                This is not generally compatible with the implementation of
+                the ideals. This method should be folded into the ``ideal``
+                method after the corresponding classes are refactored to
+                be compatible.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
+                ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: MS = MatrixSpace(QQ, 5)
+                sage: I = MS.ideal_submodule([bg.adjoint_matrix() for bg in L.lie_algebra_generators()])
+                sage: I.dimension()
+                25
+            """
+            C = AssociativeAlgebras(self.category().base_ring()).WithBasis().FiniteDimensional()
+            category = C.Subobjects().or_subcategory(category)
+            if gens in self:
+                gens = [self(gens)]
+            else:
+                gens = [self(g) for g in gens]
+            if side == 'left':
+                return self.submodule([b * g for b in self.basis() for g in gens],
+                                      category=category, *args, **opts)
+            if side == 'right':
+                return self.submodule([g * b for b in self.basis() for g in gens],
+                                      category=category, *args, **opts)
+            if side == 'twosided':
+                return self.submodule([b * g * bp for b in self.basis()
+                                       for bp in self.basis() for g in gens],
+                                      category=category, *args, **opts)
+            raise ValueError("side must be either 'left', 'right', or 'twosided'")
+
+        def principal_ideal(self, a, side='left', *args, **opts):
             r"""
             Construct the ``side`` principal ideal generated by ``a``.
+
+            INPUT:
+
+            - ``a`` -- an element
+            - ``side`` -- ``left`` (default) or ``right`` or ``twosided``
+            - ``coerce`` -- ignored, for compatibility with categories
 
             EXAMPLES:
 
             In order to highlight the difference between left and
-            right principal ideals, our first example deals with a non
-            commutative algebra::
+            right principal ideals, our first example deals with a
+            noncommutative algebra::
 
                 sage: # needs sage.graphs sage.modules
                 sage: A = Algebras(QQ).FiniteDimensional().WithBasis().example(); A
@@ -439,18 +563,58 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: [B.lift() for B in xA.basis()]                                    # needs sage.graphs sage.modules
                 [x, a, b]
 
+            For another example::
+
+                sage: A = MatrixSpace(QQ, 2)
+                sage: A.basis()
+                Finite family {(0, 0): [1 0]
+                [0 0], (0, 1): [0 1]
+                [0 0], (1, 0): [0 0]
+                [1 0], (1, 1): [0 0]
+                [0 1]}
+                sage: e = list(A.basis())
+                sage: [b.lift() for b in A.principal_ideal(e[0], side="left").basis()]
+                [
+                [1 0]  [0 0]
+                [0 0], [1 0]
+                ]
+                sage: [b.lift() for b in A.principal_ideal(e[0], side="right").basis()]
+                [
+                [1 0]  [0 1]
+                [0 0], [0 0]
+                ]
+                sage: [b.lift() for b in A.principal_ideal(e[0], side="twosided").basis()]
+                [
+                [1 0]  [0 1]  [0 0]  [0 0]
+                [0 0], [0 0], [1 0], [0 1]
+                ]
+
             .. SEEALSO::
 
                 - :meth:`peirce_summand`
             """
-            return self.submodule([(a * b if side == 'right' else b * a)
-                                   for b in self.basis()])
+            opts.pop("coerce", None)
+            if side == 'right':
+                return self.submodule([a * b
+                                       for b in self.basis()], *args, **opts)
+            if side == 'left':
+                return self.submodule([b * a
+                                       for b in self.basis()], *args, **opts)
+            if side == 'twosided':
+                return self.submodule([b1 * a * b2 for b1 in self.basis()
+                                       for b2 in self.basis()], *args, **opts)
+            raise ValueError("side must be either 'left', 'right', or 'twosided'")
 
         @cached_method
         def orthogonal_idempotents_central_mod_radical(self):
             r"""
             Return a family of orthogonal idempotents of ``self`` that project
             on the central orthogonal idempotents of the semisimple quotient.
+
+            .. TODO::
+
+                The implementation assumes that the algebra
+                is split over its base field.
 
             OUTPUT:
 
@@ -467,7 +631,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             idempotents of the semisimple quotient of `A`. We
             recursively construct orthogonal idempotents of `A` by the
             following procedure: assuming `(f_i)_{i < n}` is a set of
-            already constructed orthogonal idempotent, we construct
+            already constructed orthogonal idempotents, we construct
             `f_k` by idempotent lifting of `(1-f) g (1-f)`, where `g`
             is any lift of `\overline{e_k}` and `f=\sum_{i<k} f_i`.
 
@@ -551,7 +715,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - `x` -- an element of `A` that projects on an idempotent
+            - ``x`` -- an element of `A` that projects on an idempotent
               `\overline x` of the semisimple quotient of `A`.
               Alternatively one may give as input the idempotent
               `\overline{x}`, in which case some lift thereof will be
@@ -576,9 +740,17 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A.idempotent_lift(A.basis()['y'])
                 y
 
-            .. TODO::
+            A less trivial example::
 
-                Add some non trivial example
+                sage: B = DescentAlgebra(QQ, 4).B()
+                sage: a = 1/8*B[[1, 1, 1, 1]] - 1/2*B[[2, 1, 1]] + 1/2*B[[2, 2]]
+                sage: a ** 2 == a  # not idempotent, but idempotent mod radical
+                False
+                sage: al = B.idempotent_lift(a)
+                sage: al ** 2 == al
+                True
+                sage: (a - al) ** 2
+                0
             """
             if not self.is_parent_of(x):
                 x = x.lift()
@@ -586,10 +758,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             if p * p != p:
                 raise ValueError("%s does not retract to an idempotent." % p)
             x_prev = None
-            one = self.one()
             while x != x_prev:
                 tmp = x
-                x = (one - (one - x**2)**2)
+                y = x ** 2
+                x = 2*y - y**2  # == one - (one - x**2)**2
                 x_prev = tmp
             return x
 
@@ -598,9 +770,15 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             r"""
             Return the Cartan invariants matrix of the algebra.
 
-            OUTPUT: a matrix of non negative integers
+            OUTPUT: a matrix of nonnegative integers
 
-            Let `A` be this finite dimensional algebra and
+            .. TODO::
+
+                Both the implementation and the documentation
+                assume that the algebra is split over its
+                base field.
+
+            Let `A` be this finite-dimensional algebra and
             `(S_i)_{i\in I}` be representatives of the right simple
             modules of `A`. Note that their adjoints `S_i^*` are
             representatives of the left simple modules.
@@ -613,7 +791,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             `S_i=\operatorname{top} P^R_i`.
 
             The *Cartan invariant matrix* `(C_{i,j})_{i,j\in I}` is a
-            matrix of non negative integers that encodes much of the
+            matrix of nonnegative integers that encodes much of the
             representation theory of `A`; namely:
 
             - `C_{i,j}` counts how many times `S_i^*\otimes S_j`
@@ -661,8 +839,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             in characteristic zero, the Cartan invariants matrix is
             the identity::
 
-                sage: A3 = SymmetricGroup(3).algebra(QQ)                                # needs sage.groups sage.modules
-                sage: A3.cartan_invariants_matrix()                                     # needs sage.groups sage.modules
+                sage: A3 = SymmetricGroup(3).algebra(QQ)                                # needs sage.combinat sage.groups sage.modules
+                sage: A3.cartan_invariants_matrix()                                     # needs sage.combinat sage.groups sage.modules
                 [1 0 0]
                 [0 1 0]
                 [0 0 1]
@@ -712,7 +890,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             idempotents_quo = A_quo.central_orthogonal_idempotents()
             # Dimension of simple modules
             dim_simples = [A_quo.principal_ideal(e).dimension().sqrt()
-                          for e in idempotents_quo]
+                           for e in idempotents_quo]
             # Orthogonal idempotents
             idempotents = self.orthogonal_idempotents_central_mod_radical()
 
@@ -726,6 +904,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         def isotypic_projective_modules(self, side='left'):
             r"""
             Return the isotypic projective ``side`` ``self``-modules.
+
+            .. TODO::
+
+                The current implementation assumes that the
+                algebra is split over its base field.
 
             Let `P_i` be representatives of the indecomposable
             projective ``side``-modules of this finite dimensional
@@ -746,9 +929,9 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``side`` -- 'left' or 'right' (default: 'left')
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'left'``)
 
-            OUTPUT: a list of subspaces of ``self``.
+            OUTPUT: list of subspaces of ``self``
 
             EXAMPLES::
 
@@ -757,7 +940,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of a finite dimensional algebra with basis:
                 the path algebra of the Kronecker quiver
                 (containing the arrows a:x->y and b:x->y) over Rational Field
-                sage: Q = A.isotypic_projective_modules(side="left"); Q
+                sage: Q = A.isotypic_projective_modules(side='left'); Q
                 [Free module generated by {0} over Rational Field,
                  Free module generated by {0, 1, 2} over Rational Field]
                 sage: [[x.lift() for x in Qi.basis()]
@@ -790,7 +973,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``ei``, ``ej`` -- two idempotents of `A`
 
-            OUTPUT: `e_i A e_j`, as a subspace of `A`.
+            OUTPUT: `e_i A e_j`, as a subspace of `A`
 
             .. SEEALSO::
 
@@ -810,22 +993,23 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             corresponding to the unique simple module of dimension `2`
             of the symmetric group `S_4`::
 
-                sage: A4 = SymmetricGroup(4).algebra(QQ)                                # needs sage.groups
-                sage: e = A4.central_orthogonal_idempotents()[2]                        # needs sage.groups sage.rings.number_field
-                sage: A4.peirce_summand(e, e)                                           # needs sage.groups sage.rings.number_field
+                sage: # needs sage.combinat sage.groups sage.rings.number_field
+                sage: A4 = SymmetricGroup(4).algebra(QQ)
+                sage: e = A4.central_orthogonal_idempotents()[2]
+                sage: A4.peirce_summand(e, e)
                 Free module generated by {0, 1, 2, 3} over Rational Field
 
             TESTS:
 
-            We check each idempotent belong to its own Peirce summand
-            (see :trac:`24687`)::
+            We check each idempotent belongs to its own Peirce summand
+            (see :issue:`24687`)::
 
-                sage: # needs sage.groups
+                sage: # needs sage.combinat sage.groups sage.rings.number_field
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: M = HeckeMonoid(SymmetricGroup(4))
                 sage: A = M.algebra(QQ)
-                sage: Idms = A.orthogonal_idempotents_central_mod_radical()             # needs sage.rings.number_field
-                sage: all(A.peirce_summand(e, e).retract(e)                             # needs sage.rings.number_field
+                sage: Idms = A.orthogonal_idempotents_central_mod_radical()
+                sage: all(A.peirce_summand(e, e).retract(e)
                 ....:     in A.peirce_summand(e, e) for e in Idms)
                 True
             """
@@ -857,13 +1041,13 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``idempotents`` -- a list of orthogonal idempotents
+            - ``idempotents`` -- list of orthogonal idempotents
               `(e_i)_{i=0,\ldots,n}` of the algebra that sum to `1`
               (default: the idempotents returned by
               :meth:`orthogonal_idempotents_central_mod_radical`)
 
-            - ``check`` -- (default: ``True``) whether to check that the
-              idempotents are indeed orthogonal and idempotent and
+            - ``check`` -- boolean (default: ``True``); whether to check that
+              the idempotents are indeed orthogonal and idempotent and
               sum to `1`
 
             OUTPUT:
@@ -933,7 +1117,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             INPUT:
 
-            - ``l`` -- a list or iterable of elements of ``self``
+            - ``l`` -- list or iterable of elements of ``self``
 
             EXAMPLES::
 
@@ -963,11 +1147,11 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             With the algebra of the `0`-Hecke monoid::
 
-                sage: # needs sage.combinat sage.groups sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules sage.rings.number_field
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid
                 sage: A = HeckeMonoid(SymmetricGroup(4)).algebra(QQ)
-                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()                  # needs sage.rings.number_field
-                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)          # needs sage.rings.number_field
+                sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
+                sage: A.is_identity_decomposition_into_orthogonal_idempotents(idempotents)
                 True
 
             Here are some more counterexamples:
@@ -1038,7 +1222,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                                                   for f in l[:i]))
 
         @cached_method
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
             Return whether ``self`` is a commutative algebra.
 
@@ -1053,7 +1237,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             B = list(self.basis())
-            try: # See if 1 is a basis element, if so, remove it
+            try:  # See if 1 is a basis element, if so, remove it
                 B.remove(self.one())
             except ValueError:
                 pass
@@ -1069,7 +1253,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             - ``base_ring`` -- the base ring for the matrix to be constructed
             - ``action`` -- a bivariate function (default: :func:`operator.mul`)
-            - ``side`` -- 'left' or 'right' (default: 'left')
+            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'left'``)
 
             EXAMPLES::
 
@@ -1090,7 +1274,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [0 1 0 0 0 0]
                 [0 0 0 0 0 1]
                 [0 0 0 0 1 0]
-                sage: a.to_matrix(base_ring=RDF, side="left")
+                sage: a.to_matrix(base_ring=RDF, side='left')
                 [0.0 0.0 1.0 0.0 0.0 0.0]
                 [0.0 0.0 0.0 0.0 1.0 0.0]
                 [1.0 0.0 0.0 0.0 0.0 0.0]
@@ -1179,9 +1363,10 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             An algebra that does not define ``one_basis()``::
 
-                sage: I = DescentAlgebra(QQ, 3).I()                                     # needs sage.combinat sage.modules
-                sage: a = 3 * I.one()                                                   # needs sage.combinat sage.modules
-                sage: ~a == 1/3 * I.one()                                               # needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
+                sage: I = DescentAlgebra(QQ, 3).I()
+                sage: a = 3 * I.one()
+                sage: ~a == 1/3 * I.one()
                 True
             """
             alg = self.parent()
@@ -1192,6 +1377,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             except (AttributeError, TypeError, ValueError):
                 pass
             if ob is not None:
+                # inverting a scalar multiple of 1
+                # (a trivial but frequent use case)
                 mc = self.monomial_coefficients(copy=False)
                 if len(mc) == 1 and ob in mc:
                     try:
@@ -1269,8 +1456,8 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroupAlgebra(QQ, 3)                              # needs sage.combinat sage.modules
-                    sage: S._test_cellular()                                            # needs sage.combinat sage.modules
+                    sage: S = SymmetricGroupAlgebra(QQ, 3)                              # needs sage.combinat sage.groups sage.modules
+                    sage: S._test_cellular()                                            # needs sage.combinat sage.groups sage.modules
                 """
                 tester = self._tester(**options)
                 cell_basis = self.cellular_basis()
@@ -1331,7 +1518,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroupAlgebra(QQ, 3)                              # needs sage.groups sage.modules
+                    sage: S = SymmetricGroupAlgebra(QQ, 3)                                          # needs sage.groups sage.modules
                     sage: S._to_cellular_element   # no implementation currently uses this          # needs sage.groups sage.modules
                     NotImplemented
                 """
@@ -1434,17 +1621,33 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 EXAMPLES::
 
-                    sage: S = SymmetricGroupAlgebra(QQ, 4)                              # needs sage.groups sage.modules
-                    sage: S.simple_module_parameterization()                            # needs sage.groups sage.modules
-                    ([1, 1, 1, 1], [2, 1, 1], [2, 2], [3, 1], [4])
+                    sage: # needs sage.modules
+                    sage: TL = TemperleyLiebAlgebra(5, 30, QQ)  # semisimple
+                    sage: len(TL.radical_basis())
+                    0
+                    sage: TL.simple_module_parameterization()
+                    (1, 3, 5)
 
-                    sage: S = SymmetricGroupAlgebra(GF(3), 4)                           # needs sage.groups sage.modules
-                    sage: S.simple_module_parameterization()                            # needs sage.groups sage.modules
-                    ([2, 1, 1], [2, 2], [3, 1], [4])
+                    sage: # needs sage.modules
+                    sage: TL = TemperleyLiebAlgebra(5, 1, QQ)  # not semisimple
+                    sage: len(TL.radical_basis())
+                    24
+                    sage: TL.simple_module_parameterization()
+                    (1, 3, 5)
 
-                    sage: S = SymmetricGroupAlgebra(GF(4), 4)                           # needs sage.groups sage.modules
-                    sage: S.simple_module_parameterization()                            # needs sage.groups sage.modules
-                    ([3, 1], [4])
+                    sage: # needs sage.modules
+                    sage: TL = TemperleyLiebAlgebra(6, 30, QQ)  # semisimple
+                    sage: all(TL.cell_module(la).dimension()
+                    ....:     == TL.cell_module(la).simple_module().dimension()
+                    ....:     for la in TL.simple_module_parameterization())
+                    True
+                    sage: TL.simple_module_parameterization()
+                    (0, 2, 4, 6)
+
+                    sage: # needs sage.modules
+                    sage: TL = TemperleyLiebAlgebra(6, 0, QQ)  # not semisimple
+                    sage: TL.simple_module_parameterization()
+                    (2, 4, 6)
                 """
                 return tuple([mu for mu in self.cell_poset()
                               if self.cell_module(mu).nonzero_bilinear_form()])

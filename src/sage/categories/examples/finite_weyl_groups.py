@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Examples of finite Weyl groups
 """
@@ -60,7 +61,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
         24
         sage: S.long_element()
         (3, 2, 1, 0)
-        sage: S.cayley_graph(side="left").plot()                                        # needs sage.graphs sage.plot
+        sage: S.cayley_graph(side='left').plot()                                        # needs sage.graphs sage.plot
         Graphics object consisting of 120 graphics primitives
 
     Alternatively, one could have implemented
@@ -90,14 +91,13 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
             sage: FiniteWeylGroups().example()
             The symmetric group on {0, ..., 3}
-
         """
         return "The symmetric group on {0, ..., %s}" % (self.n-1)
 
     @cached_method
     def one(self):
         """
-        Implements :meth:`Monoids.ParentMethods.one`.
+        Implement :meth:`Monoids.ParentMethods.one`.
 
         EXAMPLES::
 
@@ -108,7 +108,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def index_set(self):
         """
-        Implements :meth:`CoxeterGroups.ParentMethods.index_set`.
+        Implement :meth:`CoxeterGroups.ParentMethods.index_set`.
 
         EXAMPLES::
 
@@ -146,7 +146,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     def product(self, x, y):
         """
-        Implements :meth:`Semigroups.ParentMethods.product`.
+        Implement :meth:`Semigroups.ParentMethods.product`.
 
         EXAMPLES::
 
@@ -173,9 +173,9 @@ class SymmetricGroup(UniqueRepresentation, Parent):
 
     class Element(ElementWrapper):
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
-            Implements :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
+            Implement :meth:`CoxeterGroups.ElementMethods.has_right_descent`.
 
             EXAMPLES::
 
@@ -185,7 +185,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
                 True
                 sage: S._test_has_descent()
             """
-            return (self.value[i] > self.value[i+1])
+            return (self.value[i] > self.value[i + 1])
 
 
 Example = SymmetricGroup

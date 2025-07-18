@@ -167,7 +167,7 @@ REFERENCES:
 # ****************************************************************************
 from __future__ import annotations
 import numbers
-from typing import Iterator
+from collections.abc import Iterator
 from itertools import product
 
 from sage.misc.fast_methods import Singleton
@@ -195,20 +195,24 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.sets.positive_integers import PositiveIntegers
 
-lazy_import('sage.libs.pari.all', 'pari')
+lazy_import('sage.libs.pari', 'pari')
 
 
 # multiplicative generators for weight <= 17
 # using the following convention
 # (3, 5) <---> (sign) * [1,0,0,1,0,0,0,0]
 # taken from the Maple implementation by F. Brown
-B_data = [[], [], [(2,)], [(3,)], [], [(5,)], [], [(7,)], [(3, 5)], [(9,)],
-          [(3, 7)], [(11,), (3, 3, 5)], [(5, 7), (5, 3, 2, 2)],
-          [(13,), (3, 5, 5), (3, 3, 7)], [(5, 9), (3, 11), (3, 3, 3, 5)],
-          [(15,), (3, 5, 7), (3, 3, 9), (5, 3, 3, 2, 2)],
-          [(11, 5), (13, 3), (5, 5, 3, 3), (7, 3, 3, 3), (7, 5, 2, 2)],
-          [(17,), (7, 5, 5), (9, 3, 5), (9, 5, 3), (11, 3, 3),
-           (5, 3, 3, 3, 3), (5, 5, 3, 2, 2)]]
+B_data: list[list[tuple]] = [[], [], [(2,)], [(3,)], [], [(5,)], [],
+                             [(7,)], [(3, 5)], [(9,)],
+                             [(3, 7)], [(11,), (3, 3, 5)],
+                             [(5, 7), (5, 3, 2, 2)],
+                             [(13,), (3, 5, 5), (3, 3, 7)],
+                             [(5, 9), (3, 11), (3, 3, 3, 5)],
+                             [(15,), (3, 5, 7), (3, 3, 9), (5, 3, 3, 2, 2)],
+                             [(11, 5), (13, 3), (5, 5, 3, 3),
+                              (7, 3, 3, 3), (7, 5, 2, 2)],
+                             [(17,), (7, 5, 5), (9, 3, 5), (9, 5, 3),
+                              (11, 3, 3), (5, 3, 3, 3, 3), (5, 5, 3, 2, 2)]]
 
 Words10 = Words((1, 0), infinite=False)
 
@@ -223,9 +227,7 @@ def coproduct_iterator(paire) -> Iterator[list]:
 
     - ``paire`` -- a pair (list of indices, end of word)
 
-    OUTPUT:
-
-    iterator for terms in the motivic coproduct
+    OUTPUT: iterator for terms in the motivic coproduct
 
     Each term is seen as a list of positions.
 
@@ -329,9 +331,7 @@ def dual_composition(c) -> tuple[int, ...]:
 
     - ``c`` -- a composition
 
-    OUTPUT:
-
-    a composition
+    OUTPUT: a composition
 
     EXAMPLES::
 
@@ -420,7 +420,7 @@ class MultizetaValues(Singleton):
         sage: parent(M((2,3,4,5), prec=128))
         Real Field with 128 bits of precision
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         When first called, pre-compute up to weight 8 at precision 1024.
 
@@ -443,7 +443,7 @@ class MultizetaValues(Singleton):
         """
         return f"Cached multiple zeta values at precision {self.prec} up to weight {self.max_weight}"
 
-    def reset(self, max_weight=8, prec=1024):
+    def reset(self, max_weight=8, prec=1024) -> None:
         r"""
         Reset the cache to its default values or to given arguments.
 
@@ -464,7 +464,7 @@ class MultizetaValues(Singleton):
         self.max_weight = int(max_weight)
         self._data = pari.zetamultall(self.max_weight, precision=self.prec)
 
-    def update(self, max_weight, prec):
+    def update(self, max_weight, prec) -> None:
         """
         Compute and store more values if needed.
 
@@ -550,7 +550,7 @@ class MultizetaValues(Singleton):
 Values = MultizetaValues()
 
 
-def extend_multiplicative_basis(B, n) -> Iterator:
+def extend_multiplicative_basis(B, n) -> Iterator[tuple]:
     """
     Extend a multiplicative basis into a basis.
 
@@ -560,11 +560,9 @@ def extend_multiplicative_basis(B, n) -> Iterator:
 
     - ``B`` -- function mapping integer to list of tuples of compositions
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
-    OUTPUT:
-
-    Each term is a tuple of tuples of compositions.
+    OUTPUT: each term is a tuple of tuples of compositions
 
     EXAMPLES::
 
@@ -640,7 +638,7 @@ class Multizetas(CombinatorialFreeModule):
         sage: (u*M((2,))+M((3,)))*M((2,))
         4*u*ζ(1,3) + 6*ζ(1,4) + 2*u*ζ(2,2) + 3*ζ(2,3) + ζ(3,2)
 
-    Check for :trac:`30925`::
+    Check for :issue:`30925`::
 
         sage: M = Multizetas(QQ)
         sage: l = [1,2,3]
@@ -649,7 +647,7 @@ class Multizetas(CombinatorialFreeModule):
         sage: z
         ζ(1,2,3)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -665,7 +663,7 @@ class Multizetas(CombinatorialFreeModule):
         if R in Domains():
             cat = cat & Domains()
         W = Words(PositiveIntegers(), infinite=False)
-        CombinatorialFreeModule.__init__(self, R, W, prefix="Z", category=cat)
+        CombinatorialFreeModule.__init__(self, R, W, prefix='Z', category=cat)
 
     def _repr_(self) -> str:
         r"""
@@ -728,7 +726,7 @@ class Multizetas(CombinatorialFreeModule):
         """
         return self([]), self([2]), self([3]), self([4]), self((1, 2))
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of the algebra.
 
@@ -951,7 +949,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -972,7 +970,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -996,7 +994,7 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``n`` -- an integer
+        - ``n`` -- integer
 
         EXAMPLES::
 
@@ -1022,9 +1020,9 @@ class Multizetas(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``d`` -- (non-negative integer) the weight
+        - ``d`` -- nonnegative integer; the weight
 
-        - ``reverse`` -- (boolean, default ``False``) change the ordering of compositions
+        - ``reverse`` -- boolean (default: ``False``); change the ordering of compositions
 
         EXAMPLES::
 
@@ -1045,7 +1043,7 @@ class Multizetas(CombinatorialFreeModule):
             []
         """
         if d < 0:
-            raise ValueError('d must be a non-negative integer')
+            raise ValueError('d must be a nonnegative integer')
         if d == 0:
             return [self([])]
         if d == 1:
@@ -1056,7 +1054,7 @@ class Multizetas(CombinatorialFreeModule):
         dim = len(self((d,)).phi_as_vector())
         V = VectorSpace(QQ, dim)
         U = V.subspace([])
-        basis = []
+        basis: list = []
         k = 1
         while len(basis) < dim:
             for c in Compositions(d, length=k):
@@ -1148,7 +1146,7 @@ class Multizetas(CombinatorialFreeModule):
 
             INPUT:
 
-            - ``basis`` (optional) - either ``None`` or a function such that
+            - ``basis`` -- either ``None`` (default) or a function such that
               ``basis(d)`` is a basis of the weight ``d`` multiple zeta values.
               If ``None``, the Hoffman basis is used.
 
@@ -1255,7 +1253,7 @@ class Multizetas(CombinatorialFreeModule):
                 raise TypeError('invalid comparison for multizetas')
             return self.iterated()._richcmp_(other.iterated(), op)
 
-        def __hash__(self):
+        def __hash__(self) -> int:
             """
             Return the hash of ``self``.
 
@@ -1406,7 +1404,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         sage: M((1,0))*M((1,0,0))
         6*I(11000) + 3*I(10100) + I(10010)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -1422,7 +1420,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         cat = GradedAlgebrasWithBasis(R).Commutative()
         if R in Domains():
             cat = cat & Domains()
-        CombinatorialFreeModule.__init__(self, R, Words10, prefix="I",
+        CombinatorialFreeModule.__init__(self, R, Words10, prefix='I',
                                          category=cat)
 
     def _repr_(self) -> str:
@@ -1624,7 +1622,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``basering`` -- optional choice of the coefficient ring
+        - ``basering`` -- (optional) choice of the coefficient ring
 
         EXAMPLES::
 
@@ -1754,9 +1752,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
 
         - ``w`` -- a word in 0 and 1
 
-        OUTPUT:
-
-        an element in the auxiliary F-algebra
+        OUTPUT: an element in the auxiliary F-algebra
 
         The coefficients are in the base ring.
 
@@ -1807,16 +1803,14 @@ class Multizetas_iterated(CombinatorialFreeModule):
         compo = tuple(iterated_to_composition(w))
         if compo in B_data[N]:
             # do not forget the sign
-            result_QQ = (-1)**len(compo) * phi_on_multiplicative_basis(compo)
-            return result_QQ
+            return (-1)**len(compo) * phi_on_multiplicative_basis(compo)
         u = compute_u_on_basis(w)
         rho_inverse_u = rho_inverse(u)
         xi = self.composition_on_basis(w, QQ)
         c_xi = (xi - rho_inverse_u)._numerical_approx_pari()
         c_xi /= Multizeta(N)._numerical_approx_pari()
         c_xi = c_xi.bestappr().sage()  # in QQ
-        result_QQ = u + c_xi * f(N)
-        return result_QQ
+        return u + c_xi * f(N)
 
     @lazy_attribute
     def phi(self):
@@ -2034,7 +2028,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
                 sage: M = Multizetas(QQ)
                 sage: a = 28*M((3,9))+150*M((5,7))+168*M((7,5))
                 sage: b = 5197/691*M((12,))
-                sage: a.iterated() == b.iterated() # not tested, long time 20s
+                sage: a.iterated() == b.iterated()                                      # not tested, long time (20s)
                 True
             """
             if op not in [op_EQ, op_NE]:
@@ -2071,7 +2065,7 @@ class All_iterated(CombinatorialFreeModule):
         sage: x.regularise()
         -I(10)
     """
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         TESTS::
 
@@ -2081,7 +2075,7 @@ class All_iterated(CombinatorialFreeModule):
         """
         if R not in Rings():
             raise TypeError("argument R must be a ring")
-        CombinatorialFreeModule.__init__(self, R, Words10, prefix="I")
+        CombinatorialFreeModule.__init__(self, R, Words10, prefix='I')
 
     def _repr_(self) -> str:
         """
@@ -2379,9 +2373,7 @@ def coeff_phi(w):
 
     - ``w`` -- a word in 0 and 1 with `k` letters (where `k` is odd)
 
-    OUTPUT:
-
-    a rational number
+    OUTPUT: a rational number
 
     EXAMPLES::
 
@@ -2414,9 +2406,7 @@ def phi_on_multiplicative_basis(compo):
 
     - ``compo`` -- a composition (in the hardcoded multiplicative base)
 
-    OUTPUT:
-
-    an element in :func:`F_ring` with rational coefficients
+    OUTPUT: an element in :func:`F_ring` with rational coefficients
 
     EXAMPLES::
 
@@ -2444,13 +2434,11 @@ def phi_on_basis(L):
 
     INPUT:
 
-    a list of compositions, each composition in the hardcoded basis
+    - ``L`` -- list of compositions; each composition in the hardcoded basis
 
     This encodes a product of multiple zeta values.
 
-    OUTPUT:
-
-    an element in :func:`F_ring`
+    OUTPUT: an element in :func:`F_ring`
 
     EXAMPLES::
 
@@ -2518,9 +2506,7 @@ def compute_u_on_compo(compo):
 
     - ``compo`` -- a composition
 
-    OUTPUT:
-
-    an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of :func:`F_ring` over `\QQ`
 
     EXAMPLES::
 
@@ -2544,9 +2530,7 @@ def compute_u_on_basis(w):
 
     - ``w`` -- a word in 0,1
 
-    OUTPUT:
-
-    an element of :func:`F_ring` over `\QQ`
+    OUTPUT: an element of :func:`F_ring` over `\QQ`
 
     EXAMPLES::
 
@@ -2587,7 +2571,7 @@ def rho_matrix_inverse(n):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     EXAMPLES::
 
@@ -2617,9 +2601,7 @@ def rho_inverse(elt):
 
     - ``elt`` -- an homogeneous element of the F ring
 
-    OUTPUT:
-
-    a linear combination of multiple zeta values
+    OUTPUT: a linear combination of multiple zeta values
 
     EXAMPLES::
 

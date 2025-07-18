@@ -22,7 +22,6 @@ from sage.combinat.words.alphabet import Alphabet
 from sage.combinat.rooted_tree import (RootedTrees, RootedTree,
                                        LabelledRootedTrees,
                                        LabelledRootedTree)
-from sage.misc.cachefunc import cached_method
 from sage.categories.rings import Rings
 from sage.sets.family import Family
 from sage.rings.integer_ring import ZZ
@@ -202,7 +201,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         cat = HopfAlgebras(R).WithBasis().Graded()
         CombinatorialFreeModule.__init__(self, R, Trees,
-                                         latex_prefix="",
+                                         latex_prefix='',
                                          sorting_key=key,
                                          category=cat)
 
@@ -267,7 +266,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- a nonnegative integer
+        - ``i`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -336,7 +335,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - `R` -- a ring
+        - ``R`` -- a ring
 
         EXAMPLES::
 
@@ -362,8 +361,7 @@ class GrossmanLarsonAlgebra(CombinatorialFreeModule):
         """
         return t.node_number() - 1
 
-    @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 

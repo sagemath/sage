@@ -20,6 +20,9 @@ leaves and of `q` to internal nodes::
 
     sage: q = QQ['q'].gen()
     sage: leaf = species.SingletonSpecies()
+    doctest:warning...
+    DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+    See https://github.com/sagemath/sage/issues/38544 for details.
     sage: internal_node = species.SingletonSpecies(weight=q)
     sage: L = species.LinearOrderSpecies(min=1)
     sage: T = species.CombinatorialSpecies(min=1)
@@ -139,6 +142,9 @@ class GenericCombinatorialSpecies(SageObject):
             sage: X = species.SingletonSpecies()
             sage: E = species.EmptySetSpecies()
             sage: L = CombinatorialSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: L.define(E+X*L)
             sage: K = CombinatorialSpecies()
             sage: K.define(E+X*L)
@@ -350,9 +356,9 @@ class GenericCombinatorialSpecies(SageObject):
 
         INPUT:
 
-        - ``min`` -- optional integer
+        - ``min`` -- (optional) integer
 
-        - ``max`` -- optional integer
+        - ``max`` -- (optional) integer
 
         EXAMPLES::
 
@@ -376,7 +382,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F.structures([1,2,3]).list()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            ValueError: Stream is not yet defined
         """
         return StructuresWrapper(self, labels, structure_class)
 
@@ -388,7 +394,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: F.isotypes([1,2,3]).list()
             Traceback (most recent call last):
             ...
-            NotImplementedError
+            ValueError: Stream is not yet defined
         """
         return IsotypesWrapper(self, labels, structure_class=structure_class)
 
@@ -501,17 +507,16 @@ class GenericCombinatorialSpecies(SageObject):
 
         INPUT:
 
-        -  ``series_ring_class`` - A class for the series
-           ring such as ExponentialGeneratingSeriesRing, etc.
+        - ``series_ring_class`` -- a class for the series ring such as
+          ``ExponentialGeneratingSeriesRing``, etc.
 
-        -  ``prefix`` - The string prefix associated with the
-           generating series such as "cis" for the cycle index series. This
-           prefix appears in the methods that are implemented in the
-           subclass.
+        - ``prefix`` -- the string prefix associated with the generating series
+          such as "cis" for the cycle index series. This prefix appears in the
+          methods that are implemented in the subclass.
 
-        -  ``base_ring`` - The ring in which the coefficients
-           of the generating series live. If it is not specified, then it is
-           determined by the weight of the species.
+        - ``base_ring`` -- the ring in which the coefficients of the generating
+          series live. If it is not specified, then it is determined by the
+          weight of the species.
 
         EXAMPLES::
 

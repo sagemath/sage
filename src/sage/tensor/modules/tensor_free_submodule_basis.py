@@ -12,7 +12,7 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ******************************************************************************
 
 from sage.tensor.modules.free_module_basis import Basis_abstract
@@ -37,7 +37,6 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
         e_2⊗e^0
         e_2⊗e^1
         e_2⊗e^2
-
     """
 
     def __init__(self, tensor_module, symbol, latex_symbol=None, indices=None,
@@ -132,7 +131,6 @@ class TensorFreeSubmoduleBasis_sym(Basis_abstract):
             e_1⊗e_1
             sage: eSym2M[1, 2].display()
             e_1⊗e_2 + e_2⊗e_1
-
         """
         tensor_module = self._fmodule
         base_module_basis = self._base_module_basis

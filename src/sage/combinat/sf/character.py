@@ -36,7 +36,8 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 
 
-class generic_character(SFA_generic):
+class Character_generic(SFA_generic):
+
     def _my_key(self, la):
         r"""
         A rank function for partitions.
@@ -55,9 +56,7 @@ class generic_character(SFA_generic):
 
         - ``la`` -- a partition
 
-        OUTPUT:
-
-        - an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -127,11 +126,9 @@ class generic_character(SFA_generic):
 
         INPUT:
 
-        - ``k`` -- a positive integer
+        - ``k`` -- positive integer
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -142,7 +139,6 @@ class generic_character(SFA_generic):
             -1/2*p[1] + 1/2*p[2]
             sage: st._b_power_k(6)
             1/6*p[1] - 1/6*p[2] - 1/6*p[3] + 1/6*p[6]
-
         """
         if k == 1:
             return self._p([1])
@@ -151,7 +147,7 @@ class generic_character(SFA_generic):
                                     for d in divisors(k))
 
 
-class induced_trivial_character_basis(generic_character):
+class InducedTrivialCharacterBasis(Character_generic):
     r"""
     The induced trivial symmetric group character basis of
     the symmetric functions.
@@ -203,7 +199,7 @@ class induced_trivial_character_basis(generic_character):
         sage: TestSuite(ht).run()
     """
 
-    def __init__(self, Sym, pfix):
+    def __init__(self, Sym):
         r"""
         Initialize the basis and register coercions.
 
@@ -223,7 +219,7 @@ class induced_trivial_character_basis(generic_character):
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="induced trivial symmetric group character",
-                             prefix=pfix, graded=False)
+                             prefix='ht', graded=False)
         self._other = Sym.complete()
         self._p = Sym.powersum()
 
@@ -247,9 +243,7 @@ class induced_trivial_character_basis(generic_character):
 
         - ``k``, ``r`` -- positive integers
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -260,7 +254,6 @@ class induced_trivial_character_basis(generic_character):
             2*p[1] + p[1, 1] - 2*p[2] - 2*p[2, 1] + p[2, 2]
             sage: ht._b_bar_power_k_r(3,2)
             3*p[1] + p[1, 1] - 3*p[3] - 2*p[3, 1] + p[3, 3]
-
         """
         p = self._p
         return k**r * p.prod( self._b_power_k(k)-j for j in range(r) )
@@ -287,9 +280,7 @@ class induced_trivial_character_basis(generic_character):
 
         - ``gamma`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -300,7 +291,6 @@ class induced_trivial_character_basis(generic_character):
             2*p[1] - 3*p[1, 1] + p[1, 1, 1]
             sage: ht._b_bar_power_gamma(Partition([3,3,1]))
             3*p[1, 1] + p[1, 1, 1] - 3*p[3, 1] - 2*p[3, 1, 1] + p[3, 3, 1]
-
         """
         return self._p.prod(self._b_bar_power_k_r(Integer(k), Integer(r))
                             for k, r in gamma.to_exp_dict().items())
@@ -325,9 +315,7 @@ class induced_trivial_character_basis(generic_character):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the power sum basis
+        OUTPUT: an expression in the power sum basis
 
         EXAMPLES::
 
@@ -336,7 +324,6 @@ class induced_trivial_character_basis(generic_character):
             p[1] - 2*p[1, 1] + 1/2*p[1, 1, 1] + 1/2*p[2, 1]
             sage: ht._self_to_power_on_basis([1,1,1])
             2*p[1] - 3*p[1, 1] + p[1, 1, 1]
-
         """
         return self._p.sum( c*self._b_bar_power_gamma(ga)
                             for (ga, c) in self._p(self._other(lam)) )
@@ -381,7 +368,7 @@ class induced_trivial_character_basis(generic_character):
         return self._other(self._self_to_power_on_basis(lam))
 
 
-class irreducible_character_basis(generic_character):
+class IrreducibleCharacterBasis(Character_generic):
     r"""
     The irreducible symmetric group character basis of
     the symmetric functions.
@@ -427,7 +414,7 @@ class irreducible_character_basis(generic_character):
         sage: TestSuite(st).run()
     """
 
-    def __init__(self, Sym, pfix):
+    def __init__(self, Sym):
         r"""
         Initialize the basis and register coercions.
 
@@ -450,7 +437,7 @@ class irreducible_character_basis(generic_character):
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="irreducible symmetric group character",
-                             prefix=pfix, graded=False)
+                             prefix='st', graded=False)
         self._other = Sym.Schur()
         self._p = Sym.powersum()
 
@@ -474,9 +461,7 @@ class irreducible_character_basis(generic_character):
 
         - ``k``, ``r`` -- positive integers
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -487,7 +472,6 @@ class irreducible_character_basis(generic_character):
             p[] + 4*p[1] + p[1, 1] - 4*p[2] - 2*p[2, 1] + p[2, 2]
             sage: st._b_power_k_r(3,2)
             p[] + 5*p[1] + p[1, 1] - 5*p[3] - 2*p[3, 1] + p[3, 3]
-
         """
         p = self._p
         return p.sum( (-1)**(r-j) * k**j * binomial(r,j)
@@ -516,9 +500,7 @@ class irreducible_character_basis(generic_character):
 
         - ``gamma`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the powersum basis of the symmetric functions
+        OUTPUT: an expression in the powersum basis of the symmetric functions
 
         EXAMPLES::
 
@@ -529,7 +511,6 @@ class irreducible_character_basis(generic_character):
             -p[] + 8*p[1] - 6*p[1, 1] + p[1, 1, 1]
             sage: st._b_power_gamma(Partition([3,1]))
             p[] - p[1, 1] - p[3] + p[3, 1]
-
         """
         return self._p.prod(self._b_power_k_r(Integer(k), Integer(r))
                             for k, r in gamma.to_exp_dict().items())
@@ -556,9 +537,7 @@ class irreducible_character_basis(generic_character):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the power sum basis
+        OUTPUT: an expression in the power sum basis
 
         EXAMPLES::
 
@@ -567,7 +546,6 @@ class irreducible_character_basis(generic_character):
             3*p[1] - 2*p[1, 1] + 1/3*p[1, 1, 1] - 1/3*p[3]
             sage: st._self_to_power_on_basis([1,1])
             p[] - p[1] + 1/2*p[1, 1] - 1/2*p[2]
-
         """
         return self._p.sum( c*self._b_power_gamma(ga)
                             for (ga, c) in self._p(self._other(lam)) )
@@ -584,9 +562,7 @@ class irreducible_character_basis(generic_character):
 
         - ``lam`` -- a partition
 
-        OUTPUT:
-
-        - an expression in the Schur basis
+        OUTPUT: an expression in the Schur basis
 
         EXAMPLES::
 

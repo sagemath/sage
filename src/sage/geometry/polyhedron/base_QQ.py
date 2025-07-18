@@ -10,7 +10,7 @@ from .base import Polyhedron_base
 
 class Polyhedron_QQ(Polyhedron_base):
     r"""
-    Base class for Polyhedra over `\QQ`
+    Base class for Polyhedra over `\QQ`.
 
     TESTS::
 
@@ -24,11 +24,9 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -46,11 +44,9 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -68,11 +64,9 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``x`` -- a number in the base ring.
+        - ``x`` -- a number in the base ring
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -97,13 +91,13 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``verbose`` -- (boolean; ``False`` by default) whether to display
-          verbose output.
+        - ``verbose`` -- boolean (default: ``False``); whether to display
+          verbose output
 
-        - ``use_Hrepresentation`` -- (boolean; ``False`` by default) -- whether
+        - ``use_Hrepresentation`` -- boolean (default: ``False``); whether
           to send the H or V representation to LattE
 
-        - ``preprocess`` -- (boolean; ``True`` by default) whether, if the integral hull
+        - ``preprocess`` -- boolean (default: ``True``); whether, if the integral hull
           is known to lie in a coordinate hyperplane, to tighten bounds to reduce dimension
 
         .. SEEALSO::
@@ -155,12 +149,12 @@ class Polyhedron_QQ(Polyhedron_base):
             ....:     x = lp.new_variable(nonnegative=True)
             ....:     lp.add_constraint(lp.sum(fibonacci(i+3)*x[i] for i in range(d)) <= b)
             ....:     return lp.polyhedron(backend=backend)
-            sage: fibonacci_knapsack(20, 12).integral_points_count() # does not finish with preprocess=False            # needs sage.combinat
+            sage: fibonacci_knapsack(20, 12).integral_points_count()  # does not finish with preprocess=False           # needs sage.combinat
             33
 
         TESTS:
 
-        We check that :trac:`21491` is fixed::
+        We check that :issue:`21491` is fixed::
 
             sage: P = Polyhedron(ieqs=[], eqns=[[-10,0,1],[-10,1,0]])
             sage: P.integral_points_count()
@@ -219,10 +213,12 @@ class Polyhedron_QQ(Polyhedron_base):
 
     @cached_method(do_pickle=True)
     def ehrhart_polynomial(self, engine=None, variable='t', verbose=False,
-            dual=None, irrational_primal=None, irrational_all_primal=None,
-            maxdet=None, no_decomposition=None, compute_vertex_cones=None,
-            smith_form=None, dualization=None, triangulation=None,
-            triangulation_max_height=None, **kwds):
+                           dual=None, irrational_primal=None,
+                           irrational_all_primal=None, maxdet=None,
+                           no_decomposition=None, compute_vertex_cones=None,
+                           smith_form=None, dualization=None,
+                           triangulation=None,
+                           triangulation_max_height=None, **kwds):
         r"""
         Return the Ehrhart polynomial of this polyhedron.
 
@@ -237,7 +233,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using LattE Integrale (optional)
@@ -245,19 +241,19 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``'normaliz'``; use Normaliz program (optional package pynormaliz).
             The backend of ``self`` must be set to ``'normaliz'``.
 
-        - ``variable`` -- string (default: ``'t'``); The variable in which the
-          Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial should be expressed
 
         - When the ``engine`` is ``'latte'``, the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); If ``True``, print the
-            whole output of the LattE command.
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+            whole output of the LattE command
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
           <https://www.math.ucdavis.edu/~latte/software/packages/latte_current/>`__:
 
-          * ``dual`` - boolean; triangulate and signed-decompose in the dual
+          * ``dual`` -- boolean; triangulate and signed-decompose in the dual
             space
           * ``irrational_primal`` -- boolean; triangulate in the dual space,
             signed-decompose in the primal space using irrationalization.
@@ -274,9 +270,7 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``triangulation_max_height`` -- integer; use a uniform distribution
             of height from 1 to this number
 
-        OUTPUT:
-
-        A univariate polynomial in ``variable`` over a rational field.
+        OUTPUT: a univariate polynomial in ``variable`` over a rational field
 
         .. SEEALSO::
 
@@ -356,12 +350,17 @@ class Polyhedron_QQ(Polyhedron_base):
             sage: Q = loads(dumps(P))
             sage: Q.ehrhart_polynomial.is_in_cache()
             True
+
+            sage: L = Polyhedron(vertices=[[QQ(0)]])
+            sage: L.ehrhart_polynomial()
+            1
         """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.rings.rational_field import QQ
+        R = PolynomialRing(QQ, variable)
+
         # check if ``self`` is compact and has vertices in ZZ
         if self.is_empty():
-            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            from sage.rings.rational_field import QQ
-            R = PolynomialRing(QQ, variable)
             return R.zero()
 
         if not self.is_compact():
@@ -369,10 +368,15 @@ class Polyhedron_QQ(Polyhedron_base):
 
         if any(not v.is_integral() for v in self.vertex_generator()):
             raise TypeError("the polytope has nonintegral vertices, use ehrhart_quasipolynomial with backend 'normaliz'")
+
+        if self.dimension() == 0:
+            return R.one()
+
         # Passes to specific latte or normaliz subfunction depending on engine
         if engine is None:
             # set default engine to latte
             engine = 'latte'
+
         if engine == 'latte':
             poly = self._ehrhart_polynomial_latte(verbose, dual,
             irrational_primal, irrational_all_primal, maxdet,
@@ -410,10 +414,10 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``variable`` -- string (default: ``'t'``); The variable in which the
-          Ehrhart polynomial should be expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial should be expressed
 
-        - ``engine`` -- string; The backend to use. Allowed values are:
+        - ``engine`` -- string; the backend to use. Allowed values are:
 
           * ``None`` (default); When no input is given the Ehrhart polynomial
             is computed using Normaliz (optional)
@@ -424,8 +428,8 @@ class Polyhedron_QQ(Polyhedron_base):
 
         - When the ``engine`` is 'latte', the additional input values are:
 
-          * ``verbose`` - boolean (default: ``False``); If ``True``, print the
-            whole output of the LattE command.
+          * ``verbose`` -- boolean (default: ``False``); if ``True``, print the
+            whole output of the LattE command
 
           The following options are passed to the LattE command, for details
           consult `the LattE documentation
@@ -444,7 +448,7 @@ class Polyhedron_QQ(Polyhedron_base):
           * ``compute_vertex_cones`` -- string; either ``'cdd'`` or ``'lrs'`` or ``'4ti2'``
           * ``smith_form`` -- string; either ``'ilio'`` or ``'lidia'``
           * ``dualization`` -- string; either ``'cdd'`` or ``'4ti2'``
-          * ``triangulation`` - string; ``'cddlib'``, ``'4ti2'`` or ``'topcom'``
+          * ``triangulation`` -- string; ``'cddlib'``, ``'4ti2'`` or ``'topcom'``
           * ``triangulation_max_height`` -- integer; use a uniform distribution of
             height from 1 to this number
 
@@ -593,8 +597,8 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``variable`` -- string (default: ``'t'``); The variable in which the
-          Ehrhart polynomial is expressed.
+        - ``variable`` -- string (default: ``'t'``); the variable in which the
+          Ehrhart polynomial is expressed
 
         OUTPUT:
 
@@ -657,7 +661,7 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``verbose`` -- boolean (default: ``False``); if ``True``, print the
-          whole output of the LattE command.
+          whole output of the LattE command
 
         The following options are passed to the LattE command, for details you
         should consult `the LattE documentation
@@ -667,15 +671,15 @@ class Polyhedron_QQ(Polyhedron_base):
           space
 
         - ``irrational_primal`` -- boolean; triangulate in the dual space,
-          signed-decompose in the primal space using irrationalization.
+          signed-decompose in the primal space using irrationalization
 
         - ``irrational_all_primal`` -- boolean; triangulate and signed-decompose
-          in the primal space using irrationalization.
+          in the primal space using irrationalization
 
         - ``maxdet`` -- integer; decompose down to an index (determinant) of
-          ``maxdet`` instead of index 1 (unimodular cones).
+          ``maxdet`` instead of index 1 (unimodular cones)
 
-        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones.
+        - ``no_decomposition`` -- boolean; do not signed-decompose simplicial cones
 
         - ``compute_vertex_cones`` -- string; either ``'cdd'`` or ``'lrs'`` or ``'4ti2'``
 
@@ -693,9 +697,7 @@ class Polyhedron_QQ(Polyhedron_base):
             Any additional argument is forwarded to LattE's executable
             ``count``. All occurrences of '_' will be replaced with a '-'.
 
-        OUTPUT:
-
-        A univariate polynomial over a rational field.
+        OUTPUT: a univariate polynomial over a rational field
 
         ALGORITHM:
 
@@ -814,11 +816,9 @@ class Polyhedron_QQ(Polyhedron_base):
         INPUT:
 
         - ``vertex_permutation`` -- permutation; a permutation of the vertices
-          of ``self``.
+          of ``self``
 
-        OUTPUT:
-
-        A subpolytope of ``self``.
+        OUTPUT: a subpolytope of ``self``
 
         .. NOTE::
 
@@ -927,7 +927,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         INPUT:
 
-        - ``conj_class_reps`` -- a list of representatives of the conjugacy
+        - ``conj_class_reps`` -- list of representatives of the conjugacy
           classes of the subgroup of the :meth:`restricted_automorphism_group` of
           the polytope. Each element is written as a permutation of the vertices
           of the polytope.
@@ -1021,7 +1021,6 @@ class Polyhedron_QQ(Polyhedron_base):
         There are several output options to see the intermediary outputs of the
         function.
 
-
         EXAMPLES:
 
         The `H^*`-polynomial of the standard (`d-1`)-dimensional simplex
@@ -1101,8 +1100,7 @@ class Polyhedron_QQ(Polyhedron_base):
     def _Hstar_function_normaliz(self, acting_group=None, output=None):
         r"""
         Return `H^*` as a rational function in `t` with coefficients in
-        the ring of class functions of the ``acting_group`'
-        of ``self``.
+        the ring of class functions of the ``acting_group`` of ``self``.
 
         INPUT:
 
@@ -1155,21 +1153,19 @@ class Polyhedron_QQ(Polyhedron_base):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         .. SEEALSO::
 
@@ -1232,21 +1228,19 @@ class Polyhedron_QQ(Polyhedron_base):
         coefficient of each `t^i` is an effective character in the ring of
         class functions of the acting group. A character `\rho` is effective if
         the coefficients of the irreducible representations in the expression
-        of `\rho` are non-negative integers.
+        of `\rho` are nonnegative integers.
 
         INPUT:
 
         - ``Hstar`` -- a rational function in `t` with coefficients in the ring
-          of class functions.
+          of class functions
 
         - ``Hstar_as_lin_comb`` -- vector. The coefficients of the irreducible
           representations of the acting group in the expression of ``Hstar`` as
           a linear combination of irreducible representations with coefficients
           in the field of rational functions in `t`.
 
-        OUTPUT:
-
-        Boolean. Whether the ``Hstar`` series is effective.
+        OUTPUT: boolean; whether the ``Hstar`` series is effective
 
         TESTS::
 

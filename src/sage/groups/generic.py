@@ -15,7 +15,6 @@ In the latter case, the caller must provide an identity, ``inverse()`` and
     multiplication_names = ('multiplication', 'times', 'product', '*')
     addition_names       = ('addition', 'plus', 'sum', '+')
 
-
 Also included are a generic function for computing multiples (or
 powers), and an iterator for general multiples and powers.
 
@@ -119,7 +118,6 @@ from copy import copy
 
 from sage.arith.misc import integer_ceil, integer_floor, xlcm
 from sage.arith.srange import xsrange
-from sage.misc.functional import log
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
@@ -171,9 +169,11 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         sage: E = EllipticCurve('389a1')
         sage: P = E(-1,1)
         sage: multiple(P, 10, '+')
-        (645656132358737542773209599489/22817025904944891235367494656 : 525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
+        (645656132358737542773209599489/22817025904944891235367494656 :
+         525532176124281192881231818644174845702936831/3446581505217248068297884384990762467229696 : 1)
         sage: multiple(P, -10, '+')
-        (645656132358737542773209599489/22817025904944891235367494656 : -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
+        (645656132358737542773209599489/22817025904944891235367494656 :
+         -528978757629498440949529703029165608170166527/3446581505217248068297884384990762467229696 : 1)
     """
     from operator import inv, mul, neg, add
 
@@ -182,7 +182,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         inverse = inv
         op = mul
     elif operation in addition_names:
-        identity = a.parent()(0)
+        identity = a.parent().zero()
         inverse = neg
         op = add
     else:
@@ -300,10 +300,10 @@ class multiples:
 
         INPUT:
 
-        - ``P`` -- step value: any Sage object on which a binary operation is defined
-        - ``n`` -- number of multiples: non-negative integer
-        - ``P0`` - offset (default 0): Sage object which can be 'added' to P
-        - ``indexed`` -- boolean (default ``False``)
+        - ``P`` -- step value; any Sage object on which a binary operation is defined
+        - ``n`` -- number of multiples; nonnegative integer
+        - ``P0`` -- offset (default: 0); Sage object which can be 'added' to P
+        - ``indexed`` -- boolean (default: ``False``)
 
           If ``indexed==False``, then the iterator delivers ``P0+i*P``
           (if ``operation=='+'``) or ``P0*P**i`` (if
@@ -329,18 +329,19 @@ class multiples:
             self.op = mul
         elif operation in addition_names:
             if P0 is None:
-                P0 = P.parent()(0)
+                P0 = P.parent().zero()
             self.op = add
         else:
-            self.op = op
             if P0 is None:
                 raise ValueError("P0 must be supplied when operation is neither addition nor multiplication")
             if op is None:
                 raise ValueError("op() must both be supplied when operation is neither addition nor multiplication")
+            self.op = op
 
         self.P = copy(P)
         self.Q = copy(P0)
-        assert self.P is not None and self.Q is not None
+        if self.P is None or self.Q is None:
+            raise ValueError("P and Q must not be None")
         self.i = 0
         self.bound = n
         self.indexed = indexed
@@ -384,6 +385,13 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     arguments are provided automatically; otherwise they must be
     provided by the caller.
 
+    .. SEEALSO::
+
+        - :func:`discrete_log` for a potentially faster algorithm by combining
+          Pohlig-Hellman with baby-step adjacent-step;
+        - :func:`order_from_bounds` to find the exact order instead of just some
+          multiple of the order.
+
     INPUT:
 
     - ``a`` -- group element
@@ -391,18 +399,20 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     - ``bounds`` -- a 2-tuple of integers ``(lower,upper)`` with ``0<=lower<=upper``
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the identity element of the group
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
     OUTPUT:
 
     An integer `n` such that `a^n = b` (or `na = b`).  If no
-    such `n` exists, this function raises a :class:`ValueError` exception.
+    such `n` exists, this function raises a :exc:`ValueError` exception.
 
-    NOTE: This is a generalization of discrete logarithm.  One
-    situation where this version is useful is to find the order of
-    an element in a group where we only have bounds on the group
-    order (see the elliptic curve example below).
+    .. NOTE::
+
+        This is a generalization of discrete logarithm.  One
+        situation where this version is useful is to find the order of
+        an element in a group where we only have bounds on the group
+        order (see the elliptic curve example below).
 
     ALGORITHM: Baby step giant step.  Time and space are soft
     `O(\sqrt{n})` where `n` is the difference between upper and lower
@@ -442,7 +452,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P, P.parent()(0), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
+        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
         69327408
 
     AUTHOR:
@@ -458,7 +468,8 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
         inverse = inv
         op = mul
     elif operation in addition_names:
-        identity = a.parent()(0)
+        # Should this be replaced with .zero()? With an extra AttributeError handler?
+        identity = a.parent().zero()
         inverse = neg
         op = add
     else:
@@ -469,7 +480,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
-    if a.is_zero() and not b.is_zero():
+    if a == identity and b != identity:
         raise ValueError("no solution in bsgs()")
 
     ran = 1 + ub - lb   # the length of the interval
@@ -479,7 +490,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     if ran < 30:    # use simple search for small ranges
         d = c
-#        for i,d in multiples(a,ran,c,indexed=True,operation=operation):
+        # for i,d in multiples(a,ran,c,indexed=True,operation=operation):
         for i0 in range(ran):
             i = lb + i0
             if identity == d:        # identity == b^(-1)*a^i, so return i
@@ -522,15 +533,15 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     - ``base`` -- a group element
     - ``ord`` -- the order of ``base`` or ``None``, in this case we try
       to compute it
-    - ``operation`` -- a string (default: ``'*'``) denoting whether we
+    - ``operation`` -- string (default: ``'*'``); denoting whether we
       are in an additive group or a multiplicative one
     - ``identity`` -- the group's identity
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``hash_function`` -- having an efficient hash function is critical
       for this algorithm (see examples)
 
-    OUTPUT: an integer `n` such that `a = base^n` (or `a = n*base`)
+    OUTPUT: integer `n` such that `a = base^n` (or `a = n*base`)
 
     ALGORITHM: Pollard rho for discrete logarithm, adapted from the
     article of Edlyn Teske, 'A space efficient algorithm for group
@@ -566,7 +577,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
         ...
         ValueError: for Pollard rho algorithm the order of the group must be prime
 
-    If it fails to find a suitable logarithm, it raises a :class:`ValueError`::
+    If it fails to find a suitable logarithm, it raises a :exc:`ValueError`::
 
         sage: I = IntegerModRing(171980)
         sage: discrete_log_rho(I(31002), I(15501))                                      # needs sage.libs.pari
@@ -596,7 +607,6 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     AUTHOR:
 
     - Yann Laigle-Chapuy (2009-09-05)
-
     """
     from sage.rings.integer import Integer
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -683,7 +693,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
 
-def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
+def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs', *, verify=True):
     r"""
     Totally generic discrete log function.
 
@@ -691,13 +701,19 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     - ``a`` -- group element
     - ``base`` -- group element (the base)
-    - ``ord`` -- integer (multiple of order of base, or ``None``)
+    - ``ord`` -- integer (multiple of order of base, ``None``, or
+      :mod:`oo <sage.rings.infinity>``); if this is
+      :mod:`oo <sage.rings.infinity>`, then it explicitly does
+      not use this, for example when factorizing the order is difficult
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the group's identity
-    - ``inverse()`` - function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
-    - ``algorithm`` -- string denoting what algorithm to use for prime-order logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``algorithm`` -- string denoting what algorithm to use for prime-order
+      logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
+    - ``verify`` -- boolean (default: ``True``); whether to verify that output is
+      correct before returning it.
 
     ``a`` and ``base`` must be elements of some group with identity
     given by ``identity``, inverse of ``x`` by ``inverse(x)``, and group
@@ -713,9 +729,9 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     assuming that ``ord`` is a multiple of the order of the base `b`.
     If ``ord`` is not specified, an attempt is made to compute it.
 
-    If no such `n` exists, this function raises a :class:`ValueError` exception.
+    If no such `n` exists, this function raises a :exc:`ValueError` exception.
 
-    .. warning::
+    .. WARNING::
 
        If ``x`` has a ``log`` method, it is likely to be vastly faster
        than using this function.  E.g., if ``x`` is an integer modulo
@@ -750,7 +766,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ...
         ValueError: no discrete log of 2 found to base 1
 
-    See :trac:`2356`::
+    See :issue:`2356`::
 
         sage: F.<w> = GF(121)                                                           # needs sage.rings.finite_rings
         sage: v = w^120                                                                 # needs sage.rings.finite_rings
@@ -780,7 +796,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(eta,eps,bounds=(0,100))                                      # needs sage.rings.number_field
         Traceback (most recent call last):
         ...
-        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24
+        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24 with bounds (0, 100)
 
     But we can invert the base (and negate the result) instead::
 
@@ -858,6 +874,14 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(u, g, algorithm='rho')
         123456789
 
+    Pass ``ord=oo`` to avoid attempts to factorize the group order::
+
+        sage: p, q = next_prime(2^128), next_prime(2^129)
+        sage: a = mod(2, p*q*124+1)
+        sage: discrete_log(a^100, a, bounds=(1, 500))  # not tested (takes very long, but pari.addprimes(p) makes it faster)
+        sage: discrete_log(a^100, a, ord=oo, bounds=(1, 500))
+        100
+
     TESTS:
 
     Random testing::
@@ -884,6 +908,16 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ....: else:
         ....:     assert res == sol
 
+    Verify that :issue:`38316` is fixed::
+
+        sage: F = GF(5)
+        sage: base = F(3)
+        sage: a = F(1)
+        sage: discrete_log(a, base, bounds=(1,2), operation="*")
+        Traceback (most recent call last):
+        ...
+        ValueError: no discrete log of 1 found to base 3 with bounds (1, 2)
+
     AUTHORS:
 
     - William Stein and David Joyner (2005-01-05)
@@ -893,13 +927,15 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     from operator import mul, add, pow
     power = mul if operation in addition_names else pow
     mult = add if operation in addition_names else mul
+    original_a = a # Store the original value of a so we can verify the answer
     if op:
         mult = op
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
     if bounds:
         lb, ub = map(integer_ring.ZZ, bounds)
-    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names+multiplication_names:
+    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names + multiplication_names:
         raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
+    from sage.rings.infinity import Infinity
     if ord is None:
         if operation in multiplication_names:
             try:
@@ -911,11 +947,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 ord = base.additive_order()
             except Exception:
                 ord = base.order()
-    else:
+    elif ord != Infinity:
         ord = integer_ring.ZZ(ord)
     try:
-        from sage.rings.infinity import Infinity
-        if ord == +Infinity:
+        if ord == Infinity:
             return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
         if base == power(base, 0) and a != base:
             raise ValueError
@@ -959,9 +994,13 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 break  # we have log%running_mod. if we know that log<running_mod, then we have the value of log.
         l = l[:i + 1]
         from sage.arith.misc import CRT_list
-        return (CRT_list(l, mods) + offset) % ord
+        result = (CRT_list(l, mods) + offset) % ord
+        if (verify and power(base, result) != original_a):
+            raise ValueError
+        return result
     except ValueError:
-        raise ValueError("no discrete log of %s found to base %s" % (a, base))
+        with_bounds = f" with bounds {bounds}" if bounds else ""
+        raise ValueError(f"no discrete log of {original_a} found to base {base}{with_bounds}")
 
 
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
@@ -980,16 +1019,16 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     INPUT:
 
-    - a -- a group element
-    - base -- a group element
-    - bounds -- a couple (lb,ub) representing the range where we look for a logarithm
-    - operation -- string: '+', '*' or 'other'
-    - identity -- the identity element of the group
-    - inverse() -- function of 1 argument ``x`` returning inverse of ``x``
-    - op() -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
-    - hash_function -- having an efficient hash function is critical for this algorithm
+    - ``a`` -- a group element
+    - ``base`` -- a group element
+    - ``bounds`` -- a couple (lb,ub) representing the range where we look for a logarithm
+    - ``operation`` -- string: '+', '*' or 'other'
+    - ``identity`` -- the identity element of the group
+    - ``inverse`` -- function of 1 argument ``x`` returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``hash_function`` -- having an efficient hash function is critical for this algorithm
 
-    OUTPUT: Returns an integer `n` such that `a=base^n` (or `a=n*base`)
+    OUTPUT: integer `n` such that `a=base^n` (or `a=n*base`)
 
     ALGORITHM: Pollard Lambda, if bounds are (lb,ub) it has time complexity
         O(sqrt(ub-lb)) and space complexity O(log(ub-lb))
@@ -1008,7 +1047,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     This will return a multiple of the order of P::
 
-        sage: discrete_log_lambda(P.parent()(0), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
+        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
         ....:                     operation='+')
         69327408
 
@@ -1021,7 +1060,6 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     AUTHOR:
 
         -- Yann Laigle-Chapuy (2009-01-25)
-
     """
     from sage.rings.integer import Integer
     from operator import mul, add
@@ -1187,28 +1225,33 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
 
 
 def order_from_multiple(P, m, plist=None, factorization=None, check=True,
-                        operation='+'):
+                        operation='+', identity=None, inverse=None, op=None):
     r"""
     Generic function to find order of a group element given a multiple
     of its order.
 
+    See :meth:`bsgs` for full explanation of the inputs.
+
     INPUT:
 
-    - ``P`` -- a Sage object which is a group element;
-    - ``m`` -- a Sage integer which is a multiple of the order of ``P``,
-      i.e. we require that ``m*P=0`` (or ``P**m=1``);
+    - ``P`` -- a Sage object which is a group element
+    - ``m`` -- Sage integer which is a multiple of the order of ``P``,
+      i.e. we require that ``m*P=0`` (or ``P**m=1``)
     - ``check`` -- a Boolean (default: ``True``), indicating whether we check if ``m``
-      really is a multiple of the order;
+      really is a multiple of the order
     - ``factorization`` -- the factorization of ``m``, or ``None`` in which
-      case this function will need to factor ``m``;
-    - ``plist`` -- a list of the prime factors of ``m``, or ``None`` - kept for compatibility only,
-      prefer the use of ``factorization``;
-    - ``operation`` -- string: ``'+'`` (default) or ``'*'``.
+      case this function will need to factor ``m``
+    - ``plist`` -- list of the prime factors of ``m``, or ``None``. Kept for compatibility only,
+      prefer the use of ``factorization``
+    - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``
+    - ``identity`` -- the identity element of the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
-    .. note::
+    .. NOTE::
 
-       It is more efficient for the caller to factor ``m`` and cache
-       the factors for subsequent calls.
+        It is more efficient for the caller to factor ``m`` and cache
+        the factors for subsequent calls.
 
     EXAMPLES::
 
@@ -1249,22 +1292,42 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: K.<a> = GF(3^60)
         sage: order_from_multiple(a, 3^60 - 1, operation='*', check=False)
         42391158275216203514294433200
+
+    TESTS:
+
+    Check that :issue:`38489` is fixed::
+
+        sage: from sage.groups.generic import order_from_multiple
+        sage: plist = [43, 257, 547, 881]
+        sage: m = prod(plist[:-1])
+        sage: elt = Zmod(m)(plist[-1])
+        sage: order_from_multiple(elt, m, plist=plist)
+        6044897
     """
     Z = integer_ring.ZZ
 
     if operation in multiplication_names:
         identity = P.parent().one()
     elif operation in addition_names:
-        identity = P.parent()(0)
+        identity = P.parent().zero()
     else:
-        raise ValueError("unknown group operation")
+        if identity is None or inverse is None or op is None:
+            raise ValueError("identity, inverse and operation must all be specified")
+
+    def _multiple(A, B):
+        return multiple(A,
+                        B,
+                        operation=operation,
+                        identity=identity,
+                        inverse=inverse,
+                        op=op)
 
     if P == identity:
         return Z.one()
 
     M = Z(m)
-    if check:
-        assert multiple(P, M, operation=operation) == identity
+    if check and _multiple(P, M) != identity:
+        raise ValueError(f"The order of P(={P}) does not divide {M}")
 
     if factorization:
         F = factorization
@@ -1280,7 +1343,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     # we use an internal recursive function to avoid unnecessary computations.
     def _order_from_multiple_helper(Q, L, S):
         """
-        internal use, to minimize the number of group operations.
+        For internal use, to minimize the number of group operations.
         """
         l = len(L)
         if l == 1:
@@ -1293,7 +1356,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             p, e = L[0]
             e0 = 0
             while (Q != identity) and (e0 < e - 1):
-                Q = multiple(Q, p, operation=operation)
+                Q = _multiple(Q, p)
                 e0 += 1
             if Q != identity:
                 e0 += 1
@@ -1308,16 +1371,14 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
                 if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
                     break
                 sum_left += v
+            if not 0 < k < l:
+                k = l // 2
             L1 = L[:k]
             L2 = L[k:]
             # recursive calls
             o1 = _order_from_multiple_helper(
-                multiple(Q, prod([p**e for p, e in L2]), operation),
-                L1,
-                sum_left)
-            o2 = _order_from_multiple_helper(multiple(Q, o1, operation),
-                                             L2,
-                                             S - sum_left)
+                _multiple(Q, prod([p**e for p, e in L2])), L1, sum_left)
+            o2 = _order_from_multiple_helper(_multiple(Q, o1), L2, S - sum_left)
             return o1 * o2
 
     return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
@@ -1335,22 +1396,21 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     - ``P`` -- a Sage object which is a group element
 
     - ``bounds`` -- a 2-tuple ``(lb,ub)`` such that ``m*P=0`` (or
-      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``.
+      ``P**m=1``) for some ``m`` with ``lb<=m<=ub``
 
     - ``d`` -- (optional) a positive integer; only ``m`` which are
-      multiples of this will be considered.
+      multiples of this will be considered
 
-    - ``operation`` -- string: ``'+'`` (default ) or ``'*'`` or other.
+    - ``operation`` -- string; ``'+'`` (default) or ``'*'`` or other.
       If other, the following must be supplied:
 
-      - ``identity`` -- the identity element for the group;
-      - ``inverse()`` -- a function of one argument giving the inverse
-        of a group element;
-      - ``op()`` -- a function of 2 arguments defining the group binary
-        operation.
+      - ``identity`` -- the identity element for the group
+      - ``inverse`` -- a function of one argument giving the inverse
+        of a group element
+      - ``op`` -- a function of 2 arguments defining the group binary
+        operation
 
-
-    .. note::
+    .. NOTE::
 
        Typically ``lb`` and ``ub`` will be bounds on the group order,
        and from previous calculation we know that the group order is
@@ -1389,7 +1449,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
         identity = P.parent().one()
     elif operation in addition_names:
         op = add
-        identity = P.parent()(0)
+        identity = P.parent().zero()
     else:
         if op is None:
             raise ValueError("operation and identity must be specified")
@@ -1410,7 +1470,8 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     return order_from_multiple(P, m, operation=operation, check=False)
 
-def has_order(P, n, operation='+'):
+
+def has_order(P, n, operation='+') -> bool:
     r"""
     Generic function to test if a group element `P` has order
     exactly equal to a given positive integer `n`.
@@ -1462,18 +1523,36 @@ def has_order(P, n, operation='+'):
         True
         sage: has_order(el, o.factor())
         True
-        sage: has_order(el, ZZ(randrange(100)*o + randrange(o)))
+        sage: not_o = ZZ(randrange(100*o))
+        sage: not_o += (not_o == o)
+        sage: has_order(el, not_o)
         False
+
+    Check for :issue:`37102`::
+
+        sage: from sage.groups.generic import has_order
+        sage: x = Mod(9, 24)
+        sage: has_order(x, 0)
+        False
+        sage: has_order(x, -8)
+        False
+
+    Check for :issue:`38708`::
+
+        sage: has_order(Mod(2,3), int(2), operation='*')
+        True
 
     .. NOTE::
 
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    if isinstance(n, sage.rings.integer.Integer):
+    if not isinstance(n, sage.structure.factorization.Factorization):
+        n = integer_ring.ZZ(n)
+        if n <= 0:
+            return False
         n = n.factor()
 
-    G = P.parent()
     if operation in addition_names:
         isid = lambda el: not el
         mult = lambda el, n: multiple(el, n, operation='+')
@@ -1483,7 +1562,7 @@ def has_order(P, n, operation='+'):
     else:
         raise ValueError('unknown group operation')
 
-    def _rec(Q, fn):
+    def _rec(Q, fn) -> bool:
         if not fn:
             return isid(Q)
 
@@ -1497,8 +1576,8 @@ def has_order(P, n, operation='+'):
 
         fl = fn[::2]
         fr = fn[1::2]
-        l = prod(p**k for p,k in fl)
-        r = prod(p**k for p,k in fr)
+        l = prod(p**k for p, k in fl)
+        r = prod(p**k for p, k in fr)
         L, R = mult(Q, r), mult(Q, l)
         return _rec(L, fl) and _rec(R, fr)
 
@@ -1514,18 +1593,16 @@ def merge_points(P1, P2, operation='+',
 
     - ``P1`` -- a pair `(g_1,n_1)` where `g_1` is a group element of order `n_1`
     - ``P2`` -- a pair `(g_2,n_2)` where `g_2` is a group element of order `n_2`
-    - ``operation`` -- string: ``'+'`` (default) or ``'*'`` or other. If
+    - ``operation`` -- string; ``'+'`` (default) or ``'*'`` or other. If
       other, the following must be supplied:
 
-      - ``identity`` -- the identity element for the group;
-      - ``inverse()`` -- a function of one argument giving the inverse
-        of a group element;
-      - ``op()`` -- a function of 2 arguments defining the group
-        binary operation.
+      - ``identity`` -- the identity element for the group
+      - ``inverse`` -- a function of one argument giving the inverse
+        of a group element
+      - ``op`` -- a function of 2 arguments defining the group
+        binary operation
 
-    OUTPUT:
-
-    A pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`.
+    OUTPUT: a pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`
 
     EXAMPLES::
 
@@ -1568,14 +1645,14 @@ def merge_points(P1, P2, operation='+',
         identity = g1.parent().one()
     elif operation in addition_names:
         op = add
-        identity = g1.parent()(0)
+        identity = g1.parent().zero()
     else:
         if op is None:
             raise ValueError("operation and identity must be specified")
 
     if check:
-        assert multiple(g1, n1, operation=operation) == identity
-        assert multiple(g2, n2, operation=operation) == identity
+        if multiple(g1, n1, operation=operation) != identity or multiple(g2, n2, operation=operation) != identity:
+            raise ValueError("the orders provided do not divide the orders of the points provided")
 
     # trivial cases
     if n1.divides(n2):
@@ -1598,17 +1675,14 @@ def structure_description(G, latex=False):
     This methods wraps GAP's ``StructureDescription`` method.
 
     For full details, including the form of the returned string and the
-    algorithm to build it, see `GAP's documentation
-    <https://www.gap-system.org/Manuals/doc/ref/chap39.html>`_.
+    algorithm to build it, see :gap:`GAP's documentation <chap39>`.
 
     INPUT:
 
-    - ``latex`` -- a boolean (default: ``False``). If ``True``, return a
-      LaTeX formatted string.
+    - ``latex`` -- boolean (default: ``False``); if ``True``, return a
+      LaTeX formatted string
 
-    OUTPUT:
-
-    string
+    OUTPUT: string
 
     .. WARNING::
 
@@ -1643,14 +1717,14 @@ def structure_description(G, latex=False):
         sage: D4.structure_description()                                                # needs sage.groups
         'D4'
 
-    Works for finitely presented groups (:trac:`17573`)::
+    Works for finitely presented groups (:issue:`17573`)::
 
         sage: F.<x, y> = FreeGroup()                                                    # needs sage.groups
         sage: G = F / [x^2*y^-1, x^3*y^2, x*y*x^-1*y^-1]                                # needs sage.groups
         sage: G.structure_description()                                                 # needs sage.groups
         'C7'
 
-    And matrix groups (:trac:`17573`)::
+    And matrix groups (:issue:`17573`)::
 
         sage: groups.matrix.GL(4,2).structure_description()                             # needs sage.libs.gap sage.modules
         'A8'

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Axioms
 
@@ -179,7 +180,7 @@ imported and is fully functional without importing :class:`FiniteGroups`.
 
     In principle, due to a limitation of
     :class:`~sage.misc.lazy_import.LazyImport` with nested classes (see
-    :trac:`15648`), one should pass the option ``as_name`` to
+    :issue:`15648`), one should pass the option ``as_name`` to
     :class:`~sage.misc.lazy_import.LazyImport`::
 
         Finite = LazyImport('sage.categories.finite_groups', 'FiniteGroups',
@@ -309,7 +310,7 @@ automatically the base category class and axiom because the class
     error is raised), it saves on some redundant information, and it
     is only used for the simple shorthands like ``FiniteGroups()`` for
     ``Groups().Finite()``. Finally, most if not all of these
-    shorthands are likely to eventually disappear (see :trac:`15741`
+    shorthands are likely to eventually disappear (see :issue:`15741`
     and the :ref:`related discussion in the primer
     <category-primer-axioms-single-entry-point>`).
 
@@ -748,7 +749,7 @@ or::
 
 The infrastructure would then be in charge of building the appropriate
 arborescence under the hood. Or rely on some database (see discussion
-on :trac:`10963`, in particular at the end of comment 332).
+on :issue:`10963`, in particular at the end of comment 332).
 
 Axioms defined upon other axioms
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -930,7 +931,7 @@ to an infinite recursion.
     the future, with quite a few occurrences already implemented in
     upcoming issues. For the time being though there is a single
     occurrence of this idiom outside of the tests. So this would be an
-    easy thing to refactor after :trac:`10963` if a better idiom is
+    easy thing to refactor after :issue:`10963` if a better idiom is
     found.
 
 Larger synthetic examples
@@ -1372,7 +1373,7 @@ Upcoming features
 
           A.CartesianProducts() & B.CartesianProducts() = (A&B).CartesianProducts()
 
-    - Once full subcategories are implemented (see :trac:`10668`),
+    - Once full subcategories are implemented (see :issue:`10668`),
       make the relevant categories with axioms be such. This can be
       done systematically for, e.g., the axioms ``Associative`` or
       ``Commutative``, but not for the axiom ``Unital``: a semigroup
@@ -1693,7 +1694,8 @@ all_axioms += ("Flying", "Blue",
                "Stratified",
               )
 
-def uncamelcase(s,separator=" "):
+
+def uncamelcase(s, separator=" "):
     """
     EXAMPLES::
 
@@ -1705,6 +1707,7 @@ def uncamelcase(s,separator=" "):
         'finite_dimensional_algebras'
     """
     return re.sub("(?!^)[A-Z]", lambda match: separator+match.group()[0], s).lower()
+
 
 def base_category_class_and_axiom(cls):
     """
@@ -1756,7 +1759,7 @@ def base_category_class_and_axiom(cls):
 
         In the following example, we could possibly retrieve ``Sets``
         from the class name. However this cannot be implemented
-        robustly until :trac:`9107` is fixed. Anyway this feature
+        robustly until :issue:`9107` is fixed. Anyway this feature
         has not been needed so far::
 
             sage: Sets.Infinite
@@ -1854,6 +1857,7 @@ def axiom_of_nested_class(cls, nested_cls):
         "{} not a nested axiom class of {} for axiom {}".format(nested_cls, cls, axiom)
     return axiom
 
+
 class CategoryWithAxiom(Category):
     r"""
     An abstract class for categories obtained by adding an axiom
@@ -1904,7 +1908,7 @@ class CategoryWithAxiom(Category):
             sage: CommutativeRings()._base_category_class_and_axiom
             (<class 'sage.categories.rings.Rings'>, 'Commutative')
             sage: CommutativeRings()._base_category_class_and_axiom_origin
-            'deduced by base_category_class_and_axiom'
+            'set by __classget__'
 
         ``Sets.Infinite`` is a nested class, so the attribute is set
         by :meth:`CategoryWithAxiom.__classget__` the first time
@@ -2215,7 +2219,7 @@ class CategoryWithAxiom(Category):
         INPUT:
 
         - ``base_category`` -- a category
-        - ``axioms`` -- a list or iterable of strings
+        - ``axioms`` -- list or iterable of strings
 
         EXAMPLES::
 
@@ -2521,7 +2525,7 @@ class CategoryWithAxiom_over_base_ring(CategoryWithAxiom, Category_over_base_rin
         Category_over_base_ring.__init__(self, base_category.base_ring())
 
 
-class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):#, Category_singleton, FastHashable_class):
+class CategoryWithAxiom_singleton(Category_singleton, CategoryWithAxiom):  # Category_singleton, FastHashable_class):
     pass
 
 
@@ -2530,30 +2534,30 @@ The following workaround is needed until any :class:`CategoryWithAxiom` of a
 :class:`Category_over_base_ring` becomes automatically a
 :class:`CategoryWithAxiom_over_base_ring`::
 
-    sage: from sage.categories.category_with_axiom import TestObjectsOverBaseRing, Category_over_base_ring
+    sage: from sage.categories.category_with_axiom import DummyObjectsOverBaseRing, Category_over_base_ring
     sage: from sage.categories.category import JoinCategory
-    sage: isinstance(TestObjectsOverBaseRing(QQ), Category_over_base_ring)
+    sage: isinstance(DummyObjectsOverBaseRing(QQ), Category_over_base_ring)
     True
-    sage: C = TestObjectsOverBaseRing(QQ).Commutative()
+    sage: C = DummyObjectsOverBaseRing(QQ).Commutative()
     sage: isinstance(C, Category_over_base_ring)          # todo: not implemented
     True
     sage: C.FiniteDimensional()
-    Category of finite dimensional commutative test objects over base ring over Rational Field
+    Category of finite dimensional commutative dummy objects over base ring over Rational Field
     sage: C.Commutative()
-    Category of commutative test objects over base ring over Rational Field
+    Category of commutative dummy objects over base ring over Rational Field
     sage: C.Unital()
-    Category of commutative unital test objects over base ring over Rational Field
+    Category of commutative unital dummy objects over base ring over Rational Field
 
-    sage: C = TestObjectsOverBaseRing(IntegerModRing(2)).Connected()
+    sage: C = DummyObjectsOverBaseRing(IntegerModRing(2)).Connected()
     sage: isinstance(C, JoinCategory)
     True
     sage: isinstance(C, Category_over_base_ring)          # todo: not implemented
     True
     sage: C.FiniteDimensional()
-    Category of finite dimensional connected test objects
+    Category of finite dimensional connected dummy objects
      over base ring over Ring of integers modulo 2
     sage: C.Connected()
-    Category of connected test objects over base ring over Ring of integers modulo 2
+    Category of connected dummy objects over base ring over Ring of integers modulo 2
 """
 
 ##############################################################################
@@ -2600,7 +2604,7 @@ class Blahs(Category_singleton):
 
     - :class:`Bars`
     - :class:`TestObjects`
-    - :class:`TestObjectsOverBaseRing`
+    - :class:`DummyObjectsOverBaseRing`
     """
 
     def super_categories(self):
@@ -2784,7 +2788,7 @@ class TestObjects(Category_singleton):
         pass
 
 
-class TestObjectsOverBaseRing(Category_over_base_ring):
+class DummyObjectsOverBaseRing(Category_over_base_ring):
     r"""
     A toy singleton category, for testing purposes.
 
@@ -2795,14 +2799,14 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
         """
         TESTS::
 
-            sage: from sage.categories.category_with_axiom import TestObjectsOverBaseRing
-            sage: TestObjectsOverBaseRing(QQ).super_categories()
+            sage: from sage.categories.category_with_axiom import DummyObjectsOverBaseRing
+            sage: DummyObjectsOverBaseRing(QQ).super_categories()
             [Category of test objects]
-            sage: TestObjectsOverBaseRing.Unital.an_instance()
-            Category of unital test objects over base ring over Rational Field
-            sage: TestObjectsOverBaseRing.FiniteDimensional.Unital.an_instance()
-            Category of finite dimensional unital test objects over base ring over Rational Field
-            sage: C = TestObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()
+            sage: DummyObjectsOverBaseRing.Unital.an_instance()
+            Category of unital dummy objects over base ring over Rational Field
+            sage: DummyObjectsOverBaseRing.FiniteDimensional.Unital.an_instance()
+            Category of finite dimensional unital dummy objects over base ring over Rational Field
+            sage: C = DummyObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()
             sage: TestSuite(C).run()
         """
         return [TestObjects()]

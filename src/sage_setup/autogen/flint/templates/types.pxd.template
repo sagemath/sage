@@ -1,5 +1,8 @@
 # distutils: depends = {HEADER_LIST}
 
+# WARNING: src/sage/libs/flint/types.pxd is generated from
+# src/sage_setup/autogen/flint/templates/types.pxd.template
+# please make sure that you are modifying the correct file!
 """
 Declarations for FLINT types
 """
@@ -21,6 +24,9 @@ ctypedef mp_limb_t ulong
 ctypedef mp_limb_signed_t slong
 ctypedef mp_limb_t flint_bitcnt_t
 
+# New in flint 3.2.0-rc1
+ctypedef mp_ptr nn_ptr
+ctypedef mp_srcptr nn_srcptr
 
 cdef extern from "flint_wrap.h":
     # flint/fmpz.h
@@ -129,10 +135,10 @@ cdef extern from "flint_wrap.h":
     ctypedef arb_mat_struct arb_mat_t[1]
 
     ctypedef struct arb_poly_struct:
-        pass
+        arb_ptr coeffs
+        long alloc
+        long length
     ctypedef arb_poly_struct[1] arb_poly_t
-    ctypedef arb_poly_struct * arb_poly_ptr
-    ctypedef const arb_poly_struct * arb_poly_srcptr
 
 
     # flint/arb_calc.h
@@ -165,10 +171,10 @@ cdef extern from "flint_wrap.h":
 
     # flint/acb_poly.h
     ctypedef struct acb_poly_struct:
-        pass
+        acb_ptr coeffs
+        long alloc
+        long length
     ctypedef acb_poly_struct[1] acb_poly_t
-    ctypedef acb_poly_struct * acb_poly_ptr
-    ctypedef const acb_poly_struct * acb_poly_srcptr
 
     # flint/acb_calc.h
     ctypedef struct acb_calc_integrate_opt_struct:
@@ -263,9 +269,19 @@ cdef extern from "flint_wrap.h":
 
 
     # flint/flint.h
-    ctypedef struct flint_rand_s:
+    ctypedef struct flint_rand_struct:
         pass
-    ctypedef flint_rand_s flint_rand_t[1]
+    ctypedef flint_rand_struct flint_rand_t[1]
+    ctypedef enum flint_err_t:
+        # flint_autogen.py does not support parsing .. enum:: yet
+        FLINT_ERROR
+        FLINT_OVERFLOW
+        FLINT_IMPINV
+        FLINT_DOMERR
+        FLINT_DIVZERO
+        FLINT_EXPOF
+        FLINT_INEXACT
+        FLINT_TEST_FAIL
 
     cdef long FLINT_BITS
     cdef long FLINT_D_BITS

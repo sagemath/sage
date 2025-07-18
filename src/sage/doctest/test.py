@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Test the doctesting framework
 
@@ -9,11 +10,12 @@ EXAMPLES::
     sage: import signal
     sage: import subprocess
     sage: import time
+    sage: import os
     sage: from sage.env import SAGE_SRC
     sage: tests_dir = os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests')
     sage: tests_env = dict(os.environ)
 
-Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
+Unset :envvar:`TERM` when running doctests, see :issue:`14370`::
 
     sage: try:
     ....:     del tests_env['TERM']
@@ -21,25 +23,25 @@ Unset :envvar:`TERM` when running doctests, see :trac:`14370`::
     ....:     pass
     sage: kwds = {'cwd': tests_dir, 'env':tests_env}
 
-Check that :trac:`2235` has been fixed::
+Check that :issue:`2235` has been fixed::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:       "--random-seed=0", "--optional=sage", "longtime.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 longtime.rst
-    [0 tests, ...s]
+    [0 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
     ...
     0
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "-l", "longtime.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
     sage -t --long --warn-long 0.0 --random-seed=0 longtime.rst
-    [1 test, ...s]
+    [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -48,7 +50,7 @@ Check that :trac:`2235` has been fixed::
 
 Check handling of tolerances::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "tolerance.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -118,7 +120,7 @@ Check handling of tolerances::
 
 Test the ``--initial`` option::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "-i", "initial.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -149,7 +151,7 @@ Test the ``--initial`` option::
 
 Test the ``--exitfirst`` option::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "--exitfirst", "initial.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -172,12 +174,12 @@ Test the ``--exitfirst`` option::
 
 Test a timeout using the ``SAGE_TIMEOUT`` environment variable.  Also set
 ``CYSIGNALS_CRASH_NDEBUG`` to help ensure the test times out in a timely
-manner (:trac:`26912`)::
+manner (:issue:`26912`)::
 
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
     sage: kwds2['env'].update({'SAGE_TIMEOUT': '1', 'CYSIGNALS_CRASH_NDEBUG': '1'})
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "99seconds.rst"], **kwds2)
     Running doctests...
     Doctesting 1 file.
@@ -194,7 +196,7 @@ manner (:trac:`26912`)::
 
 Test handling of ``KeyboardInterrupt`` in doctests::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "keyboardinterrupt.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -217,7 +219,7 @@ Test handling of ``KeyboardInterrupt`` in doctests::
 
 Interrupt the doctester::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "interrupt.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -236,7 +238,7 @@ doesn't hurt::
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
     sage: kwds2['env']['DOCTEST_TEST_PID_FILE'] = F  # Doctester will write its PID in this file
-    sage: subprocess.call(["sage", "-tp", "1000000", "--timeout=120",  # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "-p", "1000000", "--timeout=120",  # long time
     ....:      "--die_timeout=10", "--optional=sage",
     ....:      "--warn-long", "0", "99seconds.rst", "interrupt_diehard.rst"], **kwds2)
     Running doctests...
@@ -265,14 +267,14 @@ after the ``die_timeout`` given above (10 seconds)::
 
 If the child process is dead and removed, the last output should be as above.
 However, the child process interrupted its parent process (see
-``"interrupt_diehard.rst"``), and became an orphan process. Depending on the
+``'interrupt_diehard.rst'``), and became an orphan process. Depending on the
 system, an orphan process may eventually become a zombie process instead of
 being removed, and then the last output would just be a blank. Hence the ``#
 random`` tag.
 
 Test a doctest failing with ``abort()``::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "abort.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -294,15 +296,21 @@ Test a doctest failing with ``abort()``::
     ...
     16
 
-A different kind of crash::
+A different kind of crash (also test printing of line continuation ``...:``,
+represented by ``<DOTSCOLON>`` below)::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
-    ....:      "--random-seed=0", "--optional=sage", "fail_and_die.rst"], **kwds)
+    sage: # long time
+    sage: proc = subprocess.run(["python3", "-m", "sage.doctest", "--warn-long", "0",
+    ....:      "--random-seed=0", "--optional=sage", "fail_and_die.rst"], **kwds,
+    ....:      stdout=subprocess.PIPE, text=True)
+    sage: # the replacements are needed to avoid the strings being interpreted
+    ....: # specially by the doctesting framework
+    sage: print(proc.stdout.replace('sage:', 'sage<COLON>').replace('....:', '<DOTSCOLON>'))
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst
     **********************************************************************
-    File "fail_and_die.rst", line 5, in sage.doctest.tests.fail_and_die
+    File "fail_and_die.rst", line 8, in sage.doctest.tests.fail_and_die
     Failed example:
         this_gives_a_NameError
     Exception raised:
@@ -312,16 +320,23 @@ A different kind of crash::
         Killed due to kill signal
     **********************************************************************
     Tests run before process (pid=...) failed:
-    ...
+    sage<COLON> import time, signal ## line 4 ##
+    sage<COLON> print(1,
+    <DOTSCOLON>       2) ## line 5 ##
+    1 2
+    sage<COLON> this_gives_a_NameError ## line 8 ##
+    sage<COLON> os.kill(os.getpid(), signal.SIGKILL) ## line 9 ##
+    **********************************************************************
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst  # Killed due to kill signal
     ----------------------------------------------------------------------
     ...
+    sage: proc.returncode
     16
 
 Test that ``sig_on_count`` is checked correctly::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "sig_on.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -344,10 +359,10 @@ Test that ``sig_on_count`` is checked correctly::
     ...
     1
 
-Test logfiles in serial and parallel mode (see :trac:`19271`)::
+Test logfiles in serial and parallel mode (see :issue:`19271`)::
 
     sage: t = tmp_filename()
-    sage: subprocess.call(["sage", "-t", "--serial", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--serial", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "--logfile", t, "simple_failure.rst"],
     ....:      stdout=open(os.devnull, "w"), **kwds)
     1
@@ -372,7 +387,7 @@ Test logfiles in serial and parallel mode (see :trac:`19271`)::
     ----------------------------------------------------------------------
     ...
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "--logfile", t, "simple_failure.rst"],
     ....:      stdout=open(os.devnull, "w"), **kwds)
     1
@@ -399,7 +414,7 @@ Test logfiles in serial and parallel mode (see :trac:`19271`)::
 
 Test the ``--debug`` option::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "--debug", "simple_failure.rst"],
     ....:      stdin=open(os.devnull), **kwds)
     Running doctests...
@@ -434,14 +449,14 @@ Test the ``--debug`` option::
 
 Test running under gdb, without and with a timeout::
 
-    sage: subprocess.call(["sage", "-t",  "--warn-long", "0",   # long time, optional: gdb
+    sage: subprocess.call(["python3", "-m", "sage.doctest",  "--warn-long", "0",   # long time, optional: gdb
     ....:      "--random-seed=0", "--optional=sage", "--gdb", "1second.rst"],
     ....:      stdin=open(os.devnull), **kwds)
     exec gdb ...
     Running doctests...
     Doctesting 1 file...
     sage -t... 1second.rst...
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -450,7 +465,7 @@ Test running under gdb, without and with a timeout::
 
 gdb might need a long time to start up, so we allow 30 seconds::
 
-    sage: subprocess.call(["sage", "-t",  "--warn-long", "0",   # long time, optional: gdb
+    sage: subprocess.call(["python3", "-m", "sage.doctest",  "--warn-long", "0",   # long time, optional: gdb
     ....:      "--random-seed=0", "--optional=sage", "--gdb", "-T30", "99seconds.rst"],
     ....:      stdin=open(os.devnull), **kwds)
     exec gdb ...
@@ -460,7 +475,7 @@ gdb might need a long time to start up, so we allow 30 seconds::
 
 Test the ``--show-skipped`` option::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "--show-skipped", "show_skipped.rst"], **kwds)
     Running doctests ...
     Doctesting 1 file.
@@ -470,7 +485,7 @@ Test the ``--show-skipped`` option::
         1 long test not run
         1 not tested test not run
         0 tests not run because we ran out of time
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -479,7 +494,7 @@ Test the ``--show-skipped`` option::
 
 Optional tests are run correctly::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--long",  # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0", "--long",  # long time
     ....:      "--random-seed=0", "--show-skipped", "--optional=sage,gap", "show_skipped.rst"], **kwds)
     Running doctests ...
     Doctesting 1 file.
@@ -487,14 +502,14 @@ Optional tests are run correctly::
         2 tests not run due to known bugs
         1 not tested test not run
         0 tests not run because we ran out of time
-        [4 tests, ... s]
+        [4 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
     ...
     0
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--long",  # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0", "--long",  # long time
     ....:      "--random-seed=0", "--show-skipped", "--optional=gAp", "show_skipped.rst"], **kwds)
     Running doctests ...
     Doctesting 1 file.
@@ -503,7 +518,7 @@ Optional tests are run correctly::
         1 not tested test not run
         2 sage tests not run
         0 tests not run because we ran out of time
-        [2 tests, ... s]
+        [2 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -512,7 +527,7 @@ Optional tests are run correctly::
 
 Test an invalid value for ``--optional``::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",
     ....:      "--random-seed=0", "--optional=bad-option", "show_skipped.rst"], **kwds)
     Traceback (most recent call last):
     ...
@@ -527,12 +542,12 @@ Test ``atexit`` support in the doctesting framework::
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
     sage: kwds2['env']['DOCTEST_DELETE_FILE'] = F
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "atexit.rst"], **kwds2)
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 atexit.rst
-        [3 tests, ... s]
+        [3 tests, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------
@@ -547,7 +562,7 @@ Test ``atexit`` support in the doctesting framework::
 
 Test that random tests are reproducible::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=0", "--optional=sage", "random_seed.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -563,18 +578,18 @@ Test that random tests are reproducible::
     **********************************************************************
     1 item had failures:
        1 of   2 in sage.doctest.tests.random_seed
-        [1 test, 1 failure, ...s]
+        [1 test, 1 failure, ...s wall]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 random_seed.rst  # 1 doctest failed
     ----------------------------------------------------------------------
     ...
     1
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0",    # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
     ....:      "--random-seed=1", "--optional=sage", "random_seed.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=1 random_seed.rst
-        [1 test, ...s]
+        [1 test, ...s wall]
     ----------------------------------------------------------------------
     All tests passed!
     ----------------------------------------------------------------------

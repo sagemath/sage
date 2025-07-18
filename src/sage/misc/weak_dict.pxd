@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 cdef class WeakValueDictionary(dict):
     cdef __weakref__
     cdef callback

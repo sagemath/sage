@@ -54,7 +54,7 @@ from itertools import product
 from sage.misc.flatten import flatten
 
 
-cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False) noexcept:
+cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False):
     r"""
     Fill a binary matrix with the information from a Sage (di)graph.
 
@@ -64,7 +64,7 @@ cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirec
 
     - ``g`` -- a graph or digraph
 
-    - ``translation`` -- (default: `None``); several options for this parameter
+    - ``translation`` -- (default: ``None``) several options for this parameter
       used to specify the mapping from vertices to integers:
 
       - ``True``, ``False``, ``None`` -- the `i`-th vertex in the binary matrix
@@ -175,7 +175,7 @@ def is_strongly_regular(g, parameters=False):
         sage: g.is_strongly_regular()
         False
 
-    Complete graphs are not strongly regular. (:trac:`14297`) ::
+    Complete graphs are not strongly regular. (:issue:`14297`) ::
 
         sage: g = graphs.CompleteGraph(5)
         sage: g.is_strongly_regular()
@@ -393,7 +393,7 @@ def _format_result(G, edges, edges_only, labels):
 
     - ``edges_only`` -- boolean; whether to return DiGraph or list of vertices
 
-    - ``labels`` -- boolean; whether to return labelled edges or not. This
+    - ``labels`` -- boolean; whether to return labeled edges or not. This
       parameter is used only when ``edges_only`` is ``True``.
 
     EXAMPLES:
@@ -426,7 +426,7 @@ def _yield_results_for_digraph(G, edges, edges_only, labels, min_edges, max_edge
 
     - ``edges_only`` -- boolean; whether to return DiGraph or list of vertices
 
-    - ``labels`` -- boolean; whether to return labelled edges or not. This
+    - ``labels`` -- boolean; whether to return labeled edges or not. This
       parameter is used only when ``edges_only`` is ``True``.
 
     - ``min_edges`` -- integer; minimum number of edges of reported subgraphs
@@ -490,7 +490,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
     - ``edges_only`` -- boolean (default: ``False``); whether to return
       (Di)Graph or list of vertices
 
-    - ``labels`` -- boolean (default: ``False``); whether to return labelled
+    - ``labels`` -- boolean (default: ``False``); whether to return labeled
       edges or not. This parameter is used only when ``edges_only`` is ``True``.
 
     - ``min_edges`` -- integer (default: ``None``); minimum number of edges of
@@ -711,7 +711,7 @@ def connected_full_subgraphs(G, edges_only=False, labels=False,
 
         elif bitset_len(boundaries.rows[i]):
             # We prepare the boundary for the selection of the next vertex.
-            # This is equivalant to consider an empty neighborhood.
+            # This is equivalent to consider an empty neighborhood.
             bitset_copy(boundaries.rows[i + 1], boundaries.rows[i])
             bitset_clear(boundaries.rows[i])  # to prevent doing twice this operation
             E.append([])
@@ -776,7 +776,7 @@ def connected_subgraph_iterator(G, k=None, bint vertices_only=False,
       return (Di)Graph or list of edges. When ``vertices_only`` is
       ``True``, this parameter is ignored.
 
-    - ``labels`` -- boolean (default: ``False``); whether to return labelled
+    - ``labels`` -- boolean (default: ``False``); whether to return labeled
       edges or not. This parameter is used only when ``vertices_only`` is
       ``False`` and ``edges_only`` is ``True``.
 

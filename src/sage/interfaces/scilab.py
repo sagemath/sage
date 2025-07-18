@@ -176,10 +176,10 @@ TESTS::
 
 AUTHORS:
 
-   -- Ronan Paixao (2008-11-26), based on the MATLAB tutorial by
-      William Stein (2006-10-11)
+- Ronan Paixao (2008-11-26), based on the MATLAB tutorial by
+  William Stein (2006-10-11)
 """
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Ronan Paixao <ronanpaixao@yahoo.com.br>
 #
@@ -192,8 +192,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 
@@ -220,7 +220,7 @@ class Scilab(Expect):
                  logfile=None, server=None, server_tmpdir=None,
                  seed=None):
         """
-        Initializes the Scilab class.
+        Initialize the Scilab class.
 
         EXAMPLES::
 
@@ -275,7 +275,7 @@ class Scilab(Expect):
 
     def _quit_string(self):
         """
-        Returns the string used to quit the pexpect interface.
+        Return the string used to quit the pexpect interface.
 
         EXAMPLES::
 
@@ -330,7 +330,7 @@ class Scilab(Expect):
 
     def whos(self, name=None, typ=None):
         """
-        Returns information about current objects.
+        Return information about current objects.
         Arguments:
         nam: first characters of selected names
         typ: name of selected Scilab variable type
@@ -386,13 +386,12 @@ class Scilab(Expect):
         EXAMPLES::
 
             sage: scilab.console()          # optional - scilab; not tested
-
         """
         scilab_console()
 
     def version(self):
         """
-        Returns the version of the Scilab software used.
+        Return the version of the Scilab software used.
 
         EXAMPLES::
 
@@ -406,10 +405,10 @@ class Scilab(Expect):
         Return a Scilab matrix from a Sage matrix.
 
         INPUT:
-            A Sage matrix with entries in the rationals or reals.
 
-        OUTPUT:
-            A string that evaluates to a Scilab matrix.
+        - ``A`` -- Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to a Scilab matrix
 
         EXAMPLES::
 
@@ -423,7 +422,7 @@ class Scilab(Expect):
 
     def _object_class(self):
         """
-        Returns the class of the object.
+        Return the class of the object.
 
         EXAMPLES::
 
@@ -460,7 +459,7 @@ class ScilabElement(ExpectElement):
 
     def __setitem__(self, n, value):
         """
-        Sets an element of a matrix.
+        Set an element of a matrix.
 
         EXAMPLES::
 

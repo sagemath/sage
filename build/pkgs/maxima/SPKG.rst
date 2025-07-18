@@ -49,21 +49,21 @@ these patches are either in the patch files themselves or below.
 
 -  0001-taylor2-Avoid-blowing-the-stack-when-diff-expand-isn.patch:
    Fix for Maxima bug #2520 (abs_integrate fails on abs(sin(x)) and
-   abs(cos(x))). Introduced in Trac #13364 (Upgrade Maxima to
+   abs(cos(x))). Introduced in Issue #13364 (Upgrade Maxima to
    5.29.1).
 
 -  build-fasl.patch: Build a fasl library for ecl in addition to an
-   executable program. Introduced in Trac #16178 (Build maxima fasl
+   executable program. Introduced in Issue #16178 (Build maxima fasl
    without asdf).
 
 -  infodir.patch: Correct the path to the Info directory. Introduced
-   in Trac #11348 (maxima test fails when install tree is moved).
+   in Issue #11348 (maxima test fails when install tree is moved).
 
 -  matrixexp.patch: Fix matrixexp(matrix([%i*%pi])), which broke after
-   Maxima 5.29.1. Introduced in Trac #13973.
+   Maxima 5.29.1. Introduced in Issue #13973.
 
 -  maxima.system.patch: Set ``c::*compile-in-constants*`` to t.
-   Introduced in Trac #11966 (OS X 10.7 Lion: Maxima fails to build).
+   Introduced in Issue #11966 (OS X 10.7 Lion: Maxima fails to build).
 
 -  undoing_true_false_printing_patch.patch: Revert an upstream change
    causing '?' to be printed around some words. Introduced in Trac

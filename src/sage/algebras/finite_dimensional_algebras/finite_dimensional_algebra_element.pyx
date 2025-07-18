@@ -15,12 +15,11 @@ Elements of Finite Algebras
 import re
 
 from sage.matrix.matrix_space import MatrixSpace
-from sage.structure.element import is_Matrix
 from sage.rings.integer import Integer
 
 from cpython.object cimport PyObject_RichCompare as richcmp
 
-cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat) noexcept:
+cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat):
     """
     Helper for unpickling of finite dimensional algebra elements.
 
@@ -32,7 +31,6 @@ cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A
         sage: x = B([1,2,3])
         sage: loads(dumps(x)) == x      # indirect doctest
         True
-
     """
     cdef FiniteDimensionalAlgebraElement x = A.element_class.__new__(A.element_class)
     AlgebraElement.__init__(x, A)
@@ -119,7 +117,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                     raise TypeError("algebra is not unitary")
             elif isinstance(elt, Vector):
                 self._vector = MatrixSpace(k, 1, n)(list(elt))
-            elif is_Matrix(elt):
+            elif isinstance(elt, Matrix):
                 if elt.ncols() != n:
                     raise ValueError("matrix does not define an element of the algebra")
                 if elt.nrows() == 1:
@@ -133,6 +131,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             else:
                 raise TypeError("elt should be a vector, a matrix, " +
                                 "or an element of the base field")
+        self._vector.set_immutable()
 
     def __reduce__(self):
         """
@@ -146,7 +145,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             True
             sage: loads(dumps(x)) is x
             False
-
         """
         return unpickle_FiniteDimensionalAlgebraElement, (self._parent, self._vector, self.__matrix)
 
@@ -173,7 +171,6 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
             sage: x.vector()
             (1, 1, 1)
-
         """
         self._parent, D = state
         v = D.pop('_vector')
@@ -208,6 +205,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             table = <tuple> A.table()
             ret = sum(self._vector[0, i] * table[i] for i in range(A.degree()))
             self.__matrix = MatrixSpace(A.base_ring(), A.degree())(ret)
+        self.__matrix.set_immutable()
         return self.__matrix
 
     def vector(self):
@@ -222,7 +220,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(5).vector()
             (5, 0, 5)
         """
-        # By :trac:`23707`, ``self._vector`` now is a single row matrix,
+        # By :issue:`23707`, ``self._vector`` now is a single row matrix,
         # not a vector, which results in a speed-up.
         # For backwards compatibility, this method still returns a vector.
         return self._vector[0]
@@ -243,7 +241,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._matrix
 
-    def monomial_coefficients(self, copy=True):
+    cpdef dict monomial_coefficients(self, bint copy=True):
         """
         Return a dictionary whose keys are indices of basis elements in
         the support of ``self`` and whose values are the corresponding
@@ -260,9 +258,10 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: elt = B(Matrix([[1,1], [-1,1]]))
             sage: elt.monomial_coefficients()
             {0: 1, 1: 1}
+            sage: B.one().monomial_coefficients()
+            {0: 1}
         """
-        cdef Py_ssize_t i
-        return {i: self._vector[0, i] for i in range(self._vector.ncols())}
+        return {k[1]: c for k, c in self._vector._dict().items()}
 
     def left_matrix(self):
         """
@@ -338,9 +337,26 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         from sage.misc.latex import latex
         return latex(self.matrix())
 
+    def __hash__(self):
+        """
+        Return the hash value for ``self``.
+
+        EXAMPLES::
+
+            sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1,0], [0,1]]),
+            ....:                                      Matrix([[0,1], [0,0]])])
+            sage: a = A([1,2])
+            sage: b = A([2,3])
+            sage: hash(a) == hash(A([1,2]))
+            True
+            sage: hash(a) == hash(b)
+            False
+        """
+        return hash(self._vector)
+
     def __getitem__(self, m):
         """
-        Return the `m`-th coefficient of ``self``
+        Return the `m`-th coefficient of ``self``.
 
         EXAMPLES::
 
@@ -354,6 +370,9 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
 
     def __len__(self):
         """
+        Return the number of coefficients of ``self``,
+        including the zero coefficients.
+
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
@@ -361,11 +380,13 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
             sage: len(A([2,1/4,3]))
             3
+            sage: len(A([2,0,3/4]))
+            3
         """
         return self._vector.ncols()
 
     # (Rich) comparison
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -384,7 +405,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(1) != 0
             True
 
-        By :trac:`23707`, an ordering is defined on finite-dimensional algebras, corresponding
+        By :issue:`23707`, an ordering is defined on finite-dimensional algebras, corresponding
         to the ordering of the defining vectors; this may be handy if the vector space basis of
         the algebra corresponds to the standard monomials of the relation ideal, when
         the algebra is considered as a quotient of a path algebra. ::
@@ -400,7 +421,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         EXAMPLES::
 
@@ -411,7 +432,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector + <FiniteDimensionalAlgebraElement>other._vector)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         EXAMPLES::
 
@@ -422,7 +443,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector - <FiniteDimensionalAlgebraElement>other._vector)
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         EXAMPLES::
 
@@ -434,7 +455,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector * <FiniteDimensionalAlgebraElement>(other)._matrix)
 
-    cpdef _lmul_(self, Element other) noexcept:
+    cpdef _lmul_(self, Element other):
         """
         TESTS::
 
@@ -450,7 +471,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                             .format(self.parent(), other.parent()))
         return self._parent.element_class(self._parent, self._vector * other)
 
-    cpdef _rmul_(self, Element other) noexcept:
+    cpdef _rmul_(self, Element other):
         """
         TESTS::
 

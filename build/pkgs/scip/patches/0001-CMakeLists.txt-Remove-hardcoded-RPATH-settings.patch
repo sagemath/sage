@@ -1,0 +1,46 @@
+From 5a05bcd05b75ca8f6b2228b08f57ff71ba46329b Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 3 Mar 2024 18:15:12 -0800
+Subject: [PATCH] CMakeLists.txt: Remove hardcoded RPATH settings
+
+---
+ src/CMakeLists.txt | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 5392127c5d..995d194aee 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -5,8 +5,7 @@ include(GNUInstallDirs)
+ 
+ function(setLibProperties targetname outputname)
+     set_target_properties(${targetname} PROPERTIES
+-        OUTPUT_NAME ${outputname}
+-        MACOSX_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
++        OUTPUT_NAME ${outputname})
+ endfunction(setLibProperties)
+ 
+ set(CMAKE_C_STANDARD 99)
+@@ -1118,7 +1117,6 @@ add_dependencies(scip scip_update_githash)
+ set_target_properties(libscip PROPERTIES
+     VERSION ${SCIP_VERSION_MAJOR}.${SCIP_VERSION_MINOR}.${SCIP_VERSION_PATCH}.${SCIP_VERSION_SUB}
+     SOVERSION ${SCIP_VERSION_MAJOR}.${SCIP_VERSION_MINOR}
+-    INSTALL_RPATH_USE_LINK_PATH TRUE
+     CXX_VISIBILITY_PRESET hidden
+     C_VISIBILITY_PRESET hidden
+     VISIBILITY_INLINES_HIDDEN 1)
+@@ -1128,11 +1126,6 @@ target_include_directories(scip BEFORE PUBLIC
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+     $<INSTALL_INTERFACE:include>)
+ 
+-# set the install rpath to the installed destination
+-set_target_properties(scip PROPERTIES
+-    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}"
+-    INSTALL_RPATH_USE_LINK_PATH TRUE)
+-
+ # install the header files of scip
+ install(FILES ${lpiheaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/lpi)
+ install(FILES ${dijkstraheaders} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/dijkstra)
+-- 
+2.42.0
+

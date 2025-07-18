@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # distutils: libraries = gmp
 
 from sage.libs.gmp.types cimport *
@@ -198,3 +199,4 @@ cdef extern from "gmp.h":
     void * _mpz_realloc (mpz_t integer, mp_size_t new_alloc)
     mp_limb_t mpz_getlimbn (mpz_t op, mp_size_t n)
     size_t mpz_size (mpz_t op)
+    mpz_srcptr mpz_roinit_n (mpz_t x, const mp_limb_t *xp, mp_size_t xs)

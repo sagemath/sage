@@ -1,1 +1,0 @@
-dev-python/hatch-fancy-pypi-readme

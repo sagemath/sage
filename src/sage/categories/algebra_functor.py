@@ -1,4 +1,5 @@
-# sage.doctest: needs sage.groups
+# sage_setup: distribution = sagemath-objects
+# sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras and beyond: the Algebra functorial construction
 
@@ -46,7 +47,7 @@ can also be constructed with::
     Algebra of Dihedral group of order 6 as a permutation group
             over Rational Field
 
-Since :trac:`18700`, both constructions are strictly equivalent::
+Since :issue:`18700`, both constructions are strictly equivalent::
 
     sage: GroupAlgebra(G, R) is G.algebra(R)
     True
@@ -127,7 +128,6 @@ additional features::
      Category of semigroup algebras over Rational Field,
      ...
      Category of unital magma algebras over Rational Field,
-     ...
      Category of magma algebras over Rational Field,
      ...
      Category of set algebras over Rational Field,
@@ -205,7 +205,7 @@ By Maschke's theorem, for a finite group whose cardinality does not
 divide the characteristic of the base field, the algebra is
 semisimple::
 
-    sage: SymmetricGroup(5).algebra(QQ) in Algebras(QQ).Semisimple()
+    sage: SymmetricGroup(5).algebra(QQ) in Algebras(QQ).Semisimple()                    # needs sage.combinat
     True
     sage: CyclicPermutationGroup(10).algebra(FiniteField(7)) in Algebras.Semisimple
     True
@@ -225,6 +225,7 @@ group `D_2` of order 4 into the symmetric group `S_4` of order 4!, and
 since there is a natural map from the integers to the rationals, there
 is a natural map from `\ZZ[D_2]` to `\QQ[S_4]`::
 
+    sage: # needs sage.combinat
     sage: A = DihedralGroup(2).algebra(ZZ)
     sage: B = SymmetricGroup(4).algebra(QQ)
     sage: a = A.an_element(); a
@@ -308,12 +309,12 @@ Equality tests::
 
 Properties of group algebras::
 
-    sage: SU(2, GF(4, 'a')).algebra(IntegerModRing(12)).category()
+    sage: SU(2, GF(4, 'a')).algebra(IntegerModRing(12)).category()                      # needs sage.rings.finite_rings
     Category of finite group algebras over Ring of integers modulo 12
 
-    sage: SymmetricGroup(2).algebra(QQ).is_commutative()
+    sage: SymmetricGroup(2).algebra(QQ).is_commutative()                                # needs sage.combinat
     True
-    sage: SymmetricGroup(3).algebra(QQ).is_commutative()
+    sage: SymmetricGroup(3).algebra(QQ).is_commutative()                                # needs sage.combinat
     False
 
     sage: G = DihedralGroup(4)
@@ -364,7 +365,7 @@ Coercion from the group::
 
     sage: G = SymmetricGroup(5)
     sage: x,y = G.gens()
-    sage: A = G.algebra(QQ)
+    sage: A = G.algebra(QQ)                                                             # needs sage.combinat
     sage: A( A(x) )
     (1,2,3,4,5)
 
@@ -379,6 +380,7 @@ Coercion from the group::
 Coercion from the base ring takes precedences over coercion from the
 group::
 
+    sage: # needs sage.rings.number_field
     sage: G = GL(2,7)
     sage: OG = GroupAlgebra(G, ZZ[AA(5).sqrt()])
     sage: OG(2)
@@ -387,7 +389,6 @@ group::
     sage: OG(G(2))
     [2 0]
     [0 2]
-
     sage: OG(FormalSum([ (1, G(2)), (2, RR(0.77)) ]) )
     Traceback (most recent call last):
     ...
@@ -411,7 +412,7 @@ Using the functor `R \mapsto RG` to build the base ring extension
 morphism::
 
     sage: G = SymmetricGroup(3)
-    sage: A = G.algebra(ZZ)
+    sage: A = G.algebra(ZZ)                                                             # needs sage.combinat
     sage: h = GF(5).coerce_map_from(ZZ)
 
     sage: functor = A.construction()[0]; functor
@@ -420,7 +421,7 @@ morphism::
     sage: hh
     Generic morphism:
       From: Symmetric group algebra of order 3 over Integer Ring
-      To: Symmetric group algebra of order 3 over Finite Field of size 5
+      To:   Symmetric group algebra of order 3 over Finite Field of size 5
     sage: a = 2 * A.an_element(); a
     2*() + 2*(2,3) + 6*(1,2,3) + 4*(1,3,2)
 
@@ -440,13 +441,13 @@ AUTHORS:
 
 - David Loeffler (2008-08-24): initial version
 - Martin Raum (2009-08): update to use new coercion model -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - John Palmieri (2011-07): more updates to coercion, categories, etc.,
   group algebras constructed using CombinatorialFreeModule -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - Nicolas M. Thiéry (2010-2017), Travis Scrimshaw (2017):
   generalization to a covariant functorial construction for
-  monoid algebras, and beyond -- see e.g. :trac:`18700`.
+  monoid algebras, and beyond -- see e.g. :issue:`18700`.
 """
 # ****************************************************************************
 #  Copyright (C) 2010-2017 Nicolas M. Thiéry <nthiery at users.sf.net>
@@ -462,6 +463,7 @@ from sage.categories.covariant_functorial_construction import CovariantFunctoria
 from sage.categories.category_types import Category_over_base_ring
 
 # TODO: merge the two univariate functors below into a bivariate one
+
 
 class AlgebraFunctor(CovariantFunctorialConstruction):
     r"""
@@ -529,6 +531,7 @@ class AlgebraFunctor(CovariantFunctorialConstruction):
         """
         return G.algebra(self._base_ring, category=category)
 
+
 class GroupAlgebraFunctor(ConstructionFunctor):
     r"""
     For a fixed group, a functor sending a commutative ring to the
@@ -561,7 +564,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.categories.algebra_functor import GroupAlgebraFunctor
-            sage: GroupAlgebra(SU(2, GF(4, 'a')), IntegerModRing(12)).category()
+            sage: GroupAlgebra(SU(2, GF(4, 'a')), IntegerModRing(12)).category()        # needs sage.rings.finite_rings
             Category of finite group algebras over Ring of integers modulo 12
         """
         self.__group = group
@@ -588,9 +591,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``base_ring`` -- the base ring of the group algebra
 
-        OUTPUT:
-
-        A group algebra.
+        OUTPUT: a group algebra
 
         EXAMPLES::
 
@@ -611,12 +612,11 @@ class GroupAlgebraFunctor(ConstructionFunctor):
 
         - ``f`` -- a morphism of rings
 
-        OUTPUT:
-
-        A morphism of group algebras.
+        OUTPUT: a morphism of group algebras
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: G = SymmetricGroup(3)
             sage: A = GroupAlgebra(G, ZZ)
             sage: h = GF(5).coerce_map_from(ZZ)
@@ -624,7 +624,6 @@ class GroupAlgebraFunctor(ConstructionFunctor):
             Generic morphism:
               From: Symmetric group algebra of order 3 over Integer Ring
               To:   Symmetric group algebra of order 3 over Finite Field of size 5
-
             sage: a = 2 * A.an_element(); a
             2*() + 2*(2,3) + 6*(1,2,3) + 4*(1,3,2)
             sage: hh(a)
@@ -673,7 +672,7 @@ class AlgebrasCategory(CovariantConstructionCategory, Category_over_base_ring):
         """
         EXAMPLES::
 
-            sage: Semigroups().Algebras(QQ) # indirect doctest
+            sage: Semigroups().Algebras(QQ)  # indirect doctest
             Category of semigroup algebras over Rational Field
         """
         return "{} algebras over {}".format(self.base_category()._repr_object_names()[:-1],
@@ -726,6 +725,7 @@ class AlgebrasCategory(CovariantConstructionCategory, Category_over_base_ring):
 
             EXAMPLES::
 
+                sage: # needs sage.combinat
                 sage: PF = NonDecreasingParkingFunctions(4)
                 sage: A = PF.algebra(ZZ); A
                 Algebra of Non-decreasing parking functions of size 4 over Integer Ring

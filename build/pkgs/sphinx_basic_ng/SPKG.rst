@@ -1,10 +1,10 @@
-sphinx_basic_ng: A modern skeleton for Sphinx themes.
-=====================================================
+sphinx_basic_ng: Modern skeleton for Sphinx themes
+==================================================
 
 Description
 -----------
 
-A modern skeleton for Sphinx themes.
+Modern skeleton for Sphinx themes
 
 License
 -------

@@ -343,7 +343,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         return FreeZinbielAlgebra(R, n=len(A), names=A, side=self._side)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -535,7 +535,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         The things that coerce into ``self`` are
 
         - free Zinbiel algebras whose set `E` of labels is
-          a subset of the corresponding self of ``set`, and whose base
+          a subset of the corresponding ``self`` of ``set``, and whose base
           ring has a coercion map into ``self.base_ring()``
 
         EXAMPLES::
@@ -671,7 +671,8 @@ class ZinbielFunctor(ConstructionFunctor):
         Functor.__init__(self, Rings(), Magmas())
         self.vars = variables
         self._side = side
-        self._finite_vars = bool(isinstance(variables, (list, tuple)) or variables in Sets().Finite())
+        self._finite_vars = (isinstance(variables, (list, tuple))
+                             or variables in Sets().Finite())
 
     def _apply_functor(self, R):
         """
@@ -864,14 +865,12 @@ class ZinbielFunctor(ConstructionFunctor):
                 return None
             ret = list(self.vars)
             cur_vars = set(ret)
-            for v in other.vars:
-                if v not in cur_vars:
-                    ret.append(v)
+            ret.extend(v for v in other.vars if v not in cur_vars)
             return ZinbielFunctor(ret, self._side)
-        else:
-            return None
 
-    def _repr_(self):
+        return None
+
+    def _repr_(self) -> str:
         """
         TESTS::
 

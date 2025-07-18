@@ -46,13 +46,13 @@ cdef struct sparse_bitset_s:
     # Pointer to the memory of ``bits``.
     void* mem
 
-    # Storing the non zero positions can safe time, when performing
+    # Storing the nonzero positions can safe time, when performing
     # multiple comparisons.
     # E.g. one can set them while computing the intersection
     # and then use those to ``bitset_issubset`` many times in a row.
 
     # Any modification, will invalidate the already computed positions.
-    # It is stored, whether the non zero chunks are correctly initialized
+    # It is stored, whether the nonzero chunks are correctly initialized
     # or not. Computations will work correctly either way.
     bint non_zero_chunks_are_initialized
     mp_bitcnt_t* non_zero_chunks

@@ -127,7 +127,7 @@ coefgrow_$i(n) = if(length(Lpoles_$i),    \\ default bound for coeffs. a(n)
 \\ - If you want to compute L(s), say, for s=1/2+100*I,
 \\ set MaxImaginaryPart=100 before calling initLdata()
 \\ - global variable PrecisionLoss holds the number of digits lost in
-\\ the last calculation (indepedently of the MaxImaginaryPart setting)
+\\ the last calculation (independently of the MaxImaginaryPart setting)
 
 MaxImaginaryPart_$i = 0;    \\ re-define this if you want to compute L(s)
                          \\ for large imaginary s (see ex-zeta2 for example)
@@ -498,7 +498,6 @@ initLdata_$i(vstr,cutoff=1.2,vdualstr="")=
 
   default(realprecision,answerdigits_$i);
 }
-
 
 
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

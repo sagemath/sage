@@ -107,7 +107,7 @@ class Subcrystal(UniqueRepresentation, Parent):
     TESTS:
 
     Check that the subcrystal respects being in the category
-    of supercrystals (:trac:`27368`)::
+    of supercrystals (:issue:`27368`)::
 
         sage: T = crystals.Tableaux(['A',[1,1]], [2,1])
         sage: S = T.subcrystal(max_depth=3)
@@ -273,7 +273,7 @@ class Subcrystal(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`19481` is fixed::
+        Check that :issue:`19481` is fixed::
 
             sage: from sage.combinat.crystals.virtual_crystal import VirtualCrystal
             sage: A = crystals.infinity.Tableaux(['A',3])

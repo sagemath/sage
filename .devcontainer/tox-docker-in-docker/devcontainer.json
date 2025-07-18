@@ -1,0 +1,21 @@
+// Adapted from
+// https://github.com/devcontainers/templates/blob/main/src/docker-in-docker/.devcontainer/devcontainer.json
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-in-docker
+{
+    "name": "tox with docker-in-docker",
+    "image": "mcr.microsoft.com/devcontainers/base:bookworm",
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers-contrib/features/tox:2": {},
+    },
+    "customizations": {
+        "codespaces": {
+            "openFiles": [
+                "tox.ini",
+                "src/doc/en/developer/portability_testing.rst"
+            ],
+        }
+    }
+}

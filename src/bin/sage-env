@@ -127,7 +127,7 @@ fi
 # The compilers are set in order of priority by
 # 1) environment variables
 # 2) compiler installed by sage
-# 3) compiler set at configuration time 
+# 3) compiler set at configuration time
 if [ -z "$CC" ]; then
     if [ -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/gcc" ]; then
         CC=gcc
@@ -370,15 +370,41 @@ if [ -n "$PYTHONHOME" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    # On OS X, test whether "ld-classic" is present in the installed
-    # version of the command-line tools. If so, we add "-ld_classic"
-    # to LD_FLAGS. See #36599.
-    if [ "$UNAME" = "Darwin" ] && [ -x "$(xcode-select -p)/usr/bin/ld-classic" ] ; then
-        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-ld_classic,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
-    else
-        LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    # Construct and export LDFLAGS
+    if [ "$UNAME" = "Darwin" ]; then
+       LDFLAGS="-L$SAGE_LOCAL/lib $LDFLAGS"
+       # On OS X, use the old linker if it is available.
+       # if "ld-classic" is present in the selected XCode
+       # toolchain, add "-Wl,-ld_classic" to LDFLAGS (see #36599) unless
+       # LD is already set, as it will be with conda on macOS.  When the
+       # selected toolchain is in the Xcode app the output of "xcode-select -p"
+       # is "/Applications/Xcode.app/Contents/Developer", but "ld-classic" is
+       # not in the subdirectory "usr/bin/" but rather in the subdirectory
+       # "Toolchains/XcodeDefault.xctoolchain/usr/bin/".  (See #37237.)
+       if [ -z "$LD" ]; then
+	   # Running xcode-select on a system with no toolchain writes an
+	   # error message to stderr, so redirect stderr to /dev/null.
+	   XCODE_PATH=$(/usr/bin/xcode-select -p 2> /dev/null)
+	   if [ -n $XCODE_PATH ]; then
+               if [ -x "$XCODE_PATH/usr/bin/ld-classic" -o \
+		       -x "$XCODE_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld-classic" ]; then
+                   # Add -ld_classic only if -ld_classic is not deprecated.
+                   if [ -z "$(ld -ld_classic 2>&1 | grep 'ld_classic is deprecated')" ]; then
+		       LDFLAGS="$LDFLAGS -Wl,-ld_classic"
+                   fi
+               fi
+           else
+               # On a macOS system with no toolchain we don't want this script
+               # to call gcc because that will also print an error message to
+               # stderr.  We can avoid this by setting AS and LD to their
+               # default values.
+               AS=as
+               LD=ld
+	   fi
+       fi
     fi
     if [ "$UNAME" = "Linux" ]; then
+	LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
         LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
     fi
     export LDFLAGS

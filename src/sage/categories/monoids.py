@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Monoids
 """
@@ -66,7 +67,7 @@ class Monoids(CategoryWithAxiom):
         sage: x^0, x^1, x^2, x^3, x^4, x^5
         ('', 'aa', 'aaaa', 'aaaaaa', 'aaaaaaaa', 'aaaaaaaaaa')
 
-    Check for :trac:`31212`::
+    Check for :issue:`31212`::
 
         sage: R = IntegerModRing(15)
         sage: R.submonoid([R.one()]).list()                                             # needs sage.combinat
@@ -93,7 +94,7 @@ class Monoids(CategoryWithAxiom):
         - ``index_set`` -- (optional) an index set for the generators; if
           an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-        - ``names`` -- a string or list/tuple/iterable of strings
+        - ``names`` -- string or list/tuple/iterable of strings
           (default: ``'x'``); the generator names or name prefix
 
         EXAMPLES::
@@ -147,7 +148,7 @@ class Monoids(CategoryWithAxiom):
 
             INPUT:
 
-            - ``args`` -- a list (or iterable) of elements of ``self``
+            - ``args`` -- list (or iterable) of elements of ``self``
 
             Returns the product of the elements in ``args``, as an element of
             ``self``.
@@ -291,11 +292,11 @@ class Monoids(CategoryWithAxiom):
 
         def _pow_int(self, n):
             r"""
-            Return ``self`` to the `n^{th}` power.
+            Return ``self`` to the `n`-th power.
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             EXAMPLES::
 
@@ -307,11 +308,11 @@ class Monoids(CategoryWithAxiom):
 
         def _pow_naive(self, n):
             r"""
-            Return ``self`` to the `n^{th}` power (naive implementation).
+            Return ``self`` to the `n`-th power (naive implementation).
 
             INPUT:
 
-            - ``n`` -- a nonnegative integer
+            - ``n`` -- nonnegative integer
 
             This naive implementation does not use binary
             exponentiation; there are cases where this is actually
@@ -410,7 +411,7 @@ class Monoids(CategoryWithAxiom):
             - ``index_set`` -- (optional) an index set for the generators; if
               an integer, then this represents `\{0, 1, \ldots, n-1\}`
 
-            - ``names`` -- a string or list/tuple/iterable of strings
+            - ``names`` -- string or list/tuple/iterable of strings
               (default: ``'x'``); the generator names or name prefix
 
             EXAMPLES::
@@ -471,7 +472,7 @@ class Monoids(CategoryWithAxiom):
 
             def one(self):
                 """
-                Returns the multiplicative unit of this monoid,
+                Return the multiplicative unit of this monoid,
                 obtained by retracting that of the ambient monoid.
 
                 EXAMPLES::
@@ -502,6 +503,26 @@ class Monoids(CategoryWithAxiom):
             return [Bialgebras(self.base_ring()), Monoids()]
 
         class ParentMethods:
+
+            def is_field(self, proof=True) -> bool:
+                r"""
+                Return ``True`` if ``self`` is a field.
+
+                For a monoid algebra `R S` this is always false unless
+                `S` is trivial and the base ring `R` is a field.
+
+                EXAMPLES::
+
+                    sage: SymmetricGroup(1).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
+                    True
+                    sage: SymmetricGroup(1).algebra(ZZ).is_field()                      # needs sage.combinat sage.groups
+                    False
+                    sage: SymmetricGroup(2).algebra(QQ).is_field()                      # needs sage.combinat sage.groups
+                    False
+                """
+                if not self.base_ring().is_field(proof):
+                    return False
+                return self.basis().keys().cardinality() == 1
 
             @cached_method
             def one_basis(self):
@@ -565,7 +586,7 @@ class Monoids(CategoryWithAxiom):
 
                     sage: A10 = AlternatingGroup(10)                                    # needs sage.groups
                     sage: GroupAlgebras(QQ).example(A10).algebra_generators()           # needs sage.groups sage.modules
-                    Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
+                    Family ((1,2,3,4,5,6,7,8,9), (8,9,10))
 
                     sage: A = DihedralGroup(3).algebra(QQ); A                           # needs sage.groups sage.modules
                     Algebra of Dihedral group of order 6 as a permutation group
@@ -635,7 +656,7 @@ class Monoids(CategoryWithAxiom):
 
                 EXAMPLES::
 
-                    sage: # needs sage.groups
+                    sage: # needs sage.combinat sage.groups
                     sage: M = Monoids.free([1, 2, 3])
                     sage: N = Monoids.free(['a', 'b'])
                     sage: C = cartesian_product([M, N])
@@ -676,7 +697,7 @@ class Monoids(CategoryWithAxiom):
                 gens_prod = cartesian_product([Family(M.monoid_generators(),
                                                       lambda g: (i, g))
                                                for i, M in enumerate(F)])
-                return Family(gens_prod, lift, name="gen")
+                return Family(gens_prod, lift, name='gen')
 
         class ElementMethods:
             def multiplicative_order(self):

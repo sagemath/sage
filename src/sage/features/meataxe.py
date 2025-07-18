@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``meataxe``
 """
@@ -36,10 +37,9 @@ class Meataxe(JoinFeature):
             sage: isinstance(Meataxe(), Meataxe)
             True
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_meataxe' later
         JoinFeature.__init__(self, 'meataxe',
-                             [PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe')])
+                             [PythonModule('sage.matrix.matrix_gfpn_dense',
+                                           spkg='sagemath_meataxe')])
 
 
 def all_features():

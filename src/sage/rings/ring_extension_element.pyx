@@ -17,6 +17,7 @@ AUTHOR:
 # ***************************************************************************
 
 
+cimport cython
 from sage.ext.stdsage cimport PY_NEW
 from sage.cpython.getattr cimport AttributeErrorMessage
 from sage.cpython.getattr import dir_with_other_class
@@ -24,6 +25,7 @@ from sage.misc.latex import latex
 
 from sage.structure.category_object import normalize_names
 from sage.structure.element cimport CommutativeAlgebraElement
+from sage.structure.parent cimport Parent
 from sage.rings.integer_ring import ZZ
 from sage.categories.fields import Fields
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -46,7 +48,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         sage: K = GF(5^4).over()                                                        # needs sage.rings.finite_rings
         sage: x = K.random_element()                                                    # needs sage.rings.finite_rings
         sage: TestSuite(x).run()                                                        # needs sage.rings.finite_rings
-
     """
     def __init__(self, RingExtension_generic parent, x, *args, **kwds):
         r"""
@@ -96,6 +97,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         return self._parent, (self._backend,)
 
+    @cython.binding(True)
     def __getattr__(self, name):
         """
         If the parent of this element was created with ``import_methods = True``,
@@ -128,6 +130,46 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             return from_backend(output, self._parent)
         wrapper.__doc__ = method.__doc__
         return wrapper
+
+    def __getitem__(self, i):
+        r"""
+        Return the `i`-th item of this element.
+
+        This methods calls the appropriate method of the backend if
+        ``import_methods`` is set to ``True``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: E = R.over()
+            sage: P = E(x^2 + 2*x + 3)
+            sage: P[0]
+            3
+        """
+        if (<RingExtension_generic>self._parent)._import_methods:
+            output = self._backend[to_backend(i)]
+            return from_backend(output, self._parent)
+        return TypeError("this element is not subscriptable")
+
+    def __call__(self, *args, **kwargs):
+        r"""
+        Call this element.
+
+        This methods calls the appropriate method of the backend if
+        ``import_methods`` is set to ``True``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: E = R.over()
+            sage: P = E(x^2 + 2*x + 3)
+            sage: P(1)
+            6
+        """
+        if (<RingExtension_generic>self._parent)._import_methods:
+            output = self._backend(*to_backend(args), **to_backend(kwargs))
+            return from_backend(output, self._parent)
+        return TypeError("this element is not callable")
 
     def __dir__(self):
         """
@@ -274,7 +316,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``force`` -- a boolean (default: ``False``); if ``False``,
+        - ``force`` -- boolean (default: ``False``); if ``False``,
           raise an error if the backend is not exposed
 
         EXAMPLES::
@@ -290,7 +332,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             4*z4^3 + 2*z4^2 + 4*z4 + 4
             sage: y.parent()
             Finite Field in z4 of size 5^4
-
         """
         if force or (<RingExtension_generic>(self._parent))._is_backend_exposed:
             return self._backend
@@ -330,7 +371,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: g.parent()
             Finite Field in z2 of size 5^2
 
-        TESTS::
+        TESTS:
 
         We check the case of a tower of extensions::
 
@@ -341,7 +382,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x = 4*v^7 + v^6 + 3*v^4 + v^3 + v^2 + 4
             sage: x.in_base()
             u
-
         """
         cdef RingExtension_generic parent = <RingExtension_generic>self._parent
         if isinstance(parent, RingExtensionWithGen):
@@ -358,7 +398,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
                 return parent.base()(base(self._backend))
         raise NotImplementedError("cannot cast %s to the base" % self)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         Compare this element with ``right`` according to
         the rich comparison operator ``op``.
@@ -386,7 +426,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         return left._backend._richcmp_(backend_element(right), op)
 
-    cpdef _add_(self,other) noexcept:
+    cpdef _add_(self, other):
         r"""
         Return the sum of this element and ``other``.
 
@@ -406,7 +446,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend + (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Return the opposite of this element.
 
@@ -426,7 +466,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = -self._backend
         return ans
 
-    cpdef _sub_(self,other) noexcept:
+    cpdef _sub_(self, other):
         r"""
         Return the difference of this element and ``other``.
 
@@ -446,7 +486,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend - (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _mul_(self,other) noexcept:
+    cpdef _mul_(self, other):
         r"""
         Return the product of this element and ``other``.
 
@@ -466,7 +506,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         ans._backend = self._backend * (<RingExtensionElement>other)._backend
         return ans
 
-    cpdef _div_(self,other) noexcept:
+    cpdef _div_(self, other):
         r"""
         Return the quotient of this element by ``other``,
         considered as an element of the fraction field.
@@ -572,7 +612,7 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``root`` -- a boolean (default: ``False``); if ``True``,
+        - ``root`` -- boolean (default: ``False``); if ``True``,
           return also a square root
 
         EXAMPLES::
@@ -604,16 +644,16 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
 
         INPUT:
 
-        - ``extend`` -- a boolean (default: ``True``); if "True",
+        - ``extend`` -- boolean (default: ``True``); if ``True``,
           return a square root in an extension ring, if necessary.
-          Otherwise, raise a :class:`ValueError` if the root is not in
-          the ring
+          Otherwise, raise a :exc:`ValueError` if the root is not in
+          the ring.
 
-        - ``all`` -- a boolean (default: ``False``); if ``True``,
-          return all square roots of this element, instead of just one.
+        - ``all`` -- boolean (default: ``False``); if ``True``,
+          return all square roots of this element, instead of just one
 
-        - ``name`` -- Required when ``extend=True`` and ``self`` is not a
-          square. This will be the name of the generator extension.
+        - ``name`` -- required when ``extend=True`` and ``self`` is not a
+          square; this will be the name of the generator extension
 
         .. NOTE::
 
@@ -1036,7 +1076,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         base = (<RingExtension_generic>self._parent)._check_base(base)
         return self._vector(base)
 
-    cdef _vector(self, CommutativeRing base) noexcept:
+    cdef _vector(self, Parent base):
         r"""
         Return the vector of coordinates of this element over ``base``
         (in the basis output by the method :meth:`basis_over`).
@@ -1201,7 +1241,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         return self._matrix(base)
 
-    cdef _matrix(self, CommutativeRing base) noexcept:
+    cdef _matrix(self, Parent base):
         r"""
         Return the matrix of the multiplication by this element (in
         the basis output by :meth:`basis_over`).
@@ -1289,7 +1329,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         return self._trace(base)
 
-    cdef _trace(self, CommutativeRing base) noexcept:
+    cdef _trace(self, Parent base):
         r"""
         Return the trace of this element over ``base``.
 
@@ -1317,7 +1357,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert((x+y).trace(base) == x.trace(base) + y.trace(base))
         """
         cdef RingExtensionWithBasis parent = self._parent
-        cdef CommutativeRing b
+        cdef Parent b
         if base is parent:
             return self
         b = parent._base
@@ -1382,7 +1422,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             raise ValueError("the extension is not finite free")
         return self._norm(base)
 
-    cdef _norm(self, CommutativeRing base) noexcept:
+    cdef _norm(self, Parent base):
         r"""
         Return the norm of this element over ``base``.
 
@@ -1410,7 +1450,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
             ....:     assert((x*y).norm(base) == x.norm(base) * y.norm(base))
         """
         cdef RingExtensionWithBasis parent = self._parent
-        cdef CommutativeRing b
+        cdef Parent b
         if base is parent:
             return self
         b = parent._base
@@ -1486,7 +1526,7 @@ cdef class RingExtensionWithBasisElement(RingExtensionElement):
         """
         return self.matrix(base).charpoly(var)
 
-    cpdef minpoly(self, base=None, var='x') noexcept:
+    cpdef minpoly(self, base=None, var='x'):
         r"""
         Return the minimal polynomial of this element over ``base``.
 

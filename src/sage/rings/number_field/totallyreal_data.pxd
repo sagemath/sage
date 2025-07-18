@@ -1,7 +1,7 @@
 cdef double eval_seq_as_poly(int *f, int n, double x) noexcept
 cdef double newton(int *f, int *df, int n, double x0, double eps) noexcept
 cdef void newton_in_intervals(int *f, int *df, int n, double *beta, double eps, double *rts) noexcept
-cpdef lagrange_degree_3(int n, int an1, int an2, int an3) noexcept
+cpdef lagrange_degree_3(int n, int an1, int an2, int an3)
 
 cimport sage.rings.integer
 
@@ -23,4 +23,3 @@ cdef class tr_data:
     cdef int *df
 
     cdef void incr(self, int *f_out, int verbose, int haltk, int phc) noexcept
-

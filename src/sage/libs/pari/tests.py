@@ -1,7 +1,7 @@
 r"""
 Tests for the Sage <-> PARI interface
 
-The default precision is 64 bits, see :trac:`21425`::
+The default precision is 64 bits, see :issue:`21425`::
 
     sage: pari("bitprecision(Pi)")
     64
@@ -16,14 +16,14 @@ Creating PARI objects::
     x^2 - 3
 
 The following example caused Sage to crash before
-:trac:`20630`::
+:issue:`20630`::
 
     sage: R.<theta> = QQ[]
     sage: K.<a> = NumberField(theta^2 + 1)                                              # needs sage.rings.number_field
     sage: K.absolute_polynomial().galois_group(pari_group=True)                         # needs sage.groups sage.rings.number_field
     PARI group [2, -1, 1, "S2"] of degree 2
 
-Before :trac:`15654`, this used to take a very long time.
+Before :issue:`15654`, this used to take a very long time.
 Now it takes much less than a second::
 
     sage: pari.allocatemem(200000)
@@ -33,7 +33,7 @@ Now it takes much less than a second::
     sage: pari(pol).poldisc()                                                           # needs sage.rings.padics
     2*3 + 3^4 + 2*3^6 + 3^7 + 2*3^8 + 2*3^9 + O(3^10)
 
-This used to give the wrong answer before :trac:`23259`::
+This used to give the wrong answer before :issue:`23259`::
 
     sage: R.<x> = QQ[]
     sage: f = pari(x^12 + x^7 - 1/5*x^6 - 3*x^5 + 13/5*x^4 + 11/5*x^3 + 2/5*x^2 + 2/5*x + 1/5)
@@ -94,8 +94,7 @@ Conversions::
     [4, 2]
 
     sage: int(pari(RealField(63)(2^63 - 1)))                                            # needs sage.rings.real_mpfr
-    9223372036854775807   # 32-bit
-    9223372036854775807   # 64-bit
+    9223372036854775807
     sage: int(pari(RealField(63)(2^63 + 2)))                                            # needs sage.rings.real_mpfr
     9223372036854775810
 
@@ -188,7 +187,7 @@ which is now automatically generated:
 Reading a gp file::
 
     sage: import tempfile
-    sage: gpfile = tempfile.NamedTemporaryFile(mode="w")
+    sage: gpfile = tempfile.NamedTemporaryFile(mode='w')
     sage: __ = gpfile.file.write("mysquare(n) = {\n")
     sage: __ = gpfile.file.write("    n^2;\n")
     sage: __ = gpfile.file.write("}\n")
@@ -1195,7 +1194,7 @@ Finite fields::
     sage: k(2).__pari__().fforder(o=4)
     4
 
-p-adic functions::
+`p`-adic functions::
 
     sage: # needs sage.rings.padics
     sage: K = Qp(11,5)
@@ -1231,8 +1230,7 @@ Elliptic curves::
     sage: e.ellheight([1,0])
     0.476711659343740
     sage: e.ellheight([1,0], precision=128).sage()
-    0.47671165934373953737948605888465305945902294218            # 32-bit
-    0.476711659343739537379486058884653059459022942211150879336  # 64-bit
+    0.476711659343739537379486058884653059459022942211150879336
     sage: e.ellheight([1, 0], [-1, 1])
     0.418188984498861
 
@@ -1502,7 +1500,7 @@ Quadratic class numbers::
     sage: pari(-104).quadclassunit()
     [6, [6], [Qfb(5, -4, 6)], 1]
     sage: pari(109).quadclassunit()
-    [1, [], [], 5.56453508676047]
+    [1, [], [], 5.56453508676047, -1]
     sage: pari(10001).quadclassunit() # random generators
     [16, [16], [Qfb(10, 99, -5, 0.E-38)], 5.29834236561059]
     sage: pari(10001).quadclassunit()[0]
@@ -1525,8 +1523,9 @@ General number fields::
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - 1/8)                                                # needs sage.rings.number_field
     sage: pari(x^2 - 2).factornf(K.pari_polynomial("a"))                                # needs sage.rings.number_field
-    doctest:...: DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
-    [x + Mod(-a, a^2 - 2), 1; x + Mod(a, a^2 - 2), 1]
+    doctest:warning...
+    DeprecationWarning: the PARI/GP function factornf is obsolete (2016-08-08)
+    [x + Mod(-1/2*a, a^2 - 8), 1; x + Mod(1/2*a, a^2 - 8), 1]
 
     sage: K.<z> = QuadraticField(-23)                                                   # needs sage.rings.number_field
     sage: p = K.primes_above(3)[0]                                                      # needs sage.rings.number_field
@@ -1749,13 +1748,13 @@ General number fields::
     sage: y = QQ['yy'].0; _ = pari(y) # pari has variable ordering rules
     sage: x = QQ['zz'].0; nf = pari(x^2 + 2).nfinit()
     sage: nf.nfroots(y^2 + 2)
-    [Mod(-zz, zz^2 + 2), Mod(zz, zz^2 + 2)]
+    [Mod(-zz, zz^2 + 2), Mod(zz, zz^2 + 2)]~
     sage: nf = pari(x^3 + 2).nfinit()
     sage: nf.nfroots(y^3 + 2)
-    [Mod(zz, zz^3 + 2)]
+    [Mod(zz, zz^3 + 2)]~
     sage: nf = pari(x^4 + 2).nfinit()
     sage: nf.nfroots(y^4 + 2)
-    [Mod(-zz, zz^4 + 2), Mod(zz, zz^4 + 2)]
+    [Mod(-zz, zz^4 + 2), Mod(zz, zz^4 + 2)]~
 
     sage: nf = pari('x^2 + 1').nfinit()
     sage: nf.nfrootsof1()
@@ -1806,12 +1805,11 @@ library::
     sage: e = pari([0,0,0,-82,0]).ellinit()
     sage: eta1 = e.elleta(precision=50)[0]
     sage: eta1.sage()
-    3.6054636014326520859158205642077267748 # 64-bit
-    3.605463601432652085915820564           # 32-bit
+    3.6054636014326520859158205642077267748
     sage: eta1 = e.elleta(precision=150)[0]
     sage: eta1.sage()
     3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
-    3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
+    3.605463601432652085915820564207726774810268996598024745444380641430          # 32-bit
     sage: from cypari2 import Pari
     sage: pari = Pari()
 

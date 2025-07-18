@@ -83,26 +83,26 @@ In Sage, a "Parent" is an object of a category and contains elements.  Parents
 should inherit from :class:`sage.structure.parent.Parent` and their elements
 from :class:`sage.structure.element.Element`.
 
-Sage provides appropriate sub\--classes of
-:class:`~sage.structure.parent.Parent` and
-:class:`~sage.structure.element.Element` for a variety of more concrete
-algebraic structures, such as groups, rings, or fields, and of their
-elements. But some old stuff in Sage doesn't use it.  **Volunteers for
-refactoring are welcome!**
-
-
+Sage provides sub\--classes of :class:`~sage.structure.parent.Parent`
+and :class:`~sage.structure.element.Element` for a variety of more
+concrete algebraic structures, such as groups, rings, or fields, and
+of their elements. Some of them are not recommended anymore, namely
+the class :class:`sage.rings.ring.Ring` and all its sub-classes.
 
 The parent
 ----------
 
-Since we wish to implement a special kind of fields, namely fraction fields,
-it makes sense to build on top of the base class
-:class:`sage.rings.ring.Field` provided by Sage.  ::
+Since we wish to implement a special kind of fields, namely fraction
+fields, it would make sense to build on top of the base class
+:class:`sage.rings.ring.Field` provided by Sage. As said before, it is
+now recommended in that case to just use
+:class:`~sage.structure.parent.Parent` and set the category instead.
+
+Let us nevertheless provide an example using::
 
     sage: from sage.rings.ring import Field
 
-
-This base class provides a lot more methods than a general parent::
+as this base class still provides a few more methods than a general parent::
 
     sage: [p for p in dir(Field) if p not in dir(Parent)]
     ['_CommutativeRing__fraction_field',
@@ -110,59 +110,27 @@ This base class provides a lot more methods than a general parent::
      '__len__',
      '__rxor__',
      '__xor__',
-     '_an_element_impl',
      '_coerce_',
      '_coerce_c',
      '_coerce_impl',
      '_default_category',
      '_gens',
-     '_ideal_class_',
-     '_ideal_monoid',
      '_latex_names',
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_random_nonzero_element',
-     '_unit_ideal',
      '_zero_element',
-     '_zero_ideal',
-     'algebraic_closure',
+     'an_embedding',
      'base_extend',
-     'class_group',
-     'content',
-     'derivation',
-     'derivation_module',
-     'divides',
      'epsilon',
      'extension',
      'fraction_field',
-     'frobenius_endomorphism',
-     'gcd',
      'gen',
      'gens',
-     'ideal',
-     'ideal_monoid',
-     'integral_closure',
-     'is_commutative',
-     'is_field',
-     'is_integral_domain',
-     'is_integrally_closed',
-     'is_noetherian',
-     'is_prime_field',
-     'is_subring',
-     'krull_dimension',
-     'localization',
      'ngens',
      'one',
      'order',
-     'prime_subfield',
-     'principal_ideal',
-     'random_element',
-     'unit_ideal',
-     'zero',
-     'zero_ideal',
-     'zeta',
-     'zeta_order']
+     'zero']
 
 The following is a very basic implementation of fraction fields, that needs to
 be complemented later.
@@ -181,7 +149,7 @@ be complemented later.
     ....:     def characteristic(self):
     ....:         return self.base().characteristic()
 
-.. end ouf output
+.. end of output
 
 This basic implementation is formed by the following steps:
 
@@ -220,7 +188,7 @@ This basic implementation is formed by the following steps:
   error if the given ring does not belong to the category of integral
   domains. This is our first use case of categories.
 
-- Last, we add a method that returns the characteristic of the field. We don't
+- Last, we add a method that returns the characteristic of the field. We do not
   go into details, but some automated tests that we study below implicitly
   rely on this method.
 
@@ -724,7 +692,7 @@ A first note on performance
 ---------------------------
 
 The category framework is sometimes blamed for speed regressions, as in
-:trac:`9138` and :trac:`11900`. But if the category framework is *used
+:issue:`9138` and :issue:`11900`. But if the category framework is *used
 properly*, then it is fast. For illustration, we determine the time needed to
 access an attribute inherited from the element class. First, we consider an
 element that uses the class that we implemented above, but does not use the
@@ -838,7 +806,7 @@ The four axioms requested for coercions
           sage: ZZ(P2.gen(1))
           Traceback (most recent call last):
           ...
-          TypeError: not a constant polynomial
+          TypeError: v is not a constant polynomial
 
       Hence, we only have a *partial* map. This is fine for a *conversion*,
       but a partial map does not qualify as a *coercion*.
@@ -859,7 +827,9 @@ The four axioms requested for coercions
       rational field is a homomorphism of euclidean domains::
 
           sage: QQ.coerce_map_from(ZZ).category_for()
-          Join of Category of euclidean domains and Category of infinite sets
+          Join of Category of euclidean domains
+          and Category of noetherian rings
+          and Category of infinite sets
           and Category of metric spaces
 
       .. end of output
@@ -1428,7 +1398,7 @@ Being able to do arithmetics involving elements of different parents, with the
 automatic creation of a pushout to contain the result, is certainly
 convenient\---but one should not rely on it, if speed matters. Simply the
 conversion of elements into different parents takes time. Moreover, by
-:trac:`14058`, the pushout may be subject to Python's cyclic garbage
+:issue:`14058`, the pushout may be subject to Python's cyclic garbage
 collection. Hence, if one does not keep a strong reference to it, the same
 parent may be created repeatedly, which is a waste of time. In the following
 example, we illustrate the slow\--down resulting from blindly relying on
@@ -1666,7 +1636,7 @@ it appears that it is not tested.
 
 Normally, a test for a method defined by a category should be provided by the
 same category. Hence, since ``factor`` is defined in the category of quotient
-fields, a test should be added there. But we won't change source code here and
+fields, a test should be added there. But we will not change source code here and
 will instead create a sub\--category.
 
 Apparently, If `e` is an element of a quotient field, the product of the

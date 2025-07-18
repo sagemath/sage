@@ -1,7 +1,7 @@
 // Algorithms for indefinite and definite summation
 //
 // (c) 2016  Ralf Stephan <ralf@ark.in-berlin.de>
-// Distributed under GPL2, see http://www.gnu.org
+// Distributed under GPL2, see https://www.gnu.org
 //
 // Ref.:       1. W. Koepf, Algorithms for m-fold Hypergeometric Summation,
 //                  Journal of Symbolic Computation (1995) 20, 399-417

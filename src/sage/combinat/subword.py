@@ -55,7 +55,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Iterator
+from collections.abc import Iterator
 import itertools
 
 from sage.structure.parent import Parent
@@ -540,7 +540,7 @@ def smallest_positions(word, subword, pos=0) -> list | bool:
 
     TESTS:
 
-    We check for :trac:`5534`::
+    We check for :issue:`5534`::
 
         sage: w = ["a", "b", "c", "d"]; ww = ["b", "d"]
         sage: x = sage.combinat.subword.smallest_positions(w, ww); ww

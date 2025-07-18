@@ -1,10 +1,10 @@
-debugpy: An implementation of the Debug Adapter Protocol for Python
-===================================================================
+debugpy: Implementation of the Debug Adapter Protocol for Python
+================================================================
 
 Description
 -----------
 
-An implementation of the Debug Adapter Protocol for Python
+Implementation of the Debug Adapter Protocol for Python
 
 License
 -------

@@ -6,4 +6,4 @@ cdef class ntl_ZZ_pEX():
     cdef ntl_ZZ_pEContext_class c
     #cdef void setitem_from_int(ntl_ZZ_pX self, long i, int value)
     #cdef int getitem_as_int(ntl_ZZ_pX self, long i)
-    cdef ntl_ZZ_pEX _new(self) noexcept
+    cdef ntl_ZZ_pEX _new(self)

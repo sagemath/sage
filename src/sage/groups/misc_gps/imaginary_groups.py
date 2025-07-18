@@ -19,15 +19,15 @@ AUTHORS:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2018 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent
@@ -284,9 +284,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
         - ``category`` -- a category or ``None`` (in which case the output
           equals ``category``)
 
-        OUTPUT:
-
-        A category.
+        OUTPUT: a category
 
         EXAMPLES::
 
@@ -376,9 +374,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
 
         - ``imag`` -- a number (of a subset of the reals) or ``None``
 
-        OUTPUT:
-
-        A :class:`ImaginaryElement`.
+        OUTPUT: a :class:`ImaginaryElement`
 
         TESTS::
 
@@ -475,7 +471,7 @@ class ImaginaryGroup(UniqueRepresentation, Parent):
                 raise ValueError('{} is not in {}'.format(data, self))
 
         elif not isinstance(data, int) or data != 0:
-            raise ValueError('input is ambigous: '
+            raise ValueError('input is ambiguous: '
                              '{} as well as imag={} '
                              'specified'.format(data, imag))
 

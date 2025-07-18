@@ -16,7 +16,7 @@ Compute the Christoffel symbol.
 
 ::
 
-    sage: def christoffel(i,j,k,vars,g):
+    sage: def christoffel(i, j, k, vars, g):
     ....:     s = 0
     ....:     ginv = g^(-1)
     ....:     for l in range(g.nrows()):
@@ -139,7 +139,7 @@ No problems here::
     sqrt(pi)/sqrt(c)
     sage: forget()
 
-Other examples that now (:trac:`27958`) work::
+Other examples that now (:issue:`27958`) work::
 
     sage: integrate(log(x)*exp(-x^2), x)  # long time
     1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)

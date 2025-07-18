@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings sage.schemes
+# sage.doctest: needs sage.rings.finite_rings sage.schemes
 r"""
 Decoders for AG codes
 
@@ -46,7 +46,6 @@ channel::
 AUTHORS:
 
 - Kwankyu Lee (2019-03): initial version
-
 """
 
 # ****************************************************************************
@@ -77,7 +76,7 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 class EvaluationAGCodeEncoder(Encoder):
     """
-    Encoder of an evaluation AG code
+    Encoder of an evaluation AG code.
 
     INPUT:
 
@@ -605,15 +604,16 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
 
         if Q.degree() > 1:
             circuit = EvaluationAGCodeDecoder_K_extension(code._pls, code._G, Q,
-                                                           verbose=verbose)
+                                                          verbose=verbose)
         else:
             circuit = EvaluationAGCodeDecoder_K(code._pls, code._G, Q,
-                                                 verbose=verbose)
+                                                verbose=verbose)
 
         if basis is None:
             basis = code._basis_functions
 
-        C = matrix([circuit.decode(vector(K, [f.evaluate(p) for p in code._pls]))
+        C = matrix([circuit.decode(vector(K,
+                                          [f.evaluate(p) for p in code._pls]))
                     for f in basis])
 
         self._extension = Q.degree() > 1
@@ -648,7 +648,7 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
         """
         return hash((self.code(), self._Q))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Check whether ``other`` equals ``self``.
 
@@ -678,7 +678,7 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
         return (self.code() == other.code() and self._Q == other._Q
                 and self._basis == other._basis)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -700,7 +700,7 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
         """
         return "Unique decoder for {}".format(self.code())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of ``self``.
 
@@ -758,13 +758,13 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
         else:
             return circuit.encode(vector(K, message) * C)
 
-    def _decode(self, vector, **kwargs):
+    def _decode(self, vect, **kwargs):
         r"""
-        Return the message decoded from ``vector``.
+        Return the message decoded from the vector ``vect``.
 
         INPUT:
 
-        - ``vector`` -- a vector to be decoded to a message
+        - ``vect`` -- a vector to be decoded to a message
 
         TESTS::
 
@@ -788,10 +788,10 @@ class EvaluationAGCodeUniqueDecoder(Decoder):
         circuit = self._circuit
 
         if self._extension:
-            internal_message = circuit.decode(circuit._lift(vector), **kwargs) * Cinv
+            internal_message = circuit.decode(circuit._lift(vect), **kwargs) * Cinv
             return circuit._pull_back(internal_message)
-        else:
-            return circuit.decode(vector, **kwargs) * Cinv
+
+        return circuit.decode(vect, **kwargs) * Cinv
 
     def connected_encoder(self, *args, **kwargs):
         r"""
@@ -1012,10 +1012,10 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
 
         if Q.degree() > 1:
             circuit = DifferentialAGCodeDecoder_K_extension(code._pls, code._G, Q,
-                                                             verbose=verbose)
+                                                            verbose=verbose)
         else:
             circuit = DifferentialAGCodeDecoder_K(code._pls, code._G, Q,
-                                                   verbose=verbose)
+                                                  verbose=verbose)
 
         if basis is None:
             basis = code._basis_differentials
@@ -1055,7 +1055,7 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         """
         return hash((self.code(), self._Q))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Check whether ``other`` equals ``self``.
 
@@ -1085,7 +1085,7 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         return (self.code() == other.code() and self._Q == other._Q
                 and self._basis == other._basis)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
 
@@ -1107,7 +1107,7 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         """
         return "Unique decoder for {}".format(self.code())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of ``self``.
 
@@ -1165,13 +1165,13 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         else:
             return circuit.encode(vector(K, message) * C)
 
-    def _decode(self, vector, **kwargs):
+    def _decode(self, vect, **kwargs):
         r"""
-        Return the message decoded from ``vector``.
+        Return the message decoded from the vector ``vect``.
 
         INPUT:
 
-        - ``vector`` -- a vector to be decoded to a message
+        - ``vect`` -- a vector to be decoded to a message
 
         TESTS::
 
@@ -1195,10 +1195,10 @@ class DifferentialAGCodeUniqueDecoder(Decoder):
         circuit = self._circuit
 
         if self._extension:
-            internal_message = circuit.decode(circuit._lift(vector), **kwargs) * Cinv
+            internal_message = circuit.decode(circuit._lift(vect), **kwargs) * Cinv
             return circuit._pull_back(internal_message)
-        else:
-            return circuit.decode(vector, **kwargs) * Cinv
+
+        return circuit.decode(vect, **kwargs) * Cinv
 
     def connected_encoder(self, *args, **kwargs):
         r"""
@@ -1424,7 +1424,7 @@ cdef class Decoder_K():
             This modified the ``vec`` input.
         """
         cdef Py_ssize_t j, m
-        cdef list a, d, s
+        cdef list a, s
         cdef FreeModuleElement temp
         cdef Polynomial c
 
@@ -1465,7 +1465,7 @@ cdef class Decoder_K():
         - ``detect_Q_polynomial`` -- boolean; if ``True``, a Q-polynomial is
           detected for fast decoding
 
-        If decoding fails for some reason, ``DecodingError`` is raised. The
+        If decoding fails for some reason, :exc:`DecodingError` is raised. The
         message contained in the exception indicates the type of the decoding
         failure.
 
@@ -1508,7 +1508,6 @@ cdef class Decoder_K():
         coeff_mat = self.coeff_mat
 
         cdef list message_index = self.message_index
-        cdef list code_basis = self.code_basis
 
         cdef int s0 = self.s0
         cdef int tau = self.tau
@@ -1801,7 +1800,7 @@ cdef class Decoder_K():
             h = [W.zero() for k in range(gamma)]
             for j in range(code_length):
                 t = delta[j]
-                h[<Py_ssize_t> t[1]] += matinv[i,j] * x**(<int> t[0])
+                h[<Py_ssize_t> t[1]] += matinv[i, j] * x**(<int> t[0])
             vecs[i] = vector(h)
 
 
@@ -1812,13 +1811,13 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
     - ``Q`` -- a rational place not in ``pls``
 
-    - ``verbose`` -- if ``True``, verbose information is printed.
+    - ``verbose`` -- if ``True``, verbose information is printed
 
     EXAMPLES::
 
@@ -1859,7 +1858,7 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
             sage: circuit = EvaluationAGCodeDecoder_K(D, G, Q)   # long time
             sage: TestSuite(circuit).run(skip='_test_pickling')  # long time
         """
-        cdef int i, j, s, s0, sk, si, n, r, d, num
+        cdef int i, j, s, s0, sk, si, n, r, d
         cdef int code_length, genus, gamma, dLO, tau
         cdef list gaps, dR, yR, dRbar, yRbar, evyRbar, nus, mul_mat
         cdef list message_index, code_basis
@@ -2033,7 +2032,7 @@ cdef class EvaluationAGCodeDecoder_K(Decoder_K):
                 f = yR[i] * yRbar[j]
                 v = vec_form(f)
                 self._exponents((<int> dR[i]) + (<int> dRbar[j]), &sk, &si)
-                coeff_mat[i,j] = v[si][sk]
+                coeff_mat[i, j] = v[si][sk]
                 (<list> mul_mat[i])[j] = v
 
         if verbose:
@@ -2067,7 +2066,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2114,7 +2113,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
             sage: circuit = DifferentialAGCodeDecoder_K(D, G, Q)  # long time
             sage: TestSuite(circuit).run(skip='_test_pickling')   # long time
         """
-        cdef int i, j, s, s0, sk, si, n, r, d, num
+        cdef int i, j, s, s0, sk, si, n, r, d
         cdef int code_length, genus, gamma, dLO, tau
         cdef list gaps, dR, yR, dWbar, wWbar, reswWbar, nus, mul_mat
         cdef list message_index, code_basis
@@ -2288,7 +2287,7 @@ cdef class DifferentialAGCodeDecoder_K(Decoder_K):
                 f = yR[i] * wWbar[j]
                 v = vec_form(f)
                 self._exponents((<int> dR[i]) + (<int> dWbar[j]), &sk, &si)
-                coeff_mat[i,j] = v[si][sk]
+                coeff_mat[i, j] = v[si][sk]
                 (<list> mul_mat[i])[j] = v
 
         if verbose:
@@ -2321,7 +2320,7 @@ cdef class Decoder_K_extension():
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2388,7 +2387,7 @@ cdef class Decoder_K_extension():
             # construct constant field extension F_ext of F
             def_poly = F.polynomial().base_extend(F_ext_base)
             F_ext = F_ext_base.extension(def_poly, names=def_poly.variable_name())
-        else: # rational function field
+        else:  # rational function field
             F_ext = F_ext_base
 
         O_ext = F_ext.maximal_order()
@@ -2539,7 +2538,7 @@ cdef class EvaluationAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 
@@ -2593,7 +2592,7 @@ cdef class DifferentialAGCodeDecoder_K_extension(Decoder_K_extension):
 
     INPUT:
 
-    - ``pls`` -- a list of places of a function field
+    - ``pls`` -- list of places of a function field
 
     - ``G`` -- a divisor of the function field
 

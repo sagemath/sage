@@ -29,6 +29,9 @@ class SetSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: S = species.SetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = S.structures(["a","b","c"]).random_element(); a
             {'a', 'b', 'c'}
         """
@@ -50,7 +53,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this set along the permutation perm.
+        Return the transport of this set along the permutation perm.
 
         EXAMPLES::
 
@@ -65,7 +68,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this set leave it
+        Return the group of permutations whose action on this set leave it
         fixed. For the species of sets, there is only one isomorphism
         class, so every permutation is in its automorphism group.
 
@@ -95,7 +98,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of sets.
+        Return the species of sets.
 
         EXAMPLES::
 

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([psutil], [SAGE_PYTHON_PACKAGE_CHECK([psutil])])

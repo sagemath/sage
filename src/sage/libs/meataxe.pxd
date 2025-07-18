@@ -113,7 +113,6 @@ cdef extern from "meataxe.h":
     Matrix_t *MatLoad(char *fn) except? NULL
     int MatSave(Matrix_t *mat, char *fn) except -1
 
-
     ## Basic Arithmetic  ## general rule: dest is changed, src/mat are unchanged!
     Matrix_t *MatTransposed(Matrix_t *src) except NULL
     Matrix_t *MatAdd(Matrix_t *dest, Matrix_t *src) except NULL

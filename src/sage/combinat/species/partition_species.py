@@ -33,6 +33,9 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
 
             sage: from sage.combinat.species.partition_species import PartitionSpeciesStructure
             sage: P = species.PartitionSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: s = PartitionSpeciesStructure(P, ['a','b','c'], [[1,2],[3]]); s
             {{'a', 'b'}, {'c'}}
             sage: s == loads(dumps(s))
@@ -72,7 +75,7 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
 
     def transport(self, perm):
         """
-        Returns the transport of this set partition along the permutation
+        Return the transport of this set partition along the permutation
         perm. For set partitions, this is the direct product of the
         automorphism groups for each of the blocks.
 
@@ -91,7 +94,7 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
 
     def automorphism_group(self):
         """
-        Returns the group of permutations whose action on this set
+        Return the group of permutations whose action on this set
         partition leave it fixed.
 
         EXAMPLES::
@@ -113,11 +116,11 @@ class PartitionSpeciesStructure(GenericSpeciesStructure):
 
         INPUT:
 
-        - ``labels``, a list of labels.
+        - ``labels`` -- list of labels
 
         OUTPUT:
 
-        A structure with the i-th label of self replaced with the i-th
+        A structure with the `i`-th label of ``self`` replaced with the `i`-th
         label of the list.
 
         EXAMPLES::
@@ -146,7 +149,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
     def __init__(self, min=None, max=None, weight=None):
         """
-        Returns the species of partitions.
+        Return the species of partitions.
 
         EXAMPLES::
 
@@ -182,7 +185,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
             yield structure_class(self, labels, [])
             return
 
-        u = [i for i in reversed(range(1, n + 1))]
+        u = list(range(n, 0, -1))
         s0 = u.pop()
 
         # Reconstruct the set partitions from
@@ -220,7 +223,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
     def _canonical_rep_from_partition(self, structure_class, labels, p):
         """
-        Returns the canonical representative corresponding to the partition
+        Return the canonical representative corresponding to the partition
         p.
 
         EXAMPLES::
@@ -261,13 +264,11 @@ class PartitionSpecies(GenericCombinatorialSpecies):
 
     def _cis(self, series_ring, base_ring):
         r"""
-        The cycle index series for the species of partitions is given by
+        The cycle index series for the species of partitions is given by.
 
         .. MATH::
 
              exp \sum_{n \ge 1} \frac{1}{n} \left( exp \left( \sum_{k \ge 1} \frac{x_{kn}}{k} \right) -1 \right).
-
-
 
         EXAMPLES::
 

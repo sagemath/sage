@@ -17,7 +17,7 @@ AUTHORS:
   the description contained in [MvOV1996]_.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (c) 2009, 2010 Mike Hogan
 #       Copyright (c) 2009, 2010 David Joyner <wdjoyner@gmail.com>
 #       Copyright (c) 2009, 2010 Minh Van Nguyen <nguyenminh2@gmail.com>
@@ -26,8 +26,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import xor
 
@@ -43,6 +43,7 @@ from sage.rings.finite_rings.integer_mod_ring import IntegerModFactory
 
 floor = Function_floor()
 IntegerModRing = IntegerModFactory("IntegerModRing")
+
 
 class BlumGoldwasser(PublicKeyCryptosystem):
     r"""
@@ -162,12 +163,10 @@ class BlumGoldwasser(PublicKeyCryptosystem):
 
         INPUT:
 
-        - ``other`` -- a ``BlumGoldwasser`` object.
+        - ``other`` -- a ``BlumGoldwasser`` object
 
-        OUTPUT:
-
-        - ``True`` if both ``self`` and ``other`` are ``BlumGoldwasser``
-          objects. ``False`` otherwise.
+        OUTPUT: ``True`` if both ``self`` and ``other`` are ``BlumGoldwasser``
+        objects; ``False`` otherwise
 
         Two objects are ``BlumGoldwasser`` objects if their string
         representations are the same.
@@ -214,7 +213,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
           `t+1`-th iteration of the Blum-Blum-Shub algorithm.
 
         - ``K`` -- a private key `(p, q, a, b)` where `p` and `q` are
-          distinct Blum primes and `\gcd(p, q) = ap + bq = 1`.
+          distinct Blum primes and `\gcd(p, q) = ap + bq = 1`
 
         OUTPUT:
 
@@ -361,7 +360,7 @@ class BlumGoldwasser(PublicKeyCryptosystem):
           a string of ASCII characters. Where ``P`` is an ASCII string, then
           ``P`` is first encoded as a binary string prior to encryption.
 
-        - ``K`` -- a public key, which is the product of two Blum primes.
+        - ``K`` -- a public key, which is the product of two Blum primes
 
         - ``seed`` -- (default: ``None``) if `p` and `q` are Blum primes and
           `n = pq` is a public key, then ``seed`` is a quadratic residue in
@@ -537,14 +536,12 @@ class BlumGoldwasser(PublicKeyCryptosystem):
 
         INPUT:
 
-        - ``p`` -- a Blum prime.
+        - ``p`` -- a Blum prime
 
-        - ``q`` -- a Blum prime.
+        - ``q`` -- a Blum prime
 
-        OUTPUT:
-
-        - The Blum-Goldwasser private key `(p, q, a, b)` where
-          `\gcd(p, q) = ap + bq = 1`.
+        OUTPUT: the Blum-Goldwasser private key `(p, q, a, b)` where
+        `\gcd(p, q) = ap + bq = 1`
 
         Both ``p`` and ``q`` must be distinct Blum primes. Let `p` be a
         positive prime. Then `p` is a Blum prime if `p` is congruent to 3
@@ -613,13 +610,11 @@ class BlumGoldwasser(PublicKeyCryptosystem):
 
         INPUT:
 
-        - ``p`` -- a Blum prime.
+        - ``p`` -- a Blum prime
 
-        - ``q`` -- a Blum prime.
+        - ``q`` -- a Blum prime
 
-        OUTPUT:
-
-        - The Blum-Goldwasser public key `n = pq`.
+        OUTPUT: the Blum-Goldwasser public key `n = pq`
 
         Both ``p`` and ``q`` must be distinct Blum primes. Let `p` be a
         positive prime. Then `p` is a Blum prime if `p` is congruent to 3

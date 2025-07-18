@@ -57,7 +57,7 @@ Methods
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .matroid import Matroid
+from sage.matroids.matroid import Matroid
 
 
 class RankMatroid(Matroid):
@@ -66,13 +66,11 @@ class RankMatroid(Matroid):
 
     INPUT:
 
-    - ``groundset`` -- the groundset of a matroid.
+    - ``groundset`` -- the groundset of a matroid
     - ``rank_function`` -- a function mapping subsets of ``groundset`` to
-      nonnegative integers.
+      nonnegative integers
 
-    OUTPUT:
-
-    A matroid on ``groundset`` whose rank function equals ``rank_function``
+    OUTPUT: a matroid on ``groundset`` whose rank function equals ``rank_function``
 
     EXAMPLES::
 
@@ -84,7 +82,6 @@ class RankMatroid(Matroid):
         True
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
-
     """
     def __init__(self, groundset, rank_function):
         """
@@ -145,9 +142,9 @@ class RankMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -171,7 +168,7 @@ class RankMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
         OUTPUT:
 
@@ -212,7 +209,7 @@ class RankMatroid(Matroid):
 
         INPUT:
 
-        - ``other`` -- A matroid.
+        - ``other`` -- matroid
 
         OUTPUT:
 
@@ -246,51 +243,6 @@ class RankMatroid(Matroid):
         return not self == other
 
     # Copying, loading, saving:
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.advanced import *
-            sage: M = Matroid(groundset=range(10),
-            ....:             rank_function=lambda X: min(len(X), 4))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            True
-        """
-        N = RankMatroid(groundset=[], rank_function=None)
-        N._groundset = self._groundset
-        N._rank_function = self._rank_function
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo={}):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: M = Matroid(groundset=range(10),
-            ....:             rank_function=lambda X: min(len(X), 4))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            False
-        """
-        from copy import deepcopy
-        # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
-        N = RankMatroid(groundset=deepcopy(self._groundset), rank_function=deepcopy(self._rank_function))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """

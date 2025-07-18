@@ -16,6 +16,7 @@ from sage.structure.richcmp import richcmp
 # or defined by a morphism.
 ########################################################
 
+
 class SchemePoint(Element):
     """
     Base class for points on a scheme, either topological or defined
@@ -41,7 +42,7 @@ class SchemePoint(Element):
 
     def scheme(self):
         """
-        Return the scheme on which self is a point.
+        Return the scheme on which ``self`` is a point.
 
         EXAMPLES::
 
@@ -72,8 +73,14 @@ class SchemePoint(Element):
 # Topological points on a scheme
 ########################################################
 
+
 def is_SchemeTopologicalPoint(x):
+    from sage.misc.superseded import deprecation
+    deprecation(38296,
+                "The function is_SchemeTopologicalPoint is deprecated; "
+                "use 'isinstance(..., SchemeTopologicalPoint)' instead.")
     return isinstance(x, SchemeTopologicalPoint)
+
 
 class SchemeTopologicalPoint(SchemePoint):
     """
@@ -88,7 +95,7 @@ class SchemeTopologicalPoint(SchemePoint):
         TESTS:
 
         The parent of a topological point is the scheme on which it
-        lies (see :trac:`7946`)::
+        lies (see :issue:`7946`)::
 
             sage: R = Zmod(8)
             sage: S = Spec(R)
@@ -170,8 +177,8 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
              the Ideal (-x^2 + y*z) of Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         R = S.coordinate_ring()
-        from sage.rings.ideal import is_Ideal
-        if not is_Ideal(P):
+        from sage.rings.ideal import Ideal_generic
+        if not isinstance(P, Ideal_generic):
             P = R.ideal(P)
         elif P.ring() is not R:
             P = R.ideal(P.gens())
@@ -227,28 +234,3 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             False
         """
         return richcmp(self.__P, other.__P, op)
-
-########################################################
-# Points on a scheme defined by a morphism
-########################################################
-
-def is_SchemeRationalPoint(x):
-    return isinstance(x, SchemeRationalPoint)
-
-class SchemeRationalPoint(SchemePoint):
-    def __init__(self, f):
-        """
-        INPUT:
-
-
-        -  ``f`` - a morphism of schemes
-        """
-        SchemePoint.__init__(self, f.codomain(), parent=f.parent())
-        self.__f = f
-
-    def _repr_(self):
-        return "Point on %s defined by the morphism %s" % (self.scheme(),
-                                                         self.morphism())
-
-    def morphism(self):
-        return self.__f

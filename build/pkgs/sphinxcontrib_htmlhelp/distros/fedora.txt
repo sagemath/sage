@@ -1,1 +1,1 @@
-python-sphinxcontrib-htmlhelp
+python3-sphinxcontrib-htmlhelp

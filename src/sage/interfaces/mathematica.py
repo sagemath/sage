@@ -187,8 +187,7 @@ We find the `x` such that `e^x - 3x = 0`.
 Note that this agrees with what the PARI interpreter gp produces::
 
     sage: gp('solve(x=1,2,exp(x)-3*x)')
-    1.512134551657842473896739678              # 32-bit
-    1.5121345516578424738967396780720387046    # 64-bit
+    1.5121345516578424738967396780720387046
 
 Next we find the minimum of a polynomial using the two different
 ways of accessing Mathematica::
@@ -315,7 +314,7 @@ For more details, see the documentation for ``._sage_()``.
 
 OTHER Examples::
 
-    sage: def math_bessel_K(nu,x):
+    sage: def math_bessel_K(nu, x):
     ....:     return mathematica(nu).BesselK(x).N(20)
     sage: math_bessel_K(2,I)                      # optional - mathematica
     -2.59288617549119697817 + 0.18048997206696202663*I
@@ -353,7 +352,7 @@ AUTHORS:
 TESTS:
 
 Check that numerical approximations via Mathematica's `N[]` function work
-correctly (:trac:`18888`, :trac:`28907`)::
+correctly (:issue:`18888`, :issue:`28907`)::
 
     sage: # optional - mathematica
     sage: mathematica('Pi/2').N(10)
@@ -367,7 +366,7 @@ correctly (:trac:`18888`, :trac:`28907`)::
     -0.5 + 3.14159 x
 
 Check that Mathematica's `E` exponential symbol is correctly backtranslated
-as Sage's `e` (:trac:`29833`)::
+as Sage's `e` (:issue:`29833`)::
 
     sage: x = var('x')
     sage: (e^x)._mathematica_().sage()  # optional -- mathematica
@@ -376,7 +375,7 @@ as Sage's `e` (:trac:`29833`)::
     e^x
 
 Check that all trig/hyperbolic functions and their reciprocals are correctly
-translated to Mathematica (:trac:`34087`)::
+translated to Mathematica (:issue:`34087`)::
 
     sage: # optional - mathematica
     sage: x=var('x')
@@ -413,7 +412,6 @@ translated to Mathematica (:trac:`34087`)::
      log(sqrt(1/x^2 + 1) + 1/x),
      log(sqrt(1/x + 1)*sqrt(1/x - 1) + 1/x),
      1/2*log(1/x + 1) - 1/2*log(-1/x + 1)]
-
 """
 
 # ****************************************************************************
@@ -455,7 +453,7 @@ def clean_output(s):
 
 def _un_camel(name):
     """
-    Convert `CamelCase` to `camel_case`.
+    Convert ``CamelCase`` to ``camel_case``.
 
     EXAMPLES::
 
@@ -481,7 +479,7 @@ class Mathematica(ExtraTabCompletion, Expect):
         r"""
         TESTS:
 
-        Test that :trac:`28075` is fixed::
+        Test that :issue:`28075` is fixed::
 
             sage: repr(mathematica.eval("Print[1]; Print[2]; Print[3]"))  # optional - mathematica
             '1\n2\n3'
@@ -628,7 +626,7 @@ remote connection to a server running Mathematica -- for hints, type
 
     def _function_call_string(self, function, args, kwds):
         """
-        Returns the string used to make function calls.
+        Return the string used to make function calls.
 
         EXAMPLES::
 
@@ -650,7 +648,7 @@ remote connection to a server running Mathematica -- for hints, type
         return "]"
 
     ###########################################
-    # System -- change directory, etc
+    # System -- change directory, etc.
     ###########################################
     def chdir(self, dir):
         """
@@ -678,7 +676,7 @@ remote connection to a server running Mathematica -- for hints, type
 
     def _exponent_symbol(self):
         """
-        Returns the symbol used to denote the exponent of a number in
+        Return the symbol used to denote the exponent of a number in
         Mathematica.
 
         EXAMPLES::
@@ -831,7 +829,7 @@ class MathematicaElement(ExpectElement):
 
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica('Exp[1000.0]').sage()  # optional - mathematica
             1.97007111401700e434
@@ -926,11 +924,9 @@ class MathematicaElement(ExpectElement):
     @cached_method
     def _is_graphics(self):
         """
-        Test whether the mathematica expression is graphics
+        Test whether the mathematica expression is graphics.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -943,14 +939,14 @@ class MathematicaElement(ExpectElement):
 
     def save_image(self, filename, ImageSize=600):
         r"""
-        Save a mathematica graphics
+        Save a mathematica graphics.
 
         INPUT:
 
-        - ``filename`` -- string. The filename to save as. The
-          extension determines the image file format.
+        - ``filename`` -- string; the filename to save as. The
+          extension determines the image file format
 
-        - ``ImageSize`` -- integer. The size of the resulting image.
+        - ``ImageSize`` -- integer; the size of the resulting image
 
         EXAMPLES::
 
@@ -968,7 +964,7 @@ class MathematicaElement(ExpectElement):
 
     def _rich_repr_(self, display_manager, **kwds):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -979,7 +975,7 @@ class MathematicaElement(ExpectElement):
             sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
 
         The following test requires a working X display on Linux so that the
-        Mathematica frontend can do the rendering (:trac:`23112`)::
+        Mathematica frontend can do the rendering (:issue:`23112`)::
 
             sage: P._rich_repr_(dm)                              # optional - mathematica mathematicafrontend
             OutputImagePng container
@@ -1011,7 +1007,7 @@ class MathematicaElement(ExpectElement):
 
         INPUT:
 
-        - ``ImageSize`` -- integer. The size of the resulting image.
+        - ``ImageSize`` -- integer; the size of the resulting image
 
         OUTPUT:
 
@@ -1025,7 +1021,7 @@ class MathematicaElement(ExpectElement):
             Sin[x*Cos[y]]/Sqrt[1 - x^2]
 
         The following example starts a Mathematica frontend to do the rendering
-        (:trac:`28819`)::
+        (:issue:`28819`)::
 
             sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
             sage: show(P)                                        # optional - mathematica mathematicafrontend
@@ -1070,7 +1066,7 @@ class MathematicaElement(ExpectElement):
 
     def n(self, *args, **kwargs):
         r"""
-        Numerical approximation by converting to Sage object first
+        Numerical approximation by converting to Sage object first.
 
         Convert the object into a Sage object and return its numerical
         approximation. See documentation of the function
@@ -1131,11 +1127,9 @@ def request_wolfram_alpha(input, verbose=False):
     INPUT:
 
     - ``input`` -- string
-    - ``verbose`` -- bool (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    json
+    OUTPUT: json
 
     EXAMPLES::
 
@@ -1232,16 +1226,14 @@ def request_wolfram_alpha(input, verbose=False):
 
 def parse_moutput_from_json(page_data, verbose=False):
     r"""
-    Return the list of outputs found in the json (with key ``'moutput'``)
+    Return the list of outputs found in the json (with key ``'moutput'``).
 
     INPUT:
 
     - ``page_data`` -- json obtained from Wolfram Alpha
-    - ``verbose`` -- bool (default: ``False``)
+    - ``verbose`` -- boolean (default: ``False``)
 
-    OUTPUT:
-
-    list of unicode strings
+    OUTPUT: list of unicode strings
 
     EXAMPLES::
 
@@ -1297,15 +1289,13 @@ def parse_moutput_from_json(page_data, verbose=False):
 
 def symbolic_expression_from_mathematica_string(mexpr):
     r"""
-    Translate a mathematica string into a symbolic expression
+    Translate a mathematica string into a symbolic expression.
 
     INPUT:
 
     - ``mexpr`` -- string
 
-    OUTPUT:
-
-    symbolic expression
+    OUTPUT: symbolic expression
 
     EXAMPLES::
 

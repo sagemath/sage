@@ -1,1 +1,1 @@
-python-bleach
+python3-bleach

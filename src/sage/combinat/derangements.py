@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.parent import Parent
@@ -89,7 +89,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - ``x`` -- Can be an integer which corresponds to derangements of
+    - ``x`` -- can be an integer which corresponds to derangements of
       `\{1, 2, 3, \ldots, x\}`, a list, or a string
 
     REFERENCES:
@@ -281,6 +281,9 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D = Derangements([1,1,2,2,2])
             sage: D.list()
             []
+            sage: D = Derangements(0)
+            sage: D.list()
+            [[]]
         """
         if self.__multi:
             for p in Permutations(self._set):
@@ -309,7 +312,10 @@ class Derangements(UniqueRepresentation, Parent):
              [3, 4, 1, 2],
              [2, 1, 4, 3]]
         """
-        if n <= 1:
+        if n == 0:
+            yield []
+            return
+        elif n == 1:
             return
         elif n == 2:
             yield [2, 1]
@@ -342,9 +348,9 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D._fixed_point([5,4,3,2,1])
             True
         """
-        return any(x == y for (x, y) in zip(a, self._set))
+        return any(x == y for x, y in zip(a, self._set))
 
-    def _count_der(self, n):
+    def _count_der(self, n) -> Integer:
         """
         Count the number of derangements of `n` using the recursion
         `D_2 = 1, D_3 = 2, D_n = (n-1) (D_{n-1} + D_{n-2})`.
@@ -359,7 +365,9 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D._count_der(5)
             44
         """
-        if n <= 1:
+        if n == 0:
+            return Integer(1)
+        if n == 1:
             return Integer(0)
         if n == 2:
             return Integer(1)
@@ -376,8 +384,10 @@ class Derangements(UniqueRepresentation, Parent):
 
     def cardinality(self):
         r"""
-        Counts the number of derangements of a positive integer, a
-        list, or a string.  The list or string may contain repeated
+        Count the number of derangements of a positive integer, a list,
+        or a string.
+
+        The list or string may contain repeated
         elements.  If an integer `n` is given, the value returned
         is the number of derangements of `[1, 2, 3, \ldots, n]`.
 
@@ -415,23 +425,25 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D = Derangements([1,1,2,2,2])
             sage: D.cardinality()
             0
+            sage: D = Derangements(0)
+            sage: D.cardinality()
+            1
         """
         if self.__multi:
             sL = set(self._set)
             A = [self._set.count(i) for i in sL]
             R = PolynomialRing(QQ, 'x', len(A))
             S = sum(R.gens())
-            e = prod((S - x)**y for (x, y) in zip(R.gens(), A))
-            return Integer(e.coefficient(dict([(x, y) for (x, y) in zip(R.gens(), A)])))
+            e = prod((S - x)**y for x, y in zip(R.gens(), A))
+            return Integer(e.coefficient(dict(zip(R.gens(), A))))
         return self._count_der(len(self._set))
 
     def _rand_der(self):
         r"""
-        Produces a random derangement of `[1, 2, \ldots, n]`.
+        Return a random derangement of `[1, 2, \ldots, n]`.
 
-        This is an
-        implementation of the algorithm described by Martinez et. al. in
-        [MPP2008]_.
+        This is an implementation of the algorithm described by
+        Martinez et. al. in [MPP2008]_.
 
         EXAMPLES::
 
@@ -500,7 +512,7 @@ class Derangements(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that index error discovered in :trac:`29974` is fixed::
+        Check that index error discovered in :issue:`29974` is fixed::
 
             sage: D = Derangements([1,1,2,2])
             sage: _ = [D.random_element() for _ in range(20)]

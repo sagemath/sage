@@ -32,6 +32,9 @@ class SubsetSpeciesStructure(GenericSpeciesStructure):
 
             sage: set_random_seed(0)
             sage: S = species.SubsetSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = S.structures(["a","b","c"])[0]; a
             {}
         """
@@ -215,7 +218,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
 
     def _cis(self, series_ring, base_ring):
         r"""
-        The cycle index series for the species of subsets satisfies
+        The cycle index series for the species of subsets satisfies.
 
         .. MATH::
 

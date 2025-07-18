@@ -321,7 +321,7 @@ def mkgraph(int num_vertices):
     return g
 
 
-cdef bitset_to_vertex_set(subset_t s) noexcept:
+cdef bitset_to_vertex_set(subset_t s):
     """
     Return as a Set object the set corresponding to the given subset_t
     variable.

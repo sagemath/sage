@@ -12,10 +12,10 @@ An example
 ----------
 
 Here is a very brief example of using SageTeX. The full documentation
-can be found in ``SAGE_ROOT/venv/share/doc/sagetex``,
+can be found in :file:`SAGE_ROOT/venv/share/doc/sagetex`,
 where ``SAGE_ROOT`` is the directory where your Sage installation is
 located. That directory contains the documentation and an example file.
-See ``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`` for
+See :file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex` for
 some possibly useful Python scripts.
 
 To see how SageTeX works, follow the directions for installing SageTeX (in
@@ -105,7 +105,7 @@ commands in your document.
 There's a lot more to SageTeX, and since both Sage and LaTeX are
 complex, powerful tools, it's a good idea to read the documentation for
 SageTeX, which is in
-``SAGE_ROOT/venv/share/doc/sagetex``.
+:file:`SAGE_ROOT/venv/share/doc/sagetex`.
 
 .. _sec-sagetex_install:
 
@@ -122,7 +122,7 @@ installation aware of it before it will work.
 
 The key to this is that TeX needs to be able to find ``sagetex.sty``,
 which can be found in
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/``, where
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/`, where
 ``SAGE_ROOT`` is the directory where you built or installed Sage. If
 TeX can find ``sagetex.sty``, then SageTeX will work. There are several
 ways to accomplish this.
@@ -169,7 +169,7 @@ ways to accomplish this.
 
   which will print out a directory, such as ``/home/drake/texmf`` or
   ``/Users/drake/Library/texmf``. Copy the ``tex/`` directory from
-  ``SAGE_ROOT/venv/share/texmf/`` into your home ``texmf`` directory
+  :file:`SAGE_ROOT/venv/share/texmf/` into your home ``texmf`` directory
   with a command like
 
   .. CODE-BLOCK:: shell-session
@@ -225,7 +225,7 @@ SageTeX documentation
 
 While not strictly part of installation, it bears mentioning here that
 the documentation for SageTeX is maintained in
-``SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf``. There is also an
+:file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf`. There is also an
 example file in the same directory -- see ``example.tex`` and
 ``example.pdf``, the pre-built result of typesetting that file with
 LaTeX and Sage. You can also get those files from the `SageTeX page <https://github.com/sagemath/sagetex>`_.

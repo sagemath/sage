@@ -1,1 +1,1 @@
-python-networkx
+python3-networkx

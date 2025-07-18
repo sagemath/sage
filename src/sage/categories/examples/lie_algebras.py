@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Examples of a Lie algebra
@@ -15,6 +16,7 @@ from sage.categories.lie_algebras import LieAlgebras
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
+
 
 class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
     r"""
@@ -69,7 +71,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
+            sage: # needs sage.combinat sage.groups
             sage: S3 = SymmetricGroupAlgebra(QQ, 3)
             sage: L1 = LieAlgebras(QQ).example()
             sage: gens = list(S3.algebra_generators())
@@ -83,8 +85,8 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
         """
         EXAMPLES::
 
-            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat
-            sage: TestSuite(L).run()                                                    # needs sage.combinat
+            sage: L = LieAlgebras(QQ).example()                                         # needs sage.combinat sage.groups
+            sage: TestSuite(L).run()                                                    # needs sage.combinat sage.groups
         """
         if not gens:
             raise ValueError("need at least one generator")
@@ -198,9 +200,23 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
             """
             return not self.__eq__(rhs)
 
+        def __hash__(self):
+            r"""
+            Return the hash of ``self``.
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.groups
+                sage: L = LieAlgebras(QQ).example()
+                sage: x, y = L.lie_algebra_generators()
+                sage: hash(x) == hash(x.value)
+                True
+            """
+            return hash(self.value)
+
         def __bool__(self) -> bool:
             """
-            Check non-zero.
+            Check nonzero.
 
             EXAMPLES::
 

@@ -30,7 +30,6 @@ TESTS::
     p[1, 1] + p[2]
     sage: s[3]
     p[1, 1, 1] + p[2, 1]
-
 """
 
 # ****************************************************************************
@@ -142,11 +141,11 @@ class OrdinaryGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: from sage.combinat.species.generating_series import OrdinaryGeneratingSeriesRing
             sage: OrdinaryGeneratingSeriesRing.options.halting_precision(15)
             sage: R = OrdinaryGeneratingSeriesRing(QQ)
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run(skip="_test_construction")
 
             sage: OrdinaryGeneratingSeriesRing.options._reset()  # reset options
         """
-        super().__init__(base_ring, names="z")
+        super().__init__(base_ring, names='z')
 
     Element = OrdinaryGeneratingSeries
 
@@ -217,6 +216,9 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: g = G.generating_series()
             sage: [g.coefficient(i) for i in range(10)]
             [1, 1, 1, 4/3, 8/3, 128/15, 2048/45, 131072/315, 2097152/315, 536870912/2835]
@@ -269,11 +271,11 @@ class ExponentialGeneratingSeriesRing(LazyPowerSeriesRing):
             sage: from sage.combinat.species.generating_series import ExponentialGeneratingSeriesRing
             sage: ExponentialGeneratingSeriesRing.options.halting_precision(15)
             sage: R = ExponentialGeneratingSeriesRing(QQ)
-            sage: TestSuite(R).run()
+            sage: TestSuite(R).run(skip="_test_construction")
 
             sage: ExponentialGeneratingSeriesRing.options._reset()  # reset options
         """
-        super().__init__(base_ring, names="z")
+        super().__init__(base_ring, names='z')
 
     Element = ExponentialGeneratingSeries
 

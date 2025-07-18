@@ -12,5 +12,4 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     cdef int _n
 
     cdef _randomize_rational_column_unsafe(Matrix_cyclo_dense self,
-        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=?) noexcept
-
+        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=?)

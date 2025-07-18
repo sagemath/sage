@@ -15,13 +15,11 @@ Tests for the Sage/Pynac interaction
 
 def rational_powers_memleak():
     """
-    Check that there is no memory leak in rational powers
+    Check that there is no memory leak in rational powers.
 
-    OUTPUT:
+    OUTPUT: boolean; whether the memory leak was detected
 
-    Boolean. Whether the memory leak was detected.
-
-    See :trac:`9129`.
+    See :issue:`9129`.
 
     EXAMPLES::
 

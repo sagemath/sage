@@ -145,7 +145,7 @@ We can solve equations::
     sage: solve(z^2 == sqrt(3),z)
     Traceback (most recent call last):
     ...
-    TypeError: 5 is not a valid variable.
+    TypeError: 5 is not a valid variable
 
 We can also solve equations involving matrices. The following
 example defines a multivariable function ``f(x,y)``, then solves
@@ -286,7 +286,7 @@ automatically simplify even in trivial situations::
     sage: (SR(I)+1)^4 > 0
     -4 > 0
 
-Nevertheless, if you force the comparison, you get the right answer (:trac:`7160`)::
+Nevertheless, if you force the comparison, you get the right answer (:issue:`7160`)::
 
     sage: bool(SR(I)^2 == -1)
     True
@@ -355,79 +355,77 @@ AUTHORS:
 - William Stein: second version
 
 - William Stein (2007-07-16): added arithmetic with symbolic equations
-
 """
 from itertools import product
 import operator
 
 
-def test_relation_maxima(relation):
+def check_relation_maxima(relation):
     """
-    Return True if this (in)equality is definitely true. Return False
-    if it is false or the algorithm for testing (in)equality is
-    inconclusive.
+    Return ``True`` if this (in)equality is definitely true. Return ``False``
+    if it is false or the algorithm for testing (in)equality is inconclusive.
 
     EXAMPLES::
 
-        sage: from sage.symbolic.relation import test_relation_maxima
+        sage: from sage.symbolic.relation import check_relation_maxima
         sage: k = var('k')
         sage: pol = 1/(k-1) - 1/k -1/k/(k-1)
-        sage: test_relation_maxima(pol == 0)
+        sage: check_relation_maxima(pol == 0)
         True
         sage: f = sin(x)^2 + cos(x)^2 - 1
-        sage: test_relation_maxima(f == 0)
+        sage: check_relation_maxima(f == 0)
         True
-        sage: test_relation_maxima( x == x )
+        sage: check_relation_maxima( x == x )
         True
-        sage: test_relation_maxima( x != x )
+        sage: check_relation_maxima( x != x )
         False
-        sage: test_relation_maxima( x > x )
+        sage: check_relation_maxima( x > x )
         False
-        sage: test_relation_maxima( x^2 > x )
+        sage: check_relation_maxima( x^2 > x )
         False
-        sage: test_relation_maxima( x + 2 > x )
+        sage: check_relation_maxima( x + 2 > x )
         True
-        sage: test_relation_maxima( x - 2 > x )
+        sage: check_relation_maxima( x - 2 > x )
         False
 
     Here are some examples involving assumptions::
 
         sage: x, y, z = var('x, y, z')
         sage: assume(x>=y,y>=z,z>=x)
-        sage: test_relation_maxima(x==z)
+        sage: check_relation_maxima(x==z)
         True
-        sage: test_relation_maxima(z<x)
+        sage: check_relation_maxima(z<x)
         False
-        sage: test_relation_maxima(z>y)
+        sage: check_relation_maxima(z>y)
         False
-        sage: test_relation_maxima(y==z)
+        sage: check_relation_maxima(y==z)
         True
         sage: forget()
         sage: assume(x>=1,x<=1)
-        sage: test_relation_maxima(x==1)
+        sage: check_relation_maxima(x==1)
         True
-        sage: test_relation_maxima(x>1)
+        sage: check_relation_maxima(x>1)
         False
-        sage: test_relation_maxima(x>=1)
+        sage: check_relation_maxima(x>=1)
         True
-        sage: test_relation_maxima(x!=1)
+        sage: check_relation_maxima(x!=1)
         False
         sage: forget()
         sage: assume(x>0)
-        sage: test_relation_maxima(x==0)
+        sage: check_relation_maxima(x==0)
         False
-        sage: test_relation_maxima(x>-1)
+        sage: check_relation_maxima(x>-1)
         True
-        sage: test_relation_maxima(x!=0)
+        sage: check_relation_maxima(x!=0)
         True
-        sage: test_relation_maxima(x!=1)
+        sage: check_relation_maxima(x!=1)
         False
         sage: forget()
 
     TESTS:
 
     Ensure that ``canonicalize_radical()`` and ``simplify_log`` are not
-    used inappropriately, :trac:`17389`. Either one would simplify ``f``
+    used inappropriately, :issue:`17389`. Either one would simplify ``f``
     to zero below::
 
         sage: x,y = SR.var('x,y')
@@ -435,7 +433,7 @@ def test_relation_maxima(relation):
         sage: f = log(x*y) - (log(x) + log(y))
         sage: f(x=-1, y=i)
         -2*I*pi
-        sage: test_relation_maxima(f == 0)
+        sage: check_relation_maxima(f == 0)
         False
         sage: forget()
 
@@ -444,7 +442,7 @@ def test_relation_maxima(relation):
 
         sage: assume(x, 'complex')
         sage: f = sqrt(x^2) - abs(x)
-        sage: test_relation_maxima(f == 0)
+        sage: check_relation_maxima(f == 0)
         False
         sage: forget()
 
@@ -453,7 +451,7 @@ def test_relation_maxima(relation):
         sage: assume(x, 'real')
         sage: f1 = ( e^(I*x) - e^(-I*x) ) / ( I*e^(I*x) + I*e^(-I*x) )
         sage: f2 = sin(x)/cos(x)
-        sage: test_relation_maxima(f1 - f2 == 0)
+        sage: check_relation_maxima(f1 - f2 == 0)
         True
         sage: forget()
 
@@ -462,7 +460,7 @@ def test_relation_maxima(relation):
         sage: assume(x, 'complex')
         sage: f1 = ( e^(I*x) - e^(-I*x) ) / ( I*e^(I*x) + I*e^(-I*x) )
         sage: f2 = sin(x)/cos(x)
-        sage: test_relation_maxima(f1 - f2 == 0)
+        sage: check_relation_maxima(f1 - f2 == 0)
         False
         sage: forget()
 
@@ -473,7 +471,7 @@ def test_relation_maxima(relation):
         sage: assume(k, 'integer')
         sage: f1 = factorial(n+1)/factorial(n)
         sage: f2 = n + 1
-        sage: test_relation_maxima(f1 - f2 == 0)
+        sage: check_relation_maxima(f1 - f2 == 0)
         True
         sage: forget()
 
@@ -578,12 +576,105 @@ def string_to_list_of_solutions(s):
     v = symbolic_expression_from_maxima_string(s, equals_sub=True)
     return Sequence(v, universe=Objects(), cr_str=True)
 
+
+def _normalize_to_relational(f):
+    """
+    Normalize the input to a relational expression or a list of relational expressions.
+
+    TESTS::
+
+        sage: from sage.symbolic.relation import _normalize_to_relational
+        sage: x, y = var('x, y')
+        sage: _normalize_to_relational(x == 1)
+        x == 1
+        sage: _normalize_to_relational([x == 1, y == 2])
+        [x == 1, y == 2]
+        sage: _normalize_to_relational(x - 1)
+        x - 1 == 0
+        sage: _normalize_to_relational([x - 1, y - 2])
+        [x - 1 == 0, y - 2 == 0]
+        sage: _normalize_to_relational((x - 1, y - 2))
+        [x - 1 == 0, y - 2 == 0]
+        sage: _normalize_to_relational(1)
+        False
+    """
+    if isinstance(f, (list, tuple)):
+        return [_normalize_to_relational(g) for g in f]
+    from sage.symbolic.expression import Expression
+    if isinstance(f, bool) or (isinstance(f, Expression) and f.is_relational()):
+        return f
+    return f == 0
+
+
+def _normalize_to_nonrelational(f):
+    """
+    Normalize the input to a non-relational expression or a list of non-relational expressions.
+
+    TESTS::
+
+        sage: from sage.symbolic.relation import _normalize_to_nonrelational
+        sage: x, y = var('x, y')
+        sage: _normalize_to_nonrelational(x == 1)
+        x - 1
+        sage: _normalize_to_nonrelational([x == 1, y == 2])
+        [x - 1, y - 2]
+        sage: _normalize_to_nonrelational(x - 1)
+        x - 1
+        sage: _normalize_to_nonrelational([x - 1, y - 2])
+        [x - 1, y - 2]
+        sage: _normalize_to_nonrelational((x - 1, y - 2))
+        [x - 1, y - 2]
+        sage: _normalize_to_nonrelational(1)
+        1
+        sage: _normalize_to_nonrelational(True)
+        0
+        sage: _normalize_to_nonrelational(False)
+        1
+    """
+    if isinstance(f, (list, tuple)):
+        return [_normalize_to_nonrelational(g) for g in f]
+    if isinstance(f, bool):
+        return 0 if f else 1
+    from sage.symbolic.expression import Expression
+    if isinstance(f, Expression) and f.is_relational():
+        assert f.operator() == operator.eq
+        return f.lhs() - f.rhs()
+    return f
+
+
+def _normalize_to_list_expressions(f) -> list:
+    """
+    Normalize either a single equation or a list of equations into a list of
+    equations.
+
+    TESTS::
+
+        sage: from sage.symbolic.relation import _normalize_to_list_expressions
+        sage: x, y = var('x, y')
+        sage: _normalize_to_list_expressions(x == 1)
+        [x == 1]
+        sage: _normalize_to_list_expressions([x == 1, y == 2])
+        [x == 1, y == 2]
+        sage: _normalize_to_list_expressions({})
+        Traceback (most recent call last):
+        ...
+        TypeError: must be a symbolic expression or a list of symbolic expressions
+    """
+    from sage.symbolic.expression import Expression
+    if isinstance(f, (Expression, bool)):
+        f = [f]
+    if not isinstance(f, (list, tuple)) or not all(isinstance(s, (Expression, bool)) for s in f):
+        raise TypeError("must be a symbolic expression or a list of symbolic expressions")
+    return f
+
+
 ###########
 # Solving #
 ###########
 
 
-def solve(f, *args, **kwds):
+def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=None,
+          solution_dict=False, algorithm=None, domain=None):
     r"""
     Algebraically solve an equation or system of equations (over the
     complex numbers) for given variables. Inequalities and systems
@@ -591,42 +682,42 @@ def solve(f, *args, **kwds):
 
     INPUT:
 
-    -  ``f`` - equation or system of equations (given by a
-       list or tuple)
+    - ``f`` -- equation or system of equations (given by a list or tuple)
 
-    -  ``*args`` - variables to solve for.
+    - ``*args`` -- variables to solve for
 
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
-       return a list of dictionaries containing the solutions. If there
-       are no solutions, return an empty list (rather than a list containing
-       an empty dictionary). Likewise, if there's only a single solution,
-       return a list containing one dictionary with that solution.
+    - ``solution_dict`` -- boolean (default: ``False``); if ``True`` or nonzero,
+      return a list of dictionaries containing the solutions. If there
+      are no solutions, return an empty list (rather than a list containing
+      an empty dictionary). Likewise, if there's only a single solution,
+      return a list containing one dictionary with that solution.
 
     There are a few optional keywords if you are trying to solve a single
     equation.  They may only be used in that context.
 
-    -  ``multiplicities`` - bool (default: False); if True,
-       return corresponding multiplicities.  This keyword is
-       incompatible with ``to_poly_solve=True`` and does not make
-       any sense when solving inequalities.
+    - ``multiplicities`` -- boolean (default: ``False``); if True,
+      return corresponding multiplicities.  This keyword is
+      incompatible with ``to_poly_solve=True`` and does not make
+      any sense when solving inequalities.
 
-    -  ``explicit_solutions`` - bool (default: False); require that
-       all roots be explicit rather than implicit. Not used
-       when solving inequalities.
+    - ``explicit_solutions`` -- boolean (default: ``False``); require that
+      all roots be explicit rather than implicit. Not used
+      when solving inequalities.
 
-    -  ``to_poly_solve`` - bool (default: False) or string; use
-       Maxima's ``to_poly_solver`` package to search for more possible
-       solutions, but possibly encounter approximate solutions.
-       This keyword is incompatible with ``multiplicities=True``
-       and is not used when solving inequalities. Setting ``to_poly_solve``
-       to 'force' (string) omits Maxima's solve command (useful when
-       some solutions of trigonometric equations are lost).
+    - ``to_poly_solve`` -- boolean (default: ``False``) or string; use
+      Maxima's ``to_poly_solver`` package to search for more possible
+      solutions, but possibly encounter approximate solutions.
+      This keyword is incompatible with ``multiplicities=True``
+      and is not used when solving inequalities. Setting ``to_poly_solve``
+      to 'force' (string) omits Maxima's solve command (useful when
+      some solutions of trigonometric equations are lost).
 
-    - ``algorithm`` - string (default: 'maxima'); to use SymPy's
+    - ``algorithm`` -- string (default: ``'maxima'``); to use SymPy's
       solvers set this to 'sympy'. Note that SymPy is always used
-      for diophantine equations. Another choice is 'giac'.
+      for diophantine equations. Another choice, if it is installed,
+      is 'giac'.
 
-    - ``domain`` - string (default: 'complex'); setting this to 'real'
+    - ``domain`` -- string (default: ``'complex'``); setting this to 'real'
       changes the way SymPy solves single equations; inequalities
       are always solved in the real domain.
 
@@ -699,7 +790,7 @@ def solve(f, *args, **kwds):
         sage: solve([8*z + y == 3, -z +7*y == 0],y,z)
         Traceback (most recent call last):
         ...
-        TypeError: 5 is not a valid variable.
+        TypeError: 5 is not a valid variable
 
     If we ask for dictionaries containing the solutions, we get them::
 
@@ -892,7 +983,7 @@ def solve(f, *args, **kwds):
     handled by Maxima::
 
         sage: _ = var('t')
-        sage: r = solve([x^2 - y^2/exp(x), y-1], x, y, algorithm='sympy')
+        sage: r = solve([x^2 - y^2/exp(x), y-1], x, y, algorithm='sympy', solution_dict=True)
         sage: (r[0][x], r[0][y])
         (2*lambert_w(-1/2), 1)
         sage: solve(-2*x**3 + 4*x**2 - 2*x + 6 > 0, x, algorithm='sympy')
@@ -901,10 +992,10 @@ def solve(f, *args, **kwds):
         [x == -8, x == 2]
         sage: solve(sqrt(2*x + 9) - sqrt(x + 1) - sqrt(x + 4),x,algorithm='sympy')
         [x == 0]
-        sage: r = solve([x + y + z + t, -z - t], x, y, z, t, algorithm='sympy')
+        sage: r = solve([x + y + z + t, -z - t], x, y, z, t, algorithm='sympy', solution_dict=True)
         sage: (r[0][x], r[0][z])
         (-y, -t)
-        sage: r = solve([x^2+y+z, y+x^2+z, x+y+z^2], x, y,z, algorithm='sympy')
+        sage: r = solve([x^2+y+z, y+x^2+z, x+y+z^2], x, y,z, algorithm='sympy', solution_dict=True)
         sage: (r[0][x], r[0][y])
         (z, -(z + 1)*z)
         sage: (r[1][x], r[1][y])
@@ -924,18 +1015,21 @@ def solve(f, *args, **kwds):
          ImageSet(Lambda(_n, 2*_n*pi + 5*pi/3), Integers),
          ImageSet(Lambda(_n, 2*_n*pi + pi/3), Integers)]
 
-        sage: solve(x^5 + 3*x^3 + 7, x, algorithm='sympy')[0] # known bug
-        complex_root_of(x^5 + 3*x^3 + 7, 0)
+        sage: solve(x^5 + 3*x^3 + 7, x, algorithm='sympy')[0]
+        x == complex_root_of(x^5 + 3*x^3 + 7, 0)
 
     A basic interface to Giac is provided::
 
+        sage: # needs sage.libs.giac
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...[[-log(2)/(log(3) - log(2))]]
+        [-log(2)/(log(3) - log(2))]
 
+        sage: # needs sage.libs.giac
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
-        ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
+        [-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
 
+        sage: # needs sage.libs.giac
         sage: x, y = SR.var('x,y')
         sage: solve([x+y-4,x*y-3],[x,y],algorithm='giac')
         [[1, 3], [3, 1]]
@@ -945,12 +1039,10 @@ def solve(f, *args, **kwds):
         sage: solve([sin(x)==x,y^2==x],x,y)
         [sin(x) == x, y^2 == x]
         sage: solve(0==1,x)
-        Traceback (most recent call last):
-        ...
-        TypeError:  The first argument must be a symbolic expression or a list of symbolic expressions.
+        []
 
     Test if the empty list is returned, too, when (a list of)
-    dictionaries (is) are requested (:trac:`8553`)::
+    dictionaries (is) are requested (:issue:`8553`)::
 
         sage: solve([SR(0)==1],x)
         []
@@ -963,7 +1055,7 @@ def solve(f, *args, **kwds):
         sage: solve((x==1,x==-1),x,solution_dict=0)
         []
 
-    Relaxed form, suggested by Mike Hansen (:trac:`8553`)::
+    Relaxed form, suggested by Mike Hansen (:issue:`8553`)::
 
         sage: solve([x^2-1],x,solution_dict=-1)
         [{x: -1}, {x: 1}]
@@ -974,36 +1066,36 @@ def solve(f, *args, **kwds):
         sage: solve((x==1,x==-1),x,solution_dict=1)
         []
 
-    This inequality holds for any real ``x`` (:trac:`8078`)::
+    This inequality holds for any real ``x`` (:issue:`8078`)::
 
         sage: solve(x^4+2>0,x)
         [x < +Infinity]
 
-    Test for user friendly input handling :trac:`13645`::
+    Test for user friendly input handling :issue:`13645`::
 
         sage: poly.<a,b> = PolynomialRing(RR)
         sage: solve([a+b+a*b == 1], a)
         Traceback (most recent call last):
         ...
-        TypeError: a is not a valid variable.
+        TypeError: a is not a valid variable
         sage: a,b = var('a,b')
         sage: solve([a+b+a*b == 1], a)
         [a == -(b - 1)/(b + 1)]
         sage: solve([a, b], (1, a))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a valid variable
         sage: solve([x == 1], (1, a))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a valid variable
         sage: x.solve((1,2))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a valid variable
 
     Test that the original version of a system in the French Sage book
-    now works (:trac:`14306`)::
+    now works (:issue:`14306`)::
 
         sage: var('y,z')
         (y, z)
@@ -1014,119 +1106,134 @@ def solve(f, *args, **kwds):
           z == (0.9324722294... - 0.3612416661...*I)],
          ...]
 
-    :trac:`13286` fixed::
+    :issue:`13286` fixed::
 
         sage: solve([x-4], [x])
         [x == 4]
 
     Test for a list of non-symbolic expressions as first argument
-    (:trac:`31714`)::
+    (:issue:`31714`)::
 
         sage: solve([1], x)
         Traceback (most recent call last):
         ...
-        TypeError: The first argument to solve() should be a symbolic expression
-        or a list of symbolic expressions.
+        TypeError: must be a symbolic expression or a list of symbolic expressions
+
+    Automatic computation of the variables to solve for::
+
+        sage: var("x y")
+        (x, y)
+        sage: solve(x==1)
+        [x == 1]
+        sage: solve([x == 1, y == 2])  # random
+        [[y == 2, x == 1]]
+        sage: assert solve([x == 1, y == 2]) in ([[x == 1, y == 2]], [[y == 2, x == 1]])
+        sage: solve([x == 1])
+        [x == 1]
+        sage: solve(x == 1)
+        [x == 1]
+
+    Special case::
+
+        sage: solve([], [])
+        [[]]
+
+    Coverage test::
+
+        sage: y = function('y')(x)
+        sage: solve([diff(y)==x, diff(y)==x], y)
+        Traceback (most recent call last):
+        ...
+        TypeError: y(x) is not a valid variable
+        sage: solve([0==1], x, multiplicities=True)
+        ([], [])
+        sage: solve([0==0], [], multiplicities=True)
+        ([[]], [1])
+        sage: var("x y")
+        (x, y)
+        sage: solve([x==1, y==2], [x, y], algorithm='sympy', solution_dict=True)
+        [{x: 1, y: 2}]
+        sage: solve([x==1, y==2], [x, y], algorithm='sympy')
+        [[x == 1, y == 2]]
     """
     from sage.structure.element import Expression
-    explicit_solutions = kwds.get('explicit_solutions', None)
-    multiplicities = kwds.get('multiplicities', None)
-    to_poly_solve = kwds.get('to_poly_solve', None)
-    solution_dict = kwds.get('solution_dict', False)
-    algorithm = kwds.get('algorithm', None)
-    domain = kwds.get('domain', None)
+    f = _normalize_to_list_expressions(f)
 
-    if len(args) > 1:
-        x = args
-    else:
-        x = args[0]
-    if isinstance(x, (list, tuple)):
-        for i in x:
-            if not isinstance(i, Expression):
-                raise TypeError("%s is not a valid variable." % repr(i))
-    elif x is None:
-        vars = f.variables()
-        if len(vars) == 0:
-            if multiplicities:
-                return [], []
-            else:
-                return []
-        x = vars[0]
-    elif not isinstance(x, Expression):
-        raise TypeError("%s is not a valid variable." % repr(x))
-
-    if isinstance(f, (list, tuple)) and len(f) == 1:
-        # f is a list with a single element
-        if isinstance(f[0], Expression):
-            f = f[0]
-        else:
-            raise TypeError("The first argument to solve() should be a "
-                            "symbolic expression or a list of symbolic "
-                            "expressions.")
-
-    if isinstance(f, Expression):  # f is a single expression
-        return _solve_expression(f, x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
-
-    if not isinstance(f, (list, tuple)):
-        raise TypeError("The first argument must be a symbolic expression or a list of symbolic expressions.")
-
-    # f is a list of such expressions or equations
-
+    # Normalize x to list of variables
     if not args:
-        raise TypeError("Please input variables to solve for.")
-    if isinstance(x, Expression) and x.is_symbol():
-        variables = args
+        x = None
     else:
-        variables = tuple(x)
+        x = args
+        if len(x) == 1 and (isinstance(x[0], (list, tuple)) or x[0] is None):
+            x = x[0]
+    if x is None:
+        x = list({v for s in f for v in s.variables()})
 
-    for v in variables:
-        if not (isinstance(v, Expression) and v.is_symbol()):
-            raise TypeError("%s is not a valid variable." % repr(v))
+    require_all_variables_to_be_symbol = len(f) > 1
+    # we support y = function('y')(x); solve(diff(y)==x, y), in this case y = y(x) is not a symbol
+    # but only if one equation is provided, otherwise it's unimplemented
+    # there is also desolve()
+    for i in x:
+        complain = False
+        if not isinstance(i, Expression):
+            complain = True
+        elif require_all_variables_to_be_symbol and not i.is_symbol():
+            complain = True
+        if complain:
+            raise TypeError(f"{i} is not a valid variable")
 
-    try:
-        f = [s for s in f if s is not True]
-    except TypeError:
-        raise ValueError("Unable to solve %s for %s" % (f, args))
-
+    # Handle special cases
+    f = [s for s in f if s is not True]
     if any(s is False for s in f):
-        return []
+        if multiplicities:
+            return [], []
+        else:
+            return []
+
+    if not x:
+        if multiplicities:
+            from sage.rings.integer_ring import ZZ
+            return [[]], [ZZ.one()]
+        else:
+            return [[]]
+
+    if len(f) == 1:
+        return _solve_expression(f[0], x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
 
     if algorithm == 'sympy':
         from sympy import solve as ssolve
         from sage.interfaces.sympy import sympy_set_to_list
-        if isinstance(f, Expression):  # f is a single expression
-            sympy_f = f._sympy_()
-        else:
-            sympy_f = [s._sympy_() for s in f]
-        if isinstance(f, Expression) and f.is_symbol():
-            sympy_vars = (x._sympy_(),)
-        else:
-            sympy_vars = tuple([v._sympy_() for v in x])
-        if len(sympy_vars) > 1 or not isinstance(f, Expression):
-            ret = ssolve(sympy_f, sympy_vars, dict=True)
-            if isinstance(ret, dict):
-                if solution_dict:
-                    l = []
-                    for d in ret:
-                        r = {}
-                        for (v, ex) in d.items():
-                            r[v._sage_()] = ex._sage_()
-                        l.append(r)
-                    return l
-                else:
-                    return [[v._sage_() == ex._sage_()
-                             for v, ex in d.items()]
-                            for d in ret]
-            elif isinstance(ret, list):
+        sympy_f = [s._sympy_() for s in f]
+        sympy_vars = tuple([v._sympy_() for v in x])
+        ret = ssolve(sympy_f, sympy_vars, dict=True)
+        if isinstance(ret, dict):
+            # it is not clear how this branch could be reached
+            # because dict=True is passed above, however
+            # it is kept just in case
+            if solution_dict:
                 l = []
-                for sol in ret:
+                for d in ret:
                     r = {}
-                    for (v, ex) in sol.items():
+                    for (v, ex) in d.items():
                         r[v._sage_()] = ex._sage_()
                     l.append(r)
                 return l
             else:
-                return sympy_set_to_list(ret, sympy_vars)
+                return [[v._sage_() == ex._sage_()
+                         for v, ex in d.items()]
+                        for d in ret]
+        elif isinstance(ret, list):
+            if solution_dict:
+                return [{v._sage_(): ex._sage_()
+                         for v, ex in d.items()} for d in ret]
+            else:
+                return [[v._sage_() == ex._sage_()
+                         for v, ex in d.items()] for d in ret]
+        else:
+            # it is not clear how this branch could be reached
+            # because dict=True is passed above, however
+            # it is kept just in case
+            return sympy_set_to_list(ret, sympy_vars)
 
     if algorithm == 'giac':
         return _giac_solver(f, x, solution_dict)
@@ -1135,32 +1242,32 @@ def solve(f, *args, **kwds):
     m = maxima(f)
 
     try:
-        s = m.solve(variables)
+        s = m.solve(x)
     except Exception:  # if Maxima gave an error, try its to_poly_solve
         try:
-            s = m.to_poly_solve(variables)
+            s = m.to_poly_solve(x)
         except TypeError as mess:  # if that gives an error, raise an error.
             if "Error executing code in Maxima" in str(mess):
-                raise ValueError("Sage is unable to determine whether the system %s can be solved for %s" % (f, args))
+                raise ValueError(f"sage is unable to determine whether the system {f} can be solved for {x}")
             else:
                 raise
 
     if len(s) == 0:  # if Maxima's solve gave no solutions, try its to_poly_solve
         try:
-            s = m.to_poly_solve(variables)
+            s = m.to_poly_solve(x)
         except Exception:  # if that gives an error, stick with no solutions
             s = []
 
     if len(s) == 0:  # if to_poly_solve gave no solutions, try use_grobner
         try:
-            s = m.to_poly_solve(variables, 'use_grobner=true')
+            s = m.to_poly_solve(x, 'use_grobner=true')
         except Exception:  # if that gives an error, stick with no solutions
             s = []
 
     sol_list = string_to_list_of_solutions(repr(s))
 
     # Relaxed form suggested by Mike Hansen (#8553):
-    if kwds.get('solution_dict', None):
+    if solution_dict:
         if not sol_list:  # fixes IndexError on empty solution list (#8553)
             return []
         if isinstance(sol_list[0], list):
@@ -1186,7 +1293,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     TESTS:
 
-    :trac:`7325` (solving inequalities)::
+    :issue:`7325` (solving inequalities)::
 
         sage: (x^2>1).solve(x)
         [[x < -1], [x > 1]]
@@ -1205,7 +1312,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         ...
         TypeError: ECL says: cot: argument 0 isn't in the domain of cot.
 
-    :trac:`7491` fixed::
+    :issue:`7491` fixed::
 
         sage: y = var('y')
         sage: solve(y==y,y)
@@ -1219,7 +1326,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         []
         sage: forget()
 
-    :trac:`8390` fixed::
+    :issue:`8390` fixed::
 
         sage: solve(sin(x)==1/2,x)
         [x == 1/6*pi]
@@ -1234,13 +1341,13 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         sage: solve(sin(x)==1/2, x, to_poly_solve='force')
         [x == 5/6*pi + 2*pi*z..., x == 1/6*pi + 2*pi*z...]
 
-    :trac:`11618` fixed::
+    :issue:`11618` fixed::
 
         sage: g(x)=0
         sage: solve(g(x)==0,x,solution_dict=True)
         [{x: r1}]
 
-    :trac:`17128`: fixed::
+    :issue:`17128`: fixed::
 
         sage: var('x,y')
         (x, y)
@@ -1249,7 +1356,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         sage: sol[0].get(x) + sol[0].get(y)
         0
 
-    :trac:`16651` fixed::
+    :issue:`16651` fixed::
 
         sage: (x^7-x-1).solve(x, to_poly_solve=True)     # abs tol 1e-6
         [x == 1.11277569705,
@@ -1260,7 +1367,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
          x == (0.617093477784 + 0.900864951949*I),
          x == (-0.363623519329 + 0.952561195261*I)]
 
-    :trac:`31452` fixed::
+    :issue:`31452` fixed::
 
         sage: solve([x==3], [x], solution_dict=True)
         [{x: 3}]
@@ -1268,6 +1375,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         [{x: 3}]
     """
     from sage.structure.element import Expression
+
+    if isinstance(x, (list, tuple)) and len(x) == 1:
+        x = x[0]
 
     if f.is_relational():
         if f.operator() is not operator.eq:
@@ -1291,22 +1401,21 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                     return solve_ineq([f])  # trying solve_ineq_fourier
                 except Exception:
                     raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
-        ex = f
     else:
-        ex = (f == 0)
+        f = (f == 0)
 
     if multiplicities and to_poly_solve:
         raise NotImplementedError("to_poly_solve does not return multiplicities")
     # check if all variables are assumed integer;
     # if so, we have a Diophantine
 
-    def has_integer_assumption(v):
+    def has_integer_assumption(v) -> bool:
         from sage.symbolic.assumptions import assumptions, GenericDeclaration
         alist = assumptions()
         return any(isinstance(a, GenericDeclaration) and a.has(v) and
                    a._assumption in ['even', 'odd', 'integer', 'integervalued']
                    for a in alist)
-    if len(ex.variables()) and all(has_integer_assumption(var) for var in ex.variables()):
+    if len(f.variables()) and all(has_integer_assumption(var) for var in f.variables()):
         return f.solve_diophantine(x, solution_dict=solution_dict)
 
     if algorithm == 'sympy':
@@ -1317,9 +1426,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         else:
             sympy_vars = tuple([v._sympy_() for v in x])
         if domain == 'real':
-            ret = solveset(ex._sympy_(), sympy_vars[0], S.Reals)
+            ret = solveset(f._sympy_(), sympy_vars[0], S.Reals)
         else:
-            ret = solveset(ex._sympy_(), sympy_vars[0])
+            ret = solveset(f._sympy_(), sympy_vars[0])
         ret = sympy_set_to_list(ret, sympy_vars)
         if solution_dict:
             ret = [{sol.left(): sol.right()} for sol in ret]
@@ -1329,7 +1438,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         return _giac_solver(f, x, solution_dict)
 
     # from here on, maxima is used for solution
-    m = ex._maxima_()
+    m = f._maxima_()
     P = m.parent()
     if explicit_solutions:
         P.eval('solveexplicit: true')  # switches Maxima to looking for only explicit solutions
@@ -1375,7 +1484,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
     if to_poly_solve:
         if len(X) == 0:
             # Maxima's solve gave no solutions
-            solutions_so_far = [ex]
+            solutions_so_far = [f]
             ignore_exceptions = True
         else:
             solutions_so_far = X
@@ -1433,27 +1542,35 @@ def _giac_solver(f, x, solution_dict=False):
 
     - ``f`` -- equation or list of equations
     - ``x`` -- variable or list of variables
-    - ``solution_dict`` -- optional boolean (default ``False``)
+    - ``solution_dict`` -- boolean (default: ``False``)
 
     EXAMPLES::
 
+        sage: # needs sage.libs.giac
         sage: solve([(2/3)^x-2], [x], algorithm='giac')
-        ...[[-log(2)/(log(3) - log(2))]]
+        [-log(2)/(log(3) - log(2))]
         sage: solve([(2/3)^x-2], [x], algorithm='giac', solution_dict=True)
-        ...[{x: -log(2)/(log(3) - log(2))}]
+        [{x: -log(2)/(log(3) - log(2))}]
 
+        sage: # needs sage.libs.giac
         sage: f = (sin(x) - 8*cos(x)*sin(x))*(sin(x)^2 + cos(x)) - (2*cos(x)*sin(x) - sin(x))*(-2*sin(x)^2 + 2*cos(x)^2 - cos(x))
         sage: solve(f, x, algorithm='giac')
-        ...[-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
+        [-2*arctan(sqrt(2)), 0, 2*arctan(sqrt(2)), pi]
         sage: solve(f, x, algorithm='giac', solution_dict=True)
-        ...[{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
+        [{x: -2*arctan(sqrt(2))}, {x: 0}, {x: 2*arctan(sqrt(2))}, {x: pi}]
 
+        sage: # needs sage.libs.giac
         sage: x, y = SR.var('x,y')
         sage: solve([x+y-7,x*y-10],[x,y],algorithm='giac')
         [[2, 5], [5, 2]]
     """
     from sage.libs.giac.giac import libgiac
+    f = _normalize_to_list_expressions(_normalize_to_nonrelational(f))
     giac_f = libgiac(f)
+    if isinstance(x, tuple):
+        # Python tuple is translated to giac seq which we don't want
+        # (if its length is > 1 then the library call errors out)
+        x = list(x)
     giac_vars = libgiac(x)
     ret = giac_f.solve(giac_vars)
     sols = ret.sage()
@@ -1461,7 +1578,7 @@ def _giac_solver(f, x, solution_dict=False):
         if not sols:
             return []
         if isinstance(sols[0], list):
-            return [{v: sv for v, sv in zip(x, solution)} for solution in sols]
+            return [dict(zip(x, solution)) for solution in sols]
         return [{x: sx} for sx in sols]
     return sols
 
@@ -1478,17 +1595,15 @@ def solve_mod(eqns, modulus, solution_dict=False):
 
     INPUT:
 
+    - ``eqns`` -- equation or list of equations
 
-    -  ``eqns`` - equation or list of equations
+    - ``modulus`` -- integer
 
-    -  ``modulus`` - an integer
-
-    -  ``solution_dict`` - bool (default: False); if True or non-zero,
-       return a list of dictionaries containing the solutions. If there
-       are no solutions, return an empty list (rather than a list containing
-       an empty dictionary). Likewise, if there's only a single solution,
-       return a list containing one dictionary with that solution.
-
+    - ``solution_dict`` -- boolean (default: ``False``); if ``True`` or nonzero,
+      return a list of dictionaries containing the solutions. If there
+      are no solutions, return an empty list (rather than a list containing
+      an empty dictionary). Likewise, if there's only a single solution,
+      return a list containing one dictionary with that solution.
 
     EXAMPLES::
 
@@ -1626,15 +1741,13 @@ def _solve_mod_prime_power(eqns, p, m, vars):
 
     INPUT:
 
+    - ``eqns`` -- equation or list of equations
 
-    -  ``eqns`` - equation or list of equations
+    - ``p`` -- a prime
 
-    -  ``p`` - a prime
+    - ``i`` -- integer > 0
 
-    -  ``i`` - an integer > 0
-
-    -  ``vars`` - a list of variables to solve for
-
+    - ``vars`` -- list of variables to solve for
 
     EXAMPLES::
 
@@ -1698,7 +1811,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
             pairs = product(shifts, ans)
             possibles = (tuple(vector(t) + vector(shift) * (mrunning // p))
                          for shift, t in pairs)
-        ans = list(t for t in possibles if all(e(*t) == 0 for e in eqns_mod))
+        ans = [t for t in possibles if all(e(*t) == 0 for e in eqns_mod)]
         if not ans:
             return ans
 
@@ -1711,7 +1824,7 @@ def solve_ineq_univar(ineq):
 
     INPUT:
 
-    - ``ineq`` - inequality in one variable
+    - ``ineq`` -- inequality in one variable
 
     OUTPUT:
 
@@ -1754,7 +1867,7 @@ def solve_ineq_univar(ineq):
 
 def solve_ineq_fourier(ineq, vars=None):
     """
-    Solves system of inequalities using Maxima and Fourier elimination
+    Solve system of inequalities using Maxima and Fourier elimination.
 
     Can be used for system of linear inequalities and for some types
     of nonlinear inequalities. For examples, see the example section
@@ -1763,13 +1876,13 @@ def solve_ineq_fourier(ineq, vars=None):
 
     INPUT:
 
-    - ``ineq`` - list with system of inequalities
+    - ``ineq`` -- list with system of inequalities
 
-    - ``vars`` - optionally list with variables for Fourier elimination.
+    - ``vars`` -- optionally list with variables for Fourier elimination
 
     OUTPUT:
 
-    - ``list`` - output is list of solutions as a list of simple inequalities
+    - ``list`` -- output is list of solutions as a list of simple inequalities
       output [A,B,C] means (A or B or C) each A, B, C is again a list and
       if A=[a,b], then A means (a and b). The list is empty if there is no
       solution.
@@ -1807,10 +1920,10 @@ def solve_ineq_fourier(ineq, vars=None):
     - Robert Marik (01-2010)
     """
     if vars is None:
-        setvars = set([])
+        setvars = set()
         for i in (ineq):
             setvars = setvars.union(set(i.variables()))
-            vars = [i for i in setvars]
+            vars = list(setvars)
     ineq0 = [i._maxima_() for i in ineq]
     ineq0[0].parent().eval("if fourier_elim_loaded#true then (fourier_elim_loaded:true,load(\"fourier_elim\"))")
     sol = ineq0[0].parent().fourier_elim(ineq0, vars)
@@ -1828,7 +1941,7 @@ def solve_ineq_fourier(ineq, vars=None):
 
 def solve_ineq(ineq, vars=None):
     """
-    Solves inequalities and systems of inequalities using Maxima.
+    Solve inequalities and systems of inequalities using Maxima.
     Switches between rational inequalities
     (sage.symbolic.relation.solve_ineq_rational)
     and Fourier elimination (sage.symbolic.relation.solve_ineq_fouried).
@@ -1836,7 +1949,7 @@ def solve_ineq(ineq, vars=None):
 
     INPUT:
 
-    - ``ineq`` - one inequality or a list of inequalities
+    - ``ineq`` -- one inequality or a list of inequalities
 
       Case1: If ``ineq`` is one equality, then it should be rational
       expression in one variable. This input is passed to
@@ -1850,7 +1963,7 @@ def solve_ineq(ineq, vars=None):
       http://maxima.cvs.sourceforge.net/viewvc/maxima/maxima/share/contrib/fourier_elim/rtest_fourier_elim.mac
       for a big gallery of problems covered by this algorithm.
 
-    - ``vars`` - optional parameter with list of variables. This list
+    - ``vars`` -- (optional) parameter with list of variables. This list
       is used only if Fourier elimination is used. If omitted or if
       rational inequality is solved, then variables are determined
       automatically.

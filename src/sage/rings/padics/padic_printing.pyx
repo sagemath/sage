@@ -7,7 +7,7 @@
 """
 `p`-adic Printing
 
-This file contains code for printing p-adic elements.
+This file contains code for printing `p`-adic elements.
 
 It has been moved here to prevent code duplication and make finding
 the relevant code easier.
@@ -52,9 +52,9 @@ def pAdicPrinter(ring, options={}):
 
     INPUT:
 
-    - ring -- a p-adic ring or field.
+    - ``ring`` -- a `p`-adic ring or field
 
-    - options -- a dictionary, with keys in ``'mode'``, ``'pos'``,
+    - ``options`` -- dictionary, with keys in ``'mode'``, ``'pos'``,
       ``'ram_name'``, ``'unram_name'``, ``'var_name'``, ``'max_ram_terms'``,
       ``'max_unram_terms'``, ``'max_terse_terms'``, ``'sep'``, ``'alphabet'``; see
       :class:`pAdicPrinter_class` for the meanings of these keywords.
@@ -71,14 +71,15 @@ def pAdicPrinter(ring, options={}):
             options[option] = None
     return pAdicPrinter_class(ring, **options)
 
+
 class pAdicPrinterDefaults(SageObject):
     """
-    This class stores global defaults for p-adic printing.
+    This class stores global defaults for `p`-adic printing.
     """
-    def __init__(self, mode = 'series', pos = True, max_ram_terms = -1, max_unram_terms = -1, max_terse_terms = -1, sep = "|", alphabet = None):
+    def __init__(self, mode='series', pos=True, max_ram_terms=-1, max_unram_terms=-1, max_terse_terms=-1, sep="|", alphabet=None):
         r"""
         Instances of this class store global defaults used in
-        determining printing options during the creation of p-adic
+        determining printing options during the creation of `p`-adic
         rings and fields.  One instance stored in padic_printing
         stores the globally relevant default values.
 
@@ -104,7 +105,9 @@ class pAdicPrinterDefaults(SageObject):
         self._max_terse_terms = int(max_terse_terms)
         self._sep = sep
         if alphabet is None:
-            self._alphabet = ('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z')
+            txt = '0123456789'
+            txt += 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+            self._alphabet = tuple(txt)
         else:
             self._alphabet = alphabet
 
@@ -143,13 +146,13 @@ class pAdicPrinterDefaults(SageObject):
         """
         if mode is None:
             return self._mode
-        else:
-            if mode in ['val-unit','series','terse','digits','bars']:
-                self._mode = mode
-            else:
-                raise ValueError("invalid printing mode")
 
-    def allow_negatives(self, neg = None):
+        if mode in ['val-unit', 'series', 'terse', 'digits', 'bars']:
+            self._mode = mode
+        else:
+            raise ValueError("invalid printing mode")
+
+    def allow_negatives(self, neg=None):
         r"""
         Controls whether or not to display a balanced representation.
 
@@ -171,7 +174,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._pos = not neg
 
-    def max_series_terms(self, max = None):
+    def max_series_terms(self, max=None):
         r"""
         Controls the maximum number of terms shown when printing in
         ``'series'``, ``'digits'`` or ``'bars'`` mode.
@@ -196,7 +199,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._max_ram_terms = int(max)
 
-    def max_unram_terms(self, max = None):
+    def max_unram_terms(self, max=None):
         r"""
         For rings with non-prime residue fields, controls how many
         terms appear in the coefficient of each ``pi^n`` when printing in
@@ -221,7 +224,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._max_unram_terms = int(max)
 
-    def max_poly_terms(self, max = None):
+    def max_poly_terms(self, max=None):
         r"""
         Controls the number of terms appearing when printing
         polynomial representations in ``'terse'`` or ``'val-unit'`` modes.
@@ -247,7 +250,7 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._max_terse_terms = int(max)
 
-    def sep(self, sep = None):
+    def sep(self, sep=None):
         r"""
         Controls the separator used in ``'bars'`` mode.
 
@@ -270,9 +273,9 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._sep = str(sep)
 
-    def alphabet(self, alphabet = None):
+    def alphabet(self, alphabet=None):
         r"""
-        Controls the alphabet used to translate p-adic digits into
+        Controls the alphabet used to translate `p`-adic digits into
         strings (so that no separator need be used in ``'digits'`` mode).
 
         ``alphabet`` should be passed in as a list or tuple.
@@ -294,88 +297,78 @@ class pAdicPrinterDefaults(SageObject):
         else:
             self._alphabet = tuple(alphabet)
 
+
 _printer_defaults = pAdicPrinterDefaults()
 
 
 cdef class pAdicPrinter_class(SageObject):
     """
-    This class stores the printing options for a specific p-adic ring
+    This class stores the printing options for a specific `p`-adic ring
     or field, and uses these to compute the representations of
     elements.
     """
     def __init__(self, ring, mode, pos, ram_name, unram_name, var_name, max_ram_terms, max_unram_terms, max_terse_terms, sep, alphabet, show_prec):
         """
-        Initializes a :class:`pAdicPrinter`.
+        Initialize a :class:`pAdicPrinter`.
 
         INPUT:
 
-            - ring -- the ring or field to which this :class:`pAdicPrinter` is
-              attached.
+        - ``ring`` -- the ring or field to which this :class:`pAdicPrinter` is
+          attached
 
-            - mode -- The allowed values for mode are: 'val-unit',
-              'series', 'terse', 'digits' and 'bars'.
+        - ``mode`` -- the allowed values for mode are: ``'val-unit'``,
+          ``'series'``, ``'terse'``, ``'digits'`` and ``'bars'``:
 
-                - 'val-unit' -- elements are displayed as a power of
-                  the uniformizer times a unit, which is displayed in
-                  terse mode.
+          - ``'val-unit'`` -- elements are displayed as a power of the
+            uniformizer times a unit, which is displayed in terse mode
 
-                - 'series' -- elements are displayed as power series
-                  in the uniformizer.
+          - ``'series'`` -- elements are displayed as power series in the
+            uniformizer
 
-                - 'terse' -- for base rings and fields, elements are
-                  just displayed as an integer lift.  For extensions
-                  rings and fields, elements are displayed as a
-                  polynomial in the generator of the extension.
+          - ``'terse'`` -- for base rings and fields, elements are just
+            displayed as an integer lift.  For extensions rings and fields,
+            elements are displayed as a polynomial in the generator of the
+            extension.
 
-                - 'digits' -- Used only for small primes and totally
-                  ramified extensions (or trivial extensions),
-                  elements are displayed as just a string of p-adic
-                  digits, encoded using the 'alphabet' parameter.
+          - ``'digits'`` -- used only for small primes and totally ramified
+            extensions (or trivial extensions), elements are displayed as just
+            a string of `p`-adic digits, encoded using the 'alphabet' parameter
 
-                - 'bars' -- Like 'digits', but uses a separator in
-                  order to print a more canonical representation for
-                  each digit.  This change allows the use of this
-                  printing mode for unramified extensions and
-                  extensions with larger primes.
+          - ``'bars'`` -- like ``'digits'``, but uses a separator in order to
+            print a more canonical representation for each digit. This change
+            allows the use of this printing mode for unramified extensions and
+            extensions with larger primes.
 
-            - pos -- if True then integers in the range [0,... p-1]
-              will be used; if False integers in the range
-              [(1-p)/2,..., p/2] will be used.
+        - ``pos`` -- if ``True`` then integers in the range [0,... p-1] will be
+          used; if ``False`` integers in the range [(1-p)/2,..., p/2] will be used
 
-            - ram_name -- The string used to represent the
-              uniformizer.
+        - ``ram_name`` -- the string used to represent the uniformizer
 
-            - unram_name -- The string used to represent the trivial
-              lift of a generator of the residue field over the prime
-              field.
+        - ``unram_name`` -- the string used to represent the trivial lift of a
+          generator of the residue field over the prime field
 
-            - var_name -- The string used to represent the
-              user-specified generator of this extension ring or
-              field.
+        - ``var_name`` -- the string used to represent the user-specified
+          generator of this extension ring or field
 
-            - max_ram_terms -- Controls the maximum number of terms
-              shown when printing in 'series', 'digits' or 'bars'
-              mode.
+        - ``max_ram_terms`` -- controls the maximum number of terms shown when
+          printing in ``'series'``, ``'digits'`` or ``'bars'`` mode
 
-            - max_unram_terms -- For rings with non-prime residue
-              fields, controls how many terms appear in the
-              coefficient of each pi^n when printing in 'series' or
-              'bar' modes.
+        - ``max_unram_terms`` -- for rings with non-prime residue fields,
+          controls how many terms appear in the coefficient of each pi^n when
+          printing in ``'series'`` or ``'bar'`` modes
 
-            - max_terse_terms -- Controls the number of terms
-              appearing when printing polynomial representations in
-              'terse' or 'val-unit' modes.
+        - ``max_terse_terms`` -- controls the number of terms appearing when
+          printing polynomial representations in ``'terse'`` or ``'val-unit'``
+          modes
 
-            - sep -- Controls the separator used in 'bars'
-              mode.
+        - ``sep`` -- controls the separator used in ``'bars'`` mode
 
-            - alphabet -- Controls the alphabet used to translate
-              p-adic digits into strings (so that no separator need be
-              used in 'digits' mode).
+        - ``alphabet`` -- controls the alphabet used to translate `p`-adic digits
+          into strings (so that no separator need be used in ``'digits'`` mode)
 
-            - show_prec -- Specify how the precision is printed; it
-              can be 'none', 'bigoh' or 'dots' (the latter being not
-              available for all modes)
+        - ``show_prec`` -- Specify how the precision is printed; it can be
+          ``'none'``, ``'bigoh'`` or ``'dots'`` (the latter being not available
+          for all modes)
 
         TESTS::
 
@@ -520,7 +513,7 @@ cdef class pAdicPrinter_class(SageObject):
         (``max_unram_terms`` is irrelevant if the ring is totally ramified
         over the base, for example). This does not check if the rings are
         equal (to prevent infinite recursion in the comparison
-        functions of p-adic rings), but it does check if the primes
+        functions of `p`-adic rings), but it does check if the primes
         are the same (since the prime affects whether ``pos`` is
         relevant).
 
@@ -608,7 +601,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         return rich_to_bool(op, 0)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Representation of this printer.
 
@@ -617,7 +610,7 @@ cdef class pAdicPrinter_class(SageObject):
             sage: Zp(5)._printer  # indirect doctest
             series printer for 5-adic Ring with capped relative precision 20
         """
-        return "%s printer for %s"%(self._print_mode(), self.ring)
+        return "%s printer for %s" % (self._print_mode(), self.ring)
 
     def __enter__(self):
         """
@@ -663,7 +656,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _pos(self):
         """
-        Accesses self.pos.
+        Access ``self.pos``.
 
         EXAMPLES::
 
@@ -674,7 +667,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _sep(self):
         """
-        Accesses self.sep.
+        Access ``self.sep``.
 
         EXAMPLES::
 
@@ -685,7 +678,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _alphabet(self):
         """
-        Accesses self.pos.
+        Access ``self.pos``.
 
         EXAMPLES::
 
@@ -696,7 +689,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _max_ram_terms(self):
         """
-        Accesses self.max_ram_terms.
+        Access ``self.max_ram_terms``.
 
         EXAMPLES::
 
@@ -707,7 +700,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _max_unram_terms(self):
         """
-        Accesses self.max_unram_terms.
+        Access ``self.max_unram_terms``.
 
         EXAMPLES::
 
@@ -718,7 +711,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _max_terse_terms(self):
         """
-        Accesses self.max_terse_terms.
+        Access ``self.max_terse_terms``.
 
         EXAMPLES::
 
@@ -729,7 +722,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _show_prec(self):
         """
-        Accesses self.show_prec.
+        Access ``self.show_prec``.
 
         EXAMPLES::
 
@@ -740,7 +733,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _ring(self):
         """
-        Accesses self.ring.
+        Access ``self.ring``.
 
         EXAMPLES::
 
@@ -751,7 +744,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _uniformizer_name(self):
         """
-        Accesses self.ram_name.
+        Access ``self.ram_name``.
 
         EXAMPLES::
 
@@ -762,7 +755,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _ram_name(self):
         """
-        Accesses self.ram_name.
+        Access ``self.ram_name``.
 
         EXAMPLES::
 
@@ -773,7 +766,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _print_mode(self):
         """
-        Accesses self.mode.
+        Access ``self.mode``.
 
         EXAMPLES::
 
@@ -793,8 +786,7 @@ cdef class pAdicPrinter_class(SageObject):
 
     def _base_p_list(self, value, pos):
         """
-        Returns a list of integers forming the base p expansion of
-        value.
+        Return a list of integers forming the base p expansion of value.
 
         If pos is True, these integers will be in the range
         [0,..., p-1]; if pos is False, they will be in the range
@@ -816,10 +808,9 @@ cdef class pAdicPrinter_class(SageObject):
         """
         return self.base_p_list(value, pos)
 
-    cdef base_p_list(self, value, bint pos) noexcept:
+    cdef base_p_list(self, value, bint pos):
         """
-        Returns a list of integers forming the base p expansion of
-        value.
+        Return a list of integers forming the base p expansion of value.
 
         If pos is True, these integers will be in the range
         [0,... p-1]; if po is False, they will be in the range
@@ -843,16 +834,16 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return trim_zeros(list(value.unit_part().expansion(lift_mode='smallest')))
 
-    def repr_gen(self, elt, do_latex, pos = None, mode = None, ram_name = None):
+    def repr_gen(self, elt, do_latex, pos=None, mode=None, ram_name=None):
         """
         The entry point for printing an element.
 
         INPUT:
 
-        - ``elt`` -- a p-adic element of the appropriate ring to print.
+        - ``elt`` -- a `p`-adic element of the appropriate ring to print
 
         - ``do_latex`` -- whether to return a latex representation or
-          a normal one.
+          a normal one
 
         EXAMPLES::
 
@@ -894,9 +885,10 @@ cdef class pAdicPrinter_class(SageObject):
                 pprint = latex_variable_name(pprint)
         return self._repr_gen(elt, do_latex, _pos, _mode, pprint)
 
-    cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, ram_name) noexcept:
+    cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, ram_name):
         r"""
-        Prints a string representation of the element.  See __init__ for more details on print modes.
+        Print a string representation of the element.  See ``__init__`` for
+        more details on print modes.
 
         EXAMPLES::
 
@@ -922,7 +914,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         TESTS:
 
-        Check that :trac:`24843` is resolved::
+        Check that :issue:`24843` is resolved::
 
             sage: R = Zp(2, print_mode='digits', show_prec=True)
             sage: repr(R(0,10))
@@ -958,16 +950,16 @@ cdef class pAdicPrinter_class(SageObject):
                 if elt.valuation() == 0:
                     s = self._repr_spec(elt, do_latex, pos, terse, 0, ram_name)
                 elif elt.valuation() == 1:
-                    s = "%s \\cdot %s"%(ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s \\cdot %s" % (ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
                 else:
-                    s = "%s^{%s} \\cdot %s"%(ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s^{%s} \\cdot %s" % (ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
             else:
                 if elt.valuation() == 0:
                     s = self._repr_spec(elt, do_latex, pos, terse, 0, ram_name)
                 elif elt.valuation() == 1:
-                    s = "%s * %s"%(ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s * %s" % (ram_name, self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
                 else:
-                    s = "%s^%s * %s"%(ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
+                    s = "%s^%s * %s" % (ram_name, elt.valuation(), self._repr_spec(elt.unit_part(), do_latex, pos, terse, 1, ram_name))
         elif mode == digits:
             n = elt.valuation()
             if self.base:
@@ -1018,7 +1010,7 @@ cdef class pAdicPrinter_class(SageObject):
                 if self.max_unram_terms == 0:
                     L = ['[...]' if len(a) > 0 else '[]' for a in L]
                 elif self.max_unram_terms == 1:
-                    L = ["[..., %s]"%(a[-1]) if len(a) > 1 else str(a) for a in L]
+                    L = ["[..., %s]" % (a[-1]) if len(a) > 1 else str(a) for a in L]
                 else:
                     L = ["[%s,..., " % (a[0]) + ", ".join(str(b) for b in a[1-self.max_unram_terms:]) + "]" if len(a) > 2 else str(a) for a in L]
             if n > 0:
@@ -1048,13 +1040,14 @@ cdef class pAdicPrinter_class(SageObject):
                 s += ")"
             else:
                 if do_latex:
-                    s += "^{%s})"%(elt.precision_absolute())
+                    s += "^{%s})" % (elt.precision_absolute())
                 else:
-                    s += "^%s)"%(elt.precision_absolute())
-        if s == "": s = "0"
+                    s += "^%s)" % (elt.precision_absolute())
+        if s == "":
+            return "0"
         return s
 
-    cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, bint paren, ram_name) noexcept:
+    cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, bint paren, ram_name):
         """
         A function used by repr_gen for terse and series printing.
 
@@ -1087,7 +1080,7 @@ cdef class pAdicPrinter_class(SageObject):
                 # if v<0, _terse_frac doesn't use the first input at all, and expects the unit part in the third input.
                 s = self._terse_frac(lift_z, v, lift_z, ram_name, do_latex)
                 if paren and not do_latex:
-                    return "(%s)"%(s)
+                    return "(%s)" % (s)
                 else:
                     return s
             else: # mode == series
@@ -1191,7 +1184,7 @@ cdef class pAdicPrinter_class(SageObject):
                                     v, u = a.val_unit(self.prime_pow.prime)
                                     arep = self._terse_frac(a, v, u, ram_name, do_latex)
                                 if s == "":
-                                    s = "-%s"%(arep)
+                                    s = "-%s" % (arep)
                                     s += self._dot_var(var_name, i, do_latex)
                                 elif a == 1:
                                     s += " - "
@@ -1271,95 +1264,95 @@ cdef class pAdicPrinter_class(SageObject):
             s = "(" + s + ")"
         return s
 
-    cdef _var(self, x, exp, do_latex) noexcept:
+    cdef _var(self, x, exp, do_latex):
         """
-        Returns a representation of 'x^exp', latexed if necessary.
+        Return a representation of 'x^exp', latexed if necessary.
         """
         if exp == 0:
             return "1"
         if exp == 1:
             return str(x)
         if do_latex:
-            return "%s^{%s}"%(x, exp)
+            return "%s^{%s}" % (x, exp)
         else:
-            return "%s^%s"%(x, exp)
+            return "%s^%s" % (x, exp)
 
-    cdef _dot_var(self, x, exp, do_latex) noexcept:
+    cdef _dot_var(self, x, exp, do_latex):
         """
-        Returns a representation of '*x^exp', latexed if necessary.
+        Return a representation of '*x^exp', latexed if necessary.
         """
         if exp == 0:
             return ""
         if exp == 1:
             if do_latex:
-                return " \\cdot %s"%(x)
+                return " \\cdot %s" % (x)
             else:
-                return "*%s"%(x)
+                return "*%s" % (x)
         if do_latex:
-            return " \\cdot %s^{%s}"%(x, exp)
+            return " \\cdot %s^{%s}" % (x, exp)
         else:
-            return "*%s^%s"%(x, exp)
+            return "*%s^%s" % (x, exp)
 
-    cdef _co_dot_var(self, co, x, exp, do_latex) noexcept:
+    cdef _co_dot_var(self, co, x, exp, do_latex):
         """
-        Returns a representation of 'co*x^exp', latexed if necessary.
+        Return a representation of 'co*x^exp', latexed if necessary.
 
         co should be greater than 0
         """
         if exp == 0:
-            return "%s"%co
+            return "%s" % co
         if exp == 1:
             if co == 1:
-                return "%s"%x
+                return "%s" % x
             if do_latex:
-                return "%s \\cdot %s"%(co, x)
+                return "%s \\cdot %s" % (co, x)
             else:
-                return "%s*%s"%(co, x)
+                return "%s*%s" % (co, x)
         if co == 1:
             if do_latex:
-                return "%s^{%s}"%(x, exp)
+                return "%s^{%s}" % (x, exp)
             else:
-                return "%s^%s"%(x, exp)
+                return "%s^%s" % (x, exp)
         if do_latex:
-            return "%s \\cdot %s^{%s}"%(co, x, exp)
+            return "%s \\cdot %s^{%s}" % (co, x, exp)
         else:
-            return "%s*%s^%s"%(co, x, exp)
+            return "%s*%s^%s" % (co, x, exp)
 
-    cdef _plus_ellipsis(self, bint do_latex) noexcept:
+    cdef _plus_ellipsis(self, bint do_latex):
         """
-        Returns a representation of '+ ...', latexed if necessary.
+        Return a representation of '+ ...', latexed if necessary.
         """
         if do_latex:
             return " + \\cdots"
         else:
             return " + ..."
 
-    cdef _ellipsis(self, bint do_latex) noexcept:
+    cdef _ellipsis(self, bint do_latex):
         """
-        Returns a representation of '...', latexed if necessary.
+        Return a representation of '...', latexed if necessary.
         """
         if do_latex:
             return "\\cdots"
         else:
             return "..."
 
-    cdef _truncate_list(self, L, max_terms, zero) noexcept:
+    cdef _truncate_list(self, L, max_terms, zero):
         """
-        Takes a list L of coefficients and returns a list with at most max_terms nonzero terms.
+        Take a list L of coefficients and returns a list with at most max_terms nonzero terms.
 
         INPUT:
 
-        - L -- a list
+        - ``L`` -- list
 
-        - max_terms -- nonnegative integer (or -1, in which case
+        - ``max_terms`` -- nonnegative integer (or -1, in which case
           no truncation occurs)
 
-        - zero -- what should be considered zero, usually 0 or [].
+        - ``zero`` -- what should be considered zero, usually 0 or []
 
         OUTPUT:
 
-        - Truncated list -- later terms are removed.
-        - Boolean -- whether any truncation occurred.
+        - truncated list; later terms are removed
+        - boolean; whether any truncation occurred
         """
         if max_terms == -1 or len(L) == 0:
             return list(L), False
@@ -1375,27 +1368,26 @@ cdef class pAdicPrinter_class(SageObject):
             ans.append(c)
         return ans, False
 
-    cdef _print_unram_term(self, L, bint do_latex, polyname, long max_unram_terms, long expshift, bint increasing) noexcept:
+    cdef _print_unram_term(self, L, bint do_latex, polyname, long max_unram_terms, long expshift, bint increasing):
         """
-        Returns a string representation of L when considered as a polynomial, truncating to at most max_unram_terms nonzero terms.
+        Return a string representation of L when considered as a polynomial,
+        truncating to at most ``max_unram_terms`` nonzero terms.
 
         INPUT:
 
-            - L -- A list of coefficients.
+        - ``L`` -- a list of coefficients
 
-            - do_latex -- whether to print latex-style.
+        - ``do_latex`` -- whether to print latex-style
 
-            - polyname -- the name for the variable.
+        - ``polyname`` -- the name for the variable
 
-            - max_unram_terms -- a maximum number of terms before
+        - ``max_unram_terms`` -- a maximum number of terms before
               truncation occurs and an ellipsis is added.  -1
               indicates no truncation should happen.
 
-            - expshift -- a shift for all the exponents of the
-              variable.
+        - ``expshift`` -- a shift for all the exponents of the variable
 
-            - increasing -- Whether to order the exponents in
-              increasing fashion.
+        - ``increasing`` -- whether to order the exponents in increasing fashion
         """
         s = ""
         cdef Py_ssize_t j, newj
@@ -1412,7 +1404,7 @@ cdef class pAdicPrinter_class(SageObject):
                         return s
                     else:
                         count += 1
-                        if count == max_unram_terms: #this will never trigger if max_unram_terms == -1
+                        if count == max_unram_terms:  # this will never trigger if max_unram_terms == -1
                             newj = len(L) - 1
                             while L[newj] == 0:
                                 newj -= 1
@@ -1435,7 +1427,7 @@ cdef class pAdicPrinter_class(SageObject):
                         return s
                     else:
                         count += 1
-                        if count == max_unram_terms: #this will never trigger if max_unram_terms == -1
+                        if count == max_unram_terms:  # this will never trigger if max_unram_terms == -1
                             newj = 0
                             while L[newj] == 0:
                                 newj += 1
@@ -1448,43 +1440,41 @@ cdef class pAdicPrinter_class(SageObject):
                             s = self._print_term_of_poly(s, L[j], do_latex, polyname, exp)
         return s
 
-    cdef _terse_frac(self, a, v, u, ram_name, bint do_latex) noexcept:
+    cdef _terse_frac(self, a, v, u, ram_name, bint do_latex):
         """
-        Returns a representation of a=u/ram_name^v, latexed if necessary.
+        Return a representation of 'a=u/ram_name^v', latexed if necessary.
         """
         if do_latex:
             if v >= 0:
                 arep = a._latex_()
             elif v == -1:
-                arep = "\\frac{%s}{%s}"%(u, ram_name)
+                arep = "\\frac{%s}{%s}" % (u, ram_name)
             else:
-                arep = "\\frac{%s}{%s^{%s}}"%(u, ram_name, -v)
+                arep = "\\frac{%s}{%s^{%s}}" % (u, ram_name, -v)
         else:
             if v >= 0:
                 arep = str(a)
             elif v == -1:
-                arep = "%s/%s"%(u, ram_name)
+                arep = "%s/%s" % (u, ram_name)
             else:
-                arep = "%s/%s^%s"%(u, ram_name, -v)
+                arep = "%s/%s^%s" % (u, ram_name, -v)
         return arep
 
-    cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing) noexcept:
+    cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing):
         """
-        Prints a list L as a polynomial.
+        Print a list ``L`` as a polynomial.
 
         INPUT:
 
-            - L -- A list of coefficients.
+        - ``L`` -- a list of coefficients
 
-            - do_latex -- whether to print latex-style.
+        - ``do_latex`` -- whether to print latex-style
 
-            - polyname -- the name for the variable.
+        - ``polyname`` -- the name for the variable
 
-            - expshift -- a shift for all the exponents of the
-              variable.
+        - ``expshift`` -- a shift for all the exponents of the variable
 
-            - increasing -- Whether to order the exponents in
-              increasing fashion.
+        - ``increasing`` -- whether to order the exponents in increasing fashion
         """
         s = ""
         cdef Py_ssize_t j
@@ -1499,7 +1489,7 @@ cdef class pAdicPrinter_class(SageObject):
                 s = self._print_term_of_poly(s, L[j], do_latex, polyname, exp)
         return s
 
-    cdef _print_term_of_poly(self, s, coeff, bint do_latex, polyname, long exp) noexcept:
+    cdef _print_term_of_poly(self, s, coeff, bint do_latex, polyname, long exp):
         """
         Appends +coeff*polyname^exp to s, latexed if necessary.
         """

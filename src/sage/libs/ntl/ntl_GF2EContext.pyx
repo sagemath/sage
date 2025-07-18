@@ -66,9 +66,9 @@ cdef class ntl_GF2EContext_class():
         """
         return ntl_GF2EContext, (self.m,)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
-        Returns a print representation of self.
+        Return a print representation of ``self``.
 
         EXAMPLES::
 
@@ -76,7 +76,7 @@ cdef class ntl_GF2EContext_class():
             sage: c
             NTL modulus [1 0 1 1 0 1 0 0 0 0 0 0 0 0 0 0 1]
         """
-        return "NTL modulus %s"%(self.m)
+        return "NTL modulus %s" % (self.m)
 
     def modulus(self):
         """
@@ -90,7 +90,6 @@ cdef class ntl_GF2EContext_class():
             [1 1 0 0 0 0 0 1]
         """
         return self.m
-
 
     def restore(self):
         """
@@ -107,6 +106,7 @@ cdef class ntl_GF2EContext_class():
 
     cdef void restore_c(self) noexcept:
         self.x.restore()
+
 
 def ntl_GF2EContext( v ):
     """

@@ -31,7 +31,6 @@ AUTHORS:
   for affine/projective
 
 - Kwankyu Lee (2020-02): added indeterminacy_locus() and image()
-
 """
 
 # ****************************************************************************
@@ -43,14 +42,10 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import sys
-
-import sage.rings.abc
-
-from sage.calculus.functions import jacobian
 
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
@@ -237,7 +232,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         TESTS:
 
-        Check that :trac:`32209` is fixed::
+        Check that :issue:`32209` is fixed::
 
             sage: S.<x,y> = AffineSpace(ZZ, 2)
             sage: T.<u,v> = AffineSpace(ZZ, 2)
@@ -275,15 +270,13 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
     def __eq__(self, right):
         """
-        Tests the equality of two affine maps.
+        Test the equality of two affine maps.
 
         INPUT:
 
         - ``right`` -- a map on affine space
 
-        OUTPUT:
-
-        ``True`` if the two affine maps define the same map.
+        OUTPUT: ``True`` if the two affine maps define the same map
 
         EXAMPLES::
 
@@ -313,15 +306,13 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
     def __ne__(self, right):
         """
-        Tests the inequality of two affine maps.
+        Test the inequality of two affine maps.
 
         INPUT:
 
         - ``right`` -- a map on affine space
 
-        OUTPUT:
-
-        ``True`` if the two affine maps define the same map.
+        OUTPUT: ``True`` if the two affine maps define the same map
 
         EXAMPLES::
 
@@ -445,7 +436,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``n`` -- a tuple of nonnegative integers. If ``n`` is an integer,
+        - ``n`` -- tuple of nonnegative integers; if ``n`` is an integer,
           then the two values of the tuple are assumed to be the same
 
         OUTPUT: a morphism from the projective embedding of the domain of this map
@@ -548,7 +539,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             Scheme endomorphism of Projective Space of dimension 1
              over Algebraic Field
               Defn: Defined on coordinates by sending (x0 : x1) to
-                    (x0*x1 : 1/2*x0^2 + x0*x1 + 3/2*x1^2)
+                    (2*x0*x1 : x0^2 + 2*x0*x1 + 3*x1^2)
 
         ::
 
@@ -639,9 +630,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         """
         Return this endomorphism as a :class:`DynamicalSystem_affine`.
 
-        OUTPUT:
-
-        - :class:`DynamicalSystem_affine`
+        OUTPUT: :class:`DynamicalSystem_affine`
 
         EXAMPLES::
 
@@ -698,9 +687,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         INPUT:
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT: A real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -756,14 +745,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``v`` -- a prime or prime ideal of the base ring.
+        - ``v`` -- a prime or prime ideal of the base ring
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -812,14 +799,12 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         INPUT:
 
-        - ``i`` -- an integer.
+        - ``i`` -- integer
 
         - ``prec`` -- desired floating point precision (default:
-          default RealField precision).
+          default RealField precision)
 
-        OUTPUT:
-
-        - a real number.
+        OUTPUT: a real number
 
         EXAMPLES::
 
@@ -863,9 +848,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
         The `(i, j)` entry of the Jacobian matrix is the partial derivative
         ``diff(functions[i], variables[j])``.
 
-        OUTPUT:
-
-        - matrix with coordinates in the coordinate ring of the map.
+        OUTPUT: matrix with coordinates in the coordinate ring of the map
 
         EXAMPLES::
 
@@ -897,6 +880,9 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             return self.__jacobian
         except AttributeError:
             pass
+
+        from sage.calculus.functions import jacobian
+
         self.__jacobian = jacobian(list(self), self.domain().ambient_space().gens())
         return self.__jacobian
 
@@ -1030,8 +1016,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
                 poly_numerator = poly.numerator()
                 poly_denominator = poly.denominator()
                 degree = max(poly_numerator.degree(), poly_denominator.degree())
-                if degree > max_degree:
-                    max_degree = degree
+                max_degree = max(degree, max_degree)
             # polynomial affine map
             elif poly.degree() > max_degree:
                 max_degree = poly.degree()
@@ -1059,7 +1044,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
         morphism from the Weil restriction of the domain to the Weil restriction
         of the codomain.
 
-        OUTPUT: Scheme morphism on the Weil restrictions of the domain
+        OUTPUT: scheme morphism on the Weil restrictions of the domain
                 and codomain of the map.
 
         EXAMPLES::
@@ -1171,13 +1156,11 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: H = End(A)
             sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))])                         # needs sage.symbolic
             sage: f.reduce_base_field()                                                 # needs sage.symbolic
-            Scheme endomorphism of Affine Space of dimension 1 over Number
-            Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
-             with a = 1.442249570307409? + 1.414213562373095?*I
+            Scheme endomorphism of Affine Space of dimension 1 over Number Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17 with a = 1.442249570307409? - 1.414213562373095?*I
               Defn: Defined on coordinates by sending (x) to
                     ((-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2 - 772/269*a
-                    - 1092/269)*x^2 + (48/269*a^5 - 27/269*a^4 + 320/269*a^3 - 468/269*a^2
-                    + 1041/269*a + 1092/269))
+                    - 1092/269)*x^2 + (-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2
+                    - 1041/269*a - 1092/269))
 
         ::
 
@@ -1292,7 +1275,6 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: f = A2.hom([x*y, y, x], P2)
             sage: f.indeterminacy_points()                                              # needs sage.libs.singular
             [(0, 0)]
-
         """
         if F is None:
             fcn = self
@@ -1524,7 +1506,6 @@ class SchemeMorphism_polynomial_affine_subscheme_field(SchemeMorphism_polynomial
               y*z
             sage: L.dimension()                                                         # needs sage.libs.singular
             1
-
         """
         # homogenize using 0th affine patch both for domain and codomain
         h = self.homogenize(0)

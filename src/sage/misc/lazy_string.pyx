@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-objects
 """
 Lazy strings
 
@@ -25,13 +25,13 @@ Note that the function is recomputed each time::
     l'2'
 """
 
-#Copyright (c) 2009 by Armin Ronacher.
+# Copyright (c) 2009 by Armin Ronacher.
 #
-#Some rights reserved.
+# Some rights reserved.
 #
-#Redistribution and use in source and binary forms, with or without
-#modification, are permitted provided that the following conditions are
-#met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
 #
 #    * Redistributions of source code must retain the above copyright
 #      notice, this list of conditions and the following disclaimer.
@@ -45,25 +45,26 @@ Note that the function is recomputed each time::
 #      promote products derived from this software without specific
 #      prior written permission.
 #
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-#"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-#LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-#A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-#OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-#SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-#LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-#DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-#THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-#OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from cpython.object cimport PyObject_Call, PyObject_RichCompare
 
 import types
 
+
 def is_lazy_string(obj):
     """
-    Checks if the given object is a lazy string.
+    Check if the given object is a lazy string.
 
     EXAMPLES::
 
@@ -75,17 +76,17 @@ def is_lazy_string(obj):
     """
     return isinstance(obj, _LazyString)
 
+
 def lazy_string(f, *args, **kwargs):
     """
-    Creates a lazy string.
+    Create a lazy string.
 
     INPUT:
 
-    - ``f``, either a callable or a (format) string
+    - ``f`` -- either a callable or a (format) string
     - positional arguments that are given to ``f``, either by calling or by
       applying it as a format string
-    - named arguments, that are forwarded to ``f`` if it is not a string
-
+    - named arguments that are forwarded to ``f`` if it is not a string
 
     EXAMPLES::
 
@@ -131,17 +132,18 @@ def _make_lazy_string(ftype, fpickle, args, kwargs):
         f = fpickle
     return _LazyString(f, args, kwargs)
 
+
 cdef class _LazyString():
     """
     Lazy class for strings created by a function call or a format string.
 
     INPUT:
 
-    - ``f``, either a callable or a (format) string
-    - ``args``, a tuple of arguments that are given to ``f``, either by calling
+    - ``f`` -- either a callable or a (format) string
+    - ``args`` -- tuple of arguments that are given to ``f``, either by calling
       or by applying it as a format string
-    - ``kwargs``, a dictionary of optional arguments, that are forwarded to ``f``
-      if it is a callable.
+    - ``kwargs`` -- dictionary of optional arguments, that are forwarded to ``f``
+      if it is a callable
 
     .. NOTE::
 
@@ -184,11 +186,11 @@ cdef class _LazyString():
         """
         INPUT:
 
-        - ``f``, either a callable or a (format) string
-        - ``args``, a tuple of arguments that are given to ``f``, either by calling
+        - ``f`` -- either a callable or a (format) string
+        - ``args`` -- tuple of arguments that are given to ``f``, either by calling
           or by applying it as a format string
-        - ``kwargs``, a dictionary of optional arguments, that are forwarded to ``f``
-          if it is a callable.
+        - ``kwargs`` -- dictionary of optional arguments, that are forwarded to ``f``
+          if it is a callable
 
         EXAMPLES::
 
@@ -203,7 +205,7 @@ cdef class _LazyString():
         self.args = <tuple?>args
         self.kwargs = <dict?>kwargs
 
-    cdef val(self) noexcept:
+    cdef val(self):
         cdef f = self.func
         if isinstance(f, str):
             return f % self.args
@@ -313,7 +315,7 @@ cdef class _LazyString():
         Return the file system representation of ``self``, assuming that
         ``self`` is a path.
 
-        This is for Python 3 compatibility: see :trac:`24046`, and also
+        This is for Python 3 compatibility: see :issue:`24046`, and also
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 
@@ -324,7 +326,6 @@ cdef class _LazyString():
             sage: s = lazy_string(f)
             sage: os.fspath(s)
             '/dev/null'
-
         """
         return str(self)
 
@@ -503,14 +504,14 @@ cdef class _LazyString():
         except Exception:
             return '<%s broken>' % self.__class__.__name__
 
-    cpdef update_lazy_string(self, args, kwds) noexcept:
+    cpdef update_lazy_string(self, args, kwds):
         """
         Change this lazy string in-place.
 
         INPUT:
 
-        - ``args``, a tuple
-        - ``kwds``, a dict
+        - ``args`` -- tuple
+        - ``kwds`` -- dictionary
 
         .. NOTE::
 

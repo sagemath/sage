@@ -53,7 +53,7 @@ class Function_sinh(GinacFunction):
 
         EXAMPLES::
 
-            sage: sinh(3.1415)
+            sage: sinh(3.1415)                                                          # needs sage.rings.real_mpfr
             11.5476653707437
 
             sage: # needs sage.symbolic
@@ -91,7 +91,7 @@ class Function_cosh(GinacFunction):
 
         EXAMPLES::
 
-            sage: cosh(3.1415)
+            sage: cosh(3.1415)                                                          # needs sage.rings.real_mpfr
             11.5908832931176
 
             sage: # needs sage.symbolic
@@ -129,9 +129,9 @@ class Function_tanh(GinacFunction):
 
         EXAMPLES::
 
-            sage: tanh(3.1415)
+            sage: tanh(3.1415)                                                          # needs sage.rings.real_mpfr
             0.996271386633702
-            sage: tan(3.1415/4)
+            sage: tan(3.1415/4)                                                         # needs sage.rings.real_mpfr
             0.999953674278156
 
             sage: # needs sage.symbolic
@@ -170,7 +170,7 @@ class Function_tanh(GinacFunction):
             sage: tanh(x)._sympy_()                                                     # needs sympy sage.symbolic
             tanh(x)
 
-        Check that real/imaginary parts are correct (:trac:`20098`)::
+        Check that real/imaginary parts are correct (:issue:`20098`)::
 
             sage: # needs sage.symbolic
             sage: tanh(1+2*I).n()
@@ -197,7 +197,7 @@ class Function_coth(GinacFunction):
 
         EXAMPLES::
 
-            sage: coth(3.1415)
+            sage: coth(3.1415)                                                          # needs sage.rings.real_mpfr
             1.00374256795520
             sage: coth(complex(1, 2))  # abs tol 1e-15                                  # needs sage.rings.complex_double
             (0.8213297974938518+0.17138361290918508j)
@@ -256,7 +256,7 @@ class Function_sech(GinacFunction):
 
         EXAMPLES::
 
-            sage: sech(3.1415)
+            sage: sech(3.1415)                                                          # needs sage.rings.real_mpfr
             0.0862747018248192
 
             sage: # needs sage.symbolic
@@ -313,7 +313,7 @@ class Function_csch(GinacFunction):
 
         EXAMPLES::
 
-            sage: csch(3.1415)
+            sage: csch(3.1415)                                                          # needs sage.rings.real_mpfr
             0.0865975907592133
 
             sage: # needs sage.symbolic
@@ -375,7 +375,7 @@ class Function_arcsinh(GinacFunction):
 
             sage: asinh
             arcsinh
-            sage: asinh(0.5)
+            sage: asinh(0.5)                                                            # needs sage.rings.real_mpfr
             0.481211825059603
             sage: asinh(1/2)                                                            # needs sage.symbolic
             arcsinh(1/2)
@@ -527,7 +527,7 @@ class Function_arctanh(GinacFunction):
 
         EXAMPLES::
 
-            sage: atanh(0.5)
+            sage: atanh(0.5)                                                            # needs sage.rings.real_mpfr
             0.549306144334055
             sage: atanh(1/2)                                                            # needs sage.symbolic
             1/2*log(3)
@@ -617,7 +617,7 @@ class Function_arccoth(GinacFunction):
             sage: acoth(x)._sympy_()                                                    # needs sympy sage.symbolic
             acoth(x)
 
-        Check that :trac:`23636` is fixed::
+        Check that :issue:`23636` is fixed::
 
             sage: acoth(float(1.1))                                                     # needs sage.symbolic
             1.5222612188617113
@@ -717,7 +717,7 @@ class Function_arccsch(GinacFunction):
 
         TESTS:
 
-        Check that :trac:`20818` is fixed::
+        Check that :issue:`20818` is fixed::
 
             sage: acsch(float(0.1))                                                     # needs sage.symbolic
             2.99822295029797

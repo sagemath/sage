@@ -4,9 +4,12 @@ Subalgebras and ideals of Lie algebras
 AUTHORS:
 
 - Eero Hakavuori (2018-08-29): initial version
+- Travis Scrimshaw (2025-05-21): make all Lie subalgebras use elements
+  in the ambient Lie algebra
 """
 # ****************************************************************************
 #       Copyright (C) 2018 Eero Hakavuori <eero.hakavuori@gmail.com>
+#                     2025 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +27,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.family import Family
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.structure.parent import Parent
+from sage.structure.element import parent, Element
 from sage.structure.unique_representation import UniqueRepresentation
 
 
@@ -34,8 +38,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
     INPUT:
 
     - ``ambient`` -- the Lie algebra containing the subalgebra
-    - ``gens`` -- a list of generators of the subalgebra
-    - ``ideal`` -- (default: ``False``) a boolean; if ``True``, then ``gens``
+    - ``gens`` -- list of generators of the subalgebra
+    - ``ideal`` -- boolean (default: ``False``); if ``True``, then ``gens``
       is interpreted as the generating set of an ideal instead of a subalgebra
     - ``order`` -- (optional) the key used to sort the indices of ``ambient``
     - ``category`` -- (optional) a subcategory of subobjects of finite
@@ -56,10 +60,10 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         sage: S = L.subalgebra(Y)
         sage: S.basis()
-        Family (q1,)
+        Finite family {'q1': q1}
         sage: I = L.ideal(Y)
         sage: I.basis()
-        Family (q1, z)
+        Finite family {'q1': q1, 'z': z}
 
     The zero dimensional subalgebra can be created by giving 0 as a generator
     or with an empty list of generators::
@@ -70,7 +74,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         sage: S1 is S2
         True
         sage: S1.basis()
-        Family ()
+        Finite family {}
 
     Elements of the ambient Lie algebra can be reduced modulo an
     ideal or subalgebra::
@@ -91,7 +95,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         sage: # needs sage.symbolic
         sage: I =  L.ideal(X + Y)
         sage: I.basis()
-        Family (X + Y, Z)
+        Finite family {'Y': X + Y, 'Z': Z}
         sage: el = var('x')*X + var('y')*Y + var('z')*Z; el
         x*X + y*Y + z*Z
         sage: I.reduce(el)
@@ -101,7 +105,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
         sage: I =  L.ideal(X + Y, order=lambda s: ['Z','Y','X'].index(s))               # needs sage.symbolic
         sage: I.basis()                                                                 # needs sage.symbolic
-        Family (Z, X + Y)
+        Finite family {'Z': Z, 'X': X + Y}
         sage: I.reduce(el)                                                              # needs sage.symbolic
         (-x+y)*Y
 
@@ -123,20 +127,22 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         sage: J = I.ideal(Z); J
         Ideal (Z) of Ideal (Y) of Lie algebra on 4 generators (X, Y, Z, W) over Rational Field
         sage: J.basis()
-        Family (Z,)
+        Finite family {'Z': Z}
         sage: J.is_ideal(L)
         False
         sage: K = L.ideal(J.basis().list())
         sage: K.basis()
-        Family (Z, W)
+        Finite family {'Z': Z, 'W': W}
 
     TESTS:
 
     Test suites::
 
-        sage: S =  L.subalgebra(X + Y)
+        sage: sc = {('X','Y'): {'Z': 1}, ('X','Z'): {'W': 1}}
+        sage: L.<X,Y,Z,W> = LieAlgebra(QQ, sc)
+        sage: S = L.subalgebra(X + Y)
         sage: TestSuite(S).run()
-        sage: I =  L.ideal(X + Y)
+        sage: I = L.ideal(X + Y)
         sage: TestSuite(I).run()
 
     Verify that subalgebras and ideals of nilpotent Lie algebras are nilpotent::
@@ -163,9 +169,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         sage: J.reduce(I(Z) + I(W))
         W
     """
-
     @staticmethod
-    def __classcall_private__(cls, ambient, gens, ideal=False,
+    def __classcall_private__(cls, ambient, gens, ideal_of=None,
                               order=None, category=None):
         """
         Normalize input to ensure a unique representation.
@@ -193,26 +198,69 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: T3 = L.subalgebra([0, 0])
             sage: T1 is T2 and T2 is T3
             True
-        """
-        if not isinstance(gens, (list, tuple)):
-            gens = [gens]
-        gens = tuple(ambient(gen) for gen in gens if not gen.is_zero())
 
-        if not ideal and isinstance(ambient,
-                            LieSubalgebra_finite_dimensional_with_basis):
-            # a nested subalgebra is a subalgebra
-            gens = tuple(ambient.lift(gen) for gen in gens)
-            ambient = ambient.ambient()
+        Subalgebras generated by a subalgebra returns the same subalgebra::
+
+            sage: S1 = L.subalgebra(X)
+            sage: S2 = L.subalgebra(S1)
+            sage: S1 is S2
+            True
+
+        We can have subalgebras generated by subalgebras::
+
+            sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+            ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+            ....:            ('d','e'): {'c':1}}
+            sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+            sage: S1 = L.subalgebra(a)
+            sage: S2 = L.subalgebra([b, e])
+            sage: S = L.subalgebra([S1, S2])
+            sage: S
+            Subalgebra generated by (a, a, b, e) of Lie algebra on
+             5 generators (a, b, c, d, e) over Rational Field
+            sage: S.basis()
+            Finite family {'a': a, 'b': b, 'e': e}
+
+        Check that other container-like objects are handled properly
+        (:issue:`40137`)::
+
+            sage: L.<a,b,c,d> = LieAlgebra(QQ, {('a','b'): {'c': 1, 'd':1}})
+            sage: A = L.ideal([b, c, d])
+            sage: B = L.ideal([b, c+d])
+            sage: A.ideal(B)
+            Ideal (b, c + d) of Ideal (b, c, d) of Lie algebra on 4 generators
+             (a, b, c, d) over Rational Field
+            sage: A.ideal(B.basis())
+            Ideal (b, c + d) of Ideal (b, c, d) of Lie algebra on 4 generators
+             (a, b, c, d) over Rational Field
+        """
+        if isinstance(ambient, LieSubalgebra_finite_dimensional_with_basis):
+            ambient = ambient._ambient
+        if isinstance(gens, LieSubalgebra_finite_dimensional_with_basis):
+            if gens._ideal_of is ideal_of:
+                return gens
+            gens = gens.lie_algebra_generators()
+        if isinstance(gens, Element):
+            gens = [gens]
+        new_gens = []
+
+        # make sure all elements belong to the ambient Lie algebra
+        for gen in gens:
+            if isinstance(gen, LieSubalgebra_finite_dimensional_with_basis):
+                new_gens.extend(ambient(b) for b in gen.basis())
+            elif not gen.is_zero():
+                new_gens.append(ambient(gen))
+        gens = tuple(new_gens)
 
         cat = LieAlgebras(ambient.base_ring()).FiniteDimensional().WithBasis()
         category = cat.Subobjects().or_subcategory(category)
         if ambient in LieAlgebras(ambient.base_ring()).Nilpotent():
             category = category.Nilpotent()
 
-        return super().__classcall__(cls, ambient, gens, ideal,
+        return super().__classcall__(cls, ambient, gens, ideal_of,
                                      order, category)
 
-    def __init__(self, ambient, gens, ideal, order=None, category=None):
+    def __init__(self, ambient, gens, ideal_of, order=None, category=None):
         r"""
         Initialize ``self``.
 
@@ -224,13 +272,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I = L.ideal(X)
             sage: TestSuite(I).run()
 
-        Check that :trac:`34006` is fixed::
+        Check that :issue:`34006` is fixed::
 
             sage: S.gens()[0].parent() is S
             True
         """
         self._ambient = ambient
-        self._is_ideal = ideal
+        self._ideal_of = ideal_of
 
         # initialize helper variables for ordering
         if order is None:
@@ -279,10 +327,9 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I = L.subalgebra(x)
             sage: I(x) in I
             True
-
         """
-        if x in self.ambient():
-            x = self.ambient()(x)
+        if x in self._ambient:
+            x = self._ambient(x)
             return x.to_vector() in self.module()
         return super().__contains__(x)
 
@@ -319,16 +366,10 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: L.ideal([X, Y])
             Ideal (X, Y) of Abelian Lie algebra on 2 generators (X, Y) over Rational Field
         """
-        gens = self.gens()
-        if len(gens) == 1:
-            gens = gens[0]
+        if self._ideal_of is not None:
+            return "Ideal {} of {}".format(self._repr_short(), self._ideal_of)
 
-        if self._is_ideal:
-            basestr = "Ideal"
-        else:
-            basestr = "Subalgebra generated by"
-
-        return "%s %s of %s" % (basestr, self._repr_short(), self.ambient())
+        return "Subalgebra generated by {} of {}".format(self._repr_short(), self.ambient())
 
     def _repr_short(self):
         """
@@ -357,7 +398,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S._an_element_()
             X
         """
-        return self.element_class(self, self.lie_algebra_generators()[0])
+        return next(iter(self.lie_algebra_generators()))
 
     def _element_constructor_(self, x):
         """
@@ -394,14 +435,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: S([S(x), S(y)]) == S(L[x, y])
             True
         """
-        try:
-            P = x.parent()
-            if P is self:
-                return x
-            if P == self.ambient():
-                return self.retract(x)
-        except AttributeError:
-            pass
+        P = parent(x)
+        if P is self:
+            return x
+        if P == self._ambient:
+            return self.retract(x)
+        if isinstance(P, type(self)) and P._ambient == self._ambient:
+            return self.retract(x.value)
 
         if x in self.module():
             return self.from_vector(x)
@@ -448,7 +488,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             (2, 3, 1)
         """
         mc = X.monomial_coefficients()
-        M = self.ambient().module()
+        M = self._ambient.module()
         R = M.base_ring()
         B = M.basis()
         return M.sum(R(mc[self._reversed_indices[i]]) * B[i]
@@ -506,7 +546,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: L.<x,y,z> = LieAlgebra(QQ, abelian=True)
             sage: S = L.subalgebra([x, y])
             sage: S._indices
-            {0, 1}
+            {'x', 'y'}
             sage: [S.basis()[k] for k in S._indices]
             [x, y]
         """
@@ -519,11 +559,11 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: L.<x,y,z> = LieAlgebra(QQ, abelian=True)
-            sage: S = L.subalgebra([x, y])
+            sage: S = L.subalgebra([x+y, z])
             sage: S.indices()
-            {0, 1}
+            {'y', 'z'}
             sage: [S.basis()[k] for k in S.indices()]
-            [x, y]
+            [x + y, z]
         """
         return self._indices
 
@@ -611,12 +651,13 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             by (X_1, X_2) of Free Nilpotent Lie algebra on 6 generators
             (X_1, X_2, X_3, X_12, X_13, X_23) over Rational Field
         """
+        X = self._ambient(X)
         if X not in self:
             raise ValueError("the element %s is not in %s" % (X, self))
 
         return self.element_class(self, X)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generating set of ``self``.
 
@@ -646,9 +687,9 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
             sage: I = L.ideal(x)
             sage: I.lie_algebra_generators()
-            Family (x, z)
+            Finite family {'x': x, 'z': z}
         """
-        if self._is_ideal:
+        if self._ideal_of is not None:
             return self.basis()
         return self._gens
 
@@ -664,14 +705,14 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: sc = {('a','b'): {'c': 1}, ('a','c'): {'d': 1}}
             sage: L.<a,b,c,d> = LieAlgebra(QQ, sc)
             sage: L.subalgebra([a + b, c + d]).basis()
-            Family (a + b, c, d)
+            Finite family {'b': a + b, 'c': c, 'd': d}
 
         A basis of an ideal::
 
             sage: sc = {('x','y'): {'z': 1}, ('x','z'): {'w': 1}}
             sage: L.<x,y,z,w> = LieAlgebra(QQ, sc)
             sage: L.ideal([x + y + z + w]).basis()
-            Family (x + y, z, w)
+            Finite family {'y': x + y, 'z': z, 'w': w}
 
         This also works for Lie algebras whose natural basis elements
         are not comparable (but have a well-defined basis ordering)::
@@ -686,27 +727,36 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: sl3.subalgebra(e).dimension()
             3
         """
-        L = self.ambient()
-        B = [self._to_m(X) for X in L.basis()]
+        ambient = self._ambient
+        if self._ideal_of is not None:
+            L = self._ideal_of
+            B = [self._to_m(ambient(X)) for X in L.basis()]
+        else:
+            L = ambient
+            B = [self._to_m(X) for X in ambient.basis()]
 
-        m = L.module()
+        m = ambient.module()
         sm = m.submodule([self._to_m(X.value) for X in self.gens()])
         d = 0
 
         while sm.dimension() > d:
             d = sm.dimension()
             SB = sm.basis()
-            if not self._is_ideal:
+            if self._ideal_of is None:
                 B = SB
 
-            brackets = [self._to_m(L.bracket(self._from_m(v), self._from_m(w)))
+            brackets = [self._to_m(ambient.bracket(self._from_m(v), self._from_m(w)))
                         for v in B for w in SB]
             sm = m.submodule(sm.basis() + brackets)
 
         basis = [self.element_class(self, self._from_m(v))
                  for v in sm.echelonized_basis()]
-        sortkey = lambda X: self._order(self.lift(X).leading_support(key=self._order))
-        return Family(sorted(basis, key=sortkey))
+
+        indices = [self.lift(X).leading_support(key=self._order) for X in basis]
+        basis = dict(zip(indices, basis))
+        indices.sort(key=self._order)
+
+        return Family(indices, basis.__getitem__)
 
     @cached_method
     def leading_monomials(self):
@@ -721,7 +771,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: L.<a,b,c,d> = LieAlgebra(ZZ, sc)
             sage: I = L.ideal(a + b)
             sage: I.basis()
-            Family (a + b, 2*c, 4*d)
+            Finite family {'b': a + b, 'c': 2*c, 'd': 4*d}
             sage: I.leading_monomials()
             Family (b, c, d)
 
@@ -730,7 +780,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: key = lambda s: ['d','c','b','a'].index(s)
             sage: I = L.ideal(a + b, order=key)
             sage: I.basis()
-            Family (4*d, 2*c, a + b)
+            Finite family {'d': 4*d, 'c': 2*c, 'a': a + b}
             sage: I.leading_monomials()
             Family (d, c, a)
         """
@@ -739,7 +789,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
     def from_vector(self, v, order=None, coerce=False):
         r"""
-        Return the element of ``self`` corresponding to the vector ``v``
+        Return the element of ``self`` corresponding to the vector ``v``.
 
         INPUT:
 
@@ -767,8 +817,8 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: el.parent() == S
             True
         """
-        if len(v) == self.ambient().dimension():
-            return self.retract(self.ambient().from_vector(v))
+        if len(v) == self._ambient.dimension():
+            return self.retract(self._ambient.from_vector(v))
         return super().from_vector(v)
 
     def basis_matrix(self):
@@ -811,9 +861,9 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             [0 0 3]
         """
         try:
-            m = self.ambient().module(sparse=sparse)
+            m = self._ambient.module(sparse=sparse)
         except TypeError:
-            m = self.ambient().module()
+            m = self._ambient.module()
         ambientbasis = [self.lift(X).to_vector() for X in self.basis()]
         return m.submodule_with_basis(ambientbasis)
 
@@ -853,74 +903,9 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: L.is_ideal(I)
             False
         """
-        if A == self.ambient() and self._is_ideal:
+        if A is self._ideal_of:
             return True
         return super().is_ideal(A)
-
-    def reduce(self, X):
-        r"""
-        Reduce an element of the ambient Lie algebra modulo the
-        ideal ``self``.
-
-        INPUT:
-
-        - ``X`` -- an element of the ambient Lie algebra
-
-        OUTPUT:
-
-        An element `Y` of the ambient Lie algebra that is contained in a fixed
-        complementary submodule `V` to ``self`` such that `X = Y` mod ``self``.
-
-        When the base ring of ``self`` is a field, the complementary submodule
-        `V` is spanned by the elements of the basis that are not the leading
-        supports of the basis of ``self``.
-
-        EXAMPLES:
-
-        An example reduction in a 6 dimensional Lie algebra::
-
-            sage: sc = {('a','b'): {'d': 1}, ('a','c'): {'e': 1},
-            ....:       ('b','c'): {'f': 1}}
-            sage: L.<a,b,c,d,e,f> = LieAlgebra(QQ, sc)
-            sage: I =  L.ideal(c)
-            sage: I.reduce(a + b + c + d + e + f)
-            a + b + d
-
-        The reduction of an element is zero if and only if the
-        element belongs to the subalgebra::
-
-            sage: I.reduce(c + e)
-            0
-            sage: c + e in I
-            True
-
-        Over non-fields, the complementary submodule may not be spanned by
-        a subset of the basis of the ambient Lie algebra::
-
-            sage: L.<X,Y,Z> = LieAlgebra(ZZ, {('X','Y'): {'Z': 3}})
-            sage: I = L.ideal(Y)
-            sage: I.basis()
-            Family (Y, 3*Z)
-            sage: I.reduce(3*Z)
-            0
-            sage: I.reduce(Y + 14*Z)
-            2*Z
-        """
-        R = self.base_ring()
-        for Y in self.basis():
-            Y = self.lift(Y)
-            k, c = Y.leading_item(key=self._order)
-
-            if R.is_field():
-                X = X - X[k] / c * Y
-            else:
-                try:
-                    q, _ = X[k].quo_rem(c)
-                    X = X - q * Y
-                except AttributeError:
-                    pass
-
-        return X
 
     class Element(LieSubalgebraElementWrapper):
         def adjoint_matrix(self, sparse=False):
@@ -933,7 +918,10 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
                 sage: m = MS([[0, -1], [1, 0]])
                 sage: L = LieAlgebra(associative=MS)
                 sage: S = L.subalgebra([m])
-                sage: x = S.basis()[0]
+                sage: S.basis()
+                Finite family {(1, 0): [ 0 -1]
+                                       [ 1  0]}
+                sage: x = S.basis()[1,0]
                 sage: x.parent() is S
                 True
                 sage: x.adjoint_matrix()
@@ -960,7 +948,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
             TESTS:
 
-            Check that :trac:`34006` is fixed::
+            Check that :issue:`34006` is fixed::
 
                 sage: MS = MatrixSpace(QQ, 2)
                 sage: m = MS([[0, -1], [1, 0]])

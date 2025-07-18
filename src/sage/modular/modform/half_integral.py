@@ -16,6 +16,7 @@ from . import constructor
 from .theta import theta2_qexp, theta_qexp
 from copy import copy
 
+
 def half_integral_weight_modform_basis(chi, k, prec):
     r"""
     A basis for the space of weight `k/2` forms with character
@@ -28,9 +29,9 @@ def half_integral_weight_modform_basis(chi, k, prec):
 
     - ``k`` -- an odd integer > 1
 
-    - ``prec`` -- a positive integer
+    - ``prec`` -- positive integer
 
-    OUTPUT: a list of power series
+    OUTPUT: list of power series
 
     .. warning::
 
@@ -86,7 +87,7 @@ def half_integral_weight_modform_basis(chi, k, prec):
          q^4 - 2*q^5 - 2*q^6 + 4*q^7 + 4*q^9 + O(q^10),
          q^5 - 2*q^7 - 2*q^9 + O(q^10)]
 
-    This example once raised an error (see :trac:`5792`).
+    This example once raised an error (see :issue:`5792`).
 
     ::
 
@@ -99,7 +100,7 @@ def half_integral_weight_modform_basis(chi, k, prec):
 
     ALGORITHM: Basmaji (page 55 of his Essen thesis, "Ein Algorithmus
     zur Berechnung von Hecke-Operatoren und Anwendungen auf modulare
-    Kurven", http://wstein.org/scans/papers/basmaji/).
+    Kurven", https://web.archive.org/web/20160905111513/http://wstein.org/scans/papers/basmaji/thesis_of_basmaji.dvi).
 
     Let `S = S_{k+1}(\epsilon)` be the space of cusp forms of
     even integer weight `k+1` and character

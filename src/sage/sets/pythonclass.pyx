@@ -1,16 +1,17 @@
+# sage_setup: distribution = sagemath-objects
 """
 Set of all objects of a given Python class
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport rich_to_bool
@@ -19,7 +20,7 @@ from sage.categories.sets_cat import Sets
 
 cdef dict _type_set_cache = {}
 
-cpdef Set_PythonType(typ) noexcept:
+cpdef Set_PythonType(typ):
     """
     Return the (unique) Parent that represents the set of Python objects
     of a specified type.
@@ -38,7 +39,7 @@ cpdef Set_PythonType(typ) noexcept:
     S is a parent which models the set of all lists::
 
         sage: S.category()
-        Category of sets
+        Category of infinite sets
     """
     try:
         return _type_set_cache[typ]
@@ -81,11 +82,11 @@ cdef class Set_PythonType_class(Set_generic):
 
             sage: from sage.sets.pythonclass import Set_PythonType
             sage: Set_PythonType(float).category()
-            Category of sets
+            Category of infinite sets
         """
         if not isinstance(typ, type):
             raise TypeError(f"must be initialized with a class, not {typ!r}")
-        super().__init__(category=Sets())
+        super().__init__(category=Sets().Finite() if typ is bool else Sets().Infinite())
         self._type = <type>typ
 
     def _element_constructor_(self, *args, **kwds):
@@ -105,7 +106,7 @@ cdef class Set_PythonType_class(Set_generic):
 
     def __reduce__(self):
         r"""
-        Pickling support
+        Pickling support.
 
         TESTS::
 

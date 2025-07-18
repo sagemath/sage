@@ -157,7 +157,7 @@ class IntegerLists(Parent):
         TESTS:
 
         This used to fail due to poor equality testing. See
-        :trac:`17979`, comment 433::
+        :issue:`17979`, comment 433::
 
             sage: DisjointUnionEnumeratedSets(Family([2,2],
             ....:     lambda n: IntegerListsLex(n, length=2))).list()
@@ -280,7 +280,7 @@ class IntegerLists(Parent):
 
     def _element_constructor_default(self, l):
         """
-        Default element constructor
+        Default element constructor.
 
         EXAMPLES::
 
