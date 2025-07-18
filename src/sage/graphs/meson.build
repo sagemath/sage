@@ -49,6 +49,7 @@ py.install_sources(
   'matching.py',
   'matching_covered_graph.py',
   'mcqd.pxd',
+  'micali_vazirani_matching.py',
   'orientations.py',
   'partial_cube.py',
   'pq_trees.py',

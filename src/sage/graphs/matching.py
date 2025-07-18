@@ -74,6 +74,8 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         each vertex `v`, require that the sum of the values of the edges
         incident to `v` is 1.
 
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
       Linear Programming (MILP) solver to be used. If set to ``None``, the
       default one is used. For more information on MILP solvers and which
@@ -112,29 +114,35 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
         True
         sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='LP_matching')
         False
+        sage: graphs.PetersenGraph().has_perfect_matching(algorithm='Micali-Vazirani')  # needs sage.graphs.micali_vazirani_matching
+        True
+        sage: graphs.WheelGraph(6).has_perfect_matching(algorithm='Micali-Vazirani')    # needs sage.graphs.micali_vazirani_matching
+        True
+        sage: graphs.WheelGraph(5).has_perfect_matching(algorithm='Micali-Vazirani')
+        False
 
     TESTS::
 
         sage: G = graphs.EmptyGraph()
-        sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-        ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
+        sage: all(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip, sage.graphs.micali_vazirani_matching
+        ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         True
 
     Be careful with isolated vertices::
 
         sage: G = graphs.PetersenGraph()
         sage: G.add_vertex(11)
-        sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx
-        ....:     for algo in ['Edmonds', 'LP_matching', 'LP'])
+        sage: any(G.has_perfect_matching(algorithm=algo)                            # needs networkx, sage.numerical.mip, sage.graphs.micali_vazirani_matching
+        ....:     for algo in ['Edmonds', 'LP_matching', 'LP', 'Micali-Vazirani'])
         False
     """
     if G.order() % 2:
         return False
 
-    if algorithm == "Edmonds":
+    if algorithm in ["Edmonds", "Micali-Vazirani"]:
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
-                                      algorithm='Edmonds')
+                                      algorithm=algorithm)
     elif algorithm == "LP_matching":
         return len(G) == 2*G.matching(value_only=True,
                                       use_edge_labels=False,
@@ -156,7 +164,8 @@ def has_perfect_matching(G, algorithm='Edmonds', solver=None, verbose=0,
             return True
         except MIPSolverException:
             return False
-    raise ValueError('algorithm must be set to "Edmonds", "LP_matching" or "LP"')
+    raise ValueError('algorithm must be set to "Edmonds", "LP_matching", "LP"'
+                     'or "Micali-Vazirani"')
 
 
 def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
@@ -197,6 +206,8 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem.
+
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm.
 
     - ``coNP_certificate`` -- boolean (default: ``False``); if set to
       ``True`` a set of pair of vertices (say `u` and `v`) is returned such
@@ -516,6 +527,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem
 
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm
+
     - ``solver`` -- string (default: ``None``); specifies a Mixed Integer
       Linear Programming (MILP) solver to be used. If set to ``None``, the
       default one is used. For more information on MILP solvers and which
@@ -738,6 +751,8 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
       - ``'Edmonds'`` selects Edmonds' algorithm as implemented in NetworkX,
 
       - ``'LP'`` uses a Linear Program formulation of the matching problem.
+
+      - ``'Micali-Vazirani'`` uses the Micali-Vazirani algorithm.
 
     - ``coNP_certificate`` -- boolean (default: ``False``); if set to
       ``True`` an edge of the graph, that does not participate in any
@@ -1141,7 +1156,8 @@ def matching(G, value_only=False, algorithm='Edmonds',
     ALGORITHM:
 
     The problem is solved using Edmond's algorithm implemented in NetworkX,
-    or using Linear Programming depending on the value of ``algorithm``.
+    or using Linear Programming or using the Micali-Vazirani algorithm
+    depending on the value of ``algorithm``.
 
     EXAMPLES:
 
@@ -1193,6 +1209,15 @@ def matching(G, value_only=False, algorithm='Edmonds',
         sage: sorted(m)                                                             # needs sage.networkx
         [(0, 3, 3), (1, 2, 6)]
 
+    Setting Algorithm to 'Micali-Vazirani'::
+
+        sage: g = graphs.PetersenGraph()
+        sage: g.matching(algorithm='Micali-Vazirani')
+        [(0, 1, None), (2, 3, None), (4, 9, None), (5, 7, None), (6, 8, None)]
+        sage: h = graphs.CycleGraph(5)
+        sage: h.matching(algorithm='Micali-Vazirani', value_only=True)
+        2
+
     TESTS:
 
     If ``algorithm`` is set to anything different from ``'Edmonds'``, ``'LP'``,
@@ -1204,6 +1229,15 @@ def matching(G, value_only=False, algorithm='Edmonds',
         ...
         ValueError: algorithm must be set to one of the following: 'Edmonds,'
         'LP,' or 'Micali-Vazirani'
+
+    Micali-Vazirani algorithm computes a maximum cardinality matching; the
+    parameter ``use_edge_labels`` must be set to ``False``::
+
+        sage: g = graphs.PappusGraph()
+        sage: g.matching(algorithm='Micali-Vazirani', use_edge_labels=True)
+        Traceback (most recent call last):
+        ...
+        ValueError: Micali-Vazirani algorithm does not support edge labels or weights
     """
     from sage.rings.real_mpfr import RR
 
@@ -1273,9 +1307,16 @@ def matching(G, value_only=False, algorithm='Edmonds',
                                 format='list_of_edges'))
 
     elif algorithm == "Micali-Vazirani":
-        raise NotImplementedError()
+        if use_edge_labels:
+            raise ValueError("Micali-Vazirani algorithm does not support edge labels or weights")
 
-    raise ValueError('algorithm must be set to one of the following: '
+        from sage.graphs.micali_vazirani_matching import get_maximum_cardinality_matching
+        M = get_maximum_cardinality_matching(G.to_simple())
+
+        return M.size() if value_only else M
+
+    else:
+        raise ValueError('algorithm must be set to one of the following: '
                      '\'Edmonds,\' \'LP,\' or \'Micali-Vazirani\'')
 
 
