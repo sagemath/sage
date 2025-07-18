@@ -2490,7 +2490,7 @@ cdef class Expression(Expression_abc):
         """
         pynac_forget_gdecl(self._gobj, str_to_bytes(decl))
 
-    def has_wild(self):
+    def has_wild(self) -> bool:
         """
         Return ``True`` if this expression contains a wildcard.
 
@@ -3503,9 +3503,9 @@ cdef class Expression(Expression_abc):
             # associated with different semantics, different
             # precision, etc., that can lead to subtle bugs.  Also, a
             # lot of basic Sage objects can't be put into maxima.
-            from sage.symbolic.relation import test_relation_maxima
+            from sage.symbolic.relation import check_relation_maxima
             if self.variables():
-                return test_relation_maxima(self)
+                return check_relation_maxima(self)
             else:
                 return False
 

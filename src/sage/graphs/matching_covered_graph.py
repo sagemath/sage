@@ -57,7 +57,6 @@ AUTHORS:
         ``delete_multiedge()`` | Delete all edges from ``u`` to ``v``.
         ``disjoint_union()`` | Return the disjoint union of ``self`` and ``other``.
         ``disjunctive_product()`` | Return the disjunctive product of ``self`` and ``other``.
-        ``is_biconnected()`` | Check if the matching covered graph is biconnected.
         ``is_block_graph()`` | Check whether the matching covered graph is a block graph.
         ``is_cograph()`` | Check whether the matching covered graph is cograph.
         ``is_forest()`` | Check if the matching covered graph is a forest, i.e. a disjoint union of trees.
@@ -1413,7 +1412,6 @@ class MatchingCoveredGraph(Graph):
 
             if len(edge) == 2:
                 u, v = edge
-
             else:
                 u, v, l = edge
 
@@ -1729,7 +1727,7 @@ class MatchingCoveredGraph(Graph):
             [{0}, {1}, {2, 3, 4}, {5}, {6}, {7}]
 
         For a bicritical graph (for instance, the Petersen graph), the
-        canonical parition constitutes of only singleton sets each containing
+        canonical partition constitutes of only singleton sets each containing
         an individual vertex::
 
             sage: P = graphs.PetersenGraph()
@@ -2002,7 +2000,7 @@ class MatchingCoveredGraph(Graph):
         EXAMPLES:
 
         If one specifies a perfect matching while initializing the object, the
-        value of ``self._matching`` is captures the same matching::
+        value of ``self._matching`` is the same matching::
 
             sage: P = graphs.PetersenGraph()
             sage: M = [(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)]
@@ -2012,8 +2010,8 @@ class MatchingCoveredGraph(Graph):
             sage: M == sorted(G.get_matching())
             True
 
-        If no matching is specified while initilizing a matching covered graph,
-        a perfect is computed
+        If no matching is specified while initializing a matching
+        covered graph, a perfect matching is computed
         :meth:`~sage.graphs.graph.Graph.matching` and that is captured as
         ``self._matching``::
 
@@ -2215,7 +2213,7 @@ class MatchingCoveredGraph(Graph):
         return B
 
     @doc_index('Overwritten methods')
-    def has_loops(self):
+    def has_loops(self) -> bool:
         r"""
         Check whether there are loops in the (matching covered) graph.
 
@@ -2369,6 +2367,56 @@ class MatchingCoveredGraph(Graph):
 
         raise ValueError('algorithm must be set to \'Edmonds\', '
                          '\'LP_matching\' or \'LP\'')
+
+    @doc_index('Overwritten methods')
+    def is_biconnected(self):
+        r"""
+        Check whether the (matching covered) graph is biconnected.
+
+        A biconnected graph is a connected graph on two or more vertices that
+        is not broken into disconnected pieces by deleting any single vertex.
+        By definition of matching covered graphs, it follows that a graph, that
+        is matching covered, is biconnected.
+
+        Observe that `K_2` (upto multiple edges) is biconnected. A matching
+        covered graph `G`, that is not `K_2` (upto multiple edges), has at
+        least four vertices and four edges. Consider any two adjacent edges
+        (`e` and `f`) of `G`. Take a perfect matching `M` of `G` containing
+        the edge `e` and a different perfect matching `N` of `G` containing
+        the edge `f`. Observe that the symmetric difference of `M` and `N`
+        has a cycle containing both of the edges `e` and `f`. Thus, each edge
+        of `G` is contained in some cycle of `G`. Therefore, `G` is
+        biconnected.
+
+        .. NOTE::
+
+            This method overwrites the
+            :meth:`~sage.graphs.graph.Graph.is_biconnected` method
+            in order to return ``True`` as matching covered graphs are
+            biconnected.
+
+        EXAMPLES:
+
+        The complete graph on two vertices is the smallest biconnected graph
+        that is matching covered::
+
+            sage: K2 = graphs.CompleteGraph(2)
+            sage: G = MatchingCoveredGraph(K2)
+            sage: G.is_biconnected()
+            True
+
+        Petersen graph is matching covered and biconnected::
+
+            sage: P = graphs.PetersenGraph()
+            sage: G = MatchingCoveredGraph(P)
+            sage: G.is_biconnected()
+            True
+
+        .. SEEALSO::
+
+            - :meth:`~sage.graphs.matching_covered_graph.MatchingCoveredGraph.is_connected`
+        """
+        return True
 
     @doc_index('Bricks, braces and tight cut decomposition')
     def is_brace(self, coNP_certificate=False):
@@ -2865,7 +2913,7 @@ class MatchingCoveredGraph(Graph):
             sage: G.is_brick()
             True
 
-        The triangular cicular ladder (a graph on six vertices), aka
+        The triangular circular ladder (a graph on six vertices), aka
         `\overline{C_6}` is a brick::
 
             sage: C6Bar = graphs.CircularLadderGraph(3)

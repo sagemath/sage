@@ -85,14 +85,14 @@ Or you can create a homomorphism from one lattice to any other::
 # The "tutorial" above is a truncated version of one in toric_lattice.py.
 
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.libs.gmp.mpz cimport *
 
