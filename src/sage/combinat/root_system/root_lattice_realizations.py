@@ -3642,7 +3642,7 @@ class RootLatticeRealizations(Category_over_base_ring):
         # Descents
         ##########################################################################
 
-        def has_descent(self, i, positive=False):
+        def has_descent(self, i, positive=False) -> bool:
             """
             Test if ``self`` has a descent at position `i`, that is, if ``self`` is
             on the strict negative side of the `i`-th simple reflection
@@ -4435,10 +4435,7 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: alpha.is_parabolic_root([2])
                 False
             """
-            for i in self.support():
-                if i not in index_set:
-                    return False
-            return True
+            return all(i in index_set for i in self.support())
 
         def is_short_root(self):
             r"""

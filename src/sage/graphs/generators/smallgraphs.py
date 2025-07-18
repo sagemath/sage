@@ -2093,7 +2093,7 @@ def DesarguesGraph():
     """
     Return the Desargues graph.
 
-    PLOTTING: The layout chosen is the same as on the cover of [Har1994]_.
+    PLOTTING: The layout chosen is the same as on the cover of [Har1969]_.
 
     EXAMPLES::
 

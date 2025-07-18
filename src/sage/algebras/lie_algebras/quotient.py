@@ -21,6 +21,7 @@ from sage.algebras.lie_algebras.subalgebra import LieSubalgebra_finite_dimension
 from sage.categories.homset import Hom
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.morphism import SetMorphism
+from sage.structure.element import Element
 from sage.structure.indexed_generators import standardize_names_index_set
 
 
@@ -159,7 +160,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         sage: L.<c,b,a> = LieAlgebra(QQ, abelian=True)
         sage: I2 = L.ideal([a+b, a+c], order=sorted)
         sage: I2.basis()
-        Family (b + a, c + a)
+        Finite family {'b': b + a, 'c': c + a}
         sage: Q = L.quotient(I2)
         sage: Q.basis()
         Finite family {'a': a}
@@ -172,40 +173,44 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         2
         sage: TestSuite(K).run()
     """
-
     @staticmethod
-    def __classcall_private__(cls, I, ambient=None, names=None,
-                              index_set=None, category=None):
+    def __classcall_private__(cls, ambient, I, names=None, index_set=None,
+                              index_set_mapping=None, category=None):
         r"""
         Normalize input to ensure a unique representation.
 
-        EXAMPLES:
-
-        Specifying the ambient Lie algebra is not necessary::
+        EXAMPLES::
 
             sage: from sage.algebras.lie_algebras.quotient import LieQuotient_finite_dimensional_with_basis
             sage: L.<X,Y> = LieAlgebra(QQ, {('X','Y'): {'X': 1}})
-            sage: Q1 = LieQuotient_finite_dimensional_with_basis(X, ambient=L)
-            sage: Q2 = LieQuotient_finite_dimensional_with_basis(X)
-            sage: Q1 is Q2
-            True
+            sage: Q1 = LieQuotient_finite_dimensional_with_basis(L, X)
 
         Variable names are extracted from the ambient Lie algebra by default::
 
+            sage: Q2 = LieQuotient_finite_dimensional_with_basis(L, X, index_set=['Y'])
+            sage: Q1 is Q2
+            True
             sage: Q3 = L.quotient(X, names=['Y'])
             sage: Q1 is Q3
             True
+
+        Check that quotients are properly constructed for ideals of
+        subalgebras (:issue:`40137`)::
+
+            sage: L.<a,b,c,d> = LieAlgebra(QQ, {('a','b'): {'c': 1, 'd':1}, ('a','c'): {'b':1}})
+            sage: A = L.ideal([b,c,d])
+            sage: B = L.ideal([c+d])
+            sage: Q = A.quotient(B); Q
+            Lie algebra quotient L/I of dimension 1 over Rational Field where
+            L: Ideal (b, c, d) of Lie algebra on 4 generators (a, b, c, d) over Rational Field
+            I: Ideal (b, c + d)
+            sage: Q.dimension() == A.dimension() - B.dimension()
+            True
         """
         if not isinstance(I, LieSubalgebra_finite_dimensional_with_basis):
-            # assume I is an element or list of elements of some lie algebra
-            if ambient is None:
-                if not isinstance(I, (list, tuple)):
-                    ambient = I.parent()
-                else:
-                    ambient = I[0].parent()
             I = ambient.ideal(I)
-        if ambient is None:
-            ambient = I.ambient()
+        if I.is_ideal(ambient):
+            I = ambient.ideal(I)
 
         if not ambient.base_ring().is_field():
             raise NotImplementedError("quotients over non-fields "
@@ -214,12 +219,16 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         # extract an index set from a complementary basis to the ideal
         I_supp = [X.leading_support() for X in I.leading_monomials()]
         inv = ambient.basis().inverse_family()
-        sorted_indices = [inv[X] for X in ambient.basis()]
-        index_set = [i for i in sorted_indices if i not in I_supp]
+        IA = I.ambient()
+        B = ambient.basis()
+        if index_set_mapping is None:
+            index_set_mapping = [(IA(B[k]).leading_support(key=I._order), k) for k in B.keys()]
+        if index_set is None:
+            index_set = [i[0] for i in index_set_mapping if i[0] not in I_supp]
 
         if names is None:
             try:
-                amb_names = dict(zip(sorted_indices, ambient.variable_names()))
+                amb_names = dict(zip([i[1] for i in index_set_mapping], ambient.variable_names()))
                 names = [amb_names[i] for i in index_set]
             except (ValueError, KeyError):
                 # ambient has not assigned variable names
@@ -232,16 +241,16 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
                 names = ['%s_%d' % (names, k + 1)
                          for k in range(len(index_set))]
         names, index_set = standardize_names_index_set(names, index_set)
+        index_set_mapping = tuple([i for i in index_set_mapping if i[0] not in I_supp])
 
         cat = LieAlgebras(ambient.base_ring()).FiniteDimensional().WithBasis()
         if ambient in LieAlgebras(ambient.base_ring()).Nilpotent():
             cat = cat.Nilpotent()
         category = cat.Subquotients().or_subcategory(category)
+        return super().__classcall__(cls, ambient, I, names, index_set,
+                                     index_set_mapping, category=category)
 
-        return super().__classcall__(cls, I, ambient, names, index_set,
-                                     category=category)
-
-    def __init__(self, I, L, names, index_set, category=None):
+    def __init__(self, L, I, names, index_set, index_set_mapping, category=None):
         r"""
         Initialize ``self``.
 
@@ -255,8 +264,10 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             sage: TestSuite(K).run()
         """
         B = L.basis()
-        sm = L.module().submodule_with_basis([I.reduce(B[i]).to_vector()
-                                              for i in index_set])
+        IA = I.ambient()
+        self._index_set_mapping = dict(index_set_mapping)
+        sm = L.module().submodule_with_basis([I.reduce(B[k]).to_vector()
+                                              for k in self._index_set_mapping.values()])
         SB = [L.from_vector(b) for b in sm.basis()]
 
         # compute and normalize structural coefficients for the quotient
@@ -368,7 +379,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         """
         L = self.ambient()
         B = L.basis()
-        return L.sum(ck * B[ik] for ik, ck in X)
+        return L.sum(ck * B[self._index_set_mapping[ik]] for ik, ck in X)
 
     def retract(self, X):
         r"""

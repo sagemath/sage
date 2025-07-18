@@ -35,6 +35,7 @@ Classes and methods
 -------------------
 """
 
+cimport cython
 from cysignals.memory cimport check_calloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport (init_short_digraph,
@@ -1518,11 +1519,11 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.add_vertex(1)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
             sage: g.add_vertices([1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         (<StaticSparseCGraph> self._cg).add_vertex(v)
 
@@ -1536,15 +1537,16 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.delete_vertex(1)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
             sage: g.delete_vertices([1,2,3])
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         (<StaticSparseCGraph> self._cg).del_vertex(v)
 
 
+@cython.binding(True)
 def _run_it_on_static_instead(f):
     r"""
     A decorator function to force the (Di)Graph functions to compute from a
