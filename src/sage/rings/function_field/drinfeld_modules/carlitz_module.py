@@ -34,8 +34,8 @@ def CarlitzModule(A, base=None):
 
     - ``A`` -- a polynomial ring over a finite field
 
-    - ``base`` -- a field or an element in a field
-      (default: the fraction field of ``A``)
+    - ``base`` -- a field, an element in a field or a
+      string (default: the fraction field of ``A``)
 
     EXAMPLES::
 
@@ -49,8 +49,13 @@ def CarlitzModule(A, base=None):
     names::
 
         sage: R.<z> = Fq[]
-        sage: K = Frac(R)
-        sage: CarlitzModule(A, K)
+        sage: CarlitzModule(A, R)
+        Drinfeld module defined by T |--> τ + z
+
+    One can even use the following shortcut, which avoids the
+    construction of `R`::
+
+        sage: CarlitzModule(A, 'z')
         Drinfeld module defined by T |--> τ + z
 
     Using a similar syntax, we can construct the reduction over the
@@ -95,11 +100,14 @@ def CarlitzModule(A, base=None):
             z = base.gen()
     elif isinstance(base, Element):
         z = base
+    elif isinstance(base, str):
+        K = A.base_ring()[base]
+        z = K.gen()
     else:
         raise ValueError("cannot construct a Carlitz module from the given data")
     return DrinfeldModule(A, [z, 1])
 
-def CarlitzExponential(A, prec=+Infinity, name='z'):
+def carlitz_exponential(A, prec=+Infinity, name='z'):
     r"""
     Return the Carlitz exponential attached the ring `A`.
 
@@ -121,7 +129,7 @@ def CarlitzExponential(A, prec=+Infinity, name='z'):
      the exponential is returned as a lazy power series, meaning
      that any of its coefficients can be computed on demands::
 
-        sage: exp = CarlitzExponential(A)
+        sage: exp = carlitz_exponential(A)
         sage: exp
         z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
         sage: exp[2^4]
@@ -132,13 +140,13 @@ def CarlitzExponential(A, prec=+Infinity, name='z'):
     On the contrary, when ``prec`` is a finite number, all the
     required coefficients are computed at once::
 
-        sage: CarlitzExponential(A, prec=10)
+        sage: carlitz_exponential(A, prec=10)
         z + (1/(T^2 + T))*z^2 + (1/(T^8 + T^6 + T^5 + T^3))*z^4 + (1/(T^24 + T^20 + T^18 + T^17 + T^14 + T^13 + T^11 + T^7))*z^8 + O(z^10)
 
     We check that the Carlitz exponential is the compositional inverse
     of the Carlitz logarithm::
 
-        sage: log = CarlitzLogarithm(A)
+        sage: log = carlitz_logarithm(A)
         sage: exp(log)
         z + O(z^8)
         sage: log(exp)
@@ -147,7 +155,7 @@ def CarlitzExponential(A, prec=+Infinity, name='z'):
     C = CarlitzModule(A)
     return C.exponential(prec, name)
 
-def CarlitzLogarithm(A, prec=+Infinity, name='z'):
+def carlitz_logarithm(A, prec=+Infinity, name='z'):
     r"""
     Return the Carlitz exponential attached the ring `A`.
 
@@ -169,7 +177,7 @@ def CarlitzLogarithm(A, prec=+Infinity, name='z'):
      the exponential is returned as a lazy power series, meaning
      that any of its coefficients can be computed on demands::
 
-        sage: log = CarlitzLogarithm(A)
+        sage: log = carlitz_logarithm(A)
         sage: log
         z + ((1/(T^2+T))*z^2) + ((1/(T^6+T^5+T^3+T^2))*z^4) + O(z^8)
         sage: log[2^4]
@@ -180,7 +188,7 @@ def CarlitzLogarithm(A, prec=+Infinity, name='z'):
     On the contrary, when ``prec`` is a finite number, all the
     required coefficients are computed at once::
 
-        sage: CarlitzLogarithm(A, prec=10)
+        sage: carlitz_logarithm(A, prec=10)
         z + (1/(T^2 + T))*z^2 + (1/(T^6 + T^5 + T^3 + T^2))*z^4 + (1/(T^14 + T^13 + T^11 + T^10 + T^7 + T^6 + T^4 + T^3))*z^8 + O(z^10)
     """
     C = CarlitzModule(A)
