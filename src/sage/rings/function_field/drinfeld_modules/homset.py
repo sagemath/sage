@@ -427,10 +427,85 @@ class DrinfeldModuleHomset(Homset):
         # seems to work, but I don't know what I'm doing.
         return DrinfeldModuleMorphism(self, *args, **kwds)
 
-    def basis(self):
+    def an_element(self):
+        r"""
+        Return an element in this homset.
+        If the homset is not reduced to zero, then a nonzero
+        element is returned.
+
+        EXAMPLES::
+
+            sage: Fq = GF(2)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
+            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
+            sage: H = Hom(phi, psi)
+            sage: H.an_element()
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z + 1)*t + z
+              To:   Drinfeld module defined by T |--> (z^2 + z + 1)*t^2 + (z + 1)*t + z
+              Defn: z^2*t^3
+
+        Below, `\phi` and `\psi` are not isogenous, so :meth:`an_element`
+        returns the zero morphism (which is the unique element in the
+        homset)::
+
+            sage: psi = DrinfeldModule(A, [z, z + 1, 1])
+            sage: H = Hom(phi, psi)
+            sage: H.an_element()
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> (z^2 + z)*t^2 + (z^2 + z + 1)*t + z
+              To:   Drinfeld module defined by T |--> t^2 + (z + 1)*t + z
+              Defn: (z + 1)*t^2 + (z^2 + z + 1)*t + z^2 + 1
+        """
+        basis = self._A_basis()
+        if len(basis) == 0:
+            return self(0)
+        return basis[0]
+
+    def _frobenius_matrix(self, order=1, K_basis=None):
+        r"""
+        Internal method for computing the matrix of the Frobenius endomorphism
+        for K/Fq. This is a useful method for computing morphism ring bases so
+        we provide a helper method here. This should probably be part of the
+        Finite field implementation.
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
+            sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
+            sage: H = Hom(phi, psi)
+            sage: m = H._frobenius_matrix()
+            sage: e = K(z^2 + z + 1)
+            sage: frob = K.frobenius_endomorphism()
+            sage: frob(e) == K(m*vector(e.polynomial().coefficients(sparse=False)))
+            True
+        """
+        Fq = self.domain()._Fq
+        K = self.domain().base_over_constants_field()
+        n = K.degree(Fq)
+        q = Fq.cardinality()
+        char = Fq.characteristic()
+        qorder = logb(q, char)
+        frob = K.frobenius_endomorphism(qorder*order)
+        if K_basis is None:
+            K_basis = K.basis_over(Fq)
+        pol_var = K_basis[0].polynomial().parent().gen()
+        pol_ring = PolynomialRing(Fq, str(pol_var))
+        frob_matrix = Matrix(Fq, n, n)
+        for i, elem in enumerate(K_basis):
+            col = pol_ring(frob(elem).polynomial()).coefficients(sparse=False)
+            col += [0 for _ in range(n - len(col))]
+            for j in range(n):
+                frob_matrix[j, i] = col[j]
+        return frob_matrix
+
+    def _A_basis(self):
         r"""
         Return a basis of this homset over the underlying
-        function ring `\mathbb F_q[T]`.
+        function ring.
 
         ALGORITHM:
 
@@ -446,54 +521,17 @@ class DrinfeldModuleHomset(Homset):
         The algorithm consists in solving the above system
         viewed as a linear system over `\mathbb F_q[T]`.
 
-        EXAMPLES::
-
-            sage: Fq = GF(5)
-            sage: A.<T> = Fq[]
-            sage: K.<z> = Fq.extension(2)
-            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
-            sage: End(phi).basis()
-            [Identity morphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z,
-             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               Defn: t^2,
-             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               Defn: 2*t^4 + z*t^3 + z]
-
-        ::
-
-            sage: psi = DrinfeldModule(A, [z, 3*z + 1, 2*z, 4*z + 1])
-            sage: H = Hom(phi, psi)
-            sage: H.basis()
-            [Drinfeld Module morphism:
-               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: t + 1,
-             Drinfeld Module morphism:
-               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: 3*t^3 + (z + 2)*t^2 + 4*z*t + z + 4,
-             Drinfeld Module morphism:
-               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
-               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
-               Defn: (z + 4)*t^2 + 4*z*t + z + 4]
-
-        When `\phi` and `\psi` are not isogenous, an empty list is returned::
-
-            sage: psi = DrinfeldModule(A, [z, 3*z, 2*z, 4*z])
-            sage: Hom(phi, psi).basis()
-            []
+        We refer to []_ for details.
 
         TESTS::
 
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: End(phi).basis()
             Traceback (most recent call last):
             ...
             NotImplementedError: computing basis of homsets are currently only implemented over finite fields
         """
-        if self.base() not in FiniteFields():
-            raise NotImplementedError("computing basis of homsets are currently only implemented over finite fields")
         phi = self.domain()
         psi = self.codomain()
         r = phi.rank()
@@ -502,75 +540,73 @@ class DrinfeldModuleHomset(Homset):
         Fo = phi.base_over_constants_field()
         Fq = Fo.base()
         F = Fo.backend()
+        d = Fo.degree(Fq)
         q = Fq.cardinality()
         A = phi.function_ring()
         T = A.gen()
 
-        if self._basis is None:
-            AF = PolynomialRing(F, name='T')
-            TF = AF.gen()
+        AF = PolynomialRing(F, name='T')
+        TF = AF.gen()
 
-            Frob = lambda x: x**q
-            FrobT = lambda P: P.map_coefficients(Frob)
+        Frob = lambda x: x**q
+        FrobT = lambda P: P.map_coefficients(Frob)
 
-            phiT = phi.gen()
-            psiT = psi.gen()
+        phiT = phi.gen()
+        psiT = psi.gen()
 
-            # We compute the tau^i in M(phi)
-            lc = ~(phiT[r])
-            xT = [-AF(lc*phiT[i]) for i in range(r)]
-            xT[0] += lc*TF
-            taus = []
-            for i in range(r):
-                taui = r * [AF.zero()]
-                taui[i] = AF.one()
-                taus.append(taui)
-            for i in range(r):
-                s = FrobT(taui[-1])
-                taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
-                taus.append(taui)
+        # We compute the tau^i in M(phi)
+        lc = ~(phiT[r])
+        xT = [-AF(lc*phiT[i]) for i in range(r)]
+        xT[0] += lc*TF
+        taus = []
+        for i in range(r):
+            taui = r * [AF.zero()]
+            taui[i] = AF.one()
+            taus.append(taui)
+        for i in range(r):
+            s = FrobT(taui[-1])
+            taui = [s*xT[0]] + [FrobT(taui[j-1]) + s*xT[j] for j in range(1,r)]
+            taus.append(taui)
 
-            # We precompute the Frob^k(z^i)
-            d = Fo.degree(Fq)
-            z = F(Fo.gen())
-            zs = []
-            zq = z
-            for k in range(r+1):
-                x = F.one()
-                for i in range(d):
-                    zs.append(x)
-                    x *= zq
-                zq = zq ** q
-
-            # We compute the linear system to solve
-            rows = []
+        # We precompute the Frob^k(z^i)
+        z = F(Fo.gen())
+        zs = []
+        zq = z
+        for k in range(r+1):
+            x = F.one()
             for i in range(d):
-                for j in range(r):
-                    # For x = z^i * tau^j, we compute
-                    #    sum(g_k*tau^k(x), k=0..r) - T*x
-                    #  = sum(g_k*Frob^k(z^i)*tau^(k+j), k=0..r) - T*x
-                    row = r * [AF.zero()]
-                    for k in range(r+1):
-                        s = psiT[k] * zs[k*d + i]
-                        for l in range(r):
-                            row[l] += s*taus[k+j][l]
-                    row[j] -= zs[i] * TF
-                    # We write it in the A-basis
-                    rowFq = []
-                    for c in row:
-                        c0 = Fo(c[0]).vector()
-                        c1 = Fo(c[1]).vector()
-                        rowFq += [c0[k] + T*c1[k] for k in range(d)]
-                    rows.append(rowFq)
-            M = Matrix(rows)
+                zs.append(x)
+                x *= zq
+            zq = zq ** q
 
-            # We solve the linear system
-            self._basis = M.minimal_kernel_basis()
+        # We compute the linear system to solve
+        rows = []
+        for i in range(d):
+            for j in range(r):
+                # For x = z^i * tau^j, we compute
+                #    sum(g_k*tau^k(x), k=0..r) - T*x
+                #  = sum(g_k*Frob^k(z^i)*tau^(k+j), k=0..r) - T*x
+                row = r * [AF.zero()]
+                for k in range(r+1):
+                    s = psiT[k] * zs[k*d + i]
+                    for l in range(r):
+                        row[l] += s*taus[k+j][l]
+                row[j] -= zs[i] * TF
+                # We write it in the A-basis
+                rowFq = []
+                for c in row:
+                    c0 = Fo(c[0]).vector()
+                    c1 = Fo(c[1]).vector()
+                    rowFq += [c0[k] + T*c1[k] for k in range(d)]
+                rows.append(rowFq)
+        M = Matrix(rows)
+
+        # We solve the linear system
+        ker = M.minimal_kernel_basis()
 
         # We reconstruct the isogenies
         isogenies = []
         S = phi.ore_polring(); t = S.gen()
-        ker = self._basis
         for row in range(ker.nrows()):
             u = S.zero()
             for i in range(d):
@@ -581,66 +617,22 @@ class DrinfeldModuleHomset(Homset):
 
         return isogenies
 
-    def an_element(self, degree):
+    def _Fq_basis(self, degree):
         r"""
-        Return a non-zero element of the space of morphisms between the domain
-        and codomain. By default, chooses an element of largest degree less
-        than or equal to the parameter `degree`.
+        Return a `\mathbb{F}_q`-basis of the space of morphisms in this
+        homset of degree at most `degree`.
 
         INPUT:
 
-        - ``degree`` -- the maximum degree of the morphism
-
-        OUTPUT: a Drinfeld module morphism of degree at most ``degree``
-
-        EXAMPLES::
-
-            sage: Fq = GF(2)
-            sage: A.<T> = Fq[]
-            sage: K.<z> = Fq.extension(3)
-            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
-            sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
-            sage: H = Hom(phi, psi)
-            sage: M = H.an_element(3)
-            sage: M_poly = M.ore_polynomial()
-            sage: M_poly*phi.gen() - psi.gen()*M_poly
-            0
+        - ``degree`` -- an integer
 
         ALGORITHM:
 
-            We scan the basis for the first element of maximal degree
-            and return it.
-        """
-        basis = self._Fq_basis(degree)
-        if len(basis) == 0:
-            raise EmptySetError(
-                    f'no possible morphisms of degree {degree} between the'
-                    + 'domain and codomain')
-        elem = basis[0]
-        max_deg = elem.ore_polynomial().degree()
-        for basis_elem in basis:
-            if basis_elem.ore_polynomial().degree() > max_deg:
-                elem = basis_elem
-                max_deg = elem.ore_polynomial().degree()
-        return elem
+            We return the basis of the kernel of a matrix derived from the
+            constraint that `f \phi_T = \psi_T f`. See [Wes2022]_ for
+            details on this algorithm.
 
-    def _Fq_basis(self, degree):
-        r"""
-        Return a basis for the `\mathbb{F}_q`-space of morphisms from `phi` to
-        a Drinfeld module `\psi` of degree at most `degree`.
-
-        A morphism `f: \phi \to psi` is an element `f \in K\{\tau\}` such that
-        `f \phi_T = \psi_T f`. The degree of a morphism is the
-        `\tau`-degree of `f`. This method currently only works for Drinfeld
-        modules over finite fields.
-
-        INPUT:
-
-        - ``degree`` -- the maximum degree of the morphisms in the span.
-
-        OUTPUT: a list of Drinfeld module morphisms.
-
-        EXAMPLES::
+        TESTS::
 
             sage: Fq = GF(2)
             sage: A.<T> = Fq[]
@@ -664,25 +656,6 @@ class DrinfeldModuleHomset(Homset):
             sage: hom = Hom(phi, psi)
             sage: hom._Fq_basis(4)
             []
-
-        TESTS::
-
-            sage: Fq = GF(4)
-            sage: A.<T> = Fq[]
-            sage: K.<z> = Fq.extension(3)
-            sage: psi = DrinfeldModule(A, [z, z^5 + z^3 + 1, 1])
-            sage: phi = DrinfeldModule(A, [z, z^4 + z^3 + 1, 1])
-            sage: H = Hom(phi, psi)
-            sage: basis = H._Fq_basis(2); basis
-            [...Defn: t^2 + (z^5 + z^4 + z^3 + z^2)*t + z^5 + z^4 + z^3 + 1, ...Defn: t^2 + (z^5 + z^4 + z)*t + z^5 + z^4 + z^3 + z]
-
-
-
-        ALGORITHM:
-
-            We return the basis of the kernel of a matrix derived from the
-            constraint that `f \phi_T = \psi_T f`. See [Wes2022]_ for
-            details on this algorithm.
         """
         domain, codomain = self.domain(), self.codomain()
         Fq = domain._Fq
@@ -730,27 +703,105 @@ class DrinfeldModuleHomset(Homset):
                 raise ValueError('solution doesn\'t correspond to a morphism')
         return basis
 
+    def basis(self, degree=None):
+        r"""
+        Return a basis of this homset.
+
+        INPUT:
+
+        - ``degree`` -- an integer or ``None`` (default: ``None``)
+
+        If ``degree`` is ``None``, a basis over the underlying
+        function ring is returned.
+        Otherwise, a `\FF_q`-basis of the set of morphisms of
+        degree at most ``degree`` is returned.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, 0, 1, z])
+            sage: End(phi).basis()
+            [Identity morphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z,
+             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               Defn: t^2,
+             Endomorphism of Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               Defn: 2*t^4 + z*t^3 + z]
+
+        If we specify a degree, a basis over `\FF_q` is computed::
+
+            sage: End(phi).basis(degree=5)
+            []
+
+        Here is another example where the domain and the codomain differ::
+
+            sage: psi = DrinfeldModule(A, [z, 3*z + 1, 2*z, 4*z + 1])
+            sage: H = Hom(phi, psi)
+            sage: H.basis()
+            [Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               Defn: t + 1,
+             Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               Defn: 3*t^3 + (z + 2)*t^2 + 4*z*t + z + 4,
+             Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> z*t^3 + t^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*t^3 + 2*z*t^2 + (3*z + 1)*t + z
+               Defn: (z + 4)*t^2 + 4*z*t + z + 4]
+
+            sage: H.basis(degree=2)
+
+        We can check that `\phi` and `\psi` are not isomorphic by checking
+        that there is no isogeny of degree `0` between them::
+
+            sage: H.basis(degree=0)
+            []
+
+        When `\phi` and `\psi` are not isogenous, an empty list is returned::
+
+            sage: psi = DrinfeldModule(A, [z, 3*z, 2*z, 4*z])
+            sage: Hom(phi, psi).basis()
+            []
+
+        TESTS::
+
+            sage: A.<T> = GF(5)[]
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: End(phi).basis()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computing basis of homsets are currently only implemented over finite fields
+        """
+        if self.base() not in FiniteFields():
+            raise NotImplementedError("computing basis of homsets are currently only implemented over finite fields")
+        if degree is None:
+            return self._A_basis()
+        else:
+            return self._Fq_basis(degree)
+
     def basis_over_frobenius(self):
         r"""
-        Let `n = [K:\mathbb{F}_q]` and recall that `\tau^n` corresponds to the
-        Frobenius endomorphism on any Drinfeld module `\phi`. Return a basis
-        for the `\mathbb{F}_q[\tau^n]`-module of morphisms from the domain to
-        the codomain. This method currently only works for Drinfeld modules
-        over finite fields.
+        Return a basis of this homser over `\FF_q[\tau^n]` where
+        `n = [K:\FF_q]` (and thus `\tau^n` is to the Frobenius endomorphism).
 
-        OUTPUT: a list of Drinfeld module morphisms.
+        ALGORITHM:
+
+            We return the basis of the kernel of a matrix derived from the
+            constraint that `\iota \phi_T = \psi_T \iota` for any morphism
+            `iota: \phi \to \psi`.
 
         EXAMPLES::
 
             sage: Fq = GF(2)
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
-            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
+            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: H = Hom(phi, psi)
-            sage: basis = H.basis()
-            sage: [b.ore_polynomial() for b in basis]
-            [(z^2 + 1)*t^2 + t + z + 1, (z^2 + 1)*t^5 + (z + 1)*t^4 + z*t^3 + t^2 + (z^2 + z)*t + z, z^2]
+            sage: H.basis_over_frobenius()
 
         ::
 
@@ -760,7 +811,7 @@ class DrinfeldModuleHomset(Homset):
             sage: phi = DrinfeldModule(A, [z, 3*z, 4*z])
             sage: chi = DrinfeldModule(A, [z, 2*z^2 + 3, 4*z^2 + 4*z])
             sage: H = Hom(phi, chi)
-            sage: H.basis()
+            sage: H.basis_over_frobenius()
             []
 
         TESTS::
@@ -771,17 +822,24 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(A, [z, z^5 + z^3 + 1, 1])
             sage: phi = DrinfeldModule(A, [z, z^4 + z^3 + 1, 1])
             sage: H = Hom(phi, psi)
-            sage: basis = H.basis(); basis
-            [... Defn: t^2 + (z^5 + z^4 + z^3 + z^2)*t + z^5 + z^4 + z^3 + 1, ... Defn: (z^3 + z^2 + z + 1)*t^2 + (z^5 + z^4 + z^3 + 1)*t + z^4 + z^3 + z, ... Defn: (z^3 + z^2 + z + 1)*t^5 + (z^5 + z^4 + z^3)*t^4 + z^2*t^3 + (z^3 + 1)*t^2 + (z^5 + z^4 + z^2 + 1)*t + z^2]
+            sage: H.basis_over_frobenius()
+            [... Defn: t^2 + (z^5 + z^4 + z^3 + z^2)*t + z^5 + z^4 + z^3 + 1,
+             ... Defn: (z^3 + z^2 + z + 1)*t^2 + (z^5 + z^4 + z^3 + 1)*t + z^4 + z^3 + z,
+             ... Defn: (z^3 + z^2 + z + 1)*t^5 + (z^5 + z^4 + z^3)*t^4 + z^2*t^3 + (z^3 + 1)*t^2 + (z^5 + z^4 + z^2 + 1)*t + z^2]
             sage: basis[2].ore_polynomial()*phi.gen() - psi.gen()*basis[2].ore_polynomial()
             0
 
-        ALGORITHM:
+        ::
 
-            We return the basis of the kernel of a matrix derived from the
-            constraint that `\iota \phi_T = \psi_T \iota` for any morphism
-            `iota: \phi \to \psi`.
+            sage: A.<T> = GF(5)[]
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: End(phi).basis()
+            Traceback (most recent call last):
+            ...
+            ValueError: basis over Frobenius only makes sense for Drinfeld module defined over finite fields
         """
+        if self.base() not in FiniteFields():
+            raise ValueError("basis over Frobenius only makes sense for Drinfeld module defined over finite fields")
         Fq = self.domain()._Fq
         K = self.domain().base_over_constants_field()
         r = self.domain().rank()
@@ -830,90 +888,7 @@ class DrinfeldModuleHomset(Homset):
             basis.append(self(basis_poly))
         return basis
 
-    def motive_power_decomposition(self, upper):
-        r"""
-        Computes coefficients a_0, .., a_{r-1} such that
-        \tau^t = a_{r-1}\tau^{r-1} + .... + a_{0}
-        with each a_i \in Fq[x] for each t < upper..
-        """
-        domain = self.domain()
-        r = domain.rank()
-        A = domain.function_ring()
-        x = A.gen()
-        Fq = domain._Fq
-        char, q = Fq.characteristic(), Fq.cardinality()
-        qord = char.log(q)
-        K = domain.base_over_constants_field()
-        coeff = domain.coefficients(sparse=False)
-        recurrence_relation = [K(coeff[i]/coeff[r]) for i in range(r)]
-        expansion_list = [[K(1) if i == j else K(0) for j in range(r)] for i in range(r)]
-        for i in range(0, upper - r + 1):
-            z = K.gen()
-            next_expansion = [-1*sum([recurrence_relation[j].frobenius(i*qord)*expansion_list[i+j][k] \
-                                for j in range(r)]) + (expansion_list[i][k]/K(coeff[r]).frobenius(i*qord))*x for k in range(r)]
-            expansion_list.append(next_expansion)
-        return expansion_list
-
-    def motive_basis(self):
-        r"""
-
-        """
-        domain, codomain = self.domain(), self.codomain()
-        A = domain.function_ring()
-        Fq = domain._Fq
-        K = domain.base_over_constants_field()
-        q = Fq.cardinality()
-        char = Fq.characteristic()
-        r = domain.rank()
-        n = K.degree(Fq)
-        qorder = logb(q, char)
-        basis_expansions = self.motive_power_decomposition(2*r - 2)
-
-        sys = Matrix(A, r*n)
-        for alpha in range(r-1):
-            for k in range(r-1):
-                for i in range(r-1):
-                    pass
-
-    def _frobenius_matrix(self, order=1, K_basis=None):
-        r"""
-        Internal method for computing the matrix of the Frobenius endomorphism
-        for K/Fq. This is a useful method for computing morphism ring bases so
-        we provide a helper method here. This should probably be part of the
-        Finite field implementation.
-
-            sage: Fq = GF(5)
-            sage: A.<T> = Fq[]
-            sage: K.<z> = Fq.extension(3)
-            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
-            sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
-            sage: H = Hom(phi, psi)
-            sage: m = H._frobenius_matrix()
-            sage: e = K(z^2 + z + 1)
-            sage: frob = K.frobenius_endomorphism()
-            sage: frob(e) == K(m*vector(e.polynomial().coefficients(sparse=False)))
-            True
-        """
-        Fq = self.domain()._Fq
-        K = self.domain().base_over_constants_field()
-        n = K.degree(Fq)
-        q = Fq.cardinality()
-        char = Fq.characteristic()
-        qorder = logb(q, char)
-        frob = K.frobenius_endomorphism(qorder*order)
-        if K_basis is None:
-            K_basis = K.basis_over(Fq)
-        pol_var = K_basis[0].polynomial().parent().gen()
-        pol_ring = PolynomialRing(Fq, str(pol_var))
-        frob_matrix = Matrix(Fq, n, n)
-        for i, elem in enumerate(K_basis):
-            col = pol_ring(frob(elem).polynomial()).coefficients(sparse=False)
-            col += [0 for _ in range(n - len(col))]
-            for j in range(n):
-                frob_matrix[j, i] = col[j]
-        return frob_matrix
-
-    def random_element(self, degree, seed=None):
+    def random_element(self, degree=None):
         r"""
         Return a random morphism chosen uniformly from the space of morphisms
         of degree at most `degree`.
@@ -937,6 +912,12 @@ class DrinfeldModuleHomset(Homset):
             sage: M_poly*phi.gen() - psi.gen()*M_poly
             0
         """
-        set_random_seed(seed)
-        return self(sum([self.domain()._Fq.random_element()
-                * elem.ore_polynomial() for elem in self._Fq_basis(degree)]))
+        domain = self.domain()
+        if degree is None:
+            A = domain._function_ring
+            return sum(A.random_element() * u
+                       for u in self._A_basis())
+        else:
+            Fq = domain._Fq
+            return sum(Fq.random_element() * u
+                       for u in self._Fq_basis(degree))
