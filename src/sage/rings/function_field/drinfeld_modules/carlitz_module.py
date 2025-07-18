@@ -107,6 +107,7 @@ def CarlitzModule(A, base=None):
         raise ValueError("cannot construct a Carlitz module from the given data")
     return DrinfeldModule(A, [z, 1])
 
+
 def carlitz_exponential(A, prec=+Infinity, name='z'):
     r"""
     Return the Carlitz exponential attached the ring `A`.
@@ -154,6 +155,7 @@ def carlitz_exponential(A, prec=+Infinity, name='z'):
     """
     C = CarlitzModule(A)
     return C.exponential(prec, name)
+
 
 def carlitz_logarithm(A, prec=+Infinity, name='z'):
     r"""
