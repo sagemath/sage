@@ -5,6 +5,7 @@ from typing import cast, Any, List, Tuple, Hashable, NamedTuple
 
 Edge = Tuple[Hashable, Hashable, Any]
 
+
 def get_maximum_cardinality_matching(G: Graph) -> EdgesView:
     r"""
     Compute a maximum cardinality matching in a simple undirected graph using the Micali-Vazirani algorithm.
@@ -51,7 +52,6 @@ def get_maximum_cardinality_matching(G: Graph) -> EdgesView:
             color[vertex] = None
             visit_mark[vertex] = None
             search_level_vertices.append(vertex)
-
 
         for (u, v, l) in H.edge_iterator():
             edge_scanned[(u, v, l)], edge_scanned[(v, u, l)] = -1, -1
