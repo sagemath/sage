@@ -358,6 +358,8 @@ Comprehensive Module List
     sage/combinat/species/empty_species
     sage/combinat/species/functorial_composition_species
     sage/combinat/species/generating_series
+    sage/combinat/species/group_cycle_index_series
+    sage/combinat/species/group_cycle_index_series_library
     sage/combinat/species/library
     sage/combinat/species/linear_order_species
     sage/combinat/species/misc
