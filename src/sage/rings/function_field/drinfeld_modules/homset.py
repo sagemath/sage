@@ -462,8 +462,29 @@ class DrinfeldModuleHomset(Homset):
         """
         basis = self._A_basis()
         if len(basis) == 0:
-            return self(0)
+            return self.zero()
         return basis[0]
+
+    def zero(self):
+        r"""
+        Return the zero morphism is this homset.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(3)
+            sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
+            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
+            sage: H = Hom(phi, psi)
+            sage: H.zero()
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+              To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
+              Defn: 0
+        """
+        from sage.rings.integer_ring import ZZ
+        return self(ZZ(0))
 
     def _frobenius_matrix(self, order=1, K_basis=None):
         r"""
@@ -475,8 +496,8 @@ class DrinfeldModuleHomset(Homset):
             sage: Fq = GF(5)
             sage: A.<T> = Fq[]
             sage: K.<z> = Fq.extension(3)
-            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
+            sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: H = Hom(phi, psi)
             sage: m = H._frobenius_matrix()
             sage: e = K(z^2 + z + 1)
@@ -695,7 +716,7 @@ class DrinfeldModuleHomset(Homset):
         basis = []
         tau = domain.ore_polring().gen()
         for basis_elem in sol:
-            ore_poly = sum([sum([K_basis[j]*basis_elem[i*n + j]
+            ore_poly = sum([sum([K_basis[j].backend() * basis_elem[i*n + j]
                                for j in range(n)])*(tau**i)
                                for i in range(d + 1)])
             try:
@@ -733,7 +754,15 @@ class DrinfeldModuleHomset(Homset):
         If we specify a degree, a basis over `\FF_q` is computed::
 
             sage: End(phi).basis(degree=5)
-            []
+            [Identity morphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z,
+             Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               Defn: z*τ^3 + z,
+             Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               Defn: τ^2,
+             Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               Defn: z*τ^5 + z*τ^2,
+             Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               Defn: τ^4]
 
         Here is another example where the domain and the codomain differ::
 
@@ -743,7 +772,7 @@ class DrinfeldModuleHomset(Homset):
             [Drinfeld Module morphism:
                From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
                To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
-               Defn: t + 1,
+               Defn: τ + 1,
              Drinfeld Module morphism:
                From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
                To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
@@ -754,6 +783,14 @@ class DrinfeldModuleHomset(Homset):
                Defn: (z + 4)*τ^2 + 4*z*τ + z + 4]
 
             sage: H.basis(degree=2)
+            [Drinfeld Module morphism:
+             From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
+             Defn: τ + 1,
+             Drinfeld Module morphism:
+             From: Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
+               To:   Drinfeld module defined by T |--> (4*z + 1)*τ^3 + 2*z*τ^2 + (3*z + 1)*τ + z
+             Defn: (z + 4)*τ^2 + (4*z + 1)*τ + z]
 
         We can check that `\phi` and `\psi` are not isomorphic by checking
         that there is no isogeny of degree `0` between them::
@@ -803,6 +840,18 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: H = Hom(phi, psi)
             sage: H.basis_over_frobenius()
+            [Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+               To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
+               Defn: (z^2 + 1)*τ^2 + τ + z + 1,
+             Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+               To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
+               Defn: (z^2 + 1)*τ^5 + (z + 1)*τ^4 + z*τ^3 + τ^2 + (z^2 + z)*τ + z,
+             Drinfeld Module morphism:
+               From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+               To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
+               Defn: z^2]
 
         ::
 
@@ -823,7 +872,8 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(A, [z, z^5 + z^3 + 1, 1])
             sage: phi = DrinfeldModule(A, [z, z^4 + z^3 + 1, 1])
             sage: H = Hom(phi, psi)
-            sage: H.basis_over_frobenius()
+            sage: basis = H.basis_over_frobenius()
+            sage: basis
             [... Defn: τ^2 + (z^5 + z^4 + z^3 + z^2)*τ + z^5 + z^4 + z^3 + 1,
              ... Defn: (z^3 + z^2 + z + 1)*τ^2 + (z^5 + z^4 + z^3 + 1)*τ + z^4 + z^3 + z,
              ... Defn: (z^3 + z^2 + z + 1)*τ^5 + (z^5 + z^4 + z^3)*τ^4 + z^2*τ^3 + (z^3 + 1)*τ^2 + (z^5 + z^4 + z^2 + 1)*τ + z^2]
@@ -834,7 +884,7 @@ class DrinfeldModuleHomset(Homset):
 
             sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, 1])
-            sage: End(phi).basis()
+            sage: End(phi).basis_over_frobenius()
             Traceback (most recent call last):
             ...
             ValueError: basis over Frobenius only makes sense for Drinfeld module defined over finite fields
@@ -884,8 +934,7 @@ class DrinfeldModuleHomset(Homset):
             basis_poly = 0
             for i in range(n):
                 for j in range(n):
-                    basis_poly += basis_vector[n*i + j] \
-                                  .subs(tau**n)*K_basis[j]*tau**i
+                    basis_poly += basis_vector[n*i + j].subs(tau**n) * K_basis[j].backend() * tau**i
             basis.append(self(basis_poly))
         return basis
 
@@ -908,17 +957,20 @@ class DrinfeldModuleHomset(Homset):
             sage: psi = DrinfeldModule(A, [z, z + 1, z^2 + z + 1])
             sage: phi = DrinfeldModule(A, [z, z^2 + z + 1, z^2 + z])
             sage: H = Hom(phi, psi)
-            sage: M = H.random_element(3, seed=25)
-            sage: M_poly = M.ore_polynomial()
-            sage: M_poly*phi.gen() - psi.gen()*M_poly
-            0
+            sage: H.random_element(3)  # random
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
+              To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
+              Defn: (z^2 + 1)*τ^2 + τ + z + 1
         """
         domain = self.domain()
         if degree is None:
-            A = domain._function_ring
-            return sum(A.random_element() * u
-                       for u in self._A_basis())
+            scalars = domain._function_ring
+            basis = self._A_basis()
         else:
-            Fq = domain._Fq
-            return sum(Fq.random_element() * u
-                       for u in self._Fq_basis(degree))
+            scalars = domain._Fq
+            basis = self._Fq_basis(degree)
+        isog = self.zero()
+        for u in basis:
+            isog += scalars.random_element() * u
+        return isog
