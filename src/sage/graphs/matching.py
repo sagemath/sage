@@ -1367,7 +1367,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                     edge_scanned[(u, v, l)], edge_scanned[(v, u, l)] = -1, -1
                     is_prop[(u, v, l)], is_prop[(v, u, l)] = None, None
 
-                for index in range(1, H.order() + 2):
+                for index in range(1, int(2*H.order()+2)):
                     tenacity_bridges_map[index] = []
 
             # *************************************
@@ -1466,7 +1466,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
                     is_prop[(u, v, l)], is_prop[(v, u, l)] = None, None
                     edge_scanned[(u, v, l)], edge_scanned[(v, u, l)] = -1, -1
 
-                for index in range(1, int(2*H.order()+1)):
+                for index in range(1, int(2*H.order()+2)):
                     tenacity_bridges_map[index] = []
 
             # ******************************
