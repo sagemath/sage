@@ -1,7 +1,7 @@
-name: CI Linux
+name: CI (Distro)
 
-## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with selected environments,
-## whenever a tag is pushed.
+## This GitHub Actions workflow builds and tests sage with selected environments,
+## whenever a tag is pushed or a pull request changes relevant build files.
 ##
 ## It builds and checks some sage spkgs as defined in TARGETS.
 ##
@@ -14,9 +14,18 @@ name: CI Linux
 ## After all jobs have finished (or are canceled) and a short delay,
 ## tar files of all logs are made available as "build artifacts".
 
-#on: [push, pull_request]
-
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/ci-distro.yml'
+      - 'build/pkgs/**'
+      - 'configure.ac'
+      - '!build/pkgs/sage_conf/**'
+      - '!build/pkgs/sage_docbuild/**'
+      - '!build/pkgs/sage_setup/**'
+      - '!build/pkgs/sage_sws2rst/**'
+      - '!build/pkgs/sagelib/**'
+      - '!build/pkgs/sagemath_*/**'
   push:
     tags:
       - '*'
@@ -30,6 +39,11 @@ env:
 
 permissions:
   packages: write
+
+concurrency:
+  # Cancel previous runs of this workflow for the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   minimal:
