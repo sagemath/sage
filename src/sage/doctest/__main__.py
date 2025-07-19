@@ -4,9 +4,6 @@ import sys
 
 import pytest
 
-from sage.doctest.control import DocTestController
-from sage.env import SAGE_SRC
-
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
 DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),
                                                    '.sage'))
@@ -160,6 +157,9 @@ def _make_parser():
 
 
 def main():
+    from sage.doctest.control import DocTestController
+    from sage.env import SAGE_SRC
+
     parser = _make_parser()
     # custom treatment to separate properly
     # one or several file names at the end
