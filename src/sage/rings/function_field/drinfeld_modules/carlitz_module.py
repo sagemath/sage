@@ -58,7 +58,7 @@ def CarlitzModule(A, base=None):
         sage: CarlitzModule(A, 'z')
         Drinfeld module defined by T |--> τ + z
 
-    Using a similar syntax, we can construct the reduction over the
+    Using a similar syntax, we can construct the reduction of the
     Carlitz module modulo primes::
 
         sage: F.<a> = Fq.extension(z^2 + 1)
