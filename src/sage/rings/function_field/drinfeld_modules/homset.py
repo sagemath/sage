@@ -27,15 +27,13 @@ from sage.categories.finite_fields import FiniteFields
 from sage.categories.drinfeld_modules import DrinfeldModules
 from sage.categories.homset import Homset
 from sage.categories.action import Action
+from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import Matrix
 from sage.rings.function_field.drinfeld_modules.morphism import DrinfeldModuleMorphism
 from sage.structure.parent import Parent
 from sage.functions.log import logb
-from sage.matrix.constructor import Matrix
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.randstate import set_random_seed
 
 
 class DrinfeldModuleMorphismAction(Action):
@@ -452,13 +450,13 @@ class DrinfeldModuleHomset(Homset):
         returns the zero morphism (which is the unique element in the
         homset)::
 
-            sage: psi = DrinfeldModule(A, [z, z + 1, 1])
+            sage: psi = DrinfeldModule(A, [z, z^2, z^3])
             sage: H = Hom(phi, psi)
             sage: H.an_element()
             Drinfeld Module morphism:
               From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
-              To:   Drinfeld module defined by T |--> τ^2 + (z + 1)*τ + z
-              Defn: (z + 1)*τ^2 + (z^2 + z + 1)*τ + z^2 + 1
+              To:   Drinfeld module defined by T |--> (z + 1)*τ^2 + z^2*τ + z
+              Defn: 0
         """
         basis = self._A_basis()
         if len(basis) == 0:
@@ -524,6 +522,7 @@ class DrinfeldModuleHomset(Homset):
                 frob_matrix[j, i] = col[j]
         return frob_matrix
 
+    @cached_method
     def _A_basis(self):
         r"""
         Return a basis of this homset over the underlying
@@ -628,7 +627,8 @@ class DrinfeldModuleHomset(Homset):
 
         # We reconstruct the isogenies
         isogenies = []
-        S = phi.ore_polring(); t = S.gen()
+        S = phi.ore_polring()
+        t = S.gen()
         for row in range(ker.nrows()):
             u = S.zero()
             for i in range(d):
@@ -735,7 +735,7 @@ class DrinfeldModuleHomset(Homset):
 
         If ``degree`` is ``None``, a basis over the underlying
         function ring is returned.
-        Otherwise, a `\FF_q`-basis of the set of morphisms of
+        Otherwise, a `\mathbb F_q`-basis of the set of morphisms of
         degree at most ``degree`` is returned.
 
         EXAMPLES::
@@ -751,7 +751,7 @@ class DrinfeldModuleHomset(Homset):
              Endomorphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z
                Defn: 2*τ^4 + z*τ^3 + z]
 
-        If we specify a degree, a basis over `\FF_q` is computed::
+        If we specify a degree, a basis over `\mathbb F_q` is computed::
 
             sage: End(phi).basis(degree=5)
             [Identity morphism of Drinfeld module defined by T |--> z*τ^3 + τ^2 + z,
@@ -822,8 +822,8 @@ class DrinfeldModuleHomset(Homset):
 
     def basis_over_frobenius(self):
         r"""
-        Return a basis of this homser over `\FF_q[\tau^n]` where
-        `n = [K:\FF_q]` (and thus `\tau^n` is to the Frobenius endomorphism).
+        Return a basis of this homser over `\mathbb F_q[\tau^n]` where
+        `n = [K:\mathbb F_q]` (and thus `\tau^n` is to the Frobenius endomorphism).
 
         ALGORITHM:
 
