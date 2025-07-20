@@ -1682,6 +1682,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             raise ValueError("%s is an unknown region of the cone!" % region)
         if region == "interior" and self.dim() < self.lattice_dim():
             return False
+        if self.is_trivial():
+            # We always have whole cone = relative interior = {0} for
+            # the trivial cone, and in addition we have interior = {0}
+            # when the ambient space is trivial (the preceding "if"
+            # ensures this).
+            return point.is_zero()
+
         need_strict = region.endswith("interior")
         M = self.dual_lattice()
         for c in self._PPL_cone().minimized_constraints():
@@ -4369,7 +4376,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(1, 1)
             in 2-d lattice N
 
-        Two more complicated example from GAP/toric::
+        A more complicated example from GAP/toric::
 
             sage: Cone([[1,0], [3,4]]).dual().Hilbert_basis()
             M(0,  1),
@@ -4378,38 +4385,51 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             M(2, -1),
             M(3, -2)
             in 2-d lattice M
-            sage: cone = Cone([[1,2,3,4], [0,1,0,7], [3,1,0,2], [0,0,1,0]]).dual()
-            sage: cone.Hilbert_basis()           # long time
-            M(10,  -7,  0,  1),
-            M(-5,  21,  0, -3),
-            M( 0,  -2,  0,  1),
-            M(15, -63, 25,  9),
-            M( 2,  -3,  0,  1),
-            M( 1,  -4,  1,  1),
-            M( 4,  -4,  0,  1),
-            M(-1,   3,  0,  0),
-            M( 1,  -5,  2,  1),
-            M( 3,  -5,  1,  1),
-            M( 6,  -5,  0,  1),
-            M( 3, -13,  5,  2),
-            M( 2,  -6,  2,  1),
-            M( 5,  -6,  1,  1),
-            M( 8,  -6,  0,  1),
-            M( 0,   1,  0,  0),
-            M(-2,   8,  0, -1),
-            M(10, -42, 17,  6),
-            M( 7, -28, 11,  4),
-            M( 5, -21,  9,  3),
-            M( 6, -21,  8,  3),
-            M( 5, -14,  5,  2),
-            M( 2,  -7,  3,  1),
-            M( 4,  -7,  2,  1),
-            M( 7,  -7,  1,  1),
-            M( 0,   0,  1,  0),
-            M( 1,   0,  0,  0),
-            M(-1,   7,  0, -1),
-            M(-3,  14,  0, -2)
-            in 4-d lattice M
+
+        Examples verified independently using [Normaliz]_::
+
+            sage: cones.rearrangement(3,4).Hilbert_basis()
+            N(-2,  1,  1,  1),
+            N( 1,  1,  1, -2),
+            N( 1,  1, -2,  1),
+            N( 1, -2,  1,  1),
+            N( 1,  0,  0,  0),
+            N(-1,  1,  1,  0),
+            N(-1,  1,  0,  1),
+            N( 0, -1,  1,  1),
+            N( 1,  0, -1,  1),
+            N( 1,  0,  1, -1),
+            N(-1,  0,  1,  1),
+            N( 0,  1, -1,  1),
+            N( 1, -1,  0,  1),
+            N( 0,  1,  1, -1),
+            N( 1, -1,  1,  0),
+            N( 0,  1,  0,  0),
+            N( 1,  1,  0, -1),
+            N( 1,  1, -1,  0),
+            N( 0,  0,  1,  0),
+            N( 0,  0,  0,  1)
+            in 4-d lattice N
+
+            sage: # long time
+            sage: K = Cone([(1,0,1), (-1,0,1), (0,1,1), (0,-1,1)])
+            sage: K.Hilbert_basis()
+            N( 1,  0, 1),
+            N(-1,  0, 1),
+            N( 0,  1, 1),
+            N( 0, -1, 1),
+            N( 0,  0, 1)
+            in 3-d lattice N
+
+            sage: # long time
+            sage: K = Cone([(1,0,1,0), (-1,0,1,0), (0,1,1,0), (0,-1,1,0)])
+            sage: K.Hilbert_basis()
+            N( 1,  0, 1, 0),
+            N(-1,  0, 1, 0),
+            N( 0,  1, 1, 0),
+            N( 0, -1, 1, 0),
+            N( 0,  0, 1, 0)
+            in 4-d lattice N
 
         Not a strictly convex cone::
 
@@ -4436,40 +4456,40 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The primal Normaliz algorithm, see [Normaliz]_.
         """
-        if self.is_strictly_convex():
 
-            def not_in_linear_subspace(x):
-                return True
-        else:
-            linear_subspace = self.linear_subspace()
+        # Used in lieu of our linear_subspace() for containment
+        # testing when this cone is strictly convex. None of the
+        # points we test can be zero, so checking the empty tuple is
+        # equivalent to checking a trivial subspace, and the empty
+        # tuple is faster.
+        L = ()
 
-            def not_in_linear_subspace(x):
-                # "x in linear_subspace" does not work, due to absence
-                # of coercion maps as of Github issue #10513.
-                try:
-                    linear_subspace(x)
-                    return False
-                except (TypeError, ValueError):
-                    return True
+        if not self.is_strictly_convex():
+            # Our linear_subspace(), but as a cone, so that
+            # containment testing using "in" works properly.
+            L = Cone((c*r for c in (1, -1) for r in self.lines()),
+                     self.lattice(),
+                     check=False)
 
         irreducible = list(self.rays())  # these are irreducible for sure
-        gens = list(self.semigroup_generators())
-        for x in irreducible:
-            try:
-                gens.remove(x)
-            except ValueError:
-                pass
+        irr_modified = False  # have we appended to "irreducible"?
+        gens = [x for x in self.semigroup_generators()
+                if x not in irreducible]
 
+        from itertools import chain
         while gens:
             x = gens.pop()
-            if any(not_in_linear_subspace(y) and x-y in self
-                   for y in irreducible+gens):
-                continue
-            irreducible.append(x)
-        if len(irreducible) == self.nrays():
-            return self.rays()
-        else:
+            if all((y in L) or (x-y not in self)
+                   for y in chain(irreducible, gens)):
+                irreducible.append(x)
+                irr_modified = True
+
+        if irr_modified:
             return PointCollection(irreducible, self.lattice())
+
+        # Avoid the PointCollection overhead if nothing was
+        # added to the irreducible list beyond self.rays().
+        return self.rays()
 
     def Hilbert_coefficients(self, point, solver=None, verbose=0,
                              *, integrality_tolerance=1e-3):
