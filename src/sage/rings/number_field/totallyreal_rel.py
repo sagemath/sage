@@ -430,7 +430,7 @@ class tr_data_rel:
                     print(k, ":", end="")
                     for i in range(self.m + 1):
                         print(self.a[i], end="")
-                    print("")
+                    print()
 
                 if k == m - 2:
                     # We only know the value of a[n-1], the trace.
