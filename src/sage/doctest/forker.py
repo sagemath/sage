@@ -583,6 +583,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         Since it needs to be able to read stdout, it should be called
         while spoofing using :class:`SageSpoofInOut`.
 
+        INPUT: see :meth:`run`.
+
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageOutputChecker
@@ -628,6 +630,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         check = self._checker.check_output
 
         # Process each example.
+        example: doctest.Example
         for examplenum, example in enumerate(test.examples):
             if failures:
                 # If exitfirst is set, abort immediately after a
@@ -1185,7 +1188,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             example.total_state = self.running_global_digest.hexdigest()
             example.doctest_state = self.running_doctest_digest.hexdigest()
 
-    def _failure_header(self, test, example, message='Failed example:'):
+    def _failure_header(self, test, example, message='Failed example:', extra=None):
         """
         We strip out ``sage:`` prompts, so we override
         :meth:`doctest.DocTestRunner._failure_header` for better
@@ -1196,6 +1199,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``test`` -- a :class:`doctest.DocTest` instance
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
+
+        - ``message`` -- a message to be shown. Must not have a newline
+
+        - ``extra`` -- an extra message to be shown in GitHub annotation
+
+        Note that ``message`` and ``extra`` are not accepted by
+        :meth:`doctest.DocTestRunner._failure_header`, as such by Liskov
+        substitution principle this method must be callable without passing those.
 
         OUTPUT: string used for reporting that the given example failed
 
@@ -1260,6 +1271,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     message += ' [failed in baseline]'
                 else:
                     command = f'::error title={message}'
+                if extra:
+                    message += f': {extra}'
                 if extra := getattr(example, 'extra', None):
                     message += f': {extra}'
                 if test.filename:
@@ -1561,12 +1574,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             Test ran for 1.23s cpu, 2.50s wall
             Check ran for 2.34s cpu, 3.12s wall
         """
-        out(self._failure_header(test, example, 'Warning: slow doctest:') +
-            ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
-             % (example.cputime,
-                example.walltime,
-                check_timer.cputime,
-                check_timer.walltime)))
+        time_info = ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
+                     % (example.cputime,
+                        example.walltime,
+                        check_timer.cputime,
+                        check_timer.walltime))
+        out(self._failure_header(test, example, 'Warning: slow doctest:', time_info) + time_info)
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""
