@@ -1303,6 +1303,10 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         OUTPUT: a (possibly empty) list of solutions `Q` to `mQ=P`,
         where `P` = ``self``
 
+        .. SEEALSO ::
+
+            :meth:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom.inverse_image`
+
         EXAMPLES:
 
         We find the five 5-torsion points on an elliptic curve::

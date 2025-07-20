@@ -455,6 +455,35 @@ class EllipticCurveHom(Morphism):
         """
         raise NotImplementedError('children must implement')
 
+    def kernel_points(self):
+        """
+        Return an iterator over the points in the kernel of this
+        elliptic-curve morphism.
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: set(f.kernel_points())
+            {(0 : 1 : 0), (4 : 4 : 1), (2*z2 + 4 : 4*z2 + 4 : 1), (3*z2 + 1 : z2 + 3 : 1)}
+
+        In the inseparable case::
+
+            sage: E = EllipticCurve(GF(23), [1,1])
+            sage: set(E.scalar_multiplication(23).kernel_points())
+            {(0 : 1 : 0)}
+
+        Check that the result is consistent with
+        :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
+
+            sage: set(E.scalar_multiplication(4).kernel_points()) == set(E(0).division_points(4))
+            True
+        """
+        E = self.domain()
+        yield E.zero()
+        for x in self.kernel_polynomial().roots(multiplicities=False):
+            yield from E.lift_x(x, all=True)
+
     def dual(self):
         r"""
         Return the dual of this elliptic-curve morphism.
@@ -534,6 +563,113 @@ class EllipticCurveHom(Morphism):
         # TODO: could have a default implementation that simply
         # returns the first component of rational_maps()
         raise NotImplementedError('children must implement')
+
+    def inverse_image(self, Q, /, *, all=False):
+        """
+        Return an arbitrary element ``P`` in the domain such that
+        ``self(P) == Q``, or raise ``ValueError`` if no such
+        element exists.
+
+        INPUT:
+
+        - ``Q`` -- a point
+        - ``all`` -- if true, returns an iterator over all points
+          in the inverse image
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3])
+            sage: f(f.inverse_image(f(Q))) == f(Q)
+            True
+            sage: E.scalar_multiplication(-1).inverse_image(P) == -P
+            True
+            sage: f.inverse_image(f.codomain().0)
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+            sage: len(list(f.inverse_image(f(Q), all=True)))
+            2
+
+        Check that the result is consistent with
+        :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
+
+            sage: E = EllipticCurve('37a'); E
+            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+            sage: P = E(0, -1)
+            sage: (P * 5).division_points(5)
+            [(0 : -1 : 1)]
+            sage: E.scalar_multiplication(5).inverse_image(P * 5)
+            (0 : -1 : 1)
+
+        Points from wrong curves cannot be passed in::
+
+            sage: f.inverse_image(Q)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a point in the codomain
+
+        TESTS::
+
+            sage: f.inverse_image(E.zero())
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a point in the codomain
+            sage: f.inverse_image(f.codomain().zero())
+            (0 : 1 : 0)
+
+        You can give a tuple as input::
+
+            sage: f.inverse_image((0, 2))  # random
+            (2 : 3*z2 + 1 : 1)
+            sage: f(f.inverse_image((0, 2)))
+            (0 : 2 : 1)
+
+        Stress test::
+
+            sage: # long time
+            ....: for p in primes(2, 12):
+            ....:     for a in range(p):
+            ....:         for b in range(p):
+            ....:             try: E = EllipticCurve(GF(p), [a, b]); P = E.0
+            ....:             except: continue  # maybe singular curve or E.0 doesn't exist
+            ....:             for n in P.order().divisors():
+            ....:                 f = E.isogeny(P*n)
+            ....:                 for R in E:
+            ....:                     Q = f(R)
+            ....:                     assert f(f.inverse_image(Q)) == Q
+            ....:                 for Q in f.codomain():
+            ....:                     try:
+            ....:                         ignore = f.inverse_image(Q)
+            ....:                     except ValueError:  # no inverse image found
+            ....:                         continue
+        """
+        if Q not in self.codomain():
+            raise TypeError('input must be a point in the codomain')
+        Q = self.codomain()(Q)
+        if Q.is_zero():
+            if all:
+                return self.kernel_points()
+            else:
+                return Q
+        if all:
+            try:
+                P = self.inverse_image(Q)
+            except ValueError:
+                return ()
+            return (K + P for K in self.kernel_points())
+        if not self.base_ring().is_exact():
+            from warnings import warn
+            warn('computing inverse image over inexact base ring is not guaranteed to be correct')
+        E = self.domain()
+        for Px in (self.x_rational_map() - Q.x()).numerator().roots(multiplicities=False):
+            for P in E.lift_x(Px, all=True):
+                if self(P) == Q:
+                    return P
+        if self.base_ring().is_exact():
+            raise ValueError('no inverse image found')
+        else:
+            raise NotImplementedError
 
     def scaling_factor(self):
         r"""
