@@ -2916,29 +2916,27 @@ class BruhatTitsQuotient(SageObject, UniqueRepresentation):
                     if prod([self._character(ZZ((v * Matrix(ZZ, 4, 1, g))[0, 0]))
                              / self._character(p ** (nninc // 2))
                              for v in self.get_extra_embedding_matrices()]) == 1]
-        n_iters = 0
 
         def enumerate_words(v, n=None):
             if n is None:
                 n = []
             while True:
                 add_new = True
-                for jj in range(len(n)):
-                    n[jj] += 1
-                    if n[jj] != len(v):
+                for j in range(len(n)):
+                    n[j] += 1
+                    if n[j] != len(v):
                         add_new = False
                         break
-                    else:
-                        n[jj] = 0
+                    n[j] = 0
                 if add_new:
                     n.append(0)
                 yield [v[x] for x in n]
 
-        for wd in enumerate_words([self._conv(x) for x in letters]):
+        conv_list = [self._conv(x) for x in letters]
+        for n_iters, wd in enumerate(enumerate_words(conv_list)):
             if len(T) == l + 1:
                 break
             v = prod(wd)
-            n_iters += 1
             v0 = v * alpha0
             vinv = self.get_quaternion_algebra()(v0 ** (-1))
             new = True
