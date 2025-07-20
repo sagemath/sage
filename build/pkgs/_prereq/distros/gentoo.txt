@@ -31,3 +31,4 @@ sys-devel/patch
 app-arch/bzip2
 sys-devel/patch
 dev-util/pkgconf
+sys-libs/zlib

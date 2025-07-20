@@ -26,7 +26,7 @@ command inside Sage::
     ['4ti2',
      'alabaster',
      ...
-     'zlib']
+     'zipp']
 
 Functions
 ---------
@@ -273,7 +273,7 @@ def list_packages(*pkg_types: str, pkg_sources: list[str] = ['normal', 'pip', 's
         ['alabaster',
          'babel',
          ...
-         'zlib']
+         'zipp']
         sage: sage_conf_info = L['sage_conf']
         sage: sage_conf_info.type
         'standard'
@@ -514,8 +514,8 @@ def package_versions(package_type, local=False):
         sage: std = package_versions('standard', local=True)
         sage: 'gap' in std
         True
-        sage: std['zlib']  # random
-        ('1.2.11.p0', '1.2.11.p0')
+        sage: std['zipp']  # random
+        ('3.19.0', '3.19.0')
     """
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 

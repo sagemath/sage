@@ -25,6 +25,10 @@ computer:
   (some Linux distros package these separately, e.g. Debian/Ubuntu needs
   packages ``bzip2`` and ``libbz2-dev``; Fedora needs ``bzip2`` and ``bzip2-devel``.)
 - **pkgconf**, also known as ``pkg-config``.
+- **zlib**: the library ``libz`` with its headers, and its pkg-config zlib.pc file.
+  (some Linux distros package these separately.)
+  On macOS we provide a basic zlib.pc file in build/platform/macos/pkgconfig,
+  which is, if needed, gets prepended to PKG_CONFIG_PATH by ./configure.
 
 Other versions of these may work, but they are untested.
 

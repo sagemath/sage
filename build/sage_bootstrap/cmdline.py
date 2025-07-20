@@ -72,12 +72,12 @@ EXAMPLE:
     $ sage --package list
     4ti2
     [...]
-    zlib
+    zipp
 
     $ sage --package list :standard:
     _prereq
     [...]
-    zlib
+    zipp
 """
 
 

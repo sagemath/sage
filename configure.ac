@@ -310,15 +310,35 @@ if test -z "$MAKE"; then
           [AC_MSG_ERROR([[found GNU make in $ac_cv_path_MAKE, but it's not the first "make" program in your PATH]])])
 fi
 
+m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
+
 # Check for bzip2 and libbz2 
    AC_CHECK_HEADER(bzlib.h, [
       AC_SEARCH_LIBS([BZ2_bzCompress], [bz2], [
         AC_PATH_PROG([bzip2_prog], [bzip2])
         AS_IF([test x$bzip2_prog = x],
-              [AC_MSG_ERROR([could not find bzip2 executable. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
-      ], [AC_MSG_ERROR([could not find libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])])
-    ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. Cf. https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
+              [AC_MSG_ERROR([could not find bzip2 executable. $SAGE_PREREQ_URL])])
+      ], [AC_MSG_ERROR([could not find libbz2 library. $SAGE_PREREQ_URL])])
+    ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. $SAGE_PREREQ_URL])
    ])
+
+SAGE_DARWIN_PKG_CONFIG_PATH=
+# Check for zlib
+    PKG_CHECK_MODULES([zlib], [zlib >= 1.2.11], [], [
+      case $host in
+         *-*-darwin*)
+         SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/pkgconfig:"
+         ;;
+         *)
+         AC_MSG_ERROR([could not find pkg-config zlib.pc file. $SAGE_PREREQ_URL])
+         esac 
+    ]) 
+    AC_CHECK_LIB([z], [inflateEnd], [],
+         [AC_MSG_ERROR([could not find libz. $SAGE_PREREQ_URL])])
+    AC_CHECK_LIB([z], [inflateValidate], [],
+       [AC_MSG_ERROR([libz does not have inflateValidate. $SAGE_PREREQ_URL])])
+    AC_CHECK_HEADER([zlib.h], [],
+       [AC_MSG_ERROR([cannot find libz headers. $SAGE_PREREQ_URL])])
 
 # Check for system python
 AC_MSG_CHECKING([for Python])
@@ -548,7 +568,7 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
-AC_SUBST(SAGE_PKG_CONFIG_PATH, ['$SAGE_LOCAL/lib/pkgconfig'])
+AC_SUBST(SAGE_PKG_CONFIG_PATH, ['$SAGE_DARWIN_PKG_CONFIG_PATH$SAGE_LOCAL/lib/pkgconfig'])
 
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])

@@ -69,7 +69,7 @@ jmol                        LGPLv2.1+
 jsonschema                  MIT License
 lcalc                       GPLv2+
 libgap                      GPLv3+
-libpng                      Custom, very similar to zlib
+libpng                      Custom (modified BSD)
 linbox                      LGPLv2.1+
 lrcalc                      GPLv2+
 m4ri                        GPLv2+
@@ -124,7 +124,6 @@ sympy                       Modified BSD
 tachyon                     Modified BSD
 threejs                     MIT License
 tornado                     Apache License
-zlib                        Custom (Modified BSD)
 
 CONTACT INFO:
      William Stein; wstein@gmail.com;
@@ -1314,30 +1313,3 @@ modification, are permitted provided that the following conditions are met:
 [followed by the BSD disclaimer]
 
 ================================================================================
-
-zlib:
-GPL compatible according to
-  http://www.fsf.org/licensing/licenses/index_html#GPLCompatibleLicenses
-
-Copyright (C) 1995-2004 Jean-loup Gailly and Mark Adler
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
-
-  Jean-loup Gailly jloup@gzip.org
-  Mark Adler madler@alumni.caltech.edu
-
-===============================================================================

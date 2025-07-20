@@ -20,3 +20,4 @@ patch
 bzip2
 patch
 devel/pkgconf
+zlib
