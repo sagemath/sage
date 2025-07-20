@@ -1026,10 +1026,10 @@ class DiCyclicGroup(PermutationGroup_unique):
         # Representation of  x
         # Four-cycles that will conjugate the generator  a  properly
         x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i) % halfr + halfr + 1)
-             for i in range(0, fourthr)]
+             for i in range(fourthr)]
         # With an odd part, transpositions will conjugate the m-cycle to create inverse
         if m > 1:
-            x += [(r+i+1, r+m-i) for i in range(0, (m-1)//2)]
+            x += [(r+i+1, r+m-i) for i in range((m-1)//2)]
 
         PermutationGroup_generic.__init__(self, gens=[a, x])
 
