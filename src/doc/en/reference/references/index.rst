@@ -4488,6 +4488,10 @@ REFERENCES:
              Mathematics. Springer-Verlag, New York, 1997. ISBN
              0-387-98254-X
 
+.. [LieOs1991] Hans Liebeck and Anthony Osborne.
+               The Generation of All Rational Orthogonal Matrices.
+               The American Mathematical Monthly, 98(2):131-133, 1991.
+
 .. [Lim] \C. H. Lim,
          *CRYPTON: A New 128-bit Block Cipher*; available at
          https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=89a685057c2ce4f632b105dcaec264b9162a1800
