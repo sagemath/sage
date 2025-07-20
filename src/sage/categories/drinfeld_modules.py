@@ -363,6 +363,30 @@ class DrinfeldModules(Category_over_base_ring):
         """
         return Homsets().Endsets()
 
+    def A_field(self):
+        r"""
+        Return the underlying `A`-field of this category,
+        viewed as an algebra over the function ring `A`.
+
+        This is an instance of the class
+        :class:`sage.rings.ring_extension.RingExtension`.
+
+        NOTE::
+
+            This method has the same behavior as :meth:`base`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(6)
+            sage: phi = DrinfeldModule(A, [z, z^3, z^5])
+            sage: C = phi.category()
+            sage: C.A_field()
+            Finite Field in z of size 5^12 over its base
+        """
+        return self.base()
+
     def base_morphism(self):
         r"""
         Return the base morphism of the category.
@@ -575,13 +599,40 @@ class DrinfeldModules(Category_over_base_ring):
 
     class ParentMethods:
 
-        def base(self):
+        def A_field(self):
             r"""
-            Return the base field of this Drinfeld module, viewed as
-            an algebra over the function ring.
+            Return the underlying `A`-field of this Drinfeld module,
+            viewed as an algebra over the function ring `A`.
 
             This is an instance of the class
             :class:`sage.rings.ring_extension.RingExtension`.
+
+            NOTE::
+
+                This method has the same behavior as :meth:`base`.
+
+            EXAMPLES::
+
+                sage: Fq = GF(25)
+                sage: A.<T> = Fq[]
+                sage: K.<z> = Fq.extension(6)
+                sage: phi = DrinfeldModule(A, [z, z^3, z^5])
+                sage: phi.A_field()
+                Finite Field in z of size 5^12 over its base
+            """
+            return self.category().A_field()
+
+        def base(self):
+            r"""
+            Return the underlying `A`-field of this Drinfeld module,
+            viewed as an algebra over the function ring `A`.
+
+            This is an instance of the class
+            :class:`sage.rings.ring_extension.RingExtension`.
+
+            NOTE::
+
+                This method has the same behavior as :meth:`A_field`.
 
             EXAMPLES::
 
