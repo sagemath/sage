@@ -1559,14 +1559,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         """
         L = self.LLL()
         dim = L.dimension()
-        gram = L.gram_matrix()
         basis = L.basis_matrix()
 
         import fpylll
-        gmat = fpylll.IntegerMatrix(dim, dim)
-        for i in range(dim):
-            for j in range(dim):
-                gmat[i, j] = gram[i, j]
+        gmat = fpylll.IntegerMatrix.from_matrix(L.gram_matrix())
         gso = fpylll.GSO.Mat(gmat, gram=True)
         ok = gso.update_gso()
         assert ok
