@@ -2197,6 +2197,7 @@ class DocTestWorker(multiprocessing.Process):
 
     EXAMPLES::
 
+        sage: # long time
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.reporting import DocTestReporter
@@ -2321,6 +2322,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2360,6 +2362,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2394,6 +2397,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter

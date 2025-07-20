@@ -6972,7 +6972,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y>=ProjectiveSpace(QQbar, 1)
             sage: E=EllipticCurve([1, 2])
             sage: f=P.Lattes_map(E, 2)
-            sage: f.Lattes_to_curve(check_lattes=true)
+            sage: f.Lattes_to_curve(check_lattes=true)  # long time
             Elliptic Curve defined by y^2 = x^3 + x + 2 over Rational Field
 
         """
