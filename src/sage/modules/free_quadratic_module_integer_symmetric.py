@@ -76,7 +76,7 @@ def IntegralLattice(data, basis=None):
 
     A lattice is a finitely generated free abelian group `L \cong \ZZ^r`
     equipped with a non-degenerate, symmetric bilinear form
-    `L \times L \colon \rightarrow \ZZ`. Here, lattices have an
+    `L \times L \rightarrow \ZZ`. Here, lattices have an
     ambient quadratic space `\QQ^n` and a distinguished basis.
 
     INPUT:
@@ -93,7 +93,7 @@ def IntegralLattice(data, basis=None):
       * the string ``'U'`` or ``'H'`` -- for hyperbolic lattices
 
     - ``basis`` -- (optional) a matrix whose rows form a basis of the
-      lattice,  or a list of module elements forming a basis
+      lattice, or a list of module elements forming a basis
 
     OUTPUT:
 
