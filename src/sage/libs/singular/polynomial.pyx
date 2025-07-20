@@ -374,7 +374,7 @@ cdef int singular_polynomial_div_coeff(poly** ret, poly *p, poly *q, ring *r) ex
     sig_off()
     return 0
 
-cdef int singular_polynomial_pow(poly **ret, poly *p, unsigned long exp, ring *r) except -1:
+cdef int singular_polynomial_pow(poly **ret, poly *p, int exp, ring *r) except -1:
     """
     ``ret[0] = p**exp`` where ``p`` in ``r`` and ``exp`` > 0.
 
