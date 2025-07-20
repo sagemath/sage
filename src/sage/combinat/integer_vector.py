@@ -813,6 +813,24 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
             else:
                 return self._element_constructor_(rtn)
 
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        EXAMPLES::
+
+            sage: IntegerVectors().is_finite()
+            False
+            sage: IntegerVectors(3).is_finite()
+            False
+            sage: IntegerVectors(length=5).is_finite()
+            False
+            sage: IntegerVectors(3, 5).is_finite()
+            True
+        """
+        from sage.rings.infinity import Infinity
+        return self.cardinality() < Infinity
+
 
 class IntegerVectors_all(UniqueRepresentation, IntegerVectors):
     """
@@ -1371,6 +1389,21 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
         """
         n, k = self.n, self.k
         return Integer(binomial(n + k - 1, n))
+
+    def is_finite(self):
+        """
+        Return whether ``self`` is finite.
+
+        EXAMPLES::
+
+            sage: IntegerVectors(3,5).is_finite()
+            True
+            sage: IntegerVectors(99, 3).is_finite()
+            True
+            sage: IntegerVectors(2*10^9, 10^9).is_finite()
+            True
+        """
+        return True
 
 
 class IntegerVectors_nnondescents(UniqueRepresentation, IntegerVectors):
