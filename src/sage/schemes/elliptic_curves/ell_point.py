@@ -1801,7 +1801,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         See :issue:`7116`::
 
-            sage: P._line_ (Q,O)                                                        # needs sage.rings.finite_rings
+            sage: P._line_(Q, O)                                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Q must be nonzero.
