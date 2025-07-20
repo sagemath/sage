@@ -1789,13 +1789,13 @@ def block_matrix(*args, **kwds):
 
     INPUT:
 
-    The block_matrix command takes a list of submatrices to add
+    The :func:`block_matrix` function takes a list of submatrices to add
     as blocks, optionally preceded by a ring and the number of block rows
     and block columns, and returns a matrix.
 
     The submatrices can be specified as a list of matrices (using
     ``nrows`` and ``ncols`` to determine their layout), or a list
-    of lists of matrices, where each list forms a row.
+    of lists of matrices/column vectors, where each list forms a row.
 
     - ``ring`` -- the base ring
 
@@ -1928,6 +1928,31 @@ def block_matrix(*args, **kwds):
         ...
         ValueError: must specify either nrows or ncols
 
+    Vectors are interpreted as column vectors::
+
+        sage: m = matrix([[1, 2], [3, 4]])
+        sage: v = vector([5, 6])
+        sage: matrix.block([
+        ....:     [m, v],
+        ....:     [0, 1],
+        ....:     ])
+        [1 2|5]
+        [3 4|6]
+        [---+-]
+        [0 0|1]
+
+    To interpret vectors as row vectors, :meth:`~sage.modules.free_module_element.FreeModuleElement.row`
+    can be used::
+
+        sage: matrix.block([
+        ....:     [m, 0],
+        ....:     [v.row(), 1],
+        ....:     ])
+        [1 2|0]
+        [3 4|0]
+        [---+-]
+        [5 6|1]
+
     TESTS::
 
         sage: A = matrix(ZZ, 2, 2, [3,5,8,13])
@@ -1940,6 +1965,55 @@ def block_matrix(*args, **kwds):
         [-----+-----]
         [ 1  0| 3  5]
         [ 0  1| 8 13]
+        sage: block_matrix([[A, 3r+1jr], [1r, A]])
+        [        3.0         5.0|3.0 + 1.0*I         0.0]
+        [        8.0        13.0|        0.0 3.0 + 1.0*I]
+        [-----------------------+-----------------------]
+        [        1.0         0.0|        3.0         5.0]
+        [        0.0         1.0|        8.0        13.0]
+
+    This is not implemented for now, but it might be implemented in the future
+    if there is no ambiguity::
+
+        sage: matrix.block([
+        ....:     [m, 0],
+        ....:     [v, 1],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: incompatible submatrix widths
+
+    Error reporting when non-ring elements are passed in::
+
+        sage: matrix.block([
+        ....:     ["abc"],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent <class 'str'> was passed in,
+         but only matrices, vectors and ring elements are accepted
+        sage: matrix.block([
+        ....:     [(1, 2)],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent <class 'tuple'> was passed in,
+         but only matrices, vectors and ring elements are accepted
+        sage: matrix.block([
+        ....:     [[1, 2]],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent <class 'list'> was passed in,
+         but only matrices, vectors and ring elements are accepted
+        sage: matrix.block([
+        ....:     [EllipticCurve('37a1').0],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent Abelian group of points on
+         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field was passed in,
+         but only matrices, vectors and ring elements are accepted
     """
     args = list(args)
     sparse = kwds.get('sparse', None)
@@ -2050,14 +2124,19 @@ def block_matrix(*args, **kwds):
 
     # At this point sub_matrices is a list of lists
 
+    from sage.structure.element import Vector
+    from sage.structure.coerce import py_scalar_to_element
+    sub_matrices = [[M.column() if isinstance(M, Vector) else M if isinstance(M, Matrix) else py_scalar_to_element(M)
+                     for M in row] for row in sub_matrices]
+
     # determine the base ring and sparsity
     if ring is None:
-        ring = ZZ
-        for row in sub_matrices:
-            for M in row:
-                R = M.base_ring() if isinstance(M, Matrix) else parent(M)
-                if R is not ZZ:
-                    ring = sage.categories.pushout.pushout(ring, R)
+        from sage.structure.element import get_coercion_model
+        parents = [M.base_ring() if isinstance(M, Matrix) else parent(M) for row in sub_matrices for M in row]
+        for p in parents:
+            if p not in Rings():
+                raise ValueError(f"an element of parent {p} was passed in, but only matrices, vectors and ring elements are accepted")
+        ring = get_coercion_model().common_parent(*parents) if parents else ZZ
 
     if sparse is None:
         sparse = True
