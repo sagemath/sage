@@ -1,27 +1,33 @@
 # sage.doctest: needs sage.graphs sage.modules
 r"""
-ClusterSeed
+Cluster seeds
 
-A *cluster seed* is a pair `(B,\mathbf{x})` with `B` being a *skew-symmetrizable* `(n+m) \times n` *-matrix*
-and with `\mathbf{x}` being an `n`-tuple of *independent elements* in the field of rational functions in `n` variables.
+A *cluster seed* is a pair `(B,\mathbf{x})` with `B` being a
+*skew-symmetrizable* `(n+m) \times n` *-matrix* and with `\mathbf{x}` being an
+`n`-tuple of *independent elements* in the field of rational functions in `n`
+variables.
 
 For the compendium on the cluster algebra and quiver package see
 [MS2011]_.
 
-AUTHORS:
-
-- Gregg Musiker: Initial Version
-- Christian Stump: Initial Version
-- Aram Dermenjian (2015-07-01): Updating ability to not rely solely on clusters
-- Jesse Levitt (2015-07-01): Updating ability to not rely solely on clusters
-
 REFERENCES:
 
 - [FZ2007]_
-
 - [BDP2013]_
 
-.. SEEALSO:: For mutation types of cluster seeds, see :meth:`sage.combinat.cluster_algebra_quiver.quiver_mutation_type.QuiverMutationType`. Cluster seeds are closely related to :meth:`sage.combinat.cluster_algebra_quiver.quiver.ClusterQuiver`.
+.. SEEALSO::
+
+    For mutation types of cluster seeds, see
+    :meth:`sage.combinat.cluster_algebra_quiver.quiver_mutation_type.QuiverMutationType`.
+    Cluster seeds are closely related to
+    :meth:`sage.combinat.cluster_algebra_quiver.quiver.ClusterQuiver`.
+
+AUTHORS:
+
+- Gregg Musiker: initial version
+- Christian Stump: initial version
+- Aram Dermenjian (2015-07-01): updating ability to not rely solely on clusters
+- Jesse Levitt (2015-07-01): updating ability to not rely solely on clusters
 """
 
 # ****************************************************************************
