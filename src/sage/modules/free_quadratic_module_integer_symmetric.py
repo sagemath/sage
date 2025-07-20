@@ -76,7 +76,7 @@ def IntegralLattice(data, basis=None):
 
     A lattice is a finitely generated free abelian group `L \cong \ZZ^r`
     equipped with a non-degenerate, symmetric bilinear form
-    `L \times L \rightarrow \ZZ`. Here, lattices have an
+    `L \times L \to \ZZ`. Here, lattices have an
     ambient quadratic space `\QQ^n` and a distinguished basis.
 
     INPUT:
