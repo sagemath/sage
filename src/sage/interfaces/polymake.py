@@ -446,8 +446,8 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         TESTS::
 
             sage: # optional - jupymake
-            sage: c = polymake.cube(15)
             sage: from sage.interfaces.polymake import polymake
+            sage: c = polymake.cube(15)
             sage: polymake._available_vars = []
             sage: old = c._name
             sage: del c
