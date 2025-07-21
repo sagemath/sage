@@ -29,10 +29,9 @@ export SAGE_DOC_SRC=/doesnotexist
 export SAGE_PKGCONFIG=/doesnotexist
 export SAGE_SHARE=/doesnotexist
 
-# However, we only unset SAGE_LOCAL and SAGE_PKG_CONFIG_PATH.
+# However, we only unset SAGE_PKG_CONFIG_PATH.
 # sage_setup.setenv receives them from sage_conf via sage.env;
 # the poisoned environment variables would override them.
-unset SAGE_LOCAL
 unset SAGE_PKG_CONFIG_PATH
 
 # Issue #30903: We cannot poison SAGE_DOC because setup.py installs the Jupyter kernel
@@ -45,7 +44,7 @@ SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["pur
 # does not shadow the namespace package sage during the build.
 (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
 if [ "$SAGE_EDITABLE" = yes ]; then
-    sdh_pip_editable_install . --config-settings=build-dir="build/sage-distro"
+    sdh_pip_editable_install . --config-settings=build-dir="build/sage-distro" --config-settings=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL"
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
@@ -61,7 +60,7 @@ else
     (cd "$SITEPACKAGESDIR" && rm -f sagemath-standard.egg-link)
     # Use --no-build-isolation to avoid rebuilds because of dependencies:
     # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
-    sdh_pip_install --no-build-isolation .
+    sdh_pip_install --no-build-isolation . --config-settings=setup-args="-DSAGE_LOCAL=$SAGE_LOCAL"
 fi
 
 # Remove (potentially invalid) star import caches.
