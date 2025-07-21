@@ -21,6 +21,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex, LatexExpr
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -39,7 +40,7 @@ from sage.rings.infinity import PlusInfinity
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.global_options import GlobalOptions
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
+lazy_import('sage.monoids.indexed_free_monoid', 'IndexedFreeAbelianMonoid')
 
 
 def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
