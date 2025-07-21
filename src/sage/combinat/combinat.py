@@ -164,21 +164,22 @@ Functions and classes
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+
 from collections.abc import Iterator
 
 from sage.arith.misc import bernoulli, factorial
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
+from sage.combinat.combinat_cython import _stirling_number2
+from sage.misc.cachefunc import cached_function
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.misc_c import prod
-from sage.misc.cachefunc import cached_function
-from sage.structure.sage_object import SageObject
-from sage.misc.lazy_import import lazy_import
-from .combinat_cython import _stirling_number2
-from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.rings.rational_field import QQ
 from sage.structure.element import Element
+from sage.structure.sage_object import SageObject
 
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
 lazy_import('sage.libs.pari', 'pari')
@@ -385,7 +386,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
     if n < 0:
         raise ArithmeticError('Bell numbers not defined for negative indices')
     if algorithm == 'mpmath':
-        from sage.libs.mpmath.all import bell, mp, mag
+        from mpmath import bell, mag, mp
         old_prec = mp.dps
         if 'prec' in options:
             mp.dps = options['prec']
@@ -2059,8 +2060,8 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
       the polynomial is in variable ``x0``. extended to complete exponential,
       partial ordinary and complete ordinary Bell polynomials.
     """
-    from sage.combinat.partition import Partitions
     from sage.arith.misc import multinomial
+    from sage.combinat.partition import Partitions
     if k is None:
         partitions = Partitions(n)
         # We set k = 1 to use the correct ring
