@@ -1139,7 +1139,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         the original matrix is not changed::
 
             sage: K.<a> = GF(4)
-            sage: M = matrix(K,[[0,[0,1],0],[0,[1,1],1],[0,0,0]])
+            sage: M = matrix(K, [[0, a, 0], [0, a+1, 1], [0, 0, 0]])
             sage: M
             [    0     a     0]
             [    0 a + 1     1]
