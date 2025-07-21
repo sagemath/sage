@@ -1179,8 +1179,6 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         
         cdef Matrix_gf2e_dense A = self.new_matrix(ncols=nrows,
                                                    nrows=ncols)
-        if nrows == 0 or ncols == 0:
-            return A
         
         cdef Py_ssize_t i, j
         for i from 0 <= i < ncols:
