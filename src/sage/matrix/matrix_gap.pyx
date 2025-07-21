@@ -342,6 +342,37 @@ cdef class Matrix_gap(Matrix_dense):
             [ 4]
             [ 2]
             [52]
+
+        TESTS::
+
+            sage: M = MatrixSpace(QQ, 2, 3, implementation='gap')
+            sage: m = M(range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [0 1|2]
+            [---+-]
+            [3 4|5]
+            sage: m.transpose()
+            [0|3]
+            [1|4]
+            [-+-]
+            [2|5]
+
+            sage: M = MatrixSpace(QQ, 0, 2, implementation='gap')
+            sage: m = M([])
+            sage: m.subdivide([],[1])
+            sage: m._subdivisions
+            ([0, 0], [0, 1, 2])
+            sage: m.transpose()._subdivisions
+            ([0, 1, 2], [0, 0])
+
+            sage: M = MatrixSpace(QQ, 2, 0, implementation='gap')
+            sage: m = M([])
+            sage: m.subdivide([1],[])
+            sage: m._subdivisions
+            ([0, 1, 2], [0, 0])
+            sage: m.transpose()._subdivisions
+            ([0, 0], [0, 1, 2])
         """
         cdef Matrix_gap M
         M = self._new(self._ncols, self._nrows)

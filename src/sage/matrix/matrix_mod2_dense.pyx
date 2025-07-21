@@ -1493,6 +1493,20 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A[0,0] = 0
             sage: B[0,0]
             1
+
+            sage: m = matrix(GF(2),0,2)
+            sage: m.subdivide([],[1])
+            sage: m._subdivisions
+            ([0, 0], [0, 1, 2])
+            sage: m.transpose()._subdivisions
+            ([0, 1, 2], [0, 0])
+
+            sage: m = matrix(GF(2),2,0)
+            sage: m.subdivide([1],[])
+            sage: m._subdivisions
+            ([0, 1, 2], [0, 0])
+            sage: m.transpose()._subdivisions
+            ([0, 0], [0, 1, 2])
         """
         cdef Matrix_mod2_dense A = self.new_matrix(ncols=self._nrows,
                                                    nrows=self._ncols)
