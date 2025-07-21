@@ -19584,7 +19584,7 @@ cdef class Matrix(Matrix1):
                     coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col],poly_ring.base_ring().zero()) - relation[row,col]
             # construct rows
             basis_rows = [[None for _ in range(m)] for _ in range(m)]
-            if poly_ring.base_ring().degree() <= 1 or m*m > poly_ring.base_ring().order():
+            if poly_ring.base_ring().degree() <= 1 or m*m*self.ncols() < poly_ring.base_ring().order():
                 # if base field is large, don't bother caching monomials
                 # or if polynomial construction is efficient (order = 1)
                 for row in range(m):
@@ -19613,13 +19613,19 @@ cdef class Matrix(Matrix1):
                                 monomial_cache[coeff] = poly_ring(coeff)
                             basis_rows[row][col] = monomial_cache[coeff].shift(deg)
                         else:
-                            # dense case
+                            # general case
                             mindeg = min(coeffs_map[row][col].keys())
-                            maxdeg = max(coeffs_map[row][col].keys())
-                            entries = [poly_ring.base_ring().zero()] * (maxdeg-mindeg+1)
+                            # maxdeg = max(coeffs_map[row][col].keys())
+                            poly = poly_ring.zero()
                             for deg, coeff in coeffs_map[row][col].items():
-                                entries[deg-mindeg] = coeff
-                            basis_rows[row][col] = poly_ring(entries).shift(mindeg)
+                                if coeff not in monomial_cache:
+                                    monomial_cache[coeff] = poly_ring(coeff)
+                                poly += monomial_cache[coeff].shift(deg-mindeg)
+                            basis_rows[row][col] = poly.shift(mindeg)
+                            # entries = [poly_ring.base_ring().zero()] * (maxdeg-mindeg+1)
+                            # for deg, coeff in coeffs_map[row][col].items():
+                                # entries[deg-mindeg] = coeff
+                            # basis_rows[row][col] = poly_ring(entries).shift(mindeg)
             # convert to matrix
             output = matrix(poly_ring,basis_rows)
         else:
