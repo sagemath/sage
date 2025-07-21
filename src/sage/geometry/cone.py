@@ -6401,8 +6401,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         isomorphic). As a result, if ``self`` is both strictly convex
         and solid, any isomorphism must map a basis consisting of
         extreme rays of ``self`` to a basis of extreme rays of
-        ``other``. In this scenario we generate all such maps, and
-        yield the ones that turn out to be isomorphisms.
+        ``other``. In this scenario we generate "all" such maps, and
+        yield the ones that turn out to be isomorphisms. More
+        accurately, we generate all such maps that are
+        :meth:`face_lattice` isomorphisms between the two cones, since
+        this is a property that any linear isomorphism will satisfy.
 
         If the cones are both solid and strictly convex, the generated
         isomorphisms are unique up to positive row scalings. When
@@ -6585,21 +6588,23 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # Create two vector spaces V and W (resp.) to hold self and
         # other, and find their lineality / perp subspaces. See
         # [StoerWitz1970] for the lineal/non-lineal decomposition
-        # theorem.
-        V = self.lattice().vector_space()
+        # theorem. This is done slightly out-of-order so that we can
+        # fail as soon as possible if the cones are not isomorphic.
         L = self.linear_subspace()
-        self_perp = self.span().vector_space().complement()
-        W = other.lattice().vector_space()
         M = other.linear_subspace()
-        other_perp = other.span().vector_space().complement()
 
         if L.dimension() != M.dimension():
             # Linealities don't match, not isomorphic.
             return
 
+        self_perp = self.span().vector_space().complement()
+        other_perp = other.span().vector_space().complement()
         if self_perp.dimension() != other_perp.dimension():
             # Cone dimensions don't match, not isomorphic.
             return
+
+        V = self.lattice().vector_space()
+        W = other.lattice().vector_space()
 
         # Standard trick for orthogonal projections onto L and M.
         A = L.basis_matrix()
@@ -6608,40 +6613,50 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         M_proj = B.T * (B*B.T).inverse() * B
 
         # Project onto the lineality space and subtract to obtain the
-        # "pointed parts" of each generator. Any zeros that arise
+        # "pointed component" of each cone. Any zeros that arise
         # correspond to vectors that were in the lineality space of
-        # the cone. By removing them we leave only the extreme rays
-        # of a pointed cone...
-        L_perps = [ x for r in self if not (x := r - r*L_proj).is_zero() ]
-        M_perps = [ x for r in other if not (x := r - r*M_proj).is_zero() ]
-
-        # but there is a subtle issue here: we need to know that --
-        # except for the zeros we've already removed -- no new
-        # redundancies in the generators arise from projecting out the
-        # lineal parts. Basically, we need to know that Cone(L_perps)
-        # would not eliminate any of the rays in L_perps at this
-        # point. This isn't obvious, but an old result of
+        # the cone; removing them leaves only the generators of a
+        # pointed cone. It isn't obvious, but an old result of
         # Wets/Witzgall in "Algorithms for frames and lineality spaces
         # of cones" states that the generators of any given cone
-        # contain a generating set of its linear_subspace(). Using
-        # this it is straightforward to show that if L_perps or
-        # M_perps is conically-dependent, then so was the original set
-        # of generators (and we know that they were not).
+        # contain a generating set of its linear_subspace(). With that
+        # in mind it is straightforward to show that if the nonzero
+        # generators we pass to Cone() below are conically-dependent,
+        # then so was the original set of generators -- and we know
+        # that they were not. In other words, the generators we're
+        # passing in are minimal, and we can get away with
+        # check=False.
+        #
+        # The construction of two additional Cone() objects is slow,
+        # but unfortunately we need to do it if we want to easily
+        # access their face lattices.
+        L_perp = Cone( (x for r in self
+                          if not (x := r - r*L_proj).is_zero()),
+                       self.lattice(),
+                       check=False)
+        M_perp = Cone( (x for r in other
+                          if not (x := r - r*M_proj).is_zero()),
+                       other.lattice(),
+                       check=False)
 
-        num_extreme = len(L_perps)
-        if len(M_perps) != num_extreme:
-            # Different extreme rays for the pointed componenents
-            # means no isomorphism.
+        if L_perp.nrays() != M_perp.nrays():
             return
 
-        # ...which need to be immutable to be put into sets.
-        for i in range(num_extreme):
-            L_perps[i].set_immutable()
-            M_perps[i].set_immutable()
+        FL = L_perp.face_lattice().hasse_diagram()
+        FM = M_perp.face_lattice().hasse_diagram()
 
-        # The dimension of the non-lineal part of our cones. Needs to
-        # be a python int for the sake of itertools.permutations().
-        n = int(self.dim() - self.lineality())
+        # All linear cone isomorphisms are isomorphisms of the
+        # corresponding face lattices.
+        are_iso, phi = FL.is_isomorphic(FM, certificate=True)
+        if not are_iso:
+            return
+
+        # And every face-lattice isomorphism is obtained from a single
+        # lattice isomorphism composed with the lattice automorphisms
+        # on one side. Thus we obtain all lattice isomorphisms as
+        # phi*A where phi is the lattice isomorphism from above, and A
+        # is in Aut_L_perp.
+        Aut_L_perp = FL.automorphism_group()
 
         # The base ring of the matrices we'll construct later. We pass
         # it explicitly to avoid the rare situation where our rational
@@ -6656,32 +6671,26 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # "other".
         self_extra_rows = A.rows() + self_perp.basis_matrix().rows()
         other_extra_rows = B.rows() + other_perp.basis_matrix().rows()
-
-        # Now try to find isomorphisms. We attempt to map each size-n
-        # subset of rays of the pointed component of "self" to a
-        # similar subset of rays of "other". We augment the system
-        # with extra rows (computed a moment ago) ensuring that bases
-        # for the lineality and perp spaces of "self" get mapped to
-        # bases for the lineality and perp spaces of "other". If all
-        # goes well, we obtain a map that works for all three
-        # components of the cone:
-        #
-        #   1. The lineal part
-        #   2. The non-lineal part (othogonal to the lineal part)
-        #   3. The trivial part {0} in a subspace orthogonal to the
-        #      original cone
-        #
         MS = V.basis_matrix().matrix_space()
-        from itertools import combinations, permutations
-        for rs1 in permutations(L_perps, n):
-            rs1 = list(rs1)
+
+        # The dimension of the non-lineal part of our cones. Needs to
+        # be a python int for the sake of itertools.combinations().
+        n = int(L_perp.dim())
+
+        from itertools import combinations
+        for rs1f in combinations(L_perp.faces(1), n):
+            # A priori we take 1d faces because that's what Aut_L_perp
+            # acts on, but we also want those 1d faces represented as
+            # rays so that we can stick them in the rows of a matrix.
+            rs1 = [ f.ray(0) for f in rs1f ]
             A = MS(rs1 + self_extra_rows)
 
-            # We don't need the reorderings of the second set because
-            # we're trying all possible orderings of the first.
-            for rs2 in combinations(M_perps, n):
-                rs2 = list(rs2)
+            for aut in Aut_L_perp:
+                # Apply iso = (phi composed with aut) to each 1d face,
+                # then convert it to a ray.
+                rs2 = [ phi[aut(r)].ray(0) for r in rs1f ]
                 B = MS(rs2 + other_extra_rows)
+
                 try:
                     X = A.solve_right(B, extend=False)
                 except ValueError:
@@ -6693,12 +6702,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
                 # the equation above (for a subset of extreme rays)
                 # does not guarantee an isomorphism between _all_
                 # extreme rays.
-                qs1 = ( r for r in L_perps if r not in rs1 )
-                qs2 = ( r for r in M_perps if r not in rs2 )
+                qs1 = ( r for r in L_perp.rays() if r not in rs1 )
+                qs2 = ( r for r in M_perp.rays() if r not in rs2 )
                 qs1_images = [ r*X for r in qs1 ]
-                for idx in range(num_extreme - n):
-                    # Have to do this again, because matrix-vector
-                    # multiplications create mutable vectors.
+                for idx in range(L_perp.nrays() - L_perp.dim()):
+                    # Have to do this before we can put the images in
+                    # a set, because matrix-vector multiplications
+                    # create mutable vectors.
                     qs1_images[idx].set_immutable()
 
                 if set(qs1_images) == set(qs2):
