@@ -19,14 +19,28 @@ TESTS::
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.action import Action
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.partition import Partitions
+from sage.combinat.partition import Partitions, Partition
 from sage.combinat.sf.sf import SymmetricFunctions
+from sage.data_structures.stream import Stream_function, Stream_cauchy_compose
+from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_function
 from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
+from sage.sets.non_negative_integers import NonNegativeIntegers
 
 class FermionicFockSpace(CombinatorialFreeModule):
+    r"""
+    A model of the Fermionic Fock space `\mathcal{H}_F`. As a vector space, `\mathcal{H}_F`
+     has basis given by pairs `(\lambda, n)` where `\lambda` is a partition, and `n` is an integer.
 
+    EXAMPLES::
+
+        sage: from sage.algberas.vertex_operators import *
+        sage: F = FermionicFockSpace(QQ)
+        sage: F.an_element()
+        |[], 0> + 4*|[], 1> + 2*|[1], 0>
+    """
     def __init__(self, R):
         I = cartesian_product((Partitions(), ZZ))
         CombinatorialFreeModule.__init__(self, R, I, prefix='', bracket='')
@@ -83,11 +97,13 @@ class Current(Action):
             x = self._act_(i*sign, x) 
         return x
 
+
+
 @cached_function
 def Hamiltonian():
     r"""
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.algebras.vertex_operators import *
         sage: H = Hamiltonian()
@@ -102,7 +118,7 @@ def act_by_H(x):
     r"""
     Computes the action of H on an element ``x`` of the Fermionic Fock Space
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.algebras.vertex_operators import *
         sage: R = SymmetricFunctions(QQ); s = R.s()
@@ -123,7 +139,7 @@ def act_by_H(x):
 def H_mat_coeff(lam, mu):
     r"""
     
-    TESTS::
+    EXAMPLES::
     
         sage: from sage.algebras.vertex_operators import *
         sage: lam = [3,2,1]; s = SymmetricFunctions(QQ).s()
@@ -141,4 +157,74 @@ def deg(x):
 
 
 
+class HalfVertexOperator():
+    def __init__(self,f):
+        self._stream = Stream_cauchy_compose(
+            Stream_function(lambda n: ZZ(1)/factorial(n), False, 0),
+            Stream_function(f, False, 1), 
+            False
+        )
+    def __getitem__(self, i):
+        if i in NonNegativeIntegers():
+            return self._stream[i]
+        raise ValueError("Invalid input")
 
+class VertexOperator(Action):
+    """
+    
+    TESTS::
+        
+        sage: from sage.algebras.vertex_operators import *
+        sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo); dx = W.differentials()
+        sage: CreationOp = VertexOperator(lambda n: x[n], lambda n: -dx[n]/n)
+        sage: AnnihilOp = VertexOperator(lambda n: -x[n], lambda n: dx[n]/n)
+        sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
+        sage: CreationOp.act(0,B.one())
+        s[]*w
+        sage: AnnihilOp.act(0, B.one())
+        s[]*w^-1
+    """
+    def __init__(self, pos, neg, cutoff = lambda x: min(x.degree(), 1)):
+        self.pos = HalfVertexOperator(pos)
+        self.neg = HalfVertexOperator(neg)
+        # TODO: make names an optional argument
+        self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names = ('z')) 
+        self.cutoff = cutoff
+        
+        super().__init__(self, ZZ, self.fockspace)
+        
+    def _act_(self, i,x):
+        res = 0
+        # for each component of constant charge, compute the action 
+        for (charge, fn) in x.monomial_coefficients().items():
+            print(charge, fn)
+            res += self.fockspace.gen()**(charge+1)*self._act_on_sym(i, fn, charge)
+
+
+        return res
+
+    def _act_on_sym(self, i, x, c):
+        p = self.fockspace.base_ring().symmetric_function_ring().p()
+        op = 0 
+        for j in range(self.cutoff(x)):
+            if i + j + c < 0:
+                continue
+            print(f"{i+j+c}, +={self.pos[i+j+c]} -={self.neg[j]}")
+            op += self.pos[i + j + c]*self.neg[j]
+            print(op)
+        if op in self.fockspace.base_ring().base_ring():
+            return op*x
+        res = 0
+        for (m, c) in op.monomial_coefficients().items():
+             print(m, c)
+             par1 = self._weyl_to_par(m[0].dict())
+             par2 = self._weyl_to_par(m[1].dict())
+             for (m2, c2) in x.monomial_coefficients().items():
+                 print(m2,c2)
+                 res += c*c2*(p(m2).skew_by(p(par2)) * p(par1))
+        return res
+    def _weyl_to_par(self,m):
+        res = []
+        for i in m:
+            res += [i]*m[i]
+        return Partition(sorted(res, reverse=True))
