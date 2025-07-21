@@ -1496,10 +1496,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         """
         cdef Matrix_mod2_dense A = self.new_matrix(ncols=self._nrows,
                                                    nrows=self._ncols)
-        if self._nrows == 0 or self._ncols == 0:
-            return A
+        if self._nrows != 0 and self._ncols != 0:
+            A._entries = mzd_transpose(A._entries, self._entries)
 
-        A._entries = mzd_transpose(A._entries, self._entries)
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             A.subdivide(col_divs, row_divs)

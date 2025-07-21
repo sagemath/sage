@@ -346,6 +346,9 @@ cdef class Matrix_gap(Matrix_dense):
         cdef Matrix_gap M
         M = self._new(self._ncols, self._nrows)
         M._libgap = self._libgap.TransposedMat()
+        if self._subdivisions is not None:
+            row_divs, col_divs = self.subdivisions()
+            M.subdivide(col_divs, row_divs)
         return M
 
     def determinant(self):
