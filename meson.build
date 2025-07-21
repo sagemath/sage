@@ -7,14 +7,6 @@ project(
   meson_version: '>=1.2',
 )
 
-## Options
-option(
-  'SAGE_LOCAL',
-  type: 'string',
-  value: '',
-  description: 'Path to SAGE_LOCAL directory (only used for compatibility with the old Sage-the-Distro',
-)
-
 # Python module
 # https://mesonbuild.com/Python-module.html
 py_module = import('python')
