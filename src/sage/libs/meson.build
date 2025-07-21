@@ -15,6 +15,28 @@ if ecl_bin.found()
     '(quit)',
     check: false,
   )
+  if maxima_check.returncode() == 0
+    # ecl does not have any problems with Maxima, so nothing needs to be set here:
+    conf_data.set('SAGE_MAXIMA_FAS', '')
+  else
+    # Try Sage's custom maxima location
+    sage_maxima = join_paths(
+      get_option('SAGE_LOCAL'),
+      'lib',
+      'ecl',
+      'maxima.fas',
+    )
+    maxima_check = run_command(
+      ecl_bin,
+      '--eval',
+      '(require \'maxima "' + sage_maxima + '")',
+      '--eval',
+      '(quit)',
+      check: false,
+    )
+    conf_data.set('SAGE_MAXIMA_FAS', sage_maxima)
+  endif
+
   maxima_bin = find_program('maxima', required: false, disabler: true)
   maxima_present = maxima_check.returncode() == 0 and maxima_bin.found()
 else
@@ -39,7 +61,6 @@ if not maxima_present
 else
   maxima = declare_dependency()
   # ecl does not have any problems with Maxima, so nothing needs to be set here:
-  conf_data.set('SAGE_MAXIMA_FAS', '')
   conf_data.set('SAGE_MAXIMA_SHARE', '')
   conf_data.set('SAGE_MAXIMA', maxima_bin.full_path())
 endif
