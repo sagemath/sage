@@ -1138,40 +1138,41 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         We create a matrix, compute its transpose, and note that
         the original matrix is not changed. ::
 
-            sage: M = matrix(GF(4),[[0,[0,1],0],[0,[1,1],1],[0,0,0]])
+            sage: K.<a> = GF(4)
+            sage: M = matrix(K,[[0,[0,1],0],[0,[1,1],1],[0,0,0]])
             sage: M
-            [     0     z2      0]
-            [     0 z2 + 1      1]
-            [     0      0      0]
+            [    0     a     0]
+            [    0 a + 1     1]
+            [    0     0     0]
             sage: N = M.transpose()
             sage: N
-            [     0      0      0]
-            [    z2 z2 + 1      0]
-            [     0      1      0]
+            [    0     0     0]
+            [    a a + 1     0]
+            [    0     1     0]
             sage: M
-            [     0     z2      0]
-            [     0 z2 + 1      1]
-            [     0      0      0]
+            [    0     a     0]
+            [    0 a + 1     1]
+            [    0     0     0]
 
         ``.T`` is a convenient shortcut for the transpose::
 
             sage: M.T
-            [     0      0      0]
-            [    z2 z2 + 1      0]
-            [     0      1      0]
+            [    0     0     0]
+            [    a a + 1     0]
+            [    0     1     0]
 
         ::
 
             sage: M.subdivide(None, 1)
             sage: M
-            [     0|    z2      0]
-            [     0|z2 + 1      1]
-            [     0|     0      0]
+            [    0|    a     0]
+            [    0|a + 1     1]
+            [    0|    0     0]
             sage: M.transpose()
-            [     0      0      0]
-            [--------------------]
-            [    z2 z2 + 1      0]
-            [     0      1      0]
+            [    0     0     0]
+            [-----------------]
+            [    a a + 1     0]
+            [    0     1     0]
         """
         # temporary until mzed_transpose from M4RIE makes its way into Sage
         cdef Py_ssize_t nrows = self._nrows
