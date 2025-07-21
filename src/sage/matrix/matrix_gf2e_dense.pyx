@@ -1131,7 +1131,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
     def transpose(self):
         """
-        Return the transpose of ``self``, without changing ``self``.
+        Return the transpose of ``self``.
 
         EXAMPLES:
 
