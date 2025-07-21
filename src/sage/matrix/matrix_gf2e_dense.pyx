@@ -1136,7 +1136,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         EXAMPLES:
 
         We create a matrix, compute its transpose, and note that
-        the original matrix is not changed. ::
+        the original matrix is not changed::
 
             sage: K.<a> = GF(4)
             sage: M = matrix(K,[[0,[0,1],0],[0,[1,1],1],[0,0,0]])
