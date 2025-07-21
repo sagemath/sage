@@ -390,7 +390,7 @@ def _remove_kernel(mat, factor=1024, threshold=1e-4):
     mat_recover = image_space.T * norm_factor.inverse()
     return kernel_removed_mat, mat_recover
 
-def custom_psd_test(M):
+def _custom_psd_test(M):
     if not M.is_symmetric():
         return False
     R = M.base_ring()
@@ -415,6 +415,11 @@ def custom_psd_test(M):
                 sum_ldl_ij = sum(L[i, k] * L[j, k] * d_diag[k] for k in range(j))
                 L[i, j] = (M[i, j] - sum_ldl_ij) / d_j
     return True
+
+def _min_symm_eig(M):
+    import numpy as np
+    Mnp = M.n().numpy()
+    return min(np.linalg.eigh((Mnp.transpose() + Mnp)/2).eigenvalues)
 
 class _CombinatorialTheory(Parent, UniqueRepresentation):
     def __init__(self, name):
@@ -841,6 +846,27 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             res += term_contribution * current_coeff_R
         return res
 
+    def _check_matrix(self, M, ind):
+        if M==None:
+            return True
+        try:
+            if not M.is_positive_semidefinite():
+                self.fprint("Rounded X matrix "+ 
+                    "{} is not semidefinite: {}".format(
+                        ind, 
+                        _min_symm_eig(M)
+                        ))
+                return False
+        except:
+            if not _custom_psd_test(M):
+                self.fprint("Rounded X matrix "+ 
+                    "{} is not semidefinite: {}".format(
+                        ind, 
+                        _min_symm_eig(M)
+                        ))
+                return False
+        return True
+
     def get_Z_matrices(self, phi_vector, table_constructor, test=True):
         Zs = []
         for param in table_constructor.keys():
@@ -858,20 +884,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                     else:
                         Zm[ii] += mat*phi_vector[gg]
             Zs.append(Zm)
-            for Zii in Zm:
+            for jj, Zii in enumerate(Zm):
                 if test:
-                    try:
-                        if not Zii.is_positive_semidefinite():
-                            self.fprint("Construction based Z matrix for " + 
-                                        "{} is not semidef: {}".format(
-                                            ftype, min(Zii.eigenvalues())
-                                            ))
-                    except:
-                        if not custom_psd_test(Zii):
-                            self.fprint("Construction based Z matrix for " + 
-                                        "{} is not semidef: {}".format(
-                                            ftype, min(Zii.eigenvalues())
-                                            ))
+                    self._check_matrix(Zii, (param, jj))
         return Zs
 
     def _adjust_table_phi(self, table_constructor, phi_vectors_exact, 
@@ -904,12 +919,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             new_bases = []
             for ii, Zgroup in enumerate(Zs):
                 Z = None
-                for Zjj in Zgroup:
-                    if test and (not Zjj.is_positive_semidefinite()):
-                        self.fprint("Construction based Z matrix for " + 
-                              "{} is not semidef: {}".format(
-                                  ftype, min(Zjj.eigenvalues())
-                                  ))
+                for jj, Zjj in enumerate(Zgroup):
+                    if test:
+                        self._check_matrix(Zjj, (param, ii, jj))
                     if Z==None:
                         Z = Zjj
                     else:
@@ -1458,12 +1470,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 X_ii_small = recover_base * X_ii_raw * recover_base.T
                 
                 # verify semidefiniteness
-                if not X_ii_small.is_positive_semidefinite():
-                    self.fprint("Rounded X matrix "+ 
-                        "{} is not semidefinite: {}".format(
-                            block_index+plus_index, 
-                            min(X_ii_small.eigenvalues())
-                            ))
+                if not self._check_matrix(X_ii_small, (params, plus_index)):
                     return None
                 
                 # update slacks
@@ -1700,25 +1707,7 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
                 X_ii_small = recover_base * X_ii_raw * recover_base.T
                 
                 # verify semidefiniteness
-                invalid = False
-                try:
-                    if not X_ii_small.is_positive_semidefinite():
-                        self.fprint("Rounded X matrix "+ 
-                            "{} is not semidefinite: {}".format(
-                                block_index+plus_index, 
-                                min(X_ii_small.eigenvalues())
-                                ))
-                        invalid = True
-                except:
-                    RFF = RealField(prec=100)
-                    if not matrix(RFF, X_ii_small).is_positive_semidefinite():
-                        self.fprint("Rounded X matrix "+ 
-                            "{} is not semidefinite: {}".format(
-                                block_index+plus_index, 
-                                min(matrix(RFF, X_ii_small).eigenvalues())
-                                ))
-                        invalid = True
-                if invalid:
+                if not self._check_matrix(X_ii_small, (params, plus_index)):
                     return None
                 
                 # update slacks
@@ -2491,16 +2480,9 @@ class _CombinatorialTheory(Parent, UniqueRepresentation):
             iterator = enumerate(X_flats)
         for ii, Xf in iterator:
             X = matrix(_unflatten_matrix(Xf)[0])
-            try:
-                if not (X.is_positive_semidefinite()):
-                    print("Solution is not valid!")
-                    self.fprint("Matrix {} is not semidefinite".format(ii))
-                    return -1
-            except:
-                if not custom_psd_test(X):
-                    print("Solution is not valid!")
-                    self.fprint("Matrix {} is not semidefinite".format(ii))
-                    return -1
+            if not self._check_matrix(X, ii):
+                print("Solution is not valid!")
+                return -1
 
         self.fprint("Solution matrices are all positive semidefinite, " + 
               "linear coefficients are all non-negative")
