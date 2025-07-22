@@ -24,6 +24,7 @@ from sage.combinat.sf.sf import SymmetricFunctions
 from sage.data_structures.stream import Stream_function, Stream_cauchy_compose
 from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_function
+from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
@@ -36,7 +37,7 @@ class FermionicFockSpace(CombinatorialFreeModule):
 
     EXAMPLES::
 
-        sage: from sage.algberas.vertex_operators import *
+        sage: from sage.algebras.vertex_operators import *
         sage: F = FermionicFockSpace(QQ)
         sage: F.an_element()
         |[], 0> + 4*|[], 1> + 2*|[1], 0>
@@ -171,34 +172,56 @@ class HalfVertexOperator():
 
 class VertexOperator(Action):
     """
-    
-    TESTS::
+    The action of a Vertex Operator on the Bosonic Fock space.
+
+    INPUT:
+
+    - ``pos`` -- function taking in nonnegative integers indexing the positive
+     half of the vertex operator
+    - ``neg`` -- function taking in nonnegative integers indexing the negative
+     half of the vertex operator
+    - ``cutoff`` -- function taking in symmetric functions which determines how
+     far to expand the vertex operator (default: ``lambda x: max(x.degree(), 1))
+    - ``dcharge`` -- integer (default: ``1``) indicating how this vertex operator
+     should change the charge of an element 
+    - ``fockspace``-- the space that the vertex operators are acting on.
+
+    EXAMPLES::
         
         sage: from sage.algebras.vertex_operators import *
         sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo); dx = W.differentials()
-        sage: CreationOp = VertexOperator(lambda n: x[n], lambda n: -dx[n]/n)
-        sage: AnnihilOp = VertexOperator(lambda n: -x[n], lambda n: dx[n]/n)
         sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
+        sage: CreationOp = VertexOperator(lambda n: x[n], lambda n: -dx[n]/n, dcharge=1, fockspace=B)
+        sage: AnnihilOp = VertexOperator(lambda n: -x[n], lambda n: dx[n]/n, dcharge=-1, fockspace=B)
         sage: CreationOp.act(0,B.one())
         s[]*w
+        sage: CreationOp.act(1, B.one())
+        s[1]*w
+        sage: t1 = CreationOp.act(-2, B.gen()^(-3)); t1
+        s[1]*w^-2
+        sage: t2 = CreationOp.act(0, t1); t2
+        s[2, 1]*w^-1
+        sage: t3 = CreationOp.act(3, t2); t3
+        s[4, 2, 1]         
         sage: AnnihilOp.act(0, B.one())
         s[]*w^-1
     """
-    def __init__(self, pos, neg, cutoff = lambda x: min(x.degree(), 1)):
+    def __init__(self, pos, neg, cutoff = lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
         self.pos = HalfVertexOperator(pos)
         self.neg = HalfVertexOperator(neg)
-        # TODO: make names an optional argument
-        self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names = ('z')) 
+        if fockspace is None:
+            self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names = ('w')) 
+        else: #TODO: check input is correct type
+            self.fockspace = fockspace
         self.cutoff = cutoff
-        
-        super().__init__(self, ZZ, self.fockspace)
+        self.dcharge = dcharge
+        super().__init__(ZZ, self.fockspace)
         
     def _act_(self, i,x):
         res = 0
         # for each component of constant charge, compute the action 
         for (charge, fn) in x.monomial_coefficients().items():
-            print(charge, fn)
-            res += self.fockspace.gen()**(charge+1)*self._act_on_sym(i, fn, charge)
+            res += self.fockspace.gen()**(charge+self.dcharge)*self._act_on_sym(i, fn, -charge)
 
 
         return res
@@ -206,25 +229,21 @@ class VertexOperator(Action):
     def _act_on_sym(self, i, x, c):
         p = self.fockspace.base_ring().symmetric_function_ring().p()
         op = 0 
-        for j in range(self.cutoff(x)):
+        for j in range(self.cutoff(x)+1):
             if i + j + c < 0:
                 continue
-            print(f"{i+j+c}, +={self.pos[i+j+c]} -={self.neg[j]}")
             op += self.pos[i + j + c]*self.neg[j]
-            print(op)
         if op in self.fockspace.base_ring().base_ring():
             return op*x
         res = 0
         for (m, c) in op.monomial_coefficients().items():
-             print(m, c)
              par1 = self._weyl_to_par(m[0].dict())
              par2 = self._weyl_to_par(m[1].dict())
              for (m2, c2) in x.monomial_coefficients().items():
-                 print(m2,c2)
-                 res += c*c2*(p(m2).skew_by(p(par2)) * p(par1))
+                res += c*c2*(self.fockspace.base_ring()(m2).skew_by(p(par2)) * p(par1)/(prod(par1)))
         return res
     def _weyl_to_par(self,m):
         res = []
         for i in m:
-            res += [i]*m[i]
+            res += [i]*int(m[i])
         return Partition(sorted(res, reverse=True))
