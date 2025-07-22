@@ -1047,7 +1047,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         return self.local_data(P, proof, algorithm).minimal_model()
 
-    def has_good_reduction(self, P):
+    def has_good_reduction(self, P) -> bool:
         r"""
         Return ``True`` if this elliptic curve has good reduction at the prime `P`.
 
@@ -1081,7 +1081,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         return self.local_data(P).has_good_reduction()
 
-    def has_bad_reduction(self, P):
+    def has_bad_reduction(self, P) -> bool:
         r"""
         Return ``True`` if this elliptic curve has bad reduction at the prime `P`.
 
@@ -1115,7 +1115,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         return self.local_data(P).has_bad_reduction()
 
-    def has_multiplicative_reduction(self, P):
+    def has_multiplicative_reduction(self, P) -> bool:
         r"""
         Return ``True`` if this elliptic curve has (bad) multiplicative
         reduction at the prime `P`.
@@ -1150,7 +1150,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         return self.local_data(P).has_multiplicative_reduction()
 
-    def has_split_multiplicative_reduction(self, P):
+    def has_split_multiplicative_reduction(self, P) -> bool:
         r"""
         Return ``True`` if this elliptic curve has (bad) split multiplicative reduction at the prime `P`.
 
@@ -1179,7 +1179,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         return self.local_data(P).has_split_multiplicative_reduction()
 
-    def has_nonsplit_multiplicative_reduction(self, P):
+    def has_nonsplit_multiplicative_reduction(self, P) -> bool:
         r"""
         Return ``True`` if this elliptic curve has (bad) non-split
         multiplicative reduction at the prime `P`.
@@ -1209,7 +1209,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         return self.local_data(P).has_nonsplit_multiplicative_reduction()
 
-    def has_additive_reduction(self, P):
+    def has_additive_reduction(self, P) -> bool:
         r"""
         Return ``True`` if this elliptic curve has (bad) additive reduction at
         the prime `P`.
@@ -1273,7 +1273,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         return self.local_data(P, proof).tamagawa_number()
 
-    def tamagawa_numbers(self):
+    def tamagawa_numbers(self) -> list:
         """
         Return a list of all Tamagawa numbers for all prime divisors of the
         conductor (in order).
@@ -1738,7 +1738,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
                  K.ideal(1))
         return Cl(I)
 
-    def has_global_minimal_model(self):
+    def has_global_minimal_model(self) -> bool:
         r"""
         Return whether this elliptic curve has a global minimal model.
 
@@ -3544,7 +3544,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return ZZ.zero()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         """
         Return whether or not this curve has a CM `j`-invariant.
 
@@ -3585,7 +3585,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         return not self.cm_discriminant().is_zero()
 
     @cached_method
-    def has_rational_cm(self, field=None):
+    def has_rational_cm(self, field=None) -> bool:
         r"""
         Return whether or not this curve has CM defined over its
         base field or a given extension.

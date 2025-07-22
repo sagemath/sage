@@ -2,7 +2,7 @@
 .. _chapter-modularization:
 
 ===========================================
-Packaging the Sage Library for Distribution
+Modularized Distribution
 ===========================================
 
 

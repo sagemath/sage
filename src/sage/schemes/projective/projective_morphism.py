@@ -925,10 +925,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: P.<z,w> = ProjectiveSpace(K, 1)
             sage: f = DynamicalSystem_projective([a*(z^2 + w^2), z*w])
             sage: f.normalize_coordinates(); f
-            Dynamical System of Projective Space of dimension 1 over
-            Number Field in a with defining polynomial 3*x^2 + 1
-            Defn: Defined on coordinates by sending (z : w) to
-                ((3/2*a + 1/2)*z^2 + (3/2*a + 1/2)*w^2 : (-3/2*a + 3/2)*z*w)
+            Dynamical System of Projective Space of dimension 1 over Number Field in a with defining polynomial 3*x^2 + 1
+              Defn: Defined on coordinates by sending (z : w) to
+                    (z^2 + w^2 : (-3*a)*z*w)
 
         ::
 
@@ -1280,7 +1279,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f.is_morphism()                                                       # needs sage.libs.singular
             True
         """
-
         R = self.coordinate_ring()
         F = list(self._polys)
         defpolys = list(self.domain().defining_polynomials())
@@ -1291,10 +1289,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             S = PolynomialRing(R.base_ring().fraction_field(), R.gens(), R.ngens())
             L = [S(f) for f in F] + [S(f) for f in defpolys]
             J = S.ideal(L)
-        if J.dimension() > 0:
-            return False
-        else:
-            return True
+        return J.dimension() <= 0
 
     def global_height(self, prec=None):
         r"""
