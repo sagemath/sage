@@ -1132,10 +1132,10 @@ class EllipticCurveHom(Morphism):
 
     def minimal_polynomial(self):
         r"""
-        Return a minimal polynomial of this isogeny, as defined in
-        [EPSV2023]_, Definition 15: That is, some polynomial `f`
-        such that the points on the domain curve whose `x`-coordinates
-        are roots of `f` generate the kernel of this isogeny.
+        Return a minimal polynomial of the kernel subgroup of this isogeny, as
+        defined in [EPSV2023]_, Definition 15: That is, some polynomial `f` such
+        that the points on the domain curve whose `x`-coordinates are roots of `f`
+        generate the kernel of this isogeny.
 
         .. SEEALSO::
 
@@ -1178,8 +1178,8 @@ class EllipticCurveHom(Morphism):
 
     def push_subgroup(self, f):
         r"""
-        Given the minimal polynomial (see :meth:`minimal_polynomial`)
-        of a subgroup `G` of the domain of this isogeny, return a minimal
+        Given a minimal polynomial (see :meth:`minimal_polynomial`) of a
+        subgroup `G` of the domain curve of this isogeny, return a minimal
         polynomial of the image of `G` under this isogeny.
 
         ALGORITHM: [EPSV2023]_, Algorithm 5 (``PushSubgroup``)

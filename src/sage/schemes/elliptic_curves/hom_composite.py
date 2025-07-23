@@ -934,9 +934,9 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
     def push_subgroup(self, f):
         r"""
-        Given the minimal polynomial (see :meth:`~EllipticCurveHom.minimal_polynomial`)
-        of a subgroup `G` of the domain of this isogeny, return a minimal polynomial of
-        the image of `G` under this isogeny.
+        Given a minimal polynomial (see :meth:`~EllipticCurveHom.minimal_polynomial`)
+        of a subgroup `G` of the domain curve of this isogeny, return a minimal polynomial
+        of the image of `G` under this isogeny.
 
         ALGORITHM: iterative :meth:`EllipticCurveHom.push_subgroup()`
 
