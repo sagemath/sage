@@ -1181,9 +1181,9 @@ class EllipticCurveHom(Morphism):
         Given a irreducible divisor `f` of an `l`-division polynomial on the
         domain curve of this isogeny, return an irreducible polynomial `f'`
         such that the subgroup defined by `f` is mapped to the subgroup
-        defined by `f'`. See :meth:`minimal_polynomial()`.
+        defined by `f'` under the isogeny. See :meth:`minimal_polynomial()`.
 
-        ALGORITHM: [EPSV2023]_, Algorithm 5 (``PushSubgroup'')
+        ALGORITHM: [EPSV2023]_, Algorithm 5 (``PushSubgroup``)
 
         EXAMPLES::
 
