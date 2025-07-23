@@ -1348,6 +1348,14 @@ class ChainComplex_class(Parent):
             Z x C3
             sage: C._homology_generators_snf(C.differential(0), C.differential(1), 0)
             ([3, 0], [(1, 0), (0, 1)])
+
+        Check that :issue:`40469` is fixed::
+
+            sage: coeff = [1, -1, 2]
+            sage: for c in coeff:
+            ....:     differentials = {1: matrix(QQ, 1, 1, [[c]])}
+            ....:     C = ChainComplex(differentials, degree=-1)
+            ....:     assert(bool(C.homology(0, generators=True)) is False)
         """
         # Find the kernel of the out-going differential.
         K = d_out.right_kernel().matrix().transpose().change_ring(d_out.base_ring())
@@ -1365,7 +1373,7 @@ class ChainComplex_class(Parent):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
-            if N[i][i] == 1:
+            if N[i][i].is_unit():
                 non_triv = non_triv + 1
         divisors = [x for x in all_divs if x != 1]
         gens = (K * P.inverse().submatrix(col=non_triv)).columns()
