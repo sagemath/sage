@@ -102,6 +102,13 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        cdef Rational x
+        x = Rational()
+        cdef Matrix_rational_sparse _src = <Matrix_rational_sparse> src
+        mpq_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpq_vector_set_entry(&self._matrix[iDst], jDst, x.value)
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.

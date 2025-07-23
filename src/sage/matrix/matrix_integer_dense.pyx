@@ -476,6 +476,22 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return fmpz_is_zero(fmpz_mat_entry(self._matrix, i,j))
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """Copy position iSrc,jSrc of ``src`` to position iDst,jDst of this matrix.
+
+        The object ``src`` must be of type ``Matrix_integer_dense`` and have the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` -- row
+
+        - ``jDst`` -- column
+
+        - ``src`` -- must be Matrix_integer_dense! The value to set ``self[i,j]`` to.
+        """
+        cdef Matrix_integer_dense _src = <Matrix_integer_dense> src
+        fmpz_set(fmpz_mat_entry(self._matrix, iDst, jDst), fmpz_mat_entry(_src._matrix, iSrc, jSrc))
+
     def _pickle(self):
         """
         EXAMPLES::

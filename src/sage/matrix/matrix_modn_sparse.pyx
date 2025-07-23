@@ -182,6 +182,10 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         n.ivalue = get_entry(&self.rows[i], j)
         return n
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        cdef Matrix_modn_sparse _src = <Matrix_modn_sparse>src
+        set_entry(&self.rows[iDst], jDst, get_entry(&_src.rows[iSrc], jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.

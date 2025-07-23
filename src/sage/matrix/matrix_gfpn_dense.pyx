@@ -673,6 +673,13 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         finally:
             sig_off()
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copies values without bound or type checking.
+        """
+        cdef Matrix_gfpn_dense _src = <Matrix_gfpn_dense>src
+        FfInsert(FfGetPtr(self.Data.Data, iDst), jDst, FfExtract(MatGetPtr(_src.Data,iSrc), jSrc))
+
     def randomize(self, density=None, nonzero=False, *args, **kwds):
         """
         Fill the matrix with random values.

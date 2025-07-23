@@ -200,6 +200,13 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        cdef Matrix_generic_sparse _src = <Matrix_generic_sparse>src
+        if (iSrc,jSrc) in _src._entries:
+            self._entries[(iDst,jDst)] = _src._entries.get((iSrc, jSrc), _src._zero)
+        elif (iDst,jDst) in self._entries:
+            del self._entries[(iDst,jDst)]
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.

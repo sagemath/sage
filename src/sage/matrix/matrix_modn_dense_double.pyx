@@ -175,3 +175,13 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
             return (<IntegerMod_int>_self._get_template)._new_c(<int_fast32_t>result)
         else:
             return (<IntegerMod_int64>_self._get_template)._new_c(<int_fast64_t>result)
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copies the (iSrc,jSrc) entry of ``src`` to the (iDst,jDst) entry of ``self`` with no bounds-checking, or any other checks.
+
+        Assumes that ``src`` is a Matrix_modn_dense_double with the same base ring as ``self``.
+        """
+        cdef Matrix_modn_dense_double _src = <Matrix_modn_dense_double>src
+        self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]
+        

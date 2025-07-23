@@ -151,3 +151,12 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         cdef float result = (<Matrix_modn_dense_template>self)._matrix[i][j]
         return (<Matrix_modn_dense_float>self)._get_template._new_c(<int_fast32_t>result)
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copies the (iSrc,jSrc) entry of ``src`` to the (iDst,jDst) entry of ``self`` with no bounds-checking, or any other checks.
+
+        Assumes that ``src`` is a Matrix_modn_dense_float with the same base ring as ``self``.
+        """
+        cdef Matrix_modn_dense_float _src = <Matrix_modn_dense_float>src
+        self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]

@@ -204,6 +204,10 @@ cdef class Matrix_gap(Matrix_dense):
         """
         self._libgap[i,j] = x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        cdef Matrix_gap _src = <Matrix_gap>src
+        self._libgap[iDst,jDst] = _src._libgap[iSrc,jSrc]
+
     cpdef _richcmp_(self, other, int op):
         r"""
         Compare ``self`` and ``right``.

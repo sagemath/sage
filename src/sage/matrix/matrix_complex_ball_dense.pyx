@@ -307,6 +307,19 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         acb_set(z.value, acb_mat_entry(self.value, i, j))
         return z
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)`` entry of this matrix.
+
+        .. warning::
+
+           This is very unsafe; it assumes ``iSrc``, ``jSrc``, ``iDst`` and ``jDst`` are in the right
+           range, and that ``src`` is a
+           Matrix_complex_ball_dense with the same base ring as ``self``.
+        """
+        cdef Matrix_complex_ball_dense _src = <Matrix_complex_ball_dense> src
+        acb_set(acb_mat_entry(self.value, iDst, jDst), acb_mat_entry(_src.value, iSrc, jSrc))
+
     cpdef _richcmp_(left, right, int op):
         r"""
         EXAMPLES::

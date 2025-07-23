@@ -407,6 +407,18 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
 
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy the (iSrc,jSrc)-th entry of ``src`` to the (iDst,jDst)-th entry ``self``.
+
+        WARNING: As the name suggests, expect segfaults if iSrc,jSrc,iDst,jDst are out
+        of bounds!! This is for internal use only. This method assumes ``src`` is a Matrix_cyclo_dense with the same base ring as ``self``.
+        """
+        cdef Matrix_cyclo_dense _src = src
+        cdef int a
+        for a in range(self._degree):
+            self._matrix.copy_from_unsafe(a, jDst + iDst*self._ncols, _src._matrix, a, jSrc + iSrc*_src._ncols)
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.

@@ -177,6 +177,16 @@ cdef class Matrix_numpy_dense(Matrix_dense):
         return self._sage_dtype(cnumpy.PyArray_GETITEM(self._matrix_numpy,
                                                 cnumpy.PyArray_GETPTR2(self._matrix_numpy, i, j)))
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy the (iDst,jDst) entry of ``src`` to the ``(iSrc,jSrc)`` entry of ``self`` without any bounds checking,
+        mutability checking, etc.
+        
+        ``src`` is assumed to be a Matrix_numpy_dense
+        """
+        cdef Matrix_numpy_dense _src = <Matrix_numpy_dense>src
+        cnumpy.PyArray_SETITEM(self._matrix_numpy, cnumpy.PyArray_GETPTR2(self._matrix_numpy, iDst, jDst), cnumpy.PyArray_GETITEM(_src._matrix_numpy, cnumpy.PyArray_GETPTR2(_src._matrix_numpy, iSrc, jSrc)))
+
     cdef Matrix_numpy_dense _new(self, int nrows=-1, int ncols=-1):
         """
         Return a new uninitialized matrix with same parent as ``self``.

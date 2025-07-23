@@ -556,6 +556,14 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived type.")
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy from one matrix to another. It is assumed ``src`` is the same type of matrix as ``self``, with the same base ring.
+
+        This is fast because it avoids the type conversion that often is necessary in ``get_unsafe`` and ``set_unsafe``.
+        """
+        raise NotImplementedError("this must be defined in the derived type.")
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.

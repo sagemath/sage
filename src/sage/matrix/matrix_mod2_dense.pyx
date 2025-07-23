@@ -361,6 +361,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         else:
             return self._zero
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        cdef Matrix_mod2_dense _src = <Matrix_mod2_dense>src
+        mzd_write_bit(self._entries, iDst, jDst, mzd_read_bit(_src._entries, iSrc, jSrc))
+
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
             *, unicode=False, shape=None, character_art=False,
             left_border=None, right_border=None,
@@ -1793,101 +1797,6 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if ncols == 0 or nrows == 0:
             return A
         A._entries = mzd_submatrix(A._entries, self._entries, row, col, highr, highc)
-        return A
-
-    def matrix_from_rows(self, rows):
-        r"""
-        Return the matrix constructed from ``self`` using rows with indices in
-        the rows list.
-
-        EXAMPLES::
-
-            sage: M = matrix(GF(2),[[0,1,0],[0,1,1],[1,0,1]])
-            sage: M
-            [0 1 0]
-            [0 1 1]
-            [1 0 1]
-            sage: M.matrix_from_rows([2,1])
-            [1 0 1]
-            [0 1 1]
-        """
-        rows = PySequence_Fast(rows, "rows is not iterable")
-        if any(0 > row or row >= self._nrows for row in rows):
-            raise TypeError("Rows are not all in range")
-        
-        cdef Py_ssize_t nrows = len(rows)
-        
-        cdef Matrix_mod2_dense A = self.new_matrix(nrows=nrows)
-        
-        cdef Py_ssize_t i, j, row
-        for i, row in enumerate(rows):
-            for j in range(self._ncols):
-                mzd_write_bit(A._entries, i, j, mzd_read_bit(self._entries, row, j))
-        return A
-
-    def matrix_from_columns(self, cols):
-        r"""
-        Return the matrix constructed from ``self`` using columns with indices
-        in the columns list.
-
-        EXAMPLES::
-
-            sage: M = matrix(GF(2),[[0,1,0],[0,1,1],[1,0,1]])
-            sage: M
-            [0 1 0]
-            [0 1 1]
-            [1 0 1]
-            sage: M.matrix_from_columns([2,1])
-            [0 1]
-            [1 1]
-            [1 0]
-        """
-        cols = PySequence_Fast(cols, "cols is not iterable")
-        if any(0 > col or col >= self._ncols for col in cols):
-            raise TypeError("Columns are not all in range")
-        
-        cdef Py_ssize_t ncols = len(cols)
-        
-        cdef Matrix_mod2_dense A = self.new_matrix(ncols=ncols)
-        
-        cdef Py_ssize_t i, j, col
-        for i in range(self._nrows):
-            for j, col in enumerate(cols):
-                mzd_write_bit(A._entries, i, j, mzd_read_bit(self._entries, i, col))
-        return A
-    
-    def matrix_from_rows_and_columns(self, rows, cols):
-        r"""
-        Return the matrix constructed from ``self`` from the given rows and
-        columns.
-
-        EXAMPLES::
-
-            sage: M = matrix(GF(2),[[0,1,0],[0,1,1],[1,0,1]])
-            sage: M
-            [0 1 0]
-            [0 1 1]
-            [1 0 1]
-            sage: M.matrix_from_rows_and_columns([0,1],[2,1])
-            [0 1]
-            [1 1]
-        """
-        rows = PySequence_Fast(rows, "rows is not iterable")
-        cols = PySequence_Fast(cols, "cols is not iterable")
-        if any(0 > row or row >= self._nrows for row in rows):
-            raise TypeError("Rows are not all in range")
-        if any(0 > col or col >= self._ncols for col in cols):
-            raise TypeError("Columns are not all in range")
-        
-        cdef Py_ssize_t nrows = len(rows)
-        cdef Py_ssize_t ncols = len(cols)
-        
-        cdef Matrix_mod2_dense A = self.new_matrix(nrows=nrows, ncols=ncols)
-        
-        cdef Py_ssize_t i, j, row, col
-        for i,row in enumerate(rows):
-            for j, col in enumerate(cols):
-                mzd_write_bit(A._entries, i, j, mzd_read_bit(self._entries, row, col))
         return A
 
     def __reduce__(self):

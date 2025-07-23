@@ -99,6 +99,10 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries[i*self._ncols + j]
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        cdef Matrix_generic_dense _src = <Matrix_generic_dense>src
+        self._entries[iDst*self._ncols + jDst] = _src._entries[iSrc*_src._ncols + jSrc]
+
     def _reverse_unsafe(self):
         r"""
         TESTS::
