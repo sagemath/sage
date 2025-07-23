@@ -881,30 +881,51 @@ cdef class Matrix(Matrix1):
 
         Test ``extend``::
 
-            sage: matrix(ZZ, [[2]]).solve_right(vector(ZZ, [1]), extend=False)
+            sage: A = matrix(ZZ, [[2]])
+            sage: b = vector(ZZ, [1])
+            sage: A.solve_right(b, extend=False)
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
-            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [1, 1]), extend=False)
+            sage: A = matrix(ZZ, [[2], [2]])
+            sage: b = vector(ZZ, [1, 1])
+            sage: A.solve_right(b, extend=False)
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
-            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 4]), extend=False)
+            sage: b = vector(ZZ, [2, 4])
+            sage: A.solve_right(b, extend=False)
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
-            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 2]), extend=False)
+            sage: A = matrix(ZZ, [[2], [2]])
+            sage: b = vector(ZZ, [2, 2])
+            sage: A.solve_right(b, extend=False)
             (1)
-            sage: matrix(QQ, [[2]]).solve_right(vector(QQ, [1]), extend=False)
+            sage: A = matrix(QQ, [[2]])
+            sage: b = vector(QQ, [1])
+            sage: A.solve_right(b, extend=False)
             (1/2)
-            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=True)  # <1s
-            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
-            sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
-            sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
-            sage: matrix.identity(ZZ, 500).hermite_form()  # not tested (slow)
-            sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
-            sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
-            sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
+            sage: n = ZZ.random_element(0, 26)
+            sage: A = matrix.identity(QQ, 2*n)
+            sage: b = vector(QQ, [1]*2*n)
+            sage: x = A.solve_right(b, extend=True)
+            sage: x = A.solve_right(b, extend=False)
+            sage: A.hermite_form().det()
+            1
+            sage: A = matrix.identity(ZZ, 2*n)
+            sage: b = vector(ZZ, [2]*2*n)
+            sage: x = (2*A).solve_right(b, extend=False)
+            sage: A.hermite_form().det()
+            1
+            sage: I = matrix.identity(ZZ, n)
+            sage: A = I.stack(I)*2
+            sage: x = A.solve_right(b, extend=False)
+            sage: b = matrix(ZZ, [[2]]*2*n)
+            sage: x = A._solve_right_hermite_form(b)
+            sage: x.dimensions() == (n, 1)
+            True
+
         """
         try:
             L = B.base_ring()
