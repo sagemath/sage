@@ -931,3 +931,36 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             1331
         """
         return prod(phi.inseparable_degree() for phi in self._phis)
+
+    def push_subgroup(self, f):
+        r"""
+        Given the minimal polynomial (see :meth:`~EllipticCurveHom.minimal_polynomial`)
+        of a subgroup `G` of the domain of this isogeny, return a minimal polynomial of
+        the image of `G` under this isogeny.
+
+        ALGORITHM: iterative :meth:`EllipticCurveHom.push_subgroup()`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF((2^61-1, 2)), [1,0])
+            sage: phi = next(E.isogenies_degree(7)); phi
+            Isogeny of degree 7
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2305843009213693951^2
+              to Elliptic Curve defined by y^2 = x^3 + (595688734420561721*z2+584021682365204922)*x + (2058397526093132314*z2+490140893682260802) over Finite Field in z2 of size 2305843009213693951^2
+            sage: psi = E.isogeny(E.lift_x(48), algorithm='factored'); psi
+            Composite morphism of degree 36028797018963968 = 2^55:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 2305843009213693951^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 938942632807894005*x + 1238942515234646252 over Finite Field in z2 of size 2305843009213693951^2
+            sage: f = phi.minimal_polynomial()
+            sage: g = psi.push_subgroup(f)
+            sage: h = psi.codomain().kernel_polynomial_from_divisor(g, phi.degree())
+            sage: chi = psi.codomain().isogeny(h); chi
+            Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 938942632807894005*x + 1238942515234646252 over Finite Field in z2 of size 2305843009213693951^2 to Elliptic Curve defined by y^2 = x^3 + (1406897314822267524*z2+1659665944678449850)*x + (650305521764753329*z2+1047269804324934563) over Finite Field in z2 of size 2305843009213693951^2
+            sage: x = phi.kernel_polynomial().any_root()
+            sage: K = E.change_ring(E.base_field().extension(2)).lift_x(x)
+            sage: (chi * psi)._eval(K)
+            (0 : 1 : 0)
+        """
+        for phi in self.factors():
+            f = phi.push_subgroup(f)
+        return f

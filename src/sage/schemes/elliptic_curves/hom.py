@@ -1178,10 +1178,9 @@ class EllipticCurveHom(Morphism):
 
     def push_subgroup(self, f):
         r"""
-        Given a irreducible divisor `f` of an `l`-division polynomial on the
-        domain curve of this isogeny, return an irreducible polynomial `f'`
-        such that the subgroup defined by `f` is mapped to the subgroup
-        defined by `f'` under the isogeny. See :meth:`minimal_polynomial()`.
+        Given the minimal polynomial (see :meth:`minimal_polynomial`)
+        of a subgroup `G` of the domain of this isogeny, return a minimal
+        polynomial of the image of `G` under this isogeny.
 
         ALGORITHM: [EPSV2023]_, Algorithm 5 (``PushSubgroup``)
 
@@ -1234,6 +1233,24 @@ class EllipticCurveHom(Morphism):
             sage: any(iso * psi_pushed * phi == phi_pushed * psi
             ....:     for iso in psi_pushed.codomain().isomorphisms(phi_pushed.codomain()))
             True
+
+        If the subgroup represented by `f` intersects nontrivially with the
+        kernel of this isogeny, the method still works correctly::
+
+            sage: E = EllipticCurve(GF(419), [1,0])
+            sage: phi = next(E.isogenies_degree(7)); phi
+            Isogeny of degree 7
+              from Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              to Elliptic Curve defined by y^2 = x^3 + 285*x + 87 over Finite Field of size 419
+            sage: psi = next(E.isogenies_degree(21)); psi
+            Composite morphism of degree 21 = 7*3:
+              From: Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 419
+              To:   Elliptic Curve defined by y^2 = x^3 + 134*x + 230 over Finite Field of size 419
+            sage: phi.kernel_polynomial().gcd(psi.kernel_polynomial())
+            x^3 + 274*x^2 + 350*x + 6
+            sage: f = phi.minimal_polynomial()
+            sage: psi.push_subgroup(f)
+            1
         """
         g = self.x_rational_map()
         g1, g2 = g.numerator(), g.denominator()
@@ -1242,6 +1259,8 @@ class EllipticCurveHom(Morphism):
         R = f1.parent()
         S = R.quotient_ring(f1)
         alpha = S(g1 * g2.inverse_mod(f1))
+        if not alpha:
+            return R.one()
         return alpha.minpoly()
 
 
