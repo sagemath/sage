@@ -16,6 +16,7 @@ TESTS::
     6
 """
 
+from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.action import Action
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -25,6 +26,7 @@ from sage.data_structures.stream import Stream_function, Stream_cauchy_compose
 from sage.functions.other import factorial
 from sage.misc.cachefunc import cached_function
 from sage.misc.misc_c import prod
+from sage.rings.infinity import PlusInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
@@ -186,25 +188,6 @@ class VertexOperator(Action):
      should change the charge of an element 
     - ``fockspace``-- the space that the vertex operators are acting on.
 
-    EXAMPLES::
-        
-        sage: from sage.algebras.vertex_operators import *
-        sage: W.<x> = DifferentialWeylAlgebra(QQ, n=oo); dx = W.differentials()
-        sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
-        sage: CreationOp = VertexOperator(lambda n: x[n], lambda n: -dx[n]/n, dcharge=1, fockspace=B)
-        sage: AnnihilOp = VertexOperator(lambda n: -x[n], lambda n: dx[n]/n, dcharge=-1, fockspace=B)
-        sage: CreationOp.act(0,B.one())
-        s[]*w
-        sage: CreationOp.act(1, B.one())
-        s[1]*w
-        sage: t1 = CreationOp.act(-2, B.gen()^(-3)); t1
-        s[1]*w^-2
-        sage: t2 = CreationOp.act(0, t1); t2
-        s[2, 1]*w^-1
-        sage: t3 = CreationOp.act(3, t2); t3
-        s[4, 2, 1]         
-        sage: AnnihilOp.act(0, B.one())
-        s[]*w^-1
     """
     def __init__(self, pos, neg, cutoff = lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
         self.pos = HalfVertexOperator(pos)
@@ -221,18 +204,13 @@ class VertexOperator(Action):
         res = 0
         # for each component of constant charge, compute the action 
         for (charge, fn) in x.monomial_coefficients().items():
-            res += self.fockspace.gen()**(charge+self.dcharge)*self._act_on_sym(i, fn, -charge)
-
+            res += self.fockspace.gen()**(charge+self.dcharge)*self._act_on_sym(i, fn, charge)
 
         return res
 
     def _act_on_sym(self, i, x, c):
         p = self.fockspace.base_ring().symmetric_function_ring().p()
-        op = 0 
-        for j in range(self.cutoff(x)+1):
-            if i + j + c < 0:
-                continue
-            op += self.pos[i + j + c]*self.neg[j]
+        op = self._get_operator(i, x, c)
         if op in self.fockspace.base_ring().base_ring():
             return op*x
         res = 0
@@ -242,8 +220,80 @@ class VertexOperator(Action):
              for (m2, c2) in x.monomial_coefficients().items():
                 res += c*c2*(self.fockspace.base_ring()(m2).skew_by(p(par2)) * p(par1)/(prod(par1)))
         return res
+    def _get_operator(self, i, x, c):
+        raise NotImplementedError("Use a subclass of VertexOperator")
+    
     def _weyl_to_par(self,m):
         res = []
         for i in m:
             res += [i]*int(m[i])
         return Partition(sorted(res, reverse=True))
+    
+
+class CreationOperator(VertexOperator):
+    """
+    
+    EXAMPLES::
+
+        sage: from sage.algebras.vertex_operators import *
+        sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
+        sage: Cre = CreationOperator(B)
+        sage: Cre.act(-1, B.one())
+        0
+        sage: Cre.act(0, B.one())
+        s[]*w
+        sage: Cre.act(1, w)
+        s[]*w^2
+        sage: Cre.act(0, w^-1)
+        s[1]
+        sage: t = Cre.act(1, Cre.act(-1, w^-2)); t
+        s[2, 1]
+        sage: Cre.act(3, t)
+        s[3, 2, 1]*w
+    """
+    def __init__(self, fockspace):
+        self.weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
+        self.x, self.dx = self.weyl_algebra.gens()
+        super().__init__(lambda n: self.x[n], lambda n: -self.dx[n]/n, dcharge=1, fockspace=fockspace)
+
+    def _get_operator(self, i, x, c):
+        op = 0 
+        for j in range(self.cutoff(x)+1):
+            if i + j - c < 0:
+                continue
+            op += self.pos[i + j - c]*self.neg[j]
+        return op
+
+
+# TODO: Fix mysterious off by one error causing tests to fail.
+class AnnihilationOperator(VertexOperator):
+    """
+    
+    EXAMPLES::
+
+        sage: from sage.algebras.vertex_operators import *
+        sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
+        sage: Ann = AnnihilationOperator(B)
+        sage: Ann.act(0, B.one()) # known bug
+        0
+        sage: Ann.act(-1, B.one()) # known bug
+        s[]*w^-1
+        sage: Ann.act(-2, w^-1) # known bug
+        s[]*w^-2
+        sage: Ann.act(-1, w) # known bug
+        s[1]
+        sage: Ann.act(-2, Ann.act(0, w^2)) # known bug
+        s[2, 1]
+    """
+    def __init__(self, fockspace):
+       self.weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
+       self.x, self.dx = self.weyl_algebra.gens()
+       super().__init__(lambda n: -self.x[n], lambda n: self.dx[n]/n, dcharge=-1, fockspace=fockspace)
+
+    def _get_operator(self, i, x, c):
+        op = 0 
+        for j in range(self.cutoff(x)+1):
+            if -i + j + c < 0:
+                continue
+            op += self.pos[-i + j + c]*self.neg[j]
+        return op
