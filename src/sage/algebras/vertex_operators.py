@@ -32,10 +32,11 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
+
 class FermionicFockSpace(CombinatorialFreeModule):
     r"""
     A model of the Fermionic Fock space `\mathcal{H}_F`. As a vector space, `\mathcal{H}_F`
-     has basis given by pairs `(\lambda, n)` where `\lambda` is a partition, and `n` is an integer.
+    has basis given by pairs `(\lambda, n)` where `\lambda` is a partition, and `n` is an integer.
 
     EXAMPLES::
 
@@ -45,18 +46,23 @@ class FermionicFockSpace(CombinatorialFreeModule):
         |[], 0> + 4*|[], 1> + 2*|[1], 0>
     """
     def __init__(self, R):
-        I = cartesian_product((Partitions(), ZZ))
-        CombinatorialFreeModule.__init__(self, R, I, prefix='', bracket='')
+        index_set = cartesian_product((Partitions(), ZZ))
+        CombinatorialFreeModule.__init__(self, R, index_set, prefix='', bracket='')
 
     def _repr_term(self, m):
         return '|' + str(m[0]) + ', ' + str(m[1]) + '>'
 
+
+def BosonicFockSpace(names=('w',)):
+    return LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=names)
+
+
 class Current(Action):
-    """
+    r"""
     The action of the current operators `J_i` on the Fermionic Fock space.
-     For `i \neq 0`, we can view `J_i` as moving a particle by `-i` in all possible ways.
+    For `i \neq 0`, we can view `J_i` as moving a particle by `-i` in all possible ways.
     Equivalently, viewed on the bosonic side, the action of `J_i` can be calculated
-     using the Murnaghan-Nakayam rule.
+    using the Murnaghan-Nakayam rule.
 
     EXAMPLES::
 
@@ -78,33 +84,39 @@ class Current(Action):
         self._p = self._R.p()
         self.fockspace = FermionicFockSpace(self._s)
         super().__init__(ZZ, self.fockspace)
+
     def _act_(self, g, x):
         res = self.fockspace.zero()
-        if g > 0: # \partial p_k
-            for (m,c) in x.monomial_coefficients().items():
+        if g > 0:  # \partial p_k
+            for (m, c) in x.monomial_coefficients().items():
                 par = self._s(m[0])
-                for (m2,c2) in (par.skew_by(self._p[g])).monomial_coefficients().items():
+                for (m2, c2) in (par.skew_by(self._p[g])).monomial_coefficients().items():
                     res += c*c2*self.fockspace((m2, m[1]))
             return res
-        elif g < 0: #-k*p_k
-            for (m,c) in x.monomial_coefficients().items():
+        elif g < 0:  # -k*p_k
+            for (m, c) in x.monomial_coefficients().items():
                 par = self._s(m[0])
                 for (m2, c2) in (self._s(self._p[-g]*par)).monomial_coefficients().items():
-                    res += c*c2*self.fockspace((m2, m[1]))     
+                    res += c*c2*self.fockspace((m2, m[1]))
             return res
-        else: #multiply by charge
-            return sum(m[1]*c*self.fockspace(m) for (m,c) in x.monomial_coefficients().items())
-    def act_by_partition(self,lam, sign, x):
+        else:  # multiply by charge
+            return sum(m[1]*c*self.fockspace(m) for (m, c) in x.monomial_coefficients().items())
+
+    def act_by_partition(self, lam, sign, x):
         for i in lam:
             # TODO: Make this more efficient by acting by the whole partition at once
-            x = self._act_(i*sign, x) 
+            x = self._act_(i*sign, x)
         return x
-
 
 
 @cached_function
 def Hamiltonian():
     r"""
+    Returns the (exponentiated) Hamiltonian `\exp( \sum_{j \geq 1} p_i J_i)`
+    where `J_i` is a current operator and `p_i` is a powersum symmetric function.
+
+    This operator acts on the Fermionic Fock space, and its matrix coefficients are
+    the skew Schur functions.
 
     EXAMPLES::
 
@@ -117,9 +129,12 @@ def Hamiltonian():
     P = p.completion()
     return P(lambda n: p[n]/n, valuation=1).exp()
 
+
 def act_by_H(x):
     r"""
     Computes the action of H on an element ``x`` of the Fermionic Fock Space
+
+    If `x = |\lambda, n\rangle`, then `H\cdot x = \sum_{\mu} s_{\lambda/\mu}|\mu, n\rangle`.
 
     EXAMPLES::
 
@@ -136,14 +151,16 @@ def act_by_H(x):
 
     res = x.parent().zero()
     for (hm, hc) in H.monomial_coefficients().items():
-        res += hc*p(hm)*J.act_by_partition(hm,1, x)
+        res += hc*p(hm)*J.act_by_partition(hm, 1, x)
     return res
+
 
 def H_mat_coeff(lam, mu):
     r"""
-    
+    Compute the coefficient of `|\mu, n\rangle` in `H\cdot |\lambda, n\rangle`.
+
     EXAMPLES::
-    
+
         sage: from sage.algebras.vertex_operators import *
         sage: lam = [3,2,1]; s = SymmetricFunctions(QQ).s()
         sage: all(H_mat_coeff(lam, mu) == s(lam).skew_by(s(mu)) for mu in Partitions(outer=lam))
@@ -152,87 +169,111 @@ def H_mat_coeff(lam, mu):
     R = SymmetricFunctions(QQ)
     s = R.s()
     F = FermionicFockSpace(s)
-    return act_by_H(F((lam, 0))).coefficient((mu,0))
+    return act_by_H(F((lam, 0))).coefficient((mu, 0))
+
 
 # degree of element of F
 def deg(x):
-    return max((m[0].size() for (m,_) in x.monomial_coefficients().items()), default=0)
-
+    return max((m[0].size() for (m, _) in x.monomial_coefficients().items()), default=0)
 
 
 class HalfVertexOperator():
-    def __init__(self,f):
+    def __init__(self, f):
         self._stream = Stream_cauchy_compose(
             Stream_function(lambda n: ZZ(1)/factorial(n), False, 0),
-            Stream_function(f, False, 1), 
+            Stream_function(f, False, 1),
             False
         )
+
     def __getitem__(self, i):
         if i in NonNegativeIntegers():
             return self._stream[i]
         raise ValueError("Invalid input")
 
+
 class VertexOperator(Action):
-    """
+    r"""
     The action of a Vertex Operator on the Bosonic Fock space.
 
     INPUT:
 
     - ``pos`` -- function taking in nonnegative integers indexing the positive
-     half of the vertex operator
+      half of the vertex operator
     - ``neg`` -- function taking in nonnegative integers indexing the negative
-     half of the vertex operator
+      half of the vertex operator
     - ``cutoff`` -- function taking in symmetric functions which determines how
-     far to expand the vertex operator (default: ``lambda x: max(x.degree(), 1))
+      far to expand the vertex operator (default: ``lambda x: max(x.degree(), 1)``)
     - ``dcharge`` -- integer (default: ``1``) indicating how this vertex operator
-     should change the charge of an element 
+      should change the charge of an element
     - ``fockspace``-- the space that the vertex operators are acting on.
 
     """
-    def __init__(self, pos, neg, cutoff = lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
+    def __init__(self, pos, neg, cutoff=lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
         self.pos = HalfVertexOperator(pos)
         self.neg = HalfVertexOperator(neg)
         if fockspace is None:
-            self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names = ('w')) 
-        else: #TODO: check input is correct type
+            self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=('w'))
+        else:  # TODO: check input is correct type
             self.fockspace = fockspace
         self.cutoff = cutoff
         self.dcharge = dcharge
         super().__init__(ZZ, self.fockspace)
-        
-    def _act_(self, i,x):
+
+    def _act_(self, i, x):
+        r"""
+        Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
+        ``self.fockspace``
+        """
         res = 0
-        # for each component of constant charge, compute the action 
+        # for each component of constant charge, compute the action
         for (charge, fn) in x.monomial_coefficients().items():
             res += self.fockspace.gen()**(charge+self.dcharge)*self._act_on_sym(i, fn, charge)
 
         return res
 
     def _act_on_sym(self, i, x, c):
+        r"""
+        Action of the ``i``'th Fourier mode of ``self`` on a homoegeneous element
+        of ``self.fockspace``.
+        """
         p = self.fockspace.base_ring().symmetric_function_ring().p()
-        op = self._get_operator(i, x, c)
+        op = self._get_operator(i, self.cutoff(x), c)
         if op in self.fockspace.base_ring().base_ring():
             return op*x
         res = 0
         for (m, c) in op.monomial_coefficients().items():
-             par1 = self._weyl_to_par(m[0].dict())
-             par2 = self._weyl_to_par(m[1].dict())
-             for (m2, c2) in x.monomial_coefficients().items():
+            par1 = self._d_to_par(m[0].dict())
+            par2 = self._d_to_par(m[1].dict())
+            for (m2, c2) in x.monomial_coefficients().items():
                 res += c*c2*(self.fockspace.base_ring()(m2).skew_by(p(par2)) * p(par1)/(prod(par1)))
         return res
+
     def _get_operator(self, i, x, c):
         raise NotImplementedError("Use a subclass of VertexOperator")
-    
-    def _weyl_to_par(self,m):
+
+    def _d_to_par(self, m):
+        """
+        compute the partition corresponding to a dictionary ``m`` where the value
+        of key ``i`` in ``m`` corresponds to the number of parts of size ``i``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import *
+            sage: B = BosonicFockSpace()
+            sage: V = CreationOperator(B)
+            sage: V._d_to_par({1:3, 4:1})
+            [4, 1, 1, 1]
+
+        """
         res = []
         for i in m:
             res += [i]*int(m[i])
         return Partition(sorted(res, reverse=True))
-    
+
 
 class CreationOperator(VertexOperator):
-    """
-    
+    r"""
+
     EXAMPLES::
 
         sage: from sage.algebras.vertex_operators import *
@@ -244,56 +285,92 @@ class CreationOperator(VertexOperator):
         s[]*w
         sage: Cre.act(1, w)
         s[]*w^2
-        sage: Cre.act(0, w^-1)
-        s[1]
+        sage: Cre.act(0, w^-1+ w^-2)
+        s[2]*w^-1 + s[1]
         sage: t = Cre.act(1, Cre.act(-1, w^-2)); t
         s[2, 1]
         sage: Cre.act(3, t)
         s[3, 2, 1]*w
+        sage: t + Cre.act(-1, Cre.act(1, w^-2))
+        0
     """
     def __init__(self, fockspace):
         self.weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
         self.x, self.dx = self.weyl_algebra.gens()
         super().__init__(lambda n: self.x[n], lambda n: -self.dx[n]/n, dcharge=1, fockspace=fockspace)
 
-    def _get_operator(self, i, x, c):
-        op = 0 
-        for j in range(self.cutoff(x)+1):
+    def _get_operator(self, i, cutoff, c):
+        r"""
+        Compute the coefficient of `z^{i - c}` in the vertex operator
+
+        .. MATH::
+
+            \exp \left( \sum_{j \geq 1} x_j z^j \right) \exp\left(\sum_{j \geq 1} (-dx_j/j)z^{-j}\right)wz^{Q}
+
+        Thought the coefficient is an infinite sum of weyl algebra elements, we
+        only compute the first ``cutoff`` many terms.
+
+        INPUT:
+
+        - ``i`` -- (integer)
+        - ``cutoff`` -- (integer) how far to expand the product
+        - ``c`` -- (integer)
+        """
+        op = 0
+        for j in range(cutoff+1):
             if i + j - c < 0:
                 continue
             op += self.pos[i + j - c]*self.neg[j]
         return op
 
 
-# TODO: Fix mysterious off by one error causing tests to fail.
 class AnnihilationOperator(VertexOperator):
-    """
-    
+    r"""
+
     EXAMPLES::
 
         sage: from sage.algebras.vertex_operators import *
         sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
         sage: Ann = AnnihilationOperator(B)
-        sage: Ann.act(0, B.one()) # known bug
+        sage: Ann.act(0, B.one())
         0
-        sage: Ann.act(-1, B.one()) # known bug
+        sage: Ann.act(-1, B.one())
         s[]*w^-1
-        sage: Ann.act(-2, w^-1) # known bug
+        sage: Ann.act(-2, w^-1)
         s[]*w^-2
-        sage: Ann.act(-1, w) # known bug
-        s[1]
-        sage: Ann.act(-2, Ann.act(0, w^2)) # known bug
-        s[2, 1]
+        sage: Ann.act(-1, w)
+        -s[1]
+        sage: Ann.act(-2, Ann.act(0, w^2))
+        -s[2, 1]
+        sage: Ann.act(-2, Ann.act(0, w^2)) + Ann.act(0, Ann.act(-2, w^2))
+        0
     """
     def __init__(self, fockspace):
-       self.weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
-       self.x, self.dx = self.weyl_algebra.gens()
-       super().__init__(lambda n: -self.x[n], lambda n: self.dx[n]/n, dcharge=-1, fockspace=fockspace)
+        self.weyl_algebra = DifferentialWeylAlgebra(QQ, names=('x'), n=PlusInfinity())
+        self.x, self.dx = self.weyl_algebra.gens()
+        super().__init__(lambda n: -self.x[n], lambda n: self.dx[n]/n, dcharge=-1, fockspace=fockspace)
 
-    def _get_operator(self, i, x, c):
-        op = 0 
-        for j in range(self.cutoff(x)+1):
-            if -i + j + c < 0:
+    def _get_operator(self, i, cutoff, c):
+        r"""
+        Compute the coefficient of `z^{-i + c - 1}` in the vertex operator
+
+        .. MATH::
+
+            \exp \left( \sum_{j \geq 1} -x_j z^j \right) \exp\left(\sum_{j \geq 1} (dx_j/j)z^{-j}\right)z^{-Q}w^{-1}
+
+        Thought the coefficient is an infinite sum of weyl algebra elements, we
+        only compute the first ``cutoff`` many terms.
+
+        INPUT:
+
+        - ``i`` -- (integer)
+        - ``cutoff`` -- (integer) how far to expand the product
+        - ``c`` -- (integer)
+        """
+        op = 0
+        for j in range(cutoff+1):
+            if j - i + c - 1 < 0:
                 continue
-            op += self.pos[-i + j + c]*self.neg[j]
+
+            op += self.pos[j - i + c - 1]*self.neg[j]
         return op
