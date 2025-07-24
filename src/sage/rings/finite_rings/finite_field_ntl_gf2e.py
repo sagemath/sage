@@ -166,6 +166,10 @@ class FiniteField_ntl_gf2e(FiniteField):
             sage: k.<a> = GF(2^64)
             sage: k.degree()
             64
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return self._cache.degree()
 

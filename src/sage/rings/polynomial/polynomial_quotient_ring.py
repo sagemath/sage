@@ -980,6 +980,10 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S = R.quotient(x^2005 + 1)
             sage: S.degree()
             2005
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_field.absolute_degree`
         """
         return self.modulus().degree()
 
@@ -1168,67 +1172,6 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         if ret:
             self._refine_category_(IntegralDomains())
         return ret
-
-    def is_prime_field(self, proof=True):
-        """
-        Return ``True`` if ``self`` is a prime field, that is, if it is a finite
-        field of prime cardinality.
-
-        INPUT:
-
-        - ``proof`` -- boolean (default: ``True``) require the
-          ``is_irreducible`` method of the modulus to be implemented
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S = R.quotient(x^2 - 2)
-            sage: S.is_prime_field()
-            False
-            sage: R.<x> = PolynomialRing(GF(5))
-            sage: S = R.quotient(x^2 + x + 1)
-            sage: S.is_field()
-            True
-            sage: S.is_prime_field()
-            False
-            sage: T = R.quotient(x - 2)
-            sage: T.is_prime_field()
-            True
-
-        If proof is ``True``, an exception is raised when the
-        ``is_irreducible`` method of the modulus is not implemented::
-
-            sage: # needs sage.rings.padics
-            sage: R1.<x> = Qp(2)[]
-            sage: F1 = R1.quotient_ring(x^2 + x + 1)
-            sage: R2.<x> = F1[]
-            sage: F2 = R2.quotient_ring(x^2 + x + 1)
-            sage: F2.is_prime_field()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: cannot rewrite Univariate Quotient Polynomial Ring in
-             xbar over 2-adic Field with capped relative precision 20 with modulus
-             (1 + O(2^20))*x^2 + (1 + O(2^20))*x + 1 + O(2^20) as an isomorphic ring
-            sage: F2.is_prime_field(proof = False)
-            False
-
-        We check that bug :issue:`40426` is fixed::
-
-            sage: K = GF(4)
-            sage: A.<x> = K[]
-            sage: L = K.extension(x+1)
-            sage: print(L.is_prime_field())
-            False
-        """
-        try:
-            self_is_a_field = self.is_field(proof=proof)
-        except NotImplementedError:
-            raise
-        if self_is_a_field:
-            card = self.cardinality()
-            if isinstance(card, (int, Integer)):
-                return card.is_prime()
-        return False
 
     def krull_dimension(self):
         """
@@ -2498,6 +2441,42 @@ class PolynomialQuotientRing_field(PolynomialQuotientRing_domain, Field):
     """
     def __init__(self, ring, polynomial, name=None, category=None):
         PolynomialQuotientRing_domain.__init__(self, ring, polynomial, name, category)
+
+    def absolute_degree(self):
+        """
+        Return the degree of this quotient ring over the absolute base field.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(9)
+            sage: R.<x> = PolynomialRing(K)
+            sage: S = R.quotient(x^2 + a*x + 1)
+            sage: S.absolute_degree()
+            4
+            sage: x = polygen(QQ, 'x')
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<y> = PolynomialRing(K)
+            sage: S = R.quotient(y^3 + y + 1)
+            sage: S.absolute_degree()
+            6
+            sage: R.<x> = PolynomialRing(RR)
+            sage: S = R.quotient(x^2 + 1)
+            sage: S.absolute_degree()
+            2
+            sage: K = GF(4)
+            sage: A.<x> = K[]
+            sage: L = K.extension(x+1)
+            sage: L.absolute_degree()
+            2
+
+        .. SEEALSO::
+
+            :meth:`PolynomialQuotientRing_generic.degree`
+        """
+        base_field = self.base_field()
+        if hasattr(base_field, 'absolute_degree'):
+            return base_field.absolute_degree() * self.degree()
+        return self.degree()
 
     def base_field(self):
         r"""

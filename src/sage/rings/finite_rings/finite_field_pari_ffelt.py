@@ -203,6 +203,10 @@ class FiniteField_pari_ffelt(FiniteField):
             sage: F = FiniteField(3^20, 'a', impl='pari_ffelt')
             sage: F.degree()
             20
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return self._degree
 
