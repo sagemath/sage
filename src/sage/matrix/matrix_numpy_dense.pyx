@@ -268,6 +268,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             Full MatrixSpace of 3 by 0 dense matrices over Real Double Field
 
         TESTS::
+
             sage: m = matrix(RDF,2,3,range(6))
             sage: m.subdivide([1],[2])
             sage: m
@@ -282,17 +283,17 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
             sage: m = matrix(RDF,0,2)
             sage: m.subdivide([],[1])
-            sage: m._subdivisions
-            ([0, 0], [0, 1, 2])
-            sage: m.transpose()._subdivisions
-            ([0, 1, 2], [0, 0])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
 
             sage: m = matrix(RDF,2,0)
             sage: m.subdivide([1],[])
-            sage: m._subdivisions
-            ([0, 1, 2], [0, 0])
-            sage: m.transpose()._subdivisions
-            ([0, 0], [0, 1, 2])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Matrix_numpy_dense trans = self._new(self._ncols, self._nrows)
 
