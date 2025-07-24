@@ -1265,34 +1265,45 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             [1 0]
             [0 1]
             )
+
+        We can handle the trivial sublattice::
+
+            sage: A1 = IntegralLattice("A1")
+            sage: L = A1.sublattice([])
+            sage: L.orthogonal_group()
+            Group of isometries with 1 generator ([1],)
         """
         from sage.categories.groups import Groups
         from sage.groups.matrix_gps.isometries import GroupOfIsometries
-        sig = self.signature_pair()
-        if gens is None:
+
+        if gens is None and self.rank() == 0: # trivial lattice
             gens = []
-            if sig[1] == 0 or sig[0] == 0:  # definite
-                from sage.quadratic_forms.quadratic_form import QuadraticForm
-                is_finite = True
-                # Compute transformation matrix to the ambient module.
-                L = self.overlattice(self.ambient_module().gens())
-                Orthogonal = L.orthogonal_complement(self)
-                B = self.basis_matrix().stack(Orthogonal.basis_matrix())
-                if sig[0] == 0:  # negative definite
-                    q = QuadraticForm(ZZ, -2*self.gram_matrix())
-                else:  # positive definite
-                    q = QuadraticForm(ZZ, 2*self.gram_matrix())
-                identity = matrix.identity(Orthogonal.rank())
-                for g in q.automorphism_group().gens():
-                    g = g.matrix().T
-                    # We continue g as identity on the orthogonal complement.
-                    g = matrix.block_diagonal([g, identity])
-                    g = B.inverse()*g*B
-                    gens.append(g)
-            else:  # indefinite
+            is_finite = True
+        if gens is None:
+            sig = self.signature_pair()
+            if not (sig[1] == 0 or sig[0] == 0):  # indefinite
                 raise NotImplementedError(
                     "currently, we can only compute generators "
                     "for orthogonal groups over definite lattices.")
+
+            # definite
+            from sage.quadratic_forms.quadratic_form import QuadraticForm
+            is_finite = True
+            # Compute transformation matrix to the ambient module.
+            L = self.overlattice(self.ambient_module().gens())
+            Orthogonal = L.orthogonal_complement(self)
+            direct_sum_basis = self.basis_matrix().stack(Orthogonal.basis_matrix())
+            if sig[0] == 0:  # negative definite
+                q = QuadraticForm(ZZ, -2*self.gram_matrix())
+            else:  # positive definite
+                q = QuadraticForm(ZZ, 2*self.gram_matrix())
+            identity = matrix.identity(Orthogonal.rank())
+            gens = []
+            for g in q.automorphism_group().gens():
+                # We lift the automorphism by living the orthogonal complement invariant
+                g_directsum = matrix.block_diagonal([g.matrix().T, identity])
+                g_on_L = direct_sum_basis.inverse()*g_directsum*direct_sum_basis
+                gens.append(g_on_L)
         deg = self.degree()
         base = self.ambient_vector_space().base_ring()
         inv_bil = self.inner_product_matrix()
