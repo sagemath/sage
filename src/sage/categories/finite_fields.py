@@ -251,9 +251,9 @@ class FiniteFields(CategoryWithAxiom):
             r"""
             Returns a random non square element of the finite field
 
-            OUTPUTS:
-                - a non-square element of the finite field; raises an error if
-                  the finite field is of even order
+            OUTPUT:
+              A non-square element of the finite field; raises an error if
+              the finite field is of even order.
 
             EXAMPLES::
 
@@ -266,27 +266,25 @@ class FiniteFields(CategoryWithAxiom):
                 sage: k.quadratic_non_residue()
                 Traceback (most recent call last):
                 ...
-                ValueError: There are no non-squares in finite fields of even order
+                ValueError: there are no non-squares in finite fields of even order
             """
             # if the order is an even power of two
             # then every element is a square
             if self.characteristic() == 2:
-                raise ValueError("There are no non-squares in finite fields of even order")
+                raise ValueError("there are no non-squares in finite fields of even order")
             # uniformly randomly select elements for a non-square
             # with probability 1/2 for a non-square
-            element = self.random_element()
-            while element.is_square():
-                element = self.random_element()
-            return element
+            for element in self:
+                if not element.is_square():
+                    return element
 
     class ElementMethods:
         def is_square(self) -> bool:
             r"""
             Tests if the element is a square or has
-            a square root element
+            a square root element.
 
-            OUTPUT:
-            - ``True`` if the element is a square ``False`` if not
+            OUTPUT: ``True`` if the element is a square ``False`` if not
 
             EXAMPLES::
 
@@ -312,11 +310,10 @@ class FiniteFields(CategoryWithAxiom):
         def _tonelli(self):
             r"""
             Returns a square root of the element if it exists
-            using Tonelli's algorithm
+            using Tonelli's algorithm, only works for finite fields
+            of odd characteristic.
 
-            OUTPUT:
-
-            - A square root of the element; raises an error
+            OUTPUT: A square root of the element; raises an error
               if the element is not a square
 
             EXAMPLES::
@@ -329,11 +326,11 @@ class FiniteFields(CategoryWithAxiom):
                 sage: k.quadratic_non_residue()._tonelli()
                 Traceback (most recent call last):
                 ...
-                ValueError: Element is not a square
+                ValueError: element is not a square
             """
             q = self.parent().cardinality()
             if not self.is_square():
-                raise ValueError("Element is not a square")
+                raise ValueError("element is not a square")
             g = self.parent().quadratic_non_residue()
             even_exp, odd_order = (q - ZZ.one()).val_unit(2)
             e = 0
@@ -351,11 +348,10 @@ class FiniteFields(CategoryWithAxiom):
             r"""
             Returns a square root of the element if it exists
             using Cipolla's algorithm, more suited if order - 1
-            is highly divisible by 2
+            is highly divisible by 2. Only works for finite fields
+            of odd characteristic.
 
-            OUTPUT:
-
-            - A square root of the element; raises an error
+            OUTPUT: A square root of the element; raises an error
               if the element is not a square
 
             EXAMPLES::
@@ -368,12 +364,12 @@ class FiniteFields(CategoryWithAxiom):
                 sage: k.quadratic_non_residue()._cipolla()
                 Traceback (most recent call last):
                 ...
-                ValueError: Element is not a square
+                ValueError: element is not a square
             """
             parent = self.parent()
             q = parent.cardinality()
             if not self.is_square():
-                raise ValueError("Element is not a square")
+                raise ValueError("element is not a square")
             t = parent.random_element()
             root = t**2 - 4 * self
             while root.is_square():
@@ -387,7 +383,7 @@ class FiniteFields(CategoryWithAxiom):
 
         def sqrt(self, all: bool = False, algorithm: str = 'tonelli'):
             r"""
-            Returns the square root of the element if it exists
+            Returns the square root of the element if it exists.
 
             INPUT:
 
@@ -430,9 +426,21 @@ class FiniteFields(CategoryWithAxiom):
                 sage: k.quadratic_non_residue().sqrt()
                 Traceback (most recent call last):
                 ...
-                ValueError: Element is not a square
+                ValueError: element is not a square
                 sage: k.quadratic_non_residue().sqrt(all=True)
                 ()
+
+            Here is an example where changing the algorithm results
+            in a faster square root::
+
+                sage: p = 141 * 2^141 + 1
+                sage: S.<x> = GF(p)[]
+                sage: f = S.irreducible_element(2)
+                sage: k.<y> = S.quotient_ring(f)
+                sage: k in Fields()
+                True
+                sage: k(2).sqrt(algorithm="cipolla")^2 == k(2)
+                True
 
             ALGORITHM:
 
@@ -440,8 +448,8 @@ class FiniteFields(CategoryWithAxiom):
             Let `q = p^n` be the order of the finite field, let `a` be the finite field element
             that we wish to find the square root of.
 
-            - If `p = 2` then `a` is always a square, and the square root of `\sqrt{a} = a^{(q / 2)}`.
-            - If `q \equiv 3 \pmod{4}` then if `a` is a square `\sqrt{a} = {a^((q+1) / 4)}`
+            - If `p = 2` then `a` is always a square, and the square root of `\sqrt{a} = a^{q / 2}`.
+            - If `q \equiv 3 \pmod{4}` then if `a` is a square `\sqrt{a} = a^{\frac{q+1}{4}}`
             - For all other cases we use the algorithm given by the ``algorithm`` parameter.
             """
             cardinality = self.parent().order()
@@ -457,7 +465,7 @@ class FiniteFields(CategoryWithAxiom):
                 if all:
                     return ()
                 else:
-                    raise ValueError("Element is not a square")
+                    raise ValueError("element is not a square")
             if cardinality % 4 == 3:
                 square_root = self**((cardinality+1)//4)
             elif algorithm == 'tonelli':
