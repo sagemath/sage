@@ -168,6 +168,7 @@ jobs:
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
             ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
+            pytest -rfEs -s src
           fi
 
       - name: Check that all modules can be imported
