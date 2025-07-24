@@ -153,10 +153,41 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         return (<Matrix_modn_dense_float>self)._get_template._new_c(<int_fast32_t>result)
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
-        """
-        Copies the (iSrc,jSrc) entry of ``src`` to the (iDst,jDst) entry of ``self`` with no bounds-checking, or any other checks.
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
 
-        Assumes that ``src`` is a Matrix_modn_dense_float with the same base ring as ``self``.
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_modn_dense_float
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(131),3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
         """
         cdef Matrix_modn_dense_float _src = <Matrix_modn_dense_float>src
         self._matrix[iDst][jDst] = _src._matrix[iSrc][jSrc]

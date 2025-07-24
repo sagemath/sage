@@ -103,6 +103,42 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         return x
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: M
+            [     0      0    7/3   13/4]
+            [     0   31/6      0   57/8]
+            [     0      0      0 133/12]
+            sage: M.transpose()
+            [     0      0      0]
+            [     0   31/6      0]
+            [   7/3      0      0]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     0      0    7/3   13/4]
+            [     0      0      0 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [     0   13/4]
+            [  31/6   57/8]
+            [     0 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [     0   57/8]
+            [     0 133/12]
+        """
         cdef Rational x
         x = Rational()
         cdef Matrix_rational_sparse _src = <Matrix_rational_sparse> src

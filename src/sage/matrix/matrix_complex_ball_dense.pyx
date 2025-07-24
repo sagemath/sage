@@ -309,13 +309,47 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
         """
-        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)`` entry of this matrix.
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
 
         .. warning::
 
-           This is very unsafe; it assumes ``iSrc``, ``jSrc``, ``iDst`` and ``jDst`` are in the right
-           range, and that ``src`` is a
+           This is very unsafe; it assumes ``iSrc``, ``jSrc``, ``iDst`` and
+           ``jDst`` are in the right range, and that ``src`` is a
            Matrix_complex_ball_dense with the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a
+                    Matrix_complex_ball_dense with the same base ring as
+                    ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = MatrixSpace(CBF,3,4)(range(12))
+            sage: m
+            [                0 1.000000000000000 2.000000000000000 3.000000000000000]
+            [4.000000000000000 5.000000000000000 6.000000000000000 7.000000000000000]
+            [8.000000000000000 9.000000000000000 10.00000000000000 11.00000000000000]
+            sage: m.transpose()
+            [                0 4.000000000000000 8.000000000000000]
+            [1.000000000000000 5.000000000000000 9.000000000000000]
+            [2.000000000000000 6.000000000000000 10.00000000000000]
+            [3.000000000000000 7.000000000000000 11.00000000000000]
+            sage: m.matrix_from_rows([0,2])
+            [                0 1.000000000000000 2.000000000000000 3.000000000000000]
+            [8.000000000000000 9.000000000000000 10.00000000000000 11.00000000000000]
+            sage: m.matrix_from_columns([1,3])
+            [1.000000000000000 3.000000000000000]
+            [5.000000000000000 7.000000000000000]
+            [9.000000000000000 11.00000000000000]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [4.000000000000000 7.000000000000000]
+            [8.000000000000000 11.00000000000000]
         """
         cdef Matrix_complex_ball_dense _src = <Matrix_complex_ball_dense> src
         acb_set(acb_mat_entry(self.value, iDst, jDst), acb_mat_entry(_src.value, iSrc, jSrc))
