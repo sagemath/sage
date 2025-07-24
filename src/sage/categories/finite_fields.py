@@ -272,8 +272,6 @@ class FiniteFields(CategoryWithAxiom):
             # then every element is a square
             if self.characteristic() == 2:
                 raise ValueError("there are no non-squares in finite fields of even order")
-            # uniformly randomly select elements for a non-square
-            # with probability 1/2 for a non-square
             for element in self:
                 if not element.is_square():
                     return element
