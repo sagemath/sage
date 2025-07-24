@@ -45,7 +45,6 @@ from sage.arith.misc import crt
 from sage.rings.ring import Field, CommutativeRing
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 
