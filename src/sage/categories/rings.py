@@ -506,9 +506,9 @@ class Rings(CategoryWithAxiom):
                 False
             """
             # the case of QQ is handled by QQ itself
-            from sage.categories.fields import Fields
+            from sage.rings.polynomial.polynomial_quotient_ring import PolynomialQuotientRing_generic
             from sage.rings.rational_field import QQ
-            if self in Fields() and self.base_ring() is QQ:
+            if isinstance(self, PolynomialQuotientRing_generic) and self.base_ring() is QQ:
                 return self.absolute_degree() == 1
             from sage.categories.finite_fields import FiniteFields
             return self in FiniteFields() and self.absolute_degree() == 1
