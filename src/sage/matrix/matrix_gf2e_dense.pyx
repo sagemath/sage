@@ -82,7 +82,6 @@ REFERENCES:
 #*****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
-from cpython.sequence cimport PySequence_Fast
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix

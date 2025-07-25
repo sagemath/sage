@@ -119,7 +119,8 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         return x
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
-        """Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
 
         The object ``src`` must be of type ``Matrix_integer_sparse`` and have
         the same base ring as ``self``.

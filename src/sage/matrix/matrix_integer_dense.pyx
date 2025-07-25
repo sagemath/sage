@@ -477,7 +477,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         return fmpz_is_zero(fmpz_mat_entry(self._matrix, i,j))
 
     cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
-        """Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
 
         The object ``src`` must be of type ``Matrix_integer_dense`` and have
         the same base ring as ``self``.
