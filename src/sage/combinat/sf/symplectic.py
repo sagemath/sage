@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Symplectic Symmetric Functions
+Symplectic symmetric functions
 
 AUTHORS:
 

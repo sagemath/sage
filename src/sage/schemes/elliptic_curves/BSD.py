@@ -2,11 +2,9 @@
 
 from sage.arith.misc import prime_divisors
 from sage.misc.lazy_import import lazy_import
-from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-lazy_import("sage.functions.other", "ceil")
 lazy_import("sage.rings.number_field.number_field", "QuadraticField")
 
 
@@ -26,7 +24,7 @@ class BSD_data:
         Tate-Shafarevich group for the Elliptic Curve
          defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self.curve = None
         self.two_tor_rk = None
         self.Sha = None
@@ -42,7 +40,7 @@ class BSD_data:
         self.N_factorization = None
         self.proof = {}
 
-    def update(self):
+    def update(self) -> None:
         """
         Update some properties from ``curve``.
 
@@ -64,52 +62,7 @@ class BSD_data:
         self.N = self.curve.conductor()
 
 
-def simon_two_descent_work(E, two_tor_rk):
-    """
-    Prepare the output from Simon two-descent.
-
-    INPUT:
-
-    - ``E`` -- an elliptic curve
-
-    - ``two_tor_rk`` -- its two-torsion rank
-
-    OUTPUT:
-
-    - a lower bound on the rank
-
-    - an upper bound on the rank
-
-    - a lower bound on the rank of Sha[2]
-
-    - an upper bound on the rank of Sha[2]
-
-    - a list of the generators found
-
-    EXAMPLES::
-
-        sage: from sage.schemes.elliptic_curves.BSD import simon_two_descent_work
-        sage: E = EllipticCurve('14a')
-        sage: simon_two_descent_work(E, E.two_torsion_rank())
-        doctest:warning
-        ...
-        DeprecationWarning: Use E.rank(algorithm="pari") instead, as this script has been ported over to pari.
-        See https://github.com/sagemath/sage/issues/35621 for details.
-        ...
-        (0, 0, 0, 0, [])
-        sage: E = EllipticCurve('37a')
-        sage: simon_two_descent_work(E, E.two_torsion_rank())
-        (1, 1, 0, 0, [(0 : 0 : 1)])
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(35621, 'Use the two-descent in pari instead, as this script has been ported over to pari.')
-    rank_lower_bd, two_sel_rk, gens = E.simon_two_descent()
-    rank_upper_bd = two_sel_rk - two_tor_rk
-    gens = [P for P in gens if P.additive_order() == Infinity]
-    return rank_lower_bd, rank_upper_bd, 0, rank_upper_bd - rank_lower_bd, gens
-
-
-def mwrank_two_descent_work(E, two_tor_rk):
+def mwrank_two_descent_work(E, two_tor_rk) -> tuple:
     """
     Prepare the output from mwrank two-descent.
 
@@ -150,7 +103,7 @@ def mwrank_two_descent_work(E, two_tor_rk):
     return rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens
 
 
-def pari_two_descent_work(E):
+def pari_two_descent_work(E) -> tuple:
     r"""
     Prepare the output from pari by two-isogeny.
 
@@ -188,7 +141,7 @@ def pari_two_descent_work(E):
     """
     ep = E.pari_curve()
     lower, rank_upper_bd, s, pts = ep.ellrank()
-    gens = sorted([E.point([QQ(x[0]),QQ(x[1])], check=True) for x in pts])
+    gens = sorted([E.point([QQ(x[0]), QQ(x[1])], check=True) for x in pts])
     gens = E.saturation(gens)[0]
     # this is explained in the pari-gp documentation:
     # s is the dimension of Sha[2]/2Sha[4],
@@ -199,7 +152,7 @@ def pari_two_descent_work(E):
     return len(gens), rank_upper_bd, s, sha_upper_bd, gens
 
 
-def native_two_isogeny_descent_work(E, two_tor_rk):
+def native_two_isogeny_descent_work(E, two_tor_rk) -> tuple:
     """
     Prepare the output from two-descent by two-isogeny.
 
@@ -219,7 +172,8 @@ def native_two_isogeny_descent_work(E, two_tor_rk):
 
     - an upper bound on the rank of Sha[2]
 
-    - a list of the generators found (currently None, since we don't store them)
+    - a list of the generators found
+      (currently ``None``, since we do not store them)
 
     EXAMPLES::
 
@@ -232,13 +186,12 @@ def native_two_isogeny_descent_work(E, two_tor_rk):
         (1, 1, 0, 0, None)
     """
     from sage.schemes.elliptic_curves.descent_two_isogeny import two_descent_by_two_isogeny
-    n1, n2, n1p, n2p = two_descent_by_two_isogeny(E)
-    # bring n1 and n1p up to the nearest power of two
-    two = ZZ(2)  # otherwise "log" is symbolic >.<
-    e1 = ceil(ZZ(n1).log(two))
-    e1p = ceil(ZZ(n1p).log(two))
-    e2 = ZZ(n2).log(two)
-    e2p = ZZ(n2p).log(two)
+    result_two_descent = [ZZ(n) for n in two_descent_by_two_isogeny(E)]
+    # safety check that all numbers in the result are powers of two
+    if not all(n.is_power_of(2) for n in result_two_descent):
+        raise RuntimeError("not a power of 2 in two-descent")
+
+    e1, e2, e1p, e2p = [n.valuation(2) for n in result_two_descent]
     rank_lower_bd = e1 + e1p - 2
     rank_upper_bd = e2 + e2p - 2
     sha_upper_bd = e2 + e2p - e1 - e1p
@@ -246,9 +199,9 @@ def native_two_isogeny_descent_work(E, two_tor_rk):
     return rank_lower_bd, rank_upper_bd, 0, sha_upper_bd, gens
 
 
-def heegner_index_work(E):
+def heegner_index_work(E) -> tuple:
     """
-    Prepare the input and output for computing the heegner index.
+    Prepare the input and output for computing the Heegner index.
 
     INPUT:
 
@@ -507,7 +460,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         proof = bool(proof)
     if not proof:
         return []
-    from copy import copy
+
     BSD = BSD_data()
     # We replace this curve by the optimal curve, which we can do since
     # truth of BSD(E,p) is invariant under isogeny.
@@ -657,7 +610,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                             raise RuntimeError("p = %d divides sha_an, is of good reduction for E, inert in K, and does not divide the Heegner index. This may be a counterexample to BSD, but is more likely a bug. %s" % (p, BSD.curve))
             if verbosity > 0:
                 print('True for p not in {%s} by Kolyvagin (via Stein & Lum -- unpublished) and Rubin.' % str(list(set(BSD.primes).union(set(kolyvagin_primes))))[1:-1])
-        BSD.proof['finite'] = copy(BSD.primes)
+        BSD.proof['finite'] = list(BSD.primes)
     else:  # no CM
         # do some tricks to get to a finite set without calling bound_kolyvagin
         BSD.primes += [p for p in galrep.non_surjective() if p != 2]
@@ -675,7 +628,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 else:
                     s = '2, ' + s
             print('True for p not in {' + s + '} by Kolyvagin.')
-        BSD.proof['finite'] = copy(BSD.primes)
+        BSD.proof['finite'] = list(BSD.primes)
         primes_to_remove = []
         for p in BSD.primes:
             if p == 2:

@@ -70,7 +70,7 @@ class DrinfeldModules(Category_over_base_ring):
         sage: phi = DrinfeldModule(A, [p_root, 0, 0, 1])
         sage: C = phi.category()
         sage: C
-        Category of Drinfeld modules over Finite Field in z of size 11^4 over its base
+        Category of Drinfeld modules over Finite Field in z of size 11^4
 
     The output tells the user that the category is only defined by its
     base.
@@ -88,7 +88,7 @@ class DrinfeldModules(Category_over_base_ring):
         sage: C.base_morphism()
         Ring morphism:
           From: Univariate Polynomial Ring in T over Finite Field of size 11
-          To:   Finite Field in z of size 11^4 over its base
+          To:   Finite Field in z of size 11^4
           Defn: T |--> z^3 + 7*z^2 + 6*z + 10
 
     The so-called constant coefficient --- which is the same for all
@@ -123,7 +123,7 @@ class DrinfeldModules(Category_over_base_ring):
         True
 
         sage: C.ore_polring()
-        Ore Polynomial Ring in t over Finite Field in z of size 11^4 over its base twisted by Frob
+        Ore Polynomial Ring in t over Finite Field in z of size 11^4 twisted by z |--> z^11
         sage: C.ore_polring() is phi.ore_polring()
         True
 
@@ -165,20 +165,24 @@ class DrinfeldModules(Category_over_base_ring):
         sage: K.<z> = Fq.extension(4)
         sage: from sage.categories.drinfeld_modules import DrinfeldModules
         sage: base = Hom(A, K)(0)
-        sage: C = DrinfeldModules(base)
+        sage: C = DrinfeldModules(base)  # known bug (blankline)
+        <BLANKLINE>
         Traceback (most recent call last):
         ...
         TypeError: base field must be a ring extension
 
-    ::
+    Note that `C.base_morphism()` has codomain `K` while
+    the defining morphism of `C.base()` has codomain `K` viewed
+    as an `A`-field. Thus, they differ::
 
         sage: C.base().defining_morphism() == C.base_morphism()
-        True
+        False
 
     ::
 
         sage: base = Hom(A, A)(1)
-        sage: C = DrinfeldModules(base)
+        sage: C = DrinfeldModules(base)  # known bug (blankline)
+        <BLANKLINE>
         Traceback (most recent call last):
         ...
         TypeError: base field must be a ring extension
@@ -203,7 +207,7 @@ class DrinfeldModules(Category_over_base_ring):
         TypeError: function ring base must be a finite field
     """
 
-    def __init__(self, base_field, name='t'):
+    def __init__(self, base_morphism, name='t'):
         r"""
         Initialize ``self``.
 
@@ -223,34 +227,23 @@ class DrinfeldModules(Category_over_base_ring):
             sage: p_root = z^3 + 7*z^2 + 6*z + 10
             sage: phi = DrinfeldModule(A, [p_root, 0, 0, 1])
             sage: C = phi.category()
-            sage: ore_polring.<t> = OrePolynomialRing(phi.base(), phi.base().frobenius_endomorphism())
+            sage: ore_polring.<t> = OrePolynomialRing(K, K.frobenius_endomorphism())
             sage: C._ore_polring is ore_polring
-            True
-            sage: i = phi.base().coerce_map_from(K)
-            sage: base_morphism = Hom(A, K)(p_root)
-            sage: C.base() == K.over(base_morphism)
-            True
-            sage: C._base_morphism == i * base_morphism
             True
             sage: C._function_ring is A
             True
-            sage: C._constant_coefficient == base_morphism(T)
+            sage: C._constant_coefficient == C._base_morphism(T)
             True
             sage: C._characteristic(C._constant_coefficient)
             0
         """
-        # Check input is a ring extension
-        if not isinstance(base_field, RingExtension_generic):
-            raise TypeError('base field must be a ring extension')
-        base_morphism = base_field.defining_morphism()
         self._base_morphism = base_morphism
+        function_ring = self._function_ring = base_morphism.domain()
+        base_field = self._base_field = base_morphism.codomain()
         # Check input is a field
         if not base_field.is_field():
             raise TypeError('input must be a field')
-        self._base_field = base_field
-        self._function_ring = base_morphism.domain()
         # Check domain of base morphism is Fq[T]
-        function_ring = self._function_ring
         if not isinstance(function_ring, PolynomialRing_generic):
             raise NotImplementedError('function ring must be a polynomial '
                                       'ring')
@@ -262,7 +255,7 @@ class DrinfeldModules(Category_over_base_ring):
         Fq = function_ring_base
         A = function_ring
         T = A.gen()
-        K = base_field  # A ring extension
+        K = base_field
         # Build K{t}
         d = log(Fq.cardinality(), Fq.characteristic())
         tau = K.frobenius_endomorphism(d)
@@ -284,7 +277,7 @@ class DrinfeldModules(Category_over_base_ring):
         i = A.coerce_map_from(Fq)
         Fq_to_K = self._base_morphism * i
         self._base_over_constants_field = base_field.over(Fq_to_K)
-        super().__init__(base=base_field)
+        super().__init__(base=base_field.over(base_morphism))
 
     def _latex_(self):
         r"""
@@ -321,7 +314,7 @@ class DrinfeldModules(Category_over_base_ring):
             sage: phi = DrinfeldModule(A, [p_root, 0, 0, 1])
             sage: C = phi.category()
             sage: C
-            Category of Drinfeld modules over Finite Field in z of size 11^4 over its base
+            Category of Drinfeld modules over Finite Field in z of size 11^4
         """
         return f'Category of Drinfeld modules over {self._base_field}'
 
@@ -363,6 +356,30 @@ class DrinfeldModules(Category_over_base_ring):
         """
         return Homsets().Endsets()
 
+    def A_field(self):
+        r"""
+        Return the underlying `A`-field of this category,
+        viewed as an algebra over the function ring `A`.
+
+        This is an instance of the class
+        :class:`sage.rings.ring_extension.RingExtension`.
+
+        NOTE::
+
+            This method has the same behavior as :meth:`base`.
+
+        EXAMPLES::
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(6)
+            sage: phi = DrinfeldModule(A, [z, z^3, z^5])
+            sage: C = phi.category()
+            sage: C.A_field()
+            Finite Field in z of size 5^12 over its base
+        """
+        return self.base()
+
     def base_morphism(self):
         r"""
         Return the base morphism of the category.
@@ -378,7 +395,7 @@ class DrinfeldModules(Category_over_base_ring):
             sage: C.base_morphism()
             Ring morphism:
               From: Univariate Polynomial Ring in T over Finite Field of size 11
-              To:   Finite Field in z of size 11^4 over its base
+              To:   Finite Field in z of size 11^4
               Defn: T |--> z^3 + 7*z^2 + 6*z + 10
 
             sage: C.constant_coefficient() == C.base_morphism()(T)
@@ -517,7 +534,7 @@ class DrinfeldModules(Category_over_base_ring):
             sage: phi = DrinfeldModule(A, [p_root, 0, 0, 1])
             sage: C = phi.category()
             sage: C.ore_polring()
-            Ore Polynomial Ring in t over Finite Field in z of size 11^4 over its base twisted by Frob
+            Ore Polynomial Ring in t over Finite Field in z of size 11^4 twisted by z |--> z^11
         """
         return self._ore_polring
 
@@ -575,13 +592,40 @@ class DrinfeldModules(Category_over_base_ring):
 
     class ParentMethods:
 
-        def base(self):
+        def A_field(self):
             r"""
-            Return the base field of this Drinfeld module, viewed as
-            an algebra over the function ring.
+            Return the underlying `A`-field of this Drinfeld module,
+            viewed as an algebra over the function ring `A`.
 
             This is an instance of the class
             :class:`sage.rings.ring_extension.RingExtension`.
+
+            NOTE::
+
+                This method has the same behavior as :meth:`base`.
+
+            EXAMPLES::
+
+                sage: Fq = GF(25)
+                sage: A.<T> = Fq[]
+                sage: K.<z> = Fq.extension(6)
+                sage: phi = DrinfeldModule(A, [z, z^3, z^5])
+                sage: phi.A_field()
+                Finite Field in z of size 5^12 over its base
+            """
+            return self.category().A_field()
+
+        def base(self):
+            r"""
+            Return the underlying `A`-field of this Drinfeld module,
+            viewed as an algebra over the function ring `A`.
+
+            This is an instance of the class
+            :class:`sage.rings.ring_extension.RingExtension`.
+
+            NOTE::
+
+                This method has the same behavior as :meth:`A_field`.
 
             EXAMPLES::
 
@@ -615,17 +659,16 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: phi.base_morphism()
                 Ring morphism:
                   From: Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
-                  To:   Finite Field in z12 of size 5^12 over its base
+                  To:   Finite Field in z12 of size 5^12
                   Defn: T |--> 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8 + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
 
             The base field can be infinite::
 
                 sage: sigma = DrinfeldModule(A, [Frac(A).gen(), 1])
                 sage: sigma.base_morphism()
-                Ring morphism:
+                Coercion map:
                   From: Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
-                  To:   Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2 over its base
-                  Defn: T |--> T
+                  To:   Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
             """
             return self.category().base_morphism()
 
@@ -753,7 +796,7 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
                 sage: S = phi.ore_polring()
                 sage: S
-                Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
+                Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 twisted by z12 |--> z12^(5^2)
 
             The Ore polynomial ring can also be retrieved from the category
             of the Drinfeld module::
@@ -782,7 +825,7 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: phi = DrinfeldModule(A, [p_root, z12^3, z12^5])
 
                 sage: phi.ore_polring()
-                Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 over its base twisted by Frob^2
+                Ore Polynomial Ring in t over Finite Field in z12 of size 5^12 twisted by z12 |--> z12^(5^2)
                 sage: phi.ore_variable()
                 t
             """

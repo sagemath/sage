@@ -1213,7 +1213,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             [Boundary point in UHP -sqrt(65) + 9,
              Boundary point in UHP sqrt(65) + 9]
 
-        TESTS::
+        TESTS:
 
         Check that :issue:`32362` is fixed::
 

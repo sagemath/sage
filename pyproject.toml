@@ -193,6 +193,7 @@ extra = [
 ]
 
 [external.optional-dependencies]
+R = ["pkg:generic/r-lattice"]
 extra = [
   "pkg:generic/4ti2",
   "pkg:generic/benzene",

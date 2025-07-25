@@ -19,7 +19,8 @@ from sage.rings.rational_field import QQ
 
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modform.constructor import Newforms
-from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
 from sage.modular.abvar import morphism
 
 

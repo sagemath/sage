@@ -1,12 +1,13 @@
 r"""
-Vector Partitions
+Vector partitions
 
 AUTHORS:
 
-- Amritanshu Prasad (2013): Initial version
-- Shriya M (2022): Added new parameters such as ``distinct``, ``parts`` and ``is_repeatable``
+- Amritanshu Prasad (2013): initial version
+- Shriya M (2022): added new parameters such as ``distinct``, ``parts`` and
+  ``is_repeatable``
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Amritanshu Prasad <amri@imsc.res.in>
 #                     2022 Shriya M <25shriya@gmail.com>
 #
@@ -20,7 +21,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation

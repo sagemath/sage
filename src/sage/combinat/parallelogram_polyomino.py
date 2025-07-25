@@ -1,7 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Parallelogram Polyominoes
-=========================
+Parallelogram polyominoes
 
 The goal of this module is to give some tools to manipulate the
 parallelogram polyominoes.

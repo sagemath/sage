@@ -228,9 +228,8 @@ cdef class ntl_mat_ZZ():
             sage: M != 0
             True
         """
-        cdef ntl_mat_ZZ b
         try:
-            b = <ntl_mat_ZZ?>other
+            <ntl_mat_ZZ?>other
         except TypeError:
             return NotImplemented
         return PyObject_RichCompare(self.list(), other.list(), op)

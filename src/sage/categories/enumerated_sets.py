@@ -34,49 +34,49 @@ class EnumeratedSets(CategoryWithAxiom):
 
     The purpose of this category is threefold:
 
-     - to fix a common interface for all these sets;
-     - to provide a bunch of default implementations;
-     - to provide consistency tests.
+    - to fix a common interface for all these sets;
+    - to provide a bunch of default implementations;
+    - to provide consistency tests.
 
     The standard methods for an enumerated set ``S`` are:
 
-       - ``S.cardinality()`` -- the number of elements of the set. This
-         is the equivalent for ``len`` on a list except that the
-         return value is specified to be a Sage :class:`Integer` or
-         ``infinity``, instead of a Python ``int``.
+    - ``S.cardinality()`` -- the number of elements of the set. This
+      is the equivalent for ``len`` on a list except that the
+      return value is specified to be a Sage :class:`Integer` or
+      ``infinity``, instead of a Python ``int``.
 
-       - ``iter(S)`` -- an iterator for the elements of the set;
+    - ``iter(S)`` -- an iterator for the elements of the set;
 
-       - ``S.list()`` -- a fresh list of the elements of the set, when
-         possible; raises a :exc:`NotImplementedError` if the list is
-         predictably too large to be expanded in memory.
+    - ``S.list()`` -- a fresh list of the elements of the set, when
+      possible; raises a :exc:`NotImplementedError` if the list is
+      predictably too large to be expanded in memory.
 
-       - ``S.tuple()`` -- a tuple of the elements of the set, when
-         possible; raises a :exc:`NotImplementedError` if the tuple is
-         predictably too large to be expanded in memory.
+    - ``S.tuple()`` -- a tuple of the elements of the set, when
+      possible; raises a :exc:`NotImplementedError` if the tuple is
+      predictably too large to be expanded in memory.
 
-       - ``S.unrank(n)`` -- the  ``n``-th element of the set when ``n`` is a sage
-         ``Integer``. This is the equivalent for ``l[n]`` on a list.
+    - ``S.unrank(n)`` -- the  ``n``-th element of the set when ``n`` is a sage
+      ``Integer``. This is the equivalent for ``l[n]`` on a list.
 
-       - ``S.rank(e)`` -- the position of the element ``e`` in the set;
-         This is equivalent to ``l.index(e)`` for a list except that
-         the return value is specified to be a Sage :class:`Integer`,
-         instead of a Python ``int``.
+    - ``S.rank(e)`` -- the position of the element ``e`` in the set;
+      This is equivalent to ``l.index(e)`` for a list except that
+      the return value is specified to be a Sage :class:`Integer`,
+      instead of a Python ``int``.
 
-       - ``S.first()`` -- the first object of the set; it is equivalent to
-         ``S.unrank(0)``.
+    - ``S.first()`` -- the first object of the set; it is equivalent to
+      ``S.unrank(0)``.
 
-       - ``S.next(e)`` -- the object of the set which follows ``e``; it is
-         equivalent to ``S.unrank(S.rank(e) + 1)``.
+    - ``S.next(e)`` -- the object of the set which follows ``e``; it is
+      equivalent to ``S.unrank(S.rank(e) + 1)``.
 
-       - ``S.random_element()`` -- a random generator for an element of
-         the set. Unless otherwise stated, and for finite enumerated
-         sets, the probability is uniform.
+    - ``S.random_element()`` -- a random generator for an element of
+      the set. Unless otherwise stated, and for finite enumerated
+      sets, the probability is uniform.
 
     For examples and tests see:
 
-       - ``FiniteEnumeratedSets().example()``
-       - ``InfiniteEnumeratedSets().example()``
+    - ``FiniteEnumeratedSets().example()``
+    - ``InfiniteEnumeratedSets().example()``
 
     EXAMPLES::
 

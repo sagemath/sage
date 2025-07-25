@@ -1872,7 +1872,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             elif self.is_elliptic():
                 if self._twist == [1, 2]:
                     return 90
-                if self._twist == [1, 1] or self._twist == [2, 2]:
+                if self._twist in ([1, 1], [2, 2]):
                     return 35
 
         # type G
@@ -1884,7 +1884,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             elif self.is_elliptic():
                 if self._twist == [1, 3]:
                     return 7
-                if self._twist == [1, 1] or self._twist == [3, 3]:
+                if self._twist in ([1, 1], [3, 3]):
                     return 2
 
         # type X

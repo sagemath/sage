@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
-Symmetric Group Algebra
+Symmetric group algebra
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -1313,6 +1313,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         modules (which are the :meth:`Specht modules <specht_module>`
         and also projective modules)::
 
+            sage: # long time
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
             ....:     idem = SGA.ladder_idempotent(la)

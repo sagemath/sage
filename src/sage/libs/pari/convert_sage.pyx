@@ -274,7 +274,6 @@ cpdef gen_to_sage(Gen z, locals=None):
     cdef long t = typ(g)
     cdef long tx, ty
     cdef Gen real, imag, prec, xprec, yprec
-    cdef Py_ssize_t i, j, nr, nc
 
     if t == t_INT:
         return Integer(z)

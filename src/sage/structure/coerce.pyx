@@ -1681,13 +1681,13 @@ cdef class CoercionModel:
             sage: ZZxy = ZZ['x,y']
             sage: cm.discover_coercion(ZZxy, RDF)
             ((map internal to coercion system -- copy before use)
-            Call morphism:
-              From: Multivariate Polynomial Ring in x, y over Integer Ring
-              To:   Multivariate Polynomial Ring in x, y over Real Double Field,
+             Coercion map:
+               From: Multivariate Polynomial Ring in x, y over Integer Ring
+               To:   Multivariate Polynomial Ring in x, y over Real Double Field,
              (map internal to coercion system -- copy before use)
              Polynomial base injection morphism:
-              From: Real Double Field
-              To:   Multivariate Polynomial Ring in x, y over Real Double Field)
+               From: Real Double Field
+               To:   Multivariate Polynomial Ring in x, y over Real Double Field)
 
         Sometimes there is a reasonable "cover," but no canonical coercion::
 
