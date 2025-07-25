@@ -575,17 +575,17 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
             sage: m = matrix(CBF,0,2)
             sage: m.subdivide([],[1])
-            sage: m._subdivisions
-            ([0, 0], [0, 1, 2])
-            sage: m.transpose()._subdivisions
-            ([0, 1, 2], [0, 0])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
 
             sage: m = matrix(CBF,2,0)
             sage: m.subdivide([1],[])
-            sage: m._subdivisions
-            ([0, 1, 2], [0, 0])
-            sage: m.transpose()._subdivisions
-            ([0, 0], [0, 1, 2])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Py_ssize_t nc = self._ncols
         cdef Py_ssize_t nr = self._nrows
