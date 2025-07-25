@@ -283,7 +283,6 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) noexcept:
         sage: P(0) > P(-1)
         True
     """
-    cdef number *h
     cdef int tmp
 
     if r != currRing:

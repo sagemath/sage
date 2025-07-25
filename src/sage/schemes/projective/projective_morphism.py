@@ -1217,7 +1217,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             FS = FractionField(S)
             N = A_domain.dimension_relative()
             R = A_domain.coordinate_ring()
-            phi = R.hom([S.gen(j) for j in range(0, ind[0])] + [1] + [S.gen(j) for j in range(ind[0], N)], FS)
+            phi = R.hom([S.gen(j) for j in range(ind[0])] + [1] + [S.gen(j) for j in range(ind[0], N)], FS)
             F = []
             G = phi(self._polys[ind[1]])
             # ind[1] is relative to codomain

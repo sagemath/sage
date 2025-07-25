@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Kirillov-Reshetikhin Tableaux
+Kirillov-Reshetikhin tableaux
 
 Kirillov-Reshetikhin tableaux are rectangular tableaux with `r` rows and
 `s` columns that naturally arise under the bijection between rigged
@@ -13,16 +13,16 @@ rigged configurations [RigConBijection]_.
 For more information, see :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux`
 and :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`.
 
-AUTHORS:
-
-- Travis Scrimshaw (2012-01-03): Initial version
-- Travis Scrimshaw (2012-11-14): Added bijection to KR crystals
-
 REFERENCES:
 
 .. [OSS13] Masato Okado, Reiho Sakamoto, and Anne Schilling.
    *Affine crystal structure on rigged configurations of type* `D_n^{(1)}`.
    J. Algebraic Combinatorics, **37** (2013). 571-599. :arxiv:`1109.3523`.
+
+AUTHORS:
+
+- Travis Scrimshaw (2012-01-03): initial version
+- Travis Scrimshaw (2012-11-14): added bijection to KR crystals
 """
 
 # ***************************************************************************

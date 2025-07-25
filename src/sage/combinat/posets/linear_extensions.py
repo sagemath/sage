@@ -1,15 +1,5 @@
 r"""
-Linear Extensions of Posets
-
-This module defines two classes:
-
-- :class:`LinearExtensionOfPoset`
-- :class:`LinearExtensionsOfPoset`
-- :class:`LinearExtensionsOfPosetWithHooks`
-- :class:`LinearExtensionsOfForest`
-
-Classes and methods
--------------------
+Linear extensions of posets
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Anne Schilling <anne at math.ucdavis.edu>

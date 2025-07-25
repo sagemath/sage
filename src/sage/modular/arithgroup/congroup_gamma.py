@@ -315,7 +315,7 @@ def is_Gamma(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import Gamma_class
+        sage: from sage.modular.arithgroup.congroup_gamma import Gamma_class
         sage: isinstance(Gamma0(13), Gamma_class)
         False
         sage: isinstance(Gamma(4), Gamma_class)

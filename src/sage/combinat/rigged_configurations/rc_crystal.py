@@ -1,13 +1,13 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Crystal of Rigged Configurations
-
-AUTHORS:
-
-- Travis Scrimshaw (2010-09-26): Initial version
+Crystal of rigged configurations
 
 We only consider the highest weight crystal structure, not the
 Kirillov-Reshetikhin structure, and we extend this to symmetrizable types.
+
+AUTHORS:
+
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
 # ****************************************************************************

@@ -1,15 +1,15 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-`\mathcal{B}(\infty)` Crystal Of PBW Monomials
-
-AUTHORS:
-
-- Dinakar Muthiah (2015-05-11): initial version
+`\mathcal{B}(\infty)` crystal of PBW monomials
 
 .. SEEALSO::
 
     For information on PBW datum, see
     :ref:`sage.combinat.crystals.pbw_datum`.
+
+AUTHORS:
+
+- Dinakar Muthiah (2015-05-11): initial version
 """
 
 # ****************************************************************************

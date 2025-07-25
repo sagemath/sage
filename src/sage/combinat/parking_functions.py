@@ -1,5 +1,5 @@
 r"""
-Parking Functions
+Parking functions
 
 INFORMALLY (reference [Beck]_):
 

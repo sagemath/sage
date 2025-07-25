@@ -1,1 +1,1 @@
-media-libs/qhull
+media-libs/qhull[tools]

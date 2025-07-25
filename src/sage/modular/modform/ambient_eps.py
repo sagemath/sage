@@ -83,7 +83,7 @@ TESTS::
 
 from sage.rings.integer import Integer
 
-import sage.modular.arithgroup.all as arithgroup
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor
 import sage.modular.dirichlet as dirichlet
 import sage.modular.modsym.modsym as modsym
 from sage.misc.cachefunc import cached_method
@@ -133,7 +133,7 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:
             raise ValueError("the base ring must have characteristic 0.")
-        group = arithgroup.Gamma1(character.modulus())
+        group = Gamma1_constructor(character.modulus())
         base_ring = character.base_ring()
         ModularFormsAmbient.__init__(self, group, weight, base_ring, character, eis_only)
 
