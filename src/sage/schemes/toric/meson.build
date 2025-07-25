@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'batyrev.py',
+  'batyrev_library.py',
   'chow_group.py',
   'divisor.py',
   'fano_variety.py',
