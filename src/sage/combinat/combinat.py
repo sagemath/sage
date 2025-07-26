@@ -1,139 +1,97 @@
 r"""
-Combinatorial Functions
+Combinatorial functions
 
 This module implements some combinatorial functions, as listed
 below. For a more detailed description, see the relevant
 docstrings.
 
-**Sequences:**
+**Numbers:**
 
+- Bell numbers :func:`bell_number`
 
--  Bell numbers, :func:`bell_number`
+- Catalan numbers :func:`catalan_number`
 
--  Catalan numbers, :func:`catalan_number` (not to be
-   confused with the Catalan constant)
+- Narayana numbers :func:`narayana_number`
 
--  Narayana numbers, :func:`narayana_number`
+- Euler numbers :func:`euler_number`
 
--  Euler numbers, :func:`euler_number` (Maxima)
+- Eulerian numbers :func:`eulerian_number`
 
--  Eulerian numbers, :func:`eulerian_number`
+- Fibonacci numbers :func:`fibonacci`
 
--  Eulerian polynomial, :func:`eulerian_polynomial`
+- Lucas numbers :func:`lucas_number1`, :func:`lucas_number2`
 
--  Fibonacci numbers, :func:`fibonacci` (PARI) and
-   :func:`fibonacci_number` (GAP) The PARI version is
-   better.
+- Stirling numbers :func:`stirling_number1`, :func:`stirling_number2`
 
--  Lucas numbers, :func:`lucas_number1`, :func:`lucas_number2`.
+- Polygonal numbers :func:`polygonal_number`
 
--  Stirling numbers, :func:`stirling_number1`,
-   :func:`stirling_number2`.
+**Polynomials**
 
--  Polygonal numbers, :func:`polygonal_number`
+- Eulerian polynomial :func:`eulerian_polynomial`
 
-**Set-theoretic constructions:**
+- Bernoulli polynomials :func:`bernoulli_polynomial`
 
--  Derangements of a multiset, :func:`derangements` and
-   :func:`number_of_derangements`.
+**Sets:**
 
--  Tuples of a multiset, :func:`tuples` and
-   :func:`number_of_tuples`. An ordered tuple of length k of
-   set S is a ordered selection with repetitions of S and is
-   represented by a sorted list of length k containing elements from
-   S.
+- Tuples of a multiset :func:`tuples`, :func:`number_of_tuples`
 
--  Unordered tuples of a set, :func:`unordered_tuples` and
-   :func:`number_of_unordered_tuples`. An unordered tuple
-   of length k of set S is an unordered selection with repetitions of S
-   and is represented by a sorted list of length k containing elements
-   from S.
+- Unordered tuples of a set :func:`unordered_tuples`, :func:`number_of_unordered_tuples`
 
-.. WARNING::
+**Combinatorial functions from other modules:**
 
-   The following function is deprecated and will soon be removed.
+- Binomial coefficient :func:`sage.arith.misc.binomial`
 
-    - Permutations of a multiset, :func:`permutations`,
-      :func:`permutations_iterator`, :func:`number_of_permutations`. A
-      permutation is a list that contains exactly the same elements but possibly
-      in different order.
+- Factorial :func:`sage.arith.misc.factorial`
 
-**Related functions:**
+- Falling power :func:`sage.arith.misc.falling_factorial`
 
--  Bernoulli polynomials, :func:`bernoulli_polynomial`
+- Rising power :func:`sage.arith.misc.rising_factorial`
 
-**Implemented in other modules (listed for completeness):**
+- Number of partitions :func:`sage.combinat.partition.number_of_partitions`
 
-The package :mod:`sage.arith` contains the following
-combinatorial functions:
-
--  :func:`binomial` the binomial coefficient (wrapped from PARI)
-
--  :func:`factorial` (wrapped from PARI)
-
--  :func:`falling_factorial` Definition: for integer
-   `a \ge 0` we have `x(x-1) \cdots (x-a+1)`. In all
-   other cases we use the GAMMA-function:
-   `\frac {\Gamma(x+1)} {\Gamma(x-a+1)}`.
-
--  :func:`rising_factorial` Definition: for integer
-   `a \ge 0` we have `x(x+1) \cdots (x+a-1)`. In all
-   other cases we use the GAMMA-function:
-   `\frac {\Gamma(x+a)} {\Gamma(x)}`.
-
-From other modules:
-
--  :func:`number_of_partitions` (wrapped from PARI) the
-   *number* of partitions:
-
--  :func:`sage.combinat.q_analogues.gaussian_binomial` the Gaussian binomial
-
-.. MATH::
-
-    \binom{n}{k}_q = \frac{(1-q^m)(1-q^{m-1})\cdots (1-q^{m-r+1})}{(1-q)(1-q^2)\cdots (1-q^r)}.
-
-The ``sage.groups.perm_gps.permgroup_elements``
-contains the following combinatorial functions:
-
-
--  matrix method of PermutationGroupElement yielding the
-   permutation matrix of the group element.
+- Gaussian binomial coefficient :func:`sage.combinat.q_analogues.gaussian_binomial`
 
 .. TODO::
 
-    GUAVA commands:
-        * VandermondeMat
-        * GrayMat returns a list of all different vectors of length n over
-          the field F, using Gray ordering.
-    Not in GAP:
-        * Rencontres numbers (:wikipedia:`Rencontres_number`)
+    Add GUAVA commands:
+
+    * VandermondeMat
+    * GrayMat returns a list of all different vectors of length n over
+      the field F, using Gray ordering.
+
+    Add commands not in GAP:
+
+    * Rencontres numbers (:wikipedia:`Rencontres_number`)
 
 REFERENCES:
 
-- :wikipedia:`Twelvefold_way` (general reference)
+- :wikipedia:`Twelvefold_way`
 
 AUTHORS:
 
-- David Joyner (2006-07): initial implementation.
-
+- David Joyner (2006-07): initial implementation
 - William Stein (2006-07): editing of docs and code; many
   optimizations, refinements, and bug fixes in corner cases
-
+- Jon Hanke (2006-08): added ``tuples``
 - David Joyner (2006-09): bug fix for combinations, added
   permutations_iterator, combinations_iterator from Python Cookbook,
   edited docs.
-
 - David Joyner (2007-11): changed permutations, added hadamard_matrix
-
+- Blair Sutton (2009-01-26): added ``bell_polynomial``
 - Florent Hivert (2009-02): combinatorial class cleanup
-
+- Bobby Moretti (2009-02): added ``fibonacci_sequence`` and ``fibonacci_xrange``
 - Fredrik Johansson (2010-07): fast implementation of ``stirling_number2``
-
+- Robert Gerbicz (2010-10): added Bell numbers
 - Punarbasu Purkayastha (2012-12): deprecate arrangements, combinations,
   combinations_iterator, and clean up very old deprecated methods.
-
-Functions and classes
----------------------
+- Jeroen Demeyer (2014-10): improved implementation of Dobinski formula for Bell numbers
+  with more accurate error estimates (:issue:`17157`)
+- Thierry Monteil (2015-09-29): the result of ``bell_polynomial`` must
+  always be a polynomial
+- Kei Beauduin (2024-04-06): when univariate, the Bell polynomial is in
+  variable ``x0``; extended to complete exponential, partial ordinary and
+  complete ordinary Bell polynomials.
+- Kwankyu Lee (2025-01): added Lah numbers
 """
 
 # ****************************************************************************
@@ -199,7 +157,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
 
     - ``algorithm`` -- (default: ``'flint'``) any one of the following:
 
-      - ``'dobinski'`` -- use Dobinski's formula implemented in Sage
+      - ``'dobinski'`` -- use Dobinski's formula
 
       - ``'flint'`` -- wrap FLINT's ``arith_bell_number``
 
@@ -213,105 +171,6 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
         ``prec``, it can return incorrect results due to low precision. See
         the examples section.
 
-    Let `B_n` denote the `n`-th Bell number. Dobinski's formula is:
-
-    .. MATH::
-
-        B_n = e^{-1} \sum_{k=0}^{\infty} \frac{k^n}{k!}.
-
-    To show our implementation of Dobinski's method works, suppose that `n \geq 5`
-    and let `k_0` be the smallest positive integer such that `\frac{k_0^n}{k_0!} < 1`.
-    Note that `k_0 > n` and `k_0 \leq 2n` because we can prove that
-    `\frac{(2n)^n}{(2n)!} < 1` by Stirling.
-
-    If `k > k_0`, then we have `\frac{k^n}{k!} < \frac{1}{2^{k-k_0}}`.
-    We show this by induction:
-    let `c_k = \frac{k^n}{k!}`, if `k > n` then
-
-    .. MATH::
-
-        \frac{c_{k+1}}{c_k} = \frac{(1+k^{-1})^n}{k+1} < \frac{(1+n^{-1})^n}{n}
-        < \frac{1}{2}.
-
-    The last inequality can easily be checked numerically for `n \geq 5`.
-
-    Using this, we can see that `\frac{c_k}{c_{k_0}} < \frac{1}{2^{k-k_0}}`
-    for `k > k_0 > n`. So summing this it gives that `\sum_{k=k_0+1}^{\infty}
-    \frac{k^n}{k!} < 1`, and hence
-
-    .. MATH::
-
-        B_n = e^{-1} \left( \sum_{k=0}^{k_0} \frac{k^n}{k!} + E_1 \right)
-        = e^{-1} \sum_{k=0}^{k_0} \frac{k^n}{k!} + E_2,
-
-    where `0 < E_1 < 1` and `0 < E_2 < e^{-1}`. Next we have for any `q > 0`
-
-    .. MATH::
-
-        \sum_{k=0}^{k_0} \frac{k^n}{k!} = \frac{1}{q} \sum_{k=0}^{k_0} \left\lfloor
-        \frac{q k^n}{k!} \right\rfloor + \frac{E_3}{q}
-
-    where `0 \leq E_3 \leq k_0 + 1 \leq 2n + 1`. Let `E_4 = \frac{E_3}{q}`
-    and let `q = 2n + 1`. We find `0 \leq E_4 \leq 1`. These two bounds give:
-
-    .. MATH::
-
-        \begin{aligned}
-        B_n & = \frac{e^{-1}}{q} \sum_{k=0}^{k_0} \left\lfloor
-        \frac{q k^n}{k!} \right\rfloor + e^{-1} E_4 + E_2 \\
-        & = \frac{e^{-1}}{q} \sum_{k=0}^{k_0} \left\lfloor \frac{q k^n}{k!}
-        \right\rfloor + E_5
-        \end{aligned}
-
-    where
-
-    .. MATH::
-
-        0 < E_5 = e^{-1} E_4 + E_2 \leq e^{-1} + e^{-1} < \frac{3}{4}.
-
-    It follows that
-
-    .. MATH::
-
-        B_n = \left\lceil \frac{e^{-1}}{q} \sum_{k=0}^{k_0} \left\lfloor
-        \frac{q k^n}{k!} \right\rfloor \right\rceil.
-
-    Now define
-
-    .. MATH::
-
-        b = \sum_{k=0}^{k_0} \left\lfloor \frac{q k^n}{k!} \right\rfloor.
-
-    This `b` can be computed exactly using integer arithmetic.
-    To avoid the costly integer division by `k!`, we collect
-    more terms and do only one division, for example with 3 terms:
-
-    .. MATH::
-
-        \frac{k^n}{k!} + \frac{(k+1)^n}{(k+1)!} + \frac{(k+2)^n}{(k+2)!}
-        = \frac{k^n (k+1)(k+2) + (k+1)^n (k+2) + (k+2)^n}{(k+2)!}
-
-    In the implementation, we collect `\sqrt{n}/2` terms.
-
-    To actually compute `B_n` from `b`,
-    we let `p = \lfloor \log_2(b) \rfloor + 1` such that `b < 2^p` and
-    we compute with `p` bits of precision.
-    This implies that `b` (and `q < b`) can be represented exactly.
-
-    We compute `\frac{e^{-1}}{q} b`, rounding down, and we must have an
-    absolute error of at most `1/4` (given that `E_5 < 3/4`).
-    This means that we need a relative error of at most
-
-    .. MATH::
-
-        \frac{e q}{4 b} > \frac{(e q)/4}{2^p} > \frac{7}{2^p}
-
-    (assuming `n \geq 5`).
-    With a precision of `p` bits and rounding down, every rounding
-    has a relative error of at most `2^{1-p} = 2/2^p`.
-    Since we do 3 roundings (`b` and `q` do not require rounding),
-    we get a relative error of at most `6/2^p`.
-    All this implies that the precision of `p` bits is sufficient.
 
     EXAMPLES::
 
@@ -369,12 +228,107 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
         ....:     for n in range(200, 220))
         True
 
-    AUTHORS:
+    .. NOTE::
 
-    - Robert Gerbicz
+        Let `B_n` denote the `n`-th Bell number. Dobinski's formula is:
 
-    - Jeroen Demeyer: improved implementation of Dobinski formula with
-      more accurate error estimates (:issue:`17157`)
+        .. MATH::
+
+            B_n = e^{-1} \sum_{k=0}^{\infty} \frac{k^n}{k!}.
+
+        To show our implementation of Dobinski's method works, suppose that `n \geq 5`
+        and let `k_0` be the smallest positive integer such that `\frac{k_0^n}{k_0!} < 1`.
+        Note that `k_0 > n` and `k_0 \leq 2n` because we can prove that
+        `\frac{(2n)^n}{(2n)!} < 1` by Stirling.
+
+        If `k > k_0`, then we have `\frac{k^n}{k!} < \frac{1}{2^{k-k_0}}`.
+        We show this by induction:
+        let `c_k = \frac{k^n}{k!}`, if `k > n` then
+
+        .. MATH::
+
+            \frac{c_{k+1}}{c_k} = \frac{(1+k^{-1})^n}{k+1} < \frac{(1+n^{-1})^n}{n}
+            < \frac{1}{2}.
+
+        The last inequality can easily be checked numerically for `n \geq 5`.
+
+        Using this, we can see that `\frac{c_k}{c_{k_0}} < \frac{1}{2^{k-k_0}}`
+        for `k > k_0 > n`. So summing this it gives that `\sum_{k=k_0+1}^{\infty}
+        \frac{k^n}{k!} < 1`, and hence
+
+        .. MATH::
+
+            B_n = e^{-1} \left( \sum_{k=0}^{k_0} \frac{k^n}{k!} + E_1 \right)
+            = e^{-1} \sum_{k=0}^{k_0} \frac{k^n}{k!} + E_2,
+
+        where `0 < E_1 < 1` and `0 < E_2 < e^{-1}`. Next we have for any `q > 0`
+
+        .. MATH::
+
+            \sum_{k=0}^{k_0} \frac{k^n}{k!} = \frac{1}{q} \sum_{k=0}^{k_0} \left\lfloor
+            \frac{q k^n}{k!} \right\rfloor + \frac{E_3}{q}
+
+        where `0 \leq E_3 \leq k_0 + 1 \leq 2n + 1`. Let `E_4 = \frac{E_3}{q}`
+        and let `q = 2n + 1`. We find `0 \leq E_4 \leq 1`. These two bounds give:
+
+        .. MATH::
+
+            \begin{aligned}
+            B_n & = \frac{e^{-1}}{q} \sum_{k=0}^{k_0} \left\lfloor
+            \frac{q k^n}{k!} \right\rfloor + e^{-1} E_4 + E_2 \\
+            & = \frac{e^{-1}}{q} \sum_{k=0}^{k_0} \left\lfloor \frac{q k^n}{k!}
+            \right\rfloor + E_5
+            \end{aligned}
+
+        where
+
+        .. MATH::
+
+            0 < E_5 = e^{-1} E_4 + E_2 \leq e^{-1} + e^{-1} < \frac{3}{4}.
+
+        It follows that
+
+        .. MATH::
+
+            B_n = \left\lceil \frac{e^{-1}}{q} \sum_{k=0}^{k_0} \left\lfloor
+            \frac{q k^n}{k!} \right\rfloor \right\rceil.
+
+        Now define
+
+        .. MATH::
+
+            b = \sum_{k=0}^{k_0} \left\lfloor \frac{q k^n}{k!} \right\rfloor.
+
+        This `b` can be computed exactly using integer arithmetic.
+        To avoid the costly integer division by `k!`, we collect
+        more terms and do only one division, for example with 3 terms:
+
+        .. MATH::
+
+            \frac{k^n}{k!} + \frac{(k+1)^n}{(k+1)!} + \frac{(k+2)^n}{(k+2)!}
+            = \frac{k^n (k+1)(k+2) + (k+1)^n (k+2) + (k+2)^n}{(k+2)!}
+
+        In the implementation, we collect `\sqrt{n}/2` terms.
+
+        To actually compute `B_n` from `b`,
+        we let `p = \lfloor \log_2(b) \rfloor + 1` such that `b < 2^p` and
+        we compute with `p` bits of precision.
+        This implies that `b` (and `q < b`) can be represented exactly.
+
+        We compute `\frac{e^{-1}}{q} b`, rounding down, and we must have an
+        absolute error of at most `1/4` (given that `E_5 < 3/4`).
+        This means that we need a relative error of at most
+
+        .. MATH::
+
+            \frac{e q}{4 b} > \frac{(e q)/4}{2^p} > \frac{7}{2^p}
+
+        (assuming `n \geq 5`).
+        With a precision of `p` bits and rounding down, every rounding
+        has a relative error of at most `2^{1-p} = 2/2^p`.
+        Since we do 3 roundings (`b` and `q` do not require rounding),
+        we get a relative error of at most `6/2^p`.
+        All this implies that the precision of `p` bits is sufficient.
 
     REFERENCES:
 
@@ -503,7 +457,7 @@ def narayana_number(n: Integer, k: Integer) -> Integer:
 
     - ``n`` -- integer
 
-    - ``k`` -- integer between ``0`` and ``n - 1``
+    - ``k`` -- integer between `0` and `n - 1`
 
     OUTPUT: integer
 
@@ -584,9 +538,7 @@ def eulerian_number(n, k, algorithm='recursive') -> Integer:
     INPUT:
 
     - ``n`` -- integer
-
     - ``k`` -- integer between ``0`` and ``n - 1``
-
     - ``algorithm`` -- ``'recursive'`` (default) or ``'formula'``
 
     OUTPUT: integer
@@ -803,8 +755,6 @@ def lucas_number2(n, P, Q):
     `L^{(2)}_2 = P` and the recurrence relation
     `L^{(2)}_{n+2} = P \cdot L^{(2)}_{n+1} - Q \cdot L^{(2)}_n`.
 
-    Wraps GAP's Lucas(...)[2].
-
     INPUT:
 
     - ``n`` -- integer
@@ -888,6 +838,10 @@ def stirling_number1(n, k, algorithm='gap') -> Integer:
     """
     n = ZZ(n)
     k = ZZ(k)
+    if k > n:
+        return ZZ.zero()
+    if k == 0:
+        return ZZ.zero() if n else ZZ.one()
     if algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling1(n, k).sage()
@@ -1014,6 +968,10 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
     """
     n = ZZ(n)
     k = ZZ(k)
+    if k > n:
+        return ZZ.zero()
+    if k == 0:
+        return ZZ.zero() if n else ZZ.one()
     if algorithm is None:
         return _stirling_number2(n, k)
     if algorithm == 'gap':
@@ -1025,6 +983,55 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
     if algorithm == 'maxima':
         return ZZ(maxima.stirling2(n, k))  # type:ignore
     raise ValueError("unknown algorithm: %s" % algorithm)
+
+
+def lah_number(n, k) -> Integer:
+    r"""
+    Return the Lah number `L(n,k)`
+
+    This is the number of ways to partition a set of `n` elements into `k`
+    pairwise disjoint nonempty linearly-ordered subsets.
+
+    This is also called the Stirling number of the third kind.
+
+    See :wikipedia:`Lah_number`.
+
+    INPUT:
+
+    - ``n`` -- nonnegative integer
+
+    - ``k`` -- nonnegative integer
+
+    EXAMPLES::
+
+        sage: from sage.combinat.combinat import lah_number
+        sage: lah_number(50, 30)
+        3242322638238907670866645288893161825894400000
+
+    We verify a well-known identity::
+
+        sage: S1 = stirling_number1; S2 = stirling_number2
+        sage: all(lah_number(n, k) == sum(S1(n, j) * S2(j, k) for j in [k..n])
+        ....:     for n in range(10) for k in range(10))
+        True
+
+    TESTS:
+
+    Verify the usual convention for the degenerate case `k = 0`::
+
+        sage: lah_number(0, 0) == 1 and lah_number(1, 0) == 0
+        True
+    """
+    n = ZZ(n)
+    k = ZZ(k)
+    if k > n:
+        return ZZ.zero()
+    if k == 0:
+        return ZZ.zero() if n else ZZ.one()
+    # Exact form of the formula was chosen for performance after extensive
+    # experiments. See Issue #39379.
+    a = n.binomial(k)
+    return a * k // n * a * (n - k).factorial()
 
 
 def polygonal_number(s, n):
@@ -1630,10 +1637,6 @@ def tuples(S, k, algorithm='itertools'):
         sage: S = [1,1,2]
         sage: sorted(tuples(S, 3)) == sorted(tuples(S, 3, 'native'))
         True
-
-    AUTHORS:
-
-    - Jon Hanke (2006-08)
     """
     if algorithm == 'itertools':
         import itertools
@@ -1673,10 +1676,10 @@ def _tuples_native(S, k):
 
 def number_of_tuples(S, k, algorithm='naive') -> Integer:
     """
-    Return the size of ``tuples(S, k)`` when `S` is a set. More
-    generally, return the size of ``tuples(set(S), k)``. (So,
-    unlike :meth:`tuples`, this method removes redundant entries from
-    `S`.)
+    Return the size of ``tuples(S, k)`` for a set `S`.
+
+    `S` is first converted to a set. Hence, unlike :meth:`tuples`, this method
+    removes redundant entries from `S`.
 
     INPUT:
 
@@ -1901,9 +1904,9 @@ def unshuffle_iterator(a, one=1) -> Iterator:
 
 def bell_polynomial(n: Integer, k=None, ordinary=False):
     r"""
-    Return the (partial) (exponential/ordinary) bell Polynomial.
+    Return the partial (or complete) exponential (or ordinary) Bell polynomial.
 
-    The partial (exponential) *Bell polynomial* is defined by the formula
+    The partial exponential *Bell polynomial* is defined by the formula
 
     .. MATH::
 
@@ -1914,7 +1917,7 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
             \left(\frac{x_1}{(1+1)!}\right)^{j_1} \cdots
             \left(\frac{x_{n-k}}{(n-k+1)!}\right)^{j_{n-k}}.
 
-    The complete (exponential) Bell Polynomial is defined as
+    The complete exponential Bell Polynomial is defined as
 
     .. MATH::
 
@@ -1930,8 +1933,8 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
             \binom{k}{j_0, j_1, \ldots, j_{n-k}}
             x_0^{j_0} x_1^{j_1} \cdots x_{n-k}^{j_{n-k}},
 
-    where we have used the multinomial coefficient.
-    The complete version has the same definition as its exponential counterpart.
+    where we have used the multinomial coefficient. The complete version has
+    the same definition as its exponential counterpart.
 
     If we define `f(z) = \sum_{n=1}^\infty x_{n-1} z^n/n!`
     then these are alternative definitions for exponential Bell polynomials
@@ -1950,10 +1953,8 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
 
         \begin{aligned}
         \frac1{1-f(z)} & = \sum_{n=0}^\infty \hat B_n(x_0, \ldots, x_{n-1}) z^n, \\
-        f(z)^k & = \sum_{n=k}^\infty \hat B_{n, k}(x_0, \ldots, x_{n-k}) z^n,
+        f(z)^k & = \sum_{n=k}^\infty \hat B_{n, k}(x_0, \ldots, x_{n-k}) z^n.
         \end{aligned}
-
-    (see reference).
 
     INPUT:
 
@@ -2051,14 +2052,6 @@ def bell_polynomial(n: Integer, k=None, ordinary=False):
 
     - [Bel1927]_
     - [Com1974]_
-
-    AUTHORS:
-
-    - Blair Sutton (2009-01-26)
-    - Thierry Monteil (2015-09-29): the result must always be a polynomial.
-    - Kei Beauduin (2024-04-06): when univariate,
-      the polynomial is in variable ``x0``. extended to complete exponential,
-      partial ordinary and complete ordinary Bell polynomials.
     """
     from sage.arith.misc import multinomial
     from sage.combinat.partition import Partitions
@@ -2115,10 +2108,6 @@ def fibonacci_sequence(start, stop=None, algorithm=None) -> Iterator:
     .. SEEALSO::
 
        :func:`fibonacci_xrange`
-
-    AUTHORS:
-
-    - Bobby Moretti
     """
     if stop is None:
         stop = ZZ(start)
@@ -2167,10 +2156,6 @@ def fibonacci_xrange(start, stop=None, algorithm='pari') -> Iterator:
     .. SEEALSO::
 
        :func:`fibonacci_sequence`
-
-    AUTHORS:
-
-    - Bobby Moretti
     """
     if stop is None:
         stop = ZZ(start)
@@ -2211,10 +2196,9 @@ def bernoulli_polynomial(x, n: Integer):
 
        B_n(x) = \sum_{i=0}^n \binom{n}{i}B_{n-i}x^i.
 
-    One has `B_n(x) = - n\zeta(1 - n,x)`, where
-    `\zeta(s,x)` is the Hurwitz zeta function. Thus, in a
-    certain sense, the Hurwitz zeta function generalizes the
-    Bernoulli polynomials to non-integer values of n.
+    One has `B_n(x) = - n\zeta(1 - n,x)`, where `\zeta(s,x)` is the Hurwitz
+    zeta function. Thus, in a certain sense, the Hurwitz zeta function
+    generalizes the Bernoulli polynomials to non-integer values of `n`.
 
     EXAMPLES::
 
