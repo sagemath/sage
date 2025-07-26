@@ -173,15 +173,9 @@ ecl_eval("(setf $errormsg nil)")
 # question and returning the answer. Our version throws an error in
 # which the text of the question is included. This is accomplished by
 # redirecting *standard-output* to a string.
-#
-# After an update in Issue 31553, this routine also preprocesses the
-# text to replace space symbols with strings. This prevents those
-# symbols from being turned into ugly newlines -- a problem that we
-# used to avoid with a custom patch.
 ecl_eval(r"""
 (defun retrieve (msg flag &aux (print? nil))
   (declare (special msg flag print?))
-  (setq msg (mapcar #'(lambda (x) (if (eq x '| |) " " x)) msg))
   (or (eq flag 'noprint) (setq print? t))
   (error
     (concatenate 'string

@@ -1,11 +1,11 @@
 r"""
-Plane Partitions
+Plane partitions
 
 AUTHORS:
 
-- Jang Soo Kim (2016): Initial implementation
-- Jessica Striker (2016): Added additional methods
-- Kevin Dilks (2021): Added symmetry classes
+- Jang Soo Kim (2016): initial implementation
+- Jessica Striker (2016): added additional methods
+- Kevin Dilks (2021): added symmetry classes
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
@@ -912,9 +912,7 @@ class PlanePartition(ClonableArray,
             sage: PlanePartition([]).is_CSPP()
             True
         """
-        if self.z_tableau() == self.y_tableau():
-            return True
-        return False
+        return self.z_tableau() == self.y_tableau()
 
     def is_TSPP(self) -> bool:
         r"""

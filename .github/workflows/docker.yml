@@ -28,7 +28,6 @@ on:
            "centos-stream-9",
            "centos-stream-9-python3.12",
            "almalinux-9-python3.11",
-           "archlinux-latest",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed",
           ]
