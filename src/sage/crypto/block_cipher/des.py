@@ -652,7 +652,7 @@ class DES(SageObject):
             (0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
              0, 1, 1, 0, 1, 1, 1, 0, 1, 1)
         """
-        return self._permutaion(self.sbox_layer(self._expand(right)+subkey))
+        return self._permutation(self.sbox_layer(self._expand(right)+subkey))
 
     def _expand(self, right):
         r"""
@@ -704,7 +704,7 @@ class DES(SageObject):
                                           for i, b in enumerate(block)]))
         return vector(GF(2), 32, block)
 
-    def _permutaion(self, block):
+    def _permutation(self, block):
         r"""
         Apply the permutation function to ``block``.
 
@@ -714,7 +714,7 @@ class DES(SageObject):
             sage: des = DES()
             sage: B = vector(GF(2), 32, [0,1,0,1,1,1,0,0,1,0,0,0,0,0,1,0,1,0,1,
             ....:                        1,0,1,0,1,1,0,0,1,0,1,1,1])
-            sage: des._permutaion(B)
+            sage: des._permutation(B)
             (0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
              0, 1, 1, 0, 1, 1, 1, 0, 1, 1)
         """
