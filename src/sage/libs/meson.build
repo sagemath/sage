@@ -105,7 +105,6 @@ extension_data = {
   'ecl' : files('ecl.pyx'),
   'homfly' : files('homfly.pyx'),
   'libecm' : files('libecm.pyx'),
-  'sirocco': files('sirocco.pyx'),
   'meataxe': files('meataxe.pyx'),
 }
 
@@ -115,8 +114,6 @@ foreach name, pyx : extension_data
   deps = dependencies
   if name == 'ecl'
     deps += [ecl, maxima]
-  elif name == 'sirocco'
-    deps += [sirocco]
   elif name == 'meataxe'
     deps += [mtx]
   elif name == 'homfly'
@@ -135,12 +132,17 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'braiding': files('braiding.pyx')}
+extension_data_cpp = {
+  'braiding': files('braiding.pyx'),
+  'sirocco': files('sirocco.pyx'),
+}
 
 foreach name, pyx : extension_data_cpp
   deps = dependencies
   if name == 'braiding'
     deps += [braiding]
+  elif name == 'sirocco'
+    deps += [sirocco]
   endif
   py.extension_module(
     name,
