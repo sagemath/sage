@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Symmetric Functions
+Symmetric functions
 
 For a comprehensive tutorial on how to use symmetric functions in Sage
 
@@ -1478,9 +1478,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 def check_word(w):
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:
                         return False
-                    if sum(1 for i in range(n-1) if w[i] == w[i+1]) != s:
-                        return False
-                    return True
+                    return sum(1 for i in range(n - 1) if w[i] == w[i + 1]) == s
             elif comparison == -1:
                 def check_word(w):
                     if sum(1 for i in range(n-1) if w[i] > w[i+1]) != d:

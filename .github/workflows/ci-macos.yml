@@ -30,7 +30,7 @@ on:
 
 env:
   TARGETS_PRE: all-sage-local
-  TARGETS: build doc-html
+  TARGETS: build
   TARGETS_OPTIONAL: ptest
 
 jobs:

@@ -2289,13 +2289,13 @@ class SR_gf2n(SR_generic):
         lin = matrix(self.base_ring(), length*e, length*e)
         if e == 4:
             l = [k.from_integer(x) for x in (5, 1, 12, 5)]
-            for k in range( 0, length ):
+            for k in range(length):
                 for i in range(4):
                     for j in range(4):
                         lin[k*4+j, k*4+i] = l[(i-j) % 4] ** (2**j)
         elif e == 8:
             l = [k.from_integer(x) for x in (5, 9, 249, 37, 244, 1, 181, 143)]
-            for k in range( 0, length ):
+            for k in range(length):
                 for i in range(8):
                     for j in range(8):
                         lin[k*8+j, k*8+i] = l[(i-j) % 8] ** (2**j)
@@ -3298,7 +3298,7 @@ class AllowZeroInversionsContext:
         self.sr._allow_zero_inversions = self.allow_zero_inversions
 
 
-def test_consistency(max_n=2, **kwargs):
+def check_consistency(max_n=2, **kwargs):
     r"""
     Test all combinations of ``r``, ``c``, ``e`` and ``n`` in ``(1,
     2)`` for consistency of random encryptions and their polynomial
@@ -3317,8 +3317,8 @@ def test_consistency(max_n=2, **kwargs):
     on machines with "only" 2GB of RAM, we test ``max_n`` = 1, which
     has a more reasonable memory usage. ::
 
-        sage: from sage.crypto.mq.sr import test_consistency
-        sage: test_consistency(1)  # long time (65s on sage.math, 2012)
+        sage: from sage.crypto.mq.sr import check_consistency
+        sage: check_consistency(1)  # long time (65s on sage.math, 2012)
         True
     """
     consistent = True
