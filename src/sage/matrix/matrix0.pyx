@@ -5668,8 +5668,22 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: a*x - x*a
             [             0     -x*y + y*x]
             [             0 -x*y^2 + y^2*x]
+
+        TESTS:
+
+        The matrix multiplication should finish in less than a second (:issue:`26654`)::
+
+            sage: F = GF(3^12)
+            sage: n = 128
+            sage: A = matrix.random(F, n, n)
+            sage: B = matrix.random(F, n, n)
+            sage: C = A * B
         """
         # Both self and right are matrices with compatible dimensions and base ring.
+        from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
+        if isinstance(self._base_ring, FiniteField_pari_ffelt):
+            from sage.libs.pari import pari
+            return self._parent(pari(self) * pari(right))
         if self._will_use_strassen(right):
             return self._multiply_strassen(right)
         else:
