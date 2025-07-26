@@ -1,3 +1,5 @@
+export CFLAGS="-std=gnu17 $CFLAGS"
+
 if [ "$SAGE_EDITABLE" = yes ]; then
     cd "$SAGE_SRC"
 else

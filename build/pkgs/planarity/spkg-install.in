@@ -1,3 +1,5 @@
+export CFLAGS="-std=gnu17 $CFLAGS"
+
 cd src
 
 # Use newer version of config.guess and config.sub (see Issue #19723)

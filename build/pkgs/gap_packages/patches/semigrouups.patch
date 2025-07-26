@@ -1,0 +1,60 @@
+--- a/pkg/semigroups/gapbind14/include/gapbind14/gapbind14.hpp	2024-10-19 05:11:26.000000000 -0600
++++ b/pkg/semigroups//gapbind14/include/gapbind14/gapbind14.hpp	2025-01-17 15:51:00.454986860 -0700
+@@ -291,7 +291,7 @@ namespace gapbind14 {
+       _funcs.push_back({detail::copy_c_str(nm),
+                         sizeof...(Args) - 1,
+                         detail::params_c_str(sizeof...(Args) - 1),
+-                        (GVarFunc) func,
++                        (ObjFunc) func,
+                         detail::copy_c_str(fnm + ":Func" + nm)});
+     }
+ 
+@@ -305,7 +305,7 @@ namespace gapbind14 {
+           .push_back({detail::copy_c_str(nm),
+                       sizeof...(Args) - 1,
+                       detail::params_c_str(sizeof...(Args) - 1),
+-                      (GVarFunc) func,
++                      (ObjFunc) func,
+                       detail::copy_c_str(flnm + ":Func" + sbtyp + "::" + nm)});
+     }
+ 
+--- a/pkg/semigroups//gapbind14/src/gapbind14.cpp	2024-10-19 05:11:26.000000000 -0600
++++ b/pkg/semigroups//gapbind14/src/gapbind14.cpp	2025-01-17 15:43:51.483642580 -0700
+@@ -26,7 +26,7 @@
+ #include "gapbind14/gap_include.hpp"  // for Obj etc
+ 
+ #define GVAR_ENTRY(srcfile, name, nparam, params) \
+-  {#name, nparam, params, (GVarFunc) name, srcfile ":Func" #name}
++  {#name, nparam, params, (ObjFunc) (unsigned long) name, srcfile ":Func" #name}
+ 
+ namespace gapbind14 {
+   UInt T_GAPBIND14_OBJ = 0;
+@@ -241,7 +241,7 @@ namespace gapbind14 {
+     // TODO(later) remove, use InstallGlobalFunction instead
+     StructGVarFunc GVarFuncs[]
+         = {GVAR_ENTRY("gapbind14.cpp", IsValidGapbind14Object, 1, "arg1"),
+-           {0, 0, 0, 0, 0}};
++           {nullptr, 0, nullptr, nullptr, nullptr}};
+   }  // namespace
+ 
+   Module &module() {
+--- a/pkg/semigroups//src/pkg.cpp	2024-10-19 05:11:26.000000000 -0600
++++ b/pkg/semigroups//src/pkg.cpp	2025-01-17 15:44:47.234907535 -0700
+@@ -430,7 +430,7 @@ typedef Obj (*GVarFunc)(/*arguments*/);
+ 
+ #define GVAR_ENTRY(srcfile, name, nparam, params)                 \
+   {                                                               \
+-#name, nparam, params, (GVarFunc) name, srcfile ":Func" #name \
++#name, nparam, params, (ObjFunc) (unsigned long) name, srcfile ":Func" #name \
+   }
+ 
+ // Table of functions to export
+@@ -482,7 +482,7 @@ static StructGVarFunc GVarFuncs[] = {
+                4,
+                "o, scc, lookup, nr_threads"),
+ 
+-    {0, 0, 0, 0, 0} /* Finish with an empty entry */
++    {nullptr, 0, nullptr, nullptr, nullptr} /* Finish with an empty entry */
+ };
+ 
+ /******************************************************************************
