@@ -7,3 +7,12 @@ option(
   value: '',
   description: 'Path to SAGE_LOCAL directory (only used for compatibility with the old Sage-the-Distro',
 )
+
+#
+# Boolean options
+#
+option(
+  'build-docs',
+  type: 'boolean',
+  description: 'Build the HTML / PDF documentation'
+)
