@@ -27,7 +27,7 @@ def is_Gamma1(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_Gamma1
+        sage: from sage.modular.arithgroup.congroup_gamma1 import is_Gamma1
         sage: is_Gamma1(SL2Z)
         doctest:warning...
         DeprecationWarning: The function is_Gamma1 is deprecated; use 'isinstance(..., Gamma1_class)' instead.
