@@ -9,6 +9,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                          Emily A. Kirkman
 #                     2009 Michael C. Yurko <myurko@gmail.com>
 #                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
+#                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and
+#                          Kristina Obrenovic Gilmour: is_projective_planar
+#                          in graph.py and associated method p2_forbidden_minors
+#                          in sage.graphs.generators.families module.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -2999,6 +3003,61 @@ def petersen_family(generate=False):
     return [Graph(x) for x in l]
 
 
+def p2_forbidden_minors():
+    r"""
+    Return an array containing the 35 minimal forbidden excluded minors
+    of the projective plane.
+
+    We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
+    which is a result of Archdeacon and encoded them in graph6 format.
+    The order of the graphs is the same as they appear in [WA2025]_.
+
+    TESTS::
+
+    sage: len(graphs.families.p2_forbidden_minors())
+    35
+    """
+
+    p2_forbidden_minors_graph6 = [
+        'KFz_????wF?[',
+        'J~{???F@oM?',
+        'I~{?GKF@w',
+        'JFz_?AB_sE?',
+        'I~{?CME`_',
+        'H~}CKMF',
+        'G^~EMK',
+        'H^|ACME',
+        'Himp`cr',
+        'Iimp_CpKO',
+        'IFz@GCdHO',
+        'IBz__aB_o',
+        'FQ~~w',
+        'GlvJ`k',
+        'HilKH`J',
+        'GjlKJs',
+        'HhI]ECZ',
+        'HiMIKSp',
+        'HFwO]Kf',
+        'I]q?a?n@o',
+        'IHIWuFGo_',
+        'IXJWMC`Eg',
+        'GFzfF?',
+        'I]o__OF@o',
+        'G?^vf_',
+        'H?]ufBo',
+        'GlrHhs',
+        'HhIWuRB',
+        'IXCO]FGb?',
+        'Fvz~o',
+        'GlfH]{',
+        'Hl`HGvV',
+        'HhcIHmv',
+        'IhEGICRiw',
+        'JhEIDSD?ga_'
+    ]
+
+    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
+
 def SierpinskiGasketGraph(n):
     """
     Return the Sierpinski Gasket graph of generation `n`.
@@ -3386,7 +3445,7 @@ def WindmillGraph(k, n):
         slide = 1/sin(sector/4)
 
         pos_dict = {}
-        for i in range(0, k):
+        for i in range(k):
             x = float(cos(i*pi/(k-2)))
             y = float(sin(i*pi/(k-2))) + slide
             pos_dict[i] = (x, y)
