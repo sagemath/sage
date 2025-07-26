@@ -1152,14 +1152,54 @@ cdef class Matrix(Matrix1):
             [-236774176922867   -3334450741532  470910201757143          1961587  230292926737068]
             [  82318322106118    1159275026338 -163719448527234          -681977  -80065012022313]
             [  53148766104440     748485096017 -105705345467375          -440318  -51693918051894]
-        """
-        S,U,V = self.smith_form()
 
-        n,m = self.dimensions()
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_smith_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        Random testing::
+
+            sage: m = randrange(1,100)
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^m).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_smith_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
+        """
+        S,U,V = self.smith_form()  # S == U * self * V
+
+        m,n = self.dimensions()
         r = B.ncols()
 
+        # we will solve S * X_ == U * B
+        UB = U * B
+
+        # S is zero past the nth row; check if this already renders the system unsolvable
+        if UB[n:]:
+            raise ValueError("matrix equation has no solutions")
+
+        # solve the system, detecting inconsistencies up to the nth row along the way
         X_ = []
-        for d, v in zip(S.diagonal(), (U*B).rows()):
+        for d, v in zip(S.diagonal(), UB):
             if d:
                 X_.append(v / d)
             elif v:
@@ -1167,14 +1207,15 @@ cdef class Matrix(Matrix1):
             else:
                 X_.append([0] * r)
 
-        X_ += [[0] * r] * (m - n)  # arbitrary
+        X_ += [[0] * r] * (n - m)  # arbitrary
 
         from sage.matrix.constructor import matrix
         try:
-            X_ = matrix(self.base_ring(), m, r, X_)
+            X_ = matrix(self.base_ring(), n, r, X_)
         except TypeError:
             raise ValueError("matrix equation has no solutions")
 
+        # now V * X_ is a solution since self * V * X_ = U^-1 * S * X_ = U^-1 * U * B = B
         return V * X_
 
     def _solve_right_hermite_form(self, B):
@@ -1219,26 +1260,64 @@ cdef class Matrix(Matrix1):
             [  968595469303  1461570161933   781069571508  1246248350502       -1629017]
             [ -235552378240  -355438713600  -189948023680  -303074680960         396160]
             [             0              0              0              0              0]
+
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_hermite_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        Random testing::
+
+            sage: m = randrange(1,100)
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^m).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_hermite_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
         """
         H,U = self.transpose().hermite_form(transformation=True)
         H = H.transpose()
         U = U.transpose()
-#        assert self*U == H
 
-        n,m = self.dimensions()
+        m,n = self.dimensions()
         r = B.ncols()
 
         from sage.matrix.constructor import matrix
-        X_ = matrix(self.base_ring(), m, r)
-        for i in range(min(n,m)):
-            v = B[i,:]
-            v -= H[i,:i] * X_[:i]
-            d = H[i][i]
-            try:
-                X_[i] = v / d
-            except (ZeroDivisionError, TypeError) as e:
-                raise ValueError("matrix equation has no solutions")
-#        assert H*X_ == B
+        X_ = matrix(self.base_ring(), n, r)
+        j = 0  # current column
+        for i in range(m):
+            if j < n and H[i,j]:
+                # pivot for column j is in row i
+                v = B[i,:]
+                v -= H[i,:j] * X_[:j]
+                try:
+                    X_[j] = v / H[i,j]
+                except TypeError:
+                    raise ValueError("matrix equation has no solutions")
+                j += 1
+            else:
+                # pivot for column j is below row i
+                assert not H[i,j:]
+                if H[i] * X_ != B[i]:
+                    raise ValueError("matrix equation has no solutions")
 
         return U * X_
 

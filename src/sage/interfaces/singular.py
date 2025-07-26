@@ -1654,7 +1654,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             is_extension = False
         else:
             # it ought to be a finite field
-            q = ZZ(charstr[0].lstrip('ZZ/'))
+            q = ZZ(charstr[0].removeprefix('ZZ/'))
             from sage.rings.finite_rings.finite_field_constructor import GF
             if q.is_prime():
                 br = GF(q)

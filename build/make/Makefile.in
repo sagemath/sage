@@ -132,7 +132,6 @@ SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 
 # Packages for which we build platform-independent wheels for PyPI
 PYPI_NOARCH_WHEEL_PACKAGES =			\
-	sage_sws2rst				\
 	sage_setup				\
 	sagemath_environment			\
 
