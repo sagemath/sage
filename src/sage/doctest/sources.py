@@ -191,7 +191,7 @@ class DocTestSource:
         """
         return not (self == other)
 
-    def _process_doc(self, doctests, doc, namespace, start):
+    def _process_doc(self, doctests: list[doctest.DocTest], doc, namespace, start):
         """
         Appends doctests defined in ``doc`` to the list ``doctests``.
 
@@ -264,7 +264,7 @@ class DocTestSource:
         """
         return set()
 
-    def _create_doctests(self, namespace, tab_okay=None):
+    def _create_doctests(self, namespace, tab_okay=None) -> tuple[list[doctest.DocTest], dict]:
         """
         Create a list of doctests defined in this source.
 
@@ -312,7 +312,7 @@ class DocTestSource:
                                         probed_tags=self.options.probe,
                                         file_optional_tags=self.file_optional_tags)
         self.linking = False
-        doctests = []
+        doctests: list[doctest.DocTest] = []
         in_docstring = False
         unparsed_doc = False
         doc = []
@@ -465,7 +465,7 @@ class StringDocTestSource(DocTestSource):
         for lineno, line in enumerate(self.source.split('\n')):
             yield lineno + self.lineno_shift, line + '\n'
 
-    def create_doctests(self, namespace):
+    def create_doctests(self, namespace) -> tuple[list[doctest.DocTest], dict]:
         r"""
         Create doctests from this string.
 
@@ -477,8 +477,8 @@ class StringDocTestSource(DocTestSource):
 
         - ``doctests`` -- list of doctests defined by this string
 
-        - ``tab_locations`` -- either ``False`` or a list of linenumbers
-          on which tabs appear
+        - ``extras`` -- dictionary with ``extras['tab']`` either
+          ``False`` or a list of linenumbers on which tabs appear
 
         EXAMPLES::
 
@@ -488,10 +488,12 @@ class StringDocTestSource(DocTestSource):
             sage: s = "'''\n    sage: 2 + 2\n    4\n'''"
             sage: PythonStringSource = dynamic_class('PythonStringSource',(StringDocTestSource, PythonSource))
             sage: PSS = PythonStringSource('<runtime>', s, DocTestDefaults(), 'runtime')
-            sage: dt, tabs = PSS.create_doctests({})
+            sage: dt, extras = PSS.create_doctests({})
             sage: for t in dt:
             ....:     print("{} {}".format(t.name, t.examples[0].sage_source))
             <runtime> 2 + 2
+            sage: extras
+            {...'tab': []...}
         """
         return self._create_doctests(namespace)
 
@@ -721,7 +723,7 @@ class FileDocTestSource(DocTestSource):
         from .parsing import parse_file_optional_tags
         return parse_file_optional_tags(self)
 
-    def create_doctests(self, namespace):
+    def create_doctests(self, namespace) -> tuple[list[doctest.DocTest], dict]:
         r"""
         Return a list of doctests for this file.
 
@@ -882,7 +884,7 @@ class SourceLanguage:
 
     Currently supported languages include Python, ReST and LaTeX.
     """
-    def parse_docstring(self, docstring, namespace, start):
+    def parse_docstring(self, docstring, namespace, start) -> list[doctest.DocTest]:
         """
         Return a list of doctest defined in this docstring.
 

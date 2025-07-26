@@ -741,10 +741,7 @@ class TernaryQF(SageObject):
             return False
         if a == s and t > 2*r:
             return False
-        if b == r and t > 2*s:
-            return False
-
-        return True
+        return not (b == r and t > 2 * s)
 
     def reduced_form_eisenstein(self, matrix=True):
         r"""

@@ -1,5 +1,5 @@
 r"""
-Catalog Of Crystals
+Catalog of crystals
 
 Let `I` be an index set and let `(A,\Pi,\Pi^\vee,P,P^\vee)` be a Cartan datum
 associated with generalized Cartan matrix `A = (a_{ij})_{i,j\in I}`.  An

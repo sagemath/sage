@@ -276,7 +276,7 @@ class ClusterQuiver(SageObject):
             #   special cases this way.
             if len(data) == 2 and isinstance(data[0], str):
                 d0, d1 = data
-                if d0 == 'TR' or d0 == 'GR' or (d0 == 'C' and d1 == 2):
+                if d0 in {'TR', 'GR'} or (d0 == 'C' and d1 == 2):
                     if d1 in ZZ:
                         quiv = ClusterQuiver(QuiverMutationType_Irreducible(d0, d1)._digraph)
                         quiv._mutation_type = mutation_type
@@ -386,10 +386,11 @@ class ClusterQuiver(SageObject):
         # constructs a quiver from a digraph
         elif isinstance(data, DiGraph):
             if frozen is None:
-                frozen = []
-            if not isinstance(frozen, (list, tuple)):
+                frozen = set()
+            elif isinstance(frozen, (list, tuple)):
+                frozen = set(frozen)
+            else:
                 raise ValueError("'frozen' must be a list of vertices")
-            frozen = set(frozen)
             if not frozen.issubset(data.vertex_iterator()):
                 raise ValueError("frozen elements must be vertices")
 
@@ -404,16 +405,16 @@ class ClusterQuiver(SageObject):
             n = self._n = len(nlist)
             labelDict = {x: i for i, x in enumerate(nlist + mlist)}
 
-            dg = copy(data)
             if data.has_loops():
                 raise ValueError("the input DiGraph contains a loop")
 
-            edges = set(data.edge_iterator(labels=False))
-            if any((b, a) in edges for a, b in edges):
+            if any(data.has_edge((b, a))
+                   for a, b in data.edge_iterator(labels=False)):
                 raise ValueError("the input DiGraph contains two-cycles")
 
+            dg = copy(data)
             dg_labelling = False
-            if not set(dg.vertex_iterator()) == set(range(n + m)):
+            if set(dg.vertex_iterator()) != set(range(n + m)):
                 # relabelling to integers
                 # frozen vertices must be preserved
                 dg_labelling = nlist + mlist
@@ -493,7 +494,7 @@ class ClusterQuiver(SageObject):
             from sage.misc.stopgap import stopgap
             stopgap("Having frozen nodes is known to produce wrong answers", 22381)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return ``True`` if ``self`` and ``other`` represent the same quiver.
 
@@ -614,11 +615,10 @@ class ClusterQuiver(SageObject):
                     color_dict[colors[0]].append((v1, v2))
                 else:
                     color_dict[colors[6]].append((v1, v2))
+            elif ab == (1, -1):
+                color_dict[colors[1]].append((v1, v2))
             else:
-                if ab == (1, -1):
-                    color_dict[colors[1]].append((v1, v2))
-                else:
-                    color_dict[colors[5]].append((v1, v2))
+                color_dict[colors[5]].append((v1, v2))
             a, b = ab
             if a == -b:
                 if a == 1:
