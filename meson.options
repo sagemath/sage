@@ -16,3 +16,62 @@ option(
   type: 'boolean',
   description: 'Build the HTML / PDF documentation'
 )
+
+#
+# Features
+#
+option(
+  'bliss',
+  type: 'feature',
+  value: 'auto',
+  description: 'Bliss interface to graph isomorphisms'
+)
+
+option(
+  'brial',
+  type: 'feature',
+  value: 'auto',
+  description: 'BRiAl interface to polynomials over boolean rings'
+)
+
+option(
+  'coxeter3',
+  type: 'feature',
+  value: 'auto',
+  description: 'Coxeter 3.x interface to Coxeter groups'
+)
+
+option(
+  'mcqd',
+  type: 'feature',
+  value: 'auto',
+  description: 'MCQD interface to the MaxCliqueDyn algorithm'
+)
+
+option(
+  'meataxe',
+  type: 'feature',
+  value: 'auto',
+  description: 'Interface to the MeatAxe program'
+)
+
+option(
+  'rankwidth',
+  type: 'feature',
+  value: 'auto',
+  description: 'Interface to librw for rank-width decompositions'
+)
+
+option(
+  'sirocco',
+  type: 'feature',
+  value: 'auto',
+  description: 'Sirocco interface to certified root continuation'
+)
+
+option(
+  'tdlib',
+  type: 'feature',
+  value: 'auto',
+  description: 'Interface to tdlib for tree decompositions'
+)

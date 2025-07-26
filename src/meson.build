@@ -151,7 +151,7 @@ endif
 # Cannot be found via pkg-config
 mtx = cc.find_library(
   'mtx',
-  required: false,
+  required: get_option('meataxe'),
   disabler: true,
   has_headers: ['meataxe.h'],
 )

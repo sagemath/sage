@@ -1,4 +1,4 @@
-coxeter3 = cc.find_library('coxeter3', required: false, disabler: true)
+coxeter3 = cc.find_library('coxeter3', required: get_option('coxeter3'), disabler: true)
 py.install_sources(
   '__init__.py',
   'all__sagemath_coxeter3.py',
