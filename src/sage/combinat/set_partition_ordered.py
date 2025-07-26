@@ -1,12 +1,10 @@
 r"""
-Ordered Set Partitions
+Ordered set partitions
 
 AUTHORS:
 
 - Mike Hansen
-
 - MuPAD-Combinat developers (for algorithms and design inspiration)
-
 - Travis Scrimshaw (2013-02-28): Removed ``CombinatorialClass`` and added
   entry point through :class:`OrderedSetPartition`.
 """

@@ -1,17 +1,17 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-`\nu`-Dyck Words
+`\nu`-Dyck words
 
 A class of the `\nu`-Dyck word, see [PRV2017]_ for details.
-
-AUTHORS:
-
-- Aram Dermenjian (2020-09-26)
 
 This file is based off the class
 :func:`DyckWords<sage.combinat.dyck_word.DyckWord>` written by Mike Hansen, Dan
 Drake, Florent Hivert, Christian Stump, Mike Zabrocki, Jean--Baptiste Priez
-and Travis Scrimshaw
+and Travis Scrimshaw.
+
+AUTHORS:
+
+- Aram Dermenjian (2020-09-26)
 """
 # ****************************************************************************
 #       Copyright (C) 2020 Aram Dermenjian <aram.dermenjian@gmail.com>,

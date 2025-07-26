@@ -54,6 +54,7 @@ from sage.structure.sage_object import SageObject
 if sys.platform != "win32":
     from signal import SIGALRM, SIGBUS, SIGHUP, SIGKILL, SIGPIPE, SIGQUIT
 
+
 def signal_name(sig: int | Signals) -> str:  # noqa: PLR0911
     """
     Return a string describing a signal number.

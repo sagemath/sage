@@ -4452,19 +4452,17 @@ class ModularAbelianVariety_modsym_abstract(ModularAbelianVariety_abstract):
                 D = []
                 for N in reversed(divisors(M)):
                     if N > 1:
-                        isogeny_number = 0
                         A = amb.modular_symbols_of_level(N).cuspidal_subspace().new_subspace()
                         if bound is None:
                             X = factor_new_space(A)
                         else:
                             X = A.decomposition(bound=bound)
-                        for B in X:
+                        for isogeny_number, B in enumerate(X):
                             D.extend(ModularAbelianVariety_modsym(B.degeneracy_map(M, t).image(),
                                                                   is_simple=True, newform_level=(N, G),
                                                                   isogeny_number=isogeny_number,
                                                                   number=(t, M))
                                      for t in divisors(M // N))
-                            isogeny_number += 1
             elif A == amb.cuspidal_submodule():
                 D = [ModularAbelianVariety_modsym(B)
                      for B in A.decomposition(bound=bound)]

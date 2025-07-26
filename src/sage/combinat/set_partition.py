@@ -1,20 +1,17 @@
 r"""
-Set Partitions
+Set partitions
+
+This module defines a class for immutable partitioning of a set. For
+mutable version see :func:`DisjointSet`.
 
 AUTHORS:
 
 - Mike Hansen
-
 - MuPAD-Combinat developers (for algorithms and design inspiration).
-
 - Travis Scrimshaw (2013-02-28): Removed ``CombinatorialClass`` and added
   entry point through :class:`SetPartition`.
-
 - Martin Rubey (2017-10-10): Cleanup, add crossings and nestings, add
   random generation.
-
-This module defines a class for immutable partitioning of a set. For
-mutable version see :func:`DisjointSet`.
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,

@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Descent Algebras
+Descent algebras
 
 AUTHORS:
 
-- Travis Scrimshaw (2013-07-28): Initial version
+- Travis Scrimshaw (2013-07-28): initial version
 """
 # ****************************************************************************
 #  Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>

@@ -1,5 +1,5 @@
 r"""
-Forest Posets
+Forest posets
 
 AUTHORS:
 

@@ -1,5 +1,5 @@
 r"""
-Six Vertex Model
+Six vertex model
 """
 
 from sage.structure.parent import Parent

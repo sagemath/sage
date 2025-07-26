@@ -19,7 +19,7 @@ Submodules of Hecke modules
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.arith.all as arith
+import sage.arith.misc as arith
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_generic

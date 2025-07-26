@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Symmetric Functions
+Symmetric functions
 
 For a comprehensive tutorial on how to use symmetric functions in Sage
 

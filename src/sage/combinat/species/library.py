@@ -1,5 +1,5 @@
 """
-Examples of Combinatorial Species
+Examples of combinatorial species
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,

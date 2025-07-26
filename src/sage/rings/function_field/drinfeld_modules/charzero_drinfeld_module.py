@@ -504,7 +504,6 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         """
         A = self.function_ring()
         g = self.coefficient(n)
-        g = g.backend(force=True)
         if g.denominator().is_one():
             return A(g.numerator().list())
         else:
@@ -550,7 +549,6 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         A = self.function_ring()
         gs = []
         for g in self.coefficients(sparse):
-            g = g.backend(force=True)
             if g.denominator().is_one():
                 gs.append(A(g.numerator().list()))
             else:

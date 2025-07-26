@@ -980,8 +980,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
         K = self.base_ring()
         W = R.new_matrix(nrows=len(B), ncols=R.nrows())
         syms = self.manin_symbols()
-        j = 0
-        for i in B:
+        for j, i in enumerate(B):
             for h in H:
                 entries = syms.apply(i, h)
                 for k, x in entries:
@@ -989,7 +988,6 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
                     if s:
                         # W[j,f] = W[j,f] + s*K(x)
                         W.add_to_entry(j, f, s * K(x))
-            j += 1
         tm = verbose("start matrix multiply", tm)
         if hasattr(W, '_matrix_times_matrix_dense'):
             Tp = W._matrix_times_matrix_dense(R)
@@ -2937,9 +2935,8 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         mod2term = self._mod2term
         R = self.manin_gens_to_basis()
         W = R.new_matrix(nrows=len(B), ncols=R.nrows())  # the 0 with given number of rows and cols.
-        j = 0
         tm = verbose("Matrix non-reduced", tm)
-        for i in B:
+        for j, i in enumerate(B):
             # The following step is where most of the time is spent.
             c, d = P1[i]
             v = H.apply(c, d, N)
@@ -2960,7 +2957,6 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
                     f, s = mod2term[k]
                     if s != 0:
                         W[j, f] = W[j, f] + s*m
-            j += 1
         tm = verbose("done making non-reduced matrix", tm)
         verbose("start matrix-matrix (%s x %s) times (%s x %s) multiply to get Tp" % (W.nrows(), W.ncols(),
                                                                                       R.nrows(), R.ncols()))

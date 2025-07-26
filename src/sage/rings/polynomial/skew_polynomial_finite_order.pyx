@@ -65,7 +65,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             sage: x.parent() is S
             True
         """
-        SkewPolynomial_generic_dense.__init__ (self, parent, x, check, construct, **kwds)
+        SkewPolynomial_generic_dense.__init__(self, parent, x, check, construct, **kwds)
         self._norm = None
         self._charpoly = None
         self._optbound = None

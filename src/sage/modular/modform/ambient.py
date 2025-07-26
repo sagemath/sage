@@ -67,7 +67,9 @@ TESTS::
 from sage.arith.misc import is_prime, sigma
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0_class, Gamma1_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.dirichlet import TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.modsym.modsym import ModularSymbols

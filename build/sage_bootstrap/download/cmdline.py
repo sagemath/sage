@@ -98,7 +98,7 @@ def run():
     app = Application(timeout=args.timeout, quiet=args.quiet)
     if (not args.print_fastest_mirror) and (args.url_or_tarball is None):
         parser.print_help()
-        print('')
+        print()
         print('error: either --print-fastest-mirror or url_or_tarball is required')
         sys.exit(2)
     if args.print_fastest_mirror:

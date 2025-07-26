@@ -1,5 +1,5 @@
 r"""
-Colored Permutations
+Colored permutations
 
 .. TODO::
 
