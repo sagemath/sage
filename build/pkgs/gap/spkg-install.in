@@ -4,7 +4,7 @@
 
 cd src
 
-export CFLAGS="-std=gnu17 $CFLAGS_NON_NATIVE"
+export CFLAGS=$CFLAGS_NON_NATIVE
 export CXXFLAGS=$CXXFLAGS_NON_NATIVE
 
 GAP_BUILD_ROOT="$(pwd)"
