@@ -1361,7 +1361,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     d.add_edges(('s', vertices_id[v], b[v]) for v in vertices)
 
     d.add_edges(((vertices_id[u], vertices_id[v]), 't', 1)
-                 for u, v in G.edges(sort=False, labels=None))
+                for u, v in G.edges(sort=False, labels=None))
 
     # each v is linked to its incident edges
 
@@ -1381,7 +1381,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     # The flow graph may not contain all the vertices, if they are
     # not part of the flow...
     edges = ((vertices[u], vertices[vv if vv != u else uu])
-             for u in (x for x in range(n) if x in flow)
+             for u in range(n) if u in flow
              for uu, vv in flow.neighbors_out(u))
 
     return _initialize_digraph(G, edges)

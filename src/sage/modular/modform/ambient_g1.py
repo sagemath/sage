@@ -44,15 +44,10 @@ We check that :issue:`10453` is fixed::
 #                  http://www.gnu.org/licenses/
 #########################################################################
 
-from sage.rings.rational_field import Q as QQ
-
-import sage.modular.arithgroup.all as arithgroup
-
-from . import ambient
-from . import cuspidal_submodule
-from . import eisenstein_submodule
-
 from sage.misc.cachefunc import cached_method
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor
+from sage.modular.modform import ambient, cuspidal_submodule, eisenstein_submodule
+from sage.rings.rational_field import Q as QQ
 
 
 class ModularFormsAmbient_gH_Q(ambient.ModularFormsAmbient):
@@ -164,7 +159,7 @@ class ModularFormsAmbient_g1_Q(ModularFormsAmbient_gH_Q):
             sage: type(m)
             <class 'sage.modular.modform.ambient_g1.ModularFormsAmbient_g1_Q_with_category'>
         """
-        ambient.ModularFormsAmbient.__init__(self, arithgroup.Gamma1(level), weight, QQ, eis_only=eis_only)
+        ambient.ModularFormsAmbient.__init__(self, Gamma1_constructor(level), weight, QQ, eis_only=eis_only)
 
     ####################################################################
     # Computation of Special Submodules
