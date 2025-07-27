@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Diagram and Partition Algebras
+Diagram and partition algebras
 
 AUTHORS:
 
