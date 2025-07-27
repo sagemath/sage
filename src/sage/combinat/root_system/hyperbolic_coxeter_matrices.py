@@ -1,11 +1,19 @@
 """
-Hyperbolic Coxeter Matrices Database
+Hyperbolic Coxeter Matrices Database.
 
-These matrices are defined by their position in the Humphrey's book
-"Reflection groups and Coxeter groups".
-The first number in the parenthesis is the page,
-the second number is the column and the third number is the row.
+The Coxeter graphs are classified depending on their order and other
+features. To refer to a Coxeter graph in the book, we use 3 numbers:
+the page number where the Coxeter graph is depicted, the column and
+row where the Coxeter graph is placed in the page.
+
+REFERENCES:
+
+- James E. Humphreys, *Reflection Groups and Coxeter Groups*, no. 29 in
+  Cambridge Studies in Advanced Mathematics, Cambridge University Press,
+  original edition 1990; reprint edition: October 1992.
 """
+
+
 # ****************************************************************************
 #       Copyright (C) 2025 Samy Mekkati <samy.mekkati.1@ens.etsmtl.ca>
 #
@@ -23,6 +31,9 @@ the second number is the column and the third number is the row.
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 
 hyperbolic_coxeter_matrices = {
+
+    ##########################################################################
+    # Page 141 Rank 4 Coxeter Matrices
     (141, 1, 1): CoxeterMatrix([
                 [1, 4, 2, 2],
                 [4, 1, 3, 2],
@@ -77,6 +88,8 @@ hyperbolic_coxeter_matrices = {
                 [5, 2, 1, 3],
                 [2, 5, 3, 1]
             ]),
+    ##########################################################################
+    # Page 142 Rank 4 Coxeter Matrices
     (142, 1, 1): CoxeterMatrix([
                 [1, 4, 3, 2],
                 [4, 1, 2, 4],
@@ -215,7 +228,8 @@ hyperbolic_coxeter_matrices = {
                 [3, 3, 1, 3],
                 [3, 3, 3, 1]
             ]),
-
+    ##########################################################################
+    # Page 141 Rank 5 Coxeter Matrices
     (141, 3, 1): CoxeterMatrix([
                 [1, 4, 2, 2, 2],
                 [4, 1, 3, 2, 2],
@@ -251,6 +265,8 @@ hyperbolic_coxeter_matrices = {
                 [2, 4, 2, 1, 3],
                 [2, 2, 3, 3, 1]
             ]),
+    ##########################################################################
+    # Page 142 Rank 5 Coxeter Matrices
     (142, 3, 1): CoxeterMatrix([
                 [1, 3, 2, 2, 2],
                 [3, 1, 4, 2, 2],
@@ -314,7 +330,8 @@ hyperbolic_coxeter_matrices = {
                 [2, 3, 2, 1, 4],
                 [2, 2, 3, 4, 1]
             ]),
-
+    ##########################################################################
+    # Page 143 Rank 6 Coxeter Matrices
     (143, 1, 1): CoxeterMatrix([
                 [1, 3, 2, 2, 2, 2],
                 [3, 1, 4, 2, 2, 2],
@@ -411,6 +428,8 @@ hyperbolic_coxeter_matrices = {
                 [2, 2, 3, 2, 1, 3],
                 [2, 2, 2, 3, 3, 1]
             ]),
+    ##########################################################################
+    # Page 143 Rank 7 Coxeter Matrices
     (143, 1, 10): CoxeterMatrix([
                 [1, 3, 2, 2, 2, 2, 2],
                 [3, 1, 2, 3, 2, 2, 2],
@@ -438,6 +457,8 @@ hyperbolic_coxeter_matrices = {
                 [2, 2, 2, 3, 2, 1, 3],
                 [2, 2, 2, 2, 3, 3, 1]
             ]),
+    ##########################################################################
+    # Page 144 Rank 8 Coxeter Matrices
     (144, 1, 1): CoxeterMatrix([
                 [1, 3, 2, 2, 2, 2, 2, 2],
                 [3, 1, 2, 3, 2, 2, 2, 2],
@@ -478,6 +499,8 @@ hyperbolic_coxeter_matrices = {
                 [2, 2, 2, 2, 3, 2, 1, 3],
                 [2, 2, 2, 2, 2, 3, 3, 1]
             ]),
+    ##########################################################################
+    # Page 141 Rank 9 Coxeter Matrices
     (144, 1, 5): CoxeterMatrix([
                 [1, 3, 2, 2, 2, 2, 2, 2, 2],
                 [3, 1, 3, 2, 2, 2, 2, 2, 2],
@@ -533,6 +556,8 @@ hyperbolic_coxeter_matrices = {
                 [2, 2, 2, 2, 2, 2, 3, 1, 3],
                 [2, 2, 2, 2, 2, 2, 2, 3, 1]
             ]),
+    ##########################################################################
+    # Page 144 Rank 10 Coxeter Matrices
     (144, 1, 9): CoxeterMatrix([
                 [1, 3, 2, 2, 2, 2, 2, 2, 2, 2],
                 [3, 1, 2, 3, 2, 2, 2, 2, 2, 2],
@@ -558,10 +583,10 @@ hyperbolic_coxeter_matrices = {
                 [2, 2, 2, 2, 2, 2, 2, 2, 4, 1]
             ]),
 }
-
 """
-This variable contains the name of the Coxeter matrix
-defined in McMullen's notation.
+The following dictionary associates the notation used in the 
+article [Coxeter groups, Salem numbers and the Hilbert metric] 
+of McMullen to the above datum
 """
 mcmullen_notation = {
     ("Ah", 4): (142, 1, 9),

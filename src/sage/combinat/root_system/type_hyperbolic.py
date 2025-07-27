@@ -34,7 +34,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C
             Coxeter type with Humphrey's datum
             (Page : 142, Column : 1, Row : 3)
-
             sage: C = CoxeterType(["Dh", 8])
             sage: C
             Coxeter type of ['Dh', 8] with Humphrey's datum
@@ -66,7 +65,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
         """
         Return a string representation of ``self``.
 
-        this method returns a string that describes the Coxeter type,
+        This method returns a string that describes the Coxeter type,
         including its Humphrey's datum and McMullen's notation if defined.
 
         EXAMPLES::
@@ -75,7 +74,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C
             Coxeter type with Humphrey's datum
             (Page : 142, Column : 1, Row : 1)
-
             sage: C2 = CoxeterType(["Ah", 6])
             sage: C2
             Coxeter type of ['Ah', 6] with Humphrey's datum
@@ -122,7 +120,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
             [4 1 4 2]
             [2 4 1 3]
             [2 2 3 1]
-
             sage: CoxeterType(["Dh", 9]).coxeter_matrix()
             [1 2 3 2 2 2 2 2 2]
             [2 1 3 2 2 2 2 2 2]
@@ -149,7 +146,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C = CoxeterType(["Hyperbolic", (142, 1, 3)])
             sage: C.humphreys_reference()
             'Page : 142, Column : 1, Row : 3'
-
             sage: CoxeterType(["Dh", 8]).humphreys_reference()
             'Page : 144, Column : 1, Row : 2'
         """
@@ -164,15 +160,12 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C = CoxeterType(["Hyperbolic",(141, 2, 1)])
             sage: C.coxeter_graph()
             Graph on 4 vertices
-
             sage: C2 = CoxeterType(["Hyperbolic",(144, 1, 1)])
             sage: C2.coxeter_graph()
             Graph on 8 vertices
-
             sage: C3 = CoxeterType(["Dh", 9])
             sage: C3.coxeter_graph()
             Graph on 9 vertices
-
         """
         return self.coxeter_matrix().coxeter_graph()
 
@@ -183,7 +176,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
         EXAMPLES::
             sage: CoxeterType(["Hyperbolic", (142, 1, 3)]).is_hyperbolic()
             True
-
             sage: CoxeterType(["Bh", 5]).is_hyperbolic()
             True
         """
@@ -199,10 +191,8 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
             sage: CoxeterType(["Hyperbolic",(144, 1, 1)]).index_set()
             (1, 2, 3, 4, 5, 6, 7, 8)
-
             sage: CoxeterType(["Hyperbolic",(143, 1, 6)]).index_set()
             (1, 2, 3, 4, 5, 6)
-
             sage: CoxeterType(["Q", 4]).index_set()
             (1, 2, 3, 4)
         """
@@ -216,7 +206,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
             sage: CoxeterType(["Hyperbolic",(142, 3, 4)]).is_affine()
             False
-
             sage: CoxeterType(["Eh", 6]).is_affine()
             False
         """
@@ -230,7 +219,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
             sage: CoxeterType(["Hyperbolic",(142, 3, 4)]).is_finite()
             False
-
             sage: CoxeterType(["Dh", 8]).is_finite()
             False
         """
@@ -244,7 +232,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
 
             sage: CoxeterType(["Hyperbolic",(142, 3, 4)]).is_crystallographic()
             True
-
             sage: CoxeterType(["Hyperbolic",(141, 1, 1)]).is_crystallographic()
             False
         """
@@ -260,7 +247,6 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: C2 = CoxeterType(["K", 53])
             sage: C1 == C2
             True
-
             sage: C3 = CoxeterType(["Hyperbolic", (141, 1, 1)])
             sage: C1 == C3
             False
