@@ -699,11 +699,10 @@ class SpechtModuleTableauxBasis(SpechtModule):
     def __init__(self, ambient):
         r"""
         Initialize ``self``.
-        
-        INPUT::
-        
-        - ``ambient``: The ambient
-          :class:`TabloidModule`.
+
+        INPUT:
+
+        - ``ambient`` -- the ambient :class:`TabloidModule`
 
         EXAMPLES::
 
