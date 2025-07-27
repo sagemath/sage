@@ -302,6 +302,7 @@ RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
 # silence rpy2 warnings
 logging.getLogger('rpy2.rinterface_lib.callbacks').setLevel(logging.ERROR)
 
+
 def _setup_r_to_sage_converter():
     """
     Set up a the converter used to convert from rpy2's
