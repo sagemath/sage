@@ -179,16 +179,20 @@ Python floats.
 import os
 import re
 
-import sage.interfaces.abc
-
-from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.env import DOT_SAGE
 from pexpect import EOF
-from sage.misc.multireplace import multiple_replace
+
+import sage.interfaces.abc
+from sage.env import DOT_SAGE
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
 from sage.structure.richcmp import rich_to_bool
-
 
 # The Axiom commands ")what thing det" ")show Matrix" and ")display
 # op det" commands, gives a list of all identifiers that begin in
@@ -209,6 +213,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.axiom import axiom
             sage: axiom == loads(dumps(axiom))
             True
         """
@@ -829,8 +834,8 @@ class PanAxiomElement(ExpectElement, sage.interfaces.abc.AxiomElement):
             return self._sage_domain()
 
         if type == "Float":
-            from sage.rings.real_mpfr import RealField
             from sage.rings.integer_ring import ZZ
+            from sage.rings.real_mpfr import RealField
             prec = max(self.mantissa().length()._sage_(), 53)
             R = RealField(prec)
             x, e, b = self.unparsed_input_form().lstrip('float(').rstrip(')').split(',')
