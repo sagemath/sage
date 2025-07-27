@@ -1397,37 +1397,6 @@ This tests against the doctests as they appear in the installed copies of the fi
 Note that these installed copies should never be edited, as they can
 be overwritten without warning.
 
-When testing a modularized distribution package other than sagemath-standard,
-the top-level module :mod:`sage.all` is not available.  Use the option ``--environment``
-to select an appropriate top-level module::
-
-    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
-                                -p4 --environment sage.all__sagemath_categories    \
-                                --installed
-
-To test the installed modules against the doctests as they appear in the source
-tree (``src/sage/...``)::
-
-    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
-                                -p4 --environment sage.all__sagemath_categories    \
-                                src/sage/structure
-
-Note that testing all doctests as they appear in the source tree does not make sense
-because many of the source files may not be installed in the virtual environment.
-Use the option ``--if-installed`` to skip the source files of all Python/Cython modules
-that are not installed in the virtual environment::
-
-    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
-                                -p4 --environment sage.all__sagemath_categories    \
-                                --if-installed src/sage/schemes
-
-This option can also be combined with ``--all``::
-
-    [mkoeppe@localhost sage]$ pkgs/sagemath-categories/.tox/sagepython-.../sage -t \
-                                -p4 --environment sage.all__sagemath_categories    \
-                                --if-installed --all
-
-
 .. _section-fixdoctests:
 
 The doctest fixer

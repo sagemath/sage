@@ -617,10 +617,7 @@ class SageCustomizations:
             sage: SageCustomizations.all_globals()
             <module 'sage.all_cmdline' ...>
         """
-        try:
-            from sage import all_cmdline
-        except ImportError:
-            from sage import all__sagemath_repl as all_cmdline
+        from sage import all_cmdline
         return all_cmdline
 
     def init_environment(self):
