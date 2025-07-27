@@ -1254,6 +1254,7 @@ def specht_module_spanning_set(D, SGA=None):
         SGA = SymmetricGroupAlgebra(QQ, n)
     elif SGA.group().rank() != n - 1:
         raise ValueError("the rank does not match the size of the diagram")
+    R = SGA.base_ring()
     nr = max((c[0] for c in D), default=0) + 1
     nc = max((c[1] for c in D), default=0) + 1
     # We use D itself as a tableau. More precisely,
@@ -1273,8 +1274,10 @@ def specht_module_spanning_set(D, SGA=None):
         col_diagram[y].add(i)
     # Construct the row symmetrizer (row_stab)
     # and column antisymmetrizer (col_stab).
-    row_stab = SGA.zero()
-    col_stab = SGA.zero()
+    # First we compute them as "permutation: coefficient"
+    # dictionaries.
+    row_stab = dict()
+    col_stab = dict()
     B = SGA.basis()  # this is just S_n
     for w in B.keys():
         # Remember that the permutation w is 1-based.
@@ -1287,9 +1290,11 @@ def specht_module_spanning_set(D, SGA=None):
             row_perm[x].add(w(i + 1) - 1)
             col_perm[y].add(w(i + 1) - 1)
         if row_diagram == row_perm:
-            row_stab += B[w]
+            row_stab[w] = R.one()
         if col_diagram == col_perm:
-            col_stab += w.sign() * B[w]
+            col_stab[w] = w.sign() * R.one()
+    row_stab = SGA._from_dict(row_stab)
+    col_stab = SGA._from_dict(col_stab)
     # The Young symmetrizer:
     gen = col_stab * row_stab
     # The Specht module is the left ideal of the
@@ -1346,10 +1351,8 @@ def polytabloid(T):
     """
     e_T = {}
     C_T = T.column_stabilizer()
-    for perm in C_T:
-        TT = tuple([frozenset(perm(val) for val in row) for row in T])
-        e_T[TT] = perm.sign()
-    return e_T
+    return {tuple([frozenset(perm(val) for val in row) for row in T]):
+            perm.sign() for perm in T.column_stabilizer()}
 
 
 def tabloid_gram_matrix(la, base_ring):
