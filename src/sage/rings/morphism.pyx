@@ -3112,7 +3112,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
             s = '\\verb"Frob"^{%s}' % self._power
         return s
 
-    cpdef Element _call_ (self, x):
+    cpdef Element _call_(self, x):
         """
         TESTS::
 
