@@ -1,5 +1,5 @@
 r"""
-Non-Decreasing Parking Functions
+Non-decreasing parking functions
 
 A *non-decreasing parking function* of size `n` is a non-decreasing
 function `f` from `\{1,\dots,n\}` to itself such that for all `i`, one

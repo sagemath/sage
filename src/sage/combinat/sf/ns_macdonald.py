@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Non-symmetric Macdonald Polynomials
+Non-symmetric Macdonald polynomials
 """
 import copy
 
@@ -352,10 +352,7 @@ class AugmentedLatticeDiagramFilling(CombinatorialObject):
             sage: a.is_non_attacking()
             True
         """
-        for a, b in self.attacking_boxes():
-            if self[a] == self[b]:
-                return False
-        return True
+        return all(self[a] != self[b] for a, b in self.attacking_boxes())
 
     def weight(self):
         """

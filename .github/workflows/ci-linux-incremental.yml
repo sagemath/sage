@@ -24,7 +24,6 @@ on:
       - '!build/pkgs/sage_conf/**'
       - '!build/pkgs/sage_docbuild/**'
       - '!build/pkgs/sage_setup/**'
-      - '!build/pkgs/sage_sws2rst/**'
       - '!build/pkgs/sagelib/**'
       - '!build/pkgs/sagemath_*/**'
   workflow_dispatch:
@@ -94,7 +93,7 @@ jobs:
       from_docker_target: "with-targets"
       from_docker_tag: "dev"
       docker_targets: "with-targets"
-      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback doc-html ptest-nodoc"
+      targets: "${{needs.changed_files.outputs.build_targets}} ci-build-with-fallback ptest-nodoc"
       tox_system_factors: >-
         ["ubuntu-focal",
          "ubuntu-jammy",

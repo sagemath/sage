@@ -878,6 +878,33 @@ cdef class Matrix(Matrix1):
             sage: v = vector(GF(3), [1,1])
             sage: m.solve_right(v)
             (2, 1)
+
+        Test ``extend``::
+
+            sage: matrix(ZZ, [[2]]).solve_right(vector(ZZ, [1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [1, 1]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 4]), extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+            sage: matrix(ZZ, [[2], [2]]).solve_right(vector(ZZ, [2, 2]), extend=False)
+            (1)
+            sage: matrix(QQ, [[2]]).solve_right(vector(QQ, [1]), extend=False)
+            (1/2)
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=True)  # <1s
+            sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
+            sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
+            sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: matrix.identity(ZZ, 500).hermite_form()  # not tested (slow)
+            sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
+            sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
+            sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
         """
         try:
             L = B.base_ring()
@@ -944,11 +971,22 @@ cdef class Matrix(Matrix1):
 
         C = B.column() if b_is_vec else B
 
-        if not extend:
-            try:
-                X = self._solve_right_hermite_form(C)
-            except NotImplementedError:
-                X = self._solve_right_smith_form(C)
+        if P not in _Fields and not extend:
+            if self.rank() == self.ncols():
+                # hermite_form is slow, avoid if possible
+                if self.is_square():
+                    X = self._solve_right_nonsingular_square(C, check_rank=False)
+                else:
+                    X = self._solve_right_general(C)
+                try:
+                    X = X.change_ring(P)
+                except TypeError:
+                    raise ValueError('matrix equation has no solutions')
+            else:
+                try:
+                    X = self._solve_right_hermite_form(C)
+                except NotImplementedError:
+                    X = self._solve_right_smith_form(C)
             return X.column(0) if b_is_vec else X
 
         if not self.is_square():
@@ -1114,14 +1152,54 @@ cdef class Matrix(Matrix1):
             [-236774176922867   -3334450741532  470910201757143          1961587  230292926737068]
             [  82318322106118    1159275026338 -163719448527234          -681977  -80065012022313]
             [  53148766104440     748485096017 -105705345467375          -440318  -51693918051894]
-        """
-        S,U,V = self.smith_form()
 
-        n,m = self.dimensions()
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_smith_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        Random testing::
+
+            sage: m = randrange(1,100)
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^m).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_smith_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
+        """
+        S,U,V = self.smith_form()  # S == U * self * V
+
+        m,n = self.dimensions()
         r = B.ncols()
 
+        # we will solve S * X_ == U * B
+        UB = U * B
+
+        # S is zero past the nth row; check if this already renders the system unsolvable
+        if UB[n:]:
+            raise ValueError("matrix equation has no solutions")
+
+        # solve the system, detecting inconsistencies up to the nth row along the way
         X_ = []
-        for d, v in zip(S.diagonal(), (U*B).rows()):
+        for d, v in zip(S.diagonal(), UB):
             if d:
                 X_.append(v / d)
             elif v:
@@ -1129,14 +1207,15 @@ cdef class Matrix(Matrix1):
             else:
                 X_.append([0] * r)
 
-        X_ += [[0] * r] * (m - n)  # arbitrary
+        X_ += [[0] * r] * (n - m)  # arbitrary
 
         from sage.matrix.constructor import matrix
         try:
-            X_ = matrix(self.base_ring(), m, r, X_)
+            X_ = matrix(self.base_ring(), n, r, X_)
         except TypeError:
             raise ValueError("matrix equation has no solutions")
 
+        # now V * X_ is a solution since self * V * X_ = U^-1 * S * X_ = U^-1 * U * B = B
         return V * X_
 
     def _solve_right_hermite_form(self, B):
@@ -1181,26 +1260,64 @@ cdef class Matrix(Matrix1):
             [  968595469303  1461570161933   781069571508  1246248350502       -1629017]
             [ -235552378240  -355438713600  -189948023680  -303074680960         396160]
             [             0              0              0              0              0]
+
+        TESTS:
+
+        Check for :issue:`40210`::
+
+            sage: A = vector(ZZ, [1, 2, 3]).column()
+            sage: B = vector(ZZ, [1, 1, 1]).column()
+            sage: A._solve_right_hermite_form(B)
+            Traceback (most recent call last):
+            ...
+            ValueError: matrix equation has no solutions
+
+        Random testing::
+
+            sage: m = randrange(1,100)
+            sage: n = randrange(1,100)
+            sage: A = matrix(ZZ, [[randrange(-10,11) for _ in range(n)] for _ in range(m)])
+            sage: y = A * vector(ZZ, [randrange(-100,101) for _ in range(n)])
+            sage: unsolvable = randrange(1 + (A.column_space() != ZZ^m))
+            sage: if unsolvable:
+            ....:     while y in A.column_space():
+            ....:         y += (ZZ^m).random_element()
+            sage: y = y.column()
+            sage: try:
+            ....:     x = A._solve_right_hermite_form(y)
+            ....:     solved = True
+            ....: except ValueError:
+            ....:     solved = False
+            sage: solved == (not unsolvable)
+            True
+            sage: not solved or A * x == y
+            True
         """
         H,U = self.transpose().hermite_form(transformation=True)
         H = H.transpose()
         U = U.transpose()
-#        assert self*U == H
 
-        n,m = self.dimensions()
+        m,n = self.dimensions()
         r = B.ncols()
 
         from sage.matrix.constructor import matrix
-        X_ = matrix(self.base_ring(), m, r)
-        for i in range(min(n,m)):
-            v = B[i,:]
-            v -= H[i,:i] * X_[:i]
-            d = H[i][i]
-            try:
-                X_[i] = v / d
-            except (ZeroDivisionError, TypeError) as e:
-                raise ValueError("matrix equation has no solution")
-#        assert H*X_ == B
+        X_ = matrix(self.base_ring(), n, r)
+        j = 0  # current column
+        for i in range(m):
+            if j < n and H[i,j]:
+                # pivot for column j is in row i
+                v = B[i,:]
+                v -= H[i,:j] * X_[:j]
+                try:
+                    X_[j] = v / H[i,j]
+                except TypeError:
+                    raise ValueError("matrix equation has no solutions")
+                j += 1
+            else:
+                # pivot for column j is below row i
+                assert not H[i,j:]
+                if H[i] * X_ != B[i]:
+                    raise ValueError("matrix equation has no solutions")
 
         return U * X_
 
@@ -7059,6 +7176,53 @@ cdef class Matrix(Matrix1):
                     self._eigenvectors_left(
                         extend=extend, algorithm=algorithm,
                         suppress_future_warning=False))
+
+    def singular_values(self) -> Sequence:
+        """
+        Return a sequence of singular values of a matrix.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1, 2], [3, 4]])
+            sage: A.singular_values()
+            [0.3659661906262578?, 5.464985704219043?]
+
+        TESTS::
+
+            sage: type(A.singular_values())
+            <class 'sage.structure.sequence.Sequence_generic'>
+
+        Ensure floating point error does not cause trouble::
+
+            sage: set_random_seed(100)
+            sage: A = matrix.random(CC, 5)
+            sage: Sequence((A*A.H).eigenvalues(), universe=RR)
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert ... to an element of Real Field with 53 bits of precision
+            sage: A.singular_values()  # abs tol 1e-13
+            [0.317896596475411, 1.25232496300299, 1.48403213017074, 2.08062167993720, 2.59091978815526]
+
+        Ensure all returned values are real::
+
+            sage: set_random_seed(100)
+            sage: m = matrix.random(RR, 5, 4) * matrix.random(RR, 4, 5)
+            sage: l = (m*m.H).eigenvalues(); l  # abs tol 1e-13
+            [-2.25142178936519049e-17, 0.128915466573149680, 0.754320277644353032, 1.04552196882464885, 5.11544233853116598]
+            sage: min(l) < 0
+            True
+            sage: m.singular_values()  # abs tol 1e-13
+            [0.000000000000000000, 0.359048000374810165, 0.868516135511800973, 1.02250768643793033, 2.26173436515678516]
+        """
+        from sage.rings.abc import ComplexField
+        e: Sequence = (self*self.H).eigenvalues()  # guaranteed to be real nonnegative
+        from sage.rings.abc import RealField, ComplexField
+        if isinstance(self.base_ring(), (RealField, ComplexField)):
+            # because of floating point error e may not be all real nonnegative
+            e = Sequence([x.real() for x in e])
+            zero = e.universe().zero()
+            e = Sequence([max(x, zero) for x in e], universe=e.universe())
+        return Sequence([x.sqrt() for x in e])
 
     def _eigenvectors_result_to_eigenvalues(self, eigenvectors: list) -> Sequence:
         """
