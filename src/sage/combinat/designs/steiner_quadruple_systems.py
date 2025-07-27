@@ -1,5 +1,5 @@
 r"""
-Steiner Quadruple Systems
+Steiner quadruple systems
 
 A Steiner Quadruple System on `n` points is a family `SQS_n \subset \binom {[n]}
 4` of `4`-sets, such that any set `S\subset [n]` of size three is a subset of
