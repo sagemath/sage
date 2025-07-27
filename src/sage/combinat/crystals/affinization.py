@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Affinization Crystals
+Affinization crystals
 """
 
 #*****************************************************************************
