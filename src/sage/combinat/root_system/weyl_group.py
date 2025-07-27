@@ -1,14 +1,6 @@
 # sage.doctest: needs sage.graphs sage.groups sage.modules
 """
-Weyl Groups
-
-AUTHORS:
-
-- Daniel Bump (2008): initial version
-- Mike Hansen (2008): initial version
-- Anne Schilling (2008): initial version
-- Nicolas Thiéry (2008): initial version
-- Volker Braun (2013): LibGAP-based matrix groups
+Weyl groups
 
 EXAMPLES:
 
@@ -29,6 +21,14 @@ The Cayley graph of the Weyl Group of type ['D', 4]::
 .. TODO::
 
     More examples on Weyl Groups should be added here.
+
+AUTHORS:
+
+- Daniel Bump (2008): initial version
+- Mike Hansen (2008): initial version
+- Anne Schilling (2008): initial version
+- Nicolas Thiéry (2008): initial version
+- Volker Braun (2013): LibGAP-based matrix groups
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Daniel Bump <bump at match.stanford.edu>,
