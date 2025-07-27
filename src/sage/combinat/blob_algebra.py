@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Blob Algebras
+Blob algebras
 
 AUTHORS:
 
