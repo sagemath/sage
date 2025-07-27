@@ -846,7 +846,7 @@ class SageDocTestParser(doctest.DocTestParser):
         """
         return not (self == other)
 
-    def parse(self, string, *args):
+    def parse(self, string, *args) -> list[doctest.Example | str]:
         r"""
         A Sage specialization of :class:`doctest.DocTestParser`.
 
@@ -1040,8 +1040,8 @@ class SageDocTestParser(doctest.DocTestParser):
             string = find_python_continuation.sub(r"\1" + ellipsis_tag + r"\2", string)
         string = find_sage_prompt.sub(r"\1>>> sage: ", string)
         string = find_sage_continuation.sub(r"\1...", string)
-        res = doctest.DocTestParser.parse(self, string, *args)
-        filtered = []
+        res: list[doctest.Example | str] = doctest.DocTestParser.parse(self, string, *args)
+        filtered: list[doctest.Example | str] = []
         persistent_optional_tags = self.file_optional_tags
         persistent_optional_tag_setter = None
         persistent_optional_tag_setter_index = None

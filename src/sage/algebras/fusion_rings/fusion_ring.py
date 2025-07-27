@@ -1,6 +1,6 @@
 # sage.doctest: flaky (:issue:`39538`)
 """
-Fusion Rings
+Fusion rings
 """
 # ****************************************************************************
 #  Copyright (C) 2019 Daniel Bump <bump at match.stanford.edu>
