@@ -1297,7 +1297,8 @@ def polytabloid(T):
     r"""
     Compute the polytabloid element associated to a tableau ``T``.
 
-    For a tableau `T`, the polytabloid associated to `T` is
+    For a tableau `T` with entries `1,2,\ldots,n` (each
+    appearing once), the polytabloid associated to `T` is
 
     .. MATH::
 
@@ -1326,10 +1327,7 @@ def polytabloid(T):
     C_T = T.column_stabilizer()
     for perm in C_T:
         TT = tuple([frozenset(perm(val) for val in row) for row in T])
-        if TT in e_T:
-            e_T[TT] += perm.sign()
-        else:
-            e_T[TT] = perm.sign()
+        e_T[TT] = perm.sign()
     return e_T
 
 
