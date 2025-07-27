@@ -283,7 +283,6 @@ cdef int singular_polynomial_cmp(poly *p, poly *q, ring *r) except -2:
         sage: P(0) > P(-1)
         True
     """
-    cdef number *h
     cdef int tmp
     assert r, "A valid ring must be provided"
     assert r.ref >= 0, "This ring has %d references and thus has previously been deleted"%(r.ref)

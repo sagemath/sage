@@ -791,15 +791,14 @@ cdef class Converter(SageObject):
         the list
         """
         rank = max([v.parent().rank() for v in m])
-        cdef ideal *result
         cdef ring *r = self._singular_ring
         cdef ideal *i
         cdef int j = 0
 
-        i = idInit(len(m),rank)
+        i = idInit(len(m), rank)
         for f in m:
             i.m[j] = sage_vector_to_poly(f, r)
-            j+=1
+            j += 1
         return self._append(<void*> i, MODUL_CMD)
 
     cdef leftv *append_number(self, n) except NULL:
