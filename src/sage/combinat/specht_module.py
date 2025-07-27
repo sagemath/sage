@@ -1275,7 +1275,7 @@ def specht_module_spanning_set(D, SGA=None):
     # and column antisymmetrizer (col_stab).
     row_stab = SGA.zero()
     col_stab = SGA.zero()
-    B = SGA.basis() # this is just S_n
+    B = SGA.basis()  # this is just S_n
     for w in B.keys():
         # Remember that the permutation w is 1-based.
         # Compute row_perm = w(row_diagram) and
