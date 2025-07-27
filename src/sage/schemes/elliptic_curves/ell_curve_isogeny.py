@@ -220,7 +220,7 @@ def isogeny_codomain_from_kernel(E, kernel):
     if algorithm == 'velu':
         # if we are using Velu's formula, just instantiate the isogeny
         # and return the codomain
-        return EllipticCurveIsogeny(E, kernel).codomain()
+        return E.isogeny(kernel).codomain()
 
     if algorithm == 'kohel':
         return compute_codomain_kohel(E, kernel)

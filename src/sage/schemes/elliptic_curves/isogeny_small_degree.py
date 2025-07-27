@@ -1817,7 +1817,7 @@ def Psi2(l):
 
     R = PolynomialRing(QQ, ('x', 'u', 'v'))
     x = R.gen(0)
-    return sum((-1)**i * x**(d-i) * R(s[i].lift()) for i in range(0,d+1))
+    return sum((-1)**i * x**(d-i) * R(s[i].lift()) for i in range(d+1))
 
 
 def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
