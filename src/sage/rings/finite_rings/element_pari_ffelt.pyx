@@ -1407,7 +1407,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: # needs sage.libs.gap
             sage: F = FiniteField(next_prime(200)^2, 'a', impl='pari_ffelt')
             sage: a = F.multiplicative_generator()
-            sage: a._gap_ (gap)
+            sage: a._gap_(gap)
             Z(211^2)
             sage: (a^20)._gap_(gap)
             Z(211^2)^20

@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Tiling Solver
+Tiling solver
 
-Tiling a n-dimensional polyomino with n-dimensional polyominoes.
+Tiling a `n`-dimensional polyomino with n-dimensional polyominoes.
 
 This module defines two classes:
 
