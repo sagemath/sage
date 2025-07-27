@@ -112,7 +112,6 @@ cdef class ntl_ZZ_p():
         # self.c._assert_is_current_modulus()  # The context was restored in __new__
 
         cdef ZZ_c temp, num, den
-        cdef long failed
         if v is not None:
             if isinstance(v, ntl_ZZ_p):
                 self.x = (<ntl_ZZ_p>v).x
