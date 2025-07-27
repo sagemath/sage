@@ -401,6 +401,7 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
     r"""
     The vector space of all tabloids of a fixed shape with the natural
     symmetric group action.
+    This is known as a Young module.
 
     A *tabloid* is an :class:`OrderedSetPartition` whose underlying set
     is `\{1, \ldots, n\}`. The symmetric group acts by permuting the
@@ -682,10 +683,11 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
 class SpechtModuleTableauxBasis(SpechtModule):
     r"""
     A Specht module of a partition in the classical standard
-    tableau basis.
+    polytabloid basis (indexed by the standard tableaux).
 
-    This is constructed as a `S_n`-submodule of the :class:`TabloidModule`
-    (also referred to as the standard module).
+    This is constructed as a `S_n`-submodule of the
+    :class:`TabloidModule` (also referred to as the Young
+    module).
 
     .. SEEALSO::
 
@@ -697,6 +699,11 @@ class SpechtModuleTableauxBasis(SpechtModule):
     def __init__(self, ambient):
         r"""
         Initialize ``self``.
+        
+        INPUT::
+        
+        - ``ambient``: The ambient
+          :class:`TabloidModule`.
 
         EXAMPLES::
 
