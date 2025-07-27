@@ -69,7 +69,6 @@ cdef class ObjWrapper():
             sage: x == y
             True
         """
-        cdef result
         cdef Obj self_value = self.value
         cdef Obj other_value = other.value
         if op == Py_LT:
@@ -354,7 +353,7 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     """
     initialize()
     cdef Obj result
-    cdef int i, j, nresults
+    cdef int nresults
 
     # Careful: We need to keep a reference to the bytes object here
     # so that Cython doesn't deallocate it before GAP is done with
