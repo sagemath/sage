@@ -17,7 +17,7 @@ Sage example in ./sol/numbertheory.tex, line 9::
 
 Sage example in ./sol/numbertheory.tex, line 26::
 
-  sage: def enum_carmichael_p (n, p, verbose):
+  sage: def enum_carmichael_p(n, p, verbose):
   ....:    a = p; m = p*(p-1); q = p; s = 0
   ....:    while p*q^2 <= n:
   ....:       q = next_prime(q)
