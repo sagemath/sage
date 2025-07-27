@@ -617,7 +617,7 @@ class QuasiModularFormsElement(ModuleElement):
         for i, c in enumerate(self._polynomial.coefficients(sparse=False)):
             if c:
                 forms = c._forms_dictionary
-                for k in forms.keys():
+                for k in forms:
                     try:
                         components[ZZ(k + 2*i)] += QM(forms[k]*(E2**i))
                     except KeyError:

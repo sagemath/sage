@@ -1950,7 +1950,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, I
             K = self.number_field()
             F = K.pari_nf().idealfactor(self.pari_hnf())
             A = []
-            for j in range(0, len(F[0])):
+            for j in range(len(F[0])):
                 I = K.ideal(F[j,0])
                 A.append((I,ZZ(F[j,1])))
             self.__factorization = Factorization(A)

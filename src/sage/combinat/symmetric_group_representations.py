@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
-Representations of the Symmetric Group
+Representations of the symmetric group
 
 .. TODO::
 
