@@ -539,9 +539,6 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   ├── sage-setup
 │   │   ├── sage_setup/
 │   │   └── setup.py
-│   ├── sage-sws2rst
-│   │   ├── sage_sws2rst/
-│   │   └── setup.py
 │   └── sagemath-standard
 │       ├── bin/
 │       ├── sage -> ../../src/sage
