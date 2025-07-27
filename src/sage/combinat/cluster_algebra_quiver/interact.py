@@ -48,8 +48,8 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
                                          description="Show last mutation vertex")
 
     mut_buttons = widgets.ToggleButtons(options=list(range(self._n)),
-                                       style={'button_width':'initial'},
-                                       description='Mutate at: ')
+                                        style={'button_width': 'initial'},
+                                        description='Mutate at: ')
 
     which_plot = widgets.Dropdown(options=['circular', 'spring'],
                                   value='circular' if circular else "spring",

@@ -66,7 +66,7 @@ classical modular symbols (or even elliptic curves) as follows::
 # ****************************************************************************
 from sage.modules.module import Module
 from sage.modular.dirichlet import DirichletCharacter
-from sage.modular.arithgroup.all import Gamma0
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
 from sage.modular.arithgroup.arithgroup_element import ArithmeticSubgroupElement
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -552,8 +552,10 @@ class PollackStevensModularSymbolspace(Module):
         N = self.level()
         if N % p == 0:
             raise ValueError("the level is not prime to p")
-        from sage.modular.arithgroup.all import (Gamma, Gamma_class, Gamma0,
-                                                 Gamma0_class, Gamma1, Gamma1_class)
+        from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class, Gamma0_constructor as Gamma0
+        from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class, Gamma1_constructor as Gamma1
+        from sage.modular.arithgroup.congroup_gamma import Gamma_class, Gamma_constructor as Gamma
+
         G = self.group()
         if isinstance(G, Gamma0_class):
             G = Gamma0(N * p)

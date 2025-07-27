@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 """
-Non-symmetric Macdonald Polynomials
+Non-symmetric Macdonald polynomials
 """
 import copy
 

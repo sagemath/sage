@@ -1,10 +1,10 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Dendriform Algebras
+Free dendriform algebras
 
 AUTHORS:
 
-Frédéric Chapoton (2017)
+- Frédéric Chapoton (2017)
 """
 # ****************************************************************************
 #       Copyright (C) 2010-2015 Frédéric Chapoton <chapoton@unistra.fr>,

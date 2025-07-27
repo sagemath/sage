@@ -1,8 +1,8 @@
 # sage.doctest: needs sage.graphs sage.modules
 r"""
-Common Automata and Transducers (Finite State Machines Generators)
+Common automata and transducers (finite state machines generators)
 
-Automata and Transducers in Sage can be built through the
+Automata and transducers in Sage can be built through the
 :class:`automata <AutomatonGenerators>`
 and :class:`transducers <TransducerGenerators>` objects, respectively.
 It contains generators for

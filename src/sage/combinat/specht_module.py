@@ -1,17 +1,17 @@
 # sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
-Specht Modules
+Specht modules
+
+.. TODO::
+
+    Integrate this with the implementations in
+    :mod:`sage.modules.with_basis.representation`.
 
 AUTHORS:
 
 - Travis Scrimshaw (2023-1-22): initial version
 - Travis Scrimshaw (2023-11-23): added simple modules based on code
   from Sacha Goldman
-
-.. TODO::
-
-    Integrate this with the implementations in
-    :mod:`sage.modules.with_basis.representation`.
 """
 
 # ****************************************************************************

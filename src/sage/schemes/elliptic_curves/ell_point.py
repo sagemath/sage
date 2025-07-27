@@ -1303,6 +1303,10 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         OUTPUT: a (possibly empty) list of solutions `Q` to `mQ=P`,
         where `P` = ``self``
 
+        .. SEEALSO ::
+
+            :meth:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom.inverse_image`
+
         EXAMPLES:
 
         We find the five 5-torsion points on an elliptic curve::
@@ -1797,7 +1801,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         See :issue:`7116`::
 
-            sage: P._line_ (Q,O)                                                        # needs sage.rings.finite_rings
+            sage: P._line_(Q, O)                                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Q must be nonzero.

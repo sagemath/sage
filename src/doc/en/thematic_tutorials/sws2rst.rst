@@ -4,6 +4,12 @@
 Creating a Tutorial from an old Sage Worksheet (.sws)
 =====================================================
 
+.. warning::
+
+  This page contains outdated information. 
+  Some instructions or tools described here may no longer work with
+  recent versions of Sage. 
+  
 A lot of pedagogical material has been written in the Sage Worksheet format, which is no longer supported by Sage after the transition to Python 3 and the removal of the SageNB package.
 
 However, it is possible to convert Sage Worksheet files.
@@ -22,7 +28,7 @@ using the Mac app and have placed it in your Applications directory.
 
   .. CODE-BLOCK:: shell-session
 
-      $ sage -i sage_sws2rst
+      $ pip install sage-sws2rst
 
   to install it (or, in the Mac app, use the ``Terminal Session`` advanced
   menu).

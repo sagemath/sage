@@ -1,5 +1,5 @@
 r"""
-Signed Compositions
+Signed compositions
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,

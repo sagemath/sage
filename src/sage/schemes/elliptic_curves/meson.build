@@ -30,6 +30,7 @@ py.install_sources(
   'height.py',
   'hom.py',
   'hom_composite.py',
+  'hom_fractional.py',
   'hom_frobenius.py',
   'hom_scalar.py',
   'hom_sum.py',

@@ -593,7 +593,7 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         # The next rows:
         # each row is obtained from the previous one by
         # applying the semi-linear transformation f |-> t*f
-        inv = K(phiT[r]).inverse()
+        inv = ~phiT[r]
         B = inv * phiT
         T = KT.gen()
         for i in range(1, r):
