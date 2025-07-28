@@ -16484,6 +16484,11 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(CDF, 2, 2, sparse=True).norm(1)
             0.0
+
+        Check the euclidean norm for a sparse matrix (:issue:`40492`)::
+
+            sage: matrix(ZZ, [[1, 2], [3, 4]], sparse=True).norm()
+            5.464985704219043
         """
         from sage.rings.real_double import RDF
 
