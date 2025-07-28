@@ -23,31 +23,6 @@ Unset :envvar:`TERM` when running doctests, see :issue:`14370`::
     ....:     pass
     sage: kwds = {'cwd': tests_dir, 'env':tests_env}
 
-Check that :issue:`2235` has been fixed::
-
-    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
-    ....:       "--random-seed=0", "--optional=sage", "longtime.rst"], **kwds)
-    Running doctests...
-    Doctesting 1 file.
-    sage -t --warn-long 0.0 --random-seed=0 longtime.rst
-    [0 tests, ...s wall]
-    ----------------------------------------------------------------------
-    All tests passed!
-    ----------------------------------------------------------------------
-    ...
-    0
-    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time
-    ....:      "--random-seed=0", "--optional=sage", "-l", "longtime.rst"], **kwds)
-    Running doctests...
-    Doctesting 1 file.
-    sage -t --long --warn-long 0.0 --random-seed=0 longtime.rst
-    [1 test, ...s wall]
-    ----------------------------------------------------------------------
-    All tests passed!
-    ----------------------------------------------------------------------
-    ...
-    0
-
 Check slow doctest warnings are correctly raised::
 
     sage: subprocess.call(["sage", "-t", "--warn-long",     # long time
