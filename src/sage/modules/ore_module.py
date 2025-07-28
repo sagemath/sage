@@ -187,7 +187,6 @@ from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.categories.action import Action
-from sage.categories.fields import Fields
 from sage.categories.ore_modules import OreModules
 
 from sage.matrix.matrix0 import Matrix
@@ -197,6 +196,7 @@ from sage.matrix.special import identity_matrix
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
+from sage.modules.subspace_helper import SubspaceHelper
 from sage.modules.ore_module_element import OreModuleElement
 
 # Action by left multiplication on Ore modules
@@ -1226,25 +1226,35 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             zero = rank * [base.zero()]
             rows += (2*rank - len(rows)) * [zero]
         M = matrix(base, rows)
-        M.echelonize()
-        oldr = 0
-        r = M.rank()
-        iter = 1
-        while r > oldr:
-            for i in range(r):
+        if hasattr(M, 'popov_form'):
+            def normalize(M):
+                N = M.popov_form()
+                for i in range(N.nrows()):
+                    for j in range(N.ncols()):
+                        M[i,j] = N[i,j]
+        else:
+            normalize = M.__class__.echelonize
+        g = f
+        normalize(M)
+        sM = None
+        while True:
+            r = 0
+            for i in range(rank):
                 v = M.row(i)
-                for _ in range(iter):
-                    v = f(v)
-                v = v.list()
+                if v == 0:
+                    break
+                v = g(v).list()
                 for j in range(rank):
-                    M[i+r, j] = v[j]
-            M.echelonize()
-            oldr = r
-            r = M.rank()
-            iter *= 2
+                    M[i+rank, j] = v[j]
+                r += 1
+            normalize(M)
+            if M.list() == sM:
+                break
+            sM = M.list()
+            g = g * g
         return M.matrix_from_rows(range(r))
 
-    def span(self, gens, names=None):
+    def span(self, gens, saturate=False, names=None, check=True):
         r"""
         Return the submodule of this Ore module generated (over the
         underlying Ore ring) by ``gens``.
@@ -1255,6 +1265,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``names`` (default: ``None``) -- the name of the vectors in a
           basis of this submodule
+
+        - ``check`` (default: ``True``) -- a boolean, ignored
 
         EXAMPLES::
 
@@ -1327,9 +1339,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             :meth:`quotient`
         """
         gens = self._span(gens)
-        return self._submodule_class(self, gens, names=names)
+        return self._submodule_class(self, gens, saturate, names)
 
-    def quotient(self, sub, names=None, check=True):
+    def quotient(self, sub, remove_torsion=False, names=None, check=True):
         r"""
         Return the quotient of this Ore module by the submodule
         generated (over the underlying Ore ring) by ``gens``.
@@ -1402,7 +1414,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             :meth:`quo`, :meth:`span`
         """
         gens = self._span(sub)
-        return self._quotientModule_class(self, gens, names=names)
+        check_torsion = not remove_torsion
+        return self._quotientModule_class(self, gens, remove_torsion, names)
 
     quo = quotient
 
@@ -1452,7 +1465,7 @@ class OreSubmodule(OreModule):
     r"""
     Class for submodules of Ore modules.
     """
-    def __classcall_private__(cls, ambient, gens, names):
+    def __classcall_private__(cls, ambient, gens, saturate, names):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assupmtion).
@@ -1480,30 +1493,27 @@ class OreSubmodule(OreModule):
 
         ::
 
-            sage: R.<t> = QQ[]
+            sage: R.<x,y> = QQ[]
             sage: S.<X> = OrePolynomialRing(R, R.derivation())
-            sage: M.<v,w> = S.quotient_module((X + t)^2)
-            sage: M.span((X + t)*v)
+            sage: M.<v,w> = S.quotient_module((X + x + y)^2)
+            sage: M.span((X + x + y)*v)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Ore submodules are currently only implemented over fields
+            NotImplementedError: subspaces and quotients are only implemented over PID
         """
         base = ambient.base_ring()
-        if base not in Fields():
-            raise NotImplementedError("Ore submodules are currently only implemented over fields")
-        if isinstance(gens, Matrix):
-            basis = gens
+        if isinstance(gens, SubspaceHelper):
+            if not saturate or gens.is_saturated:
+                subspace = gens
+            else:
+                subspace = SubspaceHelper(gens.basis, saturate)
         else:
             basis = matrix(base, gens)
-        basis = basis.echelon_form()
-        basis.set_immutable()
-        rank = basis.rank()
-        if basis.nrows() != rank:
-            basis = basis.matrix_from_rows(range(rank))
-        names = normalize_names(names, rank)
-        return cls.__classcall__(cls, ambient, basis, names)
+            subspace = SubspaceHelper(basis, saturate)
+        names = normalize_names(names, subspace.rank)
+        return cls.__classcall__(cls, ambient, subspace, names)
 
-    def __init__(self, ambient, basis, names) -> None:
+    def __init__(self, ambient, subspace, names) -> None:
         r"""
         Initialize this Ore submodule.
 
@@ -1531,12 +1541,13 @@ class OreSubmodule(OreModule):
         from sage.modules.ore_module_morphism import OreModuleRetraction
         base = ambient.base_ring()
         self._ambient = ambient
-        self._basis = basis
-        rows = [basis.solve_left(ambient(x).image()) for x in basis.rows()]
+        self._subspace = subspace
+        C = subspace.coordinates.matrix_from_columns(range(subspace.rank))
+        rows = [ambient(x).image() * C for x in subspace.basis.rows()]
         OreModule.__init__(self, matrix(base, rows),
                            ambient.ore_ring(action=False),
                            names, ambient._ore_category)
-        coerce = self.hom(basis, codomain=ambient)
+        coerce = self.hom(subspace.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
         self.register_conversion(OreModuleRetraction(ambient, self))
@@ -1593,6 +1604,12 @@ class OreSubmodule(OreModule):
             True
         """
         return self._ambient
+
+    def saturate(self, names=None, coerce=False):
+        M = self._submodule_class(self._ambient, self._subspace, True, names)
+        if coerce:
+            raise NotImplementedError
+        return M
 
     def rename_basis(self, names, coerce=False):
         r"""
@@ -1677,7 +1694,7 @@ class OreSubmodule(OreModule):
         rank = self.rank()
         names = normalize_names(names, rank)
         cls = self.__class__
-        M = cls.__classcall__(cls, self._ambient, self._basis, names)
+        M = cls.__classcall__(cls, self._ambient, self._subspace, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -1781,12 +1798,12 @@ class OreSubmodule(OreModule):
         if f.codomain() is not self._ambient:
             raise ValueError("the codomain of the morphism must be the ambient space")
         rows = []
-        basis = self._basis
+        C = self._subspace.coordinates
         try:
-            rows = [basis.solve_left(y) for y in f._matrix.rows()]
+            im_gens = [self(f(x)) for x in f.domain().basis()]
         except ValueError:
             raise ValueError("the image of the morphism is not contained in this submodule")
-        return f.domain().hom(rows, codomain=self)
+        return f.domain().hom(im_gens, codomain=self)
 
     _hom_change_domain = morphism_restriction
     _hom_change_codomain = morphism_corestriction
@@ -1799,7 +1816,7 @@ class OreQuotientModule(OreModule):
     r"""
     Class for quotients of Ore modules.
     """
-    def __classcall_private__(cls, cover, gens, names):
+    def __classcall_private__(cls, cover, gens, remove_torsion, names):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assumption).
@@ -1827,30 +1844,29 @@ class OreQuotientModule(OreModule):
 
         ::
 
-            sage: R.<t> = QQ[]
-            sage: S.<X> = OrePolynomialRing(R, R.derivation())
-            sage: M.<v,w> = S.quotient_module((X + t)^2)
-            sage: M.quo((X + t)*v)
+            sage: R.<x,y> = QQ[]
+            sage: S.<X> = OrePolynomialRing(R, R.derivation(x))
+            sage: M.<v,w> = S.quotient_module((X + x + y)^2)
+            sage: M.quo((X + x + y)*v)
             Traceback (most recent call last):
             ...
-            NotImplementedError: quotient of Ore modules are currently only implemented over fields
+            NotImplementedError: subspaces and quotients are only implemented over PID
         """
         base = cover.base_ring()
-        if base not in Fields():
-            raise NotImplementedError("quotient of Ore modules are currently only implemented over fields")
-        if isinstance(gens, Matrix):
-            basis = gens
+        if isinstance(gens, SubspaceHelper):
+            if not remove_torsion or gens.is_saturated:
+                subspace = gens
+            else:
+                subspace = SubspaceHelper(gens.basis, remove_torsion)
         else:
             basis = matrix(base, gens)
-        basis = basis.echelon_form()
-        basis.set_immutable()
-        rank = basis.rank()
-        if basis.nrows() != rank:
-            basis = basis.matrix_from_rows(range(rank))
-        names = normalize_names(names, cover.rank() - rank)
-        return cls.__classcall__(cls, cover, basis, names)
+            subspace = SubspaceHelper(basis, remove_torsion)
+        if not subspace.is_saturated:
+            raise NotImplementedError("torsion Ore modules are not implemented")
+        names = normalize_names(names, cover.rank() - subspace.rank)
+        return cls.__classcall__(cls, cover, subspace, names)
 
-    def __init__(self, cover, basis, names) -> None:
+    def __init__(self, cover, subspace, names) -> None:
         r"""
         Initialize this Ore quotient.
 
@@ -1880,26 +1896,13 @@ class OreQuotientModule(OreModule):
         self._cover = cover
         d = cover.rank()
         base = cover.base_ring()
-        self._relations = basis
-        pivots = basis.pivots()
-        r = basis.rank()
-        coerce = matrix(base, d, d-r)
-        indices = []
-        i = 0
-        for j in range(d):
-            if i < r and pivots[i] == j:
-                i += 1
-            else:
-                indices.append(j)
-                coerce[j, j-i] = base.one()
-        for i in range(r):
-            for j in range(d-r):
-                coerce[pivots[i], j] = -basis[i, indices[j]]
-        rows = [cover.gen(i).image() * coerce for i in indices]
-        OreModule.__init__(self, matrix(base, rows),
+        self._subspace = subspace
+        rank = subspace.rank
+        coerce = subspace.coordinates.matrix_from_columns(range(rank, d))
+        images = [cover(x).image() for x in subspace.complement.rows()]
+        OreModule.__init__(self, matrix(base, d-rank, d, images) * coerce,
                            cover.ore_ring(action=False),
                            names, cover._ore_category)
-        self._indices = indices
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
         cover.register_conversion(OreModuleSection(self, cover))
@@ -1921,12 +1924,7 @@ class OreQuotientModule(OreModule):
             w
         """
         M = self._cover
-        indices = self._indices
-        base = self.base_ring()
-        coords = M.rank() * [base.zero()]
-        for i in range(self.rank()):
-            coords[indices[i]] = x[i]
-        return M(coords)._repr_()
+        return M(x)._repr_()
 
     def _latex_element(self, x) -> str:
         r"""
@@ -1945,12 +1943,7 @@ class OreQuotientModule(OreModule):
             \overline{w}
         """
         M = self._cover
-        indices = self._indices
-        base = self.base_ring()
-        coords = M.rank() * [base.zero()]
-        for i in range(self.rank()):
-            coords[indices[i]] = x[i]
-        return "\\overline{%s}" % M(coords)._latex_()
+        return "\\overline{%s}" % M(x)._latex_()
 
     def cover(self):
         r"""
@@ -2011,7 +2004,7 @@ class OreQuotientModule(OreModule):
 
             :meth:`relations`
         """
-        return self._submodule_class(self._cover, self._relations, names=names)
+        return self._submodule_class(self._cover, self._subspace, False, names)
 
     def rename_basis(self, names, coerce=False):
         r"""
@@ -2097,7 +2090,7 @@ class OreQuotientModule(OreModule):
         rank = self.rank()
         names = normalize_names(names, rank)
         cls = self.__class__
-        M = cls.__classcall__(cls, self._cover, self._relations, names)
+        M = cls.__classcall__(cls, self._cover, self._subspace, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -2163,10 +2156,10 @@ class OreQuotientModule(OreModule):
         """
         if f.domain() is not self._cover:
             raise ValueError("the domain of the morphism must be the cover ring")
-        Z = self._relations * f._matrix
+        Z = self._subspace.basis * f._matrix
         if not Z.is_zero():
             raise ValueError("the morphism does not factor through this quotient")
-        mat = f._matrix.matrix_from_rows(self._indices)
+        mat = self._subspace.complement * f._matrix
         return self.hom(mat, codomain=f.codomain())
 
     def morphism_modulo(self, f):

@@ -612,7 +612,7 @@ class OreModuleMorphism(Morphism):
             sage: g.is_injective()
             False
         """
-        return self._matrix.rank() == self.domain().rank()
+        return self.kernel().rank() == 0
 
     def is_surjective(self) -> bool:
         r"""
@@ -638,7 +638,7 @@ class OreModuleMorphism(Morphism):
             sage: g.is_surjective()
             True
         """
-        return self._matrix.rank() == self.codomain().rank()
+        return self.image()._subspace.basis.is_one()
 
     def is_bijective(self) -> bool:
         r"""
@@ -756,10 +756,15 @@ class OreModuleMorphism(Morphism):
              m1 + (z+3)*m3 + (z^2+z+4)*m4,
              m2 + (2*z^2+4*z+2)*m4 + (2*z^2+z+1)*m5]
         """
-        ker = self._matrix.left_kernel_matrix()
-        return OreSubmodule(self.domain(), ker, names)
+        mat = self._matrix
+        if hasattr(mat, 'minimal_kernel_matrix'):
+            # Optimisation
+            ker = mat.minimal_kernel_matrix()
+        else:
+            ker = mat.left_kernel_matrix()
+        return OreSubmodule(self.domain(), ker, False, names)
 
-    def image(self, names=None):
+    def image(self, saturate=False, names=None):
         r"""
         Return ``True`` if this morphism is injective.
 
@@ -784,9 +789,9 @@ class OreModuleMorphism(Morphism):
              m1 + (z+3)*m3 + (z^2+z+4)*m4,
              m2 + (2*z^2+4*z+2)*m4 + (2*z^2+z+1)*m5]
         """
-        return OreSubmodule(self.codomain(), self._matrix, names)
+        return OreSubmodule(self.codomain(), self._matrix, saturate, names)
 
-    def cokernel(self, names=None):
+    def cokernel(self, remove_torsion=False, names=None):
         r"""
         Return ``True`` if this morphism is injective.
 
@@ -809,7 +814,7 @@ class OreModuleMorphism(Morphism):
             sage: coker.basis()
             [m3, m4, m5]
         """
-        return OreQuotientModule(self.codomain(), self._matrix, names)
+        return OreQuotientModule(self.codomain(), self._matrix, remove_torsion, names)
 
     def coimage(self, names=None):
         r"""
@@ -834,8 +839,13 @@ class OreModuleMorphism(Morphism):
             sage: coim.basis()
             [m3, m4, m5]
         """
-        ker = self._matrix.left_kernel_matrix()
-        return OreQuotientModule(self.domain(), ker, names)
+        mat = self._matrix
+        if hasattr(mat, 'minimal_kernel_matrix'):
+            # Optimisation
+            ker = mat.minimal_kernel_matrix()
+        else:
+            ker = mat.left_kernel_matrix()
+        return OreQuotientModule(self.domain(), ker, False, names)
 
     def determinant(self):
         r"""
@@ -928,9 +938,14 @@ class OreModuleRetraction(Map):
             ValueError: not in the submodule
         """
         X = self.codomain()
+        subspace = X._subspace
+        rank = subspace.rank
+        xs = y * subspace.coordinates
+        if xs[rank:]:
+            raise ValueError("not in the submodule")
         try:
-            xs = X._basis.solve_left(y)
-        except ValueError:
+            xs = xs[:rank].change_ring(X.base_ring())
+        except (ValueError, TypeError):
             raise ValueError("not in the submodule")
         return X(xs)
 
@@ -958,9 +973,4 @@ class OreModuleSection(Map):
         """
         X = self.codomain()
         Y = self.domain()
-        indices = Y._indices
-        zero = X.base_ring().zero()
-        xs = X.rank() * [zero]
-        for i in range(Y.rank()):
-            xs[indices[i]] = y[i]
-        return X(xs)
+        return X(y * Y._subspace.complement)
