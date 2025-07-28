@@ -1552,6 +1552,9 @@ class OreSubmodule(OreModule):
         self._inject = coerce.__copy__()
         self.register_conversion(OreModuleRetraction(ambient, self))
 
+    def __reduce__(self):
+        return self._submodule_class, (self._ambient, self._subspace, False, self._names)
+
     def _repr_element(self, x) -> str:
         r"""
         Return a string representation of ``x``.
@@ -1906,6 +1909,9 @@ class OreQuotientModule(OreModule):
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
         cover.register_conversion(OreModuleSection(self, cover))
+
+    def __reduce__(self):
+        return self._quotient_class, (self._cover, self._subspace, False, self._names)
 
     def _repr_element(self, x) -> str:
         r"""
