@@ -901,7 +901,6 @@ cdef class Matrix(Matrix1):
             sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
             sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
             sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
-            sage: matrix.identity(ZZ, 500).hermite_form()  # not tested (slow)
             sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
             sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
             sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
@@ -974,10 +973,11 @@ cdef class Matrix(Matrix1):
         if P not in _Fields and not extend:
             if self.rank() == self.ncols():
                 # hermite_form is slow, avoid if possible
+                F = P.fraction_field()
                 if self.is_square():
-                    X = self._solve_right_nonsingular_square(C, check_rank=False)
+                    X = self.change_ring(F)._solve_right_nonsingular_square(C.change_ring(F), check_rank=False)
                 else:
-                    X = self._solve_right_general(C)
+                    X = self.change_ring(F)._solve_right_general(C.change_ring(F))
                 try:
                     X = X.change_ring(P)
                 except TypeError:
