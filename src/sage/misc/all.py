@@ -3,9 +3,6 @@ from sage.misc.lazy_import import lazy_import
 
 import sage.structure.all   # to break a cyclic import
 
-from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
-from sage.misc.lazy_import import lazy_import
-
 from sage.misc.verbose import (set_verbose, set_verbose_files,
                                get_verbose_files, unset_verbose_files, get_verbose)
 lazy_import('sage.misc.verbose', 'verbose',
@@ -154,8 +151,6 @@ from sage.misc.latex import LatexExpr, latex, view
 from sage.misc.randstate import seed, set_random_seed, initial_seed, current_randstate
 
 from sage.misc.prandom import *
-
-from sage.misc.timing import walltime, cputime
 
 from sage.misc.explain_pickle import explain_pickle, unpickle_newobj, unpickle_global, unpickle_build, unpickle_instantiate, unpickle_persistent, unpickle_extension, unpickle_appends
 

@@ -187,12 +187,6 @@ from sage.misc.all import *
 from sage.doctest.all import *
 from sage.repl.all import *
 
-
-# This import also sets up the interrupt handler
-from cysignals.signals import (AlarmInterrupt, SignalError,
-                               sig_on_reset as sig_on_count)
-
-from time import sleep
 from functools import reduce  # in order to keep reduce in python3
 
 import sage.misc.lazy_import
@@ -219,7 +213,6 @@ from sage.sat.all import *
 from sage.schemes.all import *
 from sage.graphs.all import *
 from sage.groups.all import *
-from sage.arith.power import generic_power as power
 from sage.databases.all import *
 from sage.categories.all import *
 from sage.sets.all import *
@@ -285,8 +278,6 @@ if sys.platform != 'win32':
 
 # Lazily import interacts (#15335)
 lazy_import('sage.interacts', 'all', 'interacts')
-
-from copy import copy, deepcopy
 
 # The code executed here uses a large amount of Sage components
 from sage.rings.qqbar import _init_qqbar
