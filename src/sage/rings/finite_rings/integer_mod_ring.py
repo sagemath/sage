@@ -1935,7 +1935,12 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         # Finite fields are a base case
         if self.is_field():
-            return f._roots_from_factorization(f.factor(), False)
+            R = f.parent()
+            x = R.gen()
+            p = R.modulus()
+            g = pow(x, p, f) - x
+            g = f.gcd(g)
+            return g._roots_from_factorization(g.factor(), False)
 
         # Otherwise, find roots modulo each prime power
         fac = self.factored_order()
