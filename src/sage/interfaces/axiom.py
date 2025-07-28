@@ -200,14 +200,22 @@ from sage.structure.richcmp import rich_to_bool
 # axiom has a lot a lot of ways for getting documentation from the
 # system -- this could also be useful.
 
+
 class PanAxiom(ExtraTabCompletion, Expect):
     """
     Interface to a PanAxiom interpreter.
     """
-    def __init__(self, name='axiom', command='axiom -nox -noclef',
-                 script_subdirectory=None, logfile=None,
-                 server=None, server_tmpdir=None,
-                 init_code=[')lisp (si::readline-off)']):
+
+    def __init__(
+        self,
+        name="axiom",
+        command="axiom -nox -noclef",
+        script_subdirectory=None,
+        logfile=None,
+        server=None,
+        server_tmpdir=None,
+        init_code=[")lisp (si::readline-off)"],
+    ):
         """
         Create an instance of the Axiom interpreter.
 
