@@ -321,6 +321,14 @@ Alternatively, we can still use pip to install:
     explicitly. You can obtain a list of valid feature names through
     ``meson configure``.
 
+    By default, meson may fall back to bundled versions of certain
+    subprojects known as `wrap dependencies
+    <https://mesonbuild.com/Wrap-dependency-system-manual.html>`_.
+    Maintainers will typically want to disable this behavior as well
+    to ensure that the system dependencies are used. This can be
+    achieved with the `--wrap-mode flag
+    <https://mesonbuild.com/Subprojects.html#commandline-options>`_
+
     With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
     being ``/usr/local``, it may then install to
     ``$DESTDIR/usr/local/lib/python3.12/site-packages/sage``.
