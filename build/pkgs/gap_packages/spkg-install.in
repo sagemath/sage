@@ -112,7 +112,6 @@ done
 #
 # nq         : none
 # io         : none
-# semigroups needs to use external libsemigroups
 # digraphs   needs to use external planarity
 pararr=( " " " " "--with-external-planarity" )
 ##############################################################################
