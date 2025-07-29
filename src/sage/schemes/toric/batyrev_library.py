@@ -20,13 +20,14 @@ from sage.schemes.toric.batyrev import SmoothFanoToricVariety
 from .poly_db_3d import polytopes_3d
 from .poly_db_4d import polytopes_4d
 
+
 class BatyrevToricFactory(SageObject):
     r"""
     The methods of this class construct Batyrev' classification of smooth and complete toric varieties.`
     """
 
     # whether to check the input data when constructing a variety, here we by default trust the database of smooth Fano polytopes
-    _check = False 
+    _check = False
 
     def _make_SmoothFanoToricVariety(self, name, coordinate_names, base_ring):
         r"""
@@ -57,7 +58,6 @@ class BatyrevToricFactory(SageObject):
             Delta = LatticePolytope(polytopes_4d[name])
         else:
             raise ValueError("unknown family name '%s'" % name)
-        
         if coordinate_names is None:
             dict_key = (name, base_ring)
         else:
@@ -71,7 +71,7 @@ class BatyrevToricFactory(SageObject):
                                     base_ring=base_ring,
                                     check=self._check)
         return self.__dict__[dict_key]
-       
+
     def get_smooth_fano(self, dim: int, index: int, coordinate_names=None, base_ring=QQ):
       r"""
       Return the smooth toric Fano ``dim``-fold with the given index.

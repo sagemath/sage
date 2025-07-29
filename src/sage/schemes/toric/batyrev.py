@@ -17,8 +17,6 @@ from sage.schemes.toric.fano_variety import FanoToricVariety_field
 from sage.categories.fields import Fields
 _Fields = Fields()
 
-
-
 # TODO: add the method to fix a basis of the Picard group, and express divisors in this basis
 class SmoothFanoToricVariety_field(FanoToricVariety_field):
     r"""
@@ -52,7 +50,7 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field):
 
         Use ``SmoothFanoToricVariety`` to construct a smooth Fano toric variety.
         """
-        super().__init__(Delta_polar, fan, coordinate_names, 
+        super().__init__(Delta_polar, fan, coordinate_names,
                          coordinate_name_indices, base_field)
 
     def _repr_(self):
@@ -138,7 +136,7 @@ def SmoothFanoToricVariety(Delta=None,
 
     if check and not Delta_polar.is_reflexive():
         raise ValueError("Delta_polar must be reflexive")
-    
+
     fan = FaceFan(Delta_polar)
 
     if check and not fan.is_smooth():
@@ -154,6 +152,6 @@ def SmoothFanoToricVariety(Delta=None,
                         "\n Got %s" % base_ring)
 
     return SmoothFanoToricVariety_field(
-        Delta_polar, fan, coordinate_names, 
+        Delta_polar, fan, coordinate_names,
         coordinate_name_indices, base_ring)
 
