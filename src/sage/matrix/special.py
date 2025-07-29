@@ -40,6 +40,7 @@ The following constructions are available:
     :meth:`~sage.matrix.special.random_rref_matrix`
     :meth:`~sage.matrix.special.random_subspaces_matrix`
     :meth:`~sage.matrix.special.random_unimodular_matrix`
+    :meth:`~sage.matrix.special.random_unitary_matrix`
     :meth:`~sage.matrix.special.toeplitz`
     :meth:`~sage.matrix.special.vandermonde`
     :meth:`~sage.matrix.special.vector_on_axis_rotation_matrix`
@@ -241,6 +242,9 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
       - ``'unimodular'`` -- creates a matrix of determinant 1
 
+      - ``'unitary'`` -- creates a (square) unitary matrix over a
+        subfield of the complex numbers
+
       - ``'diagonalizable'`` -- creates a diagonalizable matrix. if the
         base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
         if computed by hand, will have only integer entries. See the
@@ -303,7 +307,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: expected(100)
         1/25250
         sage: add_samples(ZZ, 5, 5)
-        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):  # long time
         ....:     add_samples(ZZ, 5, 5)
 
     The ``distribution`` keyword  set to ``uniform`` will limit values
@@ -313,7 +317,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: total_count = 0
         sage: dic = defaultdict(Integer)
         sage: add_samples(ZZ, 5, 5, distribution='uniform')
-        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):  # long time
         ....:     add_samples(ZZ, 5, 5, distribution='uniform')
 
     The ``x`` and ``y`` keywords can be used to distribute entries uniformly.
@@ -324,14 +328,14 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: total_count = 0
         sage: dic = defaultdict(Integer)
         sage: add_samples(ZZ, 4, 8, x=70, y=100)
-        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):  # long time
         ....:     add_samples(ZZ, 4, 8, x=70, y=100)
 
         sage: expected = lambda n : 1/10 if n in range(-5, 5) else 0
         sage: total_count = 0
         sage: dic = defaultdict(Integer)
         sage: add_samples(ZZ, 3, 7, x=-5, y=5)
-        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):  # long time
         ....:     add_samples(ZZ, 3, 7, x=-5, y=5)
 
     If only ``x`` is given, then it is used as the upper bound of a range
@@ -341,7 +345,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: total_count = 0
         sage: dic = defaultdict(Integer)
         sage: add_samples(ZZ, 5, 5, x=25)
-        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):  # long time
         ....:     add_samples(ZZ, 5, 5, x=25)
 
     To control the number of nonzero entries, use the ``density`` keyword
@@ -665,6 +669,8 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         return random_subspaces_matrix(parent, *args, **kwds)
     elif algorithm == 'unimodular':
         return random_unimodular_matrix(parent, *args, **kwds)
+    elif algorithm == 'unitary':
+        return random_unitary_matrix(parent, *args, **kwds)
     else:
         raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
 
@@ -1789,13 +1795,13 @@ def block_matrix(*args, **kwds):
 
     INPUT:
 
-    The block_matrix command takes a list of submatrices to add
+    The :func:`block_matrix` function takes a list of submatrices to add
     as blocks, optionally preceded by a ring and the number of block rows
     and block columns, and returns a matrix.
 
     The submatrices can be specified as a list of matrices (using
     ``nrows`` and ``ncols`` to determine their layout), or a list
-    of lists of matrices, where each list forms a row.
+    of lists of matrices/column vectors, where each list forms a row.
 
     - ``ring`` -- the base ring
 
@@ -1928,6 +1934,31 @@ def block_matrix(*args, **kwds):
         ...
         ValueError: must specify either nrows or ncols
 
+    Vectors are interpreted as column vectors::
+
+        sage: m = matrix([[1, 2], [3, 4]])
+        sage: v = vector([5, 6])
+        sage: matrix.block([
+        ....:     [m, v],
+        ....:     [0, 1],
+        ....:     ])
+        [1 2|5]
+        [3 4|6]
+        [---+-]
+        [0 0|1]
+
+    To interpret vectors as row vectors, :meth:`~sage.modules.free_module_element.FreeModuleElement.row`
+    can be used::
+
+        sage: matrix.block([
+        ....:     [m, 0],
+        ....:     [v.row(), 1],
+        ....:     ])
+        [1 2|0]
+        [3 4|0]
+        [---+-]
+        [5 6|1]
+
     TESTS::
 
         sage: A = matrix(ZZ, 2, 2, [3,5,8,13])
@@ -1940,6 +1971,55 @@ def block_matrix(*args, **kwds):
         [-----+-----]
         [ 1  0| 3  5]
         [ 0  1| 8 13]
+        sage: block_matrix([[A, 3r+1jr], [1r, A]])
+        [        3.0         5.0|3.0 + 1.0*I         0.0]
+        [        8.0        13.0|        0.0 3.0 + 1.0*I]
+        [-----------------------+-----------------------]
+        [        1.0         0.0|        3.0         5.0]
+        [        0.0         1.0|        8.0        13.0]
+
+    This is not implemented for now, but it might be implemented in the future
+    if there is no ambiguity::
+
+        sage: matrix.block([
+        ....:     [m, 0],
+        ....:     [v, 1],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: incompatible submatrix widths
+
+    Error reporting when non-ring elements are passed in::
+
+        sage: matrix.block([
+        ....:     ["abc"],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent <class 'str'> was passed in,
+         but only matrices, vectors and ring elements are accepted
+        sage: matrix.block([
+        ....:     [(1, 2)],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent <class 'tuple'> was passed in,
+         but only matrices, vectors and ring elements are accepted
+        sage: matrix.block([
+        ....:     [[1, 2]],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent <class 'list'> was passed in,
+         but only matrices, vectors and ring elements are accepted
+        sage: matrix.block([
+        ....:     [EllipticCurve('37a1').0],
+        ....:     ])
+        Traceback (most recent call last):
+        ...
+        ValueError: an element of parent Abelian group of points on
+         Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field was passed in,
+         but only matrices, vectors and ring elements are accepted
     """
     args = list(args)
     sparse = kwds.get('sparse', None)
@@ -2050,14 +2130,19 @@ def block_matrix(*args, **kwds):
 
     # At this point sub_matrices is a list of lists
 
+    from sage.structure.element import Vector
+    from sage.structure.coerce import py_scalar_to_element
+    sub_matrices = [[M.column() if isinstance(M, Vector) else M if isinstance(M, Matrix) else py_scalar_to_element(M)
+                     for M in row] for row in sub_matrices]
+
     # determine the base ring and sparsity
     if ring is None:
-        ring = ZZ
-        for row in sub_matrices:
-            for M in row:
-                R = M.base_ring() if isinstance(M, Matrix) else parent(M)
-                if R is not ZZ:
-                    ring = sage.categories.pushout.pushout(ring, R)
+        from sage.structure.element import get_coercion_model
+        parents = [M.base_ring() if isinstance(M, Matrix) else parent(M) for row in sub_matrices for M in row]
+        for p in parents:
+            if p not in Rings():
+                raise ValueError(f"an element of parent {p} was passed in, but only matrices, vectors and ring elements are accepted")
+        ring = get_coercion_model().common_parent(*parents) if parents else ZZ
 
     if sparse is None:
         sparse = True
@@ -3054,6 +3139,171 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
         return random_matrix(ring, size, algorithm='echelonizable', rank=size)
     elif upper_bound is not None and (ring == ZZ or ring == QQ):
         return random_matrix(ring, size,algorithm='echelonizable',rank=size, upper_bound=upper_bound, max_tries=max_tries)
+
+
+@matrix_method
+def random_unitary_matrix(parent):
+    r"""
+    Generate a random (square) unitary matrix of a given size
+    with entries in a subfield of the complex numbers.
+
+    INPUT:
+
+    - ``parent`` -- :class:`sage.matrix.matrix_space.MatrixSpace`; a
+      square matrix space over a subfield of the complex numbers
+      having characteristic zero.
+
+    OUTPUT:
+
+    A random unitary matrix in ``parent``. A :exc:`ValueError` is
+    raised if ``parent`` is not an appropriate matrix space (is not
+    square, or is not over a usable field).
+
+    ALGORITHM:
+
+    The method described by Liebeck and Osborne [LieOs1991]_ is used
+    almost verbatim.
+
+    .. WARNING:
+
+        Inexact rings may violate your expectations; in particular,
+        the rings ``RR`` and ``CC`` are accepted by this method but
+        the resulting matrix will usually fail the ``is_unitary()``
+        check due to numerical issues.
+
+    EXAMPLES:
+
+    This function is not in the global namespace and must be imported
+    before being used::
+
+        sage: from sage.matrix.constructor import random_unitary_matrix
+
+    Matrices with rational entries::
+
+        sage: n = ZZ.random_element(10)
+        sage: MS = MatrixSpace(QQ, n)
+        sage: U = random_unitary_matrix(MS)
+        sage: U.is_unitary() and U in MS
+        True
+
+    Matrices over a quadraric field::
+
+        sage: n = ZZ.random_element(10)
+        sage: K = QuadraticField(-1,'i')
+        sage: MS = MatrixSpace(K, n)
+        sage: U = random_unitary_matrix(MS)
+        sage: U.is_unitary() and U in MS
+        True
+
+    Matrices with entries in the algebraic real field (slow)::
+
+        sage: # long time
+        sage: n = ZZ.random_element(4)
+        sage: MS = MatrixSpace(AA, n)
+        sage: U = random_unitary_matrix(MS)
+        sage: U.is_unitary() and U in MS
+        True
+
+    Matrices with entries in the algebraic field (slower yet)::
+
+        sage: # long time
+        sage: n = ZZ.random_element(2)
+        sage: MS = MatrixSpace(QQbar, n)
+        sage: U = random_unitary_matrix(MS)
+        sage: U.is_unitary() and U in MS
+        True
+
+    Double-precision real/complex matrices can be constructed as
+    well::
+
+        sage: n = ZZ.random_element(10)
+        sage: MS = MatrixSpace(RDF, n)
+        sage: U = random_unitary_matrix(MS)
+        sage: U.is_unitary() and U in MS
+        True
+        sage: MS = MatrixSpace(CDF, n)
+        sage: U = random_unitary_matrix(MS)
+        sage: U.is_unitary() and U in MS
+        True
+
+    TESTS:
+
+    We raise a :exc:`ValueError` if the supplied matrix space is not
+    square::
+
+        sage: MS = MatrixSpace(QQ, 3, 4)
+        sage: random_unitary_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
+
+    Likewise if its base ring is not a field::
+
+        sage: MS = MatrixSpace(ZZ, 3)
+        sage: random_unitary_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a field
+
+    Likewise if that field is not of characteristic zero::
+
+        sage: MS = MatrixSpace(GF(5), 3)
+        sage: random_unitary_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must have characteristic zero
+
+    Likewise if that field is not a subfield of the complex numbers::
+
+        sage: R = Qp(7)
+        sage: R.characteristic()
+        0
+        sage: MS = MatrixSpace(R, 3)
+        sage: random_unitary_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the complex
+        numbers
+    """
+    n = parent.nrows()
+    if n != parent.ncols():
+        raise ValueError("parent must be square")
+
+    F = parent.base_ring()
+    if not F.is_field():
+        raise ValueError("base ring of parent must be a field")
+    elif not F.characteristic().is_zero():
+        # This is probably covered by checking for subfields of
+        # RLF/CLF, but it's mentioned explicitly in the paper and my
+        # faith in the subfield check is not 100%, so we verify the
+        # characteristic separately.
+        raise ValueError("base ring of parent must have characteristic zero")
+
+    from sage.rings.real_lazy import RLF, CLF
+    if not (RLF.has_coerce_map_from(F) or
+            F.has_coerce_map_from(RLF) or
+            CLF.has_coerce_map_from(F) or
+            F.has_coerce_map_from(CLF)):
+        # The implementation of SR.random_element() currently just
+        # returns a random integer coerced into SR, so there is no
+        # benefit to allowing SR here when QQ is available.
+        raise ValueError("base ring of parent must be a subfield "
+                         "of the complex numbers")
+
+    I = identity_matrix(F,n)
+    A = random_matrix(F,n)
+    S = A - A.conjugate_transpose()
+    U = (S-I).inverse()*(S+I)
+
+    # Scale the rows of U by plus/minus one with equal probability.
+    # This generates the equivalence class of U according to the
+    # Liebeck/Osborne paper.
+    from random import random
+    for i in range(n):
+        if random() < 0.5:
+            U.set_row_to_multiple_of_row(i, i, -1)
+
+    return U
 
 
 @matrix_method
