@@ -148,162 +148,43 @@ DEFAULT_COEFFICIENTS = tuple(chr(i) for i in range(ord("a"), ord("z") + 1))
 
 
 r"""
-AL: add base class of (Gorenstein) Fano varieties, which serve as the superclass for both CPR-Fano and smooth Fano varieties.
+AL: add class of (Gorenstein) Fano varieties, served as the superclass for both CPR-Fano and smooth Fano varieties.
 """
-
-def FanoToricVariety(Delta=None,
-                    Delta_polar=None,
-                    coordinate_names=None,
-                    names=None,
-                    coordinate_name_indices=None,
-                    base_ring=None,
-                    base_field=None,
-                    check=True):
-    r"""
-    Construct a Fano toric variety.
-
-    .. NOTE::
-
-        See documentation of the module
-        :mod:`~sage.schemes.toric.fano_variety` for the used
-        definitions and supported varieties.
-
-    Due to the large number of available options, it is recommended to always
-    use keyword parameters.
-
-    INPUT:
-
-    - ``Delta`` -- reflexive :class:`lattice polytope
-      <sage.geometry.lattice_polytope.LatticePolytopeClass>`. The fan of the
-      constructed CPR-Fano toric variety will be a crepant subdivision of the
-      *normal fan* of ``Delta``. Either ``Delta`` or ``Delta_polar`` must be
-      given, but not both at the same time, since one is completely determined
-      by another via :meth:`polar
-      <sage.geometry.lattice_polytope.LatticePolytopeClass.polar>` method.
-
-    - ``Delta_polar`` -- reflexive :class:`lattice polytope
-      <sage.geometry.lattice_polytope.LatticePolytopeClass>`. The fan of the
-      constructed CPR-Fano toric variety will be a crepant subdivision of the
-      *face fan* of ``Delta_polar``. Either ``Delta`` or ``Delta_polar`` must
-      be given, but not both at the same time, since one is completely
-      determined by another via :meth:`polar
-      <sage.geometry.lattice_polytope.LatticePolytopeClass.polar>` method.
-
-    - ``coordinate_names`` -- names of variables for the coordinate ring, see
-      :func:`~sage.schemes.toric.variety.normalize_names`
-      for acceptable formats. If not given, indexed variable names will be
-      created automatically.
-
-    - ``names`` -- an alias of ``coordinate_names`` for internal
-      use. You may specify either ``names`` or ``coordinate_names``,
-      but not both.
-
-    - ``coordinate_name_indices`` -- list of integers, indices for indexed
-      variables. If not given, the index of each variable will coincide with
-      the index of the corresponding point of ``Delta_polar``.
-
-    - ``base_ring`` -- base field of the Fano toric variety
-      (default: `\QQ`)
-
-    - ``base_field`` -- alias for ``base_ring``. Takes precedence if
-      both are specified.
-
-    - ``check`` -- by default the input data will be checked for correctness
-      (e.g. that ``charts`` do form a subdivision of the normal fan of
-      ``Delta``). If you know for sure that the input is valid, you may
-      significantly decrease construction time using ``check=False`` option.
-
-    OUTPUT: :class:`Fano toric variety <FanoToricVariety_field>`
-
-    EXAMPLES:
-
-    We start with the product of two projective lines::
-
-        sage: diamond = lattice_polytope.cross_polytope(2)
-        sage: diamond.vertices()
-        M( 1,  0),        M( 0,  1),
-        M(-1,  0),        M( 0, -1)
-        in 2-d lattice M
-        sage: P1xP1 = FanoToricVariety(Delta_polar=diamond)
-        sage: P1xP1
-        2-d Fano toric variety covered by 4 affine patches
-        sage: P1xP1.fan()
-        Rational polyhedral fan in 2-d lattice M
-        sage: P1xP1.fan().rays()
-        M( 1,  0),        M( 0,  1),
-        M(-1,  0),        M( 0, -1)
-        in 2-d lattice M
-
-    Here is a shorthand for defining the toric variety and homogeneous
-    coordinates in one go::
-
-        sage: P1xP1.<a,b,c,d> = FanoToricVariety(Delta_polar=diamond)
-        sage: (a^2+b^2) * (c+d)
-        a^2*c + b^2*c + a^2*d + b^2*d
-    """
-    if names is not None:
-        if coordinate_names is not None:
-            raise ValueError('You must not specify both coordinate_names and names!')
-        coordinate_names = names
-    # Check/normalize Delta_polar
-    if (Delta is None) == (Delta_polar is None):
-        raise ValueError("specify exactly one of Delta or Delta_polar")
-    if Delta_polar is None:
-        Delta_polar = Delta.polar()
-    if check and not Delta_polar.is_reflexive():
-        raise ValueError("Delta_polar must be reflexive")
-    
-    # AL: construct the fan fromt the original polytope without worrying about the refinement
-    fan = FaceFan(Delta_polar)
-
-    # Check/normalize base_field
-    if base_field is not None:
-        base_ring = base_field
-    if base_ring is None:
-        base_ring = QQ
-    elif base_ring not in _Fields:
-        raise TypeError("need a field to construct a Fano toric variety!"
-                        "\n Got %s" % base_ring)
-
-    return FanoToricVariety_field(
-        Delta_polar, fan, coordinate_names, coordinate_name_indices, base_ring)
-
-
 class FanoToricVariety_field(ToricVariety_field):
     r"""
-    Base class for Gorenstein Fano toric varieties over a field.
-    Construct a Fano toric variety associated to a reflexive polytope.
+    A (Gorenstein) Fano toric variety over a field.
 
-    .. WARNING::
+    Let `k` be a field, and let `N` be a lattice of rank `n`. A *Fano toric variety* over `k`
+    is a normal projective toric variety `X` defined over `k` such that its anticanonical
+    divisor `-K_X` is ample. When `X` is Gorenstein, `-K_X` is also Cartier, and the associated
+    polytope `\Delta` is a *reflexive lattice polytope* in `N_\RR`.
 
-        This class does not perform any checks of correctness of input and it
-        does assume that the internal structure of the given parameters is
-        coordinated in a certain way. Use
-        :func:`FanoToricVariety` to construct Fano toric varieties.
+    There is a one-to-one correspondence between Gorenstein Fano toric varieties and reflexive
+    lattice polytopes: given a reflexive polytope `\Delta \subseteq N_\RR`, the *face fan* 
+    `\Sigma(\Delta)` defines a complete fan whose associated toric variety `X(\Sigma(\Delta))`
+    is a Gorenstein Fano toric variety.
 
-    .. NOTE::
+    This class constructs such a variety over a field `k`, from either a reflexive polytope
+    or its polar.
 
-        See documentation of the module
-        :mod:`~sage.schemes.toric.fano_variety` for the used
-        definitions and supported varieties.
+    In the current implementation, the Fano toric variety is constructed as
+    ``X = X(\Sigma(\Delta^\circ))`` for a reflexive polytope `\Delta`, where `\Delta^\circ`
+    denotes its polar in the dual lattice `M`.
+
+    .. SEEALSO::
+
+        See the module documentation
+        :mod:`~sage.schemes.toric.fano_variety` for further background and references.
 
     INPUT:
 
-    - ``Delta_polar`` -- reflexive polytope
+    - ``Delta_polar`` -- reflexive polytope (i.e., polar of a reflexive polytope)
+    - ``fan`` -- rational polyhedral fan (constructed from `Delta_polar` if not given)
+    - ``coordinate_names`` -- names for the homogeneous coordinate ring
+    - ``coordinate_name_indices`` -- indices for named variables (optional)
+    - ``base_field`` -- the field `k` over which the variety is defined
 
-    - ``fan`` -- rational polyhedral fan which is the face fan of
-      ``Delta_polar``
-
-    - ``coordinate_names`` -- names of the variables of the coordinate ring in
-      the format accepted by
-      :func:`~sage.schemes.toric.variety.normalize_names`
-
-    - ``coordinate_name_indices`` -- indices for indexed variables,
-      if ``None``, will be equal to ``coordinate_points``
-
-    - ``base_field`` -- base field of the Fano toric variety
-
-    OUTPUT: :class:`Fano toric variety <FanoToricVariety_field>`
+    OUTPUT: A :class:`Fano toric variety <FanoToricVariety_field>` over the field `k`
 
     TESTS::
 
@@ -312,12 +193,81 @@ class FanoToricVariety_field(ToricVariety_field):
         sage: P1xP1
         2-d Fano toric variety covered by 4 affine patches
     """
+    @staticmethod
+    def __classcall_private__(cls, Delta=None, Delta_polar=None, coordinate_names=None,
+                            names=None, coordinate_name_indices=None, base_ring=None,
+                            base_field=None, check=True):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: diamond = lattice_polytope.cross_polytope(2)
+            sage: diamond_polar = diamond.polar() 
+            sage: FTV1 = FanoToricVariety(Delta_polar=diamond)
+            sage: FTV2 = FanoToricVariety(Delta=diamond_polar)
+            sage: FTV1 is FTV2
+            True
+        """
+        if names is not None:
+            if coordinate_names is not None:
+                raise ValueError('You must not specify both coordinate_names and names!')
+            coordinate_names = names
+        # Check/normalize Delta_polar
+        if (Delta is None) == (Delta_polar is None):
+            raise ValueError("specify exactly one of Delta or Delta_polar")
+        if Delta_polar is None:
+            Delta_polar = Delta.polar()
+        if check and not Delta_polar.is_reflexive():
+            raise ValueError("Delta_polar must be reflexive")
+        
+        # AL: construct the fan fromt the original polytope without worrying about the refinement
+        fan = FaceFan(Delta_polar)
+
+        # Check/normalize base_field
+        if base_field is not None:
+            base_ring = base_field
+        if base_ring is None:
+            base_ring = QQ
+        elif base_ring not in _Fields:
+            raise TypeError("need a field to construct a Fano toric variety!"
+                            "\n Got %s" % base_ring)
+
+        return super().__classcall__(cls, Delta_polar, fan, coordinate_names,
+                                     coordinate_name_indices, base_ring)
+
 
     def __init__(self, Delta_polar, fan, coordinate_names, coordinate_name_indices, base_field):
         r"""
         See :class:`FanoToricVariety_field` for documentation.
 
         Use ``FanoToricVariety`` to construct Fano toric varieties.
+
+        EXAMPLES:
+
+        We start with the product of two projective lines::
+
+            sage: diamond = lattice_polytope.cross_polytope(2)
+            sage: diamond.vertices()
+            M( 1,  0),        M( 0,  1),
+            M(-1,  0),        M( 0, -1)
+            in 2-d lattice M
+            sage: P1xP1 = FanoToricVariety(Delta_polar=diamond)
+            sage: P1xP1
+            2-d Fano toric variety covered by 4 affine patches
+            sage: P1xP1.fan()
+            Rational polyhedral fan in 2-d lattice M
+            sage: P1xP1.fan().rays()
+            M( 1,  0),        M( 0,  1),
+            M(-1,  0),        M( 0, -1)
+            in 2-d lattice M
+
+        Here is a shorthand for defining the toric variety and homogeneous 
+        coordinates in one go::
+
+                sage: P1xP1.<a,b,c,d> = FanoToricVariety(Delta_polar=diamond)
+                sage: (a^2+b^2) * (c+d)
+                a^2*c + b^2*c + a^2*d + b^2*d
 
         TESTS::
 
@@ -330,7 +280,7 @@ class FanoToricVariety_field(ToricVariety_field):
         # AL: we want to use the anticanonical surface and nef complete intersection functions for general Fano toric varieties
         self._coordinate_points = tuple(range(len(fan.rays())))
         self._point_to_ray = {i: i for i in self._coordinate_points}
-        super().__init__(fan, coordinate_names,
+        ToricVariety_field.__init__(self, fan, coordinate_names,
                          coordinate_name_indices, base_field)
     
     def _latex_(self):
@@ -720,412 +670,6 @@ def is_CPRFanoToricVariety(x):
     deprecation(38022, "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.")
     return isinstance(x, CPRFanoToricVariety_field)
 
-
-def CPRFanoToricVariety(Delta=None,
-                        Delta_polar=None,
-                        coordinate_points=None,
-                        charts=None,
-                        coordinate_names=None,
-                        names=None,
-                        coordinate_name_indices=None,
-                        make_simplicial=False,
-                        base_ring=None,
-                        base_field=None,
-                        check=True):
-    r"""
-    Construct a CPR-Fano toric variety.
-
-    .. NOTE::
-
-        See documentation of the module
-        :mod:`~sage.schemes.toric.fano_variety` for the used
-        definitions and supported varieties.
-
-    Due to the large number of available options, it is recommended to always
-    use keyword parameters.
-
-    INPUT:
-
-    - ``Delta`` -- reflexive :class:`lattice polytope
-      <sage.geometry.lattice_polytope.LatticePolytopeClass>`. The fan of the
-      constructed CPR-Fano toric variety will be a crepant subdivision of the
-      *normal fan* of ``Delta``. Either ``Delta`` or ``Delta_polar`` must be
-      given, but not both at the same time, since one is completely determined
-      by another via :meth:`polar
-      <sage.geometry.lattice_polytope.LatticePolytopeClass.polar>` method.
-
-    - ``Delta_polar`` -- reflexive :class:`lattice polytope
-      <sage.geometry.lattice_polytope.LatticePolytopeClass>`. The fan of the
-      constructed CPR-Fano toric variety will be a crepant subdivision of the
-      *face fan* of ``Delta_polar``. Either ``Delta`` or ``Delta_polar`` must
-      be given, but not both at the same time, since one is completely
-      determined by another via :meth:`polar
-      <sage.geometry.lattice_polytope.LatticePolytopeClass.polar>` method.
-
-    - ``coordinate_points`` -- list of integers or string. A list will be
-      interpreted as indices of (boundary) points of ``Delta_polar`` which
-      should be used as rays of the underlying fan. It must include all
-      vertices of ``Delta_polar`` and no repetitions are allowed. A string
-      must be one of the following descriptions of points of ``Delta_polar``:
-
-      * "vertices" (default),
-      * "all" (will not include the origin),
-      * "all but facets" (will not include points in the relative interior of
-        facets);
-
-    - ``charts`` -- list of lists of elements from ``coordinate_points``. Each
-      of these lists must define a generating cone of a fan subdividing the
-      normal fan of ``Delta``. Default ``charts`` correspond to the normal fan
-      of ``Delta`` without subdivision. The fan specified by ``charts`` will
-      be subdivided to include all of the requested ``coordinate_points``.
-
-    - ``coordinate_names`` -- names of variables for the coordinate ring, see
-      :func:`~sage.schemes.toric.variety.normalize_names`
-      for acceptable formats. If not given, indexed variable names will be
-      created automatically.
-
-    - ``names`` -- an alias of ``coordinate_names`` for internal
-      use. You may specify either ``names`` or ``coordinate_names``,
-      but not both.
-
-    - ``coordinate_name_indices`` -- list of integers, indices for indexed
-      variables. If not given, the index of each variable will coincide with
-      the index of the corresponding point of ``Delta_polar``.
-
-    - ``make_simplicial`` -- if ``True``, the underlying fan will be made
-      simplicial (default: ``False``)
-
-    - ``base_ring`` -- base field of the CPR-Fano toric variety
-      (default: `\QQ`)
-
-    - ``base_field`` -- alias for ``base_ring``. Takes precedence if
-      both are specified.
-
-    - ``check`` -- by default the input data will be checked for correctness
-      (e.g. that ``charts`` do form a subdivision of the normal fan of
-      ``Delta``). If you know for sure that the input is valid, you may
-      significantly decrease construction time using ``check=False`` option.
-
-    OUTPUT: :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>`
-
-    EXAMPLES:
-
-    We start with the product of two projective lines::
-
-        sage: diamond = lattice_polytope.cross_polytope(2)
-        sage: diamond.vertices()
-        M( 1,  0),        M( 0,  1),
-        M(-1,  0),        M( 0, -1)
-        in 2-d lattice M
-        sage: P1xP1 = CPRFanoToricVariety(Delta_polar=diamond)
-        sage: P1xP1
-        2-d CPR-Fano toric variety covered by 4 affine patches
-        sage: P1xP1.fan()
-        Rational polyhedral fan in 2-d lattice M
-        sage: P1xP1.fan().rays()
-        M( 1,  0),        M( 0,  1),
-        M(-1,  0),        M( 0, -1)
-        in 2-d lattice M
-
-    "Unfortunately," this variety is smooth to start with and we cannot
-    perform any subdivisions of the underlying fan without leaving the
-    category of CPR-Fano toric varieties. Our next example starts with a
-    square::
-
-        sage: square = diamond.polar()
-        sage: square.vertices()
-        N( 1,  1),        N( 1, -1),
-        N(-1, -1),        N(-1,  1)
-        in 2-d lattice N
-        sage: square.points()
-        N( 1,  1),        N( 1, -1),        N(-1, -1),
-        N(-1,  1),        N(-1,  0),        N( 0, -1),
-        N( 0,  0),        N( 0,  1),        N( 1,  0)
-        in 2-d lattice N
-
-    We will construct several varieties associated to it::
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square)
-        sage: FTV.fan().rays()
-        N( 1,  1),        N( 1, -1),
-        N(-1, -1),        N(-1,  1)
-        in 2-d lattice N
-        sage: FTV.gens()
-        (z0, z1, z2, z3)
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,8])
-        sage: FTV.fan().rays()
-        N( 1,  1),        N( 1, -1),        N(-1, -1),
-        N(-1,  1),        N( 1,  0)
-        in 2-d lattice N
-        sage: FTV.gens()
-        (z0, z1, z2, z3, z8)
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[8,0,2,1,3],
-        ....:                           coordinate_names='x+')
-        sage: FTV.fan().rays()
-        N( 1,  0),        N( 1,  1),        N(-1, -1),
-        N( 1, -1),        N(-1,  1)
-        in 2-d lattice N
-        sage: FTV.gens()
-        (x8, x0, x2, x1, x3)
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points='all',
-        ....:                           coordinate_names="x y Z+")
-        sage: FTV.fan().rays()
-        N( 1,  1),        N( 1, -1),        N(-1, -1),        N(-1,  1),
-        N(-1,  0),        N( 0, -1),        N( 0,  1),        N( 1,  0)
-        in 2-d lattice N
-        sage: FTV.gens()
-        (x, y, Z2, Z3, Z4, Z5, Z7, Z8)
-
-    Note that ``Z6`` is "missing". This is due to the fact that the 6-th point
-    of ``square`` is the origin, and all automatically created names have the
-    same indices as corresponding points of
-    :meth:`~CPRFanoToricVariety_field.Delta_polar`. This is usually very
-    convenient, especially if you have to work with several partial
-    resolutions of the same Fano toric variety. However, you can change it, if
-    you want::
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points='all',
-        ....:                           coordinate_names="x y Z+",
-        ....:                           coordinate_name_indices=list(range(8)))
-        sage: FTV.gens()
-        (x, y, Z2, Z3, Z4, Z5, Z6, Z7)
-
-    Note that you have to provide indices for *all* variables, including those
-    that have "completely custom" names. Again, this is usually convenient,
-    because you can add or remove "custom" variables without disturbing too
-    much "automatic" ones::
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points='all',
-        ....:                           coordinate_names="x Z+",
-        ....:                           coordinate_name_indices=list(range(8)))
-        sage: FTV.gens()
-        (x, Z1, Z2, Z3, Z4, Z5, Z6, Z7)
-
-    If you prefer to always start from zero, you will have to shift indices
-    accordingly::
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points='all',
-        ....:                           coordinate_names="x Z+",
-        ....:                           coordinate_name_indices=[0] + list(range(7)))
-        sage: FTV.gens()
-        (x, Z0, Z1, Z2, Z3, Z4, Z5, Z6)
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points='all',
-        ....:                           coordinate_names="x y Z+",
-        ....:                           coordinate_name_indices=[0]*2 + list(range(6)))
-        sage: FTV.gens()
-        (x, y, Z0, Z1, Z2, Z3, Z4, Z5)
-
-    So you always can get any names you want, somewhat complicated default
-    behaviour was designed with the hope that in most cases you will have no
-    desire to provide different names.
-
-    Now we will use the possibility to specify initial charts::
-
-        sage: charts = [(0,1), (1,2), (2,3), (3,0)]
-
-    (these charts actually form exactly the face fan of our square) ::
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,4],
-        ....:                           charts=charts)
-        sage: FTV.fan().rays()
-        N( 1,  1),        N( 1, -1),        N(-1, -1),
-        N(-1,  1),        N(-1,  0)
-        in 2-d lattice N
-        sage: [cone.ambient_ray_indices() for cone in FTV.fan()]
-        [(0, 1), (1, 2), (2, 4), (3, 4), (0, 3)]
-
-    If charts are wrong, it should be detected::
-
-        sage: bad_charts = charts + [(3,0)]
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,4],
-        ....:                           charts=bad_charts)
-        Traceback (most recent call last):
-        ...
-        ValueError: you have provided 5 cones, but only 4 of them are maximal!
-        Use discard_faces=True if you indeed need to construct a fan from these cones.
-
-    These charts are technically correct, they just happened to list one of
-    them twice, but it is assumed that such a situation will not happen. It is
-    especially important when you try to speed up your code::
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,4],
-        ....:                           charts=bad_charts,
-        ....:                           check=False)
-        Traceback (most recent call last):
-        ...
-        IndexError: list assignment index out of range
-
-    In this case you still get an error message, but it is harder to figure out
-    what is going on. It may also happen that "everything will still work" in
-    the sense of not crashing, but work with such an invalid variety may lead to
-    mathematically wrong results, so use ``check=False`` carefully!
-
-    Here are some other possible mistakes::
-
-        sage: bad_charts = charts + [(0,2)]
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,4],
-        ....:                           charts=bad_charts)
-        Traceback (most recent call last):
-        ...
-        ValueError: (0, 2) does not form a chart of a subdivision of
-        the face fan of 2-d reflexive polytope #14 in 2-d lattice N!
-
-        sage: bad_charts = charts[:-1]
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,4],
-        ....:                           charts=bad_charts)
-        Traceback (most recent call last):
-        ...
-        ValueError: given charts do not form a complete fan!
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[1,2,3,4])
-        Traceback (most recent call last):
-        ...
-        ValueError: all 4 vertices of Delta_polar must be used for coordinates!
-        Got: [1, 2, 3, 4]
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,0,1,2,3,4])
-        Traceback (most recent call last):
-        ...
-        ValueError: no repetitions are allowed for coordinate points!
-        Got: [0, 0, 1, 2, 3, 4]
-
-        sage: FTV = CPRFanoToricVariety(Delta_polar=square,
-        ....:                           coordinate_points=[0,1,2,3,6])
-        Traceback (most recent call last):
-        ...
-        ValueError: the origin (point #6) cannot be used for a coordinate!
-        Got: [0, 1, 2, 3, 6]
-
-    Here is a shorthand for defining the toric variety and homogeneous
-    coordinates in one go::
-
-        sage: P1xP1.<a,b,c,d> = CPRFanoToricVariety(Delta_polar=diamond)
-        sage: (a^2+b^2) * (c+d)
-        a^2*c + b^2*c + a^2*d + b^2*d
-    """
-    if names is not None:
-        if coordinate_names is not None:
-            raise ValueError('You must not specify both coordinate_names and names!')
-        coordinate_names = names
-    # Check/normalize Delta_polar
-    if Delta is None and Delta_polar is None:
-        raise ValueError("either Delta or Delta_polar must be given!")
-    elif Delta is not None and Delta_polar is not None:
-        raise ValueError("Delta and Delta_polar cannot be given together!")
-    elif Delta_polar is None:
-        Delta_polar = Delta.polar()
-    elif not Delta_polar.is_reflexive():
-        raise ValueError("Delta_polar must be reflexive!")
-    # Check/normalize coordinate_points and construct fan rays
-    if coordinate_points is None:
-        coordinate_points = list(range(Delta_polar.nvertices()))
-        if charts is not None:
-            for chart in charts:
-                for point in chart:
-                    if point not in coordinate_points:
-                        coordinate_points.append(point)
-    elif coordinate_points == "vertices":
-        coordinate_points = list(range(Delta_polar.nvertices()))
-    elif coordinate_points == "all":
-        coordinate_points = list(range(Delta_polar.npoints()))
-        coordinate_points.remove(Delta_polar.origin())
-    elif coordinate_points == "all but facets":
-        coordinate_points = Delta_polar.skeleton_points(Delta_polar.dim() - 2)
-    elif isinstance(coordinate_points, str):
-        raise ValueError("unrecognized description of the coordinate points!"
-                         "\nGot: %s" % coordinate_points)
-    elif check:
-        cp_set = set(coordinate_points)
-        if len(cp_set) != len(coordinate_points):
-            raise ValueError(
-                "no repetitions are allowed for coordinate points!\nGot: %s"
-                % coordinate_points)
-        if not cp_set.issuperset(list(range(Delta_polar.nvertices()))):
-            raise ValueError("all %d vertices of Delta_polar must be used "
-                "for coordinates!\nGot: %s"
-                % (Delta_polar.nvertices(), coordinate_points))
-        if Delta_polar.origin() in cp_set:
-            raise ValueError("the origin (point #%d) cannot be used for a "
-                "coordinate!\nGot: %s"
-                % (Delta_polar.origin(), coordinate_points))
-    point_to_ray = {point: n
-                    for n, point in enumerate(coordinate_points)}
-    # This can be simplified if LatticePolytopeClass is adjusted.
-    rays = [Delta_polar.point(p) for p in coordinate_points]
-    # Check/normalize charts and construct the fan based on them.
-    if charts is None:
-        # Start with the face fan
-        fan = FaceFan(Delta_polar)
-    else:
-        # First of all, check that each chart is completely contained in a
-        # single facet of Delta_polar, otherwise they do not form a
-        # subdivision of the face fan of Delta_polar
-        if check:
-            facet_sets = [frozenset(facet.ambient_point_indices())
-                          for facet in Delta_polar.facets()]
-            for chart in charts:
-                is_bad = True
-                for fset in facet_sets:
-                    if fset.issuperset(chart):
-                        is_bad = False
-                        break
-                if is_bad:
-                    raise ValueError(
-                        "%s does not form a chart of a subdivision of the "
-                        "face fan of %s!" % (chart, Delta_polar))
-        # We will construct the initial fan from Cone objects: since charts
-        # may not use all of the necessary rays, alternative form is tedious
-        # With check=False it should not be long anyway.
-        cones = [Cone((rays[point_to_ray[point]] for point in chart),
-                      check=check)
-                 for chart in charts]
-        fan = Fan(cones, check=check)
-        if check and not fan.is_complete():
-            raise ValueError("given charts do not form a complete fan!")
-    # Subdivide this fan to use all required points
-    fan = fan.subdivide(new_rays=(ray for ray in rays
-                                      if ray not in fan.rays().set()),
-                        make_simplicial=make_simplicial)
-    # Now create yet another fan making sure that the order of the rays is
-    # the same as requested (it is a bit difficult to get it from the start)
-    trans = {}
-    for n, ray in enumerate(fan.rays()):
-        trans[n] = rays.index(ray)
-    cones = tuple(tuple(sorted(trans[r] for r in cone.ambient_ray_indices()))
-                  for cone in fan)
-    fan = Fan(cones, rays, check=False)
-    # Check/normalize base_field
-    if base_field is not None:
-        base_ring = base_field
-    if base_ring is None:
-        base_ring = QQ
-    elif base_ring not in _Fields:
-        raise TypeError("need a field to construct a Fano toric variety!"
-                        "\n Got %s" % base_ring)
-    fan._is_complete = True     # At this point it must be for sure
-    return CPRFanoToricVariety_field(
-        Delta_polar, fan, coordinate_points,
-        point_to_ray, coordinate_names, coordinate_name_indices, base_ring)
-
-
 class CPRFanoToricVariety_field(FanoToricVariety_field):
     r"""
     Construct a CPR-Fano toric variety associated to a reflexive polytope.
@@ -1174,6 +718,411 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
         sage: P1xP1
         2-d CPR-Fano toric variety covered by 4 affine patches
     """
+    @staticmethod
+    def __classcall_private__(cls, Delta=None,
+                                Delta_polar=None,
+                                coordinate_points=None,
+                                charts=None,
+                                coordinate_names=None,
+                                names=None,
+                                coordinate_name_indices=None,
+                                make_simplicial=False,
+                                base_ring=None,
+                                base_field=None,
+                                check=True):
+        r"""
+        Normalize the input to construct a CPR-Fano toric variety, to ensure a unique representation.
+
+        .. NOTE::
+
+            See documentation of the module
+            :mod:`~sage.schemes.toric.fano_variety` for the used
+            definitions and supported varieties.
+
+        Due to the large number of available options, it is recommended to always
+        use keyword parameters.
+
+        INPUT:
+
+        - ``Delta`` -- reflexive :class:`lattice polytope
+        <sage.geometry.lattice_polytope.LatticePolytopeClass>`. The fan of the
+        constructed CPR-Fano toric variety will be a crepant subdivision of the
+        *normal fan* of ``Delta``. Either ``Delta`` or ``Delta_polar`` must be
+        given, but not both at the same time, since one is completely determined
+        by another via :meth:`polar
+        <sage.geometry.lattice_polytope.LatticePolytopeClass.polar>` method.
+
+        - ``Delta_polar`` -- reflexive :class:`lattice polytope
+        <sage.geometry.lattice_polytope.LatticePolytopeClass>`. The fan of the
+        constructed CPR-Fano toric variety will be a crepant subdivision of the
+        *face fan* of ``Delta_polar``. Either ``Delta`` or ``Delta_polar`` must
+        be given, but not both at the same time, since one is completely
+        determined by another via :meth:`polar
+        <sage.geometry.lattice_polytope.LatticePolytopeClass.polar>` method.
+
+        - ``coordinate_points`` -- list of integers or string. A list will be
+        interpreted as indices of (boundary) points of ``Delta_polar`` which
+        should be used as rays of the underlying fan. It must include all
+        vertices of ``Delta_polar`` and no repetitions are allowed. A string
+        must be one of the following descriptions of points of ``Delta_polar``:
+
+        * "vertices" (default),
+        * "all" (will not include the origin),
+        * "all but facets" (will not include points in the relative interior of
+            facets);
+
+        - ``charts`` -- list of lists of elements from ``coordinate_points``. Each
+        of these lists must define a generating cone of a fan subdividing the
+        normal fan of ``Delta``. Default ``charts`` correspond to the normal fan
+        of ``Delta`` without subdivision. The fan specified by ``charts`` will
+        be subdivided to include all of the requested ``coordinate_points``.
+
+        - ``coordinate_names`` -- names of variables for the coordinate ring, see
+        :func:`~sage.schemes.toric.variety.normalize_names`
+        for acceptable formats. If not given, indexed variable names will be
+        created automatically.
+
+        - ``names`` -- an alias of ``coordinate_names`` for internal
+        use. You may specify either ``names`` or ``coordinate_names``,
+        but not both.
+
+        - ``coordinate_name_indices`` -- list of integers, indices for indexed
+        variables. If not given, the index of each variable will coincide with
+        the index of the corresponding point of ``Delta_polar``.
+
+        - ``make_simplicial`` -- if ``True``, the underlying fan will be made
+        simplicial (default: ``False``)
+
+        - ``base_ring`` -- base field of the CPR-Fano toric variety
+        (default: `\QQ`)
+
+        - ``base_field`` -- alias for ``base_ring``. Takes precedence if
+        both are specified.
+
+        - ``check`` -- by default the input data will be checked for correctness
+        (e.g. that ``charts`` do form a subdivision of the normal fan of
+        ``Delta``). If you know for sure that the input is valid, you may
+        significantly decrease construction time using ``check=False`` option.
+
+        OUTPUT: :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>`
+
+        EXAMPLES:
+
+        We start with the product of two projective lines::
+
+            sage: diamond = lattice_polytope.cross_polytope(2)
+            sage: diamond.vertices()
+            M( 1,  0),        M( 0,  1),
+            M(-1,  0),        M( 0, -1)
+            in 2-d lattice M
+            sage: P1xP1 = CPRFanoToricVariety(Delta_polar=diamond)
+            sage: P1xP1
+            2-d CPR-Fano toric variety covered by 4 affine patches
+            sage: P1xP1.fan()
+            Rational polyhedral fan in 2-d lattice M
+            sage: P1xP1.fan().rays()
+            M( 1,  0),        M( 0,  1),
+            M(-1,  0),        M( 0, -1)
+            in 2-d lattice M
+
+        "Unfortunately," this variety is smooth to start with and we cannot
+        perform any subdivisions of the underlying fan without leaving the
+        category of CPR-Fano toric varieties. Our next example starts with a
+        square::
+
+            sage: square = diamond.polar()
+            sage: square.vertices()
+            N( 1,  1),        N( 1, -1),
+            N(-1, -1),        N(-1,  1)
+            in 2-d lattice N
+            sage: square.points()
+            N( 1,  1),        N( 1, -1),        N(-1, -1),
+            N(-1,  1),        N(-1,  0),        N( 0, -1),
+            N( 0,  0),        N( 0,  1),        N( 1,  0)
+            in 2-d lattice N
+
+        We will construct several varieties associated to it::
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square)
+            sage: FTV.fan().rays()
+            N( 1,  1),        N( 1, -1),
+            N(-1, -1),        N(-1,  1)
+            in 2-d lattice N
+            sage: FTV.gens()
+            (z0, z1, z2, z3)
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,8])
+            sage: FTV.fan().rays()
+            N( 1,  1),        N( 1, -1),        N(-1, -1),
+            N(-1,  1),        N( 1,  0)
+            in 2-d lattice N
+            sage: FTV.gens()
+            (z0, z1, z2, z3, z8)
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[8,0,2,1,3],
+            ....:                           coordinate_names='x+')
+            sage: FTV.fan().rays()
+            N( 1,  0),        N( 1,  1),        N(-1, -1),
+            N( 1, -1),        N(-1,  1)
+            in 2-d lattice N
+            sage: FTV.gens()
+            (x8, x0, x2, x1, x3)
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points='all',
+            ....:                           coordinate_names="x y Z+")
+            sage: FTV.fan().rays()
+            N( 1,  1),        N( 1, -1),        N(-1, -1),        N(-1,  1),
+            N(-1,  0),        N( 0, -1),        N( 0,  1),        N( 1,  0)
+            in 2-d lattice N
+            sage: FTV.gens()
+            (x, y, Z2, Z3, Z4, Z5, Z7, Z8)
+
+        Note that ``Z6`` is "missing". This is due to the fact that the 6-th point
+        of ``square`` is the origin, and all automatically created names have the
+        same indices as corresponding points of
+        :meth:`~CPRFanoToricVariety_field.Delta_polar`. This is usually very
+        convenient, especially if you have to work with several partial
+        resolutions of the same Fano toric variety. However, you can change it, if
+        you want::
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points='all',
+            ....:                           coordinate_names="x y Z+",
+            ....:                           coordinate_name_indices=list(range(8)))
+            sage: FTV.gens()
+            (x, y, Z2, Z3, Z4, Z5, Z6, Z7)
+
+        Note that you have to provide indices for *all* variables, including those
+        that have "completely custom" names. Again, this is usually convenient,
+        because you can add or remove "custom" variables without disturbing too
+        much "automatic" ones::
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points='all',
+            ....:                           coordinate_names="x Z+",
+            ....:                           coordinate_name_indices=list(range(8)))
+            sage: FTV.gens()
+            (x, Z1, Z2, Z3, Z4, Z5, Z6, Z7)
+
+        If you prefer to always start from zero, you will have to shift indices
+        accordingly::
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points='all',
+            ....:                           coordinate_names="x Z+",
+            ....:                           coordinate_name_indices=[0] + list(range(7)))
+            sage: FTV.gens()
+            (x, Z0, Z1, Z2, Z3, Z4, Z5, Z6)
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points='all',
+            ....:                           coordinate_names="x y Z+",
+            ....:                           coordinate_name_indices=[0]*2 + list(range(6)))
+            sage: FTV.gens()
+            (x, y, Z0, Z1, Z2, Z3, Z4, Z5)
+
+        So you always can get any names you want, somewhat complicated default
+        behaviour was designed with the hope that in most cases you will have no
+        desire to provide different names.
+
+        Now we will use the possibility to specify initial charts::
+
+            sage: charts = [(0,1), (1,2), (2,3), (3,0)]
+
+        (these charts actually form exactly the face fan of our square) ::
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,4],
+            ....:                           charts=charts)
+            sage: FTV.fan().rays()
+            N( 1,  1),        N( 1, -1),        N(-1, -1),
+            N(-1,  1),        N(-1,  0)
+            in 2-d lattice N
+            sage: [cone.ambient_ray_indices() for cone in FTV.fan()]
+            [(0, 1), (1, 2), (2, 4), (3, 4), (0, 3)]
+
+        If charts are wrong, it should be detected::
+
+            sage: bad_charts = charts + [(3,0)]
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,4],
+            ....:                           charts=bad_charts)
+            Traceback (most recent call last):
+            ...
+            ValueError: you have provided 5 cones, but only 4 of them are maximal!
+            Use discard_faces=True if you indeed need to construct a fan from these cones.
+
+        These charts are technically correct, they just happened to list one of
+        them twice, but it is assumed that such a situation will not happen. It is
+        especially important when you try to speed up your code::
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,4],
+            ....:                           charts=bad_charts,
+            ....:                           check=False)
+            Traceback (most recent call last):
+            ...
+            IndexError: list assignment index out of range
+
+        In this case you still get an error message, but it is harder to figure out
+        what is going on. It may also happen that "everything will still work" in
+        the sense of not crashing, but work with such an invalid variety may lead to
+        mathematically wrong results, so use ``check=False`` carefully!
+
+        Here are some other possible mistakes::
+
+            sage: bad_charts = charts + [(0,2)]
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,4],
+            ....:                           charts=bad_charts)
+            Traceback (most recent call last):
+            ...
+            ValueError: (0, 2) does not form a chart of a subdivision of
+            the face fan of 2-d reflexive polytope #14 in 2-d lattice N!
+
+            sage: bad_charts = charts[:-1]
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,4],
+            ....:                           charts=bad_charts)
+            Traceback (most recent call last):
+            ...
+            ValueError: given charts do not form a complete fan!
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[1,2,3,4])
+            Traceback (most recent call last):
+            ...
+            ValueError: all 4 vertices of Delta_polar must be used for coordinates!
+            Got: [1, 2, 3, 4]
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,0,1,2,3,4])
+            Traceback (most recent call last):
+            ...
+            ValueError: no repetitions are allowed for coordinate points!
+            Got: [0, 0, 1, 2, 3, 4]
+
+            sage: FTV = CPRFanoToricVariety(Delta_polar=square,
+            ....:                           coordinate_points=[0,1,2,3,6])
+            Traceback (most recent call last):
+            ...
+            ValueError: the origin (point #6) cannot be used for a coordinate!
+            Got: [0, 1, 2, 3, 6]
+
+        Here is a shorthand for defining the toric variety and homogeneous
+        coordinates in one go::
+
+            sage: P1xP1.<a,b,c,d> = CPRFanoToricVariety(Delta_polar=diamond)
+            sage: (a^2+b^2) * (c+d)
+            a^2*c + b^2*c + a^2*d + b^2*d
+        """
+        if names is not None:
+            if coordinate_names is not None:
+                raise ValueError('You must not specify both coordinate_names and names!')
+            coordinate_names = names
+        # Check/normalize Delta_polar
+        if Delta is None and Delta_polar is None:
+            raise ValueError("either Delta or Delta_polar must be given!")
+        elif Delta is not None and Delta_polar is not None:
+            raise ValueError("Delta and Delta_polar cannot be given together!")
+        elif Delta_polar is None:
+            Delta_polar = Delta.polar()
+        elif not Delta_polar.is_reflexive():
+            raise ValueError("Delta_polar must be reflexive!")
+        # Check/normalize coordinate_points and construct fan rays
+        if coordinate_points is None:
+            coordinate_points = list(range(Delta_polar.nvertices()))
+            if charts is not None:
+                for chart in charts:
+                    for point in chart:
+                        if point not in coordinate_points:
+                            coordinate_points.append(point)
+        elif coordinate_points == "vertices":
+            coordinate_points = list(range(Delta_polar.nvertices()))
+        elif coordinate_points == "all":
+            coordinate_points = list(range(Delta_polar.npoints()))
+            coordinate_points.remove(Delta_polar.origin())
+        elif coordinate_points == "all but facets":
+            coordinate_points = Delta_polar.skeleton_points(Delta_polar.dim() - 2)
+        elif isinstance(coordinate_points, str):
+            raise ValueError("unrecognized description of the coordinate points!"
+                            "\nGot: %s" % coordinate_points)
+        elif check:
+            cp_set = set(coordinate_points)
+            if len(cp_set) != len(coordinate_points):
+                raise ValueError(
+                    "no repetitions are allowed for coordinate points!\nGot: %s"
+                    % coordinate_points)
+            if not cp_set.issuperset(list(range(Delta_polar.nvertices()))):
+                raise ValueError("all %d vertices of Delta_polar must be used "
+                    "for coordinates!\nGot: %s"
+                    % (Delta_polar.nvertices(), coordinate_points))
+            if Delta_polar.origin() in cp_set:
+                raise ValueError("the origin (point #%d) cannot be used for a "
+                    "coordinate!\nGot: %s"
+                    % (Delta_polar.origin(), coordinate_points))
+        point_to_ray = {point: n
+                        for n, point in enumerate(coordinate_points)}
+        # This can be simplified if LatticePolytopeClass is adjusted.
+        rays = [Delta_polar.point(p) for p in coordinate_points]
+        # Check/normalize charts and construct the fan based on them.
+        if charts is None:
+            # Start with the face fan
+            fan = FaceFan(Delta_polar)
+        else:
+            # First of all, check that each chart is completely contained in a
+            # single facet of Delta_polar, otherwise they do not form a
+            # subdivision of the face fan of Delta_polar
+            if check:
+                facet_sets = [frozenset(facet.ambient_point_indices())
+                            for facet in Delta_polar.facets()]
+                for chart in charts:
+                    is_bad = True
+                    for fset in facet_sets:
+                        if fset.issuperset(chart):
+                            is_bad = False
+                            break
+                    if is_bad:
+                        raise ValueError(
+                            "%s does not form a chart of a subdivision of the "
+                            "face fan of %s!" % (chart, Delta_polar))
+            # We will construct the initial fan from Cone objects: since charts
+            # may not use all of the necessary rays, alternative form is tedious
+            # With check=False it should not be long anyway.
+            cones = [Cone((rays[point_to_ray[point]] for point in chart),
+                        check=check)
+                    for chart in charts]
+            fan = Fan(cones, check=check)
+            if check and not fan.is_complete():
+                raise ValueError("given charts do not form a complete fan!")
+        # Subdivide this fan to use all required points
+        fan = fan.subdivide(new_rays=(ray for ray in rays
+                                        if ray not in fan.rays().set()),
+                            make_simplicial=make_simplicial)
+        # Now create yet another fan making sure that the order of the rays is
+        # the same as requested (it is a bit difficult to get it from the start)
+        trans = {}
+        for n, ray in enumerate(fan.rays()):
+            trans[n] = rays.index(ray)
+        cones = tuple(tuple(sorted(trans[r] for r in cone.ambient_ray_indices()))
+                    for cone in fan)
+        fan = Fan(cones, rays, check=False)
+        # Check/normalize base_field
+        if base_field is not None:
+            base_ring = base_field
+        if base_ring is None:
+            base_ring = QQ
+        elif base_ring not in _Fields:
+            raise TypeError("need a field to construct a Fano toric variety!"
+                            "\n Got %s" % base_ring)
+        fan._is_complete = True     # At this point it must be for sure
+        return super().__classcall__(cls, 
+            Delta_polar, fan, coordinate_points, point_to_ray, 
+            coordinate_names, coordinate_name_indices, base_ring)
+
 
     def __init__(self, Delta_polar, fan, coordinate_points, point_to_ray,
                  coordinate_names, coordinate_name_indices, base_field):
@@ -1193,7 +1142,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
         # Check/normalize coordinate_indices
         if coordinate_name_indices is None:
             coordinate_name_indices = coordinate_points
-        super().__init__(Delta_polar, fan, coordinate_names,
+        FanoToricVariety_field.__init__(self, Delta_polar, fan, coordinate_names,
                          coordinate_name_indices, base_field)
         # AL: we add the trivial attributes for the general case, so we need to update after super().__init__
         self._coordinate_points = tuple(coordinate_points)
@@ -2135,4 +2084,20 @@ def add_variables(field, variables):
             new_variables.append(v)
     return PolynomialRing(field, new_variables).fraction_field()
 
+
+
+# AL: adhoc solution for not failing the existing test cases 
+# where used the old constructor function
+# def CPRFanoToricVariety(*args, **kwargs):
+#     return CPRFanoToricVariety_field.__classcall__(CPRFanoToricVariety_field,
+#                                                    *args, **kwargs)
+
+# def FanoToricVariety(*args, **kwargs):
+#     return FanoToricVariety_field.__classcall__(FanoToricVariety_field,
+#                                                 *args, **kwargs)
+
+def CPRFanoToricVariety(*args, **kwargs):
+    return CPRFanoToricVariety_field(*args, **kwargs)
+def FanoToricVariety(*args, **kwargs):
+    return FanoToricVariety_field(*args, **kwargs)
 
