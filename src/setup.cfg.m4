@@ -93,6 +93,7 @@ sage.libs.gap =
     sage.gaprc
 
 sage.interfaces =
+    gap_kernel_info.g
     sage-maxima.lisp
 
 sage.doctest =

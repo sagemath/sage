@@ -28,6 +28,7 @@ from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.element cimport *
 from sage.cpython.string import FS_ENCODING
 from sage.cpython.string cimport str_to_bytes, char_to_str
+from sage.interfaces.gap import KERNEL_INFO
 from sage.interfaces.gap_workspace import prepare_workspace_dir
 
 
@@ -216,7 +217,9 @@ cdef initialize():
     argv[0] = "sage"
     argv[1] = "-A"
     argv[2] = "-l"
-    s = str_to_bytes(sage.env.GAP_ROOT_PATHS, FS_ENCODING, "surrogateescape")
+    s = str_to_bytes(KERNEL_INFO().GAP_ROOT_PATHS,
+                     FS_ENCODING,
+                     "surrogateescape")
     argv[3] = s
 
     argv[4] = "-m"

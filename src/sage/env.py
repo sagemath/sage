@@ -253,6 +253,7 @@ NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
 SINGULAR_BIN = var("SINGULAR_BIN") or "Singular"
+GAP_BIN = var("GAP_BIN", "gap")
 
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
