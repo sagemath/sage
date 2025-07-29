@@ -26,7 +26,6 @@ from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.action import Action
 from sage.categories.rings import Rings
-from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.categories.cartesian_product import cartesian_product
 from sage.sets.family import Family
 import sage.data_structures.blas_dict as blas
@@ -35,11 +34,8 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing_dense
 from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
-from sage.rings.infinity import PlusInfinity
-from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.global_options import GlobalOptions
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
-from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 
 
 def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
@@ -690,6 +686,7 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
             sage: W1 is W2
             True
         """
+        from sage.rings.infinity import PlusInfinity
         if n is PlusInfinity():  # hook for Infinite weyl algebra
             return InfGenDifferentialWeylAlgebra(R, names)
         if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
@@ -714,6 +711,8 @@ class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
             sage: W = DifferentialWeylAlgebra(R)
             sage: TestSuite(W).run()
         """
+        from sage.categories.algebras_with_basis import AlgebrasWithBasis
+
         self._n = len(names)
         self._poly_ring = PolynomialRing(R, names)
         names = names + tuple('d' + n for n in names)
@@ -1395,6 +1394,10 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             Defining x, dx
             sage: TestSuite(W).run()
         """
+        from sage.categories.algebras_with_basis import AlgebrasWithBasis
+        from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
+        from sage.sets.non_negative_integers import NonNegativeIntegers
+
         names = (names[0], 'd' + names[0])
         # could probably get away with only using one copy, but the distinction is nice
         self._var_index = IndexedFreeAbelianMonoid(NonNegativeIntegers(), prefix=names[0])
@@ -1526,6 +1529,7 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             sage: x[3] == W.gen(3)
             True
         """
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         return Family(NonNegativeIntegers(), lambda x: self.gen(x), name=self.variable_names()[0])
 
     @cached_method
@@ -1582,6 +1586,7 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             sage: dx[3] == W.differential(3)
             True
         """
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         return Family(NonNegativeIntegers(), lambda x: self.differential(x), name=self.variable_names()[1])
 
     @cached_method
