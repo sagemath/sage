@@ -11,6 +11,8 @@ py.install_sources(
   'library.py',
   'morphism.py',
   'points.py',
+  'poly_db_3d.py',
+  'poly_db_4d.py',
   'toric_subscheme.py',
   'variety.py',
   'weierstrass.py',
