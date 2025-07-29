@@ -1911,6 +1911,15 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: R.<x> = Zmod(100)[]
             sage: (x^2 - 1).roots(Zmod(99), multiplicities=False) == (x^2 - 1).change_ring(Zmod(99)).roots(multiplicities=False)
             True
+
+        We can find roots of high degree polynomials in a reasonable time:
+
+            sage: set_random_seed(31337)
+            sage: p = random_prime(2^128)
+            sage: R.<x> = GF(p)[]
+            sage: f = R.random_element(degree=5000)
+            sage: f.roots(multiplicities=False)
+            [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
         """
 
         # This function only supports roots in an IntegerModRing
