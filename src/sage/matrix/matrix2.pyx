@@ -16499,13 +16499,11 @@ cdef class Matrix(Matrix1):
         if p == 2:
             from sage.rings.complex_double import CDF
 
-            # Sparse matrices don't expose the ``SVD`` method.
-            if self.is_sparse():
-                A = self.dense_matrix().change_ring(CDF)
-            else:
-                A = self.change_ring(CDF)
-
-            A = A.conjugate().transpose() * A
+            # Always try to convert to ``dense_matrix`` since sparse matrices
+            # don't expose the ``SVD`` method. If the matrix is already dense,
+            # the cost is negligible.
+            A = self.dense_matrix().change_ring(CDF)
+            A = A.conjugate_transpose() * A
             S = A.SVD()[1]
             return max(S.list()).real().sqrt()
 
