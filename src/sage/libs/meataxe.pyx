@@ -51,10 +51,9 @@ cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
     """
     cdef Matrix_t *M = MatAlloc(Field, len(entries), len(entries[0]))
     cdef PTR x = M.Data
-    cdef int idx, i, j
+    cdef int i, j
     cdef list dt_i
     for i in range(M.Nor):
-        idx = 0
         dt_i = entries[i]
         for j in range(M.Noc):
             FfInsert(x, j, FfFromInt(dt_i[j]))

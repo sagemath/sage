@@ -955,9 +955,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             Order of Quaternion Algebra (-22, 210) with base ring Rational Field
              with basis (1, i, 1/2*i + 1/2*j, 1/2 + 17/22*i + 1/44*k)
 
-            sage: for d in ( m for m in range(1, 750) if is_squarefree(m) ):        # long time (3s)
-            ....:     A = QuaternionAlgebra(d)
-            ....:     assert A.maximal_order(take_shortcuts=False).is_maximal()
+            sage: Q = QuaternionAlgebra
+            sage: all(Q(d).maximal_order(take_shortcuts=False).is_maximal()
+            ....:     for d in range(1, 350) if is_squarefree(d))
+            True
 
         Specifying an order basis gives an extension of orders::
 
