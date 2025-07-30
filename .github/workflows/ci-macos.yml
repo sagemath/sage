@@ -21,56 +21,39 @@ on:
   pull_request:
     paths:
       - '.github/workflows/ci-macos.yml'
-      - '.github/workflows/macos.yml'
   push:
     tags:
       - '*'
   workflow_dispatch:
     # Allow to run manually
 
-env:
-  TARGETS_PRE: all-sage-local
-  TARGETS: build
-  TARGETS_OPTIONAL: ptest
-
 jobs:
-  stage-1:
-    uses: ./.github/workflows/macos.yml
-    with:
-      stage: "1"
-      timeout: 14400
+  macos:
+    name: Build and Test (macos)
+    runs-on: macos-latest
 
-  stage-2:
-    uses: ./.github/workflows/macos.yml
-    with:
-      stage: "2"
-    needs: [stage-1]
-    if: ${{ success() || failure() }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  stage-2-optional-0-o:
-    uses: ./.github/workflows/macos.yml
-    with:
-      stage: "2-optional-0-o"
-    needs: [stage-2]
-    if: ${{ success() || failure() }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+        
+      - name: Install test prerequisites
+        run: python -m pip install tox
 
-  stage-2-optional-p-z:
-    uses: ./.github/workflows/macos.yml
-    with:
-      stage: "2-optional-p-z"
-    needs: [stage-2-optional-0-o]
-    if: ${{ success() || failure() }}
+      - name: Install dependencies
+        run: |
+          eval $(build/bin/sage-print-system-package-command homebrew update)
+          eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew $(build/bin/sage-package list :standard:)))
 
-  stage-2-experimental-0-o:
-    uses: ./.github/workflows/macos.yml
-    with:
-      stage: "2-experimental-0-o"
-    needs: [stage-2-optional-p-z]
-    if: ${{ success() || failure() }}
-
-  stage-2-experimental-p-z:
-    uses: ./.github/workflows/macos.yml
-    with:
-      stage: "2-experimental-p-z"
-    needs: [stage-2-experimental-0-o]
-    if: ${{ success() || failure() }}
+      - name: Build
+        run: |
+          ./bootstrap
+          ./configure --enable-download-from-upstream-url
+          make build V=0
+      
+      - name: Test
+        run: ./sage -t --all -p4
+    
