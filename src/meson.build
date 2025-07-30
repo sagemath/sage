@@ -219,7 +219,7 @@ add_project_arguments('-I', meson.current_build_dir(), language: 'cython')
 # Add global compiler flags
 add_project_arguments('-X auto_pickle=False', language: 'cython')
 add_project_arguments('-X autotestdict=False', language: 'cython')
-add_project_arguments('-X binding=False', language: 'cython')
+add_project_arguments('-X binding=True', language: 'cython')
 add_project_arguments('-X c_api_binop_methods=True', language: 'cython')
 add_project_arguments('-X cdivision=True', language: 'cython')
 add_project_arguments('-X cpow=True', language: 'cython')
