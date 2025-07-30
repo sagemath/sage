@@ -80,7 +80,15 @@ jobs:
 
   macos:
     name: Build and Test (macos)
-    runs-on: macos-latest
+    runs-on: macos-${{ matrix.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - 'latest'
+          - 'latest-large'
+          - '15'
+          - '15-large'
 
     steps:
       - name: Checkout code
