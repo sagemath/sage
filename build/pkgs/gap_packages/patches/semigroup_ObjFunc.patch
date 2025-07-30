@@ -1,0 +1,115 @@
+diff -rc gap-4.14.0/pkg/semigroups/gapbind14/include/gapbind14/gapbind14.hpp src/pkg/semigroups/gapbind14/include/gapbind14/gapbind14.hpp
+*** gap-4.14.0/pkg/semigroups/gapbind14/include/gapbind14/gapbind14.hpp	Sat Oct 19 06:11:26 2024
+--- src/pkg/semigroups/gapbind14/include/gapbind14/gapbind14.hpp	Wed Jul 16 17:24:09 2025
+***************
+*** 70,77 ****
+  // Typdefs for GAP
+  ////////////////////////////////////////////////////////////////////////
+  
+- typedef Obj (*GVarFunc)(/*arguments*/);
+- 
+  namespace gapbind14 {
+  
+    // Forward decl
+--- 70,75 ----
+***************
+*** 288,298 ****
+        static_assert(sizeof...(Args) > 0,
+                      "there must be at least 1 parameter: Obj self");
+        static_assert(sizeof...(Args) <= 7, "Args must be at most 7");
+!       _funcs.push_back({detail::copy_c_str(nm),
+!                         sizeof...(Args) - 1,
+!                         detail::params_c_str(sizeof...(Args) - 1),
+!                         (GVarFunc) func,
+!                         detail::copy_c_str(fnm + ":Func" + nm)});
+      }
+  
+      template <typename... Args>
+--- 286,297 ----
+        static_assert(sizeof...(Args) > 0,
+                      "there must be at least 1 parameter: Obj self");
+        static_assert(sizeof...(Args) <= 7, "Args must be at most 7");
+!       
+!       _funcs.push_back(StructGVarFunc{detail::copy_c_str(nm),
+!               sizeof...(Args) - 1,
+!               detail::params_c_str(sizeof...(Args) - 1),
+!               (ObjFunc) func,
+!               detail::copy_c_str(fnm + ":Func" + nm)});
+      }
+  
+      template <typename... Args>
+***************
+*** 302,312 ****
+                        Obj (*func)(Args...)) {
+        static_assert(sizeof...(Args) <= 7, "Args must be at most 7");
+        _mem_funcs.at(subtype(sbtyp))
+!           .push_back({detail::copy_c_str(nm),
+!                       sizeof...(Args) - 1,
+!                       detail::params_c_str(sizeof...(Args) - 1),
+!                       (GVarFunc) func,
+!                       detail::copy_c_str(flnm + ":Func" + sbtyp + "::" + nm)});
+      }
+  
+      void finalize();
+--- 301,311 ----
+                        Obj (*func)(Args...)) {
+        static_assert(sizeof...(Args) <= 7, "Args must be at most 7");
+        _mem_funcs.at(subtype(sbtyp))
+!           .push_back(StructGVarFunc{detail::copy_c_str(nm),
+!                   sizeof...(Args) - 1,
+!                   detail::params_c_str(sizeof...(Args) - 1),
+!                   (ObjFunc) func,
+!                   detail::copy_c_str(flnm + ":Func" + sbtyp + "::" + nm)});
+      }
+  
+      void finalize();
+diff -rc gap-4.14.0/pkg/semigroups/gapbind14/src/gapbind14.cpp src/pkg/semigroups/gapbind14/src/gapbind14.cpp
+*** gap-4.14.0/pkg/semigroups/gapbind14/src/gapbind14.cpp	Sat Oct 19 06:11:26 2024
+--- src/pkg/semigroups/gapbind14/src/gapbind14.cpp	Wed Jul 16 17:30:54 2025
+***************
+*** 25,32 ****
+  
+  #include "gapbind14/gap_include.hpp"  // for Obj etc
+  
+! #define GVAR_ENTRY(srcfile, name, nparam, params) \
+!   {#name, nparam, params, (GVarFunc) name, srcfile ":Func" #name}
+  
+  namespace gapbind14 {
+    UInt T_GAPBIND14_OBJ = 0;
+--- 25,34 ----
+  
+  #include "gapbind14/gap_include.hpp"  // for Obj etc
+  
+! #define GVAR_ENTRY(srcfile, name, nparam, params)                \
+!   {                                                              \
+! #name, nparam, params, (ObjFunc) name, srcfile ":Func" #name     \
+!   }
+  
+  namespace gapbind14 {
+    UInt T_GAPBIND14_OBJ = 0;
+diff -rc gap-4.14.0/pkg/semigroups/src/pkg.cpp src/pkg/semigroups/src/pkg.cpp
+*** gap-4.14.0/pkg/semigroups/src/pkg.cpp	Sat Oct 19 06:11:26 2024
+--- src/pkg/semigroups/src/pkg.cpp	Wed Jul 16 17:30:45 2025
+***************
+*** 426,436 ****
+  
+  /*****************************************************************************/
+  
+- typedef Obj (*GVarFunc)(/*arguments*/);
+- 
+  #define GVAR_ENTRY(srcfile, name, nparam, params)                 \
+    {                                                               \
+! #name, nparam, params, (GVarFunc) name, srcfile ":Func" #name \
+    }
+  
+  // Table of functions to export
+--- 426,434 ----
+  
+  /*****************************************************************************/
+  
+  #define GVAR_ENTRY(srcfile, name, nparam, params)                 \
+    {                                                               \
+! #name, nparam, params, (ObjFunc) name, srcfile ":Func" #name      \
+    }
+  
+  // Table of functions to export
