@@ -79,7 +79,7 @@ jobs:
           uv run ./sage -t --all -p4 || true
 
   macos:
-    name: Build and Test
+    name: Build and Test (macos)
     runs-on: macos-latest
 
     steps:
