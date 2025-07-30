@@ -1581,7 +1581,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
 
     # ancestor_idx_vec[v] := the first vertex of ``path[:t+1]`` or ``id_target`` reachable by
     #                    edges of first shortest path tree from v.
-    cdef vector[int] ancestor_idx_vec = [-1 for _ in range(len(G))]
+    cdef vector[int] ancestor_idx_vec = [-1 for _ in range(len(G) + len(unnecessary_vertices))]
 
     def ancestor_idx_func(v, t, target_idx):
         if ancestor_idx_vec[v] != -1:
@@ -1596,9 +1596,8 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     cdef dict pred = {}
 
     # calculate shortest path from dev to one of green vertices
-    def shortest_path_to_green(dev, exclude_vertices):
+    def shortest_path_to_green(dev, exclude_vertices, target_idx):
         t = len(exclude_vertices)
-        ancestor_idx_vec[id_target] = t + 1
         # clear
         while not pq.empty():
             pq.pop()
@@ -1612,7 +1611,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
             v, d = pq.top()
             pq.pop()
 
-            if ancestor_idx_func(v, t, t + 1) == t + 1:  # green
+            if ancestor_idx_func(v, t, target_idx) == target_idx:  # green
                 path = []
                 while v in pred:
                     path.append(v)
@@ -1667,7 +1666,7 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 yield P
 
             # GET DEVIATION PATHS
-            original_cost = cost
+            original_cost = cost - sidetrack_cost[(path[-2], path[-1])]
             former_part = set(path)
             for deviation_i in range(len(path) - 2, dev_idx - 1, -1):
                 for e in G.outgoing_edge_iterator(path[deviation_i]):
@@ -1687,7 +1686,8 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 original_cost -= sidetrack_cost[(path[deviation_i - 1], path[deviation_i])]
                 former_part.remove(path[deviation_i + 1])
         else:
-            deviations = shortest_path_to_green(path[dev_idx], set(path[:dev_idx]))
+            ancestor_idx_vec[id_target] = len(path)
+            deviations = shortest_path_to_green(path[dev_idx], set(path[:dev_idx]), len(path))
             if not deviations:
                 continue  # no path to target in G \ path[:dev_idx]
             deviation_weight, deviation = deviations
