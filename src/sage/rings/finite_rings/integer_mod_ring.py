@@ -1916,7 +1916,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: set_random_seed(31337)
             sage: p = random_prime(2^128)
-            sage: R.<x> = GF(p)[]
+            sage: R.<x> = Zmod(p)[]
             sage: f = R.random_element(degree=5000)
             sage: f.roots(multiplicities=False)
             [107295314027801680550847462044796892009, 75545907600948005385964943744536832524]
@@ -1935,7 +1935,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
                     " implemented (try the multiplicities=False option)"
                 )
             # Roots of non-zero polynomial over finite fields by factorization
-            return f._roots_from_factorization(f.factor(), multiplicities)
+            return f.change_ring(f.base_ring().field()).roots(multiplicities=multiplicities)
 
         # Zero polynomial is a base case
         if deg < 0:
@@ -1944,12 +1944,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         # Finite fields are a base case
         if self.is_field():
-            R = f.parent()
-            x = R.gen()
-            p = R.modulus()
-            g = pow(x, p, f) - x
-            g = f.gcd(g)
-            return g._roots_from_factorization(g.factor(), False)
+            return f.change_ring(f.base_ring().field()).roots(multiplicities=False)
 
         # Otherwise, find roots modulo each prime power
         fac = self.factored_order()

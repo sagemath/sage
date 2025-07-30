@@ -2120,6 +2120,84 @@ cdef class FiniteField(Field):
         python_int = int.from_bytes(input_bytes, byteorder=byteorder)
         return self.from_integer(python_int)
 
+    def _roots_univariate_polynomial(self, f, ring, multiplicities, **kwargs):
+        r"""
+        Return the roots of the univariate polynomial ``f``.
+
+        INPUT:
+
+        - ``f`` - a polynomial defined over this field
+
+        - ``ring`` - the ring to find roots in.
+
+        - ``multiplicities`` - bool (default: ``True``). If ``True``, return
+          list of pairs `(r, n)`, where `r` is a root and `n` is its
+          multiplicity. If ``False``, just return the unique roots, with no
+          information about multiplicities.
+
+        - ``kwargs`` - ignored
+
+        TESTS::
+            We can take the roots of a polynomial defined over a finite field
+                sage: set_random_seed(31337)
+                sage: p = random_prime(2^128)
+                sage: R.<x> = Zmod(p)[]
+                sage: f = R.random_element(degree=15)
+                sage: f.roots()
+                [(117558869610275297997958296126212805270, 1)]
+    
+            We can take the roots of a polynomial defined over a finite field without multiplicities
+                sage: set_random_seed(31337)
+                sage: p = random_prime(2^128)
+                sage: R.<x> = Zmod(p)[]
+                sage: f = R.random_element(degree=150)
+                sage: f.roots(multiplicities=False)
+                [116560079209701720510648792531840294827]
+            
+            We can take the roots of a polynomial defined over a finite field extension
+                sage: set_random_seed(31337)
+                sage: F.<a> = GF((2, 10))
+                sage: R.<x> = F[]
+                sage: f = R.random_element(degree=10)
+                sage: f.roots()
+                [(a^9 + a^8 + a^6 + a^4 + a^2, 1)]
+                sage: f.roots(multiplicities=False)
+                [a^9 + a^8 + a^6 + a^4 + a^2]
+            
+            We can take the roots of a high degree polynomial in a reasonable time
+                sage: set_random_seed(31337)
+                sage: p = random_prime(2^128)
+                sage: F = GF(p)
+                sage: R.<x> = F[]
+                sage: f = R.random_element(degree=10000)
+                sage: f.roots(multiplicities=False)
+                [65940671326230628578511607550463701471]
+        """
+
+        K = f.base_ring()
+        L = K if ring is None else ring
+
+        if K != L:
+            try:
+                f_L = f.change_ring(L)
+            except (TypeError, ValueError):
+                if L.is_exact() and L.is_subring(K):
+                    return f._roots_in_subring(L, multiplicities)
+                else:
+                    raise
+            return f_L.roots(multiplicities=multiplicities)
+
+        if multiplicities:
+            return f._roots_from_factorization(f.factor(), multiplicities)
+        else:
+            R = f.parent()
+            x = R.gen()
+            p = K.order()
+            g = pow(x, p, f) - x
+            g = f.gcd(g)
+            return g._roots_from_factorization(g.factor(), False)
+    
+
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""
