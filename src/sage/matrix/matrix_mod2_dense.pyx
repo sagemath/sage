@@ -360,6 +360,46 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         else:
             return self._zero
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_mod2_dense with
+                    the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(2),3,4,[is_prime(i) for i in range(12)])
+            sage: m
+            [0 0 1 1]
+            [0 1 0 1]
+            [0 0 0 1]
+            sage: m.transpose()
+            [0 0 0]
+            [0 1 0]
+            [1 0 0]
+            [1 1 1]
+            sage: m.matrix_from_rows([0,2])
+            [0 0 1 1]
+            [0 0 0 1]
+            sage: m.matrix_from_columns([1,3])
+            [0 1]
+            [1 1]
+            [0 1]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [0 1]
+            [0 1]
+        """
+        cdef Matrix_mod2_dense _src = <Matrix_mod2_dense>src
+        mzd_write_bit(self._entries, iDst, jDst, mzd_read_bit(_src._entries, iSrc, jSrc))
+
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
             *, unicode=False, shape=None, character_art=False,
             left_border=None, right_border=None,
