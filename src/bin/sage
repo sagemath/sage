@@ -578,7 +578,6 @@ fi
 if [ "$1" = '-c' ]; then
     shift
     sage_setup
-    unset TERM  # See Issue #12263
     exec sage-eval "$@"
 fi
 
@@ -1116,7 +1115,6 @@ if [ $# -ge 1 ]; then
         exit 1
     fi
     sage_setup
-    unset TERM  # See Issue #12263
     # sage-run rejects all command line options as the first argument.
     exec sage-run "$@"
 fi
