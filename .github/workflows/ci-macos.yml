@@ -46,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: |
           eval $(build/bin/sage-print-system-package-command homebrew update)
-          eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew $(build/bin/sage-package list :standard:)))
+          eval $(build/bin/sage-print-system-package-command homebrew --yes --ignore-missing install $(build/bin/sage-get-system-packages homebrew _bootstrap _prereq $(build/bin/sage-package list :standard:)))
 
       - name: Build
         run: |
