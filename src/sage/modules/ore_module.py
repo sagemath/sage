@@ -193,6 +193,7 @@ from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 
+from sage.rings.infinity import Infinity
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
@@ -399,6 +400,13 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         self._submodule_class = OreSubmodule
         self._quotientModule_class = OreQuotientModule
         self._pseudohom = FreeModule_ambient.pseudohom(self, mat, ore, codomain=self)
+
+    def _element_constructor_(self, x):
+        if isinstance(x, OreModuleElement):
+            M = x.parent()._pushout_(self)
+            if M is not None:
+                return self(M(x))
+        return super()._element_constructor_(x)
 
     def _repr_(self) -> str:
         r"""
@@ -1216,10 +1224,14 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         rows = []
         for gen in gens:
             if isinstance(gen, OreModule):
-                incl = self.coerce_map_from(gen)
-                if incl is None:
+                if not gen.is_submodule(self):
                     raise ValueError("not canonically a submodule")
-                rows += incl._matrix.rows()
+                incl = self.coerce_map_from(gen)
+                if incl is not None:
+                    rows += incl._matrix.rows()
+                else:
+                    for x in gen.basis():
+                        rows.append(self(x).list())
             elif isinstance(gen, OreModuleElement):
                 rows.append(self(gen).list())
         if len(rows) < 2*rank:
@@ -1341,6 +1353,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         gens = self._span(gens)
         return self._submodule_class(self, gens, saturate, names)
 
+    submodule = span
+
     def quotient(self, sub, remove_torsion=False, names=None, check=True):
         r"""
         Return the quotient of this Ore module by the submodule
@@ -1418,6 +1432,52 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         return self._quotientModule_class(self, gens, remove_torsion, names)
 
     quo = quotient
+
+    def ambient_modules(self):
+        return [self]
+
+    def _pushout_(self, other):
+        if isinstance(other, OreModule):
+            ambients = self.ambient_modules()
+            for M in other.ambient_modules():
+                if M in ambients:
+                    return M
+
+    def is_submodule(self, other):
+        M = self._pushout_(other)
+        if M is None:
+            return False
+        return all(M(x) in other for x in self.basis())
+
+    def _fitting_index(self):
+        if self is self.ambient_module():
+            return self.base_ring().one()
+        raise NotImplementedError("Fitting indexes are not implemented for this Ore module")
+
+    def fitting_index(self, other=None):
+        if other is None:
+            return self._fitting_index()
+        ambients = self.ambient_modules()
+        if other in ambients:
+            index = self.base_ring().one()
+            for amb in ambients:
+                if other is amb:
+                    return index
+                index *= amb._fitting_index()
+        M = self._pushout_(other)
+        if M is None:
+            raise ValueError("the two submodules do not live in a common ambient space")
+        N = M.span(self, other)
+        Ns = N.span(self)
+        No = N.span(other)
+        denom = No._fitting_index()
+        if denom:
+            return Ns._fitting_index() / denom
+        else:
+            return Infinity
+
+    def covers(self):
+        return [self]
 
     def __eq__(self, other) -> bool:
         r"""
@@ -1550,7 +1610,12 @@ class OreSubmodule(OreModule):
         coerce = self.hom(subspace.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
-        self.register_conversion(OreModuleRetraction(ambient, self))
+        retract = self._retract = OreModuleRetraction(ambient, self)
+        self.register_conversion(retract)
+        while isinstance(ambient, OreSubmodule):
+            retract = retract * ambient._retract
+            self.register_conversion(retract)
+            ambient = ambient.ambient_module()
 
     def __reduce__(self):
         return self._submodule_class, (self._ambient, self._subspace, False, self._names)
@@ -1591,7 +1656,7 @@ class OreSubmodule(OreModule):
         """
         return self._ambient(x)._latex_()
 
-    def ambient(self):
+    def ambient_module(self):
         r"""
         Return the ambient Ore module in which this submodule lives.
 
@@ -1601,18 +1666,35 @@ class OreSubmodule(OreModule):
             sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
             sage: M.<v,w> = S.quotient_module((X + z)^2)
             sage: N = M.span((X + z)*v)
-            sage: N.ambient()
+            sage: N.ambient_module()
             Ore module <v, w> over Finite Field in z of size 5^3 twisted by z |--> z^5
-            sage: N.ambient() is M
+            sage: N.ambient_module() is M
             True
         """
         return self._ambient
 
+    def ambient_modules(self):
+        ambients = [self]
+        ambient = self
+        while isinstance(ambient, OreSubmodule):
+            ambient = ambient._ambient
+            ambients.append(ambient)
+        return ambients
+
     def saturate(self, names=None, coerce=False):
-        M = self._submodule_class(self._ambient, self._subspace, True, names)
+        subspace = self._subspace
+        if subspace.is_saturated:
+            return self.rename_basis(names, coerce)
+        S = self._submodule_class(self._ambient, subspace, True, names)
         if coerce:
-            raise NotImplementedError
-        return M
+            M = self._ambient
+            base = self.base_ring()
+            rank = self.rank()
+            mat = matrix(base, rank, [S(M(x)) for x in self.basis()])
+            f = self.hom(mat, codomain=S)
+            S._unset_coercions_used()
+            S.register_coercion(f)
+        return S
 
     def rename_basis(self, names, coerce=False):
         r"""
@@ -1704,6 +1786,13 @@ class OreSubmodule(OreModule):
             M._unset_coercions_used()
             M.register_coercion(id)
         return M
+
+    def _fitting_index(self):
+        subspace = self._subspace
+        if subspace.rank != self._ambient.rank():
+            return self.base_ring().zero()
+        else:
+            return subspace.basis.determinant()
 
     def injection_morphism(self):
         r"""
@@ -1908,7 +1997,12 @@ class OreQuotientModule(OreModule):
                            names, cover._ore_category)
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
-        cover.register_conversion(OreModuleSection(self, cover))
+        section = self._section = OreModuleSection(self, cover)
+        cover.register_conversion(section)
+        while isinstance(cover, OreQuotientModule):
+            section = cover._section * section
+            cover = cover.cover()
+            cover.register_conversion(section)
 
     def __reduce__(self):
         return self._quotient_class, (self._cover, self._subspace, False, self._names)
@@ -1972,6 +2066,14 @@ class OreQuotientModule(OreModule):
             :meth:`relations`
         """
         return self._cover
+
+    def covers(self):
+        covers = [self]
+        cover = self
+        while isinstance(cover, OreQuotientModule):
+            cover = cover._cover
+            covers.append(cover)
+        return covers
 
     def relations(self, names=None):
         r"""
