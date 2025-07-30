@@ -16484,6 +16484,11 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(CDF, 2, 2, sparse=True).norm(1)
             0.0
+
+        Check the euclidean norm for a sparse matrix (:issue:`40492`)::
+
+            sage: matrix(ZZ, [[1, 2], [3, 4]], sparse=True).norm()
+            5.464985704219043
         """
         from sage.rings.real_double import RDF
 
@@ -16494,8 +16499,11 @@ cdef class Matrix(Matrix1):
         if p == 2:
             from sage.rings.complex_double import CDF
 
-            A = self.change_ring(CDF)
-            A = A.conjugate().transpose() * A
+            # Always try to convert to ``dense_matrix`` since sparse matrices
+            # don't expose the ``SVD`` method. If the matrix is already dense,
+            # the cost is negligible.
+            A = self.dense_matrix().change_ring(CDF)
+            A = A.conjugate_transpose() * A
             S = A.SVD()[1]
             return max(S.list()).real().sqrt()
 
