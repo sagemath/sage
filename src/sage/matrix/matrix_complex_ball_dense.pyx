@@ -558,11 +558,42 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             [3.000000000000000 6.000000000000000]
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 2 dense matrices over Complex ball field with 53 bits of precision
+
+        TESTS::
+
+            sage: m = matrix(CBF,2,3,range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [                0 1.000000000000000|2.000000000000000]
+            [-----------------------------------+-----------------]
+            [3.000000000000000 4.000000000000000|5.000000000000000]
+            sage: m.transpose()
+            [                0|3.000000000000000]
+            [1.000000000000000|4.000000000000000]
+            [-----------------+-----------------]
+            [2.000000000000000|5.000000000000000]
+
+            sage: m = matrix(CBF,0,2)
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: m = matrix(CBF,2,0)
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Py_ssize_t nc = self._ncols
         cdef Py_ssize_t nr = self._nrows
         cdef Matrix_complex_ball_dense trans = self._new(nc, nr)
         acb_mat_transpose(trans.value, self.value)
+        if self._subdivisions is not None:
+            row_divs, col_divs = self.subdivisions()
+            trans.subdivide(col_divs, row_divs)
         return trans
 
     def _solve_right_nonsingular_square(self, Matrix_complex_ball_dense rhs, check_rank=None):

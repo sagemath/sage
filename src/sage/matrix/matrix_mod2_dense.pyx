@@ -1493,15 +1493,29 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: A[0,0] = 0
             sage: B[0,0]
             1
+
+            sage: m = matrix(GF(2),0,2)
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: m = matrix(GF(2),2,0)
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
         """
         cdef Matrix_mod2_dense A = self.new_matrix(ncols=self._nrows,
                                                    nrows=self._ncols)
-        if self._nrows == 0 or self._ncols == 0:
-            return A
+        if self._nrows != 0 and self._ncols != 0:
+            A._entries = mzd_transpose(A._entries, self._entries)
 
-        A._entries = mzd_transpose(A._entries, self._entries)
         if self._subdivisions is not None:
-            A.subdivide(*self.subdivisions())
+            row_divs, col_divs = self.subdivisions()
+            A.subdivide(col_divs, row_divs)
         return A
 
     cpdef _richcmp_(self, right, int op):

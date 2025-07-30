@@ -266,13 +266,40 @@ cdef class Matrix_numpy_dense(Matrix_dense):
             []
             sage: m.transpose().parent()
             Full MatrixSpace of 3 by 0 dense matrices over Real Double Field
-        """
-        if self._nrows == 0 or self._ncols == 0:
-            return self.new_matrix(self._ncols, self._nrows)
 
-        cdef Matrix_numpy_dense trans
-        trans = self._new(self._ncols, self._nrows)
-        trans._matrix_numpy = self._matrix_numpy.transpose().copy()
+        TESTS::
+
+            sage: m = matrix(RDF,2,3,range(6))
+            sage: m.subdivide([1],[2])
+            sage: m
+            [0.0 1.0|2.0]
+            [-------+---]
+            [3.0 4.0|5.0]
+            sage: m.transpose()
+            [0.0|3.0]
+            [1.0|4.0]
+            [---+---]
+            [2.0|5.0]
+
+            sage: m = matrix(RDF,0,2)
+            sage: m.subdivide([],[1])
+            sage: m.subdivisions()
+            ([], [1])
+            sage: m.transpose().subdivisions()
+            ([1], [])
+
+            sage: m = matrix(RDF,2,0)
+            sage: m.subdivide([1],[])
+            sage: m.subdivisions()
+            ([1], [])
+            sage: m.transpose().subdivisions()
+            ([], [1])
+        """
+        cdef Matrix_numpy_dense trans = self._new(self._ncols, self._nrows)
+
+        if self._nrows != 0 and self._ncols != 0:
+            trans._matrix_numpy = self._matrix_numpy.transpose().copy()
+
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             trans.subdivide(col_divs, row_divs)
