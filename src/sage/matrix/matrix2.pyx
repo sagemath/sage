@@ -19301,7 +19301,7 @@ cdef class Matrix(Matrix1):
         self_permutation = Permutation(sorted([i+1 for i in range(m)],key=lambda x:(shift[x-1],x-1)))
 
         self_permuted = self.with_permuted_rows(self_permutation)
-        row_profile_self_permuted = self_permuted.row_rank_profile()
+        row_profile_self_permuted = self_permuted.pivot_rows()
         row_profile_self = [(self_permutation(i+1)-1,0) for i in row_profile_self_permuted]
 
         exhausted = matrix.zero(self.base_ring(), 0, sigma)
@@ -19341,7 +19341,7 @@ cdef class Matrix(Matrix1):
             # sort rows of M, find profile, translate to k (indices of full krylov matrix)
             M.permute_rows(k_perm)
 
-            row_profile_M = M.row_rank_profile()
+            row_profile_M = M.pivot_rows()
             r = len(row_profile_M)
 
             if r == sigma and l < math.ceil(math.log(degree,2)):
@@ -19373,7 +19373,7 @@ cdef class Matrix(Matrix1):
 
             M.permute_rows(k_perm)
             row_profile_self = [k[k_perm(i+1)-1] for i in range(len(k))]
-        col_profile = M.col_rank_profile()
+        col_profile = M.pivots()
 
         if output_pairs:
             return tuple(row_profile_self), M, col_profile

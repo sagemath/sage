@@ -176,7 +176,7 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     Return the reduced row echelon form of this matrix.
     """
     if linbox_is_zero(modulus, entries, nrows, ncols):
-        return 0, [], []
+        return 0, []
 
     cdef Py_ssize_t i, j
     cdef ModField *F = new ModField(<long>modulus)
