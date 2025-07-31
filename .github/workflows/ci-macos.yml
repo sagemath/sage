@@ -35,10 +35,9 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - 'latest'
-          - 'latest-large'
+          - '13'
+          - '14'
           - '15'
-          - '15-large'
 
     steps:
       - name: Checkout code
