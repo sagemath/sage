@@ -79,16 +79,15 @@ jobs:
           uv run ./sage -t --all -p4 || true
 
   macos:
-    name: Build and Test (macos)
+    name: Build and Test (macos-${{ matrix.version }})
     runs-on: macos-${{ matrix.version }}
     strategy:
       fail-fast: false
       matrix:
         version:
-          - 'latest'
-          - 'latest-large'
+          - '13'
+          - '14'
           - '15'
-          - '15-large'
 
     steps:
       - name: Checkout code
