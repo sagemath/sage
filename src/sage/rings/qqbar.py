@@ -1126,9 +1126,15 @@ class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.Algebr
             True
             sage: AA.has_coerce_map_from(int)
             True
+
+        TESTS::
+
+            sage: AA.variable_names()
+            ()
+
         """
         from sage.categories.fields import Fields
-        AlgebraicField_common.__init__(self, self, ('x',), normalize=False, category=Fields().Infinite())
+        AlgebraicField_common.__init__(self, self, normalize=False, category=Fields().Infinite())
         self._populate_coercion_lists_([ZZ, QQ])
 
     def _element_constructor_(self, x):
