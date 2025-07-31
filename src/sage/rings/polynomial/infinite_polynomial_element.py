@@ -1482,6 +1482,71 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             R = self._p.base_ring()
         return InfinitePolynomial_sparse(self.parent(), R(self._p).gcd(R(x._p)))
 
+    def monomial_coefficient(self, mon):
+        """
+        Return the base ring element that is the coefficient of ``mon``
+        in ``self``.
+
+        This function contrasts with the function :meth:`coefficient`,
+        which returns the coefficient of a monomial viewing this
+        polynomial in a polynomial ring over a base ring having fewer
+        variables.
+
+        INPUT:
+
+        - ``mon`` -- a monomial in the parent of ``self``
+
+        OUTPUT: coefficient in base ring
+
+        .. SEEALSO::
+
+            For coefficients in a base ring of fewer variables,
+            look at :meth:`coefficient`.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: f = 2*x[0]*x[2] + 3*x[1]^2
+            sage: c = f.monomial_coefficient(x[1]^2); c
+            3
+            sage: c.parent()
+            Rational Field
+
+            sage: c = f.coefficient(x[2]); c
+            2*x_0
+            sage: c.parent()
+            Infinite polynomial ring in x over Rational Field
+
+        TESTS::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: m = a[1]*a[2]
+            sage: p = a[1]*a[2] + a[1]*a[2]*a[4]
+            sage: p.monomial_coefficient(m)
+            1
+
+            sage: p = R(25)
+            sage: p.monomial_coefficient(R(1))
+            25
+        """
+        P = self.parent()
+        if parent(mon) is not P:
+            raise TypeError("mon must be a monomial in the parent of self")
+
+        VarList = set(self._p.parent().variable_names())
+        if any(str(v) not in VarList for v in mon._p.variables()):
+            return P.zero()
+
+        if VarList:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+            VarList.update(mon._p.parent().variable_names())
+            VarList = sorted(VarList, key=self.parent().varname_key, reverse=True)
+            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
+            return R(self._p).monomial_coefficient(R(mon._p))
+
+        return self._p.constant_coefficient()
+
     def coefficient(self, monomial):
         """
         Return the coefficient of a monomial in this polynomial.
@@ -1800,6 +1865,10 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: p = a[1]*a[2] + a[1]*a[2]*a[4]
             sage: p.monomial_coefficient(m)
             1
+
+            sage: p = R(25)
+            sage: p.monomial_coefficient(R(1))
+            25
         """
         P = self.parent()
         if parent(mon) is not P:
