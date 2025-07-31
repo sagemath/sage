@@ -75,9 +75,9 @@ TESTS:
 We test whether coercion works, even in complicated cases in which
 finite polynomial rings are merged with infinite polynomial rings::
 
-    sage: A.<a> = InfinitePolynomialRing(ZZ,implementation='sparse',order='degrevlex')
+    sage: A.<a> = InfinitePolynomialRing(ZZ, implementation='sparse', order='degrevlex')
     sage: B.<b_2,b_1> = A[]
-    sage: C.<b,c> = InfinitePolynomialRing(B,order='degrevlex')
+    sage: C.<b,c> = InfinitePolynomialRing(B, order='degrevlex')
     sage: C
     Infinite polynomial ring in b, c over Infinite polynomial ring in a over Integer Ring
     sage: 1/2*b_1*a[4] + c[3]
@@ -320,7 +320,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: import sage.interfaces.tab_completion as s
             sage: p = x[3]*x[2]
-            sage: s.completions('p.co',globals()) # indirect doctest
+            sage: s.completions('p.co', globals()) # indirect doctest
             ['p.coefficient',
              'p.coefficients',
              'p.constant_coefficient',
@@ -338,7 +338,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: import sage.interfaces.tab_completion as s
             sage: p = x[3]*x[2]
-            sage: s.completions('p.co',globals()) # indirect doc test
+            sage: s.completions('p.co', globals()) # indirect doc test
             ['p.coefficient',
              'p.coefficients',
              'p.constant_coefficient',
@@ -374,7 +374,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
             sage: import sage.interfaces.tab_completion as s
             sage: p = alpha[3]*alpha[2]^2
-            sage: s.completions('p.co',globals()) # indirect doc test
+            sage: s.completions('p.co', globals()) # indirect doc test
             ['p.coefficient',
              'p.coefficients',
              'p.constant_coefficient',
@@ -483,7 +483,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         EXAMPLES::
 
-            sage: X.<x,y> = InfinitePolynomialRing(ZZ,implementation='sparse')
+            sage: X.<x,y> = InfinitePolynomialRing(ZZ, implementation='sparse')
             sage: p = x[100]*y[1]^3*x[1]^2 + 2*x[10]*y[30]
             sage: p.ring()
             Infinite polynomial ring in x, y over Integer Ring
@@ -1416,7 +1416,7 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
         Two infinite polynomial rings in different implementation and
         order::
 
-            sage: Y = InfinitePolynomialRing(QQ,['x','y'], order='deglex', implementation='dense')
+            sage: Y = InfinitePolynomialRing(QQ, ['x','y'], order='deglex', implementation='dense')
             sage: x[2] == Y(x[2]) # indirect doctest
             True
 
