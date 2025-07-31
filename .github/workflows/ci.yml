@@ -99,7 +99,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' 
+          python-version: '3.12' 
 
       - name: Install dependencies
         run: |
@@ -111,17 +111,27 @@ jobs:
           uv venv
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
           uv pip install \
-              meson-python \
-              "cypari2 ==2.2.1" \
-              "cython >=3.0, != 3.0.3, < 3.1.0" \
-              "gmpy2 ~=2.1.b999" \
-              memory_allocator \
-              "numpy >=1.25" \
-              jinja2 \
-              setuptools
-          uv sync --frozen --inexact --no-build-isolation
+            meson-python \
+            "cypari2 >=2.2.1" \
+            "cysignals >=1.11.2, != 1.12.0" \
+            "cython >=3.0, != 3.0.3, < 3.1.0" \
+            "gmpy2 ~=2.1.b999" \
+            memory_allocator \
+            "numpy >=1.25" \
+            jinja2 \
+            setuptools
+          uv sync --frozen --inexact --no-build-isolation -v
 
       - name: Test
         run: |
-          uv run ./sage -t --all -p4 || true
+          uv run --frozen ./sage -t --all -p4 || true
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure() || success()
+        with:
+          name: macos-${{ matrix.version }}-log
+          path: |
+            build/cp312/meson-logs/
+            build/cp312/meson-info/
         
