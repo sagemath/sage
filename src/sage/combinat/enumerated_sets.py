@@ -1,12 +1,5 @@
 """
-Enumerated sets and combinatorial objects
-
-.. TODO:: Proofread / point to the main classes rather than the modules
-
-Categories
-----------
-
-- :class:`EnumeratedSets`, :class:`FiniteEnumeratedSets`
+Enumerated sets
 
 Basic enumerated sets
 ---------------------
@@ -20,7 +13,6 @@ Integer lists
 -------------
 
 - :ref:`sage.combinat.partition`
-  (see also: :ref:`sage.combinat.catalog_partitions`)
 - :ref:`sage.combinat.composition`
 - :class:`~sage.combinat.composition_signed.SignedCompositions`
 - :class:`IntegerListsLex`
@@ -46,8 +38,8 @@ Words
 - :ref:`sage.combinat.debruijn_sequence`
 - :ref:`sage.combinat.shuffle`
 
-Permutations, ...
------------------
+Permutations and arrangements
+-----------------------------
 
 - :ref:`sage.combinat.permutation`
 - :ref:`sage.combinat.permutation_cython`
@@ -63,18 +55,13 @@ Permutations, ...
     - :ref:`sage.combinat.integer_vectors_mod_permgroup`
     - :ref:`sage.combinat.rsk`
 
-Partitions, tableaux, ...
--------------------------
-
-See: :ref:`sage.combinat.catalog_partitions`
-
 Polyominoes
 -----------
 
-See: :ref:`sage.combinat.parallelogram_polyomino`
+- :ref:`sage.combinat.parallelogram_polyomino`
 
-Integer matrices, ...
----------------------
+Integer matrices and arrays
+---------------------------
 
 - :ref:`sage.combinat.integer_matrices`
 - :ref:`sage.combinat.matrices.hadamard_matrix`
@@ -84,11 +71,6 @@ Integer matrices, ...
 - :ref:`sage.combinat.similarity_class_type`
 - :ref:`sage.combinat.restricted_growth`
 - :ref:`sage.combinat.vector_partition`
-
-.. SEEALSO::
-
-    - :class:`MatrixSpace`
-    - :ref:`sage.groups.matrix_gps.catalog`
 
 Subsets and set partitions
 --------------------------
@@ -117,13 +99,18 @@ Enumerated sets related to graphs
 - :ref:`sage.combinat.graph_path`
 - :ref:`sage.combinat.perfect_matching`
 
-Backtracking solvers and generic enumerated sets
-------------------------------------------------
+Miscellaneous enumerated sets
+-----------------------------
 
-.. TODO::
+- :class:`~sage.combinat.integer_lists.invlex.IntegerListsLex`
+- :class:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup`
+- :ref:`sage.combinat.gray_codes`
+- :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`, :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
+- :class:`~sage.combinat.knutson_tao_puzzles.KnutsonTaoPuzzleSolver`
+- :func:`LatticePolytope`
 
-    Do we want a separate section, possibly more proeminent, for
-    backtracking solvers?
+Backtracking solvers
+--------------------
 
 - :func:`~sage.sets.recursively_enumerated_set.RecursivelyEnumeratedSet`
 - :class:`~sage.combinat.backtrack.GenericBacktracker`
@@ -131,19 +118,5 @@ Backtracking solvers and generic enumerated sets
 - :ref:`sage.combinat.tiling`
 - :ref:`sage.combinat.dlx`
 - :ref:`sage.combinat.matrices.dlxcpp`
-- :ref:`sage.combinat.species.all`
-- :class:`~sage.combinat.integer_lists.IntegerListsLex`
-- :class:`~sage.combinat.integer_vectors_mod_permgroup.IntegerVectorsModPermutationGroup`
 
-Low level enumerated sets
--------------------------
-
-- :ref:`sage.combinat.gray_codes`
-
-Misc enumerated sets
---------------------
-
-- :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPattern`, :class:`~sage.combinat.gelfand_tsetlin_patterns.GelfandTsetlinPatterns`
-- :class:`~sage.combinat.knutson_tao_puzzles.KnutsonTaoPuzzleSolver`
-- :func:`LatticePolytope`
 """
