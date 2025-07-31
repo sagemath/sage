@@ -58,6 +58,7 @@ jobs:
 
       - name: Build
         run: |
+          source ./.homebrew-build-env
           ./bootstrap
           ./configure --enable-download-from-upstream-url
           make build V=0
