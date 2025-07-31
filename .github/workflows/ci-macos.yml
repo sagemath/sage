@@ -63,5 +63,7 @@ jobs:
           make build V=0
       
       - name: Test
-        run: ./sage -t --all -p4
+        run: |
+          source ./.homebrew-build-env # Needed so that runtime cython can find the dependencies
+          ./sage -t --all -p4
     
