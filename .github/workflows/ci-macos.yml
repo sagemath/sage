@@ -61,6 +61,8 @@ jobs:
           ./bootstrap
           ./configure --enable-download-from-upstream-url
           make build V=0
+        env:
+          MAKE: 'make -j6'
       
       - name: Test
         run: |
