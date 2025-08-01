@@ -265,7 +265,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     if platform in ("osx-64", "osx-arm64"):
         all_requirements.add("libblas=*=*_newaccelerate")
     else:
-        all_requirements.add("blas=2.*=openblas")
+        all_requirements.add("libblas=*=*_openblas")
     all_requirements.add("fortran-compiler")
     if platform == "win-64":
         all_requirements.add("vs2022_win-64")
