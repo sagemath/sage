@@ -1244,7 +1244,7 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
         EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(QQ, implementation='sparse')
-            sage: x[1] + x[2] # indirect doctest
+            sage: x[1] + x[2]  # indirect doctest
             x_2 + x_1
 
         Check adding from a different parent::
@@ -1252,8 +1252,13 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: Y.<x_0> = PolynomialRing(QQ)
             sage: x[0] - x_0
             0
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar, implementation='sparse')
+            sage: x[1] + x[3]
+            x_3 + x_1
         """
-        # One may need a new parent for self._p and x._p
         try:
             result = self._p + x._p
         except TypeError:
@@ -1267,8 +1272,14 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
         EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(ZZ)
-            sage: x[2]*x[1] # indirect doctest
+            sage: x[2] * x[1]  # indirect doctest
             x_2*x_1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar, implementation='sparse')
+            sage: x[1] * x[3]
+            x_3*x_1
         """
         try:
             result = self._p * x._p
@@ -1285,6 +1296,12 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: x[2] - x[1] # indirect doctest
             x_2 - x_1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar, implementation='sparse')
+            sage: x[1] - x[3]
+            -x_3 + x_1
         """
         try:
             result = self._p - x._p
@@ -1301,6 +1318,12 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(ZZ, implementation="sparse")
             sage: x[2] // x[2]  # indirect doctest
             1
+            sage: (x[2]^2 - 1) // (x[2] + 1)
+            x_2 - 1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar, implementation='sparse')
             sage: (x[2]^2 - 1) // (x[2] + 1)
             x_2 - 1
         """
@@ -1330,6 +1353,12 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             sage: P = Permutation(((1,2),(3,4,5)))
             sage: p^P # indirect doctest
             x_10*y_1 + 2*x_2*y_4
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar, implementation='sparse')
+            sage: (x[3] + x[1])^2
+            x_3^2 + 2*x_3*x_1 + x_1^2
         """
         P = self.parent()
         if callable(n):
@@ -1464,6 +1493,35 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             result = R(self._p).gcd(R(x._p))
 
         return InfinitePolynomial_sparse(self.parent(), result)
+
+    def quo_rem(self, x):
+        """
+        Return quotient and remainder.
+
+        EXAMPLES::
+
+            sage: R.<x> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: p = 1 + 3*x[0]*x[1] + 2*x[2]
+            sage: q = x[0] - 1
+            sage: p.quo_rem(q)
+            (3*x_1, 2*x_2 + 3*x_1 + 1)
+
+        TESTS::
+
+            sage: R.<x> = InfinitePolynomialRing(QQbar, implementation="sparse")
+            sage: p = 1 + 3*x[0]*x[1] + 2*x[2]
+            sage: q = x[0] - 1
+            sage: p.quo_rem(q)
+            (3*x_1, 2*x_2 + 3*x_1 + 1)
+        """
+        try:
+            result = self._p.quo_rem(x._p)
+        except (ValueError, TypeError):
+            R = self._common_polynomial_ring(x)
+            result = R(self._p).quo_rem(R(x._p))
+
+        return (InfinitePolynomial_sparse(self.parent(), result[0]),
+                InfinitePolynomial_sparse(self.parent(), result[1]))
 
     def monomial_coefficient(self, mon):
         """
@@ -1679,8 +1737,14 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
-            sage: x[1] + x[2] # indirect doctest
+            sage: x[1] + x[2]  # indirect doctest
             x_2 + x_1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar)
+            sage: x[1] + x[3]
+            x_3 + x_1
         """
         P = self.parent()
         self._p = P._P(self._p)
@@ -1692,8 +1756,14 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
-            sage: x[2]*x[1] # indirect doctest
+            sage: x[2]*x[1]  # indirect doctest
             x_2*x_1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar)
+            sage: x[1]*x[3]
+            x_3*x_1
         """
         P = self.parent()
         self._p = P._P(self._p)
@@ -1707,6 +1777,12 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: x[2] - x[1] # indirect doctest
             x_2 - x_1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar)
+            sage: x[1] - x[3]
+            -x_3 + x_1
         """
         P = self.parent()
         self._p = P._P(self._p)
@@ -1720,6 +1796,12 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: X.<x> = InfinitePolynomialRing(ZZ)
             sage: x[2] // x[2]  # indirect doctest
             1
+            sage: (x[2]^2 - 1) // (x[2] + 1)
+            x_2 - 1
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar)
             sage: (x[2]^2 - 1) // (x[2] + 1)
             x_2 - 1
         """
@@ -1804,6 +1886,34 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         self._p = P._P(self._p)
         x._p = P._P(x._p)
         return InfinitePolynomial_dense(P, self._p.gcd(x._p))
+
+    def quo_rem(self, x):
+        """
+        Return quotient and remainder.
+
+        EXAMPLES::
+
+            sage: R.<x> = InfinitePolynomialRing(QQ)
+            sage: p = 1 + 3*x[0]*x[1] + 2*x[2]
+            sage: q = x[0] - 1
+            sage: p.quo_rem(q)
+            (3*x_1, 2*x_2 + 3*x_1 + 1)
+
+        TESTS::
+
+            sage: R.<x> = InfinitePolynomialRing(QQbar)
+            sage: p = 1 + 3*x[0]*x[1] + 2*x[2]
+            sage: q = x[0] - 1
+            sage: p.quo_rem(q)
+            (3*x_1, 2*x_2 + 3*x_1 + 1)
+        """
+        P = self.parent()
+        self._p = P._P(self._p)
+        x._p = P._P(x._p)
+        result = (self._p).quo_rem(x._p)
+
+        return (InfinitePolynomial_dense(P, result[0]),
+                InfinitePolynomial_dense(P, result[1]))
 
     def monomial_coefficient(self, mon):
         """
