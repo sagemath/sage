@@ -853,8 +853,8 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             [(2, [7]), (4, [1]), (12, [3])]
         """
         if not self._has_footprint:
-            PARENT = self.parent()
-            l = len(self.parent()._names)
+            P = self.parent()
+            l = len(P._names)
             # get the pairs (shift,exponent) of the leading monomial, indexed by the variable names
             Vars = self._p.parent().variable_names()
             from sage.rings.polynomial.multi_polynomial import MPolynomial_libsingular
@@ -864,7 +864,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
                 # self._p  is multivariate, but not libsingular, hence,
                 # exponents is slow and does not accept the optional argument as_ETuples.
                 # Thus, fall back to regular expressions
-                L = PARENT._find_varpowers.findall(repr(self.lm()._p))
+                L = P._find_varpowers.findall(repr(self.lm()._p))
                 L = [((x[0:2]), int(x[2]) if x[2] else 1) for x in L]
             else:  # it is a univariate polynomial -- this should never happen, but just in case...
                 L = [(Vars[0].split('_'), self._p.degree())]
@@ -873,7 +873,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
                 s = int(t[0][1])  # the variable *s*hift
                 if s not in self._footprint:
                     self._footprint[s] = [0]*l
-                self._footprint[s][self.parent()._name_dict[n]] = t[1]   # the exponent
+                self._footprint[s][P._name_dict[n]] = t[1]   # the exponent
             self._has_footprint = True
         return self._footprint
 
@@ -1524,8 +1524,8 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
             VarList.update(mon._p.parent().variable_names())
-            VarList = sorted(VarList, key=self.parent().varname_key, reverse=True)
-            R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
+            VarList = sorted(VarList, key=P.varname_key, reverse=True)
+            R = PolynomialRing(self._p.base_ring(), VarList, order=P._order)
             return R(self._p).monomial_coefficient(R(mon._p))
 
         return self._p.constant_coefficient()
@@ -1668,19 +1668,9 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             sage: p < q
             False
         """
-        # We can assume that self and x belong to the same ring.
-        # We can not assume yet that self._p and
-        # x._p are already defined over self.parent()._P
-        # It won't hurt to change self in place.
-        # But, to be on the safe side...
-        try:
-            self._p = self.parent()._P(self._p)
-        except Exception:
-            pass
-        try:
-            x._p = x.parent()._P(x._p)
-        except Exception:
-            pass
+        P = self.parent()
+        self._p = P._P(self._p)
+        x._p = P._P(x._p)
         return richcmp(self._p, x._p, op)
 
     # Basic arithmetics
@@ -1695,7 +1685,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(), self._p + x._p)
+        return InfinitePolynomial_dense(P, self._p + x._p)
 
     def _mul_(self, x):
         """
@@ -1708,7 +1698,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(), self._p * x._p)
+        return InfinitePolynomial_dense(P, self._p * x._p)
 
     def _sub_(self, x):
         """
@@ -1721,7 +1711,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(), self._p - x._p)
+        return InfinitePolynomial_dense(P, self._p - x._p)
 
     def _floordiv_(self, x):
         """
@@ -1736,7 +1726,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(), self._p // x._p)
+        return InfinitePolynomial_dense(P, self._p // x._p)
 
     def __pow__(self, n):
         """
@@ -1792,10 +1782,10 @@ class InfinitePolynomial_dense(InfinitePolynomial):
                 newVars.extend([PPgens[sh-p(j)] for j in range(blocklength, -1, -1)])
                 sh += nM
             mapR = PP.hom(newVars, PP)
-            return InfinitePolynomial_dense(self.parent(), mapR(self._p))
+            return InfinitePolynomial_dense(P, mapR(self._p))
 
         # else, n is supposed to be an integer
-        return InfinitePolynomial_dense(self.parent(), self._p**n)
+        return InfinitePolynomial_dense(P, self._p**n)
 
     def gcd(self, x):
         """
@@ -1813,7 +1803,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
         P = self.parent()
         self._p = P._P(self._p)
         x._p = P._P(x._p)
-        return InfinitePolynomial_dense(self.parent(), self._p.gcd(x._p))
+        return InfinitePolynomial_dense(P, self._p.gcd(x._p))
 
     def monomial_coefficient(self, mon):
         """
