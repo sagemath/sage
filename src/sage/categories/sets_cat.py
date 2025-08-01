@@ -36,6 +36,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.misc.lazy_format import LazyFormat
+# Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.category import Category
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
