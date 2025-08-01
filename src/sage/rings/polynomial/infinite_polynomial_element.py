@@ -1190,8 +1190,7 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             V = [str(x) for x in self._p.variables()]
         else:
             V = []
-        for kw in kwargs:
-            value = kwargs[kw]
+        for kw, value in kwargs.items():
             if isinstance(value, InfinitePolynomial):
                 kwargs[kw] = value._p
                 V.append(kw)
@@ -1629,8 +1628,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             x_100 + x_0
         """
         # Replace any InfinitePolynomials by their underlying polynomials
-        for kw in kwargs:
-            value = kwargs[kw]
+        for kw, value in kwargs.items():
             if isinstance(value, InfinitePolynomial):
                 kwargs[kw] = value._p
         args = list(args)
