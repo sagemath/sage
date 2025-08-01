@@ -220,11 +220,10 @@ class QuotientRingElement(RingElement):
         # However, it may occur that no variable names are assigned.
         # That holds, in particular, if there are infinitely many
         # generators, as for Steenrod algebras.
-        try:
-            P.variable_names()
-        except ValueError:
-            return str(self.__rep)
-        with localvars(R, P.variable_names(), normalize=False):
+        if P.variable_names():
+            with localvars(R, P.variable_names(), normalize=False):
+                return str(self.__rep)
+        else:
             return str(self.__rep)
 
     def _latex_(self):
@@ -245,11 +244,10 @@ class QuotientRingElement(RingElement):
         P = self.parent()
         R = P.cover_ring()
         # see _repr_ above for the idea
-        try:
-            P.variable_names()
-        except ValueError:
-            return self.__rep._latex_()
-        with localvars(R, P.variable_names(), normalize=False):
+        if P.variable_names():
+            with localvars(R, P.variable_names(), normalize=False):
+                return self.__rep._latex_()
+        else:
             return self.__rep._latex_()
 
     def __pari__(self):
