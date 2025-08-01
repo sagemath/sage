@@ -835,12 +835,12 @@ class LieAlgebraWithGenerators(LieAlgebra):
             (x, y)
         """
         G = self.lie_algebra_generators()
+        if not self.variable_names():
+            return tuple(G)
         try:
             return tuple(G[i] for i in self.variable_names())
         except (KeyError, IndexError):
             return tuple(G[i] for i in self.indices())
-        except ValueError:
-            return tuple(G)
 
     def gen(self, i):
         """
