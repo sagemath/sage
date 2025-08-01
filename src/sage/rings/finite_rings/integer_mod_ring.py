@@ -1774,7 +1774,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             [0, 32, 9]
             sage: (x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots()
             [(19, 1), (20, 2), (21, 3)]
-            sage: (x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots(multiplicities=False)
+            sage: sorted((x^6 + x^5 + 9*x^4 + 20*x^3 + 3*x^2 + 18*x + 7).roots(multiplicities=False))
             [19, 20, 21]
 
         We can find roots without multiplicities over a ring whose modulus is
