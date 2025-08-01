@@ -1115,7 +1115,7 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
     if self.has_loops() or self.allows_multiple_edges():
         G = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
     else:
-        G = self.copy()
+        G = self.copy(immutable=False)
 
     G.delete_edges(G.incoming_edges(source, labels=False))
     G.delete_edges(G.outgoing_edges(target, labels=False))
@@ -1174,11 +1174,6 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
     # idx of paths
     cdef dict idx_to_path = {0: shortest_path}
     cdef int idx = 1
-
-    # candidate_paths collects (cost, path_idx, dev_idx)
-    # + cost is sidetrack cost from the first shortest path tree T_0
-    #   (i.e. real length = cost + shortest_path_length in T_0)
-    cdef priority_queue[pair[double, pair[int, int]]] candidate_paths
 
     # ancestor_idx_vec[v] := the first vertex of ``path[:t+1]`` or ``id_target`` reachable by
     #                    edges of first shortest path tree from v.
@@ -1239,6 +1234,10 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
         return
 
     cdef int i, deviation_i
+    # candidate_paths collects (cost, path_idx, dev_idx)
+    # + cost is sidetrack cost from the first shortest path tree T_0
+    #   (i.e. real length = cost + shortest_path_length in T_0)
+    cdef priority_queue[pair[double, pair[int, int]]] candidate_paths
     candidate_paths.push((0, (0, 0)))
     while candidate_paths.size():
         negative_cost, (path_idx, dev_idx) = candidate_paths.top()
@@ -1474,11 +1473,6 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     cdef dict idx_to_path = {0: shortest_path}
     cdef int idx = 1
 
-    # candidate_paths collects (cost, path_idx, dev_idx, is_simple)
-    # + cost is sidetrack cost from the first shortest path tree T_0
-    #   (i.e. real length = cost + shortest_path_length in T_0)
-    cdef priority_queue[pair[pair[double, bint], pair[int, int]]] candidate_paths
-
     # ancestor_idx_vec[v] := the first vertex of ``path[:t+1]`` or ``id_target`` reachable by
     #                    edges of first shortest path tree from v.
     cdef vector[int] ancestor_idx_vec = [-1 for _ in range(len(G) + len(unnecessary_vertices))]
@@ -1538,6 +1532,10 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
         return
 
     cdef int i, deviation_i
+    # candidate_paths collects (cost, path_idx, dev_idx, is_simple)
+    # + cost is sidetrack cost from the first shortest path tree T_0
+    #   (i.e. real length = cost + shortest_path_length in T_0)
+    cdef priority_queue[pair[pair[double, bint], pair[int, int]]] candidate_paths
     candidate_paths.push(((0, True), (0, 0)))
     while candidate_paths.size():
         (negative_cost, is_simple), (path_idx, dev_idx) = candidate_paths.top()
