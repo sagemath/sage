@@ -1549,13 +1549,13 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
 
     def coefficient(self, monomial):
         """
-        Return the coefficient of a monomial in this polynomial.
+        Return the coefficient of a monomial in ``self``.
 
         INPUT:
 
-        - A monomial (element of the parent of self) or
+        - a monomial (element of the parent of ``self``) or
         - a dictionary that describes a monomial (the keys
-          are variables of the parent of self, the values
+          are variables of the parent of ``self``, the values
           are the corresponding exponents)
 
         EXAMPLES:
@@ -1879,13 +1879,13 @@ class InfinitePolynomial_dense(InfinitePolynomial):
 
     def coefficient(self, monomial):
         """
-        Return the coefficient of a monomial in this polynomial.
+        Return the coefficient of a monomial in ``self``.
 
         INPUT:
 
-        - A monomial (element of the parent of self) or
+        - a monomial (element of the parent of ``self``) or
         - a dictionary that describes a monomial (the keys
-          are variables of the parent of self, the values
+          are variables of the parent of ``self``, the values
           are the corresponding exponents)
 
         EXAMPLES:
@@ -1926,7 +1926,7 @@ class InfinitePolynomial_dense(InfinitePolynomial):
             -4
         """
         P = self.parent()
-        if self._p == 0:
+        if not self._p:
             return P.zero()
         self._p = P._P(self._p)
         if isinstance(monomial, dict):
