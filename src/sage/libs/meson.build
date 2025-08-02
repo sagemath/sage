@@ -5,15 +5,72 @@ if not ecl.found() and not is_windows
   ecl_proj = subproject('ecl')
   ecl = ecl_proj.get_variable('ecl_dep')
 endif
-braiding = dependency('libbraiding', required: false)
-if not braiding.found()
-  # Fallback since pkg-config support was only added in v1.3.1
-  braiding = cc.find_library(
-    'braiding',
-    required: not is_windows,
-    disabler: true,
+ecl_bin = find_program('ecl', required: false)
+if ecl_bin.found()
+  maxima_check = run_command(
+    ecl_bin,
+    '--eval',
+    '(require \'maxima)',
+    '--eval',
+    '(quit)',
+    check: false,
   )
+  if maxima_check.returncode() == 0
+    # ecl does not have any problems with Maxima, so nothing needs to be set here:
+    conf_data.set('SAGE_MAXIMA_FAS', '')
+  else
+    # Try Sage's custom maxima location
+    sage_maxima = join_paths(
+      get_option('SAGE_LOCAL'),
+      'lib',
+      'ecl',
+      'maxima.fas',
+    )
+    maxima_check = run_command(
+      ecl_bin,
+      '--eval',
+      '(require \'maxima "' + sage_maxima + '")',
+      '--eval',
+      '(quit)',
+      check: false,
+    )
+    conf_data.set('SAGE_MAXIMA_FAS', sage_maxima)
+  endif
+
+  maxima_bin = find_program('maxima', required: false, disabler: true)
+  maxima_present = maxima_check.returncode() == 0 and maxima_bin.found()
+else
+  maxima_present = false
 endif
+if not maxima_present
+  if is_windows
+    # We currently cannot build Maxima on Windows, so we disable it
+    maxima = disabler()
+  else
+    # ECL does not have Maxima support
+    maxima_proj = subproject('maxima')
+    maxima = maxima_proj.get_variable('maxima_dep')
+    # Use the freshly built maxima
+    conf_data.set('SAGE_MAXIMA_FAS', maxima.get_variable(internal: 'MAXIMA_FAS'))
+    conf_data.set(
+      'SAGE_MAXIMA_SHARE',
+      maxima.get_variable(internal: 'MAXIMA_SHARE'),
+    )
+    conf_data.set('SAGE_MAXIMA', maxima.get_variable(internal: 'MAXIMA_BIN'))
+  endif
+else
+  maxima = declare_dependency()
+  # ecl does not have any problems with Maxima, so nothing needs to be set here:
+  conf_data.set('SAGE_MAXIMA_SHARE', '')
+  conf_data.set('SAGE_MAXIMA', maxima_bin.full_path())
+endif
+
+braiding = dependency(
+  'libbraiding',
+  version: '>=1.3.1',
+  required: false,
+  disabler: true,
+)
 gc = dependency(
   ['bdw-gc-threaded', 'bdw-gc'],
   version: '>=7.6.4',
@@ -47,11 +104,13 @@ extension_data = {
   'meataxe': files('meataxe.pyx'),
 }
 
-dependencies = [py_dep, cysignals, ecl, gc, gmp]
+dependencies = [py_dep, cysignals, gc, gmp]
 
 foreach name, pyx : extension_data
   deps = dependencies
-  if name == 'meataxe'
+  if name == 'ecl'
+    deps += [ecl, maxima]
+  elif name == 'meataxe'
     deps += [mtx]
   elif name == 'homfly'
     deps += [homfly]
