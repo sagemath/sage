@@ -47,6 +47,7 @@ py.install_sources(
   'vector_space_morphism.py',
   'vector_symbolic_dense.py',
   'vector_symbolic_sparse.py',
+  'submodule_helper.py',
   subdir: 'sage/modules',
 )
 

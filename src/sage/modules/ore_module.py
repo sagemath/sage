@@ -197,7 +197,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
-from sage.modules.subspace_helper import SubspaceHelper
+from sage.modules.submodule_helper import SubmoduleHelper
 from sage.modules.ore_module_element import OreModuleElement
 
 # Action by left multiplication on Ore modules
@@ -1058,7 +1058,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         Finally ``im_gens`` can also be itself a Ore morphism, in which
         case SageMath tries to cast it into a morphism with the requested
         domains and codomains.
-        As an example below, we restrict `g` to a subspace::
+        As an example below, we restrict `g` to a submodule::
 
             sage: C.<c0,c1> = U.span((X + t)*u0)
             sage: gC = C.hom(g)
@@ -1830,21 +1830,21 @@ class OreSubmodule(OreModule):
             sage: M.span((X + x + y)*v)
             Traceback (most recent call last):
             ...
-            NotImplementedError: subspaces and quotients are only implemented over PID
+            NotImplementedError: submodules and quotients are only implemented over PID
         """
         base = ambient.base_ring()
-        if isinstance(gens, SubspaceHelper):
+        if isinstance(gens, SubmoduleHelper):
             if not saturate or gens.is_saturated:
-                subspace = gens
+                submodule = gens
             else:
-                subspace = SubspaceHelper(gens.basis, saturate)
+                submodule = SubmoduleHelper(gens.basis, saturate)
         else:
             basis = matrix(base, gens)
-            subspace = SubspaceHelper(basis, saturate)
-        names = normalize_names(names, subspace.rank)
-        return cls.__classcall__(cls, ambient, subspace, names)
+            submodule = SubmoduleHelper(basis, saturate)
+        names = normalize_names(names, submodule.rank)
+        return cls.__classcall__(cls, ambient, submodule, names)
 
-    def __init__(self, ambient, subspace, names) -> None:
+    def __init__(self, ambient, submodule, names) -> None:
         r"""
         Initialize this Ore submodule.
 
@@ -1872,13 +1872,13 @@ class OreSubmodule(OreModule):
         from sage.modules.ore_module_morphism import OreModuleRetraction
         base = ambient.base_ring()
         self._ambient = ambient
-        self._subspace = subspace
-        C = subspace.coordinates.matrix_from_columns(range(subspace.rank))
-        rows = [ambient(x).image() * C for x in subspace.basis.rows()]
+        self._submodule = submodule
+        C = submodule.coordinates.matrix_from_columns(range(submodule.rank))
+        rows = [ambient(x).image() * C for x in submodule.basis.rows()]
         OreModule.__init__(self, matrix(base, rows),
                            ambient.ore_ring(action=False),
                            names, ambient._ore_category)
-        coerce = self.hom(subspace.basis, codomain=ambient)
+        coerce = self.hom(submodule.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
         retract = self._retract = OreModuleRetraction(ambient, self)
@@ -1906,7 +1906,7 @@ class OreSubmodule(OreModule):
             sage: loads(dumps(N)) is N
             True
         """
-        return self._submodule_class, (self._ambient, self._subspace, False, self._names)
+        return self._submodule_class, (self._ambient, self._submodule, False, self._names)
 
     def _repr_element(self, x) -> str:
         r"""
@@ -2048,10 +2048,10 @@ class OreSubmodule(OreModule):
             sage: Nsat == M.span(P*e0)
             True
         """
-        subspace = self._subspace
-        if subspace.is_saturated:
+        submodule = self._submodule
+        if submodule.is_saturated:
             return self.rename_basis(names, coerce)
-        S = self._submodule_class(self._ambient, subspace, True, names)
+        S = self._submodule_class(self._ambient, submodule, True, names)
         if coerce:
             M = self._ambient
             base = self.base_ring()
@@ -2145,7 +2145,7 @@ class OreSubmodule(OreModule):
         rank = self.rank()
         names = normalize_names(names, rank)
         cls = self.__class__
-        M = cls.__classcall__(cls, self._ambient, self._subspace, names)
+        M = cls.__classcall__(cls, self._ambient, self._submodule, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -2168,11 +2168,11 @@ class OreSubmodule(OreModule):
             sage: N.fitting_index()  # indirect doctest
             t^3 + 2*t
         """
-        subspace = self._subspace
-        if subspace.rank != self._ambient.rank():
+        submodule = self._submodule
+        if submodule.rank != self._ambient.rank():
             return self.base_ring().zero()
         else:
-            return subspace.basis.determinant()
+            return submodule.basis.determinant()
 
     def injection_morphism(self):
         r"""
@@ -2270,7 +2270,7 @@ class OreSubmodule(OreModule):
         if f.codomain() is not self._ambient:
             raise ValueError("the codomain of the morphism must be the ambient space")
         rows = []
-        C = self._subspace.coordinates
+        C = self._submodule.coordinates
         try:
             im_gens = [self(f(x)) for x in f.domain().basis()]
         except ValueError:
@@ -2322,23 +2322,23 @@ class OreQuotientModule(OreModule):
             sage: M.quo((X + x + y)*v)
             Traceback (most recent call last):
             ...
-            NotImplementedError: subspaces and quotients are only implemented over PID
+            NotImplementedError: submodules and quotients are only implemented over PID
         """
         base = cover.base_ring()
-        if isinstance(gens, SubspaceHelper):
+        if isinstance(gens, SubmoduleHelper):
             if not remove_torsion or gens.is_saturated:
-                subspace = gens
+                submodule = gens
             else:
-                subspace = SubspaceHelper(gens.basis, remove_torsion)
+                submodule = SubmoduleHelper(gens.basis, remove_torsion)
         else:
             basis = matrix(base, gens)
-            subspace = SubspaceHelper(basis, remove_torsion)
-        if not subspace.is_saturated:
+            submodule = SubmoduleHelper(basis, remove_torsion)
+        if not submodule.is_saturated:
             raise NotImplementedError("torsion Ore modules are not implemented")
-        names = normalize_names(names, cover.rank() - subspace.rank)
-        return cls.__classcall__(cls, cover, subspace, names)
+        names = normalize_names(names, cover.rank() - submodule.rank)
+        return cls.__classcall__(cls, cover, submodule, names)
 
-    def __init__(self, cover, subspace, names) -> None:
+    def __init__(self, cover, submodule, names) -> None:
         r"""
         Initialize this Ore quotient.
 
@@ -2368,10 +2368,10 @@ class OreQuotientModule(OreModule):
         self._cover = cover
         d = cover.rank()
         base = cover.base_ring()
-        self._subspace = subspace
-        rank = subspace.rank
-        coerce = subspace.coordinates.matrix_from_columns(range(rank, d))
-        images = [cover(x).image() for x in subspace.complement.rows()]
+        self._submodule = submodule
+        rank = submodule.rank
+        coerce = submodule.coordinates.matrix_from_columns(range(rank, d))
+        images = [cover(x).image() for x in submodule.complement.rows()]
         OreModule.__init__(self, matrix(base, d-rank, d, images) * coerce,
                            cover.ore_ring(action=False),
                            names, cover._ore_category)
@@ -2402,7 +2402,7 @@ class OreQuotientModule(OreModule):
             sage: loads(dumps(N)) is N
             True
         """
-        return self._quotientModule_class, (self._cover, self._subspace, False, self._names)
+        return self._quotientModule_class, (self._cover, self._submodule, False, self._names)
 
     def _repr_element(self, x) -> str:
         r"""
@@ -2552,7 +2552,7 @@ class OreQuotientModule(OreModule):
 
             :meth:`relations`
         """
-        return self._submodule_class(self._cover, self._subspace, False, names)
+        return self._submodule_class(self._cover, self._submodule, False, names)
 
     def rename_basis(self, names, coerce=False):
         r"""
@@ -2638,7 +2638,7 @@ class OreQuotientModule(OreModule):
         rank = self.rank()
         names = normalize_names(names, rank)
         cls = self.__class__
-        M = cls.__classcall__(cls, self._cover, self._subspace, names)
+        M = cls.__classcall__(cls, self._cover, self._submodule, names)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -2704,10 +2704,10 @@ class OreQuotientModule(OreModule):
         """
         if f.domain() is not self._cover:
             raise ValueError("the domain of the morphism must be the cover ring")
-        Z = self._subspace.basis * f._matrix
+        Z = self._submodule.basis * f._matrix
         if not Z.is_zero():
             raise ValueError("the morphism does not factor through this quotient")
-        mat = self._subspace.complement * f._matrix
+        mat = self._submodule.complement * f._matrix
         return self.hom(mat, codomain=f.codomain())
 
     def morphism_modulo(self, f):
