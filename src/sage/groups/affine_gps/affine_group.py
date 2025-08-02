@@ -532,3 +532,17 @@ class AffineGroup(UniqueRepresentation, Group):
         vecs = self.vector_space().some_elements()
         return [self.element_class(self, A, b, check=False, convert=False)
                 for A in mats for b in vecs]
+
+    def __iter__(self):
+        """
+        TESTS::
+
+            sage: G = AffineGroup(2, 3)
+            sage: len([g for g in G]) == G.cardinality()  # indirect doctest
+            True
+        """
+        for A in self._GL:
+            for b in self.vector_space():
+                yield self.element_class(self, A, b, check=False, convert=False)
+
+    __len__ = cardinality

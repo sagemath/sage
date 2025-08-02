@@ -1,6 +1,7 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 
-import os, sys
+import os
+import sys
 from subprocess import call
 
 if len(sys.argv) < 2:
@@ -20,8 +21,8 @@ if fn.startswith('-'):
 if fn.endswith('.sage'):
     if call(['sage-preparse', fn]) != 0:
         sys.exit(1)
-    os.execvp('sage-python', ['sage-python', fn + '.py'] + opts)
+    os.execvp('python3', ['python3', fn + '.py'] + opts)
 elif fn.endswith('.pyx') or fn.endswith('.spyx'):
     os.execvp('sage-run-cython', ['sage-run-cython', fn] + opts)
 else:
-    os.execvp('sage-python', ['sage-python', fn] + opts)
+    os.execvp('python3', ['python3', fn] + opts)

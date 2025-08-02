@@ -183,15 +183,6 @@ cdef class LazyImport():
         ...
         TypeError: no conversion of this rational to integer
     """
-    cdef readonly _object  # The actual object if imported, None otherwise
-    cdef _module
-    cdef _name
-    cdef _as_name
-    cdef _namespace
-    cdef bint _at_startup
-    cdef _deprecation
-    cdef _feature
-
     def __init__(self, module, name, as_name=None, at_startup=False, namespace=None,
                  deprecation=None, feature=None):
         """

@@ -112,13 +112,12 @@ done
 #
 # nq         : none
 # io         : none
-# semigroups needs to use external libsemigroups
 # digraphs   needs to use external planarity
-pararr=( " " " " "--with-external-planarity" "--with-external-libsemigroups" )
+pararr=( " " " " "--with-external-planarity" )
 ##############################################################################
 
 parind=0
-for pkg in nq io digraphs semigroups
+for pkg in nq io digraphs
 do
     echo "Building GAP package $pkg"
     cd "$PKG_SRC_DIR/$pkg"

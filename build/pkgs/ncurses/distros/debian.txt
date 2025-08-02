@@ -1,1 +1,1 @@
-libncurses5-dev
+libncurses-dev

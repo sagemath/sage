@@ -21,5 +21,5 @@ else
     echo $MASSIF_FLAGS
 fi
 
-valgrind --tool=massif $MASSIF_FLAGS sage-python -i
+valgrind --tool=massif $MASSIF_FLAGS python3 -i
 
