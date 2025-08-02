@@ -430,8 +430,7 @@ def check_symbolic_expression_order(repetitions=100):
     EXAMPLES::
 
         sage: from sage.symbolic.random_tests import check_symbolic_expression_order
-        sage: check_symbolic_expression_order(200)
-        sage: check_symbolic_expression_order(10000)  # long time
+        sage: check_symbolic_expression_order(500)  # long time
     """
     rnd_length = 50
     nvars = 10

@@ -3177,8 +3177,8 @@ def p2_forbidden_minors():
 
     TESTS::
 
-    sage: len(graphs.families.p2_forbidden_minors())
-    35
+        sage: len(graphs.families.p2_forbidden_minors())
+        35
     """
 
     p2_forbidden_minors_graph6 = [
@@ -3220,6 +3220,7 @@ def p2_forbidden_minors():
     ]
 
     return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
+
 
 def SierpinskiGasketGraph(n):
     """
