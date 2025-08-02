@@ -263,6 +263,46 @@ cdef class Matrix_rational_dense(Matrix_dense):
         fmpq_get_mpq(x.value, fmpq_mat_entry(self._matrix, i, j))
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) for i in range(12)])
+            sage: M
+            [     1    3/2    7/3   13/4]
+            [  21/5   31/6   43/7   57/8]
+            [  73/9  91/10 111/11 133/12]
+            sage: M.transpose()
+            [     1   21/5   73/9]
+            [   3/2   31/6  91/10]
+            [   7/3   43/7 111/11]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     1    3/2    7/3   13/4]
+            [  73/9  91/10 111/11 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [   3/2   13/4]
+            [  31/6   57/8]
+            [ 91/10 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [  21/5   57/8]
+            [  73/9 133/12]
+        """
+        cdef Matrix_rational_dense _src = <Matrix_rational_dense> src
+        fmpq_set(fmpq_mat_entry(self._matrix, iDst, jDst), fmpq_mat_entry(_src._matrix, iSrc, jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry (i, j) is zero, otherwise 0.
