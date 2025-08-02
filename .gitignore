@@ -307,9 +307,12 @@ build/cp*
 /subprojects/*
 !/subprojects/*.wrap
 !/subprojects/packagefiles
+!/subprojects/README.md
 
 # Meson temporary files
 subprojects/wrapdb.json
+subprojects/maxima-5.47.0
+subprojects/packagecache
 src/sage/interfaces/__init__.py
 src/sage/crypto/block_cipher/__init__.py
 src/sage/crypto/public_key/__init__.py

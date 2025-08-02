@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Kirillov-Reshetikhin Crystals
+Kirillov-Reshetikhin crystals
 """
 
 # ****************************************************************************

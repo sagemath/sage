@@ -135,7 +135,18 @@ if not gd.found()
 endif
 # Only some platforms have a standalone math library (https://mesonbuild.com/howtox.html#add-math-library-lm-portably)
 m = cc.find_library('m', required: false)
-m4ri = dependency('m4ri', version: '>=20140914')
+m4ri = dependency('m4ri', version: '>=20250128', required: false)
+if not m4ri.found()
+  # Older versions of m4ri are declaring "@SIMD_CFLAGS@" as compile_args
+  # which breaks the build. So we exclude these compile args.
+  # https://github.com/malb/m4ri/commit/3197be5f7d3c67e8f13e32516557f35cbf4ff6ce
+  m4ri = dependency('m4ri', version: '>=20140914').partial_dependency(
+    includes: true,
+    link_args: true,
+    links: true,
+    sources: true,
+  )
+endif
 m4rie = dependency('m4rie', required: false)
 if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
@@ -153,8 +164,9 @@ zlib = dependency('zlib', version: '>=1.2.11')
 # We actually want >= 20231212, but the version number is not updated in the pkgconfig
 # https://github.com/conda-forge/eclib-feedstock/issues/48
 ec = dependency('eclib', version: '>=20231211', required: false, disabler: true)
-# Cannot be found via pkg-config
-ec = cc.find_library('ec', required: not is_windows, disabler: true)
+if not ec.found()
+  ec = cc.find_library('ec', required: false, disabler: true)
+endif
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
@@ -199,7 +211,6 @@ else
   singular_proj = subproject('singular')
   singular_factory = singular_proj.get_variable('factory_dep')
 endif
-maxima = find_program('maxima', required: not is_windows, disabler: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: not is_windows, disabler: true)
 
@@ -212,7 +223,7 @@ add_project_arguments('-I', meson.current_build_dir(), language: 'cython')
 # Add global compiler flags
 add_project_arguments('-X auto_pickle=False', language: 'cython')
 add_project_arguments('-X autotestdict=False', language: 'cython')
-add_project_arguments('-X binding=False', language: 'cython')
+add_project_arguments('-X binding=True', language: 'cython')
 add_project_arguments('-X c_api_binop_methods=True', language: 'cython')
 add_project_arguments('-X cdivision=True', language: 'cython')
 add_project_arguments('-X cpow=True', language: 'cython')
