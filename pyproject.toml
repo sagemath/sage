@@ -12,6 +12,16 @@ requires = [
   'memory_allocator',
   'numpy >=1.25',
   'jinja2',
+  'meson-python',
+  'cypari2 >=2.2.1; sys_platform != "win32"',
+  # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
+  'cysignals >=1.11.2, != 1.12.0',
+  # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
+  'cython >=3.0, != 3.0.3',
+  'gmpy2 ~=2.1.b999',
+  'memory_allocator',
+  'numpy >=1.25',
+  'jinja2',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
@@ -35,7 +45,6 @@ dependencies = [
   'cysignals >=1.11.2, != 1.12.0',
   'cython >=3.0, != 3.0.3',
   'gmpy2 ~=2.1.b999',
-  'lrcalc ~=2.1; sys_platform != "win32"',
   'memory_allocator',
   'numpy >=1.25',
   # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
@@ -95,6 +104,7 @@ extra = [
   'igraph',
   'sage_numerical_backends_coin',
   'symengine >= 0.6.1',                                                               # Only used in tests
+  'lrcalc ~=2.1; sys_platform != "win32"',
 ]
 giac = ['sagemath_giac']
 
@@ -212,6 +222,7 @@ docs = [
   "sphinx",
   "sphinx-copybutton",
   "sphinx-inline-tabs",
+  "jupyter-sphinx",
   "furo",
   "python-dateutil",
 ]
