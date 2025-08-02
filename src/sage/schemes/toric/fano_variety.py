@@ -138,6 +138,8 @@ from sage.schemes.toric.variety import (
                                             normalize_names)
 from sage.structure.all import coercion_model
 from sage.categories.fields import Fields
+from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
+from sage.structure.unique_representation import UniqueRepresentation
 _Fields = Fields()
 
 
@@ -150,7 +152,7 @@ DEFAULT_COEFFICIENTS = tuple(chr(i) for i in range(ord("a"), ord("z") + 1))
 r"""
 AL: add class of (Gorenstein) Fano varieties, served as the superclass for both CPR-Fano and smooth Fano varieties.
 """
-class FanoToricVariety_field(ToricVariety_field):
+class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
     r"""
     A (Gorenstein) Fano toric variety over a field.
 
@@ -203,9 +205,8 @@ class FanoToricVariety_field(ToricVariety_field):
         EXAMPLES::
 
             sage: diamond = lattice_polytope.cross_polytope(2)
-            sage: diamond_polar = diamond.polar() 
             sage: FTV1 = FanoToricVariety(Delta_polar=diamond)
-            sage: FTV2 = FanoToricVariety(Delta=diamond_polar)
+            sage: FTV2 = FanoToricVariety(Delta_polar=diamond)
             sage: FTV1 is FTV2
             True
         """
@@ -233,7 +234,7 @@ class FanoToricVariety_field(ToricVariety_field):
             raise TypeError("need a field to construct a Fano toric variety!"
                             "\n Got %s" % base_ring)
 
-        return super().__classcall__(cls, Delta_polar, fan, coordinate_names,
+        return typecall(cls, Delta_polar, fan, coordinate_names,
                                      coordinate_name_indices, base_ring)
 
 
@@ -429,7 +430,7 @@ class FanoToricVariety_field(ToricVariety_field):
             raise TypeError("need a field to construct a Fano toric variety!"
                             "\n Got %s" % F)
         else:
-            return FanoToricVariety_field(self._Delta_polar, self._fan,
+            return type(self)(self._Delta_polar, self._fan,
                 self.variable_names(), None, F)
         
     def coordinate_point_to_coordinate(self, point):
@@ -624,7 +625,7 @@ class FanoToricVariety_field(ToricVariety_field):
             # and not isinstance(other, SmoothFanoToricVariety_field): we will include this in the future if necessary
             fan = self.fan().cartesian_product(other.fan())
             Delta_polar = LatticePolytope(fan.rays())
-            return FanoToricVariety_field(Delta_polar, fan,
+            return type(self)(Delta_polar, fan,
                                         coordinate_names, coordinate_indices,
                                         self.base_ring())
         return super().cartesian_product(other)
@@ -670,7 +671,7 @@ def is_CPRFanoToricVariety(x):
     deprecation(38022, "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.")
     return isinstance(x, CPRFanoToricVariety_field)
 
-class CPRFanoToricVariety_field(FanoToricVariety_field):
+class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetaclass):
     r"""
     Construct a CPR-Fano toric variety associated to a reflexive polytope.
 
@@ -1119,7 +1120,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
             raise TypeError("need a field to construct a Fano toric variety!"
                             "\n Got %s" % base_ring)
         fan._is_complete = True     # At this point it must be for sure
-        return super().__classcall__(cls, 
+        return typecall(cls, 
             Delta_polar, fan, coordinate_points, point_to_ray, 
             coordinate_names, coordinate_name_indices, base_ring)
 
@@ -1358,7 +1359,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
             raise TypeError("need a field to construct a Fano toric variety!"
                             "\n Got %s" % F)
         else:
-            return CPRFanoToricVariety_field(self._Delta_polar, self._fan,
+            return type(self)(self._Delta_polar, self._fan,
                 self._coordinate_points, self._point_to_ray,
                 self.variable_names(), None, F)
                 # coordinate_name_indices do not matter, we give explicit
@@ -1636,7 +1637,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
                 coordinate_points.append(point)
                 point_to_ray[point] = ray_index
 
-            return CPRFanoToricVariety_field(Delta_polar, fan,
+            return type(self)(Delta_polar, fan,
                                         coordinate_points, point_to_ray,
                                         coordinate_names, coordinate_indices,
                                         self.base_ring())
@@ -1729,7 +1730,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field):
                                 prefix=self._coordinate_prefix))
             coordinate_names.append(self._coordinate_prefix + "+")
         rfan = fan.subdivide(new_rays=new_rays, **kwds)
-        resolution = CPRFanoToricVariety_field(Delta_polar, rfan,
+        resolution = type(self)(Delta_polar, rfan,
                             coordinate_points, point_to_ray, coordinate_names,
                             coordinate_name_indices, self.base_ring())
         R = self.coordinate_ring()
