@@ -5,8 +5,9 @@ A collection of functions implementing generic algorithms in arbitrary
 groups, including additive and multiplicative groups.
 
 In all cases the group operation is specified by either:
+
 - a parameter ``operation``, which is a string either one of the set of
-``multiplication_names`` or ``addition_names`` specified below, or
+  ``multiplication_names`` or ``addition_names`` specified below, or
 - ``operation='other'``, ``identity`` element, and ``inverse`` and ``op`` functions.
 
 ::
