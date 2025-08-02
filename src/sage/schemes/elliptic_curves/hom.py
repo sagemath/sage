@@ -14,6 +14,7 @@ Current implementations of elliptic-curve morphisms (child classes):
 - :class:`~sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar`
 - :class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`
 - :class:`~sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt`
+- :class:`~sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional`
 
 AUTHORS:
 
@@ -125,15 +126,15 @@ class EllipticCurveHom(Morphism):
             raise TypeError(f'cannot compose {type(self)} with {type(other)}')
 
         ret = self._composition_impl(self, other)
-        if ret is not NotImplemented:
-            return ret
 
-        ret = other._composition_impl(self, other)
-        if ret is not NotImplemented:
-            return ret
+        if ret is NotImplemented:
+            ret = other._composition_impl(self, other)
 
-        from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-        return EllipticCurveHom_composite.from_factors([other, self])
+        if ret is NotImplemented:
+            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            ret = EllipticCurveHom_composite.from_factors([other, self])
+
+        return ret
 
     def _add_(self, other):
         r"""
@@ -441,6 +442,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.kernel_polynomial`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.kernel_polynomial`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.kernel_polynomial`
 
         TESTS::
 
@@ -451,6 +454,35 @@ class EllipticCurveHom(Morphism):
             NotImplementedError: ...
         """
         raise NotImplementedError('children must implement')
+
+    def kernel_points(self):
+        """
+        Return an iterator over the points in the kernel of this
+        elliptic-curve morphism.
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3, Q*3])
+            sage: set(f.kernel_points())
+            {(0 : 1 : 0), (4 : 4 : 1), (2*z2 + 4 : 4*z2 + 4 : 1), (3*z2 + 1 : z2 + 3 : 1)}
+
+        In the inseparable case::
+
+            sage: E = EllipticCurve(GF(23), [1,1])
+            sage: set(E.scalar_multiplication(23).kernel_points())
+            {(0 : 1 : 0)}
+
+        Check that the result is consistent with
+        :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
+
+            sage: set(E.scalar_multiplication(4).kernel_points()) == set(E(0).division_points(4))
+            True
+        """
+        E = self.domain()
+        yield E.zero()
+        for x in self.kernel_polynomial().roots(multiplicities=False):
+            yield from E.lift_x(x, all=True)
 
     def dual(self):
         r"""
@@ -464,6 +496,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.dual`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.dual`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.dual`
 
         TESTS::
 
@@ -489,6 +523,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.rational_maps`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.rational_maps`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.rational_maps`
 
         TESTS::
 
@@ -513,6 +549,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.x_rational_map`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.x_rational_map`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.x_rational_map`
 
         TESTS::
 
@@ -525,6 +563,113 @@ class EllipticCurveHom(Morphism):
         # TODO: could have a default implementation that simply
         # returns the first component of rational_maps()
         raise NotImplementedError('children must implement')
+
+    def inverse_image(self, Q, /, *, all=False):
+        """
+        Return an arbitrary element ``P`` in the domain such that
+        ``self(P) == Q``, or raise ``ValueError`` if no such
+        element exists.
+
+        INPUT:
+
+        - ``Q`` -- a point
+        - ``all`` -- if true, returns an iterator over all points
+          in the inverse image
+
+        EXAMPLES::
+
+            sage: E.<P, Q> = EllipticCurve(GF(5^2), [1, 2, 3, 3, 1])
+            sage: f = E.isogeny([P*3])
+            sage: f(f.inverse_image(f(Q))) == f(Q)
+            True
+            sage: E.scalar_multiplication(-1).inverse_image(P) == -P
+            True
+            sage: f.inverse_image(f.codomain().0)
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+            sage: len(list(f.inverse_image(f(Q), all=True)))
+            2
+
+        Check that the result is consistent with
+        :meth:`~sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_field.division_points`::
+
+            sage: E = EllipticCurve('37a'); E
+            Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
+            sage: P = E(0, -1)
+            sage: (P * 5).division_points(5)
+            [(0 : -1 : 1)]
+            sage: E.scalar_multiplication(5).inverse_image(P * 5)
+            (0 : -1 : 1)
+
+        Points from wrong curves cannot be passed in::
+
+            sage: f.inverse_image(Q)
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a point in the codomain
+
+        TESTS::
+
+            sage: f.inverse_image(E.zero())
+            Traceback (most recent call last):
+            ...
+            TypeError: input must be a point in the codomain
+            sage: f.inverse_image(f.codomain().zero())
+            (0 : 1 : 0)
+
+        You can give a tuple as input::
+
+            sage: f.inverse_image((0, 2))  # random
+            (2 : 3*z2 + 1 : 1)
+            sage: f(f.inverse_image((0, 2)))
+            (0 : 2 : 1)
+
+        Stress test::
+
+            sage: # long time
+            ....: for p in primes(2, 12):
+            ....:     for a in range(p):
+            ....:         for b in range(p):
+            ....:             try: E = EllipticCurve(GF(p), [a, b]); P = E.0
+            ....:             except: continue  # maybe singular curve or E.0 doesn't exist
+            ....:             for n in P.order().divisors():
+            ....:                 f = E.isogeny(P*n)
+            ....:                 for R in E:
+            ....:                     Q = f(R)
+            ....:                     assert f(f.inverse_image(Q)) == Q
+            ....:                 for Q in f.codomain():
+            ....:                     try:
+            ....:                         ignore = f.inverse_image(Q)
+            ....:                     except ValueError:  # no inverse image found
+            ....:                         continue
+        """
+        if Q not in self.codomain():
+            raise TypeError('input must be a point in the codomain')
+        Q = self.codomain()(Q)
+        if Q.is_zero():
+            if all:
+                return self.kernel_points()
+            else:
+                return Q
+        if all:
+            try:
+                P = self.inverse_image(Q)
+            except ValueError:
+                return ()
+            return (K + P for K in self.kernel_points())
+        if not self.base_ring().is_exact():
+            from warnings import warn
+            warn('computing inverse image over inexact base ring is not guaranteed to be correct')
+        E = self.domain()
+        for Px in (self.x_rational_map() - Q.x()).numerator().roots(multiplicities=False):
+            for P in E.lift_x(Px, all=True):
+                if self(P) == Q:
+                    return P
+        if self.base_ring().is_exact():
+            raise ValueError('no inverse image found')
+        else:
+            raise NotImplementedError
 
     def scaling_factor(self):
         r"""
@@ -544,6 +689,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.scaling_factor`
 
         TESTS::
 
@@ -696,6 +843,8 @@ class EllipticCurveHom(Morphism):
         - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.inseparable_degree`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.inseparable_degree`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_fractional.EllipticCurveHom_fractional.inseparable_degree`
 
         TESTS::
 
@@ -1129,6 +1278,91 @@ class EllipticCurveHom(Morphism):
         from sage.matrix.constructor import matrix
         from sage.rings.finite_rings.integer_mod_ring import Zmod
         return matrix(Zmod(n), [vecP, vecQ])
+
+    def __truediv__(self, other):
+        r"""
+        Internal helper function to provide the `\phi/d` syntax
+        for dividing an isogeny by an integer.
+
+        To divide an isogeny by another isogeny (on the left or
+        right), use :meth:`divide_left` or :meth:`divide_right`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(419), [-1, 0])
+            sage: (E.frobenius_isogeny() + 1) / 2
+            Fractional elliptic-curve morphism of degree 105:
+              Numerator:   Sum morphism:
+                From: Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
+                To:   Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
+                Via:  (Frobenius endomorphism of degree 419:
+                         From: Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419
+                         To:   Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419,
+                       Scalar-multiplication endomorphism [1]
+                         of Elliptic Curve defined by y^2 = x^3 + 418*x over Finite Field of size 419)
+              Denominator: 2
+        """
+        from sage.rings.integer import Integer
+        if not isinstance(other, (int, Integer)):
+            return NotImplemented
+        from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
+        return EllipticCurveHom_fractional(self, other)
+
+    def divide_left(self, psi):
+        r"""
+        Return an isogeny `\chi` such that `\psi\circ\chi = \varphi`,
+        where `\varphi` is this isogeny, if such a `\chi` exists.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('54.b2')
+            sage: K = next(T for T in E.torsion_points() if T.order() == 9)
+            sage: phi, psi = E.isogeny(K).factors()
+            sage: chain = psi * phi; chain
+            Composite morphism of degree 9 = 3^2:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 14*x + 29 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 2324*x - 43091 over Rational Field
+            sage: chain.divide_right(phi)
+            Fractional elliptic-curve morphism of degree 3:
+              Numerator:   Composite morphism of degree 27 = 3^3:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 + 106*x - 323 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 2324*x - 43091 over Rational Field
+              Denominator: 3
+            sage: chain.divide_right(phi) == psi
+            True
+        """
+        from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
+        numer = psi.dual() * self
+        denom = psi.degree()
+        return EllipticCurveHom_fractional(numer, denom)
+
+    def divide_right(self, psi):
+        r"""
+        Return an isogeny `\chi` such that `\chi\circ\psi = \varphi`,
+        where `\varphi` is this isogeny, if such a `\chi` exists.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('54.b2')
+            sage: K = next(T for T in E.torsion_points() if T.order() == 9)
+            sage: phi, psi = E.isogeny(K).factors()
+            sage: chain = psi * phi; chain
+            Composite morphism of degree 9 = 3^2:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 14*x + 29 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 2324*x - 43091 over Rational Field
+            sage: chain.divide_left(psi)
+            Fractional elliptic-curve morphism of degree 3:
+              Numerator:   Composite morphism of degree 27 = 3^3:
+              From: Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 14*x + 29 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 + 106*x - 323 over Rational Field
+              Denominator: 3
+            sage: chain.divide_left(psi) == phi
+            True
+        """
+        from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
+        numer = self * psi.dual()
+        denom = psi.degree()
+        return EllipticCurveHom_fractional(numer, denom)
 
     def minimal_polynomial(self):
         r"""
