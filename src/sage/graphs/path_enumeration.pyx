@@ -13,6 +13,8 @@ This module is meant for all functions related to path enumeration in graphs.
     :func:`all_paths` | Return the list of all paths between a pair of vertices.
     :func:`yen_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
     :func:`nc_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
+    :func:`feng_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
+    :func:`pnc_k_shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices in increasing order of weights.
     :func:`all_paths_iterator` | Return an iterator over the paths of ``self``.
     :func:`all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :func:`shortest_simple_paths` | Return an iterator over the simple paths between a pair of vertices.
@@ -566,16 +568,16 @@ def shortest_simple_paths(self, source, target, weight_function=None,
     if algorithm is None:
         algorithm = "Feng" if self.is_directed() else "Yen"
 
-    if algorithm == "Feng":
+    if algorithm in ("Feng", "PNC"):
         if not self.is_directed():
-            raise ValueError("Feng's algorithm works only for directed graphs")
+            raise ValueError(f"{algorithm}'s algorithm works only for directed graphs")
 
         yield from nc_k_shortest_simple_paths(self, source=source, target=target,
                                               weight_function=weight_function,
                                               by_weight=by_weight, check_weight=check_weight,
                                               report_edges=report_edges,
                                               labels=labels, report_weight=report_weight,
-                                              algorithm="normal")
+                                              postponed=algorithm == "PNC")
 
     elif algorithm == "Yen":
         yield from yen_k_shortest_simple_paths(self, source=source, target=target,
@@ -583,17 +585,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
                                                by_weight=by_weight, check_weight=check_weight,
                                                report_edges=report_edges,
                                                labels=labels, report_weight=report_weight)
-
-    elif algorithm == "PNC":
-        if not self.is_directed():
-            raise ValueError("PNC's algorithm works only for directed graphs")
-
-        yield from nc_k_shortest_simple_paths(self, source=source, target=target,
-                                              weight_function=weight_function,
-                                              by_weight=by_weight, check_weight=check_weight,
-                                              report_edges=report_edges,
-                                              labels=labels, report_weight=report_weight,
-                                              algorithm="postponed")
     else:
         raise ValueError('unknown algorithm "{}"'.format(algorithm))
 
@@ -901,7 +892,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
                                by_weight=False, check_weight=True,
                                report_edges=False,
                                labels=False, report_weight=False,
-                               algorithm="normal"):
+                               postponed=False):
     r"""
     Return an iterator over the simple paths between a pair of vertices in
     increasing order of weights.
@@ -949,13 +940,13 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
       the path between ``source`` and ``target`` is returned. Otherwise a
       tuple of path length and path is returned.
 
-    - ``algorithm`` -- string (default: ``"normal"``); the algorithm to use.
-      Possible values are ``"normal"`` and ``"postponed"``. See below for
-      details.
+    - ``postponed`` -- boolean (default: ``False``); if ``True``, the postponed
+      node classification algorithm is used, otherwise the node classification
+      algorithm is used. See below for details.
 
     ALGORITHM:
 
-    - ``algorithm = "normal"``
+    - ``postponed=False``
       This algorithm can be divided into two parts. Firstly, it determines the
       shortest path from ``source`` to ``target``. Then, it determines all the
       other `k`-shortest paths. This algorithm finds the deviations of previous
@@ -979,12 +970,12 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
 
       See [Feng2014]_ for more details on this algorithm.
 
-    - ``algorithm = "postponed"``
+    - ``postponed=True``
       This algorithm is based on the the above algorithm in [Feng2014]_, but
       postpones the shortest path tree computation when non-simple deviations
       occur. See Postponed Node Classification algorithm in [ACN2023]_ for the
       algorithm description. When not all simple paths are needed, this algorithm
-      is more efficient than the normal algorithm.
+      is more efficient than the algorithm for ``postponed=False``.
 
     EXAMPLES::
 
@@ -994,9 +985,9 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         [(20.0, [1, 3, 5]), (40.0, [1, 2, 5]), (60.0, [1, 4, 5])]
         sage: list(nc_k_shortest_simple_paths(g, 1, 5, report_weight=True))
         [(2.0, [1, 2, 5]), (2.0, [1, 4, 5]), (2.0, [1, 3, 5])]
-        sage: list(nc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True, algorithm="postponed"))
+        sage: list(nc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True, postponed=True))
         [(20.0, [1, 3, 5]), (40.0, [1, 2, 5]), (60.0, [1, 4, 5])]
-        sage: list(nc_k_shortest_simple_paths(g, 1, 5, report_weight=True, algorithm="postponed"))
+        sage: list(nc_k_shortest_simple_paths(g, 1, 5, report_weight=True, postponed=True))
         [(2.0, [1, 2, 5]), (2.0, [1, 4, 5]), (2.0, [1, 3, 5])]
 
         sage: list(nc_k_shortest_simple_paths(g, 1, 1))
@@ -1113,7 +1104,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
          (17.0, [(2, 0, 5), (0, 4, 2), (4, 3, 3), (3, 1, 7)]),
          (18.0, [(2, 0, 5), (0, 3, 1), (3, 4, 2), (4, 1, 10)])]
 
-    The test when ``algorithm="postponed"``::
+    The test when ``postponed=True``::
 
         sage: g = DiGraph([(0, 1, 9), (0, 3, 1), (0, 4, 2), (1, 6, 4),
         ....:              (1, 7, 1), (2, 0, 5), (2, 1, 4), (2, 7, 1),
@@ -1121,7 +1112,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         ....:              (4, 1, 10), (4, 3, 3), (4, 7, 10), (5, 2, 5),
         ....:              (5, 4, 9), (6, 2, 9)], weighted=True)
         sage: list(nc_k_shortest_simple_paths(g, 5, 1, by_weight=True, report_weight=True,
-        ....:                                  labels=True, report_edges=True, algorithm="postponed"))
+        ....:                                  labels=True, report_edges=True, postponed=True))
         [(9.0, [(5, 2, 5), (2, 1, 4)]),
          (18.0, [(5, 2, 5), (2, 0, 5), (0, 3, 1), (3, 1, 7)]),
          (19.0, [(5, 2, 5), (2, 0, 5), (0, 1, 9)]),
@@ -1138,7 +1129,7 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: g = DiGraph(graphs.Grid2dGraph(2, 6).relabel(inplace=False))
         sage: for u, v in g.edge_iterator(labels=False):
         ....:     g.set_edge_label(u, v, 1)
-        sage: [w for  w, P in nc_k_shortest_simple_paths(g, 5, 1, by_weight=True, report_weight=True, algorithm="postponed")]
+        sage: [w for  w, P in nc_k_shortest_simple_paths(g, 5, 1, by_weight=True, report_weight=True, postponed=True)]
         [4.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 8.0, 8.0,
          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 10.0, 10.0, 10.0, 10.0]
 
@@ -1148,19 +1139,17 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         ....:              (1, 7, 1), (7, 8, 1), (8, 5, 1), (1, 6, 1),
         ....:              (6, 9, 1), (9, 5, 1), (4, 2, 1), (9, 3, 1),
         ....:              (9, 10, 1), (10, 5, 1), (9, 11, 1), (11, 10, 1)])
-        sage: [w for w, P in nc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True, algorithm="postponed")]
+        sage: [w for w, P in nc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True, postponed=True)]
         [3.0, 3.0, 4.0, 4.0, 5.0, 5.0]
 
     More tests::
 
         sage: D = graphs.Grid2dGraph(5, 5).relabel(inplace=False).to_directed()
-        sage: A = [w for w, P in nc_k_shortest_simple_paths(D, 0, 24, report_weight=True, algorithm="postponed")]
+        sage: A = [w for w, P in nc_k_shortest_simple_paths(D, 0, 24, report_weight=True, postponed=True)]
         sage: assert len(A) == 8512
         sage: for i in range(len(A) - 1):
         ....:     assert A[i] <= A[i + 1]
     """
-    if algorithm != "normal" and algorithm != "postponed":
-        raise ValueError("algorithm {} is unknown.".format(algorithm))
     if not self.is_directed():
         raise ValueError("this algorithm works only for directed graphs")
 
@@ -1305,7 +1294,9 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
     #   (i.e. real length = cost + shortest_path_length in T_0)
     # this is used in the "postponed" algorithm
     cdef priority_queue[pair[pair[double, bint], pair[int, int]]] candidate_paths2
-    if algorithm == "normal":
+
+    if not postponed:
+
         candidate_paths1.push((0, (0, 0)))
         while candidate_paths1.size():
             negative_cost, (path_idx, dev_idx) = candidate_paths1.top()
@@ -1353,7 +1344,9 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
                     continue
                 original_cost -= sidetrack_cost[(path[deviation_i - 1], path[deviation_i])]
                 former_part.remove(path[deviation_i])
-    elif algorithm == "postponed":
+
+    else:
+
         candidate_paths2.push(((0, True), (0, 0)))
         while candidate_paths2.size():
             (negative_cost, is_simple), (path_idx, dev_idx) = candidate_paths2.top()
@@ -1413,6 +1406,145 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
                 idx += 1
                 new_cost = cost + deviation_weight
                 candidate_paths2.push(((-new_cost, True), (new_path_idx, dev_idx)))
+
+
+def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
+                                 by_weight=False, check_weight=True,
+                                 report_edges=False,
+                                 labels=False, report_weight=False):
+    r"""
+    Return an iterator over the simple paths between a pair of vertices in
+    increasing order of weights.
+
+    Works only for directed graphs.
+
+    For unweighted graphs, paths are returned in order of increasing number
+    of edges.
+
+    In case of weighted graphs, negative weights are not allowed.
+
+    If ``source`` is the same vertex as ``target``, then ``[[source]]`` is
+    returned -- a list containing the 1-vertex, 0-edge path ``source``.
+
+    The loops and the multiedges if present in the given graph are ignored and
+    only minimum of the edge labels is kept in case of multiedges.
+
+    INPUT:
+
+    - ``source`` -- a vertex of the graph, where to start
+
+    - ``target`` -- a vertex of the graph, where to end
+
+    - ``weight_function`` -- function (default: ``None``); a function that
+      takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+      ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+      and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+      weight.
+
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges
+      in the graph are weighted, otherwise all edges have weight 1
+
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that
+      the ``weight_function`` outputs a number for each edge
+
+    - ``report_edges`` -- boolean (default: ``False``); whether to report
+      paths as list of vertices (default) or list of edges, if ``False``
+      then ``labels`` parameter is ignored
+
+    - ``labels`` -- boolean (default: ``False``); if ``False``, each edge
+      is simply a pair ``(u, v)`` of vertices. Otherwise a list of edges
+      along with its edge labels are used to represent the path.
+
+    - ``report_weight`` -- boolean (default: ``False``); if ``False``, just
+      the path between ``source`` and ``target`` is returned. Otherwise a
+      tuple of path length and path is returned.
+
+    ALGORITHM:
+
+    The same algorithm as :meth:`~sage.graphs.path_enumeration.nc_k_shortest_simple_paths`,
+    when ``postponed=False``.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.path_enumeration import feng_k_shortest_simple_paths
+        sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
+        sage: list(feng_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True))
+        [(20.0, [1, 3, 5]), (40.0, [1, 2, 5]), (60.0, [1, 4, 5])]
+        sage: list(feng_k_shortest_simple_paths(g, 1, 5, report_weight=True))
+        [(2.0, [1, 2, 5]), (2.0, [1, 4, 5]), (2.0, [1, 3, 5])]
+    """
+    yield from nc_k_shortest_simple_paths(self, source, target, weight_function=weight_function,
+                                          by_weight=by_weight, check_weight=check_weight,
+                                          report_edges=report_edges, labels=labels,
+                                          report_weight=report_weight, postponed=False)
+
+
+def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
+                                by_weight=False, check_weight=True,
+                                report_edges=False,
+                                labels=False, report_weight=False):
+    r"""
+    Return an iterator over the simple paths between a pair of vertices in
+    increasing order of weights.
+
+    Works only for directed graphs.
+
+    In case of weighted graphs, negative weights are not allowed.
+
+    If ``source`` is the same vertex as ``target``, then ``[[source]]`` is
+    returned -- a list containing the 1-vertex, 0-edge path ``source``.
+
+    The loops and the multiedges if present in the given graph are ignored and
+    only minimum of the edge labels is kept in case of multiedges.
+
+    INPUT:
+
+    - ``source`` -- a vertex of the graph, where to start
+
+    - ``target`` -- a vertex of the graph, where to end
+
+    - ``weight_function`` -- function (default: ``None``); a function that
+      takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+      ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+      and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+      weight.
+
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges
+      in the graph are weighted, otherwise all edges have weight 1
+
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that
+      the ``weight_function`` outputs a number for each edge
+
+    - ``report_edges`` -- boolean (default: ``False``); whether to report
+      paths as list of vertices (default) or list of edges, if ``False``
+      then ``labels`` parameter is ignored
+
+    - ``labels`` -- boolean (default: ``False``); if ``False``, each edge
+      is simply a pair ``(u, v)`` of vertices. Otherwise a list of edges
+      along with its edge labels are used to represent the path.
+
+    - ``report_weight`` -- boolean (default: ``False``); if ``False``, just
+      a path is returned. Otherwise a tuple of path length and path is
+      returned.
+
+    ALGORITHM:
+
+    The same algorithm as :meth:`~sage.graphs.path_enumeration.nc_k_shortest_simple_paths`,
+    when ``postponed=True``.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.path_enumeration import pnc_k_shortest_simple_paths
+        sage: g = DiGraph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
+        sage: list(pnc_k_shortest_simple_paths(g, 1, 5, by_weight=True, report_weight=True))
+        [(20.0, [1, 3, 5]), (40.0, [1, 2, 5]), (60.0, [1, 4, 5])]
+        sage: list(pnc_k_shortest_simple_paths(g, 1, 5, report_weight=True))
+        [(2.0, [1, 2, 5]), (2.0, [1, 4, 5]), (2.0, [1, 3, 5])]
+    """
+    yield from nc_k_shortest_simple_paths(self, source, target, weight_function=weight_function,
+                                          by_weight=by_weight, check_weight=check_weight,
+                                          report_edges=report_edges, labels=labels,
+                                          report_weight=report_weight, postponed=True)
 
 
 def _all_paths_iterator(self, vertex, ending_vertices=None,
