@@ -1,0 +1,12 @@
+[wrap-file]
+source_url = https://sourceforge.net/projects/maxima/files/Maxima-source/5.47.0-source/maxima-5.47.0.tar.gz/download
+source_hash = 9104021b24fd53e8c03a983509cb42e937a925e8c0c85c335d7709a14fd40f7a
+source_filename = maxima-5.47.0.tar.gz
+directory = maxima-5.47.0
+patch_directory = maxima
+diff_files = maxima/configure.patch
+
+#[wrap-git]
+#url = https://git.code.sf.net/p/maxima/code
+#revision = master
+#depth = 1

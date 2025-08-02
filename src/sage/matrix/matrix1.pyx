@@ -2097,7 +2097,7 @@ cdef class Matrix(Matrix0):
             if col < 0 or col >= self._ncols:
                 raise IndexError("column index out of range")
             for i in range(self._nrows):
-                A.set_unsafe(i, j, self.get_unsafe(i, col))
+                A.copy_from_unsafe(i, j, self, i, col)
         return A
 
     def delete_columns(self, dcols, check=True):
@@ -2195,7 +2195,7 @@ cdef class Matrix(Matrix0):
             if row < 0 or row >= self._nrows:
                 raise IndexError("row index out of range")
             for j in range(self._ncols):
-                A.set_unsafe(i, j, self.get_unsafe(row, j))
+                A.copy_from_unsafe(i, j, self, row, j)
         return A
 
     def delete_rows(self, drows, check=True):
@@ -2322,7 +2322,7 @@ cdef class Matrix(Matrix0):
             if row < 0 or row >= self._nrows:
                 raise IndexError("row index out of range")
             for j, col in enumerate(columns):
-                A.set_unsafe(i, j, self.get_unsafe(row, col))
+                A.copy_from_unsafe(i, j, self, row, col)
         return A
 
     def submatrix(self, Py_ssize_t row=0, Py_ssize_t col=0,
