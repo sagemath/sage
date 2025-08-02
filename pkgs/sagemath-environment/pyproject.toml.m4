@@ -48,7 +48,7 @@ script-files = [
     "bin/sage-venv-config",
     "bin/sage-version.sh",
     # Auxiliary script for invoking Python in the Sage environment
-    "bin/sage-python",
+    # "bin/sage-python",
     # Not included:
     # - bin/sage-env-config                  -- installed by sage_conf
     # - bin/sage-env-config.in               -- not to be installed
