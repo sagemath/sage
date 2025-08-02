@@ -6,7 +6,7 @@ groups, including additive and multiplicative groups.
 
 In all cases the group operation is specified by either:
 - a parameter ``operation``, which is a string either one of the set of
-  ``multiplication_names`` or ``addition_names`` specified below, or
+``multiplication_names`` or ``addition_names`` specified below, or
 - ``operation='other'``, ``identity`` element, and ``inverse`` and ``op`` functions.
 
 ::
@@ -186,7 +186,7 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
                              "operation must be 'other'")
         try:
             identity = parent.one()
-        except:
+        except Exception:
             if check_missing:
                 raise
         inverse = inv
@@ -197,7 +197,7 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
                              "operation must be 'other'")
         try:
             identity = parent.zero()
-        except:
+        except Exception:
             if check_missing:
                 raise
         inverse = neg
