@@ -883,7 +883,7 @@ cpdef tuple C3_sorted_merge(list lists, key=identity):
                     break
             if cont:
                 continue
-            for j from i<j<nbheads:
+            for j in range(i + 1, nbheads):
                 if O_key in tailsets[j]:
                     cont = True
                     break
@@ -1113,7 +1113,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
             sage: x._bases
             [5, 2]
             sage: x._key
-            <built-in function identity>
+            <cyfunction identity at ...>
             sage: x._key(10)
             10
 
@@ -1121,7 +1121,7 @@ class HierarchyElement(object, metaclass=ClasscallMetaclass):
         to reconstruct an element of the hierarchy from its value::
 
             sage: x._from_value                                                         # needs sage.graphs
-            Cached version of <cyfunction HierarchyElement.__classcall__.<locals>.f at ...>
+            Cached version of <...__classcall__...>
             sage: x._from_value(x.value) is x                                           # needs sage.graphs
             True
         """

@@ -248,7 +248,7 @@ def init_sage(controller: DocTestController | None = None) -> None:
 
     try:
         import sympy
-    except ImportError:
+    except (ImportError, AttributeError):
         # Do not require sympy for running doctests (Issue #25106).
         pass
     else:
@@ -261,7 +261,8 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     r"""
     Displays a warning message with a traceback.
 
-    INPUT: see :func:`warnings.showwarning`.
+    INPUT: see :func:`warnings.showwarning` with the difference that with ``file=None``
+           the message will be written to stdout.
 
     OUTPUT: none
 
@@ -293,7 +294,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     lines.extend(traceback.format_exception_only(category, category(message)))
 
     if file is None:
-        file = sys.stderr
+        file = sys.stdout
     try:
         file.writelines(lines)
         file.flush()
@@ -582,6 +583,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         Since it needs to be able to read stdout, it should be called
         while spoofing using :class:`SageSpoofInOut`.
 
+        INPUT: see :meth:`run`.
+
         EXAMPLES::
 
             sage: from sage.doctest.parsing import SageOutputChecker
@@ -627,6 +630,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         check = self._checker.check_output
 
         # Process each example.
+        example: doctest.Example
         for examplenum, example in enumerate(test.examples):
             if failures:
                 # If exitfirst is set, abort immediately after a
@@ -664,7 +668,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             # We print the example we're running for easier debugging
             # if this file times out or crashes.
             with OriginalSource(example):
-                print("sage: " + example.source[:-1] + " ## line %s ##" % (test.lineno + example.lineno + 1))
+                assert example.source.endswith("\n"), example
+                print("sage: " + example.source[:-1].replace("\n", "\n....: ") + " ## line %s ##" % (test.lineno + example.lineno + 1))
             # Update the position so that result comparison works
             self._fakeout.getvalue()
             if not quiet:
@@ -1097,7 +1102,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             False
             sage: doctests, extras = FDS.create_doctests(globs)
             sage: ex0 = doctests[0].examples[0]
-            sage: flags = 32768 if sys.version_info.minor < 8 else 524288
+            sage: flags = 524288
             sage: def compiler(ex):
             ....:     return compile(ex.source, '<doctest sage.doctest.forker[0]>',
             ....:                    'single', flags, 1)
@@ -1183,7 +1188,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             example.total_state = self.running_global_digest.hexdigest()
             example.doctest_state = self.running_doctest_digest.hexdigest()
 
-    def _failure_header(self, test, example, message='Failed example:'):
+    def _failure_header(self, test, example, message='Failed example:', extra=None):
         """
         We strip out ``sage:`` prompts, so we override
         :meth:`doctest.DocTestRunner._failure_header` for better
@@ -1194,6 +1199,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
         - ``test`` -- a :class:`doctest.DocTest` instance
 
         - ``example`` -- a :class:`doctest.Example` instance in ``test``
+
+        - ``message`` -- a message to be shown. Must not have a newline
+
+        - ``extra`` -- an extra message to be shown in GitHub annotation
+
+        Note that ``message`` and ``extra`` are not accepted by
+        :meth:`doctest.DocTestRunner._failure_header`, as such by Liskov
+        substitution principle this method must be callable without passing those.
 
         OUTPUT: string used for reporting that the given example failed
 
@@ -1258,6 +1271,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     message += ' [failed in baseline]'
                 else:
                     command = f'::error title={message}'
+                if extra:
+                    message += f': {extra}'
                 if extra := getattr(example, 'extra', None):
                     message += f': {extra}'
                 if test.filename:
@@ -1489,6 +1504,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                     from sage.repl.configuration import sage_ipython_config
                     from IPython.terminal.embed import InteractiveShellEmbed
                     cfg = sage_ipython_config.default()
+                    cfg.InteractiveShell.enable_tip = False
                     # Currently this doesn't work: prompts only work in pty
                     # We keep simple_prompt=True, prompts will be "In [0]:"
                     # cfg.InteractiveShell.prompts_class = DebugPrompts
@@ -1558,12 +1574,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             Test ran for 1.23s cpu, 2.50s wall
             Check ran for 2.34s cpu, 3.12s wall
         """
-        out(self._failure_header(test, example, 'Warning: slow doctest:') +
-            ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
-             % (example.cputime,
-                example.walltime,
-                check_timer.cputime,
-                check_timer.walltime)))
+        time_info = ('Test ran for %.2fs cpu, %.2fs wall\nCheck ran for %.2fs cpu, %.2fs wall\n'
+                     % (example.cputime,
+                        example.walltime,
+                        check_timer.cputime,
+                        check_timer.walltime))
+        out(self._failure_header(test, example, 'Warning: slow doctest:', time_info) + time_info)
 
     def report_unexpected_exception(self, out, test, example, exc_info):
         r"""
@@ -1821,8 +1837,8 @@ class DocTestDispatcher(SageObject):
         canceled::
 
             sage: from tempfile import NamedTemporaryFile as NTF
-            sage: with NTF(suffix='.py', mode='w+t') as f1, \
-            ....:      NTF(suffix='.py', mode='w+t') as f2:
+            sage: with (NTF(suffix='.py', mode='w+t') as f1,
+            ....:       NTF(suffix='.py', mode='w+t') as f2):
             ....:     _ = f1.write("'''\nsage: import time; time.sleep(60)\n'''")
             ....:     f1.flush()
             ....:     _ = f2.write("'''\nsage: True\nFalse\n'''")
@@ -2181,6 +2197,7 @@ class DocTestWorker(multiprocessing.Process):
 
     EXAMPLES::
 
+        sage: # long time
         sage: from sage.doctest.forker import DocTestWorker, DocTestTask
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.reporting import DocTestReporter
@@ -2305,6 +2322,7 @@ class DocTestWorker(multiprocessing.Process):
 
         TESTS::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2344,6 +2362,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2378,6 +2397,7 @@ class DocTestWorker(multiprocessing.Process):
 
         EXAMPLES::
 
+            sage: # long time
             sage: from sage.doctest.forker import DocTestWorker, DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter

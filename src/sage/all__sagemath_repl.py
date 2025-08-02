@@ -100,11 +100,10 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
                         message=r"Pickle, copy, and deepcopy support will be "
                                 r"removed from itertools in Python 3.14.")
 
-# triggered in Python 3.9 on Redhat-based distributions
-# https://github.com/sagemath/sage/issues/37863
-# https://github.com/networkx/networkx/issues/7101
-warnings.filterwarnings('ignore', category=RuntimeWarning,
-                        message="networkx backend defined more than once: nx-loopback")
+# rpy2>=3.6 emits warnings for R modifying LD_LIBRARY_PATH
+warnings.filterwarnings('ignore', category=UserWarning,
+                        message=r".*redefined by R and overriding existing variable.*",
+                        module='rpy2.*')
 
 from sage.all__sagemath_objects import *
 from sage.all__sagemath_environment import *

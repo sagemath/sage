@@ -9,7 +9,7 @@ This module defines the class :class:`EllipticCurve_field`, based on
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 import sage.rings.abc
@@ -30,7 +30,7 @@ from . import ell_generic
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
-    def __init__(self, R, data, category=None):
+    def __init__(self, R, data, category=None) -> None:
         r"""
         Constructor for elliptic curves over fields.
 
@@ -66,7 +66,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
     # j=0=1728, but I have never worked them out or seen them used!
     #
 
-    def genus(self):
+    def genus(self) -> Integer:
         """
         Return 1 for elliptic curves.
 
@@ -209,19 +209,19 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 raise ValueError("twisting parameter D must be nonzero when characteristic is not 2")
 
         if char != 2:
-            b2,b4,b6,b8 = self.b_invariants()
+            b2, b4, b6, b8 = self.b_invariants()
             # E is isomorphic to  [0,b2,0,8*b4,16*b6]
-            return EllipticCurve(K,[0,b2*D,0,8*b4*D**2,16*b6*D**3])
+            return EllipticCurve(K, [0, b2*D, 0, 8*b4*D**2, 16*b6*D**3])
 
         # now char==2
-        if self.j_invariant() != 0: # iff a1!=0
-            a1,a2,a3,a4,a6 = self.ainvs()
-            E0 = self.change_weierstrass_model(a1,a3/a1,0,(a1**2*a4+a3**2)/a1**3)
+        if self.j_invariant() != 0:  # iff a1!=0
+            a1, a2, a3, a4, a6 = self.ainvs()
+            E0 = self.change_weierstrass_model(a1, a3/a1, 0, (a1**2*a4+a3**2)/a1**3)
             # which has the form = [1,A2,0,0,A6]
             assert E0.a1() == K(1)
             assert E0.a3() == K(0)
             assert E0.a4() == K(0)
-            return EllipticCurve(K,[1,E0.a2()+D,0,0,E0.a6()])
+            return EllipticCurve(K, [1, E0.a2() + D, 0, 0, E0.a6()])
         else:
             raise ValueError("Quadratic twist not implemented in char 2 when j=0")
 
@@ -259,7 +259,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             2
         """
         f = self.division_polynomial(Integer(2))
-        n = len(f.roots())+1
+        n = len(f.roots()) + 1
         return Integer(n).ord(Integer(2))
 
     def quartic_twist(self, D):
@@ -301,10 +301,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if D.is_zero():
             raise ValueError("quartic twist requires a nonzero argument")
 
-        c4,c6 = self.c_invariants()
+        c4, c6 = self.c_invariants()
         # E is isomorphic to  [0,0,0,-27*c4,0]
         assert c6 == 0
-        return EllipticCurve(K,[0,0,0,-27*c4*D,0])
+        return EllipticCurve(K, [0, 0, 0, -27 * c4 * D, 0])
 
     def sextic_twist(self, D):
         r"""
@@ -347,10 +347,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if D.is_zero():
             raise ValueError("Sextic twist requires a nonzero argument")
 
-        c4,c6 = self.c_invariants()
+        c4, c6 = self.c_invariants()
         # E is isomorphic to  [0,0,0,0,-54*c6]
         assert c4 == 0
-        return EllipticCurve(K,[0,0,0,0,-54*c6*D])
+        return EllipticCurve(K, [0, 0, 0, 0, -54 * c6 * D])
 
     def is_quadratic_twist(self, other):
         r"""
@@ -470,12 +470,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         elif char == 3:
             if j == 0:
                 raise NotImplementedError("not implemented in characteristic 3 for curves of j-invariant 0")
-            D = E.b2()/F.b2()
+            D = E.b2() / F.b2()
 
         else:
             # now char!=2,3:
-            c4E,c6E = E.c_invariants()
-            c4F,c6F = F.c_invariants()
+            c4E, c6E = E.c_invariants()
+            c4F, c6F = F.c_invariants()
 
             if j == 0:
                 um = c6E/c6F
@@ -568,7 +568,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("not implemented in characteristic 3")
         else:
             # now char!=2,3:
-            D = F.c4()/E.c4()
+            D = F.c4() / E.c4()
 
         if D.is_zero():
             return D
@@ -637,7 +637,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("not implemented in characteristic 3")
         else:
             # now char!=2,3:
-            D = F.c6()/E.c6()
+            D = F.c6() / E.c6()
 
         if D.is_zero():
             return D
@@ -646,7 +646,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         return D
 
-    def descend_to(self, K, f=None):
+    def descend_to(self, K, f=None) -> list:
         r"""
         Given an elliptic curve ``self`` defined over a field `L` and a
         subfield `K` of `L`, return all elliptic curves over `K` which
@@ -782,33 +782,33 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             raise NotImplementedError("Not implemented in positive characteristic")
 
         if jK == 0:
-            t = -54*self.c6()
+            t = -54 * self.c6()
             try:
-                dlist = t.descend_mod_power(K,6)
+                dlist = t.descend_mod_power(K, 6)
                 # list of d in K such that t/d is in L*^6
             except AttributeError:
                 raise NotImplementedError("Not implemented over %s" % L)
-            Elist = [EllipticCurve([0,0,0,0,d]) for d in dlist]
+            Elist = [EllipticCurve([0, 0, 0, 0, d]) for d in dlist]
         elif jK == 1728:
-            t = -27*self.c4()
+            t = -27 * self.c4()
             try:
-                dlist = t.descend_mod_power(K,4)
+                dlist = t.descend_mod_power(K, 4)
                 # list of d in K such that t/d is in L*^4
             except AttributeError:
                 raise NotImplementedError("Not implemented over %s" % L)
-            Elist = [EllipticCurve([0,0,0,d,0]) for d in dlist]
+            Elist = [EllipticCurve([0, 0, 0, d, 0]) for d in dlist]
         else:
             c4, c6 = self.c_invariants()
-            t = c6/c4
+            t = c6 / c4
             try:
-                dlist = t.descend_mod_power(K,2)
+                dlist = t.descend_mod_power(K, 2)
                 # list of d in K such that t/d is in L*^2
             except AttributeError:
                 raise NotImplementedError("Not implemented over %s" % L)
-            c = -27*jK/(jK-1728) # =-27c4^3/c6^2
+            c = -27*jK/(jK-1728)  # =-27c4^3/c6^2
             a4list = [c*d**2 for d in dlist]
-            a6list = [2*a4*d for a4,d in zip(a4list,dlist)]
-            Elist = [EllipticCurve([0,0,0,a4,a6]) for a4,a6 in zip(a4list,a6list)]
+            a6list = [2*a4*d for a4, d in zip(a4list, dlist)]
+            Elist = [EllipticCurve([0, 0, 0, a4, a6]) for a4, a6 in zip(a4list, a6list)]
 
         if K is QQ:
             Elist = [E.minimal_model() for E in Elist]
@@ -902,7 +902,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
              by y^2 = x^3 + 5*a0*x^2 + (-200*a0^2)*x + (-42000*a0^2+42000*a0+126000)
              over Number Field in a0 with defining polynomial x^3 - 3*x^2 + 3*x + 9
             sage: K.<b> = E.division_field(3, simplify_all=True); K
-            Number Field in b with defining polynomial x^12 - 25*x^10 + 130*x^8 + 645*x^6 + 1050*x^4 + 675*x^2 + 225
+            Number Field in b with defining polynomial x^12 + 5*x^10 + 40*x^8 + 315*x^6 + 750*x^4 + 675*x^2 + 2025
 
         Some higher-degree examples::
 
@@ -1094,7 +1094,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         # The Galois group of the X-coordinates is a subgroup of GL(2,n)/{-1,+1}.
         if F in NumberFields():
             from sage.misc.misc_c import prod
-            deg_mult = F.degree() * prod(l * (l+1) * (l-1)**2 * l**(4*(e-1)) for l,e in n.factor()) // 2
+            deg_mult = F.degree() * prod(l * (l+1) * (l-1)**2 * l**(4*(e-1))
+                                         for l, e in n.factor()) // 2
             K, F_to_K = f.splitting_field(names, degree_multiple=deg_mult, map=True, **kwds)
         elif F in FiniteFields():
             K, F_to_K = f.splitting_field('u', map=True, **kwds)
@@ -1548,10 +1549,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + x + 6 over Rational Field
             sage: EllipticCurve(RR, [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Real Field with 53 bits of precision
+            sage: EllipticCurve(RDF, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0*x + 6.0 over Real Double Field
             sage: EllipticCurve(RealField(100), [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0000000000000000000000000000*x + 6.0000000000000000000000000000 over Real Field with 100 bits of precision
             sage: EllipticCurve(CC, [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.00000000000000*x + 6.00000000000000 over Complex Field with 53 bits of precision
+            sage: EllipticCurve(CDF, [1, 6]).period_lattice()
+            Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0*x + 6.0 over Complex Double Field
             sage: EllipticCurve(ComplexField(100), [1, 6]).period_lattice()
             Period lattice associated to Elliptic Curve defined by y^2 = x^3 + 1.0000000000000000000000000000*x + 6.0000000000000000000000000000 over Complex Field with 100 bits of precision
             sage: EllipticCurve(AA, [1, 6]).period_lattice()
@@ -1583,7 +1588,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Given a point `P` on this curve which generates a rational subgroup,
         return the kernel polynomial of that subgroup as a polynomial over
         the base field of the curve.
-        (The point `P` itself may be defined over an extension.)
+
+        The point `P` itself may be defined over an extension.
 
         EXAMPLES::
 
@@ -1766,8 +1772,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         from sage.schemes.elliptic_curves.isogeny_small_degree import _least_semi_primitive
         a = _least_semi_primitive(l)
-        mul_a = lambda x: self._multiple_x_numerator(a, x=x) / self._multiple_x_denominator(a, x=x)
-        x_mod = lambda g: g.parent().quotient(g).gen()
+
+        def mul_a(x):
+            return self._multiple_x_numerator(a, x=x) / self._multiple_x_denominator(a, x=x)
+
+        def x_mod(g):
+            return g.parent().quotient(g).gen()
 
         fs = [f]
         m = l//2//f.degree()
@@ -1780,7 +1790,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         return prod(fs)
 
-    def isogenies_prime_degree(self, l=None, max_l=31):
+    def isogenies_prime_degree(self, l=None, max_l=31) -> list:
         """
         Return a list of all separable isogenies (up to post-composition with
         isomorphisms) of given prime degree(s) with domain equal to ``self``,
@@ -2237,7 +2247,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # self -> E2
                     yield psi
 
-    def is_isogenous(self, other, field=None):
+    def is_isogenous(self, other, field=None) -> bool:
         """
         Return whether or not ``self`` is isogenous to ``other``.
 
@@ -2561,7 +2571,6 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: G3.vertices(sort=True)
             ['0', '0*', '1', '1*']
         """
-
         from warnings import warn
         from sage.matrix.constructor import Matrix
 
@@ -2578,16 +2587,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         Es = [self]  # list of curves in graph
         A = []  # adjacency matrix
         labels = []  # list of vertex labels
-        for (i, E) in enumerate(Es):
-            if 0 < curve_max and curve_max < len(Es):
+        for i, E in enumerate(Es):
+            if 0 < curve_max < len(Es):
                 warn('Isogeny graph contains more than '
-                        + str(curve_max) + ' curves.')
+                     + str(curve_max) + ' curves.')
                 curve_max = 0
 
             r = [0] * len(Es)  # adjacency matrix row
             for C in [I.codomain() for I in E.isogenies_prime_degree(l)]:
-                j = next((k for (k, F) in enumerate(Es) if C.is_isomorphic(F)),
-                        -1)  # index of curve isomorphic to codomain of isogeny
+                j = next((k for k, F in enumerate(Es) if C.is_isomorphic(F)),
+                         -1)  # index of curve isomorphic to codomain of isogeny
                 if j >= 0:
                     r[j] += 1
                 else:
@@ -2602,7 +2611,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             # regardless of the starting vertex.
             if not directed and E.j_invariant() in [0, 1728]:
                 m = len(E.automorphisms()) / 2  # multiplicity of out-edges
-                r = [v if k == i else v / m for (k, v) in enumerate(r)]
+                r = [v if k == i else v / m for k, v in enumerate(r)]
 
             A.append(r)
             if label_by_j:
@@ -2625,7 +2634,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         GL = G.relabel(labels, inplace=False)
         return GL
 
-    def endomorphism_ring_is_commutative(self):
+    def endomorphism_ring_is_commutative(self) -> bool:
         r"""
         Check whether the endomorphism ring of this elliptic curve
         *over its base field* is commutative.
@@ -2792,12 +2801,12 @@ def point_of_order(E, n):
     if n == 1:
         return E(0)
 
-    l,m = n.is_prime_power(get_data=True)
+    l, m = n.is_prime_power(get_data=True)
     if not m:
         raise NotImplementedError('only prime-power orders are currently supported')
 
     xpoly = E.division_polynomial(n).radical()
-    xpoly //= E.division_polynomial(n//l).radical()
+    xpoly //= E.division_polynomial(n // l).radical()
     if xpoly.degree() < 1:  # supersingular and l == p
         raise ValueError('curve does not have any points of the specified order')
 

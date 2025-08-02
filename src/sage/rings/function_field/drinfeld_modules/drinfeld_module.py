@@ -37,6 +37,7 @@ from sage.misc.lazy_string import _LazyString
 from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.fraction_field import FractionField_generic
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.structure.parent import Parent
@@ -193,7 +194,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     :class:`sage.categories.drinfeld_modules.DrinfeldModules`)::
 
         sage: phi.category()
-        Category of Drinfeld modules over Finite Field in z of size 3^12 over its base
+        Category of Drinfeld modules over Finite Field in z of size 3^12
         sage: phi.category() is psi.category()
         False
         sage: phi.category() is rho.category()
@@ -218,7 +219,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.base_morphism()
         Ring morphism:
           From: Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12 over its base
+          To:   Finite Field in z of size 3^12
           Defn: T |--> z
 
     Note that the base field is *not* the field `K`. Rather, it is a
@@ -236,14 +237,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.base_morphism()
         Ring morphism:
           From: Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
-          To:   Finite Field in z of size 3^12 over its base
+          To:   Finite Field in z of size 3^12
           Defn: T |--> z
 
     ::
 
         sage: phi.ore_polring()  # K{t}
-        Ore Polynomial Ring in t over Finite Field in z of size 3^12 over its base
-         twisted by Frob^2
+        Ore Polynomial Ring in t over Finite Field in z of size 3^12 twisted by z |--> z^(3^2)
 
     ::
 
@@ -267,9 +267,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.morphism()  # The Drinfeld module as a morphism
         Ring morphism:
           From: Univariate Polynomial Ring in T over Finite Field in z2 of size 3^2
-          To:   Ore Polynomial Ring in t
-                over Finite Field in z of size 3^12 over its base
-                twisted by Frob^2
+          To:   Ore Polynomial Ring in t over Finite Field in z of size 3^12
+                twisted by z |--> z^(3^2)
           Defn: T |--> t^2 + t + z
 
     One can compute the rank and height::
@@ -577,13 +576,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if isinstance(gen, OrePolynomial):
             ore_polring = gen.parent()
             # Base ring without morphism structure:
-            base_field_noext = ore_polring.base()
+            base_field = ore_polring.base()
             name = ore_polring.variable_name()
         # `gen` is a list of coefficients (function_ring = Fq[T]):
         elif isinstance(gen, (list, tuple)):
             ore_polring = None
             # Base ring without morphism structure:
-            base_field_noext = Sequence(gen).universe()
+            base_field = Sequence(gen).universe()
         else:
             raise TypeError('generator must be list of coefficients or Ore '
                             'polynomial')
@@ -591,28 +590,23 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if gen[0].is_zero():
             raise ValueError('constant coefficient must be nonzero')
         # The coefficients are in a base field that has coercion from Fq:
-        if not (hasattr(base_field_noext, 'has_coerce_map_from') and
-                base_field_noext.has_coerce_map_from(function_ring.base_ring())):
+        if not (hasattr(base_field, 'has_coerce_map_from') and
+                base_field.has_coerce_map_from(function_ring.base_ring())):
             raise ValueError('function ring base must coerce into base field')
 
         # Build the category
         T = function_ring.gen()
-        if isinstance(base_field_noext, RingExtension_generic):
-            base_field = base_field_noext
-        elif base_field_noext.has_coerce_map_from(function_ring) \
-                and T == gen[0]:
-            base_morphism = base_field_noext.coerce_map_from(function_ring)
-            base_field = base_field_noext.over(base_morphism)
+        if base_field.has_coerce_map_from(function_ring) and T == gen[0]:
+            base_morphism = base_field.coerce_map_from(function_ring)
         else:
-            base_morphism = Hom(function_ring, base_field_noext)(gen[0])
-            base_field = base_field_noext.over(base_morphism)
+            base_morphism = Hom(function_ring, base_field)(gen[0])
 
         # This test is also done in the category. We put it here also
         # to have a friendlier error message
         if not base_field.is_field():
             raise ValueError('generator coefficients must live in a field')
 
-        category = DrinfeldModules(base_field, name=name)
+        category = DrinfeldModules(base_morphism, name=name)
 
         # Check gen as Ore polynomial
         ore_polring = category.ore_polring()  # Sanity cast
@@ -624,6 +618,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         if base_field.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
+        if isinstance(base_field, FractionField_generic):
+            ring = base_field.ring()
+            if (isinstance(ring, PolynomialRing_generic)
+            and ring.base_ring() is function_ring_base
+            and base_morphism(T) == ring.gen()):
+                from .charzero_drinfeld_module import DrinfeldModule_rational
+                return DrinfeldModule_rational(gen, category)
         if not category._characteristic:
             from .charzero_drinfeld_module import DrinfeldModule_charzero
             return DrinfeldModule_charzero(gen, category)
@@ -1783,7 +1784,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             Ring morphism:
               From: Univariate Polynomial Ring in T over Finite Field in z2 of size 5^2
               To:   Ore Polynomial Ring in t over Finite Field in z12 of size 5^12
-                    over its base twisted by Frob^2
+                    twisted by z12 |--> z12^(5^2)
               Defn: T |--> z12^5*t^2 + z12^3*t + 2*z12^11 + 2*z12^10 + z12^9 + 3*z12^8
                            + z12^7 + 2*z12^5 + 2*z12^4 + 3*z12^3 + z12^2 + 2*z12
             sage: from sage.rings.morphism import RingHomomorphism

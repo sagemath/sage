@@ -38,7 +38,7 @@ We do some arithmetic in a tower of relative number fields::
     sage: a.parent()
     Number Field in sqrt2 with defining polynomial x^2 - 2 over its base field
 
-.. WARNING:
+.. WARNING::
 
     Doing arithmetic in towers of relative fields that depends on canonical
     coercions is currently VERY SLOW.  It is much better to explicitly coerce
@@ -101,7 +101,7 @@ from sage.rings.number_field.number_field_base import NumberField as NumberField
 from sage.rings.number_field.order import (RelativeOrder,
                                            relative_order_from_ring_generators)
 from sage.rings.number_field.morphism import RelativeNumberFieldHomomorphism_from_abs
-from sage.libs.pari.all import pari_gen
+from cypari2.gen import Gen as pari_gen
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -233,21 +233,21 @@ class NumberField_relative(NumberField_generic):
             sage: l.<b> = k.extension(5*x^2 + 3); l
             Number Field in b with defining polynomial 5*x^2 + 3 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
+            [x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4), ..., y^4 + 6*y^2 + 1, x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4)], [0, 0]]
             sage: b
             b
 
             sage: l.<b> = k.extension(x^2 + 3/5); l
             Number Field in b with defining polynomial x^2 + 3/5 over its base field
             sage: l.pari_rnf()
-            [x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4), ..., y^4 + 6*y^2 + 1, x^2 + (-y^3 + 1/2*y^2 - 6*y + 3/2)*x + (-3/4*y^3 - 1/4*y^2 - 17/4*y - 19/4)], [0, 0]]
+            [x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4), ..., y^4 + 6*y^2 + 1, x^2 + (5/4*y^3 - 1/4*y^2 + 27/4*y - 3/4)*x + (-9/4*y^3 - 1/4*y^2 - 47/4*y - 7/4)], [0, 0]]
             sage: b
             b
 
             sage: l.<b> = k.extension(x - 1/a0); l
             Number Field in b with defining polynomial x + 1/2*a0 over its base field
             sage: l.pari_rnf()
-            [x, [4, -x^3 - x^2 - 7*x - 3, -x^3 + x^2 - 7*x + 3, 2*x^3 + 10*x], ..., [x^4 + 6*x^2 + 1, -x, -1, y^4 + 6*y^2 + 1, x], [0, 0]]
+            [x, [4, -x^3 + x^2 - 7*x + 3, -2*x^3 - 10*x, x^3 + x^2 + 7*x + 3], ..., [x^4 + 6*x^2 + 1, -x, -1, y^4 + 6*y^2 + 1, x], [0, 0]]
             sage: b
             -1/2*a0
 
@@ -302,7 +302,7 @@ class NumberField_relative(NumberField_generic):
             raise ValueError("base field and extension cannot have the same name %r" % name)
         if polynomial.parent().base_ring() != base:
             polynomial = polynomial.change_ring(base)
-            #raise ValueError, "The polynomial must be defined over the base field"
+            # raise ValueError("The polynomial must be defined over the base field")
 
         # Generate the nf and bnf corresponding to the base field
         # defined as polynomials in y, e.g. for rnfisfree
@@ -1127,7 +1127,7 @@ class NumberField_relative(NumberField_generic):
 
             sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^5 + 2, x^7 + 3])
-            sage: k._fractional_ideal_class_ ()
+            sage: k._fractional_ideal_class_()
             <class 'sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel'>
         """
         return sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel
@@ -1624,9 +1624,9 @@ class NumberField_relative(NumberField_generic):
             sage: K.<a> = NumberField(x^2 + 1)
             sage: L.<b> = K.extension(x^2 - 1/2)
             sage: L._pari_relative_structure()
-            (x^2 + Mod(-y, y^2 + 1),
-             Mod(Mod(1/2*y - 1/2, y^2 + 1)*x, x^2 + Mod(-y, y^2 + 1)),
-             Mod(Mod(-y - 1, y^2 + 1)*x, Mod(1, y^2 + 1)*x^2 + Mod(-1/2, y^2 + 1)))
+            (x^2 + Mod(y, y^2 + 1),
+             Mod(Mod(-1/2*y - 1/2, y^2 + 1)*x, x^2 + Mod(y, y^2 + 1)),
+             Mod(Mod(y - 1, y^2 + 1)*x, x^2 + Mod(-1/2, y^2 + 1)))
 
         An example where both fields are defined by non-integral or
         non-monic polynomials::
@@ -1654,7 +1654,7 @@ class NumberField_relative(NumberField_generic):
         elif f.poldegree() == 1:
             # PARI's rnfpolredbest() does not always return a
             # polynomial with integral coefficients in this case.
-            from sage.libs.pari.all import pari
+            from sage.libs.pari import pari
             g = f.variable()
             alpha = -f[0]/f[1]
             beta = pari(0).Mod(f)
@@ -1922,11 +1922,11 @@ class NumberField_relative(NumberField_generic):
             sage: k.base_field().absolute_polynomial()
             x^2 + 1/4
             sage: k.pari_absolute_base_polynomial()
-            y^2 + 1
+            y^2 + 4
             sage: k.relative_polynomial()
             x^2 + 1/3
             sage: k.pari_relative_polynomial()
-            x^2 + Mod(y, y^2 + 1)*x - 1
+            x^2 + Mod(-1/2*y, y^2 + 4)*x - 1
         """
         return QQ['x'](self._pari_rnfeq()[0])
 
@@ -2699,7 +2699,7 @@ class NumberField_relative(NumberField_generic):
             sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 + 23, x^2 - 3])
             sage: P = K.prime_factors(5)[0]; P
-            Fractional ideal (5, 1/2*a + b - 5/2)
+            Fractional ideal (5, -1/2*a + b + 5/2)
             sage: u = K.uniformizer(P)
             sage: u.valuation(P)
             1

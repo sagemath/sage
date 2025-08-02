@@ -27,6 +27,7 @@ Coercion via construction functors
 # ****************************************************************************
 
 import operator
+from typing import Self
 
 from sage.categories.functor import Functor, IdentityFunctor_generic
 from sage.misc.lazy_import import lazy_import
@@ -255,7 +256,7 @@ class ConstructionFunctor(Functor):
         import re
         return re.sub(r"<.*'.*\.([^.]*)'>", "\\1", s)
 
-    def merge(self, other):
+    def merge(self, other) -> Self | None:
         """
         Merge ``self`` with another construction functor, or return ``None``.
 
@@ -1434,18 +1435,14 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
                                     if i == i0 and int(n) > int(n0):  # wrong order
                                         BadOverlap = True
                                 OverlappingVars.append(x)
-                            else:
-                                if IsOverlap: # The overlap must be on the right end of the variable list
-                                    BadOverlap = True
-                        else:
-                            if IsOverlap: # The overlap must be on the right end of the variable list
+                            elif IsOverlap: # The overlap must be on the right end of the variable list
                                 BadOverlap = True
-                    else:
-                        if IsOverlap: # The overlap must be on the right end of the variable list
+                        elif IsOverlap: # The overlap must be on the right end of the variable list
                             BadOverlap = True
-                else:
-                    if IsOverlap: # The overlap must be on the right end of the variable list
+                    elif IsOverlap: # The overlap must be on the right end of the variable list
                         BadOverlap = True
+                elif IsOverlap: # The overlap must be on the right end of the variable list
+                    BadOverlap = True
 
             if BadOverlap: # the overlapping variables appear in the wrong order
                 raise CoercionException("Overlapping variables (%s,%s) are incompatible" % (self._gens, OverlappingVars))
@@ -2545,9 +2542,8 @@ class CompletionFunctor(ConstructionFunctor):
             if self.p == Infinity:
                 if self.type not in self._real_types:
                     raise ValueError("completion type must be one of %s" % (", ".join(self._real_types)))
-            else:
-                if self.type not in self._dvr_types:
-                    raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
+            elif self.type not in self._dvr_types:
+                raise ValueError("completion type must be one of %s" % (", ".join(self._dvr_types[1:])))
 
     def _repr_(self):
         """
@@ -3925,8 +3921,8 @@ class BlackBoxConstructionFunctor(ConstructionFunctor):
         sage: FS = BlackBoxConstructionFunctor(singular)
         sage: FS(QQ['t'])                                                               # needs sage.libs.singular
         polynomial ring, over a field, global ordering
-        //   coefficients: QQ
-        //   number of vars : 1
+        // coefficients: QQ...
+        // number of vars : 1
         //        block   1 : ordering lp
         //                  : names    t
         //        block   2 : ordering C
@@ -4499,44 +4495,42 @@ def pushout(R, S):
                 all = apply_from(Rc)
             elif Sc[-1].rank < Rc[-1].rank:
                 all = apply_from(Sc)
-            else:
-                # the ranks are the same, so things are a bit subtler
-                if Rc[-1] == Sc[-1]:
-                    # If they are indeed the same operation, we only do it once.
-                    # The \code{merge} function here takes into account non-mathematical
-                    # distinctions (e.g. single vs. multivariate polynomials).
-                    cR = Rc.pop()
-                    cS = Sc.pop()
-                    c = cR.merge(cS) or cS.merge(cR)
-                    if c:
-                        all = c * all
-                    else:
-                        raise CoercionException("Incompatible Base Extension %r, %r (on %r, %r)" % (R, S, cR, cS))
+            # the ranks are the same, so things are a bit subtler
+            elif Rc[-1] == Sc[-1]:
+                # If they are indeed the same operation, we only do it once.
+                # The \code{merge} function here takes into account non-mathematical
+                # distinctions (e.g. single vs. multivariate polynomials).
+                cR = Rc.pop()
+                cS = Sc.pop()
+                c = cR.merge(cS) or cS.merge(cR)
+                if c:
+                    all = c * all
                 else:
-                    # Now we look ahead to see if either top functor is
-                    # applied later on in the other tower.
-                    # If this is the case for exactly one of them, we unambiguously
-                    # postpone that operation, but if both then we abort.
-                    if Rc[-1] in Sc:
-                        if Sc[-1] in Rc:
-                            raise CoercionException("Ambiguous Base Extension", R, S)
-                        else:
-                            all = apply_from(Sc)
-                    elif Sc[-1] in Rc:
-                        all = apply_from(Rc)
-                    # If, perchance, the two functors commute, then we may do them in any order.
-                    elif Rc[-1].commutes(Sc[-1]) or Sc[-1].commutes(Rc[-1]):
-                        all = Sc.pop() * Rc.pop() * all
-                    else:
-                        # try and merge (default merge is failure for unequal functors)
-                        cR = Rc.pop()
-                        cS = Sc.pop()
-                        c = cR.merge(cS) or cS.merge(cR)
-                        if c is not None:
-                            all = c * all
-                        else:
-                            # Otherwise, we cannot proceed.
-                            raise CoercionException("Ambiguous Base Extension", R, S)
+                    raise CoercionException("Incompatible Base Extension %r, %r (on %r, %r)" % (R, S, cR, cS))
+            # Now we look ahead to see if either top functor is
+            # applied later on in the other tower.
+            # If this is the case for exactly one of them, we unambiguously
+            # postpone that operation, but if both then we abort.
+            elif Rc[-1] in Sc:
+                if Sc[-1] in Rc:
+                    raise CoercionException("Ambiguous Base Extension", R, S)
+                else:
+                    all = apply_from(Sc)
+            elif Sc[-1] in Rc:
+                all = apply_from(Rc)
+            # If, perchance, the two functors commute, then we may do them in any order.
+            elif Rc[-1].commutes(Sc[-1]) or Sc[-1].commutes(Rc[-1]):
+                all = Sc.pop() * Rc.pop() * all
+            else:
+                # try and merge (default merge is failure for unequal functors)
+                cR = Rc.pop()
+                cS = Sc.pop()
+                c = cR.merge(cS) or cS.merge(cR)
+                if c is not None:
+                    all = c * all
+                else:
+                    # Otherwise, we cannot proceed.
+                    raise CoercionException("Ambiguous Base Extension", R, S)
 
         return all(Z)
 
@@ -4658,15 +4652,14 @@ def pushout_lattice(R, S):
                     lattice[i + 1, j + 1] = Sc[j](lattice[i + 1, j])
                 elif Sc[j] is None:
                     lattice[i + 1, j + 1] = Rc[i](lattice[i, j + 1])
+                # For now, we just look at the rank.
+                # TODO: be more sophisticated and query the functors themselves
+                elif Rc[i].rank < Sc[j].rank:
+                    lattice[i + 1, j + 1] = Sc[j](lattice[i + 1, j])
+                    Rc[i] = None  # force us to use pre-applied Rc[i]
                 else:
-                    # For now, we just look at the rank.
-                    # TODO: be more sophisticated and query the functors themselves
-                    if Rc[i].rank < Sc[j].rank:
-                        lattice[i + 1, j + 1] = Sc[j](lattice[i + 1, j])
-                        Rc[i] = None  # force us to use pre-applied Rc[i]
-                    else:
-                        lattice[i + 1, j + 1] = Rc[i](lattice[i, j + 1])
-                        Sc[j] = None  # force us to use pre-applied Sc[i]
+                    lattice[i + 1, j + 1] = Rc[i](lattice[i, j + 1])
+                    Sc[j] = None  # force us to use pre-applied Sc[i]
             except (AttributeError, NameError):
                 # pp(lattice)
                 for ni in range(100):

@@ -1026,10 +1026,10 @@ class DiCyclicGroup(PermutationGroup_unique):
         # Representation of  x
         # Four-cycles that will conjugate the generator  a  properly
         x = [(i+1, (-i) % halfr + halfr + 1, (fourthr+i) % halfr + 1, (-fourthr-i) % halfr + halfr + 1)
-             for i in range(0, fourthr)]
+             for i in range(fourthr)]
         # With an odd part, transpositions will conjugate the m-cycle to create inverse
         if m > 1:
-            x += [(r+i+1, r+m-i) for i in range(0, (m-1)//2)]
+            x += [(r+i+1, r+m-i) for i in range((m-1)//2)]
 
         PermutationGroup_generic.__init__(self, gens=[a, x])
 
@@ -3505,7 +3505,7 @@ class SmallPermutationGroup(PermutationGroup_generic):
         Group of order 12 and GAP Id 4 as a permutation group
         sage: G.gens()
         ((4,5), (1,2), (3,4,5))
-        sage: G.character_table()                                                       # needs sage.rings.number_field
+        sage: G.character_table()  # needs sage.rings.number_field
         [ 1  1  1  1  1  1]
         [ 1 -1  1 -1  1 -1]
         [ 1 -1  1  1 -1  1]
@@ -3513,8 +3513,16 @@ class SmallPermutationGroup(PermutationGroup_generic):
         [ 2  0 -1 -2  0  1]
         [ 2  0 -1  2  0 -1]
         sage: def numgps(n): return ZZ(libgap.NumberSmallGroups(n))
-        sage: all(SmallPermutationGroup(n,k).id() == [n,k]
-        ....:     for n in [1..64] for k in [1..numgps(n)])
+        sage: # verify at most five n and k, randomly, to save time
+        sage: from random import sample
+        sage: ns = sample([1..64], 5)
+        sage: def ks(n):
+        ....:     ngps = numgps(n)
+        ....:     ssize = min(5, ngps)
+        ....:     return sample([1..ngps], ssize)
+        sage: all(SmallPermutationGroup(n,k).id() == [n,k]  # long time
+        ....:     for n in ns
+        ....:     for k in ks(n))
         True
         sage: H = SmallPermutationGroup(6,1)
         sage: H.is_abelian()

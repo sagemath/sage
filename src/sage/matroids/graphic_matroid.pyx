@@ -1,6 +1,6 @@
 # sage.doctest: optional - sage.graphs
 r"""
-Graphic Matroids
+Graphic matroids
 
 Let `G = (V,E)` be a graph and let `C` be the collection of the edge sets
 of cycles in `G`. The corresponding graphic matroid `M(G)` has groundset `E`
@@ -90,7 +90,6 @@ from sage.matroids.matroid cimport Matroid
 from copy import copy
 from sage.matroids.utilities import newlabel, split_vertex, sanitize_contractions_deletions
 from itertools import combinations
-from sage.rings.integer import Integer
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 
 cdef class GraphicMatroid(Matroid):
@@ -152,7 +151,7 @@ cdef class GraphicMatroid(Matroid):
 
     def __init__(self, G, groundset=None):
         """
-        See class definition for full documentation.
+        See the class definition for full documentation.
 
         EXAMPLES::
 
@@ -273,8 +272,7 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef DisjointSet_of_hashables DS_vertices
         cdef list edges = self.groundset_to_edges(X)
-        cdef set vertices = set([u for (u, v, l) in edges]).union(
-                                [v for (u, v, l) in edges])
+        cdef set vertices = set([u for (u, v, l) in edges]).union([v for (u, v, l) in edges])
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
         for (u, v, l) in edges:
@@ -343,9 +341,9 @@ cdef class GraphicMatroid(Matroid):
 
         .. WARNING::
 
-            This method is linked to __richcmp__ (in Cython) and __cmp__ or
-            __eq__/__ne__ (in Python). If you override one, you should (and in
-            Cython: MUST) override the other!
+            This method is linked to ``__richcmp__`` (in Cython) and ``__cmp__``
+            or ``__eq__``/``__ne__`` (in Python). If you override one, you
+            should (and, in Cython, \emph{must}) override the other!
 
         EXAMPLES::
 
@@ -476,9 +474,9 @@ cdef class GraphicMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.CompleteGraphic(5)
-            sage: M._minor(deletions=frozenset([0,1,2]), contractions=frozenset([]))
+            sage: M._minor(deletions=frozenset([0,1,2]), contractions=frozenset())
             Graphic matroid of rank 4 on 7 elements
-            sage: M._minor(deletions=frozenset([]), contractions=frozenset([0,1,2]))
+            sage: M._minor(deletions=frozenset(), contractions=frozenset([0,1,2]))
             Graphic matroid of rank 1 on 7 elements
             sage: M = Matroid(range(15), graphs.PetersenGraph())
             sage: N = M._minor(deletions=frozenset([0, 3, 5, 9]),
@@ -651,7 +649,7 @@ cdef class GraphicMatroid(Matroid):
         DS_vertices = DisjointSet_of_hashables(all_vertices)
         for u, v, l in not_our_edges:
             DS_vertices.union(u, v)
-        return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
+        return len(X) - (DS_vertices.number_of_subsets() - 1)
 
     cpdef bint _is_circuit(self, frozenset X) noexcept:
         """
@@ -1700,9 +1698,9 @@ cdef class GraphicMatroid(Matroid):
         # If a vertex has degree 1, or 2, or 3, we already handled it.
         for u in vertices:
             if G.degree(u) > 3:
-                elts_incident = [l for (_, _, l) in G.edges_incident(u)]
+                elts_incident = [l for _, _, l in G.edges_incident(u)]
                 x = elts_incident.pop()
-                for i in range(1, (len(elts_incident) - Integer(1))):
+                for i in range(1, len(elts_incident) - 1):
                     groups = combinations(elts_incident, i)
                     for g in groups:
                         g = list(g)

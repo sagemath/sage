@@ -96,16 +96,18 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
 
     mpq_init(_z)
 
-    ##  Immediate integers handles carry the tag 'SR_INT', i.e. the last bit is 1.
-    ##  This distinguishes immediate integers from other handles which point to
-    ##  structures aligned on 4 byte boundaries and therefore have last bit zero.
-    ##  (The second bit is reserved as tag to allow extensions of this scheme.)
-    ##  Using immediates as pointers and dereferencing them gives address errors.
+    # Immediate integers handles carry the tag 'SR_INT', i.e. the last bit is 1.
+    # This distinguishes immediate integers from other handles which point to
+    # structures aligned on 4 byte boundaries and therefore have last bit zero.
+    # (The second bit is reserved as tag to allow extensions of this scheme.)
+    # Using immediates as pointers and dereferencing them gives address errors.
     nom = nlGetNumerator(n, _ring.cf)
     mpz_init(nom_z)
 
-    if (SR_HDL(nom) & SR_INT): mpz_set_si(nom_z, SR_TO_INT(nom))
-    else: mpz_set(nom_z,nom.z)
+    if SR_HDL(nom) & SR_INT:
+        mpz_set_si(nom_z, SR_TO_INT(nom))
+    else:
+        mpz_set(nom_z,nom.z)
 
     mpq_set_num(_z,nom_z)
     nlDelete(&nom,_ring.cf)
@@ -114,8 +116,10 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
     denom = nlGetDenom(n, _ring.cf)
     mpz_init(denom_z)
 
-    if (SR_HDL(denom) & SR_INT): mpz_set_si(denom_z, SR_TO_INT(denom))
-    else: mpz_set(denom_z,denom.z)
+    if SR_HDL(denom) & SR_INT:
+        mpz_set_si(denom_z, SR_TO_INT(denom))
+    else:
+        mpz_set(denom_z,denom.z)
 
     mpq_set_den(_z, denom_z)
     nlDelete(&denom,_ring.cf)
@@ -959,7 +963,7 @@ cdef number *sa2si_GFqGivaro(int quo, ring *_ring) noexcept:
     n1 = _ring.cf.cfInit(0, _ring.cf)
 
     while quo!=0:
-        coeff = _ring.cf.cfInit(quo%b, _ring.cf)
+        coeff = _ring.cf.cfInit(quo % b, _ring.cf)
 
         if not _ring.cf.cfIsZero(coeff, _ring.cf):
             apow2 = _ring.cf.cfMult(coeff, apow1, _ring.cf)
@@ -1749,7 +1753,7 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
         OverflowError: exponent overflow (4294967296)  # 64-bit
     """
     if unlikely(e > _ring.bitmask):
-        raise OverflowError("exponent overflow (%d)"%(e))
+        raise OverflowError("exponent overflow (%d)" % (e))
 
 cdef init_libsingular():
     """

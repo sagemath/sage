@@ -69,7 +69,7 @@ from sage.rings.polynomial.term_order import TermOrder
 import sage.interfaces.abc
 
 try:
-    from sage.libs.pari.all import pari_gen
+    from cypari2.gen import Gen as pari_gen
 except ImportError:
     pari_gen = ()
 
@@ -172,7 +172,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         return hash((self.base_ring(), self.ngens(),
                      self.variable_names(), self.term_order()))
 
-    def __call__(self, x=0, check=True):
+    def _element_constructor_(self, x=0, check=True):
         """
         Convert ``x`` to an element of this multivariate polynomial ring,
         possibly non-canonically.
@@ -929,7 +929,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         for t in terms:
             elt += self(t).element()
         # NOTE: here we should be using self.element_class but
-        # polynomial rings are not complient with categories...
+        # polynomial rings are not yet compliant with categories...
         from sage.rings.polynomial.multi_polynomial_element import MPolynomial_polydict
         return MPolynomial_polydict(self, elt)
 

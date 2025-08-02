@@ -22,7 +22,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.number_fields import NumberFields
-from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism_point, SchemeMorphism
 from sage.structure.sequence import Sequence

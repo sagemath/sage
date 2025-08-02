@@ -276,8 +276,8 @@ cdef class RingWrap:
             sage: l = ringlist(P)
             sage: ring = singular_function("ring")
             sage: ring(l, ring=P)._output()
-            //   coefficients: QQ
-            //   number of vars : 3
+            // coefficients: QQ...
+            // number of vars : 3
             //        block   1 : ordering dp
             //                  : names    x y z
             //        block   2 : ordering C
@@ -612,7 +612,7 @@ cdef class Converter(SageObject):
             sage: Converter([a,b,c],ring=P) # indirect doctest
             Singular Converter in Multivariate Polynomial Ring in a, b, c over Finite Field of size 127
         """
-        return "Singular Converter in %s"%(self._sage_ring)
+        return "Singular Converter in %s" % (self._sage_ring)
 
     def __dealloc__(self):
         cdef ring *r = access_singular_ring(self._sage_ring)
@@ -629,19 +629,19 @@ cdef class Converter(SageObject):
             3
         """
         cdef leftv * v
-        v=self.args
+        v = self.args
         cdef int l
-        l=0
+        l = 0
         while v != NULL:
-            l=l+1
-            v=v.next
+            l += 1
+            v = v.next
         return l
 
     cdef leftv* pop_front(self) except NULL:
         """
         Pop a Singular element from the front of the list.
         """
-        assert(self.args != NULL)
+        assert self.args != NULL
         cdef leftv *res = self.args
         self.args = self.args.next
         res.next = NULL
@@ -788,15 +788,14 @@ cdef class Converter(SageObject):
         the list
         """
         rank = max([v.parent().rank() for v in m])
-        cdef ideal *result
         cdef ring *r = self._singular_ring
         cdef ideal *i
         cdef int j = 0
 
-        i = idInit(len(m),rank)
+        i = idInit(len(m), rank)
         for f in m:
             i.m[j] = sage_vector_to_poly(f, r)
-            j+=1
+            j += 1
         return self._append(<void*> i, MODUL_CMD)
 
     cdef leftv *append_number(self, n) except NULL:
@@ -982,7 +981,7 @@ cdef class Converter(SageObject):
         elif rtyp == NONE:
             return None
         else:
-            raise NotImplementedError("rtyp %d not implemented."%(rtyp))
+            raise NotImplementedError("rtyp %d not implemented." % (rtyp))
 
 
 cdef class BaseCallHandler:
@@ -1194,7 +1193,7 @@ cdef class SingularFunction(SageObject):
             sage: SingularFunction('foobar') # indirect doctest
             foobar (singular function)
         """
-        return "%s (singular function)" %(self._name)
+        return "%s (singular function)" % (self._name)
 
     def __call__(self, *args, ring=None, bint interruptible=True, attributes=None):
         """
@@ -1356,7 +1355,7 @@ EXAMPLES::
      [x2, x1^2],
      [x2, x1^2]]
 
-"""%(self._name)
+""" % (self._name)
         from sage.interfaces.singular import get_docstring
         return prefix + get_docstring(self._name, prefix=True, code=True)
 

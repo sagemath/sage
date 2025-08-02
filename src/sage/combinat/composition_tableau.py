@@ -1,9 +1,9 @@
 r"""
-Composition Tableaux
+Composition tableaux
 
 AUTHORS:
 
-- Chris Berg, Jeff Ferreira (2012-9): Initial version
+- Chris Berg, Jeff Ferreira (2012-9): initial version
 """
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -732,7 +732,7 @@ class CompositionTableaux_shape(CompositionTableaux):
         """
         return "Composition tableaux of shape %s and maximum entry %s" % (str(self.shape), str(self.max_entry))
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of :class:`CompositionTableaux_shape`.
 
@@ -823,7 +823,7 @@ class CompositionTableauxBacktracker(GenericBacktracker):
             # We check to make sure that k does not violate the Triple Rule
             if j != 0 and i != 0 and any(k == obj_copy[m][j] for m in range(i)):
                 continue
-            if j != 0 and i != 0 and any(obj_copy[m][j] < k and k <= obj_copy[m][j - 1]
+            if j != 0 and i != 0 and any(obj_copy[m][j] < k <= obj_copy[m][j - 1]
                                          for m in range(i)):
                 continue
 

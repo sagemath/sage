@@ -1076,6 +1076,19 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         a = self.ainvs()
         return y**2 + a[0]*x*y + a[2]*y == x**3 + a[1]*x**2 + a[3]*x + a[4]
 
+    def is_exact(self):
+        """
+        Test whether elements of this elliptic curve are represented exactly.
+
+        EXAMPLES::
+
+            sage: EllipticCurve(QQ, [1, 2]).is_exact()
+            True
+            sage: EllipticCurve(RR, [1, 2]).is_exact()
+            False
+        """
+        return self.__base_ring.is_exact()
+
     def a_invariants(self):
         r"""
         The `a`-invariants of this elliptic curve, as a tuple.
@@ -2371,6 +2384,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - or just `f(x)` if ``x_only`` is ``True``
 
+        .. SEEALSO::
+
+            :meth:`scalar_multiplication` to get a morphism instead.
+
         .. NOTE::
 
             - The result is not cached.
@@ -2392,6 +2409,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: f
             ((x^4 + 2*x^2 - 24*x + 1)/(4*x^3 - 4*x + 12),
              (8*x^6*y - 40*x^4*y + 480*x^3*y - 40*x^2*y + 96*x*y - 568*y)/(64*x^6 - 128*x^4 + 384*x^3 + 64*x^2 - 384*x + 576))
+
+        We check that the rational maps agree with :meth:`scalar_multiplication`::
+
+            sage: phi = E.scalar_multiplication(2)
+            sage: phi.x_rational_map() == f[0]
+            True
+            sage: phi.rational_maps() == f
+            True
 
         Grab only the x-coordinate (less work)::
 

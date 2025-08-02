@@ -158,7 +158,8 @@ lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.schemes.generic.morphism', 'SchemeMorphism')
 
 try:
-    from sage.libs.pari.all import pari, PariError
+    from sage.libs.pari import pari
+    from cypari2.handle_error import PariError
 except ImportError:
     PariError = ()
 
@@ -271,8 +272,8 @@ class EllipticCurvePoint(AdditiveGroupElement,
             ....:     if xs:
             ....:         pts.append(E(choice(xs), y, z))
             sage: P, Q = pts
-            sage: R = P + Q
-            sage: for d in N.divisors():
+            sage: R = P + Q  # not tested (:issue:`39191`)
+            sage: for d in N.divisors():  # not tested (:issue:`39191`)
             ....:     if d > 1:
             ....:         assert R.change_ring(Zmod(d)) == P.change_ring(Zmod(d)) + Q.change_ring(Zmod(d))
         """
@@ -776,7 +777,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     additive_order = order
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         """
         Return ``True`` if this is not the zero point on the curve.
 
@@ -793,7 +794,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         return bool(self._coords[2])
 
-    def has_order(self, n):
+    def has_order(self, n) -> bool:
         r"""
         Test if this point has order exactly `n`.
 
@@ -891,7 +892,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             self._order = n
         return ret
 
-    def has_finite_order(self):
+    def has_finite_order(self) -> bool:
         """
         Return ``True`` if this point has finite additive order as an
         element of the group of points on this curve.
@@ -921,7 +922,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     is_finite_order = has_finite_order  # for backward compatibility
 
-    def has_infinite_order(self):
+    def has_infinite_order(self) -> bool:
         """
         Return ``True`` if this point has infinite additive order as an element
         of the group of points on this curve.
@@ -1301,6 +1302,10 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         OUTPUT: a (possibly empty) list of solutions `Q` to `mQ=P`,
         where `P` = ``self``
+
+        .. SEEALSO ::
+
+            :meth:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom.inverse_image`
 
         EXAMPLES:
 
@@ -1796,7 +1801,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         See :issue:`7116`::
 
-            sage: P._line_ (Q,O)                                                        # needs sage.rings.finite_rings
+            sage: P._line_(Q, O)                                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
             ...
             ValueError: Q must be nonzero.
@@ -2389,11 +2394,11 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             raise ValueError("The point P must be n-torsion")
 
         # NOTE: Pari returns the non-reduced Tate pairing, so we
-        # must perform the exponentation ourselves using the supplied
+        # must perform the exponentiation ourselves using the supplied
         # k value
         ePQ = pari.elltatepairing(E, P, Q, n)
         exp = Integer((q**k - 1)/n)
-        return K(ePQ**exp) # Cast the PARI type back to the base ring
+        return K(ePQ**exp)  # Cast the PARI type back to the base ring
 
     def ate_pairing(self, Q, n, k, t, q=None):
         r"""
@@ -2789,7 +2794,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     additive_order = order
 
-    def has_finite_order(self):
+    def has_finite_order(self) -> bool:
         """
         Return ``True`` iff this point has finite order on the elliptic curve.
 
@@ -2812,7 +2817,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             return True
         return self.order() != oo
 
-    def has_infinite_order(self):
+    def has_infinite_order(self) -> bool:
         r"""
         Return ``True`` iff this point has infinite order on the elliptic curve.
 
@@ -3008,7 +3013,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         gxdd = gxd.derivative()
         return (e(gxd(self[0])) > 0 and e(gxdd(self[0])) > 0)
 
-    def has_good_reduction(self, P=None):
+    def has_good_reduction(self, P=None) -> bool:
         r"""
         Return ``True`` iff this point has good reduction modulo a prime.
 
@@ -3052,9 +3057,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve(K, [0,1,0,-160,308])
             sage: P = E(26, -120)
             sage: E.discriminant().support()
-            [Fractional ideal (i + 1),
-             Fractional ideal (-i - 2),
-             Fractional ideal (2*i + 1),
+            [Fractional ideal (i - 1),
+             Fractional ideal (2*i - 1),
+             Fractional ideal (-2*i - 1),
              Fractional ideal (3)]
             sage: [E.tamagawa_exponent(p) for p in E.discriminant().support()]
             [1, 4, 4, 4]
@@ -4632,7 +4637,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         return ZZ(k % p)
 
-    def has_finite_order(self):
+    def has_finite_order(self) -> bool:
         r"""
         Return ``True`` if this point has finite additive order as an element
         of the group of points on this curve.

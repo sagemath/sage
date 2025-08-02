@@ -30,7 +30,7 @@ import sage.arith.all as arith
 import sage.matrix.matrix_space as matrix_space
 from sage.matrix.constructor import matrix
 
-from sage.modular.arithgroup.all import Gamma0  # for Sturm bound
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0 # for Sturm bound
 
 
 def is_AmbientHeckeModule(x) -> bool:
@@ -658,7 +658,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         AmbientHeckeModule.new_submodule(self, p)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         r"""
         Return ``True`` if this module is entirely old.
 
@@ -677,7 +677,7 @@ class AmbientHeckeModule(module.HeckeModule_free_module):
         self.old_submodule(p)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of ``V``.
 

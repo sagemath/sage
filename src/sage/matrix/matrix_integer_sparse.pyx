@@ -118,6 +118,51 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
         mpz_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+
+        The object ``src`` must be of type ``Matrix_integer_sparse`` and have
+        the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_integer_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(ZZ,3,4,[i if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: m
+            [ 0  0  2  3]
+            [ 0  5  0  7]
+            [ 0  0  0 11]
+            sage: m.transpose()
+            [ 0  0  0]
+            [ 0  5  0]
+            [ 2  0  0]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  0  2  3]
+            [ 0  0  0 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 0  3]
+            [ 5  7]
+            [ 0 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 0  7]
+            [ 0 11]
+        """
+        cdef Integer x
+        x = Integer()
+        cdef Matrix_integer_sparse _src = <Matrix_integer_sparse> src
+        mpz_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpz_vector_set_entry(&self._matrix[iDst], jDst, x.value)
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -673,7 +718,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             r = Matrix_sparse.rank(self)
             self.cache("rank", r)
         else:
-            raise ValueError("no algorithm '%s'"%algorithm)
+            raise ValueError("no algorithm '%s'" % algorithm)
 
         return r
 

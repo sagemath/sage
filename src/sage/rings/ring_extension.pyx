@@ -110,6 +110,7 @@ AUTHOR:
 # ***************************************************************************
 
 
+cimport cython
 from sage.misc.fast_methods cimport hash_by_id
 from sage.misc.cachefunc import cached_method
 from sage.cpython.getattr cimport AttributeErrorMessage
@@ -478,16 +479,16 @@ class RingExtensionFactory(UniqueFactory):
             sage: RingExtension.create_object((8,9,0), key, **extra_args)
             Rational Field over its base
         """
-        defining_morphism, gens, names = key
+        defining_morphism = key[0]
         constructors = extra_args['constructors']
         if len(constructors) == 0:
             raise NotImplementedError("no constructor available for this extension")
-        for (constructor, kwargs) in constructors[:-1]:
+        for constructor, kwargs in constructors[:-1]:
             try:
                 return constructor(defining_morphism, **kwargs)
             except (NotImplementedError, ValueError, TypeError):
                 pass
-        (constructor, kwargs) = constructors[-1]
+        constructor, kwargs = constructors[-1]
         return constructor(defining_morphism, **kwargs)
 
 
@@ -612,6 +613,7 @@ cdef class RingExtension_generic(Parent):
         self.register_coercion(RingExtensionBackendIsomorphism(ring.Hom(self)))
         ring.register_conversion(RingExtensionBackendReverseIsomorphism(self.Hom(ring)))
 
+    @cython.binding(True)
     def __getattr__(self, name):
         """
         If this extension was created with ``import_methods = True``,
@@ -1314,7 +1316,7 @@ cdef class RingExtension_generic(Parent):
         elt = self._backend.an_element()
         return self.element_class(self, elt)
 
-    def gens(self, base=None):
+    def gens(self, base=None) -> tuple:
         r"""
         Return the generators of this extension over ``base``.
 
@@ -2661,7 +2663,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         S = PolynomialRing(self._base, name=var)
         return S(coeffs)
 
-    def gens(self, base=None):
+    def gens(self, base=None) -> tuple:
         r"""
         Return the generators of this extension over ``base``.
 

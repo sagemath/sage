@@ -28,11 +28,9 @@ from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom, Homset
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.modules.free_module_element import vector
 from sage.sets.family import Family
 from sage.structure.richcmp import richcmp
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 
 
 class ModulePrinting:
@@ -356,7 +354,7 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
         return self._from_dict({self._indices.one(): one},
                                remove_zeros=False, coerce=False)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` as a `U(\mathfrak{g})`-module.
 
@@ -820,12 +818,12 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
             for m in ret._monomial_coefficients:
                 c = ret._monomial_coefficients[m]
                 mp = {}
-                for k,e in reversed(m._sorted_items()):
+                for k, e in reversed(m._sorted_items()):
                     part = P._g._part_on_basis(k)
                     if part > 0:
                         mp = None
                         break
-                    elif part == 0:
+                    if part == 0:
                         c *= P._g._weight_action(k, P._weight)**e
                     else:
                         mp[k] = e

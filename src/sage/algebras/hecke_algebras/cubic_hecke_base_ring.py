@@ -273,7 +273,7 @@ class CubicHeckeExtensionRing(LaurentPolynomialRing_mpair):
             sage: ER = chbr.CubicHeckeExtensionRing('a, b, c')
             sage: ER._test_category()   # indirect doctest
         """
-        return None
+        return
 
     def __reduce__(self):
         r"""
@@ -1334,7 +1334,7 @@ class CubicHeckeRingOfDefinition(Localization):
                       From: Multivariate Polynomial Ring in u, v, w, s
                             over Integer Ring localized at (s, w, v, u)
                       To:   Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       Defn: u |--> -M + 1
                             v |--> -M + 1
                             w |--> 1
@@ -1342,7 +1342,7 @@ class CubicHeckeRingOfDefinition(Localization):
                     then
                       Conversion map:
                       From: Multivariate Polynomial Ring in L, M
-                            over Integer Ring localized at (M, M - 1, L)
+                            over Integer Ring localized at (M - 1, M, L)
                       To:   Multivariate Laurent Polynomial Ring in L, M
                             over Integer Ring
             sage: sup = mt.support()
@@ -1353,7 +1353,7 @@ class CubicHeckeRingOfDefinition(Localization):
             True
         """
         if not self._is_markov_trace_version():
-            raise ValueError('Functionality available for Markov trace version, only')
+            raise ValueError('functionality only available for Markov trace version')
         from sage.knots.link import Link
         H = Link([]).homfly_polynomial().parent()
         L, M = H.gens()
@@ -1404,7 +1404,7 @@ class CubicHeckeRingOfDefinition(Localization):
             True
         """
         if not self._is_markov_trace_version():
-            raise ValueError('Functionality available for Markov trace version, only')
+            raise ValueError('functionality only available for Markov trace version')
         from sage.knots.knotinfo import KnotInfo
         K = KnotInfo.L2a1_1.kauffman_polynomial().parent()
         a, z = K.gens()
@@ -1456,7 +1456,7 @@ class CubicHeckeRingOfDefinition(Localization):
             + t1^2 - t0 - t1 + 1
         """
         if not self._is_markov_trace_version():
-            raise ValueError('Functionality available for Markov trace version, only')
+            raise ValueError('functionality only available for Markov trace version')
         from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
         L = LaurentPolynomialRing(ZZ, 't0, t1')
         t0, t1 = L.gens()

@@ -18,21 +18,22 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from pathlib import Path
 from copy import copy, deepcopy
+from pathlib import Path
 
-from sage.misc.lazy_import import lazy_import
-from sage.misc.misc_c import prod
-from sage.misc.cachefunc import cached_method
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import fundamental_discriminant
-from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.rings.integer import Integer
+from sage.matrix.matrix_space import MatrixSpace
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+
 lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
 lazy_import('sage.interfaces.magma', 'magma')
 
@@ -120,8 +121,7 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     return genera
 
 
-# #35557: In Python < 3.10, a staticmethod cannot be called directly
-_genera_staticmethod = staticmethod(genera)
+genera = staticmethod(genera)
 
 
 def _local_genera(p, rank, det_val, max_scale, even):
@@ -172,8 +172,8 @@ def _local_genera(p, rank, det_val, max_scale, even):
          Genus symbol at 5:     5^-2,
          Genus symbol at 5:     5^2]
     """
-    from sage.misc.mrange import cantor_product
     from sage.combinat.integer_lists.invlex import IntegerListsLex
+    from sage.misc.mrange import cantor_product
     scales_rks = []  # contains possibilities for scales and ranks
     for rkseq in IntegerListsLex(rank, length=max_scale + 1):  # rank sequences
         # sum(rkseq) = rank
@@ -942,9 +942,9 @@ def p_adic_symbol(A, p, val):
     return [[s[0]+m0] + s[1:] for s in sym + p_adic_symbol(A, p, val)]
 
 
-def is_even_matrix(A):
+def is_even_matrix(A) -> tuple[bool, int]:
     r"""
-    Determines if the integral symmetric matrix `A` is even
+    Determine if the integral symmetric matrix `A` is even
     (i.e. represents only even numbers).  If not, then it returns the
     index of an odd diagonal entry.  If it is even, then we return the
     index `-1`.
@@ -1914,7 +1914,7 @@ class Genus_Symbol_p_adic_ring:
         """
         return self._prime
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return if the underlying `p`-adic lattice is even.
 
@@ -2489,10 +2489,7 @@ class GenusSymbol_global_ring:
         t = len(self._local_symbols)
         if t != len(other._local_symbols):
             return False
-        for i in range(t):
-            if self._local_symbols[i] != other._local_symbols[i]:
-                return False
-        return True
+        return all(self._local_symbols[i] == other._local_symbols[i] for i in range(t))
 
     def __ne__(self, other) -> bool:
         r"""
@@ -2871,8 +2868,10 @@ class GenusSymbol_global_ring:
             [0 0 0 0 0 0 1 0]
             [0 0 0 0 0 0 0 2]
         """
-        from sage.quadratic_forms.quadratic_form import QuadraticForm
-        from sage.quadratic_forms.quadratic_form import quadratic_form_from_invariants
+        from sage.quadratic_forms.quadratic_form import (
+            QuadraticForm,
+            quadratic_form_from_invariants,
+        )
         sminus = self.signature_pair_of_matrix()[1]
         det = self.determinant()
         m = self.rank()
@@ -2907,7 +2906,10 @@ class GenusSymbol_global_ring:
             ....:     G = genera((2,2), det, even=False)
             ....:     assert all(g==Genus(g.representative()) for g in G)
         """
-        from sage.modules.free_quadratic_module_integer_symmetric import IntegralLattice, local_modification
+        from sage.modules.free_quadratic_module_integer_symmetric import (
+            IntegralLattice,
+            local_modification,
+        )
         q = self.rational_representative()
         # the associated quadratic form xGx.T/2 should be integral
         L = IntegralLattice(4 * q).maximal_overlattice()
@@ -3059,7 +3061,9 @@ class GenusSymbol_global_ring:
                 if self.signature_pair()[0] == 0:
                     e = ZZ(-1)
                 d = - 4 * self.determinant()
-                from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
+                from sage.quadratic_forms.binary_qf import (
+                    BinaryQF_reduced_representatives,
+                )
                 for q in BinaryQF_reduced_representatives(d, proper=False):
                     if q[1] % 2 == 0:  # we want integrality of the gram matrix
                         m = e*matrix(ZZ, 2, [q[0], q[1] // 2, q[1] // 2, q[2]])
@@ -3067,7 +3071,9 @@ class GenusSymbol_global_ring:
                             representatives.append(m)
             if n > 2:
                 from sage.quadratic_forms.quadratic_form import QuadraticForm
-                from sage.quadratic_forms.quadratic_form__neighbors import neighbor_iteration
+                from sage.quadratic_forms.quadratic_form__neighbors import (
+                    neighbor_iteration,
+                )
                 e = ZZ.one()
                 if not self.is_even():
                     e = ZZ(2)
@@ -3152,10 +3158,10 @@ class GenusSymbol_global_ring:
             sage: GS._standard_mass()                                                   # needs sage.symbolic
             1/48
         """
+        from sage.functions.gamma import gamma
+        from sage.functions.transcendental import zeta
         from sage.symbolic.constants import pi
         from sage.symbolic.ring import SR
-        from sage.functions.transcendental import zeta
-        from sage.functions.gamma import gamma
         n = self.dimension()
         if n % 2 == 0:
             s = n // 2

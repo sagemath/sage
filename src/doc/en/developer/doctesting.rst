@@ -365,8 +365,8 @@ as taking a long time:
         on machines with "only" 2GB of RAM, we test ``max_n`` = 1, which
         has a more reasonable memory usage. ::
 
-            sage: from sage.crypto.mq.sr import test_consistency
-            sage: test_consistency(1)  # long time (80s on sage.math, 2011)
+            sage: from sage.crypto.mq.sr import check_consistency
+            sage: check_consistency(1)  # long time (80s on sage.math, 2011)
             True
         """
 
@@ -794,9 +794,9 @@ You can also pass in an explicit amount of time::
         sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
     Test ran for 13.36 cpu seconds
     **********************************************************************
-    File "tests.py", line 283, in sage.rings.tests.test_random_arith
+    File "tests.py", line 283, in sage.rings.tests.check_random_arith
     Failed example:
-        sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
+        sage.rings.tests.check_random_arith(trials=1000)   # long time (5 seconds?)
     Test ran for 12.42 cpu seconds
     **********************************************************************
     ----------------------------------------------------------------------
@@ -1478,6 +1478,19 @@ to save any changes made in the file.
 
 After running the doctest fixer, it is a good idea to use ``git diff`` to check
 all edits that the automated tool made.
+
+Note that in some cases the output in doctest may be slightly different from
+the output in the actual Sage command-line (see :func:`sage.doctest.forker.init_sage`)::
+
+    sage: set_random_seed(1)
+    sage: randint(1, 100)
+    41                          # actual
+    83                          # in doctest
+    sage: {3: 4, 1: 2}
+    {3: 4, 1: 2}                # actual
+    {1: 2, 3: 4}                # in doctest
+
+.. this whole file is marked nodoctest, so the example above is not tested
 
 An alternative to this workflow is to use the option ``--keep-both``. When expected and
 actual output of an example differ, it duplicates the example, marking the two copies

@@ -759,7 +759,7 @@ cdef class IntegerMulAction(IntegerAction):
     def __init__(self, Z, M, is_left=True, m=None):
         if m is None:
             m = M.an_element()
-        test = m + (-m)  # make sure addition and negation is allowed
+        _ = m + (-m)  # make sure addition and negation is allowed
         super().__init__(Z, M, is_left, operator.mul)
 
     cpdef _act_(self, nn, a):
@@ -801,10 +801,8 @@ cdef class IntegerMulAction(IntegerAction):
 
             sage: # needs sage.schemes
             sage: P = E([2,1,1])
-            sage: alarm(0.001); 2^(10^8) * P
-            Traceback (most recent call last):
-            ...
-            AlarmInterrupt
+            sage: from sage.doctest.util import ensure_interruptible_after
+            sage: with ensure_interruptible_after(0.001): 2^(10^8) * P
 
         Verify that cysignals correctly detects that the above
         exception has been handled::

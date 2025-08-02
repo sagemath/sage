@@ -7,7 +7,6 @@ REFERENCE: The python cookbook.
 """
 import copyreg
 import pickle
-import sys
 import types
 
 
@@ -44,18 +43,13 @@ def reduce_code(co):
         raise ValueError("Cannot pickle code objects from closures")
 
     co_args = (co.co_argcount,)
-    if sys.version_info.minor >= 8:
-        co_args += (co.co_posonlyargcount,)
+    co_args += (co.co_posonlyargcount,)
     co_args += (co.co_kwonlyargcount, co.co_nlocals,
                 co.co_stacksize, co.co_flags, co.co_code,
                 co.co_consts, co.co_names, co.co_varnames, co.co_filename,
                 co.co_name)
-    if sys.version_info.minor >= 11:
-        co_args += (co.co_qualname, co.co_firstlineno,
-                    co.co_linetable, co.co_exceptiontable)
-    else:
-        co_args += (co.co_firstlineno, co.co_lnotab)
-
+    co_args += (co.co_qualname, co.co_firstlineno,
+                co.co_linetable, co.co_exceptiontable)
     return (code_ctor, co_args)
 
 
@@ -106,10 +100,7 @@ def unpickle_function(pickled):
 
 
 def call_pickled_function(fpargs):
-    try:
-        import sage.all as toplevel
-    except ImportError:
-        import sage.all__sagemath_categories as toplevel
+    import sage.all as toplevel
     (fp, (args, kwds)) = fpargs
     f = eval("unpickle_function(fp)", toplevel.__dict__, {'fp': fp})
     res = eval("f(*args, **kwds)", toplevel.__dict__,

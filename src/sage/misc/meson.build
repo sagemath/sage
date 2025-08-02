@@ -38,6 +38,7 @@ py.install_sources(
   'latex_macros.py',
   'latex_standalone.py',
   'lazy_format.py',
+  'lazy_import.pxd',
   'lazy_import_cache.py',
   'lazy_list.pxd',
   'lazy_string.pxd',
@@ -62,7 +63,6 @@ py.install_sources(
   'random_testing.py',
   'randstate.pxd',
   'remote_file.py',
-  'replace_dot_all.py',
   'repr.py',
   'rest_index_of_methods.py',
   'sage_eval.py',
@@ -125,6 +125,10 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows and (name == 'sage_ostools')
+    # Uses posix API
+    continue
+  endif
   deps = [py_dep, gmp]
   if name == 'binary_tree'
     deps += [cysignals]

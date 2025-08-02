@@ -432,7 +432,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         for k from 0 <= k < len(nz):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
-            A.set_unsafe(j,i,self.get_unsafe(i,j))
+            A.copy_from_unsafe(j, i, self, i, j)
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             A.subdivide(col_divs, row_divs)
@@ -464,7 +464,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         for k from 0 <= k < len(nz):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
-            A.set_unsafe(self._ncols-j-1, self._nrows-i-1,self.get_unsafe(i,j))
+            A.copy_from_unsafe(self._ncols-j-1, self._nrows-i-1, self, i, j)
         if self._subdivisions is not None:
             row_divs, col_divs = self.subdivisions()
             A.subdivide(list(reversed([self._ncols - t for t in col_divs])),
@@ -810,13 +810,23 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m._derivative(x)                                                      # needs sage.symbolic
             [    0     1]
             [  2*x 3*x^2]
+
+        TESTS:
+
+        Verify that :issue:`15067` is fixed::
+
+            sage: m = matrix(3, 3, {(1, 1): 2, (0,2): 5})
+            sage: derivative(m, x)
+            [0 0 0]
+            [0 0 0]
+            [0 0 0]
         """
         # We would just use apply_map, except that Cython does not
         # allow lambda functions
 
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
-        v = [(ij, z.derivative(var)) for ij, z in self.dict().iteritems()]
+        v = [(ij, sage.calculus.functional.derivative(z, var)) for ij, z in self.dict().iteritems()]
         if R is None:
             w = [x for _, x in v]
             w = sage.structure.sequence.Sequence(w)
@@ -1139,7 +1149,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: (v * m).parent() is m.row(0).parent()
             True
             """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         parent = self.row_ambient_module(base_ring=None, sparse=v.is_sparse_c())
@@ -1192,7 +1202,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: M*w
             (x*y)
         """
-        cdef int i, j
+        cdef Py_ssize_t i, j
         if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         parent = self.column_ambient_module(base_ring=None, sparse=v.is_sparse_c())

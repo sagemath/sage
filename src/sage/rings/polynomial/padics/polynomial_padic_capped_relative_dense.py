@@ -21,7 +21,8 @@ import sage.rings.padics.precision_error as precision_error
 from sage.rings.fraction_field_element import FractionFieldElement
 import copy
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen import Gen as pari_gen
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 
@@ -1257,9 +1258,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             else:
                 if valaddeds[i] < compval:
                     return False
-        if valaddeds[deg] != -self._valbase:
-            return False
-        return True
+        return valaddeds[deg] == -self._valbase
 
     def newton_slopes(self, repetition=True):
         """

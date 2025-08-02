@@ -607,10 +607,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: H < G
             False
         """
-        for l in left.gens():
-            if l not in right:
-                return False
-        return True
+        return all(l in right for l in left.gens())
 
     __le__ = is_subgroup
 
@@ -1861,7 +1858,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             return left.is_isomorphic(right)
         if left_ambient is not right_ambient:
             return False
-        return left <= right and right <= left
+        return left <= right <= left
 
     __eq__ = equals
 

@@ -372,7 +372,7 @@ class AffineConnection(SageObject):
 
             sage: M = Manifold(3, 'M')
             sage: from sage.manifolds.differentiable.affine_connection import \
-                                                                AffineConnection
+            ....:                                               AffineConnection
             sage: nab = AffineConnection(M, 'nabla', latex_name=r'\nabla')
             sage: nab
             Affine connection nabla on the 3-dimensional differentiable
@@ -1979,8 +1979,8 @@ class AffineConnection(SageObject):
                                     for l in manif.irange(start=k+1):
                                         res[i,j,k,l] = frame[k](gam[[i,j,l]]) - \
                                                        frame[l](gam[[i,j,k]]) + \
-                                                       gam_gam[[i,k,j,l]] -  \
-                                                       gam_gam[[i,l,j,k]] -  \
+                                                       gam_gam[[i,k,j,l]] - \
+                                                       gam_gam[[i,l,j,k]] - \
                                                        gam_sc[[i,j,k,l]]
             self._riemann = resu
         return self._riemann

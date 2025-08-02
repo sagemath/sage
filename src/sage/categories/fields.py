@@ -192,6 +192,18 @@ class Fields(CategoryWithAxiom):
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 
     class ParentMethods:
+        def krull_dimension(self):
+            """
+            Return the Krull dimension of this field, which is 0.
+
+            EXAMPLES::
+
+                sage: QQ.krull_dimension()
+                0
+                sage: Frac(QQ['x,y']).krull_dimension()
+                0
+            """
+            return 0
 
         def is_field(self, proof=True):
             r"""
@@ -202,6 +214,9 @@ class Fields(CategoryWithAxiom):
                 sage: QQ.is_field()
                 True
                 sage: Parent(QQ,category=Fields()).is_field()
+                True
+
+                sage: Frac(ZZ['x,y']).is_field()
                 True
             """
             return True
@@ -226,6 +241,132 @@ class Fields(CategoryWithAxiom):
                 sage: Frac(ZZ['x,y']).is_integrally_closed()
                 True
             """
+            return True
+
+        def integral_closure(self):
+            """
+            Return this field, since fields are integrally closed in their
+            fraction field.
+
+            EXAMPLES::
+
+                sage: QQ.integral_closure()
+                Rational Field
+                sage: Frac(ZZ['x,y']).integral_closure()
+                Fraction Field of Multivariate Polynomial Ring in x, y
+                over Integer Ring
+            """
+            return self
+
+        def algebraic_closure(self):
+            """
+            Return the algebraic closure of ``self``.
+
+            .. NOTE::
+
+               This is only implemented for certain classes of field.
+
+            EXAMPLES::
+
+                sage: K = PolynomialRing(QQ,'x').fraction_field(); K
+                Fraction Field of Univariate Polynomial Ring in x over Rational Field
+                sage: K.algebraic_closure()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: algebraic closures of general fields not implemented
+            """
+            raise NotImplementedError("algebraic closures of general fields not implemented")
+
+        def an_embedding(self, K):
+            r"""
+            Return some embedding of this field into another field `K`,
+            and raise a :class:`ValueError` if none exists.
+
+            EXAMPLES::
+
+                sage: GF(2).an_embedding(GF(4))
+                Ring morphism:
+                  From: Finite Field of size 2
+                  To:   Finite Field in z2 of size 2^2
+                  Defn: 1 |--> 1
+                sage: GF(4).an_embedding(GF(8))
+                Traceback (most recent call last):
+                ...
+                ValueError: no embedding from Finite Field in z2 of size 2^2 to Finite Field in z3 of size 2^3
+                sage: GF(4).an_embedding(GF(16))
+                Ring morphism:
+                  From: Finite Field in z2 of size 2^2
+                  To:   Finite Field in z4 of size 2^4
+                  Defn: z2 |--> z4^2 + z4
+
+            ::
+
+                sage: CyclotomicField(5).an_embedding(QQbar)
+                Coercion map:
+                  From: Cyclotomic Field of order 5 and degree 4
+                  To:   Algebraic Field
+                sage: CyclotomicField(3).an_embedding(CyclotomicField(7))
+                Traceback (most recent call last):
+                ...
+                ValueError: no embedding from Cyclotomic Field of order 3 and degree 2 to Cyclotomic Field of order 7 and degree 6
+                sage: CyclotomicField(3).an_embedding(CyclotomicField(6))
+                Generic morphism:
+                  From: Cyclotomic Field of order 3 and degree 2
+                  To:   Cyclotomic Field of order 6 and degree 2
+                  Defn: zeta3 -> zeta6 - 1
+            """
+            if self.characteristic() != K.characteristic():
+                raise ValueError(f'no embedding from {self} to {K}: incompatible characteristics')
+
+            H = self.Hom(K)
+            try:
+                return H.natural_map()
+            except TypeError:
+                pass
+            from sage.categories.sets_cat import EmptySetError
+            try:
+                return H.an_element()
+            except EmptySetError:
+                raise ValueError(f'no embedding from {self} to {K}')
+
+        def prime_subfield(self):
+            """
+            Return the prime subfield of ``self``.
+
+            EXAMPLES::
+
+                sage: k = GF(9, 'a')                                                        # needs sage.rings.finite_rings
+                sage: k.prime_subfield()                                                    # needs sage.rings.finite_rings
+                Finite Field of size 3
+            """
+            if self.characteristic() == 0:
+                import sage.rings.rational_field
+                return sage.rings.rational_field.RationalField()
+
+            from sage.rings.finite_rings.finite_field_constructor import GF
+            return GF(self.characteristic())
+
+        def divides(self, x, y, coerce=True):
+            """
+            Return ``True`` if ``x`` divides ``y`` in this field.
+
+            This is usually ``True`` in a field!.
+
+            If ``coerce`` is ``True`` (the default), first coerce
+            ``x`` and ``y`` into ``self``.
+
+            EXAMPLES::
+
+                sage: QQ.divides(2, 3/4)
+                True
+                sage: QQ.divides(0, 5)
+                False
+            """
+            if coerce:
+                x = self(x)
+                y = self(y)
+            if x.is_zero():
+                return y.is_zero()
             return True
 
         def _gcd_univariate_polynomial(self, a, b):
@@ -387,18 +528,18 @@ class Fields(CategoryWithAxiom):
                 if not a:
                     return (zero, zero, zero)
                 c = ~a.leading_coefficient()
-                return (c*a, R(c), zero)
+                return (c * a, R(c), zero)
             elif not a:
                 c = ~b.leading_coefficient()
-                return (c*b, zero, R(c))
-            (u, d, v1, v3) = (R.one(), a, zero, b)
+                return (c * b, zero, R(c))
+            u, d, v1, v3 = (R.one(), a, zero, b)
             while v3:
                 q, r = d.quo_rem(v3)
-                (u, d, v1, v3) = (v1, v3, u - v1*q, r)
-            v = (d - a*u) // b
+                u, d, v1, v3 = (v1, v3, u - v1 * q, r)
+            v = (d - a * u) // b
             if d:
                 c = ~d.leading_coefficient()
-                d, u, v = c*d, c*u, c*v
+                d, u, v = c * d, c * u, c * v
             return d, u, v
 
         def is_perfect(self):
@@ -451,12 +592,40 @@ class Fields(CategoryWithAxiom):
                 return
 
         def fraction_field(self):
-            r"""
+            """
             Return the *fraction field* of ``self``, which is ``self``.
+
+            EXAMPLES:
+
+            Since fields are their own field of fractions, we simply get the
+            original field in return::
+
+                sage: QQ.fraction_field()
+                Rational Field
+                sage: RR.fraction_field()                                                   # needs sage.rings.real_mpfr
+                Real Field with 53 bits of precision
+                sage: CC.fraction_field()                                                   # needs sage.rings.real_mpfr
+                Complex Field with 53 bits of precision
+
+                sage: x = polygen(ZZ, 'x')
+                sage: F = NumberField(x^2 + 1, 'i')                                         # needs sage.rings.number_field
+                sage: F.fraction_field()                                                    # needs sage.rings.number_field
+                Number Field in i with defining polynomial x^2 + 1
+            """
+            return self
+
+        def _pseudo_fraction_field(self):
+            """
+            The fraction field of ``self`` is always available as ``self``.
 
             EXAMPLES::
 
-                sage: QQ.fraction_field() is QQ
+                sage: QQ._pseudo_fraction_field()
+                Rational Field
+                sage: K = GF(5)
+                sage: K._pseudo_fraction_field()
+                Finite Field of size 5
+                sage: K._pseudo_fraction_field() is K
                 True
             """
             return self
@@ -618,7 +787,7 @@ class Fields(CategoryWithAxiom):
             """
             if other.is_zero():
                 raise ZeroDivisionError
-            return (self/other, self.parent().zero())
+            return (self / other, self.parent().zero())
 
         def is_unit(self):
             r"""
@@ -673,6 +842,11 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(0.0, 0.0)                                                     # needs sage.rings.real_mpfr
                 0.000000000000000
 
+            TESTS::
+
+                sage: QQbar(0).gcd(QQbar.zeta(3))
+                1
+
             AUTHOR:
 
             - Simon King (2011-02) -- :issue:`10771`
@@ -687,7 +861,7 @@ class Fields(CategoryWithAxiom):
                 from sage.rings.integer_ring import ZZ
                 try:
                     return P(ZZ(self).gcd(ZZ(other)))
-                except TypeError:
+                except (TypeError, ValueError):
                     pass
 
             if self == P.zero() and other == P.zero():

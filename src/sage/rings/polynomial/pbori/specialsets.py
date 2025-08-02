@@ -1,6 +1,13 @@
-from .pbori import (top_index, if_then_else,
-                    mod_mon_set, BooleSet, BooleConstant)
-from .PyPolyBoRi import (Polynomial, Monomial, Variable)
+from sage.rings.polynomial.pbori.pbori import (
+    BooleConstant,
+    BooleSet,
+    Monomial,
+    Polynomial,
+    Variable,
+    if_then_else,
+    mod_mon_set,
+    top_index,
+)
 
 
 def all_monomials_of_degree_d_old(d, variables):
@@ -87,7 +94,7 @@ if __name__ == '__main__':
     print(list(all_monomials_of_degree_d(1, [])))
     print(list(power_set([Variable(i) for i in range(2)])))
     print(list(power_set([Variable(i) for i in range(4)])))
-    print(list(power_set([])))
+    print(list(power_set()))
     # every monomial in the first 8 var, which is at most linear in the first 5
     print(list(mod_mon_set(
         power_set([Variable(i) for i in range(8)]),

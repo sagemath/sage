@@ -1643,7 +1643,7 @@ class Zp_class(UniqueFactory):
         1 + 2*5^2 + 5^3
 
     The floating point case is similar to the fixed modulus type
-    in that elements do not trac their own precision.  However, relative
+    in that elements do not track their own precision.  However, relative
     precision is truncated with each operation rather than absolute precision.
 
     On the contrary, the lattice type tracks precision using lattices
@@ -2196,7 +2196,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
         2*3^2 + (2*a + 2)*3^3
 
     The floating point case is similar to the fixed modulus type
-    in that elements do not trac their own precision.  However, relative
+    in that elements do not track their own precision.  However, relative
     precision is truncated with each operation rather than absolute precision.
 
     MODULUS:
@@ -2608,7 +2608,7 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
-            #raise TypeError, "names must be a string"
+            # raise TypeError("names must be a string")
         q = Integer(q)
         F = q.factor()
         if len(F) != 1:
