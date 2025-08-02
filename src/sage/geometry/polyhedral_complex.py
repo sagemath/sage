@@ -292,10 +292,10 @@ class PolyhedralComplex(GenericCellComplex):
             cells_dict = cells_list_to_cells_dict(maximal_cells)
         elif isinstance(maximal_cells, dict):
             cells_dict = {}
-            for (k, l) in maximal_cells.items():
+            for k, l in maximal_cells.items():
                 if backend:
-                    cells_dict[k] = set([p.base_extend(p.base_ring(), backend)
-                                        for p in l])
+                    cells_dict[k] = {p.base_extend(p.base_ring(), backend)
+                                     for p in l}
                 else:
                     cells_dict[k] = set(l)
         else:
@@ -370,7 +370,7 @@ class PolyhedralComplex(GenericCellComplex):
         for k in range(self._dim, -1, -1):
             if k in maximal_cells:
                 if k not in cells:
-                    cells[k] = set([])
+                    cells[k] = set()
                 cells[k].update(maximal_cells[k])
             if k in cells:
                 for cell in cells[k]:
@@ -382,7 +382,7 @@ class PolyhedralComplex(GenericCellComplex):
                             covers[p] = []
                         covers[p].append(cell)
                         if (k-1) not in cells:
-                            cells[k-1] = set([])
+                            cells[k-1] = set()
                         cells[k-1].add(p)
         self._face_poset = Poset(covers)
         self._cells = cells
@@ -1055,7 +1055,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         other_cells = other.cells()
         for (d, stratum) in self.maximal_cells().items():
-            if not stratum.issubset(other_cells.get(d, set([]))):
+            if not stratum.issubset(other_cells.get(d, set())):
                 return False
         return True
 
@@ -1594,9 +1594,9 @@ class PolyhedralComplex(GenericCellComplex):
         # After making sure that the affine hulls of the cells are the same,
         # it does not matter that is not full dimensional.
         boundaries = self.relative_boundary_cells()
-        vertices = set([])
-        rays = set([])
-        lines = set([])
+        vertices = set()
+        rays = set()
+        lines = set()
         for cell in boundaries:
             # it suffices to consider only vertices on the boundaries
             # Note that a line (as polyhedron) has vertex too
@@ -2055,7 +2055,7 @@ class PolyhedralComplex(GenericCellComplex):
                 for facet in c.facets():
                     p = facet.as_polyhedron()
                     if d not in cells:
-                        cells[d] = set([])
+                        cells[d] = set()
                     if p not in cells[d]:
                         cells[d].add(p)
                         covers[p] = [c]
@@ -2358,7 +2358,7 @@ class PolyhedralComplex(GenericCellComplex):
             if new_rays:
                 raise ValueError("rays/lines cannot be used for subdivision")
             # bounded version of `fan.subdivide`; not require rational.
-            vertices = set([])
+            vertices = set()
             if make_simplicial and not self.is_simplicial_complex():
                 for p in self.maximal_cell_iterator():
                     for v in p.vertices_list():
@@ -2390,7 +2390,7 @@ class PolyhedralComplex(GenericCellComplex):
                 raise ValueError("new vertices cannot be used for subdivision")
             # mimic :meth:`~sage.geometry.fan <RationalPolyhedralFan>.subdivide`
             # but here we allow for non-pointed cones, and we subdivide them.
-            rays_normalized = set([])
+            rays_normalized = set()
             self_rays = []
             cones = []
             for p in self.maximal_cell_iterator():

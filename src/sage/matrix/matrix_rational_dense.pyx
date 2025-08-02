@@ -73,7 +73,7 @@ Test hashing::
 from libc.string cimport strcpy, strlen
 
 from sage.categories.rings import Rings
-from sage.cpython.string cimport char_to_str, str_to_bytes
+from sage.cpython.string cimport char_to_str
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
 from sage.ext.stdsage cimport PY_NEW
@@ -264,6 +264,46 @@ cdef class Matrix_rational_dense(Matrix_dense):
         fmpq_get_mpq(x.value, fmpq_mat_entry(self._matrix, i, j))
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) for i in range(12)])
+            sage: M
+            [     1    3/2    7/3   13/4]
+            [  21/5   31/6   43/7   57/8]
+            [  73/9  91/10 111/11 133/12]
+            sage: M.transpose()
+            [     1   21/5   73/9]
+            [   3/2   31/6  91/10]
+            [   7/3   43/7 111/11]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     1    3/2    7/3   13/4]
+            [  73/9  91/10 111/11 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [   3/2   13/4]
+            [  31/6   57/8]
+            [ 91/10 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [  21/5   57/8]
+            [  73/9 133/12]
+        """
+        cdef Matrix_rational_dense _src = <Matrix_rational_dense> src
+        fmpq_set(fmpq_mat_entry(self._matrix, iDst, jDst), fmpq_mat_entry(_src._matrix, iSrc, jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry (i, j) is zero, otherwise 0.
@@ -374,13 +414,13 @@ cdef class Matrix_rational_dense(Matrix_dense):
                 s = data[k]
                 k += 1
                 if '/' in s:
-                    num, den = [str_to_bytes(n) for n in s.split('/')]
+                    num, den = (n.encode() for n in s.split('/'))
                     if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32) or \
                        fmpz_set_str(fmpq_mat_entry_den(self._matrix, i, j), den, 32):
                         raise RuntimeError("invalid pickle data")
                 else:
-                    s = str_to_bytes(s)
-                    if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), s, 32):
+                    num = s.encode()
+                    if fmpz_set_str(fmpq_mat_entry_num(self._matrix, i, j), num, 32):
                         raise RuntimeError("invalid pickle data")
                     fmpz_one(fmpq_mat_entry_den(self._matrix, i, j))
 
@@ -1266,7 +1306,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
     cdef int fmpz_height(self, fmpz_t h) except -1:
         cdef fmpz_t x
-        cdef int i, j
+        cdef Py_ssize_t i, j
         sig_on()
         fmpz_init(x)
         fmpz_zero(h)
@@ -1499,24 +1539,33 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         - ``algorithm`` -- an optional specification of an algorithm. One of
 
-          - ``None``: (default) uses flint for small dimension and multimodular otherwise
+          - ``None``: (default) try to pick the best choice,
 
-          - ``'flint'``: use the flint library,
+          - ``'flint'``: use flint library
+            `function <https://flintlib.org/doc/fmpq_mat.html#c.fmpq_mat_rref>`_,
+            which automatically chooses between
+            `classical algorithm <https://flintlib.org/doc/fmpq_mat.html#c.fmpq_mat_rref_classical>`_
+            (Gaussian elimination),
+            `fraction-free multimodular <https://flintlib.org/doc/fmpz_mat.html#c.fmpz_mat_rref_mul>`_,
+            and `fraction-free LU decomposition <https://flintlib.org/doc/fmpz_mat.html#c.fmpz_mat_rref_fflu>`_,
+
+          - ``'flint:classical'``, ``'flint:multimodular'``, ``'flint:fflu'``: use the
+            flint library as above, but select an algorithm explicitly,
 
           - ``'padic'``: an algorithm based on the IML `p`-adic solver,
 
-          - ``'multimodular'``: uses a multimodular algorithm the uses
-            linbox modulo many primes (likely to be faster when coefficients
-            are huge),
+          - ``'multimodular'``: uses a multimodular algorithm implemented in Cython
+            that uses linbox modulo many primes,
+            see :func:`~sage.matrix.misc.matrix_rational_echelon_form_multimodular`,
 
           - ``'classical'``: just clear each column using Gauss elimination.
 
         - ``height_guess``, ``**kwds`` -- all passed to the
-          multimodular algorithm; ignored by other algorithms
+          ``'multimodular'`` algorithm; ignored by other algorithms
 
         - ``proof`` -- boolean or ``None`` (default: None, see
           proof.linear_algebra or sage.structure.proof). Passed to the
-          multimodular algorithm. Note that the Sage global default is
+          ``'multimodular'`` algorithm. Note that the Sage global default is
           ``proof=True``.
 
         EXAMPLES::
@@ -1548,7 +1597,8 @@ cdef class Matrix_rational_dense(Matrix_dense):
         Echelonizing a matrix in place throws away the cache of
         the old matrix (:issue:`14506`)::
 
-            sage: for algo in ["flint", "padic", "multimodular", "classical"]:
+            sage: for algo in ["flint", "padic", "multimodular", "classical", "flint:classical",
+            ....:              "flint:multimodular", "flint:fflu"]:
             ....:      a = Matrix(QQ, [[1,2],[3,4]])
             ....:      _ = a.det()          # fills the cache
             ....:      _ = a._clear_denom() # fills the cache
@@ -1560,13 +1610,10 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.check_mutability()
 
         if algorithm is None:
-            if self._nrows <= 25 or self._ncols <= 25:
-                algorithm = 'flint'
-            else:
-                algorithm = 'multimodular'
+            algorithm = 'flint:multimodular'
 
-        if algorithm == 'flint':
-            pivots = self._echelonize_flint()
+        if algorithm in ('flint', 'flint:classical', 'flint:multimodular', 'flint:fflu'):
+            pivots = self._echelonize_flint(algorithm)
         elif algorithm == 'multimodular':
             pivots = self._echelonize_multimodular(height_guess, proof, **kwds)
         elif algorithm == 'classical':
@@ -1656,12 +1703,16 @@ cdef class Matrix_rational_dense(Matrix_dense):
         self.cache('rank', len(E.pivots()))
         return E
 
-    def _echelonize_flint(self):
+    def _echelonize_flint(self, algorithm: str):
         r"""
+        INPUT: See :meth:`echelonize` for the options.
+        Only options that use flint are allowed, passing other algorithms may
+        trigger undefined behavior.
+
         EXAMPLES::
 
             sage: m = matrix(QQ, 4, range(16))
-            sage: m._echelonize_flint()
+            sage: m._echelonize_flint("flint")
             (0, 1)
             sage: m
             [ 1  0 -1 -2]
@@ -1669,7 +1720,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [ 0  0  0  0]
             [ 0  0  0  0]
             sage: m = matrix(QQ, 4, 6, [-1,0,0,-2,-1,-2,-1,0,0,-2,-1,0,3,3,-2,0,0,3,-2,-3,1,1,-2,3])
-            sage: m._echelonize_flint()
+            sage: m._echelonize_flint("flint")
             (0, 1, 2, 5)
             sage: m
             [   1    0    0    2    1    0]
@@ -1678,10 +1729,40 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [   0    0    0    0    0    1]
         """
         self.clear_cache()
+
+        if fmpq_mat_is_empty(self._matrix):
+            return ()
+
         cdef long r
+        cdef fmpz_mat_t Aclear
+        cdef fmpz_t den
 
         sig_on()
-        r = fmpq_mat_rref(self._matrix, self._matrix)
+
+        if algorithm == 'flint':
+            r = fmpq_mat_rref(self._matrix, self._matrix)
+        elif algorithm == 'flint:classical':
+            r = fmpq_mat_rref_classical(self._matrix, self._matrix)
+        else:
+            # copied from fmpq_mat_rref_fraction_free
+            fmpz_mat_init(Aclear, self._nrows, self._ncols)
+            fmpq_mat_get_fmpz_mat_rowwise(Aclear, NULL, self._matrix)
+            fmpz_init(den)
+
+            if algorithm == 'flint:fflu':
+                r = fmpz_mat_rref_fflu(Aclear, den, Aclear)
+            else:
+                assert algorithm == 'flint:multimodular'
+                r = fmpz_mat_rref_mul(Aclear, den, Aclear)
+
+            if r == 0:
+                fmpq_mat_zero(self._matrix)
+            else:
+                fmpq_mat_set_fmpz_mat_div_fmpz(self._matrix, Aclear, den)
+
+            fmpz_mat_clear(Aclear)
+            fmpz_clear(den)
+
         sig_off()
 
         # compute pivots

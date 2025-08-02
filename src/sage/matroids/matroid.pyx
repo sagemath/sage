@@ -894,7 +894,7 @@ cdef class Matroid(SageObject):
             True
         """
         cdef set XX = set(X)
-        cdef set res = set([])
+        cdef set res = set()
         cdef int r = self._rank(frozenset(X))
         for e in Y:
             XX.add(e)
@@ -1155,8 +1155,8 @@ cdef class Matroid(SageObject):
         EXAMPLES::
 
             sage: M = matroids.catalog.Vamos()
-            sage: N = M._minor(contractions=set(['a']), deletions=set([]))
-            sage: N._minor(contractions=set([]), deletions=set(['b', 'c']))
+            sage: N = M._minor(contractions=set(['a']), deletions=set())
+            sage: N._minor(contractions=set(), deletions=set(['b', 'c']))
             M / {'a'} \ {'b', 'c'}, where M is Vamos:
             Matroid of rank 4 on 8 elements with circuit-closures
             {3: {{'a', 'b', 'c', 'd'}, {'a', 'b', 'e', 'f'},
@@ -2603,7 +2603,7 @@ cdef class Matroid(SageObject):
             sage: [sorted(X) for X in CC[3]]
             [['a', 'b', 'c', 'd', 'e', 'f', 'g']]
         """
-        CC = [set([]) for r in range(self.rank() + 1)]
+        CC = [set() for r in range(self.rank() + 1)]
         for C in self.circuits_iterator():
             CC[len(C) - 1].add(self.closure(C))
         return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
@@ -2634,7 +2634,7 @@ cdef class Matroid(SageObject):
             ...
             KeyError: 3
         """
-        CC = [set([]) for r in range(self.rank() + 1)]
+        CC = [set() for r in range(self.rank() + 1)]
         for C in self.nonspanning_circuits_iterator():
             CC[len(C) - 1].add(self.closure(C))
         return {r: CC[r] for r in range(self.rank() + 1) if CC[r]}
@@ -2694,8 +2694,6 @@ cdef class Matroid(SageObject):
             X = frozenset(Xt)
             if not self._is_independent(X):
                 yield X
-
-    dependent_r_sets = deprecated_function_alias(38057, dependent_sets)
 
     cpdef SetSystem dependent_sets(self, long k):
         r"""
@@ -4944,7 +4942,7 @@ cdef class Matroid(SageObject):
         """
         E = set(self.groundset())
         E.difference_update(self._closure(frozenset()))  # groundset minus loops
-        res = set([])
+        res = set()
 
         while E:
             e = E.pop()
@@ -4980,7 +4978,7 @@ cdef class Matroid(SageObject):
         """
         E = set(self.groundset())
         E.difference_update(self._coclosure(frozenset()))  # groundset minus coloops
-        res = set([])
+        res = set()
 
         while E:
             e = E.pop()
@@ -5412,7 +5410,7 @@ cdef class Matroid(SageObject):
                     for R1 in map(set, combinations(R, r2)):
                         R2 = R - R1
                         # F is the set of elements cannot be in the extension of Q1
-                        F = set([])
+                        F = set()
                         U = E - R
                         # if Q1|R1 is full
                         if m-len(Q1)-len(R1) == 0:
@@ -5925,14 +5923,14 @@ cdef class Matroid(SageObject):
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
             sage: M._shifting_all(M.basis(),
-            ....:                 set([0,1]), set([0,1]), set([]), set([]), 3)
+            ....:                 set([0,1]), set([0,1]), set(), set(), 3)
             (False, None)
             sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
             ....:                                          [1,1,1,1,0],
             ....:                                          [0,1,1,1,0],
             ....:                                          [0,0,0,1,1]])
             sage: M._shifting_all(M.basis(),
-            ....:                 set([0,1]), set([5,8]), set([]), set([]), 3)[0]
+            ....:                 set([0,1]), set([5,8]), set(), set(), 3)[0]
             True
         """
         Y = self.groundset()-X
@@ -5986,14 +5984,14 @@ cdef class Matroid(SageObject):
             ....:                                  [0,0,0,0,1,1,1,1,0,0,1,1],
             ....:                                  [0,0,0,0,0,0,0,0,1,1,1,1]])
             sage: M._shifting(M.basis(),
-            ....:             set([0,1]), set([0,1]), set([]), set([]), 3)
+            ....:             set([0,1]), set([0,1]), set(), set(), 3)
             (False, None)
             sage: M = Matroid(field=GF(2), reduced_matrix=[[1,0,1,1,1],
             ....:                                          [1,1,1,1,0],
             ....:                                          [0,1,1,1,0],
             ....:                                          [0,0,0,1,1]])
             sage: M._shifting(M.basis(),
-            ....:             set([0,1]), set([5,8]), set([]), set([4]), 3)[0]
+            ....:             set([0,1]), set([5,8]), set(), set([4]), 3)[0]
             True
         """
 
@@ -6954,7 +6952,7 @@ cdef class Matroid(SageObject):
                 raise ValueError("nonnegative weights were expected.")
             wt = sorted(wt, reverse=True)
             Y = [e for (w, e) in wt]
-        res = set([])
+        res = set()
         r = 0
         for e in Y:
             res.add(e)
@@ -7933,8 +7931,8 @@ cdef class Matroid(SageObject):
         a = x
         b = y
         R = ZZ['x, y']
-        x, y = R._first_ngens(2)
-        T = R(0)
+        x, y = R.gens()
+        T = R.zero()
         for B in self.bases_iterator():
             T += x ** len(self._internal(B)) * y ** len(self._external(B))
         if a is not None and b is not None:
@@ -8069,18 +8067,18 @@ cdef class Matroid(SageObject):
         - ``augmented`` -- boolean (default: ``False``); when ``True``, this
           is the augmented Chow ring and if ``False``, this is the
           non-augmented Chow ring
-        - ``presentation`` -- string; if ``augmented=True``, then this
-          must be one of the following (ignored if ``augmented=False``):
+        - ``presentation`` -- string; one of the following:
 
           * ``"fy"`` - the Feitchner-Yuzvinsky presentation
           * ``"atom-free"`` - the atom-free presentation
+          * ``"simplicial"`` - the simplicial presentation
 
         EXAMPLES::
 
             sage: M = matroids.Wheel(2)
-            sage: A = M.chow_ring(R=ZZ, augmented=False); A
+            sage: A = M.chow_ring(R=ZZ, augmented=False, presentation='fy'); A
             Chow ring of Wheel(2): Regular matroid of rank 2 on 4 elements with
-            5 bases over Integer Ring
+            5 bases in Feitchner-Yuzvinsky presentation over Integer Ring
             sage: A.defining_ideal()._gens_constructor(A.defining_ideal().ring())
             [A0*A1, A0*A23, A1*A23, A0 + A0123, A1 + A0123, A23 + A0123]
             sage: A23 = A.gen(0)
@@ -8090,9 +8088,9 @@ cdef class Matroid(SageObject):
         We construct a more interesting example using the Fano matroid::
 
             sage: M = matroids.catalog.Fano()
-            sage: A = M.chow_ring(QQ); A
-            Chow ring of Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
-            over Rational Field
+            sage: A = M.chow_ring(QQ, False, 'fy'); A
+            Chow ring of Fano: Binary matroid of rank 3 on 7 elements,
+            type (3, 0) in Feitchner-Yuzvinsky presentation over Rational Field
 
         Next we get the non-trivial generators and do some computations::
 

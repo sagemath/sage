@@ -41,19 +41,19 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     # hence, we first remove the maximum power of 4 from n and will then
     # multiply by the corresponding power of 2 the solution
     fac = 0
-    while n%4 == 0:
+    while n % 4 == 0:
         n >>= 2
         fac += 1
 
     # now, n is congruent to 1,2 or 3 mod 4.
     # As a square is congruent to 0,1 mod 4, a sum of square is congruent to
     # 0,1,2 mod 4.
-    if n%4 == 3:
+    if n % 4 == 3:
         return 0
 
     # if n=1 mod 4 then exactly one of i or j must be even
     # if n=2 mod 4 then i and j must be odd
-    if n%4 == 1:
+    if n % 4 == 1:
         i = ii = 0
         j = <uint_fast32_t> sqrt(<double> n)
         jj = j*j
@@ -74,7 +74,7 @@ cdef int two_squares_c(uint_fast32_t n, uint_fast32_t res[2]) noexcept:
     else: # n mod 4 = 2
         i = ii = 1
         j = <uint_fast32_t> sqrt(<double> n)
-        j += 1 - j%2
+        j += 1 - j % 2
         jj = j*j
         while ii <= jj:
             nn = n - ii
@@ -112,13 +112,13 @@ cdef int three_squares_c(uint_fast32_t n, uint_fast32_t res[3]) noexcept:
     # hence we remove from n the maximum power of 4 and at the very end we
     # multiply each term of the solution by the appropriate power of 2
     fac = 0
-    while n%4 == 0:
+    while n % 4 == 0:
         n >>= 2
         fac += 1
 
     # Legendre's three-square theorem: n is a sum of three squares if and only
     # if it is not of the form 4^a(8b + 7)
-    if n%8 == 7:
+    if n % 8 == 7:
         return 0
 
     i = <uint_fast32_t> sqrt(<double> n)

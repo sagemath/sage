@@ -113,7 +113,7 @@ def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
         sage: D.add_edge((2, 3))
         Traceback (most recent call last):
         ...
-        ValueError: graph is immutable; please change a copy instead (use function copy())
+        TypeError: this graph is immutable and so cannot be changed
         sage: G = Graph([(1, 2)])
         sage: D = _initialize_digraph(G, [])
         sage: D.vertices()
@@ -186,22 +186,9 @@ def _initialize_digraph(G, edges, name=None, weighted=None, sparse=None,
                 name=name,
                 hash_labels=hash_labels)
 
-    D.set_vertices(G.get_vertices())
-
-    attributes_to_copy = ('_assoc', '_embedding')
-    for attr in attributes_to_copy:
-        if hasattr(G, attr):
-            copy_attr = {}
-            old_attr = getattr(G, attr)
-            if isinstance(old_attr, dict):
-                for v, value in old_attr.items():
-                    try:
-                        copy_attr[v] = value.copy()
-                    except AttributeError:
-                        copy_attr[v] = copy(value)
-                setattr(D, attr, copy_attr)
-            else:
-                setattr(D, attr, copy(old_attr))
+    # Copy attributes '_assoc' and '_embedding' if set
+    D._copy_attribute_from(G, '_assoc')
+    D._copy_attribute_from(G, '_embedding')
 
     return D
 
@@ -557,13 +544,11 @@ def acyclic_orientations(G):
         # A graph without edge cannot be oriented
         return
 
-    from sage.rings.infinity import Infinity
     from sage.combinat.subset import Subsets
 
     def reorder_vertices(G):
         n = G.order()
         ko = n
-        k = n
         G_copy = G.copy()
         vertex_labels = {v: None for v in G_copy.vertices()}
 
@@ -1376,7 +1361,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     d.add_edges(('s', vertices_id[v], b[v]) for v in vertices)
 
     d.add_edges(((vertices_id[u], vertices_id[v]), 't', 1)
-                 for u, v in G.edges(sort=False, labels=None))
+                for u, v in G.edges(sort=False, labels=None))
 
     # each v is linked to its incident edges
 
@@ -1396,7 +1381,7 @@ def bounded_outdegree_orientation(G, bound, solver=None, verbose=False,
     # The flow graph may not contain all the vertices, if they are
     # not part of the flow...
     edges = ((vertices[u], vertices[vv if vv != u else uu])
-             for u in (x for x in range(n) if x in flow)
+             for u in range(n) if u in flow
              for uu, vv in flow.neighbors_out(u))
 
     return _initialize_digraph(G, edges)

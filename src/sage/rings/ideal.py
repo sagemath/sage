@@ -444,10 +444,7 @@ class Ideal_generic(MonoidElement):
             sage: bool(I)
             False
         """
-        for g in self.gens():
-            if not g.is_zero():
-                return True
-        return False
+        return any(not g.is_zero() for g in self.gens())
 
     def base_ring(self):
         r"""
@@ -856,10 +853,7 @@ class Ideal_generic(MonoidElement):
             raise NotImplementedError
         if len(ass) != 1:
             return False
-        if self == ass[0]:
-            return True
-        else:
-            return False
+        return self == ass[0]
 
     def associated_primes(self):
         r"""
@@ -1694,6 +1688,17 @@ class Ideal_pid(Ideal_principal):
         if self.ring() is ZZ:
             return ZZ.residue_field(self, check=False)
         raise NotImplementedError("residue_field() is only implemented for ZZ and rings of integers of number fields.")
+
+    def radical(self):
+        r"""
+        Return the radical of this ideal.
+
+        EXAMPLES::
+
+            sage: ZZ.ideal(12).radical()
+            Principal ideal (6) of Integer Ring
+        """
+        return self.ring().ideal(self.gen().radical())
 
 
 class Ideal_fractional(Ideal_generic):

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules sage.groups
 r"""
-Symmetric Group Algebra
+Symmetric group algebra
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -10,27 +10,37 @@ Symmetric Group Algebra
 # ****************************************************************************
 import itertools
 
+from sage.algebras.cellular_basis import CellularBasis
+from sage.algebras.group_algebra import GroupAlgebra_class
+from sage.arith.misc import factorial
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.categories.weyl_groups import WeylGroups
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.partition import Partitions, Partitions_n, _Partitions
+from sage.combinat.permutation import (
+    Permutation,
+    Permutations,
+    from_permutation_group_element,
+)
+from sage.combinat.permutation_cython import left_action_same_n, right_action_same_n
+from sage.combinat.skew_tableau import SkewTableau
+from sage.combinat.tableau import (
+    StandardTableaux,
+    StandardTableaux_shape,
+    StandardTableaux_size,
+    Tableau,
+)
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.algebras_with_basis import AlgebrasWithBasis
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.permutation import Permutation, Permutations, from_permutation_group_element
-from sage.combinat.permutation_cython import (left_action_same_n, right_action_same_n)
-from sage.combinat.partition import _Partitions, Partitions, Partitions_n
-from sage.combinat.tableau import Tableau, StandardTableaux_size, StandardTableaux_shape, StandardTableaux
-from sage.combinat.skew_tableau import SkewTableau
-from sage.algebras.group_algebra import GroupAlgebra_class
-from sage.algebras.cellular_basis import CellularBasis
-from sage.categories.weyl_groups import WeylGroups
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.rational_field import QQ
-from sage.arith.misc import factorial
-from sage.matrix.constructor import matrix
-from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
 from sage.misc.persist import register_unpickle_override
+from sage.modules.free_module_element import vector
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 
-lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
+lazy_import('sage.groups.perm_gps.permgroup_element',
+            'PermutationGroupElement')
 
 
 # TODO: Remove this function and replace it with the class
@@ -74,7 +84,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: a = sum(basis); a
         [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
         sage: a^2
-        6*[1, 2, 3] + 6*[1, 3, 2] + 6*[2, 1, 3] + 6*[2, 3, 1] + 6*[3, 1, 2] + 6*[3, 2, 1]
+        6*[1, 2, 3] + 6*[1, 3, 2] + 6*[2, 1, 3] + 6*[2, 3, 1]
+        + 6*[3, 1, 2] + 6*[3, 2, 1]
         sage: a^2 == 6*a
         True
         sage: b = QS3([3, 1, 2])
@@ -105,7 +116,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
         sage: SGA = SymmetricGroupAlgebra(QQ, WeylGroup(["A",3], prefix='s')); SGA
         Symmetric group algebra of order 4 over Rational Field
         sage: SGA.group()
-        Weyl Group of type ['A', 3] (as a matrix group acting on the ambient space)
+        Weyl Group of type ['A', 3] (as a matrix group acting
+        on the ambient space)
         sage: SGA.an_element()
         s1*s2*s3 + 3*s2*s3*s1*s2 + 2*s3*s1 + 1
 
@@ -184,7 +196,8 @@ def SymmetricGroupAlgebra(R, W, category=None):
 
         sage: QS3 = SymmetricGroupAlgebra(QQ, 3, category=Monoids())
         sage: QS3.category()
-        Category of finite dimensional cellular monoid algebras over Rational Field
+        Category of finite dimensional cellular monoid algebras
+        over Rational Field
         sage: TestSuite(QS3).run(skip=['_test_construction'])
 
 
@@ -1155,8 +1168,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             if mu not in self._blocks_dictionary:
                 raise ValueError("the {1}-core of {0} is not a {1}-core of a partition of {2}".format(la, p, self.n))
 
-        from sage.libs.gap.libgap import libgap
         from sage.data_structures.blas_dict import iaxpy
+        from sage.libs.gap.libgap import libgap
         G = self._indices
         character_table = [c.sage() for c in libgap.Irr(libgap.SymmetricGroup(self.n))]
         Pn = Partitions_n(self.n)
@@ -1247,9 +1260,9 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                 blocks[c] = [la]
         return blocks
 
-    def ladder_idemponent(self, la):
+    def ladder_idempotent(self, la):
         r"""
-        Return the ladder idempontent of ``self``.
+        Return the ladder idempotent of ``self``.
 
         Let `F` be a field of characteristic `p`. The *ladder idempotent*
         of shape `\lambda` is the idempotent of `F[S_n]` defined as follows.
@@ -1257,7 +1270,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         <sage.combinat.partition.Partition.ladder_tableau>` of shape `\lambda`.
         Let `[T]` be the set of standard tableaux whose residue sequence
         is the same as for `T`. Let `\alpha` be the sizes of the ladders
-        of `\lambda`. Then the ladder idempontent is constructed as
+        of `\lambda`. Then the ladder idempotent is constructed as
 
         .. MATH::
 
@@ -1273,7 +1286,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
             sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
             sage: for la in Partitions(SGA.n):
-            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     idem = SGA.ladder_idempotent(la)
             ....:     print(la)
             ....:     print(idem)
             ....:     assert idem^2 == idem
@@ -1300,9 +1313,10 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         modules (which are the :meth:`Specht modules <specht_module>`
         and also projective modules)::
 
+            sage: # long time
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: for la in Partitions(SGA.n):
-            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     idem = SGA.ladder_idempotent(la)
             ....:     assert idem^2 == idem
             ....:     print(la, SGA.principal_ideal(idem).dimension())
             [5] 1
@@ -1324,15 +1338,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         n = self.n
         if not p:
             p = n + 1
-        la = _Partitions(la)
-        if sum(la) != n:
-            raise ValueError(f"{la} is not a partition of {n}")
+        la = Partitions_n(n)(la)
         Tlad, alpha = la.ladder_tableau(p, ladder_lengths=True)
-        if not all(val < p for val in alpha):
+        if any(val >= p for val in alpha):
             raise ValueError(f"{la} is not {p}-ladder restricted")
         Tclass = Tlad.residue_sequence(p).standard_tableaux()
         Elad = sum(epsilon_ik(T, T) for T in Tclass)
-        Elad = self.element_class(self, {sigma: R(c) for sigma, c in Elad._monomial_coefficients.items()})
+        Elad = self.element_class(self, {sigma: R(c)
+                                         for sigma, c in Elad._monomial_coefficients.items()})
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         YG = SymmetricGroup(n).young_subgroup(alpha)
         coeff = ~R.prod(factorial(val) for val in alpha)
@@ -1715,7 +1728,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SGA.specht_module_dimension([(1,1),(1,3),(2,2),(3,1),(3,2)])
             16
         """
-        from sage.combinat.specht_module import specht_module_spanning_set, _to_diagram
+        from sage.combinat.specht_module import _to_diagram, specht_module_spanning_set
         D = _to_diagram(D)
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
@@ -2035,10 +2048,23 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
           (:meth:`antipode`) of the seminormal basis instead of
           the seminormal basis.
 
-        EXAMPLES::
+        - ``form`` -- string (default: ``"modular"`` if `p|n!` else ``"seminormal"``);
+          one of the following:
 
-            sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
-            sage: QS3.dft()
+          * ``"seminormal"`` -- use the seminormal basis
+          * ``"modular"`` -- use the modular DFT, which uses the Peirce decomposition
+            of the group algebra into blocks with central orthogonal idempotents
+          * ``"unitary"`` -- use the unitary DFT, which computes the extended
+            Cholesky decomposition of an `S_n`-invariant symmetric bilinear form as
+            a change-of-basis matrix (for positive characteristics, it must be
+            a finite field of square order)
+
+        EXAMPLES:
+
+        The default is the seminormal DFT when the characteristic does not divide the group order::
+
+            sage: QQ_S3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QQ_S3.dft()
             [   1    1    1    1    1    1]
             [   1  1/2   -1 -1/2 -1/2  1/2]
             [   0  3/4    0  3/4 -3/4 -3/4]
@@ -2046,11 +2072,36 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [   1 -1/2    1 -1/2 -1/2 -1/2]
             [   1   -1   -1    1    1   -1]
 
-        Over fields of characteristic `p > 0` such that `p \mid n!`, we use the
+        The unitary form works in characteristic zero::
+
+            sage: U = QQ_S3.dft(form='unitary'); U
+            [-1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2]
+            [       1/3*sqrt3        1/6*sqrt3       -1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3        1/6*sqrt3]
+            [               0              1/2                0              1/2             -1/2             -1/2]
+            [               0              1/2                0             -1/2              1/2             -1/2]
+            [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
+            [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
+            sage: U*U.H == 1
+            True
+
+        Over finite fields of square order with characteristic `p > n`, we can perform the unitary DFT::
+
+            sage: GF25_S3 = SymmetricGroupAlgebra(GF(5**2), 3)
+            sage: U = GF25_S3.dft(form='unitary'); U
+            [       1        1        1        1        1        1]
+            [2*z2 + 4   z2 + 2 3*z2 + 1 4*z2 + 3 4*z2 + 3   z2 + 2]
+            [       0        2        0        2        3        3]
+            [       0   z2 + 1        0 4*z2 + 4   z2 + 1 4*z2 + 4]
+            [2*z2 + 4 4*z2 + 3 2*z2 + 4 4*z2 + 3 4*z2 + 3 4*z2 + 3]
+            [       1        4        4        1        1        4]
+            sage: U*U.H == 1
+            True
+
+        Over fields of characteristic `p > 0` such that `p|n!`, we use the
         modular Fourier transform (:issue:`37751`)::
 
-            sage: GF2S3 = SymmetricGroupAlgebra(GF(2), 3)
-            sage: GF2S3.dft()
+            sage: GF2_S3 = SymmetricGroupAlgebra(GF(2), 3)
+            sage: GF2_S3.dft()
             [1 0 0 0 1 0]
             [0 1 0 0 0 1]
             [0 0 1 0 0 1]
@@ -2066,7 +2117,108 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_seminormal(mult=mult)
         if form == "modular":
             return self._dft_modular()
-        raise ValueError("invalid form (= %s)" % form)
+        if form == "unitary":
+            return self._dft_unitary()
+        raise ValueError(f"invalid form (= {form})")
+
+    def _dft_unitary(self):
+        """
+        Return the unitary form of the discrete Fourier transform for ``self``.
+
+        EXAMPLES::
+
+            sage: QQ_S3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: QQ_S3._dft_unitary()
+            [-1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2]
+            [       1/3*sqrt3        1/6*sqrt3       -1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3        1/6*sqrt3]
+            [               0              1/2                0              1/2             -1/2             -1/2]
+            [               0              1/2                0             -1/2              1/2             -1/2]
+            [       1/3*sqrt3       -1/6*sqrt3        1/3*sqrt3       -1/6*sqrt3       -1/6*sqrt3       -1/6*sqrt3]
+            [-1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2 -1/6*sqrt3*sqrt2  1/6*sqrt3*sqrt2]
+            sage: GF49_S3 = SymmetricGroupAlgebra(GF(7**2), 3)
+            sage: GF49_S3._dft_unitary()
+            [5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5 5*z2 + 5]
+            [2*z2 + 5   z2 + 6 5*z2 + 2 6*z2 + 1 6*z2 + 1   z2 + 6]
+            [       0 4*z2 + 5        0 4*z2 + 5 3*z2 + 2 3*z2 + 2]
+            [       0 3*z2 + 2        0 4*z2 + 5 3*z2 + 2 4*z2 + 5]
+            [2*z2 + 5 6*z2 + 1 2*z2 + 5 6*z2 + 1 6*z2 + 1 6*z2 + 1]
+            [5*z2 + 5 2*z2 + 2 2*z2 + 2 5*z2 + 5 5*z2 + 5 2*z2 + 2]
+
+        TESTS::
+
+            sage: QQ_S3 = SymmetricGroupAlgebra(QQ, 3)
+            sage: U = QQ_S3._dft_unitary()
+            sage: U*U.H == 1
+            True
+            sage: GF25_S3 = SymmetricGroupAlgebra(GF(5**2), 3)
+            sage: U = GF25_S3._dft_unitary()
+            sage: U*U.H == 1
+            True
+            sage: GF5_S3 = SymmetricGroupAlgebra(GF(5), 3)
+            sage: U = GF5_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: Z5_S3 = SymmetricGroupAlgebra(Integers(5), 3)
+            sage: U = Z5_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: F.<x> = FunctionField(GF(3))
+            sage: GF3_x_S3 = SymmetricGroupAlgebra(F, 5)
+            sage: U = GF3_x_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            ValueError: the base ring must be a finite field of square order
+            sage: GF9_S3 = SymmetricGroupAlgebra(GF(3**2), 3)
+            sage: U = GF9_S3._dft_unitary()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: not implemented when p|n!; dimension of invariant forms may be greater than one
+        """
+        from sage.matrix.special import diagonal_matrix
+        F = self.base_ring()
+        G = self.group()
+
+        if F.characteristic() == 0:
+            from sage.misc.functional import sqrt
+            from sage.rings.number_field.number_field import NumberField
+            dft_matrix = self.dft()
+            n = dft_matrix.nrows()
+            diag = [sum(dft_matrix[i, j] * dft_matrix[i, j].conjugate() for j in range(n))
+                    for i in range(n)]
+            primes_needed = {factor for d in diag for factor, _ in d.squarefree_part().factor()}
+            names = [f"sqrt{factor}" for factor in primes_needed]
+            x = PolynomialRing(QQ, 'x').gen()
+            K = NumberField([x**2 - d for d in primes_needed], names=names)
+            dft_matrix = dft_matrix.change_ring(K)
+            for i, d in enumerate(diag):
+                dft_matrix[i] *= ~sqrt(K(d))
+            return dft_matrix
+
+        # positive characteristic case
+        assert F.characteristic() > 0, "F must have positive characteristic"
+        if not (F.is_field() and F.is_finite() and F.order().is_square()):
+            raise ValueError("the base ring must be a finite field of square order")
+        if F.characteristic().divides(G.cardinality()):
+            raise NotImplementedError("not implemented when p|n!; dimension of invariant forms may be greater than one")
+        q = F.order().sqrt()
+
+        def conj_square_root(u):
+            if not u:
+                return F.zero()
+            z = F.multiplicative_generator()
+            k = u.log(z)
+            if k % (q+1) != 0:
+                raise ValueError(f"unable to factor as {u} is not in base field GF({q})")
+            return z ** ((k//(q+1)) % (q-1))
+
+        dft_matrix = self.dft()
+        n = dft_matrix.nrows()
+        for i in range(n):
+            d = sum(dft_matrix[i, j] * dft_matrix[i, j].conjugate() for j in range(n))
+            dft_matrix[i] *= ~conj_square_root(d)
+        return dft_matrix
 
     def _dft_seminormal(self, mult='l2r'):
         """
@@ -2382,7 +2534,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [1, 1, 1] [1, 2, 3] - [1, 3, 2] - [2, 1, 3] + [2, 3, 1] + [3, 1, 2] - [3, 2, 1]
         """
         T = []
-        total = 1 # make it 1-based
+        total = 1  # make it 1-based
         for r in la:
             T.append(list(range(total, total+r)))
             total += r
@@ -2474,7 +2626,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         try:
             from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
         except ImportError:
-            # Falback to using the KL polynomial
+            # Fallback to using the KL polynomial
             from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
             q = PolynomialRing(R, 'q').gen()
@@ -2736,7 +2888,7 @@ def a(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    rd = dict((P(h), one) for h in rs)
+    rd = {P(h): one for h in rs}
     return sgalg._from_dict(rd)
 
 
@@ -2820,7 +2972,7 @@ def b(tableau, star=0, base_ring=QQ):
     if n <= 1:
         return sgalg.one()
 
-    cd = dict((P(v), v.sign() * one) for v in cs)
+    cd = {P(v): v.sign() * one for v in cs}
     return sgalg._from_dict(cd)
 
 
@@ -3454,7 +3606,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             T[1, 2, 3]
         """
         if i not in range(1, self.n):
-            raise ValueError("i (= %(i)d) must be between 1 and n (= %(n)d)" % {'i': i, 'n': self.n})
+            raise ValueError(f"i (= {i}) must be between 1 and n (={self.n})")
 
         t_i = Permutation((i, i + 1))
         perm_i = t_i.right_action_product(perm)
@@ -3496,7 +3648,8 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             sage: H3 = HeckeAlgebraSymmetricGroupT(QQ, 3, 1)
             sage: a = H3([2,1,3])+2*H3([1,2,3])-H3([3,2,1])
             sage: a^2 #indirect doctest
-            6*T[1, 2, 3] + 4*T[2, 1, 3] - T[2, 3, 1] - T[3, 1, 2] - 4*T[3, 2, 1]
+            6*T[1, 2, 3] + 4*T[2, 1, 3] - T[2, 3, 1]
+            - T[3, 1, 2] - 4*T[3, 2, 1]
 
         ::
 
@@ -3527,7 +3680,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
             ValueError: i (= 0) must be between 1 and n-1 (= 2)
         """
         if i not in range(1, self.n):
-            raise ValueError("i (= %(i)d) must be between 1 and n-1 (= %(nm)d)" % {'i': i, 'nm': self.n - 1})
+            raise ValueError(f"i (= {i}) must be between 1 and n-1 (= {self.n - 1})")
 
         P = self.basis().keys()
         return self.monomial(P(list(range(1, i)) + [i + 1, i] +
@@ -3591,7 +3744,7 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
         if k not in range(2, self.n + 1):
             if k == 1:
                 return self.one()
-            raise ValueError("k (= %(k)d) must be between 1 and n (= %(n)d)" % {'k': k, 'n': self.n})
+            raise ValueError(f"k (= {k}) must be between 1 and n (= {self.n})")
 
         q = self.q()
         P = self._indices

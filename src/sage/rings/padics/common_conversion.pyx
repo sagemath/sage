@@ -127,7 +127,8 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             else:
                 curterm = get_ordp(a, prime_pow)
                 k = min(k, curterm + shift, maxordp)
-            if e != 1: shift += 1
+            if e != 1:
+                shift += 1
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
@@ -156,7 +157,7 @@ cdef long get_ordp(x, PowComputer_class prime_pow) except? -10000:
             return maxordp
         k = mpz_remove(temp.value, value.value, prime_pow.prime.value)
     else:
-        raise NotImplementedError("Cannot determine p-adic valuation of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic valuation of an element of %s" % parent(x))
     # Should check for overflow
     return k * e
 
@@ -206,7 +207,8 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
             else:
                 curterm = get_preccap(a, prime_pow)
                 k = min(k, curterm + shift)
-            if e != 1: shift += 1
+            if e != 1:
+                shift += 1
         # We don't want to multiply by e again.
         return k
     elif isinstance(x, pAdicGenericElement):
@@ -228,7 +230,7 @@ cdef long get_preccap(x, PowComputer_class prime_pow) except? -10000:
         if mpz_cmp_ui(temp.value, 1) != 0:
             raise TypeError("cannot coerce from the given integer mod ring (not a power of the same prime)")
     else:
-        raise NotImplementedError("Cannot determine p-adic precision of an element of %s"%parent(x))
+        raise NotImplementedError("Cannot determine p-adic precision of an element of %s" % parent(x))
     return k * e
 
 cdef long comb_prec(iprec, long prec) except? -10000:
@@ -242,7 +244,8 @@ cdef long comb_prec(iprec, long prec) except? -10000:
 
     - ``prec`` -- a long
     """
-    if iprec is infinity: return prec
+    if iprec is infinity:
+        return prec
     cdef Integer intprec
     if isinstance(iprec, Integer):
         intprec = <Integer>iprec
@@ -302,13 +305,13 @@ cdef int _process_args_and_kwds(long *aprec, long *rprec, args, kwds, bint absol
             raise TypeError("_call_with_args() got multiple values for keyword argument 'relprec'")
         relprec = args[1]
     else:
-        relprec = kwds.get("relprec",infinity)
+        relprec = kwds.get("relprec", infinity)
     if len(args) >= 1:
         if "absprec" in kwds:
             raise TypeError("_call_with_args() got multiple values for keyword argument 'absprec'")
         absprec = args[0]
     else:
-        absprec = kwds.get("absprec",infinity)
+        absprec = kwds.get("absprec", infinity)
     if absolute:
         aprec[0] = comb_prec(absprec, prime_pow.ram_prec_cap)
         rprec[0] = comb_prec(relprec, maxordp)

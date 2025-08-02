@@ -1,3 +1,4 @@
+# cython: binding=True
 # sage_setup: distribution = sagemath-objects
 from libc.stdint cimport uint32_t
 from cpython.object cimport (Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE,

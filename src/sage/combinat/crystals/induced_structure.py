@@ -1,12 +1,12 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Induced Crystals
+Induced crystals
 
 We construct a crystal structure on a set induced by a bijection `\Phi`.
 
 AUTHORS:
 
-- Travis Scrimshaw (2014-05-15): Initial implementation
+- Travis Scrimshaw (2014-05-15): initial implementation
 """
 
 #*****************************************************************************

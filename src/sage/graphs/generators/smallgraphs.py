@@ -2093,7 +2093,7 @@ def DesarguesGraph():
     """
     Return the Desargues graph.
 
-    PLOTTING: The layout chosen is the same as on the cover of [Har1994]_.
+    PLOTTING: The layout chosen is the same as on the cover of [Har1969]_.
 
     EXAMPLES::
 
@@ -3337,7 +3337,7 @@ def HoffmanSingletonGraph():
             D.append(p)
         vv = 'q%s' % (int(p[1]) + 1)
         v = [v[-1] for v in H.neighbors(p) if v[:2] == vv]
-        if len(v):
+        if v:
             s = int(v[0])
         l += 1
     map = H.relabel(range(50), return_map=True)
@@ -5473,8 +5473,9 @@ def JankoKharaghaniTonchevGraph():
             301, 304, 308, 309, 310, 312, 313, 314, 316, 317, 318)
     Gamma = Graph(multiedges=False, name='Janko-Kharaghani-Tonchev')
     for i, b in ((1, B1), (163, B163)):
-        for j in (x[0] for x in st.OrbitsDomain(b)):
-            Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, j]), libgap.OnSets)))
+        for x in st.OrbitsDomain(b):
+            Gamma.add_edges(map(tuple, G.Orbit(libgap.Set([i, x[0]]),
+                                               libgap.OnSets)))
     Gamma.relabel(range(Gamma.order()))
     return Gamma
 
@@ -5642,7 +5643,7 @@ def IoninKharaghani765Graph():
     # Associate a matrix to every entry of W
     int_to_matrix = {0: matrix.zero(45)}
     for i in range(15):
-        vec = [frozenset([]), L[0, 0], L[1, 0], L[2, 0], L[3, 0]]
+        vec = [frozenset(), L[0, 0], L[1, 0], L[2, 0], L[3, 0]]
         vec = f_pow(pi_vec, i % 3, vec)
         vec = f_pow(sigma2, i % 5, vec)
         int_to_matrix[i + 1] = N(vec)

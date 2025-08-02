@@ -976,13 +976,14 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         """
         coords = list(v)
         for f in self.defining_polynomials():
-            if f(coords) != 0:   # it must be "!=0" instead of "if f(v)", e.g.,
-                                 # because of p-adic base rings.
-                raise TypeError("Coordinates %s do not define a point on %s" % (coords,self))
+            if f(coords) != 0:
+                # it must be "!=0" instead of "if f(v)", e.g.,
+                # because of p-adic base rings.
+                raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
         try:
             return self.ambient_space()._check_satisfies_equations(coords)
         except TypeError:
-            raise TypeError("Coordinates %s do not define a point on %s" % (coords,self))
+            raise TypeError("Coordinates %s do not define a point on %s" % (coords, self))
 
     def base_extend(self, R):
         """
@@ -1121,7 +1122,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             initial_polys = list(self.__polys)
 
             for P in initial_polys:
-                # stores value which need to be mutliplied to make all coefficient integers
+                # stores value which need to be multiplied to make all coefficient integers
                 mult = lcm([c.denominator() for c in P.coefficients()])
                 P = mult*P
                 # stores the common factor from all coefficients
@@ -1357,7 +1358,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         d = self.codimension()
         minors = self.Jacobian_matrix().minors(d)
         I = self.defining_ideal()
-        minors = tuple([ I.reduce(m) for m in minors ])
+        minors = tuple([I.reduce(m) for m in minors])
         return I.ring().ideal(I.gens() + minors)
 
     def reduce(self):

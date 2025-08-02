@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = [
+#     "meson",
+# ]
+# ///
+# See README.md for more details
 
 import argparse
 import os
@@ -72,6 +79,7 @@ def _symbol(val: str) -> SymbolNode:
 
 def update_python_sources(self: Rewriter, visitor: AstPython):
     for target in visitor.install_sources_calls:
+        ignored_files = {'cmdline.py'}
         # Generate the current source list
         src_list: list[str] = []
         for arg in arg_list_from_node(target):
@@ -86,7 +94,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
         to_append: list[StringNode] = []
         for file in python_files:
             file_name = file.name
-            if file_name in src_list:
+            if file_name in src_list or file_name in ignored_files:
                 continue
             token = Token("string", target.filename, 0, 0, 0, None, file_name)
             to_append += [StringNode(token)]
@@ -288,7 +296,7 @@ meson_format(
         inplace=True,
         recursive=True,
         output=None,
-        configuration=None,
+        configuration=options.sourcedir / "meson.format",
         editor_config=None,
     )
 )

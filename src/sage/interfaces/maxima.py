@@ -494,19 +494,20 @@ Test that the output is parseable (:issue:`31796`)::
 
 import os
 import re
-import pexpect
 import shlex
-
 from random import randrange
 
+import pexpect
+
 from sage.env import MAXIMA
-
-from .expect import (Expect, ExpectElement, gc_disabled)
-
-from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                             MaximaAbstractElement,
-                             MaximaAbstractFunctionElement,
-                             MaximaAbstractElementFunction)
+from sage.interfaces.expect import Expect, ExpectElement, gc_disabled
+from sage.interfaces.maxima_abstract import (
+    MaximaAbstract,
+    MaximaAbstractElement,
+    MaximaAbstractElementFunction,
+    MaximaAbstractFunction,
+    MaximaAbstractFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
 
 
@@ -529,6 +530,7 @@ class Maxima(MaximaAbstract, Expect):
 
         TESTS::
 
+            sage:: from sage.interfaces.maxima import Maxima, maxima
             sage: Maxima == loads(dumps(Maxima))
             True
             sage: maxima == loads(dumps(maxima))
@@ -586,10 +588,13 @@ class Maxima(MaximaAbstract, Expect):
         self._ask = [b'zero or nonzero\\?', b'an integer\\?',
                      b'positive, negative or zero\\?', b'positive or negative\\?',
                      b'positive or zero\\?', b'equal to .*\\?']
+
         self._prompt_wait = ([self._prompt] +
                              [re.compile(x) for x in self._ask] +
-                             [b'Break [0-9]+'])  # note that you might need to change _expect_expr if you
-                                                 # change this
+                             [b'Break [0-9]+'])
+        # note that you might need to change _expect_expr if you
+        # change this _prompt_wait
+
         self._error_re = re.compile('(Principal Value|debugmode|incorrect syntax|Maxima encountered a Lisp error)')
         self._display2d = False
 
@@ -811,7 +816,7 @@ class Maxima(MaximaAbstract, Expect):
 
         self._expect_expr()
         assert len(self._before()) == 0, \
-                'Maxima expect interface is confused!'
+            'Maxima expect interface is confused!'
         r = self._output_prompt_re
         m = r.search(out)
         if m is not None:
@@ -984,7 +989,7 @@ class Maxima(MaximaAbstract, Expect):
             (
         """
         self._eval_line(':lisp %s\n""' % cmd, allow_use_file=False,
-               wait_for_prompt=False, reformat=False, error_check=False)
+                        wait_for_prompt=False, reformat=False, error_check=False)
         self._expect_expr('(%i)')
         return self._before()
 

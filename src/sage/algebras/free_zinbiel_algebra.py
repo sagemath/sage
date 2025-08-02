@@ -343,7 +343,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         return FreeZinbielAlgebra(R, n=len(A), names=A, side=self._side)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -671,7 +671,8 @@ class ZinbielFunctor(ConstructionFunctor):
         Functor.__init__(self, Rings(), Magmas())
         self.vars = variables
         self._side = side
-        self._finite_vars = bool(isinstance(variables, (list, tuple)) or variables in Sets().Finite())
+        self._finite_vars = (isinstance(variables, (list, tuple))
+                             or variables in Sets().Finite())
 
     def _apply_functor(self, R):
         """

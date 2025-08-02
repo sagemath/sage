@@ -1,5 +1,5 @@
 r"""
-Dyck Words
+Dyck words
 
 A class of an object enumerated by the
 :func:`Catalan numbers<sage.combinat.combinat.catalan_number>`,
@@ -368,7 +368,7 @@ class DyckWord(CombinatorialElement):
         - ``diagonal`` -- boolean (default: ``False``); value to draw the
           diagonal or not
 
-        - ``line width`` -- (default: 2*``tikz_scale``) value representing the
+        - ``line width`` -- (default: ``2*tikz_scale``) value representing the
           line width
 
         - ``color`` -- (default: black) the line color
@@ -676,7 +676,7 @@ class DyckWord(CombinatorialElement):
         - ``labelling`` -- (if type is "N-E") a list of labels assigned to
           the up steps in ``self``
 
-        - ``underpath`` -- (if type is "N-E", default:``True``) if ``True``,
+        - ``underpath`` -- (if type is "N-E", default: ``True``) if ``True``,
           the labelling is shown under the path; otherwise, it is shown to
           the right of the path
 
@@ -2696,7 +2696,7 @@ class DyckWord_complete(DyckWord):
                        bseq[bpeak[-i - 1]] - bseq[bpeak[-i - 1] + 1] + 1)
         return out
 
-    def tunnels(self):
+    def tunnels(self) -> Iterator[tuple[int, int]]:
         r"""
         Return an iterator of ranges of the matching parentheses in the Dyck
         word ``self``.
@@ -2746,15 +2746,14 @@ class DyckWord_complete(DyckWord):
         n = len(self)
         tunnels = self.tunnels()
         if tunnel_type == 'left':
-            return len([1 for (i, j) in tunnels if i + j < n])
-        elif tunnel_type == 'centered':
-            return len([1 for (i, j) in tunnels if i + j == n])
-        elif tunnel_type == 'right':
-            return len([1 for (i, j) in tunnels if i + j > n])
-        elif tunnel_type == 'all':
+            return len([1 for i, j in tunnels if i + j < n])
+        if tunnel_type == 'centered':
+            return len([1 for i, j in tunnels if i + j == n])
+        if tunnel_type == 'right':
+            return len([1 for i, j in tunnels if i + j > n])
+        if tunnel_type == 'all':
             return len(list(tunnels))
-        else:
-            raise ValueError("the given tunnel_type is not valid")
+        raise ValueError("the given tunnel_type is not valid")
 
     @combinatorial_map(order=2, name="Reverse path")
     def reverse(self) -> DyckWord:

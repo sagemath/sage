@@ -43,7 +43,6 @@ from sage.libs.gmp.all cimport *
 from sage.libs.gsl.complex cimport *
 from sage.libs.gsl.gamma cimport gsl_sf_lngamma_complex_e
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.libs.pari import pari
 from sage.misc.persist import loads, dumps
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer, smallInteger
@@ -274,8 +273,7 @@ def get_fn_serial():
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import get_fn_serial, get_sfunction_from_serial
         sage: get_fn_serial() > 125
         True
         sage: print(get_sfunction_from_serial(get_fn_serial()))
@@ -453,8 +451,7 @@ def py_print_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_print_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -517,8 +514,7 @@ def py_latex_function_pystring(id, args, fname_paren=False):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial
-        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: from sage.symbolic.expression import py_latex_function_pystring, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
         sage: foo = function('foo', nargs=2)
@@ -653,10 +649,9 @@ def py_print_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial
+        sage: from sage.symbolic.expression import py_print_fderivative_for_doctests as py_print_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:     if get_sfunction_from_serial(i) == foo: break
@@ -729,11 +724,9 @@ def py_latex_fderivative_for_doctests(id, params, args):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial
-
+        sage: from sage.symbolic.expression import py_latex_fderivative_for_doctests as py_latex_fderivative, get_ginac_serial, get_fn_serial, get_sfunction_from_serial
         sage: var('x,y,z')
         (x, y, z)
-        sage: from sage.symbolic.function import get_sfunction_from_serial
         sage: foo = function('foo', nargs=2)
         sage: for i in range(get_ginac_serial(), get_fn_serial()):
         ....:   if get_sfunction_from_serial(i) == foo: break
@@ -818,7 +811,16 @@ cdef unsigned py_get_serial_for_new_sfunction(stdstring &s,
     create one and set up the function tables properly.
     """
     from sage.symbolic.function_factory import function_factory
-    cdef Function fn = function_factory(s.c_str(), nargs)
+    # The input string s comes from GiNaC::function::function, the constructor
+    # that reads the function name from an archive.
+    # The archive is created by GiNaC::function::archive, which sets the name
+    # to GiNaC::function::registered_functions()[serial].name.
+    # Functions are registered using GiNaC::function::register_new.
+    # For symbolic functions this happens in the register_or_update_function
+    # which is defined in src/sage/symbolic/pynac_function_impl.pxi.
+    # In there, str_to_bytes is applied to the name.
+    # Hence we must apply the inverse char_to_str here.
+    cdef Function fn = function_factory(char_to_str(s.c_str()), nargs)
     return fn._serial
 
 
@@ -1544,6 +1546,7 @@ def doublefactorial(n):
 
 
 cdef py_fibonacci(n):
+    from sage.libs.pari import pari
     return Integer(pari(n).fibonacci())
 
 cdef py_step(n):

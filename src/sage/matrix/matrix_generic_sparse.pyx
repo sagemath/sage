@@ -200,6 +200,50 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_generic_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(9)
+            sage: m = matrix(K,3,4,[((i%9)//3)*z + i%3 if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: m
+            [      0       0       2       z]
+            [      0   z + 2       0 2*z + 1]
+            [      0       0       0       2]
+            sage: m.transpose()
+            [      0       0       0]
+            [      0   z + 2       0]
+            [      2       0       0]
+            [      z 2*z + 1       2]
+            sage: m.matrix_from_rows([0,2])
+            [0 0 2 z]
+            [0 0 0 2]
+            sage: m.matrix_from_columns([1,3])
+            [      0       z]
+            [  z + 2 2*z + 1]
+            [      0       2]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [      0 2*z + 1]
+            [      0       2]
+        """
+        cdef Matrix_generic_sparse _src = <Matrix_generic_sparse>src
+        if (iSrc,jSrc) in _src._entries:
+            self._entries[(iDst,jDst)] = _src._entries.get((iSrc, jSrc), _src._zero)
+        elif (iDst,jDst) in self._entries:
+            del self._entries[(iDst,jDst)]
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -233,7 +277,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
             self._entries = data
             self._zero = self._base_ring(0)
         else:
-            raise RuntimeError("unknown matrix version (=%s)"%version)
+            raise RuntimeError(f"unknown matrix version (={version})")
 
     ########################################################################
     # LEVEL 2 functionality

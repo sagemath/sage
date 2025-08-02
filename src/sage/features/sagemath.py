@@ -101,7 +101,7 @@ class sagemath_doc_html(StaticFile):
                             filename='html',
                             search_path=(SAGE_DOC,),
                             spkg='sagemath_doc_html',
-                            type='standard')
+                            type='optional')
 
 
 class sage__combinat(JoinFeature):
@@ -560,7 +560,7 @@ class sage__libs__giac(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.giac',
                              [PythonModule('sage.libs.giac.giac')],
-                             spkg='sagemath_giac', type='standard')
+                             spkg='sagemath_giac', type='optional')
 
 
 class sage__libs__homfly(JoinFeature):

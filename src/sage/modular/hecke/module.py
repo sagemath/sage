@@ -320,7 +320,7 @@ class HeckeModule_generic(Module):
             sage: sage.modular.hecke.module.HeckeModule_generic(QQ, 10).character() is None
             True
         """
-        return None
+        return
 
     def dimension(self):
         r"""
@@ -356,7 +356,7 @@ class HeckeModule_generic(Module):
         """
         return algebra.HeckeAlgebra(self)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return ``True`` if this Hecke module has dimension 0.
 
@@ -373,7 +373,7 @@ class HeckeModule_generic(Module):
         """
         return self.dimension() == 0
 
-    def is_full_hecke_module(self):
+    def is_full_hecke_module(self) -> bool:
         """
         Return ``True`` if this space is invariant under all Hecke operators.
 
@@ -404,7 +404,7 @@ class HeckeModule_generic(Module):
         self._is_full_hecke_module = True
         return True
 
-    def is_hecke_invariant(self, n):
+    def is_hecke_invariant(self, n) -> bool:
         """
         Return ``True`` if ``self`` is invariant under the Hecke operator `T_n`.
 
@@ -1341,7 +1341,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         except AttributeError:
             return -1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of basis elements of ``self``.
 
@@ -1482,7 +1482,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         return self.hecke_operator(n).charpoly(var)
 
-    def is_simple(self):
+    def is_simple(self) -> bool:
         r"""
         Return ``True`` if this space is simple as a module for the
         corresponding Hecke algebra.
@@ -1499,7 +1499,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         """
         raise NotImplementedError
 
-    def is_splittable(self):
+    def is_splittable(self) -> bool:
         """
         Return ``True`` if and only if only it is possible to split
         off a nontrivial generalized eigenspace of ``self`` as the
@@ -1520,7 +1520,7 @@ class HeckeModule_free_module(HeckeModule_generic):
             self.decomposition(anemic=False)
         return self.__is_splittable
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a submodule of ``other``.
 
@@ -1539,7 +1539,7 @@ class HeckeModule_free_module(HeckeModule_generic):
         return (self.ambient_free_module() == other.ambient_free_module() and
                 self.free_module().is_submodule(other.free_module()))
 
-    def is_splittable_anemic(self):
+    def is_splittable_anemic(self) -> bool:
         """
         Return ``True`` if and only if only it is possible to split off a
         nontrivial generalized eigenspace of ``self`` as the kernel of some
