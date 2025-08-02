@@ -167,6 +167,8 @@ For a tutorial on morphisms of Ore modules, we refer to
 AUTHOR:
 
 - Xavier Caruso (2024-10)
+
+- Xavier Caruso (2025-08); add support for Ore modules over PID
 """
 
 # ***************************************************************************
