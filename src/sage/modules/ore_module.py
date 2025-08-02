@@ -261,6 +261,7 @@ class OreAction(Action):
             ans += y._rmul_(P[i])
         return ans
 
+
 # Generic class for Ore modules
 ###############################
 

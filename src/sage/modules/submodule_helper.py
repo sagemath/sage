@@ -264,6 +264,7 @@ class SubmoduleHelper_PID(SubmoduleHelper):
         self.complement = complement.echelon_form()
         self.coordinates = self.basis.stack(self.complement).inverse()
 
+
 class SubmoduleHelper_polynomial_ring(SubmoduleHelper):
     r"""
     Submodules over polynomial rings.
