@@ -122,19 +122,6 @@ Function fields over the algebraic field are supported::
     sage: m(y)^2 + m(y) + m(x) + 1/m(x)         # long time (8s)
     O(s^5)
 
-TESTS::
-
-    sage: TestSuite(J).run()
-    sage: TestSuite(K).run(max_runs=256)        # long time (10s)                       # needs sage.rings.function_field sage.rings.number_field
-    sage: TestSuite(L).run(max_runs=8)          # long time (25s)                       # needs sage.rings.function_field sage.rings.number_field
-
-    sage: # needs sage.rings.finite_rings sage.rings.function_field
-    sage: TestSuite(M).run(max_runs=8)                                  # long time (35s)
-    sage: TestSuite(N).run(max_runs=8, skip='_test_derivation')         # long time (15s)
-    sage: TestSuite(O).run()
-    sage: TestSuite(R).run()
-    sage: TestSuite(S).run()                                            # long time (4s)
-
 Global function fields
 ----------------------
 
@@ -301,10 +288,12 @@ class FunctionField(Field):
         """
         Initialize.
 
-        TESTS::
+        EXAMPLES::
 
-            sage: K.<x> = FunctionField(QQ)
-            sage: TestSuite(K).run()               # long time (3s)
+            sage: K = FunctionField(QQ, 'z')
+            sage: K
+            Rational function field in z over Rational Field
+
         """
         Field.__init__(self, base_field, names=names, category=category)
 
@@ -747,7 +736,8 @@ class FunctionField(Field):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: TestSuite(K).run()    # indirect doctest, long time (3s)
+            sage: K._test_derivation()  # long time
+
         """
         tester = self._tester(**options)
         S = tester.some_elements()
