@@ -1081,4 +1081,3 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         for phi in self.factors():
             f = phi.push_subgroup(f)
         return f
-
