@@ -516,16 +516,15 @@ from random import randrange
 import pexpect
 
 from sage.env import MAXIMA
-from sage.misc.instancedoc import instancedoc
-
-from .expect import Expect, ExpectElement, gc_disabled
-from .maxima_abstract import (
+from sage.interfaces.expect import Expect, ExpectElement, gc_disabled
+from sage.interfaces.maxima_abstract import (
     MaximaAbstract,
     MaximaAbstractElement,
     MaximaAbstractElementFunction,
     MaximaAbstractFunction,
     MaximaAbstractFunctionElement,
 )
+from sage.misc.instancedoc import instancedoc
 
 
 # Thanks to the MRO for multiple inheritance used by the Sage's Python,
@@ -548,7 +547,7 @@ class Maxima(MaximaAbstract, Expect):
 
         TESTS::
 
-            sage: from sage.interfaces.maxima import maxima, Maxima
+            sage:: from sage.interfaces.maxima import Maxima, maxima
             sage: Maxima == loads(dumps(Maxima))
             True
             sage: maxima == loads(dumps(maxima))
