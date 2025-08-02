@@ -18,14 +18,15 @@ Schur symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import classical
-from sage.misc.misc_c import prod
-from sage.misc.lazy_import import lazy_import
-from sage.data_structures.blas_dict import convert_remove_zeroes
-from sage.rings.infinity import infinity
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.misc import factorial
 from sage.combinat.tableau import StandardTableaux
+from sage.data_structures.blas_dict import convert_remove_zeroes
+from sage.misc.lazy_import import lazy_import
+from sage.misc.misc_c import prod
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import classical
 
 lazy_import('sage.libs.lrcalc', 'lrcalc')
 
@@ -684,11 +685,19 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 sage: s.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                R = self.base_ring()
+                mc = self.monomial_coefficients(copy=False).items()
+                return R.sum(c for partition, c in mc
+                             if len(partition) <= 1)
+
             def get_variable(ring, name):
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -828,7 +837,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -861,6 +872,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.schur',
                            'SymmetricFunctionAlgebraElement_schur',
                            SymmetricFunctionAlgebra_schur.Element)

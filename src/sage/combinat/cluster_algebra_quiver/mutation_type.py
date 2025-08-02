@@ -109,44 +109,39 @@ def _triangles(dg) -> list[tuple[list, bool]]:
         []
         sage: Q.mutate([0, 1])
         sage: _triangles(Q.digraph())
-        [([(2, 0), (0, 1), (1, 2)], True)]
+        [([(0, 1), (1, 2), (2, 0)], True)]
         sage: Q2 = ClusterQuiver(['A', [1, 2], 1])
         sage: _triangles(Q2.digraph())
-        [([(1, 2), (1, 0), (2, 0)], False)]
+        [([(1, 0), (1, 2), (2, 0)], False)]
         sage: Q2.mutate(2)
         sage: _triangles(Q2.digraph())
-        [([(1, 0), (0, 2), (2, 1)], True)]
+        [([(1, 0), (2, 1), (0, 2)], True)]
     """
-    E = dg.edges(sort=True, labels=False)
-    V = list(dg)
+    from itertools import combinations
     trians = []
-    flat_trians = []
-    for e in E:
-        v1, v2 = e
-        for v in V:
-            if v not in e:
-                if (v, v1) in E:
-                    if (v2, v) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v, v1), (v1, v2), (v2, v)], True))
-                    elif (v, v2) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v, v1), (v1, v2), (v, v2)], False))
-                if (v1, v) in E:
-                    if (v2, v) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v1, v), (v1, v2), (v2, v)], False))
-                    elif (v, v2) in E:
-                        flat_trian = sorted([v, v1, v2])
-                        if flat_trian not in flat_trians:
-                            flat_trians.append(flat_trian)
-                            trians.append(([(v1, v), (v1, v2), (v, v2)], False))
+    for x in dg.vertices(sort=True):
+        nx = sorted(y for y in dg.neighbor_iterator(x) if x < y)
+        for y, z in combinations(nx, 2):
+            if dg.has_edge(y, z):
+                if dg.has_edge(x, y):
+                    if dg.has_edge(z, x):
+                        trians.append(([(x, y), (y, z), (z, x)], True))
+                    else:
+                        trians.append(([(x, y), (y, z), (x, z)], False))
+                elif dg.has_edge(z, x):
+                    trians.append(([(y, x), (y, z), (z, x)], False))
+                else:
+                    trians.append(([(y, x), (y, z), (x, z)], False))
+            elif dg.has_edge(z, y):
+                if dg.has_edge(x, y):
+                    if dg.has_edge(z, x):
+                        trians.append(([(x, y), (z, y), (z, x)], False))
+                    else:
+                        trians.append(([(x, y), (z, y), (x, z)], False))
+                elif dg.has_edge(z, x):
+                    trians.append(([(y, x), (z, y), (z, x)], False))
+                else:
+                    trians.append(([(y, x), (z, y), (x, z)], True))
     return trians
 
 
@@ -648,20 +643,17 @@ def _connected_mutation_type(dg):
                         return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
                 else:
                     return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-            else:
-                if in_out1 == in_out2:
-                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+            elif in_out1 == in_out2:
+                return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+            elif label1 == (1, -2):
+                if in_out1 == 'in':
+                    return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
                 else:
-                    if label1 == (1, -2):
-                        if in_out1 == 'in':
-                            return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                        else:
-                            return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                    else:
-                        if in_out1 == 'in':
-                            return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                        else:
-                            return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
+                    return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
+            elif in_out1 == 'in':
+                return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
+            else:
+                return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
 
         v1, v, label1 = label1
         v, v2, label2 = label2
@@ -692,78 +684,73 @@ def _connected_mutation_type(dg):
                 return _false_return()
         elif not dict_in_out[v][0] == 1 or not dict_in_out[v][1] == 1:
             return _false_return()
-        else:
-            if dg.has_edge(v2, v1, 1):
-                nr_same_neighbors = len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2)))
-                nr_other_neighbors = len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)))
-                nr_contained_cycles = len([cycle for cycle, is_oriented in _all_induced_cycles_iter(dg) if v1 in flatten(cycle) and v2 in flatten(cycle)])
-                if nr_same_neighbors + nr_other_neighbors + nr_contained_cycles > 2:
-                    return _false_return()
-                if label1 == (2, -1) and label2 == (1, -2):
-                    if n == 4 and (nr_same_neighbors == 2 or nr_other_neighbors == 1):
-                        return QuiverMutationType(['CD', n - 1, 1])
-                    # checks for affine A
+        elif dg.has_edge(v2, v1, 1):
+            nr_same_neighbors = len(set(dg.neighbors_out(v1)).intersection(dg.neighbors_in(v2)))
+            nr_other_neighbors = len(set(dg.neighbors_out(v2)).intersection(dg.neighbors_in(v1)))
+            nr_contained_cycles = len([cycle for cycle, is_oriented in _all_induced_cycles_iter(dg) if v1 in flatten(cycle) and v2 in flatten(cycle)])
+            if nr_same_neighbors + nr_other_neighbors + nr_contained_cycles > 2:
+                return _false_return()
+            if label1 == (2, -1) and label2 == (1, -2):
+                if n == 4 and (nr_same_neighbors == 2 or nr_other_neighbors == 1):
+                    return QuiverMutationType(['CD', n - 1, 1])
+                # checks for affine A
+                if nr_same_neighbors + nr_other_neighbors > 1:
+                    mt_tmp = _check_special_BC_cases(dg, n, ['C', 'CD'], [None, None], ['A', 'D'], [[], [v]])
+                else:
+                    _reset_dg(dg, vertices, dict_in_out, [v])
+                    mt_tmp = _check_special_BC_cases(dg, n, ['C', 'CD'], [None, None], ['A', 'D'])
+                if mt_tmp == 'unknown':
+                    dg.delete_edges([[v2, v1], [v1, v], [v, v2]])
+                    dg.add_edges([[v1, v2, 1], [v, v1, 1], [v2, v, 1]])
                     if nr_same_neighbors + nr_other_neighbors > 1:
-                        mt_tmp = _check_special_BC_cases(dg, n, ['C', 'CD'], [None, None], ['A', 'D'], [[], [v]])
+                        # _reset_dg(dg, vertices, dict_in_out, [v])
+                        return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'], [[v]])
                     else:
-                        _reset_dg(dg, vertices, dict_in_out, [v])
-                        mt_tmp = _check_special_BC_cases(dg, n, ['C', 'CD'], [None, None], ['A', 'D'])
-                    if mt_tmp == 'unknown':
-                        dg.delete_edges([[v2, v1], [v1, v], [v, v2]])
-                        dg.add_edges([[v1, v2, 1], [v, v1, 1], [v2, v, 1]])
-                        if nr_same_neighbors + nr_other_neighbors > 1:
-                            # _reset_dg(dg, vertices, dict_in_out, [v])
-                            return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'], [[v]])
-                        else:
-                            return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'])
-                    else:
-                        return mt_tmp
-                elif label1 == (1, -2) and label2 == (2, -1):
-                    if n == 4 and (nr_same_neighbors == 2 or nr_other_neighbors == 1):
-                        return QuiverMutationType(['BD', n - 1, 1])
-                    # checks for affine A
+                        return _check_special_BC_cases(dg, n, ['CD'], [None], ['D'])
+                return mt_tmp
+            elif label1 == (1, -2) and label2 == (2, -1):
+                if n == 4 and (nr_same_neighbors == 2 or nr_other_neighbors == 1):
+                    return QuiverMutationType(['BD', n - 1, 1])
+                # checks for affine A
+                if nr_same_neighbors + nr_other_neighbors > 1:
+                    mt_tmp = _check_special_BC_cases(dg, n, ['B', 'BD'], [None, None], ['A', 'D'], [[], [v]])
+                else:
+                    _reset_dg(dg, vertices, dict_in_out, [v])
+                    mt_tmp = _check_special_BC_cases(dg, n, ['B', 'BD'], [None, None], ['A', 'D'])
+                if mt_tmp == 'unknown':
+                    dg.delete_edges([[v2, v1], [v1, v], [v, v2]])
+                    dg.add_edges([[v1, v2, 1], [v, v1, 1], [v2, v, 1]])
                     if nr_same_neighbors + nr_other_neighbors > 1:
-                        mt_tmp = _check_special_BC_cases(dg, n, ['B', 'BD'], [None, None], ['A', 'D'], [[], [v]])
-                    else:
-                        _reset_dg(dg, vertices, dict_in_out, [v])
-                        mt_tmp = _check_special_BC_cases(dg, n, ['B', 'BD'], [None, None], ['A', 'D'])
-                    if mt_tmp == 'unknown':
-                        dg.delete_edges([[v2, v1], [v1, v], [v, v2]])
-                        dg.add_edges([[v1, v2, 1], [v, v1, 1], [v2, v, 1]])
-                        if nr_same_neighbors + nr_other_neighbors > 1:
-                            # _reset_dg(dg, vertices, dict_in_out, [v])
-                            return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'], [[v]])
-                        else:
-                            return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'])
-                    else:
-                        return mt_tmp
+                        # _reset_dg(dg, vertices, dict_in_out, [v])
+                        return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'], [[v]])
+                    return _check_special_BC_cases(dg, n, ['BD'], [None], ['D'])
                 else:
-                    return _false_return()
-            elif dict_in_out[v1][2] == 1 and dict_in_out[v2][2] == 1:
-                if label1 == (1, -2) and label2 == (1, -2):
-                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-                elif label1 == (2, -1) and label2 == (2, -1):
-                    return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
-                elif label1 == (1, -2) and label2 == (2, -1):
-                    return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
-                elif label1 == (2, -1) and label2 == (1, -2):
-                    return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
-                else:
-                    return _false_return()
-            elif dict_in_out[v][0] == dict_in_out[v][1] == 1 and dict_in_out[v1][0] == dict_in_out[v1][1] == 1 and dict_in_out[v2][0] == dict_in_out[v2][1] == 1:
-                _reset_dg(dg, vertices, dict_in_out, [v])
-                if n == 4 and (label1, label2) == ((2, -1), (1, -2)):
-                    return _check_special_BC_cases(dg, n, ['CD'], [1], ['A'])
-                elif n > 4 and (label1, label2) == ((2, -1), (1, -2)):
-                    return _check_special_BC_cases(dg, n, ['CD'], [1], ['D'])
-                elif n == 4 and (label1, label2) == ((1, -2), (2, -1)):
-                    return _check_special_BC_cases(dg, n, ['BD'], [1], ['A'])
-                elif n > 4 and (label1, label2) == ((1, -2), (2, -1)):
-                    return _check_special_BC_cases(dg, n, ['BD'], [1], ['D'])
-                else:
-                    return _false_return()
+                    return mt_tmp
             else:
                 return _false_return()
+        elif dict_in_out[v1][2] == 1 and dict_in_out[v2][2] == 1:
+            if label1 == (1, -2) and label2 == (1, -2):
+                return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+            if label1 == (2, -1) and label2 == (2, -1):
+                return _check_special_BC_cases(dg, n, ['BC'], [1], ['A'])
+            if label1 == (1, -2) and label2 == (2, -1):
+                return _check_special_BC_cases(dg, n, ['CC'], [1], ['A'])
+            if label1 == (2, -1) and label2 == (1, -2):
+                return _check_special_BC_cases(dg, n, ['BB'], [1], ['A'])
+            return _false_return()
+        elif dict_in_out[v][0] == dict_in_out[v][1] == 1 and dict_in_out[v1][0] == dict_in_out[v1][1] == 1 and dict_in_out[v2][0] == dict_in_out[v2][1] == 1:
+            _reset_dg(dg, vertices, dict_in_out, [v])
+            if n == 4 and (label1, label2) == ((2, -1), (1, -2)):
+                return _check_special_BC_cases(dg, n, ['CD'], [1], ['A'])
+            if n > 4 and (label1, label2) == ((2, -1), (1, -2)):
+                return _check_special_BC_cases(dg, n, ['CD'], [1], ['D'])
+            if n == 4 and (label1, label2) == ((1, -2), (2, -1)):
+                return _check_special_BC_cases(dg, n, ['BD'], [1], ['A'])
+            if n > 4 and (label1, label2) == ((1, -2), (2, -1)):
+                return _check_special_BC_cases(dg, n, ['BD'], [1], ['D'])
+            return _false_return()
+        else:
+            return _false_return()
 
     # second tests for finite types B and C: if there is only one exceptional label, it must belong to a leaf
     # also tests for affine type B: this exceptional label must belong to a leaf of a type D quiver
@@ -1014,9 +1001,10 @@ def _connected_mutation_type_AAtildeD(dg: DiGraph, ret_conn_vert=False):
         oriented_trian_edges.extend(oriented_trian)
 
     # test that no edge is in more than two oriented triangles
+    from collections import Counter
+    edge_count = Counter(oriented_trian_edges)
     multiple_trian_edges = []
-    for edge in oriented_trian_edges:
-        count = oriented_trian_edges.count(edge)
+    for edge, count in edge_count.items():
         if count > 2:
             return _false_return(17)
         elif count == 2:
@@ -1489,7 +1477,7 @@ def _random_tests(mt, k, mut_class=None, nr_mut=5):
             mt = _connected_mutation_type(dg)
             mut = -1
             # we perform nr_mut many mutations
-            for k in range(nr_mut):
+            for _ in range(nr_mut):
                 # while making sure that we do not mutate back
                 mut_tmp = mut
                 while mut == mut_tmp:

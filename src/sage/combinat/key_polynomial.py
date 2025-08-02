@@ -652,8 +652,8 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         if f not in self._polynomial_ring:
             try:  # to accept elements of SymbolicRing
                 from sage.calculus.var import var
-                f = f.substitute(list(d == var(f'z_{i}')
-                                 for i, d in enumerate(f.variables())))
+                f = f.substitute([d == var(f'z_{i}')
+                                  for i, d in enumerate(f.variables())])
                 f = self._polynomial_ring(f)
             except AttributeError:
                 raise ValueError(f"f must be an element of {self._polynomial_ring}")

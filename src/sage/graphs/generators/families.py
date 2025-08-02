@@ -9,6 +9,10 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #                          Emily A. Kirkman
 #                     2009 Michael C. Yurko <myurko@gmail.com>
 #                     2016 Rowan Schrecker <rowan.schrecker@hertford.ox.ac.uk>
+#                     2025 Juan M. Lazaro Ruiz, Steve Schluchter, and
+#                          Kristina Obrenovic Gilmour: is_projective_planar
+#                          in graph.py and associated method p2_forbidden_minors
+#                          in sage.graphs.generators.families module.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -3162,6 +3166,62 @@ def petersen_family(generate=False):
     return [Graph(x) for x in l]
 
 
+def p2_forbidden_minors():
+    r"""
+    Return an array containing the 35 minimal forbidden excluded minors
+    of the projective plane.
+
+    We constructed the graphs given in Theorem 6.5.1 of [MT2001]_,
+    which is a result of Archdeacon and encoded them in graph6 format.
+    The order of the graphs is the same as they appear in [WA2025]_.
+
+    TESTS::
+
+        sage: len(graphs.families.p2_forbidden_minors())
+        35
+    """
+
+    p2_forbidden_minors_graph6 = [
+        'KFz_????wF?[',
+        'J~{???F@oM?',
+        'I~{?GKF@w',
+        'JFz_?AB_sE?',
+        'I~{?CME`_',
+        'H~}CKMF',
+        'G^~EMK',
+        'H^|ACME',
+        'Himp`cr',
+        'Iimp_CpKO',
+        'IFz@GCdHO',
+        'IBz__aB_o',
+        'FQ~~w',
+        'GlvJ`k',
+        'HilKH`J',
+        'GjlKJs',
+        'HhI]ECZ',
+        'HiMIKSp',
+        'HFwO]Kf',
+        'I]q?a?n@o',
+        'IHIWuFGo_',
+        'IXJWMC`Eg',
+        'GFzfF?',
+        'I]o__OF@o',
+        'G?^vf_',
+        'H?]ufBo',
+        'GlrHhs',
+        'HhIWuRB',
+        'IXCO]FGb?',
+        'Fvz~o',
+        'GlfH]{',
+        'Hl`HGvV',
+        'HhcIHmv',
+        'IhEGICRiw',
+        'JhEIDSD?ga_'
+    ]
+
+    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
+
+
 def SierpinskiGasketGraph(n):
     """
     Return the Sierpinski Gasket graph of generation `n`.
@@ -3242,7 +3302,7 @@ def SierpinskiGasketGraph(n):
     dg.add_edges([(tuple(b), tuple(c)) for a, b, c in tri_list])
     dg.add_edges([(tuple(c), tuple(a)) for a, b, c in tri_list])
     dg.set_pos({(x, y): (x + y / 2, y * 3 / 4)
-                for (x, y) in dg})
+                for x, y in dg})
     dg.relabel()
     return dg
 
@@ -3549,7 +3609,7 @@ def WindmillGraph(k, n):
         slide = 1/sin(sector/4)
 
         pos_dict = {}
-        for i in range(0, k):
+        for i in range(k):
             x = float(cos(i*pi/(k-2)))
             y = float(sin(i*pi/(k-2))) + slide
             pos_dict[i] = (x, y)
@@ -4267,14 +4327,17 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
                 rand = randrange(0, len(temp))
                 Phi[(x, line)] = temp.pop(rand)
     elif Phi == 'fixed':
-        Phi = {(x, line): val for x in range(m) for val, line in enumerate(L_i[x])}
+        Phi = {(x, line): val for x in range(m)
+               for val, line in enumerate(L_i[x])}
     else:
         assert isinstance(Phi, dict), \
                "Phi must be a dictionary or 'random' or 'fixed'"
-        assert set(Phi.keys()) == set([(x, line) for x in range(m) for line in L_i[x]]), \
+        assert set(Phi.keys()) == {(x, line) for x in range(m)
+                                   for line in L_i[x]}, \
                'each Phi_i must have domain L_i'
         for x in range(m):
-            assert m - 2 == len(set([val for (key, val) in Phi.items() if key[0] == x])), \
+            assert m - 2 == len({val for key, val in Phi.items()
+                                 if key[0] == x}), \
                    'each phi_i must be injective'
         for val in Phi.values():
             assert val in range(m - 1), \
@@ -4313,7 +4376,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     # build V
     edges = []  # how many? *m^2*n^2
-    for (i, j) in L.edges(sort=True, labels=False):
+    for i, j in L.edges(sort=True, labels=False):
         for hyp in phi[(i, (i, j))]:
             for x in hyp:
                 newEdges = [((i, x), (j, y))

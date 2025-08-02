@@ -49,30 +49,30 @@ dependencies = [
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
   'cysignals >=1.11.2, != 1.12.0',
   'cython >=3.0, != 3.0.3',
-  'gmpy2 ~=2.1.b999',
-  'lrcalc ~=2.1; sys_platform != "win32"',
-  'memory_allocator',
-  'numpy >=1.25',
-  # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
-  'pplpy >=0.8.6; sys_platform != "win32"',
-  'primecountpy; sys_platform != "win32"',
-  'requests >=2.13.0',
-  # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
-  # version 4.4.0 adds another Python 3.11 typing backport
   'fpylll >=0.5.9; sys_platform != "win32"',
+  'gmpy2 ~=2.1.b999',
   'ipykernel >=5.2.1',
   'ipython >=8.9.0',
   'ipywidgets >=7.5.1',
   'jupyter-client',
   'matplotlib >=3.7.0',
+  'memory_allocator',
   'mpmath >=1.1.0',
   'networkx >=3.1',
+  'numpy >=1.25',
   'pexpect >=4.8.0',
   'pillow >=7.2.0',
+  'platformdirs',
+  # Issue #30922: pplpy 0.8.4 and earlier do not declare dependencies correctly
+  'pplpy >=0.8.6; sys_platform != "win32"',
+  'primecountpy; sys_platform != "win32"',
   'ptyprocess > 0.5',
+  'requests >=2.13.0',
   'scipy >=1.11',
   'sphinx >=5.2, <9',
   'sympy >=1.6, <2.0',
+  # According to https://github.com/python/typing_extensions/blob/main/CHANGELOG.md,
+  # version 4.4.0 adds another Python 3.11 typing backport
   'typing_extensions >= 4.4.0; python_version<"3.11"',
   # TODO: Remove this once the migration to meson is complete
   'pkgconfig',
@@ -86,12 +86,17 @@ requires-python = ">=3.11, <3.14"
 urls = { Homepage = "https://www.sagemath.org" }
 
 [project.optional-dependencies]
-R = [
-  'rpy2 >=3.3',
+R = ['rpy2 >=3.3']
+extra = [
+  'igraph',
+  'lrcalc ~=2.1; sys_platform != "win32"',
+  'p_group_cohomology >=3.3', # Only used in tests
+  'pycosat >=0.6.3',
+  'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
+  'sage_numerical_backends_coin',
+  'symengine >= 0.6.1', # Only used in tests
 ]
-giac = [
-  'sagemath_giac',
-]
+giac = ['sagemath_giac']
 
 [project.readme]
 content-type = "text/markdown"
@@ -101,12 +106,7 @@ file = "README.md"
 sage = "sage.cli:main"
 
 [tool.conda-lock]
-platforms = [
-  'linux-64',
-  'linux-aarch64',
-  'osx-64',
-  'osx-arm64',
-]
+platforms = ['linux-64', 'linux-aarch64', 'osx-64', 'osx-arm64']
 
 [tool.pytest.ini_options]
 norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools"
@@ -180,31 +180,44 @@ dependencies = [
   "pkg:generic/tachyon",
 ]
 
-[dependency-groups]
-dev = [
-  "conda-lock",
-  "grayskull",
-  "meson",
-  "pygithub",
-  "toml",
-  "tqdm",
+[external.optional-host-requires]
+extra = [
+  "pkg:generic/bliss",
+  "pkg:generic/coxeter3",
+  "pkg:generic/mcqd",
+  "pkg:generic/meataxe",
+  "pkg:generic/sirocco",
+  "pkg:generic/tdlib",
 ]
+
+[external.optional-dependencies]
+R = ["pkg:generic/r-lattice"]
+extra = [
+  "pkg:generic/4ti2",
+  "pkg:generic/benzene",
+  "pkg:generic/buckygen",
+  "pkg:generic/csdp",
+  "pkg:generic/frobby",
+  "pkg:generic/kenzo",
+  "pkg:generic/latte-integrale",
+  "pkg:generic/lrslib",
+  "pkg:generic/plantri",
+  "pkg:generic/qepcad",
+  "pkg:generic/tides",
+]
+
+[dependency-groups]
+dev = ["conda-lock", "grayskull", "meson", "pygithub", "toml", "tqdm", "uv"]
 docs = [
   "furo",
+  "jupyter-sphinx",
+  "python-dateutil",
   "sphinx",
+  "sphinx-copybutton",
   "sphinx-inline-tabs",
 ]
-lint = [
-  "flake8-rst-docstrings",
-  "pycodestyle",
-  "relint",
-  "ruff",
-]
-test = [
-  "coverage",
-  "pytest",
-  "pytest-xdist",
-]
+lint = ["flake8-rst-docstrings", "pycodestyle", "relint", "ruff"]
+test = ["coverage", "pytest", "pytest-xdist"]
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration

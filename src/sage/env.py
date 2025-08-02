@@ -39,22 +39,22 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Optional
-import sage
-import platform
 import os
 import socket
+import subprocess
 import sys
 import sysconfig
-from . import version
-import subprocess
+from typing import Optional
 
+from platformdirs import site_data_dir, user_data_dir
+
+from sage import version
 
 # All variables set by var() appear in this SAGE_ENV dict
 SAGE_ENV = dict()
 
 
-def join(*args):
+def join(*args) -> str | None:
     """
     Join paths like ``os.path.join`` except that the result is ``None``
     if any of the components is ``None``.
@@ -159,9 +159,9 @@ def var(key: str, *fallbacks: Optional[str], force: bool = False) -> Optional[st
             except ImportError:
                 pass
 
-    # Try all fallbacks in order as long as we don't have a value
+    # Try all fallbacks in order as long as we don't have a non-empty value
     for f in fallbacks:
-        if value is not None:
+        if value not in (None, ""):
             break
         value = f
     SAGE_ENV[key] = value
@@ -215,13 +215,9 @@ SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
-# colon-separated search path for databases.
-SAGE_DATA_PATH = var("SAGE_DATA_PATH",
-                     os.pathsep.join(filter(None, [
-                         join(DOT_SAGE, "db"),
-                         join(SAGE_SHARE, "sagemath"),
-                         SAGE_SHARE,
-                         ])))
+# colon-separated search path for databases
+# should not be used directly; instead use sage_data_paths
+SAGE_DATA_PATH = var("SAGE_DATA_PATH")
 
 # database directories, the default is to search in SAGE_DATA_PATH
 CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
@@ -238,6 +234,7 @@ THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
+MAXIMA_SHARE = var("MAXIMA_SHARE")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
 SAGE_ECMBIN = var("SAGE_ECMBIN", "ecm")
@@ -414,8 +411,9 @@ def cython_aliases(required_modules=None, optional_modules=None):
         ....: ''')
         435
     """
-    import pkgconfig
     import itertools
+
+    import pkgconfig
 
     if required_modules is None:
         required_modules = default_required_modules
@@ -515,3 +513,34 @@ def cython_aliases(required_modules=None, optional_modules=None):
     aliases["OPENMP_CXXFLAGS"] = OPENMP_CXXFLAGS.split()
 
     return aliases
+
+
+def sage_data_paths(name: str | None) -> set[str]:
+    r"""
+    Search paths for general data files.
+
+    If specified, the subdirectory ``name`` is appended to the
+    directories. Otherwise, the directories are returned as is.
+
+    EXAMPLES::
+
+        sage: from sage.env import sage_data_paths
+        sage: sage_data_paths("cremona")
+        {'.../cremona'}
+    """
+    if not SAGE_DATA_PATH:
+        paths = {
+            join(DOT_SAGE, "db"),
+            join(SAGE_SHARE, "sagemath"),
+            SAGE_SHARE,
+        }
+        paths.add(user_data_dir("sagemath"))
+        paths.add(user_data_dir())
+        paths.add(site_data_dir("sagemath"))
+        paths.add(site_data_dir())
+    else:
+        paths = {path for path in SAGE_DATA_PATH.split(os.pathsep)}
+
+    if name is None:
+        return {path for path in paths if path}
+    return {os.path.join(path, name) for path in paths if path}
