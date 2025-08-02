@@ -2236,9 +2236,9 @@ def get_gcd(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_gcd(4000)
-        <built-in method gcd_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.gcd_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_gcd(400000)
-        <built-in method gcd_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.gcd_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_gcd(4000000000)
         <function gcd at ...>
     """
@@ -2258,9 +2258,9 @@ def get_inverse_mod(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_inverse_mod(6000)
-        <built-in method inverse_mod_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.inverse_mod_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_inverse_mod(600000)
-        <built-in method inverse_mod_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.inverse_mod_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_inverse_mod(6000000000)
         <function inverse_mod at ...>
     """
@@ -3600,7 +3600,7 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
-    
+
     Tests for call with length 1 lists (:issue:`40074`)::
 
         sage: x = CRT_list([1], [2]); x
@@ -3719,7 +3719,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
         for i in range(n):
-            cs.append(e[i] * partial_prod_table[-i-1])
+            cs.append(e[i] * partial_prod_table[-i - 1])
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
@@ -3770,8 +3770,8 @@ def CRT_vectors(X, moduli):
                  for j in range(len(X[0]))]
     if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
                           for i in range(n)
-        for j in range(len(X[i]))):
-            raise ValueError("solution does not exist")
+                          for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
     return candidate
 
 

@@ -217,7 +217,7 @@ in the Installation Guide.
       for a discussion of suitable compilers.
 
     - Build tools: GNU `make`, GNU `m4`, `perl` (including
-      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`.
+      `ExtUtils::MakeMaker`), `ranlib`, `git`, `tar`, `bc`, `patch`, `bzip2`, `pkgconf` (also known as `pkg-config`).
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
@@ -538,9 +538,6 @@ SAGE_ROOT                 Root directory (create by git clone)
 │   │   └── setup.py
 │   ├── sage-setup
 │   │   ├── sage_setup/
-│   │   └── setup.py
-│   ├── sage-sws2rst
-│   │   ├── sage_sws2rst/
 │   │   └── setup.py
 │   └── sagemath-standard
 │       ├── bin/

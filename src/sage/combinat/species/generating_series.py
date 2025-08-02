@@ -1,5 +1,5 @@
 r"""
-Generating Series
+Generating series
 
 This file makes a number of extensions to lazy power series by
 endowing them with some semantic content for how they're to be
@@ -216,6 +216,9 @@ class ExponentialGeneratingSeries(LazyPowerSeries):
         EXAMPLES::
 
             sage: G = species.SimpleGraphSpecies()
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: g = G.generating_series()
             sage: [g.coefficient(i) for i in range(10)]
             [1, 1, 1, 4/3, 8/3, 128/15, 2048/45, 131072/315, 2097152/315, 536870912/2835]

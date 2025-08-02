@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Kirillov-Reshetikhin Tableaux
+Kirillov-Reshetikhin tableaux
 
 Kirillov-Reshetikhin tableaux are rectangular tableaux with `r` rows and
 `s` columns that naturally arise under the bijection between rigged
@@ -13,19 +13,19 @@ rigged configurations [RigConBijection]_.
 For more information, see :class:`~sage.combinat.rigged_configurations.kr_tableaux.KirillovReshetikhinTableaux`
 and :class:`~sage.combinat.rigged_configurations.tensor_product_kr_tableaux.TensorProductOfKirillovReshetikhinTableaux`.
 
-AUTHORS:
-
-- Travis Scrimshaw (2012-01-03): Initial version
-- Travis Scrimshaw (2012-11-14): Added bijection to KR crystals
-
 REFERENCES:
 
 .. [OSS13] Masato Okado, Reiho Sakamoto, and Anne Schilling.
    *Affine crystal structure on rigged configurations of type* `D_n^{(1)}`.
    J. Algebraic Combinatorics, **37** (2013). 571-599. :arxiv:`1109.3523`.
+
+AUTHORS:
+
+- Travis Scrimshaw (2012-01-03): initial version
+- Travis Scrimshaw (2012-11-14): added bijection to KR crystals
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -37,8 +37,8 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 # This contains both the parent and element classes. These should be split if
 #   the classes grow larger.
@@ -56,9 +56,11 @@ from sage.combinat.crystals.letters import CrystalOfLetters, EmptyLetter
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.tensor_product import CrystalOfWords
 from sage.combinat.crystals.tensor_product import TensorProductOfRegularCrystalsElement
-from sage.combinat.crystals.kirillov_reshetikhin import horizontal_dominoes_removed, \
-  KashiwaraNakashimaTableaux, KirillovReshetikhinGenericCrystalElement, \
-  partitions_in_box, vertical_dominoes_removed
+from sage.combinat.crystals.kirillov_reshetikhin import (
+    horizontal_dominoes_removed,
+    KashiwaraNakashimaTableaux, KirillovReshetikhinGenericCrystalElement,
+    partitions_in_box, vertical_dominoes_removed
+)
 from sage.combinat.partition import Partition
 from sage.combinat.tableau import Tableau
 
@@ -256,25 +258,25 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
             if typ == 'E':
                 return KRTableauxTypeFromRC(ct, r, s)
         else:
-            if typ == 'BC': # A_{2n}^{(2)}
+            if typ == 'BC':  # A_{2n}^{(2)}
                 return KRTableauxTypeBox(ct, r, s)
             typ = ct.dual().type()
-            if typ == 'BC': # A_{2n}^{(2)\dagger}
+            if typ == 'BC':  # A_{2n}^{(2)\dagger}
                 return KRTableauxTypeHorizonal(ct, r, s)
-            if typ == 'B': # A_{2n-1}^{(2)}
+            if typ == 'B':  # A_{2n-1}^{(2)}
                 return KRTableauxTypeVertical(ct, r, s)
-            if typ == 'C': # D_{n+1}^{(2)}
+            if typ == 'C':  # D_{n+1}^{(2)}
                 if r == ct.dual().classical().rank():
                     return KRTableauxDTwistedSpin(ct, r, s)
                 return KRTableauxTypeBox(ct, r, s)
-            #if typ == 'F': # E_6^{(2)}
-            if typ == 'G': # D_4^{(3)}
+            # if typ == 'F':  # E_6^{(2)}
+            if typ == 'G':  # D_4^{(3)}
                 if r == 1:
                     return KRTableauxTypeBox(ct, r, s)
                 return KRTableauxTypeFromRC(ct, r, s)
 
         raise NotImplementedError
-        #return super(KirillovReshetikhinTableaux, cls).__classcall__(cls, ct, r, s)
+        # return super(KirillovReshetikhinTableaux, cls).__classcall__(cls, ct, r, s)
 
     def __init__(self, cartan_type, r, s):
         r"""
@@ -309,7 +311,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
             Kirillov-Reshetikhin tableaux of type ['A', 4, 1] and shape (2, 3)
         """
         return "Kirillov-Reshetikhin tableaux of type {} and shape ({}, {})".format(
-                self._cartan_type, self._r, self._s)
+            self._cartan_type, self._r, self._s)
 
     def __iter__(self):
         """
@@ -324,9 +326,10 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         """
         index_set = self._cartan_type.classical().index_set()
         from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
-        return RecursivelyEnumeratedSet(self.module_generators,
-                    lambda x: [x.f(i) for i in index_set],
-                    structure='graded').breadth_first_search_iterator()
+        rset = RecursivelyEnumeratedSet(self.module_generators,
+                                        lambda x: [x.f(i) for i in index_set],
+                                        structure='graded')
+        return rset.breadth_first_search_iterator()
 
     def module_generator(self, i=None, **options):
         r"""
@@ -378,7 +381,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
             shape = list(options["shape"])
             # Make sure the shape is the correct length
             if len(shape) < n:
-                shape.extend( [0]*(n - len(shape)) )
+                shape.extend([0] * (n - len(shape)))
             for mg in self.module_generators:
                 if list(mg.classical_weight().to_vector()) == shape:
                     return mg
@@ -387,7 +390,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         if "column_shape" in options:
             shape = list(Partition(options["column_shape"]).conjugate())
             if len(shape) < n:
-                shape.extend( [0]*(n - len(shape)) )
+                shape.extend([0] * (n - len(shape)))
             for mg in self.module_generators:
                 if list(mg.classical_weight().to_vector()) == shape:
                     return mg
@@ -412,7 +415,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         Lambda = R.fundamental_weights()
         r = self.r()
         s = self.s()
-        weight = s*Lambda[r] - s*Lambda[0] * Lambda[r].level() / Lambda[0].level()
+        weight = s * Lambda[r] - s * Lambda[0] * Lambda[r].level() / Lambda[0].level()
         for b in self.module_generators:
             if b.weight() == weight:
                 return b
@@ -462,7 +465,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         if isinstance(lst[0], KirillovReshetikhinGenericCrystalElement):
             # Check to make sure it can be converted
             if lst[0].cartan_type() != self.cartan_type() \
-              or lst[0].parent().r() != self._r or lst[0].parent().s() != self._s:
+               or lst[0].parent().r() != self._r or lst[0].parent().s() != self._s:
                 raise ValueError("the Kirillov-Reshetikhin crystal must have the same Cartan type and (r,s)")
             return self.from_kirillov_reshetikhin_crystal(lst[0])
 
@@ -544,7 +547,7 @@ class KirillovReshetikhinTableaux(CrystalOfWords):
         """
         ct = self._cartan_type
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux \
-                import TensorProductOfKirillovReshetikhinTableaux
+            import TensorProductOfKirillovReshetikhinTableaux
         if all(isinstance(B, (KirillovReshetikhinTableaux, TensorProductOfKirillovReshetikhinTableaux))
                and B.cartan_type() == ct for B in crystals):
             dims = [[self._r, self._s]]
@@ -601,9 +604,8 @@ class KRTableauxRectangle(KirillovReshetikhinTableaux):
             sage: KRT._build_module_generators()
             ([[1, 1, 1], [2, 2, 2]],)
         """
-        tableau = []
-        for i in range(self._s):
-            tableau.append( [self._r - j for j in range(self._r)] )
+        tableau = [[self._r - j for j in range(self._r)]
+                   for i in range(self._s)]
 
         return (self.element_class(self, [self.letters(x) for x in flatten(tableau)]),)
 
@@ -670,7 +672,7 @@ class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
             [[1, 1, 1, 1, 1, 5, 1], [2, 2, 2, 2, 2, 6, 2], [3, 3, 9, 7, 9, 7, 3], [4, 4, 10, 8, 10, 8, 4], [5, 5, 11, 9, 11, 9, 5], [6, 6, 12, 10, 12, 10, 6], [7, 7, -12, 11, -12, 11, 7], [8, 8, -11, 12, -11, 12, 8], [9, 9, -10, -12, -10, -12, -8], [10, 10, -9, -11, -9, -11, -7], [-12, 11, -8, -10, -8, -10, -6], [-11, 12, -7, -9, -7, -9, -5]]
         """
         # Add zeros until the shape has length s
-        weight_list = list(weight) # Make sure we have a list
+        weight_list = list(weight)  # Make sure we have a list
         while len(weight_list) != self._s:
             weight_list.append(0)
 
@@ -678,14 +680,14 @@ class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
         i = 0
         # Step 0 - Fill first columns of height r
         while i < self._s and weight_list[i] == self._r:
-            tableau.append( [self._r - j for j in range(self._r)] )
+            tableau.append([self._r - j for j in range(self._r)])
             i += 1
 
         # Step 1 - Add the alternating columns until we hit an odd number of columns
         c = -1
         while i < self._s:
             # If it is an odd number of columns
-            if i == self._s - 1 or weight_list[i] != weight_list[i+1]:
+            if i == self._s - 1 or weight_list[i] != weight_list[i + 1]:
                 c = weight_list[i]
                 i += 1
                 break
@@ -693,16 +695,16 @@ class KRTableauxTypeVertical(KirillovReshetikhinTableaux):
             for j in range(weight_list[i]):
                 temp_list.append(weight_list[i] - j)
             tableau.append(temp_list)
-            tableau.append( [self._r - j for j in range(self._r)] )
+            tableau.append([self._r - j for j in range(self._r)])
             i += 2
 
         # Step 2 - Add the x dependent columns
         x = c + 1
         while i < self._s:
-            temp_list = [-x - j for j in range(self._r - x + 1)] # +1 for indexing
-            for j in range(x - weight_list[i] - 1): # +1 for indexing
+            temp_list = [-x - j for j in range(self._r - x + 1)]  # +1 for indexing
+            for j in range(x - weight_list[i] - 1):  # +1 for indexing
                 temp_list.append(self._r - j)
-            x = temp_list[-1] # This is the h+1 entry of the column
+            x = temp_list[-1]  # This is the h+1 entry of the column
             for j in range(weight_list[i]):
                 temp_list.append(weight_list[i] - j)
 
@@ -795,7 +797,7 @@ class KRTableauxTypeHorizonal(KirillovReshetikhinTableaux):
             [[1, 1, 1, 1, 1, 1], [2, 2, 2, 2, -5, 2], [-5, 3, -5, 3, -4, 3], [-4, 4, -4, 4, -3, 4], [-3, 5, -3, 5, -2, 5]]
         """
         # Add zeros until the shape has length s
-        shape_list = list(shape) # Make sure we have a list
+        shape_list = list(shape)  # Make sure we have a list
         while len(shape_list) != self._r:
             shape_list.append(0)
 
@@ -892,7 +894,7 @@ class KRTableauxTypeBox(KRTableauxTypeVertical):
             [[1, 1, 1, 1, 1, 5, 1], [2, 2, 2, 2, 2, 6, 2], [3, 3, 9, 7, 9, 7, 3], [4, 4, 10, 8, 10, 8, 4], [5, 5, 11, 9, 11, 9, 5], [6, 6, 12, 10, 12, 10, 6], [7, 7, -12, 11, -12, 11, 7], [8, 8, -11, 12, -11, 12, 8], [9, 9, -10, -12, -10, -12, -8], [10, 10, -9, -11, -9, -11, -7], [-12, 11, -8, -10, -8, -10, -6], [-11, 12, -7, -9, -7, -9, -5]]
         """
         # Add zeros until the shape has length s
-        weight_list = list(weight) # Make sure we have a list
+        weight_list = list(weight)  # Make sure we have a list
         while len(weight_list) != self._s:
             weight_list.append(0)
 
@@ -900,14 +902,14 @@ class KRTableauxTypeBox(KRTableauxTypeVertical):
         i = 0
         # Step 0 - Fill first columns of height r
         while i < self._s and weight_list[i] == self._r:
-            tableau.append( [self._r - j for j in range(self._r)] )
+            tableau.append([self._r - j for j in range(self._r)])
             i += 1
 
         # Step 1 - Add the alternating columns until we hit an odd number of columns
         c = -1
         while i < self._s:
             # If it is an odd number of columns
-            if i == self._s - 1 or weight_list[i] != weight_list[i+1]:
+            if i == self._s - 1 or weight_list[i] != weight_list[i + 1]:
                 c = weight_list[i]
                 i += 1
                 break
@@ -915,16 +917,16 @@ class KRTableauxTypeBox(KRTableauxTypeVertical):
             for j in range(weight_list[i]):
                 temp_list.append(weight_list[i] - j)
             tableau.append(temp_list)
-            tableau.append( [self._r - j for j in range(self._r)] )
+            tableau.append([self._r - j for j in range(self._r)])
             i += 2
 
         # Step 2 - Add the x dependent columns
         x = c + 1
         while i < self._s:
-            temp_list = [-x - j for j in range(self._r - x + 1)] # +1 for indexing
-            for j in range(x - weight_list[i] - 1): # +1 for indexing
+            temp_list = [-x - j for j in range(self._r - x + 1)]  # +1 for indexing
+            for j in range(x - weight_list[i] - 1):  # +1 for indexing
                 temp_list.append(self._r - j)
-            x = temp_list[-1] # This is the h+1 entry of the column
+            x = temp_list[-1]  # This is the h+1 entry of the column
             for j in range(weight_list[i]):
                 temp_list.append(weight_list[i] - j)
 
@@ -990,7 +992,7 @@ class KRTableauxSpin(KRTableauxRectangle):
 
         tableau = []
         for i in range(self._s):
-            tableau.append( [-n] + [self._r - j for j in range(self._r)] )
+            tableau.append([-n] + [self._r - j for j in range(self._r)])
 
         return (self.element_class(self, [self.letters(x) for x in flatten(tableau)]),)
 
@@ -1016,8 +1018,8 @@ class KRTableauxBn(KRTableauxTypeHorizonal):
             ([[-2, 1], [-1, 2]], [[1, 1], [2, 2]])
         """
         odd = int(self._s % 2)
-        shapes = [[int(x * 2 + odd) for x in sh] for sh
-                   in vertical_dominoes_removed(self._r, self._s // 2)]
+        shapes = ([int(x * 2 + odd) for x in sh]
+                  for sh in vertical_dominoes_removed(self._r, self._s // 2))
         return tuple(self._fill(sh) for sh in shapes)
 
     def from_kirillov_reshetikhin_crystal(self, krc):
@@ -1438,9 +1440,9 @@ class KirillovReshetikhinTableauxElement(TensorProductOfRegularCrystalsElement):
         if P._s == 1:
             raise ValueError("cannot split a single column")
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux import \
-                TensorProductOfKirillovReshetikhinTableaux
+            TensorProductOfKirillovReshetikhinTableaux
         r = P._r
-        TP = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, [[r, 1], [r, P._s-1]])
+        TP = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, [[r, 1], [r, P._s - 1]])
         lf = TP.crystals[0](*(self[:r]))
         rf = TP.crystals[1](*(self[r:]))
         return TP(lf, rf)
@@ -1635,9 +1637,9 @@ class KRTableauxSpinElement(KirillovReshetikhinTableauxElement):
         if P._s == 1:
             raise ValueError("cannot split a single column")
         from sage.combinat.rigged_configurations.tensor_product_kr_tableaux import \
-                TensorProductOfKirillovReshetikhinTableaux
+            TensorProductOfKirillovReshetikhinTableaux
         h = P._cartan_type.classical().rank()
-        TP = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, [[P._r, 1], [P._r, P._s-1]])
+        TP = TensorProductOfKirillovReshetikhinTableaux(P._cartan_type, [[P._r, 1], [P._r, P._s - 1]])
         lf = TP.crystals[0](*(self[:h]))
         rf = TP.crystals[1](*(self[h:]))
         return TP(lf, rf)

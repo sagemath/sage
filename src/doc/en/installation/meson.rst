@@ -172,7 +172,7 @@ To compile and install Sage in editable install, then just use:
         memory_allocator \
         "numpy >=1.25" \
         jinja2 \
-        setuptool
+        setuptools
     $ uv sync --frozen --inexact --no-build-isolation
 
 You can then start Sage from the command line with ``./sage``
@@ -244,6 +244,12 @@ To compile the project, run the following command:
 .. code-block:: shell-session
 
     $ meson compile -C builddir
+
+On Windows, you may encounter a linker error related to a missing
+``python_d.lib`` file. This typically indicates that your Python interpreter is
+not a debug build. To resolve this, it is recommended to use a release build
+by adding ``-Dbuildtype=release`` to the ``meson setup`` command, or
+alternatively, use a debug build of the Python interpreter.
 
 Installing is done with the following command:
 

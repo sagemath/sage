@@ -1,7 +1,7 @@
 """
-Characteristic Species
+Characteristic species
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,7 +14,7 @@ Characteristic Species
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .species import GenericCombinatorialSpecies
 from sage.arith.misc import factorial
@@ -29,6 +29,9 @@ class CharacteristicSpeciesStructure(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: F = species.CharacteristicSpecies(3)
+            doctest:warning...
+            DeprecationWarning: combinat.species is superseded by LazyCombinatorialSpecies
+            See https://github.com/sagemath/sage/issues/38544 for details.
             sage: a = F.structures([1, 2, 3]).random_element(); a
             {1, 2, 3}
             sage: F = species.SingletonSpecies()

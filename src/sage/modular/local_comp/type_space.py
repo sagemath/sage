@@ -19,7 +19,7 @@ import operator
 from sage.arith.misc import crt
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method, cached_function
-from sage.modular.arithgroup.all import GammaH
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
 from sage.modular.modform.constructor import ModularForms
 from sage.modular.modform.element import Newform
 from sage.modular.modsym.modsym import ModularSymbols
@@ -471,13 +471,14 @@ class TypeSpace(SageObject):
         g3 = [f * g2[0], g2[1], f**2 * g2[2], f*g2[3]]
         A = self.t_space.ambient()
         mm = A._action_on_modular_symbols(g3).restrict(self.t_space.free_module()).transpose()
-        m = mm / ZZ(f**(self.form().weight()-2))
-        return m
+        return mm / ZZ(f**(self.form().weight() - 2))
 
     def _rho_unramified(self, g):
         r"""
         Calculate the action of ``g`` on the type space, in the unramified (even
-        level) case. Uses the two standard generators, and a solution of the
+        level) case.
+
+        This uses the two standard generators, and a solution of the
         word problem in `\SL_2(\ZZ / p^u \ZZ)`.
 
         INPUT:

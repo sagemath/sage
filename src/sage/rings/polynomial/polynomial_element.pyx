@@ -74,9 +74,7 @@ import sage.rings.fraction_field_element
 import sage.rings.infinity as infinity
 from sage.misc.latex import latex
 from sage.arith.power cimport generic_power
-from sage.arith.misc import crt
 from sage.arith.long cimport pyobject_to_long
-from sage.misc.mrange import cartesian_product_iterator
 from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
@@ -6299,7 +6297,7 @@ cdef class Polynomial(CommutativePolynomial):
             (2*x^2 - 3*x - 5, -1)
         """
         lc = self.leading_coefficient()
-        n, u = lc.canonical_associate()
+        _, u = lc.canonical_associate()
         return (u.inverse_of_unit() * self, u)
 
     def lm(self):
@@ -8873,7 +8871,6 @@ cdef class Polynomial(CommutativePolynomial):
             sage: all(r.parent() is K for r in f.roots(multiplicities=False))           # needs sage.rings.finite_rings
             True
         """
-        from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
 
         # If the base ring has a method _roots_univariate_polynomial,
@@ -10993,7 +10990,7 @@ cdef class Polynomial(CommutativePolynomial):
             i += 1
         return ans // ans.leading_coefficient()
 
-    def has_cyclotomic_factor(self):
+    def has_cyclotomic_factor(self) -> bool:
         r"""
         Return ``True`` if the given polynomial has a nontrivial cyclotomic factor.
 
@@ -12644,6 +12641,7 @@ cdef class Polynomial_generic_dense(Polynomial):
         self._coeffs = self._coeffs[:n]
         return self
 
+
 def make_generic_polynomial(parent, coeffs):
     return parent(coeffs)
 
@@ -13031,7 +13029,7 @@ cdef class PolynomialBaseringInjection(Morphism):
     By :issue:`9944`, there are now only very few exceptions::
 
         sage: PolynomialRing(QQ,names=[]).coerce_map_from(QQ)
-        Call morphism:
+        Coercion map:
           From: Rational Field
           To:   Multivariate Polynomial Ring in no variables over Rational Field
     """

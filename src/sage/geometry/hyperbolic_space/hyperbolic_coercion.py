@@ -26,6 +26,7 @@ from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.functions.other import real, imag
 from sage.misc.functional import sqrt
+from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.misc.call', 'attrcall')
 
@@ -296,8 +297,19 @@ class CoercionPDtoUHP(HyperbolicModelCoercion):
             +Infinity
             sage: phi.image_coordinates(-I)
             0
+
+        TESTS:
+
+        Check that the second bug discussed in :issue:`32362` is fixed::
+
+            sage: PD = HyperbolicPlane().PD()
+            sage: UHP = HyperbolicPlane().UHP()
+            sage: r = exp((pi*I/2).n())
+            sage: p = PD.get_point(r)
+            sage: UHP(p)
+            Boundary point in UHP +Infinity
         """
-        if x == I:
+        if abs(x - I) < EPSILON:
             return infinity
         return (x + I)/(Integer(1) + I*x)
 
