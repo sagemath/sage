@@ -1415,7 +1415,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         from sage.sets.family import Family
         return Family(self._cubic_braid_group.gens(), self.monomial)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -1552,8 +1552,6 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         g1 = self.monomial(g1)
         g2 = self.monomial(g2)
 
-        result = None
-
         g1_Tietze = g1.Tietze()
         g2_Tietze = g2.Tietze()
 
@@ -1563,9 +1561,8 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         # The product is calculated from the corresponding product of the braids
         # ----------------------------------------------------------------------
         braid_group = self.braid_group()
-        braid_product = braid_group(g1_Tietze+g2_Tietze)
-        result = self._braid_image(braid_product)
-        return result
+        braid_product = braid_group(g1_Tietze + g2_Tietze)
+        return self._braid_image(braid_product)
 
     ############################################################################
     # --------------------------------------------------------------------------
@@ -2043,8 +2040,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                 return self.one()
             k = braid_tietze[0]*len_braid
             result_vect = self._reduce_gen_power(k)
-            result = self.from_vector(result_vect)
-            return result
+            return self.from_vector(result_vect)
 
         # ----------------------------------------------------------------------
         # Try to use former calculations (from dynamic library) to obtain the
@@ -2094,8 +2090,7 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
                 braid_preimage = tuple(word_result)
             result_vect = self._mult_by_regular_rep(vect, tuple(word_right), RepresentationType.RegularRight, braid_preimage)
 
-        result = self.from_vector(result_vect)
-        return result
+        return self.from_vector(result_vect)
 
     # --------------------------------------------------------------------------
     # _braid_image_from_former_calculations
@@ -2649,7 +2644,6 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
             sage: CHA2.mirror_isomorphism(br)   # indirect doctest
             c^-1
         """
-
         result = self.zero()
         for braid in element.support():
             autom_braid = braid_automorphism(braid)

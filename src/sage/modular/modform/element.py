@@ -57,11 +57,11 @@ from sage.rings.real_mpfr import RealField
 from sage.structure.element import coercion_model, ModuleElement, Element
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
-lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
-lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
-
 import sage.modular.hecke.element as element
 from . import defaults
+
+lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
+lazy_import('sage.rings.number_field.number_field_morphisms', 'NumberFieldEmbedding')
 
 
 def is_ModularFormElement(x):
@@ -337,7 +337,6 @@ class ModularForm_abstract(ModuleElement):
             sage: f(ComplexField(128)(1+2*I)/3 + x - x)  # rel tol 1e-36
             429.19994832206294278688085399056359632 - 786.15736284188243351153830824852974995*I
         """
-        from sage.rings.integer import Integer
         from sage.misc.functional import log
         from sage.structure.element import parent
         from sage.rings.complex_mpfr import ComplexNumber
@@ -357,7 +356,7 @@ class ModularForm_abstract(ModuleElement):
             if not isinstance(x, (RealNumber, ComplexNumber)):
                 x = CC(x)  # might lose precision if this is done unconditionally (TODO what about interval and ball types?)
         if isinstance(x, (RealNumber, ComplexNumber)):
-            return self.eval_at_tau(log(x)/(2*parent(x)(pi)*I))  # cast to parent(x) to force numerical evaluation of pi
+            return self.eval_at_tau(log(x) / (2 * parent(x)(pi) * I))  # cast to parent(x) to force numerical evaluation of pi
         return self.q_expansion(prec)(x)
 
     def eval_at_tau(self, tau):
@@ -393,7 +392,6 @@ class ModularForm_abstract(ModuleElement):
             sage: f.eval_at_tau(ComplexField(128)(1+2*I)/3 + x - x)  # rel tol 1e-36
             -1.0451570582202060056197878314286036966 + 2.7225112098519803098203933583286590274*I
         """
-        from sage.libs.pari.convert_sage import gen_to_sage
         from sage.libs.pari import pari
         from sage.rings.cc import CC
         from sage.rings.complex_mpfr import ComplexNumber, ComplexField
@@ -582,9 +580,9 @@ class ModularForm_abstract(ModuleElement):
             if n.stop is None:
                 return self.q_expansion().list()[n]
             else:
-                return self.q_expansion(n.stop+1).list()[n]
+                return self.q_expansion(n.stop + 1).list()[n]
         else:
-            return self.q_expansion(n+1)[int(n)]
+            return self.q_expansion(n + 1)[int(n)]
 
     def coefficient(self, n):
         r"""
@@ -610,7 +608,7 @@ class ModularForm_abstract(ModuleElement):
             -1472
         """
         n = ZZ(n)
-        return self.q_expansion(n+1)[n]
+        return self.q_expansion(n + 1)[n]
 
     def padded_list(self, n):
         """
@@ -995,11 +993,11 @@ class ModularForm_abstract(ModuleElement):
 
         M = self.group()(M)
         # coefficients of the matrix M
-        (b, c, d) = (M.b(), M.c() / N, M.d())
+        b, c, d = (M.b(), M.c() / N, M.d())
         if d == 0:
             return R.zero()
         if d < 0:
-            (b, c, d) = (-b, -c, -d)
+            b, c, d = (-b, -c, -d)
 
         twopi = 2 * R.pi()
         I = R.complex_field().gen()
@@ -1191,13 +1189,13 @@ class ModularForm_abstract(ModuleElement):
         # Find out how many coefficients of the Dirichlet series are needed
         # in order to compute to the required precision
         num_coeffs = L.num_coeffs()
-        coeffs = self.q_expansion(num_coeffs+1).padded_list()[1:]
+        coeffs = self.q_expansion(num_coeffs + 1).padded_list()[1:]
 
         # renormalize so that coefficient of q is 1
         b = coeffs[0]
         if b != 1:
-            invb = 1/b
-            coeffs = (invb*c for c in coeffs)
+            invb = 1 / b
+            coeffs = (invb * c for c in coeffs)
 
         v = [emb(c) for c in coeffs]
         w = [c.conjugate() for c in v]
@@ -1308,7 +1306,7 @@ class ModularForm_abstract(ModuleElement):
 
         # utility function for Dirichlet convolution of series
         def dirichlet_convolution(A, B):
-            return [sum(A[d-1] * B[n/d - 1] for d in divisors(n))
+            return [sum(A[d - 1] * B[n // d - 1] for d in divisors(n))
                     for n in range(1, 1 + min(len(A), len(B)))]
 
         # The Dirichlet series for \zeta(2 s - 2 k + 2)
@@ -1387,7 +1385,7 @@ class ModularForm_abstract(ModuleElement):
         pi = RealField(prec).pi()
         L = self.symsquare_lseries(prec=prec, embedding=embedding)
         k = self.weight()
-        return (ZZ(k - 1).factorial() / 2**(2*k - 1) / pi**(k+1)) * L(k).real_part()
+        return (ZZ(k - 1).factorial() / 2**(2 * k - 1) / pi**(k + 1)) * L(k).real_part()
 
     def _q_expansion_bound(self, eps):
         r"""
@@ -1435,11 +1433,11 @@ class ModularForm_abstract(ModuleElement):
                  chi.conductor() * eps.conductor()])
         y = QQ(self.weight()) / QQ(12) * M
         for p in M.prime_divisors():
-            y *= (1 + 1/QQ(p))
+            y *= (1 + 1 / QQ(p))
         return y.ceil()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         r"""
         Return whether the modular form ``self`` has complex multiplication.
 
@@ -1800,9 +1798,11 @@ class Newform(ModularForm_abstract):
         S = self.parent()
         return S(self.q_expansion(S.sturm_bound()))
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
-        Return True. For compatibility with elements of modular forms spaces.
+        Return ``True``.
+
+        For compatibility with elements of modular forms spaces.
 
         EXAMPLES::
 
@@ -1973,12 +1973,12 @@ class Newform(ModularForm_abstract):
             a2
         """
         if Q == 1:
-            return ZZ(1)
+            return ZZ.one()
         a_Q = self[Q]
         if not a_Q:
             raise ValueError("a_Q must be nonzero")
 
-        l = ZZ(1)
+        l = ZZ.one()
         M = self.character().conductor()
         for p, e in Q.factor():
             if p.divides(M):  # principal series at p
@@ -2013,7 +2013,7 @@ class Newform(ModularForm_abstract):
             True
         """
         if Q == 1:
-            return ZZ(1)
+            return ZZ.one()
 
         S = self._defining_modular_symbols()
         A = S.ambient()
@@ -2031,16 +2031,16 @@ class Newform(ModularForm_abstract):
                     continue
                 aa = crt(a, 1, Q, N.prime_to_m_part(Q))
                 diam = matrix(ZZ, 2, lift_to_sl2z(0, aa, N))
-                L.append((W * diam * matrix(QQ, 2, [1, a/Q0, 0, 1])).change_ring(ZZ))
+                L.append((W * diam * matrix(QQ, 2, [1, a / Q0, 0, 1])).change_ring(ZZ))
 
         W = A._matrix_of_operator_on_modular_symbols(A, [x.list() for x in L])
         e = S.dual_eigenvector(names=self._name())
         i = e.nonzero_positions()[0]
-        w = (W*e)[i]/e[i]
+        w = (W * e)[i] / e[i]
         if W * e != w * e:
             raise ArithmeticError("Bug in Atkin--Lehner computation: eigenspace not invariant")
         sign = prod([eps(-1) for eps in self.character().decomposition() if eps.conductor().divides(Q)])
-        return w / Q0 / sign * self.character()(crt(1, Q//Q0, Q, N//Q))
+        return w / Q0 / sign * self.character()(crt(1, Q // Q0, Q, N // Q))
 
     def atkin_lehner_action(self, d=None, normalization='analytic', embedding=None):
         r"""
@@ -2303,7 +2303,7 @@ class Newform(ModularForm_abstract):
         w3a = self._atkin_lehner_eigenvalue_from_modsym(d3)
         w3b = self._atkin_lehner_eigenvalue_from_qexp(d3)
         assert w3a == w3b
-        w = w1*w2*w3a
+        w = w1 * w2 * w3a
 
         if embedding is None:
             R = self.hecke_eigenvalue_field()
@@ -2328,9 +2328,9 @@ class Newform(ModularForm_abstract):
                     raise ValueError("Unable to compute Gauss sum. Try specifying an embedding into a larger ring")
             else:
                 G = R(1)
-            if not R(d**(self.weight()-2)).is_square():
+            if not R(d**(self.weight() - 2)).is_square():
                 raise ValueError("Unable to compute square root. Try specifying an embedding into a larger ring")
-            ratio = R(d**(self.weight()-2)).sqrt() * embedding(self.character()(crt(1, d//d0, d, N//d))) / G
+            ratio = R(d**(self.weight() - 2)).sqrt() * embedding(self.character()(crt(1, d // d0, d, N // d))) / G
             return embedding(w) / ratio
 
     def twist(self, chi, level=None, check=True):
@@ -2441,8 +2441,8 @@ class Newform(ModularForm_abstract):
                 alpha = N_epsilon.valuation(q)
                 beta = N_chi.valuation(q)
                 gamma = N.valuation(q)
-                delta = max(alpha + beta, 2*beta, gamma)
-                if delta == gamma and max(alpha + beta, 2*beta) < gamma:
+                delta = max(alpha + beta, 2 * beta, gamma)
+                if delta == gamma and max(alpha + beta, 2 * beta) < gamma:
                     continue
                 if delta > gamma and N_epsilon_chi.valuation(q) == max(alpha, beta):
                     continue
@@ -2462,7 +2462,7 @@ class Newform(ModularForm_abstract):
         for p in prime_range(500):
             if p.divides(chi.level()):
                 continue
-            D = (D.hecke_operator(p) - self[p]*chi(p)).kernel()
+            D = (D.hecke_operator(p) - self[p] * chi(p)).kernel()
             if D.rank() == 1:
                 break
             if D.is_zero():
@@ -2502,11 +2502,11 @@ class Newform(ModularForm_abstract):
         if p is None:
             # test local minimality at all primes
             for p in self.level().prime_divisors():
-                (g, chi) = self.minimal_twist(p)
+                g, chi = self.minimal_twist(p)
                 if g.level() < self.level():
                     h, tau = g.minimal_twist(p=None)
                     M = chi.modulus().lcm(tau.modulus())
-                    return (h, chi.extend(M)*tau.extend(M))
+                    return (h, chi.extend(M) * tau.extend(M))
             # f locally minimal at all p, hence globally minimal
             return (self, DirichletGroup(1, self.base_ring())(1))
 
@@ -2520,27 +2520,27 @@ class Newform(ModularForm_abstract):
         if (r == c) or (r == 1 and c == 0):
             # easy cases
             return (self, DirichletGroup(1, self.base_ring())(1))
-        elif r < 2*c:
+        elif r < 2 * c:
             # In this case we know that there is a unique chi of conductor p^u
             # such that self x chi has level N/p^u, where u = r-c, and this
             # twist is minimal.
             candidates = []
-            for chi in DirichletGroup(p**(r-c), self.base_ring()):
+            for chi in DirichletGroup(p**(r - c), self.base_ring()):
                 if not chi.is_primitive():
                     continue
                 try:
-                    g = self.twist(chi, level=N//p**(r-c))
+                    g = self.twist(chi, level=N // p**(r - c))
                     candidates.append((g, chi))
                 except ValueError:
                     continue
 
-            l = ZZ(1)
+            l = ZZ.one()
             while len(candidates) > 1:
                 l = l.next_prime()
                 if l == p:
                     continue
-                candidates = [(h, chi) for (h, chi) in candidates if h[l] == chi(l)*self[l]]
-                if l > 10000 or len(candidates) == 0:
+                candidates = [(h, chi) for (h, chi) in candidates if h[l] == chi(l) * self[l]]
+                if l > 10000 or not candidates:
                     raise RuntimeError("bug finding minimal twist")
             return candidates[0]
         else:
@@ -2552,27 +2552,27 @@ class Newform(ModularForm_abstract):
             T = TypeSpace(self, p)
             if T.is_minimal():
                 return (self, DirichletGroup(1, self.base_ring())(1))
-            else:
-                g = T.minimal_twist()
-                epsg = g.character().extend(N)
-                chisq = (epsg / self.character()).restrict(p**(r//2))
-                K = coercion_model.common_parent(self.base_ring(), g.base_ring())
-                chis = [chi for chi in DirichletGroup(p**(r//2), K) if chi**2 == chisq]
 
-                if g.has_cm() and g.cm_discriminant().prime_divisors() == [p]:
-                    # Quicker to test g than self, because g has smaller level.
-                    t = 2
-                else:
-                    t = 1
-                l = ZZ(1)
-                while len(chis) > t:
-                    l = l.next_prime()
-                    if l == p:
-                        continue
-                    chis = [chi for chi in chis if g[l] == chi(l) * self[l] ]
-                    if l > 10000 or len(chis) == 0:
-                        raise RuntimeError("bug finding minimal twist")
-                return (g, chis[0])
+            g = T.minimal_twist()
+            epsg = g.character().extend(N)
+            chisq = (epsg / self.character()).restrict(p**(r // 2))
+            K = coercion_model.common_parent(self.base_ring(), g.base_ring())
+            chis = [chi for chi in DirichletGroup(p**(r // 2), K) if chi**2 == chisq]
+
+            if g.has_cm() and g.cm_discriminant().prime_divisors() == [p]:
+                # Quicker to test g than self, because g has smaller level.
+                t = 2
+            else:
+                t = 1
+            l = ZZ.one()
+            while len(chis) > t:
+                l = l.next_prime()
+                if l == p:
+                    continue
+                chis = [chi for chi in chis if g[l] == chi(l) * self[l]]
+                if l > 10000 or not chis:
+                    raise RuntimeError("bug finding minimal twist")
+            return (g, chis[0])
 
     def local_component(self, p, twist_factor=None):
         """
@@ -2942,7 +2942,9 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             G = DirichletGroup(level, base_ring=R)
             M = constructor(G(epsilon) * G(chi)**2, self.weight(), base_ring=R)
         else:
-            from sage.modular.arithgroup.all import Gamma1
+            from sage.modular.arithgroup.congroup_gamma1 import (
+                Gamma1_constructor as Gamma1,
+            )
             if level is None:
                 # See [AL1978], Proposition 3.1.
                 level = lcm([N, Q]) * Q
@@ -3452,11 +3454,11 @@ class GradedModularFormElement(ModuleElement):
             sage: M([E4, ModularForms(3, 6).0])
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M({4:E4, 6:ModularForms(3, 6).0})
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M = ModularFormsRing(Gamma0(2))
             sage: E4 = ModularForms(1, 4).0
             sage: M(E4)[4].parent()
@@ -3479,7 +3481,7 @@ class GradedModularFormElement(ModuleElement):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                                 forms_dictionary[k] = M(f)
                             else:
-                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                         else:
                             raise ValueError('at least one key (%s) of the defining dictionary does not correspond to the weight of its value (%s). Real weight: %s' % (k, f, f.weight()))
                     else:
@@ -3496,15 +3498,15 @@ class GradedModularFormElement(ModuleElement):
                         M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                         forms_dictionary[f.weight()] = M(forms_dictionary.get(f.weight(), 0) + f)
                     else:
-                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                 else:
-                    forms_dictionary[ZZ(0)] = parent.base_ring().coerce(f)
+                    forms_dictionary[ZZ.zero()] = parent.base_ring().coerce(f)
         else:
             raise TypeError('the defining data structure should be a list or a dictionary')
         self._forms_dictionary = {k: f for k, f in forms_dictionary.items() if not f.is_zero()}  # remove the zero values
         Element.__init__(self, parent)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return "True" if ``self`` is nonzero and "False" otherwise.
 
@@ -3520,7 +3522,7 @@ class GradedModularFormElement(ModuleElement):
         """
         return bool(self._forms_dictionary)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return "True" if the graded form is 0 and "False" otherwise.
 
@@ -3537,7 +3539,7 @@ class GradedModularFormElement(ModuleElement):
         """
         return not self
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return "True" if the graded form is 1 and "False" otherwise.
 
@@ -3808,8 +3810,8 @@ class GradedModularFormElement(ModuleElement):
         f_other = other._forms_dictionary
         f_mul = defaultdict(int)
 
-        for k_self in f_self.keys():
-            for k_other in f_other.keys():
+        for k_self in f_self:
+            for k_other in f_other:
                 f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
 
         return GM(self.parent(), f_mul)
@@ -3840,7 +3842,7 @@ class GradedModularFormElement(ModuleElement):
         """
         GM = self.__class__
         f_self = self._forms_dictionary
-        f_mul = {k: c*f for k, f in f_self.items()}
+        f_mul = {k: c * f for k, f in f_self.items()}
         return GM(self.parent(), f_mul)
 
     def _richcmp_(self, other, op):
@@ -3898,7 +3900,7 @@ class GradedModularFormElement(ModuleElement):
         """
         if self.is_homogeneous():
             if self.is_zero():
-                return ZZ(0)
+                return ZZ.zero()
             return next(iter(self._forms_dictionary))
         else:
             raise ValueError("the given graded form is not homogeneous (not a modular form)")
@@ -3920,10 +3922,10 @@ class GradedModularFormElement(ModuleElement):
             [0]
         """
         if self.is_zero():
-            return [ZZ(0)]
+            return [ZZ.zero()]
         return sorted(self._forms_dictionary)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return ``True`` if the graded modular form is homogeneous, i.e. if it
         is a modular forms of a certain weight.
@@ -4006,7 +4008,7 @@ class GradedModularFormElement(ModuleElement):
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
-        coef_self = vector(self[k].coefficients(range(0, sturm_bound + 1))).column()
+        coef_self = vector(self[k].coefficients(range(sturm_bound + 1))).column()
 
         # solve the linear system: mat * X = coef_self
         soln = mat.solve_right(coef_self)

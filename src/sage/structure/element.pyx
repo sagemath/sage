@@ -712,7 +712,6 @@ cdef class Element(SageObject):
         """
         tester = self._tester(**options)
         SageObject._test_category(self, tester=tester)
-        category = self.category()
         # Tests that self inherits methods from the categories
         if can_assign_class(self):
             # For usual Python classes, that should be done with
@@ -928,7 +927,13 @@ cdef class Element(SageObject):
             sage: (1 + pi)._mpmath_(mp.prec)                                            # needs sage.symbolic
             mpf('4.14159265358979323846264338327933')
         """
-        return self.n(prec)._mpmath_(prec=prec)
+        t = self.n(prec)
+        from sage.rings.real_mpfr import RealNumber
+        from sage.rings.complex_mpfr import ComplexNumber
+        if not isinstance(t, (RealNumber, ComplexNumber)):
+            # avoid infinite recursion
+            raise NotImplementedError("mpmath conversion not implemented for %s" % type(self))
+        return t._mpmath_(prec=prec)
 
     cpdef _act_on_(self, x, bint self_on_left):
         """
@@ -4485,6 +4490,23 @@ cdef class FieldElement(CommutativeRingElement):
         if not (other._parent is self._parent):
             other = self.parent()(other)
         return bool(self) or other.is_zero()
+
+    def canonical_associate(self):
+        """
+        Return a canonical associate.
+
+        EXAMPLES::
+
+            sage: R.<x,y>=QQ[]; k=R.fraction_field()
+            sage: (x/y).canonical_associate()
+            (1, x/y)
+            sage: (0).canonical_associate()
+            (0, 1)
+        """
+        P = self.parent()
+        if self.is_zero():
+            return (P.zero(), P.one())
+        return (P.one(), self)
 
 
 def is_AlgebraElement(x):

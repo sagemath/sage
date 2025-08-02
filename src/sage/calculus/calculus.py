@@ -419,7 +419,7 @@ To check that :issue:`27092` is fixed::
 """
 
 import re
-from sage.arith.misc import algdep
+from sage.arith.misc import algebraic_dependency
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RealDoubleElement
@@ -794,8 +794,7 @@ def nintegral(ex, x, a, b,
     to high precision::
 
         sage: gp.eval('intnum(x=17,42,exp(-x^2)*log(x))')
-        '2.565728500561051474934096410 E-127'            # 32-bit
-        '2.5657285005610514829176211363206621657 E-127'  # 64-bit
+        '2.5657285005610514829176211363206621657 E-127'
         sage: old_prec = gp.set_real_precision(50)
         sage: gp.eval('intnum(x=17,42,exp(-x^2)*log(x))')
         '2.5657285005610514829173563961304957417746108003917 E-127'
@@ -1117,7 +1116,7 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 
             for degree in degree_list:
 
-                f = QQ[var](algdep(a, degree))  # TODO: use the known_bits parameter?
+                f = QQ[var](algebraic_dependency(a, degree))  # TODO: use the known_bits parameter?
                 # If indeed we have found a minimal polynomial,
                 # it should be accurate to a much higher precision.
                 error = abs(f(aa))
@@ -1157,28 +1156,45 @@ def minpoly(ex, var='x', algorithm=None, bits=None, degree=None, epsilon=0):
 ###################################################################
 # limits
 ###################################################################
-def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
+def limit(ex, *args, dir=None, taylor=False, algorithm='maxima', **kwargs):
     r"""
     Return the limit as the variable `v` approaches `a`
     from the given direction.
 
-    ::
+    SYNTAX:
 
-       expr.limit(x = a)
-       expr.limit(x = a, dir='+')
+    There are two ways of invoking limit. One can write
+    ``limit(expr, x=a, <keywords>)`` or ``limit(expr, x, a, <keywords>)``.
+    In the first option, ``x`` must be a valid Python identifier. Its
+    string representation is used to create the corresponding symbolic
+    variable with respect to which to take the limit. In the second
+    option, ``x`` can simply be a symbolic variable. For symbolic
+    variables that do not have a string representation that is a valid
+    Python identifier (for instance, if ``x`` is an indexed symbolic
+    variable), the second option is required.
 
     INPUT:
 
-    - ``dir`` -- (default: ``None``) may have the value
+    - ``ex`` -- the expression whose limit is computed. Must be convertible
+      to a symbolic expression.
+    - ``v`` -- The variable for the limit. Required for the
+      ``limit(expr, v, a)`` syntax. Must be convertible to a symbolic
+      variable.
+    - ``a`` -- The value the variable approaches. Required for the
+      ``limit(expr, v, a)`` syntax. Must be convertible to a symbolic
+      expression.
+    - ``dir`` -- (default: ``None``) direction for the limit:
       ``'plus'`` (or ``'+'`` or ``'right'`` or ``'above'``) for a limit from above,
-      ``'minus'`` (or ``'-'`` or ``'left'`` or ``'below'``) for a limit from below, or may be omitted
-      (implying a two-sided limit is to be computed).
-
+      ``'minus'`` (or ``'-'`` or ``'left'`` or ``'below'``) for a limit from below.
+      Omitted (``None``) implies a two-sided limit.
     - ``taylor`` -- (default: ``False``) if ``True``, use Taylor
-      series, which allows more limits to be computed (but may also
-      crash in some obscure cases due to bugs in Maxima).
-
-    - ``**argv`` -- 1 named parameter
+      series via Maxima (may handle more cases but potentially less stable).
+      Setting this automatically uses the ``'maxima_taylor'`` algorithm.
+    - ``algorithm`` -- (default: ``'maxima'``) the backend algorithm to use.
+      Options include ``'maxima'``, ``'maxima_taylor'``, ``'sympy'``,
+      ``'giac'``, ``'fricas'``, ``'mathematica_free'``.
+    - ``**kwargs`` -- (optional) single named parameter. Required for the
+      ``limit(expr, v=a)`` syntax to specify variable and limit point.
 
     .. NOTE::
 
@@ -1190,15 +1206,81 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
         sage: x = var('x')
         sage: f = (1 + 1/x)^x
-        sage: f.limit(x=oo)
+        sage: limit(f, x=oo)
+        e
+        sage: limit(f, x, oo)
         e
         sage: f.limit(x=5)
         7776/3125
+        sage: f.limit(x, 5)
+        7776/3125
+
+    The positional ``limit(expr, v, a)`` syntax is particularly useful
+    when the limit variable ``v`` is an indexed variable or another
+    expression that cannot be used as a keyword argument
+    (fixes :issue:`38761`)::
+
+        sage: y = var('y', n=3)
+        sage: g = sum(y); g
+        y0 + y1 + y2
+        sage: limit(g, y[1], 1)
+        y0 + y2 + 1
+        sage: g.limit(y[0], 5)
+        y1 + y2 + 5
+        sage: limit(y[0]^2 + y[1], y[0], y[2]) # Limit as y0 -> y2
+        y2^2 + y1
+
+    Directional limits work with both syntaxes::
+
+        sage: limit(1/x, x, 0, dir='+')
+        +Infinity
+        sage: limit(1/x, x=0, dir='-')
+        -Infinity
+        sage: limit(exp(-1/x), x, 0, dir='left')
+        +Infinity
+
+    Using different algorithms::
+
+        sage: limit(sin(x)/x, x, 0, algorithm='sympy')
+        1
+        sage: limit(sin(x)/x, x, 0, algorithm='giac') # needs sage.libs.giac
+        1
+        sage: limit(x^x, x, 0, dir='+', algorithm='fricas') # optional - fricas
+        1
+
+    Using Taylor series (can sometimes handle more complex limits)::
+
+        sage: limit((cos(x)-1)/x^2, x, 0, taylor=True)
+        -1/2
+
+    Error handling for incorrect syntax::
+
+        sage: limit(sin(x)/x, x=0, y=1) # Too many keyword args
+        Traceback (most recent call last):
+        ...
+        ValueError: multiple keyword arguments specified
+        sage: limit(sin(x)/x, x, 0, y=1) # Mixed positional (v,a) and keyword variable
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot mix positional specification of limit variable and point with keyword variable arguments
+        sage: limit(sin(x)/x, x) # Not enough positional args
+        Traceback (most recent call last):
+        ...
+        ValueError: three positional arguments (expr, v, a) or one positional and one keyword argument (expr, v=a) required
+        sage: limit(sin(x)/x) # No variable specified
+        Traceback (most recent call last):
+        ...
+        ValueError: invalid limit specification
+        sage: limit(sin(x)/x, x, 0, x=0) # Mixing both syntaxes
+        Traceback (most recent call last):
+        ...
+        ValueError: cannot mix positional specification of limit variable and point with keyword variable arguments
 
     Domain to real, a regression in 5.46.0, see https://sf.net/p/maxima/bugs/4138 ::
 
         sage: maxima_calculus.eval("domain:real")
         ...
+        sage: f = (1 + 1/x)^x
         sage: f.limit(x=1.2).n()
         2.06961575467...
         sage: maxima_calculus.eval("domain:complex");
@@ -1327,8 +1409,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: lim(x^2, x=2, dir='nugget')
         Traceback (most recent call last):
         ...
-        ValueError: dir must be one of None, 'plus', '+', 'above', 'right',
-        'minus', '-', 'below', 'left'
+        ValueError: dir must be one of None, 'plus', '+', 'above', 'right', 'minus', '-', 'below', 'left'
 
         sage: x.limit(x=3, algorithm='nugget')
         Traceback (most recent call last):
@@ -1385,6 +1466,7 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
         sage: sequence = -(3*n^2 + 1)*(-1)^n / sqrt(n^5 + 8*n^3 + 8)
         sage: limit(sequence, n=infinity)
         0
+        sage: forget() # Clean up assumption
 
     Check if :issue:`23048` is fixed::
 
@@ -1411,19 +1493,91 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
 
         sage: limit(x / (x + 2^x + cos(x)), x=-infinity)
         1
+
+    # Added specific tests for argument parsing logic to ensure coverage
+    sage: limit(x+1, x=1)
+    2
+    sage: limit(x+1, x, 1)
+    2
+    sage: limit(x+1, 'x', 1)
+    2
+    sage: limit(x+1, v=x, a=1) # using v=, a= keywords triggers multiple keyword error
+    Traceback (most recent call last):
+    ...
+    ValueError: multiple keyword arguments specified
+    sage: limit(x+1, v=x, a=1, algorithm='sympy') # as above
+    Traceback (most recent call last):
+    ...
+    ValueError: multiple keyword arguments specified
+    sage: limit(x+1, x=1, algorithm='sympy')
+    2
+    sage: limit(x+1, x, 1, algorithm='sympy')
+    2
+
+    # Test that var() is not called unnecessarily on symbolic input v
+    sage: y = var('y', n=3)
+    sage: limit(sum(y), y[1], 1) # Should work directly
+    y0 + y2 + 1
+
+    # Test conversion of v if not symbolic
+    sage: limit(x**2, 'x', 3)
+    9
+    sage: y = var('y')
+    sage: limit(x**2 + y, "y", x) # Need y=var('y') defined for this test
+    x^2 + x
+
+    # Test conversion of a if not symbolic
+    sage: limit(x**2, x, "3")
+    9
+
+    # Test using a constant number as variable 'v' fails
+    sage: limit(x**2 + 5, 5, 10)
+    Traceback (most recent call last):
+    ...
+    TypeError: limit variable must be a variable, not a constant
     """
+    # Process expression
     if not isinstance(ex, Expression):
         ex = SR(ex)
 
-    if len(argv) != 1:
-        raise ValueError("call the limit function like this, e.g. limit(expr, x=2).")
-    else:
-        k, = argv.keys()
-        v = var(k)
-        a = argv[k]
+    # Argument parsing: Determining v and a based on syntax used
+    v = None
+    a = None
 
+    if len(args) == 2: # Syntax: limit(ex, v, a, ...)
+        if kwargs: # Cannot mix positional v, a with keyword args
+            raise ValueError("cannot mix positional specification of limit variable and point with keyword variable arguments")
+        v = args[0]
+        a = args[1]
+    elif len(args) == 1:
+        if kwargs:
+            raise ValueError("cannot mix positional specification of limit variable and point with keyword variable arguments")
+        else:
+            raise ValueError("three positional arguments (expr, v, a) or one positional and one keyword argument (expr, v=a) required")
+    elif len(args) == 0:  # Potential syntax: limit(ex, v=a, ...) or limit(ex)
+        if len(kwargs) == 1:
+            k, = kwargs.keys()
+            v = var(k)
+            a = kwargs[k]
+        elif len(kwargs) == 0:  # For No variable specified at all
+            raise ValueError("invalid limit specification")
+        else:  # For Multiple keyword arguments like x=1, y=2
+            raise ValueError("multiple keyword arguments specified")
+
+    # Ensuring v is a symbolic expression and a valid limit variable
+    if not isinstance(v, Expression):
+        v = SR(v)
+    if not v.is_symbol():
+        raise TypeError("limit variable must be a variable, not a constant")
+
+    # Ensuring a is a symbolic expression
+    if not isinstance(a, Expression):
+        a = SR(a)
+
+    # Processing algorithm and direction options
+    effective_algorithm = algorithm
     if taylor and algorithm == 'maxima':
-        algorithm = 'maxima_taylor'
+        effective_algorithm = 'maxima_taylor'
 
     dir_plus = ['plus', '+', 'above', 'right']
     dir_minus = ['minus', '-', 'below', 'left']
@@ -1431,55 +1585,67 @@ def limit(ex, dir=None, taylor=False, algorithm='maxima', **argv):
     if dir not in dir_both:
         raise ValueError("dir must be one of " + ", ".join(map(repr, dir_both)))
 
-    if algorithm == 'maxima':
+    # Calling the appropriate backend based on effective_algorithm
+    l = None
+    if effective_algorithm == 'maxima':
         if dir is None:
             l = maxima.sr_limit(ex, v, a)
         elif dir in dir_plus:
             l = maxima.sr_limit(ex, v, a, 'plus')
         elif dir in dir_minus:
             l = maxima.sr_limit(ex, v, a, 'minus')
-    elif algorithm == 'maxima_taylor':
+    elif effective_algorithm == 'maxima_taylor':
         if dir is None:
             l = maxima.sr_tlimit(ex, v, a)
         elif dir in dir_plus:
             l = maxima.sr_tlimit(ex, v, a, 'plus')
         elif dir in dir_minus:
             l = maxima.sr_tlimit(ex, v, a, 'minus')
-    elif algorithm == 'sympy':
+    elif effective_algorithm == 'sympy':
         import sympy
-        if dir is None:
-            l = sympy.limit(ex._sympy_(), v._sympy_(), a._sympy_())
-        elif dir in dir_plus:
-            l = sympy.limit(ex._sympy_(), v._sympy_(), a._sympy_(), dir='+')
+        sympy_dir = '+-'
+        if dir in dir_plus:
+            sympy_dir = '+'
         elif dir in dir_minus:
-            l = sympy.limit(ex._sympy_(), v._sympy_(), a._sympy_(), dir='-')
-    elif algorithm == 'fricas':
+            sympy_dir = '-'
+        l = sympy.limit(ex._sympy_(), v._sympy_(), a._sympy_(), dir=sympy_dir)
+    elif effective_algorithm == 'fricas':
         from sage.interfaces.fricas import fricas
         eq = fricas.equation(v._fricas_(), a._fricas_())
         f = ex._fricas_()
-        if dir is None:
-            l = fricas.limit(f, eq).sage()
-            if isinstance(l, dict):
-                l = maxima("und")
-        elif dir in dir_plus:
-            l = fricas.limit(f, eq, '"right"').sage()
+        fricas_dir_arg = None
+        if dir in dir_plus:
+            fricas_dir_arg = '"right"'
         elif dir in dir_minus:
-            l = fricas.limit(f, eq, '"left"').sage()
-    elif algorithm == 'giac':
+            fricas_dir_arg = '"left"'
+
+        if fricas_dir_arg:
+            l = fricas.limit(f, eq, fricas_dir_arg).sage()
+        else:
+            l_raw = fricas.limit(f, eq).sage()
+            if isinstance(l_raw, dict):
+                l = SR('und')
+            else:
+                l = l_raw
+    elif effective_algorithm == 'giac':
         from sage.libs.giac.giac import libgiac
-        v = v._giac_init_()
-        a = a._giac_init_()
-        if dir is None:
-            l = libgiac.limit(ex, v, a).sage()
-        elif dir in dir_plus:
-            l = libgiac.limit(ex, v, a, 1).sage()
+        giac_v = v._giac_init_()
+        giac_a = a._giac_init_()
+        giac_dir_arg = 0  # Default for two-sided
+        if dir in dir_plus:
+            giac_dir_arg = 1
         elif dir in dir_minus:
-            l = libgiac.limit(ex, v, a, -1).sage()
-    elif algorithm == 'mathematica_free':
-        return mma_free_limit(ex, v, a, dir)
+            giac_dir_arg = -1
+        l = libgiac.limit(ex, giac_v, giac_a, giac_dir_arg).sage()
+    elif effective_algorithm == 'mathematica_free':
+        # Ensuring mma_free_limit exists
+        l = mma_free_limit(ex, v, a, dir)
     else:
-        raise ValueError("Unknown algorithm: %s" % algorithm)
-    return ex.parent()(l)
+        raise ValueError("Unknown algorithm: %s" % effective_algorithm)
+
+    original_parent = ex.parent()
+
+    return original_parent(l)
 
 
 # lim is alias for limit
@@ -1717,8 +1883,10 @@ def laplace(ex, t, s, algorithm='maxima'):
         sage: F.simplify()
         s^(-n - 1)*gamma(n + 1)
 
-    Testing Maxima::
 
+    Testing Maxima::
+        sage: n = SR.var('n')
+        sage: assume(n > -1)
         sage: laplace(t^n, t, s, algorithm='maxima')
         s^(-n - 1)*gamma(n + 1)
 

@@ -188,7 +188,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
         return self._indices.one()
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` as a tuple.
 
@@ -282,7 +282,7 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
                 if ax[0] < bx[0]:
                     # In order, so nothing more to do
                     break
-                elif ax[0] == bx[0]:
+                if ax[0] == bx[0]:
                     if ax[1] > bx[1]:
                         # x_{it} x_{ij} = q^{-1} x_{ij} x_{it} if t < j
                         coeff *= qi ** (ae * be)
@@ -586,7 +586,7 @@ class QuantumMatrixCoordinateAlgebra(QuantumMatrixCoordinateAlgebra_abstract):
         return self._m
 
     @cached_method
-    def algebra_generators(self):
+    def algebra_generators(self) -> Family:
         """
         Return the algebra generators of ``self``.
 

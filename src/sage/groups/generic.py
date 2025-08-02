@@ -385,6 +385,13 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     arguments are provided automatically; otherwise they must be
     provided by the caller.
 
+    .. SEEALSO::
+
+        - :func:`discrete_log` for a potentially faster algorithm by combining
+          Pohlig-Hellman with baby-step adjacent-step;
+        - :func:`order_from_bounds` to find the exact order instead of just some
+          multiple of the order.
+
     INPUT:
 
     - ``a`` -- group element
@@ -686,7 +693,7 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
 
-def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
+def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs', *, verify=True):
     r"""
     Totally generic discrete log function.
 
@@ -694,7 +701,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     - ``a`` -- group element
     - ``base`` -- group element (the base)
-    - ``ord`` -- integer (multiple of order of base, or ``None``)
+    - ``ord`` -- integer (multiple of order of base, ``None``, or
+      :mod:`oo <sage.rings.infinity>``); if this is
+      :mod:`oo <sage.rings.infinity>`, then it explicitly does
+      not use this, for example when factorizing the order is difficult
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the group's identity
@@ -702,6 +712,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``algorithm`` -- string denoting what algorithm to use for prime-order
       logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
+    - ``verify`` -- boolean (default: ``True``); whether to verify that output is
+      correct before returning it.
 
     ``a`` and ``base`` must be elements of some group with identity
     given by ``identity``, inverse of ``x`` by ``inverse(x)``, and group
@@ -784,7 +796,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(eta,eps,bounds=(0,100))                                      # needs sage.rings.number_field
         Traceback (most recent call last):
         ...
-        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24
+        ValueError: no discrete log of -11515*a - 55224 found to base 5*a - 24 with bounds (0, 100)
 
     But we can invert the base (and negate the result) instead::
 
@@ -862,6 +874,14 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         sage: discrete_log(u, g, algorithm='rho')
         123456789
 
+    Pass ``ord=oo`` to avoid attempts to factorize the group order::
+
+        sage: p, q = next_prime(2^128), next_prime(2^129)
+        sage: a = mod(2, p*q*124+1)
+        sage: discrete_log(a^100, a, bounds=(1, 500))  # not tested (takes very long, but pari.addprimes(p) makes it faster)
+        sage: discrete_log(a^100, a, ord=oo, bounds=(1, 500))
+        100
+
     TESTS:
 
     Random testing::
@@ -888,6 +908,16 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ....: else:
         ....:     assert res == sol
 
+    Verify that :issue:`38316` is fixed::
+
+        sage: F = GF(5)
+        sage: base = F(3)
+        sage: a = F(1)
+        sage: discrete_log(a, base, bounds=(1,2), operation="*")
+        Traceback (most recent call last):
+        ...
+        ValueError: no discrete log of 1 found to base 3 with bounds (1, 2)
+
     AUTHORS:
 
     - William Stein and David Joyner (2005-01-05)
@@ -897,6 +927,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     from operator import mul, add, pow
     power = mul if operation in addition_names else pow
     mult = add if operation in addition_names else mul
+    original_a = a # Store the original value of a so we can verify the answer
     if op:
         mult = op
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
@@ -904,6 +935,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         lb, ub = map(integer_ring.ZZ, bounds)
     if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names + multiplication_names:
         raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
+    from sage.rings.infinity import Infinity
     if ord is None:
         if operation in multiplication_names:
             try:
@@ -915,11 +947,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 ord = base.additive_order()
             except Exception:
                 ord = base.order()
-    else:
+    elif ord != Infinity:
         ord = integer_ring.ZZ(ord)
     try:
-        from sage.rings.infinity import Infinity
-        if ord == +Infinity:
+        if ord == Infinity:
             return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
         if base == power(base, 0) and a != base:
             raise ValueError
@@ -963,9 +994,13 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 break  # we have log%running_mod. if we know that log<running_mod, then we have the value of log.
         l = l[:i + 1]
         from sage.arith.misc import CRT_list
-        return (CRT_list(l, mods) + offset) % ord
+        result = (CRT_list(l, mods) + offset) % ord
+        if (verify and power(base, result) != original_a):
+            raise ValueError
+        return result
     except ValueError:
-        raise ValueError("no discrete log of %s found to base %s" % (a, base))
+        with_bounds = f" with bounds {bounds}" if bounds else ""
+        raise ValueError(f"no discrete log of {original_a} found to base {base}{with_bounds}")
 
 
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None, algorithm='bsgs'):
@@ -1436,7 +1471,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     return order_from_multiple(P, m, operation=operation, check=False)
 
 
-def has_order(P, n, operation='+'):
+def has_order(P, n, operation='+') -> bool:
     r"""
     Generic function to test if a group element `P` has order
     exactly equal to a given positive integer `n`.
@@ -1527,7 +1562,7 @@ def has_order(P, n, operation='+'):
     else:
         raise ValueError('unknown group operation')
 
-    def _rec(Q, fn):
+    def _rec(Q, fn) -> bool:
         if not fn:
             return isid(Q)
 

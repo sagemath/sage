@@ -126,14 +126,17 @@ import os
 import re
 
 import sage.interfaces.abc
-
-from sage.interfaces.expect import (Expect, ExpectElement, ExpectFunction,
-                                    FunctionElement)
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
 from sage.interfaces.interface import AsciiArtString
-from sage.misc.multireplace import multiple_replace
-from sage.misc.superseded import deprecated_function_alias
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.multireplace import multiple_replace
+from sage.misc.superseded import deprecated_function_alias
 from sage.structure.global_options import GlobalOptions
 
 
@@ -202,6 +205,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
         TESTS::
 
+            sage: from sage.interfaces.macaulay2 import macaulay2
             sage: macaulay2 == loads(dumps(macaulay2))
             True
         """
@@ -1590,8 +1594,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                 # Handle the ZZ/n case
                 ambient = self.ambient()
                 if ambient.external_string() == 'ZZ':
-                    from sage.rings.integer_ring import ZZ
                     from sage.rings.finite_rings.finite_field_constructor import GF
+                    from sage.rings.integer_ring import ZZ
                     external_string = self.external_string()
                     zz, n = external_string.split("/")
 
@@ -1603,7 +1607,9 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
                     ideal = self.ideal()._sage_()
                     return ambient_ring.quotient(ideal, names=ambient_ring.variable_names())
             elif cls_str == "PolynomialRing":
-                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                from sage.rings.polynomial.polynomial_ring_constructor import (
+                    PolynomialRing,
+                )
                 from sage.rings.polynomial.term_order import inv_macaulay2_name_mapping
 
                 # Get the base ring
@@ -1629,8 +1635,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
                 return PolynomialRing(base_ring, order=order, names=gens)
             elif cls_str == "GaloisField":
-                from sage.rings.integer_ring import ZZ
                 from sage.rings.finite_rings.finite_field_constructor import GF
+                from sage.rings.integer_ring import ZZ
                 gf, n = repr_str.split(" ")
                 n = ZZ(n)
                 if n.is_prime():

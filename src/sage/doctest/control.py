@@ -32,28 +32,31 @@ AUTHORS:
 # ****************************************************************************
 
 import importlib
-import random
+import json
 import os
+import random
+import shlex
 import sys
 import time
-import json
-import shlex
 import types
-import sage.misc.flatten
-import sage.misc.randstate as randstate
-from sage.structure.sage_object import SageObject
-from sage.env import DOT_SAGE, SAGE_LIB, SAGE_SRC, SAGE_VENV, SAGE_EXTCODE
-from sage.misc.temporary_file import tmp_dir
+
 from cysignals.signals import AlarmInterrupt, init_cysignals
 
-from .sources import FileDocTestSource, DictAsObject, get_basename
-from .forker import DocTestDispatcher
-from .reporting import DocTestReporter
-from .util import Timer, count_noun, dict_difference
-from .external import available_software
-from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_optional_tags, \
-     nodoctest_regex, optionaltag_regex, optionalfiledirective_regex
-
+import sage.misc.flatten
+from sage.doctest.external import available_software
+from sage.doctest.forker import DocTestDispatcher
+from sage.doctest.parsing import (
+    optional_tag_regex,
+    parse_file_optional_tags,
+    unparse_optional_tags,
+)
+from sage.doctest.reporting import DocTestReporter
+from sage.doctest.sources import DictAsObject, FileDocTestSource, get_basename
+from sage.doctest.util import Timer, count_noun, dict_difference
+from sage.env import DOT_SAGE, SAGE_EXTCODE, SAGE_LIB, SAGE_SRC
+from sage.misc import randstate
+from sage.misc.temporary_file import tmp_dir
+from sage.structure.sage_object import SageObject
 
 # Optional tags which are always automatically added
 
@@ -217,7 +220,7 @@ class DocTestDefaults(SageObject):
         return not (self == other)
 
 
-def skipdir(dirname):
+def skipdir(dirname) -> bool:
     """
     Return ``True`` if and only if the directory ``dirname`` should not be
     doctested.
@@ -230,9 +233,8 @@ def skipdir(dirname):
         sage: skipdir(os.path.join(sage.env.SAGE_SRC, "sage", "doctest", "tests"))
         True
     """
-    if os.path.exists(os.path.join(dirname, "nodoctest.py")) or os.path.exists(os.path.join(dirname, "nodoctest")):
-        return True
-    return False
+    return (os.path.exists(os.path.join(dirname, "nodoctest.py")) or
+            os.path.exists(os.path.join(dirname, "nodoctest")))
 
 
 def skipfile(filename, tested_optional_tags=False, *,
@@ -290,7 +292,7 @@ def skipfile(filename, tested_optional_tags=False, *,
     if filename.endswith('.rst.txt'):
         ext = '.rst.txt'
     else:
-        _ , ext = os.path.splitext(filename)
+        _, ext = os.path.splitext(filename)
     # .rst.txt appear in the installed documentation in subdirectories named "_sources"
     if ext not in ('.py', '.pyx', '.pxd', '.pxi', '.sage', '.spyx', '.rst', '.tex', '.rst.txt'):
         if log:
@@ -465,7 +467,7 @@ class DocTestController(SageObject):
                 s = options.hide.lower()
                 options.hide = set(s.split(','))
                 for h in options.hide:
-                    if not optionaltag_regex.search(h):
+                    if not optional_tag_regex.search(h):
                         raise ValueError('invalid optional tag {!r}'.format(h))
             if 'all' in options.hide:
                 options.hide.discard('all')
@@ -508,10 +510,10 @@ class DocTestController(SageObject):
                 # Check that all tags are valid
                 for o in options.optional:
                     if o.startswith('!'):
-                        if not optionaltag_regex.search(o[1:]):
+                        if not optional_tag_regex.search(o[1:]):
                             raise ValueError('invalid optional tag {!r}'.format(o))
                         options.disabled_optional.add(o[1:])
-                    elif not optionaltag_regex.search(o):
+                    elif not optional_tag_regex.search(o):
                         raise ValueError('invalid optional tag {!r}'.format(o))
 
                 options.optional |= auto_optional_tags
@@ -531,7 +533,7 @@ class DocTestController(SageObject):
                 else:
                     # Check that all tags are valid
                     for o in options.probe:
-                        if not optionaltag_regex.search(o):
+                        if not optional_tag_regex.search(o):
                             raise ValueError('invalid optional tag {!r}'.format(o))
 
         self.options = options
@@ -626,44 +628,7 @@ class DocTestController(SageObject):
         if self.options.long:
             self.options.warn_long = 30.0
 
-    def second_on_modern_computer(self):
-        """
-        Return the wall time equivalent of a second on a modern computer.
-
-        OUTPUT:
-
-        Float. The wall time on your computer that would be equivalent
-        to one second on a modern computer. Unless you have kick-ass
-        hardware this should always be >= 1.0. This raises a
-        :exc:`RuntimeError` if there are no stored timings to use as
-        benchmark.
-
-        EXAMPLES::
-
-            sage: from sage.doctest.control import DocTestDefaults, DocTestController
-            sage: DC = DocTestController(DocTestDefaults(), [])
-            sage: DC.second_on_modern_computer()   # not tested
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(32981, "this method is no longer used by the sage library and will eventually be removed")
-
-        if len(self.stats) == 0:
-            raise RuntimeError('no stored timings available')
-        success = []
-        failed = []
-        for mod in self.stats.values():
-            if mod.get('failed', False):
-                failed.append(mod['walltime'])
-            else:
-                success.append(mod['walltime'])
-        if len(success) < 2500:
-            raise RuntimeError('too few successful tests, not using stored timings')
-        if len(failed) > 20:
-            raise RuntimeError('too many failed tests, not using stored timings')
-        expected = 12800.0       # Core i7 Quad-Core 2014
-        return sum(success) / expected
-
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -890,7 +855,7 @@ class DocTestController(SageObject):
             Doctesting ...
         """
         opj = os.path.join
-        from sage.env import SAGE_SRC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT, SAGE_DOC
+        from sage.env import SAGE_DOC, SAGE_DOC_SRC, SAGE_ROOT, SAGE_ROOT_GIT, SAGE_SRC
         # SAGE_ROOT_GIT can be None on distributions which typically
         # only have the SAGE_LOCAL install tree but not SAGE_ROOT
         if SAGE_ROOT_GIT is not None:
@@ -1039,10 +1004,10 @@ class DocTestController(SageObject):
                                             bool(self.options.optional),
                                             if_installed=self.options.if_installed):
                                 yield os.path.join(root, file)
-                else:
-                    if not skipfile(path, bool(self.options.optional),
-                                    if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
-                        yield path
+                elif not skipfile(path, bool(self.options.optional),
+                                  if_installed=self.options.if_installed,
+                                  log=self.log):  # log when directly specified filenames are skipped
+                    yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
 
     def filter_sources(self):
@@ -1548,7 +1513,7 @@ class DocTestController(SageObject):
             return self.run_val_gdb()
         else:
             self.create_run_id()
-            from sage.env import SAGE_ROOT_GIT, SAGE_LOCAL, SAGE_VENV
+            from sage.env import SAGE_LOCAL, SAGE_ROOT_GIT, SAGE_VENV
             # SAGE_ROOT_GIT can be None on distributions which typically
             # only have the SAGE_LOCAL install tree but not SAGE_ROOT
             if (SAGE_ROOT_GIT is not None) and os.path.isdir(SAGE_ROOT_GIT):
@@ -1683,9 +1648,9 @@ def run_doctests(module, options=None):
         IP = get_ipython()
         if IP is not None:
             old_color = IP.colors
-            IP.run_line_magic('colors', 'NoColor')
+            IP.run_line_magic('colors', 'nocolor')
             old_config_color = IP.config.TerminalInteractiveShell.colors
-            IP.config.TerminalInteractiveShell.colors = 'NoColor'
+            IP.config.TerminalInteractiveShell.colors = 'nocolor'
 
     try:
         DC.run()

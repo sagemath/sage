@@ -764,7 +764,7 @@ class FGP_Module_class(Module):
         V = self._V.submodule(x) + self._W
         return self._module_constructor(V, self._W)
 
-    def has_canonical_map_to(self, A):
+    def has_canonical_map_to(self, A) -> bool:
         """
         Return ``True`` if ``self`` has a canonical map to ``A``, relative to the
         given presentation of ``A``.
@@ -795,7 +795,7 @@ class FGP_Module_class(Module):
             return True
         return self.V().is_submodule(A.V()) and self.W().is_submodule(A.W())
 
-    def is_submodule(self, A):
+    def is_submodule(self, A) -> bool:
         """
         Return ``True`` if ``self`` is a submodule of ``A``.
 
@@ -1864,7 +1864,7 @@ class FGP_Module_class(Module):
         from sage.modules.module_functors import QuotientModuleFunctor
         return (QuotientModuleFunctor(self._W), self._V)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``True`` if ``self`` is finite and ``False`` otherwise.
 

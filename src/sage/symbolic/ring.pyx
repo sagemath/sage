@@ -52,8 +52,11 @@ from sage.structure.coerce cimport is_numpy_type
 import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 
-# is_SymbolicVariable used to be defined here; re-export it
-from sage.symbolic.expression import _is_SymbolicVariable as is_SymbolicVariable
+# is_SymbolicVariable used to be defined here; re-export it here lazily
+cpdef bint is_SymbolicVariable(x):
+    from sage.symbolic.expression import _is_SymbolicVariable
+
+    return _is_SymbolicVariable(x)
 
 import keyword
 import operator
@@ -546,7 +549,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     def is_finite(self):
         """
-        Return False, since the Symbolic Ring is infinite.
+        Return ``False``, since the Symbolic Ring is infinite.
 
         EXAMPLES::
 
@@ -557,7 +560,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
     cpdef bint is_exact(self) except -2:
         """
-        Return False, because there are approximate elements in the
+        Return ``False``, because there are approximate elements in the
         symbolic ring.
 
         EXAMPLES::

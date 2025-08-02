@@ -1140,20 +1140,20 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self))
         pt = list(P[0]) + [0, 0, 0]
         if P[1][0] != 0:
-            [a,b,c] = [P[1][0]*self.Gpoly(1, 0)(*pt),
+            a, b, c = [P[1][0]*self.Gpoly(1, 0)(*pt),
                        -1*P[1][0]*self.Hpoly(1, 0, 1)(*pt) - P[1][1]*self.Gpoly(1, 0)(*pt),
                        -P[1][0]*self.Hpoly(1, 0, 2)(*pt) - P[1][2]*self.Gpoly(1, 0)(*pt)]
         elif P[1][1] != 0:
-            [a,b,c] = [-1*P[1][1]*self.Hpoly(1, 0, 1)(*pt)-P[1][0]*self.Gpoly(1, 1)(*pt),
+            a, b, c = [-1*P[1][1]*self.Hpoly(1, 0, 1)(*pt)-P[1][0]*self.Gpoly(1, 1)(*pt),
                         P[1][1]*self.Gpoly(1, 1)(*pt),
                        -P[1][1]*self.Hpoly(1, 1, 2)(*pt)-P[1][2]*self.Gpoly(1, 1)(*pt)]
         else:
-            [a,b,c] = [-1*P[1][2]*self.Hpoly(1, 0, 2)(*pt) - P[1][0]*self.Gpoly(1, 2)(*pt),
+            a, b, c = [-1*P[1][2]*self.Hpoly(1, 0, 2)(*pt) - P[1][0]*self.Gpoly(1, 2)(*pt),
                        -P[1][2]*self.Hpoly(1, 1, 2)(*pt) - P[1][1]*self.Gpoly(1, 2)(*pt),
                        P[1][2]*self.Gpoly(1, 2)(*pt)]
         Point = [P[0][0], P[0][1], P[0][2], a, b, c]
 
-        if [a,b,c] != [0,0,0]:
+        if any([a, b, c]):
             if normalize:
                 Point = self.point(Point,False)
                 Point.normalize_coordinates()
@@ -1237,7 +1237,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         if len(V) == 2:
             for D in V:
                 if D[s] != 0:
-                    [a,b,c] = [D[z0], D[z1], D[z2]]
+                    a, b, c = [D[z0], D[z1], D[z2]]
         else:
             newT = [phi(tee) for tee in T]
             for i in range(2):
@@ -1278,9 +1278,9 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 raise ValueError("cannot distinguish points in the degenerate fiber")
 
             if len(V) == 1:
-                [a, b, c] = [V[0][z0], V[0][z1], V[0][z2]]
+                a, b, c = [V[0][z0], V[0][z1], V[0][z2]]
 
-            if len(V) == 0 or [a,b,c] == [0, 0, 0]:
+            if len(V) == 0 or not any([a, b, c]):
                 SS = PolynomialRing(BR, 3, 'z0, z1, z2', order='lex')
                 z0,z1,z2 = SS.gens()
                 phi = RR.hom([1, 0, z0, z1, z2], SS)
@@ -1290,7 +1290,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 V = phi(I).variety()
                 if len(V) > 1:
                     raise ValueError( "cannot distinguish points in the degenerate fiber")
-                [a,b,c] = [V[0][z0], V[0][z1], V[0][z2]]
+                a, b, c = [V[0][z0], V[0][z1], V[0][z2]]
 
         Point = [P[0][0], P[0][1], P[0][2], a, b, c]
         if normalize:
@@ -1384,19 +1384,19 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                     raise TypeError("%s fails to convert into the map's domain %s, but a `pushforward` method is not properly implemented" % (P, self))
         pt = [0, 0, 0] + list(P[1])
         if P[0][0] != 0:
-            [a, b, c] = [P[0][0]*self.Gpoly(0, 0)(*pt),
+            a, b, c = [P[0][0]*self.Gpoly(0, 0)(*pt),
                       -1*P[0][0]*self.Hpoly(0, 0, 1)(*pt) - P[0][1]*self.Gpoly(0, 0)(*pt),
                       -P[0][0]*self.Hpoly(0, 0, 2)(*pt) - P[0][2]*self.Gpoly(0, 0)(*pt)]
         elif P[0][1] != 0:
-            [a, b, c] = [-1*P[0][1]*self.Hpoly(0, 0, 1)(*pt) - P[0][0]*self.Gpoly(0, 1)(*pt),
+            a, b, c = [-1*P[0][1]*self.Hpoly(0, 0, 1)(*pt) - P[0][0]*self.Gpoly(0, 1)(*pt),
                        P[0][1]*self.Gpoly(0, 1)(*pt),
                        -P[0][1]*self.Hpoly(0, 1, 2)(*pt) - P[0][2]*self.Gpoly(0, 1)(*pt)]
         else:
-            [a, b, c] = [-1*P[0][2]*self.Hpoly(0, 0, 2)(*pt) - P[0][0]*self.Gpoly(0, 2)(*pt),
+            a, b, c = [-1*P[0][2]*self.Hpoly(0, 0, 2)(*pt) - P[0][0]*self.Gpoly(0, 2)(*pt),
                        - P[0][2]*self.Hpoly(0, 1, 2)(*pt) - P[0][1]*self.Gpoly(0, 2)(*pt),
                        P[0][2]*self.Gpoly(0, 2)(*pt)]
         Point = [a, b, c, P[1][0], P[1][1], P[1][2]]
-        if [a, b, c] != [0, 0, 0]:
+        if any([a, b, c]):
             if normalize:
                 Point = self.point(Point, False)
                 Point.normalize_coordinates()
@@ -1520,10 +1520,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             if len(V) > 1:
                 raise ValueError("cannot distinguish points in the degenerate fiber")
             if len(V) == 1:
-                [a, b, c] = [V[0][z0], V[0][z1], V[0][z2]]
-            if len(V) == 0 or [a,b,c] == [0, 0, 0]:
+                a, b, c = [V[0][z0], V[0][z1], V[0][z2]]
+            if len(V) == 0 or not any([a, b, c]):
                 SS = PolynomialRing(BR, 3, 'z0, z1, z2', order='lex')
-                z0,z1,z2 = SS.gens()
+                z0, z1, z2 = SS.gens()
                 phi = RR.hom([1, 0, z0, z1, z2], SS)
                 J = phi(I)
                 if J.dimension() > 0:
@@ -1531,7 +1531,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
                 V = phi(I).variety()
                 if len(V) > 1:
                     raise ValueError("cannot distinguish points in the degenerate fiber")
-                [a,b,c] = [V[0][z0], V[0][z1], V[0][z2]]
+                a, b, c = [V[0][z0], V[0][z1], V[0][z2]]
 
         Point = [a, b, c, P[1][0], P[1][1], P[1][2]]
         if normalize:
@@ -2066,8 +2066,8 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         Points = []
 
         if (self.Gpoly(component,0)(P0) != 0):
-             #We are using the quadratic formula, we need this check to ensure that the points
-             #will be rational
+            # We are using the quadratic formula, we need this check
+            # to ensure that the points will be rational
             T0 = (self.Hpoly(component, 0, 1)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 1)(P0))
             T1 = (self.Hpoly(component, 0, 2)(P0)**2 - 4*self.Gpoly(component, 0)(P0)*self.Gpoly(component, 2)(P0))
             if (T0.is_square() and T1.is_square()):

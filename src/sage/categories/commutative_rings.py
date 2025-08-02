@@ -15,6 +15,7 @@ Commutative rings
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.structure.sequence import Sequence
+from sage.structure.element import coercion_model
 
 
 class CommutativeRings(CategoryWithAxiom):
@@ -140,12 +141,13 @@ class CommutativeRings(CategoryWithAxiom):
 
         def _ideal_class_(self, n=0):
             r"""
-            Return a callable object that can be used to create ideals in this
-            commutative ring.
+            Return a callable object that can be used to create ideals
+            in this commutative ring.
 
-            This class can depend on `n`, the number of generators of the ideal.
-            The default input of `n=0` indicates an unspecified number of generators,
-            in which case a class that works for any number of generators is returned.
+            This class can depend on `n`, the number of generators of
+            the ideal.  The default input of `n=0` indicates an
+            unspecified number of generators, in which case a class
+            that works for any number of generators is returned.
 
             EXAMPLES::
 
@@ -537,6 +539,41 @@ class CommutativeRings(CategoryWithAxiom):
             else:
                 codomain = self
             return self.derivation_module(codomain, twist=twist)(arg)
+
+        def _pseudo_fraction_field(self):
+            r"""
+            This method is used by the coercion model to determine if `a / b`
+            should be treated as `a * (1/b)`, for example when dividing an element
+            of `\ZZ[x]` by an element of `\ZZ`.
+
+            The default is to return the same value as ``self.fraction_field()``,
+            but it may return some other domain in which division is usually
+            defined (for example, ``\ZZ/n\ZZ`` for possibly composite `n`).
+
+            EXAMPLES::
+
+                sage: ZZ._pseudo_fraction_field()
+                Rational Field
+                sage: ZZ['x']._pseudo_fraction_field()
+                Fraction Field of Univariate Polynomial Ring in x over Integer Ring
+                sage: Integers(15)._pseudo_fraction_field()
+                Ring of integers modulo 15
+                sage: Integers(15).fraction_field()
+                Traceback (most recent call last):
+                ...
+                TypeError: self must be an integral domain.
+
+            TESTS::
+
+                sage: R.<x> = QQ[[]]
+                sage: S.<y> = R[[]]
+                sage: parent(y/(1+x))
+                Power Series Ring in y over Laurent Series Ring in x over Rational Field
+            """
+            try:
+                return self.fraction_field()
+            except (NotImplementedError, TypeError):
+                return coercion_model.division_parent(self)
 
     class ElementMethods:
         pass

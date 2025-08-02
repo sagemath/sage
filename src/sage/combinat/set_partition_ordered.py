@@ -1,12 +1,10 @@
 r"""
-Ordered Set Partitions
+Ordered set partitions
 
 AUTHORS:
 
 - Mike Hansen
-
 - MuPAD-Combinat developers (for algorithms and design inspiration)
-
 - Travis Scrimshaw (2013-02-28): Removed ``CombinatorialClass`` and added
   entry point through :class:`OrderedSetPartition`.
 """
@@ -995,6 +993,11 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
             True
             sage: [set([1,2]), set([3,4])] in OS
             True
+
+        Make sure the set really matches::
+
+            sage: [set([5,6]), set([3,4])] in OS
+            False
         """
         # x must be a list
         if not isinstance(x, (OrderedSetPartition, list, tuple)):
@@ -1015,7 +1018,9 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
 
         # Make sure that the union of all the
         # sets is the original set
-        return len(u) == len(self._set)
+        if len(u) != len(self._set):
+            return False
+        return frozenset(u) == self._set
 
     def from_finite_word(self, w, check=True):
         r"""

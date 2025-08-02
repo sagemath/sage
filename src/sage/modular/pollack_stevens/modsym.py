@@ -36,8 +36,9 @@ EXAMPLES::
 # *****************************************************************************
 
 import operator
+from typing import Self
 
-from sage.arith.misc import next_prime, gcd, kronecker
+from sage.arith.misc import gcd, kronecker, next_prime
 from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -52,10 +53,9 @@ from sage.structure.richcmp import op_EQ, op_NE
 lazy_import('sage.rings.padics.factory', 'Qp')
 lazy_import('sage.rings.padics.padic_generic', 'pAdicGeneric')
 
+from .fund_domain import M2Z
 from .manin_map import ManinMap
 from .sigma0 import Sigma0
-from .fund_domain import M2Z
-
 
 minusproj = [1, 0, 0, -1]
 
@@ -106,13 +106,12 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
     verbose("Iterating U_p", level=2)
     Psi = apinv * Phi.hecke(p)
 
-    for attempts in range(M-1):
+    for attempts in range(M - 1):
         verbose("%s attempt (val = %s/%s)" % (attempts + 1,(Phi-Psi).valuation(),M), level=2)
         Phi = Psi
         Psi = apinv * Phi.hecke(p)
         Psi._normalize()
-    Phi = ~(q ** (k + 1) + 1 - aq) * Phi
-    return Phi
+    return ~(q ** (k + 1) + 1 - aq) * Phi
 
 
 class PSModSymAction(Action):
@@ -232,7 +231,7 @@ class PSModularSymbolElement(ModuleElement):
         """
         return [self._map[g] for g in self.parent().source().gens()]
 
-    def _normalize(self, **kwds):
+    def _normalize(self, **kwds) -> Self:
         """
         Normalize all of the values of the symbol ``self``.
 
@@ -679,15 +678,15 @@ class PSModularSymbolElement(ModuleElement):
         #     aq.add_bigoh(M)
         return aq
 
-    def is_ordinary(self, p=None, P=None):
+    def is_ordinary(self, p=None, P=None) -> bool:
         r"""
-        Return true if the `p`-th eigenvalue is a `p`-adic unit.
+        Return ``True`` if the `p`-th eigenvalue is a `p`-adic unit.
 
         INPUT:
 
-        - ``p`` -- a positive integral prime, or None (default: ``None``)
-        - ``P`` -- a prime of the base ring above `p`, or None. This is ignored
-          unless the base ring is a number field
+        - ``p`` -- a positive integral prime, or ``None`` (default: ``None``)
+        - ``P`` -- a prime of the base ring above `p`, or ``None``.
+          This is ignored unless the base ring is a number field
 
         OUTPUT: boolean
 
@@ -825,11 +824,10 @@ class PSModularSymbolElement(ModuleElement):
             if not (g in MR.reps_with_two_torsion()
                     or g in MR.reps_with_three_torsion()):
                 t += f[g] * MR.gammas[g] - f[g]
+            elif g in MR.reps_with_two_torsion():
+                t -= f[g]
             else:
-                if g in MR.reps_with_two_torsion():
-                    t -= f[g]
-                else:
-                    t -= f[g]   # what ?? same thing ??
+                t -= f[g]   # what ?? same thing ??
 
         id = MR.gens()[0]
         if f[id] * MR.gammas[id] - f[id] != -t:
@@ -1100,8 +1098,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             Dist = V.coefficient_module()
             psi = K.hom([K.gen()], L)
             embedded_sym = self.parent().element_class(self._map.apply(psi, codomain=Dist, to_moments=True), V, construct=True)
-            ans = [embedded_sym, psi]
-            return ans
+            return [embedded_sym, psi]
         else:
             roots = [r[0] for r in v]
             ans = []
