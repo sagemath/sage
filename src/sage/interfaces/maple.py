@@ -237,17 +237,21 @@ loaded.
 
 import os
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-
 import pexpect
 
+from sage.cpython.string import bytes_to_str
 from sage.env import DOT_SAGE
-from sage.misc.pager import pager
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
+from sage.misc.pager import pager
 from sage.structure.richcmp import rich_to_bool
-from sage.cpython.string import bytes_to_str
-
 
 COMMANDS_CACHE = '%s/maple_commandlist_cache.sobj' % DOT_SAGE
 
@@ -270,6 +274,7 @@ class Maple(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: from sage.interfaces.maple import maple
             sage: maple == loads(dumps(maple))
             True
         """

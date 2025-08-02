@@ -34,6 +34,6 @@ def test_invalid_notebook_choice():
 
 
 def test_help():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog="sage")
     JupyterNotebookCmd.extend_parser(parser)
-    assert parser.format_usage() == "usage: pytest [-h] [-n [{jupyter,jupyterlab}]]\n"
+    assert parser.format_usage() == "usage: sage [-h] [-n [{jupyter,jupyterlab}]]\n"

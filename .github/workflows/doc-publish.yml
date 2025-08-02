@@ -100,67 +100,67 @@ jobs:
           echo "::notice::The documentation has been deployed - ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
         if: steps.download-doc.outcome == 'success'
 
-  publish-live-doc:
-    runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
-    env:
-      CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
-    steps:
-      - name: Get information about workflow origin
-        uses: potiuk/get-workflow-origin@v1_5
-        id: source-run-info
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          sourceRunId: ${{ github.event.workflow_run.id }}
-        if: env.CAN_DEPLOY == 'true'
+  # publish-live-doc:
+  #   runs-on: ubuntu-latest
+  #   if: github.event.workflow_run.conclusion == 'success'
+  #   env:
+  #     CAN_DEPLOY: ${{ secrets.NETLIFY_AUTH_TOKEN != '' &&  secrets.NETLIFY_SITE_ID != '' }}
+  #   steps:
+  #     - name: Get information about workflow origin
+  #       uses: potiuk/get-workflow-origin@v1_5
+  #       id: source-run-info
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         sourceRunId: ${{ github.event.workflow_run.id }}
+  #       if: env.CAN_DEPLOY == 'true'
 
-      - name: Download live doc
-        id: download-doc
-        uses: actions/download-artifact@v4
-        with:
-          name: livedoc
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          run-id: ${{ github.event.workflow_run.id }}
-        # if the doc was built for tag push (targetBranch contains the tag)
-        if: steps.source-run-info.outputs.sourceEvent == 'push' && steps.source-run-info.outputs.targetBranch != 'develop'
+  #     - name: Download live doc
+  #       id: download-doc
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: livedoc
+  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+  #         repository: ${{ github.repository }}
+  #         run-id: ${{ github.event.workflow_run.id }}
+  #       # if the doc was built for tag push (targetBranch contains the tag)
+  #       if: steps.source-run-info.outputs.sourceEvent == 'push' && steps.source-run-info.outputs.targetBranch != 'develop'
 
-      - name: Extract live doc
-        run: unzip livedoc.zip -d livedoc
-        if: steps.download-doc.outcome == 'success'
+  #     - name: Extract live doc
+  #       run: unzip livedoc.zip -d livedoc
+  #       if: steps.download-doc.outcome == 'success'
 
-      - name: Create _headers file for permissive CORS
-        run: |
-          cat <<EOF > livedoc/livedoc/_headers
-          /*
-            Access-Control-Allow-Origin: *
-            Access-Control-Allow-Methods: GET
-            Access-Control-Allow-Headers: Content-Type
-          EOF
-        if: steps.download-doc.outcome == 'success'
+  #     - name: Create _headers file for permissive CORS
+  #       run: |
+  #         cat <<EOF > livedoc/livedoc/_headers
+  #         /*
+  #           Access-Control-Allow-Origin: *
+  #           Access-Control-Allow-Methods: GET
+  #           Access-Control-Allow-Headers: Content-Type
+  #         EOF
+  #       if: steps.download-doc.outcome == 'success'
 
-      - name: Deploy to netlify with doc-TAG alias
-        id: deploy-netlify
-        uses: netlify/actions/cli@master
-        with:
-          args: deploy --dir=livedoc/livedoc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_MESSAGE: doc-${{ steps.source-run-info.outputs.targetBranch }}
-          NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.targetBranch }}
-        if: steps.download-doc.outcome == 'success'
+  #     - name: Deploy to netlify with doc-TAG alias
+  #       id: deploy-netlify
+  #       uses: netlify/actions/cli@master
+  #       with:
+  #         args: deploy --dir=livedoc/livedoc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
+  #       env:
+  #         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  #         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  #         NETLIFY_MESSAGE: doc-${{ steps.source-run-info.outputs.targetBranch }}
+  #         NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.targetBranch }}
+  #       if: steps.download-doc.outcome == 'success'
 
-      - name: Deploy to netlify with doc-release alias
-        uses: netlify/actions/cli@master
-        with:
-          args: deploy --dir=livedoc/livedoc --message doc-release --alias doc-release
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        if: steps.download-doc.outcome == 'success'
+  #     - name: Deploy to netlify with doc-release alias
+  #       uses: netlify/actions/cli@master
+  #       with:
+  #         args: deploy --dir=livedoc/livedoc --message doc-release --alias doc-release
+  #       env:
+  #         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+  #         NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  #       if: steps.download-doc.outcome == 'success'
 
-      - name: Report deployment url
-        run: |
-          echo "::notice::The live documentation has been deployed - ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
-        if: steps.download-doc.outcome == 'success'
+  #     - name: Report deployment url
+  #       run: |
+  #         echo "::notice::The live documentation has been deployed - ${{ steps.deploy-netlify.outputs.NETLIFY_URL }}"
+  #       if: steps.download-doc.outcome == 'success'

@@ -901,7 +901,6 @@ cdef class Matrix(Matrix1):
             sage: v = matrix.identity(QQ, 500).solve_right(vector(QQ, [1]*500), extend=False)  # <1s
             sage: matrix.identity(QQ, 500).hermite_form()  # not tested (slow)
             sage: v = (matrix.identity(ZZ, 500)*2).solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
-            sage: matrix.identity(ZZ, 500).hermite_form()  # not tested (slow)
             sage: m = matrix.identity(ZZ, 250).stack(matrix.identity(ZZ, 250))*2
             sage: v = m.solve_right(vector(ZZ, [2]*500), extend=False)  # <1s
             sage: m._solve_right_hermite_form(matrix(ZZ, [[2]]*500))  # not tested (slow)
@@ -974,10 +973,11 @@ cdef class Matrix(Matrix1):
         if P not in _Fields and not extend:
             if self.rank() == self.ncols():
                 # hermite_form is slow, avoid if possible
+                F = P.fraction_field()
                 if self.is_square():
-                    X = self._solve_right_nonsingular_square(C, check_rank=False)
+                    X = self.change_ring(F)._solve_right_nonsingular_square(C.change_ring(F), check_rank=False)
                 else:
-                    X = self._solve_right_general(C)
+                    X = self.change_ring(F)._solve_right_general(C.change_ring(F))
                 try:
                     X = X.change_ring(P)
                 except TypeError:
@@ -16484,6 +16484,11 @@ cdef class Matrix(Matrix1):
 
             sage: matrix(CDF, 2, 2, sparse=True).norm(1)
             0.0
+
+        Check the euclidean norm for a sparse matrix (:issue:`40492`)::
+
+            sage: matrix(ZZ, [[1, 2], [3, 4]], sparse=True).norm()
+            5.464985704219043
         """
         from sage.rings.real_double import RDF
 
@@ -16494,8 +16499,11 @@ cdef class Matrix(Matrix1):
         if p == 2:
             from sage.rings.complex_double import CDF
 
-            A = self.change_ring(CDF)
-            A = A.conjugate().transpose() * A
+            # Always try to convert to ``dense_matrix`` since sparse matrices
+            # don't expose the ``SVD`` method. If the matrix is already dense,
+            # the cost is negligible.
+            A = self.dense_matrix().change_ring(CDF)
+            A = A.conjugate_transpose() * A
             S = A.SVD()[1]
             return max(S.list()).real().sqrt()
 
