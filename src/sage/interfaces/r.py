@@ -264,18 +264,24 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 # ************************************************************************
+import logging
 import os
-
-from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
-from sage.env import DOT_SAGE
 import re
-from sage.structure.element import parent
+
+from sage.env import DOT_SAGE
+from sage.features import PythonModule
+from sage.interfaces.interface import (
+    Interface,
+    InterfaceElement,
+    InterfaceFunction,
+    InterfaceFunctionElement,
+)
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
 
 # see the _lazy_init for some reasoning behind the lazy imports
 from sage.misc.lazy_import import lazy_import
-from sage.features import PythonModule
+from sage.structure.element import parent
 
 rpy2_feature = PythonModule('rpy2', spkg='rpy2', type='standard')
 
@@ -297,6 +303,9 @@ RFilteredPackages = ['.GlobalEnv']
 # crosscheck with https://svn.r-project.org/R/trunk/src/main/names.c
 # but package:base should cover this. i think.
 RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
+
+# silence rpy2 warnings
+logging.getLogger('rpy2.rinterface_lib.callbacks').setLevel(logging.ERROR)
 
 
 def _setup_r_to_sage_converter():
@@ -367,7 +376,7 @@ def _setup_r_to_sage_converter():
         sage: labs = r.paste('c("X","Y")', '1:10', sep='""'); labs.sage()
         ['X1', 'Y2', 'X3', 'Y4', 'X5', 'Y6', 'X7', 'Y8', 'X9', 'Y10']
     """
-    from rpy2.rinterface import SexpVector, ListSexpVector, FloatSexpVector
+    from rpy2.rinterface import FloatSexpVector, ListSexpVector, SexpVector
 
     # convert rpy2's representation of r objects to the one sage expects (as defined by the old
     # expect interface)
@@ -480,6 +489,7 @@ class R(ExtraTabCompletion, Interface):
 
         TESTS::
 
+            sage: from sage.interfaces.r import r
             sage: r == loads(dumps(r))
             True
         """
