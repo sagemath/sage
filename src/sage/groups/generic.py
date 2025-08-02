@@ -158,6 +158,25 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
     It is further guaranteed that if the input ``operation`` is
     either addition or multiplication, then the returned ``op``
     is ``operator.add`` or ``operator.mul``, respectively.
+
+    TESTS::
+
+        sage: from sage.groups.generic import _parse_group_def
+        sage: import operator
+        sage: _parse_group_def(ZZ, 'other', None, None, None)
+        Traceback (most recent call last):
+        ...
+        ValueError: identity, inverse and operation must all be specified...
+        sage: _parse_group_def(ZZ, '+', None, None, None)
+        ('other', 0, <built-in function neg>, <built-in function add>)
+        sage: _parse_group_def(ZZ, '+', 0, None, None)
+        Traceback (most recent call last):
+        ...
+        ValueError: in order to specify custom identity/inverse/op, operation must be 'other'
+        sage: _parse_group_def(ZZ, '*', None, None, None)
+        ('other', 1, <built-in function inv>, <built-in function mul>)
+        sage: _parse_group_def(ZZ, 'other', 0, operator.neg, operator.add)
+        ('other', 0, <built-in function neg>, <built-in function add>)
     """
     from operator import inv, mul, neg, add
 
@@ -185,7 +204,8 @@ def _parse_group_def(parent, operation, identity, inverse, op, *, check_missing=
         op = add
     else:
         if check_missing and (identity is None or inverse is None or op is None):
-            raise ValueError("identity, inverse and operation must all be specified")
+            raise ValueError("identity, inverse and operation must all be specified "
+                             "when operation is neither addition nor multiplication")
     return 'other', identity, inverse, op
 
 
@@ -198,6 +218,13 @@ def _power_func(operation, identity, inverse, op):
     - ``operation``, ``identity``, ``inverse``, ``op`` -- output of :func:`_parse_group_def`
 
     OUTPUT: A function that computes powers using the given binary operation.
+
+    TESTS::
+
+        sage: from sage.groups.generic import _power_func
+        sage: import operator
+        sage: _power_func('other', 0, operator.neg, operator.add)
+        <built-in function mul>
     """
     import operator
     if op is operator.add:
@@ -218,6 +245,15 @@ def _ord_from_op(x, op):
     - ``op`` -- output of :func:`_parse_group_def`
 
     OUTPUT: An integer representing the order of ``x`` in the group.
+
+    TESTS::
+
+        sage: from sage.groups.generic import _ord_from_op
+        sage: import operator
+        sage: _ord_from_op(mod(2, 5), operator.add)
+        5
+        sage: _ord_from_op(mod(2, 5), operator.mul)
+        4
     """
     import operator
     if op is operator.add:
@@ -538,7 +574,7 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     This will return a multiple of the order of P::
 
-        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')            # needs sage.rings.finite_rings sage.schemes
+        sage: bsgs(P, P.parent().zero(), Hasse_bounds(F.order()), operation='+')        # needs sage.rings.finite_rings sage.schemes
         69327408
 
     AUTHOR:
@@ -1099,7 +1135,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
 
     This will return a multiple of the order of P::
 
-        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),            # needs sage.rings.finite_rings sage.schemes
+        sage: discrete_log_lambda(P.parent().zero(), P, Hasse_bounds(F.order()),        # needs sage.rings.finite_rings sage.schemes
         ....:                     operation='+')
         69327408
 
