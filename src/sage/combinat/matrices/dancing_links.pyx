@@ -1017,9 +1017,6 @@ cdef class dancing_linksWrapper:
         the `i`-th row is in the solution::
 
             sage: p.show()                                                              # needs sage.numerical.mip
-            Maximization:
-            <BLANKLINE>
-            <BLANKLINE>
             Constraints:...
               one 1 in 0-th column: 1.0 <= x_0 + x_1 <= 1.0
               one 1 in 1-th column: 1.0 <= x_0 + x_2 <= 1.0

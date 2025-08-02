@@ -9584,7 +9584,6 @@ class Graph(GenericGraph):
 
         return True
 
-
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free

@@ -38,6 +38,7 @@ py.install_sources(
   'latex_macros.py',
   'latex_standalone.py',
   'lazy_format.py',
+  'lazy_import.pxd',
   'lazy_import_cache.py',
   'lazy_list.pxd',
   'lazy_string.pxd',

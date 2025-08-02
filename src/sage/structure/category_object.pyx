@@ -583,7 +583,7 @@ cdef class CategoryObject(SageObject):
             sage: F.base_ring()                                                         # needs sage.modules
             Integer Ring
             sage: F.__class__.base_ring                                                 # needs sage.modules
-            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+            <cyfunction CategoryObject.base_ring at ...>
 
         Note that the coordinates of the elements of a module can lie
         in a bigger ring, the ``coordinate_ring``::
@@ -604,7 +604,7 @@ cdef class CategoryObject(SageObject):
             sage: F.base_ring()                                                         # needs sage.combinat sage.modules
             Rational Field
             sage: F.__class__.base_ring                                                 # needs sage.combinat sage.modules
-            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+            <cyfunction CategoryObject.base_ring at ...>
 
             sage: # needs sage.modules
             sage: E = CombinatorialFreeModule(ZZ, [1,2,3])
@@ -613,7 +613,7 @@ cdef class CategoryObject(SageObject):
             sage: H.base_ring()
             Integer Ring
             sage: H.__class__.base_ring
-            <method 'base_ring' of 'sage.structure.category_object.CategoryObject' objects>
+            <cyfunction CategoryObject.base_ring at ...>
 
         .. TODO::
 

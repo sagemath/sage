@@ -1,0 +1,22 @@
+diff --git a/configure b/configure
+old mode 100755
+new mode 100644
+index 6716f3a04a6..732dcfeae8b
+--- a/configure
++++ b/configure
+@@ -7092,15 +7092,6 @@ if test x"${ccl64}" = xtrue ; then
+ 	fi
+ fi
+ 
+-if test x"${ecl}" = xtrue ; then
+-	if test x"$srcdir" = x"." ; then
+-		echo "Compiling maxima using \"${ECL_NAME}\""
+-	else
+-		echo "ECL enabled. Executable name: \"${ECL_NAME}\""
+-		as_fn_error $? "For ECL out-of-tree builds aren't supported. See src/maxima.system for details." "$LINENO" 5
+-	fi
+-fi
+-
+ if test x"${abcl}" = xtrue ; then
+ 	if test x"$srcdir" = x"." ; then
+ 		echo "Compiling maxima using \"${ABCL_JAR}\""

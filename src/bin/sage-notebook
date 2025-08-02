@@ -1,19 +1,16 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 # -*- coding: utf-8; mode: python -*-
 
-import os
-import sys
-import ast
 import argparse
 import logging
-import textwrap
+import os
+import sys
 from contextlib import contextmanager
 
 logging.basicConfig()
 logger = logging.getLogger()
 
 from sage.misc.banner import banner
-
 
 _system_jupyter_url = "https://doc.sagemath.org/html/en/installation/launching.html#setting-up-sagemath-as-a-jupyter-kernel-in-an-existing-jupyter-notebook-or-jupyterlab-installation"
 
@@ -188,7 +185,9 @@ def sage_doc_server():
     from functools import partial
     from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
     from threading import Thread
-    from sage.env import SAGE_DOC, SAGE_DOC_LOCAL_PORT as port
+
+    from sage.env import SAGE_DOC
+    from sage.env import SAGE_DOC_LOCAL_PORT as port
 
     server = ThreadingHTTPServer(('127.0.0.1', int(port)),
         partial(SimpleHTTPRequestHandler, directory=SAGE_DOC))

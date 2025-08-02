@@ -50,7 +50,7 @@ Check that :issue:`2235` has been fixed::
 
 Check slow doctest warnings are correctly raised::
 
-    sage: subprocess.call(["sage", "-t", "--warn-long",     # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long",     # long time
     ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
@@ -67,7 +67,7 @@ Check slow doctest warnings are correctly raised::
     ----------------------------------------------------------------------
     ...
     0
-    sage: subprocess.call(["sage", "-t", "--format=github", "--warn-long",     # long time
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--format=github", "--warn-long",     # long time
     ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.

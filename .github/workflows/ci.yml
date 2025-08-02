@@ -8,6 +8,7 @@ on:
     paths:
       - '**.build'
       - 'subprojects/**'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
     # Allow to run manually
 
@@ -21,6 +22,9 @@ jobs:
         container:
           - fedora:41
           - fedora:42
+          #- ubuntu:22.04 - fails due to issue with cypari2
+          #- ubuntu:24.04 - fails due to issue with cypari2
+          - ubuntu:25.04
     container:
       image: ${{ matrix.container }}
 
@@ -30,7 +34,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6.3.1
+        uses: astral-sh/setup-uv@v6.4.3
 
       # We cannot use the setup python action because it doesn't support all containers
       # https://github.com/actions/setup-python/issues/527
@@ -62,18 +66,35 @@ jobs:
         run: |
           # Install build dependencies manually as workaround for https://github.com/astral-sh/uv/issues/1516
           uv pip install \
-              meson-python \
-              "cypari2 >=2.2.1" \
-              "cython >=3.0, != 3.0.3, != 3.1.0" \
-              "cython >=3.0, != 3.0.3" \
-              "gmpy2 ~=2.1.b999" \
-              memory_allocator \
-              "numpy >=1.25" \
-              jinja2 \
-              setuptool
-          uv sync --frozen --inexact --no-build-isolation
+            meson-python \
+            "cypari2 >=2.2.1" \
+            "cysignals >=1.11.2, != 1.12.0" \
+            "cython >=3.0, != 3.0.3, < 3.1.0" \
+            "gmpy2 ~=2.1.b999" \
+            memory_allocator \
+            "numpy >=1.25" \
+            jinja2 \
+            setuptools
+          uv sync --frozen --inexact --no-build-isolation -v
 
       - name: Test
         run: |
-          uv run ./sage -t --all -p4 || true
-        
+          uv run --frozen ./sage -t --all -p4 || true
+
+      - name: Clear container name
+        id: clear-container-name
+        if: failure() || success()
+        run: |
+          # Output the container name, but with ":" replaced by "-"
+          # This is needed to avoid issues with the upload-artifact action
+          CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':' '-')
+          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4.5.0
+        if: failure() || success()
+        with:
+          name: ${{ steps.clear-container-name.outputs.CONTAINER_NAME }}-log
+          path: |
+            build/cp313/meson-logs/
+            build/cp313/meson-info/
