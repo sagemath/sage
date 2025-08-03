@@ -95,10 +95,10 @@ jobs:
         id: clear-container-name
         if: failure() || success()
         run: |
-          # Output the container name, but with ":" replaced by "-"
-          # This is needed to avoid issues with the upload-artifact action
-          CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':' '-')
-          echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
+            # Output the container name, but with ":" and "/" replaced by "-"
+            # This is needed to avoid issues with the upload-artifact action
+            CONTAINER_NAME=$(echo "${{ matrix.container }}" | tr ':/' '--')
+            echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_OUTPUT
 
       - name: Upload log
         uses: actions/upload-artifact@v4.5.0
