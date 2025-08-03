@@ -416,3 +416,19 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         if proof:
             raise NotImplementedError("Rigorous computation of lower bounds of endomorphism rings has not yet been implemented.")
         return False
+
+    def cardinality(self):
+        """
+        Return the cardinality of the Jacobian.
+        Use the formula in `<https://math.stackexchange.com/a/2190894>`_.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(3663031)[]
+            sage: HyperellipticCurve(x^5 + 1758294*x^4 + 1908793*x^3 + 3033920*x^2 + 3445698*x + 3020661).jacobian().cardinality()
+            13403849798842
+        """
+        from sage.categories.finite_fields import FiniteFields
+        if self.curve().base_ring() not in FiniteFields():
+            raise NotImplementedError
+        return self.curve().frobenius_polynomial()(1)

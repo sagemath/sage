@@ -57,6 +57,7 @@ from sage.arith.misc import binomial
 from sage.rings.power_series_ring import PowerSeriesRing
 from . import hyperelliptic_generic
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.functional import rank
 from sage.misc.lazy_import import lazy_import
@@ -297,7 +298,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             ValueError: In the current implementation, p must be greater than (2g+1)(2N-1) = 81
         """
         if algorithm != 'hypellfrob':
-            raise ValueError("Unknown algorithm")
+            raise ValueError("unknown algorithm")
 
         # By default, use precision enough to be able to compute the
         # frobenius minimal polynomial
@@ -306,7 +307,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         return self.frobenius_matrix_hypellfrob(N=N)
 
-    def frobenius_polynomial_cardinalities(self, a=None):
+    def _frobenius_polynomial_cardinalities(self, a=None):
         r"""
         Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
         by computing the number of points on the curve over `g` extensions
@@ -321,13 +322,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
             sage: R.<t> = PolynomialRing(GF(37))
             sage: H = HyperellipticCurve(t^5 + t + 2)
-            sage: H.frobenius_polynomial_cardinalities()
+            sage: H.frobenius_polynomial(algorithm='cardinalities')
             x^4 + x^3 - 52*x^2 + 37*x + 1369
 
         A quadratic twist::
 
             sage: H = HyperellipticCurve(2*t^5 + 2*t + 4)
-            sage: H.frobenius_polynomial_cardinalities()
+            sage: H.frobenius_polynomial(algorithm='cardinalities')
             x^4 - x^3 - 52*x^2 - 37*x + 1369
 
         Curve over a non-prime field::
@@ -335,7 +336,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: K.<z> = GF(7**2)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^5 + z*t + z^2)
-            sage: H.frobenius_polynomial_cardinalities()
+            sage: H.frobenius_polynomial(algorithm='cardinalities')
             x^4 + 8*x^3 + 70*x^2 + 392*x + 2401
 
         This method may actually be useful when ``hypellfrob`` does not work::
@@ -343,11 +344,11 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: K = GF(7)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^9 + t^3 + 1)
-            sage: H.frobenius_polynomial_matrix(algorithm='hypellfrob')
+            sage: H.frobenius_polynomial(algorithm='matrix')
             Traceback (most recent call last):
             ...
             ValueError: In the current implementation, p must be greater than (2g+1)(2N-1) = 81
-            sage: H.frobenius_polynomial_cardinalities()
+            sage: H.frobenius_polynomial(algorithm='cardinalities')
             x^8 - 5*x^7 + 7*x^6 + 36*x^5 - 180*x^4 + 252*x^3 + 343*x^2 - 1715*x + 2401
         """
         g = self.genus()
@@ -372,7 +373,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         return ZZ['x'](coeffs).reverse()
 
-    def frobenius_polynomial_matrix(self, M=None, algorithm='hypellfrob'):
+    def _frobenius_polynomial_matrix(self, M=None, algorithm='hypellfrob'):
         r"""
         Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
         by computing the charpoly of the frobenius matrix.
@@ -384,13 +385,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
             sage: R.<t> = PolynomialRing(GF(37))
             sage: H = HyperellipticCurve(t^5 + t + 2)
-            sage: H.frobenius_polynomial_matrix()
+            sage: H.frobenius_polynomial(algorithm='matrix')
             x^4 + x^3 - 52*x^2 + 37*x + 1369
 
         A quadratic twist::
 
             sage: H = HyperellipticCurve(2*t^5 + 2*t + 4)
-            sage: H.frobenius_polynomial_matrix()
+            sage: H.frobenius_polynomial(algorithm='matrix')
             x^4 - x^3 - 52*x^2 - 37*x + 1369
 
         Curves defined over larger prime fields::
@@ -398,11 +399,11 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: K = GF(49999)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^9 + t^5 + 1)
-            sage: H.frobenius_polynomial_matrix()
+            sage: H.frobenius_polynomial(algorithm='matrix')
             x^8 + 281*x^7 + 55939*x^6 + 14144175*x^5 + 3156455369*x^4 + 707194605825*x^3
             + 139841906155939*x^2 + 35122892542149719*x + 6249500014999800001
             sage: H = HyperellipticCurve(t^15 + t^5 + 1)
-            sage: H.frobenius_polynomial_matrix()  # long time, 8s on a Corei7
+            sage: H.frobenius_polynomial(algorithm='matrix')  # long time, 8s on a Corei7
             x^14 - 76*x^13 + 220846*x^12 - 12984372*x^11 + 24374326657*x^10 - 1203243210304*x^9
             + 1770558798515792*x^8 - 74401511415210496*x^7 + 88526169366991084208*x^6
             - 3007987702642212810304*x^5 + 3046608028331197124223343*x^4
@@ -440,7 +441,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         return ZZ['x'](f)
 
-    def frobenius_polynomial_pari(self):
+    def _frobenius_polynomial_pari(self):
         r"""
         Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
         by calling the PARI function ``hyperellcharpoly``.
@@ -449,13 +450,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
             sage: R.<t> = PolynomialRing(GF(37))
             sage: H = HyperellipticCurve(t^5 + t + 2)
-            sage: H.frobenius_polynomial_pari()
+            sage: H.frobenius_polynomial(algorithm='pari')
             x^4 + x^3 - 52*x^2 + 37*x + 1369
 
         A quadratic twist::
 
             sage: H = HyperellipticCurve(2*t^5 + 2*t + 4)
-            sage: H.frobenius_polynomial_pari()
+            sage: H.frobenius_polynomial(algorithm='pari')
             x^4 - x^3 - 52*x^2 - 37*x + 1369
 
         Slightly larger example::
@@ -463,7 +464,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: K = GF(2003)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^7 + 487*t^5 + 9*t + 1)
-            sage: H.frobenius_polynomial_pari()
+            sage: H.frobenius_polynomial(algorithm='pari')
             x^6 - 14*x^5 + 1512*x^4 - 66290*x^3 + 3028536*x^2 - 56168126*x + 8036054027
 
         Curves defined over a non-prime field are supported as well::
@@ -471,13 +472,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: K.<a> = GF(7^2)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^5 + a*t + 1)
-            sage: H.frobenius_polynomial_pari()
+            sage: H.frobenius_polynomial(algorithm='pari')
             x^4 + 4*x^3 + 84*x^2 + 196*x + 2401
 
             sage: K.<z> = GF(23**3)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^3 + z*t + 4)
-            sage: H.frobenius_polynomial_pari()
+            sage: H.frobenius_polynomial(algorithm='pari')
             x^2 - 15*x + 12167
 
         Over prime fields of odd characteristic, `h` may be nonzero::
@@ -485,7 +486,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: K = GF(101)
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^5 + 27*t + 3, t)
-            sage: H.frobenius_polynomial_pari()
+            sage: H.frobenius_polynomial(algorithm='pari')
             x^4 + 2*x^3 - 58*x^2 + 202*x + 10201
 
         TESTS:
@@ -495,16 +496,32 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: P.<x> = PolynomialRing(GF(3))
             sage: u = x^10 + x^9 + x^8 + x
             sage: C = HyperellipticCurve(u)
-            sage: C.frobenius_polynomial_pari()
+            sage: C.frobenius_polynomial(algorithm='pari')
             x^8 + 2*x^7 + 6*x^6 + 9*x^5 + 18*x^4 + 27*x^3 + 54*x^2 + 54*x + 81
         """
         f, h = self.hyperelliptic_polynomials()
         return ZZ['x'](pari([f, h]).hyperellcharpoly())
 
+    frobenius_polynomial_cardinalities = deprecated_function_alias(40528, _frobenius_polynomial_cardinalities)
+    frobenius_polynomial_matrix = deprecated_function_alias(40528, _frobenius_polynomial_matrix)
+    frobenius_polynomial_pari = deprecated_function_alias(40528, _frobenius_polynomial_pari)
+
     @cached_method
-    def frobenius_polynomial(self):
+    def frobenius_polynomial(self, algorithm=None, **kwargs):
         r"""
         Compute the charpoly of frobenius, as an element of `\ZZ[x]`.
+
+        INPUT:
+
+        - ``algorithm`` -- (default: ``None``) the algorithm to use, one of
+          ``'cardinalities'``, ``'matrix'``, or ``'pari'``.
+
+          Refer to :meth:`frobenius_polynomial_cardinalities`,
+          :meth:`frobenius_polynomial_matrix`, and
+          :meth:`frobenius_polynomial_pari` respectively.
+
+        - ``**kwargs`` -- additional keyword arguments passed to the
+          methods above. Undocumented feature, may be removed in the future.
 
         EXAMPLES::
 
@@ -578,6 +595,15 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: C.frobenius_polynomial()
             x^8 + 2*x^7 + 6*x^6 + 9*x^5 + 18*x^4 + 27*x^3 + 54*x^2 + 54*x + 81
         """
+        if algorithm == "cardinalities":
+            return self._frobenius_polynomial_cardinalities(**kwargs)
+        elif algorithm == "matrix":
+            return self._frobenius_polynomial_matrix(**kwargs)
+        elif algorithm == "pari":
+            return self._frobenius_polynomial_pari(**kwargs)
+        elif algorithm is not None:
+            raise ValueError(f"unknown algorithm {algorithm}")
+
         K = self.base_ring()
         e = K.degree()
         q = K.cardinality()
@@ -588,11 +614,11 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         if (e == 1 and
             q >= (2*g+1)*(2*self._frobenius_coefficient_bound_charpoly()-1) and
             h == 0 and f.degree() % 2):
-            return self.frobenius_polynomial_matrix()
+            return self.frobenius_polynomial(algorithm='matrix')
         elif q % 2 == 1:
-            return self.frobenius_polynomial_pari()
+            return self.frobenius_polynomial(algorithm='pari')
         else:
-            return self.frobenius_polynomial_cardinalities()
+            return self.frobenius_polynomial(algorithm='cardinalities')
 
     def _points_fast_sqrt(self):
         """
@@ -1031,7 +1057,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
                 a.append(self.cardinality_exhaustive(extension_degree=i))
 
         # let's not be too naive and compute the frobenius polynomial
-        f = self.frobenius_polynomial_cardinalities(a=a)
+        f = self._frobenius_polynomial_cardinalities(a=a)
         return self.count_points_frobenius_polynomial(n=n, f=f)
 
     def count_points_hypellfrob(self, n=1, N=None, algorithm=None):
@@ -1116,7 +1142,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             M = self.frobenius_matrix(N=N, algorithm='hypellfrob')
             return self.count_points_matrix_traces(n=n,M=M,N=N)
         elif algorithm == 'charpoly':
-            f = self.frobenius_polynomial_matrix(algorithm='hypellfrob')
+            f = self._frobenius_polynomial_matrix(algorithm='hypellfrob')
             return self.count_points_frobenius_polynomial(n=n,f=f)
         else:
             raise ValueError("Unknown algorithm")
