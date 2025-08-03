@@ -2272,6 +2272,131 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         raise ValueError(f"No algorithm '{algorithm}' known")
 
+    def random_element(self):
+        """
+        Return a random point on this elliptic/hyperelliptic curve, uniformly chosen
+        among all rational points.
+
+        ALGORITHM:
+
+        Choose the point at infinity with probability `1/(2q + 1)`.
+        Otherwise, take a random element from the field as x-coordinate
+        and compute the possible y-coordinates. Return the i-th
+        possible y-coordinate, where i is randomly chosen to be 0 or 1.
+        If the i-th y-coordinate does not exist (either there is no
+        point with the given x-coordinate or we hit a 2-torsion point
+        with i == 1), try again.
+
+        This gives a uniform distribution because you can imagine
+        `2q + 1` buckets, one for the point at infinity and 2 for each
+        element of the field (representing the x-coordinates). This
+        gives a 1-to-1 map of (hyper)elliptic curve points into buckets. At
+        every iteration, we simply choose a random bucket until we find
+        a bucket containing a point.
+
+        AUTHORS:
+
+        - Jeroen Demeyer (2014-09-09): choose points uniformly random,
+          see :issue:`16951`.
+
+        EXAMPLES::
+
+            sage: k = GF(next_prime(7^5))
+            sage: E = EllipticCurve(k,[2,4])
+            sage: P = E.random_element(); P  # random
+            (16740 : 12486 : 1)
+            sage: type(P)
+            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
+            sage: P in E
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(7^5)
+            sage: E = EllipticCurve(k,[2,4])
+            sage: P = E.random_element(); P  # random
+            (5*a^4 + 3*a^3 + 2*a^2 + a + 4 : 2*a^4 + 3*a^3 + 4*a^2 + a + 5 : 1)
+            sage: type(P)
+            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
+            sage: P in E
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(2^5)
+            sage: E = EllipticCurve(k,[a^2,a,1,a+1,1])
+            sage: P = E.random_element(); P  # random
+            (a^4 + a : a^4 + a^3 + a^2 : 1)
+            sage: type(P)
+            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
+            sage: P in E
+            True
+
+        Ensure that the entire point set is reachable::
+
+            sage: E = EllipticCurve(GF(11), [2,1])
+            sage: S = set()
+            sage: while len(S) < E.cardinality():
+            ....:     S.add(E.random_element())
+
+        TESTS:
+
+        See :issue:`8311`::
+
+            sage: E = EllipticCurve(GF(3), [0,0,0,2,2])
+            sage: E.random_element()
+            (0 : 1 : 0)
+            sage: E.cardinality()
+            1
+
+            sage: E = EllipticCurve(GF(2), [0,0,1,1,1])
+            sage: E.random_point()
+            (0 : 1 : 0)
+            sage: E.cardinality()
+            1
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(4)
+            sage: E = EllipticCurve(F, [0, 0, 1, 0, a])
+            sage: E.random_point()
+            (0 : 1 : 0)
+            sage: E.cardinality()
+            1
+
+        Sampling from points on a hyperelliptic curve::
+
+            sage: R.<x,y> = GF(13)[]
+            sage: C = HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
+            sage: P = C.random_element(); P  # random
+            (0 : 1 : 0)
+            sage: P in C
+            True
+        """
+        from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
+        from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
+        if not isinstance(self, (EllipticCurve_finite_field, HyperellipticCurve_finite_field)):
+            raise NotImplementedError("only implemented for elliptic and hyperelliptic curves over finite fields")
+
+        k = self.base_ring()
+        n = 2 * k.order() + 1
+
+        from sage.rings.integer_ring import ZZ
+        while True:
+            # Choose the point at infinity with probability 1/(2q + 1)
+            i = ZZ.random_element(n)
+            if not i:
+                return self(0, 1, 0)
+
+            v = self.lift_x(k.random_element(), all=True)
+            try:
+                return v[i % 2]
+            except IndexError:
+                pass
+
+    random_point = random_element
+
 
 class IntegralProjectiveCurve(ProjectiveCurve_field):
     """
