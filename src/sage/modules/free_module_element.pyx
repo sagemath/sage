@@ -4285,11 +4285,16 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: f(x, y, z) = (y, z, x)
             sage: f.compositional_inverse()
+            (x, y, z) |--> (z, x, y)
 
         TESTS::
 
             sage: f.change_ring(SR)
+            (y, z, x)
             sage: f.change_ring(SR).compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be a symbolic expression ring
         """
         from sage.rings.abc import CallableSymbolicExpressionRing
         if not isinstance(self.base_ring(), CallableSymbolicExpressionRing):
