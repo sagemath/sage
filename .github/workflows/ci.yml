@@ -22,7 +22,7 @@ jobs:
         container:
           - fedora:41
           - fedora:42
-          - ghcr.io/void-linux/void-musl-full
+          - ghcr.io/void-linux/void-glibc-full
           #- ubuntu:22.04 - fails due to issue with cypari2
           #- ubuntu:24.04 - fails due to issue with cypari2
           - ubuntu:25.04
@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Prepare container
         run: |
-          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-musl-full" ]; then
+          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-glibc-full" ]; then
             xbps-install -Syu xbps
             xbps-install -yu
             # node-based actions require libstdc++.so.6
