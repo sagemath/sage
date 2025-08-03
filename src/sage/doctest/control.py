@@ -69,7 +69,7 @@ class DocTestDefaults(SageObject):
 
     INPUT:
 
-    - ``runtest_default`` -- (boolean, default ``False``); if ``True``,
+    - ``runtest_default`` -- boolean (default: ``False``); if ``True``,
       fills in attribute to be the same as the defaults defined in
       ``sage-runtests``. If ``False``, change defaults in a few places
       for use in doctests of the doctester, which is mostly to make
