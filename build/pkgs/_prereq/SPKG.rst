@@ -28,7 +28,7 @@ computer:
 - **zlib**: the library ``libz`` with its headers, and its pkg-config zlib.pc file.
   (some Linux distros package these separately.)
   On macOS we provide a basic zlib.pc file in build/platform/macos/pkgconfig,
-  which is, if needed, gets prepended to PKG_CONFIG_PATH by ./configure.
+  which, if needed, gets prepended to PKG_CONFIG_PATH by ./configure.
 
 Other versions of these may work, but they are untested.
 
