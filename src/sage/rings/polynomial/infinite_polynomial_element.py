@@ -103,6 +103,7 @@ finite polynomial rings are merged with infinite polynomial rings::
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.structure.element import parent
+from sage.structure.factorization import Factorization
 from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -311,87 +312,17 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         return self._p
 
-    def _getAttributeNames(self):
+    def _latex_(self):
         """
-        This method implements tab completion, see :issue:`6854`.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
-            sage: X.<x> = InfinitePolynomialRing(QQ)
-            sage: import sage.interfaces.tab_completion as s
-            sage: p = x[3]*x[2]
-            sage: s.completions('p.co', globals()) # indirect doctest
-            ['p.coefficient',
-             'p.coefficients',
-             'p.constant_coefficient',
-             'p.content',
-             'p.content_ideal']
-        """
-        return dir(self._p)
-
-    def __dir__(self):
-        """
-        This method implements tab completion, see :issue:`6854`.
-
-        TESTS::
-
-            sage: X.<x> = InfinitePolynomialRing(QQ)
-            sage: import sage.interfaces.tab_completion as s
-            sage: p = x[3]*x[2]
-            sage: s.completions('p.co', globals()) # indirect doc test
-            ['p.coefficient',
-             'p.coefficients',
-             'p.constant_coefficient',
-             'p.content',
-             'p.content_ideal']
-            sage: 'constant_coefficient' in dir(p) # indirect doctest
-            True
-        """
-        return dir(self._p)
-
-    def __getattr__(self, s):
-        """
-        NOTE:
-
-        This method will only be called if an attribute of ``self``
-        is requested that is not known to Python. In that case,
-        the corresponding attribute of the underlying polynomial
-        of ``self`` is returned.
-
-        EXAMPLES:
-
-        Elements of Infinite Polynomial Rings have no genuine
-        ``_latex_`` method. But the method inherited from the
-        underlying polynomial suffices::
-
             sage: X.<alpha> = InfinitePolynomialRing(QQ)
-            sage: latex(alpha[3]*alpha[2]^2) # indirect doctest
+            sage: latex(alpha[3]*alpha[2]^2)  # indirect doctest
             \alpha_{3} \alpha_{2}^{2}
-
-        Related with issues :issue:`6854` and :issue:`7580`, the attribute
-        ``__methods__`` is treated in a special way, which
-        makes introspection and tab completion work::
-
-            sage: import sage.interfaces.tab_completion as s
-            sage: p = alpha[3]*alpha[2]^2
-            sage: s.completions('p.co', globals()) # indirect doc test
-            ['p.coefficient',
-             'p.coefficients',
-             'p.constant_coefficient',
-             'p.content',
-             'p.content_ideal']
-            sage: 'constant_coefficient' in dir(p) # indirect doctest
-            True
         """
-        if s == '__members__':
-            return dir(self._p)
-        if s == '__methods__':
-            return [X for X in dir(self._p) if hasattr(self._p, X)
-                    and ('method' in str(type(getattr(self._p, X))))]
-        try:
-            return getattr(self._p, s)
-        except AttributeError:
-            raise AttributeError('%s has no attribute %s' % (self.__class__, s))
+        return self._p._latex_()
 
     def subs(self, fixed=None, **kwargs):
         """
@@ -553,6 +484,106 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         return self._p.is_nilpotent()
 
+    def is_constant(self):
+        """
+        Return ``True`` if ``self`` is a constant and ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: R.<x> = InfinitePolynomialRing(QQbar)
+            sage: f = 3*x[3]^2 - 2*x[1] + 5
+            sage: f.is_constant()
+            False
+            sage: g = 10*f^0
+            sage: g.is_constant()
+            True
+        """
+        return self._p.is_constant()
+
+    def constant_coefficient(self):
+        """
+        Return the constant coefficient of this multivariate polynomial.
+
+        EXAMPLES::
+
+            sage: R.<x, y> = InfinitePolynomialRing(QQ)
+            sage: f = 3*x[3]^2 - 2*x[2]*y[2] + 5
+            sage: f.constant_coefficient()
+            5
+            sage: f = 3*x[3]^2
+            sage: f.constant_coefficient()
+            0
+        """
+        return self._p.constant_coefficient()
+
+    def is_monomial(self):
+        """
+        Return ``True`` if ``self`` is a monomial, which we define to be a
+        product of generators with coefficient 1.
+
+        Use :meth:`is_term` to allow the coefficient to not be 1.
+
+        EXAMPLES::
+
+            sage: R.<x, y> = InfinitePolynomialRing(QQ)
+            sage: p = 2*x[2]*y[2]
+            sage: p.is_monomial()
+            False
+            sage: (p/2).is_monomial()
+            True
+        """
+        return self._p.is_monomial()
+
+    def is_term(self):
+        """
+        Return ``True`` if ``self`` is a term, which we define to be a
+        product of generators times some coefficient, which need
+        not be 1.
+
+        Use :meth:`is_monomial` to require that the coefficient be 1.
+
+        EXAMPLES::
+
+            sage: R.<x, y> = InfinitePolynomialRing(QQ)
+            sage: p = 2*x[2]*y[2] + 5
+            sage: p.is_term()
+            False
+            sage: (p-5).is_term()
+            True
+        """
+        return self._p.is_term()
+
+    def degree(self, x=None, std_grading=False):
+        """
+        Return the degree of ``self`` in ``x``, where ``x`` must
+        be one of the generators for the parent of ``self``.
+
+        INPUT:
+
+        - ``x`` -- a generator of the parent of ``self``. If ``x`` is
+          not specified (or is None), return the total degree, which
+          is the maximum degree of any monomial. Note that a weighted
+          term ordering alters the grading of the generators of the
+          ring; see the tests below.  To avoid this behavior, set the
+          optional argument ``std_grading=True``.
+
+        OUTPUT: integer
+
+        EXAMPLES::
+
+            sage: R.<x, y> = InfinitePolynomialRing(QQ)
+            sage: p = x[3]*x[2]^2*y[5]^3 + 1
+            sage: p.degree()
+            6
+            sage: p.degree(y[5])
+            3
+            sage: p.degree(y[3])
+            0
+        """
+        if x is not None:
+            x = x._p
+        return self._p.degree(x=x, std_grading=std_grading)
+
     def numerator(self):
         r"""
         Return a numerator of ``self``, computed as ``self * self.denominator()``.
@@ -587,6 +618,38 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         P = self.parent()
         return InfinitePolynomial(P, self._p.numerator())
+
+    def denominator(self):
+        r"""
+        Return a denominator of ``self``.
+
+        First, the lcm of the denominators of the entries of ``self``
+        is computed and returned. If this computation fails, the
+        unit of the parent of ``self`` is returned.
+
+        Note that some subclasses may implement its own denominator
+        function.
+
+        .. WARNING::
+
+           This is not the denominator of the rational function
+           defined by ``self``, which would always be 1 since ``self`` is a
+           polynomial.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: p = 2/3*x[1] + 4/9*x[2] - 2*x[1]*x[3]
+            sage: d = p.denominator(); d
+            9
+
+        TESTS::
+
+            sage: d.parent()
+            Infinite polynomial ring in x over Rational Field
+        """
+        P = self.parent()
+        return InfinitePolynomial(P, self._p.denominator())
 
     @cached_method
     def variables(self):
@@ -719,6 +782,36 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             field = self.parent().fraction_field()
             # there remains a problem in reduction
             return FractionFieldElement(field, self, x, reduce=False)
+
+    def factor(self, proof=None):
+        """
+        Return the factorization of this polynomial.
+
+        INPUT:
+
+        - ``proof`` -- ignored
+
+        EXAMPLES::
+
+            sage: R.<x> = InfinitePolynomialRing(QQbar)
+            sage: factor(x[3]^2 - x[1]^2)
+            (x_3 - x_1) * (x_3 + x_1)
+
+        TESTS::
+
+            sage: P = factor(x[3]^2 - x[1]^2)[0][0].parent()
+            sage: P
+            Infinite polynomial ring in x over Algebraic Field
+            sage: P == R
+            True
+        """
+        P = self.parent()
+        f = self._p.factor(proof=proof)
+        return Factorization([(InfinitePolynomial(P, p), e) for p, e in f],
+                             unit=f.unit(),
+                             cr=f._cr(),
+                             sort=False,
+                             simplify=False)
 
     @cached_method
     def lm(self):
