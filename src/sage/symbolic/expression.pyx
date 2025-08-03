@@ -13441,77 +13441,6 @@ cdef class Expression(Expression_abc):
             raise TypeError("this expression must be a relation")
         return self / x
 
-    def implicit_derivative(self, Y, X, n=1):
-        """
-        Return the `n`-th derivative of `Y` with respect to `X` given
-        implicitly by this expression.
-
-        INPUT:
-
-        - ``Y`` -- the dependent variable of the implicit expression
-
-        - ``X`` -- the independent variable with respect to which the
-          derivative is taken
-
-        - ``n`` -- (default: 1) the order of the derivative
-
-        EXAMPLES::
-
-            sage: var('x, y')
-            (x, y)
-            sage: f = cos(x)*sin(y)
-            sage: f.implicit_derivative(y, x)
-            sin(x)*sin(y)/(cos(x)*cos(y))
-            sage: g = x*y^2
-            sage: g.implicit_derivative(y, x, 3)
-            -1/4*(y + 2*y/x)/x^2 + 1/4*(2*y^2/x - y^2/x^2)/(x*y) - 3/4*y/x^3
-
-        It is an error to not include an independent variable term
-        in the expression::
-
-            sage: (cos(x)*sin(x)).implicit_derivative(y, x)
-            Traceback (most recent call last):
-            ...
-            ValueError: Expression cos(x)*sin(x) contains no y terms
-
-
-        TESTS:
-
-        Check that the symbols registry is not polluted::
-
-            sage: var('x,y')
-            (x, y)
-            sage: psr = copy(SR.symbols)
-            sage: (x^6*y^5).implicit_derivative(y, x, 3)
-            -792/125*y/x^3 + 12/25*(15*x^4*y^5 + 28*x^3*y^5)/(x^6*y^4) - 36/125*(20*x^5*y^4 + 43*x^4*y^4)/(x^7*y^3)
-            sage: psr == SR.symbols
-            True
-        """
-        from sage.symbolic.ring import SR
-        from sage.symbolic.function import SymbolicFunction
-
-        if not self.has(Y):
-            raise ValueError("Expression {} contains no {} terms".format(self, Y))
-        with SR.temp_var() as x:
-            with SR.temp_var() as yy:
-                y = SymbolicFunction('y', 1)(x)
-                f = SymbolicFunction('f', 2)(x, yy)
-                Fx = f.diff(x)
-                Fy = f.diff(yy)
-                G = -(Fx/Fy)
-                G = G.subs({yy: y})
-                di = {y.diff(x): -self.diff(X)/self.diff(Y)}
-                R = G
-                S = G.diff(x, n - 1)
-                for i in range(n + 1):
-                    di[y.diff(x, i + 1).subs({x: x})] = R
-                    S = S.subs(di)
-                    R = G.diff(x, i)
-                    for j in range(n + 1 - i):
-                        di[f.diff(x, i, yy, j).subs({x: x, yy: y})] = self.diff(X, i, Y, j)
-                        S = S.subs(di)
-                return S
-
     def compositional_inverse(self, allow_inverse_multivalued=True, **kwargs):
         """
         Find the compositional inverse of this symbolic function.
@@ -13588,6 +13517,77 @@ cdef class Expression(Expression_abc):
         """
         from sage.modules.free_module_element import vector
         return vector([self]).compositional_inverse(allow_inverse_multivalued=allow_inverse_multivalued, **kwargs)[0]
+
+    def implicit_derivative(self, Y, X, n=1):
+        """
+        Return the `n`-th derivative of `Y` with respect to `X` given
+        implicitly by this expression.
+
+        INPUT:
+
+        - ``Y`` -- the dependent variable of the implicit expression
+
+        - ``X`` -- the independent variable with respect to which the
+          derivative is taken
+
+        - ``n`` -- (default: 1) the order of the derivative
+
+        EXAMPLES::
+
+            sage: var('x, y')
+            (x, y)
+            sage: f = cos(x)*sin(y)
+            sage: f.implicit_derivative(y, x)
+            sin(x)*sin(y)/(cos(x)*cos(y))
+            sage: g = x*y^2
+            sage: g.implicit_derivative(y, x, 3)
+            -1/4*(y + 2*y/x)/x^2 + 1/4*(2*y^2/x - y^2/x^2)/(x*y) - 3/4*y/x^3
+
+        It is an error to not include an independent variable term
+        in the expression::
+
+            sage: (cos(x)*sin(x)).implicit_derivative(y, x)
+            Traceback (most recent call last):
+            ...
+            ValueError: Expression cos(x)*sin(x) contains no y terms
+
+
+        TESTS:
+
+        Check that the symbols registry is not polluted::
+
+            sage: var('x,y')
+            (x, y)
+            sage: psr = copy(SR.symbols)
+            sage: (x^6*y^5).implicit_derivative(y, x, 3)
+            -792/125*y/x^3 + 12/25*(15*x^4*y^5 + 28*x^3*y^5)/(x^6*y^4) - 36/125*(20*x^5*y^4 + 43*x^4*y^4)/(x^7*y^3)
+            sage: psr == SR.symbols
+            True
+        """
+        from sage.symbolic.ring import SR
+        from sage.symbolic.function import SymbolicFunction
+
+        if not self.has(Y):
+            raise ValueError("Expression {} contains no {} terms".format(self, Y))
+        with SR.temp_var() as x:
+            with SR.temp_var() as yy:
+                y = SymbolicFunction('y', 1)(x)
+                f = SymbolicFunction('f', 2)(x, yy)
+                Fx = f.diff(x)
+                Fy = f.diff(yy)
+                G = -(Fx/Fy)
+                G = G.subs({yy: y})
+                di = {y.diff(x): -self.diff(X)/self.diff(Y)}
+                R = G
+                S = G.diff(x, n - 1)
+                for i in range(n + 1):
+                    di[y.diff(x, i + 1).subs({x: x})] = R
+                    S = S.subs(di)
+                    R = G.diff(x, i)
+                    for j in range(n + 1 - i):
+                        di[f.diff(x, i, yy, j).subs({x: x, yy: y})] = self.diff(X, i, Y, j)
+                        S = S.subs(di)
+                return S
 
 
 cpdef _repr_Expression(x):

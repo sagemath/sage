@@ -4271,7 +4271,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return vector(ring, coeffs)
         return vector(coeffs)
 
-    def compositional_inverse(self, allow_inverse_multivalued=True, **kwargs):
+    def compositional_inverse(self, allow_multivalued_inverse=True, **kwargs):
         """
         Find the compositional inverse of this symbolic function.
 
@@ -4306,8 +4306,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         l = solve([a == b for a, b in zip(self.change_ring(SR), tmp_vars)], input_vars, solution_dict=True, **kwargs)
         if not l:
             raise ValueError("cannot find an inverse")
-        if len(l) > 1 and not allow_inverse_multivalued:
-            raise ValueError("inverse is multivalued, pass allow_inverse_multivalued=True to bypass")
+        if len(l) > 1 and not allow_multivalued_inverse:
+            raise ValueError("inverse is multivalued, pass allow_multivalued_inverse=True to bypass")
         d = l[0]
         subs_dict = dict(zip(tmp_vars, input_vars))
         for x in input_vars:
