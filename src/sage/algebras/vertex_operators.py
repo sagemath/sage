@@ -28,6 +28,7 @@ from sage.misc.cachefunc import cached_function
 from sage.misc.misc_c import prod
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -62,7 +63,7 @@ class Current(Action):
     The action of the current operators `J_i` on the Fermionic Fock space.
     For `i \neq 0`, we can view `J_i` as moving a particle by `-i` in all possible ways.
     Equivalently, viewed on the bosonic side, the action of `J_i` can be calculated
-    using the Murnaghan-Nakayam rule.
+    using the Murnaghan-Nakayama rule.
 
     EXAMPLES::
 
@@ -191,9 +192,14 @@ class HalfVertexOperator():
         raise ValueError("Invalid input")
 
 
-class VertexOperator(Action):
+
+
+
+class VertexOperator():
     r"""
-    The action of a Vertex Operator on the Bosonic Fock space.
+    The action of a Vertex Operator on the Bosonic Fock space. Users should not
+    create instances of this class directly, but instead use one of the defined
+    subclasses.
 
     INPUT:
 
@@ -205,24 +211,29 @@ class VertexOperator(Action):
       far to expand the vertex operator (default: ``lambda x: max(x.degree(), 1)``)
     - ``dcharge`` -- integer (default: ``1``) indicating how this vertex operator
       should change the charge of an element
-    - ``fockspace``-- the space that the vertex operators are acting on.
+    - ``fockspace``-- the space that the vertex operators are acting on
 
     """
     def __init__(self, pos, neg, cutoff=lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
+        
         self.pos = HalfVertexOperator(pos)
         self.neg = HalfVertexOperator(neg)
         if fockspace is None:
             self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=('w'))
         else:  # TODO: check input is correct type
             self.fockspace = fockspace
+        
+        # self.spectral = LazyLaurentSeriesRing(self.fockspace, names = ('z',))
         self.cutoff = cutoff
         self.dcharge = dcharge
-        super().__init__(ZZ, self.fockspace)
+        # super().__init__(ZZ, self.fockspace)
 
-    def _act_(self, i, x):
+    # def act_on_fock_space_element(self, x):
+    #     return self.spectral(lambda n: self.act_by_mode(n,x), valuation = -1)
+    def act_by_mode(self, i, x):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
-        ``self.fockspace``
+        ``self.fockspace``.
         """
         res = 0
         # for each component of constant charge, compute the action
@@ -231,6 +242,8 @@ class VertexOperator(Action):
 
         return res
 
+    act = act_by_mode
+
     def _act_on_sym(self, i, x, c):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on a homoegeneous element
@@ -238,8 +251,11 @@ class VertexOperator(Action):
         """
         p = self.fockspace.base_ring().symmetric_function_ring().p()
         op = self._get_operator(i, self.cutoff(x), c)
+        
+        # op is a scalar
         if op in self.fockspace.base_ring().base_ring():
             return op*x
+        
         res = 0
         for (m, c) in op.monomial_coefficients().items():
             par1 = self._d_to_par(m[0].dict())
@@ -269,7 +285,69 @@ class VertexOperator(Action):
         for i in m:
             res += [i]*int(m[i])
         return Partition(sorted(res, reverse=True))
+    
+class ProductOfVertexOperators():
+    def __init__(self, vertex_ops):
+        self.vertex_ops = vertex_ops
+        self.fockspace = self.vertex_ops[0].fockspace
+        assert all(op.fockspace is self.fockspace for op in self.vertex_ops)
 
+    def get_monomial_coefficient(self, mon, x):
+        """
+        
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import *
+            sage: B = BosonicFockSpace()
+            sage: Cre = CreationOperator(B)
+            sage: P = ProductOfVertexOperators([Cre, Cre, Cre])
+            sage: P.get_monomial_coefficient([3, 2, 1],B.one())
+            s[1, 1, 1]*w^3
+            sage: P.get_monomial_coefficient([3, 1, 2],B.one())
+            -s[1, 1, 1]*w^3
+            sage: Ann = AnnihilationOperator(B)
+            sage: P = ProductOfVertexOperators([Ann]*3)
+            sage: P.get_monomial_coefficient([-4, -3, -2],B.one())
+            -s[3]*w^-3
+            sage: P.get_monomial_coefficient([-3, -2, -4],B.one())
+            -s[3]*w^-3
+        """
+        # BUG: This currently gives the wrong power for Annihilation operators
+        # This is coming from the fact that their series form is \sum \psi_i^* z^-i
+        # The code for getting their Fourier mode picks out the action of \psi_i, NOT the coefficient of z^i
+        # The former makes more sense when you just want the action of a single clifford element, but the latter makes 
+        # more sense when you want to deal with series expansions
+        if len(mon) != len(self.vertex_ops):
+            raise ValueError
+        for i in range(len(mon) -1, -1, -1):
+            x = self.vertex_ops[i].act(mon[i], x)
+            if x == 0:
+                break
+        return self.fockspace(x)
+    
+    def vacuum_expectation(self, cutoff=4):
+        """
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import *
+            sage: B = BosonicFockSpace()
+            sage: Cre = CreationOperator(B)
+            sage: Ann = AnnihilationOperator(B)
+            sage: P = ProductOfVertexOperators([Ann, Cre])
+            sage: P.vacuum_expectation()
+            {(0, 0): 1, (1, 1): 1, (2, 2): 1, (3, 3): 1, (4, 4): 1}
+            sage: P = ProductOfVertexOperators([Cre, Ann])
+            sage: P.vacuum_expectation()
+            {(-4, -4): 1, (-3, -3): 1, (-2, -2): 1, (-1, -1): 1}
+        """
+        from itertools import product
+        vac = self.vertex_ops[0].fockspace.one()
+        res = {}
+        for m in product(range(-cutoff, cutoff+1),repeat=len(self.vertex_ops)):
+            c = self.get_monomial_coefficient(m, vac).constant_coefficient().monomial_coefficients().get(Partition([]), 0)  
+            if c != 0:
+                res[m] = c
+        return res
 
 class CreationOperator(VertexOperator):
     r"""
