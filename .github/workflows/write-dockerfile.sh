@@ -275,7 +275,7 @@ cat <<EOF
 FROM with-system-packages AS bootstrapped
 #:bootstrapping:
 RUN rm -rf /new /sage/.git
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap conftest.py configure_wrapper configure.ac sage .homebrew-build-env tox.ini .gitignore pyproject.toml meson.build /new/
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap conftest.py configure_wrapper configure.ac sage .homebrew-build-env tox.ini .gitignore pyproject.toml meson.build meson.options /new/
 $ADD config/config.rpath /new/config/config.rpath
 $ADD src/doc/bootstrap /new/src/doc/bootstrap
 $ADD src/meson.build /new/src/
