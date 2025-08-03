@@ -13512,6 +13512,59 @@ cdef class Expression(Expression_abc):
                         S = S.subs(di)
                 return S
 
+    def compositional_inverse(self, allow_inverse_multivalued=True, **kwargs):
+        """
+        Find the compositional inverse of this symbolic function.
+
+        INPUT:
+
+        - ``allow_inverse_multivalued`` -- (default: ``True``); see example below
+        - ``**kwargs`` -- additional keyword arguments passed to :func:`sage.symbolic.relation.solve`.
+
+        .. SEEALSO::
+
+            :meth:`sage.modules.free_module_element.FreeModuleElement.compositional_inverse`.
+
+        EXAMPLES::
+
+            sage: f(x) = x+1
+            sage: f.compositional_inverse()
+            sage: var("y")
+            sage: f(x) = x+y
+            sage: f.compositional_inverse()
+            sage: f(x) = x^2
+            sage: f.compositional_inverse()
+
+        When ``allow_inverse_multivalued=False``, there is some additional checking::
+
+            sage: f(x) = x^2
+            sage: f.compositional_inverse(allow_inverse_multivalued=False)
+
+        Nonetheless, the checking is not always foolproof (``x |--> log(x) + 2*pi*I`` is another possibility)::
+
+            sage: f(x) = exp(x)
+            sage: f.compositional_inverse(allow_inverse_multivalued=False)
+
+        Sometimes passing ``kwargs`` is useful, for example ``algorithm`` can be used
+        when the default solver fails::
+
+            sage: f(x) = (2/3)^x
+            sage: f.compositional_inverse()
+            sage: f.compositional_inverse(algorithm="giac")  # needs sage.libs.giac
+
+        TESTS::
+
+            sage: f(x) = x+exp(x)
+            sage: f.compositional_inverse()
+            sage: f(x) = 0
+            sage: f.compositional_inverse()
+            sage: f(x, y) = (x, x)
+            sage: f.compositional_inverse()
+            sage: (x+1).compositional_inverse()
+        """
+        from sage.modules.free_module_element import vector
+        return vector([self]).compositional_inverse(allow_inverse_multivalued=allow_inverse_multivalued, **kwargs)[0]
+
 
 cpdef _repr_Expression(x):
     r"""
