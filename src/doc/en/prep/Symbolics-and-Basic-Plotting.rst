@@ -178,7 +178,7 @@ This is a good place for a few reminders of basic help.
 ::
 
     sage: z.simplify
-    <built-in method simplify of sage.symbolic.expression.Expression object at ...>
+    <bound method Expression.simplify of -((x + 1)*sqrt(x - 1) - (x - 1)^(3/2))/sqrt((x + 1)*(x - 1))>
 
 Finally, recall that you can get nicely typeset versions of the output
 in several ways.
