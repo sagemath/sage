@@ -951,7 +951,11 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ord = integer_ring.ZZ(ord)
     try:
         if ord == Infinity:
-            return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
+            if algorithm == 'bsgs':
+                return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
+            else:
+                assert algorithm == 'lambda'
+                return discrete_log_lambda(base, a, bounds, inverse=inverse, identity=identity, op=op, operation=operation)
         if base == power(base, 0) and a != base:
             raise ValueError
         f = ord.factor()
@@ -982,7 +986,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                     c = bsgs(gamma, h, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
                 elif algorithm == 'rho':
                     c = discrete_log_rho(h, gamma, ord=pi, inverse=inverse, identity=identity, op=op, operation=operation)
-                elif algorithm == 'lambda':
+                else:
+                    assert algorithm == 'lambda'
                     c = discrete_log_lambda(h, gamma, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
                 l[i] += c * (pi**j)
                 running_bound //= pi
@@ -1100,14 +1105,14 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
             c += r
         if mut:
             H.set_immutable()
-        mem = {H}
+        mem = H
         # second random walk
         H = a
         d = 0
         while c - d >= lb:
             if mut:
                 H.set_immutable()
-            if ub >= c - d and H in mem:
+            if ub >= c - d and H == mem:
                 return c - d
             r, e = M[hash_function(H) % k]
             H = mult(H, e)
