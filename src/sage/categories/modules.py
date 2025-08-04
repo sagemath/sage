@@ -769,7 +769,8 @@ class Modules(Category_module):
                 This ``base_ring`` method is actually overridden by
                 :meth:`sage.structure.category_object.CategoryObject.base_ring`::
 
-                    sage: H.base_ring.__module__                                        # needs sage.modules
+                    sage: H.base_ring.__module__
+                    'sage.structure.category_object'
 
                 Here we call it directly::
 
