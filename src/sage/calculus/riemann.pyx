@@ -51,7 +51,7 @@ from math import pi
 from math import sin
 from math import cos
 
-from math import log # used for complex plot lightness
+from math import log  # used for complex plot lightness
 from math import atan
 
 from cmath import exp
@@ -201,7 +201,7 @@ cdef class Riemann_Map:
     cdef exterior
 
     def __init__(self, fs, fprimes, COMPLEX_T a, int N=500, int ncorners=4,
-        opp=False, exterior = False):
+                 opp=False, exterior=False):
         """
         Initialize the ``Riemann_Map`` class. See the class :class:`Riemann_Map`
         for full documentation on the input of this initialization method.
@@ -227,7 +227,7 @@ cdef class Riemann_Map:
         self.f = fs[0]
         self.a = a
         self.ncorners = ncorners
-        self.N = N  # Number of collocation pts
+        self.N = N   # Number of collocation pts
         self.opp = opp
         self.exterior = exterior
         self.tk = np.array(np.arange(N) * TWOPI / N + 0.001 / N,
@@ -236,14 +236,14 @@ cdef class Riemann_Map:
         for i in range(N):
             self.tk2[i] = self.tk[i]
         self.tk2[N] = TWOPI
-        self.B = len(fs) # number of boundaries of the figure
+        self.B = len(fs)  # number of boundaries of the figure
         if self.exterior and (self.B > 1):
             raise ValueError(
                 "The exterior map is undefined for multiply connected domains")
-        cdef np.ndarray[COMPLEX_T,ndim=2] cps = np.zeros([self.B, N],
-            dtype=COMPLEX)
-        cdef np.ndarray[COMPLEX_T,ndim=2] dps = np.zeros([self.B, N],
-            dtype=COMPLEX)
+        cdef np.ndarray[COMPLEX_T, ndim=2] cps = np.zeros([self.B, N],
+                                                          dtype=COMPLEX)
+        cdef np.ndarray[COMPLEX_T, ndim=2] dps = np.zeros([self.B, N],
+                                                          dtype=COMPLEX)
         # Find the points on the boundaries and their derivatives.
         if self.exterior:
             for k in range(self.B):
@@ -321,14 +321,14 @@ cdef class Riemann_Map:
         hconj = h.conjugate()
         g = -sadp * hconj
         normalized_dp=dp/adp
-        C = I / N * sadp # equivalent to -TWOPI / N * 1 / (TWOPI * I) * sadp
-        errinvalid = np.geterr()['invalid'] # checks the current error handling for invalid
-        errdivide = np.geterr()['divide'] # checks the current error handling for divide
-        np.seterr(divide='ignore',invalid='ignore')
+        C = I / N * sadp  # equivalent to -TWOPI / N * 1 / (TWOPI * I) * sadp
+        errinvalid = np.geterr()['invalid']  # checks the current error handling for invalid
+        errdivide = np.geterr()['divide']  # checks the current error handling for divide
+        np.seterr(divide='ignore', invalid='ignore')
         K = np.array([C * sadp[t] * (normalized_dp/(cp-cp[t]) -
-             (normalized_dp[t]/(cp-cp[t])).conjugate())
-              for t in np.arange(NB)], dtype=np.complex128)
-        np.seterr(divide=errdivide,invalid=errinvalid) # resets the error handling
+                                     (normalized_dp[t]/(cp-cp[t])).conjugate())
+                      for t in np.arange(NB)], dtype=np.complex128)
+        np.seterr(divide=errdivide, invalid=errinvalid)  # resets the error handling
         for i in range(NB):
             K[i, i] = 1
         # Nystrom Method for solving 2nd kind integrals
@@ -336,7 +336,6 @@ cdef class Riemann_Map:
         # the all-important Szego kernel
         szego = np.array(phi.flatten() / np.sqrt(dp), dtype=COMPLEX)
         self.szego = szego.reshape([B, N])
-        start = 0
         # Finding the theta correspondence using phase. Misbehaves for some
         # regions.
         if B != 1:
@@ -431,7 +430,6 @@ cdef class Riemann_Map:
             sage: sz0 = m.get_szego(boundary=0)
             sage: sz1 = m.get_szego(boundary=1)
         """
-        cdef int k, B
         if boundary < 0:
             temptk = self.tk
             for i in range(self.B - 1):
@@ -564,7 +562,7 @@ cdef class Riemann_Map:
                 p_vector[k, N] = (I / (3*N) * dps[k, 0] *
                                   exp(I * theta_array[k, 0]))
         self.p_vector = p_vector.flatten()
-        cdef np.ndarray[double complex, ndim=1] pq = self.cps[:,list(range(N))+[0]].flatten()
+        cdef np.ndarray[double complex, ndim=1] pq = self.cps[:, list(range(N))+[0]].flatten()
         self.pre_q_vector = pq
 
     cpdef riemann_map(self, COMPLEX_T pt):
@@ -706,10 +704,11 @@ cdef class Riemann_Map:
         else:
             return mapped
 
-    def plot_boundaries(self, plotjoined=True, rgbcolor=[0,0,0], thickness=1):
+    def plot_boundaries(self, plotjoined=True, rgbcolor=None, thickness=1):
         """
-        Plots the boundaries of the region for the Riemann map. Note that
-        this method DOES work for multiply connected domains.
+        Plot the boundaries of the region for the Riemann map.
+
+        Note that this method DOES work for multiply connected domains.
 
         INPUT:
 
@@ -746,6 +745,9 @@ cdef class Riemann_Map:
             Graphics object consisting of 1 graphics primitive
         """
         from sage.plot.all import list_plot
+
+        if rgbcolor is None:
+            rgbcolor = [0, 0, 0]
 
         plots = list(range(self.B))
         for k in range(self.B):
@@ -817,18 +819,19 @@ cdef class Riemann_Map:
             for i in range(x_points):
                 for j in range(y_points):
                     pt = 1/(xmin + 0.5*xstep + i*xstep + I*(ymin + 0.5*ystep + j*ystep))
-                    z_values[j, i] = 1/(-np.dot(p_vector,1/(pre_q_vector - pt)))
+                    z_values[j, i] = 1/(-np.dot(p_vector, 1/(pre_q_vector - pt)))
         else:
             for i in range(x_points):
                 for j in range(y_points):
                     pt = xmin + 0.5*xstep + i*xstep + I*(ymin + 0.5*ystep + j*ystep)
-                    z_values[j, i] = -np.dot(p_vector,1/(pre_q_vector - pt))
+                    z_values[j, i] = -np.dot(p_vector, 1/(pre_q_vector - pt))
         return z_values, xmin, xmax, ymin, ymax
 
     @options(interpolation='catrom')
     def plot_spiderweb(self, spokes=16, circles=4, pts=32, linescale=0.99,
-            rgbcolor=[0, 0, 0], thickness=1, plotjoined=True, withcolor=False,
-            plot_points=200, min_mag=0.001, **options):
+                       rgbcolor=None, thickness=1,
+                       plotjoined=True, withcolor=False,
+                       plot_points=200, min_mag=0.001, **options):
         """
         Generate a traditional "spiderweb plot" of the Riemann map.
 
@@ -944,12 +947,16 @@ cdef class Riemann_Map:
         cdef int k, i
         if self.exterior:
             raise ValueError(
-                "Spiderwebs for exterior maps are not currently    supported")
+                "Spiderwebs for exterior maps are not currently supported")
+
+        if rgbcolor is None:
+            rgbcolor = [0, 0, 0]
+
         if self.B == 1:  # The efficient simply connected
             edge = self.plot_boundaries(plotjoined=plotjoined,
-                rgbcolor=rgbcolor, thickness=thickness)
+                                        rgbcolor=rgbcolor,
+                                        thickness=thickness)
             circle_list = list(range(circles))
-            theta_array = self.theta_array[0]
             s = spline(np.column_stack([self.theta_array[0], self.tk2]).tolist())
             tmax = self.theta_array[0, self.N]
             tmin = self.theta_array[0, 0]
@@ -960,10 +967,13 @@ cdef class Riemann_Map:
                         (k + 1) / (circles + 1.0) * exp(I*i * TWOPI / (2*pts)))
                 if plotjoined:
                     circle_list[k] = list_plot(comp_pt(temp, 1),
-                        rgbcolor=rgbcolor, thickness=thickness, plotjoined=True)
+                                               rgbcolor=rgbcolor,
+                                               thickness=thickness,
+                                               plotjoined=True)
                 else:
                     circle_list[k] = list_plot(comp_pt(temp, 1),
-                        rgbcolor=rgbcolor, pointsize=thickness)
+                                               rgbcolor=rgbcolor,
+                                               pointsize=thickness)
             line_list = list(range(spokes))
             for k in range(spokes):
                 temp = list(range(pts))
@@ -989,24 +999,31 @@ cdef class Riemann_Map:
                     self.plot_colored(plot_points=plot_points)
             else:
                 return edge + sum(circle_list) + sum(line_list)
-        else: # The more difficult multiply connected
+        else:  # The more difficult multiply connected
             z_values, xmin, xmax, ymin, ymax = self.compute_on_grid([],
-                plot_points)
+                                                                    plot_points)
             xstep = (xmax-xmin)/plot_points
             ystep = (ymax-ymin)/plot_points
-            dr, dtheta= get_derivatives(z_values, xstep, ystep) # clean later
+            dr, dtheta= get_derivatives(z_values, xstep, ystep)  # clean later
 
             g = Graphics()
-            g.add_primitive(ComplexPlot(complex_to_spiderweb(z_values,dr,dtheta,
-                spokes, circles, rgbcolor,thickness, withcolor, min_mag),
-                (xmin, xmax), (ymin, ymax),options))
+            g.add_primitive(ComplexPlot(complex_to_spiderweb(z_values, dr,
+                                                             dtheta, spokes,
+                                                             circles,
+                                                             rgbcolor,
+                                                             thickness,
+                                                             withcolor,
+                                                             min_mag),
+                                        (xmin, xmax), (ymin, ymax), options))
             return g + self.plot_boundaries(thickness = thickness)
 
     @options(interpolation='catrom')
-    def plot_colored(self, plot_range=[], int plot_points=100, **options):
+    def plot_colored(self, plot_range=None, int plot_points=100, **options):
         """
-        Generates a colored plot of the Riemann map. A red point on the
-        colored plot corresponds to a red point on the unit disc.
+        Generate a colored plot of the Riemann map.
+
+        A red point on the colored plot corresponds to a red point on
+        the unit disc.
 
         INPUT:
 
@@ -1053,11 +1070,14 @@ cdef class Riemann_Map:
         from sage.plot.complex_plot import ComplexPlot
         from sage.plot.all import Graphics
 
+        if plot_range is None:
+            plot_range = []
+
         z_values, xmin, xmax, ymin, ymax = self.compute_on_grid(plot_range,
-            plot_points)
+                                                                plot_points)
         g = Graphics()
         g.add_primitive(ComplexPlot(complex_to_rgb(z_values), (xmin, xmax),
-            (ymin, ymax),options))
+                                    (ymin, ymax), options))
         return g
 
 cdef comp_pt(clist, loop=True):
@@ -1089,8 +1109,8 @@ cdef comp_pt(clist, loop=True):
         list2.append(list2[0])
     return list2
 
-cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
-    FLOAT_T ystep):
+cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values,
+                      FLOAT_T xstep, FLOAT_T ystep):
     """
     Compute the r*e^(I*theta) form of derivatives from the grid of points. The
     derivatives are computed using quick-and-dirty taylor expansion and
@@ -1132,21 +1152,21 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
     """
     cdef np.ndarray[COMPLEX_T, ndim=2] xderiv
     cdef np.ndarray[FLOAT_T, ndim = 2] dr, dtheta, zabs
-    imax = len(z_values)-2
-    jmax = len(z_values[0])-2
     # (f(x+delta)-f(x-delta))/2delta
-    xderiv = (z_values[1:-1,2:]-z_values[1:-1,:-2])/(2*xstep)
+    xderiv = (z_values[1:-1, 2:]-z_values[1:-1, :-2]) / (2 * xstep)
     # b/c the function is analytic, we know the magnitude of its
     # derivative is equal in all directions
     dr = np.abs(xderiv)
     # the abs(derivative) scaled by distance from origin
-    zabs = np.abs(z_values[1:-1,1:-1])
-    dtheta = np.divide(dr,zabs)
+    zabs = np.abs(z_values[1:-1, 1:-1])
+    dtheta = np.divide(dr, zabs)
     return dr, dtheta
 
 cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
-    np.ndarray[FLOAT_T, ndim = 2] dr, np.ndarray[FLOAT_T, ndim = 2] dtheta,
-    spokes, circles, rgbcolor, thickness, withcolor, min_mag):
+                           np.ndarray[FLOAT_T, ndim = 2] dr,
+                           np.ndarray[FLOAT_T, ndim = 2] dtheta,
+                           spokes, circles, rgbcolor, thickness,
+                           withcolor, min_mag):
     """
     Convert a grid of complex numbers into a matrix containing rgb data
     for the Riemann spiderweb plot.
@@ -1221,9 +1241,9 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
                 [1.        , 1.        , 1.        ]]])
      """
     cdef Py_ssize_t i, j, imax, jmax
-    cdef FLOAT_T x, y, mag, arg, width, target, precision, dmag, darg
+    cdef FLOAT_T mag, arg, target, precision, dmag, darg
     cdef COMPLEX_T z
-    cdef FLOAT_T DMAX = 70 # change to adjust rate_of_change cutoff below
+    cdef FLOAT_T DMAX = 70  # change to adjust rate_of_change cutoff below
     precision = thickness/150.0
     imax = len(z_values)
     jmax = len(z_values[0])
@@ -1234,31 +1254,31 @@ cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
         rgb = np.zeros(dtype=FLOAT, shape=(imax, jmax, 3))
         rgb += 1
     if circles != 0:
-        circ_radii = srange(0,1.0,1.0/circles)
+        circ_radii = srange(0, 1.0, 1.0/circles)
     else:
         circ_radii = []
     if spokes != 0:
         # both -pi and pi are included
-        spoke_angles = srange(-PI,PI+TWOPI/spokes,TWOPI/spokes)
+        spoke_angles = srange(-PI, PI+TWOPI/spokes, TWOPI/spokes)
     else:
         spoke_angles = []
     for i in range(imax-2):  # the d arrays are 1 smaller on each side
         for j in range(jmax-2):
-            z = z_values[i+1,j+1]
+            z = z_values[i+1, j+1]
             mag = abs(z)
             arg = phase(z)
-            dmag = dr[i,j]
-            darg = dtheta[i,j]
+            dmag = dr[i, j]
+            darg = dtheta[i, j]
             # points that change too rapidly are presumed to be borders
             # points that are too small are presumed to be outside
             if darg < DMAX and mag > min_mag:
                 for target in circ_radii:
                     if abs(mag - target)/dmag < precision:
-                        rgb[i+1,j+1] = rgbcolor
+                        rgb[i+1, j+1] = rgbcolor
                         break
                 for target in spoke_angles:
                     if abs(arg - target)/darg < precision:
-                        rgb[i+1,j+1] = rgbcolor
+                        rgb[i+1, j+1] = rgbcolor
                         break
     return rgb
 
@@ -1301,7 +1321,7 @@ cpdef complex_to_rgb(np.ndarray[COMPLEX_T, ndim=2] z_values):
         TypeError: Argument 'z_values' has incorrect type (expected numpy.ndarray, got list)
     """
     cdef Py_ssize_t i, j, imax, jmax
-    cdef FLOAT_T x, y, mag, arg
+    cdef FLOAT_T mag, arg
     cdef FLOAT_T lightness, hue, top, bot
     cdef FLOAT_T r, g, b
     cdef int ihue
@@ -1452,7 +1472,7 @@ cpdef cauchy_kernel(t, args):
     cdef COMPLEX_T z = args[1]
     cdef int n = args[2]
     part = args[3]
-    result = exp(I*analytic_boundary(t,n, epsilon))/(exp(I*t)+epsilon*exp(-I*t)-z) *  \
+    result = exp(I*analytic_boundary(t, n, epsilon))/(exp(I*t)+epsilon*exp(-I*t)-z) *  \
         (I*exp(I*t)-I*epsilon*exp(-I*t))
     if part == 'c':
         return result
@@ -1466,9 +1486,11 @@ cpdef cauchy_kernel(t, args):
 
 cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
     """
-    Provides a nearly exact computation of the Riemann Map of an interior
-    point of the ellipse with axes 1 + epsilon and 1 - epsilon. It is
-    primarily useful for testing the accuracy of the numerical Riemann Map.
+    Provide a nearly exact computation of the Riemann Map of an interior
+    point of the ellipse with axes 1 + epsilon and 1 - epsilon.
+
+    It is primarily useful for testing the accuracy of the numerical
+    Riemann Map.
 
     INPUT:
 
@@ -1491,10 +1513,10 @@ cpdef analytic_interior(COMPLEX_T z, int n, FLOAT_T epsilon):
         sage: abs(m.riemann_map(.5)-analytic_interior(.5, 20, .3)) < 10^-6
         True
     """
-    # evaluates the Cauchy integral of the boundary, split into the real
-    # and imaginary results because numerical_integral can't handle complex data.
-    rp = 1/(TWOPI)*numerical_integral(cauchy_kernel,0,2*pi,
-        params = [epsilon,z,n,'i'])[0]
-    ip = 1/(TWOPI*I)*numerical_integral(cauchy_kernel,0,2*pi,
-        params = [epsilon,z,n,'r'])[0]
+    # evaluates the Cauchy integral of the boundary, split into the real and
+    # imaginary results because numerical_integral cannot handle complex data.
+    rp = 1 / (TWOPI) * numerical_integral(cauchy_kernel, 0, 2 * pi,
+                                          params=[epsilon, z, n, 'i'])[0]
+    ip = 1 / (TWOPI*I) * numerical_integral(cauchy_kernel, 0, 2 * pi,
+                                            params=[epsilon, z, n, 'r'])[0]
     return rp + ip

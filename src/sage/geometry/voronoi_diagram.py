@@ -5,13 +5,13 @@ This module provides the class :class:`VoronoiDiagram` for computing the
 Voronoi diagram of a finite list of points in `\RR^d`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Moritz Firsching <moritz@math.fu-berlin.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron

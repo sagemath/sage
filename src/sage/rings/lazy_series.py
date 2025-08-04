@@ -657,6 +657,66 @@ class LazyModuleElement(Element):
             return P.zero()
         return P.element_class(P, Stream_exact(initial_coefficients, order=v))
 
+    def restrict(self, min_degree=None, max_degree=None):
+        r"""
+        Return the series obtained by keeping only terms of
+        degree between ``min_degree`` and ``max_degree``.
+
+        INPUT:
+
+        - ``min_degree``, ``max_degree`` -- (optional) integers
+          indicating which degrees to keep
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: alpha = z + 2*z^2 + 3*z^3 + z^4/(1-z)
+            sage: alpha
+            z + 2*z^2 + 3*z^3 + z^4 + z^5 + z^6 + O(z^7)
+            sage: alpha.restrict(2)
+            2*z^2 + 3*z^3 + z^4 + z^5 + z^6 + O(z^7)
+            sage: alpha.restrict(3)
+            3*z^3 + z^4 + z^5 + z^6 + O(z^7)
+            sage: alpha.restrict(3, 6)
+            3*z^3 + z^4 + z^5 + z^6
+            sage: alpha.restrict(max_degree=6)
+            z + 2*z^2 + 3*z^3 + z^4 + z^5 + z^6
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: exp(z).restrict(3)
+            1/6*z^3 + 1/24*z^4 + 1/120*z^5 + 1/720*z^6 + 1/5040*z^7 + 1/40320*z^8 + 1/362880*z^9 + O(z^10)
+        """
+        P = self.parent()
+        if max_degree is None and min_degree is None:
+            return self
+        elif max_degree is None:
+            v = max(self._coeff_stream._approximate_order, min_degree)
+            if isinstance(self._coeff_stream, Stream_exact):
+                degree = self._coeff_stream._degree
+                if degree <= min_degree:
+                    coeff_stream = Stream_exact([],
+                                                order=v,
+                                                constant=self._coeff_stream._constant)
+                else:
+                    initial_coefficients = self._coeff_stream._initial_coefficients[min_degree-degree:]
+                    coeff_stream = Stream_exact(initial_coefficients,
+                                                order=v,
+                                                constant=self._coeff_stream._constant)
+            else:
+                coeff_stream = Stream_truncated(self._coeff_stream, 0, v)
+        else:
+            if min_degree is None:
+                v = self._coeff_stream._approximate_order
+            else:
+                v = max(self._coeff_stream._approximate_order, min_degree)
+            initial_coefficients = [self._coeff_stream[i]
+                                    for i in range(v, max_degree + 1)]
+            if not any(initial_coefficients):
+                coeff_stream = Stream_zero()
+            else:
+                coeff_stream = Stream_exact(initial_coefficients, order=v)
+        return P.element_class(P, coeff_stream)
+
     def shift(self, n):
         r"""
         Return ``self`` with the indices shifted by ``n``.
@@ -2839,6 +2899,99 @@ class LazyModuleElement(Element):
         P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
         phi = P.euler()
         return phi(self)
+
+    def jacobi_theta(self, w, a=0, b=0):
+        r"""
+        Return the Jacobi theta function `\vartheta_{ab}(w; q)` evaluated
+        with the nome `q` at ``self``.
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.lazy_series_ring.LazyLaurentSeriesRing.jacobi_theta`
+
+        EXAMPLES::
+
+            sage: R.<w> = LaurentSeriesRing(QQ)
+            sage: L.<q> = LazyLaurentSeriesRing(R)
+            sage: theta = L.jacobi_theta(w)
+            sage: (q + q^2).jacobi_theta(w) - theta(q + q^2)
+            O(q^7)
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "q", sparse=self.parent()._sparse)
+        phi = P.jacobi_theta(w=w, a=a, b=b)
+        return phi(self)
+
+    def polylog(self, s):
+        r"""
+        Return the polylogarithm in ``s`` evaluated at ``self``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: z.polylog(-2)
+            z + 4*z^2 + 9*z^3 + 16*z^4 + 25*z^5 + 36*z^6 + 49*z^7 + O(z^8)
+            sage: (z + z^2).polylog(3)
+            z + 9/8*z^2 + 31/108*z^3 + 145/576*z^4 + 3269/18000*z^5 + 421/2400*z^6
+             + 213859/1234800*z^7 + O(z^8)
+            sage: polylog(3, z)
+            z + 1/8*z^2 + 1/27*z^3 + 1/64*z^4 + 1/125*z^5 + 1/216*z^6 + 1/343*z^7 + O(z^8)
+
+        We verify an identity due to D.C. Wood (1992)::
+
+            sage: n = 5
+            sage: polylog(-n, z)
+            z + 32*z^2 + 243*z^3 + 1024*z^4 + 3125*z^5 + 7776*z^6 + 16807*z^7 + O(z^8)
+            sage: (-1)^(n+1) * sum(factorial(k) * stirling_number2(n+1,k+1)
+            ....:                  * (-1/(1-z))^(k+1) for k in range(n+1))
+            z + 32*z^2 + 243*z^3 + 1024*z^4 + 3125*z^5 + 7776*z^6 + O(z^7)
+
+        We can pass more general values::
+
+            sage: L.<z> = LazyPowerSeriesRing(SR)
+            sage: s = SR.var('s')
+            sage: z.polylog(s)
+            z + 1/(2^s)*z^2 + 1/(3^s)*z^3 + 1/(4^s)*z^4 + 1/(5^s)*z^5
+             + 1/(6^s)*z^6 + 1/(7^s)*z^7 + O(z^8)
+
+        REFERENCES:
+
+        - :wikipedia:`Polylogarithm`
+        """
+        from .lazy_series_ring import LazyLaurentSeriesRing
+        P = LazyLaurentSeriesRing(self.base_ring(), "z", sparse=self.parent()._sparse)
+        phi = P.polylog(s=s)
+        return phi(self)
+
+    def dilog(self):
+        r"""
+        Return the dilogarithm evaluated at ``self``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: z.dilog()
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+            sage: dilog(z)
+            z + 1/4*z^2 + 1/9*z^3 + 1/16*z^4 + 1/25*z^5 + 1/36*z^6 + 1/49*z^7 + O(z^8)
+
+        We check some dilogarithm identites::
+
+            sage: dilog(z) + dilog(-z)
+            1/2*z^2 + 1/8*z^4 + 1/18*z^6 + O(z^8)
+            sage: dilog(z^2) / 2
+            1/2*z^2 + 1/8*z^4 + 1/18*z^6 + 1/32*z^8 + O(z^9)
+
+            sage: dilog(z) + dilog(z/(z-1))
+            -1/2*z^2 - 1/2*z^3 - 11/24*z^4 - 5/12*z^5 - 137/360*z^6 - 7/20*z^7 + O(z^8)
+            sage: -1/2 * log(1 - z)^2
+            -1/2*z^2 - 1/2*z^3 - 11/24*z^4 - 5/12*z^5 - 137/360*z^6 - 7/20*z^7 - 363/1120*z^8 + O(z^9)
+
+        REFERENCES:
+
+        - :wikipedia:`Dilogarithm`
+        """
+        return self.polylog(2)
 
     # === powers ===
 
@@ -7126,8 +7279,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
             sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
 
             sage: # needs sage.modules
-            sage: C = species.CycleSpecies().cycle_index_series()
-            sage: c = L(lambda n: C[n])
+            sage: c = LazyCombinatorialSpecies(QQ, "X").Cycles().cycle_index_series()
             sage: Lplus = L(lambda n: p([1]*n), valuation=1)
             sage: r = c.arithmetic_product(Lplus); r                                    # needs sage.libs.pari
             m[1] + (3*m[1,1]+2*m[2])

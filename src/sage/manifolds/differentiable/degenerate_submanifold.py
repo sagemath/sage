@@ -1394,10 +1394,7 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
         for u in rad:
             if not g.along(im)(u.along(im),v).is_zero():
                 return False
-        for u in normal:
-            if not g.along(im)(u.along(im),v).is_zero():
-                return False
-        return True
+        return all(g.along(im)(u.along(im), v).is_zero() for u in normal)
 
 
 #**************************************************************************************

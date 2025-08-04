@@ -19,7 +19,7 @@ Submodules of Hecke modules
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.arith.all as arith
+import sage.arith.misc as arith
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_generic
@@ -383,8 +383,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
                 break
 
         if V.rank() + self.rank() == A.rank():
-            C = A.submodule(V, check=False)
-            return C
+            return A.submodule(V, check=False)
 
         # first attempt to compute the complement failed, we now try
         # the following naive approach: decompose the ambient space,
@@ -519,8 +518,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         if self.complement.is_in_cache():
             verbose('This module knows its complement already -- cheating in dual_free_module')
             C = self.complement()
-            V = C.basis_matrix().right_kernel()
-            return V
+            return C.basis_matrix().right_kernel()
 
         verbose("computing dual")
 
@@ -672,7 +670,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
 
         return M
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return ``True`` if ``self`` is an ambient space of modular symbols.
 
@@ -688,7 +686,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         """
         return self.free_module() == self.ambient_hecke_module().free_module()
 
-    def is_new(self, p=None):
+    def is_new(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-new. If `p` is None,
         returns ``True`` if it is new.
@@ -710,7 +708,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_new[p] = self.is_submodule(N)
         return self.__is_new[p]
 
-    def is_old(self, p=None):
+    def is_old(self, p=None) -> bool:
         """
         Return ``True`` if this Hecke module is `p`-old. If `p` is ``None``,
         returns ``True`` if it is old.
@@ -735,7 +733,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         self.__is_old[p] = self.is_submodule(O)
         return self.__is_old[p]
 
-    def is_submodule(self, V):
+    def is_submodule(self, V) -> bool:
         """
         Return ``True`` if and only if ``self`` is a submodule of V.
 

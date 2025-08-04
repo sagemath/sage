@@ -102,6 +102,49 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_rational_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: M = matrix(QQ,3,4,[i + 1/(i+1) if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: M
+            [     0      0    7/3   13/4]
+            [     0   31/6      0   57/8]
+            [     0      0      0 133/12]
+            sage: M.transpose()
+            [     0      0      0]
+            [     0   31/6      0]
+            [   7/3      0      0]
+            [  13/4   57/8 133/12]
+            sage: M.matrix_from_rows([0,2])
+            [     0      0    7/3   13/4]
+            [     0      0      0 133/12]
+            sage: M.matrix_from_columns([1,3])
+            [     0   13/4]
+            [  31/6   57/8]
+            [     0 133/12]
+            sage: M.matrix_from_rows_and_columns([1,2],[0,3])
+            [     0   57/8]
+            [     0 133/12]
+        """
+        cdef Rational x
+        x = Rational()
+        cdef Matrix_rational_sparse _src = <Matrix_rational_sparse> src
+        mpq_vector_get_entry(x.value, &_src._matrix[iSrc], jSrc)
+        mpq_vector_set_entry(&self._matrix[iDst], jDst, x.value)
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -374,7 +417,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpz_t x, h
         mpz_init(x)
         mpz_init_set_si(h, 0)
-        cdef int i, j
+        cdef Py_ssize_t i, j
         sig_on()
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._matrix[i].num_nonzero:
@@ -538,7 +581,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [      0       0       1 238/157]
             [      0       0       0       0]
         """
-        label = 'echelon_form_%s'%algorithm
+        label = 'echelon_form_%s' % algorithm
         x = self.fetch(label)
         if x is not None:
             return x

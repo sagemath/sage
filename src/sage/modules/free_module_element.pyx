@@ -3619,9 +3619,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ArithmeticError: degrees (1 and 2) must be the same
         """
-        return (self.conjugate()).dot_product(right)
+        return self.conjugate().dot_product(right)
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return ``True`` if this is a dense vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3639,7 +3639,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_dense_c(self) noexcept:
         return self.parent().is_dense()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return ``True`` if this is a sparse vector, which is just a
         statement about the data structure, not the number of nonzero
@@ -3657,7 +3657,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
     cdef bint is_sparse_c(self) noexcept:
         return self.parent().is_sparse()
 
-    def is_vector(self):
+    def is_vector(self) -> bool:
         """
         Return ``True``, since this is a vector.
 
@@ -4539,8 +4539,17 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: V = ZZ['x']^5
             sage: 5 * V.0
             (5, 0, 0, 0, 0)
+
+        TESTS:
+
+        Check :issue:`40282` is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: M = span([[x, x^2+1], [1/x, x^3]], R)
+            sage: x * M.basis()[0]
+            (1, x^4)
         """
-        if left._parent is self._parent._base:
+        if left._parent is self._parent.coordinate_ring():
             v = [left._mul_(<RingElement>x) for x in self._entries]
         else:
             v = [left * x for x in self._entries]
@@ -4555,8 +4564,17 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             (-2/3, 0, 2, 2/3*pi)
             sage: v * (2/3)                                                             # needs sage.symbolic
             (-2/3, 0, 2, 2/3*pi)
+
+        TESTS:
+
+        Check :issue:`40282` is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: M = span([[x, x^2+1], [1/x, x^3]], R)
+            sage: M.basis()[0] * x
+            (1, x^4)
         """
-        if right._parent is self._parent._base:
+        if right._parent is self._parent.coordinate_ring():
             v = [(<RingElement>x)._mul_(right) for x in self._entries]
         else:
             v = [x * right for x in self._entries]

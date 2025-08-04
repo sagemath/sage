@@ -1437,7 +1437,7 @@ class ModularForm_abstract(ModuleElement):
         return y.ceil()
 
     @cached_method
-    def has_cm(self):
+    def has_cm(self) -> bool:
         r"""
         Return whether the modular form ``self`` has complex multiplication.
 
@@ -1798,9 +1798,11 @@ class Newform(ModularForm_abstract):
         S = self.parent()
         return S(self.q_expansion(S.sturm_bound()))
 
-    def is_cuspidal(self):
+    def is_cuspidal(self) -> bool:
         """
-        Return ``True``. For compatibility with elements of modular forms spaces.
+        Return ``True``.
+
+        For compatibility with elements of modular forms spaces.
 
         EXAMPLES::
 
@@ -2940,7 +2942,9 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             G = DirichletGroup(level, base_ring=R)
             M = constructor(G(epsilon) * G(chi)**2, self.weight(), base_ring=R)
         else:
-            from sage.modular.arithgroup.all import Gamma1
+            from sage.modular.arithgroup.congroup_gamma1 import (
+                Gamma1_constructor as Gamma1,
+            )
             if level is None:
                 # See [AL1978], Proposition 3.1.
                 level = lcm([N, Q]) * Q
@@ -3450,11 +3454,11 @@ class GradedModularFormElement(ModuleElement):
             sage: M([E4, ModularForms(3, 6).0])
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M({4:E4, 6:ModularForms(3, 6).0})
             Traceback (most recent call last):
             ...
-            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistant with the base space
+            ValueError: the group and/or the base ring of at least one modular form (q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)) is not consistent with the base space
             sage: M = ModularFormsRing(Gamma0(2))
             sage: E4 = ModularForms(1, 4).0
             sage: M(E4)[4].parent()
@@ -3477,7 +3481,7 @@ class GradedModularFormElement(ModuleElement):
                                 M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                                 forms_dictionary[k] = M(f)
                             else:
-                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                                raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                         else:
                             raise ValueError('at least one key (%s) of the defining dictionary does not correspond to the weight of its value (%s). Real weight: %s' % (k, f, f.weight()))
                     else:
@@ -3494,7 +3498,7 @@ class GradedModularFormElement(ModuleElement):
                         M = parent.modular_forms_of_weight(f.weight()).change_ring(parent.base_ring())
                         forms_dictionary[f.weight()] = M(forms_dictionary.get(f.weight(), 0) + f)
                     else:
-                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistant with the base space' % (f))
+                        raise ValueError('the group and/or the base ring of at least one modular form (%s) is not consistent with the base space' % (f))
                 else:
                     forms_dictionary[ZZ.zero()] = parent.base_ring().coerce(f)
         else:
@@ -3502,7 +3506,7 @@ class GradedModularFormElement(ModuleElement):
         self._forms_dictionary = {k: f for k, f in forms_dictionary.items() if not f.is_zero()}  # remove the zero values
         Element.__init__(self, parent)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return "True" if ``self`` is nonzero and "False" otherwise.
 
@@ -3518,7 +3522,7 @@ class GradedModularFormElement(ModuleElement):
         """
         return bool(self._forms_dictionary)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return "True" if the graded form is 0 and "False" otherwise.
 
@@ -3535,7 +3539,7 @@ class GradedModularFormElement(ModuleElement):
         """
         return not self
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return "True" if the graded form is 1 and "False" otherwise.
 
@@ -3806,8 +3810,8 @@ class GradedModularFormElement(ModuleElement):
         f_other = other._forms_dictionary
         f_mul = defaultdict(int)
 
-        for k_self in f_self.keys():
-            for k_other in f_other.keys():
+        for k_self in f_self:
+            for k_other in f_other:
                 f_mul[k_self + k_other] += f_self[k_self] * f_other[k_other]
 
         return GM(self.parent(), f_mul)
@@ -3921,7 +3925,7 @@ class GradedModularFormElement(ModuleElement):
             return [ZZ.zero()]
         return sorted(self._forms_dictionary)
 
-    def is_homogeneous(self):
+    def is_homogeneous(self) -> bool:
         r"""
         Return ``True`` if the graded modular form is homogeneous, i.e. if it
         is a modular forms of a certain weight.
@@ -4004,7 +4008,7 @@ class GradedModularFormElement(ModuleElement):
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
-        coef_self = vector(self[k].coefficients(range(0, sturm_bound + 1))).column()
+        coef_self = vector(self[k].coefficients(range(sturm_bound + 1))).column()
 
         # solve the linear system: mat * X = coef_self
         soln = mat.solve_right(coef_self)

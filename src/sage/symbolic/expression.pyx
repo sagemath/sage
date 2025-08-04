@@ -392,7 +392,6 @@ from sage.structure.element cimport Expression as Expression_abc
 from sage.symbolic.complexity_measures import string_length
 from sage.symbolic.function cimport SymbolicFunction
 from sage.rings.rational import Rational
-from sage.rings.real_mpfr cimport RealNumber
 from sage.misc.derivative import multi_derivative
 from sage.misc.decorators import sage_wraps
 from sage.misc.latex import latex_variable_name
@@ -2491,7 +2490,7 @@ cdef class Expression(Expression_abc):
         """
         pynac_forget_gdecl(self._gobj, str_to_bytes(decl))
 
-    def has_wild(self):
+    def has_wild(self) -> bool:
         """
         Return ``True`` if this expression contains a wildcard.
 
@@ -3504,9 +3503,9 @@ cdef class Expression(Expression_abc):
             # associated with different semantics, different
             # precision, etc., that can lead to subtle bugs.  Also, a
             # lot of basic Sage objects can't be put into maxima.
-            from sage.symbolic.relation import test_relation_maxima
+            from sage.symbolic.relation import check_relation_maxima
             if self.variables():
-                return test_relation_maxima(self)
+                return check_relation_maxima(self)
             else:
                 return False
 
@@ -13756,6 +13755,7 @@ cpdef new_Expression(parent, x):
                                      unsigned_infinity)
     from sage.structure.factorization import Factorization
     from sage.categories.sets_cat import Sets
+    from sage.rings.real_mpfr import RealNumber
 
     if isinstance(x, RealNumber):
         if x.is_NaN():
@@ -14194,3 +14194,15 @@ include "pynac_constant_impl.pxi"
 include "pynac_function_impl.pxi"
 include "series_impl.pxi"
 include "substitution_map_impl.pxi"
+
+
+# ------------------------------------------------------------
+# Trac #26254: Inject symbolic-function-related functions into
+# sage.symbolic.function
+# ------------------------------------------------------------
+import sage.symbolic.function
+sage.symbolic.function.call_registered_function = call_registered_function
+sage.symbolic.function.find_registered_function = find_registered_function
+sage.symbolic.function.register_or_update_function = register_or_update_function
+sage.symbolic.function.get_sfunction_from_hash = get_sfunction_from_hash
+sage.symbolic.function.get_sfunction_from_serial = get_sfunction_from_serial

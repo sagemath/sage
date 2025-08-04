@@ -344,7 +344,7 @@ cdef class MPComplexField_class(Field):
         z.init = 1
         return z
 
-    def _repr_ (self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -353,12 +353,12 @@ cdef class MPComplexField_class(Field):
             sage: MPComplexField(200, 'RNDDU') # indirect doctest
             Complex Field with 200 bits of precision and rounding RNDDU
         """
-        s = "Complex Field with %s bits of precision"%self._prec
+        s = "Complex Field with %s bits of precision" % self._prec
         if self.__rnd != MPC_RNDNN:
-            s = s + " and rounding %s"%(self.__rnd_str)
+            s = s + " and rounding %s" % (self.__rnd_str)
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -613,7 +613,7 @@ cdef class MPComplexField_class(Field):
             sage: C = MPComplexField(10, 'RNDNZ'); C.name()
             'MPComplexField10_RNDNZ'
         """
-        return "MPComplexField%s_%s"%(self._prec, self.__rnd_str)
+        return "MPComplexField%s_%s" % (self._prec, self.__rnd_str)
 
     def __hash__(self):
         """

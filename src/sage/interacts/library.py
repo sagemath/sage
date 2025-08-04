@@ -1230,7 +1230,7 @@ def trapezoid_integration(
         ))
     elif output_form == 'table':
         s = [['$i$', '$x_i$', '$f(x_i)$', '$m$', r'$m\cdot f(x_i)$']]
-        for i in range(0,n+1):
+        for i in range(n+1):
             if i == 0 or i == n:
                 j = 1
             else:
@@ -1343,7 +1343,7 @@ def simpson_integration(
     if output_form == 'traditional':
         sum_formula_html = r"\frac{d}{3} \cdot \left[ f(x_0) + %s + f(x_{%s})\right]" % (
             ' + '.join(r"%s \cdot f(x_{%s})" % (i % 2 * (-2) + 4, i + 1)
-                       for i in range(0,n-1)),
+                       for i in range(n-1)),
             n
             )
 
@@ -1642,7 +1642,7 @@ def function_tool(f, g, xrange, yrange, a, action, do_plot):
     html('<center><font color="green">$g = %s$</font></center>' % latex(g))
     html('<center><font color="blue"><b>$h = %s = %s$</b></font></center>' % (lbl, latex(h)))
     if do_plot:
-        P = plot(f, xrange, color='red', thickness=2) +  \
+        P = plot(f, xrange, color='red', thickness=2) + \
             plot(g, xrange, color='green', thickness=2) + \
             plot(h, xrange, color='blue', thickness=2)
         if yrange == 'auto':

@@ -206,7 +206,8 @@ from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.verbose import verbose
-from sage.modular.arithgroup.all import Gamma0_class, Gamma1_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
 from sage.modular.dirichlet import trivial_character
 from sage.modular.etaproducts import EtaProduct
 from sage.modular.modform.element import ModularFormElement
@@ -429,7 +430,7 @@ class OverconvergentModularFormsSpace(Module):
     # Boring functions that access internal data #
     ##############################################
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this space are represented exactly.
 
@@ -1501,7 +1502,7 @@ class OverconvergentModularFormElement(ModuleElement):
         """
         return self.gexp().prec()
 
-    def is_eigenform(self):
+    def is_eigenform(self) -> bool:
         r"""
         Return ``True`` if this is an eigenform.
 
@@ -1668,7 +1669,7 @@ class OverconvergentModularFormElement(ModuleElement):
         self._eigenvalue = eigenvalue
         self._slope = eigenvalue.normalized_valuation()
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
         Test whether this element has `q`-expansion coefficients that are `p`-adically integral.
 
