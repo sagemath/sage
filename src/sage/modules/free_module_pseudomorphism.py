@@ -577,7 +577,7 @@ class FreeModulePseudoMorphism(Morphism):
                     morphism = self._morphism
                 else:
                     morphism = self._morphism * right._morphism
-                mat = right._matrix.map_coefficients(self._morphism) * self._matrix
+                mat = right._matrix.apply_map(self._morphism) * self._matrix
             parent = right.domain().pseudoHom(morphism, codomain=self.codomain())
             f = FreeModulePseudoMorphism(parent, mat, "left")
             if self.side() == 'right' and right.side() == 'right':
