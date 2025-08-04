@@ -42,6 +42,13 @@ option(
 )
 
 option(
+  'eclib',
+  type: 'feature',
+  value: 'auto',
+  description: 'eclib interface to mwrank and elliptic curves over Q'
+)
+
+option(
   'mcqd',
   type: 'feature',
   value: 'auto',

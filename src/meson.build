@@ -157,7 +157,12 @@ mtx = cc.find_library(
 )
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
-ec = dependency('eclib', version: '>=20250122', required: false, disabler: true)
+ec = dependency(
+  'eclib',
+  version: '>=20250122',
+  required: get_option('eclib'),
+  disabler: true
+)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(
