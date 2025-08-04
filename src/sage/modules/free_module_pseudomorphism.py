@@ -21,6 +21,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.map import FormalCompositeMap
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import richcmp
 from sage.modules.free_module_morphism import FreeModuleMorphism
@@ -506,6 +507,83 @@ class FreeModulePseudoMorphism(Morphism):
             TypeError: unsupported operand parent(s) for <: 'Set of Pseudoendomorphisms (twisted by z |--> z^7) of Vector space of dimension 2 over Finite Field in z of size 7^3' and '<class 'sage.modules.free_module.FreeModule_ambient_field_with_category'>'
         """
         return richcmp(self._matrix, other._matrix, op)
+
+    def _composition_(self, right, homset):
+        r"""
+        Return the composition of ``self`` and ``right``.
+
+        EXAMPLES:
+
+        When there is no twisting derivation, the composite is still
+        a pseudomorphism and it is computed as such::
+
+            sage: Fq.<z> = GF(7^3)
+            sage: Frob = Fq.frobenius_endomorphism()
+            sage: V = Fq^2
+            sage: mat = matrix(2, [1, z, z^2, z^3])
+            sage: f = V.pseudohom(mat, Frob)
+            sage: f * f
+            Free module pseudomorphism (twisted by z |--> z^(7^2)) defined by the matrix
+            [  z^2 + 2*z + 4 3*z^2 + 4*z + 3]
+            [2*z^2 + 2*z + 5 4*z^2 + 5*z + 6]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+
+        We note that the side is preserved::
+
+            sage: fr = f.side_switch()
+            sage: fr
+            Free module pseudomorphism (twisted by z |--> z^7) defined as left-multiplication by the matrix
+            [      1     z^2]
+            [      z z^2 + 3]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            sage: fr * fr
+            Free module pseudomorphism (twisted by z |--> z^(7^2)) defined as left-multiplication by the matrix
+            [  z^2 + 2*z + 4 2*z^2 + 2*z + 5]
+            [3*z^2 + 4*z + 3 4*z^2 + 5*z + 6]
+            Domain: Vector space of dimension 2 over Finite Field in z of size 7^3
+            Codomain: Vector space of dimension 2 over Finite Field in z of size 7^3
+
+        For general pseudomorphisms, a formal composed map is returned::
+
+            sage: P.<x> = ZZ[]
+            sage: d = P.derivation()
+            sage: M = P^2
+            sage: f = M.pseudohom([[1, 2*x], [x, 1]], d)
+            sage: f * f
+            Composite map:
+              From: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+              To:   Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+              Defn:   Free module pseudomorphism (twisted by d/dx) defined by the matrix
+                    [  1 2*x]
+                    [  x   1]
+                    Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+                    Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+                    then
+                      Free module pseudomorphism (twisted by d/dx) defined by the matrix
+                    [  1 2*x]
+                    [  x   1]
+                    Domain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+                    Codomain: Ambient free module of rank 2 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+        """
+        if (isinstance(right, FreeModulePseudoMorphism)
+        and self._derivation is None and right._derivation is None):
+            if self._morphism is None:
+                morphism = right._morphism
+                mat = right._matrix * self._matrix
+            else:
+                if right._morphism is None:
+                    morphism = self._morphism
+                else:
+                    morphism = self._morphism * right._morphism
+                mat = right._matrix.map_coefficients(self._morphism) * self._matrix
+            parent = right.domain().pseudoHom(morphism, codomain=self.codomain())
+            f = FreeModulePseudoMorphism(parent, mat, "left")
+            if self.side() == 'right' and right.side() == 'right':
+                f._side = "right"
+            return f
+        return FormalCompositeMap(homset, right, self)
 
     def ore_module(self, names=None):
         r"""
