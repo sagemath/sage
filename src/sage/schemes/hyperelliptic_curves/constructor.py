@@ -36,6 +36,21 @@ def _parse_multivariate_defining_equation(g):
     or a constant multiple of that.
 
     OUTPUT: tuple (f, h), each of them given as a list of coefficients.
+
+    TESTS::
+
+        sage: from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+        sage: R.<x,y> = QQ[]
+        sage: _parse_multivariate_defining_equation(y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1, 1, 0, 0, 0, 1], [0, 0, 3])
+        sage: _parse_multivariate_defining_equation(2*y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1/2, 1/2, 0, 0, 0, 1/2], [0, 0, 3/2])
+
+    The variable names are arbitrary::
+
+        sage: S.<z,t> = GF(13)[]
+        sage: _parse_multivariate_defining_equation(2*t^2 + 3*z^2*t - (z^5 + z + 1))
+        ([7, 7, 0, 0, 0, 7], [0, 0, 8])
     """
     from sage.rings.polynomial.multi_polynomial import MPolynomial
     if not isinstance(g, MPolynomial):
