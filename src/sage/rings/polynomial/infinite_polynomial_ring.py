@@ -893,7 +893,14 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
                 sage: R.<a> = InfinitePolynomialRing(QQ)
                 sage: M = InfinitePolynomialRing(L, names=["a"])
                 sage: c = a[0]
-                sage: M(c)  # known bug
+                sage: M(c)
+                a_0
+
+            Check :issue:`40540`::
+
+                sage: R.<a> = InfinitePolynomialRing(QQ)
+                sage: P.<x,y> = QQ[]
+                sage: a[0] * P.one()
                 a_0
         """
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
