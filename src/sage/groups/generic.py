@@ -953,9 +953,12 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         if ord == Infinity:
             if algorithm == 'bsgs':
                 return bsgs(base, a, bounds, identity=identity, inverse=inverse, op=op, operation=operation)
-            else:
-                assert algorithm == 'lambda'
+            elif algorithm == 'lambda':
                 return discrete_log_lambda(base, a, bounds, inverse=inverse, identity=identity, op=op, operation=operation)
+            elif algorithm == 'rho':
+                raise ValueError('pollard rho algorithm does not work with infinite order elements')
+            else:
+                raise ValueError(f"unknown algorithm {algorithm}")
         if base == power(base, 0) and a != base:
             raise ValueError
         f = ord.factor()
@@ -986,9 +989,10 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                     c = bsgs(gamma, h, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
                 elif algorithm == 'rho':
                     c = discrete_log_rho(h, gamma, ord=pi, inverse=inverse, identity=identity, op=op, operation=operation)
-                else:
-                    assert algorithm == 'lambda'
+                elif algorithm == 'lambda':
                     c = discrete_log_lambda(h, gamma, (0, temp_bound), inverse=inverse, identity=identity, op=op, operation=operation)
+                else:
+                    raise ValueError(f"unknown algorithm {algorithm}")
                 l[i] += c * (pi**j)
                 running_bound //= pi
                 running_mod *= pi
