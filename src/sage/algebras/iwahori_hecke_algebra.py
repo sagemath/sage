@@ -233,7 +233,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: H = IwahoriHeckeAlgebra('A3', q^2)
-        sage: T=H.T(); Cp=H.Cp(); C=H.C()
+        sage: T = H.T(); Cp = H.Cp(); C = H.C()
         sage: C(T[1])
         q*C[1] + q^2
         sage: elt = Cp(T[1,2,1]); elt
@@ -245,7 +245,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: H = IwahoriHeckeAlgebra('A3', q, -q^-1)
-        sage: T=H.T(); Cp=H.Cp(); C=H.C()
+        sage: T = H.T(); Cp = H.Cp(); C = H.C()
         sage: C(T[1])
         C[1] + q
         sage: elt = Cp(T[1,2,1]); elt
@@ -256,7 +256,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
     In the group algebra, so that `(T_r-1)(T_r+1) = 0`::
 
         sage: H = IwahoriHeckeAlgebra('A3', 1)
-        sage: T=H.T(); Cp=H.Cp(); C=H.C()
+        sage: T = H.T(); Cp = H.Cp(); C = H.C()
         sage: C(T[1])
         C[1] + 1
         sage: Cp(T[1,2,1])
@@ -270,7 +270,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         sage: R.<q>=LaurentPolynomialRing(ZZ)
         sage: H = IwahoriHeckeAlgebra('A3', q)
-        sage: C=H.C()
+        sage: C = H.C()
         Traceback (most recent call last):
         ...
         ValueError: the Kazhdan-Lusztig bases are defined only when -q_1*q_2 is a square
@@ -279,7 +279,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         sage: R.<v> = LaurentPolynomialRing(ZZ)
         sage: H = IwahoriHeckeAlgebra(['A',2,1], v^2)
-        sage: T=H.T(); Cp=H.Cp(); C=H.C()
+        sage: T = H.T(); Cp = H.Cp(); C = H.C()
         sage: C(T[1,0,2])
         v^3*C[1,0,2] + v^4*C[1,0] + v^4*C[0,2] + v^4*C[1,2]
          + v^5*C[0] + v^5*C[2] + v^5*C[1] + v^6
@@ -462,6 +462,12 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         TESTS::
 
+            sage: T = IwahoriHeckeAlgebra("B2", 1).T()
+            sage: T.is_commutative()
+            False
+            sage: T = IwahoriHeckeAlgebra("A1", 1).T()
+            sage: T.is_commutative()
+            True
             sage: IwahoriHeckeAlgebra('A3', x+1, base_ring=SR).T().an_element()**2
             doctest:warning
             ...
@@ -512,7 +518,12 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             self._category = FiniteDimensionalAlgebrasWithBasis(base_ring)
         else:
             self._category = AlgebrasWithBasis(base_ring)
-        Parent.__init__(self, base=base_ring, category=self._category.WithRealizations())
+
+        if base_ring.is_commutative() and W.is_commutative():
+            self._category = self._category.Commutative()
+
+        Parent.__init__(self, base=base_ring,
+                        category=self._category.WithRealizations())
 
         self._is_generic = False  # needed for initialisation of _KLHeckeBasis
 
@@ -779,19 +790,6 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     False
                 """
                 return False
-
-            def is_commutative(self) -> bool:
-                """
-                Return whether this Iwahori-Hecke algebra is commutative.
-
-                EXAMPLES::
-
-                    sage: T = IwahoriHeckeAlgebra("B2", 1).T()
-                    sage: T.is_commutative()
-                    False
-                """
-                return self.base_ring().is_commutative() \
-                    and self.realization_of().coxeter_group().is_commutative()
 
             @cached_method
             def one_basis(self):
@@ -1634,8 +1632,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
-                sage: T=H.T()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: T = H.T()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: T.hash_involution_on_basis(s)
                 -(v^-2)*T[1]
                 sage: T[s].hash_involution()
@@ -1674,8 +1672,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
-                sage: T=H.T()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: T = H.T()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: T.goldman_involution_on_basis(s)
                 -T[1] - (1-v^2)
                 sage: T[s].goldman_involution()
@@ -1849,8 +1847,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             EXAMPLES::
 
-                sage: H=IwahoriHeckeAlgebra("A3",1); Cp=H.Cp(); C=H.C()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: H = IwahoriHeckeAlgebra("A3",1); Cp = H.Cp(); C = H.C()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: C.to_T_basis(s)
                 T[1] - 1
                 sage: Cp.to_T_basis(s)
@@ -2045,8 +2043,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
-                sage: Cp=H.Cp()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: Cp = H.Cp()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: Cp.hash_involution_on_basis(s)
                 -Cp[1] + (v^-1+v)
                 sage: Cp[s].hash_involution()
@@ -2143,7 +2141,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 sage: # optional - coxeter3
                 sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')
                 sage: W = CoxeterGroup('A3', implementation='coxeter3')
-                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp=H.Cp()
+                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp = H.Cp()
                 sage: Cp.product_on_basis(W([1,2,1]), W([3,1]))
                 (v^-1+v)*Cp[1,2,1,3]
                 sage: Cp.product_on_basis(W([1,2,1]), W([3,1,2]))
@@ -2280,7 +2278,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(ZZ, 'v')             # optional - coxeter3
                 sage: W = CoxeterGroup('A3', implementation='coxeter3')  # optional - coxeter3
-                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp=H.Cp()        # optional - coxeter3
+                sage: H = IwahoriHeckeAlgebra(W, v**2); Cp = H.Cp()      # optional - coxeter3
 
             When `u` is itself a generator `s`, the decomposition is trivial::
 
@@ -2453,8 +2451,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
-                sage: C=H.C()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: C = H.C()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: C.hash_involution_on_basis(s)
                 -C[1] - (v^-1+v)
                 sage: C[s].hash_involution()
@@ -2486,7 +2484,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
             sage: H = IwahoriHeckeAlgebra('A3', v**2)
-            sage: A=H.A(); T=H.T()
+            sage: A = H.A(); T = H.T()
             sage: T(A[1])
             T[1] + (1/2-1/2*v^2)
             sage: T(A[1,2])
@@ -2539,8 +2537,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             EXAMPLES::
 
                 sage: R.<v> = LaurentPolynomialRing(QQ)
-                sage: H = IwahoriHeckeAlgebra('A3', v**2); A=H.A(); T=H.T()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: H = IwahoriHeckeAlgebra('A3', v**2); A = H.A(); T = H.T()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: A.to_T_basis(s)
                 T[1] + (1/2-1/2*v^2)
                 sage: T(A[1,2])
@@ -2563,8 +2561,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
-                sage: A=H.A()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: A = H.A()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: A.goldman_involution_on_basis(s)
                 -A[1]
                 sage: A[1,2].goldman_involution()
@@ -2606,7 +2604,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
             sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
             sage: H = IwahoriHeckeAlgebra('A3', v**2)
-            sage: A=H.A(); T=H.T(); Cp=H.Cp()
+            sage: A = H.A(); T = H.T(); Cp = H.Cp()
             sage: T(A[1])
             T[1] + (1/2-1/2*v^2)
             sage: T(A[1,2])
@@ -2672,8 +2670,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
             EXAMPLES::
 
                 sage: R.<v> = LaurentPolynomialRing(QQ)
-                sage: H = IwahoriHeckeAlgebra('A3', v**2); B=H.B(); T=H.T()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: H = IwahoriHeckeAlgebra('A3', v**2); B = H.B(); T = H.T()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: B.to_T_basis(s)
                 T[1] + (1/2-1/2*v^2)
                 sage: T(B[1,2])
@@ -2700,8 +2698,8 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
                 sage: R.<v> = LaurentPolynomialRing(QQ, 'v')
                 sage: H = IwahoriHeckeAlgebra('A3', v**2)
-                sage: B=H.B()
-                sage: s=H.coxeter_group().simple_reflection(1)
+                sage: B = H.B()
+                sage: s = H.coxeter_group().simple_reflection(1)
                 sage: B.goldman_involution_on_basis(s)
                 -B[1]
                 sage: B[1,2].goldman_involution()
@@ -2835,8 +2833,8 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
         EXAMPLES::
 
             sage: R.<q>=LaurentPolynomialRing(ZZ)
-            sage: H=IwahoriHeckeAlgebra("A3",q^2)
-            sage: GH=H._generic_iwahori_hecke_algebra
+            sage: H = IwahoriHeckeAlgebra("A3",q^2)
+            sage: GH = H._generic_iwahori_hecke_algebra
             sage: GH._bar_on_coefficients(GH.u_inv)
             u
             sage: GH._bar_on_coefficients(GH.v_inv)
@@ -2884,8 +2882,8 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
                 EXAMPLES::
 
                     sage: R.<a,b>=LaurentPolynomialRing(ZZ,2)
-                    sage: H=IwahoriHeckeAlgebra("A3",a^2,-b^2)
-                    sage: GH=H._generic_iwahori_hecke_algebra
+                    sage: H = IwahoriHeckeAlgebra("A3",a^2,-b^2)
+                    sage: GH = H._generic_iwahori_hecke_algebra
                     sage: GH.T()(GH.C()[1])
                     (v^-1)*T[1] + (-u*v^-1)
                     sage: ( GH.T()(GH.C()[1]) ).specialize_to(H)

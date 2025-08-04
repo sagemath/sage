@@ -1212,6 +1212,17 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: UHP.get_geodesic(1 + I, 2 + 4*I).ideal_endpoints()
             [Boundary point in UHP -sqrt(65) + 9,
              Boundary point in UHP sqrt(65) + 9]
+
+        TESTS:
+
+        Check that :issue:`32362` is fixed::
+
+            sage: PD = HyperbolicPlane().PD()
+            sage: z0 = CC(-0.0571909584179366 + 0.666666666666667*I)
+            sage: z1 = CC(-1)
+            sage: pts = PD.get_geodesic(z0, z1).ideal_endpoints()
+            sage: pts[1]
+            Boundary point in PD I
         """
         start = self._start.coordinates()
         end = self._end.coordinates()
@@ -1226,7 +1237,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         if CC(end).is_infinity():
             return [M.get_point(x1), M.get_point(end)]
         # We could also have a vertical line with two interior points
-        if x1 == x2:
+        if abs(x1 - x2) < EPSILON:
             return [M.get_point(x1), M.get_point(infinity)]
         # Otherwise, we have a semicircular arc in the UHP
         c = ((x1+x2)*(x2-x1) + (y1+y2)*(y2-y1)) / (2*(x2-x1))

@@ -1305,10 +1305,7 @@ class TensorBundle(DifferentiableVectorBundle):
                 return True
             # Otherwise check whether a global frame on the pullback bundle is
             # defined:
-            for frame in self.frames():
-                if frame._domain is self._base_space:
-                    return True
-            return False
+            return any(frame._domain is self._base_space for frame in self.frames())
 
     def local_frame(self, *args, **kwargs):
         r"""
