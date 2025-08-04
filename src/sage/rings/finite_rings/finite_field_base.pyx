@@ -2178,7 +2178,7 @@ cdef class FiniteField(Field):
             sage: f.roots(multiplicities=False)
             [65940671326230628578511607550463701471]
         """
-        if algorithm is None:
+        if algorithm is not None:
             raise NotImplementedError
 
         K = f.base_ring()
