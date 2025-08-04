@@ -923,7 +923,7 @@ class Crystals(Category_singleton):
             Export a file, suitable for pdflatex, to ``filename``.
 
             This requires
-            a proper installation of ``dot2tex`` in sage-python. For more
+            a proper installation of ``dot2tex``. For more
             information see the documentation for ``self.latex()``.
 
             EXAMPLES::
