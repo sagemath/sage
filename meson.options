@@ -59,7 +59,7 @@ option(
   'meataxe',
   type: 'feature',
   value: 'auto',
-  description: 'Interface to the MeatAxe program'
+  description: 'MeatAxe interface to matrix representations over finite fields'
 )
 
 option(
