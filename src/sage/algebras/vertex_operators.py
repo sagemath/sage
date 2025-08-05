@@ -1,6 +1,12 @@
 r"""
+Vertex Operators
+
 Currently just a sandbox for experimenting with vertex operator code
 before a more permanent implementation
+
+AUTHORS:
+
+- Joseph McDonough (2025-08-04): Initial version
 
 TESTS::
     sage: from sage.algebras.vertex_operators import *
@@ -192,9 +198,6 @@ class HalfVertexOperator():
         raise ValueError("Invalid input")
 
 
-
-
-
 class VertexOperator():
     r"""
     The action of a Vertex Operator on the Bosonic Fock space. Users should not
@@ -293,8 +296,17 @@ class ProductOfVertexOperators():
         assert all(op.fockspace is self.fockspace for op in self.vertex_ops)
 
     def get_monomial_coefficient(self, mon, x):
-        """
-        
+        r"""
+        Compute the action of ``self`` on ``x``.
+
+        Let `X^i_j` denote the `j`'th Fourier mode of the `i`'th vertex operator of ``self``.
+        This method computes `X^1_{mon_1}\cdots X^m_{mon_m}\left|x\right\rangle`.
+
+        INPUT:
+
+        - ``mon`` -- a list of integers of length equal to the number of vertex operators
+        - ``x`` -- an element of ``self.fockspace`` to be acted on.
+
         EXAMPLES::
 
             sage: from sage.algebras.vertex_operators import *
@@ -309,8 +321,8 @@ class ProductOfVertexOperators():
             sage: P = ProductOfVertexOperators([Ann]*3)
             sage: P.get_monomial_coefficient([-4, -3, -2],B.one())
             -s[3]*w^-3
-            sage: P.get_monomial_coefficient([-3, -2, -4],B.one())
-            -s[3]*w^-3
+            sage: P.get_monomial_coefficient([-4, -2, -3],B.one())
+            s[3]*w^-3
         """
         # BUG: This currently gives the wrong power for Annihilation operators
         # This is coming from the fact that their series form is \sum \psi_i^* z^-i
@@ -325,6 +337,37 @@ class ProductOfVertexOperators():
                 break
         return self.fockspace(x)
     
+    def matrix_coefficient(self, bra, ket, cutoff=4):
+        """
+        Approximate the matrix coefficient <bra|X|ket>, where X is the vertex operator
+        represented by ``self``
+
+        INPUT:
+
+        - ``bra``, ``ket`` -- ordered pair (`\lambda`, c) consisting of an integer partition and an integer, indexing a basis element of the Fock space.
+        - ``cutoff`` -- Nonnegative integer indicating how far to expand the vertex operator.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import *
+            sage: B = BosonicFockSpace()
+            sage: Cre = CreationOperator(B)
+            sage: Ann = AnnihilationOperator(B)
+            sage: P = ProductOfVertexOperators([Cre, Cre])
+            sage: P.matrix_coefficient(([],3), ([],1))  # example of eq 2.21 in [AZ13]
+            {(1, 2): -1, (2, 1): 1}
+        """
+        from itertools import product
+        w = self.fockspace.gen()
+        R = self.fockspace.base_ring()
+        f = (w**ket[1])*R(ket[0])
+        res = {}
+        for m in product(range(-cutoff, cutoff+1),repeat=len(self.vertex_ops)):
+            c = self.get_monomial_coefficient(m, f).monomial_coefficients().get(bra[1],self.fockspace.zero()).monomial_coefficients().get(Partition(bra[0]),self.fockspace.zero())
+            if c != 0:
+                res[m] = c
+        return res
+
     def vacuum_expectation(self, cutoff=4):
         """
         EXAMPLES::
@@ -334,20 +377,14 @@ class ProductOfVertexOperators():
             sage: Cre = CreationOperator(B)
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Ann, Cre])
-            sage: P.vacuum_expectation()
+            sage: P.vacuum_expectation() 
             {(0, 0): 1, (1, 1): 1, (2, 2): 1, (3, 3): 1, (4, 4): 1}
             sage: P = ProductOfVertexOperators([Cre, Ann])
             sage: P.vacuum_expectation()
             {(-4, -4): 1, (-3, -3): 1, (-2, -2): 1, (-1, -1): 1}
         """
-        from itertools import product
-        vac = self.vertex_ops[0].fockspace.one()
-        res = {}
-        for m in product(range(-cutoff, cutoff+1),repeat=len(self.vertex_ops)):
-            c = self.get_monomial_coefficient(m, vac).constant_coefficient().monomial_coefficients().get(Partition([]), 0)  
-            if c != 0:
-                res[m] = c
-        return res
+        return self.matrix_coefficient(([],0),([],0), cutoff)
+
 
 class CreationOperator(VertexOperator):
     r"""
@@ -400,10 +437,12 @@ class CreationOperator(VertexOperator):
                 continue
             op += self.pos[i + j - c]*self.neg[j]
         return op
-
+    def _repr_(self):
+        return f"The creation vertex operator acting on {self.fockspace}"
 
 class AnnihilationOperator(VertexOperator):
     r"""
+
 
     EXAMPLES::
 
@@ -452,3 +491,5 @@ class AnnihilationOperator(VertexOperator):
 
             op += self.pos[j - i + c - 1]*self.neg[j]
         return op
+    def _repr_(self):
+        return f"The annihilation vertex operator acting on {self.fockspace}"
