@@ -1,3 +1,4 @@
+# sage.doctest: needs eclib
 r"""
 Interface to mwrank
 
