@@ -1369,7 +1369,7 @@ class ChainComplex_class(Parent):
         (N, P, Q) = d_in_induced.smith_form()
         all_divs = [0]*N.nrows()
         non_triv = 0
-        for i in range(0, N.nrows()):
+        for i in range(N.nrows()):
             if i >= N.ncols():
                 break
             all_divs[i] = N[i][i]
