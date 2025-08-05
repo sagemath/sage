@@ -537,6 +537,33 @@ class sage__libs__ntl(JoinFeature):
                              spkg='sagemath_ntl', type='standard')
 
 
+class sage__libs__eclib(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of
+    :mod:`sage.libs.eclib`.
+
+    In addition to the modularization purposes that this tag serves,
+    it also provides attribution to the upstream project.
+
+    TESTS::
+
+        sage: from sage.features.sagemath import sage__libs__eclib
+        sage: sage__libs__eclib().is_present()                                           # needs sage.libs.eclib
+        FeatureTestResult('sage.libs.eclib', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__libs__eclib
+            sage: isinstance(sage__libs__eclib(), sage__libs__eclib)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.libs.eclib',
+                             [PythonModule('sage.libs.eclib.mwrank')],
+                             spkg='eclib', type='standard')
+
+
 class sage__libs__giac(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.giac`.
