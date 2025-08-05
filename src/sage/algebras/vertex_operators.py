@@ -218,14 +218,14 @@ class VertexOperator():
 
     """
     def __init__(self, pos, neg, cutoff=lambda x: max(x.degree(), 1), dcharge=1, fockspace=None):
-        
+
         self.pos = HalfVertexOperator(pos)
         self.neg = HalfVertexOperator(neg)
         if fockspace is None:
             self.fockspace = LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=('w'))
         else:  # TODO: check input is correct type
             self.fockspace = fockspace
-        
+
         # self.spectral = LazyLaurentSeriesRing(self.fockspace, names = ('z',))
         self.cutoff = cutoff
         self.dcharge = dcharge
@@ -254,11 +254,11 @@ class VertexOperator():
         """
         p = self.fockspace.base_ring().symmetric_function_ring().p()
         op = self._get_operator(i, self.cutoff(x), c)
-        
+
         # op is a scalar
         if op in self.fockspace.base_ring().base_ring():
             return op*x
-        
+
         res = 0
         for (m, c) in op.monomial_coefficients().items():
             par1 = self._d_to_par(m[0].dict())
@@ -288,7 +288,8 @@ class VertexOperator():
         for i in m:
             res += [i]*int(m[i])
         return Partition(sorted(res, reverse=True))
-    
+
+
 class ProductOfVertexOperators():
     def __init__(self, vertex_ops):
         self.vertex_ops = vertex_ops
@@ -327,18 +328,18 @@ class ProductOfVertexOperators():
         # BUG: This currently gives the wrong power for Annihilation operators
         # This is coming from the fact that their series form is \sum \psi_i^* z^-i
         # The code for getting their Fourier mode picks out the action of \psi_i, NOT the coefficient of z^i
-        # The former makes more sense when you just want the action of a single clifford element, but the latter makes 
+        # The former makes more sense when you just want the action of a single clifford element, but the latter makes
         # more sense when you want to deal with series expansions
         if len(mon) != len(self.vertex_ops):
             raise ValueError
-        for i in range(len(mon) -1, -1, -1):
+        for i in range(len(mon) - 1, -1, -1):
             x = self.vertex_ops[i].act(mon[i], x)
             if x == 0:
                 break
         return self.fockspace(x)
-    
+
     def matrix_coefficient(self, bra, ket, cutoff=4):
-        """
+        r"""
         Approximate the matrix coefficient <bra|X|ket>, where X is the vertex operator
         represented by ``self``
 
@@ -362,8 +363,9 @@ class ProductOfVertexOperators():
         R = self.fockspace.base_ring()
         f = (w**ket[1])*R(ket[0])
         res = {}
-        for m in product(range(-cutoff, cutoff+1),repeat=len(self.vertex_ops)):
-            c = self.get_monomial_coefficient(m, f).monomial_coefficients().get(bra[1],self.fockspace.zero()).monomial_coefficients().get(Partition(bra[0]),self.fockspace.zero())
+        for m in product(range(-cutoff, cutoff + 1), repeat=len(self.vertex_ops)):
+            c = self.get_monomial_coefficient(m, f).monomial_coefficients().get(
+                bra[1], self.fockspace.zero()).monomial_coefficients().get(Partition(bra[0]), self.fockspace.zero())
             if c != 0:
                 res[m] = c
         return res
@@ -377,13 +379,13 @@ class ProductOfVertexOperators():
             sage: Cre = CreationOperator(B)
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Ann, Cre])
-            sage: P.vacuum_expectation() 
+            sage: P.vacuum_expectation()
             {(0, 0): 1, (1, 1): 1, (2, 2): 1, (3, 3): 1, (4, 4): 1}
             sage: P = ProductOfVertexOperators([Cre, Ann])
             sage: P.vacuum_expectation()
             {(-4, -4): 1, (-3, -3): 1, (-2, -2): 1, (-1, -1): 1}
         """
-        return self.matrix_coefficient(([],0),([],0), cutoff)
+        return self.matrix_coefficient(([], 0), ([], 0), cutoff)
 
 
 class CreationOperator(VertexOperator):
@@ -437,8 +439,10 @@ class CreationOperator(VertexOperator):
                 continue
             op += self.pos[i + j - c]*self.neg[j]
         return op
+
     def _repr_(self):
         return f"The creation vertex operator acting on {self.fockspace}"
+
 
 class AnnihilationOperator(VertexOperator):
     r"""
@@ -491,5 +495,6 @@ class AnnihilationOperator(VertexOperator):
 
             op += self.pos[j - i + c - 1]*self.neg[j]
         return op
+
     def _repr_(self):
         return f"The annihilation vertex operator acting on {self.fockspace}"
