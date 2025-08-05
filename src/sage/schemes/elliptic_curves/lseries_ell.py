@@ -843,7 +843,9 @@ class Lseries_ell(SageObject):
 
             sage: EllipticCurve([0,0,0,-193^2,0]).sha().an()
             4
-            sage: EllipticCurve([1, 0, 1, -131, 558]).sha().an()  # long time
+
+            sage: # long time, needs sage.libs.eclib
+            sage: EllipticCurve([1, 0, 1, -131, 558]).sha().an()
             1.00000000000000
 
         ALGORITHM: Compute the root number.  If it is -1 then `L(E,s)`
