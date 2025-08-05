@@ -546,6 +546,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
     Test pickling an elliptic curve that has known points on it::
 
+        sage: # needs eclib
         sage: e = EllipticCurve([0, 0, 1, -1, 0]); g = e.gens(); loads(dumps(e)) == e
         True
 
@@ -853,6 +854,8 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
             (0 : 1 : 0)
             sage: P.is_zero()
             True
+
+            sage: # needs eclib
             sage: P = E.gens()[0]
             sage: P.is_zero()
             False
@@ -1055,6 +1058,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         Example to show that bug :issue:`4820` is fixed::
 
+            sage: # needs eclib
             sage: [type(c) for c in 2*EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
             <... 'sage.rings.rational.Rational'>,
@@ -1146,6 +1150,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         Example to show that bug :issue:`4820` is fixed::
 
+            sage: # needs eclib
             sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
              <... 'sage.rings.rational.Rational'>,
@@ -2918,6 +2923,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
     Test pickling an elliptic curve that has known points on it::
 
+        sage: # needs eclib
         sage: e = EllipticCurve([0, 0, 1, -1, 0]); g = e.gens(); loads(dumps(e)) == e
         True
     """
@@ -3265,14 +3271,16 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         EXAMPLES::
 
             sage: E = EllipticCurve('990e1')
-            sage: P = E.gen(0); P
-            (15 : 51 : 1)
             sage: [E.has_good_reduction(p) for p in [2,3,5,7]]
             [False, False, False, True]
-            sage: [P.has_good_reduction(p) for p in [2,3,5,7]]
-            [True, False, True, True]
             sage: [E.tamagawa_exponent(p) for p in [2,3,5,7]]
             [2, 2, 1, 1]
+
+            sage: # needs eclib
+            sage: P = E.gen(0); P
+            (15 : 51 : 1)
+            sage: [P.has_good_reduction(p) for p in [2,3,5,7]]
+            [True, False, True, True]
             sage: [(2*P).has_good_reduction(p) for p in [2,3,5,7]]
             [True, True, True, True]
             sage: P.has_good_reduction()
@@ -3475,7 +3483,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             0.0511114082399688
             sage: P.order()
             +Infinity
-            sage: E.regulator()  # abs tol 1e-15
+            sage: E.regulator()  # abs tol 1e-15, needs eclib
             0.0511114082399688
 
             sage: def naive_height(P):
@@ -4628,6 +4636,8 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve([0,1,1,a,a])
             sage: E.cardinality()
             762
+
+            sage: # needs eclib
             sage: P = E.gens()[0]
             sage: Q = 400*P
             sage: Q.log(P)
