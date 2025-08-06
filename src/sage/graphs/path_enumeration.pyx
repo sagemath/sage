@@ -471,13 +471,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
            ('101', '011', 1),
            ('011', '111', 1)])]
 
-    Feng's algorithm cannot be used on undirected graphs::
-
-        sage: list(graphs.PathGraph(2).shortest_simple_paths(0, 1, algorithm='Feng'))
-        Traceback (most recent call last):
-        ...
-        ValueError: Feng's algorithm works only for directed graphs
-
     If the algorithm is not implemented::
 
         sage: list(g.shortest_simple_paths(1, 5, algorithm='tip top'))
@@ -528,11 +521,29 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         sage: s == t
         True
 
-    Check that "Yen" and "Feng" provide same results on random digraphs::
+    Check that "Yen", "Feng" and "PNC" provide same results on random digraphs::
 
         sage: G = digraphs.RandomDirectedGNP(30, .05)
         sage: while not G.is_strongly_connected():
         ....:     G = digraphs.RandomDirectedGNP(30, .1)
+        sage: for u, v in list(G.edges(labels=False, sort=False)):
+        ....:     G.set_edge_label(u, v, randint(1, 10))
+        sage: V = G.vertices(sort=False)
+        sage: shuffle(V)
+        sage: u, v = V[:2]
+        sage: it_Y = G.shortest_simple_paths(u, v, by_weight=True, report_weight=True, algorithm='Yen')
+        sage: it_F = G.shortest_simple_paths(u, v, by_weight=True, report_weight=True, algorithm='Feng')
+        sage: it_P = G.shortest_simple_paths(u, v, by_weight=True, report_weight=True, algorithm='PNC')
+        sage: for i, (y, f, p) in enumerate(zip(it_Y, it_F, it_P)):
+        ....:     if y[0] != f[0] or y[0] != p[0]:
+        ....:         raise ValueError(f"something goes wrong u={u}, v={v}, G={G.edges()}!")
+        ....:     if i == 100:
+        ....:         break
+
+    Check that "Yen", "Feng" and "PNC" provide same results on random undirected graphs::
+
+        sage: from sage.graphs.generators.random import RandomGNP
+        sage: G = RandomGNP(30, .05)
         sage: for u, v in list(G.edges(labels=False, sort=False)):
         ....:     G.set_edge_label(u, v, randint(1, 10))
         sage: V = G.vertices(sort=False)
@@ -569,9 +580,6 @@ def shortest_simple_paths(self, source, target, weight_function=None,
         algorithm = "Feng" if self.is_directed() else "Yen"
 
     if algorithm in ("Feng", "PNC"):
-        if not self.is_directed():
-            raise ValueError(f"{algorithm}'s algorithm works only for directed graphs")
-
         yield from nc_k_shortest_simple_paths(self, source=source, target=target,
                                               weight_function=weight_function,
                                               by_weight=by_weight, check_weight=check_weight,
@@ -897,8 +905,6 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
     Return an iterator over the simple paths between a pair of vertices in
     increasing order of weights.
 
-    Works only for directed graphs.
-
     For unweighted graphs, paths are returned in order of increasing number
     of edges.
 
@@ -1000,6 +1006,14 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         [(20.0, [(1, 3, 10), (3, 5, 10)]),
          (40.0, [(1, 2, 20), (2, 5, 20)]),
          (60.0, [(1, 4, 30), (4, 5, 30)])]
+
+    Algorithm works for undirected graphs as well::
+
+        sage: g = Graph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
+        sage: list(nc_k_shortest_simple_paths(g, 5, 1, by_weight=True))
+        [[5, 3, 1], [5, 2, 1], [5, 4, 1]]
+        sage: list(nc_k_shortest_simple_paths(g, 5, 1))
+        [[5, 2, 1], [5, 4, 1], [5, 3, 1]]
 
     TESTS::
 
@@ -1150,9 +1164,6 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: for i in range(len(A) - 1):
         ....:     assert A[i] <= A[i + 1]
     """
-    if not self.is_directed():
-        raise ValueError("this algorithm works only for directed graphs")
-
     if source not in self:
         raise ValueError("vertex '{}' is not in the graph".format(source))
     if target not in self:
@@ -1163,9 +1174,11 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         return
 
     if self.has_loops() or self.allows_multiple_edges():
-        G = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
+        G = self.to_simple(to_undirected=self.is_directed(), keep_label='min', immutable=False)
     else:
         G = self.copy(immutable=False)
+    if not G.is_directed():
+        G = G.to_directed()
 
     G.delete_edges(G.incoming_edges(source, labels=False))
     G.delete_edges(G.outgoing_edges(target, labels=False))
@@ -1416,8 +1429,6 @@ def feng_k_shortest_simple_paths(self, source, target, weight_function=None,
     Return an iterator over the simple paths between a pair of vertices in
     increasing order of weights.
 
-    Works only for directed graphs.
-
     For unweighted graphs, paths are returned in order of increasing number
     of edges.
 
@@ -1486,8 +1497,6 @@ def pnc_k_shortest_simple_paths(self, source, target, weight_function=None,
     r"""
     Return an iterator over the simple paths between a pair of vertices in
     increasing order of weights.
-
-    Works only for directed graphs.
 
     In case of weighted graphs, negative weights are not allowed.
 
