@@ -19111,9 +19111,10 @@ cdef class Matrix(Matrix1):
             U.rescale_col(n - 1, -1)
         return U
 
-    def striped_krylov_matrix(self, M, shift=None, degree=None):
+    def krylov_matrix(self, M, shift=None, degree=None):
         r"""
-        Return the block matrix of the following form, with rows permuted according to shift.
+        Return the block matrix built from the rows of ``self`` and the matrix ``M``, with rows ordered according to a priority  defined by ``shift``. See [Beckermann and Labahn, 2000, https://doi.org/10.1137/S0895479897326912] and [Jeannerod, Neiger, Schost, Villard, 2017, https://doi.org/10.1016/j.jsc.2016.11.015]."
+
         The following uses `E` to refer to ``self``, and `d` to refer to ``degree``.
 
         [     ]
@@ -19136,12 +19137,13 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of ``self``.
         - ``degree`` -- integer, the maximum exponent for the Krylov matrix.
-        - ``shift`` -- list of integers (optional), row priority shifts. If ``None``,
-            defaults to all zero.
+        - ``shift`` -- list of ``self.nrows()`` integers (optional), row priority
+          shifts. If ``None``, defaults to all zeroes.
 
         OUTPUT:
 
-        - A matrix with block rows [E, EM, EM^2, ..., EM^d], row-permuted by shift.
+        - A matrix with block rows [E, EM, EM^2, ..., EM^d], row-permuted by
+          shift.
 
         EXAMPLES::
 
@@ -19156,7 +19158,7 @@ cdef class Matrix(Matrix1):
             [0 1 0]
             [0 0 1]
             [0 0 0]
-            sage: E.striped_krylov_matrix(M)
+            sage: E.krylov_matrix(M)
             [27 49 29]
             [50 58  0]
             [77 10 29]
@@ -19169,7 +19171,7 @@ cdef class Matrix(Matrix1):
             [ 0  0  0]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.striped_krylov_matrix(M,[0,3,6])
+            sage: E.krylov_matrix(M,[0,3,6])
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27]
@@ -19182,7 +19184,7 @@ cdef class Matrix(Matrix1):
             [ 0 77 10]
             [ 0  0 77]
             [ 0  0  0]
-            sage: E.striped_krylov_matrix(M,[3,0,2])
+            sage: E.krylov_matrix(M,[3,0,2])
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50]
@@ -19202,25 +19204,25 @@ cdef class Matrix(Matrix1):
         from sage.matrix.constructor import matrix # for matrix.block
 
         if not isinstance(M, Matrix):
-            raise TypeError("striped_krylov_matrix: M is not a matrix")
+            raise TypeError("krylov_matrix: M is not a matrix")
         if M.nrows() != self.ncols() or M.ncols() != self.ncols():
-            raise ValueError("striped_krylov_matrix: matrix M does not have correct dimensions.")
+            raise ValueError("krylov_matrix: matrix M does not have correct dimensions.")
         if M.base_ring() != self.base_ring():
-            raise ValueError("striped_krylov_matrix: matrix M does not have same base ring as E.")
+            raise ValueError("krylov_matrix: matrix M does not have same base ring as E.")
 
         if degree is None:
             degree = self.ncols()
         if not isinstance(degree, (int, sage.rings.integer.Integer)):
-            raise TypeError("striped_krylov_matrix: degree is not an integer.")
+            raise TypeError("krylov_matrix: degree is not an integer.")
         if degree < 0:
-            raise ValueError("striped_krylov_matrix: degree bound cannot be negative.")
+            raise ValueError("krylov_matrix: degree bound cannot be negative.")
 
         if shift is None or shift == 0:
             shift = (ZZ**self.nrows()).zero()
         if isinstance(shift, (list, tuple)):
             shift = (ZZ**self.nrows())(shift)
         if shift not in ZZ**self.nrows():
-            raise ValueError(f"striped_krylov_matrix: shift is not an integer vector of length {self.nrows()}.")
+            raise ValueError(f"krylov_matrix: shift is not an integer vector of length {self.nrows()}.")
 
         m = self.nrows()
 
@@ -19234,10 +19236,10 @@ cdef class Matrix(Matrix1):
         priority_triplets = sorted([[priority(*index(i)),index(i),i] for i in range(m*(degree+1))])
         priority_permutation = Permutation([t[2]+1 for t in priority_triplets])
 
-        # build all blocks for the striped matrix
+        # store 2 blocks for the Krylov matrix
         blocks = [self]
 
-        # for i from 0 to degree (inclusive), add E*M^i
+        # for i from 0 to degree (inclusive), merge existing blocks, add E*M^i
         M_i = None
         for i in range(math.ceil(math.log(degree + 1, 2))):
             if M_i is None:
@@ -19255,21 +19257,21 @@ cdef class Matrix(Matrix1):
         krylov.permute_rows(priority_permutation)
         return krylov
 
-    def naive_krylov_profile(self, M, shift=None, degree=None, output_pairs=True):
+    def _naive_krylov_basis(self, M, shift=None, degree=None, output_pairs=True):
         r"""
-        Compute the rank profile (row and column) of the striped Krylov matrix
+        Compute the rank profile (row and column) of the Krylov matrix
         built from ``self`` and matrix ``M``.
 
         INPUT:
 
         - ``M`` -- square matrix used in the Krylov construction.
-        - ``degree`` -- maximum power of ``M`` in Krylov matrix.
-        - ``shift`` -- list of integers (optional): priority row shift.
+        - ``degree`` -- maximum power of ``M`` in Krylov matrix. If None, a suitable upper bound of ``self.ncols()`` is default.
+        - ``shift`` -- list of ``self.nrows()`` integers (optional): priority row shift. If ``None``, defaults to all zeroes.
 
         OUTPUT:
 
         - A tuple (row_profile, pivot_matrix, column_profile):
-            * row_profile: list of the first r row indices in the striped Krylov matrix ``K`` corresponding to independent rows
+            * row_profile: list of the first r row indices in the Krylov matrix ``K`` corresponding to independent rows
             * pivot: the submatrix of ``K`` given by those rows
             * column_profile: list of the first r independent column indices in ``pivot_matrix``
           where r is the rank of ``K``.
@@ -19288,8 +19290,8 @@ cdef class Matrix(Matrix1):
             [0 0 1]
             [0 0 0]
             sage: degree = 3
-            sage: striped_krylov_matrix = matrix.block([[E*M^i] for i in range(degree+1)],subdivide=False)
-            sage: striped_krylov_matrix
+            sage: K = E.krylov_matrix(M)
+            sage: K
             [27 49 29]
             [50 58  0]
             [77 10 29]
@@ -19302,13 +19304,13 @@ cdef class Matrix(Matrix1):
             [ 0  0  0]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.krylov_profile(M, output_pairs=False)
+            sage: E.krylov_basis(M, output_pairs=False)
             (
                        [27 49 29]
                        [50 58  0]
             (0, 1, 3), [ 0 27 49], (0, 1, 2)
             )
-            sage: E.krylov_profile(M)
+            sage: E.krylov_basis(M)
             (
                                       [27 49 29]
                                       [50 58  0]
@@ -19344,7 +19346,7 @@ cdef class Matrix(Matrix1):
              (6, 2, 1),
              (9, 2, 2),
              (12, 2, 3)]
-            sage: striped_krylov_matrix.with_permuted_rows(Permutation([x[0] for x in rows]))
+            sage: E.krylov_matrix(M,shift=shift)
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27]
@@ -19357,13 +19359,13 @@ cdef class Matrix(Matrix1):
             [ 0 77 10]
             [ 0  0 77]
             [ 0  0  0]
-            sage: E.krylov_profile(M, shift=shift, output_pairs=False)
+            sage: E.krylov_basis(M, shift=shift, output_pairs=False)
             (
                        [27 49 29]
                        [ 0 27 49]
             (0, 1, 2), [ 0  0 27], (0, 1, 2)
             )
-            sage: E.krylov_profile(M, shift=shift)
+            sage: E.krylov_basis(M,shift=shift)
             (
                                       [27 49 29]
                                       [ 0 27 49]
@@ -19385,7 +19387,7 @@ cdef class Matrix(Matrix1):
              (7, 0, 2),
              (12, 2, 3),
              (10, 0, 3)]
-            sage: striped_krylov_matrix.with_permuted_rows(Permutation([x[0] for x in rows]))
+            sage: E.krylov_matrix(M,shift=shift)
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50]
@@ -19398,13 +19400,13 @@ cdef class Matrix(Matrix1):
             [ 0  0 27]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.krylov_profile(M,shift=shift,output_pairs=False)
+            sage: E.krylov_basis(M,shift=shift,output_pairs=False)
             (
                        [50 58  0]
                        [ 0 50 58]
             (0, 1, 2), [ 0  0 50], (0, 1, 2)
             )
-            sage: E.krylov_profile(M,shift=shift)
+            sage: E.krylov_basis(M,shift=shift)
             (
                                       [50 58  0]
                                       [ 0 50 58]
@@ -19414,38 +19416,29 @@ cdef class Matrix(Matrix1):
         from sage.matrix.constructor import matrix
 
         if not isinstance(M, Matrix):
-            raise TypeError("naive_krylov_profile: M is not a matrix")
+            raise TypeError("naive_krylov_basis: M is not a matrix")
         if M.nrows() != self.ncols() or M.ncols() != self.ncols():
-            raise ValueError("naive_krylov_profile: matrix M does not have correct dimensions.")
+            raise ValueError("naive_krylov_basis: matrix M does not have correct dimensions.")
         if M.base_ring() != self.base_ring():
-            raise ValueError("naive_krylov_profile: matrix M does not have same base ring as E.")
+            raise ValueError("naive_krylov_basis: matrix M does not have same base ring as E.")
 
         if degree is None:
             degree = self.ncols()
         if not isinstance(degree, (int, sage.rings.integer.Integer)):
-            raise TypeError("naive_krylov_profile: degree is not an integer.")
+            raise TypeError("naive_krylov_basis: degree is not an integer.")
         if degree < 0:
-            raise ValueError("naive_krylov_profile: degree bound cannot be negative.")
+            raise ValueError("naive_krylov_basis: degree bound cannot be negative.")
 
         if shift is None or shift == 0:
             shift = (ZZ**self.nrows()).zero()
         if isinstance(shift, (list, tuple)):
             shift = (ZZ**self.nrows())(shift)
         if shift not in ZZ**self.nrows():
-            raise ValueError(f"naive_krylov_profile: shift is not an integer vector of length {self.nrows()}.")
+            raise ValueError(f"naive_krylov_basis: shift is not an integer vector of length {self.nrows()}.")
 
         m = self.nrows()
 
-        K = self.striped_krylov_matrix(M,shift,degree)
-
-        # define priority and indexing functions
-        # index: [0,1,...,m-1,m,...,2m-1,...,m*degree-1] -> [(0,0),(1,0),...,(m-1,0),(0,1),...,(m-1,1),...,(m-1,degree)]
-        priority = lambda c,d : shift[c] + d
-        index = lambda i : (i%m,i//m)
-
-        # deduce permutation by sorting priorities
-        # rows should be ordered by ascending priority, then by associated row number in E (i%m)
-        priority_pairs = sorted([[priority(*index(i)),index(i)] for i in range(m*(degree+1))])
+        K = self.krylov_matrix(M,shift,degree)
 
         # calculate first independent rows of K
         row_profile = K.pivot_rows()
@@ -19456,11 +19449,22 @@ cdef class Matrix(Matrix1):
         # calculate first independent columns of pivot
         col_profile = pivot.pivots()
 
-        row_profile = tuple([priority_pairs[i][1] for i in row_profile])
+        if output_pairs:
+
+            # define priority and indexing functions
+            # index: [0,1,...,m-1,m,...,2m-1,...,m*degree-1] -> [(0,0),(1,0),...,(m-1,0),(0,1),...,(m-1,1),...,(m-1,degree)]
+            priority = lambda c,d : shift[c] + d
+            index = lambda i : (i%m,i//m)
+
+            # deduce permutation by sorting priorities
+            # rows should be ordered by ascending priority, then by associated row number in E (i%m)
+            priority_pairs = sorted([[priority(*index(i)),index(i)] for i in range(m*(degree+1))])
+
+            row_profile = tuple([priority_pairs[i][1] for i in row_profile])
 
         return row_profile,pivot,col_profile
 
-    def krylov_profile(self, M, shift=None, degree=None, output_pairs=True):
+    def _elimination_krylov_basis(self, M, shift=None, degree=None, output_pairs=True):
         r"""
         Compute the rank profile (row and column) of the block Krylov matrix
         built from ``self`` and matrix ``M``.
@@ -19470,7 +19474,7 @@ cdef class Matrix(Matrix1):
         - ``M`` -- square matrix used in the Krylov construction.
         - ``degree`` -- maximum power of ``M`` in Krylov matrix. If None, a suitable upper bound of ``self.ncols()`` is default.
         - ``shift`` -- list of ``self.nrows()`` integers (optional): priority
-          row shift.
+          row shift. If ``None``, defaults to all zeroes.
 
         OUTPUT:
 
@@ -19498,8 +19502,8 @@ cdef class Matrix(Matrix1):
             [0 0 1]
             [0 0 0]
             sage: degree = 3
-            sage: striped_krylov_matrix = matrix.block([[E*M^i] for i in range(degree+1)],subdivide=False)
-            sage: striped_krylov_matrix
+            sage: K = E.krylov_matrix(M)
+            sage: K
             [27 49 29]
             [50 58  0]
             [77 10 29]
@@ -19512,19 +19516,18 @@ cdef class Matrix(Matrix1):
             [ 0  0  0]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.krylov_profile(M, output_pairs=False)
+            sage: E.krylov_basis(M,output_pairs=False)
             (
                        [27 49 29]
                        [50 58  0]
             (0, 1, 3), [ 0 27 49], (0, 1, 2)
             )
-            sage: E.krylov_profile(M)
+            sage: E.krylov_basis(M)
             (
                                       [27 49 29]
                                       [50 58  0]
             ((0, 0), (1, 0), (0, 1)), [ 0 27 49], (0, 1, 2)
             )
-
             sage: rows = [(i+j*E.nrows()+1,i,j) for j in range(degree+1) for i in range(E.nrows())]
             sage: rows
             [(1, 0, 0),
@@ -19554,7 +19557,7 @@ cdef class Matrix(Matrix1):
              (6, 2, 1),
              (9, 2, 2),
              (12, 2, 3)]
-            sage: striped_krylov_matrix.with_permuted_rows(Permutation([x[0] for x in rows]))
+            sage: E.krylov_matrix(M,shift=shift)
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27]
@@ -19567,19 +19570,18 @@ cdef class Matrix(Matrix1):
             [ 0 77 10]
             [ 0  0 77]
             [ 0  0  0]
-            sage: E.krylov_profile(M, shift=shift, output_pairs=False)
+            sage: E.krylov_basis(M,shift=shift,output_pairs=False)
             (
                        [27 49 29]
                        [ 0 27 49]
             (0, 1, 2), [ 0  0 27], (0, 1, 2)
             )
-            sage: E.krylov_profile(M, shift=shift)
+            sage: E.krylov_basis(M,shift=shift)
             (
                                       [27 49 29]
                                       [ 0 27 49]
             ((0, 0), (0, 1), (0, 2)), [ 0  0 27], (0, 1, 2)
             )
-
             sage: shift = [3,0,2]
             sage: rows.sort(key=lambda x: (x[2] + shift[x[1]],x[1]))
             sage: rows
@@ -19595,7 +19597,7 @@ cdef class Matrix(Matrix1):
              (7, 0, 2),
              (12, 2, 3),
              (10, 0, 3)]
-            sage: striped_krylov_matrix.with_permuted_rows(Permutation([x[0] for x in rows]))
+            sage: E.krylov_matrix(M,shift=shift)
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50]
@@ -19608,13 +19610,13 @@ cdef class Matrix(Matrix1):
             [ 0  0 27]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.krylov_profile(M,shift=shift,output_pairs=False)
+            sage: E.krylov_basis(M,shift=shift,output_pairs=False)
             (
                        [50 58  0]
                        [ 0 50 58]
             (0, 1, 2), [ 0  0 50], (0, 1, 2)
             )
-            sage: E.krylov_profile(M,shift=shift)
+            sage: E.krylov_basis(M,shift=shift)
             (
                                       [50 58  0]
                                       [ 0 50 58]
@@ -19626,25 +19628,25 @@ cdef class Matrix(Matrix1):
         from sage.combinat.permutation import Permutation
 
         if not isinstance(M, Matrix):
-            raise TypeError("krylov_profile: M is not a matrix")
+            raise TypeError("krylov_basis: M is not a matrix")
         if M.nrows() != self.ncols() or M.ncols() != self.ncols():
-            raise ValueError("krylov_profile: matrix M does not have correct dimensions.")
+            raise ValueError("krylov_basis: matrix M does not have correct dimensions.")
         if M.base_ring() != self.base_ring():
-            raise ValueError("krylov_profile: matrix M does not have same base ring as E.")
+            raise ValueError("krylov_basis: matrix M does not have same base ring as E.")
 
         if degree is None:
             degree = self.ncols()
         if not isinstance(degree, (int, sage.rings.integer.Integer)):
-            raise TypeError("krylov_profile: degree is not an integer.")
+            raise TypeError("krylov_basis: degree is not an integer.")
         if degree < 0:
-            raise ValueError("krylov_profile: degree bound cannot be negative.")
+            raise ValueError("krylov_basis: degree bound cannot be negative.")
 
         if shift is None or shift == 0:
             shift = (ZZ**self.nrows()).zero()
         if isinstance(shift, (list, tuple)):
             shift = (ZZ**self.nrows())(shift)
         if shift not in ZZ**self.nrows():
-            raise ValueError(f"krylov_profile: shift is not a Z-vector of length {self.nrows()}.")
+            raise ValueError(f"krylov_basis: shift is not a Z-vector of length {self.nrows()}.")
 
         m = self.nrows()
         sigma = self.ncols()
@@ -19739,7 +19741,54 @@ cdef class Matrix(Matrix1):
 
         return tuple(row_profile_K), R, col_profile
 
-    def linear_interpolation_basis(self, M, var_name, degree=None, shift=None):
+    def krylov_basis(self, M, shift=None, degree=None, output_pairs=True, algorithm='default'):
+        r"""
+        Compute the rank profile (row and column) of the block Krylov matrix
+        built from ``self`` and matrix ``M``.
+
+        INPUT:
+
+        - ``M`` -- square matrix used in the Krylov construction.
+        - ``degree`` -- maximum power of ``M`` in Krylov matrix. If None, a suitable upper bound of ``self.ncols()`` is default.
+        - ``shift`` -- list of ``self.nrows()`` integers (optional): priority
+          row shift. If ``None``, defaults to all zeroes.
+
+        OUTPUT:
+
+        A tuple (row_profile, pivot_matrix, column_profile):
+        - ``row_profile``: list of the first r row indices in the striped
+          Krylov matrix ``K`` corresponding to independent rows. If
+          ``output_pairs`` is True, then the output is the list of pairs
+          (c_i, d_i) where c_i is the corresponding row in the original matrix
+          and d_i the corresponding power of ``M``.
+        - ``pivot_matrix``: the submatrix of ``K`` given by ``row_profile``
+        - ``column_profile``: the first r independent column indices in
+          ``pivot_matrix`` where r is the rank of `K`.
+        """
+        if algorithm == 'default':
+            if self.base_ring().order() == 2:
+                if self.nrows() <= 12:
+                    algorithm = 'naive'
+                else:
+                    algorithm = 'elimination'
+            elif self.base_ring().degree() == 1:
+                if self.nrows() <= 4:
+                    algorithm = 'naive'
+                else:
+                    algorithm = 'elimination'
+            else:
+                if self.nrows() <= 2:
+                    algorithm = 'naive'
+                else:
+                    algorithm = 'elimination'
+        if algorithm == 'naive':
+            return self._naive_krylov_basis(M, shift, degree, output_pairs)
+        elif algorithm == 'elimination':
+            return self._elimination_krylov_basis(M, shift, degree, output_pairs)
+        else:
+            raise ValueError("algorithm must be one of \"default\", \"naive\" or \"elimination\".")
+
+    def krylov_kernel_basis(self, M, var_name='x', degree=None, shift=None, output_coefficients=False):
         r"""
         Return a shifted minimal linear interpolation basis for
         (``self``,``M``) in ``s``-Popov form with respect to a shift ``s``.
@@ -19753,15 +19802,18 @@ cdef class Matrix(Matrix1):
         ``self.nrows()`` in K[x] that form a basis for solutions to the
         equation ``p_1 e_1 + ... + p_n e_n = 0``.
 
-        See https://arxiv.org/abs/1512.03503
+        See [Kai1980]
 
         INPUT:
 
         - ``M`` -- square matrix for Krylov construction.
         - ``var_name`` -- variable name for the returned polynomial matrix
-        - ``degree`` -- upper bound on degree of minpoly(`M`). If None, a suitable upper bound of ``self.ncols()`` is default.
+        - ``degree`` -- upper bound on degree of minpoly(`M`). If None, a
+          suitable upper bound of ``self.ncols()`` is default.
         - ``shift`` -- list of self.nrows() integers (optional): controls
-                        priority of rows. 
+          priority of rows.  If ``None``, defaults to all zeroes.
+        - ``output_coefficients`` -- If True, outputs the matrix as a sparse
+          block matrix of coefficients.
 
         OUTPUT:
 
@@ -19782,8 +19834,8 @@ cdef class Matrix(Matrix1):
             [0 0 1]
             [0 0 0]
             sage: degree = E.ncols()
-            sage: striped_krylov_matrix = matrix.block([[E*M^i] for i in range(degree+1)],subdivide=False)
-            sage: striped_krylov_matrix
+            sage: krylov_matrix = matrix.block([[E*M^i] for i in range(degree+1)],subdivide=False)
+            sage: krylov_matrix
             [27 49 29]
             [50 58  0]
             [77 10 29]
@@ -19796,48 +19848,63 @@ cdef class Matrix(Matrix1):
             [ 0  0  0]
             [ 0  0  0]
             [ 0  0  0]
-            sage: basis = E.linear_interpolation_basis(M,'x')
+            sage: basis = E.krylov_kernel_basis(M,'x')
             sage: basis
             [x^2 + 40*x + 82              76               0]
             [       3*x + 13          x + 57               0]
             [             96              96               1]
+            sage: basis_coeff = E.krylov_kernel_basis(M,'x',output_coefficients=True)
+            sage: basis_coeff
+            [82 76  0 40  0  0  1  0  0]
+            [13 57  0  3  1  0  0  0  0]
+            [96 96  1  0  0  0  0  0  0]
             sage: basis.is_popov()
             True
             sage: basis.degree() <= E.ncols()
             True
-            sage: matrix.block([[basis.coefficient_matrix(i) for i in range(E.ncols()+1)]],subdivide=False) * striped_krylov_matrix == matrix.zero(R,E.nrows())
+            sage: basis_coeff.augment(matrix.zero(R,E.nrows())) * krylov_matrix == matrix.zero(R,E.nrows())
             True
-            sage: len(E.krylov_profile(M)[0]) == sum(basis[i,i].degree() for i in range(E.nrows()))
+            sage: len(E.krylov_basis(M)[0]) == sum(basis[i,i].degree() for i in range(E.nrows()))
             True
             
             sage: shift = [0,3,6]
-            sage: basis = E.linear_interpolation_basis(M,'x',shift=shift)
+            sage: basis = E.krylov_kernel_basis(M,'x',shift=shift)
             sage: basis
             [               x^3                  0                  0]
             [60*x^2 + 72*x + 70                  1                  0]
             [60*x^2 + 72*x + 69                  0                  1]
+            sage: basis_coeff = E.krylov_kernel_basis(M,'x',shift=shift,output_coefficients=True)
+            sage: basis_coeff
+            [ 0  0  0  0  0  0  0  0  0  1  0  0]
+            [70  1  0 72  0  0 60  0  0  0  0  0]
+            [69  0  1 72  0  0 60  0  0  0  0  0]
             sage: basis.is_popov(shifts=shift)
             True
             sage: basis.degree() <= E.ncols()
             True
-            sage: matrix.block([[basis.coefficient_matrix(i) for i in range(E.ncols()+1)]],subdivide=False) * striped_krylov_matrix == matrix.zero(R,E.nrows())
+            sage: basis_coeff * krylov_matrix == matrix.zero(R,E.nrows())
             True
-            sage: len(E.krylov_profile(M,shift=shift)[0]) == sum(basis[i,i].degree() for i in range(E.nrows()))
+            sage: len(E.krylov_basis(M,shift=shift)[0]) == sum(basis[i,i].degree() for i in range(E.nrows()))
             True
             
             sage: shift = [3,0,2]
-            sage: basis = E.linear_interpolation_basis(M,'x',shift=shift)
+            sage: basis = E.krylov_kernel_basis(M,'x',shift=shift)
             sage: basis
             [                 1 26*x^2 + 49*x + 79                  0]
             [                 0                x^3                  0]
             [                 0 26*x^2 + 49*x + 78                  1]
+            sage: basis_coeff = E.krylov_kernel_basis(M,'x',shift=shift,output_coefficients=True)
+            sage: basis_coeff
+            [ 1 79  0  0 49  0  0 26  0  0  0  0]
+            [ 0  0  0  0  0  0  0  0  0  0  1  0]
+            [ 0 78  1  0 49  0  0 26  0  0  0  0]
             sage: basis.is_popov(shifts=shift)
             True
             sage: basis.degree() <= E.ncols()
             True
-            sage: matrix.block([[basis.coefficient_matrix(i) for i in range(E.ncols()+1)]],subdivide=False) * striped_krylov_matrix == matrix.zero(R,E.nrows())
+            sage: basis_coeff * krylov_matrix == matrix.zero(R,E.nrows())
             True
-            sage: len(E.krylov_profile(M,shift=shift)[0]) == sum(basis[i,i].degree() for i in range(E.nrows()))
+            sage: len(E.krylov_basis(M,shift=shift)[0]) == sum(basis[i,i].degree() for i in range(E.nrows()))
             True
         """
         from sage.combinat.permutation import Permutation
@@ -19846,11 +19913,11 @@ cdef class Matrix(Matrix1):
 
         # INPUT VALIDATION
         if not isinstance(M, Matrix):
-            raise TypeError("linear_interpolation_basis: M is not a matrix")
+            raise TypeError("krylov_kernel_basis: M is not a matrix")
         if M.nrows() != self.ncols() or M.ncols() != self.ncols():
-            raise ValueError("linear_interpolation_basis: matrix M does not have correct dimensions.")
+            raise ValueError("krylov_kernel_basis: matrix M does not have correct dimensions.")
         if M.base_ring() != self.base_ring():
-            raise ValueError("linear_interpolation_basis: matrix M does not have same base ring as E.")
+            raise ValueError("krylov_kernel_basis: matrix M does not have same base ring as E.")
 
         if not isinstance(var_name, str):
             raise TypeError("var_name is not a string")
@@ -19858,16 +19925,16 @@ cdef class Matrix(Matrix1):
         if degree is None:
             degree = self.ncols()
         if not isinstance(degree, (int, sage.rings.integer.Integer)):
-            raise TypeError("linear_interpolation_basis: degree is not an integer.")
+            raise TypeError("krylov_kernel_basis: degree is not an integer.")
         if degree < 0:
-            raise ValueError("linear_interpolation_basis: degree bound cannot be negative.")
+            raise ValueError("krylov_kernel_basis: degree bound cannot be negative.")
 
         if shift is None or shift == 0:
             shift = (ZZ**self.nrows()).zero()
         if isinstance(shift, (list, tuple)):
             shift = (ZZ**self.nrows())(shift)
         if shift not in ZZ**self.nrows():
-            raise ValueError(f"linear_interpolation_basis: shift is not a Z-vector of length {self.nrows()}.")
+            raise ValueError(f"krylov_kernel_basis: shift is not a Z-vector of length {self.nrows()}.")
 
         m = self.nrows()
         sigma = self.ncols()
@@ -19875,14 +19942,14 @@ cdef class Matrix(Matrix1):
         poly_ring = PolynomialRing(self.base_ring(),var_name)
 
         # calculate krylov profile
-        row_profile, pivot, col_profile = self.krylov_profile(M, shift, degree)
+        row_profile, pivot, col_profile = self.krylov_basis(M, shift, degree)
 
         if len(row_profile) == 0:
             return matrix.identity(poly_ring,m)
 
         c, d = zip(*(row for row in row_profile))
 
-        # degree_c = 0 or max d[k] such that c[k] = c
+        # degree_c = 0 or max d[k] + 1 such that c[k] = c
         inv_c = [None]*m
         degree_c = [0]*m
         for k in range(len(row_profile)):
@@ -19909,57 +19976,66 @@ cdef class Matrix(Matrix1):
         D = matrix(D_rows)
         relation = D*C.inverse()
 
-        # construct polynomial matrix - potentially costly at polynomial construction stage for extension fields
-        coeffs_map = [[{} for _ in range(m)] for _ in range(m)]
-        # add identity part of basis
-        for i in range(m):
-            coeffs_map[i][i][degree_c[i]] = self.base_ring().one()
-        # add relation part of basis
-        for col in range(relation.ncols()):
-            for row in range(m):
-                coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col], self.base_ring().zero()) - relation[row,col]
-        # construct rows
-        basis_rows = [[None] * m for _ in range(m)]
-        if self.base_ring().degree() <= 1 or m*m*sigma < self.base_ring().order():
-            # if base field is large, don't bother caching monomials
-            # or if polynomial construction is efficient (order = 1)
-            for row in range(m):
-                for col in range(m):
-                    if not coeffs_map[row][col]:
-                        basis_rows[row][col] = self.base_ring().zero()
-                    else:
-                        # construct a small polynomial (less costly), then shift
-                        mindeg = min(coeffs_map[row][col].keys())
-                        maxdeg = max(coeffs_map[row][col].keys())
-                        entries = [self.base_ring().zero()] * (maxdeg-mindeg+1)
-                        for deg, coeff in coeffs_map[row][col].items():
-                            entries[deg-mindeg] = coeff
-                        basis_rows[row][col] = poly_ring(entries).shift(mindeg)
-            return matrix(poly_ring, basis_rows)
+        if output_coefficients:
+            coefficients = matrix.zero(self.base_ring(),m,m*(max(degree_c)+1))
+            for i in range(m):
+                coefficients[i,i+degree_c[i]*m] = self.base_ring().one()
+            for col in range(relation.ncols()):
+                for row in range(m):
+                    coefficients[row,c[col]+d[col]*m] -= relation[row,col]
+            return coefficients
         else:
-            # if base field is small, cache monomials to minimise number of constructions
-            monomial_cache = {}
-            for row in range(m):
-                for col in range(m):
-                    if not coeffs_map[row][col]:
-                        basis_rows[row][col] = poly_ring.zero()
-                    elif len(coeffs_map[row][col]) == 1:
-                        # monomial case
-                        deg, coeff = coeffs_map[row][col].popitem()
-                        if coeff not in monomial_cache:
-                            monomial_cache[coeff] = poly_ring(coeff)
-                        basis_rows[row][col] = monomial_cache[coeff].shift(deg)
-                    else:
-                        # general case
-                        mindeg = min(coeffs_map[row][col].keys())
-                        poly = poly_ring.zero()
-                        for deg, coeff in coeffs_map[row][col].items():
+            # construct polynomial matrix - potentially costly at polynomial construction stage for extension fields
+            coeffs_map = [[{} for _ in range(m)] for _ in range(m)]
+            # add identity part of basis
+            for i in range(m):
+                coeffs_map[i][i][degree_c[i]] = self.base_ring().one()
+            # add relation part of basis
+            for col in range(relation.ncols()):
+                for row in range(m):
+                    coeffs_map[row][c[col]][d[col]] = coeffs_map[row][c[col]].get(d[col], self.base_ring().zero()) - relation[row,col]
+            # construct rows
+            basis_rows = [[None] * m for _ in range(m)]
+            if self.base_ring().degree() <= 1 or m*m*sigma < self.base_ring().order():
+                # if base field is large, don't bother caching monomials
+                # or if polynomial construction is efficient (order = 1)
+                for row in range(m):
+                    for col in range(m):
+                        if not coeffs_map[row][col]:
+                            basis_rows[row][col] = self.base_ring().zero()
+                        else:
+                            # construct a small polynomial (less costly), then shift
+                            mindeg = min(coeffs_map[row][col].keys())
+                            maxdeg = max(coeffs_map[row][col].keys())
+                            entries = [self.base_ring().zero()] * (maxdeg-mindeg+1)
+                            for deg, coeff in coeffs_map[row][col].items():
+                                entries[deg-mindeg] = coeff
+                            basis_rows[row][col] = poly_ring(entries).shift(mindeg)
+                return matrix(poly_ring, basis_rows)
+            else:
+                # if base field is small, cache monomials to minimise number of constructions
+                monomial_cache = {}
+                for row in range(m):
+                    for col in range(m):
+                        if not coeffs_map[row][col]:
+                            basis_rows[row][col] = poly_ring.zero()
+                        elif len(coeffs_map[row][col]) == 1:
+                            # monomial case
+                            deg, coeff = coeffs_map[row][col].popitem()
                             if coeff not in monomial_cache:
                                 monomial_cache[coeff] = poly_ring(coeff)
-                            poly += monomial_cache[coeff].shift(deg-mindeg)
-                        basis_rows[row][col] = poly.shift(mindeg)
-        # convert to matrix
-        return matrix(poly_ring,basis_rows)
+                            basis_rows[row][col] = monomial_cache[coeff].shift(deg)
+                        else:
+                            # general case
+                            mindeg = min(coeffs_map[row][col].keys())
+                            poly = poly_ring.zero()
+                            for deg, coeff in coeffs_map[row][col].items():
+                                if coeff not in monomial_cache:
+                                    monomial_cache[coeff] = poly_ring(coeff)
+                                poly += monomial_cache[coeff].shift(deg-mindeg)
+                            basis_rows[row][col] = poly.shift(mindeg)
+            # convert to matrix
+            return matrix(poly_ring,basis_rows)
 
     # a limited number of access-only properties are provided for matrices
     @property
