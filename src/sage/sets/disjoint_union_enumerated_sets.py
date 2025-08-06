@@ -521,8 +521,8 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 yield wrap_element(el, k)
             if any_stopped:
                 if self._keepkey:
-                    filtered = [*zip(
-                        *[(k, el_iter) for k, el_iter in zip(seen_keys, el_iters) if el_iter is not None])]
+                    filtered = list(zip(
+                        *[(k, el_iter) for k, el_iter in zip(seen_keys, el_iters) if el_iter is not None]))
                     if filtered:
                         seen_keys = list(filtered[0])
                         el_iters = list(filtered[1])
