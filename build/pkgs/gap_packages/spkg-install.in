@@ -92,7 +92,7 @@ install_compiled_pkg()
 #
 # These packages have an old ./configure that take the GAP_ROOT as a positional
 # argument
-for pkg in cohomolo crypting grape guava orb datastructures
+for pkg in cohomolo crypting grape orb datastructures
 do
     echo "Building GAP package $pkg"
     CFLAGS="$CFLAGS -Wno-implicit-function-declaration"
@@ -103,6 +103,14 @@ do
     install_compiled_pkg "$pkg"
     cd "$PKG_SRC_DIR"
 done
+
+echo "Building GAP package guava"
+export CFLAGS="-std=gnu17 $CFLAGS -Wno-implicit-function-declaration"
+cd "$PKG_SRC_DIR/guava"
+./configure "$GAP_ROOT"
+sdh_make
+install_compiled_pkg "guava"
+cd "$PKG_SRC_DIR"
 
 # These packages have a new-style autoconf ./configure
 # that takes --with-gaproot
