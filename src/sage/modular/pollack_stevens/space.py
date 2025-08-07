@@ -48,6 +48,7 @@ classical modular symbols (or even elliptic curves) as follows::
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve('37a1')
     sage: phi = E.pollack_stevens_modular_symbol(); phi
     Modular symbol of level 37 with values in Sym^0 Q^2
@@ -858,6 +859,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('113a1')
         sage: symb = E.pollack_stevens_modular_symbol() # indirect doctest
         sage: symb
@@ -865,6 +867,7 @@ def ps_modsym_from_elliptic_curve(E, sign=0, implementation='eclib'):
         sage: symb.values()
         [-1/2, 1, -1, 0, 0, 1, 1, -1, 0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 1, 0, 0]
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve([0,1])
         sage: symb = E.pollack_stevens_modular_symbol()
         sage: symb.values()
@@ -975,7 +978,7 @@ def ps_modsym_from_simple_modsym_space(A, name='alpha'):
 
         sage: from sage.modular.pollack_stevens.space import ps_modsym_from_simple_modsym_space
         sage: E = EllipticCurve('11a')
-        sage: f_E = E.pollack_stevens_modular_symbol(); f_E.values()
+        sage: f_E = E.pollack_stevens_modular_symbol(); f_E.values()  # needs sage.libs.eclib
         [-1/5, 1, 0]
         sage: A = ModularSymbols(11, sign=1, weight=2).decomposition()[0]
         sage: f_plus = ps_modsym_from_simple_modsym_space(A); f_plus.values()
@@ -991,7 +994,7 @@ def ps_modsym_from_simple_modsym_space(A, name='alpha'):
 
         sage: (-1/5)*vector(QQ, f_plus.values()) + (1/2)*vector(QQ, f_minus.values())
         (-1/5, 1, 0)
-        sage: vector(QQ, f_E.values())
+        sage: vector(QQ, f_E.values())  # needs sage.libs.eclib
         (-1/5, 1, 0)
 
     The next few examples all illustrate the ways in which exceptions are
