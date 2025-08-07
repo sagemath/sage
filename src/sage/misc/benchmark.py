@@ -22,6 +22,7 @@ def benchmark(n=-1):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: from sage.misc.benchmark import *
         sage: _ = benchmark()
         Running benchmark 0
@@ -105,6 +106,7 @@ def bench1():
 
     BENCHMARK::
 
+        sage: # needs sage.libs.eclib
         sage: from sage.misc.benchmark import *
         sage: print(bench1()[0])
         Find the Mordell-Weil group of the elliptic curve 5077A using mwrank
@@ -208,6 +210,7 @@ def bench7():
 
     BENCHMARK::
 
+        sage: # needs sage.libs.eclib
         sage: from sage.misc.benchmark import *
         sage: print(bench7()[0])
         Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997.
