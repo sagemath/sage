@@ -926,6 +926,7 @@ class ModularForm_abstract(ModuleElement):
         These can be used to express the periods of `f` as exact
         linear combinations of the real and the imaginary period of `E`::
 
+            sage: # needs sage.libs.eclib
             sage: s = E.modular_symbol(sign=+1)
             sage: t = E.modular_symbol(sign=-1, implementation='sage')
             sage: s(3/11), t(3/11)
