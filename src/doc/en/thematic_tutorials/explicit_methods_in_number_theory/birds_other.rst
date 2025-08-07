@@ -123,6 +123,7 @@ more general, but doesn't scale nearly so well (yet).
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: M = CremonaModularSymbols(20014)       # few seconds
     sage: M
     Cremona Modular Symbols space of dimension 5005 for
