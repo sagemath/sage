@@ -343,9 +343,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         from sage.rings.semirings.non_negative_integer_semiring import NN
         self._numerator = parent._numerator_ring(numerator)
-        self._denominator_factored = list(
-            (parent._denominator_ring(d), NN(n))
-            for d, n in denominator_factored)
+        self._denominator_factored = [(parent._denominator_ring(d), NN(n))
+                                      for d, n in denominator_factored]
 
         R = self.denominator_ring
         if numerator in R and reduce:
@@ -353,7 +352,7 @@ class FractionWithFactoredDenominator(RingElement):
             numer = R(self._numerator)
             df = self._denominator_factored
             new_df = []
-            for (q, e) in df:
+            for q, e in df:
                 ee = e
                 quo, rem = numer.quo_rem(q)
                 while rem == 0 and ee > 0:
@@ -1922,7 +1921,7 @@ class FractionWithFactoredDenominator(RingElement):
                 for k in range(N):
                     L.append(sum([(-1) ** l * gamma((2 * k + v * l + 1) / v) /
                                   (factorial(l) * factorial(2 * k + v * l)) *
-                                  DD[(k, l)] for l in range(0, 2 * k + 1)]))
+                                  DD[(k, l)] for l in range(2 * k + 1)]))
                 chunk = (a ** (-1 / v) / (pi * v) *
                          sum([alpha[d - 1] ** (-(2 * k + 1) / v) *
                               L[k] * asy_var ** (-(2 * k + 1) / v)
@@ -1935,7 +1934,7 @@ class FractionWithFactoredDenominator(RingElement):
                                   (zeta ** (k + v * l + 1) +
                                    (-1) ** (k + v * l) *
                                    zeta ** (-(k + v * l + 1))) *
-                                  DD[(k, l)] for l in range(0, k + 1)]))
+                                  DD[(k, l)] for l in range(k + 1)]))
                 chunk = (abs(a) ** (-1 / v) / (2 * pi * v) *
                          sum([alpha[d - 1] ** (-(k + 1) / v) *
                               L[k] * asy_var ** (-(k + 1) / v)
@@ -1981,7 +1980,7 @@ class FractionWithFactoredDenominator(RingElement):
             for k in range(N):
                 L.append(sum([DD[(0, k, l)] / ((-1) ** k * 2 ** (l + k) *
                                                factorial(l) * factorial(l + k))
-                              for l in range(0, 2 * k + 1)]))
+                              for l in range(2 * k + 1)]))
             chunk = sum([(2 * pi) ** ((1 - d) / Integer(2)) *
                          a.determinant() ** (-ZZ.one() / Integer(2)) *
                          alpha[d - 1] ** ((ZZ.one() - d) / Integer(2) - k) *

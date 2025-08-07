@@ -436,7 +436,7 @@ class MPolynomialIdeal_magma_repr:
                 mgb = mself.GroebnerBasis()
 
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
 
         # TODO: rewrite this to be much more sophisticated in multi-level nested cases.
@@ -1560,7 +1560,7 @@ class MPolynomialIdeal_singular_repr(
                 raise TypeError("algorithm '%s' unknown" % algorithm)
         self.__gb_singular = S
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
         return S
 
@@ -2149,9 +2149,7 @@ class MPolynomialIdeal_singular_repr(
                 M.set_immutable()
                 M = sing_reduce(M, self)
 
-            if any(M):
-                return False
-            return True
+            return not any(M)
         except TypeError:
             if singular is None:
                 singular = singular_default
@@ -5087,10 +5085,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: J.is_homogeneous()
             True
         """
-        for f in self.gens():
-            if not f.is_homogeneous():
-                return False
-        return True
+        return all(f.is_homogeneous() for f in self.gens())
 
     def degree_of_semi_regularity(self):
         r"""

@@ -327,7 +327,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         return self.__character
 
-    def has_character(self):
+    def has_character(self) -> bool:
         r"""
         Return ``True`` if this space of modular forms has a specific
         character.
@@ -663,9 +663,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             B = [f for f in self._compute_q_expansion_basis(current_prec) if f != 0]
             if len(B) == d:
                 break
-            else:
-                tries += 1
-                current_prec += d
+            tries += 1
+            current_prec += d
             if tries > 5:
                 print("WARNING: possible bug in q_expansion_basis for modular forms space %s" % self)
         if prec == -1:
@@ -1433,9 +1432,11 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise NotImplementedError
         if self.__sturm_bound is None:
             G = self.group()
-            from sage.modular.arithgroup.all import Gamma1_class
+            from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
             if isinstance(G, Gamma1_class) and self.character() is not None:
-                from sage.modular.arithgroup.all import Gamma0
+                from sage.modular.arithgroup.congroup_gamma0 import (
+                    Gamma0_constructor as Gamma0,
+                )
                 G = Gamma0(self.level())
             # the +1 below is because O(q^prec) has precision prec.
             self.__sturm_bound = G.sturm_bound(self.weight())+1
@@ -1854,7 +1855,4 @@ def contains_each(V, B):
         sage: contains_each( range(20), range(30) )
         False
     """
-    for b in B:
-        if b not in V:
-            return False
-    return True
+    return all(b in V for b in B)

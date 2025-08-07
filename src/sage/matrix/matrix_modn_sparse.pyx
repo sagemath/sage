@@ -117,7 +117,6 @@ from sage.rings.fast_arith cimport arith_int
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
 from sage.structure.element cimport Matrix
 
 ################
@@ -182,6 +181,46 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         IntegerMod_abstract.__init__(n, self._base_ring)
         n.ivalue = get_entry(&self.rows[i], j)
         return n
+
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_modn_sparse
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(GF(257),3,4,[i if is_prime(i) else 0 for i in range(12)],sparse=True)
+            sage: m
+            [ 0  0  2  3]
+            [ 0  5  0  7]
+            [ 0  0  0 11]
+            sage: m.transpose()
+            [ 0  0  0]
+            [ 0  5  0]
+            [ 2  0  0]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  0  2  3]
+            [ 0  0  0 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 0  3]
+            [ 5  7]
+            [ 0 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 0  7]
+            [ 0 11]
+        """
+        cdef Matrix_modn_sparse _src = <Matrix_modn_sparse>src
+        set_entry(&self.rows[iDst], jDst, get_entry(&_src.rows[iSrc], jSrc))
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
@@ -860,7 +899,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             self.cache('rank', r)
             self.cache('det', d)
             return d
-        
+
         if algorithm == 'generic':
             d = Matrix_sparse.determinant(self)
             self.cache('det', d)

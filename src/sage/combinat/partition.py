@@ -946,7 +946,7 @@ class Partition(CombinatorialElement):
             return "{\\emptyset}"
         exp = self.to_exp()
         return '%s' % ','.join('{}{}'.format(m + 1, '' if e == 1 else '^{%s}' % e)
-                               for (m, e) in enumerate(exp) if e > 0)
+                               for m, e in enumerate(exp) if e > 0)
 
     def _latex_exp_high(self):
         r"""
@@ -2043,7 +2043,7 @@ class Partition(CombinatorialElement):
                         covers[(i, j)] = [(i, j - 1)]
         return Poset(covers)
 
-    def frobenius_coordinates(self):
+    def frobenius_coordinates(self) -> tuple[list, list]:
         """
         Return a pair of sequences of Frobenius coordinates aka beta numbers
         of the partition.
@@ -2065,11 +2065,11 @@ class Partition(CombinatorialElement):
         mu = self
         muconj = mu.conjugate()     # Naive implementation
         if len(mu) <= len(muconj):
-            a = [x for x in (val-i-1 for i, val in enumerate(mu)) if x >= 0]
-            b = [x for x in (muconj[i]-i-1 for i in range(len(a))) if x >= 0]
+            a = [x for i, val in enumerate(mu) if (x := val - i - 1) >= 0]
+            b = [x for i in range(len(a)) if (x := muconj[i] - i - 1) >= 0]
         else:
-            b = [x for x in (val-i-1 for i, val in enumerate(muconj)) if x >= 0]
-            a = [x for x in (mu[i]-i-1 for i in range(len(b))) if x >= 0]
+            b = [x for i, val in enumerate(muconj) if (x := val - i - 1) >= 0]
+            a = [x for i in range(len(b)) if (x := mu[i] - i - 1) >= 0]
         return (a, b)
 
     def frobenius_rank(self):
@@ -2347,8 +2347,8 @@ class Partition(CombinatorialElement):
             12
         """
         res = 1
-        for (i, j) in self.cells():
-            res *= (a - (i-1)/alpha + j-1)
+        for i, j in self.cells():
+            res *= (a - (i - 1) / alpha + j - 1)
         return res
 
     def get_part(self, i, default=Integer(0)):
@@ -2424,28 +2424,29 @@ class Partition(CombinatorialElement):
         if not self._list:
             if n is None:
                 return DyckWord([])
-            return DyckWord([1]*n + [0]*n)
+            return DyckWord([1] * n + [0] * n)
         list_of_word = []
         if n is None:
-            n = max(i + l + 1 for (i, l) in enumerate(self))
-            # This n is also max(i+j for (i,j) in self.cells()) + 2.
-        list_of_word.extend([1]*(n-self.length()))
+            n = max(i + l + 1 for i, l in enumerate(self))
+            # This n is also max(i+j for i, j in self.cells()) + 2.
+        list_of_word.extend([1] * (n - self.length()))
         copy_part = list(self)
         while copy_part:
             c = copy_part.pop()
-            list_of_word.extend([0]*c)
+            list_of_word.extend([0] * c)
             for i in range(len(copy_part)):
                 copy_part[i] -= c
             list_of_word.append(1)
-        list_of_word.extend([0]*(n-self[0]))
+        list_of_word.extend([0] * (n - self[0]))
         return DyckWord(list_of_word)
 
     @combinatorial_map(order=2, name="conjugate partition")
     def conjugate(self):
         """
-        Return the conjugate partition of the partition ``self``. This
-        is also called the associated partition or the transpose in the
-        literature.
+        Return the conjugate partition of the partition ``self``.
+
+        This is also called the associated partition or the transpose
+        in the literature.
 
         EXAMPLES::
 
@@ -3980,7 +3981,7 @@ class Partition(CombinatorialElement):
         """
         block = {}
         Ie = IntegerModRing(e)
-        for (r, c) in self.cells():
+        for r, c in self.cells():
             i = Ie(multicharge[0] + c - r)
             block[i] = block.get(i, 0) + 1
         return block

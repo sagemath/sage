@@ -37,7 +37,7 @@ jobs:
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
       - name: make dist (--disable-download-from-upstream-url)
         id: make_dist
         run: |
@@ -106,7 +106,7 @@ jobs:
       - name: Old sagemath-standard
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
           ./bootstrap
           ./configure
           make pypi-sdists V=0
@@ -187,7 +187,7 @@ jobs:
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap _prereq)
       - name: make pypi-noarch-wheels
         run: |
           ./bootstrap
@@ -260,13 +260,13 @@ jobs:
         # Installing pipx follows the approach of https://github.com/pypa/cibuildwheel/pull/1743
         id: python
         with:
-          python-version: "3.8 - 3.12"
+          python-version: "3.11 - 3.13"
           update-environment: false
 
       - name: Bootstrap
         run: |
           export PATH=$(pwd)/build/bin:$PATH
-          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap)
+          eval $(sage-print-system-package-command auto --sudo --yes --no-install-recommends --spkg install _bootstrap _prereq)
           ./bootstrap
 
       - name: Unpack and prepare
@@ -283,7 +283,7 @@ jobs:
         #
         # omit sagemath-{meataxe,sirocco} for now -- needs sagemath-modules
         run: |
-          "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==2.18.0
+          "${{ steps.python.outputs.python-path }}" -m pip install cibuildwheel==3.0.1
           export PATH=build/bin:$PATH
           echo CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || $(sage-print-system-package-command alpine --yes --no-install-recommends install $(sage-get-system-packages alpine $SPKGS)) || echo error ignored) ) && if cp /host/sage-\$AUDITWHEEL_PLAT/config.status . 2>/dev/null; then chmod +x config.status; fi && if [ -x ./config.status ]; then ./config.status; else ./configure --enable-build-as-root ${{ startsWith(matrix.os, 'ubuntu') && '--prefix=/host/sage-\$AUDITWHEEL_PLAT' || '' }} && cp config.status prefix/; fi && MAKE=\"make -j6\" make V=0 $TARGETS_PRE && (echo \"sage_conf @ file://\$(pwd)/pkgs/sage-conf\" && echo \"sage_setup @ file://\$(pwd)/pkgs/sage-setup\") > constraints.txt" >> "$GITHUB_ENV"
           mkdir -p unpacked

@@ -2530,7 +2530,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             sage: P.<x,y> = ProjectiveSpace(CC,1)
             sage: f = DynamicalSystem_projective([x^3 - 25*x*y^2 + 12*y^3, 12*y^3])
-            sage: f.multiplier(P(1,1), 5)
+            sage: f.multiplier(P(1,1), 5)  # abs tol 1e-14
             [0.389017489711934]
 
         ::
@@ -4089,9 +4089,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         crit_orbit = []
         for i in crit_list:
             crit_orbit += f.orbit(i, 4)
-        if len(set(crit_orbit)) > 3:
-            return False
-        return True
+        return len(set(crit_orbit)) <= 3
 
     def critical_point_portrait(self, check=True, use_algebraic_closure=True):
         r"""
@@ -6974,7 +6972,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: P.<x,y>=ProjectiveSpace(QQbar, 1)
             sage: E=EllipticCurve([1, 2])
             sage: f=P.Lattes_map(E, 2)
-            sage: f.Lattes_to_curve(check_lattes=true)
+            sage: f.Lattes_to_curve(check_lattes=true)  # long time
             Elliptic Curve defined by y^2 = x^3 + x + 2 over Rational Field
 
         """

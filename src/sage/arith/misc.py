@@ -2236,9 +2236,9 @@ def get_gcd(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_gcd(4000)
-        <built-in method gcd_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.gcd_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_gcd(400000)
-        <built-in method gcd_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.gcd_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_gcd(4000000000)
         <function gcd at ...>
     """
@@ -2258,9 +2258,9 @@ def get_inverse_mod(order):
     EXAMPLES::
 
         sage: sage.arith.misc.get_inverse_mod(6000)
-        <built-in method inverse_mod_int of sage.rings.fast_arith.arith_int object at ...>
+        <bound method arith_int.inverse_mod_int of <sage.rings.fast_arith.arith_int object at ...>
         sage: sage.arith.misc.get_inverse_mod(600000)
-        <built-in method inverse_mod_longlong of sage.rings.fast_arith.arith_llong object at ...>
+        <bound method arith_llong.inverse_mod_longlong of <sage.rings.fast_arith.arith_llong object at ...>
         sage: sage.arith.misc.get_inverse_mod(6000000000)
         <function inverse_mod at ...>
     """
@@ -3600,6 +3600,13 @@ def CRT_list(values, moduli=None):
         [1, 2, 3]
         sage: ms
         [5, 7, 9]
+
+    Tests for call with length 1 lists (:issue:`40074`)::
+
+        sage: x = CRT_list([1], [2]); x
+        1
+        sage: x = CRT_list([int(1)], [int(2)]); x
+        1
     """
     if not isinstance(values, list) or (moduli is not None and not isinstance(moduli, list)):
         raise ValueError("arguments to CRT_list should be lists")
@@ -3621,10 +3628,11 @@ def CRT_list(values, moduli=None):
         if not values:
             return ZZ.zero()
         if len(values) == 1:
-            return moduli[0].parent()(values[0])
+            return parent(moduli[0])(values[0])
 
     # The result is computed using a binary tree. In typical cases,
     # this scales much better than folding the list from one side.
+    # See also sage.misc.misc_c.balanced_list_prod
     from sage.arith.functions import lcm
     while len(values) > 1:
         vs, ms = values[::2], moduli[::2]
@@ -3711,7 +3719,7 @@ def CRT_basis(moduli, *, require_coprime_moduli=True):
         for i in range(1, n):
             partial_prod_table.append((1 - e[-i]) * partial_prod_table[-1])
         for i in range(n):
-            cs.append(e[i] * partial_prod_table[-i-1])
+            cs.append(e[i] * partial_prod_table[-i - 1])
         # also return a boolean flag to report that the moduli are not coprime
         return [cs, False]
 
@@ -3762,8 +3770,8 @@ def CRT_vectors(X, moduli):
                  for j in range(len(X[0]))]
     if not res[1] and any((X[i][j] - candidate[j]) % moduli[i] != 0
                           for i in range(n)
-        for j in range(len(X[i]))):
-            raise ValueError("solution does not exist")
+                          for j in range(len(X[i]))):
+        raise ValueError("solution does not exist")
     return candidate
 
 

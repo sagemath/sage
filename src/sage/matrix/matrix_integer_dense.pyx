@@ -476,6 +476,48 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         return fmpz_is_zero(fmpz_mat_entry(self._matrix, i,j))
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy position iSrc,jSrc of ``src`` to position iDst,jDst of ``self``.
+
+        The object ``src`` must be of type ``Matrix_integer_dense`` and have
+        the same base ring as ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_integer_dense
+                    with the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: m = matrix(ZZ,3,4,range(12))
+            sage: m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.transpose()
+            [ 0  4  8]
+            [ 1  5  9]
+            [ 2  6 10]
+            [ 3  7 11]
+            sage: m.matrix_from_rows([0,2])
+            [ 0  1  2  3]
+            [ 8  9 10 11]
+            sage: m.matrix_from_columns([1,3])
+            [ 1  3]
+            [ 5  7]
+            [ 9 11]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [ 4  7]
+            [ 8 11]
+        """
+        cdef Matrix_integer_dense _src = <Matrix_integer_dense> src
+        fmpz_set(fmpz_mat_entry(self._matrix, iDst, jDst), fmpz_mat_entry(_src._matrix, iSrc, jSrc))
+
     def _pickle(self):
         """
         EXAMPLES::
@@ -3024,6 +3066,10 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``'pari'`` -- pari's qflll
 
+        - ``'flatter'`` -- external executable ``flatter``, requires manual install (see caveats below).
+          Note that sufficiently new version of ``pari`` also supports FLATTER algorithm, see
+          https://pari.math.u-bordeaux.fr/dochtml/html/Vectors__matrices__linear_algebra_and_sets.html#qflll.
+
         OUTPUT: a matrix over the integers
 
         EXAMPLES::
@@ -3097,6 +3143,16 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [0 0 0]
             [0 0 0]
 
+        When ``algorithm='flatter'``, some matrices are not supported depends
+        on ``flatter``. For example::
+
+            sage: # needs flatter
+            sage: m = matrix.zero(3, 2)
+            sage: m.LLL(algorithm='flatter')
+            Traceback (most recent call last):
+            ...
+            ValueError: ...
+
         TESTS::
 
             sage: matrix(ZZ, 0, 0).LLL()
@@ -3153,6 +3209,17 @@ cdef class Matrix_integer_dense(Matrix_dense):
             Although LLL is a deterministic algorithm, the output for
             different implementations and CPUs (32-bit vs. 64-bit) may
             vary, while still being correct.
+
+        Check ``flatter``::
+
+            sage: # needs flatter
+            sage: M = matrix(ZZ, 2, 2, [-1,1,1,1])
+            sage: L = M.LLL(algorithm="flatter")
+            sage: abs(M.det()) == abs(L.det())
+            True
+            sage: L = M.LLL(algorithm="flatter", delta=0.99)
+            sage: abs(M.det()) == abs(L.det())
+            True
         """
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
@@ -3176,6 +3243,21 @@ cdef class Matrix_integer_dense(Matrix_dense):
         if prec < 0:
             raise TypeError("precision prec must be >= 0")
         prec = int(prec)
+
+        if algorithm == 'flatter':
+            import subprocess
+            cmd = ["flatter"]
+            if fp is not None or early_red or use_givens or transformation or eta is not None or use_siegel:
+                raise TypeError("flatter does not support fp, early_red, use_givens, transformation, eta or use_siegel")
+            if kwds:
+                raise TypeError("flatter does not support additional keywords")
+            if delta is not None:
+                cmd += ["-delta", str(delta)]
+            stdout = subprocess.run(
+                    cmd, input="[" + "\n".join('[' + ' '.join(str(x) for x in row) + ']' for row in self) + "]",
+                    text=True, encoding="utf-8", stdout=subprocess.PIPE).stdout
+            return self.new_matrix(entries=[[ZZ(x) for x in row.strip('[] ').split()]
+                                            for row in stdout.strip('[] \n').split('\n')])
 
         if algorithm == 'NTL:LLL':
             if fp is None:

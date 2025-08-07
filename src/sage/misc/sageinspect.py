@@ -149,7 +149,7 @@ def is_function_or_cython_function(obj):
         sage: is_function_or_cython_function(_mul_parent)
         True
         sage: is_function_or_cython_function(Integer.digits)     # unbound method
-        False
+        True
         sage: is_function_or_cython_function(Integer(1).digits)  # bound method
         False
 
@@ -202,7 +202,9 @@ def isclassinstance(obj):
             # Starting with Cython 3, Cython's builtin types have __module__ set
             # to the shared module names like _cython_3_0_0.
             not (isinstance(obj.__class__.__module__, str) and
-                 obj.__class__.__module__.startswith('_cython_')))
+                 obj.__class__.__module__.startswith('_cython_')) and
+            # In Cython 3.1, they have 'member_descriptor' type
+            'cython_function_or_method' not in str(obj.__class__.__module__))
 
 
 # Parse strings of form "File: sage/rings/rational.pyx (starting at line 1080)"

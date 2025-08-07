@@ -65,7 +65,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             sage: x.parent() is S
             True
         """
-        SkewPolynomial_generic_dense.__init__ (self, parent, x, check, construct, **kwds)
+        SkewPolynomial_generic_dense.__init__(self, parent, x, check, construct, **kwds)
         self._norm = None
         self._charpoly = None
         self._optbound = None
@@ -383,7 +383,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         for more details about this).
         The user can speciify different names if desired::
 
-            sage: a.reduced_charpoly(var='T')  # variable name for the caracteristic polynomial
+            sage: a.reduced_charpoly(var='T')  # variable name for the characteristic polynomial
             T^3 + (2*z + 1)*T^2 + (3*z^2 + 4*z)*T + 4*z^3 + z^2 + 1
 
             sage: a.reduced_charpoly(var=('T', 'c'))

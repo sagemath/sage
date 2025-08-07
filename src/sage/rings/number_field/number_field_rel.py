@@ -1127,7 +1127,7 @@ class NumberField_relative(NumberField_generic):
 
             sage: x = polygen(ZZ, 'x')
             sage: k.<a> = NumberField([x^5 + 2, x^7 + 3])
-            sage: k._fractional_ideal_class_ ()
+            sage: k._fractional_ideal_class_()
             <class 'sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel'>
         """
         return sage.rings.number_field.number_field_ideal_rel.NumberFieldFractionalIdeal_rel
@@ -1922,11 +1922,11 @@ class NumberField_relative(NumberField_generic):
             sage: k.base_field().absolute_polynomial()
             x^2 + 1/4
             sage: k.pari_absolute_base_polynomial()
-            y^2 + 1
+            y^2 + 4
             sage: k.relative_polynomial()
             x^2 + 1/3
             sage: k.pari_relative_polynomial()
-            x^2 + Mod(-y, y^2 + 1)*x - 1
+            x^2 + Mod(-1/2*y, y^2 + 4)*x - 1
         """
         return QQ['x'](self._pari_rnfeq()[0])
 
