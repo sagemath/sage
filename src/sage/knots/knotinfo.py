@@ -4,8 +4,8 @@ Access to the KnotInfo database
 
 This module contains the class :class:`KnotInfoBase` which is derived from
 :class:`Enum` and provides knots and links listed in the databases at the
-web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__
-and `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__ as its items.
+web-pages `KnotInfo <https://knotinfo.org/>`__
+and `LinkInfo <https://link-info-repo.onrender.com/>`__ as its items.
 
 This interface contains a set of about twenty knots and links statically as
 demonstration cases. The complete database can be installed as an optional Sage
@@ -209,8 +209,8 @@ in the KnotInfo database::
 
 REFERENCES:
 
-- `KnotInfo <https://knotinfo.math.indiana.edu/>`__
-- `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__
+- `KnotInfo <https://knotinfo.org/>`__
+- `LinkInfo <https://link-info-repo.onrender.com/>`__
 
 
 AUTHORS:
@@ -469,7 +469,7 @@ class SymmetryMutant(Enum):
 class KnotInfoBase(Enum):
     r"""
     Enum class to select the knots and links listed in the databases at the web-pages
-    `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and `LinkInfo <https://linkinfo.sitehost.iu.edu/>`__.
+    `KnotInfo <https://knotinfo.org/>`__ and `LinkInfo <https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 
@@ -1323,7 +1323,7 @@ class KnotInfoBase(Enum):
         Return whether the Cosmetic Crossing Conjecture has been verified
         for ``self``.
 
-        From the KnotInfo `description page <https://knotinfo.math.indiana.edu/descriptions/cosmetic_crossing.html>`__:
+        From the KnotInfo `description page <https://knotinfo.org/descriptions/cosmetic_crossing.html>`__:
 
             A crossing change in a diagram of a knot ``K`` is called cosmetic if
             the resulting diagram also represents ``K``. The cosmetic crossing
@@ -1359,7 +1359,7 @@ class KnotInfoBase(Enum):
 
         The HOMFLY-PT polynomial `P(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
 
         .. MATH::
 
@@ -1460,7 +1460,7 @@ class KnotInfoBase(Enum):
         under regular isotopy `\Delta (L) = a^{w(L)} F(L)` where `w(L)` is the
         writhe of the link `L` satisfies the following skein relation
         (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
 
         .. MATH::
 
@@ -1547,7 +1547,7 @@ class KnotInfoBase(Enum):
 
         The Jones polynomial `V(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.math.indiana.edu/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
 
         .. MATH::
 
@@ -2005,7 +2005,7 @@ class KnotInfoBase(Enum):
         - :wikipedia:`Khovanov_homology`
         - :wikipedia:`Reduced_homology`
         - [ORS2013]_
-        - `KnotInfo <https://knotinfo.math.indiana.edu/descriptions/khovanov_unreduced_integral_polynomial.html>`__
+        - `KnotInfo <https://knotinfo.org/descriptions/khovanov_unreduced_integral_polynomial.html>`__
         """
         if not ring:
             if self.is_knot():

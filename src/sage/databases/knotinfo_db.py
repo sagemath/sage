@@ -3,8 +3,8 @@ KnotInfo database
 
 This module contains the class :class:`KnotInfoDataBase` and auxiliary classes
 for it, which serves as an interface to the lists of named knots and links provided
-at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-`LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
+at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
+`LinkInfo <https://https://link-info-repo.onrender.com/>`__.
 
 To use the database, you need to install the optional :ref:`database_knotinfo
 <spkg_database_knotinfo>` package by the Sage command ::
@@ -48,8 +48,8 @@ columns_black_list = ['homfly_polynomial_old']
 class KnotInfoColumnTypes(Enum):
     r"""
     Enum class to specify if a column from the table of knots and links provided
-    at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.  is used for knots only,
+    at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://https://link-info-repo.onrender.com/>`__.  is used for knots only,
     links only or both.
 
     EXAMPLES::
@@ -68,8 +68,8 @@ class KnotInfoColumnTypes(Enum):
 class KnotInfoColumns(Enum):
     r"""
     Enum class to select a column from the table of knots and links provided
-    at the web-pages `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__.
+    at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 
@@ -199,7 +199,7 @@ class KnotInfoFilename(Enum):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.knots.url()
-            'https://knotinfo.math.indiana.edu/'
+            'https://knotinfo.org/'
         """
         if self == KnotInfoFilename.knots:
             return self.value[0]
@@ -304,7 +304,7 @@ class KnotInfoFilename(Enum):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.knots.description_url(ki_db.columns().braid_notation)
-            'https://knotinfo.math.indiana.edu/descriptions/braid_notation.html'
+            'https://knotinfo.org/descriptions/braid_notation.html'
         """
         return '%sdescriptions/%s.html' % (self.url(), column.name)
 
@@ -317,17 +317,17 @@ class KnotInfoFilename(Enum):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.knots.diagram_url('3_1-50.png')
-            'https://knotinfo.math.indiana.edu/diagram_display.php?3_1-50.png'
+            'https://knotinfo.org/diagram_display.php?3_1-50.png'
             sage: ki_db.filename.knots.diagram_url('3_1', single=True)
-            'https://knotinfo.math.indiana.edu/diagrams/3_1'
+            'https://knotinfo.org/diagrams/3_1'
         """
         if single:
             return '%sdiagrams/%s' % (self.url(), fname)
         else:
             return '%sdiagram_display.php?%s' % (self.url(), fname)
 
-    knots = ['https://knotinfo.math.indiana.edu/', 'knotinfo_data_complete']
-    links = ['https://linkinfo.sitehost.iu.edu/',  'linkinfo_data_complete']
+    knots = ['https://knotinfo.org/', 'knotinfo_data_complete']
+    links = ['https://link-info-repo.onrender.com/',  'linkinfo_data_complete']
 
 
 #----------------------------------------------------------------------------------------------------------------------------
@@ -347,7 +347,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         sage: from sage.databases.knotinfo_db import KnotInfoDataBase
         sage: ki_db = KnotInfoDataBase()
         sage: ki_db.filename.knots
-        <KnotInfoFilename.knots: ['https://knotinfo.math.indiana.edu/',
+        <KnotInfoFilename.knots: ['https://knotinfo.org/',
                                   'knotinfo_data_complete']>
     """
 
@@ -362,7 +362,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.filename.links
-            <KnotInfoFilename.links: ['https://linkinfo.sitehost.iu.edu/',
+            <KnotInfoFilename.links: ['https://link-info-repo.onrender.com/',
                                       'linkinfo_data_complete']>
         """
         # some constants
