@@ -450,7 +450,11 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
                 return self._indices(m)
         else:
             def build_index(m):
-                return self._indices(reversed(m)).trim()
+                mc = m.monomial_coefficients()
+                v = [0 for _ in range(max(mc, default=-1) + 1)]
+                for i, e in mc.items():
+                    v[i] = e
+                return self._indices(v)
 
         self._build_index = build_index
 

@@ -737,9 +737,18 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         # some basic data
         self._order = order
         self._name_dict = {name: i for i, name in enumerate(names)}
-        from sage.categories.commutative_algebras import CommutativeAlgebras
-        CommutativeRing.__init__(self, R, category=CommutativeAlgebras(R))
-
+        from sage.rings.polynomial.polynomial_ring_constructor import polynomial_default_category
+        from sage.rings.infinity import Infinity
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.semirings.non_negative_integer_semiring import NN
+        from sage.categories.cartesian_product import cartesian_product
+        from sage.combinat.free_module import CombinatorialFreeModule
+        category = polynomial_default_category(R.category(), Infinity)
+        CommutativeRing.__init__(self, R, category=category)
+        self._indices = cartesian_product([CombinatorialFreeModule(ZZ,
+                                                                   basis_keys=NN,
+                                                                   prefix=v)
+                                           for v in names])
         self._populate_coercion_lists_()
 
     def __repr__(self):

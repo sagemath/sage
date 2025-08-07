@@ -113,7 +113,8 @@ from .multi_polynomial import MPolynomial
 import copy
 
 
-class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClasscallMetaclass):
+class InfinitePolynomial(CommutativePolynomial,
+                         metaclass=InheritComparisonClasscallMetaclass):
     """
     Create an element of a Polynomial Ring with a Countably Infinite Number of Variables.
 
@@ -256,7 +257,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             sage: a == loads(dumps(a))
             True
         """
-
         # Despite the above comment, it can still happen that p is in
         # the wrong ring and we get here without going through
         # _element_constructor_.  See trac 22514 for examples.
@@ -693,6 +693,137 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         P = self.parent()
         return [InfinitePolynomial(P, m) for m in self._p.monomials()]
+
+    def monomial_coefficients(self, copy=None):
+        """
+        Return underlying dictionary with keys the exponents and values
+        the coefficients of this polynomial.
+
+        EXAMPLES::
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ)
+            sage: f = 2*z[2]*z[3] + 3*z[1]^2*z[5]
+            sage: f.monomial_coefficients()
+            {2*B[1] + B[5]: 3, B[2] + B[3]: 2}
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]
+            sage: g.monomial_coefficients()
+            {B[(0, 0)] + B[(0, 2)]: 2, 2*B[(0, 1)] + B[(1, 1)]: 3}
+
+        TESTS::
+
+            sage: g*x[10]
+            2*x_10*x_2*x_0 + 3*x_10*x_1^2*y_1
+            sage: g.monomial_coefficients()
+            {B[(0, 0)] + B[(0, 2)]: 2, 2*B[(0, 1)] + B[(1, 1)]: 3}
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ)
+            sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]
+            sage: g.monomial_coefficients()
+            {B[(0, 0)] + B[(0, 2)]: 2, 2*B[(0, 1)] + B[(1, 1)]: 3}
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: f = 2*z[2]*z[3] + 3*z[1]^2*z[5]
+            sage: f.monomial_coefficients()
+            {2*B[1] + B[5]: 3, B[2] + B[3]: 2}
+        """
+        P = self.parent()
+        B = P._indices
+        p = self._p
+        R_gens = p.parent().gens()
+        if P.ngens() > 1:
+            def gen_to_index(g):
+                j, i = P.varname_key(str(g))
+                return -j, i
+        else:
+            def gen_to_index(g):
+                return P.varname_key(str(g))[1]
+
+        return {B._from_dict({gen_to_index(g): e
+                              for e, g in zip(m, R_gens)},
+                             coerce=False, remove_zeros=True): c
+                for m, c in p.monomial_coefficients().items()}
+
+    def exponents(self):
+        """
+        Return the exponents of the monomials appearing in this
+        polynomial.
+
+        EXAMPLES::
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ)
+            sage: f = 2*z[2]*z[3] + 3*z[1]^2*z[5]
+            sage: f.exponents()
+            [2*B[1] + B[5], B[2] + B[3]]
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]
+            sage: g.exponents()
+            [B[(0, 0)] + B[(0, 2)], 2*B[(0, 1)] + B[(1, 1)]]
+
+        TESTS::
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: g*x[10]
+            2*x_10*x_2*x_0 + 3*x_10*x_1^2*y_1
+
+            sage: g.exponents()
+            [B[(0, 0)] + B[(0, 2)], 2*B[(0, 1)] + B[(1, 1)]]
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ)
+            sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]
+            sage: g.exponents()
+            [B[(0, 0)] + B[(0, 2)], 2*B[(0, 1)] + B[(1, 1)]]
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: f = 2*z[2]*z[3] + 3*z[1]^2*z[5]
+            sage: f.exponents()
+            [2*B[1] + B[5], B[2] + B[3]]
+        """
+        return list(self.monomial_coefficients())
+
+    def degrees(self):
+        """
+        Return an index element corresponding to the maximal
+        degree of each variable in this polynomial.
+
+        EXAMPLES::
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ)
+            sage: f = 2*z[2]*z[3] + 3*z[1]^2*z[5]^4
+            sage: f.degrees()
+            {B[1]: 2, B[2]: 1, B[3]: 1, B[5]: 4}
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]^4
+            sage: g.degrees()
+            {B[(0, 0)]: 1, B[(0, 1)]: 2, B[(0, 2)]: 1, B[(1, 1)]: 4}
+
+        TESTS::
+
+            sage: g*x[10]
+            2*x_10*x_2*x_0 + 3*x_10*x_1^2*y_1^4
+            sage: g.degrees()
+            {B[(0, 0)]: 1, B[(0, 1)]: 2, B[(0, 2)]: 1, B[(1, 1)]: 4}
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ)
+            sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]^4
+            sage: g.degrees()
+            {B[(0, 0)]: 1, B[(0, 1)]: 2, B[(0, 2)]: 1, B[(1, 1)]: 4}
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ, implementation="sparse")
+            sage: f = 2*z[2]*z[3] + 3*z[1]^2*z[5]^4
+            sage: f.degrees()
+            {B[1]: 2, B[2]: 1, B[3]: 1, B[5]: 4}
+        """
+        B = self.parent()._indices
+        degs = {}
+        for e in self.exponents():
+            for m, d in e.monomial_coefficients().items():
+                m = B.monomial(m)
+                degs[m] = max(d, degs.get(m, 0))
+        return degs
 
     @cached_method
     def max_index(self):
