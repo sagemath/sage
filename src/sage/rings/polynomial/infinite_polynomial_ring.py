@@ -266,6 +266,7 @@ from sage.categories.rings import Rings
 from sage.structure.all import SageObject, parent
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
 
 ###################################################
 #  The Construction Functor
@@ -696,6 +697,14 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             True
             sage: X.gen(1)[2]*Y.gen(0)[1]
             alpha_1*beta_2
+
+        TESTS::
+
+            sage: X.<x> = InfinitePolynomialRing(QQbar)
+            sage: TestSuite(X).run()
+
+            sage: Y.<alpha,beta> = InfinitePolynomialRing(QQ, order='deglex', implementation='sparse')
+            sage: TestSuite(Y).run()
         """
         if not names:
             names = ['x']
@@ -750,6 +759,29 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
                                                                    prefix=v)
                                            for v in names])
         self._populate_coercion_lists_()
+
+    def monomial(self, m):
+        """
+        Return the basis element indexed by ``m``.
+
+        INPUT:
+
+        - ``m`` -- an element of the index set
+
+        EXAMPLES::
+
+            sage: Z.<z> = InfinitePolynomialRing(QQ)
+            sage: Z.monomial([(1, 2), (5, 3)])
+            z_5^3*z_1^2
+
+            sage: X.<x, y> = InfinitePolynomialRing(QQ)
+            sage: X.monomial([((0, 2), 2), ((1, 5), 3)])
+            x_2^2*y_5^3
+        """
+        V = self.gens()
+        if len(V) > 1:
+            return prod(V[j][i]**e for (j, i), e in m)
+        return prod(V[0][i]**e for i, e in m)
 
     def __repr__(self):
         """
