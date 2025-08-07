@@ -138,6 +138,7 @@ the :math:`5`-adic and :math:`997`-adic regulators of this curve.
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve('389a')
     sage: E.padic_regulator(5, 10)
     5^2 + 2*5^3 + 2*5^4 + 4*5^5 + 3*5^6 + 4*5^7 + 3*5^8 + 5^9 + O(5^11)
@@ -154,6 +155,7 @@ nontrivial computational challenge. Now in Sage computing the
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E.padic_regulator(100003,5)  # a couple of seconds
     42582*100003^2 + 35250*100003^3 + 12790*100003^4 + 64078*100003^5 + O(100003^6)
 
@@ -176,6 +178,7 @@ rank :math:`2`.
 
 ::
 
+    sage: # needs.sage.libs.eclib
     sage: E = EllipticCurve('389a')
     sage: L = E.padic_lseries(5)
     sage: L
@@ -199,7 +202,7 @@ unpublished papers of Wuthrich and me.
     sage: E.sha().bound()            # so only 2 could divide sha
     [2]
     sage: E = EllipticCurve('37a1')  # so only 2 could divide sha
-    sage: E.sha().bound()
+    sage: E.sha().bound()  # needs sage.libs.eclib
     ([2], 1)
     sage: E = EllipticCurve('389a1')
     sage: E.sha().bound()
@@ -223,6 +226,7 @@ and :math:`7` do not divide the Shafarevich-Tate group of our rank
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve('389a1')
     sage: sha = E.sha()
     sage: sha.p_primary_bound(5)  # iwasawa theory ==> 5 doesn't divide sha
@@ -242,6 +246,7 @@ number in general!
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E.sha().an()
     1.00000000000000
 
@@ -257,7 +262,7 @@ GP scripts for computing Mordell-Weil groups of elliptic curves.
     sage: E = EllipticCurve([1,2,5,17,159])
     sage: E.conductor()       # not in the Tables
     10272987
-    sage: E.gens()            # a few seconds
+    sage: E.gens()            # a few seconds, needs sage.libs.eclib
     [(-3 : 9 : 1), (-3347/3249 : 1873597/185193 : 1)]
 
 
@@ -274,6 +279,7 @@ the only free open source implementation available.
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve([1,2,5,7,17])
     sage: E.integral_points(both_signs=True)
     [(1 : -9 : 1), (1 : 3 : 1)]
@@ -283,6 +289,7 @@ rank :math:`3`, which has 36 integral points.
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E = elliptic_curves.rank(3)[0]
     sage: E.integral_points(both_signs=True)   # less than 3 seconds
     [(-3 : -1 : 1), (-3 : 0 : 1), (-2 : -4 : 1), (-2 : 3 : 1), ...(816 : -23310 : 1), (816 : 23309 : 1)]
@@ -299,6 +306,7 @@ points).
 
 ::
 
+    sage: # needs sage.libs.eclib
     sage: E = elliptic_curves.rank(4)[0]
     sage: E.integral_points(both_signs=True)   # about a minute
     [(-10 : 3 : 1), (-10 : 7 : 1), ...
