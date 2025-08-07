@@ -161,7 +161,7 @@ ec = dependency(
   'eclib',
   version: '>=20250122',
   required: get_option('eclib'),
-  disabler: true
+  disabler: true,
 )
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
