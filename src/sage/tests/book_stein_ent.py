@@ -628,20 +628,20 @@ sage: r([-3024, 46224])
 2
 sage: r([-112, 400])
 3
-sage: r([-102627, 12560670])
+sage: r([-102627, 12560670])  # needs sage.libs.eclib
 4
 sage: def cong(n):
 ....:     G = EllipticCurve([-n^2,0]).gens()
 ....:     if len(G) == 0: return False
 ....:     x,y,_ = G[0]
 ....:     return ((n^2-x^2)/y,-2*x*n/y,(n^2+x^2)/y)
-sage: cong(6)
+sage: cong(6)  # needs sage.libs.eclib
 (3, 4, 5)
-sage: cong(5)
+sage: cong(5)  # needs sage.libs.eclib
 (3/2, 20/3, 41/6)
-sage: cong(1)
+sage: cong(1)  # needs sage.libs.eclib
 False
-sage: cong(13)
+sage: cong(13)  # needs sage.libs.eclib
 (323/30, 780/323, 106921/9690)
 sage: (323/30 * 780/323)/2
 13
