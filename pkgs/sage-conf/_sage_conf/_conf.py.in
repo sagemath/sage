@@ -21,6 +21,7 @@ MAXIMA = "@SAGE_MAXIMA@".replace('${prefix}', SAGE_LOCAL)
 # Set this to the empty string if your ECL can load maxima without
 # further prodding.
 MAXIMA_FAS = "@SAGE_MAXIMA_FAS@".replace('${prefix}', SAGE_LOCAL)
+MAXIMA_SHARE = "@SAGE_MAXIMA_SHARE@".replace('${prefix}', SAGE_LOCAL)
 
 # Delete this line if your ECL can load Kenzo without further prodding.
 KENZO_FAS = "@SAGE_KENZO_FAS@".replace('${prefix}', SAGE_LOCAL)
