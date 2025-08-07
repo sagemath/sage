@@ -35,6 +35,7 @@ def benchmark(n: list[int] | int = -1) -> tuple[list[BenchmarkResult], float] | 
 
     EXAMPLES::
 
+        sage: # needs eclib
         sage: from sage.misc.benchmark import *
         sage: _ = benchmark()
         Running benchmark 0
@@ -118,6 +119,7 @@ def bench1() -> tuple[str, float]:
 
     BENCHMARK::
 
+        sage: # needs eclib
         sage: from sage.misc.benchmark import *
         sage: print(bench1()[0])
         Find the Mordell-Weil group of the elliptic curve 5077A using mwrank
@@ -221,6 +223,7 @@ def bench7() -> tuple[str, float]:
 
     BENCHMARK::
 
+        sage: # needs eclib
         sage: from sage.misc.benchmark import *
         sage: print(bench7()[0])
         Compute the Mordell-Weil group of y^2 = x^3 + 37*x - 997.
