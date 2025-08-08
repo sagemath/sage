@@ -31,9 +31,9 @@ project = "Sage Tutorial"
 name = 'SageTutorial-de'
 language = "de"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
-html_title = project + " v"+release
+# The name for this set of Sphinx documents.
+html_title = project
+html_short_title = project
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = name
