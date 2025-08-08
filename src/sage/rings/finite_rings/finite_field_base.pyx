@@ -2185,14 +2185,7 @@ cdef class FiniteField(Field):
         L = K if ring is None else ring
 
         if K != L:
-            try:
-                f_L = f.change_ring(L)
-            except (TypeError, ValueError):
-                if L.is_exact() and L.is_subring(K):
-                    return f._roots_in_subring(L, multiplicities)
-                else:
-                    raise NotImplementedError
-            return f_L.roots(multiplicities=multiplicities)
+            raise NotImplementedError
 
         if multiplicities:
             return f._roots_from_factorization(f.factor(), multiplicities)
