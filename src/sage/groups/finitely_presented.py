@@ -313,6 +313,38 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         tl = self.gap().UnderlyingElement().TietzeWordAbstractWord()
         return tuple(tl.sage())
 
+    def __hash__(self):
+        """
+        Return the hash of the element.
+        
+        This uses a canonical form obtained from a confluent rewriting system
+        to ensure that equal elements have equal hashes, which is required
+        by the Python hash contract.
+        
+        EXAMPLES::
+        
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: elem1 = b^3
+            sage: elem2 = b^-10  # This equals b^3 since b^13 = 1
+            sage: elem1 == elem2
+            True
+            sage: hash(elem1) == hash(elem2)
+            True
+        """
+        try:
+            # Try to get cached confluent rewriting system from parent
+            if not hasattr(self.parent(), '_confluent_rewriting_system'):
+                rs = self.parent().rewriting_system()
+                rs.make_confluent()
+                self.parent()._confluent_rewriting_system = rs
+            canonical_form = self.parent()._confluent_rewriting_system.reduce(self)
+            return hash(str(canonical_form))
+        except Exception:
+            # Fallback to the parent class hash if rewriting system fails
+            return super().__hash__()
+
     def __call__(self, *values, **kwds):
         """
         Replace the generators of the free group with ``values``.
