@@ -332,12 +332,13 @@ def shortest_simple_paths(self, source, target, weight_function=None,
       supported:
 
       - ``'Yen'`` -- Yen's algorithm [Yen1970]_
+        (:meth:`~sage.graphs.path_enumeration.yen_k_shortest_simple_paths`)
 
-      - ``'Feng'`` -- an improved version of Yen's algorithm but that works only
-        for directed graphs [Feng2014]_
+      - ``'Feng'`` -- an improved version of Yen's algorithm [Feng2014]_
+        (:meth:`~sage.graphs.path_enumeration.feng_k_shortest_simple_paths`)
 
-      - ``'PNC'`` -- an improved version of Feng's algorithm. This also works only
-        for directed graphs [ACN2023]_
+      - ``'PNC'`` -- an improved version of Feng's algorithm [ACN2023]_
+        (:meth:`~sage.graphs.path_enumeration.pnc_k_shortest_simple_paths`)
 
     - ``report_edges`` -- boolean (default: ``False``); whether to report paths
       as list of vertices (default) or list of edges. When set to ``False``, the
