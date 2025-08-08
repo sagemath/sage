@@ -5859,7 +5859,6 @@ class FreeModule_ambient(FreeModule_generic):
             self.__basis = basis_seq(self, w)
             return self.__basis
 
-    @cached_method
     def echelonized_basis(self):
         """
         Return a basis for this ambient free module in echelon form.
@@ -6900,7 +6899,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
     def _matrix_space(self, nrows, ring=None):
         """
-        Returns a matrix space with number of rows equal to the dimension of this module,
+        Return the matrix space with number of rows equal to the dimension of this module,
         and elements of the ambient module lives in the matrix space's row space.
         Note that elements of this module may not be in the row space,
         see :meth:`ambient_module`.
@@ -7670,8 +7669,10 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         """
         C = self.element_class
         echelonized_basis = self.echelonized_basis_matrix().rows()
-        w = [C(self, x.list(), coerce=False, copy=True)
-                for x in echelonized_basis]
+        if echelonized_basis and echelonized_basis[0].parent() is not self:
+            w = [self(x) for x in echelonized_basis]
+        else:
+            w = echelonized_basis
         return basis_seq(self, w)
 
     def echelon_coordinate_vector(self, v, check=True):
