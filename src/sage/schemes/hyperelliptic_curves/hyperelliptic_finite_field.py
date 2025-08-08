@@ -309,14 +309,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
     def _frobenius_polynomial_cardinalities(self, a=None):
         r"""
-        Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
-        by computing the number of points on the curve over `g` extensions
-        of the base field where `g` is the genus of the curve.
-
-        .. WARNING::
-
-            This is highly inefficient when the base field or the genus of the
-            curve are large.
+        Helper method for :meth:`frobenius_polynomial`.
 
         EXAMPLES::
 
@@ -375,11 +368,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
     def _frobenius_polynomial_matrix(self, M=None, algorithm='hypellfrob'):
         r"""
-        Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
-        by computing the charpoly of the frobenius matrix.
-
-        This is currently only supported when the base field is prime
-        and large enough using the ``hypellfrob`` library.
+        Helper method for :meth:`frobenius_polynomial`.
 
         EXAMPLES::
 
@@ -443,8 +432,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
     def _frobenius_polynomial_pari(self):
         r"""
-        Compute the charpoly of frobenius, as an element of `\ZZ[x]`,
-        by calling the PARI function ``hyperellcharpoly``.
+        Helper method for :meth:`frobenius_polynomial`.
 
         EXAMPLES::
 
@@ -502,9 +490,18 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         f, h = self.hyperelliptic_polynomials()
         return ZZ['x'](pari([f, h]).hyperellcharpoly())
 
-    frobenius_polynomial_cardinalities = deprecated_function_alias(40528, _frobenius_polynomial_cardinalities)
-    frobenius_polynomial_matrix = deprecated_function_alias(40528, _frobenius_polynomial_matrix)
-    frobenius_polynomial_pari = deprecated_function_alias(40528, _frobenius_polynomial_pari)
+    frobenius_polynomial_cardinalities = deprecated_function_alias(
+            40528, _frobenius_polynomial_cardinalities,
+            replacement='frobenius_polynomial(algorithm="cardinalities")',
+            replacement_rst_doc=':meth:`frobenius_polynomial` ``(algorithm="cardinalities")``')
+    frobenius_polynomial_matrix = deprecated_function_alias(
+            40528, _frobenius_polynomial_matrix,
+            replacement='frobenius_polynomial(algorithm="matrix")',
+            replacement_rst_doc=':meth:`frobenius_polynomial` ``(algorithm="matrix")`')
+    frobenius_polynomial_pari = deprecated_function_alias(
+            40528, _frobenius_polynomial_pari,
+            replacement='frobenius_polynomial(algorithm="pari")',
+            replacement_rst_doc=':meth:`frobenius_polynomial` ``(algorithm="pari")`')
 
     @cached_method
     def frobenius_polynomial(self, algorithm=None, **kwargs):
@@ -513,15 +510,27 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``None``) the algorithm to use, one of
-          ``'cardinalities'``, ``'matrix'``, or ``'pari'``.
+        - ``algorithm`` -- the algorithm to use, one of
 
-          Refer to :meth:`frobenius_polynomial_cardinalities`,
-          :meth:`frobenius_polynomial_matrix`, and
-          :meth:`frobenius_polynomial_pari` respectively.
+          - ``None`` (default) -- automatically select an algorithm.
+
+          - ``'pari'`` -- use the PARI function ``hyperellcharpoly``.
+
+          - ``'cardinalities'`` -- compute the number of points on the curve over `g`
+            extensions of the base field where `g` is the genus of the curve.
+
+            .. WARNING::
+
+                This is highly inefficient when the base field or the genus of the
+                curve are large.
+
+          - ``'matrix'`` -- compute the charpoly of the frobenius matrix.
+
+            This is currently only supported when the base field is prime
+            and large enough using the ``hypellfrob`` library.
 
         - ``**kwargs`` -- additional keyword arguments passed to the
-          methods above. Undocumented feature, may be removed in the future.
+          internal method. Undocumented feature, may be removed in the future.
 
         EXAMPLES::
 

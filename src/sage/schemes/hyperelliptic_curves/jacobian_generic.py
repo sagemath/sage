@@ -422,6 +422,8 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         Return the cardinality of the Jacobian.
         Use the formula in `<https://math.stackexchange.com/a/2190894>`_.
 
+        Currently only implemented over finite fields.
+
         EXAMPLES::
 
             sage: R.<x> = GF(3663031)[]
