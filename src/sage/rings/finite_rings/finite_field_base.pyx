@@ -2191,7 +2191,7 @@ cdef class FiniteField(Field):
                 if L.is_exact() and L.is_subring(K):
                     return f._roots_in_subring(L, multiplicities)
                 else:
-                    raise
+                    raise NotImplementedError
             return f_L.roots(multiplicities=multiplicities)
 
         if multiplicities:
