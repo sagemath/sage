@@ -4,7 +4,7 @@ KnotInfo database
 This module contains the class :class:`KnotInfoDataBase` and auxiliary classes
 for it, which serves as an interface to the lists of named knots and links provided
 at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
-`LinkInfo <https://https://link-info-repo.onrender.com/>`__.
+`LinkInfo <https://link-info-repo.onrender.com/>`__.
 
 To use the database, you need to install the optional :ref:`database_knotinfo
 <spkg_database_knotinfo>` package by the Sage command ::
@@ -49,7 +49,7 @@ class KnotInfoColumnTypes(Enum):
     r"""
     Enum class to specify if a column from the table of knots and links provided
     at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
-    `LinkInfo <https://https://link-info-repo.onrender.com/>`__.  is used for knots only,
+    `LinkInfo <https://link-info-repo.onrender.com/>`__.  is used for knots only,
     links only or both.
 
     EXAMPLES::
@@ -69,7 +69,7 @@ class KnotInfoColumns(Enum):
     r"""
     Enum class to select a column from the table of knots and links provided
     at the web-pages `KnotInfo <https://knotinfo.org/>`__ and
-    `LinkInfo <https://https://link-info-repo.onrender.com/>`__.
+    `LinkInfo <https://link-info-repo.onrender.com/>`__.
 
     EXAMPLES::
 
@@ -327,7 +327,7 @@ class KnotInfoFilename(Enum):
             return '%sdiagram_display.php?%s' % (self.url(), fname)
 
     knots = ['https://knotinfo.org/', 'knotinfo_data_complete']
-    links = ['https://link-info-repo.onrender.com/',  'linkinfo_data_complete']
+    links = ['https://link-info-repo.onrender.com/', 'linkinfo_data_complete']
 
 
 #----------------------------------------------------------------------------------------------------------------------------
