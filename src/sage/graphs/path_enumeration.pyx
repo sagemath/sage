@@ -542,8 +542,7 @@ def shortest_simple_paths(self, source, target, weight_function=None,
 
     Check that "Yen", "Feng" and "PNC" provide same results on random undirected graphs::
 
-        sage: from sage.graphs.generators.random import RandomGNP
-        sage: G = RandomGNP(30, .05)
+        sage: G = graphs.RandomGNP(30, .5)
         sage: for u, v in list(G.edges(labels=False, sort=False)):
         ....:     G.set_edge_label(u, v, randint(1, 10))
         sage: V = G.vertices(sort=False)
@@ -1012,8 +1011,8 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         sage: g = Graph([(1, 2, 20), (1, 3, 10), (1, 4, 30), (2, 5, 20), (3, 5, 10), (4, 5, 30)])
         sage: list(nc_k_shortest_simple_paths(g, 5, 1, by_weight=True))
         [[5, 3, 1], [5, 2, 1], [5, 4, 1]]
-        sage: list(nc_k_shortest_simple_paths(g, 5, 1))
-        [[5, 2, 1], [5, 4, 1], [5, 3, 1]]
+        sage: [len(P) for P in nc_k_shortest_simple_paths(g, 5, 1)]
+        [3, 3, 3]
 
     TESTS::
 
@@ -1174,11 +1173,14 @@ def nc_k_shortest_simple_paths(self, source, target, weight_function=None,
         return
 
     if self.has_loops() or self.allows_multiple_edges():
-        G = self.to_simple(to_undirected=self.is_directed(), keep_label='min', immutable=False)
+        G = self.to_simple(to_undirected=False, keep_label='min', immutable=False)
+        if not G.is_directed():
+            G = G.to_directed()
+    elif not self.is_directed():
+        # Turn the graph into a mutable directed graph
+        G = self.to_directed(data_structure='sparse')
     else:
         G = self.copy(immutable=False)
-    if not G.is_directed():
-        G = G.to_directed()
 
     G.delete_edges(G.incoming_edges(source, labels=False))
     G.delete_edges(G.outgoing_edges(target, labels=False))
