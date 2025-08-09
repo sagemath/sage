@@ -1,0 +1,6 @@
+jedi pygments docutils psutil parso pyyaml anyio h11 packaging pathspec platformdirs idna sniffio | $(PYTHON_TOOLCHAIN) $(PYTHON)
+
+----------
+All lines of this file are ignored except the first.
+
+Listed dependencies according to marimo-0.4.11 and recursive dependencies of black-24.4.2 click-8.1.7 pymdown_extensions-10.8.1 starlette-0.37.2 tomlkit-0.12.4 uvicorn-0.29.0 websockets-12.0
