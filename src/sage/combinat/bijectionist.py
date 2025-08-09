@@ -207,7 +207,8 @@ The output is in a form suitable for FindStat::
     sage: findmap(list(bij.minimal_subdistributions_iterator()))            # optional -- internet
     0: Mp00034 (quality [100])
     1: Mp00061oMp00023 (quality [100])
-    2: Mp00018oMp00140 (quality [100])
+    2: Mp00029oMp00327 (quality [100])
+    3: Mp00018oMp00140 (quality [100])
 
 TESTS::
 
