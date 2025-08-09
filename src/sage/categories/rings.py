@@ -400,7 +400,7 @@ class Rings(CategoryWithAxiom):
                 sage: R.fraction_field()                                                    # needs sage.libs.pari
                 Traceback (most recent call last):
                 ...
-                TypeError: self must be an integral domain.
+                TypeError: self must be an integral domain
                 sage: R.is_integral_domain()                                                # needs sage.libs.pari
                 False
 

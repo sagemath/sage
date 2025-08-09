@@ -791,7 +791,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: Integers(15).fraction_field()
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: self must be an integral domain
             sage: Integers(15)._pseudo_fraction_field()
             Ring of integers modulo 15
             sage: R.<x> = Integers(15)[]

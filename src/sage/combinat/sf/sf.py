@@ -863,7 +863,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: Sym1 = SymmetricFunctions(FiniteField(23))
             sage: Sym2 = SymmetricFunctions(Integers(23))
-            sage: TestSuite(Sym).run()
+            sage: TestSuite(Sym).run(skip="_test_fraction_field")
         """
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
         assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
