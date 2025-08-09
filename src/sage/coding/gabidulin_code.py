@@ -938,18 +938,19 @@ class GabidulinGaoDecoder(Decoder):
 
         EXAMPLES::
 
-            sage: Fqm = GF(2^9)
-            sage: Fq = GF(2^3)
-            sage: C = codes.GabidulinCode(Fqm, 2, 2, Fq)
+            sage: Fqm = GF(5^12)
+            sage: Fq = GF(5)
+            sage: C = codes.GabidulinCode(Fqm, 11, 4, Fq)
             sage: D = codes.decoders.GabidulinGaoDecoder(C)
             sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
             sage: S.<x> = Fqm['x', C.twisting_homomorphism()]
-            sage: z9 = Fqm.gen()
-            sage: p = (z9^6 + z9^4)*x + z9^2 + z9
+            sage: p = x**3 - x + 3
             sage: codeword_vector = E.encode(p, "vector")
-            sage: r = D.decode_to_message(codeword_vector) #indirect doctest
-            sage: r
-            (z9^6 + z9^4)*x + z9^2 + z9
+            sage: Chan = channels.StaticRankErrorChannel(C.ambient_space(), 3)
+            sage: y = Chan(codeword_vector)
+            sage: c, m = D._decode_to_code_and_message(y)
+            sage: c == codeword_vector and m == p
+            True
         """
         C = self.code()
         length = len(r)
@@ -960,7 +961,6 @@ class GabidulinGaoDecoder(Decoder):
             return r, self.connected_encoder().unencode_nocheck(r)
 
         points = [(eval_pts[i], r[i]) for i in range(len(eval_pts))]
-        # R = S.lagrange_polynomial(eval_pts, list(r))
         R = S.lagrange_polynomial(points)
         r_out, u_out = self._partial_xgcd(S.minimal_vanishing_polynomial(eval_pts),
                 R, (C.length() + C.dimension()) // 2)
@@ -993,15 +993,12 @@ class GabidulinGaoDecoder(Decoder):
             sage: D = codes.decoders.GabidulinGaoDecoder(C)
             sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
             sage: S.<x> = Fqm['x', C.twisting_homomorphism()]
-            sage: z20 = Fqm.gen()
             sage: p = x
             sage: codeword_vector = E.encode(p, "vector")
-            sage: codeword_vector
-            (1, z20^3, z20^6, z20^9, z20^12)
-            sage: l = list(codeword_vector)
-            sage: l[0] = l[1] #make an error
-            sage: D.decode_to_code(vector(l))
-            (1, z20^3, z20^6, z20^9, z20^12)
+            sage: Chan = channels.StaticRankErrorChannel(C.ambient_space(), 1)
+            sage: y = Chan(codeword_vector)
+            sage: D.decode_to_code(y) == codeword_vector
+            True
         """
         return self._decode_to_code_and_message(r)[0]
 
@@ -1018,18 +1015,19 @@ class GabidulinGaoDecoder(Decoder):
 
         EXAMPLES::
 
-            sage: Fqm = GF(2^9)
+            sage: Fqm = GF(2^18)
             sage: Fq = GF(2^3)
-            sage: C = codes.GabidulinCode(Fqm, 2, 2, Fq)
+            sage: C = codes.GabidulinCode(Fqm, 6, 2, Fq)
             sage: D = codes.decoders.GabidulinGaoDecoder(C)
             sage: E = codes.encoders.GabidulinPolynomialEvaluationEncoder(C)
             sage: S.<x> = Fqm['x', C.twisting_homomorphism()]
-            sage: z9 = Fqm.gen()
-            sage: p = (z9^6 + z9^4)*x + z9^2 + z9
+            sage: p = x + 1
             sage: codeword_vector = E.encode(p, "vector")
-            sage: r = D.decode_to_message(codeword_vector)
+            sage: Chan = channels.StaticRankErrorChannel(C.ambient_space(), 2)
+            sage: y = Chan(codeword_vector)
+            sage: r = D.decode_to_message(y)
             sage: r
-            (z9^6 + z9^4)*x + z9^2 + z9
+            x + 1
         """
         return self._decode_to_code_and_message(r)[1]
 
