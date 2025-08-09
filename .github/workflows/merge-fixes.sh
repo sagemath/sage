@@ -26,7 +26,8 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
             echo "Getting open PRs with 'p: CI Fix' label from https://github.com/$REPO/pulls?q=is%3Aopen+label%3A%22p%3A+CI+Fix%22"
             GH="gh -R $REPO"
             REPO_FILE="upstream/ci-fixes-${REPO%%/*}-${REPO##*/}"
-            PRs="$($GH pr list --label "p: CI Fix" --json number --jq '.[].number' | tee $REPO_FILE)"
+            $GH pr list --label "p: CI Fix" --json number --jq '.[].number' > "$REPO_FILE" || exit 1
+            PRs="$(cat "$REPO_FILE")"
             date -u +"%Y-%m-%dT%H:%M:%SZ" > $REPO_FILE.date  # Record the date, for future reference
             if [ -z "$PRs" ]; then
                 echo "Nothing to do: Found no open PRs with 'p: CI Fix' label in $REPO."
