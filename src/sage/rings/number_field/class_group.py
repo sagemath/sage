@@ -321,6 +321,18 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
         """
         return self.ideal().gens()
 
+class NarrowFractionalIdealClass(FractionalIdealClass):
+    def _repr_(self):
+        r"""
+        Return a string representation of the narrow ideal class of this fractional ideal.
+
+        EXAMPLES::
+
+        """
+        if self.is_trivial():
+            return 'Trivial narrow ideal class'
+        return 'Fractional narrow ideal class %s' % self._value._repr_short()
+    pass
 
 class SFractionalIdealClass(FractionalIdealClass):
     r"""
@@ -628,6 +640,24 @@ class ClassGroup(AbelianGroupWithValues_class):
         """
         return self._number_field
 
+class NarrowClassGroup(ClassGroup):
+    Element = NarrowFractionalIdealClass
+
+    def __init__(self, gens_orders, names, number_field, gens, proof=True):
+        r"""
+        Create a narrow class group.
+        """
+        AbelianGroupWithValues_class.__init__(self, gens_orders, names, gens,
+                                              values_group=number_field.ideal_monoid())
+        self._proof_flag = proof
+        self._number_field = number_field
+
+    def _repr_(self):
+        s = 'Narrow class group of order %s ' % self.order()
+        if self.order() > 1:
+            s += 'with structure %s ' % self._group_notation(self.gens_orders())
+        s += 'of %s' % self.number_field()
+        return s
 
 class SClassGroup(ClassGroup):
     r"""
