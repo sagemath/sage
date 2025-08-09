@@ -314,52 +314,132 @@ class AffinePlaneCurve(AffineCurve):
 
     def divisor_of_function(self, r):
         """
-        Return the divisor of a function on a curve.
-
-        INPUT:
-
-        - ``r`` -- a rational function on X
-
-        OUTPUT:
-
-        - ``list`` -- the divisor of r represented as a list of coefficients
-          and points. (TODO: This will change to a more structural output in
-          the future.)
-
-        EXAMPLES::
-
-            sage: F = GF(5)
-            sage: P2 = AffineSpace(2, F, names='xy')
-            sage: R = P2.coordinate_ring()
-            sage: x, y = R.gens()
-            sage: f = y^2 - x^9 - x
-            sage: C = Curve(f)
-            sage: K = FractionField(R)
-            sage: r = 1/x
-            sage: C.divisor_of_function(r)      # not implemented (broken)
-                  [[-1, (0, 0, 1)]]
-            sage: r = 1/x^3
-            sage: C.divisor_of_function(r)      # not implemented (broken)
-                  [[-3, (0, 0, 1)]]
+            Return the divisor of a function on an affine curve.
+    
+            INPUT: r is a rational function on X
+    
+            OUTPUT:
+    
+    
+            -  ``list`` - The divisor of r represented as a list of
+                   coefficients and points. (TODO: This will change to a more
+                   structural output in the future, so
+                   intersection_number should disappear in the future.)
+    
+    
+            EXAMPLES::
+    
+                sage: F = GF(5)
+                sage: P2 = AffineSpace(2, F, names='xy')
+                sage: R = P2.coordinate_ring()
+                sage: x, y = R.gens()
+                sage: f = y^2 - x^9 - x
+                sage: C = Curve(f)
+                sage: K = FractionField(R)
+                sage: r = 1/x
+                sage: C.divisor_of_function(r)
+                [(-2, (0, 0))]
+                sage: r = x^3
+                sage: C.divisor_of_function(r)
+                [(6, (0, 0))]
         """
-        F = self.base_ring()
-        f = self.defining_polynomial()
-        pts = self.places_on_curve()
-        R = f.parent()
-        x, y = R.gens()
-        R0 = PolynomialRing(F, 3, names=[str(x), str(y), "t"])
-        vars0 = R0.gens()
-        t = vars0[2]
-        divf = []
-        for pt0 in pts:
-            if pt0[2] != F(0):
-                lcs = self.local_coordinates(pt0, 5)
-                yt = lcs[1]
-                xt = lcs[0]
-                ldg = degree_lowest_rational_function(r(xt, yt), t)
-                if ldg != 0:
-                    divf.append([ldg, pt0])
-        return divf
+        
+        def intersection_number(P, Q, pt=(0,0)):
+            """
+                Return the multiplicity of intersection of P and Q at pt.
+            
+                INPUT: P and Q are polynomials in 2 variables
+            
+                OUTPUT:
+            
+            
+                -  ``int`` - The multiplicity of intersection of P and Q at pt
+            
+            
+                EXAMPLES::
+            
+                    sage: F = GF(5)
+                    sage: P2 = AffineSpace(2, F, names='xy')
+                    sage: R = P2.coordinate_ring()
+                    sage: x, y = R.gens()
+                    sage: f = y^2 - x^9 - x
+                    sage: intersection_number(f, x)
+                    2
+                    sage: intersection_number(f, x^3)
+                    6
+            """
+            if not(P.parent() == Q.parent()):
+                raise ValueError("P and Q must be in the same ambiant space")
+            x, y = P.parent().gens()
+            P = P(x + pt[0], y + pt[1]); Q = Q(x + pt[0], y + pt[1])
+            if P(0,0)!=0 or Q(0,0)!=0:
+                return 0
+            p=P(x,0);r=p.degree(x)
+            q=Q(x,0);s=q.degree(x)
+            if s < r :
+                P,Q,p,q,r,s = Q,P,q,p,s,r
+            if P==0:
+                return Infinity
+            if r==-1:
+                P=P.quo_rem(y)[0]
+                v=q.univariate_polynomial().valuation()
+                return intersection_number(P, Q) + v
+            a=p.lc();b=q.lc()
+            Q=a*Q-b*x^(s-r)*P
+            return intersection_number(P, Q)
+        
+        P = self.defining_polynomial()
+        x, y = P.parent().gens()
+        P2 = AffineSpace(2, F, names='xy')
+        In = []
+        if r.numerator() == 1:
+            pass
+        else :
+            Q = P.parent()(r.numerator())
+            H = gcd(P,Q)
+            if H != 1:
+                raise ValueError("r=0")
+            elif Q == 1:
+                pass
+            else:
+                Rx = P.resultant(Q,x)
+                Or = Rx.univariate_polynomial().roots(multiplicities=false)
+                Ry = P.resultant(Q,y)
+                Ab = Ry.univariate_polynomial().roots(multiplicities=false)
+                for a in Ab:
+                    for b in Or:
+                        if P(a,b) == 0 and Q(a,b) == 0:
+                            In = In + [(intersection_number(P,Q,(a,b)),P2(a,b))]
+        Jn = []
+        if r.denominator() == 1:
+            pass
+        else :
+            Q = P.parent()(r.denominator())
+            H = gcd(P,Q)
+            if H != 1:
+                raise ValueError("1/r=0")
+            elif Q == 1:
+                pass
+            else:
+                Rx = P.resultant(Q,x)
+                Or = Rx.univariate_polynomial().roots(multiplicities=false)
+                Ry = P.resultant(Q,y)
+                Ab = Ry.univariate_polynomial().roots(multiplicities=false)
+                for a in Ab:
+                    for b in Or:
+                        if P(a,b) == 0 and Q(a,b) == 0:
+                            Jn = Jn + [(-intersection_number(P,Q,(a,b)),P2(a,b))]
+        dct1 = {e[1]: e[0] for e in In}
+        dct2 = {e[1]: e[0] for e in Jn}
+        for e in dct2.keys():
+            if e in dct1.keys():
+                dct1[e] += dct2[e]
+                if dct1[e] == 0:
+                    del dct1[e]
+            else:
+                dct1[e] = dct2[e]
+        res = [(e[1], e[0]) for e in dct1.items()]
+        return res
 
     def local_coordinates(self, pt, n):
         r"""

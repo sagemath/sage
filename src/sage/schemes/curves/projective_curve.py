@@ -638,45 +638,181 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
     def divisor_of_function(self, r):
         """
-        Return the divisor of a function on a curve.
+            Return the divisor of a function on a projective curve.
 
-        INPUT:
+            INPUT: r is a rational function on X, with homogenized numerator and denominator
 
-        - ``r`` is a rational function on X
+            OUTPUT:
 
-        OUTPUT: list; the divisor of r represented as a list of coefficients
-        and points. (TODO: This will change to a more structural output in the
-        future.)
 
-        EXAMPLES::
+            -  ``list`` - The divisor of r represented as a list of
+            coefficients and points. (TODO: This will change to a more
+                structural output in the future, so
+                intersection_number should disappear in the future.)
 
-            sage: FF = FiniteField(5)
-            sage: P2 = ProjectiveSpace(2, FF, names=['x','y','z'])
-            sage: R = P2.coordinate_ring()
-            sage: x, y, z = R.gens()
-            sage: f = y^2*z^7 - x^9 - x*z^8
-            sage: C = Curve(f)
-            sage: K = FractionField(R)
-            sage: r = 1/x
-            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!
-            [[-1, (0, 0, 1)]]
-            sage: r = 1/x^3
-            sage: C.divisor_of_function(r)     # todo: not implemented  !!!!
-            [[-3, (0, 0, 1)]]
+
+            EXAMPLES::
+
+                sage: F = GF(5)
+                sage: P2 = ProjectiveSpace(2, F, names='xyz')
+                sage: R = P2.coordinate_ring()
+                sage: x, y, z = R.gens()
+                sage: f = y^2 - x^9 - x
+                sage: f = f.homogenize(z)
+                sage: C = Curve(f)
+                sage: K = FractionField(R)
+                sage: r = 1/x
+                sage: C.divisor_of_function(r)
+                [(-7, (0 : 1 : 0)), (-2, (0 : 0 : 1))]
+                sage: r = x^3
+                sage: C.divisor_of_function(r)
+                [(21, (0 : 1 : 0)), (6, (0 : 0 : 1))]
         """
-        F = self.base_ring()
-        f = self.defining_polynomial()
-        x, y, z = f.parent().gens()
-        pnts = self.rational_points()
-        divf = []
-        for P in pnts:
-            if P[2] != F(0):
-                # What is the '5' in this line and the 'r()' in the next???
-                lcs = self.local_coordinates(P, 5)
-                ldg = degree_lowest_rational_function(r(lcs[0], lcs[1]), z)
-                if ldg != 0:
-                    divf.append([ldg, P])
-        return divf
+        
+        def intersection_number(P, Q, pt=(0,0)):
+            """
+                Return the multiplicity of intersection of P and Q at pt.
+            
+                INPUT: P and Q are polynomials in 2 variables
+            
+                OUTPUT:
+            
+            
+                -  ``int`` - The multiplicity of intersection of P and Q at pt
+            
+            
+                EXAMPLES::
+            
+                    sage: F = GF(5)
+                    sage: P2 = AffineSpace(2, F, names='xy')
+                    sage: R = P2.coordinate_ring()
+                    sage: x, y = R.gens()
+                    sage: f = y^2 - x^9 - x
+                    sage: intersection_number(f, x)
+                    2
+                    sage: intersection_number(f, x^3)
+                    6
+            """
+            if not(P.parent() == Q.parent()):
+                raise ValueError("P and Q must be in the same ambiant space")
+            x, y = P.parent().gens()
+            P = P(x + pt[0], y + pt[1]); Q = Q(x + pt[0], y + pt[1])
+            if P(0,0)!=0 or Q(0,0)!=0:
+                return 0
+            p=P(x,0);r=p.degree(x)
+            q=Q(x,0);s=q.degree(x)
+            if s < r :
+                P,Q,p,q,r,s = Q,P,q,p,s,r
+            if P==0:
+                return Infinity
+            if r==-1:
+                P=P.quo_rem(y)[0]
+                v=q.univariate_polynomial().valuation()
+                return intersection_number(P, Q) + v
+            a=p.lc();b=q.lc()
+            Q=a*Q-b*x^(s-r)*P
+            return intersection_number(P, Q)
+        
+        P0 = C.defining_polynomial()
+        x, y, z = P0.parent().gens()
+        P2 = ProjectiveSpace(2, F, names='xyz')
+        In = []
+        if r.numerator() == 1:
+            pass
+        else :
+            Q0 = P0.parent()(r.numerator().homogenize(z))
+            P = P0.subs(x=1);Q = Q0.subs(x=1)
+            P1 = AffineSpace(2, F, names='yz')
+            R = P1.coordinate_ring()
+            P = R(P);Q = R(Q)
+            if P(0,0) == 0 and Q(0,0) == 0:
+                In = In + [(intersection_number(P,Q,(0,0)), P2(1,0,0))]
+            P = P0.subs(y=1);Q = Q0.subs(y=1)
+            P1 = AffineSpace(2, F, names='xz')
+            R = P1.coordinate_ring()
+            P = R(P);Q = R(Q)
+            H = gcd(P,Q)
+            if H != 1:
+                ValueError("r=0")
+            elif Q == 1:
+                pass
+            else:
+                Ab = P.subs(z=0).univariate_polynomial().roots(multiplicities=false)
+                for a in Ab:
+                    if Q(a,0) == 0:
+                        In = In + [(intersection_number(P,Q,(a,0)),P2(a,1,0))]
+            P = P0.subs(z=1);Q = Q0.subs(z=1)
+            P1 = AffineSpace(2, F, names='xy')
+            R = P1.coordinate_ring()
+            P = R(P);Q = R(Q)
+            H = gcd(P,Q)
+            if H != 1:
+                ValueError("r=0")
+            elif Q == 1:
+                pass
+            else:
+                Rx = P.resultant(P.parent()(Q),P.parent()(x))
+                Or = Rx.univariate_polynomial().roots(multiplicities=false)
+                Ry = P.resultant(P.parent()(Q),P.parent()(y))
+                Ab = Ry.univariate_polynomial().roots(multiplicities=false)
+                for a in Ab:
+                    for b in Or:
+                        if P(a,b) == 0 and Q(a,b) == 0:
+                            In = In + [(intersection_number(P,Q,(a,b)),P2(a,b,1))]
+        Jn = []
+        if r.denominator() == 1:
+            pass
+        else :
+            Q0 = P0.parent()(r.denominator().homogenize(z))
+            P = P0.subs(x=1);Q = Q0.subs(x=1)
+            P1 = AffineSpace(2, F, names='yz')
+            R = P1.coordinate_ring()
+            P = R(P);Q = R(Q)
+            if P(0,0) == 0 and Q(0,0) == 0:
+                Jn = Jn + [(-intersection_number(P,Q,(0,0)), P2(1,0,0))]
+            P = P0.subs(y=1);Q = Q0.subs(y=1)
+            P1 = AffineSpace(2, F, names='xz')
+            R = P1.coordinate_ring()
+            P = R(P);Q = R(Q)
+            H = gcd(P,Q)
+            if H != 1:
+                ValueError("r=0")
+            elif Q == 1:
+                pass
+            else:
+                Ab = P.subs(z=0).univariate_polynomial().roots(multiplicities=false)
+                for a in Ab:
+                    if Q(a,0) == 0:
+                        Jn = Jn + [(-intersection_number(P,Q,(a,0)),P2(a,1,0))]
+            P = P0.subs(z=1);Q = Q0.subs(z=1)
+            P1 = AffineSpace(2, F, names='xy')
+            R = P1.coordinate_ring()
+            P = R(P);Q = R(Q)
+            H = gcd(P,Q)
+            if H != 1:
+                ValueError("r=0")
+            elif Q == 1:
+                pass
+            else:
+                Rx = P.resultant(P.parent()(Q),P.parent()(x))
+                Or = Rx.univariate_polynomial().roots(multiplicities=false)
+                Ry = P.resultant(P.parent()(Q),P.parent()(y))
+                Ab = Ry.univariate_polynomial().roots(multiplicities=false)
+                for a in Ab:
+                    for b in Or:
+                        if P(a,b) == 0 and Q(a,b) == 0:
+                            Jn = Jn + [(-intersection_number(P,Q,(a,b)),P2(a,b,1))]
+        dct1 = {e[1]: e[0] for e in In}
+        dct2 = {e[1]: e[0] for e in Jn}
+        for e in dct2.keys():
+            if e in dct1.keys():
+                dct1[e] += dct2[e]
+                if dct1[e] == 0:
+                    del dct1[e]
+            else:
+                dct1[e] = dct2[e]
+        res = [(e[1], e[0]) for e in dct1.items()]
+        return res
 
     def local_coordinates(self, pt, n):
         r"""
