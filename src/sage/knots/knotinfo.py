@@ -1359,7 +1359,7 @@ class KnotInfoBase(Enum):
 
         The HOMFLY-PT polynomial `P(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1460,7 +1460,7 @@ class KnotInfoBase(Enum):
         under regular isotopy `\Delta (L) = a^{w(L)} F(L)` where `w(L)` is the
         writhe of the link `L` satisfies the following skein relation
         (see the corresponding `KnotInfo description page
-        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
@@ -1547,7 +1547,7 @@ class KnotInfoBase(Enum):
 
         The Jones polynomial `V(L)` of a link `L` satisfies the following skein
         relation (see the corresponding `KnotInfo description page
-        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html)>`__):
+        <https://knotinfo.org/descriptions/jones_homfly_kauffman_description/polynomial_defn.html>`__):
 
         .. MATH::
 
