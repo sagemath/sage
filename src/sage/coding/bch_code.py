@@ -139,6 +139,44 @@ class BCHCode(CyclicCode):
         self._offset = offset
         self._designed_distance = designed_distance
 
+    def dual_code(self):
+        r"""
+        Return the dual code of this BCH code as a cyclic code.
+
+        The dual of a BCH code is a cyclic code, so we compute its
+        generator polynomial and return it as a CyclicCode object.
+
+        EXAMPLES::
+
+            sage: P.<x> = PolynomialRing(GF(2))
+            sage: f = x^6 + x^4 + x^3 + x + 1
+            sage: F.<a> = GF(2^6, modulus=f)
+            sage: n = 63
+            sage: C = codes.BCHCode(GF(2), n, 9, a)
+            sage: C
+            [63, 39] BCH Code over GF(2) with designed distance 9
+            sage: C_dual = C.dual_code()
+            sage: C_dual
+            [63, 24] Cyclic Code over GF(2)
+            sage: C_dual.generator_polynomial()
+            x^39 + x^36 + x^35 + ... + 1
+        """
+        # Get parameters
+        n = self.length()  # Code length
+        k = self.dimension()  # Code dimension
+        g = self.generator_polynomial()  # Generator polynomial
+
+        # Compute parity-check polynomial h(x)
+        P = g.parent()  # Polynomial ring
+        h = (P.gen()**n - 1) // g
+
+        # Compute generator polynomial for dual cyclic code
+        h0 = h[0]  # Constant term of h(x)
+        g_dual = P(h0**-1 * P.gen()**k * h(1 / P.gen()))
+
+        # Return dual as a cyclic code
+        return CyclicCode(generator_pol=g_dual, length=n)
+    
     def __eq__(self, other):
         r"""
         Test equality between BCH Code objects.
