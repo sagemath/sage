@@ -2147,7 +2147,7 @@ cdef class FiniteField(Field):
             sage: f = R.random_element(degree=15)
             sage: f.roots()
             [(117558869610275297997958296126212805270, 1)]
-    
+
         We can take the roots of a polynomial defined over a finite field without multiplicities::
 
             sage: set_random_seed(31337)
@@ -2156,7 +2156,7 @@ cdef class FiniteField(Field):
             sage: f = R.random_element(degree=150)
             sage: f.roots(multiplicities=False)
             [116560079209701720510648792531840294827]
-            
+
         We can take the roots of a polynomial defined over a finite field extension::
 
             sage: set_random_seed(31337)
@@ -2167,7 +2167,7 @@ cdef class FiniteField(Field):
             [(a^9 + a^8 + a^6 + a^4 + a^2, 1)]
             sage: f.roots(multiplicities=False)
             [a^9 + a^8 + a^6 + a^4 + a^2]
-            
+
         We can take the roots of a high degree polynomial in a reasonable time::
 
             sage: set_random_seed(31337)
@@ -2196,7 +2196,6 @@ cdef class FiniteField(Field):
             g = pow(x, p, f) - x
             g = f.gcd(g)
             return g._roots_from_factorization(g.factor(), False)
-    
 
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
