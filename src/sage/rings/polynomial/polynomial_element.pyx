@@ -11818,6 +11818,7 @@ cdef list do_schoolbook_product(list x, list y, Py_ssize_t deg):
         return [a*c for a in x[:deg]] # beware of noncommutative rings
     coeffs = [None]*deg
     for k in range(deg):
+        sig_check()
         start = 0 if k <= d2 else k-d2  # max(0, k-d2)
         end = k if k <= d1 else d1    # min(k, d1)
         sum = x[start] * y[k-start]
