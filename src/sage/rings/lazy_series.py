@@ -2371,7 +2371,7 @@ class LazyModuleElement(Element):
         TESTS::
 
             sage: L.<z> = LazyLaurentSeriesRing(QQ); x = var("x")                       # needs sage.symbolic
-            sage: cot(z)[0:6] == cot(x).series(x, 6).coefficients(sparse=False)         # needs sage.symbolic
+            sage: cot(z)[0:6] == (cot(x)-x^-1).series(x, 6).coefficients(sparse=False)  # needs sage.symbolic
             True
         """
         return ~self.tan()
@@ -2653,7 +2653,7 @@ class LazyModuleElement(Element):
         TESTS::
 
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
-            sage: coth(z)[0:6] == coth(x).series(x, 6).coefficients(sparse=False)       # needs sage.symbolic
+            sage: coth(z)[0:6] == (coth(x)-x^-1).series(x, 6).coefficients(sparse=False)# needs sage.symbolic
             True
         """
         from sage.arith.misc import bernoulli
@@ -2716,7 +2716,7 @@ class LazyModuleElement(Element):
         TESTS::
 
             sage: L.<z> = LazyLaurentSeriesRing(SR); x = var("x")                       # needs sage.symbolic
-            sage: csch(z)[0:6] == csch(x).series(x, 6).coefficients(sparse=False)       # needs sage.symbolic
+            sage: csch(z)[0:6] == (csch(x)-x^-1).series(x, 6).coefficients(sparse=False) # needs sage.symbolic
             True
         """
         from sage.arith.misc import bernoulli
