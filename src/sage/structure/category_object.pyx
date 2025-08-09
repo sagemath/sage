@@ -462,9 +462,11 @@ cdef class CategoryObject(SageObject):
 
     def variable_names(self):
         """
-        Return the list of variable names corresponding to the generators.
+        Return the variable names corresponding to our generators.
 
-        OUTPUT: a tuple of strings
+        OUTPUT:
+
+        A (possibly empty) tuple of strings.
 
         EXAMPLES::
 
@@ -480,10 +482,16 @@ cdef class CategoryObject(SageObject):
             sage: T.<x> = InfinitePolynomialRing(ZZ)
             sage: T.variable_names()
             ('x',)
+
+        ::
+
+            sage: NN.variable_names()
+            ()
+
         """
         if self._names is not None:
             return self._names
-        raise ValueError("variable names have not yet been set using self._assign_names(...)")
+        return ()
 
     def variable_name(self):
         """
@@ -525,13 +533,11 @@ cdef class CategoryObject(SageObject):
         # We cannot assume that self *has* _latex_variable_names.
         # But there is a method that returns them and sets
         # the attribute at the same time, if needed.
-        # Simon King: It is not necessarily the case that variable
-        # names are assigned. In that case, self._names is None,
-        # and self.variable_names() raises a ValueError
-        try:
+
+        old = None, None
+        if self.variable_names():
             old = self.variable_names(), self.latex_variable_names()
-        except ValueError:
-            old = None, None
+
         self._names, self._latex_names = names, latex_names
         return old
 

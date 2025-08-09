@@ -227,13 +227,17 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
             index_set = [i[0] for i in index_set_mapping if i[0] not in I_supp]
 
         if names is None:
-            try:
-                amb_names = dict(zip([i[1] for i in index_set_mapping], ambient.variable_names()))
-                names = [amb_names[i] for i in index_set]
-            except (ValueError, KeyError):
-                # ambient has not assigned variable names
-                # or the names are for the generators rather than the basis
-                names = 'e'
+            names = 'e'
+            if ambient.variable_names():
+                # ambient has not assigned variable names...
+                try:
+                    amb_names = dict(zip([i[1] for i in index_set_mapping],
+                                         ambient.variable_names()))
+                    names = [amb_names[i] for i in index_set]
+                except KeyError:
+                    # or the names are for the generators rather than
+                    # the basis.
+                    pass
         if isinstance(names, str):
             if len(index_set) == 1:
                 names = [names]
