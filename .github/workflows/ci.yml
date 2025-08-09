@@ -30,6 +30,12 @@ jobs:
       image: ${{ matrix.container }}
 
     steps:
+      - name: Prepare container
+        run: |
+          if [ "${{ matrix.container }}" = "alpine" ]; then
+            apk add --no-cache bash
+          fi
+
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
         uses: actions/checkout@v3
