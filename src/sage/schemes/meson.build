@@ -7,6 +7,7 @@ py.install_sources(
 
 install_subdir('affine', install_dir: sage_install_dir / 'schemes')
 install_subdir('berkovich', install_dir: sage_install_dir / 'schemes')
+install_subdir('chow', install_dir: sage_install_dir / 'schemes')
 install_subdir('curves', install_dir: sage_install_dir / 'schemes')
 install_subdir('cyclic_covers', install_dir: sage_install_dir / 'schemes')
 subdir('elliptic_curves')
