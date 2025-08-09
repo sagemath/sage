@@ -540,6 +540,7 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
         ...
         ValueError: the maximum number `kmax` of vertices in a block must be >= `k`
     """
+    from sage.graphs.generators.trees import RandomTree
     from sage.misc.prandom import choice
     from sage.sets.disjoint_set import DisjointSet
 
@@ -1423,6 +1424,7 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
         set_random_seed(seed)
 
     # 1. Generate a random tree of order n
+    from sage.graphs.generators.trees import RandomTree
     T = RandomTree(n)
 
     # 2. Generate n non-empty subtrees of T: {T1,...,Tn}
@@ -1470,182 +1472,6 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
         G.add_clique(X)
 
     return G
-
-
-def RandomLobster(n, p, q, seed=None):
-    r"""
-    Return a random lobster.
-
-    A lobster is a tree that reduces to a caterpillar when pruning all
-    leaf vertices. A caterpillar is a tree that reduces to a path when
-    pruning all leaf vertices (`q=0`).
-
-    INPUT:
-
-    - ``n`` -- expected number of vertices in the backbone
-
-    - ``p`` -- probability of adding an edge to the backbone
-
-    - ``q`` -- probability of adding an edge (claw) to the arms
-
-    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``)
-
-    EXAMPLES:
-
-    We check a random graph with 12 backbone
-    nodes and probabilities `p = 0.7` and `q = 0.3`::
-
-        sage: # needs networkx
-        sage: G = graphs.RandomLobster(12, 0.7, 0.3)
-        sage: leaves = [v for v in G.vertices(sort=False) if G.degree(v) == 1]
-        sage: G.delete_vertices(leaves)                                 # caterpillar
-        sage: leaves = [v for v in G.vertices(sort=False) if G.degree(v) == 1]
-        sage: G.delete_vertices(leaves)                                 # path
-        sage: s = G.degree_sequence()
-        sage: if G:
-        ....:     if G.num_verts() == 1:
-        ....:         assert s == [0]
-        ....:     else:
-        ....:         assert s[-2:] == [1, 1]
-        ....:     assert all(d == 2 for d in s[:-2])
-
-    ::
-
-        sage: G = graphs.RandomLobster(9, .6, .3)                                       # needs networkx
-        sage: G.show()                          # long time                             # needs networkx sage.plot
-    """
-    if seed is None:
-        seed = int(current_randstate().long_seed() % sys.maxsize)
-    import networkx
-    return Graph(networkx.random_lobster(n, p, q, seed=seed))
-
-
-def RandomTree(n, seed=None):
-    r"""
-    Return a random tree on `n` nodes numbered `0` through `n-1`.
-
-    By Cayley's theorem, there are `n^{n-2}` trees with vertex
-    set `\{0,1,\dots,n-1\}`. This constructor chooses one of these uniformly
-    at random.
-
-    ALGORITHM:
-
-    The algorithm works by generating an `(n-2)`-long
-    random sequence of numbers chosen independently and uniformly
-    from `\{0,1,\dots,n-1\}` and then applies an inverse
-    Prufer transformation.
-
-    INPUT:
-
-    - ``n`` -- number of vertices in the tree
-
-    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``)
-
-    EXAMPLES::
-
-        sage: G = graphs.RandomTree(10)
-        sage: G.is_tree()
-        True
-        sage: G.show()                          # long time                             # needs sage.plot
-
-    TESTS:
-
-    Ensuring that we encounter no unexpected surprise ::
-
-        sage: all( graphs.RandomTree(10).is_tree()
-        ....:      for i in range(100) )
-        True
-
-    Random tree with one and zero vertices::
-
-        sage: graphs.RandomTree(0)
-        Graph on 0 vertices
-        sage: graphs.RandomTree(1)
-        Graph on 1 vertex
-    """
-    g = Graph(n)
-    if n <= 1:
-        return g
-
-    if seed is not None:
-        set_random_seed(seed)
-
-    # create random Prufer code
-    code = [randint(0, n - 1) for i in range(n - 2)]
-
-    # We count the number of symbols of each type.
-    # count[k] is the number of times k appears in code
-    #
-    # (count[k] is set to -1 when the corresponding vertex is not
-    # available anymore)
-    count = [0] * n
-    for k in code:
-        count[k] += 1
-
-    # We use a heap to store vertices for which count[k] == 0 and get the vertex
-    # with smallest index
-    from heapq import heapify, heappop, heappush
-    zeros = [x for x in range(n) if not count[x]]
-    heapify(zeros)
-
-    for s in code:
-        x = heappop(zeros)
-        g.add_edge(x, s)
-        count[x] = -1
-        count[s] -= 1
-        if not count[s]:
-            heappush(zeros, s)
-
-    # Adding as an edge the last two available vertices
-    g.add_edge(zeros)
-
-    return g
-
-
-def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
-    """
-    Return a tree with a power law degree distribution, or ``False`` on failure.
-
-    From the NetworkX documentation: a trial power law degree sequence is chosen
-    and then elements are swapped with new elements from a power law
-    distribution until the sequence makes a tree (size = order - 1).
-
-    INPUT:
-
-    - ``n`` -- number of vertices
-
-    - ``gamma`` -- exponent of power law distribution
-
-    - ``tries`` -- number of attempts to adjust sequence to make a tree
-
-    - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
-      number generator (default: ``None``)
-
-    EXAMPLES:
-
-    We check that the generated graph is a tree::
-
-        sage: G = graphs.RandomTreePowerlaw(10, 3)                                      # needs networkx
-        sage: G.is_tree()                                                               # needs networkx
-        True
-        sage: G.order(), G.size()                                                       # needs networkx
-        (10, 9)
-
-    ::
-
-        sage: G = graphs.RandomTreePowerlaw(15, 2)                                      # needs networkx
-        sage: if G:                             # random output         # long time, needs networkx sage.plot
-        ....:     G.show()
-    """
-    if seed is None:
-        seed = int(current_randstate().long_seed() % sys.maxsize)
-    import networkx
-    try:
-        return Graph(networkx.random_powerlaw_tree(n, gamma, seed=seed, tries=tries))
-    except networkx.NetworkXError:
-        return False
 
 
 def RandomKTree(n, k, seed=None):
