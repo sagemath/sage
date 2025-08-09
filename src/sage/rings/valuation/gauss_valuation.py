@@ -47,7 +47,7 @@ from .inductive_valuation import NonFinalInductiveValuation
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.factory import UniqueFactory
-
+from sage.rings.infinity import infinity
 
 class GaussValuationFactory(UniqueFactory):
     r"""
@@ -343,7 +343,10 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             f = f.truncate(degree_bound + 1)
 
         try:
-            return f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
+            reduction = f.map_coefficients(self._base_valuation.reduce, self._base_valuation.residue_field())
+            if reduction != 0:
+                return reduction
+            raise ValueError("Cannot reduce element with finite valuation; use reduce_to_unit instead")
         except Exception:
             if check and not all(v >= 0 for v in self.valuations(f)):
                 raise ValueError("reduction not defined for non-integral elements and %r is not integral over %r" % (f, self))
@@ -807,5 +810,5 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         if not coefficients:
             from sage.rings.infinity import infinity
             return infinity
-        else:
-            return self._base_valuation.upper_bound(coefficients[-1])
+        return self._base_valuation.upper_bound(coefficients[-1])
+
