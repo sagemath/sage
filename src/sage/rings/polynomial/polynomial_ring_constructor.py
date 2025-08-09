@@ -10,6 +10,10 @@ There is also a function :func:`BooleanPolynomialRing_constructor`, used for
 constructing Boolean polynomial rings, which are not technically polynomial
 rings but rather quotients of them (see module
 :mod:`sage.rings.polynomial.pbori` for more details).
+
+AUTHORS:
+
+- Asimina Hamakiotes (2024-02-09): Added a TypeError to ``BooleanPolynomialRing``
 """
 # ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -1008,6 +1012,13 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order='lex'):
         sage: BooleanPolynomialRing(names='x,y')                                        # needs sage.rings.polynomial.pbori
         Boolean PolynomialRing in x, y
 
+    This example shows that the bug reported at :issue:`34481` has been fixed::
+
+        sage: BooleanPolynomialRing(1)
+        Traceback (most recent call last):
+        ...
+        TypeError: you must specify the names of the variables
+
     TESTS::
 
         sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                        # needs sage.rings.polynomial.pbori
@@ -1026,6 +1037,9 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order='lex'):
         n = -1
     elif n is None:
         n = -1
+
+    if names is None:
+        raise TypeError("you must specify the names of the variables")
 
     names = normalize_names(n, names)
     n = len(names)
