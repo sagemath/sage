@@ -306,7 +306,6 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             category = EnumeratedSets()
         Parent.__init__(self, facade=facade, category=category)
 
-    @cached_method
     def is_finite(self):
         """
         Return whether this set is finite.
@@ -316,18 +315,34 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: DisjointUnionEnumeratedSets({1: FiniteEnumeratedSet([1,2,3]),
             ....:                              2: FiniteEnumeratedSet([4,5,6])}).is_finite()
             True
-            sage: DisjointUnionEnumeratedSets({1: ZZ,
-            ....:                              2: FiniteEnumeratedSet([4,5,6])}).is_finite()
+            sage: DisjointUnionEnumeratedSets({1: Set([]),
+            ....:                              2: ZZ,
+            ....:                              3: FiniteEnumeratedSet([4,5,6])}).is_finite()
             False
+
+        TESTS::
+
+            sage: DisjointUnionEnumeratedSets(Family(ZZ, lambda x: Set([x]))).is_finite()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot determine finiteness of disjoint union of infinite family, specify category in constructor if you know
+            sage: DisjointUnionEnumeratedSets(Family(ZZ, lambda x: Set([x])), category=Sets().Finite()).is_finite()
+            True
         """
+        category = self.category()
+        if category.is_subcategory(Sets().Finite()):
+            return True
+        if category.is_subcategory(Sets().Infinite()):
+            return False
         if self._family.is_finite():
             result = all(x.is_finite() for x in self._family)
             if result:
-                self._refine_category_(self.category().Finite())
+                self._refine_category_(category.Finite())
             else:
-                self._refine_category_(self.category().Infinite())
+                self._refine_category_(category.Infinite())
             return result
-        raise NotImplementedError
+        raise NotImplementedError('cannot determine finiteness of disjoint union of infinite family, '
+                                  'specify category in constructor if you know')
 
     def _repr_(self):
         """
