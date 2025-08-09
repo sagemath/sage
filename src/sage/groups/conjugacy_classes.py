@@ -491,7 +491,7 @@ class ConjugacyClassGAP(ConjugacyClass):
         if not finite:
             raise NotImplementedError("only implemented for finite groups")
 
-        return G._gap_().IsConjugate(g0._gap_(), g._gap_()).sage()
+        return G._libgap_().IsConjugate(g0._libgap_(), g._libgap_()).sage()
 
     @cached_method
     def set(self):
