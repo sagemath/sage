@@ -236,6 +236,7 @@ Test that conversion of symbolic functions with latex names works (:issue:`31047
 #############################################################################
 
 import os
+import shutil
 
 import pexpect
 
@@ -334,11 +335,17 @@ class Giac(Expect):
             sage: giac == loads(dumps(giac))
             True
         """
+        # Check if xvfb-run is available for headless display
+        if shutil.which('xvfb-run'):
+            command = "xvfb-run -a giac --sage"
+        else:
+            command = "giac --sage"
+        
         Expect.__init__(self,
                         name='giac',
                         prompt='[0-9]*>> ',
-                        command="giac --sage",
-                        env={"LANG": "C"},
+                        command=command,
+                        env={"LANG": "C", "DISPLAY": ""},
                         init_code=['maple_mode(0);I:=i;'],  # coercion could be broken in maple_mode
                         script_subdirectory=script_subdirectory,
                         restart_on_ctrlc=False,
