@@ -772,7 +772,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         OT = self._ambient
         if not f:
-            return OT(f)
+            return OT.monomial(f)
 
         fset = frozenset(self._groundset_action(g, e) for e in f)
         return OT.subset_image(fset)
