@@ -249,14 +249,31 @@ class SchemeHomset_generic(HomsetWithBase):
 
         sage: from sage.schemes.generic.homset import SchemeHomset_generic
         sage: A2 = AffineSpace(QQ,2)
-        sage: Hom = SchemeHomset_generic(A2, A2); Hom
+        sage: Hom = A2.Hom(A2); Hom
         Set of morphisms
           From: Affine Space of dimension 2 over Rational Field
           To:   Affine Space of dimension 2 over Rational Field
         sage: Hom.category()
         Category of endsets of schemes over Rational Field
+
+    TESTS::
+
+        sage: Hom = SchemeHomset_generic(A2, A2); Hom
+        Set of morphisms
+          From: Affine Space of dimension 2 over Rational Field
+          To:   Affine Space of dimension 2 over Rational Field
+        sage: Hom = SchemeHomset_generic(A2, A2, Sets())
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot create SchemeHomset with category = Category of sets. Consider using Homset instead
     """
     Element = SchemeMorphism
+
+    def __init__(self, X, Y, category=None, check=True, base=None):
+        super().__init__(X, Y, category, check, base)
+        from sage.categories.schemes import Schemes
+        if check and category is not None and not category.is_subcategory(Schemes()):
+            raise ValueError(f"Cannot create SchemeHomset with category = {category}. Consider using Homset instead")
 
     def __reduce__(self):
         """
