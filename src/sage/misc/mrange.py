@@ -393,6 +393,33 @@ class xmrange_iter:
         else:
             return ans
 
+    def __eq__(self, other):
+        r"""
+        Check equality.
+
+        EXAMPLES::
+
+            sage: X = cartesian_product_iterator([[1,2],[-1,-2]])
+            sage: Y = cartesian_product_iterator([[1,2],[-1,-2]])
+            sage: Z = cartesian_product_iterator([[1,2],[-1,-2]], list)
+            sage: A = cartesian_product_iterator([[1,2,3],[-1]])
+            sage: X == Y
+            True
+            sage: X == X
+            True
+            sage: X == list(X)
+            False
+            sage: X == Z
+            False
+            sage: X == A
+            False
+        """
+        if self is other:
+            return True
+        if not isinstance(other, type(self)):
+            return False
+        return self.iter_list == other.iter_list and self.typ == other.typ
+
 
 def _xmrange(sizes, typ=list):
     n = len(sizes)

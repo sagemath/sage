@@ -259,7 +259,7 @@ subgroup::
 import itertools
 
 from .combinat import CombinatorialElement
-from .integer_vector import IntegerVectors
+from .integer_vector import integer_vectors_nk_fast_iter
 from .partition import (Partition, Partitions, Partitions_n, _Partitions,
                         RegularPartitions_all, RegularPartitions_n)
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -444,7 +444,7 @@ class PartitionTuple(CombinatorialElement):
         else:
             return PartitionTuples_all().element_class(PartitionTuples_all(), mu)
 
-    def __init__(self, parent, mu):
+    def __init__(self, parent, mu, check=True):
         """
         Initialize ``self`` and checks that the input determines a tuple of
         partitions.
@@ -461,7 +461,10 @@ class PartitionTuple(CombinatorialElement):
             ...
             ValueError: [[], [], [2, 1, 2, 1]] is not a tuple of Partitions
         """
-        mu = [_Partitions(nu) for nu in mu]
+        if check:
+            mu = [_Partitions(nu) for nu in mu]
+        else:
+            mu = [_Partitions.element_class(_Partitions, nu) for nu in mu]
         CombinatorialElement.__init__(self, parent, mu)
 
     def level(self):
@@ -1028,25 +1031,25 @@ class PartitionTuple(CombinatorialElement):
         Return ``True`` if the PartitionTuple dominates or equals `\mu` and
         ``False`` otherwise.
 
-        Given partition tuples `\mu=(\mu^{(1)},...,\mu^{(m)})` and `\nu=(\nu^{(1)},...,\nu^{(n)})`
-        then `\mu` dominates `\nu` if
+        Given partition tuples `\mu=(\mu^{(1)},...,\mu^{(m)})` and
+        `\nu=(\nu^{(1)},...,\nu^{(n)})` then `\mu` dominates `\nu` if
 
         .. MATH::
 
             \sum_{k=1}^{l-1} |\mu^{(k)}| +\sum_{r \geq 1} \mu^{(l)}_r
-               \geq \sum_{k=1}^{l-1} |\nu^{(k)}| + \sum_{r \geq 1} \nu^{(l)}_r
+               \geq \sum_{k=1}^{l-1} |\nu^{(k)}| + \sum_{r \geq 1} \nu^{(l)}_r.
 
         EXAMPLES::
 
-            sage: mu=PartitionTuple([[1,1],[2],[2,1]])
-            sage: nu=PartitionTuple([[1,1],[1,1],[2,1]])
+            sage: mu = PartitionTuple([[1,1],[2],[2,1]])
+            sage: nu = PartitionTuple([[1,1],[1,1],[2,1]])
             sage: mu.dominates(mu)
             True
             sage: mu.dominates(nu)
             True
             sage: nu.dominates(mu)
             False
-            sage: tau=PartitionTuple([[],[2,1],[]])
+            sage: tau = PartitionTuple([[],[2,1],[]])
             sage: tau.dominates([[2,1],[],[]])
             False
             sage: tau.dominates([[],[],[2,1]])
@@ -1059,24 +1062,28 @@ class PartitionTuple(CombinatorialElement):
 
         if mu == self:
             return True
-        level = 0
         ssum = 0  # sum of successive rows in self
         musum = 0  # sum of successive rows in self
-        while level < self.level() and level < mu.level():
+        minlevel = min(self.level(), mu.level())
+        for level in range(minlevel):
             row = 0
-            while row < len(self[level]) and row < len(mu[level]):
-                ssum += self[level][row]
-                musum += mu[level][row]
+            selflevel = self[level]
+            mulevel = mu[level]
+            selflevlen = len(selflevel)
+            mulevlen = len(mulevel)
+            minlen = min(selflevlen, mulevlen)
+            while row < minlen:
+                ssum += selflevel[row]
+                musum += mulevel[row]
                 if musum > ssum:
                     return False
                 row += 1
-            if row < len(self[level]):
-                ssum += sum(self[level][row:])
-            elif row < len(mu[level]):
-                musum += sum(mu[level][row:])
+            if row < selflevlen:
+                ssum += sum(selflevel[row:])
+            elif row < mulevlen:
+                musum += sum(mulevel[row:])
                 if musum > ssum:
                     return False
-            level += 1
         return True
 
     @cached_method
@@ -1912,7 +1919,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         if mu == [] or mu == () or mu == [[]]:
             if mu not in self:
                 raise ValueError('{} is not a {}'.format(mu, self))
-            return self.element_class(self, [_Partitions([])])
+            return self.element_class(self, [_Partitions([])], check=False)
 
         # As partitions are 1-tuples of partitions we need to treat them separately
         try:
@@ -2419,10 +2426,14 @@ class PartitionTuples_level_size(PartitionTuples):
              ([], [], [2]),
              ([], [], [1, 1])]
         """
+        if self._level == 0:
+            if self._size == 0:
+                yield self._element_constructor_([])
+            return
         p = [Partitions_n(i) for i in range(self._size+1)]
-        for iv in IntegerVectors(self._size, self._level):
+        for iv in integer_vectors_nk_fast_iter(self._size, self._level):
             for cp in itertools.product(*[p[i] for i in iv]):
-                yield self._element_constructor_(cp)
+                yield self.element_class(self, [_Partitions.element_class(_Partitions, la) for la in cp], check=False)
 
     def _an_element_(self):
         """
@@ -2633,7 +2644,7 @@ class RegularPartitionTuples_all(RegularPartitionTuples):
         for N in NN:
             for size in range(N+1):
                 for mu in RegularPartitionTuples_level_size(N-size+1, size, self._ell):
-                    yield self.element_class(self, list(mu))
+                    yield self.element_class(self, list(mu), check=False)
 
 
 class RegularPartitionTuples_level(PartitionTuples_level):
@@ -2851,7 +2862,7 @@ class RegularPartitionTuples_level(PartitionTuples_level):
         """
         for size in NN:
             for mu in RegularPartitionTuples_level_size(self._level, size, self._ell):
-                yield self.element_class(self, list(mu))
+                yield self.element_class(self, list(mu), check=False)
 
 
 class RegularPartitionTuples_size(RegularPartitionTuples):
@@ -2938,7 +2949,7 @@ class RegularPartitionTuples_size(RegularPartitionTuples):
         """
         for level in PositiveIntegers():
             for mu in RegularPartitionTuples_level_size(level, self._size, self._ell):
-                yield self.element_class(self, list(mu))
+                yield self.element_class(self, list(mu), check=False)
 
 
 class RegularPartitionTuples_level_size(PartitionTuples_level_size):
@@ -3085,11 +3096,15 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
              ([], [], [3]),
              ([], [], [2, 1])]
         """
-        for iv in IntegerVectors(self._size, self._level):
+        if self._level == 0:
+            if self._size == 0:
+                yield self._element_constructor_([])
+            return
+        for iv in integer_vectors_nk_fast_iter(self._size, self._level):
             p = [RegularPartitions_n(v, ell) if ell > 0 else Partitions_n(v)
                  for v, ell in zip(iv, self._ell)]
             for cp in itertools.product(*[p[i] for i in range(self._level)]):
-                yield self._element_constructor_(cp)
+                yield self.element_class(self, [_Partitions.element_class(_Partitions, la) for la in cp], check=False)
 
     def _an_element_(self):
         """
