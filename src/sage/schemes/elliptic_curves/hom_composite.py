@@ -194,11 +194,11 @@ def _compute_factored_isogeny_prime_power(P, l, n, split=.8, velu_sqrt_bound=Non
         sage: phis = hom_composite._compute_factored_isogeny_prime_power(P,l,n)
         sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0)  # long time -- about 10s
         True
-        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.1)
+        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.1)  # long time (:issue:`39569`)
         True
-        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.5)
+        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.5)  # long time (:issue:`39569`)
         True
-        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.9)
+        sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=0.9)  # long time (:issue:`39569`)
         True
         sage: phis == hom_composite._compute_factored_isogeny_prime_power(P,l,n, split=1)
         True

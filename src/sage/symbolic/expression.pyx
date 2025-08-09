@@ -13221,7 +13221,7 @@ cdef class Expression(Expression_abc):
         answer::
 
             sage: f = ln(1+4/5*sin(x))
-            sage: integrate(f, x, -3.1415, 3.1415)  # random
+            sage: integrate(f, x, -3.1415, 3.1415)  # random, long time (:issue:`39569`)
             integrate(log(4/5*sin(x) + 1), x, -3.14150000000000,
             3.14150000000000)
             sage: # needs sage.libs.giac

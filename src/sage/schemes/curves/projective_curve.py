@@ -1804,8 +1804,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: G0 = C.fundamental_group()                    # needs sirocco
-            sage: G.is_isomorphic(G0)                           # needs sirocco
+            sage: G0 = C.fundamental_group()                    # needs sirocco, long time (:issue:`39569`)
+            sage: G.is_isomorphic(G0)                           # needs sirocco, long time (:issue:`39569`)
             True
             sage: C = P.curve(z)
             sage: C.fundamental_group()                         # needs sirocco
