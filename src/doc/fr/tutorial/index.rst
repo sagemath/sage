@@ -2,6 +2,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+=================================
 Bienvenue dans le tutoriel Sage !
 =================================
 
@@ -45,8 +46,8 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    appendix
    bibliography
 
-Index et tables
-===============
+Index et Recherche
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`
