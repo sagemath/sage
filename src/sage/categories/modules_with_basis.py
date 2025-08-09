@@ -1483,6 +1483,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 else:
                     basis_elements = []
                     basis_iter = iter(basis)
+
                 def _g(coefficients):
                     nonlocal self, basis_elements, basis_iter
                     while len(basis_elements) < len(coefficients):
