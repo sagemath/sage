@@ -21,6 +21,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
 
 cdef class BooleanPolynomial(MPolynomial):
     cdef PBPoly _pbpoly
+    cdef object _hamming_weight
     cpdef _add_(self, other)
     cpdef _mul_(self, other)
 
