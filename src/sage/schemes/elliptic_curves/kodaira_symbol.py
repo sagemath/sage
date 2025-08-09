@@ -7,7 +7,7 @@ Kodaira symbols encode the type of reduction of an elliptic curve at a
 The standard notation for Kodaira Symbols is as a string which is one
 of `\rm{I}_m`, `\rm{II}`, `\rm{III}`, `\rm{IV}`, `\rm{I}^*_m`,
 `\rm{II}^*`, `\rm{III}^*`, `\rm{IV}^*`, where `m` denotes a
-nonnegative integer.  These have been encoded by single integers by
+non-negative integer.  These have been encoded by single integers by
 different people.  For convenience we give here the conversion table
 between strings, the eclib coding and the PARI encoding.
 
@@ -41,6 +41,8 @@ AUTHORS:
 - David Roe       <roed@math.harvard.edu>
 
 - John Cremona
+
+- Katie Ahrens (unicode art method)
 """
 
 # ****************************************************************************
@@ -62,6 +64,7 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.integer import Integer
+from sage.env import SAGE_ROOT
 import weakref
 
 
@@ -74,13 +77,14 @@ class KodairaSymbol_class(SageObject):
     Users should use the ``KodairaSymbol()`` function to construct
     Kodaira Symbols rather than use the class constructor directly.
     """
+
     def __init__(self, symbol):
         r"""
         Constructor for Kodaira Symbol class.
 
         INPUT:
 
-        - ``symbol`` -- string or integer; the string should be a
+        - ``symbol`` (string or integer) -- The string should be a
           standard string representation (e.g. III*) of a Kodaira
           symbol, which will be parsed.  Alternatively, use the PARI
           encoding of Kodaira symbols as integers.
@@ -306,6 +310,65 @@ class KodairaSymbol_class(SageObject):
         """
         return self._pari
 
+    def _unicode_art_(self):
+        r"""
+        Return a unicode art representation of the Kodaira symbol.
+
+        EXAMPLES::
+
+            sage: unicode_art(KodairaSymbol('In'))
+            _/___\_
+            /  1  \ 1
+            :     :
+            :     :
+            _\____/_
+            1 \  / 1
+               1
+            sage: unicode_art(KodairaSymbol('III*'))
+            \   \ / 3
+            1 \ 2/ \
+              / \   \
+             /   \  |\
+                    |
+             _______|
+                2   |
+                   4|
+                    |/
+               \/   /
+               /\  /|
+             1/ 2\/3|
+                /   /\
+        """
+        from sage.typeset.unicode_art import unicode_art
+        string = str(self)
+        if string.startswith('I') and list(string)[1] == '0' and list(string)[-1] == '*':
+            #I_0*
+            return unicode_art("1\n\\ |\n \\|\n\\ |\\\n1\\|\n  \\\n  |\n  |\n  |/\n1/| /\n/ |/\n /|\n/ |\n1")
+        elif string.startswith('I') and list(string)[1].isdigit() and list(string)[-1] == '*':
+            #I_n*
+            return unicode_art("   \\ 1\n    \\\n  \\  \\\n 1 \\  \\\n    \\  \\/\n     \\/ \\\n    / \\\n \\ / 2\n  /\\\n /  \\\n    2 \\\n       :\n \\  2 /\n  \\  /\n   \\/\n   /\\\n  /  \\2\n      \\/\n     / \\\n   1/   \\/\n   /   / \\\n      /   \\\n     /\n    /")
+        elif string.startswith('I') and list(string)[1].isdigit():
+            #I_n
+            return unicode_art(" _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1")
+        elif string == "In":
+            #also I_n
+            return unicode_art(" _/___\\_\n /  1  \\ 1\n :     :\n :     :\n_\\____/_\n1 \\  /  1\n    1")
+            #string = "I_n"
+        elif string == "II":
+            return unicode_art("\\     /\n \\   /\n  \\ /\n   |\n1  |")
+        elif string == "III":
+            return unicode_art("  \\     /\n   \\   /\n    \\ /\n     |\n     |\n    /\\\n   /  \\\n1 /    \\ 1")
+        elif string == "IV":
+            return unicode_art(" \\    /\n  \\  /\n1__\\/__\n   /\\\n1 /  \\ 1\n /    \\")
+        elif string == "IV*":
+            return unicode_art("     \\ /\n    /  \\\n   /     \\|\n  /       |\\\n          |\n 1|       |\n _|_______|\n  |   2   |\n          |\n          |\n        3 |/\n  \\       /\n1  \\    / |\n     \\/ 2 |\n     /\\")
+        elif string == "III*":
+            return unicode_art("  \\   \\ / 3\n1  \\ 2/ \\\n   / \\   \\\n  /   \\  |\\\n         |\n  _______|\n     2   |\n        4|\n         |/\n    \\/   /\n    /\\  /|\n  1/ 2\\/3|\n  /   /\\")
+        elif string == "II*":
+            return unicode_art(" \\   2/\\   \\/ 5\n1  \\/  3\\4/ \\\n  / \\  / \\   \\\n /   /\\   \\  |\\\n             |\n             |\n             |\n             |\n       \\     |/\n        \\   /|\n        2\\ /4\n         / \\")
+        else:
+            return
+
 
 _ks_cache = {}
 
@@ -316,9 +379,9 @@ def KodairaSymbol(symbol):
 
     INPUT:
 
-    - ``symbol`` -- string or integer; either a string of the form
+    - ``symbol`` (string or integer) -- Either a string of the form
       "I0", "I1", ..., "In", "II", "III", "IV", "I0*", "I1*", ..., "In*", "II*", "III*", or "IV*",
-      or an integer encoding a Kodaira symbol using PARI's conventions
+      or an integer encoding a Kodaira symbol using PARI's conventions.
 
     OUTPUT:
 
@@ -333,11 +396,20 @@ def KodairaSymbol(symbol):
         [I0*, II*, III*, IV*, I1*, I2*, I3*, I4*, I5*]
         sage: all(KS(str(KS(n))) == KS(n) for n in range(-10,10) if n != 0)
         True
+        sage: unicode_art(KS(2))
+         \     /
+          \   /
+           \ /
+            |
+         1  |
+
     """
+
     if symbol in _ks_cache:
         ks = _ks_cache[symbol]()
         if ks is not None:
             return ks
+
     ks = KodairaSymbol_class(symbol)
     _ks_cache[symbol] = weakref.ref(ks)
     return ks
