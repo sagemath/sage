@@ -18,6 +18,8 @@ from sage.modular.arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
                                          ArithmeticSubgroup_Permutation,
                                          CongruenceSubgroup, FareySymbol)
 
+from .hecke_character import HeckeCharacterGroup
+
 from sage.modular.cusps import Cusp, Cusps
 
 from sage.modular.etaproducts import (EtaGroup, EtaProduct, EtaGroupElement,

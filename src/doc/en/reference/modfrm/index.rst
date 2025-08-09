@@ -86,6 +86,7 @@ Miscellaneous Modules (to be sorted)
    sage/modular/cusps
    sage/modular/dims
    sage/modular/buzzard
+   sage/modular/hecke_character
 
    sage/modular/local_comp/local_comp
    sage/modular/local_comp/smoothchar

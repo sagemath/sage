@@ -9,6 +9,7 @@ py.install_sources(
   'dims.py',
   'dirichlet.py',
   'etaproducts.py',
+  'hecke_character.py',
   'hypergeometric_misc.pxd',
   'hypergeometric_motive.py',
   'multiple_zeta.py',
