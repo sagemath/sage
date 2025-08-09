@@ -899,6 +899,7 @@ from sage import categories
 from sage.categories.algebras import Algebras
 # Some fixed categories, in order to avoid the function call overhead
 _FiniteSets = categories.sets_cat.Sets().Finite()
+_EnumeratedSets = categories.sets_cat.Sets().Enumerated()
 _InfiniteSets = categories.sets_cat.Sets().Infinite()
 _EuclideanDomains = categories.euclidean_domains.EuclideanDomains()
 _UniqueFactorizationDomains = categories.unique_factorization_domains.UniqueFactorizationDomains()
@@ -950,8 +951,7 @@ def polynomial_default_category(base_ring_category, n_variables):
     if n_variables:
         # here we assume the base ring to be nonzero
         category = category.Infinite()
-        if base_ring_category.is_subcategory(_FiniteSets) and n_variables == 1:
-            # base_ring_category.is_subcategory(_EnumeratedSets) suffices but this is not yet implemented
+        if base_ring_category.is_subcategory(_EnumeratedSets) and n_variables == 1:
             category = category.Enumerated()
     else:
         if base_ring_category.is_subcategory(_Fields):

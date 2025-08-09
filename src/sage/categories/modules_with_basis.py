@@ -1442,10 +1442,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
         def __iter__(self):
             r"""
             Return iterator over the elements of this free module.
-            The base ring must be finite and the basis must be countable.
-
-            In the future, the implementation may be generalized
-            to require the base ring to be countable only.
+            The base ring must be countable and the basis must be countable.
 
             EXAMPLES::
 
@@ -1459,22 +1456,52 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: R.<x> = Integers(1)[]
                 sage: [*R]
                 [0]
-                sage: R.<x> = QQ[]
-                sage: list(islice(iter(R), 10))  # when this is implemented add Enumerated() to category(R)
-                Traceback (most recent call last):
-                ...
-                NotImplementedError: iteration over infinite base ring not yet implemented
                 sage: R.<x> = LaurentPolynomialRing(Zmod(4))
                 sage: list(islice(iter(R), 20))
                 [0, 1, 2, 3, x, 1 + x, 2 + x, 3 + x, 2*x, 1 + 2*x, 2 + 2*x, 3 + 2*x,
                  3*x, 1 + 3*x, 2 + 3*x, 3 + 3*x, x^-1, x^-1 + 1, x^-1 + 2, x^-1 + 3]
+                sage: list(islice(iter(QQ^2), 20))
+                [(0, 0), (1, 0), (0, 1), (-1, 0), (1, 1), (0, -1), (1/2, 0), (-1, 1), (1, -1), (0, 1/2),
+                 (-1/2, 0), (1/2, 1), (-1, -1), (1, 1/2), (0, -1/2), (2, 0), (-1/2, 1), (1/2, -1), (-1, 1/2), (1, -1/2)]
+                sage: list(islice(iter(QQ[x]), 20))
+                [1, -1, x, 1/2, x + 1, x^2, -1/2, -x, x^2 + 1, x^3,
+                 2, x - 1, x^2 + x, x^3 + 1, x^4, -2, -x + 1, -x^2, x^3 + x, x^4 + 1]
             """
             from sage.rings.infinity import Infinity
             R = self.base_ring()
-            if R.cardinality() == Infinity:
-                raise NotImplementedError("iteration over infinite base ring not yet implemented")
-            iters = []
             zero = R.zero()
+            if R.cardinality() == Infinity:
+                from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+                from sage.sets.family import Family
+                from sage.sets.set import Set
+                R_nonzero = Set(R) - Set([zero])
+                basis = self.basis()
+                from sage.structure.sequence import Sequence_generic
+                if isinstance(basis, (list, tuple, Sequence_generic)):
+                    basis_elements = basis
+                    basis_iter = None
+                else:
+                    basis_elements = []
+                    basis_iter = iter(basis)
+                def _g(coefficients):
+                    nonlocal self, basis_elements, basis_iter
+                    while len(basis_elements) < len(coefficients):
+                        x = next(basis_iter)
+                        basis_elements.append(x)
+                    return self.sum([coefficient * basis_element for coefficient, basis_element
+                                     in zip(coefficients, basis_elements)])
+                from .cartesian_product import cartesian_product
+                if isinstance(basis, (list, tuple)) or basis.is_finite():
+                    yield from Family(cartesian_product([R] * len(basis)), _g)
+                    # alternatively: yield from DisjointUnionEnumeratedSets(Family(range(len(basis)), _f))
+                else:
+                    def _f(d):
+                        nonlocal self, R, R_nonzero, _g
+                        return Family(cartesian_product([R] * d + [R_nonzero]), _g, lazy=True)
+                    from sage.rings.semirings.non_negative_integer_semiring import NN
+                    yield from DisjointUnionEnumeratedSets(Family(NN, _f))
+                assert False, "this should not be reached"
+            iters = []
             v = []
             n = 0
             yield self.zero()

@@ -18,6 +18,7 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.family import Family
+from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
@@ -304,10 +305,14 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             # try to guess if the result is infinite or not.
             if self._family in InfiniteEnumeratedSets():
                 category = InfiniteEnumeratedSets()
-            elif self._family.last().cardinality() == Infinity:
-                category = InfiniteEnumeratedSets()
             else:
-                category = FiniteEnumeratedSets()
+                if hasattr(self._family, 'first'):
+                    if self._family.first().cardinality() == Infinity:
+                        category = InfiniteEnumeratedSets()
+                    else:
+                        category = FiniteEnumeratedSets()
+                else:
+                    category = EnumeratedSets()
         Parent.__init__(self, facade=facade, category=category)
 
     def _repr_(self):

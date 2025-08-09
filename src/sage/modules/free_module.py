@@ -2479,9 +2479,9 @@ class FreeModule_generic(Module_free_ambient):
             sage: [sum(o <= b and m <= b for o,m in norms) for b in range(8)]  # did not miss any
             [1, 11, 61, 231, 681, 1683, 3653, 7183]
         """
-        G = self.gens()
-        if not G:
-            yield self(0)
+        n = self.rank()
+        if n == 0:
+            yield self.zero()
             return
 
         R = self.base_ring()
@@ -2507,7 +2507,6 @@ class FreeModule_generic(Module_free_ambient):
                                                      norm - max_ - lnorm, rmax):
                                         for mid in (+max_, -max_):
                                             yield left + (mid,) + right
-            n = len(G)
             for norm in itertools.count(0):
                 mm = (norm + n - 1) // n
                 for max_ in range(mm, norm + 1):

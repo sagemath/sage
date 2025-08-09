@@ -485,6 +485,17 @@ class Sequence_generic(SageObject, list):
         list.__init__(self, x)
         self._is_immutable = immutable
 
+    def is_finite(self) -> bool:
+        """
+        Return ``True``.
+
+        EXAMPLE::
+
+            sage: Sequence([1, 2, 3]).is_finite()
+            True
+        """
+        return True
+
     def reverse(self):
         """
         Reverse the elements of self, in place.
