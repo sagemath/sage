@@ -148,3 +148,23 @@ def jacobian(functions, variables):
         variables = [variables]
 
     return matrix([[diff(f, v) for v in variables] for f in functions])
+
+
+def hessian(function, variables):
+    """
+    Return the Hessian matrix, which is the matrix of second-order
+    partial derivatives of a scalar-valued function.
+
+    EXAMPLES::
+
+        sage: x,y = var('x,y')
+        sage: g=x^2-2*x*y
+        sage: hessian(g, (x,y))
+        [ 2 -2]
+        [-2  0]
+    """
+    if not isinstance(variables, (tuple, list, Vector)):
+        variables = [variables]
+
+    jacobian_matrix = jacobian(function, variables)
+    return matrix([[diff(jacobian_matrix[0, j], v) for j, v in enumerate(variables)] for v in variables])
