@@ -816,7 +816,7 @@ class NotImplementedOZero(NotImplementedError):
             raise ValueError("specify either 'asymptotic_ring' or 'var'")
 
         if var is None:
-            var = ', '.join(str(g) for g in asymptotic_ring.gens())
+            var = ', '.join(asymptotic_ring.variable_names())
         message = ('got {}\n'.format(('{} + '.format(exact_part) if exact_part else '')
                                      + 'O(0)') +
                    'The error term O(0) '
@@ -887,7 +887,7 @@ class NotImplementedBZero(NotImplementedError):
             raise ValueError("specify either 'asymptotic_ring' or 'var'")
 
         if var is None:
-            var = ', '.join(str(g) for g in asymptotic_ring.gens())
+            var = ', '.join(asymptotic_ring.variable_names())
         message = ('got {}\n'.format(('{} + '.format(exact_part) if exact_part else '')
                                      + 'B(0)') +
                    'The error term B(0) '
