@@ -401,6 +401,42 @@ cdef class IntegerWrapper(Integer):
             Element.__init__(self, parent=parent)
         Integer.__init__(self, x, base=base)
 
+
+cdef inline Integer move_integer_from_mpz(mpz_t x):
+    """
+    Construct an :class:`Integer` by moving it from a ``mpz_t`` object.
+
+    This function is intend to be used as follows::
+
+        cdef mpz_t x  # local variable
+        mpz_init(x)
+        sig_on()
+        mpz_SOMETHING_MUTATE_X(x, ...)
+        sig_off()
+        return move_integer_from_mpz(x)  # no need mpz_clear(x)
+
+    The reason to do so is explained in :issue:`24986`:
+    if the user interrupts the operation, ``x`` may be in an inconsistent state,
+    as such we don't want to call ``fast_tp_dealloc`` on it, because
+    putting a corrupted object in the integer pool may lead to incorrect results
+    afterwards.
+
+    Here we do not call ``mpz_clear(x)`` either, but double ``free()``
+    is also undesirable. Compared to these issues, memory leak is the least problematic.
+
+    In this case:
+
+    - if ``sig_on()`` throws, :func:`move_integer_from_mpz` will not be called, as such
+      ``x`` will not be cleared;
+
+    - if ``sig_on()`` does not throw, :func:`move_integer_from_mpz` will call ``mpz_clear(x)``.
+    """
+    cdef Integer y = <Integer>PY_NEW(Integer)
+    mpz_swap(y.value, x)
+    mpz_clear(x)
+    return y
+
+
 cdef class Integer(sage.structure.element.EuclideanDomainElement):
     r"""
     The :class:`Integer` class represents arbitrary precision
@@ -2299,14 +2335,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         elif n == 1:
             return self
 
-        cdef Integer x
         cdef Rational q
+        cdef mpz_t x
         if n > 0:
-            x = PY_NEW(Integer)
+            mpz_init(x)
             sig_on()
-            mpz_pow_ui(x.value, self.value, n)
+            mpz_pow_ui(x, self.value, n)
             sig_off()
-            return x
+            return move_integer_from_mpz(x)
         else:
             if mpz_sgn(self.value) == 0:
                 raise ZeroDivisionError("rational division by zero")
