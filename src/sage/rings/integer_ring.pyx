@@ -297,7 +297,7 @@ cdef class IntegerRing_class(CommutativeRing):
         sage: list(ZZ)
         Traceback (most recent call last):
         ...
-        NotImplementedError: len() of an infinite set
+        NotImplementedError: infinite set
 
         sage: ZZ.is_finite()
         False

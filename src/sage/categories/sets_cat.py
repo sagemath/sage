@@ -1911,6 +1911,22 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 """
                 return False
 
+            def __len__(self):
+                """
+                Return the length.
+
+                As this is not defined for infinite sets,
+                this raises a :exc:`ValueError`.
+
+                EXAMPLES::
+
+                    sage: len(QQ)
+                    Traceback (most recent call last):
+                    ...
+                    ValueError: infinite set
+                """
+                raise ValueError('infinite set')
+
             def is_empty(self):
                 r"""
                 Return whether this set is empty.

@@ -663,7 +663,7 @@ class EnumeratedSets(CategoryWithAxiom):
                 sage: list(MyIntegers)  # indirect test
                 Traceback (most recent call last):
                 ...
-                NotImplementedError
+                NotImplementedError: infinite set
             """
             try:
                 if self._list is not None:
