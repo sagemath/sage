@@ -56,28 +56,31 @@ cdef class GapElement(RingElement):
 
     cpdef GapElement deepcopy(self, bint mut)
 
-cdef class GapElement_Integer(GapElement):
+cdef class GapElement_with_hash(GapElement):
     pass
 
-cdef class GapElement_Rational(GapElement):
+cdef class GapElement_Integer(GapElement_with_hash):
     pass
 
-cdef class GapElement_IntegerMod(GapElement):
+cdef class GapElement_Rational(GapElement_with_hash):
+    pass
+
+cdef class GapElement_IntegerMod(GapElement_with_hash):
     cpdef GapElement_Integer lift(self)
 
-cdef class GapElement_FiniteField(GapElement):
+cdef class GapElement_FiniteField(GapElement_with_hash):
     cpdef GapElement_Integer lift(self)
 
-cdef class GapElement_Cyclotomic(GapElement):
+cdef class GapElement_Cyclotomic(GapElement_with_hash):
     pass
 
 cdef class GapElement_Ring(GapElement):
     pass
 
-cdef class GapElement_String(GapElement):
+cdef class GapElement_String(GapElement_with_hash):
     pass
 
-cdef class GapElement_Boolean(GapElement):
+cdef class GapElement_Boolean(GapElement_with_hash):
     pass
 
 cdef class GapElement_Function(GapElement):
@@ -96,5 +99,5 @@ cdef class GapElement_RecordIterator():
 cdef class GapElement_List(GapElement):
     pass
 
-cdef class GapElement_Permutation(GapElement):
+cdef class GapElement_Permutation(GapElement_with_hash):
     pass
