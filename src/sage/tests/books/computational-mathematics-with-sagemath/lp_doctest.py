@@ -187,7 +187,7 @@ Sage example in ./lp.tex, line 681::
 
 Sage example in ./lp.tex, line 684::
 
-  sage: p.set_objective(p.sum( f[s,u] for u in g.neighbors_out(s)))
+  sage: p.set_objective(p.sum( f[s,u] for u in g.neighbors_out(s)) - p.sum(f[v,s] for v in g.neighbors_in(s)))
 
 Sage example in ./lp.tex, line 687::
 
