@@ -3,6 +3,7 @@ py.install_sources(
   'abc.py',
   'all.py',
   'all__sagemath_polyhedra.py',
+  'asir.py',
   'axiom.py',
   'ecm.py',
   'expect.py',

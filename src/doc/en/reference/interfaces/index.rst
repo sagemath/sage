@@ -65,6 +65,7 @@ and testing to make sure nothing funny is going on).
    sage/interfaces/sagespawn
    sage/interfaces/abc
    sage/interfaces/axiom
+   sage/interfaces/asir
    sage/interfaces/ecm
    sage/interfaces/four_ti_2
    sage/interfaces/fricas
