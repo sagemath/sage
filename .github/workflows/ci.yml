@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Prepare container
         run: |
-          if [ "${{ matrix.container }}" = "alpine" ]; then
+          if [[ "${{ matrix.container }}" == alpine* ]]; then
             apk add --no-cache bash
           fi
 
