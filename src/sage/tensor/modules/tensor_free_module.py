@@ -338,7 +338,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
 
     Element = FreeModuleTensor
 
-    def __init__(self, fmodule, tensor_type, name=None, latex_name=None, category=None):
+    def __init__(self, fmodule, tensor_type=None, name=None, latex_name=None, category=None):
         r"""
         TESTS::
 
@@ -346,26 +346,47 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: T = M.tensor_module(2, 3)
             sage: TestSuite(T).run()
         """
-        self._fmodule = fmodule
-        self._tensor_type = tuple(tensor_type)
-        ring = fmodule._ring
-        rank = pow(fmodule._rank, tensor_type[0] + tensor_type[1])
-        if self._tensor_type == (0,1):  # case of the dual
+        from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
+        if not isinstance(fmodule, (list, tuple)): # for M.tensor((_,_)) syntax
+            self._fmodule = (fmodule,)
+            self._tensor_type = tuple(tensor_type)
+            self._module_set = (fmodule,) * tensor_type[0] + (fmodule.dual(),) * tensor_type[1]
+            rank = fmodule._rank * (tensor_type[0] + tensor_type[1])
+        else:
+            rank = 1
+            fmodules = []
+            for module in fmodule:
+                rank *= module._rank
+                if module not in fmodules and module.dual() not in fmodules:
+                    fmodules.append(module if isinstance(module, FiniteRankFreeModule) else module.dual())
+            self._module_set = tuple(fmodule) # tuple of all modules in the tensor product (ordered)
+            self._fmodule = tuple(fmodules) # tuple of all unique modules in the tensor product
+        ring = self._fmodule[0]._ring
+
+        if hasattr(self, '_tensor_type') and self._tensor_type == (0,1):  # case of the dual
             category = Modules(ring).FiniteDimensional().or_subcategory(category)
-            if name is None and fmodule._name is not None:
-                name = fmodule._name + '*'
-            if latex_name is None and fmodule._latex_name is not None:
-                latex_name = fmodule._latex_name + r'^*'
+            if name is None and self._fmodule[0]._name is not None:
+                name = self._fmodule[0]._name + '*'
+            if latex_name is None and self._fmodule[0]._latex_name is not None:
+                latex_name = self._fmodule[0]._latex_name + r'^*'
         else:
             category = Modules(ring).FiniteDimensional().TensorProducts().or_subcategory(category)
-            if name is None and fmodule._name is not None:
-                name = 'T^' + str(self._tensor_type) + '(' + fmodule._name + \
-                       ')'
-            if latex_name is None and fmodule._latex_name is not None:
-                latex_name = r'T^{' + str(self._tensor_type) + r'}\left(' + \
-                             fmodule._latex_name + r'\right)'
-        super().__init__(fmodule._ring, rank, name=name, latex_name=latex_name, category=category)
-        fmodule._all_modules.add(self)
+            if all(module._name for module in self._fmodule):
+                if len(self._fmodule) == 1:
+                    name = 'T^({})({})'.format(self._tensor_type, self._fmodule[0]._name)
+                else:
+                    from sage.typeset.unicode_characters import unicode_otimes
+                    name = 'T({})'.format(unicode_otimes.join(module._name for module in self._module_set))
+
+            if all(module._latex_name for module in self._fmodule):
+                if len(self._fmodule) == 1:
+                    latex_name = r'T^{' + str(self._tensor_type) + r'}\left(' + \
+                                self._fmodule[0]._latex_name + r'\right)'
+                else:
+                    latex_name = 'T({})'.format(r'\otimes'.join(module._latex_name for module in self._module_set))
+        super().__init__(ring, rank, name=name, latex_name=latex_name, category=category)
+        for module in self._fmodule:
+            module._all_modules.add(self)
 
     #### Parent Methods
 
@@ -409,7 +430,7 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
                     resu.add_comp(basis[0])[:] = mat
             else:
                 raise TypeError("cannot coerce the {}".format(endo) +
-                                " to an element of {}".format(self))
+                            " to an element of {}".format(self))
         elif isinstance(comp, AlternatingContrTensor):
             # coercion of an alternating contravariant tensor of degree
             # p to a type-(p,0) tensor:
@@ -474,12 +495,16 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
                 resu._components[basis] = comp.copy()
         else:
             # Standard construction:
-            resu = self.element_class(self._fmodule, self._tensor_type,
-                                      name=name, latex_name=latex_name,
-                                      sym=sym, antisym=antisym, parent=self)
+            if hasattr(self, '_tensor_type'):
+                resu = self.element_class(self._fmodule, self._tensor_type, name=name,
+                            latex_name=latex_name, sym=sym, antisym=antisym, parent=self)
+            else:
+                resu = self.element_class(self._fmodule, name=name, latex_name=latex_name, parent=self)
             if comp:
                 resu.set_comp(basis)[:] = comp
         return resu
+
+    element = _element_constructor_
 
     @cached_method
     def zero(self):
@@ -501,8 +526,10 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             True
         """
         resu = self._element_constructor_(name='zero', latex_name='0')
-        for basis in self._fmodule._known_bases:
-            resu._add_comp_unsafe(basis)
+        all_basis = tuple()
+        for module in self._fmodule:
+            all_basis += (module._def_basis,)
+        resu._add_comp_unsafe(all_basis)
             # (since new components are initialized to zero)
         resu._is_zero = True # This element is certainly zero
         resu.set_immutable()
@@ -538,10 +565,10 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
         """
         resu = self([])
         # Make sure that the base module has a default basis
-        self._fmodule.an_element()
+        for module in self._fmodule: module.an_element()
         sindex = self._fmodule._sindex
         ind = [sindex for i in range(resu._tensor_rank)]
-        resu.set_comp()[ind] = self._fmodule._ring.an_element()
+        resu.set_comp()[ind] = self._ring.an_element()
         return resu
 
     def _coerce_map_from_(self, other):
@@ -642,8 +669,19 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             Free module of type-(1,1) tensors on the 2-dimensional vector space
              M over the Rational Field
         """
-        description = "Free module of type-({},{}) tensors on the {}".format(
-                     self._tensor_type[0], self._tensor_type[1], self._fmodule)
+        if len(self._fmodule) == 1:
+            description = "Free module of type-({},{}) tensors on the {}".format(
+                        self._tensor_type[0], self._tensor_type[1], self._fmodule[0])
+        else:
+            description = "Free module defined as "
+            from sage.typeset.unicode_characters import unicode_otimes
+            if any(module._name is None for module in self._module_set):
+                module_names = unicode_otimes.join(map(str, self._module_set))
+                description += "({})".format(module_names)
+            else:
+                module_names = unicode_otimes.join(module._name for module in self._module_set)
+                description += "({}) on the {}".format(module_names, self._ring)
+            
         return description
 
     def base_module(self):
@@ -666,7 +704,9 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: T.base_module() is M
             True
         """
-        return self._fmodule
+        if not hasattr(self, '_tensor_type'):
+            return self._fmodule
+        return self._fmodule[0]
 
     def tensor_type(self):
         r"""
@@ -684,6 +724,8 @@ class TensorFreeModule(ReflexiveModule_tensor, FiniteRankFreeModule_abstract):
             sage: T.tensor_type()
             (1, 2)
         """
+        if not hasattr(self, '_tensor_type'):
+            raise AttributeError("Tensor object has no attribute tensor type")
         return self._tensor_type
 
     @cached_method
