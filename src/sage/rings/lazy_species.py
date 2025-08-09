@@ -63,6 +63,7 @@ bi-point-determining graphs we use Corollary (4.6) in
 """
 from sage.arith.misc import divisors, multinomial
 from sage.functions.other import binomial, factorial
+from sage.libs.gap.libgap import libgap
 from sage.misc.lazy_list import lazy_list
 from sage.misc.misc_c import prod
 from sage.rings.integer_ring import ZZ
@@ -850,6 +851,97 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         F.define(P(coefficient))
         return F
 
+    def functorial_composition(self, *args):
+        r"""
+        Return the functorial composition of `F` and `G`.
+
+        This is defined on objects as `F\Box G[U] = F[G[U]` and on
+        bijections as `F\Box G[\sigma] = F[G[\sigma]]`.
+
+        Thus, `(F+G)\Box H = F\Box H + G\Box H`.  Moreover,
+        `(F\times G)\Box H = (F\Box H) \times (G\Box H)`.
+
+        The species of elements `X E` is a (left and right) neutral
+        element.
+
+        The species of sets is an absorbing element on the left, that
+        is, `E\Box G = E`.  Moreover, `F\Box E = |F[1]| E`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: F = L.Cycles()
+            sage: G = X^3
+            sage: F.functorial_composition(G)
+            (3*C_3+8*X*E_2+15*X^3) + O^7
+
+        Graphs::
+
+            sage: E = L.Sets()
+            sage: subsets = E^2
+            sage: pairs = E*E.restrict(2, 2)
+            sage: G = subsets.functorial_composition(pairs)
+            sage: G[5] - L.Graphs()[5]
+            0
+
+        Coverings::
+
+            sage: E = L.Sets()
+            sage: p = E^2
+            sage: pp = E * E.restrict(1)
+            sage: CovE = p.functorial_composition(pp)
+            sage: CovE.isotype_generating_series().truncate(5)  # long time
+            1 + 2*X + 6*X^2 + 40*X^3 + 1992*X^4
+            sage: oeis(CovE.isotype_generating_series()[:5])  # long time, optional -- internet
+            0: A000612: Number of P-equivalence classes of switching functions of n or fewer variables, divided by 2.
+
+            sage: Cov = CovE * E.inverse()
+            sage: Cov.isotype_generating_series().truncate(5)  # long time
+            1 + X + 4*X^2 + 34*X^3 + 1952*X^4
+            sage: oeis(Cov.isotype_generating_series()[:5])  # long time, optional -- internet
+            0: A055621: Number of covers of an unlabeled n-set.
+
+        The functorial composition of two atomic species is not necessarily molecular::
+
+            sage: C = L.Cycles()
+            sage: C.restrict(6,6).functorial_composition(C.restrict(4,4))[4]
+            4*X^2*E_2 + 3*X*C_3 + 2*X^4
+
+        Another special case which is easy to understand::
+
+            sage: [(X^factorial(k)).functorial_composition(X^k) - factorial(factorial(k)-1)*X^k for k in range(4)]
+            [O^7, O^7, O^7, O^7]
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: E2 = E.restrict(2,2)
+            sage: E3 = E.restrict(3,3)
+            sage: (E3^2).functorial_composition(E2^2)
+            (E_2(X^2)+2*X*E_3) + O^7
+        """
+        return FunctorialCompositionSpeciesElement(self, *args)
+
+    def arithmetic_product(self, *args):
+        r"""
+        Return the arithmetic product of `F` and `G`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: Ep = E.restrict(1)
+            sage: Ep.arithmetic_product(Ep)
+            X + 2*E_2 + 2*E_3 + (2*E_4+Pb_4) + 2*E_5 + (2*E_6+2*P_6) + O^7
+            sage: C = L.Cycles()
+            sage: C.arithmetic_product(Ep)
+            X + 2*E_2 + (E_3+C_3) + (E_4+Pb_4+C_4) + (E_5+C_5) + (E_6+P_6+2*C_6) + O^7
+            sage: C.arithmetic_product(C)
+            X + 2*E_2 + 2*C_3 + (2*C_4+Pb_4) + 2*C_5 + 4*C_6 + O^7
+        """
+        return ArithmeticProductSpeciesElement(self, *args)
+
 
 class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
     r"""
@@ -1303,6 +1395,147 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
             h[2, 2, 1] - h[3, 1, 1] + 3*h[3, 2] + 2*h[4, 1] + 2*h[5]
         """
         return self._left.cycle_index_series()(*[G.cycle_index_series() for G in self._args])
+
+
+class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, left, *args):
+        r"""
+        Initialize the functorial composition of species.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: subsets = E^2
+            sage: pairs = E*E.restrict(2, 2)
+            sage: G = subsets.functorial_composition(pairs)
+            sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+        """
+        # Find a good parent for the result
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
+
+        args = [P(g) for g in args]
+        if len(args) > 1:
+            raise NotImplementedError("multisort functorial composition is not yet implemented")
+        G = args[0]
+        R = P._laurent_poly_ring
+
+        def coefficient(n):
+            S_n = SymmetricGroup(n)
+            G_n = G[n]
+            g_n = factorial(n) * G.generating_series()[n]
+            result = R.zero()
+            for f, c in left[g_n]:
+                f_g_n = factorial(g_n) / f.permutation_group()[0].cardinality()
+                if f_g_n == 1:  # f is the trivial action
+                    result += c * R(S_n)
+                else:
+                    l_G = [H
+                           for g, c in G_n if (H := g.permutation_group()[0]) != S_n
+                           for _ in range(c)]
+                    g_act = libgap.FactorCosetAction(S_n, l_G)
+                    gens, images = libgap.MappingGeneratorsImages(g_act)
+
+                    f_act = libgap.FactorCosetAction(SymmetricGroup(g_n),
+                                                     f.permutation_group()[0])
+                    f_images = [libgap.Image(f_act, image) for image in images]
+
+                    summands = []
+                    U = set(range(1, f_g_n + 1))
+                    while U:
+                        u = U.pop()
+                        OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
+                        summands.append(PermutationGroup(gap_group=OS["stabilizer"],
+                                                         domain=S_n.domain()))
+                        U.difference_update(OS["orbit"].sage())
+
+                    result += c * sum(map(R, summands))
+            return result
+
+        coeff_stream = Stream_function(coefficient, P._sparse, 0)
+        super().__init__(P, coeff_stream)
+        self._left = left
+        self._args = args
+
+    def generating_series(self):
+        r"""
+        Return the (exponential) generating series of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: subsets = E^2
+            sage: pairs = E*E.restrict(2, 2)
+            sage: G = subsets.functorial_composition(pairs)
+            sage: G.generating_series()[9]
+            536870912/2835
+        """
+        f = self._left.generating_series()
+        g = self._args[0].generating_series()
+
+        def coefficient(n):
+            fact = factorial(n)
+            g_count = g[n] * fact
+            f_count = f[g_count] * factorial(g_count)
+            return f_count / fact
+
+        return g.parent()(coefficient)
+
+
+class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, left, *args):
+        r"""
+        Initialize the arithmetic product of species.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: (X^2).arithmetic_product(X^2)
+            X^4 + O^7
+            sage: E = L.Sets()
+            sage: Ep = E.restrict(1)
+            sage: Ep.arithmetic_product(Ep)
+            X + 2*E_2 + 2*E_3 + (2*E_4+Pb_4) + 2*E_5 + (2*E_6+2*P_6) + O^7
+            sage: C = L.Cycles()
+            sage: G = C.arithmetic_product(Ep)
+            sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+        """
+        # Find a good parent for the result
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+        P = cm.common_parent(left.base_ring(), *[parent(g) for g in args])
+
+        args = [P(g) for g in args]
+        if len(args) > 1:
+            raise NotImplementedError("multisort arithmetic product is not yet implemented")
+        G = args[0]
+        R = P._laurent_poly_ring
+
+        def coefficient(n):
+            if not n:
+                return 0
+            result = R.zero()
+            for k in divisors(n):
+                for m1, c1 in left[k]:
+                    D1, _ = m1.permutation_group()
+                    if D1.is_trivial():
+                        result += c1 * G[n//k](R.term(m1))
+                    else:
+                        for m2, c2 in G[n//k]:
+                            D2, _ = m2.permutation_group()
+                            D = D1.gap().DirectProduct(D2)
+                            X = libgap.Cartesian(list(range(1, k+1)), list(range(k+1, k+n//k+1)))
+                            hom = libgap.ActionHomomorphism(D, X, libgap.OnTuples, "surjective")
+                            result += c1 * c2 * R(PermutationGroup(gap_group=libgap.Image(hom)))
+            return result
+
+        coeff_stream = Stream_function(coefficient, P._sparse, 0)
+        super().__init__(P, coeff_stream)
+        self._left = left
+        self._args = args
 
 
 class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
