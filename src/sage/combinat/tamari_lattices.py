@@ -47,6 +47,7 @@ are also available directly using the catalogue of posets, as follows::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
+from sage.categories.finite_lattice_posets import FiniteLatticePosets
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
 
 
@@ -172,7 +173,8 @@ def GeneralizedTamariLattice(a, b, m=1):
 
     OUTPUT:
 
-    - a finite lattice (special case of the alt `\nu`-Tamari lattices in [CC2023]_)
+    - a finite lattice (special case of the alt `\nu`-Tamari lattices
+      in [CC2023]_)
 
     The elements of the lattice are
     :func:`Dyck paths<sage.combinat.dyck_word.DyckWord>` in the
@@ -224,8 +226,18 @@ def GeneralizedTamariLattice(a, b, m=1):
     def covers(p):
         return [swap(p, i, m) for i in range(len(p) - 1)
                 if not p[i] and p[i + 1]]
+
+    # TODO check the exact best categories to use
+    if m == 0:  # generalized Dyck lattices
+        cat = FiniteLatticePosets().Distributive()
+    elif m == 1 and a == b + 1:  # Tamari lattices
+        cat = FiniteLatticePosets().Trim().CongruenceUniform()
+    else:
+        cat = FiniteLatticePosets()
+
     return LatticePoset({p: covers(p)
-                         for p in paths_in_triangle(a, b, a, b)}, check=False)
+                         for p in paths_in_triangle(a, b, a, b)},
+                        check=False, category=cat)
 
 
 def TamariLattice(n, m=1):

@@ -125,7 +125,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 _join_cache = WeakValueDictionary()
 
 
-HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie',
+                'Hecke', 'Dedekind', 'Stone']
 
 
 class Category(UniqueRepresentation, SageObject):
