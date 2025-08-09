@@ -221,7 +221,7 @@ Check that we can invert matrices::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.element import Element, parent
+from sage.structure.element import Element, ModuleElement, RingElement, parent
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.misc.misc_c import prod
 from sage.arith.power import generic_power
@@ -262,7 +262,7 @@ from sage.data_structures.stream import (
 )
 
 
-class LazyModuleElement(Element):
+class LazyModuleElement(ModuleElement):
     r"""
     A lazy sequence with a module structure given by term-wise
     addition and scalar multiplication.
@@ -3081,7 +3081,7 @@ class LazyModuleElement(Element):
         return self ** QQ((1, 2))  # == 1/2
 
 
-class LazyCauchyProductSeries(LazyModuleElement):
+class LazyCauchyProductSeries(LazyModuleElement, RingElement):
     r"""
     A class for series where multiplication is the Cauchy product.
 
@@ -3098,6 +3098,13 @@ class LazyCauchyProductSeries(LazyModuleElement):
         sage: f = 1 / (1 - z)
         sage: f
         1 + z + z^2 + O(z^3)
+
+    TESTS:
+
+    Check creation of polynomial ring over lazy power series ring::
+
+        sage: R.<x> = LazyPowerSeriesRing(QQ)
+        sage: T.<t> = R[]
     """
     def valuation(self):
         r"""
