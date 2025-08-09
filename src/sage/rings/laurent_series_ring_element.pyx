@@ -69,6 +69,7 @@ AUTHORS:
 
 from sage.rings.infinity import infinity
 
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 import sage.misc.latex
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_univariate
@@ -1338,7 +1339,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         if self.is_zero():
             return infinity
-        return self.__n
+        return ZZ(self.__n)
 
     def variable(self):
         """
