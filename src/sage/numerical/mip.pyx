@@ -1538,6 +1538,75 @@ cdef class MixedIntegerLinearProgram(SageObject):
             return self._backend_variable_value_ZZ(v, tolerance)
         return self.base_ring()(self._backend_variable_value(v, tolerance))
 
+    def constraints_values(self, indices=None):
+        r"""
+        Return values of constraints according to the current values of variables.
+
+        INPUT:
+
+         - ``indices`` -- select which constraint(s) values to return:
+
+          * ``None`` - return the list of all the constraints values
+          * an integer `i` - return the value of constraint `i`
+          * a list of integers - return the list of the
+            corresponding value of constraints
+
+        OUTPUT:
+
+        A list of numbers according to the input.
+
+        EXAMPLES::
+
+            sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.set_objective(5*x[1] + 4*x[2])
+            sage: p.add_constraint(6*x[1] + 4*x[2], max=24)
+            sage: p.add_constraint(x[1] + 2*x[2], max=6)
+            sage: p.add_constraint(-x[1] + x[2], max=1)
+            sage: p.add_constraint(x[2], max=2)
+            sage: p.solve()
+            21.0
+            sage: p.get_values(x)
+            {1: 3.0, 2: 1.5}
+            sage: p.constraints_values()
+            [24.0, 6.0, -1.5, 1.5]
+
+        TESTS:
+
+        Check if the integer input is outside the valid input range::
+
+            sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
+            sage: x = p.new_variable(nonnegative=True)
+            sage: p.set_objective(3*x[1] + 4*x[2])
+            sage: p.add_constraint(2*x[1] + x[2], max=20)
+            sage: p.add_constraint(4*x[1] + 3*x[2], max=6)
+            sage: p.solve()
+            8.0
+            sage: p.constraints_values(1)
+            [6.0]
+            sage: p.constraints_values(2)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid row index 2
+        """
+        from sage.rings.integer_ring import ZZ
+
+        # calculate value of constraint 'i'
+        def calculate_value(self, i):
+            s = 0
+            cons = self.constraints(i)[1]
+            for index, coeff in zip(cons[0], cons[1]):
+                s += var_val[index] * coeff
+            return s
+
+        var = [n for n in self._variables]
+        var_val = self.get_values([n for n in var])
+        if indices is None:
+            indices = [n for n in range(self.number_of_constraints())]
+        elif indices in ZZ:
+            indices = [ZZ(indices)]
+        return [calculate_value(self, i) for i in indices]
+
     def get_values(self, *lists, convert=None, tolerance=None):
         r"""
         Return values found by the previous call to ``solve()``.
