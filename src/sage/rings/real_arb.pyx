@@ -2177,7 +2177,7 @@ cdef class RealBall(RingElement):
             sage: RBF(1).add_error(-1)
             1.000000000000000
             sage: RBF(0).add_error(RBF(1, rad=2.)).endpoints()
-            (-3.00000000745059, 3.00000000745059)
+            (-3.00000000372530, 3.00000000372530)
         """
         cdef RealBall res = self._new()
         cdef RealBall my_ampl = self._parent(ampl)
@@ -2473,7 +2473,7 @@ cdef class RealBall(RingElement):
             0
 
             sage: RBF(0, rad=2.).min(RBF(0, rad=1.)).endpoints()
-            (-2.00000000651926, 1.00000000465662)
+            (-2.00000000186265, 1.00000000186265)
 
             sage: RBF(infinity).min(3, 1/3)
             [0.3333333333333333 +/- ...e-17]
@@ -2510,7 +2510,7 @@ cdef class RealBall(RingElement):
             0
 
             sage: RBF(0, rad=2.).max(RBF(0, rad=1.)).endpoints()
-            (-1.00000000465662, 2.00000000651926)
+            (-1.00000000186265, 2.00000000186265)
 
             sage: RBF(-infinity).max(-3, 1/3)
             [0.3333333333333333 +/- ...e-17]
