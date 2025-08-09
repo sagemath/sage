@@ -44,6 +44,7 @@ Recall an example from abelian groups::
 ###########################################################################
 
 from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
+from sage.misc.misc_c import prod
 
 
 def is_AbelianGroupElement(x):
@@ -115,15 +116,18 @@ class AbelianGroupElement(AbelianGroupElementBase):
             (1,2)
             sage: ap in Gp                                                              # needs sage.groups sage.libs.gap
             True
+            sage: (a * b).as_permutation()                                              # needs sage.libs.gap
+            (1,2)(3,4,5)
+            sage: (a * b * a).as_permutation()                                          # needs sage.libs.gap
+            (3,4,5)
+            sage: (a * b * a * b).as_permutation()                                      # needs sage.libs.gap
+            (3,5,4)
+            sage: (a * b * c * a * b).as_permutation()                                  # needs sage.libs.gap
+            (3,5,4)(6,7,8,9)
         """
-        from sage.libs.gap.libgap import libgap
         G = self.parent()
-        A = libgap.AbelianGroup(G.gens_orders())
-        phi = libgap.IsomorphismPermGroup(A)
-        gens = libgap.GeneratorsOfGroup(A)
-        L2 = libgap.Product([geni**Li for geni, Li in zip(gens, self.list())])
-        pg = libgap.Image(phi, L2)
-        return G.permutation_group()(pg)
+        H = G.permutation_group()
+        return H(prod(gen**order for gen, order in zip(H.gens(), self.list())))
 
     def word_problem(self, words):
         """
