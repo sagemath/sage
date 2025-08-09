@@ -1434,11 +1434,30 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             x + y
             sage: O(x).exact_part()
             0
+
+        Check that the exact part of an expansion can also be determined for
+        rings with custom element keys::
+
+            sage: from sage.data_structures.mutable_poset import MutablePoset
+            sage: from sage.rings.asymptotic.term_monoid import can_absorb, absorption
+            sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
+            sage: class CustomAsymptoticRing(AsymptoticRing):
+            ....:     @staticmethod
+            ....:     def _create_empty_summands_():
+            ....:         return MutablePoset(key=lambda element: element.growth**2,
+            ....:             can_merge=can_absorb, merge=absorption)
+            sage: AR = CustomAsymptoticRing(growth_group='n^QQ', coefficient_ring=QQ)
+            sage: n = AR.gen()
+            sage: expr = n^5 + n^3 + O(n^(-2))
+            sage: expr.exact_part()
+            n^5 + n^3
+            sage: list(expr.summands.keys())
+            [n^10, n^6, n^(-4)]
         """
         exact_terms = self.summands.copy()
         for term in self.summands.elements_topological():
             if not term.is_exact():
-                exact_terms.remove(term.growth)
+                exact_terms.remove(exact_terms.get_key(term))
 
         return self.parent(exact_terms)
 
@@ -2143,7 +2162,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         for term in self.summands.elements_topological():
             if not term.is_little_o_of_one():
                 large_terms.append(term)
-                expr_o.remove(term.growth)
+                expr_o.remove(expr_o.get_key(term))
 
         expr_o = P(expr_o)
 
@@ -3978,13 +3997,13 @@ class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
                 raise TypeError('Not all list entries of %s '
                                 'are asymptotic terms, so cannot create an '
                                 'asymptotic expansion in %s.' % (data, self))
-            summands = AsymptoticRing._create_empty_summands_()
+            summands = self._create_empty_summands_()
             summands.union_update(data)
             return self.element_class(self, summands,
                                       simplify=simplify, convert=convert)
 
         if not data:
-            summands = AsymptoticRing._create_empty_summands_()
+            summands = self._create_empty_summands_()
             return self.element_class(self, summands,
                                       simplify=simplify, convert=False)
 
