@@ -54,7 +54,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             True
         """
         if q is None:
-            q = LaurentPolynomialRing(QQ, 'q').gen()
+            q = YokonumaHeckeAlgebra._default_q_param
         if R is None:
             R = q.parent()
         q = R(q)
@@ -65,6 +65,29 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
             n = CartanType(n)
             return YokonumaHeckeAlgebraWeyl(d, n, q, R)
         return YokonumaHeckeAlgebraGL(d, n, q, R)
+
+    _default_q_param = LaurentPolynomialRing(QQ, 'q').gen()
+
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: sage_input(algebras.YokonumaHecke(5, 3))
+            algebras.YokonumaHecke(5, 3)
+            sage: sage_input(algebras.YokonumaHecke(5, 3, LaurentPolynomialRing(QQ[I], 'q').0), verify=True)
+            # Verified
+            ...
+            sage: sage_input(algebras.YokonumaHecke(5, 3, LaurentPolynomialRing(QQ[I], 'q').0), verify=True)
+            # Verified
+            ...
+        """
+        if self.base_ring() is self._q.parent():
+            if self._q is YokonumaHeckeAlgebra._default_q_param:
+                return sib.name('algebras.YokonumaHecke')(self._d, self._n)
+            else:
+                return sib.name('algebras.YokonumaHecke')(self._d, self._n, self._q)
+        else:
+            return sib.name('algebras.YokonumaHecke')(self._d, self._n, self._q, self.base_ring())
 
     def __init__(self, d, W, q, R, indices, category=None):
         """

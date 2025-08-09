@@ -290,6 +290,15 @@ class RealLazyField_class(LazyField):
                                  sage.rings.infinity.Infinity,
                                  {'type': 'RLF'}), QQ
 
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: sage_input(RLF)
+            RLF
+        """
+        return sib.name('RLF')
+
     def _latex_(self):
         r"""
         Return a latex representation of ``self``.
@@ -405,6 +414,15 @@ class ComplexLazyField_class(LazyField):
         """
         LazyField.__init__(self, base=RLF)
         self._populate_coercion_lists_(coerce_list=[LazyWrapperMorphism(RLF, self)])
+
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: sage_input(CLF)
+            CLF
+        """
+        return sib.name('CLF')
 
     def interval_field(self, prec=None):
         """
@@ -945,6 +963,19 @@ cdef class LazyWrapper(LazyFieldElement):
         self._value = value
         if check:
             self._parent.interval_field()(value)
+
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: sage_input(RLF(1))
+            RLF(1)
+            sage: sage_input(CLF(1))
+            CLF(1)
+            sage: sage_input(CLF(QQbar(I)))
+            CLF(QQbar(I))
+        """
+        return sib(self._parent)(self._value)
 
     def __neg__(self):
         """
