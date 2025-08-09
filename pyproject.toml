@@ -217,7 +217,16 @@ docs = [
   "python-dateutil",
 ]
 lint = ["relint", "ruff", "pycodestyle", "flake8-rst-docstrings"]
-dev = ["tqdm", "pygithub", "meson", "conda-lock", "grayskull", "toml", "uv"]
+dev = [
+  "tqdm",
+  "pygithub",
+  "meson",
+  "conda-lock",
+  "grayskull",
+  "toml",
+  "python-build",
+  "uv",
+]
 
 [tool.ruff]
 # https://docs.astral.sh/ruff/configuration
