@@ -18,6 +18,7 @@ from sage.structure.element import Element
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.sets.family import Family
+from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -302,18 +303,31 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         if self._is_category_initialized():
             return
         if category is None:
-            # try to guess if the result is infinite or not.
-            if self._family in InfiniteEnumeratedSets():
-                category = InfiniteEnumeratedSets()
-            else:
-                if hasattr(self._family, 'first'):
-                    if self._family.first().cardinality() == Infinity:
-                        category = InfiniteEnumeratedSets()
-                    else:
-                        category = FiniteEnumeratedSets()
-                else:
-                    category = EnumeratedSets()
+            category = EnumeratedSets()
         Parent.__init__(self, facade=facade, category=category)
+
+    @cached_method
+    def is_finite(self):
+        """
+        Return whether this set is finite.
+
+        EXAMPLES::
+
+            sage: DisjointUnionEnumeratedSets({1: FiniteEnumeratedSet([1,2,3]),
+            ....:                              2: FiniteEnumeratedSet([4,5,6])}).is_finite()
+            True
+            sage: DisjointUnionEnumeratedSets({1: ZZ,
+            ....:                              2: FiniteEnumeratedSet([4,5,6])}).is_finite()
+            False
+        """
+        if self._family.is_finite():
+            result = all(x.is_finite() for x in self._family)
+            if result:
+                self._refine_category_(self.category().Finite())
+            else:
+                self._refine_category_(self.category().Infinite())
+            return result
+        raise NotImplementedError
 
     def _repr_(self):
         """
