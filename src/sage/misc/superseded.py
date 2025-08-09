@@ -305,16 +305,13 @@ class experimental:
 
         @sage_wraps(func)
         def wrapper(*args, **kwds):
-            if not wrapper._already_issued:
-                experimental_warning(self.issue_number,
-                            'This class/method/function is marked as '
-                            'experimental. It, its functionality or its '
-                            'interface might change without a '
-                            'formal deprecation.',
-                            self.stacklevel)
-                wrapper._already_issued = True
+            experimental_warning(self.issue_number,
+                        'This class/method/function is marked as '
+                        'experimental. It, its functionality or its '
+                        'interface might change without a '
+                        'formal deprecation.',
+                        self.stacklevel)
             return func(*args, **kwds)
-        wrapper._already_issued = False
 
         return wrapper
 
