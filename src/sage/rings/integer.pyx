@@ -483,6 +483,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     """
 
     def __cinit__(self):
+        # this function is only called to create global_dummy_Integer,
+        # after that it will be replaced by fast_tp_new
         global the_integer_ring
         mpz_init(self.value)
         self._parent = the_integer_ring
@@ -7542,8 +7544,6 @@ cdef int sizeof_Integer
 # from. DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
 cdef Integer global_dummy_Integer
 global_dummy_Integer = Integer()
-# Reallocate to one limb to fix :issue:`31340` and :issue:`33081`
-_mpz_realloc(global_dummy_Integer.value, 1)
 
 
 def _check_global_dummy_Integer():
@@ -7559,7 +7559,7 @@ def _check_global_dummy_Integer():
     # Check that it has exactly one limb allocated
     # This is assumed later in fast_tp_new() :issue:`33081`
     cdef mpz_ptr dummy = global_dummy_Integer.value
-    if dummy._mp_alloc == 1 and dummy._mp_size == 0:
+    if dummy._mp_alloc == 0 and dummy._mp_size == 0:
         return True
 
     raise AssertionError(
@@ -7589,7 +7589,6 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     global integer_pool, integer_pool_count, total_alloc, use_pool
 
     cdef PyObject* new
-    cdef mpz_ptr new_mpz
 
     # for profiling pool usage
     # total_alloc += 1
@@ -7622,12 +7621,10 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         # created before this tp_new started to operate.
         memcpy(new, (<void*>global_dummy_Integer), sizeof_Integer)
 
-        # We allocate memory for the _mp_d element of the value of this
-        # new Integer. We allocate one limb. Normally, one would use
-        # mpz_init() for this, but we allocate the memory directly.
-        # This saves time both by avoiding extra function calls and
-        # because the rest of the mpz struct was already initialized
-        # fully using the memcpy above.
+        # In sufficiently new versions of GMP, mpz_init() does not allocate
+        # any memory. We assume that memcpy a newly-initialized mpz results
+        # in a valid new mpz. Normally, one would use mpz_init() for this.
+        # This saves time by avoiding extra function calls.
         #
         # What is done here is potentially very dangerous as it reaches
         # deeply into the internal structure of GMP. Consequently things
@@ -7639,10 +7636,6 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         #  various internals described here may change in future GMP releases.
         #  Applications expecting to be compatible with future releases should use
         #  only the documented interfaces described in previous chapters."
-        #
-        # NOTE: This assumes global_dummy_Integer.value._mp_alloc == 1
-        new_mpz = <mpz_ptr>((<Integer>new).value)
-        new_mpz._mp_d = <mp_ptr>check_malloc(GMP_LIMB_BITS >> 3)
 
     # This line is only needed if Python is compiled in debugging mode
     # './configure --with-pydebug' or SAGE_DEBUG=yes. If that is the
@@ -7692,7 +7685,7 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
             return
 
         # No space in the pool, so just free the mpz_t.
-        sig_free(o_mpz._mp_d)
+        mpz_clear(o_mpz)
 
     # Free the object. This assumes that Py_TPFLAGS_HAVE_GC is not
     # set. If it was set another free function would need to be
