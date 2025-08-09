@@ -226,6 +226,7 @@ class sage_build_cython(Command):
                 compiler_directives=self.cython_directives,
                 compile_time_env=self.compile_time_env,
                 create_extension=self.create_extension,
+                show_all_warnings=True,
                 # Debugging
                 gdb_debug=self.debug,
                 output_dir=os.path.join(self.build_lib, "sage"),
