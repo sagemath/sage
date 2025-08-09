@@ -340,7 +340,7 @@ class Giac(Expect):
             command = "xvfb-run -a giac --sage"
         else:
             command = "giac --sage"
-        
+
         Expect.__init__(self,
                         name='giac',
                         prompt='[0-9]*>> ',
