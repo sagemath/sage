@@ -11,8 +11,7 @@ EXAMPLES::
     sage: v
     (0, 42, 0)
     sage: v.numpy()
-    array([ 0, 42,  0])               # 64-bit
-    array([ 0, 42,  0], dtype=int64)  # 32-bit
+    array([ 0, 42,  0])
 
 TESTS::
 

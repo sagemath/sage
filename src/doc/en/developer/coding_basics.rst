@@ -1388,14 +1388,6 @@ framework. Here is a comprehensive list:
           sage: 1+1 # indirect doctest
           2
 
-- **32-bit** or **64-bit:** for tests that behave differently on 32-bit or
-  64-bit machines. Note that this particular flag is to be applied on the
-  **output** lines, not the input lines::
-
-      sage: hash(2^31 + 2^13)
-      8193                      # 32-bit
-      2147491840                # 64-bit
-
 Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.
 

@@ -94,8 +94,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             sage: G = MatrixGroup([MS([1,1,0,1]), MS([1,0,1,1])])
             sage: g = G.an_element()
             sage: hash(g)
-            -5306160029685893860  # 64-bit
-            -181258980            # 32-bit
+            -5306160029685893860
         """
         return hash(self.matrix())
 

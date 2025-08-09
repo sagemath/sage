@@ -118,8 +118,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: m = matrix(2, range(6), sparse=True)
             sage: m.set_immutable()
             sage: hash(m)
-            -154991009345361003  # 64-bit
-            -2003358827          # 32-bit
+            -154991009345361003  
 
         The sparse and dense hashes should agree::
 

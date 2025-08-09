@@ -2247,8 +2247,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 2 ^ 100000000000000000000000
             Traceback (most recent call last):
             ...
-            OverflowError: exponent must be at most 2147483647           # 32-bit
-            OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+            OverflowError: exponent must be at most 9223372036854775807
             sage: 1 ^ 100000000000000000000000
             1
             sage: 1 ^ -100000000000000000000000
@@ -3086,8 +3085,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: prod(primes_first_n(58)).divisors()                                   # needs sage.libs.pari
             Traceback (most recent call last):
             ...
-            OverflowError: value too large                                 # 32-bit
-            MemoryError: failed to allocate 288230376151711744 * 24 bytes  # 64-bit
+            MemoryError: failed to allocate 288230376151711744 * 24 bytes
 
         Check for memory leaks and ability to interrupt
         (the ``divisors`` call below allocates about 800 MB every time,
@@ -6274,8 +6272,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: numpy.array([1, 2, 3])
             array([1, 2, 3])
             sage: numpy.array([1, 2, 3]).dtype
-            dtype('int32')                         # 32-bit
-            dtype('int64')                         # 64-bit
+            dtype('int64')
 
             sage: # needs numpy (this has to be repeated until #36099 is fixed)
             sage: import numpy

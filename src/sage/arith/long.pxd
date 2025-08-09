@@ -51,8 +51,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         sage: a^(2**258)
         Traceback (most recent call last):
         ...
-        OverflowError: exponent must be at most 2147483647           # 32-bit
-        OverflowError: exponent must be at most 9223372036854775807  # 64-bit
+        OverflowError: exponent must be at most 9223372036854775807
 
     See :issue:`22319`::
 
@@ -274,14 +273,11 @@ cdef inline bint integer_check_long_py(x, long* value, int* err) noexcept:
         sage: for v in L:
         ....:     assert check_long_py(int(v)) == v
         sage: check_long_py(int(2^60))
-        1152921504606846976                 # 64-bit
-        'Overflow (...)'                    # 32-bit
+        1152921504606846976
         sage: check_long_py(int(2^61))
-        2305843009213693952                 # 64-bit
-        'Overflow (...)'                    # 32-bit
+        2305843009213693952
         sage: check_long_py(int(2^62))
-        4611686018427387904                 # 64-bit
-        'Overflow (...)'                    # 32-bit
+        4611686018427387904
         sage: check_long_py(int(2^63))
         'Overflow (...)'
         sage: check_long_py(int(2^100))
