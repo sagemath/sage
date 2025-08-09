@@ -37,16 +37,19 @@ REFERENCES:
 
 - [TIDES]_
 """
+from pathlib import Path
 
-from sage.rings.real_mpfr import RealField
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.calculus.all", "symbolic_expression")
-from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
-from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.log import log, exp
 from sage.functions.other import floor, ceil
+from sage.misc.flatten import flatten
 from sage.misc.functional import sqrt
+from sage.misc.lazy_import import lazy_import
+from sage.rings.real_mpfr import RealField
+from sage.rings.semirings.non_negative_integer_semiring import NN
+
+
+lazy_import("sage.calculus.all", "symbolic_expression")
 
 
 def subexpressions_list(f, pars=None):
@@ -367,7 +370,7 @@ def remove_constants(l1, l2):
 
 
 def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
-                      tolrel=1e-16, tolabs=1e-16, output=''):
+                      tolrel=1e-16, tolabs=1e-16, output : str = ''):
     r"""
     Generate the needed files for the min_tides library.
 
@@ -543,6 +546,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
 
     code = res
 
+    integrator = Path(integrator)
     outfile = open(integrator, 'a')
     auxstring = """
     /****************************************************************************
@@ -587,6 +591,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     outfile.write('}\n')
     outfile.write('\n')
 
+    driver = Path(driver)
     outfile = open(driver, 'a')
 
     auxstring = """
@@ -625,7 +630,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
 
 def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
                   parameters=None, parameter_values=None, dig=20, tolrel=1e-16,
-                  tolabs=1e-16, output=''):
+                  tolabs=1e-16, output : str = ''):
     r"""
         Generate the needed files for the mpfr module of the tides library.
 
@@ -870,6 +875,7 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
 }
     """
 
+    integrator = Path(integrator)
     with open(integrator, 'a') as outfile:
         outfile.write(auxstring1)
 
@@ -886,6 +892,8 @@ def genfiles_mpfr(integrator, driver, f, ics, initial, final, delta,
         outfile.write(auxstring2)
 
     npar = len(parameter_values)
+
+    driver = Path(driver)
     outfile = open(driver, 'a')
 
     auxstring3 = """
