@@ -37,6 +37,10 @@ from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module import FreeModule_submodule_with_basis_pid, FreeModule_ambient_pid
 from sage.modules.free_module_element import vector
+from math import prod
+from sage.functions.all import gamma
+from sage.symbolic.constants import pi, e
+
 
 try:
     from sage.rings.number_field.number_field_element import OrderElement_absolute
@@ -892,3 +896,77 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         Alias for :meth:`approximate_closest_vector`.
         """
         return self.approximate_closest_vector(*args, **kwargs)
+
+    def hadamard_ratio(self, use_reduced_basis=True):
+        """
+        Computes the normalized hadamard ratio. The closer this ratio is to 1,
+        the more orthogonal the basis is.
+
+        INPUT:
+        - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis 
+            for computing the ratio
+
+        OUTPUT: The normalized hadamard ratio. This ratio lies in (0, 1]
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
+            sage: float(L.hadamard_ratio())
+            0.351096481348176
+            sage: L.LLL()
+            [  1  -5   2  18]
+            [ -5  25 -10  11]
+            [-17 -16 -34  -3]
+            [-39  -7  23   5]
+            sage: float(L.hadamard_ratio())
+            0.9933322263147489
+        """
+        if use_reduced_basis:
+            basis = self.reduced_basis
+        else:
+            basis = self.basis_matrix()
+        
+        n = basis.nrows()
+        r = self.rank()
+        assert r == n
+        
+        ratio = (self.discriminant().sqrt() / prod([v.norm() for v in basis]))**(1/r)
+        assert 0 < ratio <= 1
+        return ratio
+    
+    def gaussian_heuristic(self, exact_form=False):
+        """
+        Computes the Gaussian expected shortest length, also known as the Gaussian
+        heuristic. This estimates the expected norm of the shortest non-zero vector
+        in the lattice. The heuristic is independent of the chosen basis.
+
+        INPUT:
+        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
+            based on gamma function, instead of estimation of the gamma function
+
+        OUTPUT: The Gaussian heuristic described above.
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]])
+            sage: float(L.gaussian_heuristic())
+            15.418206247181422
+
+        For small `n`, the exact and approximate forms differ significantly:
+            sage: float(L.gaussian_heuristic(exact_form=True))
+            21.375859827168494
+        """
+        basis = self.basis_matrix()
+        
+        n = basis.nrows()
+        r = self.rank()
+        assert r == n
+
+        D = self.discriminant().sqrt()
+        
+        if exact_form:
+            return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
+        else:
+            return D**(1/r) * (r/(2*pi*e)).sqrt()
