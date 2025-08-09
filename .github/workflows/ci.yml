@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         container:
-          - alpine
+          - alpine:3.22
           - fedora:41
           - fedora:42
           #- ubuntu:22.04 - fails due to issue with cypari2
