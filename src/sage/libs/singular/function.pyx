@@ -98,11 +98,15 @@ from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
 from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec, start_catch_error, check_error
+from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
+
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
 
 from sage.misc.verbose import get_verbose
+
+from cysignals.memory cimport sig_calloc
 
 
 cdef poly* sage_vector_to_poly(v, ring *r) except <poly*> -1:
@@ -148,8 +152,7 @@ cdef class RingWrap:
         return "<RingWrap>"
 
     def __dealloc__(self):
-        if self._ring != NULL:
-            self._ring.ref -= 1
+        singular_ring_delete(self._ring, self._ring_ref)
 
     def ngens(self):
         """
@@ -810,7 +813,6 @@ cdef class Converter(SageObject):
         Append the ring ``r`` to the list.
         """
         cdef ring *_r = access_singular_ring(r)
-        _r.ref += 1
         return self._append(<void *>_r, RING_CMD)
 
     cdef leftv *append_matrix(self, mat) except NULL:
@@ -1026,9 +1028,8 @@ cdef class LibraryCallHandler(BaseCallHandler):
 
     cdef leftv* handle_call(self, Converter argument_list, ring *_ring=NULL) noexcept:
         if _ring != currRing: rChangeCurrRing(_ring)
-        cdef bint error = iiMake_proc(self.proc_idhdl, NULL, argument_list.args)
         cdef leftv * res
-        if not error:
+        if not iiMake_proc(self.proc_idhdl, NULL, argument_list.args):
             res = <leftv*> omAllocBin(sleftv_bin)
             res.Init()
             res.Copy(&iiRETURNEXPR)
@@ -1170,8 +1171,13 @@ cdef class SingularFunction(SageObject):
             currRingHdl = ggetid("my_awesome_sage_ring")
             if currRingHdl == NULL:
                 currRingHdl = enterid("my_awesome_sage_ring", 0, RING_CMD, &IDROOT, 1)
-                currRingHdl.data.uring = <ring *>omAlloc0Bin(sip_sring_bin)
-            currRingHdl.data.uring.ref += 1
+                if currRing:
+                    currRingHdl.data.uring = currRing
+                else:
+                    currRingHdl.data.uring = <ring *>omAlloc0Bin(sip_sring_bin)
+                    # deletion would result in a segfault, thus, we
+                    # prevent it from deletion:
+                    currRingHdl.data.uring.ref += 1
 
     cdef BaseCallHandler get_call_handler(self):
         """
@@ -1457,9 +1463,7 @@ cdef inline call_function(SingularFunction self, tuple args, object R, bint sign
     if si_ring != currRing: rChangeCurrRing(si_ring)
 
     if currRingHdl.data.uring!= currRing:
-        currRingHdl.data.uring.ref -= 1
-        currRingHdl.data.uring = currRing # ref counting?
-        currRingHdl.data.uring.ref += 1
+        currRingHdl.data.uring = currRing
 
     cdef Converter argument_list = Converter(args, R, attributes)
 
@@ -1882,9 +1886,9 @@ def list_of_functions(packages=False):
 
 cdef inline RingWrap new_RingWrap(ring* r):
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)
-    ring_wrap_result._ring = r
-    ring_wrap_result._ring.ref += 1
-
+    ring_wrap_result._ring_ref = <int*>sig_calloc(1, sizeof(int))
+    ring_wrap_result._ring = singular_ring_reference(r, ring_wrap_result._ring_ref)
+    ring_wrap_result._ring.ref = 1 # to prevent Singular from deleting it prematurely
     return ring_wrap_result
 
 # Add support for _instancedoc_
