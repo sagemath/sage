@@ -523,10 +523,13 @@ def deprecated_function_alias(issue_number, func, *, replacement=None, replaceme
     - ``func`` -- the function or method to be aliased
 
     - ``replacement`` -- a plain text string to be inserted
-      into the warning message to describe the replacement
+      into the warning message to describe the replacement.
+      If unspecified, use the name of ``func``.
 
-    - ``replacement_rst_doc`` -- a restructuredText snippet to be inserted
-      into the user documentation to describe the replacement
+    - ``replacement_rst_doc`` -- a reStructuredText snippet to be inserted
+      into the user documentation to describe the replacement.
+      If unspecified, this is constructed from the name of ``func``,
+      with either the ``:meth:`` or the ``:func:`` role, as appropriate.
 
     EXAMPLES::
 
