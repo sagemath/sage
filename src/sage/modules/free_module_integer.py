@@ -899,14 +899,20 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
     def hadamard_ratio(self, use_reduced_basis=True):
         """
-        Computes the normalized hadamard ratio. The closer this ratio is to 1,
-        the more orthogonal the basis is.
+        Computes the normalized Hadamard ratio of the given basis. 
+        
+        The normalized Hadamard ratio of the basis `B = \{v_1, v_2, \dots, v_n\} is defined as
+
+        .. MATH::
+            \mathcal{H}(B) = \left(\dfrac{det L}{\|v_1\| \|v_2\| \cdots \|v_n\|}\right)^{\frac{1}{n}}
+
+        The closer this ratio is to 1, the more orthogonal the basis is.
 
         INPUT:
         - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis 
             for computing the ratio
 
-        OUTPUT: The normalized hadamard ratio. This ratio lies in (0, 1]
+        OUTPUT: The normalized Hadamard ratio. This ratio lies in (0, 1]
 
         EXAMPLES::
 
