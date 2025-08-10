@@ -6,16 +6,21 @@ An elliptic curve `E` over a number field `K` can be given
 by a Weierstrass equation whose coefficients lie in `K` or by
 using ``base_extend`` on an elliptic curve defined over a subfield.
 
-One major difference to elliptic curves over `\QQ` is that there
-might not exist a global minimal equation over `K`, when `K` does
-not have class number one.
-Another difference is the lack of understanding of modularity for
-general elliptic curves over general number fields.
+One major difference to elliptic curves over `\QQ` is that there might
+not exist a global minimal equation over `K`, when `K` does not have
+class number one.  When a minimal model does exist the method
+:meth:`global_minimal_model()` will compute it, and otherwise compute
+a model which is minimal at all primes except one.  Another difference
+is the relative lack of understanding of modularity for elliptic
+curves over general number fields; the method :meth:`is_modular()`
+does implement recent methods to prove modularity of elliptic curves,
+over totally real and imaginary quadratic fields only.
 
-Currently Sage can obtain local information about `E/K_v` for finite places
-`v`, it has an interface to Denis Simon's script for 2-descent, it can compute
-the torsion subgroup of the Mordell-Weil group `E(K)`, and it can work with
-isogenies defined over `K`.
+Currently Sage can obtain local information about `E/K_v` for finite
+places `v`, it has an interface to Denis Simon's script for 2-descent,
+it can compute the torsion subgroup of the Mordell-Weil group `E(K)`,
+and it can work with isogenies defined over `K`, including the
+determination of the complete isogeny class of any curve.
 
 EXAMPLES::
 
@@ -77,6 +82,7 @@ REFERENCE:
 
 - [Sil2] Silverman, Joseph H. Advanced topics in the arithmetic of elliptic curves. Graduate Texts in
   Mathematics, 151. Springer, 1994.
+
 """
 
 # ****************************************************************************
@@ -4161,3 +4167,212 @@ class EllipticCurve_number_field(EllipticCurve_field):
             E = E.change_ring(kwds['F'])
 
         return [E(pt) for pt in Curve(self).rational_points(**kwds)]
+
+    def is_modular(self, verbose=False):
+        r"""Return ``True`` if the base field is totally real or imaginary
+        quadratic and modularity of this curve can be proved,
+        otherwise ``False``.
+
+        INPUT:
+
+        - ``verbose`` (bool, default ``False``) -- if ``True``, outputs a reason for the conclusion.
+
+        .. NOTE::
+
+            When ``False`` is returned, it does not mean that the
+            curve is not modular!  Only that modularity cannot be
+            proved with current knowledge and implemented methods.  It
+            is expected that the return value will be ``True`` for most
+            curves defined over totally real fields, and for all
+            defined over imaginary quadratic fields over which the
+            modular curve `X_0(15)` (which is the elliptic curve with
+            label `15a1`) has rank zero.  Any curve defined over
+            totally real fields for which the return value is
+            ``False`` is of interest, as its mod `p` Galois
+            representations for the primes 3, 5 and 7 are
+            simultaneously small.
+
+            Note that for over half of all imaginary quadratic fields,
+            there exist infinitely many elliptic curves (even up to
+            twist) whose mod 3 and mod 5 Galois representations are
+            both reducible (in other words, which possess a rational
+            15-isogeny).  Such curves can be proved to be modular, but
+            not using the methods implemented here.
+
+            There are currently no theoretical results which allow
+            modularity to be proved over fields other than totally
+            real fields and imaginary quadratic fields.
+
+        ALGORITHM:
+
+        This is based on code provided by S. Siksek for the totally
+        real case, and relies on theorems in the following papers:
+        [Wiles1995]_, [Breuil2001]_, [Chen1996]_, [FLHS2015]_,
+        [Thorne2016]_, [CarNew2023]_, [DNS2020]_, [Box2022]_.
+
+        It relies on checking that the images of the mod-`p` Galois
+        representation attached to the elliptic curve for `p=3,5,7`
+        are not simultaneously small, except for the cases (base field
+        `\QQ`, real quadratic, totally real cubic, or totally real quartic
+        not containing `\sqrt{5}`) where theoretical results show this to
+        be impossible.
+
+        Over `\QQ`: all curves are modular with no further checks
+        needed, by [Wiles1995]_ and [Breuil2001]_.
+
+        Over real quadratic fields:  all curves are modular with no further checks
+        needed, by [FLHS2015]_.
+
+        Over totally real cubic fields:  all curves are modular with no further checks
+        needed, by [DNS2020]_.
+
+        Over totally real quartic fields not containing `\sqrt{5}`:
+        all curves are modular with no further checks needed, by
+        [Box2022]_.
+
+        Over other totally real fields: modularity is implied by
+        conditions on the mod-`\ell` representations for `\ell=3,5,7`
+        by [FLHS2015]_.  It is sufficient for one of the following to
+        hold: (1) the image of the mod-3 representation is not
+        contained in either a Borel or the normaliser of a split
+        Cartan subgroup; (2) image of the mod-5 representation is
+        irreducible, and either 5 is not square in the field, or the
+        image is not contained in the normaliser of either a split or
+        nonsplt Cartan subgroup; (3) the image of the mod-7
+        representation is be not contained in either a Borel or the
+        normaliser of a split or nonsplt Cartan subgroup.
+
+        Over imaginary quadratic fields: by [CarNew2023]_, it is
+        sufficient for the mod-3 or mod-5 images to satisfy conditions
+        (1) or (2) above, respectively.
+
+        EXAMPLES:
+
+        Set ``verbose=True`` to see a reason for the conclusion::
+
+            sage: E = EllipticCurve('11a1')
+            sage: E.is_modular(verbose=True)
+            All elliptic curves over QQ are modular
+            True
+            sage: K.<a> = QuadraticField(5)
+            sage: E = EllipticCurve([0,1,0,a,0])
+            sage: E.is_modular(verbose=True)
+            All elliptic curves over real quadratic fields are modular
+            True
+            sage: E = EllipticCurve([0,0,0,a,0])
+            sage: E.is_modular(verbose=True)
+            All elliptic curves over real quadratic fields are modular
+            True
+            sage: K.<a> = CyclotomicField(5)
+            sage: E = EllipticCurve([0,1,0,a,0])
+            sage: E.is_modular(verbose=True)
+            Unable to determine modularity except over totally real and imaginary quadratic fields
+            False
+
+        Some examples from the LMFDB.  Over a totally real quintic field::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([1, 3, -1, -5, 0, 1]))
+            sage: E = EllipticCurve([K([3,0,-5,0,1]),K([-3,-7,9,2,-2]),K([1,0,0,0,0]),K([-22,-79,-92,14,21]),K([12,-87,-324,7,74])])
+            sage: E.is_modular(verbose=True)
+            Modular since the mod 3 Galois image is neither reducible nor split
+            True
+
+        Over imaginary quadratic fields `K` over which `X_0(15)` has
+        positive rank, there are many curves where current results do
+        not imply modularity::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([2, -1, 1]))
+            sage: EllipticCurve('15a1').change_ring(K).rank()
+            1
+            sage: E = EllipticCurve([K([1,0]),K([1,-1]),K([1,1]),K([-105,98]),K([-615,1188])])
+            sage: E.is_modular(verbose=True)
+            Modularity not established: this curve has small image at 3 and 5
+            False
+            sage: EllipticCurve('15a1').change_ring(K).rank() # long time
+            1
+
+        Nevertheless, over the same field, most curves pass::
+
+            sage: E = EllipticCurve([K([0,0]),K([0,1]),K([1,1]),K([-8,-3]),K([-5,-5])])
+            sage: E.is_modular(verbose=True)
+            Modular since the mod 3 Galois image is neither reducible nor split
+            True
+
+        Over a field which is neither totally real nor imaginary
+        quadratic, no conclusion is currently possible::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([1, 0, -1, 1]))
+            sage: K.is_totally_real()
+            False
+            sage: E = EllipticCurve([K([0,0,1]),K([1,0,0]),K([0,0,1]),K([0,0,0]),K([0,0,0])])
+            sage: E.is_modular(verbose=True)
+            Unable to determine modularity except over totally real and imaginary quadratic fields
+            False
+
+        """
+        K = self.base_field()
+        d = K.degree()
+
+        if d == 1: # base field QQ: [Wiles1995], [Breuil2001]
+            if verbose:
+                print("All elliptic curves over QQ are modular")
+            return True
+
+        TR =  K.is_totally_real()
+
+        if TR and d <= 3: # base field real quadratic or totally real cubic
+            if verbose:
+                if d==2:
+                    print("All elliptic curves over real quadratic fields are modular")
+                else:
+                    print("All elliptic curves over totaly real cubic fields are modular")
+            return True
+
+        if TR and d==4 and not K(5).is_square():
+            if verbose:
+                print("All elliptic curves over totally real quartic fields not containing sqrt(5) are modular")
+
+        if d > 2 and not TR:
+            if verbose:
+                print("Unable to determine modularity except over totally real and imaginary quadratic fields")
+            return False # meaning 'unknown'
+
+        # from here either K is totally real of degree at least 4 (TR is True) or imaginary quadratic
+
+        if self.has_cm():
+            if verbose:
+                print("All CM elliptic curves over totally real and imaginary quadratic fields are modular")
+            return True
+
+        G = self.galois_representation()
+
+        if not (G.is_borel(3) or G.is_split_normaliser(3)):
+            if verbose:
+                print("Modular since the mod 3 Galois image is neither reducible nor split")
+            return True
+
+        if not G.is_borel(5):
+            if not (TR and K(5).is_square()):
+                if verbose:
+                    print("Modular since the mod 5 Galois image is irreducible, and 5 not square")
+                return True
+            if TR and not (G.is_split_normaliser(5) or G.is_nonsplit_normaliser(5)):
+                if verbose:
+                    print("Modular since the mod 5 Galois image is not reducible, split, or nonsplit")
+                return True
+
+        if TR and not (G.is_borel(7) or G.is_split_normaliser(7) or G.is_nonsplit_normaliser(7)):
+            if verbose:
+                print("Modular since the mod 7 Galois image is not being reducible, split, or nonsplit")
+            return True
+
+        if verbose:
+            if TR:
+                print("Modularity not established: this curve has small image at 3, 5 and 7")
+            else:
+                print("Modularity not established: this curve has small image at 3 and 5")
+
+        return False # We've run out of tricks!
