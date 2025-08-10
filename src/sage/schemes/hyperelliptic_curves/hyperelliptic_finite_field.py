@@ -493,15 +493,15 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
     frobenius_polynomial_cardinalities = deprecated_function_alias(
             40528, _frobenius_polynomial_cardinalities,
             replacement='frobenius_polynomial(algorithm="cardinalities")',
-            replacement_rst_doc=':meth:`frobenius_polynomial` ``(algorithm="cardinalities")``')
+            replacement_rst_doc=':meth:`frobenius_polynomial(algorithm="cardinalities") <frobenius_polynomial>`')
     frobenius_polynomial_matrix = deprecated_function_alias(
             40528, _frobenius_polynomial_matrix,
             replacement='frobenius_polynomial(algorithm="matrix")',
-            replacement_rst_doc=':meth:`frobenius_polynomial` ``(algorithm="matrix")``')
+            replacement_rst_doc=':meth:`frobenius_polynomial(algorithm="matrix") <frobenius_polynomial>`')
     frobenius_polynomial_pari = deprecated_function_alias(
             40528, _frobenius_polynomial_pari,
             replacement='frobenius_polynomial(algorithm="pari")',
-            replacement_rst_doc=':meth:`frobenius_polynomial` ``(algorithm="pari")``')
+            replacement_rst_doc=':meth:`frobenius_polynomial(algorithm="pari") <frobenius_polynomial>`')
 
     @cached_method
     def frobenius_polynomial(self, algorithm=None, **kwargs):
