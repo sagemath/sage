@@ -2,7 +2,7 @@
 r"""
 Fano toric varieties
 
-This module provides support for (Crepant Partial Resolutions of) Fano toric
+This module provides support for Fano toric varieties and (Crepant Partial Resolutions of) Fano toric
 varieties, corresponding to crepant subdivisions of face fans of reflexive
 :class:`lattice polytopes
 <sage.geometry.lattice_polytope.LatticePolytopeClass>`.
@@ -133,13 +133,11 @@ from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.fraction_field import FractionField_generic
 
 from sage.schemes.toric.toric_subscheme import AlgebraicScheme_subscheme_toric
-from sage.schemes.toric.variety import (
-                                            ToricVariety_field,
-                                            normalize_names)
+from sage.schemes.toric.variety import ToricVariety_field, normalize_names
 from sage.structure.all import coercion_model
 from sage.categories.fields import Fields
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
-from sage.structure.unique_representation import UniqueRepresentation
+
 _Fields = Fields()
 
 
@@ -152,6 +150,8 @@ DEFAULT_COEFFICIENTS = tuple(chr(i) for i in range(ord("a"), ord("z") + 1))
 r"""
 AL: add class of (Gorenstein) Fano varieties, served as the superclass for both CPR-Fano and smooth Fano varieties.
 """
+
+
 class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
     r"""
     A (Gorenstein) Fano toric variety over a field.
@@ -162,7 +162,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
     polytope `\Delta` is a *reflexive lattice polytope* in `N_\RR`.
 
     There is a one-to-one correspondence between Gorenstein Fano toric varieties and reflexive
-    lattice polytopes: given a reflexive polytope `\Delta \subseteq N_\RR`, the *face fan* 
+    lattice polytopes: given a reflexive polytope `\Delta \subseteq N_\RR`, the *face fan*
     `\Sigma(\Delta)` defines a complete fan whose associated toric variety `X(\Sigma(\Delta))`
     is a Gorenstein Fano toric variety.
 
@@ -194,25 +194,43 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
         ....:     Delta_polar=lattice_polytope.cross_polytope(2))
         sage: P1xP1
         2-d Fano toric variety covered by 4 affine patches
+        sage: P1xP1.fan()
+        Rational polyhedral fan in 2-d lattice M
+        sage: P1xP1.fan().rays()
+        M( 1,  0),        M( 0,  1),
+        M(-1,  0),        M( 0, -1)
+        in 2-d lattice M
     """
+
     @staticmethod
-    def __classcall_private__(cls, Delta=None, Delta_polar=None, coordinate_names=None,
-                            names=None, coordinate_name_indices=None, base_ring=None,
-                            base_field=None, check=True):
+    def __classcall_private__(
+        cls,
+        Delta=None,
+        Delta_polar=None,
+        coordinate_names=None,
+        names=None,
+        coordinate_name_indices=None,
+        base_ring=None,
+        base_field=None,
+        check=True,
+    ):
         """
         Normalize input to ensure a unique representation.
 
         EXAMPLES::
 
             sage: diamond = lattice_polytope.cross_polytope(2)
+            sage: diamond_polar = diamond.polar()
             sage: FTV1 = FanoToricVariety(Delta_polar=diamond)
-            sage: FTV2 = FanoToricVariety(Delta_polar=diamond)
-            sage: FTV1 is FTV2
+            sage: FTV2 = FanoToricVariety(Delta=diamond_polar)
+            sage: FTV1 == FTV2
             True
         """
         if names is not None:
             if coordinate_names is not None:
-                raise ValueError('You must not specify both coordinate_names and names!')
+                raise ValueError(
+                    "You must not specify both coordinate_names and names!"
+                )
             coordinate_names = names
         # Check/normalize Delta_polar
         if (Delta is None) == (Delta_polar is None):
@@ -221,7 +239,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
             Delta_polar = Delta.polar()
         if check and not Delta_polar.is_reflexive():
             raise ValueError("Delta_polar must be reflexive")
-        
+
         # AL: construct the fan fromt the original polytope without worrying about the refinement
         fan = FaceFan(Delta_polar)
 
@@ -231,14 +249,18 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
         if base_ring is None:
             base_ring = QQ
         elif base_ring not in _Fields:
-            raise TypeError("need a field to construct a Fano toric variety!"
-                            "\n Got %s" % base_ring)
+            raise TypeError(
+                "need a field to construct a Fano toric variety!"
+                "\n Got %s" % base_ring
+            )
 
-        return typecall(cls, Delta_polar, fan, coordinate_names,
-                                     coordinate_name_indices, base_ring)
+        return typecall(
+            cls, Delta_polar, fan, coordinate_names, coordinate_name_indices, base_ring
+        )
 
-
-    def __init__(self, Delta_polar, fan, coordinate_names, coordinate_name_indices, base_field):
+    def __init__(
+        self, Delta_polar, fan, coordinate_names, coordinate_name_indices, base_field
+    ):
         r"""
         See :class:`FanoToricVariety_field` for documentation.
 
@@ -263,7 +285,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
             M(-1,  0),        M( 0, -1)
             in 2-d lattice M
 
-        Here is a shorthand for defining the toric variety and homogeneous 
+        Here is a shorthand for defining the toric variety and homogeneous
         coordinates in one go::
 
                 sage: P1xP1.<a,b,c,d> = FanoToricVariety(Delta_polar=diamond)
@@ -281,9 +303,10 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
         # AL: we want to use the anticanonical surface and nef complete intersection functions for general Fano toric varieties
         self._coordinate_points = tuple(range(len(fan.rays())))
         self._point_to_ray = {i: i for i in self._coordinate_points}
-        ToricVariety_field.__init__(self, fan, coordinate_names,
-                         coordinate_name_indices, base_field)
-    
+        ToricVariety_field.__init__(
+            self, fan, coordinate_names, coordinate_name_indices, base_field
+        )
+
     def _latex_(self):
         r"""
         Return a LaTeX representation of ``self``.
@@ -311,14 +334,16 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
             sage: print(P1xP1._repr_())
             2-d Fano toric variety covered by 4 affine patches
         """
-        return ("%d-d Fano toric variety covered by %d affine patches"
-                % (self.dimension_relative(), self.fan().ngenerating_cones()))
+        return "%d-d Fano toric variety covered by %d affine patches" % (
+            self.dimension_relative(),
+            self.fan().ngenerating_cones(),
+        )
 
     def anticanonical_hypersurface(self, **kwds):
         r"""
         Return an anticanonical hypersurface of ``self``.
 
-        .. NOTE::
+        .. SEEALSO::
 
             The returned hypersurface may be actually a subscheme of
             **another** Fano toric variety: if the base field of ``self``
@@ -380,7 +405,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
               a0*z0^3 + a9*z0^2*z1 + a7*z0*z1^2 + a1*z1^3 + a8*z0^2*z2 + a6*z0*z1*z2
               + a4*z1^2*z2 + a5*z0*z2^2 + a3*z1*z2^2 + a2*z2^3
         """
-        #  AL: we include this function because the construction only rely on the Delta and cox variables 
+        #  AL: we include this function because the construction only rely on the Delta and cox variables
         #      and the anticanonical hypersurface is important for Fano varieties
         return AnticanonicalHypersurface(self, **kwds)
 
@@ -395,7 +420,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
 
         OUTPUT: :class:`Fano toric variety <FanoToricVariety_field>` over ``F``
 
-        .. NOTE::
+        .. SEEALSO::
 
             There is no need to have any relation between ``F`` and the base
             field of ``self``. If you do want to have such a relation, use
@@ -427,12 +452,14 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
         if self.base_ring() == F:
             return self
         elif F not in _Fields:
-            raise TypeError("need a field to construct a Fano toric variety!"
-                            "\n Got %s" % F)
+            raise TypeError(
+                "need a field to construct a Fano toric variety!" "\n Got %s" % F
+            )
         else:
-            return type(self)(self._Delta_polar, self._fan,
-                self.variable_names(), None, F)
-        
+            return type(self)(
+                self._Delta_polar, self._fan, self.variable_names(), None, F
+            )
+
     def coordinate_point_to_coordinate(self, point):
         r"""
         Return the coordinate of the point in the coordinate ring of ``self``.
@@ -453,7 +480,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
             z3
         """
         return self.gen(self._point_to_ray[point])
-                        
+
     def coordinate_points(self):
         r"""
         Return the list of indices of coordinate points of ``self``.
@@ -467,7 +494,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
             (0, 1, 2, 3)
         """
         return self._coordinate_points
-        
+
     def Delta(self):
         r"""
         Return the reflexive polytope associated to ``self``.
@@ -517,7 +544,7 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
         r"""
         Return a nef complete intersection in ``self``.
 
-        .. NOTE::
+        .. SEEALSO::
 
             The returned complete intersection may be actually a subscheme of
             **another** Fano toric variety: if the base field of ``self``
@@ -576,10 +603,8 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
           ``self`` (with the extended base field, if necessary).
         """
         return NefCompleteIntersection(self, nef_partition, **kwds)
-        
 
-    def cartesian_product(self, other,
-                          coordinate_names=None, coordinate_indices=None):
+    def cartesian_product(self, other, coordinate_names=None, coordinate_indices=None):
         r"""
         Return the Cartesian product of ``self`` with ``other``.
 
@@ -621,15 +646,13 @@ class FanoToricVariety_field(ToricVariety_field, metaclass=ClasscallMetaclass):
             sage: P1xP2.Delta_polar()
             3-d reflexive polytope in 3-d lattice N+M
         """
-        if isinstance(other, FanoToricVariety_field) and not isinstance(other, CPRFanoToricVariety_field):
-            # and not isinstance(other, SmoothFanoToricVariety_field): we will include this in the future if necessary
+        if isinstance(other, FanoToricVariety_field):
             fan = self.fan().cartesian_product(other.fan())
             Delta_polar = LatticePolytope(fan.rays())
-            return type(self)(Delta_polar, fan,
-                                        coordinate_names, coordinate_indices,
-                                        self.base_ring())
+            return type(self)(
+                Delta_polar, fan, coordinate_names, coordinate_indices, self.base_ring()
+            )
         return super().cartesian_product(other)
-
 
 
 def is_CPRFanoToricVariety(x):
@@ -645,7 +668,7 @@ def is_CPRFanoToricVariety(x):
     - ``True`` if ``x`` is a :class:`CPR-Fano toric variety
       <CPRFanoToricVariety_field>` and ``False`` otherwise.
 
-    .. NOTE::
+    .. SEEALSO::
 
         While projective spaces are Fano toric varieties mathematically, they
         are not toric varieties in Sage due to efficiency considerations, so
@@ -668,21 +691,19 @@ def is_CPRFanoToricVariety(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(38022, "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.")
+
+    deprecation(
+        38022,
+        "The function is_CPRFanoToricVariety is deprecated; use 'isinstance(..., CPRFanoToricVariety_field)' instead.",
+    )
     return isinstance(x, CPRFanoToricVariety_field)
+
 
 class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetaclass):
     r"""
     Construct a CPR-Fano toric variety associated to a reflexive polytope.
 
-    .. WARNING::
-
-        This class does not perform any checks of correctness of input and it
-        does assume that the internal structure of the given parameters is
-        coordinated in a certain way. Use
-        :func:`CPRFanoToricVariety` to construct CPR-Fano toric varieties.
-
-    .. NOTE::
+    .. SEEALSO::
 
         See documentation of the module
         :mod:`~sage.schemes.toric.fano_variety` for the used
@@ -719,22 +740,26 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         sage: P1xP1
         2-d CPR-Fano toric variety covered by 4 affine patches
     """
+
     @staticmethod
-    def __classcall_private__(cls, Delta=None,
-                                Delta_polar=None,
-                                coordinate_points=None,
-                                charts=None,
-                                coordinate_names=None,
-                                names=None,
-                                coordinate_name_indices=None,
-                                make_simplicial=False,
-                                base_ring=None,
-                                base_field=None,
-                                check=True):
+    def __classcall_private__(
+        cls,
+        Delta=None,
+        Delta_polar=None,
+        coordinate_points=None,
+        charts=None,
+        coordinate_names=None,
+        names=None,
+        coordinate_name_indices=None,
+        make_simplicial=False,
+        base_ring=None,
+        base_field=None,
+        check=True,
+    ):
         r"""
         Normalize the input to construct a CPR-Fano toric variety, to ensure a unique representation.
 
-        .. NOTE::
+        .. SEEALSO::
 
             See documentation of the module
             :mod:`~sage.schemes.toric.fano_variety` for the used
@@ -1022,7 +1047,9 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         """
         if names is not None:
             if coordinate_names is not None:
-                raise ValueError('You must not specify both coordinate_names and names!')
+                raise ValueError(
+                    "You must not specify both coordinate_names and names!"
+                )
             coordinate_names = names
         # Check/normalize Delta_polar
         if Delta is None and Delta_polar is None:
@@ -1049,24 +1076,29 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         elif coordinate_points == "all but facets":
             coordinate_points = Delta_polar.skeleton_points(Delta_polar.dim() - 2)
         elif isinstance(coordinate_points, str):
-            raise ValueError("unrecognized description of the coordinate points!"
-                            "\nGot: %s" % coordinate_points)
+            raise ValueError(
+                "unrecognized description of the coordinate points!"
+                "\nGot: %s" % coordinate_points
+            )
         elif check:
             cp_set = set(coordinate_points)
             if len(cp_set) != len(coordinate_points):
                 raise ValueError(
                     "no repetitions are allowed for coordinate points!\nGot: %s"
-                    % coordinate_points)
+                    % coordinate_points
+                )
             if not cp_set.issuperset(list(range(Delta_polar.nvertices()))):
-                raise ValueError("all %d vertices of Delta_polar must be used "
+                raise ValueError(
+                    "all %d vertices of Delta_polar must be used "
                     "for coordinates!\nGot: %s"
-                    % (Delta_polar.nvertices(), coordinate_points))
+                    % (Delta_polar.nvertices(), coordinate_points)
+                )
             if Delta_polar.origin() in cp_set:
-                raise ValueError("the origin (point #%d) cannot be used for a "
-                    "coordinate!\nGot: %s"
-                    % (Delta_polar.origin(), coordinate_points))
-        point_to_ray = {point: n
-                        for n, point in enumerate(coordinate_points)}
+                raise ValueError(
+                    "the origin (point #%d) cannot be used for a "
+                    "coordinate!\nGot: %s" % (Delta_polar.origin(), coordinate_points)
+                )
+        point_to_ray = {point: n for n, point in enumerate(coordinate_points)}
         # This can be simplified if LatticePolytopeClass is adjusted.
         rays = [Delta_polar.point(p) for p in coordinate_points]
         # Check/normalize charts and construct the fan based on them.
@@ -1078,8 +1110,10 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
             # single facet of Delta_polar, otherwise they do not form a
             # subdivision of the face fan of Delta_polar
             if check:
-                facet_sets = [frozenset(facet.ambient_point_indices())
-                            for facet in Delta_polar.facets()]
+                facet_sets = [
+                    frozenset(facet.ambient_point_indices())
+                    for facet in Delta_polar.facets()
+                ]
                 for chart in charts:
                     is_bad = True
                     for fset in facet_sets:
@@ -1089,27 +1123,31 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
                     if is_bad:
                         raise ValueError(
                             "%s does not form a chart of a subdivision of the "
-                            "face fan of %s!" % (chart, Delta_polar))
+                            "face fan of %s!" % (chart, Delta_polar)
+                        )
             # We will construct the initial fan from Cone objects: since charts
             # may not use all of the necessary rays, alternative form is tedious
             # With check=False it should not be long anyway.
-            cones = [Cone((rays[point_to_ray[point]] for point in chart),
-                        check=check)
-                    for chart in charts]
+            cones = [
+                Cone((rays[point_to_ray[point]] for point in chart), check=check)
+                for chart in charts
+            ]
             fan = Fan(cones, check=check)
             if check and not fan.is_complete():
                 raise ValueError("given charts do not form a complete fan!")
         # Subdivide this fan to use all required points
-        fan = fan.subdivide(new_rays=(ray for ray in rays
-                                        if ray not in fan.rays().set()),
-                            make_simplicial=make_simplicial)
+        fan = fan.subdivide(
+            new_rays=(ray for ray in rays if ray not in fan.rays().set()),
+            make_simplicial=make_simplicial,
+        )
         # Now create yet another fan making sure that the order of the rays is
         # the same as requested (it is a bit difficult to get it from the start)
         trans = {}
         for n, ray in enumerate(fan.rays()):
             trans[n] = rays.index(ray)
-        cones = tuple(tuple(sorted(trans[r] for r in cone.ambient_ray_indices()))
-                    for cone in fan)
+        cones = tuple(
+            tuple(sorted(trans[r] for r in cone.ambient_ray_indices())) for cone in fan
+        )
         fan = Fan(cones, rays, check=False)
         # Check/normalize base_field
         if base_field is not None:
@@ -1117,16 +1155,32 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         if base_ring is None:
             base_ring = QQ
         elif base_ring not in _Fields:
-            raise TypeError("need a field to construct a Fano toric variety!"
-                            "\n Got %s" % base_ring)
-        fan._is_complete = True     # At this point it must be for sure
-        return typecall(cls, 
-            Delta_polar, fan, coordinate_points, point_to_ray, 
-            coordinate_names, coordinate_name_indices, base_ring)
+            raise TypeError(
+                "need a field to construct a Fano toric variety!"
+                "\n Got %s" % base_ring
+            )
+        fan._is_complete = True  # At this point it must be for sure
+        return typecall(
+            cls,
+            Delta_polar,
+            fan,
+            coordinate_points,
+            point_to_ray,
+            coordinate_names,
+            coordinate_name_indices,
+            base_ring,
+        )
 
-
-    def __init__(self, Delta_polar, fan, coordinate_points, point_to_ray,
-                 coordinate_names, coordinate_name_indices, base_field):
+    def __init__(
+        self,
+        Delta_polar,
+        fan,
+        coordinate_points,
+        point_to_ray,
+        coordinate_names,
+        coordinate_name_indices,
+        base_field,
+    ):
         r"""
         See :class:`CPRFanoToricVariety_field` for documentation.
 
@@ -1143,8 +1197,14 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         # Check/normalize coordinate_indices
         if coordinate_name_indices is None:
             coordinate_name_indices = coordinate_points
-        FanoToricVariety_field.__init__(self, Delta_polar, fan, coordinate_names,
-                         coordinate_name_indices, base_field)
+        FanoToricVariety_field.__init__(
+            self,
+            Delta_polar,
+            fan,
+            coordinate_names,
+            coordinate_name_indices,
+            base_field,
+        )
         # AL: we add the trivial attributes for the general case, so we need to update after super().__init__
         self._coordinate_points = tuple(coordinate_points)
         self._point_to_ray = point_to_ray
@@ -1175,14 +1235,16 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
             sage: print(P1xP1._repr_())
             2-d CPR-Fano toric variety covered by 4 affine patches
         """
-        return ("%d-d CPR-Fano toric variety covered by %d affine patches"
-                % (self.dimension_relative(), self.fan().ngenerating_cones()))
+        return "%d-d CPR-Fano toric variety covered by %d affine patches" % (
+            self.dimension_relative(),
+            self.fan().ngenerating_cones(),
+        )
 
     def anticanonical_hypersurface(self, **kwds):
         r"""
         Return an anticanonical hypersurface of ``self``.
 
-        .. NOTE::
+        .. SEEALSO::
 
             The returned hypersurface may be actually a subscheme of
             **another** CPR-Fano toric variety: if the base field of ``self``
@@ -1324,7 +1386,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
 
         OUTPUT: :class:`CPR-Fano toric variety <CPRFanoToricVariety_field>` over ``F``
 
-        .. NOTE::
+        .. SEEALSO::
 
             There is no need to have any relation between ``F`` and the base
             field of ``self``. If you do want to have such a relation, use
@@ -1356,14 +1418,21 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         if self.base_ring() == F:
             return self
         elif F not in _Fields:
-            raise TypeError("need a field to construct a Fano toric variety!"
-                            "\n Got %s" % F)
+            raise TypeError(
+                "need a field to construct a Fano toric variety!" "\n Got %s" % F
+            )
         else:
-            return type(self)(self._Delta_polar, self._fan,
-                self._coordinate_points, self._point_to_ray,
-                self.variable_names(), None, F)
-                # coordinate_name_indices do not matter, we give explicit
-                # names for all variables
+            return type(self)(
+                self._Delta_polar,
+                self._fan,
+                self._coordinate_points,
+                self._point_to_ray,
+                self.variable_names(),
+                None,
+                F,
+            )
+            # coordinate_name_indices do not matter, we give explicit
+            # names for all variables
 
     def coordinate_point_to_coordinate(self, point):
         r"""
@@ -1469,7 +1538,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         r"""
         Return a nef complete intersection in ``self``.
 
-        .. NOTE::
+        .. SEEALSO::
 
             The returned complete intersection may be actually a subscheme of
             **another** CPR-Fano toric variety: if the base field of ``self``
@@ -1587,8 +1656,7 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         """
         return NefCompleteIntersection(self, nef_partition, **kwds)
 
-    def cartesian_product(self, other,
-                          coordinate_names=None, coordinate_indices=None):
+    def cartesian_product(self, other, coordinate_names=None, coordinate_indices=None):
         r"""
         Return the Cartesian product of ``self`` with ``other``.
 
@@ -1637,10 +1705,15 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
                 coordinate_points.append(point)
                 point_to_ray[point] = ray_index
 
-            return type(self)(Delta_polar, fan,
-                                        coordinate_points, point_to_ray,
-                                        coordinate_names, coordinate_indices,
-                                        self.base_ring())
+            return type(self)(
+                Delta_polar,
+                fan,
+                coordinate_points,
+                point_to_ray,
+                coordinate_names,
+                coordinate_indices,
+                self.base_ring(),
+            )
         return super().cartesian_product(other)
 
     def resolve(self, **kwds):
@@ -1699,43 +1772,55 @@ class CPRFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMetac
         #   just toric variety if subdivision involves rays
         if "new_rays" in kwds:
             if "new_points" in kwds:
-                raise ValueError("you cannot give new_points and new_rays at "
-                                 "the same time!")
+                raise ValueError(
+                    "you cannot give new_points and new_rays at " "the same time!"
+                )
             return super().resolve(**kwds)
         # Now we need to construct another Fano variety
         new_points = kwds.pop("new_points", ())
         coordinate_points = self.coordinate_points()
-        new_points = tuple(point for point in new_points
-                           if point not in coordinate_points)
+        new_points = tuple(
+            point for point in new_points if point not in coordinate_points
+        )
         Delta_polar = self._Delta_polar
         if Delta_polar.origin() in new_points:
-            raise ValueError("the origin (point #%d) cannot be used for "
-                             "subdivision!" % Delta_polar.origin())
+            raise ValueError(
+                "the origin (point #%d) cannot be used for "
+                "subdivision!" % Delta_polar.origin()
+            )
         if new_points:
             coordinate_points = coordinate_points + new_points
-            point_to_ray = {point: n
-                            for n, point in enumerate(coordinate_points)}
+            point_to_ray = {point: n for n, point in enumerate(coordinate_points)}
         else:
             point_to_ray = self._point_to_ray
         new_rays = [Delta_polar.point(point) for point in new_points]
-        coordinate_name_indices = kwds.pop("coordinate_name_indices",
-                                           coordinate_points)
+        coordinate_name_indices = kwds.pop("coordinate_name_indices", coordinate_points)
         fan = self.fan()
         if "coordinate_names" in kwds:
             coordinate_names = kwds.pop("coordinate_names")
         else:
             coordinate_names = list(self.variable_names())
-            coordinate_names.extend(normalize_names(ngens=len(new_rays),
-                                indices=coordinate_name_indices[fan.nrays():],
-                                prefix=self._coordinate_prefix))
+            coordinate_names.extend(
+                normalize_names(
+                    ngens=len(new_rays),
+                    indices=coordinate_name_indices[fan.nrays() :],
+                    prefix=self._coordinate_prefix,
+                )
+            )
             coordinate_names.append(self._coordinate_prefix + "+")
         rfan = fan.subdivide(new_rays=new_rays, **kwds)
-        resolution = type(self)(Delta_polar, rfan,
-                            coordinate_points, point_to_ray, coordinate_names,
-                            coordinate_name_indices, self.base_ring())
+        resolution = type(self)(
+            Delta_polar,
+            rfan,
+            coordinate_points,
+            point_to_ray,
+            coordinate_names,
+            coordinate_name_indices,
+            self.base_ring(),
+        )
         R = self.coordinate_ring()
         R_res = resolution.coordinate_ring()
-        resolution_map = resolution.hom(R.hom(R_res.gens()[:R.ngens()]), self)
+        resolution_map = resolution.hom(R.hom(R_res.gens()[: R.ngens()]), self)
         resolution._resolution_map = resolution_map
         return resolution
 
@@ -1770,8 +1855,15 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
     See :meth:`~FanoToricVariety_field.anticanonical_hypersurface()` for a
     more elaborate example.
     """
-    def __init__(self, P_Delta, monomial_points=None, coefficient_names=None,
-                 coefficient_name_indices=None, coefficients=None):
+
+    def __init__(
+        self,
+        P_Delta,
+        monomial_points=None,
+        coefficient_names=None,
+        coefficient_name_indices=None,
+        coefficients=None,
+    ):
         r"""
         See :meth:`FanoToricVariety_field.anticanonical_hypersurface` for
         documentation.
@@ -1796,9 +1888,11 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
 
         """
         if not isinstance(P_Delta, FanoToricVariety_field):
-            raise TypeError("anticanonical hypersurfaces can only be "
-                            "constructed for CPR-Fano toric varieties!"
-                            "\nGot: %s" % P_Delta)
+            raise TypeError(
+                "anticanonical hypersurfaces can only be "
+                "constructed for CPR-Fano toric varieties!"
+                "\nGot: %s" % P_Delta
+            )
         Delta = P_Delta.Delta()
         Delta_polar = Delta.polar()
         # Monomial points normalization
@@ -1813,8 +1907,10 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             monomial_points = Delta.skeleton_points(Delta.dim() - 2)
             monomial_points.append(Delta.origin())
         elif isinstance(monomial_points, str):
-            raise ValueError("%s is an unsupported description of monomial "
-                             "points!" % monomial_points)
+            raise ValueError(
+                "%s is an unsupported description of monomial "
+                "points!" % monomial_points
+            )
         monomial_points = tuple(monomial_points)
         self._monomial_points = monomial_points
         # Make the necessary ambient space
@@ -1822,8 +1918,11 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             if coefficient_name_indices is None:
                 coefficient_name_indices = monomial_points
             coefficient_names = normalize_names(
-                                coefficient_names, len(monomial_points),
-                                DEFAULT_COEFFICIENT, coefficient_name_indices)
+                coefficient_names,
+                len(monomial_points),
+                DEFAULT_COEFFICIENT,
+                coefficient_name_indices,
+            )
             # We probably don't want it: the analog in else-branch is unclear.
             # self._coefficient_names = coefficient_names
             F = add_variables(P_Delta.base_ring(), coefficient_names)
@@ -1842,14 +1941,21 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
             coefficients = [F(_) for _ in coefficients]
         P_Delta = P_Delta.base_extend(F)
         if len(monomial_points) != len(coefficients):
-            raise ValueError("cannot construct equation of the anticanonical"
-                     " hypersurface with %d monomials and %d coefficients"
-                     % (len(monomial_points), len(coefficients)))
+            raise ValueError(
+                "cannot construct equation of the anticanonical"
+                " hypersurface with %d monomials and %d coefficients"
+                % (len(monomial_points), len(coefficients))
+            )
         # Defining polynomial
-        h = sum(coef * prod(P_Delta.coordinate_point_to_coordinate(n)
-                            ** (Delta.point(m) * Delta_polar.point(n) + 1)
-                            for n in P_Delta.coordinate_points())
-            for m, coef in zip(monomial_points, coefficients))
+        h = sum(
+            coef
+            * prod(
+                P_Delta.coordinate_point_to_coordinate(n)
+                ** (Delta.point(m) * Delta_polar.point(n) + 1)
+                for n in P_Delta.coordinate_points()
+            )
+            for m, coef in zip(monomial_points, coefficients)
+        )
         super().__init__(P_Delta, h)
 
 
@@ -1885,9 +1991,16 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
     See :meth:`FanoToricVariety_field.nef_complete_intersection` for a
     more elaborate example.
     """
-    def __init__(self, P_Delta, nef_partition,
-                 monomial_points='all', coefficient_names=None,
-                 coefficient_name_indices=None, coefficients=None):
+
+    def __init__(
+        self,
+        P_Delta,
+        nef_partition,
+        monomial_points="all",
+        coefficient_names=None,
+        coefficient_name_indices=None,
+        coefficients=None,
+    ):
         r"""
         See :meth:`FanoToricVariety_field.nef_complete_intersection` for
         documentation.
@@ -1909,12 +2022,16 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
               + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
         """
         if not isinstance(P_Delta, FanoToricVariety_field):
-            raise TypeError("nef complete intersections can only be "
-                            "constructed for Fano toric varieties!"
-                            "\nGot: %s" % P_Delta)
+            raise TypeError(
+                "nef complete intersections can only be "
+                "constructed for Fano toric varieties!"
+                "\nGot: %s" % P_Delta
+            )
         if nef_partition.Delta() is not P_Delta.Delta():
-            raise ValueError("polytopes 'Delta' of the nef-partition and the "
-                             "Fano toric variety must be the same!")
+            raise ValueError(
+                "polytopes 'Delta' of the nef-partition and the "
+                "Fano toric variety must be the same!"
+            )
         self._nef_partition = nef_partition
         k = nef_partition.nparts()
         # Pre-normalize all parameters
@@ -1938,20 +2055,27 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
                 monomial_points[i] = list(range(Delta_i.npoints()))
             elif monomial_points[i] == "vertices+origin":
                 monomial_points[i] = list(range(Delta_i.nvertices()))
-                if (Delta_i.origin() is not None
-                    and Delta_i.origin() >= Delta_i.nvertices()):
+                if (
+                    Delta_i.origin() is not None
+                    and Delta_i.origin() >= Delta_i.nvertices()
+                ):
                     monomial_points[i].append(Delta_i.origin())
             elif isinstance(monomial_points[i], str):
-                raise ValueError("'%s' is an unsupported description of "
-                                 "monomial points!" % monomial_points[i])
+                raise ValueError(
+                    "'%s' is an unsupported description of "
+                    "monomial points!" % monomial_points[i]
+                )
             monomial_points[i] = tuple(monomial_points[i])
             # Extend the base ring of the ambient space if necessary
             if coefficients[i] is None:
                 if coefficient_name_indices[i] is None:
                     coefficient_name_indices[i] = monomial_points[i]
                 coefficient_names[i] = normalize_names(
-                        coefficient_names[i], len(monomial_points[i]),
-                        DEFAULT_COEFFICIENTS[i], coefficient_name_indices[i])
+                    coefficient_names[i],
+                    len(monomial_points[i]),
+                    DEFAULT_COEFFICIENTS[i],
+                    coefficient_name_indices[i],
+                )
                 F = add_variables(P_Delta.base_ring(), coefficient_names[i])
                 coefficients[i] = [F(coef) for coef in coefficient_names[i]]
             else:
@@ -1968,15 +2092,24 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
                 coefficients[i] = [F(_) for _ in coefficients[i]]
             P_Delta = P_Delta.base_extend(F)
             if len(monomial_points[i]) != len(coefficients[i]):
-                raise ValueError("cannot construct equation %d of the complete"
-                         " intersection with %d monomials and %d coefficients"
-                         % (i, len(monomial_points[i]), len(coefficients[i])))
+                raise ValueError(
+                    "cannot construct equation %d of the complete"
+                    " intersection with %d monomials and %d coefficients"
+                    % (i, len(monomial_points[i]), len(coefficients[i]))
+                )
             # Defining polynomial
-            h = sum(coef * prod(P_Delta.coordinate_point_to_coordinate(n)
-                                ** (Delta_i.point(m) * Delta_polar.point(n)
-                                    + (nef_partition.part_of_point(n) == i))
-                                for n in P_Delta.coordinate_points())
-                for m, coef in zip(monomial_points[i], coefficients[i]))
+            h = sum(
+                coef
+                * prod(
+                    P_Delta.coordinate_point_to_coordinate(n)
+                    ** (
+                        Delta_i.point(m) * Delta_polar.point(n)
+                        + (nef_partition.part_of_point(n) == i)
+                    )
+                    for n in P_Delta.coordinate_points()
+                )
+                for m, coef in zip(monomial_points[i], coefficients[i])
+            )
             polynomials.append(h)
         self._monomial_points = tuple(monomial_points)
         super().__init__(P_Delta, polynomials)
@@ -2003,9 +2136,14 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         """
         X = self.ambient_space()
         H = X.cohomology_ring()
-        return prod(sum(H.gen(X._point_to_ray[point])
-                    for point in part if point in X._coordinate_points)
-               for part in self.nef_partition().parts(all_points=True))
+        return prod(
+            sum(
+                H.gen(X._point_to_ray[point])
+                for point in part
+                if point in X._coordinate_points
+            )
+            for part in self.nef_partition().parts(all_points=True)
+        )
 
     def nef_partition(self):
         r"""
@@ -2074,8 +2212,7 @@ def add_variables(field, variables):
                 if v not in new_variables:
                     new_variables.append(v)
             if len(new_variables) > R.ngens():
-                return PolynomialRing(R.base_ring(),
-                                      new_variables).fraction_field()
+                return PolynomialRing(R.base_ring(), new_variables).fraction_field()
             else:
                 return field
     # "Intelligent extension" didn't work, use the "usual one."
@@ -2086,19 +2223,11 @@ def add_variables(field, variables):
     return PolynomialRing(field, new_variables).fraction_field()
 
 
-
-# AL: adhoc solution for not failing the existing test cases 
+# AL: adhoc solution for not failing the existing test cases
 # where used the old constructor function
-# def CPRFanoToricVariety(*args, **kwargs):
-#     return CPRFanoToricVariety_field.__classcall__(CPRFanoToricVariety_field,
-#                                                    *args, **kwargs)
-
-# def FanoToricVariety(*args, **kwargs):
-#     return FanoToricVariety_field.__classcall__(FanoToricVariety_field,
-#                                                 *args, **kwargs)
-
 def CPRFanoToricVariety(*args, **kwargs):
     return CPRFanoToricVariety_field(*args, **kwargs)
+
+
 def FanoToricVariety(*args, **kwargs):
     return FanoToricVariety_field(*args, **kwargs)
-
