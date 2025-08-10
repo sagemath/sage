@@ -605,9 +605,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         except Exception:
             pass
         try:
-            g = iter(self.basis().keys())
-            for c in range(1, 4):
-                x = x + self.term(next(g), R(c))
+            for c, gi in zip(range(1, 4), I):
+                x = x + self.term(gi, R(c))
         except Exception:
             pass
         return x

@@ -694,14 +694,14 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: [PR.unrank(i) for i in range(10)]                                 # needs sage.graphs
                 [alpha[1],
                  alpha[2],
+                 alpha[0] + alpha[1] + alpha[2] + alpha[3],
                  alpha[3],
+                 2*alpha[0] + 2*alpha[1] + 2*alpha[2] + 2*alpha[3],
                  alpha[1] + alpha[2],
+                 3*alpha[0] + 3*alpha[1] + 3*alpha[2] + 3*alpha[3],
                  alpha[2] + alpha[3],
-                 alpha[1] + alpha[2] + alpha[3],
-                 alpha[0] + 2*alpha[1] + alpha[2] + alpha[3],
-                 alpha[0] + alpha[1] + 2*alpha[2] + alpha[3],
-                 alpha[0] + alpha[1] + alpha[2] + 2*alpha[3],
-                 alpha[0] + 2*alpha[1] + 2*alpha[2] + alpha[3]]
+                 4*alpha[0] + 4*alpha[1] + 4*alpha[2] + 4*alpha[3],
+                 alpha[1] + alpha[2] + alpha[3]]
             """
             if self.cartan_type().is_affine():
                 from sage.sets.disjoint_union_enumerated_sets \
@@ -798,18 +798,18 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: [PR.unrank(i) for i in range(5)]                                  # needs sage.graphs
                 [alpha[1],
                  alpha[2],
+                 2*alpha[0] + 2*alpha[1] + alpha[2],
                  alpha[1] + alpha[2],
-                 2*alpha[1] + alpha[2],
-                 alpha[0] + alpha[1] + alpha[2]]
+                 4*alpha[0] + 4*alpha[1] + 2*alpha[2]]
 
                 sage: Q = RootSystem(['D',3,2]).root_lattice()
                 sage: PR = Q.positive_roots()                                           # needs sage.graphs
                 sage: [PR.unrank(i) for i in range(5)]                                  # needs sage.graphs
                 [alpha[1],
                  alpha[2],
+                 alpha[0] + alpha[1] + alpha[2],
                  alpha[1] + 2*alpha[2],
-                 alpha[1] + alpha[2],
-                 alpha[0] + alpha[1] + 2*alpha[2]]
+                 2*alpha[0] + 2*alpha[1] + 2*alpha[2]]
             """
             if self.cartan_type().is_finite():
                 return tuple(RecursivelyEnumeratedSet(self.simple_roots(),

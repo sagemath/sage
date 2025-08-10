@@ -2479,9 +2479,9 @@ class FreeModule_generic(Module_free_ambient):
             sage: [sum(o <= b and m <= b for o,m in norms) for b in range(8)]  # did not miss any
             [1, 11, 61, 231, 681, 1683, 3653, 7183]
         """
-        G = self.gens()
-        if not G:
-            yield self(0)
+        n = self.rank()
+        if n == 0:
+            yield self.zero()
             return
 
         R = self.base_ring()
@@ -2507,7 +2507,6 @@ class FreeModule_generic(Module_free_ambient):
                                                      norm - max_ - lnorm, rmax):
                                         for mid in (+max_, -max_):
                                             yield left + (mid,) + right
-            n = len(G)
             for norm in itertools.count(0):
                 mm = (norm + n - 1) // n
                 for max_ in range(mm, norm + 1):
@@ -2515,24 +2514,7 @@ class FreeModule_generic(Module_free_ambient):
                         yield self.linear_combination_of_basis(vec)
             assert False  # should loop forever
 
-        iters = [iter(R) for _ in range(len(G))]
-        for x in iters:
-            next(x)     # put at 0
-        zero = R.zero()
-        v = [zero for _ in range(len(G))]
-        n = 0
-        z = self(0)
-        yield z
-        while n < len(G):
-            try:
-                v[n] = next(iters[n])
-                yield self.linear_combination_of_basis(v)
-                n = 0
-            except StopIteration:
-                iters[n] = iter(R)  # reset
-                next(iters[n])     # put at 0
-                v[n] = zero
-                n += 1
+        yield from super().__iter__()
 
     def cardinality(self):
         r"""
