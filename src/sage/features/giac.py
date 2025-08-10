@@ -25,7 +25,7 @@ class Giac(Executable):
             True
         """
         Executable.__init__(self, 'giac', executable='giac',
-                            spkg='giac', type='optional')
+                            spkg='giac', type='standard')
 
 
 def all_features():
