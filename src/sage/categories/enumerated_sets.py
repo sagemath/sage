@@ -755,7 +755,11 @@ class EnumeratedSets(CategoryWithAxiom):
                 raise ValueError("the rank must be greater than or equal to 0")
             if r not in ZZ:
                 raise ValueError(f"{r=} must be an integer")
-            for counter, u in enumerate(self):
+            # we do the below instead of just enumerate(self)
+            # so that if __iter__ is not available, it raises an error
+            # instead of fallback to __getitem__, which might call this method,
+            # leads to infinite recursion
+            for counter, u in enumerate(self.__iter__()):
                 if counter == r:
                     return u
             raise ValueError("the rank must be in the range from %s to %s" % (0,counter))

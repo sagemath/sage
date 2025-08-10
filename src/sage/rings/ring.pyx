@@ -113,7 +113,7 @@ from sage.misc.superseded import deprecation
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
-from sage.structure.category_object cimport check_default_category
+from sage.structure.category_object cimport CategoryObject, check_default_category
 from sage.categories.rings import Rings
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_algebras import CommutativeAlgebras
@@ -258,6 +258,25 @@ cdef class Ring(ParentWithGens):
             category = check_default_category(_Rings, category)
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
+
+    def __iter__(self):
+        """
+        This method is provided so that if ``ParentMethods`` or ``ElementMethods``
+        provides ``__iter__``, it is usable from ``iter()``.
+        To avoid metaclass confusion, Python only lookups special methods
+        from type objects.
+
+        This should be in ``CategoryObject``, but it does not work for unknown reasons.
+
+        TESTS::
+
+            sage: R.<x,y> = ZZ[]
+            sage: next(iter(R))
+            1
+        """
+        cdef CategoryObject c = <CategoryObject?>self
+        if c:
+            return self.getattr_from_category('__iter__')()
 
     def __len__(self):
         r"""

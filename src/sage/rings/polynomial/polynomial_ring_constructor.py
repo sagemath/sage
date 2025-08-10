@@ -951,7 +951,7 @@ def polynomial_default_category(base_ring_category, n_variables):
     if n_variables:
         # here we assume the base ring to be nonzero
         category = category.Infinite()
-        if base_ring_category.is_subcategory(_EnumeratedSets) and n_variables == 1:
+        if base_ring_category.is_subcategory(_EnumeratedSets):
             category = category.Enumerated()
     else:
         if base_ring_category.is_subcategory(_Fields):
