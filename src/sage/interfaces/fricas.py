@@ -390,7 +390,7 @@ http://fricas.sourceforge.net.
             sage: a.is_running()
             False
 
-        TEST::
+        TESTS::
 
         Ensure that a new process is started after ``quit()``::
 
