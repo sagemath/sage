@@ -35,6 +35,7 @@ from sage.arith.functions import lcm
 from sage.arith.misc import binomial, GCD as gcd
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 from sage.misc.cachefunc import cached_method
+from sage.misc.prandom import shuffle
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer import Integer
@@ -287,10 +288,27 @@ class EllipticCurve_finite_field(EllipticCurve_field):
 
         return [self.cardinality(extension_degree=i) for i in range(1, n + 1)]
 
-    def random_element(self):
+    def random_element(self, order=None, algorithm=None):
         """
-        Return a random point on this elliptic curve, uniformly chosen
-        among all rational points.
+        If order = None, return a random point on this elliptic curve,
+        uniformly chosen among all rational points. Otherwise, return
+        a random point of given order.
+
+        INPUT:
+
+        - ``order`` (int) -- if specified, the order of the
+            generated point.
+        - ``algorithm`` (string) -- the algorithm used for sampling a
+            point of given order. Only works if ``order`` is not None.
+          - ``None`` -- automatically chooses the algorithm.
+          - ``'cofactor'`` -- sample a random point of full order and
+            multiply it by an appropriate cofactor.
+          - ``'divPol'`` -- compute a random root of the corresponding
+            division polynomial and try to lift it to a point on the
+            elliptic curve.
+          - ``'abelianGroup'`` -- compute a basis for the abelian
+            group and return an appropriate linear combination of the
+            generators.
 
         ALGORITHM:
 
@@ -309,10 +327,38 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         every iteration, we simply choose a random bucket until we find
         a bucket containing a point.
 
+        If a specific order is requested and ``algorithm=None``,
+        automatically choose the algorithm to use. If the largest prime
+        factor of ``order`` is smaller than 11, choose ``'divPol'``.
+        Otherwise, if the order of the curve is cached and the curve is
+        known to be supersingular, choose ``'cofactor'``. In all other
+        cases choose ``'abelianGroup'``.
+
+        If a specific order is requested and ``algorithm='cofactor'``,
+        keep sampling a point as above and scaling it by the appropriate
+        cofactor until it has the desired order. This method only works
+        if elliptic curve is supersingular with non-cyclic group of
+        points.
+
+        If a specific order is requested and ``algorithm='divPol'``,
+        compute the corresponding division polynomial and select a random
+        root over the base field of the curve (if such a root exists).
+        Then try to lift that root to a point that is defined over the base
+        field as well. Works for ordinary and supersingular curves, but the
+        computation is very slow.
+
+        If a specific order is requested and ``algorithm='abelianGroup'``,
+        compute the two generators of the abelian group of the curve and
+        scale both such that they have the correct order. Then compute a
+        random linear combination of them. This method works for ordinary
+        and supersingular curves, but is potentially slow.
+
         AUTHORS:
 
         - Jeroen Demeyer (2014-09-09): choose points uniformly random,
           see :issue:`16951`.
+
+        - Jonas Meers, Andrea Basso (2024-01-21): choose points of given order
 
         EXAMPLES::
 
@@ -356,6 +402,34 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             sage: while len(S) < E.cardinality():
             ....:     S.add(E.random_element())
 
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(863^2)
+            sage: E = EllipticCurve(k, [0,1])
+            sage: P = E.random_element(order=32); P  # random
+            (626*a + 484 : 456*a + 23 : 1)
+            sage: P.order()
+            32
+            sage: P = E.random_element(order=31)
+            Traceback (most recent call last):
+            ...
+            ValueError: the curve does not have a point of order 31
+
+        ::
+
+            sage: E = EllipticCurve(GF(863^2), [0,1])
+            sage: S = set()
+            sage: while len(S) < 12: # we expect 12 points of order 4
+            ....:     S.add(E.random_element(order=4))
+
+        ::
+
+            sage: E = EllipticCurve(GF(103), [3, 5])
+            sage: S = set()
+            sage: while len(S) < 8: # we expect 8 points of order 12
+            ....:     S.add(E.random_element(order=12))
+
         TESTS:
 
         See :issue:`8311`::
@@ -379,21 +453,195 @@ class EllipticCurve_finite_field(EllipticCurve_field):
             (0 : 1 : 0)
             sage: E.cardinality()
             1
+
+            sage: p = 863
+            sage: F = GF(863^2)
+            sage: E = EllipticCurve(F, [1,0])
+            sage: for i in range(1,5):
+            ....:     P = E.random_point(order=2^i)
+            ....:     assert P.order() == 2^i
+            sage: E = E.quadratic_twist()
+            sage: E.set_order(862^2)
+            sage: P = E.random_point(order=431)
+            sage: P.order() == 431
+            True
+            sage: E.random_point(order=430)
+            Traceback (most recent call last):
+            ...
+            ValueError: the curve does not have a point of order 430
+
+            ::
+
+            sage: E = EllipticCurve(GF(863^2), [0,1])
+            sage: S = set()
+            sage: while len(S) < 12: # we expect 12 (= 16 - 4) points of order 4
+            ....:     S.add(E.random_element(order=4, algorithm="cofactor"))
+            sage: S = set()
+            sage: while len(S) < 12: # we expect 12 (= 16 - 4) points of order 4
+            ....:     S.add(E.random_element(order=4, algorithm="divPol"))
+            sage: S = set()
+            sage: while len(S) < 12: # we expect 12 (= 16 - 4) points of order 4
+            ....:     S.add(E.random_element(order=4))
+            sage: S = set()
+            sage: while len(S) < 96: # we expect 96 points of order 16
+            ....:     S.add(E.random_element(order=16, algorithm="divPol"))
+            sage: S = set()
+            sage: while len(S) < 96: # we expect 96 points of order 16
+            ....:     S.add(E.random_element(order=16, algorithm="cofactor"))
+            sage: S = set()
+            sage: while len(S) < 96: # we expect 96 points of order 16
+            ....:     S.add(E.random_element(order=16, algorithm="divPol"))
+
+            sage: p = 863
+            sage: F = GF(863^2)
+            sage: E = EllipticCurve(F, [1,1])
+            sage: E.is_supersingular()
+            False
+            sage: P = E.random_point(order=35, algorithm='cofactor')
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: not implemented for ordinary curves or supersingular curves with cyclic group of points
+            sage: P = E.random_point(order=35)
+            sage: P.order() == 35
+            True
         """
         k = self.base_field()
-        n = 2 * k.order() + 1
+        p = k.characteristic()
 
-        while True:
-            # Choose the point at infinity with probability 1/(2q + 1)
-            i = ZZ.random_element(n)
-            if not i:
-                return self.point(0)
+        if order is None:
+            n = 2 * k.order() + 1
 
-            v = self.lift_x(k.random_element(), all=True)
-            try:
-                return v[i % 2]
-            except IndexError:
-                pass
+            while True:
+                # Choose the point at infinity with probability 1/(2q + 1)
+                i = ZZ.random_element(n)
+                if not i:
+                    return self.zero()
+
+                v = self.lift_x(k.random_element(), all=True)
+                try:
+                    return v[i % 2]
+                except IndexError:
+                    pass
+
+        # From now on, `order` is set and we generate a point with given order
+        alg = algorithm
+
+        # Automatic choice of the algorithm
+        if alg == None:
+            if max(order.prime_divisors()) < 11:
+                alg = 'divPol'
+            elif hasattr(self, "_order"): # order is cached
+                if self.cardinality() == (p+1)**2 or self.cardinality() == (p-1)**2:
+                    alg = 'cofactor'
+                else:
+                    alg = 'abelianGroup'
+            else:
+                alg = 'abelianGroup'
+
+        if alg == 'cofactor':
+            if self.cardinality() == (p+1)**2:
+                if (p + 1) % order != 0:
+                    raise ValueError(f"the curve does not have a point of order {order}")
+                cofactor = (p + 1) // order
+            elif self.cardinality() == (p-1)**2:
+                if (p - 1) % order != 0:
+                    raise ValueError(f"the curve does not have a point of order {order}")
+                cofactor = (p - 1) // order
+            else:
+                raise NotImplementedError("not implemented for ordinary curves or supersingular curves with cyclic group of points")
+
+            while True:
+                P = self.random_element()
+                P = cofactor * P
+
+                P.set_order(multiple=order)
+                P_order = generic.order_from_multiple(P, order)
+                if P_order == order:
+                    P.set_order(P_order)
+                    return P
+
+        elif alg == "divPol":
+            if order == 1:
+                return self.zero()
+
+            points = []
+
+            for (ell, e) in order.factor():
+                divpol = self.division_polynomial(ell)
+                roots = divpol.numerator().roots(multiplicities=False)
+                shuffled_indices = list(range(len(roots)))
+                shuffle(shuffled_indices)
+
+                if not roots:
+                    raise ValueError(f"the curve does not have a point of order {order}")
+
+                for index in shuffled_indices:
+                    if ell == 2:
+                        # y-coodinate is bound to be 0
+                        P = self(roots[index], 0)
+
+                    else:
+                        # Random sampling of a x-coordinate and a choice for the y coordinate
+                        Ps = self.lift_x(roots[index], all=True)
+                        if Ps:
+                            i = ZZ.random_element(2)
+                            P = Ps[i]
+                        else:
+                            continue
+
+                    for _ in range(e - 1):
+                        divpoints = P.division_points(ell)
+                        if not divpoints:
+                            break
+
+                        i = ZZ.random_element(len(divpoints))
+                        P = divpoints[i]
+                    else:
+                        points.append(P)
+                        break
+
+                else:
+                    # Fail when all torsion points have rational x-,
+                    # but irrational y-coordinate
+                    raise ValueError(f"the curve does not have a point of order {order}")
+
+            return sum(points)
+
+        elif alg == "abelianGroup":
+            generators = self.gens()
+
+            if len(generators) == 2:
+                (P,Q) = generators
+            elif len(generators) == 1:
+                P = generators[0]
+                Q = self.zero()
+            else:
+                raise ValueError(f'the curve does not have any generators defined over the base field')
+
+            # Multiply P, Q by an appropriate cofactor s.t. both have the correct order
+            if P.order() % order != 0 or Q.order() % order != 0:
+                raise ValueError(f'the curve does not have any {order} torsion points defined over the base field')
+
+            P = (P.order() // order) * P
+            Q = (Q.order() // order) * Q
+
+            s = order
+            t = order
+
+            # Avoid the case where, say, order = 2*7*7 = 98, ord(P) = ord(Q) = 98 and s = 49, t = 14
+            # which results in a point of order 14
+            while(gcd([s,t,order]) > 1):
+                s = ZZ.random_element(P.order())
+                if not Q:
+                    t = 0 # avoid the case Q.order() = 1
+                else:
+                    t = ZZ.random_element(Q.order())
+
+            R = s*P + t*Q
+            #assert R.order() == order
+            return R
+        else:
+            raise NotImplementedError(f'unknown algorithm {alg}')
 
     random_point = random_element
 
