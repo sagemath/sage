@@ -2,6 +2,7 @@ r"""
 Library for Batyrev's classification of smooth toric varieties.
 TODO: Batyrev's construction for complete toric varieties of Picard rank 3. [Batyrev1991]
 TODO: Maybe add the correspoding well-known name for each variety.
+TODO: Add the Kleinschmidt classification of smooth toric varieties of Picard rank 2.
 """
 
 from sage.structure.sage_object import SageObject
