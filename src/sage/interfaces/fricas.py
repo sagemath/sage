@@ -288,8 +288,9 @@ class FriCAS(ExtraTabCompletion, Expect):
         Create an instance of the FriCAS interpreter.
 
         TESTS::
-
-            sage: fricas == loads(dumps(fricas))
+            
+            sage: a = FriCAS()
+            sage: isinstance(loads(dumps(a)), FriCAS)
             True
 
         Check that :issue:`25174` is fixed::
@@ -389,10 +390,11 @@ http://fricas.sourceforge.net.
             sage: a.is_running()
             False
 
-        TESTS:
-
-        Ensure that a new process is started after ``quit()``::
-
+        TESTS::
+            sage: from sage.interfaces.fricas import FriCAS
+            sage: a = FriCAS()
+            sage: isinstance(loads(dumps(a)), FriCAS)
+            True
             sage: p = fricas.pid()
             sage: fricas.quit()
             sage: fricas.pid() == p
