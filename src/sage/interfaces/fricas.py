@@ -391,9 +391,7 @@ http://fricas.sourceforge.net.
             False
 
         TESTS::
-
-        Ensure that a new process is started after ``quit()``::
-
+            sage: from sage.interfaces.fricas import FriCAS
             sage: a = FriCAS()
             sage: isinstance(loads(dumps(a)), FriCAS)
             True
