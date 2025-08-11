@@ -17,6 +17,7 @@ Hyperbolic Coxeter types.
 # ****************************************************************************
 
 from sage.combinat.root_system.coxeter_type import CoxeterType
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.combinat.root_system.hyperbolic_coxeter_matrices import (
     hyperbolic_coxeter_matrices,
     mcmullen_notation)
@@ -107,7 +108,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             sage: CoxeterType(['L', 633]).rank()
             4
         """
-        return hyperbolic_coxeter_matrices[self._position].rank()
+        return len(hyperbolic_coxeter_matrices[self._position])
 
     def coxeter_matrix(self):
         """
@@ -131,7 +132,7 @@ class CoxeterType_Hyperbolic(CoxeterType):
             [2 2 2 2 2 2 3 1 3]
             [2 2 2 2 2 2 2 3 1]
         """
-        return hyperbolic_coxeter_matrices[self._position]
+        return CoxeterMatrix(hyperbolic_coxeter_matrices[self._position])
 
     def humphreys_reference(self):
         """
