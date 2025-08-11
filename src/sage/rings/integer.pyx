@@ -1072,6 +1072,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return gmpy2.GMPy_MPZ_From_mpz(self.value)
 
+    def _regina_(self, regina):
+        r"""
+        Return a Regina integer.
+
+        EXAMPLES::
+
+            sage: r5 = regina(5);(r5, type(r5), type(r5._inst))  # optional regina
+            (5,
+            <class 'sage.interfaces.regina.ReginaElement'>,
+            <class 'regina.engine.Integer'>)
+        """
+        return regina.Integer(mpz_get_si(self.value))
+
     def str(self, int base=10):
         r"""
         Return the string representation of ``self`` in the
