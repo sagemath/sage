@@ -390,6 +390,8 @@ http://fricas.sourceforge.net.
             sage: a.is_running()
             False
 
+        TESTS:
+
         Ensure that a new process is started after ``quit()``::
 
             sage: p = fricas.pid()
