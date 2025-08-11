@@ -1,9 +1,6 @@
 r"""
 Vertex Operators
 
-Currently just a sandbox for experimenting with vertex operator code
-before a more permanent implementation
-
 AUTHORS:
 
 - Joseph McDonough (2025-08-04): Initial version
@@ -38,7 +35,7 @@ from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.non_negative_integers import NonNegativeIntegers
-
+from sage.structure.sage_object import SageObject
 
 class FermionicFockSpace(CombinatorialFreeModule):
     r"""
@@ -51,6 +48,7 @@ class FermionicFockSpace(CombinatorialFreeModule):
         sage: F = FermionicFockSpace(QQ)
         sage: F.an_element()
         |[], 0> + 4*|[], 1> + 2*|[1], 0>
+        sage: TestSuite(F).run()
     """
     def __init__(self, R):
         index_set = cartesian_product((Partitions(), ZZ))
@@ -63,6 +61,22 @@ class FermionicFockSpace(CombinatorialFreeModule):
 def BosonicFockSpace(names=('w',)):
     return LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=names)
 
+def BFMap():
+    r"""
+    
+    TESTS::
+
+        sage: from sage.algebras.vertex_operators import *
+        sage: F = FermionicFockSpace(QQ)
+        sage: phi = BFMap()
+        sage: phi(F(([2,1],-1)) + F(([],0)))
+        s[2, 1]*w^-1 + s[]
+    """
+    F = FermionicFockSpace(QQ)
+    B = BosonicFockSpace()
+    w = B.gen()
+    s = B.base_ring()
+    return F.module_morphism(on_basis=lambda b: w**(b[1])*s(b[0]), codomain = B)
 
 class Current(Action):
     r"""
@@ -198,7 +212,7 @@ class HalfVertexOperator():
         raise ValueError("Invalid input")
 
 
-class VertexOperator():
+class VertexOperator(SageObject):
     r"""
     The action of a Vertex Operator on the Bosonic Fock space. Users should not
     create instances of this class directly, but instead use one of the defined
@@ -229,10 +243,10 @@ class VertexOperator():
         # self.spectral = LazyLaurentSeriesRing(self.fockspace, names = ('z',))
         self.cutoff = cutoff
         self.dcharge = dcharge
-        # super().__init__(ZZ, self.fockspace)
 
     # def act_on_fock_space_element(self, x):
     #     return self.spectral(lambda n: self.act_by_mode(n,x), valuation = -1)
+
     def act_by_mode(self, i, x):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
@@ -290,7 +304,7 @@ class VertexOperator():
         return Partition(sorted(res, reverse=True))
 
 
-class ProductOfVertexOperators():
+class ProductOfVertexOperators(SageObject):
     def __init__(self, vertex_ops):
         self.vertex_ops = vertex_ops
         self.fockspace = self.vertex_ops[0].fockspace
@@ -320,16 +334,11 @@ class ProductOfVertexOperators():
             -s[1, 1, 1]*w^3
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Ann]*3)
-            sage: P.get_monomial_coefficient([-4, -3, -2],B.one())
+            sage: P.get_monomial_coefficient([4, 3, 2],B.one())
             -s[3]*w^-3
-            sage: P.get_monomial_coefficient([-4, -2, -3],B.one())
+            sage: P.get_monomial_coefficient([4, 2, 3],B.one())
             s[3]*w^-3
         """
-        # BUG: This currently gives the wrong power for Annihilation operators
-        # This is coming from the fact that their series form is \sum \psi_i^* z^-i
-        # The code for getting their Fourier mode picks out the action of \psi_i, NOT the coefficient of z^i
-        # The former makes more sense when you just want the action of a single clifford element, but the latter makes
-        # more sense when you want to deal with series expansions
         if len(mon) != len(self.vertex_ops):
             raise ValueError
         for i in range(len(mon) - 1, -1, -1):
@@ -380,17 +389,18 @@ class ProductOfVertexOperators():
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Ann, Cre])
             sage: P.vacuum_expectation()
-            {(0, 0): 1, (1, 1): 1, (2, 2): 1, (3, 3): 1, (4, 4): 1}
+            {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1, (0, 0): 1}
             sage: P = ProductOfVertexOperators([Cre, Ann])
             sage: P.vacuum_expectation()
-            {(-4, -4): 1, (-3, -3): 1, (-2, -2): 1, (-1, -1): 1}
+            {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1}
         """
         return self.matrix_coefficient(([], 0), ([], 0), cutoff)
 
 
 class CreationOperator(VertexOperator):
     r"""
-
+    The generating series for (bosonic) creation operators. 
+    
     EXAMPLES::
 
         sage: from sage.algebras.vertex_operators import *
@@ -440,13 +450,21 @@ class CreationOperator(VertexOperator):
             op += self.pos[i + j - c]*self.neg[j]
         return op
 
+    def act_by_clifford_gen(self, i, x):
+        return self.act_by_mode(i, x)
+
     def _repr_(self):
         return f"The creation vertex operator acting on {self.fockspace}"
 
 
 class AnnihilationOperator(VertexOperator):
     r"""
+    The generating series for (bosonic) annihilation operators. 
+    
+    .. WARNING::
 
+        Following the literature, the operator corresponding to the coefficient of 
+        `z^i` is `\psi_{-i}`, **not** `\psi_i`.
 
     EXAMPLES::
 
@@ -455,15 +473,15 @@ class AnnihilationOperator(VertexOperator):
         sage: Ann = AnnihilationOperator(B)
         sage: Ann.act(0, B.one())
         0
-        sage: Ann.act(-1, B.one())
+        sage: Ann.act(1, B.one())
         s[]*w^-1
-        sage: Ann.act(-2, w^-1)
+        sage: Ann.act(2, w^-1)
         s[]*w^-2
-        sage: Ann.act(-1, w)
+        sage: Ann.act(1, w)
         -s[1]
-        sage: Ann.act(-2, Ann.act(0, w^2))
+        sage: Ann.act(2, Ann.act(0, w^2))
         -s[2, 1]
-        sage: Ann.act(-2, Ann.act(0, w^2)) + Ann.act(0, Ann.act(-2, w^2))
+        sage: Ann.act(2, Ann.act(0, w^2)) + Ann.act(0, Ann.act(2, w^2))
         0
     """
     def __init__(self, fockspace):
@@ -473,7 +491,7 @@ class AnnihilationOperator(VertexOperator):
 
     def _get_operator(self, i, cutoff, c):
         r"""
-        Compute the coefficient of `z^{-i + c - 1}` in the vertex operator
+        Compute the coefficient of `z^{i + c - 1}` in the vertex operator
 
         .. MATH::
 
@@ -490,11 +508,17 @@ class AnnihilationOperator(VertexOperator):
         """
         op = 0
         for j in range(cutoff+1):
-            if j - i + c - 1 < 0:
+            if j + i + c - 1 < 0:
                 continue
 
-            op += self.pos[j - i + c - 1]*self.neg[j]
+            op += self.pos[j + i + c - 1]*self.neg[j]
         return op
 
+    def act_by_clifford_gen(self,i, x):
+        """
+        Action of the coefficient of z^{-i} on Fock space element ``x``.
+        """
+        return self.act_by_mode(-i, x)
+    
     def _repr_(self):
         return f"The annihilation vertex operator acting on {self.fockspace}"
