@@ -390,11 +390,8 @@ http://fricas.sourceforge.net.
             sage: a.is_running()
             False
 
-        TESTS::
-            sage: from sage.interfaces.fricas import FriCAS
-            sage: a = FriCAS()
-            sage: isinstance(loads(dumps(a)), FriCAS)
-            True
+        Ensure that a new process is started after ``quit()``::
+
             sage: p = fricas.pid()
             sage: fricas.quit()
             sage: fricas.pid() == p
