@@ -568,8 +568,8 @@ class InterfaceShellTransformer(PrefilterTransformer):
             '2 + sage0 '
             sage: maxima.eval('sage0')
             '3'
-            sage: ift.preparse_imports_from_sage('2 + maxima(a)') # maxima calls set_seed on startup which is why 'sage0' will becomes 'sage4' and not just 'sage1'
-            '2 +  sage4 '
+            sage: ift.preparse_imports_from_sage('2 + maxima(a)')
+            '2 +  sage1 '
             sage: ift.preparse_imports_from_sage('2 + gap(a)')
             '2 + gap(a)'
 

@@ -15,7 +15,6 @@ py.install_sources(
   'expression_conversions.py',
   'function.pxd',
   'function_factory.py',
-  'maxima_wrapper.py',
   'operators.py',
   'pynac_wrap.h',
   'random_tests.py',
