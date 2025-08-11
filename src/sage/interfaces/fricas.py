@@ -288,7 +288,7 @@ class FriCAS(ExtraTabCompletion, Expect):
         Create an instance of the FriCAS interpreter.
 
         TESTS::
-            
+
             sage: a = FriCAS()
             sage: isinstance(loads(dumps(a)), FriCAS)
             True
