@@ -2084,7 +2084,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         By definition, the relative Frobenius is the isogeny represented by
         the Ore polynomial `tau^d` where `d` is the degree of the characteristic
         of this Drinfeld module (which is also the degree of `\gamma(T)` over
-        the `\mathbb F_q`).
+        `\mathbb F_q`, where `\gamma` is the base morphism `\mathbb F_q[T] \to F`).
 
         INPUT:
 
