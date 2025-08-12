@@ -27,7 +27,7 @@ from sage.combinat.partition import Partitions, Partition
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.data_structures.stream import Stream_function, Stream_cauchy_compose
 from sage.functions.other import factorial
-from sage.misc.cachefunc import cached_function
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.misc_c import prod
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer_ring import ZZ
@@ -36,6 +36,7 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.sage_object import SageObject
+
 
 class FermionicFockSpace(CombinatorialFreeModule):
     r"""
@@ -61,9 +62,14 @@ class FermionicFockSpace(CombinatorialFreeModule):
 def BosonicFockSpace(names=('w',)):
     return LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=names)
 
+
 def BFMap():
     r"""
-    
+    Returns a map that compute the image of an element of the Fermionic Fock space
+    under the Boson-Fermion correspondence. The basis element `|\lambda, n \rangle`
+    gets mapped to `w^ns_\lambda`, where `w` is the charge variable and `s_\lambda`
+    is the Schur function corresponding to `\lambda`.
+
     TESTS::
 
         sage: from sage.algebras.vertex_operators import *
@@ -76,7 +82,8 @@ def BFMap():
     B = BosonicFockSpace()
     w = B.gen()
     s = B.base_ring()
-    return F.module_morphism(on_basis=lambda b: w**(b[1])*s(b[0]), codomain = B)
+    return F.module_morphism(on_basis=lambda b: w**(b[1])*s(b[0]), codomain=B)
+
 
 class Current(Action):
     r"""
@@ -247,6 +254,7 @@ class VertexOperator(SageObject):
     # def act_on_fock_space_element(self, x):
     #     return self.spectral(lambda n: self.act_by_mode(n,x), valuation = -1)
 
+    @cached_method
     def act_by_mode(self, i, x):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
@@ -349,8 +357,7 @@ class ProductOfVertexOperators(SageObject):
 
     def matrix_coefficient(self, bra, ket, cutoff=4):
         r"""
-        Approximate the matrix coefficient <bra|X|ket>, where X is the vertex operator
-        represented by ``self``
+        Approximate the matrix coefficient `\langle` ``bra`` `|` ``self`` `|` ``ket`` `\rangle`.
 
         INPUT:
 
@@ -380,7 +387,9 @@ class ProductOfVertexOperators(SageObject):
         return res
 
     def vacuum_expectation(self, cutoff=4):
-        """
+        r"""
+        Computes the matrix coefficient `\langle \varnothing | X | \varnothing \rangle`
+
         EXAMPLES::
 
             sage: from sage.algebras.vertex_operators import *
@@ -393,14 +402,23 @@ class ProductOfVertexOperators(SageObject):
             sage: P = ProductOfVertexOperators([Cre, Ann])
             sage: P.vacuum_expectation()
             {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1}
+
+        This verifies that, letting `\psi(z), \psi^*(w)` denote the fermionic fields,
+        the matrix coefficient of their product is given by `\langle \varnothing | \psi^*(w)\psi^(z)|\varnothing\rangle = \frac{w}{w-z}`
         """
         return self.matrix_coefficient(([], 0), ([], 0), cutoff)
 
 
 class CreationOperator(VertexOperator):
     r"""
-    The generating series for (bosonic) creation operators. 
-    
+    The image under the boson-fermion correspond of the fermionic field `\psi^*(z)`.
+
+    Explicitly, the action on the bosonic fock space is given by the series
+
+    .. MATH::
+
+        \exp \left( \sum_{j \geq 1} x_j z^j \right) \exp\left(\sum_{j \geq 1} (-dx_j/j)z^{-j}\right)wz^{Q}
+
     EXAMPLES::
 
         sage: from sage.algebras.vertex_operators import *
@@ -459,11 +477,17 @@ class CreationOperator(VertexOperator):
 
 class AnnihilationOperator(VertexOperator):
     r"""
-    The generating series for (bosonic) annihilation operators. 
-    
+    The image under the boson-fermion correspond of the fermionic field `\psi^*(z)`.
+
+    Explicitly, the action on the bosonic fock space is given by the series
+
+    .. MATH::
+
+        \exp \left( \sum_{j \geq 1} -x_j z^j \right) \exp\left(\sum_{j \geq 1} (dx_j/j)z^{-j}\right)z^{-Q}w^{-1}
+
     .. WARNING::
 
-        Following the literature, the operator corresponding to the coefficient of 
+        Following the literature, the operator corresponding to the coefficient of
         `z^i` is `\psi_{-i}`, **not** `\psi_i`.
 
     EXAMPLES::
@@ -514,11 +538,11 @@ class AnnihilationOperator(VertexOperator):
             op += self.pos[j + i + c - 1]*self.neg[j]
         return op
 
-    def act_by_clifford_gen(self,i, x):
+    def act_by_clifford_gen(self, i, x):
         """
-        Action of the coefficient of z^{-i} on Fock space element ``x``.
+        Action of the coefficient of `z^{-i}` on Fock space element ``x``.
         """
         return self.act_by_mode(-i, x)
-    
+
     def _repr_(self):
         return f"The annihilation vertex operator acting on {self.fockspace}"
