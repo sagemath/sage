@@ -490,6 +490,11 @@ class DrinfeldModuleHomset(Homset):
         Return a basis of this homset over the underlying
         function ring.
 
+        Currently, it only works over finite fields.
+
+        This method should not be called directly; call
+        :meth:`basis` instead.
+
         ALGORITHM:
 
         The isogenies `u : \phi \to \psi' correspond to
@@ -603,8 +608,13 @@ class DrinfeldModuleHomset(Homset):
 
     def _Fq_basis(self, degree):
         r"""
-        Return a `\mathbb{F}_q`-basis of the space of morphisms in this
-        homset of degree at most `degree`.
+        Return a `\mathbb{F}_q`-basis of the space of morphisms
+        in this homset of degree at most ``degree``.
+
+        Currently, it only works over finite fields.
+
+        This method should not be called directly; call
+        :meth:`basis` instead.
 
         INPUT:
 
@@ -703,6 +713,12 @@ class DrinfeldModuleHomset(Homset):
         Otherwise, a `\mathbb F_q`-basis of the set of morphisms of
         degree at most ``degree`` is returned.
 
+        ALGORITHM:
+
+        We reformulate the problem as a linear system over `\mathbb F_q`
+        or `A = \mathbb F_q[T]` and solve it.
+        We refer to [Mus2023]_, Section 7.3 for more details.
+
         EXAMPLES::
 
             sage: Fq = GF(5)
@@ -769,7 +785,7 @@ class DrinfeldModuleHomset(Homset):
             sage: Hom(phi, psi).basis()
             []
 
-        TESTS::
+        Currently, this method only works over finite fields::
 
             sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, 1])
