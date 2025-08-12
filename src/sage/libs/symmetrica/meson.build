@@ -1,9 +1,12 @@
-# Cannot be found by pkg-config
-symmetrica = cc.find_library(
-  'symmetrica',
-  required: not is_windows,
-  disabler: true,
-)
+symmetrica = dependency('symmetrica', required: false, disabler: true)
+if not symmetrica.found()
+  # fallback for older versions without pkg-config
+  symmetrica = cc.find_library(
+    'symmetrica',
+    required: not is_windows,
+    disabler: true,
+  )
+endif
 
 py.install_sources('__init__.py', 'all.py', subdir: 'sage/libs/symmetrica')
 
