@@ -1,4 +1,8 @@
-brial = cc.find_library('brial', required: false, disabler: true)
+brial = dependency('brial', required: false, disabler: true)
+if not brial.found()
+  # fallback for older versions without pkg-config
+  brial = cc.find_library('brial', required: false, disabler: true)
+endif
 # Cannot be found via pkg-config
 brial_groebner = cc.find_library(
   'brial_groebner',

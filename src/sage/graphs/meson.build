@@ -5,14 +5,22 @@ if cc.has_header('mcqd.h')
 else
   mcqd = disabler()
 endif
-cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
 
-# Cannot be found via pkg-config
-planarity = cc.find_library(
-  'planarity',
-  required: not is_windows,
-  disabler: true,
-)
+cliquer = dependency('libcliquer', required: false, disabler: true)
+if not cliquer.found()
+  # fallback for older versions without pkg-config
+  cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
+endif
+
+planarity = dependency('libplanarity', required: false, disabler: true)
+if not planarity.found()
+  # fallback for older versions without pkg-config
+  planarity = cc.find_library(
+    'planarity',
+    required: not is_windows,
+    disabler: true,
+  )
+endif
 
 py.install_sources(
   '__init__.py',
