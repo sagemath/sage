@@ -92,13 +92,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi
         Drinfeld module defined by T |--> t^2 + 4*t + z
 
-    ::
+    When the given coefficients naturally live in a ring, the
+    Drinfeld module is constructed over the fraction field::
 
         sage: Fq = GF(49)
         sage: A.<T> = Fq[]
         sage: psi = DrinfeldModule(A, [T, T+1])
         sage: psi
         Drinfeld module defined by T |--> (T + 1)*t + T
+        sage: psi.base()
+        Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 7^2 over its base
 
     .. NOTE::
 
