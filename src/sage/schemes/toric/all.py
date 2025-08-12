@@ -6,6 +6,7 @@ lazy_import('sage.schemes.toric.variety', ['AffineToricVariety', 'ToricVariety']
 lazy_import('sage.schemes.toric.library', 'toric_varieties')
 lazy_import('sage.schemes.toric.fano_variety', ['FanoToricVariety', 'CPRFanoToricVariety'])
 lazy_import('sage.schemes.toric.batyrev', 'SmoothFanoToricVariety')
+lazy_import('sage.schemes.toric.kleinschmidt', 'KTF')
 lazy_import('sage.schemes.toric.batyrev_library', 'BTF')
 lazy_import('sage.schemes.toric.ideal', 'ToricIdeal')
 del lazy_import

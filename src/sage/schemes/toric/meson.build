@@ -8,6 +8,7 @@ py.install_sources(
   'fano_variety.py',
   'homset.py',
   'ideal.py',
+  'kleinschmidt.py',
   'library.py',
   'morphism.py',
   'points.py',
