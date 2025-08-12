@@ -907,13 +907,14 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
             \mathcal{H}(B) = \left(\dfrac{det L}{\|v_1\| \|v_2\| \cdots \|v_n\|}\right)^{\frac{1}{n}}
 
+
         The closer this ratio is to 1, the more orthogonal the basis is.
 
         INPUT:
         - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis 
           for computing the ratio
 
-        OUTPUT: the ratio described above. This ratio lies in (0, 1]
+        OUTPUT: the ratio described above.
 
         EXAMPLES::
 
