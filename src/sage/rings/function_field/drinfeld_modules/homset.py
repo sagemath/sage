@@ -9,6 +9,7 @@ This module provides the class
 AUTHORS:
 
 - Antoine Leudière (2022-04)
+- Xavier Caruso, Yossef Musleh (2025-08): added computation of bases of homsets
 """
 
 # *****************************************************************************
