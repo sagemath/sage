@@ -94,7 +94,7 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
-    FflasRight, vector, list as std_list
+    FfpackSlabRecursive, FflasRight, vector, list as std_list, RankProfileFromLU
 from libcpp cimport bool
 from sage.parallel.parallelism import Parallelism
 
@@ -176,12 +176,13 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     Return the reduced row echelon form of this matrix.
     """
     if linbox_is_zero(modulus, entries, nrows, ncols):
-        return 0, []
+        return 0, [], []
 
     cdef Py_ssize_t i, j
     cdef ModField *F = new ModField(<long>modulus)
     cdef size_t* P = <size_t*>check_allocarray(nrows, sizeof(size_t))
     cdef size_t* Q = <size_t*>check_allocarray(ncols, sizeof(size_t))
+    cdef size_t* rkprofile = <size_t*>check_allocarray(nrows, sizeof(size_t))
 
     cdef Py_ssize_t r
     cdef size_t nbthreads
@@ -190,9 +191,11 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     if nrows * ncols > 1000:
         sig_on()
     if nbthreads > 1 :
-        r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q, transform, nbthreads)
+        r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries,
+                                   ncols, P, Q, transform, nbthreads, FfpackSlabRecursive)
     else :
-        r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q)
+        r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q,
+                                  transform, FfpackSlabRecursive)
     if nrows * ncols > 1000:
         sig_off()
 
@@ -204,12 +207,16 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
 
     applyP(F[0], FflasRight, FflasNoTrans, nrows, 0, r, <ModField.Element*>entries, ncols, Q)
 
+    RankProfileFromLU(Q, nrows, r, rkprofile, FfpackSlabRecursive)
+
     cdef list pivots = [int(Q[i]) for i in range(r)]
+    cdef list rrp = [int(rkprofile[i]) for i in range(r)]
 
     sig_free(P)
     sig_free(Q)
+    sig_free(rkprofile)
     del F
-    return r, pivots
+    return r, pivots, rrp
 
 cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
     # See trac #13878: This is to avoid sending invalid data to linbox,
@@ -1595,7 +1602,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           - ``gauss`` -- uses a custom slower `O(n^3)` Gauss
             elimination implemented in Sage
 
-          - ``all`` -- compute using both algorithms and verify that
+          - ``all`` -- compute using all algorithms and verify that
             the results are the same
 
         - ``**kwds`` -- these are all ignored
@@ -1788,12 +1795,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             r, pivots = linbox_echelonize_efd(self.p, self._entries,
                                               self._nrows, self._ncols)
         else:
-            r, pivots = linbox_echelonize(self.p, self._entries,
-                                          self._nrows, self._ncols)
+            r, pivots, rrp = linbox_echelonize(self.p, self._entries, self._nrows, self._ncols)
         verbose('done with echelonize', t)
         self.cache('in_echelon_form', True)
         self.cache('rank', r)
         self.cache('pivots', tuple(pivots))
+        if not efd:
+            self.cache('pivot_rows', tuple(rrp))
 
     def _echelon_in_place_classical(self):
         """
