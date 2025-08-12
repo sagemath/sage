@@ -717,7 +717,7 @@ class DrinfeldModuleHomset(Homset):
 
         We reformulate the problem as a linear system over `\mathbb F_q`
         or `A = \mathbb F_q[T]` and solve it.
-        We refer to [Mus2023]_, Section 7.3 for more details.
+        We refer to [Wes2022]_ and [Mus2023]_, Section 7.3 for more details.
 
         EXAMPLES::
 
