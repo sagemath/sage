@@ -89,8 +89,6 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
     Construct :math:`\mathbb{P}^2` **from its fan** and let the constructor
     compute the anticanonical polytope automatically::
 
-        sage: from sage.geometry.toric_lattice import ToricLattice
-        sage: from sage.geometry.fan import Fan
         sage: N = ToricLattice(2)
         sage: e1, e2 = N.basis()
         sage: rays = [e1, e2, -(e1+e2)]
@@ -156,7 +154,7 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
         if check and not Delta_polar.is_reflexive():
             raise ValueError("Delta_polar must be reflexive")
 
-        fan = FaceFan(Delta_polar, check=check)
+        fan = FaceFan(Delta_polar)
 
         if check and not fan.is_smooth():
             raise ValueError("The face fan of Delta_polar is not smooth")
@@ -265,16 +263,44 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
       r"""Return ``dim Hom(L1, L2) = dim H^0(X, O_X(L2-L1))`` via a cheap H^0 counter."""
       return self._h0_dim(L2 - L1)
     
-    def _picard_rank(self) -> int:
+    def picard_rank(self) -> int:
         r"""
         Return the Picard rank of ``self``.
-        TODO: we can implement a more general method for any toric variety. The current
+        TODO: 
+        - we can implement a more general method for any toric variety. The current
         implementation only works for smooth complete toric varieties.
+        - add testcases
         """
-        return self.fan().nrays() - self.fan().dimension()
+        ambient_dim = self.fan().lattice().ngens()
+        from sage.modules.free_module import VectorSpace
+        ambient_space = VectorSpace(QQ, ambient_dim)
+        dim_cone = ambient_space.span(self.fan().rays()).dimension()
+        return self.fan().nrays() - dim_cone
+    
+    def _is_cartesian_product_of_projective_spaces(self):
+        r"""
+        Check if the toric variety is a cartesian product of projective spaces. This will determine the method to compute the cohomologically zero line bundles.
+        """
+        # TODO: if no neat algorithm related to the reflexive polytope, we can just enrich the library with its original name and geometric properties. 
+        if self.picard_rank != self.toric_variety.dimension():
+            return False
+        # Quick ray count check: P^m has m+1 rays.  
+        # product of r copies ⇒ total rays = Σ(m_i+1). We only test consistency here, not sufficiency.
+        rays = len(self.toric_variety.fan().rays())
+        return rays == self.toric_variety.dimension() + self.picard_rank
+
+        
+    def _is_projective_bundle_over_projective_space(self):
+        # Very rough: Picard rank 2 and fan splits as a join of two simplices.
+        return self.picard_rank == 2 and self.toric_variety.dimension() >= 2
+    
+    def _is_blow_up_of_projective_space(self):
+        # Rough proxy: smooth Fano with Picard rank > 1 but small.
+        return 1 < self.picard_rank <= self.toric_variety.dimension() + 1
 
 
     @staticmethod
+    # TODO: something wrong with this method for some testcase
     def anticanonical_polytope_from_fan(fan, require_reflexive=True):
         r"""
         Construct the anticanonical polytope from a complete fan.
@@ -310,9 +336,7 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
         A Fano–Gorenstein example: :math:`\mathbb{P}^2`. Its fan has rays
         :math:`(1,0)`, :math:`(0,1)`, :math:`(-1,-1)` and three 2D cones::
 
-            sage: from sage.schemes.toric.smooth_fano import SmoothFanoToricVariety_field
-            sage: from sage.geometry.toric_lattice import ToricLattice
-            sage: from sage.geometry.fan import Fan
+        
             sage: N = ToricLattice(2)
             sage: e1, e2 = N.basis()
             sage: rays = [e1, e2, -(e1+e2)]
@@ -381,8 +405,6 @@ def SmoothFanoToricVariety(*arg, **kwds):
 
     Using a smooth complete fan (the constructor checks Fano/Gorenstein via the anticanonical polytope)::
 
-        sage: from sage.geometry.toric_lattice import ToricLattice
-        sage: from sage.geometry.fan import Fan
         sage: N = ToricLattice(2)
         sage: e1, e2 = N.basis()
         sage: rays = [e1, e2, -(e1+e2)]
