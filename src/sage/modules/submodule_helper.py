@@ -130,8 +130,16 @@ class SubmoduleHelper(metaclass=ClasscallMetaclass):
             sage: SH2 = SubmoduleHelper(matrix(Fq, [[2, 6]]))
             sage: SH1 == SH2
             True
+
+        ::
+
+            sage: SHZ = SubmoduleHelper(matrix(ZZ, [[1, 3]]))
+            sage: SHZ == SH1
+            False
         """
-        return self.basis == other.basis
+        sb = self.basis
+        ob = other.basis
+        return sb.parent() is ob.parent() and sb == ob
 
 
 class SubmoduleHelper_field(SubmoduleHelper):

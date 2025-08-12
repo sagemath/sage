@@ -1812,6 +1812,10 @@ class OreSubmodule(OreModule):
         - ``gens`` -- a list of generators (formatted as coordinates
           vectors) of this submodule
 
+        - ``saturate`` -- a boolean; if ``True``, return the saturation
+          of this submodule in the ambient space (see :meth:`saturate`
+          for more details)
+
         - ``names`` -- the name of the vectors of the basis of
           the submodule, or ``None``
 
@@ -1856,7 +1860,9 @@ class OreSubmodule(OreModule):
         - ``ambient`` -- a Ore module, the ambient module where
           this submodule sits
 
-        - ``basis`` -- the echelon basis of this submodule
+        - ``submodule`` -- an instance of the class
+          :class:`sage.modules.submodule_helper.SubmoduleHelper`
+          describing this submodule
 
         - ``names`` -- the name of the vectors of the basis of
           the submodule, or ``None``
@@ -2023,6 +2029,15 @@ class OreSubmodule(OreModule):
         By definition, the saturation of `N` in `M` is the submodule
         of `M` consisting of vectors `x` such that `a x \in N` for a
         nonzero scalar `a` in the base ring.
+
+        INPUT:
+
+        - ``names`` -- a string or a list of strings, the names
+          of the vectors in a basis of the saturation
+
+        - ``coerce`` (default: ``False``) -- a boolean; if
+          ``True``, a coercion map from this Ore module to
+          its saturation is set
 
         EXAMPLES::
 
@@ -2304,6 +2319,9 @@ class OreQuotientModule(OreModule):
         - ``gens`` -- a list of generators (formatted as coordinates
           vectors) of the submodule by which we quotient out
 
+        - ``remove_torsion`` -- a boolean; if ``True``, quotient
+          out in addition by the torsion
+
         - ``names`` -- the name of the vectors of the basis of
           the quotient, or ``None``
 
@@ -2350,8 +2368,9 @@ class OreQuotientModule(OreModule):
         - ``cover`` -- a Ore module, the cover module of this
           quotient
 
-        - ``basis`` -- the echelon basis of the submodule
-          defining the quotient
+        - ``submodule`` -- an instance of the class
+          :class:`sage.modules.submodule_helper.SubmoduleHelper`
+          describing this submodule
 
         - ``names`` -- the name of the vectors of the basis of
           the submodule, or ``None``
