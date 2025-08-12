@@ -1,4 +1,8 @@
-sirocco = cc.find_library('sirocco', required: false, disabler: true)
+sirocco = dependency('libsirocco', required: false, disabler: true)
+if not sirocco.found()
+  # fallback for older versions without pkg-config
+  sirocco = cc.find_library('sirocco', required: false, disabler: true)
+endif
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl', required: false, disabler: true)
 if not ecl.found() and not is_windows
@@ -77,12 +81,16 @@ gc = dependency(
   required: not is_windows,
   disabler: true,
 )
-homfly = cc.find_library(
-  'homfly',
-  has_headers: ['homfly.h'],
-  required: false,
-  disabler: true,
-)
+homfly = dependency('libhomfly', required: false, disabler: true)
+if not homfly.found()
+  # fallback for older versions without pkg-config
+  homfly = cc.find_library(
+    'homfly',
+    has_headers: ['homfly.h'],
+    required: false,
+    disabler: true,
+  )
+endif
 
 py.install_sources(
   '__init__.py',
