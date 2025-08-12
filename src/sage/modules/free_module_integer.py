@@ -947,12 +947,6 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         heuristic. This estimates the expected norm of the shortest non-zero vector
         in the lattice. The heuristic is independent of the chosen basis.
 
-        INPUT:
-        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
-          based on gamma function, instead of estimation of the gamma function
-
-        OUTPUT: The Gaussian heuristic described above.
-
         EXAMPLES::
 
             sage: from sage.modules.free_module_integer import IntegerLattice
