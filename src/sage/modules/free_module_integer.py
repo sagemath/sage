@@ -901,7 +901,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         Computes the normalized Hadamard ratio of the given basis.
 
-        The normalized Hadamard ratio of the basis `B = \{v_1, v_2, \dots, v_n\} is defined as
+        The normalized Hadamard ratio of the basis `B = \{v_1, v_2, \dots, v_n\}` is defined as
 
         .. MATH::
 
@@ -913,7 +913,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis 
           for computing the ratio
 
-        OUTPUT: The normalized Hadamard ratio. This ratio lies in (0, 1]
+        OUTPUT: the ratio described above. This ratio lies in (0, 1]
 
         EXAMPLES::
 
@@ -961,7 +961,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: float(L.gaussian_heuristic())
             15.418206247181422
 
-        For small `n`, the exact and approximate forms differ significantly:
+        For small `n`, the exact and approximate forms differ significantly::
+
             sage: float(L.gaussian_heuristic(exact_form=True))
             21.375859827168494
         """
