@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # sage.doctest: optional - sage.rings.finite_rings
 r"""
 Drinfeld modules over rings of characteristic zero
@@ -60,7 +61,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
         sage: K.<T> = Frac(A)
         sage: phi = DrinfeldModule(A, [T, 1])
         sage: phi
-        Drinfeld module defined by T |--> t + T
+        Drinfeld module defined by T |--> τ + T
 
     ::
 
@@ -110,7 +111,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
         sage: L.<s> = LaurentSeriesRing(GF(2))  # s = 1/T
         sage: phi = DrinfeldModule(A, [1/s, s + s^2 + s^5 + O(s^6), 1+1/s])
         sage: phi(T)
-        (s^-1 + 1)*t^2 + (s + s^2 + s^5 + O(s^6))*t + s^-1
+        (s^-1 + 1)*τ^2 + (s + s^2 + s^5 + O(s^6))*τ + s^-1
 
     One can also construct Drinfeld modules over SageMath's global
     function fields::
@@ -119,7 +120,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
         sage: K.<z> = FunctionField(GF(5))  # z = T
         sage: phi = DrinfeldModule(A, [z, 1, z^2])
         sage: phi(T)
-        z^2*t^2 + t + z
+        z^2*τ^2 + τ + z
     """
     @cached_method
     def _compute_coefficient_exp(self, k):
@@ -462,7 +463,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         sage: A = Fq['T']
         sage: K.<T> = Frac(A)
         sage: C = DrinfeldModule(A, [T, 1]); C
-        Drinfeld module defined by T |--> t + T
+        Drinfeld module defined by T |--> τ + T
         sage: type(C)
         <class 'sage.rings.function_field.drinfeld_modules.charzero_drinfeld_module.DrinfeldModule_rational_with_category'>
     """
@@ -573,7 +574,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: A = Fq['T']
             sage: K.<T> = Frac(A)
             sage: C = DrinfeldModule(A, [T, 1]); C
-            Drinfeld module defined by T |--> t + T
+            Drinfeld module defined by T |--> τ + T
             sage: C.class_polynomial()
             1
 
