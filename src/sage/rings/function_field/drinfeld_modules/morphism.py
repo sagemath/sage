@@ -554,11 +554,15 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
     def right_gcd(self, other):
         r"""
-        Return the right gcd of this isogeny and ``other``.
+        Return the right gcd of this morphism and ``other``.
+
+        If `u` and `v` are separable isogenies with the same domain,
+        their right gcd is the separable isogeny whose kernel is
+        `\ker u \cap \ker v`.
 
         INPUT:
 
-        - ``other`` -- an isogeny of Drinfeld modules with the
+        - ``other`` -- a morphism of Drinfeld modules with the
           same domain
 
         EXAMPLES::
@@ -595,11 +599,15 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
 
     def left_lcm(self, other):
         r"""
-        Return the left lcm of this isogeny and ``other``.
+        Return the left lcm of this morphism and ``other``.
+
+        If `u` and `v` are separable isogenies with the same domain,
+        their right gcd is the separable isogeny whose kernel is
+        `\ker u + \ker v`.
 
         INPUT:
 
-        - ``other`` -- an isogeny of Drinfeld modules with the
+        - ``other`` -- a morphism of Drinfeld modules with the
           same domain
 
         EXAMPLES::
