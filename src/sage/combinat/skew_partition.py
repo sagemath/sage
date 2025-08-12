@@ -121,6 +121,14 @@ This example shows how to compute the corners of a skew partition.
     sage: SkewPartition([[4,3,1],[2]]).outer_corners()
     [(0, 3), (1, 2), (2, 0)]
 
+Any partition `p` can be viewed as a skew partition
+`p / ()`. This is implemented as a default conversion::
+
+    sage: SkewPartition([2,2,1])
+    [2, 2, 1] / []
+    sage: SkewPartition(Partition([2]))
+    [2] / []
+
 AUTHORS:
 
 - Mike Hansen: Initial version
@@ -183,17 +191,35 @@ class SkewPartition(CombinatorialElement):
             [2, 1]
             sage: skp.outer()
             [3, 2, 1]
+
+        Partitions can be converted into skew partitions::
+
+            sage: skp = SkewPartition([3,3,2]); skp
+            [3, 3, 2] / []
+            sage: skp = SkewPartition(Partition([3,3,2])); skp
+            [3, 3, 2] / []
+            sage: skp = SkewPartition([]); skp
+            [] / []
         """
-        skp = [_Partitions(p) for p in skp]
-        if skp not in SkewPartitions():
+        try:
+            skp_list = [_Partitions(p) for p in skp]
+        except ValueError:
+            if skp in _Partitions:
+                return SkewPartitions()([_Partitions(skp), _Partitions([])])
+            raise ValueError("invalid skew partition: %s" % p)
+        if skp_list not in SkewPartitions():
+            if not skp_list:
+                return SkewPartitions()([_Partitions([]), _Partitions([])])
             raise ValueError("invalid skew partition: %s" % skp)
-        return SkewPartitions()(skp)
+        return SkewPartitions()(skp_list)
 
     def __init__(self, parent, skp):
         """
         TESTS::
 
             sage: skp = SkewPartition([[3,2,1],[2,1]])
+            sage: TestSuite(skp).run()
+            sage: skp = SkewPartition([3,2,1])
             sage: TestSuite(skp).run()
         """
         CombinatorialElement.__init__(self, parent,
