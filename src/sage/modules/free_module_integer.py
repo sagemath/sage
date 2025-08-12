@@ -909,6 +909,12 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         The closer this ratio is to 1, the more orthogonal the basis is.
 
+        INPUT:
+        - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis 
+          for computing the ratio
+
+        OUTPUT: The normalized Hadamard ratio. This ratio lies in (0, 1]
+
         EXAMPLES::
 
             sage: from sage.modules.free_module_integer import IntegerLattice
@@ -941,6 +947,12 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         Computes the Gaussian expected shortest length, also known as the Gaussian
         heuristic. This estimates the expected norm of the shortest non-zero vector
         in the lattice. The heuristic is independent of the chosen basis.
+
+        INPUT:
+        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
+          based on gamma function, instead of estimation of the gamma function
+
+        OUTPUT: The Gaussian heuristic described above.
 
         EXAMPLES::
 
