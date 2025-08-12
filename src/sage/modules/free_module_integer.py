@@ -910,7 +910,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         INPUT:
         - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis 
-            for computing the ratio
+          for computing the ratio
 
         OUTPUT: The normalized Hadamard ratio. This ratio lies in (0, 1]
 
@@ -949,7 +949,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         INPUT:
         - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
-            based on gamma function, instead of estimation of the gamma function
+          based on gamma function, instead of estimation of the gamma function
 
         OUTPUT: The Gaussian heuristic described above.
 
