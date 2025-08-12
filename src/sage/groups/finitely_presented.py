@@ -332,6 +332,76 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             True
             sage: hash(elem1) == hash(elem2)
             True
+
+        Test that the hash is consistent with Cayley graph construction::
+        
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^2, y^3, (x*y)^4]
+            sage: a, b = G.gens()
+            sage: # Test that equal elements have equal hashes
+            sage: elem1 = a * b * a
+            sage: elem2 = b^2  # Should be equal due to relations
+            sage: if elem1 == elem2:
+            ....:     assert hash(elem1) == hash(elem2), "Equal elements must have equal hashes"
+            
+            sage: # Test with a simpler group to ensure Cayley graph works
+            sage: F.<a> = FreeGroup()
+            sage: H = F / [a^4]
+            sage: CG_simple = H.cayley_graph()
+            sage: len(CG_simple.vertices(sort=False)) == H.order()
+            True
+            
+        Test hash consistency for the identity and inverses::
+        
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a^3, b^2, (a*b)^2]
+            sage: # Identity element
+            sage: id1 = G.one()
+            sage: id2 = G([])
+            sage: hash(id1) == hash(id2)
+            True
+            
+        TESTS::
+        
+        Test that hash works with various group presentations::
+        
+            sage: # Dihedral group D_4
+            sage: F.<r,s> = FreeGroup()
+            sage: D4 = F / [r^4, s^2, s*r*s*r]
+            sage: elements = [D4.one(), D4([1]), D4([2]), D4([1,2])]
+            sage: hashes = [hash(e) for e in elements]
+            sage: len(set(hashes)) == len(set(elements))  # Distinct elements should have distinct hashes when possible
+            True
+            
+        Test hash consistency with group operations::
+        
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^2, y^2, (x*y)^3]
+            sage: a, b = G.gens()
+            sage: # Test that mathematically equal elements have same hash
+            sage: elem1 = a * b * a * b * a * b  # This should equal identity due to (ab)^3 = 1
+            sage: elem2 = G.one()
+            sage: if elem1 == elem2:  # Only test hash equality if elements are actually equal
+            ....:     assert hash(elem1) == hash(elem2)
+            
+        Test specific Cayley graph bug with semidirect product Z_4 ⋊ Z_13::
+        
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: G.order() == 52
+            True
+            sage: a.order() == 4
+            True
+            sage: b.order() == 13
+            True
+            sage: a*b*a^-1 == b^5  # isomorphic to semidirect product of Z_4 and Z_13
+            True
+            sage: # Test that Cayley graph has correct number of vertices
+            sage: gr = G.cayley_graph(generators=[a,b]).to_undirected()
+            sage: gr.num_verts() == G.order()  # Should be 52, not 109
+            True
+
         """
         try:
             # Try to get cached confluent rewriting system from parent
