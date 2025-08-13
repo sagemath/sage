@@ -1,0 +1,15 @@
+diff --git a/doc/gphelp.in b/doc/gphelp.in
+index 549b289f33..167e24ed37 100755
+--- a/doc/gphelp.in
++++ b/doc/gphelp.in
+@@ -1,6 +1,9 @@
+ #!@runtime_perl@
+ $version= "@version@";
+-$datadir= "@datadir@";
++$datadir= <<'END_OF_DATADIR';
++@datadir@
++END_OF_DATADIR
++chomp($datadir);
+ # no expanded material (@key@) below
+ # Copyright (C) 2000  The PARI group.
+ #
