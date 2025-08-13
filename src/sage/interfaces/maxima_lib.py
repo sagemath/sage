@@ -218,7 +218,7 @@ if MAXIMA_SHARE:
 
 init_code = ['besselexpand : true', 'display2d : false', 'domain : complex', 'keepfloat : true',
              'load(to_poly_solve)', 'load(simplify_sum)',
-             'load(diag)']
+             'load(diag)', 'load(abs_integrate)']
 
 
 # Turn off the prompt labels, since computing them *very
@@ -759,19 +759,43 @@ class MaximaLib(MaximaAbstract):
             sage: a.imag().abs() < 3e-17
             True
 
-        The following examples (at least for now) require Maxima's
-        ``abs_integrate`` package. Enabling ``abs_integrate`` globally
-        caused several bugs catalogued in :issue:`12731`, so we no
-        longer load it by default, but you can load it manually by
-        running ``maxima_calculus.eval("load(abs_integrate)")``.
-        Afterwards, these integrals should produce a meaningful
-        result; but be warned, there is no way to unload the
-        ``abs_integrate`` package once it is loaded::
+        The following examples require Maxima's ``abs_integrate``
+        package. Enabling ``abs_integrate`` globally caused several
+        bugs (catalogued in :issue:`12731`) but most of these have
+        been fixed, and ``abs_integrate`` has been re-enabled::
 
-            sage: integrate(1/(abs(x) + 1), x)
-            integrate(1/(abs(x) + 1), x)
-            sage: integrate(cos(x + abs(x)), x)
-            integrate(cos(x + abs(x)), x)
+            sage: integrate(1/(abs(x) + 1), x, algorithm="maxima")
+            1/2*(log(x + 1) + log(-x + 1))*sgn(x) + 1/2*log(x + 1) - 1/2*log(-x + 1)
+            sage: integrate(cos(x + abs(x)), x, algorithm="maxima")
+            -1/4*(2*x - sin(2*x))*sgn(x) + 1/2*x + 1/4*sin(2*x)
+
+        Several examples where ``abs_integrate`` previously lead to
+        incorrect results. This was once reported to be divergent in
+        :issue:`13733`::
+
+            sage: # long time
+            sage: integral(log(cot(x)-1), x, 0, pi/4, algorithm="maxima")
+            catalan + 1/2*I*dilog(1/2*I + 1/2) - 1/2*I*dilog(-1/2*I + 1/2)
+
+        This used to return ``1/2`` in :issue:`11590`::
+
+            sage: integrate(x * sgn(x^2 - 1/4), x, -1, 0, algorithm="maxima")
+            -1/4
+
+        In :issue:`14591`, this incorrectly simplified to ``cosh(x)``::
+
+            sage: integrate(sqrt(1-1/4*cosh(x)^2), x, algorithm="maxima")
+            integrate(sqrt(-1/4*cosh(x)^2 + 1), x)
+
+        In :issue:`17468`, this integral hangs::
+
+            sage: integral(log(abs(2*sin(x))), x, 0, pi/3, algorithm="maxima")
+            1/36*I*pi^2 + I*dilog(1/2*I*sqrt(3) + 1/2) + I*dilog(-1/2*I*sqrt(3) - 1/2)
+
+        This used to return a *negative* answer in :issue:`17511`::
+
+            sage: integrate(abs(cos(x)), x, 0, pi, algorithm="maxima")
+            2
 
         """
         try:
