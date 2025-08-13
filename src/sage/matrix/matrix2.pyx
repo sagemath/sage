@@ -19145,9 +19145,11 @@ cdef class Matrix(Matrix1):
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
-        - ``degree`` -- integer, the maximum exponent for the Krylov matrix.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional), row
           priority shifts. If ``None``, defaults to all zeroes.
+        - ``degree`` -- the maximum power or list of ``self.nrows()`` maximum
+          powers of ``M`` for each row in ``self`` in the output. If None,
+          ``self.ncols()`` is chosen by default for all rows.
 
         OUTPUT:
 
@@ -19270,21 +19272,30 @@ cdef class Matrix(Matrix1):
 
         # return block matrix permuted according to shifts
         krylov = blocks[0].stack(blocks[1],subdivide=False) if len(blocks) > 1 else blocks[0]
-        krylov.permute_rows(priority_permutation)
-        return krylov
+        return krylov.with_permuted_rows(priority_permutation)
 
     def _naive_krylov_basis(self, M, shifts, degree, output_row_indices):
         r"""
         Compute the rank profile (row and column) of the Krylov matrix
         built from ``self`` and matrix ``M``.
 
+        .. WARNING::
+
+            If the degree bounds are not true upper bounds, no guarantees are
+            made on the value of the output.
+
         INPUT:
 
         - ``M`` -- square matrix used in the Krylov construction.
-        - ``degree`` -- maximum power of ``M`` in Krylov matrix. If None, a
-          suitable upper bound of ``self.ncols()`` is default.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional): priority
           row shifts. If ``None``, defaults to all zeroes.
+        - ``degree`` -- an upper bound or list of ``self.nrows()`` upper bounds
+          on the power of ``M`` for each row in ``self`` in the
+          ``krylov_basis`` of ``M`` in Krylov matrix. If None, a suitable upper
+          bound of ``self.ncols()`` is default for all rows.
+        - ``output_row_indices`` -- determines whether the output row indices
+          are pairs of row indices in ``self`` and degrees of ``M`` (False) or
+          row indices in the Krylov matrix (True).
 
         OUTPUT:
 
@@ -19467,13 +19478,23 @@ cdef class Matrix(Matrix1):
         Compute the rank profile (row and column) of the block Krylov matrix
         built from ``self`` and matrix ``M``.
 
+        .. WARNING::
+
+            If the degree bounds are not true upper bounds, no guarantees are
+            made on the value of the output.
+
         INPUT:
 
         - ``M`` -- square matrix used in the Krylov construction.
-        - ``degree`` -- maximum power of ``M`` in Krylov matrix. If None, a
-          suitable upper bound of ``self.ncols()`` is default.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional): priority
           row shifts. If ``None``, defaults to all zeroes.
+        - ``degree`` -- an upper bound or list of ``self.nrows()`` upper bounds
+          on the power of ``M`` for each row in ``self`` in the
+          ``krylov_basis`` of ``M`` in Krylov matrix. If None, a suitable upper
+          bound of ``self.ncols()`` is default for all rows.
+        - ``output_row_indices`` -- determines whether the output row indices
+          are pairs of row indices in ``self`` and degrees of ``M`` (False) or
+          row indices in the Krylov matrix (True).
 
         OUTPUT:
 
@@ -19654,9 +19675,9 @@ cdef class Matrix(Matrix1):
         M_L = None
 
         for l in range(math.ceil(math.log(max(degree, default=0) + 1, 2))):
-            L = pow(2,l)
+            L = pow(2, l)
             # adding 2^l to each degree
-            row_extension = [(x[0],x[1] + L) for x in row_profile_self if x[1] + L <= degree[x[0]]]
+            row_extension = [(x[0], x[1] + L) for x in row_profile_self if x[1] + L <= degree[x[0]]]
             if len(row_extension) == 0:
                 break
 
@@ -19715,7 +19736,7 @@ cdef class Matrix(Matrix1):
             return R, tuple(row_profile_self), col_profile
 
         # convert c,d to actual position in striped Krylov matrix
-        phi = lambda c,d : sum(min(max(shifts[c] - shifts[i] + d + (i < c and shifts[i] <= shifts[c] + max(degree)),0),max(degree)+1) for i in range(m)) # TODO: fix
+        phi = lambda c,d : sum(min(max(shifts[c] - shifts[i] + d + (i < c and shifts[i] <= shifts[c] + d), 0), degree[i] + 1) for i in range(m))
         row_profile_K = [phi(*row) for row in row_profile_self]
 
         return R, tuple(row_profile_K), col_profile
@@ -19725,13 +19746,21 @@ cdef class Matrix(Matrix1):
         Compute the rank profile (row and column) of the block Krylov matrix
         built from ``self`` and matrix ``M``.
 
+        .. WARNING::
+
+            If the degree bounds are not true upper bounds, no guarantees are
+            made on the value of the output, including whether it is consistent
+            between different algorithms.
+
         INPUT:
 
         - ``M`` -- square matrix used in the Krylov construction.
-        - ``degree`` -- maximum power of ``M`` in Krylov matrix. If None, a
-        suitable upper bound of ``self.ncols()`` is default.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional): priority
           row shifts. If ``None``, defaults to all zeroes.
+        - ``degree`` -- an upper bound or list of ``self.nrows()`` upper bounds
+          on the power of ``M`` for each row in ``self`` in the
+          ``krylov_basis`` of ``M`` in Krylov matrix. If None, a suitable upper
+          bound of ``self.ncols()`` is default for all rows.
         - ``output_row_indices`` -- determines whether ``row_profile`` is
           returned as pairs of row indices in ``self`` and degrees of ``M``
           (``False``), or row indices in the Krylov matrix (``True``).
@@ -19754,11 +19783,11 @@ cdef class Matrix(Matrix1):
         from sage.modules.free_module_element import vector
 
         if not isinstance(M, Matrix):
-            raise TypeError("_naive_krylov_basis: M is not a matrix")
+            raise TypeError("krylov_basis: M is not a matrix")
         if M.nrows() != self.ncols() or M.ncols() != self.ncols():
-            raise ValueError("_naive_krylov_basis: matrix M does not have correct dimensions.")
+            raise ValueError("krylov_basis: matrix M does not have correct dimensions.")
         if M.base_ring() != self.base_ring():
-            raise ValueError("naive_krylov_basis: matrix M does not have same base ring as E.")
+            raise ValueError("krylov_basis: matrix M does not have same base ring as E.")
 
         if degree is None:
             degree = vector(ZZ, [self.ncols()] * self.nrows())
@@ -19767,16 +19796,16 @@ cdef class Matrix(Matrix1):
         if isinstance(degree, (list, tuple)):
             degree = vector(ZZ, degree)
         if degree not in ZZ**self.nrows():
-            raise TypeError(f"_naive_krylov_basis: degree must be an None, an integer, or an integer vector of length self.nrows().")
+            raise TypeError(f"krylov_basis: degree must be an None, an integer, or an integer vector of length self.nrows().")
         if self.nrows() > 0 and min(degree) < 0:
-            raise ValueError(f"_naive_krylov_basis: degree must not contain a negative bound.")
+            raise ValueError(f"krylov_basis: degree must not contain a negative bound.")
 
         if shifts is None or shifts == 0:
             shifts = (ZZ**self.nrows()).zero()
         if isinstance(shifts, (list, tuple)):
             shifts = (ZZ**self.nrows())(shifts)
         if shifts not in ZZ**self.nrows():
-            raise ValueError(f"_naive_krylov_basis: shifts is not an integer vector of length {self.nrows()}.")
+            raise ValueError(f"krylov_basis: shifts is not an integer vector of length {self.nrows()}.")
         
         if algorithm is None:
             if self.base_ring().order() == 2:
@@ -19801,7 +19830,7 @@ cdef class Matrix(Matrix1):
         else:
             raise ValueError("algorithm must be one of None, \"naive\" or \"elimination\".")
 
-    def krylov_kernel_basis(self, M, degree=None, shifts=None, output_coefficients=False, var='x'):
+    def krylov_kernel_basis(self, M, shifts=None, degree=None, output_coefficients=False, var='x'):
         r"""
         Return a shifted minimal krylov kernel basis for (``self``,``M``) in
         ``s``-Popov form with respect to a set of shifts ``s``.
@@ -19922,6 +19951,7 @@ cdef class Matrix(Matrix1):
         """
         from sage.combinat.permutation import Permutation
         from sage.matrix.constructor import matrix
+        from sage.modules.free_module_element import vector
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
         # INPUT VALIDATION
@@ -19936,11 +19966,15 @@ cdef class Matrix(Matrix1):
             raise TypeError("var is not a string")
 
         if degree is None:
-            degree = self.ncols()
-        if not isinstance(degree, (int, sage.rings.integer.Integer)):
-            raise TypeError("krylov_kernel_basis: degree is not an integer.")
-        if self.nrows() > 0 and degree < 0:
-            raise ValueError("krylov_kernel_basis: degree bound cannot be negative.")
+            degree = vector(ZZ, [self.ncols()] * self.nrows())
+        if isinstance(degree, (int, sage.rings.integer.Integer)):
+            degree = vector(ZZ, [degree] * self.nrows())
+        if isinstance(degree, (list, tuple)):
+            degree = vector(ZZ, degree)
+        if degree not in ZZ**self.nrows():
+            raise TypeError(f"krylov_kernel_basis: degree must be an None, an integer, or an integer vector of length self.nrows().")
+        if self.nrows() > 0 and min(degree) < 0:
+            raise ValueError(f"krylov_kernel_basis: degree must not contain a negative bound.")
 
         if shifts is None or shifts == 0:
             shifts = (ZZ**self.nrows()).zero()
@@ -19990,7 +20024,7 @@ cdef class Matrix(Matrix1):
         relation = D*C.inverse()
 
         if output_coefficients:
-            coefficients = matrix.zero(self.base_ring(),m,m*(max(degree_c, default=0)+1), sparse=True)
+            coefficients = matrix.zero(self.base_ring(),m,m*(max(degree_c, default=0)+1))
             for i in range(m):
                 coefficients[i,i+degree_c[i]*m] = self.base_ring().one()
             for col in range(relation.ncols()):
@@ -20037,7 +20071,7 @@ cdef class Matrix(Matrix1):
                             deg, coeff = coeffs_map[row][col].popitem()
                             if coeff not in monomial_cache:
                                 monomial_cache[coeff] = poly_ring(coeff)
-                            basis_rows[row][col] = monomial_cache[coeff].shift(deg)
+                            basis_rows[row][col] = monomial_cache[coeff].shift                                     (deg)
                         else:
                             # general case
                             mindeg = min(coeffs_map[row][col].keys())
