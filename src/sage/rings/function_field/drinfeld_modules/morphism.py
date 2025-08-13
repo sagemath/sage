@@ -428,6 +428,26 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         """
         return self._ore_polynomial
 
+    def degree(self):
+        r"""
+        Return the degree of this isogeny, that is, by definition,
+        the `\tau`-degree of its defining Ore polynomial.
+
+        EXAMPLES::
+
+            sage: Fq = GF(2)
+            sage: A.<T> = Fq[]
+            sage: K.<z6> = Fq.extension(6)
+            sage: phi = DrinfeldModule(A, [z6, 1, 1])
+            sage: f = phi.frobenius_endomorphism()
+            sage: f
+            Endomorphism of Drinfeld module defined by T |--> τ^2 + τ + z6
+              Defn: τ^6
+            sage: f.degree()
+            6
+        """
+        return self._ore_polynomial.degree()
+
     @coerce_binop
     def __add__(self, other):
         r"""
