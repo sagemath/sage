@@ -2606,6 +2606,19 @@ cdef class RealIntervalFieldElement(RingElement):
         mpfi_alea(x.value, self.value)
         return x
 
+    def add_error(self, ampl):
+        """
+        Increase the length of this interval on both ends by ``ampl``.
+
+        EXAMPLES::
+
+            sage: RIF(7).add_error(RIF(1)).endpoints()  # abs tol 1e-14
+            (6.0, 8.0)
+        """
+        # TODO mpfi_increase may be faster
+        ampl = self.parent()(ampl).upper()
+        return self + self.parent()(-ampl, ampl)
+
     ########################
     #   Basic Arithmetic
     ########################
