@@ -777,7 +777,8 @@ class OreModuleMorphism(Morphism):
 
         - ``saturate`` (default: ``False``) -- a boolean; if ``True``,
           return the saturation (in the codomain) of the image (see
-          :meth:`saturate` for more details)
+          :meth:`sage.modules.ore_module.OreSubmodule.saturate` for
+          more details)
 
         - ``names`` (default: ``None``) -- the name of the vectors in a
           basis of the image
