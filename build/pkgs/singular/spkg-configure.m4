@@ -23,6 +23,13 @@ SAGE_SPKG_CONFIGURE([singular], [
             AC_MSG_RESULT(no)
             sage_spkg_install_singular=yes
           ])
+          AC_MSG_CHECKING([that polynomial division over transcendental extensions is working])
+          AS_IF([test x`printf "ring r = (0,x),(u,v),dp; \n ((1/x)*(u-1))/(u-1);" | Singular 2>&1 | grep "error occurred"` = x], [
+            AC_MSG_RESULT(yes)
+          ], [
+            AC_MSG_RESULT(no)
+            sage_spkg_install_singular=yes
+          ])
         ], [
           AC_MSG_RESULT([no])
           sage_spkg_install_singular=yes
