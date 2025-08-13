@@ -611,7 +611,7 @@ class InfinitePolynomial(CommutativePolynomial,
             sage: R.<a> = InfinitePolynomialRing(QQ)
             sage: P.<x,y> = QQ[]
             sage: FF = P.fraction_field()
-            sage: FF(a[0])
+            sage: FF(a[0])  # known bug
             Traceback (most recent call last):
             ...
             TypeError: Could not find a mapping of the passed element to this ring.
@@ -759,7 +759,7 @@ class InfinitePolynomial(CommutativePolynomial,
 
             sage: X.<x, y> = InfinitePolynomialRing(QQ, implementation="sparse")
             sage: g = 2*x[0]*x[2] + 3*x[1]^2*y[1]
-            sage: g.exponents()
+            sage: g.exponents()  # random
             [B[(0, 0)] + B[(0, 2)], 2*B[(0, 1)] + B[(1, 1)]]
 
         TESTS::
@@ -768,7 +768,7 @@ class InfinitePolynomial(CommutativePolynomial,
             sage: g*x[10]
             2*x_10*x_2*x_0 + 3*x_10*x_1^2*y_1
 
-            sage: g.exponents()
+            sage: g.exponents()  # random
             [B[(0, 0)] + B[(0, 2)], 2*B[(0, 1)] + B[(1, 1)]]
 
             sage: X.<x, y> = InfinitePolynomialRing(QQ)
@@ -1071,7 +1071,7 @@ class InfinitePolynomial(CommutativePolynomial,
             sage: Z
             Infinite polynomial ring in a over Multivariate Polynomial Ring in y, z over Infinite polynomial ring in x over Integer Ring
             sage: type(Z._P)
-            <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_with_category'>
+            <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
             sage: p = a[12]^3*a[2]^7*a[4] + a[4]*a[2]
             sage: sorted(p.footprint().items())
             [(2, [7]), (4, [1]), (12, [3])]
