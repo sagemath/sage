@@ -898,14 +898,14 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         return self.approximate_closest_vector(*args, **kwargs)
 
     def hadamard_ratio(self, use_reduced_basis=True):
-        """
+        r"""
         Computes the normalized Hadamard ratio of the given basis.
 
-        The normalized Hadamard ratio of the basis `B = \{v_1, v_2, \dots, v_n\}` is defined as
+        The normalized Hadamard ratio of the basis `B = {v_1, v_2, \dots, v_n}` is defined as
 
         .. MATH::
 
-            \mathcal{H}(B) = \left(\dfrac{det L}{\|v_1\| \|v_2\| \cdots \|v_n\|}\right)^{\frac{1}{n}}
+            \mathcal{H}(B) = \dfrac{det L}{\|v_1\| \|v_2\| \cdots \|v_n\|}^{\dfrac{1}{n}}
 
 
         The closer this ratio is to 1, the more orthogonal the basis is.
@@ -944,14 +944,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         return ratio
     
     def gaussian_heuristic(self, exact_form=False):
-        """
-        Computes the Gaussian expected shortest length, also known as the Gaussian
+        r"""
+        Computes the Gaussian expected shortest length, also known as the Gaussian  
         heuristic. This estimates the expected norm of the shortest non-zero vector
         in the lattice. The heuristic is independent of the chosen basis.
 
         INPUT:
-        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
-          based on gamma function, instead of estimation of the gamma function
+        - ``exact_form`` -- boolean (default: ``False``); uses exact formulation based on gamma function, instead of estimation of the gamma function
 
         OUTPUT: The Gaussian heuristic described above.
 
