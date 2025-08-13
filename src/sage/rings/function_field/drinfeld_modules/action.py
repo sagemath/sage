@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 The module action induced by a Drinfeld module
