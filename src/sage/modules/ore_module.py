@@ -168,7 +168,7 @@ AUTHOR:
 
 - Xavier Caruso (2024-10)
 
-- Xavier Caruso (2025-08); add support for Ore modules over PID
+- Xavier Caruso (2025-08); add support for Ore modules over PIDs
 """
 
 # ***************************************************************************
@@ -1837,7 +1837,7 @@ class OreSubmodule(OreModule):
             sage: M.span((X + x + y)*v)
             Traceback (most recent call last):
             ...
-            NotImplementedError: submodules and quotients are only implemented over PID
+            NotImplementedError: submodules and quotients are only implemented over PIDs
         """
         base = ambient.base_ring()
         if isinstance(gens, SubmoduleHelper):
@@ -2343,7 +2343,7 @@ class OreQuotientModule(OreModule):
             sage: M.quo((X + x + y)*v)
             Traceback (most recent call last):
             ...
-            NotImplementedError: submodules and quotients are only implemented over PID
+            NotImplementedError: submodules and quotients are only implemented over PIDs
         """
         base = cover.base_ring()
         if isinstance(gens, SubmoduleHelper):
