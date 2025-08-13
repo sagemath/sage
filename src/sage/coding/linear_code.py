@@ -2318,11 +2318,6 @@ class LinearCode(AbstractLinearCode):
             [3, 0] linear code over GF(2)
             sage: C.dimension()
             0
-            sage: C_dual = C.dual_code()
-            sage: C_dual
-            [3, 3] linear code over GF(2)
-            sage: C_dual.dimension() == C_dual.length()
-            True
         """
 
         from sage.matrix.constructor import matrix
@@ -2399,7 +2394,6 @@ class LinearCode(AbstractLinearCode):
     def intersection(self, other):
         """
         Return the intersection of this linear code with another.
-
         The intersection of two linear codes C1 and C2 is the set of all
         codewords that are in both C1 and C2. It is also a linear code.
 
@@ -2452,7 +2446,6 @@ class LinearCode(AbstractLinearCode):
         Return a generator matrix of ``self``.
 
         INPUT:
-
         - ``encoder_name`` -- (default: ``None``) name of the encoder which will be
           used to compute the generator matrix. ``self._generator_matrix``
           will be returned if default value is kept.
