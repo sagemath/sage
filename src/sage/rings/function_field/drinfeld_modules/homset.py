@@ -431,8 +431,6 @@ class DrinfeldModuleHomset(Homset):
     def an_element(self, degree=None):
         r"""
         Return an element in this homset.
-        If the homset is not reduced to zero, then a nonzero
-        element is returned.
 
         INPUT:
 
@@ -479,7 +477,24 @@ class DrinfeldModuleHomset(Homset):
               From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
               To:   Drinfeld module defined by T |--> (z + 1)*τ^2 + z^2*τ + z
               Defn: 0
+
+        When the base is not a finite field, computing isogenies is not
+        implemented so far, so this method always returns the zero morphism::
+
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: End(phi).an_element()
+            Endomorphism of Drinfeld module defined by T |--> τ + T
+              Defn: 0
+            sage: End(phi).an_element(degree=1)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computing isogenies are currently only implemented over finite fields
         """
+        if self.base() not in FiniteFields():
+            if degree is None:
+                return self.zero()
+            else:
+                raise NotImplementedError("computing isogenies are currently only implemented over finite fields")
         if degree is None:
             basis = self._A_basis()
             if len(basis) == 0:
@@ -988,7 +1003,17 @@ class DrinfeldModuleHomset(Homset):
               From: Drinfeld module defined by T |--> (z^2 + z)*τ^2 + (z^2 + z + 1)*τ + z
               To:   Drinfeld module defined by T |--> (z^2 + z + 1)*τ^2 + (z + 1)*τ + z
               Defn: z^2*τ^3 + (z^2 + 1)*τ^2 + τ + z^2 + z + 1
+
+        Currently, this method only works over finite fields::
+
+            sage: phi = DrinfeldModule(A, [T, 1])
+            sage: End(phi).random_element()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: computing isogenies are currently only implemented over finite fields
         """
+        if self.base() not in FiniteFields():
+            raise NotImplementedError("computing isogenies are currently only implemented over finite fields")
         domain = self.domain()
         if degree is None:
             scalars = domain._function_ring
