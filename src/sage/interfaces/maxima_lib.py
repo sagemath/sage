@@ -771,9 +771,10 @@ class MaximaLib(MaximaAbstract):
 
         Several examples where ``abs_integrate`` previously lead to
         incorrect results. This was once reported to be divergent in
-        :issue:`13733`::
+        :issue:`13733`, and only in maxima-5.48 does it give the
+        correct answer::
 
-            sage: # long time
+            sage: # long time, not tested until maxima-5.48 is widespread
             sage: integral(log(cot(x)-1), x, 0, pi/4, algorithm="maxima")
             catalan + 1/2*I*dilog(1/2*I + 1/2) - 1/2*I*dilog(-1/2*I + 1/2)
 
@@ -796,7 +797,6 @@ class MaximaLib(MaximaAbstract):
 
             sage: integrate(abs(cos(x)), x, 0, pi, algorithm="maxima")
             2
-
         """
         try:
             return max_to_sr(maxima_eval(([max_integrate],
