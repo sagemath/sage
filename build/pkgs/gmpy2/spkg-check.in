@@ -1,1 +1,1 @@
-cd src && pytest && cd test_cython && python3 runtests.py
+cd src && pytest
