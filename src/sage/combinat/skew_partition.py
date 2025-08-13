@@ -162,7 +162,7 @@ from sage.sets.set import Set
 from sage.misc.lazy_import import lazy_import
 
 from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.partition import Partitions, _Partitions
+from sage.combinat.partition import Partitions, _Partitions, Partition
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Compositions
 
@@ -1516,6 +1516,12 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: S = SkewPartitions()
             sage: S([[3,1], [1]])
             [3, 1] / [1]
+
+        TESTS::
+
+            sage: S = SkewPartitions()
+            sage: S(Partition([3,2]))
+            [3, 2] / []
         """
         return self.element_class(self, skp)
 
@@ -1563,6 +1569,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
             True
         """
         if isinstance(x, SkewPartition):
+            return True
+        if isinstance(x, Partition):
             return True
 
         try:
@@ -1825,8 +1833,10 @@ class SkewPartitions_n(SkewPartitions):
             sage: [[7, 4, 3, 2], [5, 2, 1]] in SkewPartitions(8, overlap=-2)
             True
         """
-        return x in SkewPartitions() \
-            and sum(x[0])-sum(x[1]) == self.n \
+        if not x in SkewPartitions():
+            return False
+        x = SkewPartition(x)
+        return sum(x[0])-sum(x[1]) == self.n \
             and self.overlap <= SkewPartition(x).overlap()
 
     def _repr_(self):
@@ -2000,6 +2010,7 @@ class SkewPartitions_rowlengths(SkewPartitions):
             True
         """
         if x in SkewPartitions():
+            x = SkewPartition(x)
             o = x[0]
             i = x[1]+[0]*(len(x[0])-len(x[1]))
             return [u[0]-u[1] for u in zip(o,i)] == self.co
