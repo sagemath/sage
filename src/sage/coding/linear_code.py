@@ -2318,6 +2318,15 @@ class LinearCode(AbstractLinearCode):
             [3, 0] linear code over GF(2)
             sage: C.dimension()
             0
+            sage: C_dual = C.dual_code()
+            sage: C_dual
+            [3, 3] linear code over GF(2)
+            sage: C_dual.dimension() == C_dual.length()
+            True
+            sage: C.encode(C.message_space().zero())
+            (0, 0, 0)
+            sage: C.decode_to_code(vector(GF(2), [1,0,1]))
+            (0, 0, 0)
         """
 
         from sage.matrix.constructor import matrix
