@@ -1,7 +1,6 @@
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_objects.py',
   'constants.pxd',
   'functions.pxd',
   'long.pxd',

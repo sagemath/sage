@@ -17,9 +17,6 @@ planarity = cc.find_library(
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_bliss.py',
-  'all__sagemath_mcqd.py',
-  'all__sagemath_tdlib.py',
   'bipartite_graph.py',
   'cliquer.pxd',
   'cographs.py',

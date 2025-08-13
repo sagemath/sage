@@ -5,7 +5,6 @@ py.install_sources(
   '__init__.py',
   'action.pxd',
   'all.py',
-  'all__sagemath_meataxe.py',
   'args.pxd',
   'benchmark.py',
   'berlekamp_massey.py',
