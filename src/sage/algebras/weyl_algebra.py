@@ -1444,7 +1444,7 @@ class InfGenDifferentialWeylAlgebra(UniqueRepresentation, Parent):
             if x.parent().base_ring() is R:
                 return self.element_class(self, {
                     (prod(self._var_index.gen(len(m)-i-1)**m[i] for i in range(len(m))),
-                     self._diff_index.one()): R(c) for m, c in x.monomial_coefficients().items()
+                     self._diff_index.one()): R(c) for m, c in x._p.monomial_coefficients().items()
                 })
         if isinstance(x, InfGenDifferentialWeylAlgebraElement):
             if x.parent().base_ring() is R:
