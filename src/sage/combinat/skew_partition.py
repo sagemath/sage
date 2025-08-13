@@ -1523,6 +1523,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: S(Partition([3,2]))
             [3, 2] / []
         """
+        if skp in _Partitions:
+            skp = SkewPartition(skp)
         return self.element_class(self, skp)
 
     def __contains__(self, x):
@@ -1566,6 +1568,8 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: [[4,2,1],[1,1,1,1]] in SkewPartitions()
             False
             sage: [[1,1,1,0],[1,1,0,0]] in SkewPartitions()
+            True
+            sage: Partition([3,2]) in SkewPartitions()
             True
         """
         if isinstance(x, SkewPartition):
@@ -1832,6 +1836,10 @@ class SkewPartitions_n(SkewPartitions):
             False
             sage: [[7, 4, 3, 2], [5, 2, 1]] in SkewPartitions(8, overlap=-2)
             True
+            sage: Partition([2, 1]) in SkewPartitions(3)
+            True
+            sage: Partition([2, 1]) in SkewPartitions(4)
+            False
         """
         if not x in SkewPartitions():
             return False
@@ -2008,6 +2016,10 @@ class SkewPartitions_rowlengths(SkewPartitions):
             False
             sage: [[5,4,3,1],[3,3,1]] in SkewPartitions(row_lengths=[2,1,2,1])
             True
+            sage: Partition([2, 1]) in SkewPartitions(row_lengths=[2,1])
+            True
+            sage: Partition([2, 1]) in SkewPartitions(row_lengths=[2,2])
+            False
         """
         if x in SkewPartitions():
             x = SkewPartition(x)
