@@ -758,6 +758,21 @@ class MaximaLib(MaximaAbstract):
             0.124756040961038
             sage: a.imag().abs() < 3e-17
             True
+
+        The following examples (at least for now) require Maxima's
+        ``abs_integrate`` package. Enabling ``abs_integrate`` globally
+        caused several bugs catalogued in :issue:`12731`, so we no
+        longer load it by default, but you can load it manually by
+        running ``maxima_calculus.eval("load(abs_integrate)")``.
+        Afterwards, these integrals should produce a meaningful
+        result; but be warned, there is no way to unload the
+        ``abs_integrate`` package once it is loaded::
+
+            sage: integrate(1/(abs(x) + 1), x)
+            integrate(1/(abs(x) + 1), x)
+            sage: integrate(cos(x + abs(x)), x)
+            integrate(cos(x + abs(x)), x)
+
         """
         try:
             return max_to_sr(maxima_eval(([max_integrate],
