@@ -4,13 +4,17 @@ Smooth Fano toric varieties.
 This module provides support for smooth Fano toric varieties, which have been
 classified by Batyrev in dimensions up to 4.
 """
-
+from collections import defaultdict, Counter
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan, FaceFan
 from sage.geometry.lattice_polytope import LatticePolytope
 from sage.geometry.toric_lattice import ToricLattice
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
+from sage.matrix.constructor import matrix
+from sage.modules.free_module import VectorSpace
+from sage.modules.free_module_element import vector
 from sage.arith.misc import GCD as gcd
 from sage.schemes.toric.variety import (
     DEFAULT_PREFIX,
@@ -22,6 +26,10 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.categories.fields import Fields
 
 _Fields = Fields()
+
+
+from .poly_db_3d import BATYREV_3FOLD_LOOKUP, CLASS_BY_LABEL_3FOLD    
+from .poly_db_4d import BATYREV_4FOLD_LOOKUP, CLASS_BY_LABEL_4FOLD
 
 
 # TODO: add the method to fix a basis of the Picard group, and express divisors in this basis
@@ -187,6 +195,10 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
         FanoToricVariety_field.__init__(self,
             Delta_polar, fan, coordinate_names, coordinate_name_indices, base_field
         )
+        self.Sigma = self.Delta_polar.face_fan()
+        self.n = self.dimension()
+        self.V, self.max_cones = self._matrix_from_rays_and_cones(self.Sigma)
+        self.Q = self._gale_dual(self.V)
 
     def _repr_(self):
         r"""
@@ -277,6 +289,296 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
         dim_cone = ambient_space.span(self.fan().rays()).dimension()
         return self.fan().nrays() - dim_cone
     
+    def table_invariants(self):
+      n = self.n
+      X = ToricVariety(self.Sigma)
+
+      # c1^n and (if n>=4) c1^2 c2 via Chow ring
+      try:
+          c1n, c1_2_c2 = self._chern_numbers_toric(X)
+      except Exception:
+          # fallback for c1^n only using polar volume (requires Fano)
+          Delta_dual = self.Delta.polar()
+          c1n = self._degree_c1_power_n(Delta_dual)
+          c1_2_c2 = None
+
+      # b2 (=\rho) and b4 from Chow ring when available
+      try:
+          b2, b4 = self._betti_numbers_toric(X)
+      except Exception:
+          b2 = self.V.ncols() - n
+          b4 = None
+
+      h0 = self._h0_of_anticanonical(self.Delta)
+      try:
+          aV = self._automorphism_dimension(self.Sigma)
+      except Exception:
+          aV = n  # conservative lower bound
+
+      if n == 3:
+          return (3, int(c1n), int(b2), int(h0), int(aV))
+      elif n == 4:
+          if c1_2_c2 is None or b4 is None:
+              raise RuntimeError("Need Chow ring support to compute c1^2 c2 and b4 in dimension 4.")
+          return (4, int(c1n), int(c1_2_c2), int(b2), int(b4), int(h0), int(aV))
+      else:
+          raise ValueError("This method standardizes invariants for 3- and 4-folds.")
+
+    def identify_batyrev_label(self, lookup=BATYREV_3FOLD_LOOKUP):
+        inv = self.table_invariants()
+        return [lab for lab, tpl in lookup.items() if tuple(tpl) == tuple(inv)]
+
+    def classify(self, lookup=BATYREV_3FOLD_LOOKUP):
+        """
+        Combine invariants with structure tests to pick a unique label
+        among candidates sharing the same invariants.
+        """
+        inv = self.table_invariants()
+        cands = self.identify_batyrev_label(lookup)
+        prod, factors = self.is_cartesian_product_of_projective_spaces()
+        pb, k = self.is_projective_bundle_over_projective_space()
+        blow, center_dim = self.is_blow_up_of_projective_space()
+
+        # heuristic disambiguation if multiple candidates share invariants
+        label = None
+        if len(cands) == 1:
+            label = cands[0]
+        elif cands:
+            # filter by coarse class
+            def label_class(L):
+                return CLASS_BY_LABEL.get(L, None)
+            if prod:
+                pool = [L for L in cands if label_class(L) == "product"]
+                label = pool[0] if pool else None
+            elif pb:
+                pool = [L for L in cands if label_class(L) == "projective_bundle"]
+                label = pool[0] if pool else None
+            elif blow:
+                pool = [L for L in cands if label_class(L) == "blow_up"]
+                label = pool[0] if pool else None
+
+        return {
+            "invariants": inv,
+            "candidates": cands,
+            "label": label,
+            "structure": {
+                "is_product": bool(prod), "factors": factors,
+                "is_projective_bundle_over_P": bool(pb), "fiber_dimension": k,
+                "is_blow_up_of_P": bool(blow), "center_dim": center_dim,
+            },
+        }
+
+    def is_cartesian_product_of_projective_spaces(self):
+        """
+        Recognize X ≅ Π P^{a_i} from Gale-dual blocks and cone combinatorics.
+        Returns (bool, [a1,a2,...]) where ai are the factor dimensions if True.
+        """
+        n, m = self.V.nrows(), self.V.ncols()
+        Q = self.Q
+
+        if Q.nrows() == 0:
+            if self.is_fan_of_projective_space(self.V, self.max_cones):
+                return True, [n]
+            return False, None
+
+        reps, col_class = [], [-1]*m
+        for j in range(m):
+            qj = vector(QQ, Q.column(j))
+            assigned = False
+            for k, rk in enumerate(reps):
+                if qj in Span([rk]):
+                    col_class[j] = k; assigned = True; break
+            if not assigned:
+                reps.append(qj); col_class[j] = len(reps)-1
+
+        blocks = defaultdict(list)
+        for j, cls in enumerate(col_class):
+            blocks[cls].append(j)
+        blocks = list(blocks.values())
+        if any(len(B) < 2 for B in blocks):
+            return False, None
+
+        for c in self.max_cones:
+            cnt = Counter(col_class[j] for j in c)
+            for b, B in enumerate(blocks):
+                if cnt[b] != len(B) - 1:
+                    return False, None
+
+        dims = [len(B)-1 for B in blocks]
+        if sum(dims) != n:
+            return False, None
+        return True, dims
+
+    def is_projective_bundle_over_projective_space(self):
+        """
+        Detect X ≅ P^k-bundle over P^{n-k}.
+        Returns (bool, k) with k ≥ 1 if True.
+        """
+        prod, _ = self.is_cartesian_product_of_projective_spaces()
+        if prod:
+            return False, None
+
+        n, m = self.V.nrows(), self.V.ncols()
+        Q = self.Q
+
+        reps, col_class = [], [-1]*m
+        for j in range(m):
+            qj = vector(QQ, Q.column(j))
+            assigned = False
+            for k, rk in enumerate(reps):
+                if qj in Span([rk]):
+                    col_class[j] = k; assigned = True; break
+            if not assigned:
+                reps.append(qj); col_class[j] = len(reps)-1
+
+        blocks = defaultdict(list)
+        for j, cls in enumerate(col_class):
+            blocks[cls].append(j)
+        blocks = list(blocks.values())
+
+        for S in blocks:
+            k = len(S) - 1
+            if k < 1 or k >= n:
+                continue
+            B = [j for j in range(m) if j not in S]
+            if len(B) != (n-k)+1:
+                continue
+            Sset, Bset = set(S), set(B)
+            ok = True
+            for c in self.max_cones:
+                s_in = len([j for j in c if j in Sset])
+                b_in = len([j for j in c if j in Bset])
+                if not (s_in == len(S)-1 and b_in == len(B)-1):
+                    ok = False; break
+            if not ok:
+                continue
+            # Base must be P^{n-k}
+            Vb = self.V[:, B]
+            base_max = list({tuple(sorted([j for j in c if j in Bset])) for c in self.max_cones})
+            if self._is_fan_of_projective_space(Vb, base_max):
+                return True, k
+        return False, None
+
+    def is_blow_up_of_projective_space(self):
+        """
+        Detect a single toric blow-up of P^n.
+        Returns (bool, center_dim) where center_dim in {0,1} for n=3 (point/line).
+        """
+        n, m = self.V.nrows(), self.V.ncols()
+        for r in range(m):
+            keep = [j for j in range(m) if j != r]
+            if len(keep) != n+1:
+                continue
+            base_cones = sorted({tuple(sorted([j for j in c if j in keep]))
+                                for c in self.max_cones if r not in c})
+            if len(base_cones) != n+1:
+                continue
+            Vb = self.V[:, keep]
+            if self._is_fan_of_projective_space(Vb, base_cones):
+                center_dim = None
+                if n == 3:
+                    used = [c for c in self.max_cones if r in c]
+                    partners = set()
+                    for c in used:
+                        for j in c:
+                            if j != r: partners.add(j)
+                    # 3 partners -> point, 2 partners -> line
+                    center_dim = 0 if len(partners) == 3 else 1
+                return True, center_dim
+        return False, None
+
+    @staticmethod
+    def _matrix_from_rays_and_cones(fan):
+        rays = [vector(ZZ, r.primitive_generator()) for r in fan.rays()]
+        V = matrix(ZZ, list(zip(*rays)))  # n x m
+        r2i = {tuple(r): i for i, r in enumerate(rays)}
+        max_cones = []
+        for s in fan.maximal_cones():
+            cols = [r2i[tuple(vector(ZZ, rr))] for rr in s.rays()]
+            max_cones.append(tuple(cols))
+        return V, max_cones
+
+    @staticmethod
+    def _gale_dual(V):
+        U, D, W = matrix(ZZ, V.transpose()).smith_form()
+        r = V.rank()
+        Q = W[r:, :]
+        if Q.nrows() == 0:
+            return matrix(ZZ, 0, V.ncols())
+        for i in range(Q.nrows()):
+            g = gcd(list(Q.row(i)))
+            if g > 1:
+                Q.set_row(i, Q.row(i) // g)
+        return Q
+
+    @staticmethod
+    def _is_fan_of_projective_space(V, max_cones):
+        n, m = V.nrows(), V.ncols()
+        if m != n+1:
+            return False
+        if not (all(len(c) == n for c in max_cones) and len(max_cones) == m):
+            return False
+        dets = {abs(V[:, list(J)].determinant()) for J in combinations(range(m), n)}
+        if dets != {1}:
+            return False
+        s = sum(V.columns())
+        return all(x == 0 for x in s)
+
+    @staticmethod
+    def _h0_of_anticanonical(Delta):
+        return Delta.integral_points_count()
+
+    @staticmethod
+    def _degree_c1_power_n(Delta_dual):
+        n = Delta_dual.ambient_dim()
+        vol = Delta_dual.volume(measure='induced_lattice')
+        return ZZ(factorial(n) * vol)
+
+    @staticmethod
+    def _betti_numbers_toric(X):
+        A, _ = X.chow_ring()
+        n = X.dimension()
+        def rank_deg(k): return len(A.homogeneous_component(k).basis())
+        b2 = rank_deg(1)
+        b4 = rank_deg(2) if n >= 4 else None
+        return b2, b4
+
+    @staticmethod
+    def _chern_numbers_toric(X):
+        A, divs = X.chow_ring()
+        one = A(1)
+        c_tot = one
+        for D in divs.values():
+            c_tot *= (one + D)
+        n = X.dimension()
+        c = [A(0)]*(n+1)
+        for k in range(n+1):
+            c[k] = c_tot.homogeneous_component(k)
+        c1, c2 = c[1], (c[2] if n >= 2 else None)
+        deg = A.degree()
+        c1n = deg(c1**n)
+        c1_2_c2 = deg((c1**2)*c2) if n >= 4 else None
+        return ZZ(c1n), (ZZ(c1_2_c2) if c1_2_c2 is not None else None)
+
+    @staticmethod
+    def _automorphism_dimension(fan):
+        # a(V) = n + #Demazure roots
+        V, _ = SmoothToricFanoVariety._matrix_from_rays_and_cones(fan)
+        n, m = V.nrows(), V.ncols()
+        rays = [V.column(i) for i in range(m)]
+        roots = set()
+        for j, vj in enumerate(rays):
+            A, b = [], []
+            for i, vi in enumerate(rays):
+                if i == j:
+                    A.append(list(vi)); b.append(-1)     # <m, vj> = -1
+                else:
+                    A.append([-x for x in vi]); b.append(0)  # <m, vi> ≥ 0
+            P = Polyhedron(ieqs=[[bi]+Ai for Ai,bi in zip(A,b)])
+            for w in P.integral_points():
+                roots.add(tuple(w))
+        return n + len(roots)
+    
     def _is_cartesian_product_of_projective_spaces(self):
         r"""
         Check if the toric variety is a cartesian product of projective spaces. This will determine the method to compute the cohomologically zero line bundles.
@@ -291,12 +593,16 @@ class SmoothFanoToricVariety_field(FanoToricVariety_field, metaclass=ClasscallMe
 
         
     def _is_projective_bundle_over_projective_space(self):
-        # Very rough: Picard rank 2 and fan splits as a join of two simplices.
-        return self.picard_rank == 2 and self.toric_variety.dimension() >= 2
+        # AL: do we also want to return the splitting type of the bundle?
+        if self.picard_rank == 2:
+            # all smooth toric varieties of Picard rank 2 are projective bundles over projective spaces
+            return True
+        # TODO: investigate so called Cayley test
+
     
     def _is_blow_up_of_projective_space(self):
         # Rough proxy: smooth Fano with Picard rank > 1 but small.
-        return 1 < self.picard_rank <= self.toric_variety.dimension() + 1
+        return 1 < self.picard_rank() <= self.dimension() + 1
 
 
     @staticmethod

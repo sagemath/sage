@@ -126,3 +126,324 @@ polytopes_4d = {
     'F.4D.0122': [[1, 1, 1, -2], [1, -2, 1, 1], [1, 1, 1, 1], [-2, 1, 1, 1], [1, 1, -2, 1], [-2, -2, 1, 1], [-2, 1, 1, -2], [1, -2, -2, 1], [1, 1, -2, -2]],
     'F.4D.0123': [[1, 1, 1, 1], [-4, 1, 1, 1], [1, -4, 1, 1], [1, 1, -4, 1], [1, 1, 1, -4]],
 }
+
+# TODO: Add more comments about the varieties properties
+BATYREV_4FOLD_LOOKUP = {
+    # \rho = 1
+    "P4":  (4, 625, 250, 1, 1, 126, 24),
+
+    # \rho = 2  (B-series)
+    "B1":  (4, 800, 296, 2, 2, 159, 36),  # P_{P^3}(O \otimes O(3))
+    "B2":  (4, 640, 256, 2, 2, 129, 26),  # P_{P^3}(O \otimes O(2))
+    "B3":  (4, 544, 232, 2, 2, 111, 20),  # P_{P^3}(O \otimes O(1))
+    "B4":  (4, 512, 224, 2, 2, 105, 18),  # P^2 × P^2
+    "B5":  (4, 512, 224, 2, 2, 105, 18),  # P_{P^1}(O \otimes O \otimes O \otimes O(1))
+
+    # \rho = 2,3  (C-series, base P^2)
+    "C1":  (4, 594, 240, 2, 3, 120, 24),  # P_{P^2}(O \otimes O \otimes O(2))
+    "C2":  (4, 513, 222, 2, 3, 105, 18),  # P_{P^2}(O \otimes O \otimes O(1))
+    "C3":  (4, 513, 222, 2, 3, 105, 18),  # P_{P^2}(O \otimes O(1) \otimes O(1))
+    "C4":  (4, 486, 216, 2, 3, 100, 16),  # P^2 × P^2
+
+    # \rho = 3  (E-series and D-series begin)
+    "E1":  (4, 605, 254, 3, 3, 123, 23),
+    "E2":  (4, 489, 222, 3, 3, 101, 17),
+    "E3":  (4, 431, 206, 3, 3,  90, 14),
+
+    # \rho = 3,4  (D-series)
+    "D1":  (4, 592, 244, 3, 4, 120, 24),
+    "D2":  (4, 576, 240, 3, 4, 117, 23),
+    "D3":  (4, 560, 236, 3, 4, 114, 22),
+    "D4":  (4, 560, 236, 3, 4, 114, 22),
+    "D5":  (4, 496, 220, 3, 4, 102, 18),
+    "D6":  (4, 496, 220, 3, 4, 102, 18),
+    "D7":  (4, 486, 216, 3, 4, 100, 18),
+    "D8":  (4, 464, 212, 3, 4,  96, 16),
+    "D9":  (4, 464, 212, 3, 4,  96, 16),
+    "D10": (4, 464, 212, 3, 4,  96, 16),
+    "D11": (4, 459, 210, 3, 4,  95, 15),
+    "D12": (4, 448, 208, 3, 4,  93, 15),
+    "D13": (4, 432, 204, 3, 4,  90, 14),
+    "D14": (4, 432, 204, 3, 4,  90, 14),
+    "D15": (4, 432, 204, 3, 4,  90, 14),
+    "D16": (4, 432, 204, 3, 4,  90, 14),
+    "D17": (4, 405, 198, 3, 4,  85, 12),
+    "D18": (4, 400, 196, 3, 4,  84, 12),
+    "D19": (4, 400, 196, 3, 4,  84, 12),
+
+    # \rho = 3–5 (G-series)
+    "G1":  (4, 529, 206, 3, 5, 108, 20),
+    "G2":  (4, 450, 204, 3, 5,  93, 16),
+    "G3":  (4, 433, 202, 3, 5,  87, 13),
+    "G4":  (4, 417, 198, 3, 5,  87, 13),
+    "G5":  (4, 401, 196, 3, 5,  85, 12),
+    "G6":  (4, 401, 194, 4, 5,  84, 12),
+
+    # \rho = 4–5 (H-series)
+    "H1":  (4, 588, 240, 4, 5, 114, 22),
+    "H2":  (4, 505, 228, 4, 5, 104, 19),
+    "H3":  (4, 478, 220, 4, 5,  99, 17),
+    "H4":  (4, 447, 210, 4, 5,  93, 16),
+    "H5":  (4, 415, 202, 4, 5,  87, 14),
+    "H6":  (4, 409, 202, 4, 5,  96, 13),
+    "H7":  (4, 382, 196, 4, 5,  81, 11),
+    "H8":  (4, 378, 192, 4, 5,  80, 12),  # P^2 × S_2
+    "H9":  (4, 367, 190, 4, 5,  78, 11),
+    "H10": (4, 345, 178, 4, 5,  75, 10),
+
+    # \rho = 4–6 (L-series, bundles/products)
+    "L1":  (4, 480, 216, 4, 6,  99, 18),
+    "L2":  (4, 464, 212, 4, 6,  96, 17),
+    "L3":  (4, 448, 208, 4, 6,  93, 16),
+    "L4":  (4, 432, 204, 4, 6,  90, 15),
+    "L5":  (4, 416, 200, 4, 6,  87, 14),
+    "L6":  (4, 409, 198, 4, 6,  84, 13),
+    "L7":  (4, 384, 192, 4, 6,  81, 12),
+    "L8":  (4, 384, 192, 4, 6,  81, 12),
+    "L9":  (4, 384, 192, 4, 6,  81, 12),
+    "L10": (4, 384, 192, 4, 6,  81, 12),
+    "L11": (4, 352, 184, 4, 6,  75, 10),
+    "L12": (4, 352, 184, 4, 6,  75, 10),
+    "L13": (4, 352, 184, 4, 6,  75, 10),
+
+    # \rho = 4–7 (I-series)
+    "I1":  (4, 496, 220, 4, 6, 102, 19),
+    "I2":  (4, 463, 214, 4, 6,  96, 16),
+    "I3":  (4, 442, 206, 4, 6,  90, 13),
+    "I4":  (4, 433, 204, 4, 6,  87, 12),
+    "I5":  (4, 415, 202, 4, 6,  87, 13),
+    "I6":  (4, 409, 196, 4, 6,  84, 12),
+    "I7":  (4, 400, 196, 4, 6,  73, 10),
+    "I8":  (4, 394, 192, 4, 6,  72, 10),
+    "I9":  (4, 389, 192, 4, 6,  72, 10),
+    "I10": (4, 389, 192, 4, 6,  72, 10),
+    "I11": (4, 379, 188, 4, 6,  71,  9),
+    "I12": (4, 347, 182, 4, 6,  74, 10),
+    "I13": (4, 368, 188, 4, 6,  78, 11),
+    "I14": (4, 357, 186, 4, 6,  76, 10),
+    "I15": (4, 370, 178, 4, 6,  72, 10),
+
+    # \rho = 4–7 (M- and J-series)
+    "M1":  (4, 385, 190, 4, 7,  81, 12),  # not contractible smoothly
+    "M2":  (4, 417, 198, 4, 7,  87, 14),
+    "M3":  (4, 369, 186, 4, 7,  78, 11),
+    "M4":  (4, 369, 186, 4, 7,  78, 11),
+    "M5":  (4, 364, 184, 4, 7,  77, 11),
+    "J1":  (4, 368, 184, 4, 7,  78, 10),
+    "J2":  (4, 326, 176, 4, 7,  70,  8),
+
+    # \rho = 5–8 (Q-series)
+    "Q1":  (4, 422, 208, 5, 8,  92, 16),
+    "Q2":  (4, 405, 198, 5, 8,  85, 14),
+    "Q3":  (4, 394, 196, 5, 8,  83, 13),
+    "Q4":  (4, 405, 195, 5, 8,  84, 14),
+    "Q5":  (4, 373, 190, 5, 8,  79, 12),
+    "Q6":  (4, 368, 188, 5, 8,  78, 12),
+    "Q7":  (4, 363, 188, 5, 8,  77, 12),
+    "Q8":  (4, 352, 184, 5, 8,  75, 11),
+    "Q9":  (4, 341, 182, 5, 8,  73, 10),
+    "Q10": (4, 336, 180, 5, 8,  72, 10),
+    "Q11": (4, 336, 180, 5, 8,  72, 10),
+    "Q12": (4, 351, 180, 5, 8,  71, 10),
+    "Q13": (4, 330, 180, 5, 8,  71,  9),
+    "Q14": (4, 325, 178, 5, 8,  70,  9),
+    "Q15": (4, 320, 176, 5, 8,  69,  9),
+    "Q16": (4, 310, 172, 5, 8,  67,  9),
+    "Q17": (4, 299, 170, 5, 8,  65,  8),
+
+    # \rho = 4–6 (K-series, R-series)
+    "K1":  (4, 364, 196, 5, 6,  78, 10),
+    "K2":  (4, 354, 192, 5, 6,  76, 10),
+    "K3":  (4, 334, 184, 5, 6,  72, 10),
+    "K4":  (4, 324, 180, 5, 6,  70, 10),
+
+    "R1":  (4, 332, 176, 5, 9,  71, 10),
+    "R2":  (4, 321, 174, 5, 9,  69,  9),
+    "R3":  (4, 305, 170, 5, 9,  66,  8),
+
+    # \rho = 6–10 (U-series)
+    "U1":  (4, 308, 176, 6, 10, 67,  8),
+    "U2":  (4, 298, 172, 6, 10, 65,  8),
+    "U3":  (4, 298, 172, 6, 10, 65,  8),
+    "U4":  (4, 288, 168, 6, 10, 63,  8),
+    "U5":  (4, 288, 168, 6, 10, 63,  8),
+    "U6":  (4, 288, 168, 6, 10, 63,  8),
+    "U7":  (4, 278, 164, 6, 10, 61,  8),
+    "U8":  (4, 268, 160, 6, 10, 59,  8),
+
+    # Products at the end of the list
+    "S2xS2": (4, 294, 168, 6, 11, 64,  8),
+    "S2xS3": (4, 252, 156, 7, 14, 56,  6),
+    "S3xS3": (4, 216, 144, 8, 18, 49,  4),
+
+    # Z-series
+    "Z1":  (4, 322, 172, 4, 8, 69,  8),
+    "Z2":  (4, 327, 174, 4, 8, 70,  8),
+
+    # Special cases 
+    "X1": (4, 310, 172, 5, 9, 67, 8),   # blow up of a surface S2 on P^1 × V(D2) (see §3.4.1)
+    "X2": (4, 307, 166, 5, 11, 66, 8),  # special case; see section 3.5.8(ii)
+    "X3": (4, 230, 140, 6, 16, 51, 4),  # special case; see section 3.5.8(iii)
+}
+
+# AL: the lookup tables for classification of type of Fano 4-folds
+# (i.e. projective spaces, products, projective bundles, blow-ups of projective spaces)
+# --- 4-folds ---
+CLASS_BY_LABEL_4FOLD = {
+    # ρ = 1
+    "P4": "product",  # P^4
+
+    # B-series (bundles over P^3 except the product B4)
+    "B1": "projective_bundle",
+    "B2": "projective_bundle",
+    "B3": "projective_bundle",
+    "B4": "product",             # P^2 × P^2
+    "B5": "projective_bundle",
+
+    # C-series (bundles over P^2 except the product C4)
+    "C1": "projective_bundle",
+    "C2": "projective_bundle",
+    "C3": "projective_bundle",
+    "C4": "product",             # P^2 × P^2
+
+    # E-series (all blow-ups)
+    "E1": "blow_up",
+    "E2": "blow_up",
+    "E3": "blow_up",
+
+    # D-series
+    "D1": "projective_bundle",   # P_{P^1×P^2}(...)
+    "D2": "projective_bundle",   # P^1-bundle over V(B1)
+    "D3": "projective_bundle",   # P^1-bundle over V(B2)
+    "D4": "projective_bundle",   # P^1-bundle over V(B3)
+    "D5": "product",             # P^1 × P_{P^2}(O \otimes O(2))
+    "D6": "projective_bundle",   # P_{P^1×P^2}(O \otimes O(1,1))
+    "D7": "projective_bundle",   # P_{P^1×P^1}(O \otimes O \otimes O(1,1))
+    "D8": "projective_bundle",   # P^1-bundle over V(B2)
+    "D9": "projective_bundle",   # P^1-bundle over V(B2)
+    "D10": "projective_bundle",  # P^1-bundle over V(B3)
+    "D11": "projective_bundle",  # P_{F1}(O \otimes O \otimes O \otimes O(l))
+    "D12": "product",            # P^1 × P_{P^2}(O \otimes O(1))
+    "D13": "product",            # P^1 × P^1 × P^2
+    "D14": "projective_bundle",  # P^1 × P_{P^1}(O \otimes O \otimes O(1))  (product with a bundle)
+    "D15": "product",            # F1 × P^2
+    "D16": "projective_bundle",  # P^1-bundle over V(B1)
+    "D17": "projective_bundle",  # P_{P^1×P^1}(O \otimes O(1,0) \otimes O(0,1))
+    "D18": "projective_bundle",  # P_{P^1×P^2}(O \otimes O(−1,2))
+    "D19": "projective_bundle",  # P_{P^1×P^2}(O \otimes O(−1,1))
+
+    # G-series
+    "G1": "other_special",       # not contractible smoothly
+    "G2": "blow_up",
+    "G3": "blow_up",
+    "G4": "blow_up",
+    "G5": "blow_up",
+    "G6": "blow_up",
+
+    # H-series
+    "H1": "blow_up",
+    "H2": "blow_up",
+    "H3": "blow_up",
+    "H4": "blow_up",
+    "H5": "blow_up",
+    "H6": "blow_up",
+    "H7": "blow_up",
+    "H8": "product",             # P^2 × S2
+    "H9": "blow_up",
+    "H10": "blow_up",
+
+    # L-series
+    "L1":  "projective_bundle",  # P_{(P^1)^3}(O \otimes O(1,1,1))
+    "L2":  "projective_bundle",  # P^1-bundle over V(C1)
+    "L3":  "projective_bundle",  # P_{P^1×F1}(O \otimes O(1) \otimes O(l))
+    "L4":  "projective_bundle",  # P^1-bundle over V(C3)
+    "L5":  "product",            # P^1 × P_{P^1×P^1}(O \otimes O(1,1))
+    "L6":  "projective_bundle",  # P_{P^1×F1}(O \otimes O(l))
+    "L7":  "product",            # F1 × F1
+    "L8":  "product",            # (P^1)^4
+    "L9":  "product",            # P^1 × P^2 × F1
+    "L10": "projective_bundle",  # P^1-bundle over V(D2)
+    "L11": "product",            # P^1 × V(D2)
+    "L12": "projective_bundle",  # P_{(P^1)^3}(O \otimes O(1) \otimes O(−l))
+    "L13": "projective_bundle",  # P_{(P^1)^3}(O \otimes O(1,1,−1))
+
+    # I-series
+    "I1":  "blow_up",
+    "I2":  "blow_up",
+    "I3":  "blow_up",
+    "I4":  "blow_up",
+    "I5":  "blow_up",
+    "I6":  "blow_up",
+    "I7":  "product",            # P^1 × V(D1)
+    "I8":  "blow_up",
+    "I9":  "blow_up",
+    "I10": "blow_up",
+    "I11": "projective_bundle",  # P^1-bundle over V(C1)
+    "I12": "blow_up",
+    "I13": "blow_up",
+    "I14": "blow_up",
+    "I15": "blow_up",
+
+    # M- and J-series
+    "M1":  "other_special",      # not contractible smoothly
+    "M2":  "other_special",      # not contractible smoothly
+    "M3":  "blow_up",
+    "M4":  "blow_up",
+    "M5":  "blow_up",
+    "J1":  "blow_up",
+    "J2":  "blow_up",
+    "J3":  "product",            # P^1 × V(D2)
+
+    # Q-series
+    "Q1":  "blow_up",
+    "Q2":  "blow_up",
+    "Q3":  "blow_up",
+    "Q4":  "blow_up",
+    "Q5":  "blow_up",
+    "Q6":  "product",            # P × V(E1)
+    "Q7":  "blow_up",
+    "Q8":  "product",            # P^1 × V(E2)
+    "Q9":  "blow_up",
+    "Q10": "product",            # F1 × S2
+    "Q11": "product",            # P^1 × P^1 × S2
+    "Q12": "blow_up",
+    "Q13": "blow_up",
+    "Q14": "blow_up",
+    "Q15": "product",            # P^1 × V(E4)
+    "Q16": "blow_up",
+    "Q17": "blow_up",
+
+    # K- and R-series
+    "K1":  "blow_up",
+    "K2":  "blow_up",
+    "K3":  "blow_up",
+    "K4":  "product",            # P^2 × S3
+
+    "R1":  "blow_up",
+    "R2":  "blow_up",
+    "R3":  "blow_up",
+
+    # U-series
+    "U1":  "blow_up",
+    "U2":  "blow_up",
+    "U3":  "blow_up",
+    "U4":  "product",            # S1 × S3
+    "U5":  "product",            # P^1 × P^1 × S3
+    "U6":  "product",            # P^1 × V(F1)
+    "U7":  "blow_up",
+    "U8":  "blow_up",
+
+    # Pure products at the end of the table
+    "S2xS2": "product",
+    "S2xS3": "product",
+    "S3xS3": "product",
+
+    # Z-series
+    "Z1": "blow_up",
+    "Z2": "blow_up",
+
+    # custom labels for unlabeled rows
+    "X1": "blow_up",        # blow up of a surface S2 on P^1 × V(D2)
+    "X2": "other_special",  # see §3.5.8(ii)
+    "X3": "other_special",  # see §3.5.8(iii)
+}
