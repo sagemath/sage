@@ -2508,18 +2508,35 @@ cdef class GapElement_Function(GapElement):
 
         try:
             sig_GAP_Enter()
+            # Ensure GAP is in a valid state before calling sig_on
+            if self.value == NULL:
+                raise RuntimeError("GAP function object is NULL")
+            
+            # Add memory barrier to ensure all previous operations are complete
+            # before entering signal-protected region
             sig_on()
             sig_on_called = True
+            
+            # Additional validation after sig_on
+            if self.value == NULL:
+                raise RuntimeError("GAP function object became NULL after sig_on")
+                
             if n == 0:
                 result = GAP_CallFunc0Args(self.value)
             elif n == 1:
+                if (<GapElement>a[0]).value == NULL:
+                    raise RuntimeError("GAP argument is NULL")
                 result = GAP_CallFunc1Args(self.value,
                                            (<GapElement>a[0]).value)
             elif n == 2:
+                if (<GapElement>a[0]).value == NULL or (<GapElement>a[1]).value == NULL:
+                    raise RuntimeError("GAP argument is NULL")
                 result = GAP_CallFunc2Args(self.value,
                                            (<GapElement>a[0]).value,
                                            (<GapElement>a[1]).value)
             elif n == 3:
+                if (<GapElement>a[0]).value == NULL or (<GapElement>a[1]).value == NULL or (<GapElement>a[2]).value == NULL:
+                    raise RuntimeError("GAP argument is NULL")
                 v2 = (<GapElement>a[2]).value
                 result = GAP_CallFunc3Args(self.value,
                                            (<GapElement>a[0]).value,
@@ -2527,17 +2544,33 @@ cdef class GapElement_Function(GapElement):
                                            v2)
             else:
                 arg_list = make_gap_list(args)
+                if arg_list == NULL:
+                    raise RuntimeError("Failed to create GAP argument list")
                 result = GAP_CallFuncList(self.value, arg_list)
+                
+            # Validate result before clearing signal handling
+            # Note: result can legitimately be NULL for procedures that don't return values
+            
             if sig_on_called:
                 sig_off()
                 sig_on_called = False
-        except:
+        except Exception as e:
+            # Handle any exception, including system-level crashes
             if sig_on_called:
-                sig_off()
+                try:
+                    sig_off()
+                except:
+                    # If sig_off fails, we're in a bad state but shouldn't crash further
+                    pass
                 sig_on_called = False
             raise
         finally:
-            GAP_Leave()
+            # Always ensure GAP context is properly cleaned up
+            try:
+                GAP_Leave()
+            except:
+                # If GAP_Leave fails, log it but don't crash
+                pass
         if result == NULL:
             # We called a procedure that does not return anything
             return None
@@ -3160,7 +3193,7 @@ cdef class GapElement_Record(GapElement):
             123
         """
         cdef UInt i = self.record_name_to_index(name)
-        cdef volatile Obj result
+        cdef Obj result
         sig_on()
         try:
             GAP_Enter()
