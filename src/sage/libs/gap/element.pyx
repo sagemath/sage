@@ -28,6 +28,7 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
+from libc.stdlib cimport malloc, free
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
@@ -2496,11 +2497,12 @@ cdef class GapElement_Function(GapElement):
             hello from the shell
         """
         cdef Obj result = NULL
-        cdef Obj arg_list
         cdef int n = len(args)
         cdef volatile Obj v2
+        cdef Obj *arg_array = NULL
+        cdef int i
 
-        if n > 0 and n <= 3:
+        if n > 0:
             libgap = self.parent()
             a = [x if isinstance(x, GapElement) else libgap(x) for x in args]
 
@@ -2523,8 +2525,17 @@ cdef class GapElement_Function(GapElement):
                                            (<GapElement>a[1]).value,
                                            v2)
             else:
-                arg_list = make_gap_list(args)
-                result = GAP_CallFuncList(self.value, arg_list)
+                # Use GAP_CallFuncArray instead of GAP_CallFuncList
+                # to avoid creating GAP list objects and nested GAP_Enter calls
+                arg_array = <Obj*>malloc(n * sizeof(Obj))
+                if arg_array == NULL:
+                    raise MemoryError("Failed to allocate memory for GAP function arguments")
+                
+                for i in range(n):
+                    arg_array[i] = (<GapElement>a[i]).value
+                
+                result = GAP_CallFuncArray(self.value, n, arg_array)
+                free(arg_array)
             sig_off()
         finally:
             GAP_Leave()
