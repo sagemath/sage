@@ -1657,8 +1657,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         - the pivot columns (a.k.a. column rank profile) of ``self`` are
           computed and cached
 
-        - only if using algorithm ``linbox_noefd``: return the pivot rows of
-          ``self`` before echelonization (a.k.a. its row rank profile)
+        - only if using algorithm ``linbox_noefd``: the pivot rows of ``self``
+          before echelonization (a.k.a. its row rank profile) are computed and
+          cached
 
         EXAMPLES::
 
@@ -1768,9 +1769,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0 0 0 0 0 0 0]
 
             sage: A = matrix(GF(97),3,4,range(12))
-            sage: A.echelonize()
-            (0, 1)
-            sage: A
+            sage: A.echelonize(); A
             [ 1  0 96 95]
             [ 0  1  2  3]
             [ 0  0  0  0]
@@ -1794,8 +1793,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if algorithm == 'linbox':
             self._echelonize_linbox(efd=True)
         elif algorithm == 'linbox_noefd':
-            rrp = self._echelonize_linbox(efd=False)
-            return rrp
+            self._echelonize_linbox(efd=False)
         elif algorithm == 'gauss':
             self._echelon_in_place_classical()
 
@@ -1929,12 +1927,15 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: A.pivots()
             (0, 1)
         """
+        if not self.base_ring().is_field():
+            raise NotImplementedError("Echelon form not implemented over '%s'." % self.base_ring())
+
         v = self.fetch('pivots')
         if v is not None:
             return tuple(v)
 
         E = self.__copy__()
-        rrp = E.echelonize(algorithm="linbox_noefd")
+        rrp = E._echelonize_linbox(efd=False)
         E.set_immutable()
         v = E.pivots()
         self.cache('echelon_form', E)
@@ -1971,12 +1972,15 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: B.pivots() == A.pivot_rows()
             True
         """
+        if not self.base_ring().is_field():
+            raise NotImplementedError("Echelon form not implemented over '%s'." % self.base_ring())
+
         v = self.fetch('pivot_rows')
         if v is not None:
             return tuple(v)
 
         E = self.__copy__()
-        v = E.echelonize(algorithm="linbox_noefd")
+        v = E._echelonize_linbox(efd=False)
         E.set_immutable()
         self.cache('echelon_form', E)
         self.cache('rank', E._cache['rank'])
