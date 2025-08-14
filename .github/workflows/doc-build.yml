@@ -44,7 +44,7 @@ jobs:
           path: ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
-  
+
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
@@ -62,7 +62,7 @@ jobs:
           channel-priority: true
           activate-environment: sage-dev
           environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
-        
+
       - name: Build Sage
         shell: bash -l {0}
         run: |
@@ -74,6 +74,7 @@ jobs:
       #
       # For pull requests
       #
+
       - name: Get workflow run-id
         if: github.event_name == 'pull_request'
         run: |
@@ -204,33 +205,32 @@ jobs:
           name: doc-${{ github.ref_name }}
           path: doc.zip
 
-      # The following fails randomly
-      # - name: Build live doc
-      #   if: github.event_name != 'pull_request'
-      #   shell: bash -l {0}
-      #   run: |
-      #     # Remove previous doc build
-      #     rm -rf builddir/src/doc
-      #     meson compile -C builddir doc-html
-      #   env:
-      #     SAGE_USE_CDNS: yes
-      #     SAGE_LIVE_DOC: yes
-      #     SAGE_JUPYTER_SERVER: binder:sagemath/sage-binder-env/dev
-      #     SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
+      - name: Build live doc
+        if: github.event_name != 'pull_request'
+        shell: bash -l {0}
+        run: |
+          # Remove previous doc build
+          rm -rf builddir/src/doc
+          meson compile -C builddir doc-html -j1
+        env:
+          SAGE_USE_CDNS: yes
+          SAGE_LIVE_DOC: yes
+          SAGE_JUPYTER_SERVER: binder:sagemath/sage-binder-env/dev
+          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
-      # - name: Copy live doc
-      #   if: github.event_name != 'pull_request'
-      #   run: |
-      #     mkdir -p ./livedoc
-      #     # We copy everything to a local folder
-      #       cp -r builddir/src/doc/html livedoc/
-      #       cp builddir/src/doc/index.html livedoc/
-      #     zip -r livedoc.zip livedoc
+      - name: Copy live doc
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p ./livedoc
+          # We copy everything to a local folder
+          cp -r builddir/src/doc/html livedoc/
+          cp builddir/src/doc/index.html livedoc/
+          zip -r livedoc.zip livedoc
 
-      # - name: Upload live doc
-      #   if: github.event_name != 'pull_request'
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: livedoc
-      #     path: livedoc.zip
+      - name: Upload live doc
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: livedoc
+          path: livedoc.zip
 
