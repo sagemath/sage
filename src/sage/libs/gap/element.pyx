@@ -984,7 +984,7 @@ cdef class GapElement(RingElement):
             GAPError: Error, no method found!
             Error, no 1st choice method found for `+' on 2 arguments
         """
-        cdef Obj result
+        cdef volatile Obj result
         try:
             sig_GAP_Enter()
             sig_on()
@@ -1012,7 +1012,7 @@ cdef class GapElement(RingElement):
             ...
             GAPError: Error, no method found! ...
         """
-        cdef Obj result
+        cdef volatile Obj result
         try:
             sig_GAP_Enter()
             sig_on()
@@ -1041,7 +1041,7 @@ cdef class GapElement(RingElement):
             GAPError: Error, no method found!
             Error, no 1st choice method found for `*' on 2 arguments
         """
-        cdef Obj result
+        cdef volatile Obj result
         try:
             sig_GAP_Enter()
             sig_on()
@@ -1075,7 +1075,7 @@ cdef class GapElement(RingElement):
             ...
             GAPError: Error, Rational operations: <divisor> must not be zero
         """
-        cdef Obj result
+        cdef volatile Obj result
         try:
             sig_GAP_Enter()
             sig_on()
@@ -1102,7 +1102,7 @@ cdef class GapElement(RingElement):
             GAPError: Error, no method found!
             Error, no 1st choice method found for `mod' on 2 arguments
         """
-        cdef Obj result
+        cdef volatile Obj result
         try:
             sig_GAP_Enter()
             sig_on()
@@ -1150,6 +1150,7 @@ cdef class GapElement(RingElement):
             GAPError: Error, no method found! Error, no 1st choice
             method found for `InverseMutable' on 1 arguments
         """
+        cdef volatile Obj result
         try:
             sig_GAP_Enter()
             sig_on()
@@ -2495,10 +2496,11 @@ cdef class GapElement_Function(GapElement):
             sage: libgap_exec('echo hello from the shell')
             hello from the shell
         """
-        cdef Obj result = NULL
+        cdef volatile Obj result = NULL
         cdef Obj arg_list
         cdef int n = len(args)
         cdef volatile Obj v2
+        cdef volatile bint sig_on_called = False
 
         if n > 0 and n <= 3:
             libgap = self.parent()
@@ -2507,6 +2509,7 @@ cdef class GapElement_Function(GapElement):
         try:
             sig_GAP_Enter()
             sig_on()
+            sig_on_called = True
             if n == 0:
                 result = GAP_CallFunc0Args(self.value)
             elif n == 1:
@@ -2525,9 +2528,13 @@ cdef class GapElement_Function(GapElement):
             else:
                 arg_list = make_gap_list(args)
                 result = GAP_CallFuncList(self.value, arg_list)
-            sig_off()
+            if sig_on_called:
+                sig_off()
+                sig_on_called = False
         except:
-            sig_off()
+            if sig_on_called:
+                sig_off()
+                sig_on_called = False
             raise
         finally:
             GAP_Leave()
@@ -3153,7 +3160,7 @@ cdef class GapElement_Record(GapElement):
             123
         """
         cdef UInt i = self.record_name_to_index(name)
-        cdef Obj result
+        cdef volatile Obj result
         sig_on()
         try:
             GAP_Enter()
