@@ -2530,10 +2530,8 @@ cdef class GapElement_Function(GapElement):
                 arg_array = <Obj*>malloc(n * sizeof(Obj))
                 if arg_array == NULL:
                     raise MemoryError("Failed to allocate memory for GAP function arguments")
-                
                 for i in range(n):
                     arg_array[i] = (<GapElement>a[i]).value
-                
                 result = GAP_CallFuncArray(self.value, n, arg_array)
                 free(arg_array)
             sig_off()
