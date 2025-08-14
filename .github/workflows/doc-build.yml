@@ -216,7 +216,6 @@ jobs:
           SAGE_USE_CDNS: yes
           SAGE_LIVE_DOC: yes
           SAGE_JUPYTER_SERVER: binder:sagemath/sage-binder-env/dev
-          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
       - name: Copy live doc
         if: github.event_name != 'pull_request'
