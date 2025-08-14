@@ -94,7 +94,9 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
-    FfpackSlabRecursive, FflasRight, vector, list as std_list, RankProfileFromLU
+    FfpackTileRecursive, FfpackSlabRecursive, FflasLeft, FflasRight, vector, list as std_list, \
+    RankProfileFromLU, PLUQtoEchelonPermutation, MathPerm2LAPACKPerm, LAPACKPerm2MathPerm
+
 from libcpp cimport bool
 from sage.parallel.parallelism import Parallelism
 
@@ -182,7 +184,13 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     cdef ModField *F = new ModField(<long>modulus)
     cdef size_t* P = <size_t*>check_allocarray(nrows, sizeof(size_t))
     cdef size_t* Q = <size_t*>check_allocarray(ncols, sizeof(size_t))
-    cdef size_t* rkprofile = <size_t*>check_allocarray(nrows, sizeof(size_t))
+
+    cdef size_t* Qmath = <size_t*>check_allocarray(ncols, sizeof(size_t))
+    cdef size_t* Qtmp = <size_t*>check_allocarray(ncols, sizeof(size_t))
+    cdef size_t* Qperm = <size_t*>check_allocarray(ncols, sizeof(size_t))
+
+    cdef size_t* rrp = <size_t*>check_allocarray(nrows, sizeof(size_t))
+    cdef size_t* crp = <size_t*>check_allocarray(ncols, sizeof(size_t))
 
     cdef Py_ssize_t r
     cdef size_t nbthreads
@@ -192,31 +200,61 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
         sig_on()
     if nbthreads > 1 :
         r = pReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries,
-                                   ncols, P, Q, transform, nbthreads, FfpackSlabRecursive)
+                                   ncols, P, Q, transform, nbthreads, FfpackTileRecursive)
     else :
         r = ReducedRowEchelonForm(F[0], nrows, ncols, <ModField.Element*>entries, ncols, P, Q,
-                                  transform, FfpackSlabRecursive)
+                                  transform, FfpackTileRecursive)
     if nrows * ncols > 1000:
         sig_off()
 
+    # extract row and column rank profiles
+    RankProfileFromLU(P, nrows, r, rrp, FfpackTileRecursive)
+    RankProfileFromLU(Q, ncols, r, crp, FfpackTileRecursive)
+
+    cdef list pivots = [int(crp[i]) for i in range(r)]
+    cdef list pivot_rows = [int(rrp[i]) for i in range(r)]
+
+    # row permutation into echelon
+    PLUQtoEchelonPermutation(ncols, r, Q, Qperm)
+    applyP(F[0], FflasLeft, FflasNoTrans, ncols, 0, r, <ModField.Element*>entries, ncols, Qperm)
+
+    # fill top left with identity
     for i in range(nrows):
         for j in range(r):
-            (entries+i*ncols+j)[0] = 0
+            (entries + i*ncols + j)[0] = 0
         if i<r:
-            (entries + i*(ncols+1))[0] = 1
+            (entries + i*ncols + i)[0] = 1
 
-    applyP(F[0], FflasRight, FflasNoTrans, nrows, 0, r, <ModField.Element*>entries, ncols, Q)
+    # column permutation to put pivots in correct columns
+    piv = 0
+    ipiv = r
+    idx = 0
+    while idx < r and ipiv < ncols:
+        if crp[idx] > piv:
+            crp[ipiv] = piv
+            ipiv += 1
+            piv += 1
+        else:
+            idx += 1
+            piv += 1
+    while ipiv < ncols:
+        crp[ipiv] = piv
+        ipiv += 1
+        piv += 1
 
-    RankProfileFromLU(Q, nrows, r, rkprofile, FfpackSlabRecursive)
+    MathPerm2LAPACKPerm(Q, crp, ncols)
 
-    cdef list pivots = [int(Q[i]) for i in range(r)]
-    cdef list rrp = [int(rkprofile[i]) for i in range(r)]
+    applyP(F[0], FflasRight, FflasNoTrans, nrows, 0, ncols, <ModField.Element*>entries, ncols, Q)
 
     sig_free(P)
     sig_free(Q)
-    sig_free(rkprofile)
+    sig_free(rrp)
+    sig_free(crp)
+    sig_free(Qmath)
+    sig_free(Qtmp)
+    sig_free(Qperm)
     del F
-    return r, pivots, rrp
+    return r, pivots, pivot_rows
 
 cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
     # See trac #13878: This is to avoid sending invalid data to linbox,
@@ -1607,14 +1645,20 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
         - ``**kwds`` -- these are all ignored
 
-        OUTPUT: ``self`` is put in reduced row echelon form
+        OUTPUT: if ``self`` is known to be echelonized (the information is
+        cached), nothing is done; else, ``self`` is put in reduced row echelon
+        form and
+
+        - the fact that ``self`` is now in echelon form is cached so future
+          calls to echelonize return immediately
 
         - the rank of ``self`` is computed and cached
 
-        - the pivot columns of ``self`` are computed and cached
+        - the pivot columns (a.k.a. column rank profile) of ``self`` are
+          computed and cached
 
-        - the fact that ``self`` is now in echelon form is recorded and
-          cached so future calls to echelonize return immediately
+        - only if using algorithm ``linbox_noefd``: return the pivot rows of
+          ``self`` before echelonization (a.k.a. its row rank profile)
 
         EXAMPLES::
 
@@ -1632,7 +1676,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ....:     A = random_matrix(GF(13), 10, 10)
             sage: MS = parent(A)
             sage: B = A.augment(MS(1))
-            sage: B.echelonize()
+            sage: rrp = B.echelonize()
             sage: A.rank()
             10
             sage: C = B.submatrix(0,10,10,10)
@@ -1724,11 +1768,15 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             [0 0 0 0 0 0 0 0 0 0]
 
             sage: A = matrix(GF(97),3,4,range(12))
-            sage: A.echelonize(); A
+            sage: A.echelonize()
+            (0, 1)
+            sage: A
             [ 1  0 96 95]
             [ 0  1  2  3]
             [ 0  0  0  0]
             sage: A.pivots()
+            (0, 1)
+            sage: A.pivot_rows()
             (0, 1)
 
             sage: for p in (3,17,97,127,1048573):
@@ -1746,7 +1794,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         if algorithm == 'linbox':
             self._echelonize_linbox(efd=True)
         elif algorithm == 'linbox_noefd':
-            self._echelonize_linbox(efd=False)
+            rrp = self._echelonize_linbox(efd=False)
+            return rrp
         elif algorithm == 'gauss':
             self._echelon_in_place_classical()
 
@@ -1777,6 +1826,9 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           ignore). However, ``efd=True`` uses more memory than FFLAS
           directly (default: ``True``)
 
+        OUTPUT: if ``efd`` is ``False``, return the row rank profile of
+        ``self``
+
         EXAMPLES::
 
             sage: A = random_matrix(GF(7), 10, 20)
@@ -1800,8 +1852,10 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         self.cache('in_echelon_form', True)
         self.cache('rank', r)
         self.cache('pivots', tuple(pivots))
+        self.cache('pivot_rows', tuple(range(r)))
+
         if not efd:
-            self.cache('pivot_rows', tuple(rrp))
+            return tuple(rrp)
 
     def _echelon_in_place_classical(self):
         """
@@ -1857,7 +1911,78 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
                     start_row = start_row + 1
                     break
         self.cache('pivots', tuple(pivots))
+        self.cache('pivot_rows', tuple(range(r)))
         self.cache('in_echelon_form', True)
+
+    def pivots(self):
+        """
+        Return the pivot column positions of this matrix.
+
+        OUTPUT: a tuple of Python integers: the position of the
+        first nonzero entry in each row of the echelon form.
+
+        This returns a tuple so it is immutable; see :issue:`10752`.
+
+        EXAMPLES::
+
+            sage: A = matrix(GF(7), 2, 2, range(4))
+            sage: A.pivots()
+            (0, 1)
+        """
+        v = self.fetch('pivots')
+        if v is not None:
+            return tuple(v)
+
+        E = self.__copy__()
+        rrp = E.echelonize(algorithm="linbox_noefd")
+        E.set_immutable()
+        v = E.pivots()
+        self.cache('echelon_form', E)
+        self.cache('rank', E._cache['rank'])
+        self.cache('pivots', tuple(v))
+        self.cache('pivot_rows', rrp)
+        return tuple(v)
+
+    def pivot_rows(self):
+        """
+        Return the pivot row positions for this matrix, which form the topmost
+        subset of the rows that span the row space and are linearly
+        independent. Also known as row rank profile.
+
+        If this has already been computed and cached, this returns the cached
+        value. Otherwise, this computes an echelon form (using algorithm
+        ``linbox_noefd``), and deduces the pivot row positions to be returned.
+        In the latter case, this also caches other attributes at the same time
+        (see :meth:`Matrix_modn_dense_template.echelonize`).
+
+        OUTPUT: a tuple of integers
+
+        EXAMPLES::
+
+            sage: A = matrix(GF(3), [[1,0,1,0],[1,0,0,0],[1,0,0,0],[0,1,0,0]])
+            sage: B = A.transpose()
+            sage: A
+            [1 0 1 0]
+            [1 0 0 0]
+            [1 0 0 0]
+            [0 1 0 0]
+            sage: A.pivot_rows()
+            (0, 1, 3)
+            sage: B.pivots() == A.pivot_rows()
+            True
+        """
+        v = self.fetch('pivot_rows')
+        if v is not None:
+            return tuple(v)
+
+        E = self.__copy__()
+        v = E.echelonize(algorithm="linbox_noefd")
+        E.set_immutable()
+        self.cache('echelon_form', E)
+        self.cache('rank', E._cache['rank'])
+        self.cache('pivots', E._cache['pivots'])
+        self.cache('pivot_rows', v)
+        return v
 
     def right_kernel_matrix(self, algorithm='linbox', basis='echelon'):
         r"""
