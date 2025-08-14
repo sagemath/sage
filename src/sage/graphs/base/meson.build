@@ -1,3 +1,23 @@
+boost_cpp17_compatible = false
+boost = dependency(
+  'boost',
+  version: '>=1.83.0',
+  required: false,
+  modules: ['graph', 'tuple'],
+)
+if boost.found()
+  # Need at least v1.83.0 (https://github.com/boostorg/functional/commit/6a573e4b8333ee63ee62ce95558c3667348db233)
+  # for C++17 compatibility.
+  boost_cpp17_compatible = true
+else
+  boost = dependency(
+    'boost',
+    version: '>=1.66.0',
+    required: false,
+    modules: ['graph', 'tuple'],
+  )
+endif
+
 py.install_sources(
   '__init__.py',
   'all.py',
@@ -39,14 +59,23 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp]
+  override_options = ['cython_language=cpp']
+  if name == 'boost_graph'
+    deps += [boost]
+    if not boost_cpp17_compatible
+      override_options += ['cpp_std=c++11']
+    endif
+  endif
+
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/graphs/base',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: override_options,
     include_directories: [inc_cpython, inc_data_structures, inc_rings],
-    dependencies: [py_dep, cysignals, gmp],
+    dependencies: deps,
   )
 endforeach
 

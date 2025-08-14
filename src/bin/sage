@@ -165,7 +165,6 @@ if [ -x "${SELF}-config" ]; then
 fi
 if [ -f "${SELF}-src-env-config" ]; then
     # Not installed script, present only in src/bin/
-    SAGE_SRC_ENV_CONFIG=1
     . "${SELF}-src-env-config" >&2
 fi
 if [ -z "$SAGE_VENV" -a -x "${SELF}-venv-config" ]; then
@@ -294,8 +293,8 @@ sage_setup() {
         echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
         echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
         echo >&2 'finished). You should run `make` in the SAGE_ROOT directory first.'
-        echo >&2 'If you did not intend to build Sage from source, you should download'
-        echo >&2 'a binary tarball instead. Read README.txt for more information.'
+        echo >&2 'If you did not intend to build Sage from source, you should read' 
+        echo >&2 'README.md for more information on available installation methods.'
         echo >&2 '************************************************************************'
         exit 1
     fi
