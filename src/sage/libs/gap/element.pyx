@@ -2526,6 +2526,9 @@ cdef class GapElement_Function(GapElement):
                 arg_list = make_gap_list(args)
                 result = GAP_CallFuncList(self.value, arg_list)
             sig_off()
+        except:
+            sig_off()
+            raise
         finally:
             GAP_Leave()
         if result == NULL:
