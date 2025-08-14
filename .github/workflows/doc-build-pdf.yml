@@ -148,3 +148,36 @@ jobs:
         with:
           name: doc-pdf
           path: doc-pdf.zip
+
+      #
+      # On release events
+      #
+
+      - name: Build live doc
+        if: github.event_name != 'pull_request'
+        run: |
+          # Avoid running out of disk space
+          rm -rf upstream
+          export SAGE_USE_CDNS=yes
+          export SAGE_LIVE_DOC=yes
+          export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
+          make doc-clean doc-uninstall
+          ./config.status && make sagemath_doc_html-no-deps
+        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
+
+      - name: Copy live doc
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p ./livedoc
+          # We copy everything to a local folder
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/pdf livedoc
+          docker cp --follow-link BUILD:/sage/local/share/doc/sage/index.html livedoc
+          zip -r livedoc.zip livedoc
+
+      - name: Upload live doc
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: livedoc
+          path: livedoc.zip

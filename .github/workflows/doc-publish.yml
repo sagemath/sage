@@ -2,7 +2,7 @@ name: Publish documentation
 
 on:
   workflow_run:
-    workflows: ["Build documentation"]
+    workflows: ["Build documentation", "Build documentation (PDF)"]
     types:
       - completed
 
@@ -12,8 +12,8 @@ permissions:
   pull-requests: write
 
 
-# This workflow runs after doc-build workflow, taking the artifact
-# (doc/livedoc) and deploying it to a netlify site.
+# This workflow runs after doc-build and doc-build-pdf workflows, taking the
+# artifact (doc/livedoc) and deploying it to a netlify site.
 #
 # event (triggered doc-build)     URL (of the doc deployed to NETLIFY_SITE)
 # ---------------------------     ---------------------------------
