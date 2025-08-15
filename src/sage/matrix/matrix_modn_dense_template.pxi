@@ -1914,18 +1914,59 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def pivots(self):
         """
-        Return the pivot column positions of this matrix.
+        Return the column pivot positions for this matrix, which form the
+        leftmost subset of the columns that span the column space and are
+        linearly independent. This coincides with the position of the first
+        nonzero entry in each row of the reduced row echelon form of ``self``,
+        and is also known as the column rank profile of ``self``. The returned
+        tuple is ordered increasingly.
 
-        OUTPUT: a tuple of Python integers: the position of the
-        first nonzero entry in each row of the echelon form.
+        If this has already been computed and cached, this returns the cached
+        value. Otherwise, this computes an echelon form (using algorithm
+        ``linbox_noefd``), and deduces the pivot positions to be cached and
+        returned. In the latter case, this also caches other attributes at the
+        same time: the reduced row echelon form of ``self`` and the rank of
+        ``self``, as well as its row pivot positions (also known as row rank
+        profile).
 
-        This returns a tuple so it is immutable; see :issue:`10752`.
+        OUTPUT: a tuple of `r` integers where `r` is the rank of ``self``
+
+        .. SEEALSO::
+
+            The method :meth:`Matrix_modn_dense_template.pivot_rows` computes
+            the row pivot positions, also known as row rank profile.
 
         EXAMPLES::
 
             sage: A = matrix(GF(7), 2, 2, range(4))
             sage: A.pivots()
             (0, 1)
+
+            sage: A = matrix(GF(3), [[1,1,1,0],[0,0,0,1],[1,0,0,0]])
+            sage: A
+            [1 1 1 0]
+            [0 0 0 1]
+            [1 0 0 0]
+            sage: A.pivots() == (0, 1, 3)
+            True
+
+            sage: A = matrix(GF(65537), 5, 3,
+            ....:            [  223,   669, 21130,
+            ....:             13996, 41988, 21387,
+            ....:             39034, 51565, 40500,
+            ....:             14660, 43980,  3899,
+            ....:             12016, 36048,  9308])
+            sage: A[:,1] == 3 * A[:,0]
+            True
+            sage: A.pivots() == (0, 2)
+            True
+            sage: A = matrix(GF(7), 3, 5, [2, 2, 4, 1, 4,
+            ....:                          4, 4, 1, 4, 6,
+            ....:                          5, 2, 5, 6, 6])
+            sage: A[:,0] == 2 * A[:,1] + 3 * A[:,2]
+            True
+            sage: A.pivots() == (0, 1, 3)
+            True
         """
         if not self.base_ring().is_field():
             raise NotImplementedError("Echelon form not implemented over '%s'." % self.base_ring())
@@ -1946,30 +1987,55 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
     def pivot_rows(self):
         """
-        Return the pivot row positions for this matrix, which form the topmost
+        Return the row pivot positions for this matrix, which form the topmost
         subset of the rows that span the row space and are linearly
-        independent. Also known as row rank profile.
+        independent. This coincides with the position of the first nonzero
+        entry in each column of the reduced column echelon form of ``self``,
+        and is also known as the row rank profile of ``self``. The returned
+        tuple is ordered increasingly.
 
         If this has already been computed and cached, this returns the cached
         value. Otherwise, this computes an echelon form (using algorithm
-        ``linbox_noefd``), and deduces the pivot row positions to be returned.
-        In the latter case, this also caches other attributes at the same time
-        (see :meth:`Matrix_modn_dense_template.echelonize`).
+        ``linbox_noefd``), and deduces the pivot row positions to be cached and
+        returned.  In the latter case, this also caches other attributes at the
+        same time: the reduced row echelon form of ``self`` and the rank of
+        ``self``, as well as its pivot indices (also known as column rank
+        profile).
 
-        OUTPUT: a tuple of integers
+        OUTPUT: a tuple of `r` integers where `r` is the rank of ``self``
+
+        .. SEEALSO::
+
+            The method :meth:`Matrix_modn_dense_template.pivots` computes
+            the column pivot positions, also known as column rank profile.
 
         EXAMPLES::
 
             sage: A = matrix(GF(3), [[1,0,1,0],[1,0,0,0],[1,0,0,0],[0,1,0,0]])
-            sage: B = A.transpose()
             sage: A
             [1 0 1 0]
             [1 0 0 0]
             [1 0 0 0]
             [0 1 0 0]
-            sage: A.pivot_rows()
-            (0, 1, 3)
-            sage: B.pivots() == A.pivot_rows()
+            sage: A.pivot_rows() == (0, 1, 3)
+            True
+
+            sage: A = matrix(GF(65537), 3, 5,
+            ....:            [  223, 13996, 39034, 14660, 12016,
+            ....:               669, 41988, 51565, 43980, 36048,
+            ....:             21130, 21387, 40500,  3899,  9308])
+            sage: A[1,:] == 3 * A[0,:]
+            True
+            sage: A.pivot_rows() == (0, 2)
+            True
+            sage: A = matrix(GF(7), 5, 3, [2, 4, 5,
+            ....:                          2, 4, 2,
+            ....:                          4, 1, 5,
+            ....:                          1, 4, 6,
+            ....:                          4, 6, 6])
+            sage: A[0,:] == 2 * A[1,:] + 3 * A[2,:]
+            True
+            sage: A.pivot_rows() == (0, 1, 3)
             True
         """
         if not self.base_ring().is_field():
