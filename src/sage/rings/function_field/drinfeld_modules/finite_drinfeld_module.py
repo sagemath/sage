@@ -138,7 +138,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` -- (default: ``'τ'``) the name of the variable of
+        - ``name`` -- (default: `\tau`) the name of the variable of
           the Ore polynomial ring
 
         TESTS::
@@ -235,7 +235,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Let `q` be the order of the base field of the function ring. The
         *Frobenius endomorphism* is defined as the endomorphism whose
-        defining Ore polynomial is `τ^q`.
+        defining Ore polynomial is `\tau^q`.
 
         EXAMPLES::
 
@@ -273,14 +273,14 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Let `\chi = X^r + \sum_{i=0}^{r-1} A_{i}(T)X^{i}` be the
         characteristic polynomial of the Frobenius endomorphism, and
-        let `τ^n` be the Ore polynomial that defines the Frobenius
+        let `\tau^n` be the Ore polynomial that defines the Frobenius
         endomorphism of `\phi`; by definition, `n` is the degree of `K`
         over the base field `\mathbb{F}_q`. Then we have
 
         .. MATH::
 
-            \chi(τ^n)(\phi(T))
-            = τ^{nr} + \sum_{i=1}^{r} \phi_{A_{i}}τ^{n(i)}
+            \chi(\tau^n)(\phi(T))
+            = \tau^{nr} + \sum_{i=1}^{r} \phi_{A_{i}}\tau^{n(i)}
             = 0,
 
         with `\deg(A_i) \leq \frac{n(r-i)}{r}`.
