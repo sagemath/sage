@@ -159,7 +159,6 @@ from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subsch
 
 lazy_import('sage.interfaces.singular', 'singular')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
-lazy_import('sage.rings.qqbar', ['number_field_elements_from_algebraics', 'QQbar'])
 
 from .curve import Curve_generic
 
@@ -1450,9 +1449,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                       + (1/16*a + 1/16)*x*y*z^2 + (3/16*a + 3/16)*y^2*z^2
                       + (-3/16*a - 1/4)*y*z^3 + (1/16*a + 3/32)*z^4)
         """
-        # helper function for extending the base field
+        from sage.rings.qqbar import number_field_elements_from_algebraics, QQbar
 
         def extension(self):
+            # helper function for extending the base field
             F = self.base_ring()
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
