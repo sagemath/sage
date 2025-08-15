@@ -115,8 +115,9 @@ jobs:
         run: |
           # Ensure build dependencies are properly installed on macOS
           # First update conda and pip to latest versions
-          conda update -y conda pip
+          conda update -n base –y conda 
           # Install/update essential build tools in the correct order
+          conda activate sage-dev
           pip install --upgrade pip
           pip install --upgrade setuptools wheel
           pip install --upgrade meson-python
