@@ -7617,7 +7617,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             return M.span(B)
 
     def coordinate_vector(self, v, check=True):
-        """
+        r"""
         Write `v` in terms of the user basis for ``self``.
 
         INPUT:
@@ -7634,7 +7634,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
         .. MATH::
 
-            \\sum c_i B_i = v.
+            \sum c_i B_i = v.
 
         If `v` is not in self, raise an :exc:`ArithmeticError` exception.
 
@@ -7644,13 +7644,21 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: M = V.span_of_basis([['1/8',2,1]])
             sage: M.coordinate_vector([1,16,8])
             (8)
+
+        TESTS::
+
+            sage: basis_matrix = random_vector(100, x=0, y=2^100).column().augment(matrix.identity(100) * 2)
+            sage: basis_matrix.echelon_form()  # not tested (very slow)
+            sage: M = (ZZ^101).span_of_basis(basis_matrix.rows())
+            sage: M.coordinate_vector(basis_matrix[0])  # should be fast
+            (1, 0, 0, ..., 0)
         """
-        # First find the coordinates of v wrt echelon basis.
-        w = self.echelon_coordinate_vector(v, check=check)
-        # Next use transformation matrix from echelon basis to
-        # user basis.
-        T = self.echelon_to_user_matrix()
-        return T.linear_combination_of_rows(w)
+        try:
+            if isinstance(v, FreeModuleElement):
+                v = v.list()
+            return self.basis_matrix().solve_left(FreeModule(self.coordinate_ring(), len(v))(v), extend=False)
+        except (ValueError, TypeError):
+            raise ArithmeticError('vector is not in module')
 
     def echelonized_basis(self):
         """
