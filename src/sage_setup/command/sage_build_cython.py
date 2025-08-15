@@ -13,7 +13,6 @@ import json
 # can replace distutils by its own vendored copy.
 import setuptools
 import logging
-import sys
 
 # Configure logging with simple format showing only level and message
 logging.basicConfig(
