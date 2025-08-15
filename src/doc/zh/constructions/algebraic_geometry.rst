@@ -1,19 +1,18 @@
-******************
-Algebraic Geometry
-******************
+********
+代数几何
+********
 
 .. index::
    pair: elliptic curve; point counting
 
-Point counting on curves
-========================
-How do you count points on an elliptic curve over a finite field in
-Sage?
+曲线上点的计数
+==============
 
-Over prime finite fields, includes both the baby step giant step
-method and the SEA (Schoof-Elkies-Atkin) algorithm (implemented in PARI
-by Christophe Doche and Sylvain Duquesne). An example taken form the
-Reference manual:
+如何在 Sage 中计算有限域上椭圆曲线上点的数量？
+
+对于素有限域，有小步大步法 (baby step giant step method) 和 SEA (Schoof-Elkies-Atkin) 算法
+（由 Christophe Doche 和 Sylvain Duquesne 在 PARI 中实现）。
+以下是从参考手册中摘取的示例：
 
 ::
 
@@ -21,12 +20,10 @@ Reference manual:
     sage: E.cardinality()
     10076
 
-The command ``E.points()`` will return the actual list of rational
-points.
+``E.points()`` 命令将返回有理点的实际列表。
 
-How do you count points on a plane curve over a finite field? The
-``rational_points`` command produces points by a simple enumeration
-algorithm. Here is an example of the syntax:
+如何在有限域上计算平面曲线上有理点的数量？
+``rational_points`` 命令使用简单枚举算法生成有理点。以下是语法示例：
 
 ::
 
@@ -38,11 +35,9 @@ algorithm. Here is an example of the syntax:
     sage: C.rational_points(algorithm="bn")
     [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1), (3 : 1 : 1), (3 : 4 : 1)]
 
-The option ``algorithm="bn"`` uses Sage's Singular interface and
-calls the ``brnoeth`` package.
+选项 ``algorithm="bn"`` 使用 Sage 的 Singular 接口并调用 ``brnoeth`` 包。
 
-Here is another example using Sage's ``rational_points`` applied to
-Klein's quartic over :math:`GF(8)`.
+下面是将 Sage 的 ``rational_points`` 应用于 `GF(8)` 上的 Klein 四次方程的另一个例子。
 
 ::
 
@@ -76,16 +71,14 @@ Klein's quartic over :math:`GF(8)`.
      (a^2 + a + 1 : a^2 + 1 : 1),
      (a^2 + a + 1 : a^2 + a + 1 : 1)]
 
-Other methods
--------------
+其他方法
+--------
 
 
--  For a plane curve, you can use Singular's ``closed_points``
-   command. The input is the vanishing ideal :math:`I` of the curve
-   :math:`X` in a ring of :math:`2` variables :math:`F[x,y]`.
-   The ``closed_points`` command returns a list of prime ideals (each a
-   Gröbner basis), corresponding to the (distinct affine closed)
-   points of :math:`V(I)`. Here's an example:
+-  对于平面曲线，你可以使用 Singular 的 ``closed_points`` 命令。
+   输入是 `2` 变量环 `F[x,y]` 中曲线 `X` 的消失理想 `I`。
+   ``closed_points`` 命令返回一个素理想列表（每个都是 Gröbner 基），
+   对应于 `V(I)` 的（不同仿射闭合）点。以下是示例：
 
    .. skip
 
@@ -154,9 +147,8 @@ Other methods
        sage: r in [t.gens() for t in l] #  one of them is given by [y,x]
        True
 
--  Another way to compute rational points is to use Singular's
-   ``NSplaces`` command. Here's the Klein quartic over :math:`GF(8)`
-   done this way:
+-  另一种计算有理点的方法是使用 Singular 的 ``NSplaces`` 命令。
+   以下是用该方法在 `GF(8)` 上计算 Klein 四次方程的示例：
 
    ::
 
@@ -179,8 +171,7 @@ Other methods
        ...
        sage: klein3 = singular.extcurve(3, klein2)
 
-   Above we defined a curve :math:`X = \{f = 0\}` over
-   :math:`GF(8)` in Singular.
+   上面我们在 Singular 中定义了一条 `GF(8)` 上的曲线 `X = \{f = 0\}`。
 
    .. link
 
@@ -225,7 +216,7 @@ Other methods
        [2]:
           1,2
 
-   For the places of degree :math:`3`:
+   对于度为 `3` 的地方：
 
    .. link
 
@@ -251,7 +242,7 @@ Other methods
        [9]:
           3,7
 
-   Each point below is a pair: (degree, point index number).
+   下面的每个点都是成对的：（度，点索引号）。
 
    .. link
 
@@ -277,7 +268,7 @@ Other methods
        [9]:
           3,7
 
-   To actually get the points of :math:`X(GF(8))`:
+   实际获取 `X(GF(8))` 的点：
 
    .. link
 
@@ -302,23 +293,19 @@ Other methods
              0
        ...
 
-   plus 21 others (omitted). There are a total of :math:`23`
-   rational points.
+   加上另外 21 个点（已省略）。总共有 `23` 个有理点。
 
 .. index:: Riemann-Roch space
 
-Riemann-Roch spaces using Singular
-==================================
+使用 Singular 计算 Riemann-Roch 空间
+====================================
 
-To compute a basis of the Riemann-Roch space of a divisor :math:`D`
-on a curve over a field :math:`F`, one can use Sage's wrapper
-``riemann_roch_basis`` of Singular's implementation of the Brill
-Noether algorithm. Note that this wrapper currently only works when
-:math:`F` is prime and the divisor :math:`D` is supported on rational points.
-Below are examples of how to use ``riemann_roch_basis`` and how to use
-Singular itself to help an understanding of how the wrapper works.
+为了计算域 `F` 上曲线上的因子 `D` 的 Riemann-Roch 空间基，
+可以使用 Sage 封装的 ``riemann_roch_basis`` 方法，它是 Singular 实现的 Brill Noether 算法。
+注意，这个封装当前仅在 `F` 是素数且因子 `D` 在有理点上受支持时才有效。
+下面是如何使用 ``riemann_roch_basis`` 的示例，以及如何使用 Singular 本身来帮助理解封装的工作方式。
 
--  Using ``riemann_roch_basis``:
+-  使用 ``riemann_roch_basis``:
 
    ::
 
@@ -329,10 +316,9 @@ Singular itself to help an understanding of how the wrapper works.
        sage: X.riemann_roch_basis(D)
        [(-2*x + y)/(x + y), (-x + z)/(x + y)]
 
--  Using Singular's ``BrillNoether`` command (for details see the section
-   Brill-Noether in the Singular online documentation
-   (https://www.singular.uni-kl.de/Manual/4-3-0/sing_2254.htm and the
-   paper {CF}):
+-  使用 Singular 的 ``BrillNoether`` 命令
+   （具体内容请参见 Singular 在线文档的 Brill-Noether 章节
+   https://www.singular.uni-kl.de/Manual/4-3-0/sing_2254.htm 和论文{CF}）：
 
    ::
 
@@ -363,18 +349,14 @@ Singular itself to help an understanding of how the wrapper works.
        [6]:
           1,6
 
-   The first integer of each pair in the above list is the degree
-   `d` of a point. The second integer is the index of this point
-   in the list POINTS of the ring X[5][`d`][1]. Note that the
-   order of this latter list is different every time the algorithm
-   is run, e.g. `1`, `1` in the above list refers to a different
-   rational point each time. A divisor is given by defining a list
-   `G` of integers of the same length as X[3] such that if the
-   `k`-th entry of X[3] is `d`, `i`, then the `k`-th entry of `G` is
-   the multiplicity of the divisor at the `i`-th point in the list
-   POINTS of the ring X[5][`d`][1]. Let us proceed by defining a
-   "random" divisor of degree 12 and computing a basis of its
-   Riemann-Roch space:
+   上述列表中，每个整数对中的第一个整数表示点的度数 `d`。
+   第二个整数是该点在环 X[5][`d`][1] 的 POINTS 列表中的索引。
+   注意，每次运行算法时，这个列表的顺序都不相同，
+   例如上面列表中的 `1`, `1` 每次可能指示不同的有理点。
+   通过定义一个与 X[3] 长度相同的整数列表 `G`，可以指定一个因子。
+   如果 X[3] 的第 `k` 项为 `d`, `i`，则 `G` 的第 `k` 项表示
+   该因子在环 X[5][`d`][1] 的 POINTS 列表中第 `i` 个点上的重数。
+   接下来，我们定义一个度为 12 的“随机”因子并计算其 Riemann-Roch 空间基：
 
    .. link
 
@@ -397,23 +379,17 @@ Singular itself to help an understanding of how the wrapper works.
 .. index::
    pair: codes; algebraic-geometric
 
-AG codes
---------
+AG 码
+-----
 
-Sage can compute an AG code :math:`C=C_X(D,E)` by calling
-Singular's BrillNoether to compute a basis of the Riemann Roch
-space :math:`L(D)=L_X(D)`. In addition to the curve :math:`X`
-and the divisor :math:`D`, you must also specify the evaluation
-divisor :math:`E`.
+Sage 可以通过调用 Singular 的 BrillNoether 算法计算 Riemann-Roch 空间 `L(D)=L_X(D)` 的基，
+从而计算 AG 码 `C=C_X(D,E)`。
+除了曲线 `X` 和因子 `D`，还必须指定求值因子 `E`。
 
-Note that this section has not been updated since the wrapper
-``riemann_roch_basis`` has been fixed. See above for how to
-properly define a divisor for Singular's ``BrillNoether``
-command.
+请注意，自从 ``riemann_roch_basis`` 封装被修复后，本节尚未更新。
+请参阅上文中，了解如何正确定义 Singular 的 ``BrillNoether`` 命令的因子。
 
-Here's an example, one which computes a generator matrix of an
-associated AG code. This time we use Singular's ``AGCode_L``
-command.
+这里有一个示例，计算相关 AG 码的生成矩阵。这次我们使用 Singular 的 ``AGCode_L`` 命令：
 
 ::
 
@@ -435,19 +411,18 @@ command.
     sage: print(singular.eval("HC = extcurve(2,HC1);"))
     Total number of rational places : NrRatPl = 9
 
-We set the following to ``junk`` to discard the output::
+我们将以下内容设置为 ``junk`` 以丢弃输出::
 
     sage: junk = singular.eval("intvec G = 5;")      # the rational divisor G = 5*HC[3][1]
     sage: junk = singular.eval("def R = HC[1][2];")
     sage: singular.eval("setring R;")
     ''
 
-The vector :math:`G` represents the divisor
-"5 times the point at infinity".
+向量 `G` 表示因子“无穷远点的 5 倍”。
 
 .. index:: Riemann-Roch space
 
-Next, we compute the Riemann-Roch space.
+接下来，我们计算 Riemann-Roch 空间。
 
 .. link
 
@@ -475,11 +450,8 @@ Next, we compute the Riemann-Roch space.
        _[1]=y3+y2z
        _[2]=x2z
 
-That was the basis of the Riemann-Roch space, where each pair of
-functions represents the quotient (first function divided by second
-function). Each of these basis elements get evaluated at certain
-points to construct the generator matrix of the code. We next
-construct the points.
+这是 Riemann-Roch 空间的基，其中每个函数对表示商（第一个函数除以第二个函数）。
+每一个基元素都会在特定点进行求值以构建码的生成矩阵。接下来我们构建这些点。
 
 .. skip
 
@@ -520,9 +492,8 @@ construct the points.
           1
     ...
 
-plus :math:`5` more, for a total of :math:`9` rational points
-on the curve. We define our "evaluation divisor" :math:`D` using
-a subset of these points (all but the first):
+再加上 `5` 个，曲线上总共有 `9` 个有理点。
+我们使用这些点的子集（除第一个点外）定义我们的“求值因子” `D`：
 
 .. skip
 
@@ -550,8 +521,6 @@ a subset of these points (all but the first):
     0,0,(a),  (a+1),1,  1,    (a+1),(a),
     0,0,1,    1,    (a),(a+1),(a+1),(a)
 
-This is, finally, our desired generator matrix, where ``a``
-represents a generator of the field extension of degree :math:`2`
-over the base field :math:`GF(2)`.
+这就是我们最终想要的生成矩阵，其中 ``a`` 表示基域 `GF(2)` 上度为 `2` 的域扩张的生成器。
 
-Can this be "wrapped"?
+是否可以对其进行“封装”？
