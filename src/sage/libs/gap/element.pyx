@@ -2501,11 +2501,12 @@ cdef class GapElement_Function(GapElement):
         cdef Obj a[3]
 
         if n <= 3:
-            if n:
+            if not all(isinstance(x, GapElement) for x in args):
                 libgap = self.parent()
+                args = tuple(x if isinstance(x, GapElement) else libgap(x) for x in args)
             for i in range(n):
                 x = args[i]
-                a[i] = (<GapElement>(x if isinstance(x, GapElement) else libgap(x))).value
+                a[i] = (<GapElement>x).value
         else:
             arg_list = make_gap_list(args)
 
