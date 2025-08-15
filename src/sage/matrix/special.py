@@ -212,7 +212,7 @@ def column_matrix(*args, **kwds):
 
 
 @matrix_method
-def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation=None, *args, **kwds):
+def random_matrix(ring, nrows=None, ncols=None, algorithm='randomize', implementation=None, *args, **kwds):
     r"""
     Return a random matrix with entries in a specified ring, and possibly with additional properties.
 
@@ -250,6 +250,8 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         if computed by hand, will have only integer entries. See the
         documentation of :meth:`~sage.matrix.special.random_diagonalizable_matrix`
         for more information
+
+      - ``'fpylll:<subalgorithm>'`` -- uses an algorithm provided by fpylll, see below
 
     - ``implementation`` -- (``None`` or string or a matrix class) a possible
       implementation. See the documentation of the constructor of
@@ -630,6 +632,20 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
         from sage.matrix.constructor import random_unimodular_matrix
 
+    When ``algorithm`` starts with ``fpylll:``, uses fpylll. See
+    https://fpylll.readthedocs.io/en/latest/modules.html#fpylll.fplll.integer_matrix.IntegerMatrix.random
+    for the options.
+    In this special case, ``nrows`` must not be implemented, instead pass keyword parameter ``d``
+    specifying the dominant size parameter.
+    For example::
+
+        sage: B = matrix.random(ZZ, d=3, algorithm='fpylll:intrel', bits=5); B  # needs fpylll, random
+        [11  1  0  0]
+        [15  0  1  0]
+        [22  0  0  1]
+        sage: type(B)
+        <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+
     TESTS:
 
     We return an error for a bogus value of ``algorithm``::
@@ -638,6 +654,18 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         Traceback (most recent call last):
         ...
         ValueError: random matrix algorithm "bogus" is not recognized
+
+    More ``fpylll`` tests::
+
+        sage: # needs fpylll
+        sage: type(matrix.random(ZZ, d=3, algorithm='fpylll:intrel', bits=5, sparse=True))
+        <class 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
+        sage: matrix.random(ZZ, 3, algorithm='fpylll:intrel', bits=5)
+        Traceback (most recent call last):
+        ...
+        ValueError: when using fpylll algorithms, nrows/ncols must not be specified, instead use d
+        sage: type(matrix.random(QQ, d=3, algorithm='fpylll:intrel', bits=5))
+        <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
 
     AUTHOR:
 
@@ -649,6 +677,15 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ncols = nrows
     sparse = kwds.pop('sparse', False)
     # Construct the parent of the desired matrix
+    if algorithm.startswith('fpylll:'):
+        if nrows is not None or ncols is not None:
+            raise ValueError('when using fpylll algorithms, nrows/ncols must not be specified, instead use d')
+        d = kwds.pop('d')
+        import fpylll
+        return matrix(ring, fpylll.IntegerMatrix.random(d, algorithm.removeprefix('fpylll:'), *args, **kwds),
+                      implementation=implementation, sparse=sparse)
+    elif nrows is None:
+        raise ValueError('nrows must be specified if not using fpylll algorithms')
     parent = matrix_space.MatrixSpace(ring, nrows, ncols, sparse=sparse, implementation=implementation)
     if algorithm == 'randomize':
         density = kwds.pop('density', None)
