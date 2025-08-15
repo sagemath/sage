@@ -173,7 +173,7 @@ cdef class Module(Parent):
             if (isinstance(M, Module)
                     and self.base_ring().has_coerce_map_from(M.base_ring())
                     and M.change_ring(self.base_ring()).is_submodule(self)):
-                return M.hom([self._element_constructor_(x) for x in M.gens()], self)
+                return M.hom([self._element_constructor_(x, check=False) for x in M.gens()], self)
         except (TypeError, NotImplementedError, AttributeError, ArithmeticError):
             pass
         return None
