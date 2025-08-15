@@ -381,7 +381,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         polynomial is ``x`` and the name of central variable is usually ``z``
         (see :meth:`~sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
         for more details about this).
-        The user can speciify different names if desired::
+        The user can specify different names if desired::
 
             sage: a.reduced_charpoly(var='T')  # variable name for the characteristic polynomial
             T^3 + (2*z + 1)*T^2 + (3*z^2 + 4*z)*T + 4*z^3 + z^2 + 1
@@ -392,13 +392,28 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         .. SEEALSO::
 
             :meth:`reduced_trace`, :meth:`reduced_norm`
+
+        TESTS:
+
+        We test that the cache works correctly (see :issue:`39883`)::
+
+            sage: f = u^5 + t*u^4 + t^2*u^3 + t^3*u^2 + t^4*u + t^5
+            sage: f.reduced_norm()
+            z^5 + 2*z^4 + 4*z^3 + z^2 + 4*z + 2
+            sage: f.reduced_charpoly()
+            x^3 + z*x^2 + (2*z + 3)*x + 4*z^5 + 3*z^4 + z^3 + 4*z^2 + z + 3
+            sage: f.reduced_norm()
+            z^5 + 2*z^4 + 4*z^3 + z^2 + 4*z + 2
         """
         if self._charpoly is None:
             M = self._matmul_c()
             chi = M.charpoly()
             self._charpoly = [tuple(c.list()) for c in chi.list()]
-            if self._norm is not None:
-                self._norm = self._charpoly[-1]
+            if self._norm is None:
+                if len(self._charpoly) % 2:
+                    self._norm = self._charpoly[0]
+                else:
+                    self._norm = tuple((-chi[0]).list())
         varcenter = None
         if var is None:
             varcharpoly = 'x'
