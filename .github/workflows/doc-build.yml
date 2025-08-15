@@ -70,7 +70,7 @@ jobs:
           export CC="ccache $CC"
           export CXX="ccache $CXX"
           # Use editable install for faster incremental builds
-          MESONPY_EDITABLE_VERBOSE=1 pip install --no-build-isolation --editable --config-settings=builddir=builddir . -v
+          MESONPY_EDITABLE_VERBOSE=1 pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
 
       #
       # For pull requests

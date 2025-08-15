@@ -10,4 +10,4 @@ mamba env create -y --file environment-3.11-linux.yml || mamba env update --file
 conda init bash
 
 # Build sage
-conda run -n sage-dev pip install --no-build-isolation -v -v --editable . --config-settings=build-dir="build/conda-cp311"
+conda run -n sage-dev pip install --no-build-isolation -v -v --config-settings=build-dir="build/conda-cp311" --editable .
