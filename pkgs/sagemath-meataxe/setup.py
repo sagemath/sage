@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
-from distutils import log
+import logging
 from setuptools import setup
 
+# Set up logging with simplified format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s'
+)
+logger = logging.getLogger(__name__)
 # Work around a Cython problem in Python 3.8.x on macOS
 # https://github.com/cython/cython/issues/3262
 import os
