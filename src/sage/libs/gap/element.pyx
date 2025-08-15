@@ -29,7 +29,8 @@ from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
-from libc.stdlib cimport malloc, free
+from libc.stdlib cimport malloc, calloc, free
+from libc.string cimport memset
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 from sage.combinat.permutation import Permutation
@@ -2497,12 +2498,11 @@ cdef class GapElement_Function(GapElement):
             sage: libgap_exec('echo hello from the shell')
             hello from the shell
         """
-        cdef Obj result = NULL
+        cdef volatile Obj result = NULL
         cdef int n = len(args)
         cdef volatile Obj v2
-        cdef Obj *arg_array = NULL
-        cdef int i
-        cdef int refs_incremented = 0
+        cdef volatile Obj *arg_array = NULL
+        cdef int i, refs_incremented = 0
 
         if n > 0:
             libgap = self.parent()
@@ -2527,24 +2527,40 @@ cdef class GapElement_Function(GapElement):
                                            (<GapElement>a[1]).value,
                                            v2)
             else:
-                # Use GAP_CallFuncArray instead of GAP_CallFuncList
-                # to avoid creating GAP list objects and nested GAP_Enter calls
-                arg_array = <Obj*>malloc(n * sizeof(Obj))
-                if arg_array == NULL:
-                    raise MemoryError("Failed to allocate memory for GAP function arguments")
+                # ULTRA-ROBUST MEMORY MANAGEMENT for n >= 4 arguments
+                # Following the comprehensive approach to prevent all GC issues
                 
-                # Increment reference counts first to prevent GC of GapElement objects
-                try:
-                    for i in range(n):
-                        Py_INCREF(a[i])
-                        refs_incremented = i + 1
-                        arg_array[i] = (<GapElement>a[i]).value
-                    result = GAP_CallFuncArray(self.value, n, arg_array)
-                finally:
-                    # Decrement reference counts for all successfully incremented refs
+                # 1) Pin all Python GapElement objects BEFORE entering GAP region
+                for i in range(n):
+                    Py_INCREF(a[i])
+                refs_incremented = n
+                
+                # 2) Allocate and zero-initialize the arg array
+                arg_array = <Obj*>calloc(n, sizeof(Obj))
+                if arg_array == NULL:
+                    # rollback INCREFs on allocation failure
                     for i in range(refs_incremented):
                         Py_DECREF(a[i])
-                    free(arg_array)
+                    refs_incremented = 0
+                    raise MemoryError("Failed to allocate memory for GAP function arguments")
+                
+                try:
+                    # 3) Fill arg_array from pinned 'a' (these a[i] won't be GC'd now)
+                    for i in range(n):
+                        arg_array[i] = (<GapElement>a[i]).value
+                    
+                    # 4) Single GAP call - all objects are protected
+                    result = GAP_CallFuncArray(self.value, n, <Obj*>arg_array)
+                    
+                finally:
+                    # 5) cleanup: free array and unpin Python objs
+                    if arg_array != NULL:
+                        free(<void*>arg_array)
+                        arg_array = NULL
+                    # DECREF exactly refs_incremented times
+                    for i in range(refs_incremented):
+                        Py_DECREF(a[i])
+                    refs_incremented = 0
             sig_off()
         finally:
             GAP_Leave()
