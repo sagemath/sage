@@ -189,6 +189,9 @@ ENV SAGE_FAT_BINARY yes
 # Just to be sure Sage doesn't try to build its own GCC (even though
 # it shouldn't with a recent GCC package from the system and with gfortran)
 ENV SAGE_INSTALL_GCC no
+# Enable editable installs for faster incremental builds
+ARG SAGE_EDITABLE="yes"
+ENV SAGE_EDITABLE $SAGE_EDITABLE
 # Set MAKEFLAGS and SAGE_NUM_THREADS to build things in parallel during the
 # docker build. Note that these do not leak into the sagemath and sagemath-dev
 # images.
@@ -197,8 +200,8 @@ ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
 RUN make configure
-# Old default before https://github.com/sagemath/sage/issues/32406
-RUN ./configure --disable-editable
+# Enable editable installs by default (SAGE_EDITABLE=yes is the default in configure.ac)
+RUN ./configure
 RUN make build
 
 ################################################################################

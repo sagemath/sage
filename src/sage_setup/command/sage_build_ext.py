@@ -1,11 +1,20 @@
-import os
 import errno
+import logging
+import os
+import sys
+
+# Configure logging with simple format showing only level and message
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
 
-from distutils import log
 from setuptools.command.build_ext import build_ext
 from distutils.dep_util import newer_group
 try:
@@ -47,7 +56,7 @@ class sage_build_ext(build_ext):
                 flags = ext.extra_compile_args
                 for flag in flags:
                     if forbidden.match(flag):
-                        log.error("%s uses forbidden flag '%s'", ext.name, flag)
+                        logger.error("%s uses forbidden flag '%s'", ext.name, flag)
                         errors += 1
             if errors:
                 raise RuntimeError("forbidden flags used")
@@ -132,10 +141,10 @@ class sage_build_ext(build_ext):
                 assert e.errno == errno.EEXIST, 'Cannot create %s.' % path
         depends = sources + ext.depends
         if not (self.force or newer_group(depends, ext_filename, 'newer')):
-            log.debug("skipping '%s' extension (up-to-date)", ext.name)
+            logger.debug("skipping '%s' extension (up-to-date)", ext.name)
             need_to_compile = False
         else:
-            log.info("building '%s' extension", ext.name)
+            logger.info("building '%s' extension", ext.name)
             need_to_compile = True
 
         return need_to_compile, (sources, ext, ext_filename)

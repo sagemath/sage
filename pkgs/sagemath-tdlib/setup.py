@@ -1,7 +1,16 @@
 #!/usr/bin/env python
 
-from distutils import log
+import logging
+import sys
 from setuptools import setup
+
+# Configure logging with simple format showing only level and message
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 # Work around a Cython problem in Python 3.8.x on macOS
 # https://github.com/cython/cython/issues/3262
@@ -53,9 +62,9 @@ from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     '.', ['sage'], distributions=['sagemath-tdlib'])
 
-log.warn('python_packages = {0}'.format(python_packages))
-log.warn('python_modules = {0}'.format(python_modules))
-log.warn('cython_modules = {0}'.format(cython_modules))
+logger.warning('python_packages = {0}'.format(python_packages))
+logger.warning('python_modules = {0}'.format(python_modules))
+logger.warning('cython_modules = {0}'.format(cython_modules))
 
 setup(
     cmdclass = cmdclass,

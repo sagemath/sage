@@ -136,7 +136,7 @@ jobs:
                              ;;
           esac
           (sleep ${{ inputs.timeout }}; pkill make) &
-          MAKE="make -j12" EXTRA_SAGE_PACKAGES="${{ inputs.extra_sage_packages }}" "${{ steps.python.outputs.python-path }}" -m pipx run tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
+          MAKE="make -j12" EXTRA_SAGE_PACKAGES="${{ inputs.extra_sage_packages }}" SAGE_EDITABLE=yes "${{ steps.python.outputs.python-path }}" -m pipx run tox -e $TOX_ENV -- SAGE_NUM_THREADS=6 $TARGETS
       - name: Prepare logs artifact
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"

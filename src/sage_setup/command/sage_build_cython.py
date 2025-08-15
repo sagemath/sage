@@ -12,8 +12,16 @@ import json
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
+import logging
+import sys
 
-from distutils import log
+# Configure logging with simple format showing only level and message
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 from setuptools import Command
 
 from sage_setup.util import stable_uniq
@@ -113,13 +121,13 @@ class sage_build_cython(Command):
         self.debug = os.environ.get('SAGE_DEBUG', None) != 'no'
 
         if self.debug:
-            log.info('Enabling Cython debugging support')
+            logger.info('Enabling Cython debugging support')
 
         if self.profile is None:
             self.profile = os.environ.get('SAGE_PROFILE') == 'yes'
 
         if self.profile:
-            log.info('Enabling Cython profiling support')
+            logger.info('Enabling Cython profiling support')
 
         if self.parallel is None:
             self.parallel = os.environ.get('SAGE_NUM_THREADS', '0')
@@ -190,7 +198,7 @@ class sage_build_cython(Command):
         self.cythonized_files = list(find_extra_files(
             ".", ["sage"], self.build_dir, [],
             distributions=self.built_distributions).items())
-        log.debug(f"cythonized_files = {self.cythonized_files}")
+        logger.debug(f"cythonized_files = {self.cythonized_files}")
 
         return self.cythonized_files
 
@@ -211,7 +219,7 @@ class sage_build_cython(Command):
 
         Cython.Compiler.Options.embed_pos_in_docstring = True
 
-        log.info("Updating Cython code....")
+        logger.info("Updating Cython code....")
         t = time.time()
 
         from sage.misc.package_dir import cython_namespace_package_support
@@ -238,7 +246,7 @@ class sage_build_cython(Command):
         # object is pointed to from different places.
         self.extensions[:] = extensions
 
-        log.info("Finished Cythonizing, time: %.2f seconds." % (time.time() - t))
+        logger.info("Finished Cythonizing, time: %.2f seconds." % (time.time() - t))
 
         with open(self._version_file, 'w') as f:
             f.write(self._version_stamp)

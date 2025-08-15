@@ -177,7 +177,7 @@ fi
 . sage-build-env-config
 . sage-build-env || exit_with_error_msg "Error setting environment variables by sourcing sage-build-env"
 
-# Remove '.' from PYTHONPATH, to avoid trouble with setuptools / easy_install
+# Remove '.' from PYTHONPATH, to avoid trouble with setuptools / pip
 # (cf. #10192, #10176):
 if [ -n "$PYTHONPATH" ]; then
     # We also collapse multiple slashs into a single one (first substitution),

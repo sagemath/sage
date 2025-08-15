@@ -121,6 +121,8 @@ jobs:
       FROM_DOCKER_TAG:    ${{ inputs.from_docker_tag }}
       EXTRA_CONFIGURE_ARGS: --enable-fat-binary
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
+      # Enable editable installs for faster incremental builds
+      SAGE_EDITABLE:      yes
     steps:
       - name: Maximize build disk space
         uses: easimon/maximize-build-space@v10

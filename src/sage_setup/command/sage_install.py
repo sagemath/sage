@@ -2,14 +2,23 @@
 ### Install Jupyter kernel spec
 #########################################################
 
+import logging
 import os
+import sys
 import time
+
+# Configure logging with simple format showing only level and message
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
 
-from distutils import log
 from distutils.command.install import install
 from setuptools.command.develop import develop
 

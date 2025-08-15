@@ -7,7 +7,7 @@ import fnmatch
 
 from setuptools import setup
 from setuptools.dist import Distribution
-from distutils.command.build_scripts import build_scripts as distutils_build_scripts
+from setuptools.command.build_scripts import build_scripts as setuptools_build_scripts  # Use setuptools instead of distutils
 from setuptools.command.build_py import build_py as setuptools_build_py
 from setuptools.command.editable_wheel import editable_wheel as setuptools_editable_wheel
 from setuptools.errors import SetupError
@@ -111,18 +111,18 @@ class build_py(setuptools_build_py):
                                 ignore=ignore)  # will fail if already exists
             except Exception as e:
                 raise SetupError(f"the directory SAGE_ROOT={SAGE_ROOT} already exists but it is not configured ({e}). "
-                                 "Please either remove it and try again, or install in editable mode (pip install -e).")
+                                 "Please either remove it and try again, or install in editable mode (pip install --editable).")
 
         return SAGE_ROOT
 
 
-class build_scripts(distutils_build_scripts):
+class build_scripts(setuptools_build_scripts):
 
     def run(self):
         self.distribution.scripts.append(os.path.join('bin', 'sage-env-config'))
         if not self.distribution.entry_points:
             self.entry_points = self.distribution.entry_points = dict()
-        distutils_build_scripts.run(self)
+        setuptools_build_scripts.run(self)
 
 
 class editable_wheel(setuptools_editable_wheel):

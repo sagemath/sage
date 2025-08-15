@@ -74,6 +74,8 @@ env:
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+  # Enable editable installs for faster incremental builds
+  SAGE_EDITABLE:          yes
 
 jobs:
   test-long:

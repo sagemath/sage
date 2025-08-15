@@ -2,6 +2,7 @@
 build-backend = 'mesonpy'
 # Minimum requirements for the build system to execute.
 requires = [
+  'setuptools >=68.1.1',  # Modern setuptools for compatibility with latest tools
   'meson-python',
   'cypari2 >=2.2.1; sys_platform != "win32"',
   # Exclude 1.12.0 because of https://github.com/sagemath/cysignals/issues/212
@@ -23,6 +24,11 @@ requires = [
 install = ['--skip-subprojects']
 # Ensure that ``library`` targets are built as static, and nothing gets installed
 setup = ['--default-library=static']
+
+# Development Note: For fast incremental development, install in editable mode:
+# pip install --no-build-isolation --editable .
+# This enables automatic recompilation of only changed files when running ./sage
+# Set MESONPY_EDITABLE_VERBOSE=1 to see recompilation messages
 
 [project]
 name = "sagemath"
@@ -244,3 +250,13 @@ ignore = [
 [tool.uv]
 # Don't use build isolation for sage (it's incompatible with meson-python's editable install)
 no-build-isolation-package = ["sagemath"]
+
+[tool.setuptools]
+# Modern setuptools configuration for better tool compatibility
+zip-safe = false
+include-package-data = true
+
+[tool.setuptools.packages.find]
+# Ensure setuptools can find packages properly
+where = ["src"]
+include = ["sage*"]

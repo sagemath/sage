@@ -1,12 +1,12 @@
-pip: Tool for installing and managing Python packages
-=====================================================
+pip
+===
 
 Description
 -----------
 
-This package installs pip, the tool for installing and managing Python
-packages, such as those found in the Python Package Index. It’s a
-replacement for easy_install.
+This package installs pip, the standard tool for installing and managing Python
+packages, such as those found in the Python Package Index. It has replaced
+the deprecated easy_install tool.
 
 License
 -------
@@ -23,4 +23,3 @@ Upstream Contact
 - Bug Tracking: https://github.com/pypa/pip/issues
 - Mailing list: http://groups.google.com/group/python-virtualenv
 - Docs: https://pip.pypa.io/
-

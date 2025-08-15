@@ -449,7 +449,7 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   creating a wheel file in ``dist/``, followed by
   ``sdh_store_and_pip_install_wheel`` (see below).
 
-- ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
+- ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install --editable``
   with the given arguments, as well as additional default arguments used for
   installing packages into Sage with pip. The last argument must be
   ``.`` to indicate installation from the current directory.

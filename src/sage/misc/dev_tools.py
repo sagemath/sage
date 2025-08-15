@@ -46,11 +46,11 @@ def runsnake(command):
     :func:`runsnake` requires the program ``runsnake``. Due to non
     trivial dependencies (python-wxgtk, ...), installing it within the
     Sage distribution is unpractical. Hence, we recommend installing
-    it with the system wide Python. On Ubuntu 10.10, this can be done
+    it with the system wide Python. On Ubuntu, this can be done
     with::
 
-        > sudo apt-get install python-profiler python-wxgtk2.8 python-setuptools
-        > sudo easy_install RunSnakeRun
+        > sudo apt-get install python-profiler python-wxgtk2.8 python3-pip
+        > sudo pip install RunSnakeRun
 
     See the ``runsnake`` website for instructions for other platforms.
 

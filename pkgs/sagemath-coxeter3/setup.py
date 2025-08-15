@@ -53,9 +53,9 @@ from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     '.', ['sage'], distributions=['sagemath-coxeter3'])
 
-log.warn('python_packages = {0}'.format(python_packages))
-log.warn('python_modules = {0}'.format(python_modules))
-log.warn('cython_modules = {0}'.format(cython_modules))
+logger.warning('python_packages = {0}'.format(python_packages))
+logger.warning('python_modules = {0}'.format(python_modules))
+logger.warning('cython_modules = {0}'.format(cython_modules))
 
 setup(
     cmdclass = cmdclass,

@@ -6,7 +6,7 @@
 ##         (sage-sh) $ python3 -m venv venv1
 ##         (sage-sh) $ source venv1/bin/activate
 ## (venv1) (sage-sh) $ pip install -r requirements.txt
-## (venv1) (sage-sh) $ pip install -e .
+## (venv1) (sage-sh) $ pip install --editable .
 
 dnl FIXME: Including the whole package-version.txt does not work for packages that have a patchlevel....
 dnl We need a better tool to format this information.

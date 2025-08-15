@@ -6,14 +6,22 @@
 ## Distribution packaging should use build/pkgs/sagelib/src/setup.py
 ## instead.
 
+import logging
 import os
 import platform
 import sys
 import time
 from setuptools import setup, find_namespace_packages
 from setuptools.dist import Distribution
-from distutils import log
 import multiprocessing.pool
+
+# Configure logging with simple format showing only level and message
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 # PEP 517 builds do not have . in sys.path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -70,11 +78,11 @@ if sdist:
     extensions = []
     python_packages = []
 else:
-    log.info("Generating auto-generated sources")
+    logger.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-    log.info("Discovering Python/Cython source code...")
+    logger.info("Discovering Python/Cython source code...")
 
     optional_packages = ['mcqd', 'bliss', 'tdlib',
                          'coxeter3', 'sirocco', 'meataxe']
@@ -82,12 +90,12 @@ else:
                                 for pkg in optional_packages]
     files_to_exclude = filter_cython_sources(SAGE_SRC, distributions_to_exclude)
 
-    log.debug(f"files_to_exclude = {files_to_exclude}")
+    logger.debug(f"files_to_exclude = {files_to_exclude}")
 
     python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage.*'])
-    log.debug(f"python_packages = {python_packages}")
+    logger.debug(f"python_packages = {python_packages}")
 
-    log.info("Discovering Python/Cython source code... done")
+    logger.info("Discovering Python/Cython source code... done")
 
     # from sage_build_cython:
     import Cython.Compiler.Options
@@ -95,11 +103,11 @@ else:
     gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
 
     aliases = cython_aliases()
-    log.debug(f"aliases = {aliases}")
+    logger.debug(f"aliases = {aliases}")
     include_path = sage_include_directories(use_sources=True) + ['.']
-    log.debug(f"include_path = {include_path}")
+    logger.debug(f"include_path = {include_path}")
     nthreads = sage_build_ext_minimal.get_default_number_build_jobs()
-    log.info(f"Cythonizing with {nthreads} threads...")
+    logger.info(f"Cythonizing with {nthreads} threads...")
     try:
         from Cython.Build import cythonize
         from sage.env import cython_aliases, sage_include_directories
@@ -116,9 +124,9 @@ else:
                 gdb_debug=gdb_debug,
                 nthreads=nthreads)
     except Exception as exception:
-        log.warn(f"Exception while cythonizing source files: {repr(exception)}")
+        logger.warning(f"Exception while cythonizing source files: {repr(exception)}")
         raise
-    log.info(f"Cythonizing with {nthreads} threads... done")
+    logger.info(f"Cythonizing with {nthreads} threads... done")
 
 # ########################################################
 # ## Distutils

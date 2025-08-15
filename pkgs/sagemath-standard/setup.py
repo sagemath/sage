@@ -1,13 +1,21 @@
 #!/usr/bin/env python
 
+import logging
 import os
 import sys
 import time
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
-from distutils import log
 from setuptools import setup
+
+# Configure logging with simple format showing only level and message
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(levelname)s: %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 # Work around a Cython problem in Python 3.8.x on macOS
 # https://github.com/cython/cython/issues/3262
@@ -65,7 +73,7 @@ cmdclass = dict(build_cython=sage_build_cython,
 
 if any(x in sys.argv
        for x in ['build', 'build_ext', 'bdist_wheel', 'install']):
-    log.info("Generating auto-generated sources")
+    logger.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()
 
@@ -77,14 +85,14 @@ distributions = ['sagemath-categories',
                  'sagemath-objects',
                  'sagemath-repl',
                  '']
-log.warn('distributions = {0}'.format(distributions))
+logger.warn('distributions = {0}'.format(distributions))
 from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     SAGE_SRC, ['sage'], distributions=distributions)
 
-log.debug('python_packages = {0}'.format(python_packages))
-log.debug('python_modules = {0}'.format(python_modules))
-log.debug('cython_modules = {0}'.format(cython_modules))
+logger.debug('python_packages = {0}'.format(python_packages))
+logger.debug('python_modules = {0}'.format(python_modules))
+logger.debug('cython_modules = {0}'.format(cython_modules))
 
 print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
 
