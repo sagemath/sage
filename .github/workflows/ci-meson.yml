@@ -101,6 +101,14 @@ jobs:
           activate-environment: sage-dev
           environment-file: environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && (startsWith(runner.arch, 'ARM') && 'macos' || 'macos-x86_64') || startsWith(matrix.os, 'ubuntu') && 'linux' || 'win' }}.yml
 
+      - name: Install build dependencies
+        if: runner.os == 'Linux'
+        shell: bash -l {0}
+        run: |
+          # Ensure essential build tools are available for Linux builds
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libtool-bin
+
       # Sometimes the conda setup fails due to network issues.
       # This is a workaround to retry the setup step if it fails.
       # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/129
@@ -127,16 +135,28 @@ jobs:
         shell: bash -l {0}
         run: |
           if [[ "$RUNNER_OS" != "Windows" ]]; then
+            # Clean environment to avoid conflicts
+            unset CFLAGS CXXFLAGS LDFLAGS
+            # Set up ccache for faster builds
             export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-            export CC="ccache $CC"
-            export CXX="ccache $CXX"
+            # Only use ccache if the base compilers are available
+            if command -v gcc >/dev/null 2>&1; then
+              export CC="ccache gcc"
+            fi
+            if command -v g++ >/dev/null 2>&1; then
+              export CXX="ccache g++"
+            fi
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
             export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
           fi
 
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
-          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
+          if [[ "${{ matrix.editable }}" == "true" ]]; then
+            pip install --no-build-isolation --no-deps --config-settings=builddir=builddir --editable . -v
+          else
+            pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
+          fi
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files

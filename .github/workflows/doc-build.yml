@@ -62,13 +62,28 @@ jobs:
           channel-priority: true
           activate-environment: sage-dev
           environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
+
+      - name: Install build dependencies
+        shell: bash -l {0}
+        run: |
+          # Ensure essential build tools are available
+          sudo apt-get update
+          sudo apt-get install -y build-essential gfortran libtool-bin
         
       - name: Build Sage
         shell: bash -l {0}
         run: |
+          # Clean environment to avoid conflicts
+          unset CFLAGS CXXFLAGS LDFLAGS
+          # Set up ccache for faster builds
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-          export CC="ccache $CC"
-          export CXX="ccache $CXX"
+          # Only use ccache if the base compilers are available
+          if command -v gcc >/dev/null 2>&1; then
+            export CC="ccache gcc"
+          fi
+          if command -v g++ >/dev/null 2>&1; then
+            export CXX="ccache g++"
+          fi
           # Use editable install for faster incremental builds
           MESONPY_EDITABLE_VERBOSE=1 pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
 
