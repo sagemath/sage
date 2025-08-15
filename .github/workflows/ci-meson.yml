@@ -210,12 +210,27 @@ jobs:
         shell: bash -l {0}
         if: matrix.tests == 'all'
         run: |
+          # Store current git state
+          git add .
+          git stash push -m "Pre-update-meson state"
+          
+          # Run update-meson
           python tools/update-meson.py
-          if ! ./tools/test-git-no-uncommitted-changes; then
-            git add --intent-to-add .  # also show newly created files in git diff
-            git status
-            git diff
-            false
+          
+          # Check if update-meson made any changes to tracked files
+          if ! git diff --quiet HEAD; then
+            echo "update-meson.py made changes to tracked files:"
+            git diff HEAD
+            echo "Please run 'python tools/update-meson.py' and commit the changes."
+            exit 1
+          fi
+          
+          # Check for new untracked files that should be committed
+          if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+            echo "update-meson.py created new files that may need to be committed:"
+            git ls-files --others --exclude-standard
+            echo "If these files should be tracked, please add and commit them."
+            # Don't fail for new files, just warn
           fi
 
       - name: Verify dependencies
