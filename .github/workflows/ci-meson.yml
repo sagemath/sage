@@ -109,6 +109,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential gfortran libtool-bin
 
+      - name: Install build dependencies (macOS)
+        if: runner.os == 'macOS'
+        shell: bash -l {0}
+        run: |
+          # Ensure build dependencies are properly installed on macOS
+          # First update conda and pip to latest versions
+          conda update -y conda pip
+          # Install/update essential build tools in the correct order
+          pip install --upgrade pip
+          pip install --upgrade setuptools wheel
+          pip install --upgrade meson-python
+          # Verify installations
+          python -c "import setuptools; print(f'setuptools: {setuptools.__version__}')"
+          python -c "import mesonpy; print(f'meson-python: {mesonpy.__version__}')"
+
       # Sometimes the conda setup fails due to network issues.
       # This is a workaround to retry the setup step if it fails.
       # Workaround for https://github.com/conda-incubator/setup-miniconda/issues/129
@@ -131,6 +146,28 @@ jobs:
           conda info
           conda list
 
+      - name: Clean build artifacts
+        shell: bash -l {0}
+        run: |
+          # Clean any previous build artifacts that might cause issues
+          rm -rf build/ dist/ *.egg-info builddir/
+          find . -name "*.pyc" -delete
+          find . -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
+
+      - name: Verify Python environment
+        shell: bash -l {0}
+        run: |
+          # Verify the Python environment is correctly set up
+          python --version
+          pip --version
+          python -c "import sys; print(f'Python executable: {sys.executable}')"
+          python -c "import sysconfig; print(f'Python include: {sysconfig.get_path(\"include\")}')"
+          # Test that we can import required build dependencies
+          python -c "import setuptools, wheel, mesonpy; print('Build dependencies OK')" || {
+            echo "Build dependencies missing, installing..."
+            pip install --upgrade setuptools wheel meson-python
+          }
+
       - name: Build
         shell: bash -l {0}
         run: |
@@ -151,10 +188,19 @@ jobs:
             export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
           fi
 
+          # Debug: Show environment before build
+          echo "=== Build Environment ==="
+          echo "Python: $(python --version)"
+          echo "Pip: $(pip --version)"
+          echo "Working directory: $(pwd)"
+          echo "Python path: $PYTHONPATH"
+          
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
           if [[ "${{ matrix.editable }}" == "true" ]]; then
+            echo "Building in editable mode..."
             pip install --no-build-isolation --no-deps --config-settings=builddir=builddir --editable . -v
           else
+            echo "Building in standard mode..."
             pip install --no-build-isolation --no-deps --config-settings=builddir=builddir . -v
           fi
 
