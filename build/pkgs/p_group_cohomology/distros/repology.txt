@@ -1,1 +1,1 @@
-sagemath-p-group-cohomology
+python:p-group-cohomology

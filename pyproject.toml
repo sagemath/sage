@@ -88,7 +88,7 @@ requires-python = ">=3.11, <3.14"
 [project.optional-dependencies]
 R = ['rpy2 >=3.3']
 extra = [
-  'p_group_cohomology >=3.3',                                                         # Only used in tests
+  #'p_group_cohomology >=3.3', # Only used in tests, not available on PyPI
   'pycosat >=0.6.3',
   'pynormaliz >=2.18; platform_machine != "aarch64" and platform_machine != "arm64"', # Not yet available for Linux aarch64
   'igraph',
@@ -96,7 +96,7 @@ extra = [
   'symengine >= 0.6.1',                                                               # Only used in tests
   'lrcalc ~=2.1; sys_platform != "win32"',
 ]
-giac = ['sagemath_giac']
+#giac = ['sagemath_giac'] # Not yet available on PyPI (https://github.com/sagemath/sagemath-giac/issues/3)
 
 [project.readme]
 file = "README.md"
