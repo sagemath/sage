@@ -2,6 +2,11 @@
 """
 Documentation builders
 
+.. NOTE::
+
+   If you are a developer and want to build the SageMath documentation from source,
+   refer to `developer's guide <../../../developer/sage_manuals.html>`_.
+
 This module is the starting point for building documentation, and is
 responsible to figure out what to build and with which options. The actual
 documentation build for each individual document is then done in a subprocess
@@ -21,7 +26,7 @@ doctree files in ``local/share/doctree`` and ``inventory.inv`` inventory files
 in ``local/share/inventory``.
 
 The reference manual is built in two passes, first by :class:`ReferenceBuilder`
-with ``inventory`` output type and secondly with``html`` output type. The
+with ``inventory`` output type and secondly with ``html`` output type. The
 :class:`ReferenceBuilder` itself uses :class:`ReferenceTopBuilder` and
 :class:`ReferenceSubBuilder` to build subcomponents of the reference manual.
 The :class:`ReferenceSubBuilder` examines the modules included in the
@@ -293,7 +298,7 @@ class DocBuilder():
 
 def build_many(target, args, processes=None):
     """
-    Thin wrapper around `sage_docbuild.utils.build_many` which uses the
+    Thin wrapper around :func:`sage_docbuild.utils.build_many` which uses the
     docbuild settings ``NUM_THREADS`` and ``ABORT_ON_ERROR``.
     """
     if processes is None:

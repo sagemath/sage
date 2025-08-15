@@ -77,7 +77,9 @@ function's documentation.  Type::
 Hyperlinks
 ==========
 
-The documentation can contain links toward modules, classes, or methods, e.g.::
+The documentation can contain links toward modules, classes, or methods, e.g.:
+
+.. CODE-BLOCK:: rest
 
     :mod:`link to a module <sage.module_name>`
     :mod:`sage.module_name` (here the link's text is the module's name)
@@ -335,7 +337,7 @@ links that it contains, use the ``--warn-links`` flag. Note that Sphinx will not
 rebuild a document that has not been updated, and thus not report its broken
 links::
 
-        sage --docbuild --warn-links reference html
+    sage --docbuild --warn-links reference html
 
 .. _section-manuals-names:
 
