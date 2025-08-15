@@ -187,7 +187,7 @@ def _compute_factored_isogeny_prime_power(P, l, n, split=.8, velu_sqrt_bound=Non
     All choices of ``split`` produce the same result, albeit
     not equally fast::
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.rings.finite_rings, long time (:issue:`39569`)
         sage: E = EllipticCurve(GF(2^127 - 1), [1,0])
         sage: P, = E.gens()
         sage: (l,n), = P.order().factor()
