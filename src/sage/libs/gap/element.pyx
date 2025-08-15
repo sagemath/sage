@@ -16,6 +16,7 @@ elements. For general information about GAP, you should read the
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
+from cpython.ref cimport Py_INCREF, Py_DECREF
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gap.gap_includes cimport *
@@ -2501,6 +2502,7 @@ cdef class GapElement_Function(GapElement):
         cdef volatile Obj v2
         cdef Obj *arg_array = NULL
         cdef int i
+        cdef int refs_incremented = 0
 
         if n > 0:
             libgap = self.parent()
@@ -2530,11 +2532,18 @@ cdef class GapElement_Function(GapElement):
                 arg_array = <Obj*>malloc(n * sizeof(Obj))
                 if arg_array == NULL:
                     raise MemoryError("Failed to allocate memory for GAP function arguments")
+                
+                # Increment reference counts first to prevent GC of GapElement objects
                 try:
                     for i in range(n):
+                        Py_INCREF(a[i])
+                        refs_incremented = i + 1
                         arg_array[i] = (<GapElement>a[i]).value
                     result = GAP_CallFuncArray(self.value, n, arg_array)
                 finally:
+                    # Decrement reference counts for all successfully incremented refs
+                    for i in range(refs_incremented):
+                        Py_DECREF(a[i])
                     free(arg_array)
             sig_off()
         finally:
