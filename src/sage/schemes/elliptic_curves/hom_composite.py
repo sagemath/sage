@@ -974,7 +974,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         INPUT:
 
         - ``Q`` -- a point
-        - ``all`` -- (boolean) if ``True``, returns an iterator over all points
+        - ``all`` -- boolean; if ``True``, returns an iterator over all points
           in the inverse image
 
         EXAMPLES::
