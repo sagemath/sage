@@ -2498,11 +2498,16 @@ cdef class GapElement_Function(GapElement):
         cdef Obj result = NULL
         cdef Obj arg_list
         cdef int n = len(args)
-        cdef volatile Obj v2
+        cdef Obj a[3]
 
-        if n > 0 and n <= 3:
-            libgap = self.parent()
-            a = [x if isinstance(x, GapElement) else libgap(x) for x in args]
+        if n <= 3:
+            if n:
+                libgap = self.parent()
+            for i in range(n):
+                x = args[i]
+                a[i] = (<GapElement>(x if isinstance(x, GapElement) else libgap(x))).value
+        else:
+            arg_list = make_gap_list(args)
 
         try:
             sig_GAP_Enter()
@@ -2510,20 +2515,12 @@ cdef class GapElement_Function(GapElement):
             if n == 0:
                 result = GAP_CallFunc0Args(self.value)
             elif n == 1:
-                result = GAP_CallFunc1Args(self.value,
-                                           (<GapElement>a[0]).value)
+                result = GAP_CallFunc1Args(self.value, a[0])
             elif n == 2:
-                result = GAP_CallFunc2Args(self.value,
-                                           (<GapElement>a[0]).value,
-                                           (<GapElement>a[1]).value)
+                result = GAP_CallFunc2Args(self.value, a[0], a[1])
             elif n == 3:
-                v2 = (<GapElement>a[2]).value
-                result = GAP_CallFunc3Args(self.value,
-                                           (<GapElement>a[0]).value,
-                                           (<GapElement>a[1]).value,
-                                           v2)
+                result = GAP_CallFunc3Args(self.value, a[0], a[1], a[2])
             else:
-                arg_list = make_gap_list(args)
                 result = GAP_CallFuncList(self.value, arg_list)
             sig_off()
         finally:
