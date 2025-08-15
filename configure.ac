@@ -568,7 +568,7 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
-AC_SUBST(SAGE_PKG_CONFIG_PATH, ['$SAGE_DARWIN_PKG_CONFIG_PATH$SAGE_LOCAL/lib/pkgconfig'])
+AC_SUBST(SAGE_PKG_CONFIG_PATH, [$SAGE_DARWIN_PKG_CONFIG_PATH'$SAGE_LOCAL/lib/pkgconfig'])
 
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
