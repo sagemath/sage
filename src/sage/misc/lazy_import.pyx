@@ -345,7 +345,7 @@ cdef class LazyImport():
             sage: rm = LazyImport('sage.matrix.special', 'random_matrix')
             sage: rm._sage_argspec_()                                                   # needs sage.modules
             FullArgSpec(args=['ring', 'nrows', 'ncols', 'algorithm', 'implementation'],
-                        varargs='args', varkw='kwds', defaults=(None, 'randomize', None),
+                        varargs='args', varkw='kwds', defaults=(None, None, 'randomize', None),
                         kwonlyargs=[], kwonlydefaults=None, annotations={})
         """
         return sageinspect.sage_getargspec(self.get_object())
