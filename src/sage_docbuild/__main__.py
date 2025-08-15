@@ -77,6 +77,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from functools import partial
 
 import sphinx.ext.intersphinx
 
@@ -156,20 +157,20 @@ def help_examples(s=""):
     return s
 
 
-def help_documents():
+def help_documents(parser, args):
     """
     Append and return a tabular list of documents, including a
     shortcut 'all' for all documents, available to the Sage
     documentation builder.
     """
-    docs = get_documents()
+    args.source_dir = preprocess_source_dir(parser, args.source_dir)
+    docs = [str(p) for p in get_all_documents(args.source_dir)]
     s = "DOCUMENTs:\n"
     s += format_columns(docs)
     s += "\n"
-    if 'reference' in docs:
-        s += "Other valid document names take the form 'reference/DIR', where\n"
-        s += "DIR is a subdirectory of src/doc/en/reference/.\n"
-        s += "This builds just the specified part of the reference manual.\n"
+    s += "Other valid document names take the form 'reference/DIR', where\n"
+    s += "DIR is a subdirectory of src/doc/en/reference/.\n"
+    s += "This builds just the specified part of the reference manual.\n"
     s += "DOCUMENT may also have the form 'file=/path/to/FILE', which builds\n"
     s += "the documentation for the specified file.\n"
     return s
@@ -220,7 +221,7 @@ class help_message_long(argparse.Action):
     and exits.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        help_funcs = [help_usage, help_description, help_documents,
+        help_funcs = [help_usage, help_description, functools.partial(help_documents, parser, namespace),
                       help_formats, help_commands]
         for f in help_funcs:
             print(f())
@@ -253,13 +254,22 @@ class help_wrapper(argparse.Action):
     """
     def __call__(self, parser, namespace, values, option_string=None):
         if option_string in ['-D', '--documents']:
-            print(help_documents(), end="")
+            print(help_documents(parser, namespace), end="")
         if option_string in ['-F', '--formats']:
             print(help_formats(), end="")
         if self.dest == 'commands':
             print(help_commands(values), end="")
         setattr(namespace, 'printed_list', 1)
         sys.exit(0)
+
+
+def preprocess_source_dir(parser, val):
+    if val is None:
+        val = Path(os.environ.get('SAGE_DOC_SRC', 'src/doc'))
+    p = val.absolute()
+    if not p.is_dir():
+        parser.error(f"Source directory {p} does not exist.")
+    return p
 
 
 def setup_parser():
@@ -452,14 +462,8 @@ def main():
     # Parse the command-line.
     parser = setup_parser()
     args: BuildOptions = parser.parse_args() # type: ignore
+    args.source_dir = preprocess_source_dir(parser, args.source_dir)
 
-    # Check that the docs source directory exists
-    if args.source_dir is None:
-        args.source_dir = Path(os.environ.get('SAGE_DOC_SRC', 'src/doc'))
-    args.source_dir = args.source_dir.absolute()
-    if not args.source_dir.is_dir():
-        parser.error(f"Source directory {args.source_dir} does not exist.")
-    
     if args.all_documents:
         if args.all_documents == 'reference':
             docs = get_all_reference_documents(args.source_dir / 'en')
