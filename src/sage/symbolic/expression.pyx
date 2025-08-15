@@ -13443,6 +13443,83 @@ cdef class Expression(Expression_abc):
             raise TypeError("this expression must be a relation")
         return self / x
 
+    def compositional_inverse(self, allow_multivalued_inverse=True, **kwargs):
+        """
+        Find the compositional inverse of this symbolic function.
+
+        INPUT:
+
+        - ``allow_multivalued_inverse`` -- (default: ``True``); see example below
+        - ``**kwargs`` -- additional keyword arguments passed to :func:`sage.symbolic.relation.solve`.
+
+        .. SEEALSO::
+
+            :meth:`sage.modules.free_module_element.FreeModuleElement.compositional_inverse`.
+
+        EXAMPLES::
+
+            sage: f(x) = x+1
+            sage: f.compositional_inverse()
+            x |--> x - 1
+            sage: var("y")
+            y
+            sage: f(x) = x+y
+            sage: f.compositional_inverse()
+            x |--> x - y
+            sage: f(x) = x^2
+            sage: f.compositional_inverse()
+            x |--> -sqrt(x)
+
+        When ``allow_multivalued_inverse=False``, there is some additional checking::
+
+            sage: f(x) = x^2
+            sage: f.compositional_inverse(allow_multivalued_inverse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: inverse is multivalued, pass allow_multivalued_inverse=True to bypass
+
+        Nonetheless, the checking is not always foolproof (``x |--> log(x) + 2*pi*I`` is another possibility)::
+
+            sage: f(x) = exp(x)
+            sage: f.compositional_inverse(allow_multivalued_inverse=False)
+            x |--> log(x)
+
+        Sometimes passing ``kwargs`` is useful, for example ``algorithm`` can be used
+        when the default solver fails::
+
+            sage: f(x) = (2/3)^x
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            KeyError: x
+            sage: f.compositional_inverse(algorithm="giac")                             # needs sage.libs.giac
+            x |--> -log(x)/(log(3) - log(2))
+
+        TESTS::
+
+            sage: f(x) = x+exp(x)
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find an inverse
+            sage: f(x) = 0
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find an inverse
+            sage: f(x, y) = (x, x)
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find an inverse
+            sage: (x+1).compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be a symbolic expression ring
+        """
+        from sage.modules.free_module_element import vector
+        return vector([self]).compositional_inverse(allow_multivalued_inverse=allow_multivalued_inverse, **kwargs)[0]
+
     def implicit_derivative(self, Y, X, n=1):
         """
         Return the `n`-th derivative of `Y` with respect to `X` given

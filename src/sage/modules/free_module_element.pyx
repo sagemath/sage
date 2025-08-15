@@ -4271,6 +4271,50 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             return vector(ring, coeffs)
         return vector(coeffs)
 
+    def compositional_inverse(self, allow_multivalued_inverse=True, **kwargs):
+        """
+        Find the compositional inverse of this symbolic function.
+
+        INPUT: see :meth:`sage.symbolic.expression.Expression.compositional_inverse`
+
+        .. SEEALSO::
+
+            :meth:`sage.symbolic.expression.Expression.compositional_inverse`
+
+        EXAMPLES::
+
+            sage: f(x, y, z) = (y, z, x)
+            sage: f.compositional_inverse()
+            (x, y, z) |--> (z, x, y)
+
+        TESTS::
+
+            sage: f.change_ring(SR)
+            (y, z, x)
+            sage: f.change_ring(SR).compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be a symbolic expression ring
+        """
+        from sage.rings.abc import CallableSymbolicExpressionRing
+        if not isinstance(self.base_ring(), CallableSymbolicExpressionRing):
+            raise ValueError("base ring must be a symbolic expression ring")
+        from sage.symbolic.ring import SR
+        tmp_vars = [SR.symbol() for _ in range(self.parent().dimension())]
+        input_vars = self.base_ring().args()
+        from sage.symbolic.relation import solve
+        l = solve([a == b for a, b in zip(self.change_ring(SR), tmp_vars)], input_vars, solution_dict=True, **kwargs)
+        if not l:
+            raise ValueError("cannot find an inverse")
+        if len(l) > 1 and not allow_multivalued_inverse:
+            raise ValueError("inverse is multivalued, pass allow_multivalued_inverse=True to bypass")
+        d = l[0]
+        subs_dict = dict(zip(tmp_vars, input_vars))
+        for x in input_vars:
+            if set(d[x].variables()) & set(input_vars):
+                raise ValueError("cannot find an inverse")
+        return self.parent()([d[x].subs(subs_dict) for x in input_vars])
+
 
 # ############################################
 # Generic dense element
