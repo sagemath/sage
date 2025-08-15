@@ -4084,7 +4084,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         if var is None:
             if isinstance(self.coordinate_ring(), sage.rings.abc.CallableSymbolicExpressionRing):
-                from sage.calculus.all import jacobian
+                from sage.calculus.functions import jacobian
                 return jacobian(self, self.coordinate_ring().arguments())
             else:
                 raise ValueError("No differentiation variable specified.")
