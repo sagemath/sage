@@ -639,8 +639,9 @@ class ReferenceSubBuilder(DocBuilder):
         # (Background: Meson puts them in the build directory, but Sphinx can also read
         # files from the source directory, see https://github.com/sphinx-doc/sphinx/issues/3132)
         generated_dir = self._options.output_dir / self.name
-        for file in generated_dir.rglob('*'):
-            shutil.copy2(file, self.dir / file.relative_to(generated_dir))
+        if self.dir != generated_dir:
+            for file in generated_dir.rglob('*'):
+                shutil.copy2(file, self.dir / file.relative_to(generated_dir))
 
         getattr(DocBuilder, build_type)(self, *args, **kwds)
 
