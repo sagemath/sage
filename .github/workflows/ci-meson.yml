@@ -136,7 +136,7 @@ jobs:
           fi
 
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda
-          pip install --no-build-isolation --no-deps ${{ matrix.editable && '--editable' || '' }} --config-settings=builddir=builddir . -v
+          pip install --no-build-isolation --no-deps --config-settings=builddir=builddir ${{ matrix.editable && '--editable' || '' }} . -v
 
       - name: Check update-meson
         # this step must be after build, because meson.build creates a number of __init__.py files
