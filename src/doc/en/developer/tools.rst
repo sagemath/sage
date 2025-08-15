@@ -19,6 +19,7 @@ all systems and ensures consistent, reproducible installations.
 It is automatically updated during ``uv`` operations like ``uv add`` 
 and ``uv run``, or explicitly with ``uv lock``. 
 Moreover, it is periodically updated by `Renovate <https://docs.renovatebot.com/>`_.
+You can also manually update it by running ``uv lock -U``.
 
 .. _section-tools-tox:
 
