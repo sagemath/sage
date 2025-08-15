@@ -139,7 +139,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` -- (default: `\tau`) the name of the variable of
+        - ``name`` -- (default: ``'τ'``) the name of the variable of
           the Ore polynomial ring
 
         TESTS::
