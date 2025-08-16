@@ -1393,7 +1393,7 @@ class FiniteWordPath_all(SageObject):
         if letters is None:
             letters = self.parent().alphabet()
         if color is None:
-            from sage.plot.all import hue
+            from sage.plot.colors import hue
             A = self.parent().alphabet()
             color = {a: hue(A.rank(a) / float(A.cardinality())) for a in A}
         it = self.projected_point_iterator(v, ring=ring)
@@ -1655,7 +1655,9 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             See www.imagemagick.org, for example.
         """
-        from sage.plot.all import line, polygon, animate
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.animate import animate
 
         pts = list(self.points())
 

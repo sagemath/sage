@@ -187,7 +187,7 @@ def scatter_plot(datalist, **options):
         sphinx_plot(S)
     """
     import numpy
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
     data = numpy.array(datalist, dtype='float')
