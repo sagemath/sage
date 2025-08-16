@@ -205,6 +205,10 @@ extra = [
   "pkg:generic/qepcad",
   "pkg:generic/tides",
 ]
+docs-pdf = [
+  "pkg:generic/latexmk",
+  "pkg:generic/lualatex",
+]
 
 [dependency-groups]
 test = ["pytest", "pytest-xdist", "coverage"]
