@@ -29,8 +29,7 @@ html_theme_options.update({
 # General information about the project.
 project = "A Tour of Sage"
 
-# The name for this set of Sphinx documents.  If None, it defaults to
-# "<project> v<release> documentation".
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

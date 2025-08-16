@@ -44,7 +44,7 @@ jobs:
           path: ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
-  
+
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
@@ -62,7 +62,7 @@ jobs:
           channel-priority: true
           activate-environment: sage-dev
           environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
-        
+
       - name: Build Sage
         shell: bash -l {0}
         run: |
@@ -123,6 +123,7 @@ jobs:
                                                   -e 's;#L[0-9]*";";' \
                                                   -e 's;tab-set--[0-9]*-;tab-set-;g' \
                                                   -e 's;"tab-set--[0-9]*";"tab-set";' \
+                                                  -e 's/0x[0-9a-fA-F]*&gt;/0x12345678\&gt;/' \
              && true)
             # If the regex list above is changed, the sed command in "Copy doc" step should also be changed
             # Create git repo from old doc
@@ -168,6 +169,7 @@ jobs:
                                                   -e 's;#L[0-9]*";";' \
                                                   -e 's;tab-set--[0-9]*-;tab-set-;g' \
                                                   -e 's;"tab-set--[0-9]*";"tab-set";' \
+                                                  -e 's/0x[0-9a-fA-F]*&gt;/0x12345678\&gt;/' \
              && git commit -a -m 'wipe-out')
             # If the regex list above is changed, the sed command in "Store old doc" step should also be changed
             # Since HEAD is at commit 'wipe-out', HEAD~1 is commit 'new' (new doc), HEAD~2 is commit 'old' (old doc)
