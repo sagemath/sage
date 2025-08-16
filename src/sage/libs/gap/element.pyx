@@ -1507,7 +1507,7 @@ cdef class GapElement_Integer(GapElement):
             sage: huge.sage().ndigits()
             10000
         """
-        cdef UInt* x
+        cdef const UInt* x
         cdef Int size
         cdef int c_sign
         cdef int c_size
