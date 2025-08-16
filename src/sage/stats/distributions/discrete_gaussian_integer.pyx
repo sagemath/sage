@@ -8,7 +8,7 @@ r"""
 Discrete Gaussian Samplers over the Integers
 
 This class realizes oracles which returns integers proportionally to
-`\exp(-(x-c)^2/(2σ^2))`. All oracles are implemented using rejection sampling.
+`\exp(-(x-c)^2/(2\sigma^2))`. All oracles are implemented using rejection sampling.
 See :func:`DiscreteGaussianDistributionIntegerSampler.__init__` for which algorithms are
 available.
 
@@ -18,7 +18,7 @@ AUTHORS:
 
 EXAMPLES:
 
-We construct a sampler for the distribution `D_{3,c}` with width `σ=3` and center `c=0`::
+We construct a sampler for the distribution `D_{3,c}` with width `\sigma=3` and center `c=0`::
 
     sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
     sage: sigma = 3.0
@@ -169,19 +169,19 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
         INPUT:
 
         - ``sigma`` -- samples `x` are accepted with probability proportional to
-          `\exp(-(x-c)²/(2σ²))`
+          `\exp(-(x-c)^2/(2\sigma^2))`
 
         - ``c`` -- the mean of the distribution. The value of ``c`` does not have
           to be an integer. However, some algorithms only support integer-valued
           ``c`` (default: ``0``)
 
-        - ``tau`` -- samples outside the range `(⌊c⌉-⌈στ⌉,...,⌊c⌉+⌈στ⌉)` are
+        - ``tau`` -- samples outside the range `(⌊c⌉-⌈\sigma\tau⌉,...,⌊c⌉+⌈\sigma\tau⌉)` are
           considered to have probability zero. This bound applies to algorithms which
           sample from the uniform distribution (default: ``6``)
 
         - ``algorithm`` -- see list below (default: ``'uniform+table'`` for
-           `σt` bounded by ``DiscreteGaussianDistributionIntegerSampler.table_cutoff`` and
-           ``'uniform+online'`` for bigger `στ`)
+           `\sigma\tau` bounded by ``DiscreteGaussianDistributionIntegerSampler.table_cutoff`` and
+           ``'uniform+online'`` for bigger `\sigma\tau`)
 
         - ``precision`` -- either ``'mp'`` for multi-precision where the actual
           precision used is taken from sigma or ``'dp'`` for double precision. In
@@ -191,27 +191,27 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
         - ``'uniform+table'`` -- classical rejection sampling, sampling from the
           uniform distribution and accepted with probability proportional to
-          `\exp(-(x-c)²/(2σ²))` where `\exp(-(x-c)²/(2σ²))` is precomputed and
+          `\exp(-(x-c)^2/(2\sigma^2))` where `\exp(-(x-c)^2/(2\sigma^2))` is precomputed and
           stored in a table. Any real-valued `c` is supported.
 
         - ``'uniform+logtable'`` -- samples are drawn from a uniform distribution and
-          accepted with probability proportional to `\exp(-(x-c)²/(2σ²))` where
-          `\exp(-(x-c)²/(2σ²))` is computed using logarithmically many calls to
+          accepted with probability proportional to `\exp(-(x-c)^2/(2\sigma^2))` where
+          `\exp(-(x-c)^2/(2\sigma^2))` is computed using logarithmically many calls to
           Bernoulli distributions. See [DDLL2013]_ for details.  Only
           integer-valued `c` are supported.
 
         - ``'uniform+online'`` -- samples are drawn from a uniform distribution and
-          accepted with probability proportional to `\exp(-(x-c)²/(2σ²))` where
-          `\exp(-(x-c)²/(2σ²))` is computed in each invocation. Typically this
+          accepted with probability proportional to `\exp(-(x-c)^2/(2\sigma^2))` where
+          `\exp(-(x-c)^2/(2\sigma^2))` is computed in each invocation. Typically this
           is very slow.  See [DDLL2013]_ for details.  Any real-valued `c` is
           accepted.
 
         - ``'sigma2+logtable'`` -- samples are drawn from an easily samplable
-          distribution with `σ = k·σ_2` with `σ_2 = \sqrt{1/(2\log 2)}` and accepted
-          with probability proportional to `\exp(-(x-c)²/(2σ²))` where
-          `\exp(-(x-c)²/(2σ²))` is computed using  logarithmically many calls to Bernoulli
+          distribution with `\sigma = k\cdot\sigma_2` with `\sigma_2 = \sqrt{1/(2\log 2)}` and accepted
+          with probability proportional to `\exp(-(x-c)^2/(2\sigma^2))` where
+          `\exp(-(x-c)^2/(2\sigma^2))` is computed using  logarithmically many calls to Bernoulli
           distributions (but no calls to `\exp`). See [DDLL2013]_ for details. Note that this
-          sampler adjusts `σ` to match `k·σ_2` for some integer `k`.
+          sampler adjusts `\sigma` to match `k\cdot\sigma_2` for some integer `k`.
           Only integer-valued `c` are supported.
 
         EXAMPLES::
@@ -224,7 +224,7 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
             sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm='uniform+logtable')
             Discrete Gaussian sampler over the Integers with sigma = 3.000000 and c = 0.000000
 
-        Note that ``'sigma2+logtable'`` adjusts `σ`::
+        Note that ``'sigma2+logtable'`` adjusts `\sigma`::
 
             sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm='sigma2+logtable')
             Discrete Gaussian sampler over the Integers with sigma = 3.397287 and c = 0.000000

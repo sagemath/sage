@@ -103,7 +103,7 @@ jobs:
       - name: Start container
         id: container
         # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
-        if: (success() || failure())
+        if: (!cancelled())
         run: |
           docker run --name BUILD -dit \
                      --mount type=bind,src=$(pwd),dst=$(pwd) \
@@ -116,7 +116,7 @@ jobs:
 
       - name: Update system packages
         id: packages
-        if: (success() || failure()) && steps.container.outcome == 'success'
+        if: (!cancelled() && steps.container.outcome == 'success')
         run: |
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
@@ -126,15 +126,19 @@ jobs:
 
       - name: Build doc (PDF)
         id: docbuild
-        if: (success() || failure()) && steps.packages.outcome == 'success'
+        if: (!cancelled() && steps.packages.outcome == 'success')
         run: |
           export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
         shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
+      - name: Check for missing character error messages
+        if: (!cancelled())
+        run: sh .github/workflows/docker-exec-script.sh BUILD /sage .github/workflows/check-latex-build.sh
+
       - name: Copy doc
         id: copy
-        if: (success() || failure()) && steps.docbuild.outcome == 'success'
+        if: (!cancelled() && steps.docbuild.outcome == 'success')
         run: |
           mkdir -p ./doc
           # We copy everything to a local folder
@@ -143,7 +147,7 @@ jobs:
           zip -r doc-pdf.zip doc
 
       - name: Upload doc
-        if: (success() || failure()) && steps.copy.outcome == 'success'
+        if: (!cancelled() && steps.copy.outcome == 'success')
         uses: actions/upload-artifact@v4
         with:
           name: doc-pdf
