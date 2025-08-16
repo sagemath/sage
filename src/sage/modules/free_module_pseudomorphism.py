@@ -21,7 +21,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.map import FormalCompositeMap
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import richcmp
 from sage.modules.free_module_morphism import FreeModuleMorphism
@@ -583,7 +582,7 @@ class FreeModulePseudoMorphism(Morphism):
             if self.side() == 'right' and right.side() == 'right':
                 f._side = "right"
             return f
-        return FormalCompositeMap(homset, right, self)
+        return super()._composition_(right, homset)
 
     def ore_module(self, names=None):
         r"""
