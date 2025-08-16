@@ -7,9 +7,9 @@ import fnmatch
 
 from setuptools import setup
 from setuptools.dist import Distribution
-from distutils.command.build_scripts import build_scripts as distutils_build_scripts
 from setuptools.command.build_py import build_py as setuptools_build_py
 from setuptools.command.editable_wheel import editable_wheel as setuptools_editable_wheel
+from setuptools._distutils.command.build_scripts import build_scripts as distutils_build_scripts
 from setuptools.errors import SetupError
 
 
@@ -125,42 +125,12 @@ class build_scripts(distutils_build_scripts):
         distutils_build_scripts.run(self)
 
 
-class editable_wheel(Command):
+class editable_wheel(setuptools_editable_wheel):
+    r"""
+    Customized so that exceptions raised by our build_py
+    do not lead to the "Customization incompatible with editable install" message
     """
-    Custom editable wheel command that uses 'pip install -e' approach
-    as a replacement for problematic setuptools.command.editable_wheel
-    """
-    
-    description = "create a wheel for editable installs"
-    user_options = []
-    
-    def initialize_options(self):
-        pass
-    
-    def finalize_options(self):
-        pass
-    
-    def run(self):
-        """Use pip install -e to perform the editable installation"""
-        import subprocess
-        import sys
-        
-        package_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        self.announce(f"Installing {package_dir} in editable mode using pip install -e", level=1)
-        
-        try:
-            # Use pip to install in editable mode
-            cmd = [sys.executable, "-m", "pip", "install", "--editable", package_dir, "--break-system-packages"]
-            result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-            self.announce("✅ Editable installation completed successfully!", level=1)
-            self.announce(f"Output: {result.stdout}", level=1)
-            
-        except subprocess.CalledProcessError as e:
-            self.announce(f"Fallback: Could not create editable installation: {e}", level=1)
-            # If pip install -e fails, we can fall back to just building normally
-            self.run_command('build')
-            self.announce("Built package normally instead of editable installation", level=1)
+    _safely_run = setuptools_editable_wheel.run_command
 
 
 setup(
