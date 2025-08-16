@@ -121,6 +121,14 @@ This example shows how to compute the corners of a skew partition.
     sage: SkewPartition([[4,3,1],[2]]).outer_corners()
     [(0, 3), (1, 2), (2, 0)]
 
+Any partition `p` can be viewed as a skew partition
+`p / ()`. This is implemented as a default conversion::
+
+    sage: SkewPartition([2,2,1])
+    [2, 2, 1] / []
+    sage: SkewPartition(Partition([2]))
+    [2] / []
+
 AUTHORS:
 
 - Mike Hansen: Initial version
@@ -154,7 +162,7 @@ from sage.sets.set import Set
 from sage.misc.lazy_import import lazy_import
 
 from sage.combinat.combinat import CombinatorialElement
-from sage.combinat.partition import Partitions, _Partitions
+from sage.combinat.partition import Partitions, _Partitions, Partition
 from sage.combinat.tableau import Tableaux
 from sage.combinat.composition import Compositions
 
@@ -183,17 +191,35 @@ class SkewPartition(CombinatorialElement):
             [2, 1]
             sage: skp.outer()
             [3, 2, 1]
+
+        Partitions can be converted into skew partitions::
+
+            sage: skp = SkewPartition([3,3,2]); skp
+            [3, 3, 2] / []
+            sage: skp = SkewPartition(Partition([3,3,2])); skp
+            [3, 3, 2] / []
+            sage: skp = SkewPartition([]); skp
+            [] / []
         """
-        skp = [_Partitions(p) for p in skp]
-        if skp not in SkewPartitions():
+        try:
+            skp_list = [_Partitions(p) for p in skp]
+        except ValueError:
+            if skp in _Partitions:
+                return SkewPartitions()([_Partitions(skp), _Partitions([])])
+            raise ValueError("invalid skew partition: %s" % p)
+        if skp_list not in SkewPartitions():
+            if not skp_list:
+                return SkewPartitions()([_Partitions([]), _Partitions([])])
             raise ValueError("invalid skew partition: %s" % skp)
-        return SkewPartitions()(skp)
+        return SkewPartitions()(skp_list)
 
     def __init__(self, parent, skp):
         """
         TESTS::
 
             sage: skp = SkewPartition([[3,2,1],[2,1]])
+            sage: TestSuite(skp).run()
+            sage: skp = SkewPartition([3,2,1])
             sage: TestSuite(skp).run()
         """
         CombinatorialElement.__init__(self, parent,
@@ -1490,7 +1516,15 @@ class SkewPartitions(UniqueRepresentation, Parent):
             sage: S = SkewPartitions()
             sage: S([[3,1], [1]])
             [3, 1] / [1]
+
+        TESTS::
+
+            sage: S = SkewPartitions()
+            sage: S(Partition([3,2]))
+            [3, 2] / []
         """
+        if skp in _Partitions:
+            skp = SkewPartition(skp)
         return self.element_class(self, skp)
 
     def __contains__(self, x):
@@ -1535,8 +1569,12 @@ class SkewPartitions(UniqueRepresentation, Parent):
             False
             sage: [[1,1,1,0],[1,1,0,0]] in SkewPartitions()
             True
+            sage: Partition([3,2]) in SkewPartitions()
+            True
         """
         if isinstance(x, SkewPartition):
+            return True
+        if isinstance(x, Partition):
             return True
 
         try:
@@ -1798,9 +1836,15 @@ class SkewPartitions_n(SkewPartitions):
             False
             sage: [[7, 4, 3, 2], [5, 2, 1]] in SkewPartitions(8, overlap=-2)
             True
+            sage: Partition([2, 1]) in SkewPartitions(3)
+            True
+            sage: Partition([2, 1]) in SkewPartitions(4)
+            False
         """
-        return x in SkewPartitions() \
-            and sum(x[0])-sum(x[1]) == self.n \
+        if not x in SkewPartitions():
+            return False
+        x = SkewPartition(x)
+        return sum(x[0])-sum(x[1]) == self.n \
             and self.overlap <= SkewPartition(x).overlap()
 
     def _repr_(self):
@@ -1972,8 +2016,13 @@ class SkewPartitions_rowlengths(SkewPartitions):
             False
             sage: [[5,4,3,1],[3,3,1]] in SkewPartitions(row_lengths=[2,1,2,1])
             True
+            sage: Partition([2, 1]) in SkewPartitions(row_lengths=[2,1])
+            True
+            sage: Partition([2, 1]) in SkewPartitions(row_lengths=[2,2])
+            False
         """
         if x in SkewPartitions():
+            x = SkewPartition(x)
             o = x[0]
             i = x[1]+[0]*(len(x[0])-len(x[1]))
             return [u[0]-u[1] for u in zip(o,i)] == self.co
