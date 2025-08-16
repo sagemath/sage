@@ -6,7 +6,13 @@ import time
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
-from distutils import log
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s'  # keep as distutils.log the same
+)
+log = logging.getLogger(__name__)
 from setuptools import setup
 
 # Work around a Cython problem in Python 3.8.x on macOS
@@ -77,7 +83,7 @@ distributions = ['sagemath-categories',
                  'sagemath-objects',
                  'sagemath-repl',
                  '']
-log.warn('distributions = {0}'.format(distributions))
+log.warning('distributions = {0}'.format(distributions))
 from sage_setup.find import find_python_sources
 python_packages, python_modules, cython_modules = find_python_sources(
     SAGE_SRC, ['sage'], distributions=distributions)

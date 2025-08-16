@@ -920,9 +920,12 @@ class CythonFeature(Feature):
             from setuptools.errors import CCompilerError
         except ImportError:
             try:
-                from distutils.errors import CCompilerError
+                from setuptools._distutils.errors import CCompilerError
             except ImportError:
-                CCompilerError = ()
+                try:
+                    from distutils.errors import CCompilerError
+                except ImportError:
+                    CCompilerError = ()
         try:
             from sage.misc.cython import cython_import
         except ImportError:

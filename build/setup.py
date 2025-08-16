@@ -1,6 +1,6 @@
 #!/usr/bin/env sage-bootstrap-python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='sage_bootstrap',

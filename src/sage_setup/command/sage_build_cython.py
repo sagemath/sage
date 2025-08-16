@@ -4,21 +4,25 @@
 ##
 ########################################################################
 
-import os
-import sys
-import time
 import json
+import logging
+import os
+import time
 
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
-
-from distutils import log
 from setuptools import Command
 
-from sage_setup.util import stable_uniq
-from sage_setup.find import find_extra_files
 from sage_setup.cython_options import compiler_directives, compile_time_env_variables
+from sage_setup.find import find_extra_files
+from sage_setup.util import stable_uniq
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s'  # keep as distutils.log the same
+)
+log = logging.getLogger(__name__)
 
 # Do not put all, but only the most common libraries and their headers
 # (that are likely to change on an upgrade) here:

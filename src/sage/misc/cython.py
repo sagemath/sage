@@ -354,14 +354,21 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
-    from distutils.log import set_verbosity
+    import logging
+    
+    # Configure logging verbosity level equivalent to distutils.log.set_verbosity
+    if verbose == 0:
+        logging.getLogger().setLevel(logging.WARNING)
+    elif verbose == 1:
+        logging.getLogger().setLevel(logging.INFO)
+    else:
+        logging.getLogger().setLevel(logging.DEBUG)
 
     import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
     from setuptools.dist import Distribution
     from setuptools.extension import Extension
-    set_verbosity(verbose)
 
     Cython.Compiler.Options.annotate = annotate
     Cython.Compiler.Options.embed_pos_in_docstring = True

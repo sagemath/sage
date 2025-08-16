@@ -292,7 +292,7 @@ class Application(object):
         # Restrict to normal Python packages
         pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'version_requirements.txt'])
         if not pc.names:
-            log.warn('nothing to do (does not name a normal Python package)')
+            log.warning('nothing to do (does not name a normal Python package)')
         for package_name in sorted(pc.names):
             if package_name in exclude:
                 log.debug('skipping %s because of pypi name collision', package_name)
@@ -300,7 +300,7 @@ class Application(object):
             try:
                 self.update_latest(package_name, commit=commit)
             except PyPiError as e:
-                log.warn('updating %s failed: %s', package_name, e)
+                log.warning('updating %s failed: %s', package_name, e)
 
     def download(self, package_name, allow_upstream=False):
         """
@@ -331,7 +331,7 @@ class Application(object):
                 if on_error == 'stop':
                     raise
                 elif on_error == 'warn':
-                    log.warn('Unable to download tarball of %s', package)
+                    log.warning('Unable to download tarball of %s', package)
                 else:
                     raise ValueError('on_error must be one of "stop" and "warn"')
         pc.apply(download_with_args)
