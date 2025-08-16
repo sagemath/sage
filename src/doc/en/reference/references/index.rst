@@ -4880,6 +4880,9 @@ REFERENCES:
              Notes in Computer Science, volume 5856, pp 272-278,
              Springer, Berlin (2009).
 
+.. [Mar1992] H. H. Martens, "A footnote to the Poincaré complete reducibility theorem",
+             *Publicacions Matemàtiques* **36** (1992), no. 1, 111–129.
+
 .. [Mar1997] \C.-M. Marle, *The Schouten-Nijenhuis bracket and interior
              products*, Journal of Geometry and Physics **23**, 350
              (1997); :doi:`10.1016/S0393-0440(97)80009-5`
