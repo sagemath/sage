@@ -37,23 +37,23 @@ lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 class DrinfeldModules(Category_over_base_ring):
     r"""
     This class implements the category of Drinfeld
-    `\mathbb{F}_q[T]`-modules on a given base field.
+    `\GF_q[T]`-modules on a given base field.
 
-    Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
-    finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
-    morphism `\gamma: \mathbb{F}_q[T] \to K`; we say that `K` is an
-    `\mathbb{F}_q[T]`*-field*. Let `K\{\tau\}` be the ring of Ore
+    Let `\GF_q[T]` be a polynomial ring with coefficients in a
+    finite field `\GF_q` and let `K` be a field. Fix a ring
+    morphism `\gamma: \GF_q[T] \to K`; we say that `K` is an
+    `\GF_q[T]`-field. Let `K\{\tau\}` be the ring of Ore
     polynomials with coefficients in `K`, whose multiplication is given
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
-    The extension `K`/`\mathbb{F}_q[T]` (represented as an instance of
+    The extension `K`/`\GF_q[T]` (represented as an instance of
     the class :class:`sage.rings.ring_extension.RingExtension`) is the
     *base field* of the category; its defining morphism `\gamma` is
     called the *base morphism*.
 
     The monic polynomial that generates the kernel of `\gamma` is called
-    the `\mathbb{F}_q[T]`-*characteristic*, or *function-field
-    characteristic*, of the base field. We say that `\mathbb{F}_q[T]` is
+    the `\GF_q[T]`-*characteristic*, or *function-field
+    characteristic*, of the base field. We say that `\GF_q[T]` is
     the *function ring* of the category; `K\{\tau\}` is the *Ore
     polynomial ring*. The constant coefficient of the category is the
     image of `T` under the base morphism.
@@ -78,7 +78,7 @@ class DrinfeldModules(Category_over_base_ring):
 
     .. RUBRIC:: Properties of the category
 
-    The base field is retrieved using the method :meth:`base`.
+    The base field is retrieved using the method :meth:`base`::
 
         sage: C.base()
         Finite Field in z of size 11^4 over its base
@@ -102,7 +102,7 @@ class DrinfeldModules(Category_over_base_ring):
         True
 
     Similarly, the function ring-characteristic of the category is
-    either `0` or the unique monic polynomial in `\mathbb{F}_q[T]` that
+    either `0` or the unique monic polynomial in `\GF_q[T]` that
     generates the kernel of the base::
 
         sage: C.characteristic()
@@ -407,7 +407,7 @@ class DrinfeldModules(Category_over_base_ring):
     def base_over_constants_field(self):
         r"""
         Return the base field, seen as an extension over the constants
-        field `\mathbb{F}_q`.
+        field `\GF_q`.
 
         EXAMPLES::
 
@@ -676,7 +676,7 @@ class DrinfeldModules(Category_over_base_ring):
         def base_over_constants_field(self):
             r"""
             Return the base field, seen as an extension over the constants
-            field `\mathbb{F}_q`.
+            field `\GF_q`.
 
             This is an instance of the class
             :class:`sage.rings.ring_extension.RingExtension`.
@@ -756,7 +756,7 @@ class DrinfeldModules(Category_over_base_ring):
                 sage: phi.constant_coefficient() == p_root
                 True
 
-            Let `\mathbb{F}_q[T]` be the function ring, and let `\gamma` be
+            Let `\GF_q[T]` be the function ring, and let `\gamma` be
             the base of the Drinfeld module. The constant coefficient is
             `\gamma(T)`::
 
