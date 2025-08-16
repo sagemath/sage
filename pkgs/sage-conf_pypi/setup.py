@@ -7,9 +7,9 @@ import fnmatch
 
 from setuptools import setup
 from setuptools.dist import Distribution
-from distutils.command.build_scripts import build_scripts as distutils_build_scripts
 from setuptools.command.build_py import build_py as setuptools_build_py
 from setuptools.command.editable_wheel import editable_wheel as setuptools_editable_wheel
+from setuptools._distutils.command.build_scripts import build_scripts as distutils_build_scripts
 from setuptools.errors import SetupError
 
 

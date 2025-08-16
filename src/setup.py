@@ -10,10 +10,16 @@ import os
 import platform
 import sys
 import time
+import logging
+import multiprocessing.pool
 from setuptools import setup, find_namespace_packages
 from setuptools.dist import Distribution
-from distutils import log
-import multiprocessing.pool
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s'  # keep as distutils.log the same
+)
+log = logging.getLogger(__name__)
 
 # PEP 517 builds do not have . in sys.path
 sys.path.insert(0, os.path.dirname(__file__))
@@ -116,7 +122,7 @@ else:
                 gdb_debug=gdb_debug,
                 nthreads=nthreads)
     except Exception as exception:
-        log.warn(f"Exception while cythonizing source files: {repr(exception)}")
+        log.warning(f"Exception while cythonizing source files: {repr(exception)}")
         raise
     log.info(f"Cythonizing with {nthreads} threads... done")
 

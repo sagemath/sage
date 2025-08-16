@@ -36,7 +36,7 @@ jobs:
             tests: 'new'
           # one additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
-            python: 3.12
+            python: '3.12'
             editable: true
             tests: 'all'
           - os: windows
@@ -133,6 +133,15 @@ jobs:
           else
             export LIB="$LIB;$CONDA_PREFIX\\Library\\lib"
             export INCLUDE="$INCLUDE;$CONDA_PREFIX\\Library\\include"
+            # Ensure Conda's Scripts (which contains cython.exe) is on PATH for Meson to detect Cython
+            export PATH="$CONDA_PREFIX/Scripts:$CONDA_PREFIX/Library/bin:$PATH"
+            # Explicitly point Meson to the Cython executable if present
+            if [[ -x "$CONDA_PREFIX/Scripts/cython.exe" ]]; then
+              export CYTHON="$CONDA_PREFIX/Scripts/cython.exe"
+            fi
+            # Diagnostic: show which cython will be used and its version
+            command -v cython || true
+            cython -V || python -m cython -V || true
           fi
 
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda

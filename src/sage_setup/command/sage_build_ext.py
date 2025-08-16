@@ -1,13 +1,19 @@
-import os
 import errno
+import logging
+import os
 
 # Import setuptools before importing distutils, so that setuptools
 # can replace distutils by its own vendored copy.
 import setuptools
-
-from distutils import log
+from setuptools.modified import newer_group
 from setuptools.command.build_ext import build_ext
-from distutils.dep_util import newer_group
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(message)s'  # keep as distutils.log the same
+)
+log = logging.getLogger(__name__)
+
 try:
     # Available since https://setuptools.pypa.io/en/latest/history.html#v59-0-0
     from setuptools.errors import DistutilsSetupError
@@ -54,7 +60,7 @@ class sage_build_ext(build_ext):
 
     def build_extensions(self):
 
-        from distutils.debug import DEBUG
+        from setuptools._distutils.debug import DEBUG
 
         if DEBUG:
             print("self.compiler.compiler:")
