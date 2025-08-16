@@ -74,7 +74,6 @@ env:
   FROM_DOCKER_TARGET:     "with-targets"
   FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
-  NO_COLOR:               1
 
 jobs:
   test-long:
@@ -177,7 +176,7 @@ jobs:
           rm -rf /sage/.coverage
           ln -s $(pwd)/.coverage /sage/
           cd /sage
-          ./sage -python -m pip install coverage
+          ./sage -python -m pip install coverage colorlog
           ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --force-lib --long -p4 --format github --random-seed=286735480429121101562228604801325644303 ${{ matrix.tests }}
         shell: sh .github/workflows/docker-exec-script.sh BUILD . {0}
 
