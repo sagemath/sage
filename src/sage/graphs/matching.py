@@ -47,6 +47,7 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import itertools
 
 from sage.rings.integer import Integer
 from sage.graphs.views import EdgesView
@@ -178,7 +179,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     graphs are special kind of matching covered graphs. Each maximal barrier of
     a bicritical graph is a singleton. Thus, for a bicritical graph, the
     canonical partition of the vertex set is the set of sets where each set is
-    an indiviudal vertex. Three-connected bicritical graphs, aka *bricks*, play
+    an individual vertex. Three-connected bicritical graphs, aka *bricks*, play
     an important role in the theory of matching covered graphs.
 
     This method implements the algorithm proposed in [LZ2001]_ and we
@@ -442,7 +443,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
         for component in components:
             if u is not None and not len(component) % 2:
                 v = component[0]
-                return (False, set([u, v]))
+                return (False, {u, v})
             elif len(component) == 1:
                 u = component[0]
 
@@ -472,16 +473,18 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
     else:
         # A maximum matching of the graph is computed
         M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
+                             integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
         if G.order() != M.order():
             u, v = next(M.edge_iterator(labels=False))
-            return (False, set([u, v])) if coNP_certificate else False
+            return (False, {u, v}) if coNP_certificate else False
 
-    # G is bicritical if and only if for each vertex u with its M-matched neighbor being v,
-    # every vertex of the graph distinct from v must be reachable from u through an even length
-    # M-alternating uv-path starting with an edge not in M and ending with an edge in M
+    # G is bicritical if and only if for each vertex u with its
+    # M-matched neighbor being v, every vertex of the graph distinct
+    # from v must be reachable from u through an even length
+    # M-alternating uv-path starting with an edge not in M and ending
+    # with an edge in M
 
     for u in G:
         v = next(M.neighbor_iterator(u))
@@ -490,7 +493,7 @@ def is_bicritical(G, matching=None, algorithm='Edmonds', coNP_certificate=False,
 
         for w in G:
             if w != v and w not in even:
-                return (False, set([v, w])) if coNP_certificate else False
+                return (False, {v, w}) if coNP_certificate else False
 
     return (True, None) if coNP_certificate else True
 
@@ -568,8 +571,8 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
 
     Friendship graphs are non-Hamiltonian factor-critical graphs::
 
-        sage: [graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5)]             # needs networkx
-        [True, True, True, True]
+        sage: all(graphs.FriendshipGraph(i).is_factor_critical() for i in range(1, 5))             # needs networkx
+        True
 
     Bipartite graphs are not factor-critical::
 
@@ -679,7 +682,6 @@ def is_factor_critical(G, matching=None, algorithm='Edmonds', solver=None, verbo
                 R.pop()
                 # Set t as pred of all vertices of the chains and add
                 # vertices marked odd to the queue
-                import itertools
 
                 for a in itertools.chain(P, R):
                     pred[a] = t
@@ -953,7 +955,9 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
         sage: G.is_matching_covered()
         Traceback (most recent call last):
         ...
-        ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+        ValueError: This method is not known to work on graphs with loops.
+        Perhaps this method can be updated to handle them, but in the meantime
+        if you want to use it please disallow loops using allow_loops().
 
     REFERENCES:
 
@@ -1006,7 +1010,7 @@ def is_matching_covered(G, matching=None, algorithm='Edmonds', coNP_certificate=
     else:
         # A maximum matching of the graph is computed
         M = Graph(G.matching(algorithm=algorithm, solver=solver, verbose=verbose,
-                                    integrality_tolerance=integrality_tolerance))
+                             integrality_tolerance=integrality_tolerance))
 
         # It must be a perfect matching
         if G.order() != M.order():
@@ -1275,7 +1279,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
 
         from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))]) for u, v in d],
-                                format='list_of_edges'))
+                               format='list_of_edges'))
 
     elif algorithm == "LP":
         g = G
@@ -1292,7 +1296,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         # the maximum matching
         for v in g:
             p.add_constraint(p.sum(b[frozenset(e)] for e in G.edge_iterator(vertices=[v], labels=False)
-                                    if e[0] != e[1]), max=1)
+                                   if e[0] != e[1]), max=1)
 
         p.solve(log=verbose)
         b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
@@ -1304,7 +1308,7 @@ def matching(G, value_only=False, algorithm='Edmonds',
         from sage.graphs.graph import Graph
         return EdgesView(Graph([(u, v, L[frozenset((u, v))])
                                 for u, v in L if b[frozenset((u, v))]],
-                                format='list_of_edges'))
+                               format='list_of_edges'))
 
     elif algorithm == "Micali-Vazirani":
         if use_edge_labels:
@@ -2103,8 +2107,6 @@ def perfect_matchings(G, labels=False):
     G_copy.allow_multiple_edges(False)
 
     # For each unlabeled matching, we yield all its possible labelings
-    import itertools
-
     for m in rec(G_copy):
         yield from itertools.product(*[edges[frozenset(e)] for e in m])
 
@@ -2283,7 +2285,6 @@ def M_alternating_even_mark(G, vertex, matching):
         raise ValueError("the input is not a matching of the graph")
 
     # Build an M-alternating tree T rooted at vertex
-    import itertools
     from queue import Queue
 
     q = Queue()

@@ -53,9 +53,15 @@ AUTHORS:
 import os
 import random
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
-from sage.structure.element import RingElement, parent
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+    gc_disabled,
+)
 from sage.misc.instancedoc import instancedoc
+from sage.structure.element import RingElement, parent
 from sage.structure.richcmp import rich_to_bool
 
 
@@ -68,6 +74,7 @@ class Lisp(Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.lisp import lisp
             sage: lisp == loads(dumps(lisp))
             True
         """
