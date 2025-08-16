@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.eclib
 r"""
 Sage interface to Cremona's ``eclib`` library (also known as ``mwrank``)
 

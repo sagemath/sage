@@ -1511,7 +1511,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             ...
             NotImplementedError: not implemented.
             sage: E = EllipticCurve(QQ, [1,1])
-            sage: E.gens()
+            sage: E.gens()  # needs sage.libs.eclib
             [(0 : 1 : 1)]
         """
         raise NotImplementedError("not implemented.")
@@ -2188,12 +2188,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve("37a")
             sage: P = E.gens()[0]
             sage: x = P[0]
 
         ::
 
+            sage: # needs sage.libs.eclib
             sage: (35*P)[0]
             -804287518035141565236193151/1063198259901027900600665796
             sage: E._multiple_x_numerator(35, x)
@@ -2203,6 +2205,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs sage.libs.eclib
             sage: (36*P)[0]
             54202648602164057575419038802/15402543997324146892198790401
             sage: E._multiple_x_numerator(36, x)
@@ -2310,6 +2313,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         ::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve("43a")
             sage: P = E.gens()[0]
             sage: x = P[0]

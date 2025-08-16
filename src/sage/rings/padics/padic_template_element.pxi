@@ -537,7 +537,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         Check to see that :issue:`10292` is resolved::
 
-            sage: # needs sage.schemes
+            sage: # needs sage.schemes sage.libs.eclib
             sage: E = EllipticCurve('37a')
             sage: R = E.padic_regulator(7)
             sage: len(R.expansion())

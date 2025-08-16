@@ -2070,7 +2070,7 @@ class EllipticCurveCanonicalHeight:
             sage: h = E.height_function()
             sage: h.min(.01, 5)
             0.03987318057488725
-            sage: E.gen(0).height()
+            sage: E.gen(0).height()  # needs sage.libs.eclib
             0.0511114082399688
 
         After base change the lower bound can decrease::
@@ -2083,7 +2083,7 @@ class EllipticCurveCanonicalHeight:
             sage: h = E.height_function()
             sage: h.min(0.1, 5)
             0.05731275270029196
-            sage: [P.height() for P in E.gens()]
+            sage: [P.height() for P in E.gens()]  # needs sage.libs.eclib
             [0.686667083305587, 0.327000773651605]
         """
         # The lcm of the exponents of all the component groups at

@@ -131,6 +131,7 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('37a')
         sage: L = E.padic_lseries(5); L
         5-adic L-series of Elliptic Curve defined by y^2 + y = x^3 - x over Rational Field
@@ -141,6 +142,7 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
     rank `0` and in each case verify the interpolation property
     for their leading coefficient (i.e., value at 0)::
 
+        sage: # needs sage.libs.eclib
         sage: e = EllipticCurve('11a')
         sage: ms = e.modular_symbol()
         sage: [ms(1/11), ms(1/3), ms(0), ms(oo)]
@@ -166,6 +168,7 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
 
     Next consider the curve 37b::
 
+        sage: # needs sage.libs.eclib
         sage: e = EllipticCurve('37b')
         sage: L = e.padic_lseries(3)
         sage: P = L.series(5)
@@ -195,6 +198,7 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
 
     Finally, we can use the overconvergent method of Pollack-Stevens.::
 
+        sage: # needs sage.libs.eclib
         sage: e = EllipticCurve('11a')
         sage: L = e.padic_lseries(3, implementation = 'pollackstevens', precision = 6)
         sage: L.series(5)
@@ -204,6 +208,7 @@ def padic_lseries(self, p, normalize=None, implementation='eclib',
 
     Another example with a semistable prime.::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("11a1")
         sage: L = E.padic_lseries(11, implementation = 'pollackstevens', precision=3)
         sage: L[1]
@@ -271,23 +276,27 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("37a")
         sage: E.padic_regulator(5, 10)
         5 + 5^2 + 5^3 + 3*5^6 + 4*5^7 + 5^9 + O(5^10)
 
     An anomalous case::
 
+        sage: # needs sage.libs.eclib
         sage: E.padic_regulator(53, 10)
         26*53^-1 + 30 + 20*53 + 47*53^2 + 10*53^3 + 32*53^4 + 9*53^5 + 22*53^6 + 35*53^7 + 30*53^8 + O(53^9)
 
     An anomalous case where the precision drops some::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("5077a")
         sage: E.padic_regulator(5, 10)
         5 + 5^2 + 4*5^3 + 2*5^4 + 2*5^5 + 2*5^6 + 4*5^7 + 2*5^8 + 5^9 + O(5^10)
 
     Check that answers agree over a range of precisions::
 
+        sage: # needs sage.libs.eclib
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_regulator(5, max_prec)           # long time
         sage: for prec in range(1, max_prec):                 # long time
@@ -296,12 +305,14 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
     A case where the generator belongs to the formal group already
     (:issue:`3632`)::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve([37,0])
         sage: E.padic_regulator(5,10)
         2*5^2 + 2*5^3 + 5^4 + 5^5 + 4*5^6 + 3*5^8 + 4*5^9 + O(5^10)
 
     The result is not dependent on the model for the curve::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve([0,0,0,0,2^12*17])
         sage: Em = E.minimal_model()
         sage: E.padic_regulator(7) == Em.padic_regulator(7)
@@ -309,6 +320,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
 
     Allow a python int as input::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('37a')
         sage: E.padic_regulator(int(5))
         5 + 5^2 + 5^3 + 3*5^6 + 4*5^7 + 5^9 + 5^10 + 3*5^11 + 3*5^12 + 5^13 + 4*5^14 + 5^15 + 2*5^16 + 5^17 + 2*5^18 + 4*5^19 + O(5^20)
@@ -373,6 +385,7 @@ def padic_height_pairing_matrix(self, p, prec=20, height=None, check_hypotheses=
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("37a")
         sage: E.padic_height_pairing_matrix(5, 10)
         [5 + 5^2 + 5^3 + 3*5^6 + 4*5^7 + 5^9 + O(5^10)]
@@ -495,6 +508,7 @@ def _multiply_point(E, R, P, m):
     Test over a range of `n` for a single curve with fairly
     random coefficients::
 
+        sage: # needs sage.libs.eclib
         sage: R = Integers(625)
         sage: E = EllipticCurve([4, -11, 17, -8, -10])
         sage: P = E.gens()[0] * LCM(E.tamagawa_numbers())
@@ -708,6 +722,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("37a")
         sage: P = E.gens()[0]
         sage: h = E.padic_height(5, 10)
@@ -716,22 +731,26 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     An anomalous case::
 
+        sage: # needs sage.libs.eclib
         sage: h = E.padic_height(53, 10)
         sage: h(P)
         26*53^-1 + 30 + 20*53 + 47*53^2 + 10*53^3 + 32*53^4 + 9*53^5 + 22*53^6 + 35*53^7 + 30*53^8 + 17*53^9 + O(53^10)
 
     Boundary case::
 
+        sage: # needs sage.libs.eclib
         sage: E.padic_height(5, 3)(P)
         5 + 5^2 + O(5^3)
 
     A case that works the division polynomial code a little harder::
 
+        sage: # needs sage.libs.eclib
         sage: E.padic_height(5, 10)(5*P)
         5^3 + 5^4 + 5^5 + 3*5^8 + 4*5^9 + O(5^10)
 
     Check that answers agree over a range of precisions::
 
+        sage: # needs sage.libs.eclib
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(1, max_prec):                 # long time
@@ -739,6 +758,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     A supersingular prime for a curve::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('37a')
         sage: E.is_supersingular(3)
         True
@@ -752,6 +772,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     A torsion point in both the good and supersingular cases::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('11a')
         sage: P = E.torsion_subgroup().gen(0).element(); P
         (5 : 5 : 1)
@@ -764,6 +785,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     The result is not dependent on the model for the curve::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve([0,0,0,0,2^12*17])
         sage: Em = E.minimal_model()
         sage: P = E.gens()[0]
@@ -777,6 +799,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     Check that issue :issue:`20798` is solved::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("91b")
         sage: h = E.padic_height(7,10)
         sage: P = E.gen(0)
@@ -903,6 +926,7 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve("37a")
         sage: P = E.gens()[0]
         sage: h = E.padic_height_via_multiply(5, 10)
@@ -911,12 +935,14 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     An anomalous case::
 
+        sage: # needs sage.libs.eclib
         sage: h = E.padic_height_via_multiply(53, 10)
         sage: h(P)
         26*53^-1 + 30 + 20*53 + 47*53^2 + 10*53^3 + 32*53^4 + 9*53^5 + 22*53^6 + 35*53^7 + 30*53^8 + 17*53^9 + O(53^10)
 
     Supply the value of E2 manually::
 
+        sage: # needs sage.libs.eclib
         sage: E2 = E.padic_E2(5, 8)
         sage: E2
         2 + 4*5 + 2*5^3 + 5^4 + 3*5^5 + 2*5^6 + O(5^8)
@@ -926,11 +952,13 @@ def padic_height_via_multiply(self, p, prec=20, E2=None, check_hypotheses=True):
 
     Boundary case::
 
+        sage: # needs sage.libs.eclib
         sage: E.padic_height_via_multiply(5, 3)(P)
         5 + 5^2 + O(5^3)
 
     Check that answers agree over a range of precisions::
 
+        sage: # needs sage.libs.eclib
         sage: max_prec = 30    # make sure we get past p^2    # long time
         sage: full = E.padic_height(5, max_prec)(P)           # long time
         sage: for prec in range(2, max_prec):                 # long time

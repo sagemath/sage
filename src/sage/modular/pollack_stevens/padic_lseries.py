@@ -46,23 +46,25 @@ class pAdicLseries(SageObject):
 
     EXAMPLES::
 
+        sage: # long time, needs sage.libs.eclib
         sage: E = EllipticCurve('37a')
         sage: p = 5
         sage: prec = 4
-        sage: L = E.padic_lseries(p, implementation='pollackstevens', precision=prec) # long time
-        sage: L[1]                # long time
+        sage: L = E.padic_lseries(p, implementation='pollackstevens', precision=prec)
+        sage: L[1]
         1 + 4*5 + 2*5^2 + O(5^3)
-        sage: L.series(3)    # long time
+        sage: L.series(3)
         O(5^4) + (1 + 4*5 + 2*5^2 + O(5^3))*T + (3 + O(5^2))*T^2 + O(T^3)
 
     ::
 
+        sage: # long time, needs sage.libs.eclib
         sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
         sage: E = EllipticCurve('20a')
         sage: phi = E.pollack_stevens_modular_symbol()
-        sage: Phi = phi.p_stabilize_and_lift(3, 4) # long time
-        sage: L = pAdicLseries(Phi)                # long time
-        sage: L.series(4)                          # long time
+        sage: Phi = phi.p_stabilize_and_lift(3, 4)
+        sage: L = pAdicLseries(Phi)
+        sage: L.series(4)
         2*3 + O(3^4) + (3 + O(3^2))*T + (2 + O(3))*T^2 + O(3^0)*T^3 + O(T^4)
 
     An example of a `p`-adic `L`-series associated to a modular
@@ -92,17 +94,17 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('11a3')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: p = 11
             sage: prec = 3
-            sage: Phi = phi.lift(p, prec,eigensymbol=True) # long time
-            sage: L = pAdicLseries(Phi)                    # long time
-            sage: L.series(3)                              # long time
+            sage: Phi = phi.lift(p, prec,eigensymbol=True)
+            sage: L = pAdicLseries(Phi)
+            sage: L.series(3)
             O(11^3) + (2 + 5*11 + O(11^2))*T + (10 + O(11))*T^2 + O(T^3)
-
-            sage: TestSuite(L).run()                       # long time
+            sage: TestSuite(L).run()
         """
         self._coefficients = {}
 
@@ -129,11 +131,12 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('14a5')
-            sage: L = E.padic_lseries(7,implementation='pollackstevens',precision=5) # long time
-            sage: L[0]                                   # long time
+            sage: L = E.padic_lseries(7,implementation='pollackstevens',precision=5)
+            sage: L[0]
             O(7^5)
-            sage: L[1]                                   # long time
+            sage: L[1]
             5 + 5*7 + 2*7^2 + 2*7^3 + O(7^4)
         """
         if n in self._coefficients:
@@ -172,9 +175,10 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
-            sage: L = E.padic_lseries(11,implementation='pollackstevens',precision=6) # long time
-            sage: L == loads(dumps(L)) # indirect doctest, long time
+            sage: L = E.padic_lseries(11,implementation='pollackstevens',precision=6)
+            sage: L == loads(dumps(L))  # indirect doctest
             True
         """
         if not isinstance(other, pAdicLseries):
@@ -191,9 +195,10 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
-            sage: L = E.padic_lseries(11,implementation='pollackstevens',precision=6) # long time
-            sage: L != L  # long time
+            sage: L = E.padic_lseries(11,implementation='pollackstevens',precision=6)
+            sage: L != L
             False
         """
         return not self.__eq__(other)
@@ -204,15 +209,16 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('21a4')
             sage: phi = E.pollack_stevens_modular_symbol()
-            sage: Phi = phi.p_stabilize_and_lift(2,5)   # long time
-            sage: L = pAdicLseries(Phi)                 # long time
-            sage: L.symbol()                              # long time
+            sage: Phi = phi.p_stabilize_and_lift(2,5)
+            sage: L = pAdicLseries(Phi)
+            sage: L.symbol()
             Modular symbol of level 42 with values in Space of 2-adic
             distributions with k=0 action and precision cap 15
-            sage: L.symbol() is Phi                       # long time
+            sage: L.symbol() is Phi
             True
         """
         return self._symb
@@ -223,9 +229,10 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('19a')
-            sage: L = E.padic_lseries(19, implementation='pollackstevens',precision=6) # long time
-            sage: L.prime()                   # long time
+            sage: L = E.padic_lseries(19, implementation='pollackstevens',precision=6)
+            sage: L.prime()
             19
         """
         return self._symb.parent().prime()
@@ -236,6 +243,7 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
@@ -252,9 +260,10 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('14a2')
-            sage: L = E.padic_lseries(3, implementation='pollackstevens', precision=4)  # long time
-            sage: L._repr_()                           # long time
+            sage: L = E.padic_lseries(3, implementation='pollackstevens', precision=4)
+            sage: L._repr_()
             '3-adic L-series of Modular symbol of level 42 with values in
             Space of 3-adic distributions with k=0 action and precision cap 8'
         """
@@ -272,16 +281,18 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('14a2')
             sage: p = 3
             sage: prec = 6
-            sage: L = E.padic_lseries(p,implementation='pollackstevens',precision=prec) # long time
-            sage: L.series(4)          # long time
+            sage: L = E.padic_lseries(p,implementation='pollackstevens',precision=prec)
+            sage: L.series(4)
             2*3 + 3^4 + 3^5 + O(3^6) + (2*3 + 3^2 + O(3^4))*T + (2*3 + O(3^2))*T^2 + (3 + O(3^2))*T^3 + O(T^4)
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve("15a3")
-            sage: L = E.padic_lseries(5,implementation='pollackstevens',precision=15)  # long time
-            sage: L.series(3)            # long time
+            sage: L = E.padic_lseries(5,implementation='pollackstevens',precision=15)
+            sage: L.series(3)
             O(5^15) + (2 + 4*5^2 + 3*5^3 + 5^5 + 2*5^6 + 3*5^7 + 3*5^8 + 2*5^9 + 2*5^10 + 3*5^11 + 5^12 + O(5^13))*T + (4*5 + 4*5^3 + 3*5^4 + 4*5^5 + 3*5^6 + 2*5^7 + 5^8 + 4*5^9 + 3*5^10 + O(5^11))*T^2 + O(T^3)
 
             sage: E = EllipticCurve("79a1")
@@ -316,13 +327,16 @@ class pAdicLseries(SageObject):
         EXAMPLES::
 
             sage: E = EllipticCurve('19a2')
-            sage: L = E.padic_lseries(3,implementation='pollackstevens',precision=6)  # long time
-            sage: ap = E.ap(3)               # long time
-            sage: L.interpolation_factor(ap) # long time
+
+            sage: # long time, needs sage.libs.eclib
+            sage: L = E.padic_lseries(3,implementation='pollackstevens',precision=6)
+            sage: ap = E.ap(3)
+            sage: L.interpolation_factor(ap)
             3^2 + 3^3 + 2*3^5 + 2*3^6 + O(3^7)
 
         Comparing against a different implementation::
 
+            sage: # needs sage.libs.eclib
             sage: L = E.padic_lseries(3)
             sage: (1-1/L.alpha(prec=4))^2
             3^2 + 3^3 + O(3^5)
@@ -357,10 +371,11 @@ class pAdicLseries(SageObject):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('11a3')
-            sage: L = E.padic_lseries(5, implementation='pollackstevens', precision=4) #long time
-            sage: L._basic_integral(1,2) # long time
+            sage: L = E.padic_lseries(5, implementation='pollackstevens', precision=4)
+            sage: L._basic_integral(1,2)
             2*5^2 + 5^3 + O(5^4)
         """
         symb = self.symbol()
