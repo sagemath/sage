@@ -84,7 +84,7 @@ jobs:
         id: copy
         run: |
           mkdir -p ./doc
-          cp -r builddir/src/doc/sage/pdf doc/
+          cp -r builddir/src/doc/pdf doc/
           # Zip everything for increased performance
           zip -r doc-pdf.zip doc
 
