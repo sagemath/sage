@@ -32,12 +32,12 @@ from sage.matrix.constructor import matrix
 class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
                              metaclass=InheritComparisonClasscallMetaclass):
     r"""
-    This class represents Drinfeld `\GF_q[T]`-module morphisms.
+    This class represents Drinfeld `\GF{q}[T]`-module morphisms.
 
-    Let `\phi` and `\psi` be two Drinfeld `\GF_q[T]`-modules over
+    Let `\phi` and `\psi` be two Drinfeld `\GF{q}[T]`-modules over
     a field `K`. A *morphism of Drinfeld modules* `\phi \to \psi` is an
     Ore polynomial `f \in K\{\tau\}` such that `f \phi_a = \psi_a f` for
-    every `a \in \GF_q[T]`. In our case, this is equivalent to `f
+    every `a \in \GF{q}[T]`. In our case, this is equivalent to `f
     \phi_T = \psi_T f`. An *isogeny* is a nonzero morphism.
 
     To create a morphism object, the user should never explicitly

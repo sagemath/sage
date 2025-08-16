@@ -36,7 +36,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 class DrinfeldModule_finite(DrinfeldModule):
     r"""
-    This class implements finite Drinfeld `\GF_q[T]`-modules.
+    This class implements finite Drinfeld `\GF{q}[T]`-modules.
 
     A *finite Drinfeld module* is a Drinfeld module whose base field is
     finite. In this case, the function field characteristic is a prime
@@ -262,7 +262,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism.
 
-        Let `\GF_q` be the base field of the function ring. The
+        Let `\GF{q}` be the base field of the function ring. The
         *characteristic polynomial* `\chi` *of the Frobenius endomorphism*
         is defined in [Gek1991]_. An important feature of this
         polynomial is that it is monic, univariate, and has coefficients
@@ -275,7 +275,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         characteristic polynomial of the Frobenius endomorphism, and
         let `\tau^n` be the Ore polynomial that defines the Frobenius
         endomorphism of `\phi`; by definition, `n` is the degree of `K`
-        over the base field `\GF_q`. Then we have
+        over the base field `\GF{q}`. Then we have
 
         .. MATH::
 
@@ -300,7 +300,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
             - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
               central simple algebra (CSA) over
-              `\GF_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+              `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
             - ``'crystalline'`` -- it uses the action of the Frobenius
               on the crystalline cohomology (see [MS2023]_).
             - ``'gekeler'`` -- it tries to identify coefficients by
@@ -449,7 +449,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Crystalline cohomology.
 
-        The algorithm works for Drinfeld `\GF_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank.
 
         This method is private and should not be directly called.
@@ -471,7 +471,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         the reduced characteristic polynomial of the Ore polynomial
         `\phi_T`. This algorithm is particularly interesting when the
         rank of the Drinfeld module is large compared to the degree
-        of the extension `K/\GF_q`. See [CL2023]_.
+        of the extension `K/\GF{q}`. See [CL2023]_.
         """
         E = self._base
         EZ = PolynomialRing(E, name='Z')
@@ -501,7 +501,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Crystalline cohomology.
 
-        The algorithm works for Drinfeld `\GF_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank.
 
         This method is private and should not be directly called.
@@ -563,7 +563,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Gekeler's algorithm.
 
-        The algorithm works for Drinfeld `\GF_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank, provided that the constant coefficient is a generator
         of the base field.
 
@@ -644,7 +644,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Return the characteristic polynomial of the Frobenius
         endomorphism using Motivic cohomology.
 
-        The algorithm works for Drinfeld `\GF_q[T]`-modules of
+        The algorithm works for Drinfeld `\GF{q}[T]`-modules of
         any rank.
 
         This method is private and should not be directly called.
@@ -695,11 +695,11 @@ class DrinfeldModule_finite(DrinfeldModule):
         .. MATH::
 
             a_0 = (-1)^{nr - n -r}
-                  \mathrm{Norm}_{K/\GF_q}(\Delta)^{-1}
+                  \mathrm{Norm}_{K/\GF{q}}(\Delta)^{-1}
                   p^{n / \mathrm{deg}(p)},
 
         where `K` is the ground field, which as degree `n` over
-        `\GF_q`, `r` is the rank of the Drinfeld module,
+        `\GF{q}`, `r` is the rank of the Drinfeld module,
         and `\Delta` is the leading coefficient of the generator.
         This formula is given in Theorem~4.2.7 of [Pap2023]_.
 
@@ -764,7 +764,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         Let `C(X) = \sum_{i=0}^r a_iX^{i}` denote the characteristic
         polynomial of the Frobenius endomorphism. The Frobenius trace
         is `-a_{r-1}`. This is an element of the regular function ring
-        and if `n` is the degree of the base field over `\GF_q`,
+        and if `n` is the degree of the base field over `\GF{q}`,
         then the Frobenius trace has degree at most `\frac{n}{r}`.
 
         INPUT:
@@ -778,7 +778,7 @@ class DrinfeldModule_finite(DrinfeldModule):
 
             - ``'CSA'`` -- it exploits the fact that `K\{\tau\}` is a
               central simple algebra (CSA) over
-              `\GF_q[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
+              `\GF{q}[\text{Frob}_\phi]` (see Chapter 4 of [CL2023]_).
             - ``'crystalline'`` -- it uses the action of the Frobenius
               on the crystalline cohomology (see [MS2023]_).
 
