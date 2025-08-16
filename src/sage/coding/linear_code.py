@@ -2403,6 +2403,7 @@ class LinearCode(AbstractLinearCode):
     def intersection(self, other):
         """
         Return the intersection of this linear code with another.
+
         The intersection of two linear codes C1 and C2 is the set of all
         codewords that are in both C1 and C2. It is also a linear code.
 
@@ -2415,7 +2416,8 @@ class LinearCode(AbstractLinearCode):
         OUTPUT:
         - a linear code, the intersection of self and other.
 
-        EXAMPLES:
+        .. EXAMPLES::
+
             sage: F = GF(2)
             sage: G1 = matrix(F, [[1,1,0,0], [0,0,1,1]])
             sage: C1 = LinearCode(G1)
@@ -2428,7 +2430,7 @@ class LinearCode(AbstractLinearCode):
             sage: c in C_int
             True
 
-        # Test intersection with the zero code
+            # Test intersection with the zero code
             sage: C_zero = LinearCode(matrix(F, [[0,0,0,0]]))
             sage: C1.intersection(C_zero)
             [4, 0] linear code over GF(2)
