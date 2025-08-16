@@ -7,6 +7,7 @@
 import json
 import logging
 import os
+import sys
 import time
 
 # Import setuptools before importing distutils, so that setuptools
