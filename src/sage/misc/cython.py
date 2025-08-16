@@ -355,7 +355,7 @@ def cython(filename, verbose=0, compile_message=False,
 
     # Now do the actual build, directly calling Cython and distutils
     import logging
-    
+
     # Configure logging verbosity level equivalent to distutils.log.set_verbosity
     if verbose == 0:
         logging.getLogger().setLevel(logging.WARNING)
