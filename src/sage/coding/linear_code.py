@@ -2430,10 +2430,11 @@ class LinearCode(AbstractLinearCode):
             sage: c in C_int
             True
 
-            # Test intersection with the zero code
-            sage: C_zero = LinearCode(matrix(F, [[0,0,0,0]]))
-            sage: C1.intersection(C_zero)
-            [4, 0] linear code over GF(2)
+            # Test intersection with the zero code::
+
+                sage: C_zero = LinearCode(matrix(F, [[0,0,0,0]]))
+                sage: C1.intersection(C_zero)
+                [4, 0] linear code over GF(2)
         """
         if not isinstance(other, AbstractLinearCode):
             raise TypeError("Intersection is only defined between linear codes.")
