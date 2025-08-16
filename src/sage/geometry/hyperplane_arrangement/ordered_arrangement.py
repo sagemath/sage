@@ -400,13 +400,13 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             (0, 0, 0, 0, 0)
             sage: A4.<t1, t2, t3, t4> = OrderedHyperplaneArrangements(QQ)
             sage: H = A4(hyperplane_arrangements.braid(4))
-            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()
+            sage: G4 = H.projective_fundamental_group(); G4.sorted_presentation()  # long time (:issue:`39569`)
             Finitely presented group
             < x0, x1, x2, x3, x4 | x4^-1*x3^-1*x2^-1*x3*x4*x0*x2*x0^-1,
                                    x4^-1*x2^-1*x4*x2, x4^-1*x1^-1*x0^-1*x1*x4*x0,
                                    x4^-1*x1^-1*x0^-1*x4*x0*x1,
                                    x3^-1*x2^-1*x1^-1*x0^-1*x3*x0*x1*x2, x3^-1*x1^-1*x3*x1 >
-            sage: G4.abelian_invariants()
+            sage: G4.abelian_invariants()  # long time (:issue:`39569`)
             (0, 0, 0, 0, 0)
 
             sage: # needs sirocco

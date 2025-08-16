@@ -38,7 +38,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.affine.affine_point import SchemeMorphism_point_affine
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.schemes.projective.projective_space import ProjectiveSpace
-from sage.structure.all import Sequence
+from sage.structure.sequence import Sequence
 from sage.structure.element import Matrix
 
 from .con_field import ProjectiveConic_field

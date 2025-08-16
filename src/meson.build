@@ -151,18 +151,18 @@ endif
 # Cannot be found via pkg-config
 mtx = cc.find_library(
   'mtx',
-  required: false,
+  required: get_option('meataxe'),
   disabler: true,
   has_headers: ['meataxe.h'],
 )
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
-# We actually want >= 20231212, but the version number is not updated in the pkgconfig
-# https://github.com/conda-forge/eclib-feedstock/issues/48
-ec = dependency('eclib', version: '>=20231211', required: false, disabler: true)
-if not ec.found()
-  ec = cc.find_library('ec', required: false, disabler: true)
-endif
+ec = dependency(
+  'eclib',
+  version: '>=20250122',
+  required: get_option('eclib'),
+  disabler: true,
+)
 ecm = cc.find_library('ecm', required: not is_windows, disabler: true)
 gmpxx = dependency('gmpxx', required: not is_windows, disabler: true)
 fflas = dependency(

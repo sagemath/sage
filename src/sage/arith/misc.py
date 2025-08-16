@@ -1705,7 +1705,7 @@ class Sigma:
             124.0
         """
         v = [(n, sigma(n, k)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -3193,7 +3193,7 @@ class Euler_Phi:
             46.0
         """
         v = [(n, euler_phi(n)) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -4743,7 +4743,7 @@ class Moebius:
         """
         values = self.range(xmin, xmax + 1)
         v = [(n, values[n - xmin]) for n in range(xmin, xmax + 1)]
-        from sage.plot.all import list_plot
+        from sage.plot.plot import list_plot
         P = list_plot(v, pointsize=pointsize, rgbcolor=rgbcolor, **kwds)
         if join:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7, 0.7, 0.7), **kwds)
@@ -5271,7 +5271,7 @@ def falling_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x - i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + 1) / gamma(x - a + 1)
 
 
@@ -5363,7 +5363,7 @@ def rising_factorial(x, a):
         (isinstance(a, Expression) and
          a.is_integer())) and a >= 0:
         return prod(((x + i) for i in range(a)), z=x.parent().one())
-    from sage.functions.all import gamma
+    from sage.functions.gamma import gamma
     return gamma(x + a) / gamma(x)
 
 

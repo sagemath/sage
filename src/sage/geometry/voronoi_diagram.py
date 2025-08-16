@@ -280,7 +280,10 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
-        from sage.plot.all import line, point, rainbow, plot
+        from sage.plot.line import line
+        from sage.plot.point import point
+        from sage.plot.colors import rainbow
+        from sage.plot.plot import plot
 
         if self.ambient_dim() == 2:
             S = line([])

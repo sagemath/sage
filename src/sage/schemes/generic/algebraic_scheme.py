@@ -124,7 +124,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.misc.latex import latex
 from sage.misc.misc import is_iterator
 
-from sage.structure.all import Sequence
+from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.arith.functions import lcm

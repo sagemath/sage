@@ -256,7 +256,7 @@ def plot_vector_field(f_g, xrange, yrange, **options):
         sphinx_plot(g)
     """
     f, g = f_g
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     z, ranges = setup_for_eval_on_grid([f, g], [xrange, yrange],
                                        options['plot_points'])

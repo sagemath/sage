@@ -246,11 +246,11 @@ class OEIS:
       - a list representing a sequence of integers.
       - a string, representing a text search.
 
-    - ``max_results`` -- (integer, default: 30) the maximum number of
+    - ``max_results`` -- integer (default: 30); the maximum number of
       results to return, they are sorted according to their relevance. In
       any cases, the OEIS website will never provide more than 100 results.
 
-    - ``first_result`` -- (integer, default: 0) allow to skip the
+    - ``first_result`` -- integer (default: 0); allow to skip the
       ``first_result`` first results in the search, to go further.
       This is useful if you are looking for a sequence that may appear
       after the 100 first found sequences.
@@ -448,11 +448,11 @@ class OEIS:
 
         - ``description`` -- string; the description the searched sequences
 
-        - ``max_results`` -- (integer, default: 3) the maximum number of results
+        - ``max_results`` -- integer (default: 3); the maximum number of results
           we want. In any case, the on-line encyclopedia will not return more
           than 100 results.
 
-        - ``first_result`` -- (integer, default: 0) allow to skip the
+        - ``first_result`` -- integer (default: 0); allow to skip the
           ``first_result`` first results in the search, to go further.
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.

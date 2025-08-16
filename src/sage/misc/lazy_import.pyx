@@ -36,6 +36,23 @@ that (s)he can remove the flag::
     UserWarning: Option ``at_startup=True`` for lazy import ZZ not needed anymore
     Integer Ring
 
+.. WARNING::
+
+    After the first usage, the imported object is directly injected into the
+    namespace; however, before that, the :class:`LazyImport` object
+    is not exactly equivalent to the actual imported object. For example::
+
+        sage: from sage.misc.lazy_import import LazyImport
+        sage: my_qqbar = LazyImport('sage.rings.qqbar', 'QQbar')
+        sage: my_qqbar(5) == QQbar(5)  # good
+        True
+        sage: isinstance(QQbar, Parent)
+        True
+        sage: isinstance(my_qqbar, Parent)  # fails!
+        False
+
+    To avoid this issue, you may execute the import inside the function instead.
+
 .. SEEALSO:: :func:`lazy_import`, :class:`LazyImport`
 
 AUTHOR:

@@ -27,7 +27,7 @@ from collections.abc import Iterable
 from sage.matrix.constructor import Matrix
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.all import SageObject
+from sage.structure.sage_object import SageObject
 from operator import itemgetter
 
 

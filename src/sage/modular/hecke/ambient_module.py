@@ -25,12 +25,12 @@ from . import submodule
 from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.rings.integer import Integer
 
-import sage.arith.all as arith
+import sage.arith.misc as arith
 
 import sage.matrix.matrix_space as matrix_space
 from sage.matrix.constructor import matrix
 
-from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0 # for Sturm bound
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0  # for Sturm bound
 
 
 def is_AmbientHeckeModule(x) -> bool:

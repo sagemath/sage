@@ -3131,7 +3131,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot([4, 3+I, I, 1+5*i, None, 1+i])
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import point
+    from sage.plot.point import point
     try:
         if not data:
             return Graphics()

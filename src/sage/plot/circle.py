@@ -410,7 +410,7 @@ def circle(center, radius, **options):
 
         sage: C = circle((1,1), 1, legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
     # Otherwise matplotlib complains.

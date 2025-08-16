@@ -203,7 +203,7 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.rings.integer_ring import ZZ
-from sage.structure.all import SageObject
+from sage.structure.sage_object import SageObject
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be

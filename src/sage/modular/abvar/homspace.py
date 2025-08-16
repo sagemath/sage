@@ -176,7 +176,7 @@ AUTHORS:
 from copy import copy
 
 from sage.categories.homset import HomsetWithBase
-from sage.structure.all import parent
+from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.misc.lazy_attribute import lazy_attribute
 

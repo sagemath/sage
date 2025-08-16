@@ -455,7 +455,7 @@ class MarkovTraceModuleBasis(Enum):
         Return a description of the link corresponding to this basis element.
 
         In the case of knots it refers to the naming according to
-        `KnotInfo <https://knotinfo.math.indiana.edu/>`__.
+        `KnotInfo <https://knotinfo.org/>`__.
 
         EXAMPLES::
 

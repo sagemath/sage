@@ -5251,7 +5251,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I.plot()                         # blow up                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import implicit_plot
+        from sage.plot.contour_plot import implicit_plot
         from sage.rings.real_mpfr import RR
 
         K = self.base_ring()
