@@ -265,13 +265,37 @@ class DocBuilder():
             with open(tex_file, 'w') as f:
                 f.write(ref)
 
-        make_target = "cd '%s' && $MAKE %s && mv -f *.pdf '%s'"
-        error_message = "failed to run $MAKE %s in %s"
+        make_cmd = os.environ.get('MAKE', 'make')
         command = 'all-pdf'
+        logger.debug(f"Running {make_cmd} {command} in {tex_dir}")
 
-        if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
-            raise RuntimeError(error_message % (command, tex_dir))
-        logger.warning(f"Build finished. The built documents can be found in {pdf_dir}.")
+        proc = subprocess.run(
+            [make_cmd, command],
+            check=False, cwd=tex_dir,
+            capture_output=True,
+            text=True,
+        )
+
+        if proc.returncode != 0:
+            logger.error(f"stdout from {make_cmd}:\n{proc.stdout}")
+            logger.error(f"stderr from {make_cmd}:\n{proc.stderr}")
+            raise RuntimeError(f"failed to run {make_cmd} {command} in {tex_dir}")
+
+        if proc.stdout:
+            logger.debug(f"make stdout:\n{proc.stdout}")
+        if proc.stderr:
+            # Still surface stderr even on success, but at debug level
+            logger.debug(f"make stderr:\n{proc.stderr}")
+
+        # Move generated PDFs
+        for pdf in tex_dir.glob("*.pdf"):
+            try:
+                shutil.move(str(pdf), pdf_dir)
+            except Exception as e:
+                logger.error(f"Failed moving {pdf} to {pdf_dir}: {e}")
+                raise
+
+        logger.info(f"Build finished. The built documents can be found in {pdf_dir}.")
 
     def clean(self, *args):
         shutil.rmtree(self._doctrees_dir())

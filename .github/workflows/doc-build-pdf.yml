@@ -2,18 +2,20 @@ name: Build documentation (PDF)
 
 on:
   pull_request:
+  merge_group:
   push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+    branches:
+      - develop
   workflow_dispatch:
     # Allow to run manually
-    inputs:
-      platform:
-        description: 'Platform'
-        required: true
-        default: 'ubuntu-noble-standard'
-      docker_tag:
-        description: 'Docker tag'
-        required: true
-        default: 'dev'
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
@@ -21,129 +23,72 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Same as in build.yml
-  TOX_ENV:                "docker-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-incremental"
-  BUILD_IMAGE:            "localhost:5000/${{ github.repository }}/sage-${{ github.event.inputs.platform || 'ubuntu-noble-standard' }}-with-targets:ci"
-  FROM_DOCKER_REPOSITORY: "ghcr.io/sagemath/sage/"
-  FROM_DOCKER_TARGET:     "with-targets"
-  FROM_DOCKER_TAG:        ${{ github.event.inputs.docker_tag || 'dev'}}
-  EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
+  PYTHON_VERSION: 3.11
 
 jobs:
-  build-doc-pdf:
+  doc-pdf:
     runs-on: ubuntu-latest
-    services:
-      # https://docs.docker.com/build/ci/github-actions/local-registry/
-      registry:
-        image: registry:2
-        ports:
-          - 5000:5000
     steps:
-      - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v10
-        with:
-          # need space in /var for Docker images
-          root-reserve-mb:      30000
-          remove-dotnet:        true
-          remove-android:       true
-          remove-haskell:       true
-          remove-codeql:        true
-          remove-docker-images: true
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install test prerequisites
-        # From docker.yml
-        run: |
-          sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
-          sudo apt-get clean
-          df -h
+
       - name: Merge CI fixes from sagemath/sage
         run: |
-          mkdir -p upstream
-          .github/workflows/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
-          SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-      # Building
+      - name: Cache conda packages
+        uses: actions/cache@v4
+        with:
+          path: ~/conda_pkgs_dir
+          key:
+            ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
+  
+      - name: Compiler cache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ runner.os }}-meson-${{ env.PYTHON_VERSION }}
 
-      - name: Generate Dockerfile
-        # From docker.yml
+      - name: Setup Conda environment
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          # Disabled for now due to
+          # https://github.com/conda-incubator/setup-miniconda/issues/379
+          # miniforge-version: latest
+          use-mamba: true
+          channels: conda-forge
+          channel-priority: true
+          activate-environment: sage-dev
+          environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
+        
+      - name: Build Sage
+        shell: bash -l {0}
         run: |
-          tox -e ${{ env.TOX_ENV }}
-          cp .tox/${{ env.TOX_ENV }}/Dockerfile .
+          export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
+          export CC="ccache $CC"
+          export CXX="ccache $CXX"
+          pip install --no-build-isolation --config-settings=builddir=builddir . -v
+
+      - name: Build documentation
+        shell: bash -l {0}
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive sudo apt-get install texlive-latex-base
+          meson compile -C builddir doc-pdf
         env:
-          # Only generate the Dockerfile, do not run 'docker build' here
-          DOCKER_TARGETS: ""
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          driver-opts: network=host
-
-      - name: Build Docker image
-        id: image
-        uses: docker/build-push-action@v6
-        with:
-          # push and load may not be set together at the moment
-          push:       true
-          load:       false
-          context:    .
-          tags:       ${{ env.BUILD_IMAGE }}
-          target:     with-targets
-          cache-from: type=gha
-          cache-to:   type=gha,mode=max
-          build-args: |
-            NUMPROC=6
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
-            TARGETS_PRE=build/make/Makefile
-            TARGETS=ci-build-with-fallback
-
-      - name: Start container
-        id: container
-        # Try to continue when "exporting to GitHub Actions Cache" failed with timeout
-        if: (success() || failure())
-        run: |
-          docker run --name BUILD -dit \
-                     --mount type=bind,src=$(pwd),dst=$(pwd) \
-                     --workdir $(pwd) \
-                     ${{ env.BUILD_IMAGE }} /bin/sh
-
-      #
-      # On PRs and pushes to branches
-      #
-
-      - name: Update system packages
-        id: packages
-        if: (success() || failure()) && steps.container.outcome == 'success'
-        run: |
-          export PATH="build/bin:$PATH"
-          eval $(sage-print-system-package-command auto update)
-          eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
-          eval $(sage-print-system-package-command auto --spkg --yes --no-install-recommends install git texlive texlive_luatex free_fonts xindy)
-        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
-
-      - name: Build doc (PDF)
-        id: docbuild
-        if: (success() || failure()) && steps.packages.outcome == 'success'
-        run: |
-          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
-          make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
-        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
+          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
       - name: Copy doc
         id: copy
-        if: (success() || failure()) && steps.docbuild.outcome == 'success'
         run: |
           mkdir -p ./doc
-          # We copy everything to a local folder
-          docker cp BUILD:/sage/local/share/doc/sage/pdf doc
+          cp -r builddir/src/doc/sage/pdf doc/
           # Zip everything for increased performance
           zip -r doc-pdf.zip doc
 
       - name: Upload doc
-        if: (success() || failure()) && steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: doc-pdf

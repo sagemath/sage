@@ -168,6 +168,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("symengine", "python-symengine")
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
+        .replace("pkg:generic/latexmk", "latexmk")
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -177,6 +178,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "sagemath_giac",
         "pynormaliz",  # due to https://github.com/sagemath/sage/issues/40214
         "latte-integrale",  # due to https://github.com/sagemath/sage/issues/40216
+        "pkg:generic/lualatex", # texlive-core doesn't include lualatex
     }
     if platform in ("linux-aarch64", "osx-arm64"):
         exclude_packages |= {
