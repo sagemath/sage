@@ -128,11 +128,8 @@ build-requires = [
 host-requires = [
   "virtual:interface/blas",
   "virtual:compiler/fortran",
-<<<<<<< HEAD
   "pkg:generic/brial",
-=======
   "pkg:generic/boost",
->>>>>>> origin/develop
   "pkg:generic/cddlib",
   "pkg:generic/cliquer",
   "pkg:generic/ecl",
@@ -184,7 +181,6 @@ dependencies = [
 
 [external.optional-host-requires]
 extra = [
-  "pkg:generic/boost",
   "pkg:generic/bliss",
   "pkg:generic/brial",
   "pkg:generic/coxeter3",
