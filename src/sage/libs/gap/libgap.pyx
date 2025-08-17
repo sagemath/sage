@@ -163,30 +163,32 @@ Using the GAP C library from Cython
    We are using the GAP API provided by the GAP project since
    GAP 4.10.
 
+
    One unusual aspect of this interface is its signal handling.
    Typically, cysignals' ``sig_on()`` and ``sig_off()`` functions are
-   used to wrap code that may take a long time, and, as a result, may
-   need to be interrupted with Ctrl-C. Those functions are implemented
-   with setjmp and longjmp however, and cause hard-to-diagnose issues
-   arising from their interaction with ``GAP_enter()`` and
-   ``GAP_Leave()`` -- also implemented via setjmp and longjmp. This
-   has lead to many segfaults when GAP errors are raised, or when
-   Ctrl-C is used to interrupt GAP computations.
+   used to wrap code that may take a long time, and as a result, may
+   need to be interrupted with Ctrl-C. However, it is possible that
+   interrupting a function execution at an arbitrary location will
+   lead to inconsistent state. Internally, GAP provides a mechanism
+   using ``InterruptExecStat``, which sets a flag that tells GAP to
+   gracefully exit with an error as early as possible. We make use of
+   this internal mechanism to prevent segmentation fault when GAP
+   functions are interrupted.
 
-   The approach we are using instead is to install GAP's own
-   ``SIGINT`` handler (to catch Ctrl-C) before executing any
-   long-running GAP code, and then to later uninstall it when the GAP
-   code has finished. This is accomplished using the
-   suggestively-named ``gap_sig_on()`` and ``gap_sig_off()``
-   functions. After you have called ``gap_sig_on()``, if GAP receives
-   Ctrl-C, it will invoke our custom ``error_handler()`` that will
-   raise a :exc:`sage.libs.gap.util.GAPError` containing the phrase
-   "user interrupt". As a result you will often find GAP code
-   sandwiched between ``gap_sig_on()`` and ``gap_sig_off()``, in a
-   ``try/except`` block, with special handling for these GAP
-   errors. The goal is to catch and re-raise them as
-   :exc:`KeyboardInterrupt` so that they can be caught in user code
-   just like you would with a cysignals interrupt.
+   Specifically, we install GAP's own ``SIGINT`` handler (to catch
+   Ctrl-C) before executing any long-running GAP code, and then later
+   reinstall the original handler when the GAP code has finished. This
+   is accomplished using the suggestively-named ``gap_sig_on()`` and
+   ``gap_sig_off()`` functions. After you have called
+   ``gap_sig_on()``, if GAP receives Ctrl-C, it will invoke our custom
+   ``error_handler()`` that will raise a
+   :exc:`sage.libs.gap.util.GAPError` containing the phrase "user
+   interrupt". As a result you will often find GAP code sandwiched
+   between ``gap_sig_on()`` and ``gap_sig_off()``, in a ``try/except``
+   block, with special handling for these GAP errors. The goal is to
+   catch and re-raise them as :exc:`KeyboardInterrupt` so that they
+   can be caught in user code just like you would with a cysignals
+   interrupt.
 
    Before you attempt to change any of this, please make sure that you
    understand the issues that it is intended to fix, e.g.
