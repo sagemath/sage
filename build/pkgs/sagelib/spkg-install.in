@@ -46,15 +46,14 @@ SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["pur
 # does not shadow the namespace package sage during the build.
 (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
 if [ "$SAGE_EDITABLE" = yes ]; then
-    # Check if this is an incremental build by looking for existing editable install
-    if python3 -c "import importlib.metadata; importlib.metadata.distribution('sagemath-standard')" 2>/dev/null && \
-       python3 -c "import sage; import os; exit(0 if os.path.exists(os.path.join(os.path.dirname(sage.__file__), '..', 'setup.py')) else 1)" 2>/dev/null; then
-        echo "Detected existing editable install - performing incremental build"
+    # Check if we already have an editable install
+    if ls "$SITEPACKAGESDIR"/__editable__*sagemath* 2>/dev/null || ls "$SITEPACKAGESDIR"/sagemath*.egg-link 2>/dev/null; then
+        echo "Detected existing editable install - performing incremental build only"
         # Use setup.py build_ext --inplace for incremental compilation
         python3 setup.py build_ext --inplace || sdh_die "Error during incremental build"
-        # No need to reinstall - editable install is already in place
+        # No reinstall needed - editable install is already in place
     else
-        echo "Performing initial editable install"
+        echo "No editable install found - performing initial editable install"
         sdh_pip_editable_install .
     fi
 
