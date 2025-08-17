@@ -27,9 +27,6 @@ cdef extern from "gap/calls.h" nogil:
 
 
 cdef extern from "gap/libgap-api.h" nogil:
-    """
-    #define sig_GAP_Enter()  {int t = GAP_Enter(); if (!t) sig_error();}
-    """
     ctypedef void (*GAP_CallbackFunc)()
     void GAP_Initialize(int argc, char ** argv,
             GAP_CallbackFunc markBagsCallback, GAP_CallbackFunc errorCallback,
@@ -40,7 +37,6 @@ cdef extern from "gap/libgap-api.h" nogil:
     cdef void GAP_EnterStack()
     cdef void GAP_LeaveStack()
     cdef int GAP_Enter() except 0
-    cdef void sig_GAP_Enter()
     cdef void GAP_Leave()
     cdef int GAP_Error_Setjmp() except 0
 
