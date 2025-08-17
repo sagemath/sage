@@ -12,8 +12,9 @@ Utility functions for GAP
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from libc.signal cimport signal, SIGCHLD, SIG_DFL
+from libc.signal cimport signal, SIGALRM, SIGCHLD, SIG_DFL, SIGINT
 from posix.dlfcn cimport dlopen, dlclose, dlerror, RTLD_LAZY, RTLD_GLOBAL
+from posix.signal cimport sigaction, sigaction_t, sigemptyset
 
 from cpython.exc cimport PyErr_Fetch, PyErr_Restore
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
@@ -180,6 +181,12 @@ MakeReadOnlyGlobal("ERROR_OUTPUT");
 MakeImmutable(libgap_errout);
 """
 
+# "Global" signal handler info structs. The GAP one we enable/disable
+# before/after GAP code. The Sage ones we use to store the existing
+# handlers before we do that.
+cdef sigaction_t gap_sigint_sa
+cdef sigaction_t sage_sigint_sa
+cdef sigaction_t sage_sigalrm_sa
 
 cdef initialize():
     """
@@ -259,10 +266,22 @@ cdef initialize():
     argv[argc] = NULL
 
     sig_on()
-    # Initialize GAP but disable their SIGINT handler
+    # Initialize GAP but disable its signal handlers: we only want
+    # them to be invoked while libgap code is executing, whereas the
+    # default would enable them globally. We will explicitly wrap GAP
+    # computations in gap_sig_on() and gap_sig_off() instead.
     GAP_Initialize(argc, argv, gasman_callback, error_handler,
                    handleSignals=False)
     sig_off()
+
+    # Configure a SIGINT handler (which can be enabled by calling
+    # gap_sig_on) to run InterruptExecStat. This is essentially GAP's
+    # own SIGINT handler (but without the double-Ctrl-C behavior), and
+    # is less crashy than when we mix cysignals with GAP code.
+    global gap_sigint_sa
+    gap_sigint_sa.sa_handler = <void (*)(int) noexcept>InterruptExecStat
+    sigemptyset(&(gap_sigint_sa.sa_mask))
+    gap_sigint_sa.sa_flags = 0;
 
     # Disable GAP's SIGCHLD handler ChildStatusChanged(), which calls
     # waitpid() on random child processes.
@@ -283,6 +302,23 @@ cdef initialize():
             f.close()
             gap_eval('SaveWorkspace("{0}")'.format(f.name))
 
+cpdef void gap_sig_on() noexcept:
+    # Install GAP's own SIGINT handler, typically for the duration of
+    # some libgap commands. We install it for SIGALRM too so that the
+    # doctest runner can use alarm() to interrupt it.
+    global gap_sigint_sa
+    global sage_sigint_sa
+    global sage_sigalrm_sa
+    sigaction(SIGINT, &gap_sigint_sa, &sage_sigint_sa)
+    sigaction(SIGALRM, &gap_sigint_sa, &sage_sigalrm_sa)
+
+cpdef void gap_sig_off() noexcept:
+    # Restore the Sage handlers that were saved & overwritten in
+    # gap_sig_on(). Better make sure the two are paired correctly!
+    global sage_sigint_sa
+    global sage_sigalrm_sa
+    sigaction(SIGINT, &sage_sigint_sa, NULL)
+    sigaction(SIGALRM, &sage_sigalrm_sa, NULL)
 
 ############################################################################
 ### Evaluate string in GAP #################################################
