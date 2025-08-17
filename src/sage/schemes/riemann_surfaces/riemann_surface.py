@@ -205,9 +205,9 @@ def bisect(L, t):
 
     - ``t`` -- real number between `t_0` and `t_n`
 
-    OUTPUT: 
-    
-    Integer; the index ``i`` such that ``L[i][0] <= t < L[i+1][0]``. If ``t`` 
+    OUTPUT:
+
+    Integer; the index ``i`` such that ``L[i][0] <= t < L[i+1][0]``. If ``t``
     equals ``L[i][0]`` exactly, then ``i`` is returned.
 
     EXAMPLES:
@@ -312,23 +312,6 @@ def differential_basis_baker(f):
     that is nonsingular outside the coordinate points at infinity
     (1:0:0), (0:1:0), and (0:0:1).
 
-    Baker's theorem tells us that if a curve has its singularities at 
-    the coordinate vertices and meets some further easily tested 
-    genericity criteria, then we can read off a basis for the regular 
-    differentials from the interior of the Newton polygon spanned by 
-    the monomials. While this theorem only applies to special plane curves 
-    it is worth implementing because the analysis is relatively cheap 
-    and it applies to a lot of commonly encountered curves (e.g., 
-    curves given by a hyperelliptic model). Other advantages include 
-    that we can do the computation over any exact base ring 
-    (the alternative Singular based method requires rationals).
-
-    This approach is advantageous for curves meeting these criteria (e.g.,
-    many hyperelliptic curves) because it is computationally inexpensive,
-    can be performed over any exact base ring (unlike some Singular-based
-    methods requiring rationals), and avoids potential issues with external
-    library routines.
-
     INPUT:
 
     - ``f`` -- a bivariate polynomial defining the plane curve.
@@ -356,6 +339,25 @@ def differential_basis_baker(f):
         True
         sage: differential_basis_baker(x^2+y^2-1) # Genus 0 curve
         []
+
+    .. NOTE::
+
+        Baker's theorem tells us that if a curve has its singularities at
+        the coordinate vertices and meets some further easily tested
+        genericity criteria, then we can read off a basis for the regular
+        differentials from the interior of the Newton polygon spanned by
+        the monomials. While this theorem only applies to special plane curves
+        it is worth implementing because the analysis is relatively cheap
+        and it applies to a lot of commonly encountered curves (e.g.,
+        curves given by a hyperelliptic model). Other advantages include
+        that we can do the computation over any exact base ring
+        (the alternative Singular based method requires rationals).
+
+        This approach is advantageous for curves meeting these criteria (e.g.,
+        many hyperelliptic curves) because it is computationally inexpensive,
+        can be performed over any exact base ring (unlike some Singular-based
+        methods requiring rationals), and avoids potential issues with external
+        library routines.
 
     TESTS::
 
@@ -438,9 +440,9 @@ def reparameterize_differential_minpoly(minpoly, z0):
     r"""
     Reparameterize a differential's minimal polynomial around a new point `z_0`.
 
-    Given a minimal polynomial `m(z,g)` for a differential `g dz`, 
-    we compute the minimal polynomial for the same differential expressed 
-    in local coordinates around the point `z_0`. The transformation uses 
+    Given a minimal polynomial `m(z,g)` for a differential `g dz`,
+    we compute the minimal polynomial for the same differential expressed
+    in local coordinates around the point `z_0`. The transformation uses
     `\bar{z} = z - z_0` for finite `z_0`, or `\bar{z} = z^{-1}` when `z_0 = \infty`.
 
     INPUT:
@@ -451,9 +453,9 @@ def reparameterize_differential_minpoly(minpoly, z0):
     - ``z0`` -- complex number or infinity; the center point for the new
       local coordinate system
 
-    OUTPUT: 
-    
-    Polynomial in two variables (with names ending in "bar") giving 
+    OUTPUT:
+
+    Polynomial in two variables (with names ending in "bar") giving
     the reparameterized minimal polynomial
 
     EXAMPLES:
@@ -800,7 +802,7 @@ class RiemannSurface:
 
         A list of complex numbers, representing the distinct solutions ``w`` to
         ``f(z0, w) = 0``. The length of the list is typically ``self.degree``
-        (the degree of `f` in `w`). At ramification points, the list will contain 
+        (the degree of `f` in `w`). At ramification points, the list will contain
         fewer than ``self.degree`` distinct values.
 
         EXAMPLES::
@@ -2391,8 +2393,8 @@ class RiemannSurface:
         r"""
         Compute the period matrix of the surface.
 
-        OUTPUT: 
-        
+        OUTPUT:
+
         A ``Matrix`` over a complex field, representing the period matrix
         of the combined surface.
 
@@ -2433,8 +2435,8 @@ class RiemannSurface:
         r"""
         Compute the Riemann matrix.
 
-        OUTPUT: 
-        
+        OUTPUT:
+
         A ``Matrix`` over a complex field, representing the Riemann matrix
         of the combined surface.
 
@@ -3970,7 +3972,7 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     OUTPUT:
 
     A list of `2*g \times 2*h` integer matrices (where `g` and `h` are
-    the dimensions of `M1` and `M2` respectively). When `r` and `b-r` are 
+    the dimensions of `M1` and `M2` respectively). When `r` and `b-r` are
     chosen to be sufficiently large, these matrices form a `\ZZ`-basis for the
     module of transformations `(D, B; C, A)` satisfying the condition.
 
