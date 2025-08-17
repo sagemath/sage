@@ -1360,7 +1360,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
             return plot_slope_field(de, (ivar, XMIN, XMAX), (dvar, YMIN, YMAX)) + R
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
-        from sage.calculus.all import diff
+        from sage.calculus.functional import diff
         from sage.symbolic.relation import solve
         from sage.symbolic.ring import SR
         if isinstance(de, Expression) and de.is_relational():
