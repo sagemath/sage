@@ -292,7 +292,7 @@ During the compilation of Sage from source, the HTML version of the
 documentation is also built in the process. To build the HTML version
 of the documentation, issue the following command from ``SAGE_ROOT``:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ ./sage --docbuild --no-pdf-links all html
 
@@ -300,14 +300,14 @@ Building the PDF version requires that your system has a working LaTeX
 installation. To build the PDF version of the documentation, issue the
 following command from ``SAGE_ROOT``:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ ./sage --docbuild all pdf
 
 For more command line options, refer to the output of any of the
 following commands:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ ./sage --help
     $ ./sage --advanced

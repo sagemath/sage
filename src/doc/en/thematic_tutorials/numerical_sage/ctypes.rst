@@ -38,7 +38,7 @@ As an example suppose you write the following simple C program
 which you want to call from python. First make a shared object
 library by doing (at the command line)
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ gcc -c sum.c
     $ gcc -shared -o sum.so sum.o
@@ -160,7 +160,7 @@ this.
 
 We can compile it by running at the command line
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
      $ gcc -c laplace.c
      $ gcc -shared -o laplace.so laplace.o

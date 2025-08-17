@@ -334,7 +334,7 @@ crystals.
 ``dot2tex`` is an optional package of sage and the latest version
 can be installed via:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sage -i dot2tex
 

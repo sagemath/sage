@@ -707,7 +707,7 @@ Python（以及 Sage）提供了几种性能分析工具和方法，
 
 在系统终端中，输入
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 

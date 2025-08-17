@@ -172,7 +172,7 @@ available, start a Jupyter notebook and look for the kernel named
 Alternatively, you can use the following command to check which kernels are
 available:
 
-.. code-block:: shell-session
+.. code-block:: shell
 
     $ jupyter kernelspec list
     Available kernels:

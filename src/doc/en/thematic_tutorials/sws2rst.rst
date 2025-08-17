@@ -26,7 +26,7 @@ using the Mac app and have placed it in your Applications directory.
 * Next, you will need an optional package to convert your worksheet.  Use the
   command:
 
-  .. CODE-BLOCK:: shell-session
+  .. CODE-BLOCK:: shell
 
       $ pip install sage-sws2rst
 
@@ -37,7 +37,7 @@ using the Mac app and have placed it in your Applications directory.
   a document in the `ReStructuredText <http://sphinx-doc.org/rest.html>`_
   format.  Be sure you are in the same directory as the worksheet:
 
-  .. CODE-BLOCK:: shell-session
+  .. CODE-BLOCK:: shell
 
       $ sage --sws2rst Tutorial.sws
 
@@ -56,13 +56,13 @@ using the Mac app and have placed it in your Applications directory.
     we will open a Sage shell session, where all appropriate Sage
     references already work properly:
 
-    .. CODE-BLOCK:: shell-session
+    .. CODE-BLOCK:: shell
 
         $ sage --sh
 
     From here, you should be able to just type:
 
-    .. CODE-BLOCK:: shell-session
+    .. CODE-BLOCK:: shell
 
         $ sphinx-quickstart
 
@@ -77,7 +77,7 @@ using the Mac app and have placed it in your Applications directory.
     Keep note of the instructions; the main other thing to do is add
     your file's name to ``index.rst``, and then just do:
 
-    .. CODE-BLOCK:: shell-session
+    .. CODE-BLOCK:: shell
 
         $ make html
 

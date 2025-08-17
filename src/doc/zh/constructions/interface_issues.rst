@@ -12,7 +12,7 @@
 
 没错，Sage 作业可以在 UNIX 系统上后台运行。通常做法是输入以下命令
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ nohup sage < command_file  > output_file &
 

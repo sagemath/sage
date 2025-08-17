@@ -791,7 +791,7 @@ visualization.
 
 On a system shell, type
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 

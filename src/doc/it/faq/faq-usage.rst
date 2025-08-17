@@ -34,7 +34,7 @@ Le sessioni di lavoro Notebook di Sage sono eseguite all'interno di
 un browser web. Puoi lanciare il Notebook di sage attraverso il
 seguente comando purché ``sage`` sia nella variabile ``PATH``
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sage -notebook
 
@@ -644,14 +644,14 @@ come questo.
 
 * Linux (assumendo che hai Sage nella cartella ``/usr/bin``):
 
-  .. CODE-BLOCK:: shell-session
+  .. CODE-BLOCK:: shell
 
     $ env BROWSER=opera /usr/bin/sage --notebook
 
 * Mac (assumendo che tu sia nella cartella dove hai scaricato Sage).
   Con il notebook Jupyter:
 
-  .. CODE-BLOCK:: shell-session
+  .. CODE-BLOCK:: shell
 
     $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
     $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter

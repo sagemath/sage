@@ -13,7 +13,7 @@ Background jobs
 Yes, a Sage job can be run in the background on a
 UNIX system. The canonical thing to do is type
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ nohup sage < command_file  > output_file &
 

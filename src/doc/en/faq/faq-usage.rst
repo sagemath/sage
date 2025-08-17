@@ -31,7 +31,7 @@ release of Sage.
 The Sage Jupyter notebook runs within a web browser. To start the notebook,
 issue the following command in a terminal, if ``sage`` is in your ``PATH``
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sage -notebook
 
@@ -61,14 +61,14 @@ needs to have a working C compiler if you want to compile Sage
 from source. On
 Debian/Ubuntu, you can install these prerequisites as follows:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sudo apt-get install build-essential m4
 
 If you have a multi-core system, you can opt for a parallel build of
 Sage. The command
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ export MAKEFLAGS='-j8'
 
@@ -79,7 +79,7 @@ cores on your system. Some Sage installations may have OpenMP-enabled BLAS
 the environment variable OMP_NUM_THREADS; however, it is known to not
 play well with Python parallelism, and you might want to
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ export OMP_NUM_THREADS=1
 
@@ -98,13 +98,13 @@ need to build Sage's Python nowadays (anno 2023), but if you do, here it is.
 Make sure you installed the Tcl/Tk development library.  On Ubuntu, this is the
 command
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sudo apt-get install tk8.5-dev
 
 or something along that line. Next, reinstall Sage's Python:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ make python3-clean python3-uninstall && make python3
 
@@ -137,7 +137,7 @@ option ``-python`` which would run your script using the version of
 Python that comes with Sage. For example, if Sage is in your ``PATH``
 variable then you can do this:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sage -python /path/to/my/script.py
 
@@ -146,7 +146,7 @@ itself. A Sage script has the file extension ``.sage`` and is more or
 less a Python script but uses Sage-specific functions and
 commands. You can then run that Sage script like so:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ sage /path/to/my/script.sage
 
@@ -458,7 +458,7 @@ When I start Sage, SELinux complains that "/path/to/libpari-gmp.so.2" requires t
 
 The problem can be fixed by running the following command:
 
-.. CODE-BLOCK:: shell-session
+.. CODE-BLOCK:: shell
 
     $ chcon -t textrel_shlib_t /path/to/libpari-gmp.so.2
 
@@ -647,14 +647,14 @@ You will need to do this from the command line.  Just run a command like this.
 
 * Linux (assuming you have Sage in ``/usr/bin``):
 
-  .. CODE-BLOCK:: shell-session
+  .. CODE-BLOCK:: shell
 
     $ env BROWSER=opera /usr/bin/sage --notebook
 
 * Mac (assuming you are in the directory of your downloaded Sage).
   With the Jupyter notebook:
 
-  .. CODE-BLOCK:: shell-session
+  .. CODE-BLOCK:: shell
 
     $ BROWSER='open -a Firefox %s' ./sage --notebook jupyter
     $ BROWSER='open -a Google\ Chrome %s' ./sage --notebook jupyter
