@@ -26035,6 +26035,7 @@ class GenericGraph(GenericGraph_pyx):
     from sage.graphs.traversals import lex_DFS
     from sage.graphs.traversals import lex_DOWN
     is_geodetic = LazyImport('sage.graphs.convexity_properties', 'is_geodetic')
+    from sage.graphs.cycle_enumeration import _all_cycles_iterator_vertex
     from sage.graphs.cycle_enumeration import _all_simple_cycles_iterator_edge
     from sage.graphs.cycle_enumeration import all_cycles_iterator
     from sage.graphs.cycle_enumeration import all_simple_cycles
