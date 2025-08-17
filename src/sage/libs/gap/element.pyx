@@ -16,12 +16,11 @@ elements. For general information about GAP, you should read the
 # ****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
-from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
-from sage.libs.gap.util import GAPError
+from sage.libs.gap.util import GAPError, gap_sig_on, gap_sig_off
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_get_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
@@ -935,13 +934,21 @@ cdef class GapElement(RingElement):
         if self._compare_by_id:
             return id(self) == id(other)
         cdef GapElement c_other = <GapElement>other
-        sig_on()
+
         try:
+            gap_sig_on()
             GAP_Enter()
             return GAP_EQ(self.value, c_other.value)
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
-            sig_off()
+            gap_sig_off()
+
 
     cdef bint _compare_less(self, Element other) except -2:
         """
@@ -957,13 +964,21 @@ cdef class GapElement(RingElement):
         if self._compare_by_id:
             return id(self) < id(other)
         cdef GapElement c_other = <GapElement>other
-        sig_on()
+
         try:
+            gap_sig_on()
             GAP_Enter()
             return GAP_LT(self.value, c_other.value)
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
-            sig_off()
+            gap_sig_off()
+
 
     cpdef _add_(self, right):
         r"""
@@ -986,12 +1001,18 @@ cdef class GapElement(RingElement):
         """
         cdef Obj result
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()
             result = GAP_SUM(self.value, (<GapElement>right).value)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         return make_any_gap_element(self.parent(), result)
 
     cpdef _sub_(self, right):
@@ -1014,12 +1035,18 @@ cdef class GapElement(RingElement):
         """
         cdef Obj result
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()
             result = GAP_DIFF(self.value, (<GapElement>right).value)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         return make_any_gap_element(self.parent(), result)
 
     cpdef _mul_(self, right):
@@ -1043,12 +1070,18 @@ cdef class GapElement(RingElement):
         """
         cdef Obj result
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()
             result = GAP_PROD(self.value, (<GapElement>right).value)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         return make_any_gap_element(self.parent(), result)
 
     cpdef _div_(self, right):
@@ -1077,12 +1110,18 @@ cdef class GapElement(RingElement):
         """
         cdef Obj result
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()
             result = GAP_QUO(self.value, (<GapElement>right).value)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         return make_any_gap_element(self.parent(), result)
 
     cpdef _mod_(self, right):
@@ -1104,12 +1143,18 @@ cdef class GapElement(RingElement):
         """
         cdef Obj result
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()
             result = GAP_MOD(self.value, (<GapElement>right).value)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         return make_any_gap_element(self.parent(), result)
 
     cpdef _pow_(self, other):
@@ -1151,12 +1196,18 @@ cdef class GapElement(RingElement):
             method found for `InverseMutable' on 1 arguments
         """
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()  # GAPError raised from here
             result = GAP_POW(self.value, (<GapElement>other).value)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         return make_any_gap_element(self._parent, result)
 
     cpdef _pow_int(self, other):
@@ -2511,8 +2562,8 @@ cdef class GapElement_Function(GapElement):
             arg_list = make_gap_list(args)
 
         try:
-            sig_GAP_Enter()
-            sig_on()
+            gap_sig_on()
+            GAP_Enter()
             if n == 0:
                 result = GAP_CallFunc0Args(self.value)
             elif n == 1:
@@ -2523,9 +2574,15 @@ cdef class GapElement_Function(GapElement):
                 result = GAP_CallFunc3Args(self.value, a[0], a[1], a[2])
             else:
                 result = GAP_CallFuncList(self.value, arg_list)
-            sig_off()
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
+            gap_sig_off()
         if result == NULL:
             # We called a procedure that does not return anything
             return None
@@ -3149,13 +3206,20 @@ cdef class GapElement_Record(GapElement):
         """
         cdef UInt i = self.record_name_to_index(name)
         cdef Obj result
-        sig_on()
+
         try:
+            gap_sig_on()
             GAP_Enter()
             result = ELM_REC(self.value, i)
+        except GAPError as e:
+            if "user interrupt" in str(e):
+                # Ctrl-C
+                raise KeyboardInterrupt from e
+            else:
+                raise
         finally:
             GAP_Leave()
-            sig_off()
+            gap_sig_off()
         return make_any_gap_element(self.parent(), result)
 
     def sage(self):
