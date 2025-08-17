@@ -224,6 +224,7 @@ cdef class BooleanFunction(SageObject):
     cdef object _autocorrelation
     cdef object _absolute_indicator
     cdef object _sum_of_square_indicator
+    cdef long long _hamming_weight
 
     def __cinit__(self, x):
         r"""
@@ -347,6 +348,7 @@ cdef class BooleanFunction(SageObject):
             bitset_copy(self._truth_table, (<BooleanFunction>x)._truth_table)
         else:
             raise TypeError("unable to init the Boolean function")
+        self._hamming_weight = -1
 
     def __dealloc__(self):
         bitset_free(self._truth_table)
@@ -753,6 +755,31 @@ cdef class BooleanFunction(SageObject):
                 d[abs(i)] = 1
         return d
 
+    def hamming_weight(self):
+        """
+        Return the Hamming weight of this function.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import random_boolean_function
+            sage: B = random_boolean_function(5)
+            sage: B.hamming_weight() == sum(B.truth_table())
+            True
+
+            sage: B = random_boolean_function(12)
+            sage: B.hamming_weight() == sum(B.truth_table())
+            True
+        """
+        if self._hamming_weight != -1:
+            return self._hamming_weight
+
+        if self._nvariables < 6:
+            self._hamming_weight = sum(self.truth_table(format='int'))
+        else:
+            self._hamming_weight = bitset_len(self._truth_table)
+
+        return self._hamming_weight
+
     def is_balanced(self):
         """
         Return ``True`` if the function takes the value ``True`` half of the time.
@@ -767,7 +794,7 @@ cdef class BooleanFunction(SageObject):
             sage: B.is_balanced()
             True
         """
-        return self.walsh_hadamard_transform()[0] == 0
+        return self.hamming_weight() == 1 << (self._nvariables-1)
 
     def is_symmetric(self):
         """
@@ -1343,7 +1370,14 @@ cdef class BooleanFunction(SageObject):
             True
         """
         self._clear_cache()
-        bitset_set_to(self._truth_table, int(i), int(y)&1)
+
+        if self(int(i)) != int(y) & 1:
+            if self._hamming_weight != -1:
+                if int(y) & 1:
+                    self._hamming_weight += 1
+                else:
+                    self._hamming_weight -= 1
+            bitset_set_to(self._truth_table, int(i), int(y)&1)
 
     def __getitem__(self, i):
         """
