@@ -2947,7 +2947,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: y.exp(prec=53)  # default RealField precision                         # needs sage.symbolic
             +infinity
         """
-        from sage.functions.all import exp
+        from sage.functions.log import exp
         res = exp(self, dont_call_method_on_arg=True)
         if prec:
             return res.n(prec=prec)
@@ -7826,11 +7826,6 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
     # to have 54 bits remaining.
     cdef mp_bitcnt_t shift = sx - 54
 
-    # Compute q = trunc(x / 2^shift) and let remainder_is_zero be True
-    # if and only if no truncation occurred.
-    cdef int remainder_is_zero
-    remainder_is_zero = mpz_divisible_2exp_p(x, shift)
-
     sig_on()
 
     cdef mpz_t q
@@ -7855,12 +7850,16 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
         # Round towards zero
         pass
     else:
-        if not remainder_is_zero:
-            # Remainder is nonzero: round away from zero
+        if (q64 & 2) == 2:
+            # round to even and round away from zero gives the same result, no need to check
             q64 += 1
         else:
-            # Halfway case: round to even
-            q64 += (q64 & 2) - 1
+            if mpz_divisible_2exp_p(x, shift):
+                # Halfway case: round to even
+                q64 -= 1
+            else:
+                # Remainder is nonzero: round away from zero
+                q64 += 1
 
     # The conversion of q64 to double is *exact*.
     # This is because q64 is even and satisfies 2^53 <= q64 <= 2^54.
