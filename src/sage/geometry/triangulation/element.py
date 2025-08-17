@@ -68,7 +68,9 @@ def triangulation_render_2d(triangulation, **kwds):
         sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest              # needs sage.plot
         Graphics object consisting of 12 graphics primitives
     """
-    from sage.plot.all import point2d, line2d, polygon2d
+    from sage.plot.point import point2d
+    from sage.plot.line import line2d
+    from sage.plot.polygon import polygon2d
     points = [point.reduced_affine() for point in triangulation.point_configuration()]
     coord = [ [p[0], p[1]] for p in points ]
     plot_points = sum([ point2d(p,
