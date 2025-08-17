@@ -139,11 +139,9 @@ host-requires = [
   "virtual:interface/blas",
   "virtual:compiler/fortran",
   "pkg:generic/boost",
-  "pkg:generic/brial",
   "pkg:generic/cddlib",
   "pkg:generic/cliquer",
   "pkg:generic/ecl",
-  "pkg:generic/eclib",
   "pkg:generic/ecm",
   "pkg:generic/fflas-ffpack",
   "pkg:generic/flint",
@@ -193,7 +191,9 @@ dependencies = [
 [external.optional-host-requires]
 extra = [
   "pkg:generic/bliss",
+  "pkg:generic/brial",
   "pkg:generic/coxeter3",
+  "pkg:generic/eclib",
   "pkg:generic/mcqd",
   "pkg:generic/meataxe",
   "pkg:generic/sirocco",
