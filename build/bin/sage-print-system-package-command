@@ -145,6 +145,7 @@ case $system:$command in
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
         [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
+        # There is an --ignore-missing option for apt-get, but it only ignores download errors not completely missing packages.
         if [ "$IGNORE_MISSING" = yes ]; then
             [ -n "$system_packages" ] && echo "for pkg in $system_packages; do ${SUDO}${env}apt-get $command $options \$pkg || true; done"
         else
@@ -171,7 +172,7 @@ case $system:$command in
         fi
         ;;
     void*:update)
-        print_shell_command "${SUDO}xbps-install -Su"
+        print_shell_command "${SUDO}xbps-install -Suy"
         ;;
     void*:install)
         [ "$YES" = yes ] && options="$options --yes"

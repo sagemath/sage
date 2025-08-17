@@ -1,14 +1,16 @@
-#!/usr/bin/env sage-python
+#!/usr/bin/env python3
 
 # Cleverly run Mathematica with the benefit of readline, which
 # is something the usual commercial mathematica doesn't provide!
 # See
 #    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/363500
 
-import sys
 import signal
 import subprocess
+import sys
+
 from sage.cpython.string import str_to_bytes
+
 
 def child_exited(*args):
     global child
