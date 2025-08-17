@@ -1,9 +1,9 @@
-bliss = cc.find_library('bliss', required: false, disabler: true)
-# mcqd is a header-only library
-if cc.has_header('mcqd.h')
+bliss = cc.find_library('bliss', required: get_option('bliss'), disabler: true)
+
+mcqd = disabler()
+if cc.has_header('mcqd.h', required: get_option('mcqd'))
+  # mcqd is a header-only library
   mcqd = declare_dependency()
-else
-  mcqd = disabler()
 endif
 cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
 
