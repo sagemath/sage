@@ -19,7 +19,6 @@ from posix.signal cimport sigaction, sigaction_t, sigemptyset
 from cpython.exc cimport PyErr_Fetch, PyErr_Restore
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from cpython.ref cimport PyObject, Py_XINCREF, Py_XDECREF
-from cysignals.signals cimport sig_on, sig_off
 
 import os
 import warnings
@@ -265,14 +264,12 @@ cdef initialize():
 
     argv[argc] = NULL
 
-    sig_on()
     # Initialize GAP but disable its signal handlers: we only want
     # them to be invoked while libgap code is executing, whereas the
     # default would enable them globally. We will explicitly wrap GAP
     # computations in gap_sig_on() and gap_sig_off() instead.
     GAP_Initialize(argc, argv, gasman_callback, error_handler,
                    handleSignals=False)
-    sig_off()
 
     # Configure a SIGINT handler (which can be enabled by calling
     # gap_sig_on) to run InterruptExecStat. This is essentially GAP's
@@ -391,8 +388,9 @@ cdef Obj gap_eval(str gap_string) except? NULL:
     # so that Cython doesn't deallocate it before GAP is done with
     # its contents.
     cmd = str_to_bytes(gap_string + ';\n')
-    sig_on()
+
     try:
+        gap_sig_on()
         GAP_Enter()
         result = GAP_EvalString(cmd)
         # We can assume that the result object is a GAP PList (plain list)
@@ -423,9 +421,15 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # this like returning None)
 
         return GAP_ElmList(result, 2)
+    except GAPError as e:
+        if "user interrupt" in str(e):
+            # Ctrl-C
+            raise KeyboardInterrupt from e
+        else:
+            raise
     finally:
         GAP_Leave()
-        sig_off()
+        gap_sig_off()
 
 
 ############################################################################
