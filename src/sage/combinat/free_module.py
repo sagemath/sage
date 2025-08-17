@@ -672,7 +672,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F = CombinatorialFreeModule(QQ,[0,1])
 
         Is ``0`` the zero of the base ring, or the index of a basis
-        element?  I.e. should the result be ``0`` or ``B[0]``?
+        element?  I.e. should the result be ``0`` or ``B[0]``?::
 
             sage: F = CombinatorialFreeModule(QQ,[0,1])
             sage: F(0) # this feature may eventually disappear
