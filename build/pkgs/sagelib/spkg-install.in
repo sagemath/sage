@@ -46,9 +46,16 @@ SITEPACKAGESDIR=$(python3 -c 'import sysconfig; print(sysconfig.get_paths()["pur
 # does not shadow the namespace package sage during the build.
 (cd "$SITEPACKAGESDIR" && rm -f sage/__init__.py)
 if [ "$SAGE_EDITABLE" = yes ]; then
-    # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
-    export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
-    sdh_pip_editable_install .
+    # Check if this is an incremental build by looking for existing editable install
+    if python3 -c "import importlib.metadata; importlib.metadata.distribution('sagemath-standard')" 2>/dev/null && \
+       python3 -c "import sage; import os; exit(0 if os.path.exists(os.path.join(os.path.dirname(sage.__file__), '..', 'setup.py')) else 1)" 2>/dev/null; then
+        echo "Detected existing editable install - performing incremental build"
+        # Use setup.py build_ext --inplace for incremental compilation
+        python3 setup.py build_ext --inplace || sdh_die "Error during incremental build"
+    else
+        echo "Performing initial editable install"
+        sdh_pip_editable_install .
+    fi
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)

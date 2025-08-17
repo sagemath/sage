@@ -115,6 +115,15 @@ clean:
 # "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
 # Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
 # Also cython_debug is for editable installs.
+# 
+# NOTE: Editable installs with incremental compilation are now the default.
+# - First build: Full editable install with pip install -e
+# - Subsequent builds: Incremental compilation with setup.py build_ext --inplace
+# 
+# For manual incremental compilation, use the Sage Python environment:
+#   cd src && ../sage --python setup.py build_ext --inplace
+# This will only recompile changed Cython extensions in place.
+# Or use: make sagelib (which will rebuild all of sagelib)
 sagelib-clean:
 	@echo "Deleting Sage library build artifacts..."
 	if [ -d "$(SAGE_SRC)" ]; then \
