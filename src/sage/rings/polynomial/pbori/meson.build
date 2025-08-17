@@ -33,14 +33,27 @@ py.install_sources(
 extension_data_cpp = {'pbori': files('pbori.pyx')}
 
 foreach name, pyx : extension_data_cpp
+  override_options = ['cython_language=cpp']
+  if not boost_cpp17_compatible
+    override_options += ['cpp_std=c++11']
+  endif
   py.extension_module(
     name,
     sources: pyx,
     subdir: 'sage/rings/polynomial/pbori',
     install: true,
-    override_options: ['cython_language=cpp'],
+    override_options: override_options,
     include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
-    dependencies: [py_dep, brial, brial_groebner, cysignals, gmp, m4ri, png],
+    dependencies: [
+      py_dep,
+      boost,
+      brial,
+      brial_groebner,
+      cysignals,
+      gmp,
+      m4ri,
+      png,
+    ],
   )
 endforeach
 

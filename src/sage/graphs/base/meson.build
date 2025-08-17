@@ -1,23 +1,3 @@
-boost_cpp17_compatible = false
-boost = dependency(
-  'boost',
-  version: '>=1.83.0',
-  required: false,
-  modules: ['graph', 'tuple'],
-)
-if boost.found()
-  # Need at least v1.83.0 (https://github.com/boostorg/functional/commit/6a573e4b8333ee63ee62ce95558c3667348db233)
-  # for C++17 compatibility.
-  boost_cpp17_compatible = true
-else
-  boost = dependency(
-    'boost',
-    version: '>=1.66.0',
-    required: false,
-    modules: ['graph', 'tuple'],
-  )
-endif
-
 py.install_sources(
   '__init__.py',
   'all.py',
