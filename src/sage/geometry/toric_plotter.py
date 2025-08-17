@@ -1077,7 +1077,8 @@ def sector(ray1, ray2, **extra_options):
         sage: sector((3,2,1), (1,2,3))                                                  # needs sage.plot
         Graphics3d Object
     """
-    from sage.functions.all import arccos, arctan2
+    from sage.functions.trig import acos as arccos
+    from sage.functions.trig import arctan2
 
     ray1 = vector(RDF, ray1)
     ray2 = vector(RDF, ray2)

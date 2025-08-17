@@ -32,14 +32,14 @@ REFERENCES:
 # ****************************************************************************
 import sage.combinat.skew_partition
 from sage.categories.homset import Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.morphism import SetMorphism
 from sage.combinat import ribbon_tableau
 from sage.combinat.partition import Partition, Partitions, _Partitions
+from sage.combinat.sf import sfa
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
-
-from . import sfa
 
 # cache for H spin basis
 hsp_to_m_cache = {}
@@ -451,7 +451,7 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym, self._basis_name)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-        category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+        category = ModulesWithBasis(self._sym.base_ring())
         self._m = llt._sym.m()
         self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
         self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
