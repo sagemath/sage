@@ -152,6 +152,9 @@ jobs:
             jinja2 \
             setuptools
           uv sync --frozen --inexact --no-build-isolation -v
+        env:
+          _PYTHON_HOST_PLATFORM: macosx-${{ matrix.version }}-arm64
+          ARCHFLAGS: '-arch arm64'
 
       - name: Test
         run: |
