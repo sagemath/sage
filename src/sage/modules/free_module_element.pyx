@@ -951,6 +951,7 @@ def random_vector(ring, degree=None, *args, **kwds):
     entries = [ring.random_element(*args, **kwds) for _ in range(degree)]
     return vector(ring, degree, entries, sparse)
 
+vector.random = random_vector
 
 cdef class FreeModuleElement(Vector):   # abstract base class
     """
