@@ -301,7 +301,7 @@ def density_plot(f, xrange, yrange, **options):
         sage: density_plot(f, (0,1), (0,1))
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     from sage.rings.real_double import RDF
     g, ranges = setup_for_eval_on_grid([f], [xrange, yrange], options['plot_points'])
