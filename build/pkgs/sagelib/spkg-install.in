@@ -52,6 +52,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
         echo "Detected existing editable install - performing incremental build"
         # Use setup.py build_ext --inplace for incremental compilation
         python3 setup.py build_ext --inplace || sdh_die "Error during incremental build"
+        sdh_pip_editable_install . || sdh_die "Error during incremental install"
     else
         echo "Performing initial editable install"
         sdh_pip_editable_install .
