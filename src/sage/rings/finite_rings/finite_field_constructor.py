@@ -579,7 +579,8 @@ class FiniteFieldFactory(UniqueFactory):
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
                 raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
 
-        from sage.structure.proof.all import WithProof, arithmetic
+        from sage.structure.proof.proof import WithProof
+        from sage.structure.proof.all import arithmetic
         if proof is None:
             proof = arithmetic()
         with WithProof('arithmetic', proof):
@@ -751,7 +752,7 @@ class FiniteFieldFactory(UniqueFactory):
         else:
             order, name, modulus, impl, p, n, proof, prefix, repr, elem_cache, check_prime, check_irreducible = key
 
-        from sage.structure.proof.all import WithProof
+        from sage.structure.proof.proof import WithProof
         with WithProof('arithmetic', proof):
             if check_prime and not p.is_prime():
                 raise ValueError("the order of a finite field must be a prime power")
