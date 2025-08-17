@@ -148,6 +148,10 @@ cdef extern from "gap/stringobj.h" nogil:
     Obj NEW_STRING(Int)
 
 
+cdef extern from "gap/stats.h" nogil:
+    void InterruptExecStat()
+
+
 cdef extern from "<structmember.h>" nogil:
     """
     /* Hack: Cython 3.0 automatically includes <structmember.h>, which
