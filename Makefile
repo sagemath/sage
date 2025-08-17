@@ -129,7 +129,7 @@ sagelib-clean:
 	if [ -d "$(SAGE_SRC)" ]; then \
 	    (cd "$(SAGE_SRC)" && \
 	     rm -rf c_lib .cython_version cython_debug; \
-	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
+	     rm -rf build *.egg-info; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
 	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
 	     cd sage/ext/interpreters/ && rm -f *.so *.c *.h *.py* *.pxd) \
 	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
@@ -173,7 +173,7 @@ bdist-clean: clean
 distclean: build-clean
 	$(MAKE) misc-clean
 	@echo "Deleting all remaining output from build system ..."
-	rm -rf local
+	rm -rf local *.egg-info
 	rm -f src/bin/sage-env-config
 	rm -f prefix venv
 
