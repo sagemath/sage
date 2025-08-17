@@ -918,14 +918,15 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
-            sage: float(L.hadamard_ratio())
+            sage: L.hadamard_ratio()
+            sage: float(L.hadamard_ratio()) # rel tol 1e-13
             0.351096481348176
             sage: L.LLL()
             [  1  -5   2  18]
             [ -5  25 -10  11]
             [-17 -16 -34  -3]
             [-39  -7  23   5]
-            sage: float(L.hadamard_ratio())
+            sage: float(L.hadamard_ratio()) # rel tol 1e-13
             0.9933322263147489
         """
         if use_reduced_basis:
@@ -957,12 +958,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]])
-            sage: float(L.gaussian_heuristic())
+            sage: L.gaussian_heuristic()
+            sage: float(L.gaussian_heuristic()) # rel tol 1e-13
             15.418206247181422
 
         For small `n`, the exact and approximate forms differ significantly::
 
-            sage: float(L.gaussian_heuristic(exact_form=True))
+            sage: float(L.gaussian_heuristic(exact_form=True)) # rel tol 1e-13
             21.375859827168494
         """
         basis = self.basis_matrix()
