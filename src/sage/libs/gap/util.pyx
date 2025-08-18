@@ -510,7 +510,10 @@ cdef void error_handler() noexcept with gil:
         # Note that we manually need to deal with refcounts here.
         Py_XDECREF(exc_type)
         Py_XDECREF(exc_val)
-        exc_type = <PyObject*>GAPError
+        if "user interrupt" in msg:
+            exc_type = <PyObject*>KeyboardInterrupt
+        else:
+            exc_type = <PyObject*>GAPError
         exc_val = <PyObject*>msg
         Py_XINCREF(exc_type)
         Py_XINCREF(exc_val)
