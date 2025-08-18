@@ -302,9 +302,9 @@ class FreeGroupElement(ElementLibGAP):
             sage: elem2 = G.one()
             sage: if elem1 == elem2:  # Only test hash equality if elements are actually equal
             ....:     assert hash(elem1) == hash(elem2)
-            
+
         Test specific Cayley graph bug with semidirect product `\mathbb{Z}_4 \rtimes \mathbb{Z}_{13}`::
-        
+
             sage: F.<x,y> = FreeGroup()
             sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
             sage: a, b = G.gens()
@@ -329,7 +329,7 @@ class FreeGroupElement(ElementLibGAP):
                     self.parent()._confluent_rewriting_system = rs
                 canonical_form = self.parent()._confluent_rewriting_system.reduce(self)
                 return hash(str(canonical_form))
-            except Exception:
+            except (AttributeError, ValueError, RuntimeError, NotImplementedError):
                 pass
         
         return hash(self.Tietze())
