@@ -473,8 +473,6 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: n = C._random_element_from_unrank()
                 sage: n in C
                 True
-
-            TODO: implement _test_random which checks uniformity
             """
             from sage.misc.prandom import randint
             c = self.cardinality()
@@ -482,6 +480,41 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             return self.unrank(r)
         # Set the default implementation of random_element
         random_element = _random_element_from_unrank
+
+        def _test_random(self, **options):
+            """
+            EXAMPLES::
+
+                sage: R = GF(9)
+                sage: C = cartesian_product([R])
+                sage: C._test_random()
+
+                sage: C = cartesian_product([R, R])
+                sage: C._test_random()
+
+                sage: C = cartesian_product([list(range(5)) for _ in range(5)])
+                sage: C._test_random()
+            """
+            from sage.probability.probability_distribution import RealDistribution
+            from sage.rings.infinity import Infinity
+            tester = self._tester(**options)
+            n = self.cardinality()
+            if n is Infinity or n == 1:
+                return
+            T = RealDistribution('chisquared', n-1)
+            critical = T.cum_distribution_function_inv(0.99)
+            tester.assertFalse(critical.is_NaN())
+            try:
+                d = {e: 0 for e in self}
+            except TypeError:
+                return
+            E = 5
+            N = E * n
+            for _ in range(N):
+                x = self.random_element()
+                d[x] += 1
+            chi_2 = sum(float(o) ** 2 for o in d.values()) / float(E) - float(N)
+            tester.assertLessEqual(chi_2, critical)
 
         @cached_method
         def _last_from_iterator(self):

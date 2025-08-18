@@ -6337,11 +6337,12 @@ class Permutations_nk(Permutations):
         """
         EXAMPLES::
 
-            sage: s = Permutations(3,2).random_element()
-            sage: s in Permutations(3,2)
+            sage: s = Permutations(3, 2).random_element()
+            sage: s in Permutations(3, 2)
             True
         """
-        return sample(range(1, self.n + 1), self._k)
+        x = sample(range(1, self.n + 1), self._k)
+        return self.element_class(self, x, check=False)
 
 
 class Permutations_mset(Permutations):
@@ -6620,9 +6621,9 @@ class Permutations_mset(Permutations):
             [3, 1, 4, 1, 5, 9, 2, 6, 5]
             sage: p.rank(p.unrank(10))
             10
-            sage: p.unrank(0) == list(sorted(mset))
+            sage: p.unrank(0) == p(sorted(mset))
             True
-            sage: p.unrank(p.cardinality()-1) == list(reversed(sorted(mset)))
+            sage: p.unrank(p.cardinality()-1) == p(reversed(sorted(mset)))
             True
 
         TESTS::
@@ -6650,9 +6651,9 @@ class Permutations_mset(Permutations):
 
             sage: mset = list(range(10)) * 3
             sage: p = Permutations_mset(mset)
-            sage: p.unrank(p.rank(mset)) == mset
+            sage: p.unrank(p.rank(mset)) == p(mset)
             True
-            sage: p.unrank(p.cardinality()-1) == list(reversed(sorted(mset)))
+            sage: p.unrank(p.cardinality()-1) == p(reversed(sorted(mset)))
             True
 
         Exhaustive check of roundtrip and lexicographic order for a single
@@ -6672,7 +6673,7 @@ class Permutations_mset(Permutations):
 
             sage: ps = Permutations(4)
             sage: pm = Permutations_mset(list(range(1, 5)))
-            sage: ps.unrank(5) == pm.unrank(5)
+            sage: ps.unrank(5) == ps(pm.unrank(5))
             True
         """
         range_error = ValueError("r must be between %d and %d inclusive" % (0, self.cardinality()-1))
@@ -6735,7 +6736,7 @@ class Permutations_mset(Permutations):
         if r > 0:
             raise range_error
 
-        return p
+        return self.element_class(self, p, check=False)
 
 
 class Permutations_set(Permutations):
@@ -6862,7 +6863,8 @@ class Permutations_set(Permutations):
             sage: s.parent() is Permutations([1,2,3])
             True
         """
-        return sample(self._set, len(self._set))
+        x = sample(self._set, len(self._set))
+        return self.element_class(self, x, check=False)
 
 
 class Permutations_msetk(Permutations_mset):
@@ -7036,7 +7038,8 @@ class Permutations_setk(Permutations_set):
             sage: s in Permutations([1,2,4], 2)
             True
         """
-        return sample(self._set, self._k)
+        x = sample(self._set, self._k)
+        return self.element_class(self, x, check=False)
 
 ##################################
 # Arrangements
