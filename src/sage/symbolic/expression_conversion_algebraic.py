@@ -22,7 +22,7 @@ from functools import reduce
 
 import sage.rings.abc
 
-from sage.functions.all import exp
+from sage.functions.log import exp
 from sage.symbolic.expression_conversions import Converter
 from sage.symbolic.operators import add_vararg, mul_vararg
 from sage.symbolic.ring import SR
