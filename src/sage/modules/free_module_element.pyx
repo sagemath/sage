@@ -791,7 +791,7 @@ def zero_vector(arg0, arg1=None):
 
 def random_vector(ring, degree=None, *args, **kwds):
     r"""
-    This function is available as random_vector(…) and vector.random(…).
+    This function is available as ``random_vector(…)`` and ``vector.random(…)``.
 
     Return a vector (or module element) with random entries.
 
