@@ -791,6 +791,8 @@ def zero_vector(arg0, arg1=None):
 
 def random_vector(ring, degree=None, *args, **kwds):
     r"""
+    This function is available as random_vector(…) and vector.random(…).
+
     Return a vector (or module element) with random entries.
 
     INPUT:
@@ -931,6 +933,11 @@ def random_vector(ring, degree=None, *args, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: degree of a random vector must be nonnegative, not -9
+    
+    We may also use vector.random(...) in place of random_vector(...). ::
+
+        sage: vector.random(10).parent()
+        Ambient free module of rank 10 over the principal ideal domain Integer Ring
     """
     if isinstance(ring, (Integer, int)):
         if degree is not None:
@@ -951,7 +958,9 @@ def random_vector(ring, degree=None, *args, **kwds):
     entries = [ring.random_element(*args, **kwds) for _ in range(degree)]
     return vector(ring, degree, entries, sparse)
 
+
 vector.random = random_vector
+
 
 cdef class FreeModuleElement(Vector):   # abstract base class
     """
