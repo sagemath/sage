@@ -887,8 +887,7 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
         e.__traceback__ = None  # workaround for https://github.com/python/cpython/pull/129276
         alarm_raised = True
     except KeyboardInterrupt as e:
-        from sage.libs.gap.util import GAPError
-        if isinstance(e.__cause__, GAPError):
+        if "user interrupt" in str(e):
             # To handle SIGALRM in GAP we install its SIGINT handler
             # as the SIGALRM handler. When it gets Ctrl-C, we turn the
             # resulting GAPError into a KeyboardInterrupt... but
