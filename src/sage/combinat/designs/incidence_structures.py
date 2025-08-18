@@ -1387,8 +1387,18 @@ class IncidenceStructure:
             self._point_to_index = None
             return
 
-        if isinstance(perm, (list, tuple)):
-            perm = dict(zip(self._points, perm))
+        if not isinstance(perm, dict):
+            # Check for generic iterable/callable
+            try:
+                it = iter(perm)
+            except TypeError:
+                if not callable(perm):
+                    raise
+                # callable
+                perm = {v: perm(v) for v in self._points}
+            else:
+                # iterable
+                perm = dict(zip(self._points, it))
 
         if not isinstance(perm, dict):
             raise ValueError("perm argument must be None, a list or a dictionary")
