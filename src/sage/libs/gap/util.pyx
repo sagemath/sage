@@ -187,6 +187,11 @@ cdef sigaction_t gap_sigint_sa
 cdef sigaction_t sage_sigint_sa
 cdef sigaction_t sage_sigalrm_sa
 
+cdef void gap_interrupt_asap(int signum):
+    # A wrapper around InterruptExecStat(). This tells GAP to raise an
+    # error at the next opportunity.
+    InterruptExecStat()
+
 cdef initialize():
     """
     Initialize the GAP library, if it hasn't already been
@@ -276,7 +281,7 @@ cdef initialize():
     # own SIGINT handler (but without the double-Ctrl-C behavior), and
     # is less crashy than when we mix cysignals with GAP code.
     global gap_sigint_sa
-    gap_sigint_sa.sa_handler = <void (*)(int) noexcept>InterruptExecStat
+    gap_sigint_sa.sa_handler = gap_interrupt_asap
     sigemptyset(&(gap_sigint_sa.sa_mask))
     gap_sigint_sa.sa_flags = 0;
 
