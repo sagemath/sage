@@ -272,7 +272,7 @@ class GammaH_class(CongruenceSubgroup):
             raise ValueError("M (=%s) must be a multiple of the level (%s) of self" % (M, self.level()))
         return self._new_group_from_level(M)
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         """
         Used for pickling ``self``.
 
@@ -1135,7 +1135,7 @@ class GammaH_class(CongruenceSubgroup):
         for d in N.divisors():
             d2 = d**2
             if d2 > N:
-                break
+                continue
             Nd = lcm(d, N // d)
             Hd = {x % Nd for x in H}
             lenHd = len(Hd)
