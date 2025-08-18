@@ -883,17 +883,12 @@ def ensure_interruptible_after(seconds: float, max_wait_after_interrupt: float =
 
     try:
         yield data
-    except AlarmInterrupt as e:
-        e.__traceback__ = None  # workaround for https://github.com/python/cpython/pull/129276
-        alarm_raised = True
     except KeyboardInterrupt as e:
-        if "user interrupt" in str(e):
-            # To handle SIGALRM in GAP we install its SIGINT handler
-            # as the SIGALRM handler. When it gets Ctrl-C, we turn the
-            # resulting GAPError into a KeyboardInterrupt... but
-            # there's no real way to distinguish the SIGALRM case
-            # (doctesting) from the SIGINT case (interactive Ctrl-C)
-            # except for context.
+        # AlarmInterrupt is a subclass of KeyboardInterrupt, so this
+        # catches both. The "user interrupt" message is a quirk of
+        # GAP interrupts that result from SIGALRM.
+        if isinstance(e, AlarmInterrupt) or "user interrupt" in str(e):
+            # workaround for https://github.com/python/cpython/pull/129276
             e.__traceback__ = None
             alarm_raised = True
         else:
