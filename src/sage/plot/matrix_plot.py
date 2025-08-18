@@ -568,7 +568,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     import numpy as np
     import scipy.sparse as scipysparse
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.structure.element import Matrix
     from sage.rings.real_double import RDF
     orig_mat = mat

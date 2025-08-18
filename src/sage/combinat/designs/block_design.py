@@ -148,7 +148,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l+1) is False
         ....:         assert are_hyperplanes_in_projective_geometry_parameters(v,k,l-1) is False
     """
-    import sage.arith.all as arith
+    from sage.arith.misc import gcd
 
     q1 = Integer(v - k)
     q2 = Integer(k - lmbda)
@@ -161,7 +161,7 @@ def are_hyperplanes_in_projective_geometry_parameters(v, k, lmbda, return_parame
     p1,e1 = q1.factor()[0]
     p2,e2 = q2.factor()[0]
 
-    k = arith.gcd(e1,e2)
+    k = gcd(e1,e2)
     d = e1//k
     q = p1**k
     if e2//k != d-1 or lmbda != (q**(d-1)-1)//(q-1):

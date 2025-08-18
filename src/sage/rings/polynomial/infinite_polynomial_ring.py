@@ -263,7 +263,8 @@ from functools import reduce
 
 from sage.rings.ring import CommutativeRing
 from sage.categories.rings import Rings
-from sage.structure.all import SageObject, parent
+from sage.structure.sage_object import SageObject
+from sage.structure.element import parent
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
