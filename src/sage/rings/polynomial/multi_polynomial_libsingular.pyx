@@ -4662,6 +4662,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 sig_off()
             finally:
                 if check_error():
+                    if len(self.variables()) == 1:
+                        return Factorization([(self._parent(p), e) for p, e in self.univariate_polynomial().factor()])
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
