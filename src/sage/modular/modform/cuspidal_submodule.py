@@ -540,7 +540,7 @@ class CuspidalSubmodule_wt1_gH(CuspidalSubmodule):
             else:
                 for i in range(d):
                     for j in range(d):
-                        H[e*i:e*(i+1), e*j:e*(j+1)] = M[i,j].matrix().transpose()
+                        H[e*i: e*(i+1), e*j: e*(j+1)] = M[i, j].matrix().transpose()
             A = A.block_sum(H)
         t = self._transformation_matrix()
         return t * A * ~t

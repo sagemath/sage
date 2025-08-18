@@ -127,7 +127,7 @@ def JH(N, H):
         sage: JH(389,[16])
         Abelian variety JH(389,[16]) of dimension 64
     """
-    key = 'JH(%s,%s)' % (N,H)
+    key = 'JH(%s,%s)' % (N, H)
     try:
         return _get(key)
     except ValueError:
@@ -180,7 +180,7 @@ def AbelianVariety(X):
     if isinstance(X, ModularSymbolsSpace):
         return abvar.ModularAbelianVariety_modsym(X)
 
-    if isinstance(X, (tuple,list)) and all(isinstance(G, CongruenceSubgroupBase) for G in X):
+    if isinstance(X, (tuple, list)) and all(isinstance(G, CongruenceSubgroupBase) for G in X):
         return abvar.ModularAbelianVariety(X)
 
     raise TypeError("X must be an integer, string, newform, modsym space, congruence subgroup or tuple of congruence subgroups")

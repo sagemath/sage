@@ -107,7 +107,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
     Psi = apinv * Phi.hecke(p)
 
     for attempts in range(M - 1):
-        verbose("%s attempt (val = %s/%s)" % (attempts + 1,(Phi-Psi).valuation(),M), level=2)
+        verbose("%s attempt (val = %s/%s)" % (attempts + 1, (Phi - Psi).valuation(), M), level=2)
         Phi = Psi
         Psi = apinv * Phi.hecke(p)
         Psi._normalize()
@@ -115,7 +115,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
 
 class PSModSymAction(Action):
-    def __init__(self, actor, MSspace):
+    def __init__(self, actor, MSspace) -> None:
         r"""
         Create the action.
 

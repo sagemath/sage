@@ -777,9 +777,9 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         gens = [f.padded_list(prec) for f in B]
         C = A.span(gens)
         D = C.saturation()
-        S = [R(f.list(),prec) for f in D.basis()]
+        S = [R(f.list(), prec) for f in D.basis()]
         for _ in range(self.dimension() - len(S)):
-            S.append(R(0,prec))
+            S.append(R(0, prec))
         S = Sequence(S, immutable=True, cr=True)
         self.__q_integral_basis = (prec, S)
         return S

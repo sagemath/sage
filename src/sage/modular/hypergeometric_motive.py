@@ -1701,7 +1701,7 @@ class HypergeometricData:
             return ZZ.one()
         q = p ** f
         prec = ceil(deg*(self.weight()+1-mul)/2 + log(2*d + 1, p))
-        k = (q-1) // mo
+        k = (q - 1) // mo
         flip = (f == 1 and prec == 1)
         gtab_prec, gtab = self.gauss_table(p, f, prec)
         try:
@@ -1727,7 +1727,8 @@ class HypergeometricData:
                 term *= ZZ(-1) ** ct
                 ct += f * (D + m[0] - m[r])
                 l.append(term * p**ct)
-        traces = [0 if j % f else sum(i ** (j//f) for i in l) for j in range(1,d+1)]
+        traces = [0 if j % f else sum(i ** (j // f) for i in l)
+                  for j in range(1, d + 1)]
         R = IntegerModRing(p**prec)
         traces = [R(i).lift_centered() for i in traces]
         return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg, use_fe=False)
