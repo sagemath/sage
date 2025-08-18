@@ -140,8 +140,16 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
             sage: cartesian_product([QQ, ZZ, ZZ]) # indirect doctest
             The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
+            sage: cartesian_product([ZZ]*10) # indirect doctest
+            The Cartesian product of 10 copies of Integer Ring
         """
-        return "The Cartesian product of %s" % (self._sets,)
+        if not self._sets:
+            return f"The Cartesian product of {self._sets}"
+        first = self._sets[0]
+        all_same = all(ring == first for ring in self._sets)
+        return (f"The Cartesian product of {len(self._sets)} copies of {first}" 
+                if all_same 
+                else f"The Cartesian product of {self._sets}")
 
     def __contains__(self, x):
         """
