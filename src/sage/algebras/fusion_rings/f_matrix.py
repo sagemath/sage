@@ -582,7 +582,7 @@ class FMatrix(SageObject):
             ret = {}
         id_anyon = self._FR.one()
         for a, b, c, d in product(self._FR.basis(), repeat=4):
-            if a == id_anyon or b == id_anyon or c == id_anyon:
+            if id_anyon in (a, b, c):
                 continue
             for x in self.f_from(a, b, c, d):
                 for y in self.f_to(a, b, c, d):
@@ -1268,7 +1268,7 @@ class FMatrix(SageObject):
             self._reset_solver_state()
         # Set up shared memory resource handlers
         n_proc = cpu_count() if processes is None else processes
-        self._pid_list = shared_memory.ShareableList([0] * (n_proc+1))
+        self._pid_list = shared_memory.ShareableList([0] * (n_proc + 1))
         pids_name = self._pid_list.shm.name
         self._solved = shared_memory.ShareableList(self._solved)
         s_name = self._solved.shm.name
@@ -1379,8 +1379,8 @@ class FMatrix(SageObject):
         else:
             mapped = worker_pool.imap_unordered(executor, input_iter, chunksize=chunksize)
         # Reduce phase
-        results = {eqn for child_eqns in mapped for eqn in child_eqns
-                   if child_eqns is not None}
+        results = {eqn for child_eqns in mapped if child_eqns is not None
+                   for eqn in child_eqns}
         return list(results)
 
     ########################
@@ -2436,8 +2436,7 @@ class FMatrix(SageObject):
             if verbose:
                 print("Found valid F-symbols for {}".format(self._FR))
             pe = None
-        else:
-            if verbose:
-                print("Something went wrong. Pentagons remain.")
+        elif verbose:
+            print("Something went wrong. Pentagons remain.")
         self._fvars = fvars_copy
         return pe
