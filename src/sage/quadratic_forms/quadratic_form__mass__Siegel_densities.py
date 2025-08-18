@@ -185,7 +185,7 @@ def Watson_mass_at_2(self):
         sage: Q.Watson_mass_at_2()  # WARNING:  WE NEED TO CHECK THIS CAREFULLY!        # needs sage.symbolic
         384
     """
-    from sage.functions.all import sgn
+    from sage.functions.generalized import sgn
 
     # Make a 0-dim'l quadratic form (for initialization purposes)
     Null_Form = deepcopy(self)

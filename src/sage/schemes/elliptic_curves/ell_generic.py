@@ -2384,6 +2384,10 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
         - or just `f(x)` if ``x_only`` is ``True``
 
+        .. SEEALSO::
+
+            :meth:`scalar_multiplication` to get a morphism instead.
+
         .. NOTE::
 
             - The result is not cached.
@@ -2405,6 +2409,14 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: f
             ((x^4 + 2*x^2 - 24*x + 1)/(4*x^3 - 4*x + 12),
              (8*x^6*y - 40*x^4*y + 480*x^3*y - 40*x^2*y + 96*x*y - 568*y)/(64*x^6 - 128*x^4 + 384*x^3 + 64*x^2 - 384*x + 576))
+
+        We check that the rational maps agree with :meth:`scalar_multiplication`::
+
+            sage: phi = E.scalar_multiplication(2)
+            sage: phi.x_rational_map() == f[0]
+            True
+            sage: phi.rational_maps() == f
+            True
 
         Grab only the x-coordinate (less work)::
 
@@ -2464,6 +2476,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: assert(E(eval(f,P)) == 2*P)
 
         The following test shows that :issue:`6413` is fixed for elliptic curves over finite fields::
+
+            sage: # long time (:issue:`39569`)
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
