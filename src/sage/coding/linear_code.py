@@ -2310,7 +2310,7 @@ class LinearCode(AbstractLinearCode):
             sage: C = LinearCode(VS); C
             [3, 1] linear code over GF(2)
 
-        Forbid the zero vector space (see :issue:`17452` and :issue:`6486`)::
+        Constructing a zero code is allowed::
 
             sage: G = matrix(GF(2), [[0,0,0]])
             sage: C = LinearCode(G)
