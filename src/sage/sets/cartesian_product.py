@@ -146,7 +146,7 @@ class CartesianProduct(UniqueRepresentation, Parent):
         if not self._sets:
             return f"The Cartesian product of {self._sets}"
         first = self._sets[0]
-        all_same = all(ring == first for ring in self._sets)
+        all_same = all(element == first for element in self._sets)
         return (f"The Cartesian product of {len(self._sets)} copies of {first}" 
                 if all_same 
                 else f"The Cartesian product of {self._sets}")
