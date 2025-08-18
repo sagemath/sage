@@ -939,12 +939,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             return GAP_EQ(self.value, c_other.value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -969,12 +963,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             return GAP_LT(self.value, c_other.value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -1004,12 +992,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             result = GAP_SUM(self.value, (<GapElement>right).value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -1038,12 +1020,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             result = GAP_DIFF(self.value, (<GapElement>right).value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -1073,12 +1049,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             result = GAP_PROD(self.value, (<GapElement>right).value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -1113,12 +1083,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             result = GAP_QUO(self.value, (<GapElement>right).value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -1146,12 +1110,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()
             result = GAP_MOD(self.value, (<GapElement>right).value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -1199,12 +1157,6 @@ cdef class GapElement(RingElement):
             gap_sig_on()
             GAP_Enter()  # GAPError raised from here
             result = GAP_POW(self.value, (<GapElement>other).value)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -2574,12 +2526,6 @@ cdef class GapElement_Function(GapElement):
                 result = GAP_CallFunc3Args(self.value, a[0], a[1], a[2])
             else:
                 result = GAP_CallFuncList(self.value, arg_list)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()
@@ -3211,12 +3157,6 @@ cdef class GapElement_Record(GapElement):
             gap_sig_on()
             GAP_Enter()
             result = ELM_REC(self.value, i)
-        except GAPError as e:
-            if "user interrupt" in str(e):
-                # Ctrl-C
-                raise KeyboardInterrupt from e
-            else:
-                raise
         finally:
             GAP_Leave()
             gap_sig_off()

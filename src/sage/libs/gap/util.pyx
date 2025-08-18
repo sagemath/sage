@@ -421,12 +421,6 @@ cdef Obj gap_eval(str gap_string) except? NULL:
         # this like returning None)
 
         return GAP_ElmList(result, 2)
-    except GAPError as e:
-        if "user interrupt" in str(e):
-            # Ctrl-C
-            raise KeyboardInterrupt from e
-        else:
-            raise
     finally:
         GAP_Leave()
         gap_sig_off()
