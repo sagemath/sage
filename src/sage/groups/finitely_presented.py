@@ -751,10 +751,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             <fp group of size 60 on the generators [ A_5.1, A_5.2 ]>
             sage: A5sage = A5gapfp.sage(); A5sage;
             Finitely presented group < A_5.1, A_5.2 | A_5.1^5*A_5.2^-5, A_5.1^5*(A_5.2^-1*A_5.1^-1)^2, (A_5.1^-2*A_5.2^2)^2 >
-            sage: A5sage.inject_variables()
-            Traceback (most recent call last):
-            ...
-            ValueError: variable names have not yet been set using self._assign_names(...)
 
         Check that pickling works::
 
@@ -772,10 +768,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         assert isinstance(relations, tuple)
         self._free_group = free_group
         self._relations = relations
-        try:
+        if free_group.variable_names():
             self._assign_names(free_group.variable_names())
-        except ValueError:
-            pass
         if libgap_fpgroup is None:
             libgap_fpgroup = free_group.gap() / libgap([rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, libgap_fpgroup)

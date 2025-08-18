@@ -176,10 +176,13 @@ def parent_to_repr_short(P):
             op, cl = ('[', ']')
         else:
             op, cl = ('[[', ']]')
-        try:
-            s = abbreviate(P.base_ring()) + op + ', '.join(P.variable_names()) + cl
-        except ValueError:
-            s = str(P)
+        s = str(P)
+        if P.variable_names():
+            try:
+                s = abbreviate(P.base_ring()) + op + ', '.join(P.variable_names()) + cl
+            except ValueError:
+                pass
+
     else:
         try:
             s = abbreviate(P)

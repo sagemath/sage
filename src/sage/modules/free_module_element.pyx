@@ -3034,9 +3034,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             [(x, y, z) |--> x, (x, y, z) |--> y, (x, y, z) |--> z]
         """
         R = self._parent.base_ring()
-        try:
-            var_names = R.variable_names()
-        except ValueError:
+        var_names = R.variable_names()
+        if not var_names:
             if hasattr(R, 'arguments'):
                 var_names = R.arguments()
             else:
