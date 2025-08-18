@@ -1180,7 +1180,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             elif self._k < 0:
                 raise ValueError('cannot sample from empty set')
             else:
-                return self._cftp(0)
+                return self.element_class(self, self._cftp(0))
         else:
             raise ValueError('cannot sample from infinite set')
 
