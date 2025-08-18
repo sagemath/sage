@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.graphs sage.groups
 r"""
-Fundamental Group of an Extended Affine Weyl Group
+Fundamental group of an extended affine Weyl group
 
 AUTHORS:
 

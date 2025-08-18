@@ -230,12 +230,12 @@ class DrinfeldModule_finite(DrinfeldModule):
 
     def frobenius_endomorphism(self):
         r"""
-        Return the Frobenius endomorphism of the Drinfeld module as a
-        morphism object.
+        Return the Frobenius endomorphism of the Drinfeld module.
 
-        Let `q` be the order of the base field of the function ring. The
-        *Frobenius endomorphism* is defined as the endomorphism whose
-        defining Ore polynomial is `t^q`.
+        The *Frobenius endomorphism* is defined by the Ore polynomial
+        `tau^n`, where `n` is the degree of the base field `K` over
+        `\mathbb F_q`.
+
 
         EXAMPLES::
 
@@ -620,7 +620,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             block_shifts.append(block_shifts[-1] + shifts[i])
         # Compute the images \phi_T^i for i = 0 .. n.
         gen_powers = [self(A.gen()**i).coefficients(sparse=False)
-                      for i in range(0, n + 1)]
+                      for i in range(n + 1)]
         sys, vec = Matrix(K, rows, cols), vector(K, rows)
         vec[rows - 1] = -1
         for j in range(r):
