@@ -163,17 +163,84 @@ Using the GAP C library from Cython
    We are using the GAP API provided by the GAP project since
    GAP 4.10.
 
+   All GAP library usage should be sandwiched between calls to
+   ``GAP_Enter()`` and ``GAP_Leave()``. These are macros defined in
+   ``libgap-api.h`` and must be used carefully because ``GAP_Enter()``
+   is defined as two function calls in succession without braces. The
+   first thing that ``GAP_Enter()`` does is a ``setjmp()`` which plays
+   an important role in handling errors. The return value from
+   ``GAP_Enter()`` is non-zero (success) the first time around, and if
+   an error occurs, execution "jumps" back to ``GAP_Enter()``, this
+   time with a return value of zero (failure). Due to these
+   implementation details, we cannot simply check the return value
+   before executing Cython code; the following *does not* work::
 
-   One unusual aspect of this interface is its signal handling.
-   Typically, cysignals' ``sig_on()`` and ``sig_off()`` functions are
-   used to wrap code that may take a long time, and as a result, may
-   need to be interrupted with Ctrl-C. However, it is possible that
-   interrupting a function execution at an arbitrary location will
-   lead to inconsistent state. Internally, GAP provides a mechanism
-   using ``InterruptExecStat``, which sets a flag that tells GAP to
-   gracefully exit with an error as early as possible. We make use of
-   this internal mechanism to prevent segmentation fault when GAP
-   functions are interrupted.
+       if (GAP_Enter()):
+          # further calls to libgap
+          GAP_Leave()
+
+   Instead you will see something like::
+
+       try:
+           GAP_Enter()
+           # further calls to libgap
+       finally:
+           GAP_Leave()
+
+   How this works is subtle. When GAP is initialized, we install an
+   ``error_handler()`` callback that GAP invokes on error. This
+   function sets a python exception using ``PyErr_Restore()``, but so
+   long as we remain in C, this exception will not actually be
+   raised. When ``error_handler()`` finishes executing, control
+   returns to GAP which then jumps back to the previous
+   ``GAP_Enter()``. It is at this point that we need to raise the
+   (already set) exception, to prevent re-executing the code that
+   caused an error. To facilitate this, ``GAP_Enter()`` is wrapped by
+   Cython, and the wrapper is qualified with ``except 0``. This means
+   that Cython will treat a return value from the ``GAP_Enter()``
+   macro as an error, and raise an exception if one is set. (One will
+   be if there was an error because our ``error_handler()`` sets
+   it). Here is a real example::
+
+       try:
+           GAP_Enter()
+           libgap.Sum(1,2,3,4)
+       finally:
+           GAP_Leave()
+
+   The call to ``libgap.Sum(1,2,3,4)`` is an error in this case,
+   because summing four numbers requires them to be passed as a
+   list. In any case, what happens is,
+
+   #. We call the ``GAP_Enter()`` Cython wrapper, which invokes the
+      macro, and additionally generates some C code to raise an
+      exception if that return value is zero (error). But this is the
+      first pass, so for now the macro returns a non-zero (success)
+      value.
+   #. We call ``libgap.Sum(1,2,3,4)``, which is an error.
+   #. GAP invokes our ``error_handler()``, which creates a
+      :exc:`sage.libs.gap.util.GAPError`, and sets it active.
+   #. Control returns to GAP.
+   #. GAP jumps back to ``GAP_Enter()``.
+   #. The error branch of ``GAP_Enter()`` is executed. In other words
+      we proceed from ``GAP_Enter()`` as if it returned zero (error).
+   #. An exception is raised, because the ``except 0`` qualifier on the
+      Cython wrapper for ``GAP_Enter()`` specifically checks for zero
+      and raises any exceptions in that case.
+   #. Finally, ``GAP_Leave()`` is called to clean up. In a more
+      realistic example where failure is not guaranteed, this would
+      also have been run to clean up if no errors were raised.
+
+   Another unusual aspect of the libgap interface is its signal
+   handling. Typically, cysignals' ``sig_on()`` and ``sig_off()``
+   functions are used to wrap code that may take a long time, and as a
+   result, may need to be interrupted with Ctrl-C. However, it is
+   possible that interrupting a function execution at an arbitrary
+   location will lead to inconsistent state. Internally, GAP provides
+   a mechanism using ``InterruptExecStat``, which sets a flag that
+   tells GAP to gracefully exit with an error as early as possible. We
+   make use of this internal mechanism to prevent segmentation faults
+   when GAP functions are interrupted.
 
    Specifically, we install GAP's own ``SIGINT`` handler (to catch
    Ctrl-C) before executing any long-running GAP code, and then later
@@ -181,14 +248,10 @@ Using the GAP C library from Cython
    is accomplished using the suggestively-named ``gap_sig_on()`` and
    ``gap_sig_off()`` functions. After you have called
    ``gap_sig_on()``, if GAP receives Ctrl-C, it will invoke our custom
-   ``error_handler()`` that will raise a
-   :exc:`sage.libs.gap.util.GAPError` containing the phrase "user
-   interrupt". As a result you will often find GAP code sandwiched
-   between ``gap_sig_on()`` and ``gap_sig_off()``, in a ``try/except``
-   block, with special handling for these GAP errors. The goal is to
-   catch and re-raise them as :exc:`KeyboardInterrupt` so that they
-   can be caught in user code just like you would with a cysignals
-   interrupt.
+   ``error_handler()`` that will set a :exc:`KeyboardInterrupt`
+   containing the phrase "user interrupt". Eventually (as explained in
+   the preceding paragraphs), control will jump back to the Cython
+   wrapper for ``GAP_Enter()``, and this exception will be raised.
 
    Before you attempt to change any of this, please make sure that you
    understand the issues that it is intended to fix, e.g.
