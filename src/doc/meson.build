@@ -25,6 +25,7 @@ references = run_command(
   py,
   [
     src / 'build-docs.py',
+    '--no-prune-empty-dirs',
     '--all-documents',
     'reference',
     '--source',
