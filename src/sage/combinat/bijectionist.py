@@ -1032,7 +1032,6 @@ class Bijectionist(SageObject):
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
-            sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
             ValueError: no possible values found for singleton block [[1, 2]]
@@ -1042,10 +1041,16 @@ class Bijectionist(SageObject):
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_constant_blocks([[permutation for permutation in Permutations(n)] for n in range(4)])
             sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
-            sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
             ValueError: no possible values found for block [[1, 2], [2, 1]]
+
+            sage: A = [(1,2),(3,4)]
+            sage: b = Bijectionist(A, A)
+            sage: b.set_value_restrictions(((1,2), (3,4)))
+            Traceback (most recent call last):
+            ...
+            AssertionError: dimensions of the restricted range does not match that of the codomain, recall that the possible values must be specified as a list
 
             sage: A = B = [permutation for n in range(4) for permutation in Permutations(n)]
             sage: tau = Permutation.longest_increasing_subsequence_length
@@ -1062,9 +1067,22 @@ class Bijectionist(SageObject):
         self._bmilp = None
         set_Z = set(self._Z)
         self._restrictions_possible_values = {a: set_Z for a in self._A}
+        get_depth = lambda lst: 0 if not isinstance(lst, list) else 1 if not lst else 1 + max(map(get_depth, lst))
+
         for a, values in value_restrictions:
             assert a in self._A, f"element {a} was not found in A"
+            assert (get_depth(values) == get_depth(list(set_Z))), "dimensions of the restricted range does not match that of the codomain, recall that the possible values must be specified as a list"
             self._restrictions_possible_values[a] = self._restrictions_possible_values[a].intersection(values)
+
+        if hasattr(self, '_P'):
+            self._compute_possible_block_values()
+        else:
+            empty_set = [key for key, value in self._restrictions_possible_values.items() if not value]
+            if empty_set:
+                if len(empty_set) == 1:
+                    raise ValueError(f"no possible values found for singleton block {empty_set}")
+                else:
+                    raise ValueError(f"no possible values found for block {empty_set}")
 
     def _compute_possible_block_values(self):
         r"""
@@ -1081,7 +1099,6 @@ class Bijectionist(SageObject):
             sage: tau = Permutation.longest_increasing_subsequence_length
             sage: bij = Bijectionist(A, B, tau)
             sage: bij.set_value_restrictions((Permutation([1, 2]), [4, 5]))
-            sage: bij._compute_possible_block_values()
             Traceback (most recent call last):
             ...
             ValueError: no possible values found for singleton block [[1, 2]]
