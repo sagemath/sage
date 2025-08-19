@@ -2066,6 +2066,9 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         cdef Element sage_res
 
+        if len(x) > 0 and len(kwds) > 0:
+            raise TypeError("Cannot mix both arguments and keywords.")
+
         if len(kwds) > 0:
             f = self.subs(**kwds)
             if len(x) > 0:
