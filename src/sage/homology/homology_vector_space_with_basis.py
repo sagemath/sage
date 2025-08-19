@@ -872,8 +872,8 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
             for cell, coeff in H._to_cycle_on_basis((deg_tot, gamma_index)):
                 for (c, left_cell, right_cell) in scomplex.alexander_whitney(cell, deg_left):
                     if c:
-                        left = n_chains_left(left_cell)
-                        right = n_chains_right(right_cell)
+                        left = n_chains_left.monomial(left_cell)
+                        right = n_chains_right.monomial(right_cell)
                         gamma_coeff += c * coeff * left_cycle.eval(left) * right_cycle.eval(right)
             if gamma_coeff != base_ring.zero():
                 result[(deg_tot, gamma_index)] = gamma_coeff
@@ -1197,8 +1197,8 @@ class CohomologyRing_mod2(CohomologyRing):
                                  and left.is_nondegenerate()
                                  and right.is_nondegenerate())
                                     or not hasattr(left, 'is_nondegenerate')):
-                                left = n_chains(left)
-                                right = n_chains(right)
+                                left = n_chains.monomial(left)
+                                right = n_chains.monomial(right)
                                 gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
                     if gamma_coeff != base_ring.zero():
                         result[(m, gamma_index)] = gamma_coeff

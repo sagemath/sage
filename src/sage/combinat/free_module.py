@@ -22,6 +22,7 @@ from sage.combinat.cartesian_product import CartesianProduct_iters
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.superseded import deprecation
 from sage.categories.morphism import SetMorphism
 from sage.categories.category import Category
 from sage.categories.sets_cat import Sets
@@ -645,13 +646,17 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F(F.monomial("a"))   # indirect doctest
             B['a']
 
-        Do not rely on the following feature which may be removed in the future::
+        The following feature has been deprecated::
 
             sage: QS3 = SymmetricGroupAlgebra(QQ,3)                                     # needs sage.combinat
             sage: QS3([2,3,1])     # indirect doctest                                   # needs sage.combinat
+            doctest:warning...
+            DeprecationWarning: passing a basis index ([2, 3, 1]) to the element
+            constructor is deprecated; use the method 'monomial' instead
+            See https://github.com/sagemath/sage/issues/37523 for details.
             [2, 3, 1]
 
-        instead, use::
+        Instead, use::
 
             sage: P = QS3.basis().keys()                                                # needs sage.combinat
             sage: QS3.monomial(P([2,3,1]))   # indirect doctest                         # needs sage.combinat
@@ -761,6 +766,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
               parent(x) == self._indices):
             return self.monomial(x)
         elif x in self._indices:
+            deprecation(37523,
+                        f"passing a basis index ({x}) to the element constructor is deprecated; "
+                        "use the method 'monomial' instead")
             return self.monomial(self._indices(x))
         else:
             if hasattr(self, '_coerce_end'):
@@ -1016,7 +1024,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
             sage: b = QS3.from_vector(vector((2, 0, 0, 0, 0, 4))); b
             2*[1, 2, 3] + 4*[3, 2, 1]
-            sage: a = 2*QS3([1,2,3]) + 4*QS3([3,2,1])
+            sage: P = QS3.basis().keys()
+            sage: a = 2*QS3.monomial(P([1,2,3])) + 4*QS3.monomial(P([3,2,1]))
             sage: a == b
             True
         """
