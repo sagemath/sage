@@ -394,10 +394,10 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
     the given vertices. Each edge must have a positive weight.
 
     The cycles are enumerated in increasing length order. Here, a cycle
-    means a closed walk ```v_0e_0v_1e_1 \ldots v_{k-1}e_{k-1}v_0``` where
-    ```v_i``` are vertices and ```e_i``` are edges. ```v_i``` and ```e_i```
-    (```0 \leq i < k```) may not be distinct. If ``simple=True``, then cycles
-    with distinct ```v_i``` and ```e_i``` (```0 \leq i < k```) are enumerated.
+    means a closed walk `v_0e_0v_1e_1 \ldots v_{k-1}e_{k-1}v_0` where
+    `v_i` are vertices and `e_i` are edges. `v_i` and `e_i`
+    (`0 \leq i < k`) may not be distinct. If ``simple=True``, then cycles
+    with distinct `v_i` and `e_i` (`0 \leq i < k`) are enumerated.
 
     INPUT:
 
