@@ -130,7 +130,7 @@ def hilbert_class_polynomial(D, algorithm=None):
     from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
     from sage.rings.real_mpfr import RR
     from sage.rings.complex_mpfr import ComplexField
-    from sage.functions.all import elliptic_j
+    from sage.functions.special import elliptic_j
 
     # get all primitive reduced quadratic forms, (necessary to exclude
     # imprimitive forms when D is not a fundamental discriminant):

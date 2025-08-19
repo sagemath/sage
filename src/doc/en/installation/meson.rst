@@ -232,8 +232,24 @@ To configure the project, we need to run the following command:
 
     $ meson setup builddir
 
-This will create a build directory ``builddir`` that will hold the build
-artifacts.
+This will create a build directory ``builddir`` that will hold the
+build artifacts. Certain options are configurable at build time. The
+easiest way to obtain an overview of these options is by using ``meson
+configure``:
+
+.. code-block:: shell-session
+
+    $ meson configure builddir
+
+This command should display the available options and their associated
+values. The section titled "Project options" contains the options that
+are unique to SageMath. To change the value of an option, the flag
+``-Doption=value`` can be passed to ``meson setup``. For example, if
+you don't want to build the HTML documentation, you might use
+
+.. code-block:: shell-session
+
+    $ meson setup -Dbuild-docs=false builddir
 
 If pip is used as above with ``--editable``, ``builddir`` is set to be
 ``build/cp[Python major version][Python minor version]``, such as
@@ -297,6 +313,21 @@ Alternatively, we can still use pip to install:
         $ meson setup builddir --prefix=/usr --libdir=... -Dcpp_args=...
         $ meson compile -C builddir
         $ DESTDIR=/path/to/staging/root meson install -C builddir
+
+    SageMath's automatic feature detection (based on the packages that
+    happen to be installed at build time) can be disabled in favor of
+    explicit configuration by passing ``-Dauto_features=disabled`` to
+    ``meson setup``. Afterwards, individual features must be enabled
+    explicitly. You can obtain a list of valid feature names through
+    ``meson configure``.
+
+    By default, meson may fall back to bundled versions of certain
+    subprojects known as `wrap dependencies
+    <https://mesonbuild.com/Wrap-dependency-system-manual.html>`_.
+    Maintainers will typically want to disable this behavior as well
+    to ensure that the system dependencies are used. This can be
+    achieved with the `--wrap-mode flag
+    <https://mesonbuild.com/Subprojects.html#commandline-options>`_
 
     With the `default <https://mesonbuild.com/Running-Meson.html#installing>`_ prefix
     being ``/usr/local``, it may then install to

@@ -650,7 +650,7 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
         sage: A = arrow2d((-1,-1), (2,3), legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options))
 

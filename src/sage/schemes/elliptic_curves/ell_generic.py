@@ -2476,6 +2476,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: assert(E(eval(f,P)) == 2*P)
 
         The following test shows that :issue:`6413` is fixed for elliptic curves over finite fields::
+
+            sage: # long time (:issue:`39569`)
             sage: p = 7
             sage: K.<a> = GF(p^2)
             sage: E = EllipticCurve(K, [a + 3, 5 - a])
