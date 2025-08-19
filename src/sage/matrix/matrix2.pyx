@@ -8388,6 +8388,9 @@ cdef class Matrix(Matrix1):
           - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
             scaled partial pivoting (if base ring has valuation)
 
+          - ``'full_pivoting'``: Gauss elimination, using full pivoting
+            (see :meth:`_echelon_in_place_fp`)
+
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
 
@@ -8400,10 +8403,11 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        The matrix ``self`` is put into echelon form. Nothing is
-        returned unless the keyword option ``transformation=True`` is
-        specified, in which case the transformation matrix is
-        returned.
+        The matrix ``self`` is put into echelon form, returning nothing by
+        default. If ``transformation=True`` is specified, returns a
+        transformation matrix `T`. If ``algorithm='full_pivoting'`` is
+        specified, returns a permutation `s` of the columns in the form
+        `s` or `(s,T)` depending on ``transformation``.
 
         EXAMPLES::
 
@@ -8541,6 +8545,9 @@ cdef class Matrix(Matrix1):
                     self._echelon_in_place(algorithm)
                 elif algorithm == 'strassen':
                     self._echelon_strassen(cutoff)
+                elif algorithm == 'full_pivoting':
+                    transformation = 'transformation' in kwds and kwds['transformation']
+                    return self._echelon_in_place_fp(transformation)
                 else:
                     raise ValueError("Unknown algorithm '%s'" % algorithm)
             else:
@@ -8580,6 +8587,9 @@ cdef class Matrix(Matrix1):
           - ``'scaled_partial_pivoting_valuation'``: Gauss elimination, using
             scaled partial pivoting (if base ring has valuation)
 
+          - ``'full_pivoting'``: Gauss elimination, using full pivoting
+            (see :meth:`_echelon_in_place_fp`)
+
           - ``'strassen'``: use a Strassen divide and conquer
             algorithm (if available)
 
@@ -8599,6 +8609,10 @@ cdef class Matrix(Matrix1):
         specified, the output consists of a pair `(E,T)` of matrices
         where `E` is the echelon form of ``self`` and `T` is the
         transformation matrix.
+
+        If ``algorithm='full_pivoting'`` is specified, then the output
+        contains a permutation `s` representing the column swaps done,
+        in the form `(E,s)` or `(E,s,T)` depending on ``transformation``.
 
         EXAMPLES::
 
@@ -8631,13 +8645,23 @@ cdef class Matrix(Matrix1):
             True
         """
         cdef bint transformation = ('transformation' in kwds and kwds['transformation'])
-        x = self.fetch('echelon_form')
-        if x is not None:
-            if not transformation:
-                return x
-            y = self.fetch('echelon_transformation')
-            if y:
-                return (x, y)
+        if algorithm != 'full_pivoting':
+            x = self.fetch('echelon_form')
+            if x is not None:
+                if not transformation:
+                    return x
+                y = self.fetch('echelon_transformation')
+                if y:
+                    return x, y
+        else:
+            x = self.fetch('echelon_form_full_pivoting')
+            if x is not None:
+                s = self.fetch('echelon_full_pivoting_columnperm')
+                if not transformation:
+                    return x, s
+                y = self.fetch('echelon_full_pivoting_transformation')
+                if y:
+                    return x, s, y
 
         E = self.__copy__()
         if algorithm == 'default':
@@ -8645,14 +8669,22 @@ cdef class Matrix(Matrix1):
         else:
             v = E.echelonize(algorithm=algorithm, cutoff=cutoff, **kwds)
         E.set_immutable()  # so we can cache the echelon form.
-        self.cache('echelon_form', E)
-        if v is not None:
-            self.cache('echelon_transformation', v)
-        self.cache('pivots', E.pivots())
-        if transformation and v is not None:
-            return (E, v)
-        else:
+        if algorithm != 'full_pivoting':
+            self.cache('echelon_form', E)
+            if v is not None:
+                self.cache('echelon_transformation', v)
+            self.cache('pivots', E.pivots())
+            if transformation and v is not None:
+                return E, v
             return E
+        else:
+            self.cache('echelon_form_full_pivoting', E)
+            if transformation:
+                self.cache('echelon_full_pivoting_transformation', v[1])
+                self.cache('echelon_full_pivoting_columnperm', v[0])
+                return E, v[0], v[1]
+            self.cache('echelon_full_pivoting_columnperm', v)
+            return E, v
 
     cpdef _echelon(self, str algorithm):
         """
@@ -9099,6 +9131,120 @@ cdef class Matrix(Matrix1):
             extended.subdivide(rank, self.ncols())
             extended.set_immutable()
         return extended
+
+    cpdef _echelon_in_place_fp(self, bint transformation):
+        r"""
+        Transforms ``self`` into echelon form with leftmost pivots via full
+        pivoting, returning permutation ``sigma`` representing the
+        column permutations done.
+
+        INPUT:
+
+        - ``transformation`` -- boolean (default: ``False``); whether to
+        additionally return the row transformation matrix.
+
+        OUTPUT:
+
+        If ``self`` is an `m\times n` matrix, then puts it in echelon form
+        via full pivoting, and returns permutation element ``s`` in `S_n`
+        corresponding to the column swaps done during full pivoting.
+
+        If ``transformation=True`` is given, returns ``(s, T)``
+        where ``T`` is the row transformation matrix.
+
+        EXAMPLES:
+
+        The following relation should hold for ``s`` and ``T``. Note that
+        ``permute_columns`` permutes ``mc`` according to `s^{-1}`. ::
+
+            sage: F = Qp(5); m = matrix.random(F, 10)
+            sage: mc = copy(m)
+            sage: s, T = mc._echelon_in_place_fp(True)
+            sage: mc.with_permuted_columns(s) == T*m
+            True
+        """
+        s = self.fetch('echelon_full_pivoting_columnperm')
+        if s is not None:
+            if not transformation:
+                return s
+            T = self.fetch('echelon_full_pivoting_transformation')
+            if T is not None:
+                return s, T
+
+        self.check_mutability()
+        cdef Py_ssize_t nr, nc, piv, pivi, pivj
+        cdef bint isDVF
+        from sage.matrix.constructor import identity_matrix
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        from sage.categories.discrete_valuation import DiscreteValuationFields
+
+        R = self._base_ring
+        nr = self._nrows
+        nc = self._ncols
+        if transformation:
+            T = identity_matrix(R, nr)
+            temp = []
+        S = SymmetricGroup(nc)
+        s = S.identity()
+        isDVF = R in DiscreteValuationFields
+        if isDVF:
+            seen = None
+
+        for piv in range(min(nr, nc)):
+            if not isDVF:
+                pivi = pivj = piv
+                current = 0
+                for j in range(piv, nc):
+                    for i in range(piv, nr):
+                        a = self.get_unsafe(i, j).abs()
+                        if a > current:
+                            pivi = i; pivj = j
+                            current = a
+                if current == 0:
+                    break
+            else:
+                pivi, pivj, seen = _find_pivot_dvf_fp(self, piv, piv,
+                                                      nr, nc, seen)
+                if pivi == -1:
+                    break
+
+            self.swap_rows(piv, pivi)
+            if transformation:
+                T.swap_rows(piv, pivi)
+                temp.append(pivi)
+                T.swap_columns(piv, pivi)
+            if piv != pivj:
+                self.swap_columns(piv, pivj)
+                s = s * S((piv+1, pivj+1))
+
+            scalar = ~self.get_unsafe(piv, piv)
+            self.rescale_row(piv, scalar, piv+1)
+            self.set_unsafe(piv, piv, R.one())
+            if transformation:
+                T.rescale_row(piv, scalar)
+            for i in range(nr):
+                if i != piv:
+                    scalar = -self.get_unsafe(i, piv)
+                    if scalar:
+                        self.add_multiple_of_row(i, piv, scalar, piv+1)
+                        self.set_unsafe(i, piv, R.zero())
+                        if transformation:
+                            T.add_multiple_of_row(i, piv, scalar, end_col=piv)
+        else:
+            piv += 1
+        if transformation:
+            for i in range(len(temp)-1,-1,-1):
+                T.swap_columns(i, temp[i])
+
+        self.cache('rank', piv)
+        self.cache('echelon_form_full_pivoting', self)
+        self.cache('echelon_full_pivoting_columnperm', s)
+        if transformation:
+            self.cache('echelon_full_pivoting_transformation', T)
+
+        if transformation:
+            return s, T
+        return s
 
     #####################################################################################
     # Functions for symmetries of a matrix under row and column permutations
@@ -19785,3 +19931,27 @@ cdef inline bint _block_ldlt_pivot1x1(Matrix A, Py_ssize_t k) except 1:
                      A.get_unsafe(k+i+1, k)/ pivot)
 
     return 0
+
+cdef inline _find_pivot_dvf_fp(Matrix A, Py_ssize_t starti, Py_ssize_t startj,
+                               Py_ssize_t nr, Py_ssize_t nc, seen):
+    r"""
+    Finds location of pivot in full pivoting step over a DVF.
+    Returns a tuple ``(pivi, pivj, seen)`` where ``(pivi, pivj)``
+    is the pivot's position and ``seen`` is the lowest seen valuation.
+
+    If no pivot is found, returns ``-1`` in the first coordinate.
+    """
+    current = None
+    for j in range(startj, nc):
+        for i in range(starti, nr):
+            v = A.get_unsafe(i, j).valuation()
+            if A.get_unsafe(i, j) and (current is None or v < current):
+                pivi = i; pivj = j
+                current = v
+                if current == seen:
+                    break
+        else: continue
+        break
+    if current is None:
+        return -1, 0, 0
+    return pivi, pivj, current
