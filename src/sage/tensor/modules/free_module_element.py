@@ -235,7 +235,7 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
         description = "Element "
         if self._name is not None:
             description += self._name + " "
-        description += "of the {}".format(self._fmodule)
+        description += "of the {}".format(self._fmodule[0])
         return description
 
     def _new_comp(self, basis: FreeModuleBasis) -> Components:
@@ -262,9 +262,9 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: type(v._new_comp(e))
             <class 'sage.tensor.modules.comp.Components'>
         """
-        fmodule = self._fmodule  # the base free module
-        return Components(fmodule._ring, basis, 1, start_index=fmodule._sindex,
-                          output_formatter=fmodule._output_formatter)
+        fmodule = self._fmodule[0]  # the base free module
+        return Components(fmodule._ring, basis, 1, self._shape,
+                        start_index=fmodule._sindex, output_formatter=fmodule._output_formatter)
 
     def _new_instance(self):
         r"""
@@ -280,4 +280,4 @@ class FiniteRankFreeModuleElement(AlternatingContrTensor):
             sage: v._new_instance().parent() is v.parent()
             True
         """
-        return self.__class__(self._fmodule)
+        return self.__class__(self._fmodule[0])
