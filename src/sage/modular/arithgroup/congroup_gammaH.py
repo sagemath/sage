@@ -1181,7 +1181,7 @@ class GammaH_class(CongruenceSubgroup):
         for d in divisors(N):
             d2 = d**2
             if d2 > N:
-                break
+                continue
             Nd = lcm(d, N // d)
             Hd = {x % Nd for x in H}
             if Nd - 1 not in Hd:
