@@ -886,7 +886,7 @@ cdef class dancing_linksWrapper:
         Return the SAT solver solving an equivalent problem.
 
         Note that row index `i` in the dancing links solver corresponds to
-        the boolean variable index `ì+1` for the SAT solver to avoid
+        the boolean variable index `i+1` for the SAT solver to avoid
         the variable index `0`.
 
         See also :mod:`sage.sat.solvers.satsolver`.

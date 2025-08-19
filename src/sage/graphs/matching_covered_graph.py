@@ -2617,7 +2617,7 @@ class MatchingCoveredGraph(Graph):
 
         For a brace `G[A, B]` of order six or more, `|N(X)| \geq |X| + 2`, for
         all `X \subset A` such that `0 < |X| <|A| - 1`, where
-        `N(S) := \{b | (a, b) \in E \^ a \in S\}` is called the neighboring set
+        `N(S) := \{b | (a, b) \in E \wedge a \in S\}` is called the neighboring set
         of `S`::
 
             sage: H = graphs.MoebiusLadderGraph(15)
