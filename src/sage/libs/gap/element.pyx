@@ -1201,7 +1201,11 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('3/2').is_list()
             False
         """
-        return GAP_IsList(self.value)
+        try:
+            GAP_Enter()
+            return GAP_IsList(self.value)
+        finally:
+            GAP_Leave()
 
     def is_record(self):
         r"""
@@ -1216,7 +1220,11 @@ cdef class GapElement(RingElement):
             sage: libgap.eval('rec(a:=1, b:=3)').is_record()
             True
         """
-        return GAP_IsRecord(self.value)
+        try:
+            GAP_Enter()
+            return GAP_IsRecord(self.value)
+        finally:
+            GAP_Leave()
 
     cpdef is_bool(self):
         r"""
