@@ -4375,6 +4375,11 @@ cdef class Expression(Expression_abc):
             sage: complex(1,3)^(sqrt(2))
             (1+3j)^sqrt(2)
 
+        Check that :issue:`39035` is fixed::
+
+            sage: 1.0^x
+            1.00000000000000^x
+
         Test complex numeric powers::
 
             sage: symI = SR(I)
