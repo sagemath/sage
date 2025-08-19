@@ -1391,11 +1391,6 @@ cdef class GapElement(RingElement):
                 x = R.gen()
                 return x**val * R(num) / R(den)
 
-        elif self.IsList():
-            # May be a list-like collection of some other type of GapElements
-            # that we can convert
-            return [item.sage() for item in self.AsList()]
-
         elif self.IsFreeGroup():
             from sage.groups.free_group import FreeGroup_class
             names = tuple(str(g) for g in self.GeneratorsOfGroup())
