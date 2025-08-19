@@ -154,8 +154,10 @@ jobs:
             setuptools
           uv sync --frozen --inexact --no-build-isolation -v
         env:
-          _PYTHON_HOST_PLATFORM: macosx-${{ matrix.version }}-arm64
-          ARCHFLAGS: '-arch arm64'
+            # macos-13 is x86_64, while macos-14 and macos-15 are arm64
+            # https://docs.github.com/en/actions/reference/runners/github-hosted-runners#standard-github-hosted-runners-for-public-repositories
+            _PYTHON_HOST_PLATFORM: macosx-${{ matrix.version }}-${{ matrix.version == '13' && 'x86_64' || 'arm64' }}
+            ARCHFLAGS: ${{ matrix.version == '13' && '-arch x86_64' || '-arch arm64' }}
 
       - name: Test
         run: |
