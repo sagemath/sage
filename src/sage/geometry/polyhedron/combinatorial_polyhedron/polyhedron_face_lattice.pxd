@@ -31,7 +31,7 @@ cdef class PolyhedronFaceLattice:
     cdef int is_incidence_initialized
     cdef int incidence_dim_one
     cdef int incidence_dim_two
-    cdef size_t incidence_counter_one  # walks trough faces of incidence_dim_one
+    cdef size_t incidence_counter_one  # walks through faces of incidence_dim_one
     cdef size_t incidence_counter_two  # walks through all indices of coatoms (for each face in incidence_dim_one)
 
     # Intersection of ``faces[incidence_dim_one][incidence_counter_one]`` with
@@ -41,7 +41,7 @@ cdef class PolyhedronFaceLattice:
 
     cdef int _sort(self) except -1
     cdef inline size_t find_face(self, int dimension, face_t face) except -2
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index)
     cdef size_t set_coatom_rep(self, int dimension, size_t index) except -1
     cdef size_t set_atom_rep(self, int dimension, size_t index) except -1
     cdef void incidence_init(self, int dimension_one, int dimension_two) noexcept

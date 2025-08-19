@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 """
 Elementary Cellular Automata
 
@@ -26,6 +25,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.matrix_plot", "matrix_plot")
 from sage.misc.constant_function import ConstantFunction
 
+
 class ElementaryCellularAutomata(SageObject):
     r"""
     Elementary cellular automata.
@@ -52,7 +52,7 @@ class ElementaryCellularAutomata(SageObject):
 
     INPUT:
 
-    - ``rule`` -- an integer between 0 and 255
+    - ``rule`` -- integer between 0 and 255
     - ``width`` -- (optional) the width of the ECA
     - ``initial_state`` -- (optional) the initial state given
       as a list of ``0`` and ``1``

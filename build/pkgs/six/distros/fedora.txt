@@ -1,1 +1,1 @@
-python-six
+python3-six

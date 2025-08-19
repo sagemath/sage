@@ -3,7 +3,7 @@
 Benkart-Kang-Kashiwara crystals for the general-linear Lie superalgebra
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Franco Saliola <saliola@gmail.com>
 #                     2017 Travis Scrimshaw <tcscrims at gmail.com>
 #                     2017 Anne Schilling <anne@math.ucdavis.edu>
@@ -12,8 +12,8 @@ Benkart-Kang-Kashiwara crystals for the general-linear Lie superalgebra
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.parent import Parent
 from sage.categories.regular_supercrystals import RegularSuperCrystals
@@ -60,7 +60,7 @@ class CrystalOfBKKTableaux(CrystalOfWords):
         """
         ct = CartanType(ct)
         shape = _Partitions(shape)
-        if len(shape) > ct.m + 1 and shape[ct.m+1] > ct.n + 1:
+        if len(shape) > ct.m + 1 and shape[ct.m + 1] > ct.n + 1:
             raise ValueError("invalid hook shape")
         return super().__classcall__(cls, ct, shape)
 
@@ -80,16 +80,14 @@ class CrystalOfBKKTableaux(CrystalOfWords):
         C = CrystalOfBKKLetters(ct)
         tr = shape.conjugate()
         mg = []
-        for i,col_len in enumerate(tr):
-            for j in range(col_len - m):
-                mg.append(C(i+1))
-            for j in range(max(0, m - col_len), m):
-                mg.append(C(-j-1))
+        for i, col_len in enumerate(tr, start=1):
+            mg.extend(C(i) for j in range(col_len - m))
+            mg.extend(C(-j - 1) for j in range(max(0, m - col_len), m))
         mg = list(reversed(mg))
         Parent.__init__(self, category=RegularSuperCrystals())
         self.module_generators = (self.element_class(self, mg),)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 

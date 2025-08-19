@@ -6,3 +6,4 @@ perl-TermReadKey
 perl-XML-Writer
 perl-XML-LibXML
 perl-XML-LibXSLT
+perl-SVG

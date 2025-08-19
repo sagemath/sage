@@ -487,13 +487,13 @@ static CYTHON_INLINE mat_ZZ* mat_ZZ_HNF(const mat_ZZ* A, const struct ZZ* D)
 static CYTHON_INLINE long mat_ZZ_LLL(struct ZZ **det, mat_ZZ *x, long a, long b, long verbose)
 {
     *det = new ZZ();
-    return LLL(**det,*x,a,b,verbose);
+    return LLL(**det, *x, a, b, verbose);
 }
 
 static CYTHON_INLINE long mat_ZZ_LLL_U(struct ZZ **det, mat_ZZ *x, mat_ZZ *U, long a, long b, long verbose)
 {
     *det = new ZZ();
-    return LLL(**det,*x,*U,a,b,verbose);
+    return LLL(**det, *x, *U, a, b, verbose);
 }
 
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``csdp``
 """
@@ -41,8 +41,8 @@ class CSDP(Executable):
             sage: isinstance(CSDP(), CSDP)
             True
         """
-        Executable.__init__(self, name="csdp", spkg="csdp", executable="theta",
-                                url="https://github.com/dimpase/csdp")
+        Executable.__init__(self, name='csdp', spkg='csdp', executable='theta',
+                                url='https://github.com/dimpase/csdp')
 
     def is_functional(self):
         r"""
@@ -59,7 +59,7 @@ class CSDP(Executable):
 
         tf_name = tmp_filename()
         with open(tf_name, 'wb') as tf:
-            tf.write("2\n1\n1 1".encode())
+            tf.write(b"2\n1\n1 1")
         with open(os.devnull, 'wb') as devnull:
             command = ['theta', tf_name]
             try:

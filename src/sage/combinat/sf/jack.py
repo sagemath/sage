@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Jack Symmetric Functions
+Jack symmetric functions
 
 Jack's symmetric functions appear in [Ma1995]_ Chapter VI, section 10.
 Zonal polynomials are the subject of [Ma1995]_ Chapter VII.
@@ -30,17 +30,17 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.structure.unique_representation import UniqueRepresentation
-import sage.categories.all
+from sage.arith.functions import lcm
+from sage.arith.misc import gcd
+from sage.categories.homset import End, Hom
+from sage.categories.modules_with_basis import ModulesWithBasis
+from sage.categories.morphism import SetMorphism
+from sage.misc.misc_c import prod
+from sage.rings.fraction_field import FractionField, FractionField_generic
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.arith.misc import gcd
-from sage.arith.functions import lcm
-from sage.rings.fraction_field import is_FractionField
-from sage.misc.misc_c import prod
-from sage.categories.morphism import SetMorphism
-from sage.categories.homset import Hom, End
-from sage.rings.fraction_field import FractionField
+from sage.structure.unique_representation import UniqueRepresentation
+
 from . import sfa
 
 QQt = FractionField(QQ['t'])
@@ -50,8 +50,25 @@ m_to_p_cache = {}
 
 
 class Jack(UniqueRepresentation):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        """
+        Normalize the arguments.
 
-    def __init__(self, Sym, t='t'):
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).jack().P()
+            sage: B2 = SymmetricFunctions(R).jack(t).P()
+            sage: B3 = SymmetricFunctions(R).jack(q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
+
+    def __init__(self, Sym, t):
         r"""
         The family of Jack symmetric functions including the `P`, `Q`, `J`, `Qp`
         bases.  The default parameter is ``t``.
@@ -60,7 +77,7 @@ class Jack(UniqueRepresentation):
 
         - ``self`` -- the family of Jack symmetric function bases
         - ``Sym`` -- a ring of symmetric functions
-        - ``t`` -- an optional parameter (default : 't')
+        - ``t`` -- an optional parameter (default: ``'t'``)
 
         EXAMPLES::
 
@@ -70,7 +87,7 @@ class Jack(UniqueRepresentation):
             Jack polynomials with t=1 over Rational Field
         """
         self._sym = Sym
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % t
@@ -78,15 +95,13 @@ class Jack(UniqueRepresentation):
 
     def __repr__(self):
         r"""
-        The string representation for the family of Jack symmetric function bases
+        The string representation for the family of Jack symmetric function bases.
 
         INPUT:
 
         - ``self`` -- the family of Jack symmetric function bases
 
-        OUTPUT:
-
-        - returns the name of the family of bases
+        OUTPUT: the name of the family of bases
 
         EXAMPLES::
 
@@ -97,16 +112,14 @@ class Jack(UniqueRepresentation):
 
     def base_ring( self ):
         r"""
-        Returns the base ring of the symmetric functions in which the
-        Jack symmetric functions live
+        Return the base ring of the symmetric functions in which the
+        Jack symmetric functions live.
 
         INPUT:
 
         - ``self`` -- the family of Jack symmetric function bases
 
-        OUTPUT:
-
-        - the base ring of the symmetric functions ring of ``self``
+        OUTPUT: the base ring of the symmetric functions ring of ``self``
 
         EXAMPLES::
 
@@ -118,16 +131,14 @@ class Jack(UniqueRepresentation):
 
     def symmetric_function_ring( self ):
         r"""
-        Returns the base ring of the symmetric functions of the Jack symmetric
+        Return the base ring of the symmetric functions of the Jack symmetric
         function bases
 
         INPUT:
 
         - ``self`` -- the family of Jack symmetric function bases
 
-        OUTPUT:
-
-        - the symmetric functions ring of ``self``
+        OUTPUT: the symmetric functions ring of ``self``
 
         EXAMPLES::
 
@@ -139,15 +150,13 @@ class Jack(UniqueRepresentation):
 
     def P(self):
         r"""
-        Returns the algebra of Jack polynomials in the `P` basis.
+        Return the algebra of Jack polynomials in the `P` basis.
 
         INPUT:
 
         - ``self`` -- the family of Jack symmetric function bases
 
-        OUTPUT:
-
-        - the `P` basis of the Jack symmetric functions
+        OUTPUT: the `P` basis of the Jack symmetric functions
 
         EXAMPLES::
 
@@ -244,15 +253,13 @@ class Jack(UniqueRepresentation):
 
     def Q(self):
         r"""
-        Returns the algebra of Jack polynomials in the `Q` basis.
+        Return the algebra of Jack polynomials in the `Q` basis.
 
         INPUT:
 
         - ``self`` -- the family of Jack symmetric function bases
 
-        OUTPUT:
-
-        - the `Q` basis of the Jack symmetric functions
+        OUTPUT: the `Q` basis of the Jack symmetric functions
 
         EXAMPLES::
 
@@ -285,7 +292,7 @@ class Jack(UniqueRepresentation):
 
     def J(self):
         r"""
-        Returns the algebra of Jack polynomials in the `J` basis.
+        Return the algebra of Jack polynomials in the `J` basis.
 
         INPUT:
 
@@ -348,16 +355,14 @@ class Jack(UniqueRepresentation):
 
     def Qp(self):
         r"""
-        Returns the algebra of Jack polynomials in the `Qp`, which is dual to
+        Return the algebra of Jack polynomials in the `Qp`, which is dual to
         the `P` basis with respect to the standard scalar product.
 
         INPUT:
 
         - ``self`` -- the family of Jack symmetric function bases
 
-        OUTPUT:
-
-        - the `Q'` basis of the Jack symmetric functions
+        OUTPUT: the `Q'` basis of the Jack symmetric functions
 
         EXAMPLES::
 
@@ -382,7 +387,7 @@ class Jack(UniqueRepresentation):
 
 def c1(part, t):
     r"""
-    Returns the `t`-Jack scalar product between ``J(part)`` and ``P(part)``.
+    Return the `t`-Jack scalar product between ``J(part)`` and ``P(part)``.
 
     INPUT:
 
@@ -408,7 +413,7 @@ def c1(part, t):
 
 def c2(part, t):
     r"""
-    Returns the t-Jack scalar product between ``J(part)`` and ``Q(part)``.
+    Return the t-Jack scalar product between ``J(part)`` and ``Q(part)``.
 
     INPUT:
 
@@ -445,9 +450,7 @@ def normalize_coefficients(self, c):
     - ``self`` -- a Jack basis of the symmetric functions
     - ``c`` -- a coefficient in the base ring of ``self``
 
-    OUTPUT:
-
-    - divide numerator and denominator by the greatest common divisor
+    OUTPUT: divide numerator and denominator by the greatest common divisor
 
     EXAMPLES::
 
@@ -464,7 +467,7 @@ def normalize_coefficients(self, c):
         6/(t^2 + 3*t + 2)
     """
     BR = self.base_ring()
-    if is_FractionField(BR) and BR.base_ring() == QQ:
+    if isinstance(BR, FractionField_generic) and BR.base_ring() == QQ:
         denom = c.denominator()
         numer = c.numerator()
 
@@ -493,7 +496,7 @@ def normalize_coefficients(self, c):
 class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
     def __init__(self, jack):
         r"""
-        A class of methods which are common to all Jack bases of the symmetric functions
+        A class of methods which are common to all Jack bases of the symmetric functions.
 
         INPUT:
 
@@ -522,29 +525,46 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         # common category BasesByOrthotriangularity (shared with Jack, HL, orthotriang, Mcdo)
         if hasattr(self, "_m_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-            category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+            category = ModulesWithBasis(self._sym.base_ring())
             self._m = self._sym.monomial()
             self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
             self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
         if hasattr(self, "_h_cache"):
             # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
-            category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+            category = ModulesWithBasis(self._sym.base_ring())
             self._h = self._sym.homogeneous()
             self   .register_coercion(SetMorphism(Hom(self._h, self, category), self._h_to_self))
             self._h.register_coercion(SetMorphism(Hom(self, self._h, category), self._self_to_h))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: JP = Sym.jack().P()
+            sage: JP.construction()
+            (SymmetricFunctionsFunctor[Jack P],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        return (sfa.SymmetricFunctionsFamilyFunctor(self, Jack,
+                                                    self.basis_name(),
+                                                    self.t),
+                self.base_ring())
+
     def _m_to_self(self, x):
         r"""
-        Isomorphism from the monomial basis into ``self``
+        Isomorphism from the monomial basis into ``self``.
 
         INPUT:
 
         - ``self`` -- a Jack basis of the symmetric functions
         - ``x`` -- element of the monomial basis
 
-        OUTPUT:
-
-        - an element of ``self`` equivalent to ``x``
+        OUTPUT: an element of ``self`` equivalent to ``x``
 
         EXAMPLES::
 
@@ -564,16 +584,14 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _self_to_m(self, x):
         r"""
-        Isomorphism from self to the monomial basis
+        Isomorphism from ``self`` to the monomial basis.
 
         INPUT:
 
         - ``self`` -- a Jack basis of the symmetric functions
         - ``x`` -- an element of ``self``
 
-        OUTPUT:
-
-        - an element of the monomial basis equivalent to ``x``
+        OUTPUT: an element of the monomial basis equivalent to ``x``
 
         EXAMPLES::
 
@@ -593,7 +611,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def c1(self, part):
         r"""
-        Returns the `t`-Jack scalar product between ``J(part)`` and ``P(part)``.
+        Return the `t`-Jack scalar product between ``J(part)`` and ``P(part)``.
 
         INPUT:
 
@@ -617,7 +635,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def c2(self, part):
         r"""
-        Returns the `t`-Jack scalar product between ``J(part)`` and ``Q(part)``.
+        Return the `t`-Jack scalar product between ``J(part)`` and ``Q(part)``.
 
         INPUT:
 
@@ -643,16 +661,14 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _normalize(self, x):
         r"""
-        Normalize the coefficients of ``x``
+        Normalize the coefficients of ``x``.
 
         INPUT:
 
         - ``self`` -- a Jack basis of the symmetric functions
         - ``x`` -- an element of ``self``
 
-        OUTPUT:
-
-        - returns ``x`` with _normalize_coefficient applied to each of the coefficients
+        OUTPUT: ``x`` with _normalize_coefficient applied to each of the coefficients
 
         EXAMPLES::
 
@@ -670,16 +686,12 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def _normalize_morphism(self, category):
         r"""
-        Returns the normalize morphism
+        Return the normalize morphism.
 
         INPUT:
 
         - ``self`` -- a Jack basis of the symmetric functions
         - ``category`` -- a category
-
-        OUTPUT:
-
-        - the normalized morphism
 
         EXAMPLES::
 
@@ -715,9 +727,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         - ``self`` -- a Jack basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -736,15 +746,11 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def jack_family(self):
         r"""
-        Returns the family of Jack bases associated to the basis ``self``
+        Return the family of Jack bases associated to the basis ``self``.
 
         INPUT:
 
         - ``self`` -- a Jack basis of the symmetric functions
-
-        OUTPUT:
-
-        - the family of Jack symmetric functions associated to ``self``
 
         EXAMPLES::
 
@@ -756,7 +762,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     def coproduct_by_coercion(self, elt):
         r"""
-        Returns the coproduct of the element ``elt`` by coercion to the Schur basis.
+        Return the coproduct of the element ``elt`` by coercion to the Schur basis.
 
         INPUT:
 
@@ -792,12 +798,10 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
             - ``self`` -- an element of a Jack basis of the symmetric functions
             - ``x`` -- an element of the symmetric functions
-            - ``t`` -- an optional parameter (default : None uses the parameter from
-                the basis)
+            - ``t`` -- an optional parameter (default: ``None``; uses the
+              parameter from the basis)
 
-            OUTPUT:
-
-            - returns the Jack scalar product between ``x`` and ``self``
+            OUTPUT: the Jack scalar product between ``x`` and ``self``
 
             EXAMPLES::
 
@@ -819,7 +823,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
 def part_scalar_jack(part1, part2, t):
     r"""
-    Returns the Jack scalar product between ``p(part1)`` and ``p(part2)`` where
+    Return the Jack scalar product between ``p(part1)`` and ``p(part2)`` where
     `p` is the power-sum basis.
 
     INPUT:
@@ -827,9 +831,7 @@ def part_scalar_jack(part1, part2, t):
     - ``part1``, ``part2`` -- two partitions
     - ``t`` -- a parameter
 
-    OUTPUT:
-
-    - returns the scalar product between the power sum indexed by ``part1`` and ``part2``
+    OUTPUT: the scalar product between the power sum indexed by ``part1`` and ``part2``
 
     EXAMPLES::
 
@@ -877,14 +879,14 @@ class JackPolynomials_p(JackPolynomials_generic):
 
     def _m_cache(self, n):
         r"""
-        Computes the change of basis between the Jack polynomials in the `P`
+        Compute the change of basis between the Jack polynomials in the `P`
         basis and the monomial symmetric functions. This uses Gram-Schmidt
         to go to the monomials, and then that matrix is simply inverted.
 
         INPUT:
 
         - ``self`` -- an instance of the Jack `P` basis of the symmetric functions
-        - ``n`` -- a positive integer indicating the degree
+        - ``n`` -- positive integer indicating the degree
 
         EXAMPLES::
 
@@ -906,12 +908,14 @@ class JackPolynomials_p(JackPolynomials_generic):
              ([3],
               [([1, 1, 1], 3/(t^2 + 3/2*t + 1/2)), ([2, 1], 3/2/(t + 1/2)), ([3], 1)])]
         """
+        from sage.combinat.sf.sf import SymmetricFunctions
+
         if n in self._self_to_m_cache:
             return
         self._self_to_m_cache[n] = {}
         t = QQt.gen()
-        monomial = sage.combinat.sf.sf.SymmetricFunctions(QQt).monomial()
-        JP = sage.combinat.sf.sf.SymmetricFunctions(QQt).jack().P()
+        monomial = SymmetricFunctions(QQt).monomial()
+        JP = SymmetricFunctions(QQt).jack().P()
         JP._gram_schmidt(n, monomial, lambda p: part_scalar_jack(p, p, t),
                          self._self_to_m_cache[n], upper_triangular=True)
         JP._invert_morphism(n, QQt, self._self_to_m_cache,
@@ -961,9 +965,7 @@ class JackPolynomials_p(JackPolynomials_generic):
         - ``self`` -- a Jack basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -983,7 +985,7 @@ class JackPolynomials_p(JackPolynomials_generic):
 
     def scalar_jack_basis(self, part1, part2=None):
         r"""
-        Returns the scalar product of `P(part1)` and `P(part2)`.
+        Return the scalar product of `P(part1)` and `P(part2)`.
 
         This is equation (10.16) of [Mc1995]_ on page 380.
 
@@ -991,7 +993,7 @@ class JackPolynomials_p(JackPolynomials_generic):
 
         - ``self`` -- an instance of the Jack `P` basis of the symmetric functions
         - ``part1`` -- a partition
-        - ``part2`` -- an optional partition (default : None)
+        - ``part2`` -- an optional partition (default: ``None``)
 
         OUTPUT:
 
@@ -1060,7 +1062,7 @@ class JackPolynomials_j(JackPolynomials_generic):
 
     def __init__(self, jack):
         r"""
-        The `J` basis is a defined as a normalized form of the `P` basis
+        The `J` basis is a defined as a normalized form of the `P` basis.
 
         INPUT:
 
@@ -1080,7 +1082,7 @@ class JackPolynomials_j(JackPolynomials_generic):
         # Should be shared with _q (and possibly other bases in Macdo/HL) as BasesByRenormalization
         self._P = self._jack.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         phi = self.module_morphism(diagonal=self.c1,
                                    codomain=self._P, category=category)
         # should use module_morphism(on_coeffs = ...) once it exists
@@ -1096,7 +1098,7 @@ class JackPolynomials_q(JackPolynomials_generic):
 
     def __init__(self, jack):
         r"""
-        The `Q` basis is defined as a normalized form of the `P` basis
+        The `Q` basis is defined as a normalized form of the `P` basis.
 
         INPUT:
 
@@ -1116,7 +1118,7 @@ class JackPolynomials_q(JackPolynomials_generic):
         # Should be shared with _j (and possibly other bases in Macdo/HL) as BasesByRenormalization
         self._P = self._jack.P()
         # temporary until Hom(GradedHopfAlgebrasWithBasis) works better
-        category = sage.categories.all.ModulesWithBasis(self.base_ring())
+        category = ModulesWithBasis(self.base_ring())
         phi = self._P.module_morphism(diagonal=self._P.scalar_jack_basis,
                                       codomain=self, category=category)
         self.register_coercion(self._normalize_morphism(category) * phi)
@@ -1165,9 +1167,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
         - ``self`` -- an instance of the Jack `Qp` basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -1188,14 +1188,14 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
     def _h_cache(self, n):
         r"""
-        Computes the change of basis between the Jack polynomials in the `Qp`
+        Compute the change of basis between the Jack polynomials in the `Qp`
         basis and the homogeneous symmetric functions. This uses the coefficients
         in the change of basis between the Jack `P` basis and the monomial basis.
 
         INPUT:
 
         - ``self`` -- an instance of the Jack `Qp` basis of the symmetric functions
-        - ``n`` -- a positive integer indicating the degree
+        - ``n`` -- positive integer indicating the degree
 
         EXAMPLES::
 
@@ -1237,16 +1237,14 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
     def _self_to_h( self, x ):
         r"""
-        Isomorphism from self to the homogeneous basis
+        Isomorphism from ``self`` to the homogeneous basis.
 
         INPUT:
 
         - ``self`` -- a Jack `Qp` basis of the symmetric functions
         - ``x`` -- an element of the Jack `Qp` basis
 
-        OUTPUT:
-
-        - an element of the homogeneous basis equivalent to ``x``
+        OUTPUT: an element of the homogeneous basis equivalent to ``x``
 
         EXAMPLES::
 
@@ -1266,16 +1264,14 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
     def _h_to_self(self, x):
         r"""
-        Isomorphism from the homogeneous basis into ``self``
+        Isomorphism from the homogeneous basis into ``self``.
 
         INPUT:
 
         - ``self`` -- a Jack `Qp` basis of the symmetric functions
         - ``x`` -- element of the homogeneous basis
 
-        OUTPUT:
-
-        - an element of the Jack `Qp` basis equivalent to ``x``
+        OUTPUT: an element of the Jack `Qp` basis equivalent to ``x``
 
         EXAMPLES::
 
@@ -1295,7 +1291,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
     def coproduct_by_coercion(self, elt):
         r"""
-        Returns the coproduct of the element ``elt`` by coercion to the Schur basis.
+        Return the coproduct of the element ``elt`` by coercion to the Schur basis.
 
         INPUT:
 
@@ -1331,7 +1327,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
 class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
     def __init__(self, Sym):
         r"""
-        Returns the algebra of zonal polynomials.
+        Return the algebra of zonal polynomials.
 
         INPUT:
 
@@ -1353,8 +1349,8 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
         #self._m_to_self_cache = {} Now that we compute Jacks once, there is a global cache
         #self._self_to_m_cache = {} and we don't need to compute it separately for zonals
         sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym,
-                                                      prefix="Z", basis_name="zonal")
-        category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
+                                                      prefix='Z', basis_name='zonal')
+        category = ModulesWithBasis(self._sym.base_ring())
         self   .register_coercion(SetMorphism(Hom(self._P, self, category), self.sum_of_terms))
         self._P.register_coercion(SetMorphism(Hom(self, self._P, category), self._P.sum_of_terms))
 
@@ -1369,9 +1365,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
         - ``self`` -- a zonal basis of the symmetric functions
         - ``left``, ``right`` -- symmetric function elements
 
-        OUTPUT:
-
-        the product of ``left`` and ``right`` expanded in the basis ``self``
+        OUTPUT: the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -1400,9 +1394,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
             - ``self`` -- an element of the zonal basis
             - ``x`` -- an element of the symmetric function
 
-            OUTPUT:
-
-            - the scalar product between ``self`` and ``x``
+            OUTPUT: the scalar product between ``self`` and ``x``
 
             EXAMPLES::
 
@@ -1425,6 +1417,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_qp', JackPolynomials_qp.Element)
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_j', JackPolynomials_j.Element)
 register_unpickle_override('sage.combinat.sf.jack', 'JackPolynomial_p', JackPolynomials_p.Element)

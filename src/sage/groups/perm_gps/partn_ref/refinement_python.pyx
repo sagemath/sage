@@ -12,12 +12,11 @@ in pure Python, and still use the Cython algorithms. Experimentation with
 specific partition backtrack implementations no longer requires compilation, as
 the input functions can be dynamically changed at runtime.
 
-NOTE:
+.. NOTE::
 
-This is not intended for production quality implementations of partition
-refinement, but instead for experimentation, learning, and use of the Python
-debugger.
-
+    This is not intended for production quality implementations of partition
+    refinement, but instead for experimentation, learning, and use of the
+    Python debugger.
 """
 
 #*****************************************************************************
@@ -53,7 +52,6 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7) # implicit doctest
-
         """
         self.c_ps = PS_new(n, 1)
 
@@ -66,13 +64,12 @@ cdef class PythonPartitionStack:
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
             sage: del(P) # implicit doctest
-
         """
         PS_dealloc(self.c_ps)
 
     def __repr__(self):
         """
-        Returns a string representing the stack.
+        Return a string representing the stack.
 
         EXAMPLES::
 
@@ -80,13 +77,12 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P # implicit doctest
             PythonPartitionStack of degree 7 and depth 0.
-
         """
-        return "PythonPartitionStack of degree %d and depth %d."%(self.c_ps.degree, self.c_ps.depth)
+        return "PythonPartitionStack of degree %d and depth %d." % (self.c_ps.degree, self.c_ps.depth)
 
     def display(self):
         """
-        Prints a representation of the stack.
+        Print a representation of the stack.
 
         EXAMPLES::
 
@@ -98,13 +94,12 @@ cdef class PythonPartitionStack:
             sage: P.display()
             (0 1 2 3 4 5 6)
             (0 1 2|3 4 5 6)
-
         """
         PS_print(self.c_ps)
 
     def is_discrete(self):
         """
-        Returns whether the deepest partition consists only of singleton cells.
+        Return whether the deepest partition consists only of singleton cells.
 
         EXAMPLES::
 
@@ -116,13 +111,12 @@ cdef class PythonPartitionStack:
             [None, None, None, None, None, None, None]
             sage: P.is_discrete()
             True
-
         """
         return PS_is_discrete(self.c_ps)
 
     def num_cells(self):
         """
-        Returns the number of cells in the deepest partition.
+        Return the number of cells in the deepest partition.
 
         EXAMPLES::
 
@@ -130,13 +124,12 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.num_cells()
             1
-
         """
         return PS_num_cells(self.c_ps)
 
     def move_min_to_front(self, int start, int end):
         """
-        Makes sure that the first element of the segment of entries i with
+        Make sure that the first element of the segment of entries i with
         start <= i <= end is minimal.
 
         EXAMPLES::
@@ -150,7 +143,6 @@ cdef class PythonPartitionStack:
             sage: P.move_min_to_front(0,1)
             sage: P.display()
             (0 1 2 3 4 5 6)
-
         """
         PS_move_min_to_front(self.c_ps, start, end)
 
@@ -166,7 +158,6 @@ cdef class PythonPartitionStack:
             (0 1 2 3 4 5 6)
             sage: Q.display()
             (0 1 2 3 4 5 6)
-
         """
         cdef PythonPartitionStack cpy
         cpy = PythonPartitionStack(self.c_ps.degree)
@@ -175,7 +166,7 @@ cdef class PythonPartitionStack:
 
     def clear(self):
         """
-        Sets the current partition to the first shallower one, i.e. forgets about
+        Set the current partition to the first shallower one, i.e. forget about
         boundaries between cells that are new to the current level.
 
         EXAMPLES::
@@ -192,13 +183,12 @@ cdef class PythonPartitionStack:
             sage: P.display()
             (0 1 2 3 4 5 6)
             (0 1 2 3 4 5 6)
-
         """
         PS_clear(self.c_ps)
 
     def entries(self):
         """
-        Returns the entries array as a Python list of ints.
+        Return the entries array as a Python list of ints.
 
         EXAMPLES::
 
@@ -208,14 +198,13 @@ cdef class PythonPartitionStack:
             [0, 1, 2, 3, 4, 5, 6]
             sage: P.levels()
             [7, 7, 7, 7, 7, 7, -1]
-
         """
         cdef int i
         return [self.c_ps.entries[i] for i from 0 <= i < self.c_ps.degree]
 
     def set_entry(self, int i, int entry):
         """
-        Sets the ith entry of the entries array to entry.
+        Set the `i`-th entry of the entries array to entry.
 
         EXAMPLES::
 
@@ -225,13 +214,12 @@ cdef class PythonPartitionStack:
             sage: P.set_entry(0,1)
             sage: P.display()
             (1 0 2 3 4 5 6)
-
         """
         self.c_ps.entries[i] = entry
 
     def get_entry(self, int i):
         """
-        Gets the ith entry of the entries array.
+        Get the `i`-th entry of the entries array.
 
         EXAMPLES::
 
@@ -239,7 +227,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.get_entry(0)
             0
-
         """
         return self.c_ps.entries[i]
 
@@ -255,13 +242,12 @@ cdef class PythonPartitionStack:
             [0, 1, 2, 3, 4, 5, 6]
             sage: P.levels()
             [7, 7, 7, 7, 7, 7, -1]
-
         """
         return [self.c_ps.levels[i] for i from 0 <= i < self.c_ps.degree]
 
     def set_level(self, int i, int level):
         """
-        Sets the ith entry of the levels array to entry.
+        Set the `i`-th entry of the levels array to entry.
 
         EXAMPLES::
 
@@ -273,13 +259,12 @@ cdef class PythonPartitionStack:
             sage: P.display()
             (0 1 2 3 4 5 6)
             (0 1 2|3 4 5 6)
-
         """
         self.c_ps.levels[i] = level
 
     def get_level(self, int i):
         """
-        Gets the ith entry of the levels array.
+        Get the `i`-th entry of the levels array.
 
         EXAMPLES::
 
@@ -287,13 +272,12 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.get_level(0)
             7
-
         """
         return self.c_ps.levels[i]
 
     def depth(self, new=None):
         """
-        Returns the depth of the deepest partition in the stack, setting it to
+        Return the depth of the deepest partition in the stack, setting it to
         new if new is not None.
 
         EXAMPLES::
@@ -302,7 +286,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.depth()
             0
-
         """
         if new is not None:
             self.c_ps.depth = new
@@ -310,7 +293,7 @@ cdef class PythonPartitionStack:
 
     def degree(self, new=None):
         """
-        Returns the degree of the partition stack, setting it to
+        Return the degree of the partition stack, setting it to
         new if new is not None.
 
         EXAMPLES::
@@ -319,7 +302,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.degree()
             7
-
         """
         if new is not None:
             self.c_ps.degree = new
@@ -340,7 +322,6 @@ cdef class PythonPartitionStack:
             [[0, 1, 2, 3, 4, 5, 6]]
             sage: P.partition(1)
             [[0, 1, 2], [3, 4, 5, 6]]
-
         """
         cdef int i
         cdef list partition = [], cell = []
@@ -351,6 +332,7 @@ cdef class PythonPartitionStack:
                 if i < self.c_ps.degree:
                     cell = []
         return partition
+
 
 class PythonObjectWrapper:
     """
@@ -363,11 +345,11 @@ class PythonObjectWrapper:
         EXAMPLES::
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
-            sage: def acae(a,b):
+            sage: def acae(a, b):
             ....:  return 0
-            sage: def rari(a,b,c):
+            sage: def rari(a, b, c):
             ....:  return 0
-            sage: def cs(a,b,c,d,e):
+            sage: def cs(a, b, c, d, e):
             ....:  return 0
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonObjectWrapper
             sage: P = PythonObjectWrapper(None, acae, rari, cs, 7) # implicit doctest
@@ -380,13 +362,13 @@ class PythonObjectWrapper:
             <function rari at ...>
             sage: P.cs_fn
             <function cs at ...>
-
         """
         self.degree = degree
         self.obj = obj
         self.acae_fn = acae_fn
         self.rari_fn = rari_fn
         self.cs_fn = cs_fn
+
 
 cdef bint all_children_are_equivalent_python(PartitionStack *PS, void *S) noexcept:
     """
@@ -418,19 +400,20 @@ cdef int compare_structures_python(int *gamma_1, int *gamma_2, void *S1, void *S
     cdef list gamma_2_py = [gamma_2[i] for i from 0 <= i < degree]
     return S1_obj.cs_fn(gamma_1_py, gamma_2_py, S1_obj.obj, S2_obj.obj, degree)
 
+
 def aut_gp_and_can_lab_python(S, partition, n,
     all_children_are_equivalent,
     refine_and_return_invariant,
     compare_structures,
     canonical_label, base, order):
     """
-    Calls the automorphism group and canonical label function.
+    Call the automorphism group and canonical label function.
 
     INPUT:
 
-        S -- the object to examine
-        partition -- an ordered partition, as a list of lists
-        n -- the degree of the automorphism group to be computed
+    - ``S`` -- the object to examine
+    - ``partition`` -- an ordered partition, as a list of lists
+    - ``n`` -- the degree of the automorphism group to be computed
 
     ::
 
@@ -451,11 +434,11 @@ def aut_gp_and_can_lab_python(S, partition, n,
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import aut_gp_and_can_lab_python
-        sage: def acae(a,b):
+        sage: def acae(a, b):
         ....:  return 0
-        sage: def rari(a,b,c):
+        sage: def rari(a, b, c):
         ....:  return 0
-        sage: def cs(a,b,c,d,e):
+        sage: def cs(a, b, c, d, e):
         ....:  return 0
         sage: aut_gp_and_can_lab_python(None, [[0,1,2,3],[4,5]], 6, acae, rari, cs, True, True, True)
         ([[0, 1, 3, 2, 4, 5],
@@ -467,7 +450,6 @@ def aut_gp_and_can_lab_python(S, partition, n,
          48)
         sage: factorial(4)*factorial(2)
         48
-
     """
     obj_wrapper = PythonObjectWrapper(S, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     cdef aut_gp_and_can_lab *output
@@ -509,15 +491,14 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     refine_and_return_invariant,
     compare_structures):
     """
-    Calls the double coset function.
+    Call the double coset function.
 
     INPUT:
 
-        S1, S2 -- the objects to examine
-        partition1 -- an ordered partition, as a list of lists
-        ordering2 -- represents a partition of the points of S2,
-            as a relabeling of partition1
-        n -- the degree
+    - ``S1``, ``S2`` -- the objects to examine
+    - ``partition1`` -- an ordered partition, as a list of lists
+    - ``ordering2`` -- represents a partition of the points of ``S2``, as a relabeling of ``partition1``
+    - ``n`` -- the degree
 
     ::
 
@@ -532,16 +513,16 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.partn_ref.refinement_python import double_coset_python
-        sage: def acae(a,b):
+        sage: def acae(a, b):
         ....:     return 0
-        sage: def rari(a,b,c):
+        sage: def rari(a, b, c):
         ....:     return 0
-        sage: def cs(a,b,c,d,e):
+        sage: def cs(a, b, c, d, e):
         ....:     return 0
         sage: double_coset_python(None, None, [[0,1,2,3],[4,5]], [2,3,1,5,0,4], 6, acae, rari, cs)
         [1, 2, 3, 5, 0, 4]
 
-        sage: def compare_lists(p1,p2,l1,l2,deg):
+        sage: def compare_lists(p1, p2, l1, l2, deg):
         ....:     for i in range(len(l1)):
         ....:         a1 = l1[p1[i]]
         ....:         a2 = l2[p2[i]]
@@ -551,7 +532,6 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
         sage: double_coset_python([0,0,1], [1,0,0], [[0,1,2]], [0,1,2], 3, acae, rari, compare_lists)
         [1, 2, 0]
-
     """
     obj_wrapper1 = PythonObjectWrapper(S1, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)
     obj_wrapper2 = PythonObjectWrapper(S2, all_children_are_equivalent, refine_and_return_invariant, compare_structures, n)

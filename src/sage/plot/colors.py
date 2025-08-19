@@ -199,12 +199,10 @@ def mod_one(x):
 
     INPUT:
 
-    - ``x`` - an instance of Integer, int, RealNumber, etc.; the
+    - ``x`` -- an instance of Integer, int, RealNumber, etc.; the
       number to reduce
 
-    OUTPUT:
-
-    - a float
+    OUTPUT: float
 
     EXAMPLES::
 
@@ -232,11 +230,9 @@ def html_to_float(c):
 
     INPUT:
 
-    - ``c`` - a string; a valid HTML hex color
+    - ``c`` -- string; a valid HTML hex color
 
-    OUTPUT:
-
-    - a RGB 3-tuple of floats in the interval [0.0, 1.0]
+    OUTPUT: a RGB 3-tuple of floats in the interval [0.0, 1.0]
 
     EXAMPLES::
 
@@ -254,7 +250,7 @@ def html_to_float(c):
         raise ValueError("'%s' must be a valid HTML hex color (e.g., '#f07' or '#d6e7da')" % c)
     h = c[1:]
     if len(h) == 3:
-        h = '%s%s%s%s%s%s' % (h[0], h[0], h[1], h[1], h[2], h[2])
+        h = f'{h[0]}{h[0]}{h[1]}{h[1]}{h[2]}{h[2]}'
     elif len(h) != 6:
         raise ValueError("color hex string (= '%s') must have length 3 or 6" % h)
     return tuple([int(h[i:i + 2], base=16) / 255 for i in [0, 2, 4]])
@@ -268,16 +264,14 @@ def rgbcolor(c, space='rgb'):
 
     INPUT:
 
-    - ``c`` - a :class:`Color` instance, string (name or HTML hex),
+    - ``c`` -- a :class:`Color` instance, string (name or HTML hex),
       3-tuple, or 3-list; the color to convert
 
-    - ``space`` - a string (default: 'rgb'); the color space
-      coordinate system (other choices are 'hsl', 'hls', and 'hsv') in
-      which to interpret a 3-tuple or 3-list
+    - ``space`` -- string (default: ``'rgb'``); the color space
+      coordinate system (other choices are ``'hsl'``, ``'hls'``, and ``'hsv'``)
+      in which to interpret a 3-tuple or 3-list
 
-    OUTPUT:
-
-    - a RGB 3-tuple of floats in the interval [0.0, 1.0]
+    OUTPUT: a RGB 3-tuple of floats in the interval [0.0, 1.0]
 
     EXAMPLES::
 
@@ -338,8 +332,8 @@ def rgbcolor(c, space='rgb'):
 
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
-            raise ValueError("color list or tuple '%s' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel" % (c, ))
-        c = [mod_one(_) for _ in list(c)]
+            raise ValueError(f"color list or tuple '{c}' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel")
+        c = [mod_one(comp) for comp in c]
         if space == 'rgb':
             return tuple(c)
         elif space == 'hsv':
@@ -358,7 +352,7 @@ def rgbcolor(c, space='rgb'):
 to_mpl_color = rgbcolor
 
 
-class Color():
+class Color:
     def __init__(self, r='#0000ff', g=None, b=None, space='rgb'):
         """
         A Red-Green-Blue (RGB) color model color object.  For most
@@ -370,17 +364,17 @@ class Color():
         transformations, of this space.  Coordinates in all of these
         spaces are floating point values in the interval [0.0, 1.0].
 
-        .. note:: All instantiations of :class:`Color` are converted
+        .. NOTE:: All instantiations of :class:`Color` are converted
                   to an internal RGB floating point 3-tuple.  This is
                   likely to degrade precision.
 
         INPUT:
 
-        -  ``r,g,b`` - either a triple of floats between 0 and 1,
-           OR ``r`` - a color name string or HTML color hex string
+        - ``r``, ``g``, ``b`` -- either a triple of floats between 0 and 1,
+          OR ``r`` - a color name string or HTML color hex string
 
-        - ``space`` - a string (default: 'rgb'); the coordinate system
-          (other choices are 'hsl', 'hls', and 'hsv') in which to
+        - ``space`` -- string (default: ``'rgb'``); the coordinate system
+          (other choices are ``'hsl'``, ``'hls'``, and ``'hsv'``) in which to
           interpret a triple of floats
 
         EXAMPLES::
@@ -410,9 +404,7 @@ class Color():
         """
         Return a string representation of this color.
 
-        OUTPUT:
-
-        - a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -421,7 +413,7 @@ class Color():
             sage: Color(1, 0.5, 1/16, space='hsl').__repr__()
             'RGB color (0.09375, 0.03125, 0.03125)'
         """
-        return "RGB color %s" % (self._rgb, )
+        return f"RGB color {self._rgb}"
 
     def __lt__(self, right):
         """
@@ -431,11 +423,9 @@ class Color():
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
-        OUTPUT:
-
-        - boolean -- False
+        OUTPUT: boolean; ``False``
 
         EXAMPLES::
 
@@ -457,11 +447,9 @@ class Color():
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
-        OUTPUT:
-
-        - boolean -- False
+        OUTPUT: boolean; ``False``
 
         EXAMPLES::
 
@@ -481,11 +469,10 @@ class Color():
 
         INPUT:
 
-        - ``right`` - a :class:`Color` instance
+        - ``right`` -- a :class:`Color` instance
 
-        OUTPUT:
-
-        - boolean -- True if the two colors are the same, False if different
+        OUTPUT: boolean; ``True`` if the two colors are the same, ``False``
+        if different
 
         EXAMPLES::
 
@@ -509,12 +496,12 @@ class Color():
 
         INPUT:
 
-        - ``right`` - a :class:`Color` instance
+        - ``right`` -- a :class:`Color` instance
 
         OUTPUT:
 
-        - boolean -- True if the two colors are different,
-            False if they're the same
+        boolean; ``True`` if the two colors are different, ``False`` if they're
+        the same.
 
         EXAMPLES::
 
@@ -537,11 +524,9 @@ class Color():
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
-        OUTPUT:
-
-        - boolean -- False
+        OUTPUT: boolean; ``False``
 
         EXAMPLES::
 
@@ -563,11 +548,9 @@ class Color():
 
         INPUT:
 
-        - ``right`` - an object
+        - ``right`` -- an object
 
-        OUTPUT:
-
-        - boolean -- False
+        OUTPUT: boolean; ``False``
 
         EXAMPLES::
 
@@ -585,9 +568,7 @@ class Color():
         Return the hash value of a color.
         Equal colors return equal hash values.
 
-        OUTPUT:
-
-        - a hash value
+        OUTPUT: a hash value
 
         EXAMPLES::
 
@@ -606,15 +587,13 @@ class Color():
 
         INPUT:
 
-        - ``color`` - a :class:`Color` instance or float-convertible
+        - ``color`` -- a :class:`Color` instance or float-convertible
           3-tuple/list; the color with which to blend this color
 
-        - ``fraction`` - a float-convertible number; the fraction of
+        - ``fraction`` -- a float-convertible number; the fraction of
           ``color`` to blend with this color
 
-        OUTPUT:
-
-        - a **new** :class:`Color` instance
+        OUTPUT: a **new** :class:`Color` instance
 
         EXAMPLES::
 
@@ -645,7 +624,7 @@ class Color():
             color = [float(_) for _ in color]
             return Color(rgbcolor([(1 - fraction) * a + fraction * b
                                    for a, b in zip(self._rgb, color)]))
-        raise TypeError("%s must be a Color or float-convertible 3-tuple/list" % (color, ))
+        raise TypeError(f"{color} must be a Color or float-convertible 3-tuple/list")
 
     def __add__(self, right):
         """
@@ -654,12 +633,10 @@ class Color():
 
         INPUT:
 
-        - ``right`` - a :class:`Color` instance or float-convertible
+        - ``right`` -- a :class:`Color` instance or float-convertible
           3-tuple/list
 
-        OUTPUT:
-
-        - a **new** :class:`Color` instance
+        OUTPUT: a **new** :class:`Color` instance
 
         EXAMPLES::
 
@@ -690,12 +667,10 @@ class Color():
 
         INPUT:
 
-        - ``left`` - a :class:`Color` instance or float-convertible
+        - ``left`` -- a :class:`Color` instance or float-convertible
           3-tuple/list
 
-        OUTPUT:
-
-        - a **new** :class:`Color` instance
+        OUTPUT: a **new** :class:`Color` instance
 
         EXAMPLES::
 
@@ -721,11 +696,9 @@ class Color():
 
         INPUT:
 
-        - ``right`` - a float-convertible number
+        - ``right`` -- a float-convertible number
 
-        OUTPUT:
-
-        - a **new** :class:`Color` instance
+        OUTPUT: a **new** :class:`Color` instance
 
         EXAMPLES::
 
@@ -749,11 +722,9 @@ class Color():
 
         INPUT:
 
-        - ``left`` - a float-convertible number
+        - ``left`` -- a float-convertible number
 
-        OUTPUT:
-
-        - a **new** :class:`Color` instance
+        OUTPUT: a **new** :class:`Color` instance
 
         EXAMPLES::
 
@@ -772,11 +743,9 @@ class Color():
 
         INPUT:
 
-        - ``right`` -- a float-convertible, non-zero number
+        - ``right`` -- a float-convertible, nonzero number
 
-        OUTPUT:
-
-        - a **new** instance of :class:`Color`
+        OUTPUT: a **new** instance of :class:`Color`
 
         EXAMPLES::
 
@@ -812,9 +781,9 @@ class Color():
 
         OUTPUT:
 
-        - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
-          are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0]
-          to the integer range 0, 1, ..., 255.
+        The integer 256^2 r_int + 256 g_int + b_int, where r_int, g_int,
+        and b_int are obtained from r, g, and b by converting from the
+        real interval [0.0, 1.0] to the integer range 0, 1, ..., 255.
 
         EXAMPLES::
 
@@ -828,9 +797,7 @@ class Color():
         """
         Return an iterator over the RGB coordinates of this color.
 
-        OUTPUT:
-
-        - a tupleiterator
+        OUTPUT: a tupleiterator
 
         EXAMPLES::
 
@@ -854,11 +821,9 @@ class Color():
 
         INPUT:
 
-        - ``i`` - an integer; the 0-based coordinate to retrieve
+        - ``i`` -- integer; the 0-based coordinate to retrieve
 
-        OUTPUT:
-
-        - a float
+        OUTPUT: float
 
         EXAMPLES::
 
@@ -881,9 +846,7 @@ class Color():
         Return the underlying Red-Green-Blue (RGB) coordinates of this
         color.
 
-        OUTPUT:
-
-        - a 3-tuple of floats
+        OUTPUT: a 3-tuple of floats
 
         EXAMPLES::
 
@@ -906,9 +869,7 @@ class Color():
         Return the Hue-Lightness-Saturation (HLS) coordinates of this
         color.
 
-        OUTPUT:
-
-        - a 3-tuple of floats
+        OUTPUT: a 3-tuple of floats
 
         EXAMPLES::
 
@@ -929,9 +890,7 @@ class Color():
         Return the Hue-Saturation-Lightness (HSL) coordinates of this
         color.
 
-        OUTPUT:
-
-        - a 3-tuple of floats
+        OUTPUT: a 3-tuple of floats
 
         EXAMPLES::
 
@@ -951,9 +910,7 @@ class Color():
         Return the Hue-Saturation-Value (HSV) coordinates of this
         color.
 
-        OUTPUT:
-
-        - a 3-tuple of floats
+        OUTPUT: a 3-tuple of floats
 
         EXAMPLES::
 
@@ -971,9 +928,7 @@ class Color():
         """
         Return a HTML hex representation for this color.
 
-        OUTPUT:
-
-        - a string of length 7.
+        OUTPUT: string of length 7
 
         EXAMPLES::
 
@@ -997,12 +952,10 @@ class Color():
 
         INPUT:
 
-        - ``fraction`` - a float (default: 1/3); blending fraction
+        - ``fraction`` -- a float (default: 1/3); blending fraction
           to apply
 
-        OUTPUT:
-
-        - a **new** instance of :class:`Color`
+        OUTPUT: a **new** instance of :class:`Color`
 
         EXAMPLES::
 
@@ -1025,12 +978,10 @@ class Color():
 
         INPUT:
 
-        - ``fraction`` - a float (default: 1/3); blending fraction
+        - ``fraction`` -- a float (default: 1/3); blending fraction
           to apply
 
-        OUTPUT:
-
-        - a new instance of :class:`Color`
+        OUTPUT: a new instance of :class:`Color`
 
         EXAMPLES::
 
@@ -1055,7 +1006,7 @@ class ColorsDict(dict):
     """
     def __init__(self):
         """
-        Constructs a dict-like collection of colors.  The keys are the
+        Construct a dict-like collection of colors.  The keys are the
         color names (i.e., strings) and the values are RGB 3-tuples of
         floats.
 
@@ -1071,20 +1022,18 @@ class ColorsDict(dict):
             148
         """
         # Convert the colors_dict defined above to Color instances.
-        for k in colors_dict:
-            self[k] = Color(colors_dict[k])
+        for k, col in colors_dict.items():
+            self[k] = Color(col)
 
     def __getattr__(self, name):
         """
-        Gets a color via attribute access.
+        Get a color via attribute access.
 
         INPUT:
 
-        - ``name`` - a string; the name of the color to return
+        - ``name`` -- string; the name of the color to return
 
-        OUTPUT:
-
-        - a RGB 3-tuple of floats
+        OUTPUT: a RGB 3-tuple of floats
 
         EXAMPLES::
 
@@ -1104,16 +1053,14 @@ class ColorsDict(dict):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
+            raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
     def __dir__(self):
         """
-        Returns an approximate list of attribute names, including the
+        Return an approximate list of attribute names, including the
         color names.
 
-        OUTPUT:
-
-        - a list of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 
@@ -1155,15 +1102,13 @@ def hue(h, s=1, v=1):
 
     INPUT:
 
-    - ``h`` - a number; the color's hue
+    - ``h`` -- a number; the color's hue
 
-    - ``s`` - a number (default: 1); the color's saturation
+    - ``s`` -- a number (default: 1); the color's saturation
 
-    - ``v`` - a number (default: 1); the color's value
+    - ``v`` -- a number (default: 1); the color's value
 
-    OUTPUT:
-
-    - a RGB 3-tuple of floats in the interval [0.0, 1.0]
+    OUTPUT: a RGB 3-tuple of floats in the interval [0.0, 1.0]
 
     EXAMPLES::
 
@@ -1204,9 +1149,7 @@ def float_to_html(r, g, b):
 
     - ``b`` -- a real number; the RGB color's "blue" intensity
 
-    OUTPUT:
-
-    - a string of length 7, starting with '#'
+    OUTPUT: string of length 7, starting with ``'#'``
 
     EXAMPLES::
 
@@ -1245,9 +1188,9 @@ def float_to_integer(r, g, b):
 
     OUTPUT:
 
-    - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
-      are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0]
-      to the integer range 0, 1, ..., 255.
+    The integer 256^2 r_int + 256 g_int + b_int, where r_int, g_int, and
+    b_int are obtained from r, g, and b by converting from the real
+    interval [0.0, 1.0] to the integer range 0, 1, ..., 255.
 
     EXAMPLES::
 
@@ -1272,7 +1215,7 @@ def float_to_integer(r, g, b):
 
 def rainbow(n, format='hex'):
     """
-    Returns a list of colors sampled at equal intervals over the
+    Return a list of colors sampled at equal intervals over the
     spectrum, from Hue-Saturation-Value (HSV) coordinates (0, 1, 1) to
     (1, 1, 1).  This range is red at the extremes, but it covers
     orange, yellow, green, cyan, blue, violet, and many other hues in
@@ -1281,15 +1224,13 @@ def rainbow(n, format='hex'):
 
     INPUT:
 
-    - ``n`` - a number; the length of the list
+    - ``n`` -- a number; the length of the list
 
-    - ``format`` - a string (default: 'hex'); the output format for
-      each color in the list; the other choice is 'rgbtuple'
+    - ``format`` -- string (default: ``'hex'``); the output format for
+      each color in the list. The other choice is ``'rgbtuple'``.
 
-    OUTPUT:
-
-    - a list of strings or RGB 3-tuples of floats in the interval
-      [0.0, 1.0]
+    OUTPUT: a list of strings or RGB 3-tuples of floats in the interval
+    [0.0, 1.0]
 
     EXAMPLES::
 
@@ -1307,10 +1248,7 @@ def rainbow(n, format='hex'):
 
     - Karl-Dieter Crisman (directly use :func:`hsv_to_rgb` for hues)
     """
-    R = []
-
-    for i in range(n):
-        R.append(tuple(map(float, hsv_to_rgb(i / n, 1, 1))))
+    R = [tuple(map(float, hsv_to_rgb(i / n, 1, 1))) for i in range(n)]
 
     if format == 'rgbtuple':
         return R
@@ -1324,7 +1262,7 @@ def rainbow(n, format='hex'):
 # about cmap where it is used and to test these classes.
 def get_cmap(cmap):
     r"""
-    Returns a color map (actually, a matplotlib :class:`Colormap`
+    Return a color map (actually, a matplotlib :class:`Colormap`
     object), given its name or a [mixed] list/tuple of RGB list/tuples
     and color names.  For a list of map names, evaluate::
 
@@ -1335,13 +1273,10 @@ def get_cmap(cmap):
 
     INPUT:
 
-    - ``cmap`` - a string, list, tuple, or
-      :class:`matplotlib.colors.Colormap`; a string must be a valid
-      color map name
+    - ``cmap`` -- string, list, tuple, or :class:`matplotlib.colors.Colormap`;
+      a string must be a valid color map name
 
-    OUTPUT:
-
-    - a :class:`matplotlib.colors.Colormap` instance
+    OUTPUT: a :class:`matplotlib.colors.Colormap` instance
 
     EXAMPLES::
 
@@ -1431,7 +1366,7 @@ class Colormaps(MutableMapping):
     """
     def __init__(self):
         """
-        Constructs an empty mutable collection of color maps.
+        Construct an empty mutable collection of color maps.
 
         EXAMPLES::
 
@@ -1465,12 +1400,10 @@ class Colormaps(MutableMapping):
 
     def __dir__(self):
         """
-        Returns an approximate list of attribute names, including the
+        Return an approximate list of attribute names, including the
         color map names.
 
-        OUTPUT:
-
-        - a list of strings
+        OUTPUT: list of strings
 
         EXAMPLES::
 
@@ -1487,11 +1420,9 @@ class Colormaps(MutableMapping):
 
     def __len__(self):
         """
-        Returns the number of color maps.
+        Return the number of color maps.
 
-        OUTPUT:
-
-        - an int
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -1505,11 +1436,9 @@ class Colormaps(MutableMapping):
 
     def __iter__(self):
         """
-        Returns an iterator over the color map collection.
+        Return an iterator over the color map collection.
 
-        OUTPUT:
-
-        - a dictionary key iterator instance
+        OUTPUT: a dictionary key iterator instance
 
         EXAMPLES::
 
@@ -1525,15 +1454,13 @@ class Colormaps(MutableMapping):
 
     def __contains__(self, name):
         """
-        Returns whether a map is in the color maps collection.
+        Return whether a map is in the color maps collection.
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to query
+        - ``name`` -- string; the name of the map to query
 
-        OUTPUT:
-
-        - a boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -1549,15 +1476,13 @@ class Colormaps(MutableMapping):
 
     def __getitem__(self, name):
         """
-        Gets a color map from the collection via key access.
+        Get a color map from the collection via key access.
 
         INPUT:
 
-        - ``name`` - a string; the name of the map return
+        - ``name`` -- string; the name of the map return
 
-        OUTPUT:
-
-        - an instance of :class:`matplotlib.colors.Colormap`
+        OUTPUT: an instance of :class:`matplotlib.colors.Colormap`
 
         EXAMPLES::
 
@@ -1581,15 +1506,13 @@ class Colormaps(MutableMapping):
 
     def __getattr__(self, name):
         """
-        Gets a color map from the collection via attribute access.
+        Get a color map from the collection via attribute access.
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to return
+        - ``name`` -- string; the name of the map to return
 
-        OUTPUT:
-
-        - an instance of :class:`matplotlib.colors.Colormap`
+        OUTPUT: an instance of :class:`matplotlib.colors.Colormap`
 
         EXAMPLES::
 
@@ -1611,15 +1534,13 @@ class Colormaps(MutableMapping):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
+            raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
     def __repr__(self):
         """
-        Returns a string representation of the color map collection.
+        Return a string representation of the color map collection.
 
-        OUTPUT:
-
-        - a string
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -1635,13 +1556,13 @@ class Colormaps(MutableMapping):
 
     def __setitem__(self, name, colormap):
         """
-        Adds a color map to the collection.
+        Add a color map to the collection.
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to add
+        - ``name`` -- string; the name of the map to add
 
-        - ``colormap`` - an instance of
+        - ``colormap`` -- an instance of
           :class:`matplotlib.colors.Colormap`; the color map to add
 
         EXAMPLES::
@@ -1665,7 +1586,7 @@ class Colormaps(MutableMapping):
 
         INPUT:
 
-        - ``name`` - a string; the name of the map to remove
+        - ``name`` -- string; the name of the map to remove
 
         EXAMPLES::
 

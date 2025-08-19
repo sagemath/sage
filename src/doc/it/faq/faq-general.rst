@@ -80,7 +80,7 @@ Una lista di coloro che hanno dato un contributo diretto è reperibile al link
 "mappa di sviluppo di Sage"
 (`Sage Development Map <http://www.sagemath.org/development-map.html>`_)
 e la storia delle modifiche può essere reperita al link "changelog di
-alto livello" (`changelog <http://www.sagemath.org/mirror/src/changelog.txt>`_).
+alto livello" (`changelog <https://www.sagemath.org/changelogs/>`_).
 Fai riferimento alla
 `Pagina dei riconoscimenti <http://www.sagemath.org/development-ack.html>`_
 del sito web di Sage per una lista aggiornata di coloro che ci sostengono
@@ -188,16 +188,13 @@ realizzate attraverso progetti FOSS come
 * `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- software matematico per
   calcolo veloce in Teoria dei Numeri.
 
-* `Pynac <http://pynac.sagemath.org>`_ --- versione modificata di GiNaC che
-  rimpiazza la dipendenza da CLN con Python.
-
 * `R <http://www.r-project.org>`_ --- linguaggio ed ambiente operativo per
   calcolo statistico e grafici relativi.
 
 * E molti altri troppo numerosi per essere elencati qui.
 
 Una lista aggiornata può essere reperita alla seguente link:
-`repository dei pacchetti standard <http://www.sagemath.org/packages/standard>`_.
+`repository dei pacchetti standard <https://doc.sagemath.org/html/en/reference/spkg/>`_.
 
 I principali linguaggi di programmazione di Sage sono
 `Python <http://www.python.org>`_ e `Cython <http://www.cython.org>`_.
@@ -292,7 +289,7 @@ Per scaricare la documentazione standard di Sage in formato HTML o PDF, visita
 Ogni release di Sage dispone della documentazione completa che costituisce la
 documentazione standard di Sage. Se hai scaricato un rilascio di Sage in formato
 binario, la versione HTML della sua documentazione si trova già disponibile nella
-cartella ``SAGE_ROOT/src/doc/output/html/``. Nel corso della compilazione da
+cartella :sage_root:`src/doc/output/html/`. Nel corso della compilazione da
 sorgente viene preparata anche la documentazione HTML.
 Per construire la versione HTML della documentazione, lancia il seguente comando
 dopo essersi posizionati in ``SAGE_ROOT``::

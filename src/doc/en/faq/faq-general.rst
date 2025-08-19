@@ -199,8 +199,6 @@ functionalities are made possible through FOSS projects such as
 * `OpenBLAS <https://www.openblas.net/>`_  --- an optimized BLAS library.
 * `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- a computer algebra
   system for fast computations in number theory.
-* `Pynac <http://pynac.sagemath.org>`_ --- a modified version of GiNaC
-  that replaces the dependency on CLN by Python.
 * `R <http://www.r-project.org>`_ --- a language and environment for
   statistical computing and graphics.
 * And many more too numerous to list here.
@@ -315,7 +313,6 @@ following commands:
     $ ./sage --advanced
 
 
-
 I want to cite Sage in a publication, how do I do it?
 """""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -334,8 +331,10 @@ Here is a BibTeX entry for Sage:
     }
 
 Adjust version/year as needed.  You might also like to use DOI for Sage,
-as the note entry in the above record, or directly as DOI record.
-
+as the ``note`` entry in the above record, or directly as DOI record.
+The DOI :doi:`10.5281/zenodo.8042260` represents all versions of Sage;
+clicking on it will show the DOI for the latest Sage version
+(at the time of writing, 10.3, see :doi:`10.5281/zenodo.10841614`).
 
 If you happen to use the Sage interface to PARI, GAP or Singular,
 you should definitely reference them as well. Likewise, if you use
@@ -403,4 +402,4 @@ What are DOI records for Sage?
 e.g. see `record for Sage 9.5 <https://zenodo.org/record/6259615>`_.
 The corresponding :doi:`10.5281/zenodo.6259615`.
 
-There is also DOI for the latest version, :doi:`10.5281/zenodo.593563`.
+There is also DOI for the latest version, :doi:`10.5281/zenodo.8042260`.

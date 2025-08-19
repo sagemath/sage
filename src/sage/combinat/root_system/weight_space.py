@@ -21,7 +21,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     - ``root_system`` -- a root system
     - ``base_ring`` -- a ring `R`
-    - ``extended`` -- a boolean (default: False)
+    - ``extended`` -- boolean (default: ``False``)
 
     The weight space (or lattice if ``base_ring`` is `\ZZ`) of a root
     system is the formal free module `\bigoplus_i R \Lambda_i`
@@ -145,7 +145,7 @@ class WeightSpace(CombinatorialFreeModule):
     @staticmethod
     def __classcall_private__(cls, root_system, base_ring, extended=False):
         """
-        Guarantees Unique representation
+        Guarantee Unique representation.
 
         .. SEEALSO:: :class:`UniqueRepresentation`
 
@@ -230,7 +230,6 @@ class WeightSpace(CombinatorialFreeModule):
             Coweight lattice of the Root system of type ['A', 4]
             sage: RootSystem(['B',4]).coweight_space()
             Coweight space over the Rational Field of the Root system of type ['B', 4]
-
         """
         return self._name_string()
 
@@ -248,14 +247,14 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def fundamental_weight(self, i):
         r"""
-        Returns the `i`-th fundamental weight
+        Return the `i`-th fundamental weight.
 
         INPUT:
 
-        - ``i`` -- an element of the index set or ``"delta"``
+        - ``i`` -- an element of the index set or ``'delta'``
 
         By a slight notational abuse, for an affine type this method
-        also accepts ``"delta"`` as input, and returns the image of
+        also accepts ``'delta'`` as input, and returns the image of
         `\delta` of the extended weight lattice in this realization.
 
         .. SEEALSO:: :meth:`~sage.combinat.root_system.weight_lattice_realization.ParentMethods.fundamental_weight`
@@ -287,7 +286,7 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def basis_extension(self):
         r"""
-        Return the basis elements used to extend the fundamental weights
+        Return the basis elements used to extend the fundamental weights.
 
         EXAMPLES::
 
@@ -313,7 +312,7 @@ class WeightSpace(CombinatorialFreeModule):
     @cached_method
     def simple_root(self, j):
         r"""
-        Returns the `j^{th}` simple root
+        Return the `j`-th simple root.
 
         EXAMPLES::
 
@@ -371,7 +370,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     def _repr_term(self, m):
         r"""
-        Customized monomial printing for extended weight lattices
+        Customized monomial printing for extended weight lattices.
 
         EXAMPLES::
 
@@ -389,7 +388,7 @@ class WeightSpace(CombinatorialFreeModule):
 
     def _latex_term(self, m):
         r"""
-        Customized monomial typesetting for extended weight lattices
+        Customized monomial typesetting for extended weight lattices.
 
         EXAMPLES::
 
@@ -515,9 +514,9 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             return sum( (self[i]*c for (i,c) in lambdacheck), zero)
 
     def is_dominant(self):
-        """
-        Checks whether an element in the weight space lies in the positive cone spanned
-        by the basis elements (fundamental weights).
+        r"""
+        Check whether an element in the weight space lies in the positive
+        cone spanned by the basis elements (fundamental weights).
 
         EXAMPLES::
 
@@ -530,9 +529,9 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w.is_dominant()
             False
 
-        In the extended affine weight lattice, 'delta' is orthogonal to
+        In the extended affine weight lattice, ``'delta'`` is orthogonal to
         the positive coroots, so adding or subtracting it should not
-        affect dominance ::
+        affect dominance::
 
             sage: P = RootSystem(['A',2,1]).weight_lattice(extended=true)
             sage: Lambda = P.fundamental_weights()
@@ -540,13 +539,47 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             sage: w = Lambda[1] - delta                                                 # needs sage.graphs
             sage: w.is_dominant()                                                       # needs sage.graphs
             True
-
         """
-        return all(self.coefficient(i) >= 0 for i in self.parent().index_set())
+        index_set = set(self.parent().index_set())
+        return all(c >= 0 for i, c in self._monomial_coefficients.items() if i in index_set)
+
+    def is_dominant_weight(self):
+        r"""
+        Check whether an element in the weight space lies in the positive
+        `\ZZ`-lattice cone spanned by the basis elements (fundamental weights).
+
+        EXAMPLES::
+
+            sage: W = RootSystem(['A',3]).weight_space()
+            sage: Lambda = W.basis()
+            sage: w = Lambda[1] + Lambda[3]
+            sage: w.is_dominant_weight()
+            True
+            sage: w = Lambda[1] + 2/3*Lambda[3]
+            sage: w.is_dominant_weight()
+            False
+            sage: w = Lambda[1] - Lambda[2]
+            sage: w.is_dominant_weight()
+            False
+
+        In the extended affine weight lattice, ``'delta'`` is orthogonal to
+        the positive coroots, so adding or subtracting it should not
+        affect dominance::
+
+            sage: P = RootSystem(['A',2,1]).weight_lattice(extended=true)
+            sage: Lambda = P.fundamental_weights()
+            sage: delta = P.null_root()                                                 # needs sage.graphs
+            sage: w = Lambda[1] - delta                                                 # needs sage.graphs
+            sage: w.is_dominant_weight()                                                # needs sage.graphs
+            True
+        """
+        index_set = set(self.parent().index_set())
+        from sage.rings.integer_ring import ZZ
+        return all(c in ZZ and c >= 0 for i, c in self._monomial_coefficients.items() if i in index_set)
 
     def to_ambient(self):
         r"""
-        Maps ``self`` to the ambient space.
+        Map ``self`` to the ambient space.
 
         EXAMPLES::
 
@@ -560,7 +593,6 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             Only implemented in finite Cartan type.
             Does not work for coweight lattices because there is no implemented map
             from the coweight lattice to the ambient space.
-
         """
         return self.parent().to_ambient_space_morphism()(self)
 
@@ -579,6 +611,28 @@ class WeightSpaceElement(CombinatorialFreeModule.Element):
             2*Lambda[1] + 2*Lambda[2]
         """
         return self
+
+    @cached_method
+    def _to_root_vector(self):
+        r"""
+        Helper method to express ``self`` as a linear combination
+        of simple roots.
+
+        OUTPUT:
+
+        A vector with entries in `\QQ` representing ``self`` as a linear
+        combination of simple roots.
+
+        EXAMPLES::
+
+            sage: P = RootSystem(['A',3]).weight_lattice()
+            sage: La = P.fundamental_weights()
+            sage: [al._to_root_vector() for al in P.simple_roots()]
+            [(1, 0, 0), (0, 1, 0), (0, 0, 1)]
+            sage: (La[1] + La[2])._to_root_vector()
+            (5/4, 3/2, 3/4)
+        """
+        return self.parent()._inverse_cartan_matrix * self.to_vector()
 
 
 WeightSpace.Element = WeightSpaceElement

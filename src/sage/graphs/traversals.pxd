@@ -5,4 +5,4 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd,
                                                 int* alpha,
                                                 int* alpha_inv,
                                                 list F,
-                                                bint* X) noexcept
+                                                bint* X)

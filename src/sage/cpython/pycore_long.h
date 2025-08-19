@@ -2,12 +2,14 @@
 #include <stdbool.h>
 
 #if PY_VERSION_HEX >= 0x030C00A5
+// For Python 3.12 compatibility
 #define ob_digit(o)  (((PyLongObject*)o)->long_value.ob_digit)
 #else
 #define ob_digit(o)  (((PyLongObject*)o)->ob_digit)
 #endif
 
 #if PY_VERSION_HEX >= 0x030C00A7
+// For Python 3.12 compatibility
 // taken from cpython:Include/internal/pycore_long.h @ 3.12
 
 /* Long value tag bits:
@@ -87,12 +89,7 @@ _PyLong_DigitCount(const PyLongObject *op)
 static inline void
 _PyLong_SetSignAndDigitCount(PyLongObject *op, int sign, Py_ssize_t size)
 {
-#if (PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION < 9)
-// The function Py_SET_SIZE is defined starting with python 3.9.
-    Py_SIZE(op) = size;
-#else
     Py_SET_SIZE(op, sign < 0 ? -size : size);
-#endif
 }
 
 #endif

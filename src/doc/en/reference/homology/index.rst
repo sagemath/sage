@@ -19,6 +19,5 @@ computing homology groups.
    sage/homology/algebraic_topological_model
    sage/homology/homology_morphism
    sage/homology/matrix_utils
-   sage/interfaces/chomp
 
 .. include:: ../footer.txt

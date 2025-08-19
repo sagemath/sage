@@ -14,13 +14,15 @@ Generate cdd ``.ext`` / ``.ine`` file format
 from .misc import _set_to_None_if_empty, _common_length_of, _to_space_separated_string
 
 #########################################################################
+
+
 def cdd_Vrepresentation(cdd_type, vertices, rays, lines, file_output=None):
     r"""
     Return a string containing the V-representation in cddlib's ext format.
 
     INPUT:
 
-    - ``file_output`` (string; optional) -- a filename to which the
+    - ``file_output`` -- string (optional); a filename to which the
       representation should be written. If set to ``None`` (default),
       representation is returned as a string.
 
@@ -92,13 +94,15 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines, file_output=None):
         return s
 
 #########################################################################
+
+
 def cdd_Hrepresentation(cdd_type, ieqs, eqns, file_output=None):
     r"""
     Return a string containing the H-representation in cddlib's ine format.
 
     INPUT:
 
-    - ``file_output`` (string; optional) -- a filename to which the
+    - ``file_output`` -- string (optional); a filename to which the
       representation should be written. If set to ``None`` (default),
       representation is returned as a string.
 

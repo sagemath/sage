@@ -28,6 +28,7 @@ from sage.dynamics.finite_dynamical_system import DiscreteDynamicalSystem, \
         FiniteDynamicalSystem, InvertibleDiscreteDynamicalSystem, \
         InvertibleFiniteDynamicalSystem
 
+
 def permutation(pi, invertible=True):
     r"""
     Return the invertible finite discrete dynamical system
@@ -63,6 +64,7 @@ def permutation(pi, invertible=True):
     n = len(pi)
     X = range(1, n+1)
     return InvertibleFiniteDynamicalSystem(X, pi, inverse=pi.inverse(), create_tuple=True)
+
 
 def one_line(xs):
     r"""
@@ -147,6 +149,7 @@ def bitstring_rotation(n, ones=None):
         phi = lambda x: x[1:] + (x[0],)
         psi = lambda x: (x[-1],) + x[:-1]
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
+
 
 def striker_sweep(E, predicate, elements, lazy=False):
     r"""

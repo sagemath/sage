@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Filtered Modules With Basis
 
@@ -33,6 +34,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.categories.subobjects import SubobjectsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+
 
 class FilteredModulesWithBasis(FilteredModulesCategory):
     r"""
@@ -124,7 +126,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
 
             INPUT:
 
-            - ``d`` -- (optional, default ``None``) nonnegative integer
+            - ``d`` -- (default: ``None``) nonnegative integer
               or ``None``
 
             OUTPUT:
@@ -157,7 +159,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                  over Integer Ring(i))_{i in Partitions}
 
             Checking this method on a filtered algebra. Note that this
-            will typically raise a :class:`NotImplementedError` when this
+            will typically raise a :exc:`NotImplementedError` when this
             feature is not implemented. ::
 
                 sage: A = AlgebrasWithBasis(ZZ).Filtered().example()
@@ -479,9 +481,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
             - ``f`` -- a filtration-preserving linear map from ``self``
               to ``other`` (can be given as a morphism or as a function)
 
-            OUTPUT:
-
-            The graded linear map `\operatorname{gr} f`.
+            OUTPUT: the graded linear map `\operatorname{gr} f`
 
             EXAMPLES:
 
@@ -852,7 +852,7 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 raise ValueError("the zero element does not have a well-defined degree")
             if not self.is_homogeneous():
                 raise ValueError("element is not homogeneous")
-            return self.parent().degree_on_basis(self.leading_support())
+            return self.parent().degree_on_basis(next(iter(self.support())))
 
         # default choice for degree; will be overridden as necessary
         degree = homogeneous_degree
@@ -1197,7 +1197,6 @@ class FilteredModulesWithBasis(FilteredModulesCategory):
                 from collections import defaultdict
                 from sage.rings.integer_ring import ZZ
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                R = self.base_ring()
                 PR = PolynomialRing(ZZ, 't')
                 dims = defaultdict(ZZ)
                 for b in self.basis():

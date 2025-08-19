@@ -1093,13 +1093,6 @@ static ex find_common_factor(const ex & e, ex & factor, exmap & repl)
 
 		if (gc.is_one())
 			return e;
-#ifdef PYNAC_HAVE_LIBGIAC
-                else {
-                        ex f = 1;
-                        gc = find_common_factor(gc, f, repl);
-                        gc *= f;
-                }
-#endif
 
 		// The GCD is the factor we pull out
 		factor *= gc;

@@ -1,4 +1,4 @@
- zlib freetype | $(PYTHON_TOOLCHAIN) pkgconf $(PYTHON)
+ zlib freetype trove_classifiers | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

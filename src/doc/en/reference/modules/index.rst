@@ -92,6 +92,15 @@ Morphisms
 
    sage/modules/matrix_morphism
 
+Pseudomorphisms
+---------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/modules/free_module_pseudohomspace
+   sage/modules/free_module_pseudomorphism
+
 Vectors
 -------
 
@@ -126,5 +135,6 @@ Misc
    sage/modules/tensor_operations
    sage/modules/finite_submodule_iter
    sage/modules/misc
+   sage/modules/numpy_util
 
 .. include:: ../footer.txt

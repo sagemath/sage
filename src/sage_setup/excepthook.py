@@ -1,13 +1,14 @@
 import os
 import sys
 
+
 def excepthook(*exc):
     """
     When an error occurs, display an error message similar to the error
     messages from ``sage-spkg``.
 
     In particular, ``build/make/install`` will recognize "sage" as a failed
-    package, see :trac:`16774`.
+    package, see :issue:`16774`.
     """
     stars = '*' * 72
 

@@ -1,5 +1,6 @@
 cd src
 
+cp "$SAGE_ROOT"/config/config.* .
 sdh_configure --enable-executable=no  # no igraph dependency
 sdh_make
 sdh_make_install

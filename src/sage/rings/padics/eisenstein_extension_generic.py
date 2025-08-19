@@ -26,7 +26,7 @@ from sage.rings.infinity import infinity
 class EisensteinExtensionGeneric(pAdicExtensionGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):
         """
-        Initializes ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -59,7 +59,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     def absolute_e(self):
         """
-        Return the absolute ramification index of this ring or field
+        Return the absolute ramification index of this ring or field.
 
         EXAMPLES::
 
@@ -97,11 +97,9 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
         INPUT:
 
-        - ``self`` -- a p-adic ring
+        - ``self`` -- a `p`-adic ring
 
-        OUTPUT:
-
-        the residue field
+        OUTPUT: the residue field
 
         EXAMPLES::
 
@@ -147,7 +145,7 @@ class EisensteinExtensionGeneric(pAdicExtensionGeneric):
 
     #def galois_group(self):
     #    r"""
-    #    Returns the Galois group of self's fraction field over Qp.
+    #    Returns the Galois group of ``self``'s fraction field over Qp.
     #    """
     #    ##
     #    ## If K is a number field, then K.galois_group() can return

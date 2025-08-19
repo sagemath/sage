@@ -201,7 +201,6 @@ is modeled by the system of 2nd order differential equations
     m_2 x_2''+ k_2 (x_2-x_1) = 0,
 
 
-
 where :math:`m_{i}` is the mass of object *i*, :math:`x_{i}` is
 the displacement from equilibrium of mass *i*, and :math:`k_{i}`
 is the spring constant for spring *i*.

@@ -1,7 +1,7 @@
 r"""
-Paths in Directed Acyclic Graphs
+Paths in directed acyclic graphs
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,7 +14,7 @@ Paths in Directed Acyclic Graphs
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.parent import Parent
@@ -236,11 +236,7 @@ class GraphPaths_common:
             [[2, 3, 4], [2, 4]]
         """
         source_paths = self.outgoing_paths(source)
-        paths = []
-        for path in source_paths:
-            if path[-1] == target:
-                paths.append(path)
-        return paths
+        return [path for path in source_paths if path[-1] == target]
 
     def paths(self):
         """

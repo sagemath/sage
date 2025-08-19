@@ -1,0 +1,20 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "fedora-42",
+    "image": "fedora:42",
+    "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
+    "features": {
+        "ghcr.io/devcontainers/features/git": {},
+        "ghcr.io/devcontainers/features/python:1": {},
+        "../uv": {
+			"version": "latest"
+		}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python"
+            ]
+        }
+    }
+}

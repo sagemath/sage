@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Iterable of the keys of a Mapping associated with nonzero values
 """
@@ -9,7 +10,8 @@ from sage.misc.superseded import deprecation
 
 class SupportView(MappingView, Sequence, Set):
     r"""
-    Dynamic view of the set of keys of a dictionary that are associated with nonzero values
+    Dynamic view of the set of keys of a dictionary that are associated with
+    nonzero values.
 
     It behaves like the objects returned by the :meth:`keys`, :meth:`values`,
     :meth:`items` of a dictionary (or other :class:`collections.abc.Mapping`
@@ -17,9 +19,9 @@ class SupportView(MappingView, Sequence, Set):
 
     INPUT:
 
-    - ``mapping`` -- a :class:`dict` or another :class:`collections.abc.Mapping`.
+    - ``mapping`` -- a :class:`dict` or another :class:`collections.abc.Mapping`
 
-    - ``zero`` -- (optional) test for zeroness by comparing with this value.
+    - ``zero`` -- (optional) test for zeroness by comparing with this value
 
     EXAMPLES::
 

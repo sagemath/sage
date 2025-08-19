@@ -1,1 +1,1 @@
-python-wheel
+python3-wheel

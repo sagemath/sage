@@ -2,7 +2,7 @@
 Finite Fields
 """
 
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2010 David Roe <roed@math.harvard.edu>
 #                          William Stein <wstein@gmail.com>
 #
@@ -15,9 +15,9 @@ Finite Fields
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from .finite_field_constructor import FiniteField
-from .conway_polynomials import conway_polynomial, exists_conway_polynomial
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.finite_rings.conway_polynomials import conway_polynomial, exists_conway_polynomial
 GF = FiniteField

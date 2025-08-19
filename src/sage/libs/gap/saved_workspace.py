@@ -14,7 +14,7 @@ from sage.interfaces.gap_workspace import gap_workspace_file
 
 def timestamp():
     """
-    Return a time stamp for (lib)gap
+    Return a time stamp for (lib)gap.
 
     OUTPUT:
 
@@ -51,8 +51,8 @@ def workspace(name='workspace'):
 
     INPUT:
 
-    - ``name`` -- string. A name that will become part of the
-      workspace filename.
+    - ``name`` -- string; a name that will become part of the
+      workspace filename
 
     OUTPUT:
 

@@ -4,4 +4,4 @@ cdef class Matrix:
     cdef mat* M
 
 cdef class MatrixFactory:
-    cdef new_matrix(self, mat M) noexcept
+    cdef new_matrix(self, mat M)

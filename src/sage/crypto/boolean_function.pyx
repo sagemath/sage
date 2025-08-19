@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Boolean functions
 
@@ -26,7 +25,6 @@ AUTHOR:
 - Rusydi H. Makarim (2016-07-09): add is_plateaued()
 - Yann Laigle-Chapuy (2010-02-26): add basic arithmetic
 - Yann Laigle-Chapuy (2009-08-28): first implementation
-
 """
 
 from cysignals.signals cimport sig_check
@@ -51,7 +49,7 @@ except ImportError:
 # walsh_hadamard transform, reed_muller transform, and a lot
 # more, see 'Matters computational' available on www.jjj.de.
 
-cdef walsh_hadamard(long *f, int ldn) noexcept:
+cdef walsh_hadamard(long *f, int ldn):
     r"""
     The Walsh Hadamard transform is an orthogonal transform equivalent
     to a multidimensional discrete Fourier transform of size 2x2x...x2.
@@ -102,14 +100,14 @@ cdef long yellow_code(unsigned long a) noexcept:
     cdef unsigned long s = (8*sizeof(unsigned long)) >> 1
     cdef unsigned long m = (~0UL) >> s
     cdef unsigned long r = a
-    while(s):
+    while s:
         sig_check()
         r ^= (r&m) << s
         s >>= 1
         m ^= (m<<s)
     return r
 
-cdef reed_muller(mp_limb_t* f, int ldn) noexcept:
+cdef reed_muller(mp_limb_t* f, int ldn):
     r"""
     The Reed Muller transform (also known as binary Möbius transform)
     is an orthogonal transform. For a function `f` defined by
@@ -121,7 +119,6 @@ cdef reed_muller(mp_limb_t* f, int ldn) noexcept:
 
     .. MATH:: f(x) = \bigoplus_{support(x)\subset I} a_I
     .. MATH:: a_i  = \bigoplus_{I\subset support(x)} f(x)
-
 
     EXAMPLES::
 
@@ -233,12 +230,12 @@ cdef class BooleanFunction(SageObject):
         Construct a Boolean Function.
         The input ``x`` can be either:
 
-        - an integer - the result is the zero function with ``x`` variables;
-        - a list - it is expected to be the truth table of the
+        - an integer -- the result is the zero function with ``x`` variables;
+        - a list -- it is expected to be the truth table of the
           result. Therefore it must be of length a power of 2, and its
           elements are interpreted as Booleans;
-        - a Boolean polynomial - the result is the corresponding Boolean function;
-        - a polynomial P over an extension of GF(2) - the result is
+        - a Boolean polynomial -- the result is the corresponding Boolean function;
+        - a polynomial P over an extension of GF(2) -- the result is
           the Boolean function with truth table ``( Tr(P(x)) for x in
           GF(2^k) )``
 
@@ -291,11 +288,11 @@ cdef class BooleanFunction(SageObject):
         if isinstance(x, str):
             L = ZZ(len(x))
             if L.is_power_of(2):
-                x = ZZ("0x"+x).digits(base=2,padto=4*L)
+                x = ZZ("0x" + x).digits(base=2, padto=4*L)
             else:
                 raise ValueError("the length of the truth table must be a power of 2")
         from types import GeneratorType
-        if isinstance(x, (list,tuple,GeneratorType)):
+        if isinstance(x, (list, tuple, GeneratorType)):
             # initialisation from a truth table
 
             # first, check the length
@@ -339,14 +336,15 @@ cdef class BooleanFunction(SageObject):
                     FiniteField_givaro = ()
                 if isinstance(K, FiniteField_givaro):  # the ordering is not the same in this case
                     for u in K:
-                        bitset_set_to(self._truth_table, ZZ(u._vector_().list(),2), (x(u)).trace())
+                        bitset_set_to(self._truth_table,
+                                      ZZ(u._vector_().list(), 2), (x(u)).trace())
                 else:
-                    for i,u in enumerate(K):
+                    for i, u in enumerate(K):
                         bitset_set_to(self._truth_table, i, (x(u)).trace())
         elif isinstance(x, BooleanFunction):
             self._nvariables = x.nvariables()
             bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
-            bitset_copy(self._truth_table,(<BooleanFunction>x)._truth_table)
+            bitset_copy(self._truth_table, (<BooleanFunction>x)._truth_table)
         else:
             raise TypeError("unable to init the Boolean function")
 
@@ -368,7 +366,7 @@ cdef class BooleanFunction(SageObject):
 
     def __invert__(self):
         """
-        Return the complement Boolean function of `self`.
+        Return the complement Boolean function of ``self``.
 
         EXAMPLES::
 
@@ -510,7 +508,7 @@ cdef class BooleanFunction(SageObject):
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
         from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
-        R = BooleanPolynomialRing(self._nvariables,"x")
+        R = BooleanPolynomialRing(self._nvariables, "x")
         G = R.gens()
         P = R(0)
 
@@ -520,7 +518,7 @@ cdef class BooleanFunction(SageObject):
                 inf = i*sizeof(long)*8
                 sup = min((i+1)*sizeof(long)*8, (1<<self._nvariables))
                 for j in range(inf, sup):
-                    if bitset_in(anf,j):
+                    if bitset_in(anf, j):
                         m = R(1)
                         for k in range(self._nvariables):
                             if (j>>k)&1:
@@ -545,11 +543,14 @@ cdef class BooleanFunction(SageObject):
         """
         The truth table of the Boolean function.
 
-        INPUT: a string representing the desired format, can be either
+        INPUT:
 
-        - ``'bin'`` (default): we return a tuple of Boolean values
-        - ``'int'``: we return a tuple of 0 or 1 values
-        - ``'hex'``: we return a string representing the truth table in hexadecimal
+        - ``format`` -- string representing the desired format; can be either
+
+          - ``'bin'`` -- (default) we return a tuple of Boolean values
+          - ``'int'`` -- we return a tuple of 0 or 1 values
+          - ``'hex'`` -- we return a string representing the truth table in
+            hexadecimal
 
         EXAMPLES::
 
@@ -592,9 +593,9 @@ cdef class BooleanFunction(SageObject):
         if format == 'bin':
             return tuple(self)
         if format == 'int':
-            return tuple(map(int,self))
+            return tuple(map(int, self))
         if format == 'hex':
-            S = ZZ(self.truth_table(),2).str(16)
+            S = ZZ(self.truth_table(), 2).str(16)
             S = "0"*((1<<(self._nvariables-2)) - len(S)) + S
             return S
         raise ValueError("unknown output format")
@@ -639,10 +640,13 @@ cdef class BooleanFunction(SageObject):
         """
         Return the value of the function for the given input.
 
-        INPUT: either
+        INPUT:
 
-        - a list -- then all elements are evaluated as Booleans
-        - an integer -- then we consider its binary representation
+        - ``x`` -- either:
+
+          - a list: then all elements are evaluated as booleans
+
+          - an integer: then we consider its binary representation
 
         EXAMPLES::
 
@@ -695,7 +699,7 @@ cdef class BooleanFunction(SageObject):
         """
         return self._walsh_hadamard_transform
 
-    cpdef tuple walsh_hadamard_transform(self) noexcept:
+    cpdef tuple walsh_hadamard_transform(self):
         r"""
         Compute the Walsh Hadamard transform `W` of the function `f`.
 
@@ -710,7 +714,7 @@ cdef class BooleanFunction(SageObject):
             (0, -4, 0, 4, 0, 4, 0, 4)
         """
         cdef long *temp
-        cdef mp_bitcnt_t i,n
+        cdef mp_bitcnt_t i, n
 
         if self._walsh_hadamard_transform is None:
             n = self._truth_table.size
@@ -980,7 +984,7 @@ cdef class BooleanFunction(SageObject):
             self._sum_of_square_indicator = sum(a**2 for a in D)
         return self._sum_of_square_indicator
 
-    def annihilator(self,d, dim = False):
+    def annihilator(self, d, dim=False):
         r"""
         Return (if it exists) an annihilator of the boolean function of
         degree at most `d`, that is a Boolean polynomial `g` such that
@@ -991,9 +995,9 @@ cdef class BooleanFunction(SageObject):
 
         INPUT:
 
-        - ``d`` -- an integer;
-        - ``dim`` -- a Boolean (default: ``False``), if ``True``, return also
-          the dimension of the annihilator vector space.
+        - ``d`` -- integer
+        - ``dim`` -- boolean (default: ``False``); if ``True``, return also
+          the dimension of the annihilator vector space
 
         EXAMPLES::
 
@@ -1007,7 +1011,7 @@ cdef class BooleanFunction(SageObject):
         """
         # NOTE: this is a toy implementation
         from sage.rings.polynomial.polynomial_ring_constructor import BooleanPolynomialRing_constructor
-        R = BooleanPolynomialRing_constructor(self._nvariables,'x')
+        R = BooleanPolynomialRing_constructor(self._nvariables, 'x')
         G = R.gens()
         r = [R(1)]
 
@@ -1019,7 +1023,8 @@ cdef class BooleanFunction(SageObject):
 
         from sage.matrix.constructor import Matrix
         from sage.arith.misc import binomial
-        M = Matrix(GF(2), sum(binomial(self._nvariables,i) for i in range(d+1)), len(s))
+        M = Matrix(GF(2), sum(binomial(self._nvariables, i)
+                              for i in range(d+1)), len(s))
 
         cdef long i
         for i in range(1, d+1):
@@ -1033,25 +1038,22 @@ cdef class BooleanFunction(SageObject):
         cdef long j
         cdef mp_bitcnt_t v
 
-        for i,m in enumerate(r):
+        for i, m in enumerate(r):
             t = BooleanFunction(m)
-            for j,v in enumerate(s):
+            for j, v in enumerate(s):
                 sig_check()
-                M[i,j] = bitset_in(t._truth_table,v)
+                M[i, j] = bitset_in(t._truth_table, v)
 
         kg = M.kernel().gens()
 
         if kg:
-            res = sum([kg[0][i]*ri for i,ri in enumerate(r)])
+            res = sum([kg[0][i]*ri for i, ri in enumerate(r)])
         else:
             res = None
 
-        if dim:
-            return res, len(kg)
-        else:
-            return res
+        return (res, len(kg)) if dim else res
 
-    def algebraic_immunity(self, annihilator = False):
+    def algebraic_immunity(self, annihilator=False):
         """
         Return the algebraic immunity of the Boolean function.
 
@@ -1184,12 +1186,12 @@ cdef class BooleanFunction(SageObject):
             ...
             TypeError: cannot compute is_linear_structure() using parameter X
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self._nvariables
 
         if isinstance(val, (tuple, list)):
             i = ZZ(val, base=2)
-        elif is_Vector(val):
+        elif isinstance(val, Vector):
             if val.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif val.parent().dimension() != nvars:
@@ -1207,7 +1209,7 @@ cdef class BooleanFunction(SageObject):
         except TypeError:
             raise TypeError("cannot compute is_linear_structure() using parameter %s" % (val,))
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         r"""
         Return ``True`` if this function has a linear structure.
 
@@ -1274,7 +1276,7 @@ cdef class BooleanFunction(SageObject):
 
     def derivative(self, u):
         r"""
-        Return the derivative in direction of ``u``
+        Return the derivative in direction of ``u``.
 
         INPUT:
 
@@ -1303,12 +1305,12 @@ cdef class BooleanFunction(SageObject):
             ...
             IndexError: index out of bound
         """
-        from sage.structure.element import is_Vector
+        from sage.structure.element import Vector
         nvars = self._nvariables
 
         if isinstance(u, (tuple, list)):
             v = ZZ(u, base=2)
-        elif is_Vector(u):
+        elif isinstance(u, Vector):
             if u.base_ring() != GF(2):
                 raise TypeError("base ring of input vector must be GF(2)")
             elif u.parent().dimension() != nvars:
@@ -1480,5 +1482,5 @@ def random_boolean_function(n):
     T[0] = B._truth_table[0]
     for i in range(T.limbs):
         sig_check()
-        T.bits[i] = r.randrange(0,Integer(1)<<(sizeof(unsigned long)*8))
+        T.bits[i] = r.randrange(0, Integer(1)<<(sizeof(unsigned long)*8))
     return B

@@ -1,4 +1,3 @@
-##      -*-   coding: utf-8   -*-     ##
 ##          Sage Doctest File         ##
 #**************************************#
 #*    Generated from PreTeXt source   *#
@@ -60,5 +59,4 @@ r"""
     sage: DI = DiCyclicGroup(2)
     sage: Q.is_isomorphic(DI)
     True
-
 """

@@ -3,7 +3,7 @@ Generic Backend for SDP solvers
 
 This class only lists the methods that should be defined by any
 interface with a SDP Solver. All these methods immediately raise
-``NotImplementedError`` exceptions when called, and are obviously
+:exc:`NotImplementedError` exceptions when called, and are obviously
 meant to be replaced by the solver-specific method. This file can also
 be used as a template to create a new interface : one would only need
 to replace the occurrences of ``"Nonexistent_SDP_solver"`` by the
@@ -14,7 +14,6 @@ class.
 AUTHORS:
 
 - Ingolfur Edvardsson (2014-07): initial implementation
-
 """
 
 #*****************************************************************************
@@ -29,9 +28,9 @@ AUTHORS:
 
 cdef class GenericSDPBackend:
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         """
-        The base ring
+        The base ring.
 
         TESTS::
 
@@ -42,9 +41,9 @@ cdef class GenericSDPBackend:
         from sage.rings.real_double import RDF
         return RDF
 
-    cpdef zero(self) noexcept:
+    cpdef zero(self):
         """
-        Zero of the base ring
+        Zero of the base ring.
 
         TESTS::
 
@@ -63,11 +62,13 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``obj`` - (optional) coefficient of this variable in the objective function (default: 0.0)
+        - ``obj`` -- (optional) coefficient of this variable in the objective
+          function (default: 0.0)
 
-        - ``name`` - an optional name for the newly added variable (default: ``None``).
+        - ``name`` -- an optional name for the newly added variable (default:
+          ``None``)
 
-        OUTPUT: The index of the newly created variable
+        OUTPUT: the index of the newly created variable
 
         EXAMPLES::
 
@@ -98,13 +99,13 @@ cdef class GenericSDPBackend:
 
         INPUT:
 
-        - ``n`` - the number of new variables (must be > 0)
+        - ``n`` -- the number of new variables (must be > 0)
 
-        - ``obj`` - (optional) coefficient of all variables in the objective function (default: 0.0)
+        - ``obj`` -- coefficient of all variables in the objective function (default: 0.0)
 
-        - ``names`` - optional list of names (default: ``None``)
+        - ``names`` -- list of names (default: ``None``)
 
-        OUTPUT: The index of the variable created last.
+        OUTPUT: the index of the variable created last
 
         EXAMPLES::
 
@@ -122,13 +123,13 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef set_sense(self, int sense) noexcept:
+    cpdef set_sense(self, int sense):
         """
         Set the direction (maximization/minimization).
 
         INPUT:
 
-        - ``sense`` (integer):
+        - ``sense`` -- integer:
 
           * `+1` => Maximization
           * `-1` => Minimization
@@ -146,16 +147,16 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef  objective_coefficient(self, int variable, coeff=None) noexcept:
+    cpdef  objective_coefficient(self, int variable, coeff=None):
         """
         Set or get the coefficient of a variable in the objective
         function
 
         INPUT:
 
-        - ``variable`` (integer) -- the variable's id
+        - ``variable`` -- integer; the variable's id
 
-        - ``coeff`` (double) -- its coefficient
+        - ``coeff`` -- double; its coefficient
 
         EXAMPLES::
 
@@ -172,16 +173,17 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef  set_objective(self, list coeff, d=0.0) noexcept:
+    cpdef  set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
         INPUT:
 
-        - ``coeff`` -- a list of real values, whose ith element is the
-          coefficient of the ith variable in the objective function.
+        - ``coeff`` -- list of real values, whose i-th element is the
+          coefficient of the i-th variable in the objective function
 
-        - ``d`` (double) -- the constant term in the linear function (set to `0` by default)
+        - ``d`` -- double; the constant term in the linear function (set to `0`
+          by default)
 
         EXAMPLES::
 
@@ -198,8 +200,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-
-    cpdef add_linear_constraint(self, coefficients, name=None) noexcept:
+    cpdef add_linear_constraint(self, coefficients, name=None):
         """
         Add a linear constraint.
 
@@ -209,11 +210,11 @@ cdef class GenericSDPBackend:
           is a variable index (integer) and ``v`` is a value (real
           value).
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``name`` - an optional name for this row (default: ``None``)
+        - ``name`` -- an optional name for this row (default: ``None``)
 
         EXAMPLES::
 
@@ -233,20 +234,19 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-
-    cpdef add_linear_constraints(self, int number, names=None) noexcept:
+    cpdef add_linear_constraints(self, int number, names=None):
         """
         Add constraints.
 
         INPUT:
 
-        - ``number`` (integer) -- the number of constraints to add.
+        - ``number`` -- integer; the number of constraints to add
 
-        - ``lower_bound`` - a lower bound, either a real value or ``None``
+        - ``lower_bound`` -- a lower bound, either a real value or ``None``
 
-        - ``upper_bound`` - an upper bound, either a real value or ``None``
+        - ``upper_bound`` -- an upper bound, either a real value or ``None``
 
-        - ``names`` - an optional list of names (default: ``None``)
+        - ``names`` -- an optional list of names (default: ``None``)
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef get_objective_value(self) noexcept:
+    cpdef get_objective_value(self):
         """
         Return the value of the objective function.
 
@@ -318,7 +318,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef get_variable_value(self, int variable) noexcept:
+    cpdef get_variable_value(self, int variable):
         """
         Return the value of a variable given by the solver.
 
@@ -400,13 +400,13 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef problem_name(self, name=None) noexcept:
+    cpdef problem_name(self, name=None):
         """
-        Return or define the problem's name
+        Return or define the problem's name.
 
         INPUT:
 
-        - ``name`` (``str``) -- the problem's name. When set to
+        - ``name`` -- string; the problem's name. When set to
           ``NULL`` (default), the method returns the problem's name.
 
         EXAMPLES::
@@ -421,13 +421,13 @@ cdef class GenericSDPBackend:
 
         raise NotImplementedError()
 
-    cpdef row(self, int i) noexcept:
+    cpdef row(self, int i):
         """
-        Return a row
+        Return a row.
 
         INPUT:
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
         OUTPUT:
 
@@ -451,13 +451,13 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef row_name(self, int index) noexcept:
+    cpdef row_name(self, int index):
         """
-        Return the ``index`` th row name
+        Return the ``index``-th row name.
 
         INPUT:
 
-        - ``index`` (integer) -- the row's id
+        - ``index`` -- integer; the row's id
 
         EXAMPLES::
 
@@ -467,20 +467,19 @@ cdef class GenericSDPBackend:
             sage: p.add_linear_constraints(1, 2, None, name="Empty constraint 1")
             sage: p.row_name(0)
             'Empty constraint 1'
-
         """
         raise NotImplementedError()
 
-    cpdef col_name(self, int index) noexcept:
+    cpdef col_name(self, int index):
         """
-        Return the ``index`` th col name
+        Return the ``index``-th col name.
 
         INPUT:
 
-        - ``index`` (integer) -- the col's id
+        - ``index`` -- integer; the col's id
 
-        - ``name`` (``char *``) -- its name. When set to ``NULL``
-          (default), the method returns the current name.
+        - ``name`` -- (``char *``) its name; when set to ``NULL``
+          (default), the method returns the current name
 
         EXAMPLES::
 
@@ -494,17 +493,15 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef dual_variable(self, int i, sparse=False) noexcept:
+    cpdef dual_variable(self, int i, sparse=False):
         """
-        The `i`-th dual variable
+        The `i`-th dual variable.
 
-        Available after self.solve() is called, otherwise the result is undefined
+        Available after ``self.solve()`` is called, otherwise the result is undefined
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
-        OUTPUT:
-
-        The matrix of the `i`-th dual variable
+        OUTPUT: the matrix of the `i`-th dual variable
 
         EXAMPLES::
 
@@ -541,17 +538,16 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef slack(self, int i, sparse=False) noexcept:
+    cpdef slack(self, int i, sparse=False):
         """
-        Slack of the `i`-th constraint
+        Slack of the `i`-th constraint.
 
-        Available after self.solve() is called, otherwise the result is undefined
+        Available after ``self.solve()`` is called, otherwise the result is
+        undefined.
 
-        - ``index`` (integer) -- the constraint's id.
+        - ``index`` -- integer; the constraint's id
 
-        OUTPUT:
-
-        The matrix of the slack of the `i`-th constraint
+        OUTPUT: the matrix of the slack of the `i`-th constraint
 
         EXAMPLES::
 
@@ -590,16 +586,16 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None) noexcept:
+    cpdef solver_parameter(self, name, value=None):
         """
-        Return or define a solver parameter
+        Return or define a solver parameter.
 
         INPUT:
 
-        - ``name`` (string) -- the parameter
+        - ``name`` -- string; the parameter
 
         - ``value`` -- the parameter's value if it is to be defined,
-          or ``None`` (default) to obtain its current value.
+          or ``None`` (default) to obtain its current value
 
         .. NOTE::
 
@@ -618,33 +614,33 @@ cdef class GenericSDPBackend:
         raise NotImplementedError()
 
 
-
 default_solver = None
+
 
 def default_sdp_solver(solver=None):
     """
-    Return/set the default SDP solver used by Sage
+    Return/set the default SDP solver used by Sage.
 
     INPUT:
 
     - ``solver`` -- one of the following:
 
-      - the string ``"CVXOPT"``, to make the use of the CVXOPT solver
+      - the string ``'CVXOPT'``, to make the use of the CVXOPT solver
         (see the `CVXOPT <http://cvxopt.org/>`_ web site) the default;
 
       - a subclass of
         :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`,
         to make it the default; or
 
-      - ``None`` (default), in which case the current default solver
-        (a string or a class) is returned.
+      - ``None`` -- (default) in which case the current default solver
+        (a string or a class) is returned
 
     OUTPUT:
 
     This function returns the current default solver (a string or a
     class) if ``solver = None`` (default). Otherwise, it sets the
     default solver to the one given. If this solver does not exist, or
-    is not available, a ``ValueError`` exception is raised.
+    is not available, a :exc:`ValueError` exception is raised.
 
     EXAMPLES::
 
@@ -662,7 +658,6 @@ def default_sdp_solver(solver=None):
         sage: default_sdp_solver(my_sdp_solver)
         sage: default_sdp_solver() is my_sdp_solver
         True
-
     """
     global default_solver
 
@@ -702,7 +697,7 @@ def default_sdp_solver(solver=None):
         raise ValueError("'solver' should be set to 'CVXOPT', 'Matrix', a class, or None.")
 
 
-cpdef GenericSDPBackend get_solver(solver=None, base_ring=None) noexcept:
+cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
     """
     Return a solver according to the given preferences.
 
@@ -710,18 +705,18 @@ cpdef GenericSDPBackend get_solver(solver=None, base_ring=None) noexcept:
 
     - ``solver`` -- one of the following:
 
-      - the string ``"CVXOPT"``, designating the use of the CVXOPT solver
+      - the string ``'CVXOPT'``, designating the use of the CVXOPT solver
         (see the `CVXOPT <http://cvxopt.org/>`_ web site);
 
       - a subclass of
-        :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`;
+        :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`
 
-      - ``None`` (default), in which case the default solver is used (see
-        :func:`default_sdp_solver`);
+      - ``None`` -- (default) in which case the default solver is used (see
+        :func:`default_sdp_solver`)
 
     .. SEEALSO::
 
-        - :func:`default_sdp_solver` -- Returns/Sets the default SDP solver.
+        - :func:`default_sdp_solver` -- returns/sets the default SDP solver
 
     EXAMPLES::
 

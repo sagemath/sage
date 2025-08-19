@@ -171,7 +171,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         self.__ngens = self._alphabet.cardinality()
         cat = GradedHopfAlgebrasWithBasis(R).Commutative().Connected()
         CombinatorialFreeModule.__init__(self, R, Words(names, infinite=False),
-                                         latex_prefix="", prefix=prefix,
+                                         latex_prefix='', prefix=prefix,
                                          category=cat)
 
     def variable_names(self):
@@ -241,7 +241,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``w1``, ``w2`` -- Basis elements
+        - ``w1``, ``w2`` -- basis elements
 
         EXAMPLES::
 
@@ -285,7 +285,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``i`` -- an integer
+        - ``i`` -- integer
 
         EXAMPLES::
 
@@ -439,7 +439,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         if isinstance(P, ShuffleAlgebra):
             if P is self:
                 return x
-            if not (P is self.base_ring()):
+            if P is not self.base_ring():
                 return self.element_class(self, x.monomial_coefficients())
         if isinstance(P, DualPBWBasis):
             return self(P.expansion(x))
@@ -539,10 +539,7 @@ class ShuffleAlgebra(CombinatorialFreeModule):
         # shuffle algebras in the same variable over any base that coerces in:
         if isinstance(R, ShuffleAlgebra):
             if R.variable_names() == self.variable_names():
-                if self.base_ring().has_coerce_map_from(R.base_ring()):
-                    return True
-                else:
-                    return False
+                return self.base_ring().has_coerce_map_from(R.base_ring())
 
         if isinstance(R, DualPBWBasis):
             return self.has_coerce_map_from(R._alg)

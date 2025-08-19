@@ -28,7 +28,6 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
         FflasNoTrans
         FflasTrans
 
-
     ctypedef enum FFLAS_SIDE:
         FflasRight
 
@@ -112,14 +111,14 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
                                   size_t s, size_t* P, size_t* Q, bool transform, size_t numthreads)
 
     Modular_double.Element* Solve (Modular_double F, size_t M,
-           Modular_double.Element*  A, size_t lda,
-           Modular_double.Element*  x, int incx,
-           Modular_double.Element*  b, int incb)
+           Modular_double.Element* A, size_t lda,
+           Modular_double.Element* x, int incx,
+           Modular_double.Element* b, int incb)
 
     Modular_double.Element* pSolve (Modular_double F, size_t M,
-           Modular_double.Element*  A, size_t lda,
-           Modular_double.Element*  x, int incx,
-           Modular_double.Element*  b, int incb, size_t numthreads)
+           Modular_double.Element* A, size_t lda,
+           Modular_double.Element* x, int incx,
+           Modular_double.Element* b, int incb, size_t numthreads)
 
     void applyP (Modular_double F,
                  FFLAS_SIDE s, FFLAS_TRANSPOSE tr,
@@ -166,14 +165,14 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
                                   size_t s, size_t* P, size_t* Q, bool transform, size_t numthreads)
 
     Modular_float.Element* Solve (Modular_float F, size_t M,
-           Modular_float.Element*  A, size_t lda,
-           Modular_float.Element*  x, int incx,
-           Modular_float.Element*  b, int incb)
+           Modular_float.Element* A, size_t lda,
+           Modular_float.Element* x, int incx,
+           Modular_float.Element* b, int incb)
 
     Modular_float.Element* pSolve (Modular_float F, size_t M,
-           Modular_float.Element*  A, size_t lda,
-           Modular_float.Element*  x, int incx,
-           Modular_float.Element*  b, int incb, size_t numthreads)
+           Modular_float.Element* A, size_t lda,
+           Modular_float.Element* x, int incx,
+           Modular_float.Element* b, int incb, size_t numthreads)
 
     void applyP (Modular_float F,
                  FFLAS_SIDE s, FFLAS_TRANSPOSE tr,

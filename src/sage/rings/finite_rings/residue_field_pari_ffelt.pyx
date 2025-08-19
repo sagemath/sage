@@ -103,7 +103,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
             sage: P.residue_class_degree()
             2
             sage: ff.<alpha> = P.residue_field(); ff
-            Residue field in alpha of Fractional ideal (-12*aa^2 + 189*aa - 475)
+            Residue field in alpha of Fractional ideal (12*aa^2 - 189*aa + 475)
             sage: type(ff)
             <class 'sage.rings.finite_rings.residue_field_pari_ffelt.ResidueFiniteField_pari_ffelt_with_category'>
             sage: ff(alpha^2 + 1)

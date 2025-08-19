@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Test Backend
 
@@ -30,14 +30,14 @@ We switch to the test backend for the remainder of this file::
     TestOutputPlainText container
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.structure.sage_object import SageObject
@@ -95,11 +95,9 @@ class TestObject(SageObject):
 
     def _repr_(self):
         """
-        Return string representation
+        Return string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 
@@ -112,7 +110,7 @@ class TestObject(SageObject):
 
     def _rich_repr_(self, display_manager):
         """
-        Rich Output Magic Method
+        Rich Output Magic Method.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -135,11 +133,9 @@ class BackendTest(BackendBase):
 
     def _repr_(self):
         """
-        Return the string representation
+        Return the string representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: string
 
         EXAMPLES::
 

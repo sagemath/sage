@@ -304,13 +304,11 @@ def conjugacy_class_iterator(part, S=None):
 
     - ``part`` -- partition
 
-    - ``S`` -- (optional, default: `\{ 1, 2, \ldots, n \}`, where `n`
+    - ``S`` -- (default: `\{ 1, 2, \ldots, n \}`, where `n`
       is the size of ``part``) a set
 
-    OUTPUT:
-
-    An iterator over the conjugacy class consisting of all
-    permutations of the set ``S`` whose cycle type is ``part``.
+    OUTPUT: an iterator over the conjugacy class consisting of all
+    permutations of the set ``S`` whose cycle type is ``part``
 
     EXAMPLES::
 

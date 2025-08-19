@@ -1,5 +1,5 @@
 r"""
-Frieze Patterns
+Frieze patterns
 
 This implements the original frieze patterns due to Conway and Coxeter.
 Such a frieze pattern is considered as a sequence of nonnegative
@@ -363,9 +363,9 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
 
         The option ``model`` must be one of
 
-        * ``'UHP'`` - (default) for the upper half plane model
-        * ``'PD'`` - for the Poincare disk model
-        * ``'KM'`` - for the Klein model
+        * ``'UHP'`` -- (default) for the upper half plane model
+        * ``'PD'`` -- for the Poincare disk model
+        * ``'KM'`` -- for the Klein model
 
         The hyperboloid model is not an option as this does not implement
         boundary points.

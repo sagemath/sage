@@ -98,19 +98,21 @@ REFERENCES:
 - http://webusers.imj-prg.fr/~bernhard.keller/ictp2006/lecturenotes/xi.pdf
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015-2018 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.combinat.free_module import CombinatorialFreeModule
+from typing import Self
+
 from sage.categories.algebras import Algebras
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
 
 
 class CellularBasis(CombinatorialFreeModule):
@@ -283,7 +285,7 @@ class CellularBasis(CombinatorialFreeModule):
         """
         return self._algebra.cell_module_indices(la)
 
-    def cellular_basis(self):
+    def cellular_basis(self) -> Self:
         """
         Return the cellular basis of ``self``, which is ``self``.
 
@@ -327,6 +329,18 @@ class CellularBasis(CombinatorialFreeModule):
             sage: t = StandardTableau([[1,3],[2]])
             sage: C.product_on_basis((la, s, t), (la, s, t))
             0
+
+        TESTS::
+
+            sage: C5.<z5> = CyclotomicField(5)
+            sage: TL = TemperleyLiebAlgebra(2, z5 + ~z5, C5)
+            sage: m = TL.cell_module(0)
+            sage: c = m.basis().keys()[0]
+            sage: B = TL.cellular_basis()
+            sage: B.product_on_basis((0, c, c), (0, c, c))
+            (-z5^3-z5^2-1)*C(0, {{1, 2}}, {{1, 2}})
+
+            sage: p = TL(B.monomial((0,c,c))) * TL(B.monomial((0,c,c)))
         """
         A = self._algebra
         return self(A(self.monomial(x)) * A(self.monomial(y)))

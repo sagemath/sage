@@ -650,7 +650,6 @@ derive from the one that follows.
                and self.dimension() == other.dimension())
 
 
-
     class BinaryRepetitionCodeGeneratorMatrixEncoder(Encoder):
 
         def __init__(self, code):
@@ -669,7 +668,6 @@ derive from the one that follows.
         def generator_matrix(self):
             n = self.code().length()
             return Matrix(GF(2), 1, n, [GF(2).one()] * n)
-
 
 
     class BinaryRepetitionCodeStraightforwardEncoder(Encoder):
@@ -695,7 +693,6 @@ derive from the one that follows.
 
         def message_space(self):
             return GF(2)
-
 
 
     class BinaryRepetitionCodeMajorityVoteDecoder(Decoder):
@@ -730,7 +727,6 @@ derive from the one that follows.
 
         def decoding_radius(self):
             return (self.code().length()-1) // 2
-
 
 
     BinaryRepetitionCode._registered_encoders["RepetitionGeneratorMatrixEncoder"] = BinaryRepetitionCodeGeneratorMatrixEncoder

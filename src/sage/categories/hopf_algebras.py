@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Hopf algebras
 """
@@ -45,7 +46,7 @@ class HopfAlgebras(Category_over_base_ring):
 
     def dual(self):
         """
-        Return the dual category
+        Return the dual category.
 
         EXAMPLES:
 
@@ -63,7 +64,7 @@ class HopfAlgebras(Category_over_base_ring):
 
         def antipode(self):
             """
-            Return the antipode of self
+            Return the antipode of ``self``.
 
             EXAMPLES::
 
@@ -198,7 +199,7 @@ class HopfAlgebras(Category_over_base_ring):
             #   HopfAlgebras.ParentMethods.
             def antipode_by_coercion(self, x):
                 """
-                Returns the image of ``x`` by the antipode
+                Return the image of ``x`` by the antipode.
 
                 This default implementation coerces to the default
                 realization, computes the antipode there, and coerces the

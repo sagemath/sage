@@ -64,12 +64,6 @@ PyObject* CC_get();
 
 class CanonicalForm;
 
-#ifdef PYNAC_HAVE_LIBGIAC
-namespace giac {
-        class context;
-}
-#endif
-
 namespace GiNaC {
 
 enum Type {
@@ -246,9 +240,6 @@ public:
         const numeric try_py_method(const std::string& s,
                         const numeric& x2) const;
         const numeric to_dict_parent(PyObject* dict) const;
-#ifdef PYNAC_HAVE_LIBGIAC
-        giac::gen* to_giacgen(giac::context*) const;
-#endif
         CanonicalForm to_canonical() const;
 
 	const numeric real() const;

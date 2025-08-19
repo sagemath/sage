@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of ``pandoc``
 """
@@ -34,8 +34,8 @@ class Pandoc(Executable):
             sage: isinstance(Pandoc(), Pandoc)
             True
         """
-        Executable.__init__(self, "pandoc", executable="pandoc",
-                            url="https://pandoc.org/")
+        Executable.__init__(self, "pandoc", executable='pandoc',
+                            url='https://pandoc.org/')
 
 
 def all_features():

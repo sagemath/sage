@@ -31,14 +31,12 @@ if ! props=$(sage-package properties --format=shell $PKG_BASE 2> /dev/null); the
 fi
 eval "$props"
 eval PKG_SCRIPTS=\$path_$PKG_BASE
-for ext in rst txt; do
-    SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
-    if [ -f "$SPKG_FILE" ]; then
-        # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
-        sed -e "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" "$SPKG_FILE"
-        break
-    fi
-done
+SPKG_FILE="$PKG_SCRIPTS/SPKG.rst"
+if [ -f "$SPKG_FILE" ]; then
+    # for sphinx 4.4 we need to replace all direct links by some "extlink" (issue 33272)
+    sed -e "1,3s/^ *Sage: Open Source Mathematics Software:/$PKG_BASE:/" -e "s|https://github.com/sagemath/sage/issues/\([0-9]*\)|:issue:\`\1\`|g" -e "s|https://arxiv.org/abs/cs/\([0-9]*\)|:arxiv:\`cs/\1\`|g" "$SPKG_FILE"
+    break
+fi
 if [ -r "$PKG_SCRIPTS/type" ] ; then
     echo
     echo "Type"
@@ -56,14 +54,7 @@ echo
 echo "Version Information"
 echo "-------------------"
 echo
-for a in package-version.txt requirements.txt install-requires.txt; do
-    if [ -f "$PKG_SCRIPTS"/"$a" ]; then
-        echo "$a::"
-        echo
-        sed 's/^/    /' "$PKG_SCRIPTS/$a"
-        echo
-    fi
-done
+sage-get-system-packages versions $PKG_BASE
 echo
 echo "Equivalent System Packages"
 echo "--------------------------"
@@ -94,7 +85,6 @@ for system in $systems; do
             alpine)     tab "Alpine";;
             arch)       tab "Arch Linux";;
             conda)      tab "conda-forge";;
-            cygwin)     tab "Cygwin";;
             debian)     tab "Debian/Ubuntu";;
             fedora)     tab "Fedora/Redhat/CentOS";;
             freebsd)    tab "FreeBSD";;

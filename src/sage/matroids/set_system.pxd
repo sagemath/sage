@@ -8,29 +8,29 @@ cdef class SetSystem:
     cdef long _len, _capacity
     cdef bitset_t _temp
 
-    cdef copy(self) noexcept
-    cdef _relabel(self, l) noexcept
-    cpdef _complements(self) noexcept
+    cdef copy(self)
+    cdef _relabel(self, mapping)
+    cpdef _complements(self)
 
-    cdef resize(self, k=*) noexcept
-    cdef _append(self, bitset_t X) noexcept
-    cdef append(self, X) noexcept
-    cdef _subset(self, long k) noexcept
-    cdef subset(self, k) noexcept
-    cpdef _get_groundset(self) noexcept
+    cdef resize(self, k=*)
+    cdef _append(self, bitset_t X)
+    cdef append(self, X)
+    cdef _subset(self, long k)
+    cdef subset(self, k)
+    cpdef _get_groundset(self)
 
-    cdef list _incidence_count(self, E) noexcept
-    cdef SetSystem _groundset_partition(self, SetSystem P, list cnt) noexcept
+    cdef list _incidence_count(self, E)
+    cdef SetSystem _groundset_partition(self, SetSystem P, list cnt)
     cdef long subset_characteristic(self, SetSystem P, long e) noexcept
-    cdef subsets_partition(self, SetSystem P=*, E=*) noexcept
-    cdef _distinguish(self, Py_ssize_t v) noexcept
-    cpdef is_connected(self) noexcept
+    cdef subsets_partition(self, SetSystem P=*, E=*)
+    cdef _distinguish(self, Py_ssize_t v)
+    cpdef is_connected(self)
 
-    cdef initial_partition(self, SetSystem P=*, E=*) noexcept
-    cpdef _equitable_partition(self, SetSystem P=*, EP=*) noexcept
-    cpdef _heuristic_partition(self, SetSystem P=*, EP=*) noexcept
-    cpdef _isomorphism(self, SetSystem other, SetSystem SP=*, SetSystem OP=*) noexcept
-    cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=*, SetSystem OP=*) noexcept
+    cdef initial_partition(self, SetSystem P=*, E=*)
+    cpdef _equitable_partition(self, SetSystem P=*, EP=*)
+    cpdef _heuristic_partition(self, SetSystem P=*, EP=*)
+    cpdef _isomorphism(self, SetSystem other, SetSystem SP=*, SetSystem OP=*)
+    cpdef _equivalence(self, is_equiv, SetSystem other, SetSystem SP=*, SetSystem OP=*)
 
 cdef class SetSystemIterator:
     cdef SetSystem _H

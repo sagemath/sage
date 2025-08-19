@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Topological Vector Bundle
 
@@ -22,26 +21,26 @@ REFERENCES:
 
 - [Lee2013]_
 - [Mil1974]_
-
 """
 
-#******************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung@uni-potsdam.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#******************************************************************************
+# ****************************************************************************
 
-from sage.structure.category_object import CategoryObject
-from sage.categories.vector_bundles import VectorBundles
-from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.abc
-from sage.rings.cc import CC
-from sage.rings.real_mpfr import RR
-from sage.rings.integer import Integer
+from sage.categories.vector_bundles import VectorBundles
 from sage.manifolds.vector_bundle_fiber import VectorBundleFiber
+from sage.rings.cc import CC
+from sage.rings.integer import Integer
+from sage.rings.real_mpfr import RR
+from sage.structure.category_object import CategoryObject
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
     r"""
@@ -190,7 +189,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
          the real vector bundle E of rank 2
         sage: s in E.section_module()
         True
-
     """
     def __init__(self, rank, name, base_space, field='real',
                  latex_name=None, category=None, unique_tag=None):
@@ -204,7 +202,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: TopologicalVectorBundle(2, 'E', M)
             Topological real vector bundle E -> M of rank 2 over the base space
              2-dimensional topological manifold M
-
         """
         if base_space is None:
             raise ValueError("a base space must be provided")
@@ -267,18 +264,20 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: M = Manifold(2, 'M', structure='topological')
             sage: E = M.vector_bundle(2, 'E')
             sage: E._init_attributes()
-
         """
-        self._section_modules = {} # dict of section modules with domains as
-                                   # keys
+        self._section_modules = {}
+        # dict of section modules with domains as keys
+
         self._atlas = []  # list of trivializations defined on self
-        self._transitions = {} # dictionary of transition maps (key: pair of
-                               # of trivializations)
+        self._transitions = {}
+        # dictionary of transition maps (key: pair of trivializations)
+
         self._frames = []  # list of local frames for self
         self._frame_changes = {}  # dictionary of changes of frames
-        self._coframes = [] # list of local coframes for self
-        self._trivial_parts = set() # subsets of base space on which self is
-                                    # trivial
+        self._coframes = []  # list of local coframes for self
+        self._trivial_parts = set()
+        # subsets of base space on which self is trivial
+
         self._def_frame = None
 
     def base_space(self):
@@ -291,7 +290,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(2, 'E')
             sage: E.base_space()
             2-dimensional topological manifold M
-
         """
         return self._base_space
 
@@ -301,12 +299,11 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
 
         OUTPUT:
 
-        - a string describing the field, with three possible values:
+        A string describing the field, with three possible values:
 
-          - ``'real'`` for the real field `\RR`
-          - ``'complex'`` for the complex field `\CC`
-          - ``'neither_real_nor_complex'`` for a field different
-            from `\RR` and `\CC`
+        - ``'real'`` for the real field `\RR`
+        - ``'complex'`` for the complex field `\CC`
+        - ``'neither_real_nor_complex'`` for a field different from `\RR` and `\CC`
 
         EXAMPLES::
 
@@ -314,7 +311,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(2, 'E', field=CC)
             sage: E.base_field_type()
             'complex'
-
         """
         return self._field_type
 
@@ -322,9 +318,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         r"""
         Return the field on which the fibers are defined.
 
-        OUTPUT:
-
-        - a topological field
+        OUTPUT: a topological field
 
         EXAMPLES::
 
@@ -332,7 +326,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(2, 'E', field=CC)
             sage: E.base_field()
             Complex Field with 53 bits of precision
-
         """
         return self._field
 
@@ -346,7 +339,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(3, 'E')
             sage: E.rank()
             3
-
         """
         return self._rank
 
@@ -361,7 +353,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E._repr_object_name()
             'real vector bundle E -> M of rank 1 over the base space
              2-dimensional topological manifold M'
-
         """
         desc = self.base_field_type() + " "
         desc += "vector bundle "
@@ -381,7 +372,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E._repr_()
             'Topological real vector bundle E -> M of rank 1 over the base space
              2-dimensional topological manifold M'
-
         """
         desc = "Topological "
         desc += self._repr_object_name()
@@ -397,7 +387,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(1, 'E')
             sage: E._latex_()
             'E\\to M'
-
         """
         latex = self._latex_name
         latex += r'\to '
@@ -420,7 +409,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E._add_local_frame(e)
             sage: E._frames
             [Local frame (E|_M, (e_0,e_1)), Local frame (E|_M, (e_0,e_1))]
-
         """
         self._trivial_parts.add(frame.domain())
         self._frames.append(frame)
@@ -449,20 +437,17 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E = M.vector_bundle(2, 'E')
             sage: phi = E.trivialization('phi', domain=U); phi
             Trivialization (phi, E|_U)
-
         """
         if domain is None:
             domain = self._base_space
-        from .trivialization import Trivialization
+        from sage.manifolds.trivialization import Trivialization
         return Trivialization(self, name, domain=domain, latex_name=latex_name)
 
     def transitions(self):
         r"""
         Return the transition maps defined over subsets of the base space.
 
-        OUTPUT:
-
-        - dictionary of transition maps, with pairs of trivializations as keys
+        OUTPUT: dictionary of transition maps, with pairs of trivializations as keys
 
         EXAMPLES::
 
@@ -482,7 +467,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
              (Trivialization (phi_U, E|_V),
              Trivialization (phi_U, E|_U)): Transition map from Trivialization
              (phi_U, E|_V) to Trivialization (phi_U, E|_U)}
-
         """
         return self._transitions.copy()
 
@@ -520,7 +504,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.transition(phi_V, phi_U)
             Transition map from Trivialization (phi_V, E|_V) to Trivialization
              (phi_U, E|_U)
-
         """
         if (triv1, triv2) not in self._transitions:
             raise TypeError("the transition map from " +
@@ -545,9 +528,8 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             [Trivialization (phi_U, E|_U),
              Trivialization (phi_V, E|_V),
              Trivialization (phi_M, E|_M)]
-
         """
-        return list(self._atlas) # Make a (shallow) copy
+        return list(self._atlas)  # Make a (shallow) copy
 
     def is_manifestly_trivial(self):
         r"""
@@ -571,7 +553,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             Trivialization (phi_M, E|_M)
             sage: E.is_manifestly_trivial()
             True
-
         """
         return self.base_space() in self._trivial_parts
 
@@ -586,7 +567,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
 
         - ``domain`` -- (default: ``None``) the domain on which the module is
           defined; if ``None`` the base space is assumed
-        - ``force_free`` -- (default: ``False``) if set to ``True``, force
+        - ``force_free`` -- boolean (default: ``False``); if set to ``True``, force
           the construction of a *free* module (this implies that `E` is trivial)
 
         OUTPUT:
@@ -657,12 +638,10 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
              manifold RP^1 with values in the real vector bundle E of rank 1
             sage: C0_U.an_element().display(phi_U.frame())
             2 (phi_U^*e_1)
-
         """
         if domain is None:
             domain = self._base_space
-        from sage.manifolds.section_module import (SectionModule,
-                                                   SectionFreeModule)
+        from sage.manifolds.section_module import SectionFreeModule, SectionModule
         if domain not in self._section_modules:
             if force_free or domain in self._trivial_parts:
                 self._section_modules[domain] = SectionFreeModule(self, domain)
@@ -696,7 +675,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
              3-dimensional topological manifold M
             sage: E.fiber(p)
             Fiber of E at Point p on the 3-dimensional topological manifold M
-
         """
         return VectorBundleFiber(self, point)
 
@@ -791,7 +769,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
 
             For more options, in particular for the choice of symbols and
             indices, see :class:`~sage.manifolds.local_frame.LocalFrame`.
-
         """
         from sage.manifolds.local_frame import LocalFrame
         # Input processing
@@ -809,7 +786,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         symbol_dual = kwargs.pop('symbol_dual', None)
         latex_symbol_dual = kwargs.pop('latex_symbol_dual', None)
         domain = kwargs.pop('domain', None)
-        #
+
         sec_module = self.section_module(domain=domain, force_free=True)
         resu = LocalFrame(sec_module, symbol=symbol, latex_symbol=latex_symbol,
                           indices=indices, latex_indices=latex_indices,
@@ -866,7 +843,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: s = E.section(name='s'); s
             Section s on the 2-dimensional topological manifold M with values in the
              real vector bundle E of rank 2
-
         """
         domain = kwargs.pop('domain', self._base_space)
         name = kwargs.pop('name', None)
@@ -896,18 +872,19 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: M = Manifold(3, 'M', structure='top')
             sage: E = M.vector_bundle(2, 'E')
             sage: E.total_space()
-            6-dimensional topological manifold E
-
+            5-dimensional topological manifold E
         """
         if self._total_space is None:
             from sage.manifolds.manifold import Manifold
             base_space = self._base_space
-            dim = base_space._dim * self._rank
+            dim = base_space._dim + self._rank
             sindex = base_space.start_index()
-            self._total_space = Manifold(dim, self._name,
-                                   latex_name=self._latex_name,
-                                   field=self._field, structure='topological',
-                                   start_index=sindex)
+            self._total_space = Manifold(
+                dim, self._name,
+                latex_name=self._latex_name,
+                field=self._field, structure='topological',
+                start_index=sindex
+            )
 
         # TODO: if update_atlas: introduce charts via self._atlas
 
@@ -928,9 +905,10 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
           :class:`~sage.tensor.modules.free_module_automorphism.FreeModuleAutomorphism`
           describing the automorphism `P` that relates the basis `(e_i)` to
           the basis `(f_i)` according to `f_i = P(e_i)`
-        - ``compute_inverse`` (default: True) -- if set to True, the inverse
-          automorphism is computed and the change from basis `(f_i)` to `(e_i)`
-          is set to it in the internal dictionary ``self._frame_changes``
+        - ``compute_inverse`` -- boolean (default: ``True``); if set to True,
+          the inverse automorphism is computed and the change from basis
+          `(f_i)` to `(e_i)` is set to it in the internal dictionary
+          ``self._frame_changes``
 
         EXAMPLES::
 
@@ -953,17 +931,15 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.change_of_frame(e,f)[e,:]
             [1 2]
             [0 3]
-
         """
-        from sage.tensor.modules.free_module_automorphism import \
-            FreeModuleAutomorphism
+        from sage.tensor.modules.free_module_automorphism import FreeModuleAutomorphism
         sec_module = frame1._fmodule
         if frame2._fmodule != sec_module:
             raise ValueError("the two frames are not defined on the same " +
                              "section module")
         if isinstance(change_of_frame, FreeModuleAutomorphism):
             auto = change_of_frame
-        else: # Otherwise try to coerce the input
+        else:  # Otherwise try to coerce the input
             auto_group = sec_module.general_linear_group()
             auto = auto_group(change_of_frame, basis=frame1)
         sec_module.set_change_of_basis(frame1, frame2, auto,
@@ -1005,7 +981,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             True
             sage: a.inverse() == E.change_of_frame(f, e)
             True
-
         """
         if (frame1, frame2) not in self._frame_changes:
             raise ValueError("the change of frame from {} to {}".format(frame1, frame2) +
@@ -1045,7 +1020,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
              Local frame (E|_M, (f_0,f_1))): Automorphism of the Free module
              C^0(M;E) of sections on the 3-dimensional topological manifold M
              with values in the real vector bundle E of rank 2}
-
         """
         return self._frame_changes.copy()
 
@@ -1053,9 +1027,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         r"""
         Return the list of local frames defined on ``self``.
 
-        OUTPUT:
-
-        - list of local frames defined on ``self``
+        OUTPUT: list of local frames defined on ``self``
 
         EXAMPLES::
 
@@ -1067,7 +1039,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.frames()
             [Trivialization frame (E|_U, ((phi_U^*e_1),(phi_U^*e_2))),
              Local frame (E|_V, (e_0,e_1))]
-
         """
         return list(self._frames)
 
@@ -1075,9 +1046,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
         r"""
         Return the list of coframes defined on ``self``.
 
-        OUTPUT:
-
-        - list of coframes defined on ``self``
+        OUTPUT: list of coframes defined on ``self``
 
         EXAMPLES::
 
@@ -1089,7 +1058,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.coframes()
             [Trivialization coframe (E|_U, ((phi_U^*e^1),(phi_U^*e^2))),
              Local coframe (E|_V, (e^0,e^1))]
-
         """
         return list(self._coframes)
 
@@ -1109,7 +1077,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: e = E.local_frame('e')
             sage: E.default_frame()
             Local frame (E|_M, (e_0,e_1))
-
         """
         return self._def_frame
 
@@ -1133,7 +1100,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.set_default_frame(f)
             sage: E.default_frame()
             Local frame (E|_M, (f_0,f_1))
-
         """
         from sage.manifolds.local_frame import LocalFrame
         if not isinstance(frame, LocalFrame):
@@ -1190,9 +1156,8 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.orientation()
             [Local frame (E|_U, (e_0,e_1)),
              Local frame (E|_V, (f_0,f_1))]
-
         """
-        from .local_frame import LocalFrame
+        from sage.manifolds.local_frame import LocalFrame
         if isinstance(orientation, LocalFrame):
             orientation = [orientation]
         elif isinstance(orientation, (tuple, list)):
@@ -1270,7 +1235,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.orientation()
             [Local frame (E|_U, (e_0,e_1)),
              Local frame (E|_V, (f_0,f_1))]
-
         """
         if not self._orientation:
             # Trivial case:
@@ -1288,7 +1252,7 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
                             break
         return list(self._orientation)
 
-    def has_orientation(self):
+    def has_orientation(self) -> bool:
         r"""
         Check whether ``self`` admits an obvious or by user set orientation.
 
@@ -1326,7 +1290,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
             sage: E.set_orientation([e, f])
             sage: E.has_orientation()
             True
-
         """
         return bool(self.orientation())
 
@@ -1371,7 +1334,6 @@ class TopologicalVectorBundle(CategoryObject, UniqueRepresentation):
 
             sage: next(E.irange()) == M.start_index()
             True
-
         """
         si = self._base_space._sindex
         imax = self._rank + si

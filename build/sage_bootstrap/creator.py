@@ -4,7 +4,8 @@ Package Creator
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2015-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2020-2024 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -63,6 +64,21 @@ class PackageCreator(object):
         Write the ``SPKG.rst`` file
         """
         with open(os.path.join(self.path, 'SPKG.rst'), 'w+') as f:
+            # Attempt to bring title to a common style
+            if description.startswith(self.package_name + ':'):
+                description = description[len(self.package_name + ':'):]
+            if description.startswith(self.package_name + ' is'):
+                description = description[len(self.package_name + ' is'):]
+            description = description.strip()
+            if not description.endswith('etc.'):
+                description = description.rstrip('.')
+            if description.startswith('A ') or description.startswith('a '):
+                description = description[2:].strip()
+            if description.startswith('An ') or description.startswith('an '):
+                description = description[3:].strip()
+            if description:
+                description = description[0].upper() + description[1:]
+
             def heading(title, char='-'):
                 return '{0}\n{1}\n\n'.format(title, char * len(title))
             if description:
@@ -90,14 +106,14 @@ class PackageCreator(object):
             except OSError:
                 pass
 
-    def set_python_data_and_scripts(self, pypi_package_name=None, source='normal'):
+    def set_python_data_and_scripts(self, pypi_package_name=None, source='normal', dependencies=None):
         """
         Write the file ``dependencies`` and other files for Python packages.
 
         If ``source`` is ``"normal"``, write the files ``spkg-install.in`` and
-        ``install-requires.txt``.
+        ``version_requirements.txt``.
 
-        If ``source`` is ``"wheel"``, write the file ``install-requires.txt``.
+        If ``source`` is ``"wheel"``, write the file ``version_requirements.txt``.
 
         If ``source`` is ``"pip"``, write the file ``requirements.txt``.
 
@@ -106,17 +122,25 @@ class PackageCreator(object):
         if pypi_package_name is None:
             pypi_package_name = self.package_name
         with open(os.path.join(self.path, 'dependencies'), 'w+') as f:
-            f.write(' | $(PYTHON_TOOLCHAIN) $(PYTHON)\n\n')
+            if dependencies:
+                dependencies = ' '.join(dependencies)
+            else:
+                dependencies = ''
+            if source == 'wheel':
+                dependencies_order_only = 'pip $(PYTHON)'
+            else:
+                dependencies_order_only = '$(PYTHON_TOOLCHAIN) $(PYTHON)'
+            f.write(dependencies + ' | ' + dependencies_order_only + '\n\n')
             f.write('----------\nAll lines of this file are ignored except the first.\n')
         if source == 'normal':
             with open(os.path.join(self.path, 'spkg-install.in'), 'w+') as f:
                 f.write('cd src\nsdh_pip_install .\n')
-            with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
+            with open(os.path.join(self.path, 'version_requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
             # Remove this file, which would mark the package as a pip package.
             self._remove_files(['requirements.txt'])
         elif source == 'wheel':
-            with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
+            with open(os.path.join(self.path, 'version_requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
             # Remove this file, which would mark the package as a pip package.
             self._remove_files(['requirements.txt'])

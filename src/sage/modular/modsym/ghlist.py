@@ -93,7 +93,7 @@ class GHlist(SageObject):
 
     def __repr__(self):
         """
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -122,7 +122,7 @@ class GHlist(SageObject):
         is equivalent to `(u', v')`.
 
         This will only make sense if `{\rm gcd}(u, v, N) = 1`; otherwise the
-        output will not be an element of self.
+        output will not be an element of ``self``.
 
         EXAMPLES::
 

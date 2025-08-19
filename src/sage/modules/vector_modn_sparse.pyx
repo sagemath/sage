@@ -130,7 +130,7 @@ cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n) noexcept:
     """
     return binary_search0_modn(v.positions, v.num_nonzero, n) == -1
 
-cdef object to_list(c_vector_modint* v) noexcept:
+cdef object to_list(c_vector_modint* v):
     """
     Return a Python list of 2-tuples (i,x), where x=v[i] runs
     through the nonzero elements of x, in order.
@@ -251,7 +251,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
     while i < v.num_nonzero or j < w.num_nonzero:
         if i >= v.num_nonzero:   # just copy w in
             z.positions[k] = w.positions[j]
-            z.entries[k] = (multiple*w.entries[j])%v.p
+            z.entries[k] = (multiple * w.entries[j]) % v.p
             j = j + 1
             k = k + 1
         elif j >= w.num_nonzero:  # just copy v in
@@ -265,7 +265,7 @@ cdef int add_c_vector_modint_init(c_vector_modint* sum, c_vector_modint* v,
             i = i + 1
             k = k + 1
         elif v.positions[i] > w.positions[j]: # copy entry from w in
-            s = (multiple*w.entries[j])%v.p
+            s = (multiple * w.entries[j]) % v.p
             if s != 0:
                 z.positions[k] = w.positions[j]
                 z.entries[k] = s

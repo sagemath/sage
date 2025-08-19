@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 An example of set factory
 =========================
@@ -23,15 +24,13 @@ where `(a, b)\in S`
     S^b := \{(x,y) \in S \mid y = b\},
 
     S_a^b := \{(x,y) \in S \mid x = a, y = b\}.
-
-
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Florent Hivert <florent.hivert at lri.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
@@ -64,9 +63,9 @@ class XYPairsFactory(SetFactory):
 
         INPUT:
 
-        - ``x=a`` -- where ``a`` is an integer (default to ``None``).
-        - ``y=b`` -- where ``b`` is an integer (default to ``None``).
-        - ``policy`` -- the policy passed to the created set.
+        - ``x=a`` -- where ``a`` is an integer (default: ``None``)
+        - ``y=b`` -- where ``b`` is an integer (default: ``None``)
+        - ``policy`` -- the policy passed to the created set
 
         .. SEEALSO::
 
@@ -92,7 +91,6 @@ class XYPairsFactory(SetFactory):
         TESTS::
 
             sage: TestSuite(P).run()
-
         """
         if policy is None:
             policy = self._default_policy
@@ -101,8 +99,8 @@ class XYPairsFactory(SetFactory):
             if isinstance(y, (Integer, int)):
                 return SingletonPair(x, y, policy)
             return PairsX_(x, policy)
-        elif isinstance(y, (Integer, int)):
-                return Pairs_Y(y, policy)
+        if isinstance(y, (Integer, int)):
+            return Pairs_Y(y, policy)
         return AllPairs(policy)
 
     def add_constraints(self, cons, args_opts):
@@ -249,10 +247,9 @@ class AllPairs(ParentWithSetFactory, DisjointUnionEnumeratedSets):
 
     def pairs_y(self, letter):
         r"""
-        Construct the parent for the disjoint union
+        Construct the parent for the disjoint union.
 
-        Construct a parent in :class:`Pairs_Y` as a facade parent for
-        ``self``.
+        Construct a parent in :class:`Pairs_Y` as a facade parent for ``self``.
 
         This is an internal function which should be hidden from the user
         (typically under the name ``_pairs_y``. We put it here for
@@ -433,7 +430,7 @@ class Pairs_Y(ParentWithSetFactory, DisjointUnionEnumeratedSets):
 
     def single_pair(self, letter):
         r"""
-        Construct the singleton pair parent
+        Construct the singleton pair parent.
 
         Construct a singleton pair for ``(self.y, letter)`` as a facade parent
         for ``self``.

@@ -25,8 +25,6 @@ following C code.
     } double_sparse_matrix;
 
 
-
-
     double_sparse_matrix * initialize_matrix(int nrows, int ncols)
     {
       int i;

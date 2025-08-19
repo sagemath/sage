@@ -1,9 +1,0 @@
-diff --git a/src/include/cfuns-c.H1 b/src/include/cfuns-c.H1
-index af23933a..8e458c6c 100644
---- a/src/include/cfuns-c.H1
-+++ b/src/include/cfuns-c.H1
-@@ -1,2 +1,4 @@
- extern int directoryp(char *);
- extern int writeablep(char *);
-+extern int remove_directory(char *);
-+extern int makedir(char *);

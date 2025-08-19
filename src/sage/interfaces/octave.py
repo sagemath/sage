@@ -145,12 +145,14 @@ EXAMPLES::
 # ****************************************************************************
 
 import os
-from .expect import Expect, ExpectElement
+
 import pexpect
-from sage.misc.verbose import verbose
+
+from sage.cpython.string import bytes_to_str
+from sage.interfaces.expect import Expect, ExpectElement
 from sage.misc.instancedoc import instancedoc
 from sage.misc.temporary_file import tmp_filename
-from sage.cpython.string import bytes_to_str
+from sage.misc.verbose import verbose
 
 
 class Octave(Expect):
@@ -186,6 +188,7 @@ class Octave(Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.octave import octave
             sage: octave == loads(dumps(octave))
             True
         """
@@ -351,7 +354,6 @@ class Octave(Expect):
         if self._expect is not None:
             if verbose:
                 print("Exiting spawned %s process." % self)
-        return
 
     def _start(self):
         """
@@ -486,7 +488,7 @@ class Octave(Expect):
 
     def solve_linear_system(self, A, b):
         r"""
-        Use octave to compute a solution x to A\*x = b, as a list.
+        Use Octave to compute a solution x to ``A*x = b``, as a list.
 
         INPUT:
 
@@ -494,7 +496,7 @@ class Octave(Expect):
 
         - ``b`` -- m-vector b entries in `\QQ` or `\RR` (resp)
 
-        OUTPUT: A list x (if it exists) which solves M\*x = b
+        OUTPUT: list x (if it exists) which solves ``M*x = b``
 
         EXAMPLES::
 
@@ -531,9 +533,11 @@ class Octave(Expect):
         """
         Return an octave matrix from a Sage matrix.
 
-        INPUT: A Sage matrix with entries in the rationals or reals.
+        INPUT:
 
-        OUTPUT: A string that evaluates to an Octave matrix.
+        - ``A`` - Sage matrix with entries in the rationals or reals
+
+        OUTPUT: string that evaluates to an Octave matrix
 
         EXAMPLES::
 
@@ -555,16 +559,13 @@ class Octave(Expect):
 
         INPUT:
 
+        - ``f`` -- a pair of strings representing the
+          differential equations; the independent variable must be called x
+          and the dependent variable must be called y
 
-        -  ``f`` - a pair of strings representing the
-           differential equations; The independent variable must be called x
-           and the dependent variable must be called y.
+        - ``ics`` -- a pair [x0,y0] such that x(t0) = x0, y(t0) = y0
 
-        -  ``ics`` - a pair [x0,y0] such that x(t0) = x0, y(t0)
-           = y0
-
-        -  ``trange`` - a pair [t0,t1]
-
+        - ``trange`` -- a pair [t0,t1]
 
         OUTPUT: a gnuplot window appears
 
@@ -607,7 +608,7 @@ octave_functions = set()
 
 def to_complex(octave_string, R):
     r"""
-    Helper function to convert octave complex number
+    Helper function to convert octave complex number.
 
     TESTS::
 

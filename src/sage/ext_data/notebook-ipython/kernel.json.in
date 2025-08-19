@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python",
+    "-m",
+    "sage.repl.ipython_kernel",
+    "-f",
+    "{connection_file}"
+  ],
+  "display_name": "SageMath @SAGE_VERSION@",
+  "language": "sage"
+}

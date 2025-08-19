@@ -147,10 +147,10 @@ REFERENCES:
 
 .. [RS] http://reasoning.cs.ucla.edu/rsat/
 
-.. [GL] http://www.lri.fr/~simon/?page=glucose
+.. [GL] https://www.labri.fr/perso/lsimon/research/glucose/
 
 .. [CMS] http://www.msoos.org
 
-.. [SG09] http://www.satcompetition.org/2009/format-benchmarks2009.html
+.. [SG09] https://web.archive.org/web/20090305015900/http://www.satcompetition.org/2009/format-benchmarks2009.html
 
 .. include:: ../footer.txt

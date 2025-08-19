@@ -70,7 +70,7 @@ Sage. The command
 
 .. CODE-BLOCK:: shell-session
 
-    $ export MAKE='make -j8'
+    $ export MAKEFLAGS='-j8'
 
 will enable 8 threads for parts of the build that support
 parallelism. Change the number 8 as appropriate to suit the number of
@@ -219,8 +219,8 @@ by a web search.
 
 * `Building Skills in Python <http://homepage.mac.com/s_lott/books/python.html>`_
   by Steven F. Lott
-* `Dive into Python <http://www.diveintopython.net>`_ by Mark Pilgrim
-* `How to Think Like a Computer Scientist <http://www.openbookproject.net/thinkCSpy>`_
+* `Dive into Python <https://diveintopython3.net>`_ by Mark Pilgrim
+* `How to Think Like a Computer Scientist <https://www.openbookproject.net/thinkcs/python/english3e/>`_
   by Jeffrey Elkner, Allen B. Downey, and Chris Meyers
 * `Official Python Tutorial <https://docs.python.org/tutorial>`_
 * `Python <https://www.python.org>`_ home page and the
@@ -324,7 +324,7 @@ ints. For example::
     sage: RealNumber = float; Integer = int
     sage: from scipy import stats
     sage: stats.ttest_ind([1,2,3,4,5], [2,3,4,5,.6])
-    Ttest...Result(statistic=0.0767529..., pvalue=0.940704...)
+    Ttest...Result(statistic=...0.0767529..., pvalue=...0.940704...)
     sage: stats.uniform(0,15).ppf([0.5,0.7])
     array([  7.5,  10.5])
 
@@ -479,35 +479,6 @@ How do I run sage in daemon mode, i.e. as a service?
 There are several possibilities. Use ``screen``, ``nohup`` or ``disown``.
 
 
-The show command for plotting 3-D objects does not work.
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-The default live 3-D plotting for Sage 6.4+ uses
-`Jmol/JSmol <http://jmol.sourceforge.net>`_
-for viewing. From the command line the Jmol Java application is used,
-and for in browser viewing either pure javascript or a Java applet
-is used.  By default in browsers pure javascript is used to avoid
-the problems with some browsers that do not support java applet
-plugins (namely Chrome).  On each browser worksheet there is a
-checkbox which must be checked before a 3-D plot is generated if
-the user wants to use the Java applet (the applet is a little faster
-with complex plots).
-
-The most likely reason for a malfunction is that you do not have
-a Java Run Time Environment (JRE) installed or you have one older than
-version 1.7.  If things work from the command line another possibility
-is that your browser does not have the proper plugin to support Java
-applets (at present, 2014, plugins do not work with most versions of
-Chrome).  Make sure you have installed either the IcedTea browser
-plugin (for linux see your package manager), see:
-`IcedTea <http://icedtea.classpath.org/wiki/IcedTea-Web>`_,
-or the Oracle Java plugin see:
-`Java <https://java.com/en/download/help/index_installing.xml>`_.
-
-If you are using a Sage server over the web and even javascript rendering
-does not work, you may have a problem with your browser's javascript
-engine or have it turned off.
-
 May I use Sage tools in a commercial environment?
 """""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -591,7 +562,7 @@ include the following:
     limit maxproc 512 2048
 
 then reboot. See
-`this page <http://www.macosxhints.com/article.php?story=20050709233920660>`_
+`this page <https://web.archive.org/web/20051106134912/http://www.macosxhints.com/article.php?story=20050709233920660>`_
 for more details.
 
 How do I plot the cube root (or other odd roots) for negative input?

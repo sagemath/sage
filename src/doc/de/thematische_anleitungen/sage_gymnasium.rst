@@ -774,8 +774,7 @@ falls wir im Bogenmass rechnen möchten. Ansonsten müssen wir wie oben beschrie
 
 Ihre Umkehrfunktionen sind auch mit den nicht sehr überraschenden Namen ``asin()``, ``acos()``, ``atan()`` und ``acot()`` versehen.
 Sie geben uns aber wie oben erklärt nur Winkel im Bogenmass zurück. Möchten wir im Gradmass rechnen, müssen wir wieder
-konvertieren. Die exakte Berechnung der Werte funktioniert in die Gegenrichtung nur, falls im ursprünglichen Wert keine
-Wurzeln vorkommen::
+konvertieren. Exakte Berechnung der Werte funktioniert, wenn es möglich ist::
 
     sage: atan(1)
     1/4*pi
@@ -784,12 +783,7 @@ Wurzeln vorkommen::
     sage: rad2deg(x) = x*(180/pi)
     sage: rad2deg(acos(-1/2))
     120
-
-Falls wir Wurzelterme verwenden, müssen wir mit der Funktion ``simplify_full()`` vereinfachen::
-
     sage: acos(sqrt(3)/2)
-    arccos(1/2*sqrt(3))
-    sage: (acos(sqrt(3)/2)).simplify_full()
     1/6*pi
 
 Sage kann auch weitere Regeln für trigonometrische Funktionen anwenden, um Terme zu vereinfachen. Es kennt zum Beispiel auch die
@@ -1223,27 +1217,23 @@ benutzen wir ``divisors()``::
     [1, 2, 3, 4, 6, 12, 13, 26, 39, 52, 78, 156]
 
 
-
 Weiterführende Links und Literatur
 ==================================
 
 Das folgende Tutorial erklärt (auf englisch) wie Sage als einfacher Rechner benutzt werden kann. Hier
 finden sich auch viele Funktionen und Beispiele, welche für unsere Zwecke interessant sind.
 
-* http://www-rohan.sdsu.edu/~mosulliv/sagetutorial/sagecalc.html
+* https://mosullivan.sdsu.edu/sagetutorial/sagecalc.html
 
 Die offizielle deutsche Dokumentation von Sage ist noch im Aufbau und weit entfernt von einer
-vollständigen Dokumentation. Das Einführungstutorial ist jedoch auch auf deutsch verfügbar. Die offizielle
-Seite der deutschen Version von Sage findet sich hier:
-
-* http://www.sagemath.org/de/
+vollständigen Dokumentation. Das Einführungstutorial ist jedoch auch auf deutsch verfügbar.
 
 
 .. rubric:: Footnotes
 
-.. [#keywords] http://docs.python.org/2/reference/lexical_analysis.html#keywords
+.. [#keywords] https://docs.python.org/3/reference/lexical_analysis.html#keywords
 .. [#tutorial] http://doc.sagemath.org/html/de/tutorial/
 .. [#units] http://doc.sagemath.org/html/en/reference/calculus/sage/symbolic/units.html
 .. [#2dgraphics] http://doc.sagemath.org/html/en/reference/plotting/index.html
 .. [#scatterplot] http://doc.sagemath.org/html/en/reference/plotting/sage/plot/scatter_plot.html
-.. [#listcomp] http://docs.python.org/2/tutorial/datastructures.html#list-comprehensions
+.. [#listcomp] https://docs.python.org/3/tutorial/datastructures.html#list-comprehensions

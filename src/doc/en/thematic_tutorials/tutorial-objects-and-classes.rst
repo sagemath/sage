@@ -25,7 +25,7 @@ surprising for people used to imperative languages like C or Maple. The reason
 is that they are **not variables but names**.
 
 The following explanation is `borrowed from
-David Goodger <http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#python-has-names>`_.
+David Goodger <https://web.archive.org/web/20070928013054/http://python.net/~goodger/projects/pycon/2007/idiomatic/handout.html#python-has-names>`_.
 
 Other languages have "variables"
 ================================
@@ -366,7 +366,6 @@ define the methods and the attributes of the object.
 
 **attribute**
    variable where information about the object is stored.
-
 
 
 An example: glass of beverage in a restaurant

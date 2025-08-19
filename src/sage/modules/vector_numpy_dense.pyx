@@ -53,7 +53,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     def __cinit__(self, parent, entries, coerce=True, copy=True):
         """
-        Set up a new vector
+        Set up a new vector.
 
         EXAMPLES::
 
@@ -68,9 +68,9 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         self._degree = parent.degree()
         self._parent = parent
 
-    cdef Vector_numpy_dense _new(self, numpy.ndarray vector_numpy) noexcept:
+    cdef Vector_numpy_dense _new(self, numpy.ndarray vector_numpy):
         """
-        Return a new vector with same parent as self.
+        Return a new vector with same parent as ``self``.
         """
         cdef Vector_numpy_dense v
         v = self.__class__.__new__(self.__class__,self._parent,None,None,None)
@@ -103,19 +103,19 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
     cdef bint is_dense_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is dense.
+        Return ``True`` (i.e., 1) if ``self`` is dense.
         """
         return 1
 
     cdef bint is_sparse_c(self) noexcept:
         """
-        Return True (i.e., 1) if self is sparse.
+        Return ``True`` (i.e., 1) if ``self`` is sparse.
         """
         return 0
 
     def __copy__(self, copy=True):
         """
-        Return a copy of the vector
+        Return a copy of the vector.
 
         EXAMPLES::
 
@@ -128,7 +128,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         from copy import copy
         return self._new(copy(self._vector_numpy))
 
-    def __init__(self, parent, entries, coerce = True, copy = True):
+    def __init__(self, parent, entries, coerce=True, copy=True):
         """
         Fill the vector with entries.
 
@@ -231,7 +231,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
                         self._python_dtype(value))
         # TODO: Throw an error if status == -1
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
@@ -248,7 +248,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         return self._sage_dtype(numpy.PyArray_GETITEM(self._vector_numpy,
                                                 numpy.PyArray_GETPTR1(self._vector_numpy, i)))
 
-    cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array) noexcept:
+    cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array):
         """
         Replace the underlying numpy array with numpy_array.
         """
@@ -266,8 +266,9 @@ cdef class Vector_numpy_dense(FreeModuleElement):
 
         INPUT:
 
-        - ``dtype`` -- if specified, the `numpy dtype <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_
-                       of the returned array.
+        - ``dtype`` -- if specified, the `numpy dtype
+          <http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html>`_ of
+          the returned array
 
         EXAMPLES::
 

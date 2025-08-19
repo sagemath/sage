@@ -28,7 +28,6 @@ one forms is called *connection matrix of* `\nabla` *with respect to* `e`.
 AUTHORS:
 
 - Michael Jung (2019) : initial version
-
 """
 # ******************************************************************************
 #       Copyright (C) 2019 Michael Jung <micjung@uni-potsdam.de>
@@ -39,11 +38,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ******************************************************************************
 
-from sage.structure.sage_object import SageObject
-from sage.structure.mutability import Mutability
+from sage.manifolds.differentiable.vector_bundle import DifferentiableVectorBundle
 from sage.rings.integer import Integer
-from sage.manifolds.differentiable.vector_bundle import \
-    DifferentiableVectorBundle
+from sage.structure.mutability import Mutability
+from sage.structure.sage_object import SageObject
 
 
 class BundleConnection(SageObject, Mutability):
@@ -91,18 +89,18 @@ class BundleConnection(SageObject, Mutability):
         connection (1,1) of bundle connection nabla w.r.t. Local frame
          (E|_M, (e_1,e_2)) = 0
 
-    Now, we want to specify some non-zero entries::
+    Now, we want to specify some nonzero entries::
 
         sage: nab[e, 1, 2][:] = [x*z, y*z, z^2]
         sage: nab[e, 2, 1][:] = [x, x^2, x^3]
         sage: nab[e, 1, 1][:] = [x+z, y-z, x*y*z]
         sage: nab.display()
         connection (1,1) of bundle connection nabla w.r.t. Local frame
-          (E|_M, (e_1,e_2)) = (x + z) dx + (y - z) dy + x*y*z dz
-         connection (1,2) of bundle connection nabla w.r.t. Local frame
-          (E|_M, (e_1,e_2)) = x*z dx + y*z dy + z^2 dz
-         connection (2,1) of bundle connection nabla w.r.t. Local frame
-          (E|_M, (e_1,e_2)) = x dx + x^2 dy + x^3 dz
+         (E|_M, (e_1,e_2)) = (x + z) dx + (y - z) dy + x*y*z dz
+        connection (1,2) of bundle connection nabla w.r.t. Local frame
+         (E|_M, (e_1,e_2)) = x*z dx + y*z dy + z^2 dz
+        connection (2,1) of bundle connection nabla w.r.t. Local frame
+         (E|_M, (e_1,e_2)) = x dx + x^2 dy + x^3 dz
 
     Notice, when we omit the frame, the default frame of the vector bundle is
     assumed (in this case ``e``)::
@@ -189,14 +187,14 @@ class BundleConnection(SageObject, Mutability):
         sage: nab.display(frame=f)
         connection (1,1) of bundle connection nabla w.r.t. Local frame
          (E|_M, (f_1,f_2)) = ((x^3 + x)*z + 2*x)/(x^2 + 1) dx + y*z dy + z^2 dz
-         connection (1,2) of bundle connection nabla w.r.t. Local frame
-          (E|_M, (f_1,f_2)) = -(x^3 + x)*z dx - (x^2 + 1)*y*z dy -
+        connection (1,2) of bundle connection nabla w.r.t. Local frame
+         (E|_M, (f_1,f_2)) = -(x^3 + x)*z dx - (x^2 + 1)*y*z dy -
           (x^2 + 1)*z^2 dz
-         connection (2,1) of bundle connection nabla w.r.t. Local frame
-          (E|_M, (f_1,f_2)) = (x*z - x)/(x^2 + 1) dx -
+        connection (2,1) of bundle connection nabla w.r.t. Local frame
+         (E|_M, (f_1,f_2)) = (x*z - x)/(x^2 + 1) dx -
           (x^2 - y*z)/(x^2 + 1) dy - (x^3 - z^2)/(x^2 + 1) dz
-         connection (2,2) of bundle connection nabla w.r.t. Local frame
-          (E|_M, (f_1,f_2)) = -x*z dx - y*z dy - z^2 dz
+        connection (2,2) of bundle connection nabla w.r.t. Local frame
+         (E|_M, (f_1,f_2)) = -x*z dx - y*z dy - z^2 dz
 
     The new connection 1-forms obey the defining formula, too::
 
@@ -214,14 +212,14 @@ class BundleConnection(SageObject, Mutability):
         ....:         print(Omega(i ,j, e).display())
         curvature (1,1) of bundle connection nabla w.r.t. Local frame
          (E|_M, (e_1,e_2)) = -(x^3 - x*y)*z dx∧dy + (-x^4*z + x*z^2) dx∧dz +
-         (-x^3*y*z + x^2*z^2) dy∧dz
-         curvature (1,2) of bundle connection nabla w.r.t. Local frame
+          (-x^3*y*z + x^2*z^2) dy∧dz
+        curvature (1,2) of bundle connection nabla w.r.t. Local frame
          (E|_M, (e_1,e_2)) = -x dx∧dz - y dy∧dz
-         curvature (2,1) of bundle connection nabla w.r.t. Local frame
+        curvature (2,1) of bundle connection nabla w.r.t. Local frame
          (E|_M, (e_1,e_2)) = 2*x dx∧dy + 3*x^2 dx∧dz
-         curvature (2,2) of bundle connection nabla w.r.t. Local frame
+        curvature (2,2) of bundle connection nabla w.r.t. Local frame
          (E|_M, (e_1,e_2)) = (x^3 - x*y)*z dx∧dy + (x^4*z - x*z^2) dx∧dz +
-         (x^3*y*z - x^2*z^2) dy∧dz
+          (x^3*y*z - x^2*z^2) dy∧dz
 
     The derived forms certainly obey the structure equations, see
     :meth:`curvature_form` for details::
@@ -236,7 +234,6 @@ class BundleConnection(SageObject, Mutability):
         ....:             for k in E.irange()))
         sage: check  # long time
         [True, True, True, True]
-
     """
 
     def __init__(self, vbundle, name, latex_name=None):
@@ -259,7 +256,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab[:] = 0
             sage: nab.set_connection_form(1, 0)[:] = [x*z, y*z, z^2]
             sage: TestSuite(nab).run()
-
         """
         if not isinstance(vbundle, DifferentiableVectorBundle):
             raise TypeError("the first argument must be a differentiable " +
@@ -294,7 +290,6 @@ class BundleConnection(SageObject, Mutability):
             'Bundle connection nabla on the Differentiable real vector bundle
              E -> M of rank 3 over the base space 5-dimensional differentiable
              manifold M'
-
         """
         description = "Bundle connection"
         if self._name is not None:
@@ -320,7 +315,6 @@ class BundleConnection(SageObject, Mutability):
             'D'
             sage: latex(nab)  # indirect doctest
             D
-
         """
         return self._latex_name
 
@@ -334,7 +328,6 @@ class BundleConnection(SageObject, Mutability):
             sage: E = M.vector_bundle(2, 'E')
             sage: nab = E.bundle_connection('nabla', latex_name=r'\nabla')
             sage: nab._init_derived()
-
         """
         self._curvature_forms = {}  # dict. of dict. of curvature forms
         # (key: local frame)
@@ -350,7 +343,6 @@ class BundleConnection(SageObject, Mutability):
             sage: E = M.vector_bundle(2, 'E')
             sage: nab = E.bundle_connection('nabla', latex_name=r'\nabla')
             sage: nab._del_derived()
-
         """
         self._curvature_forms.clear()
 
@@ -362,9 +354,7 @@ class BundleConnection(SageObject, Mutability):
 
         - ``other`` -- a bundle connection
 
-        OUTPUT:
-
-        - ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
+        OUTPUT: ``True`` if ``self`` is equal to ``other`` and ``False`` otherwise
 
         TESTS::
 
@@ -388,7 +378,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab1[1, 0][:] = [y^2, y]
             sage: (nab1 == nab) and (nab == nab1)
             True
-
         """
         if other is self:
             return True
@@ -442,7 +431,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab1[1, 0][:] = [y^2, y]
             sage: (nab1 != nab) or (nab != nab1)
             False
-
         """
         return not (self == other)
 
@@ -465,7 +453,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab.vector_bundle()
             Differentiable real vector bundle E -> M of rank 2 over the base
              space 3-dimensional differentiable manifold M
-
         """
         return self._vbundle
 
@@ -483,18 +470,17 @@ class BundleConnection(SageObject, Mutability):
             sage: forms = nab._new_forms(e)
             sage: [forms[k] for k in sorted(forms)]
             [1-form connection (1,1) of bundle connection nabla w.r.t. Local
-             frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
-             manifold M,
-            1-form connection (1,2) of bundle connection nabla w.r.t. Local
-             frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
-             manifold M,
-            1-form connection (2,1) of bundle connection nabla w.r.t. Local
-             frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
-             manifold M,
-            1-form connection (2,2) of bundle connection nabla w.r.t. Local
-            frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
-            manifold M]
-
+              frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
+              manifold M,
+             1-form connection (1,2) of bundle connection nabla w.r.t. Local
+              frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
+              manifold M,
+             1-form connection (2,1) of bundle connection nabla w.r.t. Local
+              frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
+              manifold M,
+             1-form connection (2,2) of bundle connection nabla w.r.t. Local
+              frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
+              manifold M]
         """
         dom = frame._domain
         forms_dict = {}
@@ -563,7 +549,6 @@ class BundleConnection(SageObject, Mutability):
             1-form connection (2,2) of bundle connection nabla w.r.t. Local
              frame (E|_M, (e_1,e_2)) on the 3-dimensional differentiable
              manifold M]
-
         """
         if frame is None:
             smodule = self._vbundle.section_module(domain=self._domain)
@@ -635,7 +620,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab.connection_form(1, 0).display()
             connection (1,0) of bundle connection nabla w.r.t. Local frame
              (E|_M, (e_0,e_1)) = y^2 dx + y dy
-
         """
         return self.connection_forms(frame)[(i, j)]
 
@@ -648,9 +632,7 @@ class BundleConnection(SageObject, Mutability):
         - ``v`` -- a vector field `v` on the base space
         - ``s`` -- a local section `s`
 
-        OUTPUT:
-
-        - local section `\nabla_v s`
+        OUTPUT: local section `\nabla_v s`
 
         TESTS::
 
@@ -668,7 +650,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab.__call__(v, s)
             Section nabla_v(s) on the 2-dimensional differentiable manifold M
              with values in the real vector bundle E of rank 2
-
         """
         from sage.manifolds.section import TrivialSection
         from sage.tensor.modules.format_utilities import format_unop_latex
@@ -709,9 +690,7 @@ class BundleConnection(SageObject, Mutability):
         - ``v`` -- a vector field `v` on the base space
         - ``s`` -- a local section `s` whose module is free
 
-        OUTPUT:
-
-        - local section `\nabla_v s`
+        OUTPUT: local section `\nabla_v s`
 
         TESTS::
 
@@ -729,7 +708,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab._derive_trivial(v, s)
             Section nabla_v(s) on the 2-dimensional differentiable manifold M
              with values in the real vector bundle E of rank 2
-
         """
         vb = self._vbundle
         dom = s.domain()
@@ -828,7 +806,6 @@ class BundleConnection(SageObject, Mutability):
              (E|_M, (e_0,e_1)) = x^2 dx + x dy
 
         To delete them, use the method :meth:`set_connection_form` instead.
-
         """
         self._require_mutable()
         if frame is None:
@@ -912,7 +889,6 @@ class BundleConnection(SageObject, Mutability):
              the Local frame (E|_M, (f_0,f_1))
 
         To keep them, use the method :meth:`add_connection_form` instead.
-
         """
         self._require_mutable()
         omega = self.add_connection_form(i, j, frame=frame)
@@ -964,7 +940,6 @@ class BundleConnection(SageObject, Mutability):
             ...
             ValueError: no basis could be found for computing the components in
              the Local frame (E|_M, (e_1,e_2))
-
         """
         if frame is None:
             smodule = self._vbundle.section_module(domain=self._domain)
@@ -1020,7 +995,6 @@ class BundleConnection(SageObject, Mutability):
             sage: curv.display()
             curvature (1,1) of bundle connection nabla w.r.t. Local frame
              (E|_M, (e_1)) = dx∧dy
-
         """
         if frame is None:
             smodule = self._vbundle.section_module(domain=self._domain)
@@ -1064,7 +1038,6 @@ class BundleConnection(SageObject, Mutability):
 
             sage: {nab: 1}[nab]
             1
-
         """
         self._require_immutable()
         if self._hash == -1:
@@ -1122,7 +1095,6 @@ class BundleConnection(SageObject, Mutability):
              1-form connection (2,2) of bundle connection nabla w.r.t. Local
              frame (E|_M, (e_1,e_2)) on the 2-dimensional differentiable
              manifold M]]
-
         """
         # extract frame from first index:
         vb = self._vbundle
@@ -1159,7 +1131,7 @@ class BundleConnection(SageObject, Mutability):
 
     def __setitem__(self, args, value):
         r"""
-        Sets the components of ``self`` corresponding to the given indices.
+        Set the components of ``self`` corresponding to the given indices.
 
         INPUT:
 
@@ -1195,7 +1167,6 @@ class BundleConnection(SageObject, Mutability):
             sage: nab[e, 1, 2].display()
             connection (1,2) of bundle connection nabla w.r.t. Local frame
              (E|_M, (e_1,e_2)) = x^2 dx + x dy
-
         """
         # extract frame from first index:
         vb = self._vbundle
@@ -1283,7 +1254,7 @@ class BundleConnection(SageObject, Mutability):
         - ``chart`` -- (default: ``None``) chart specifying the coordinate
           expression of the connection 1-forms; if ``None``,
           the default chart of the domain of ``frame`` is used
-        - ``only_nonzero`` -- (default: ``True``) boolean; if ``True``, only
+        - ``only_nonzero`` -- boolean (default: ``True``); if ``True``, only
           nonzero connection coefficients are displayed
 
         EXAMPLES:
@@ -1307,8 +1278,8 @@ class BundleConnection(SageObject, Mutability):
             sage: nab.display()
             connection (1,1) of bundle connection nabla w.r.t. Local frame
              (E|_M, (e_1,e_2)) = x dx + y dy + z dz
-             connection (2,2) of bundle connection nabla w.r.t. Local frame
-              (E|_M, (e_1,e_2)) = x^2 dx + y^2 dy + z^2 dz
+            connection (2,2) of bundle connection nabla w.r.t. Local frame
+             (E|_M, (e_1,e_2)) = x^2 dx + y^2 dy + z^2 dz
             sage: latex(nab.display())
             \begin{array}{lcl} \omega^1_{\ \, 1} = x \mathrm{d} x +
              y \mathrm{d} y + z \mathrm{d} z \\ \omega^2_{\ \, 2} = x^{2}
@@ -1346,7 +1317,6 @@ class BundleConnection(SageObject, Mutability):
              (E|_M, (e_1,e_2)) = 0
             connection (2,2) of bundle connection nabla w.r.t. Local frame
              (E|_M, (e_1,e_2)) = x^2 dx + y^2 dy + z^2 dz
-
         """
         vb = self._vbundle
         if frame is None:
@@ -1429,7 +1399,6 @@ class BundleConnection(SageObject, Mutability):
              (E|_M, (e_1,e_2)) = dx + x dy + y^3*z dz
             connection (2,1) of bundle connection nablo w.r.t. Local frame
              (E|_M, (e_1,e_2)) = dx + 2 dy + 3 dz
-
         """
         copy = type(self)(self._vbundle, name, latex_name=latex_name)
         for frame, form_dict in self._connection_forms.items():
@@ -1468,7 +1437,6 @@ class BundleConnection(SageObject, Mutability):
             Traceback (most recent call last):
             ...
             ValueError: object is immutable; please change a copy instead
-
         """
         for form_dict in self._connection_forms.values():
             for form in form_dict.values():

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite lattice posets
 """
@@ -9,6 +10,7 @@ Finite lattice posets
 #******************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
+
 
 class FiniteLatticePosets(CategoryWithAxiom):
     r"""
@@ -34,7 +36,6 @@ class FiniteLatticePosets(CategoryWithAxiom):
         sage: C is FiniteLatticePosets().Finite()
         True
         sage: TestSuite(C).run()
-
     """
 
     class ParentMethods:

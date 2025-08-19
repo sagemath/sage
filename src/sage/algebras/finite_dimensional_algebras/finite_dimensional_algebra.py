@@ -1,7 +1,7 @@
 """
 Finite-Dimensional Algebras
 """
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2011 Johan Bosman <johan.g.bosman@gmail.com>
 #  Copyright (C) 2011, 2013 Peter Bruin <peter.bruin@math.uzh.ch>
 #  Copyright (C) 2011 Michiel Kosters <kosters@gmail.com>
@@ -9,8 +9,8 @@ Finite-Dimensional Algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
@@ -18,32 +18,40 @@ from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal
 from sage.rings.integer_ring import ZZ
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
-from sage.matrix.constructor import Matrix, matrix
-from sage.structure.element import is_Matrix
-from sage.rings.ring import Algebra
+from sage.categories.algebras import Algebras
+from sage.matrix.constructor import matrix
+from sage.structure.element import Matrix
 from sage.structure.category_object import normalize_names
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.misc.cachefunc import cached_method
 from functools import reduce
 
 
-class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
+class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
     r"""
     Create a finite-dimensional `k`-algebra from a multiplication table.
+
+    This is a magmatic `k`-algebra, i.e., not necessarily
+    associative or unital.
 
     INPUT:
 
     - ``k`` -- a field
 
-    - ``table`` -- a list of matrices
+    - ``table`` -- list of matrices
 
-    - ``names`` -- (default: ``'e'``) string; names for the basis
+    - ``names`` -- string (default: ``'e'``); names for the basis
       elements
 
-    - ``assume_associative`` -- (default: ``False``) boolean; if
+    - ``assume_associative`` -- boolean (default: ``False``); if
       ``True``, then the category is set to ``category.Associative()``
       and methods requiring associativity assume this
+
+    - ``assume_unital`` -- boolean (default: ``False``); if
+      ``True``, then the category is set to ``category.Unital()``
+      and methods requiring unitality assume this
 
     - ``category`` -- (default:
       ``MagmaticAlgebras(k).FiniteDimensional().WithBasis()``)
@@ -67,6 +75,49 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
         sage: B
         Finite-dimensional algebra of degree 3 over Rational Field
+        sage: B.one()
+        e0 + e2
+        sage: B.is_associative()
+        True
+
+    A more complicated example (the descent algebra of `S_3` in
+    a slightly rescaled I-basis, see :class:`DescentAlgebra`)::
+
+        sage: Ma = Matrix([[6,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]])
+        sage: Mb = Matrix([[0,0,0,0], [0,1,0,0], [0,1,0,0], [0,0,0,0]])
+        sage: Mc = Matrix([[0,0,0,0], [0,0,1,0], [0,0,1,0], [0,0,0,0]])
+        sage: Md = Matrix([[0,0,0,0], [0,1,-1,0], [0,-1,1,0], [0,0,0,2]])
+        sage: C = FiniteDimensionalAlgebra(QQ, [Ma, Mb, Mc, Md])
+        sage: C.one()
+        1/6*e0 + 1/2*e1 + 1/2*e2 + 1/2*e3
+        sage: C.is_associative()
+        True
+        sage: C.is_commutative()
+        False
+
+    If we set both ``is_associative`` and ``is_unital`` to
+    ``True``, then this is an associative unital algebra and
+    belongs to the category of
+    :class:`sage.categories.finite_dimensional_algebras_with_basis.FiniteDimensionalAlgebrasWithBasis`::
+
+        sage: C = FiniteDimensionalAlgebra(QQ, [Ma, Mb, Mc, Md],
+        ....:                              assume_associative=True,
+        ....:                              assume_unital=True)
+        sage: C.radical_basis()
+        (e1 - e2,)
+        sage: C.radical()
+        Radical of Finite-dimensional algebra of degree 4 over Rational Field
+        sage: C.center_basis()
+        (e0, e1 + e2 + e3)
+        sage: C.center()
+        Center of Finite-dimensional algebra of degree 4 over Rational Field
+        sage: C.center().is_commutative()
+        True
+        sage: e = C.basis()
+        sage: C.annihilator_basis([e[1]])
+        (e0, e1 - e2, e3)
+        sage: C.annihilator_basis([e[1]], side='left')
+        (e0, e1 - e2 - e3)
 
     TESTS::
 
@@ -82,7 +133,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
     """
     @staticmethod
     def __classcall_private__(cls, k, table, names='e', assume_associative=False,
-                              category=None):
+                              assume_unital=False, category=None):
         """
         Normalize input.
 
@@ -103,6 +154,26 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             ....:                               category=cat.Associative())
             sage: A2 = FiniteDimensionalAlgebra(GF(3), table, assume_associative=True)
             sage: A1 is A2
+            True
+
+        Likewise for the ``assume_associative`` keyword::
+
+            sage: A3 = FiniteDimensionalAlgebra(GF(3), table,
+            ....:                               category=cat.Unital())
+            sage: A4 = FiniteDimensionalAlgebra(GF(3), table, assume_unital=True)
+            sage: A3 is A4
+            True
+
+        With both keywords on, the
+        :class:`sage.categories.algebras.Algebras` category
+        is used::
+
+            sage: cat_a = Algebras(GF(3)).FiniteDimensional().WithBasis()
+            sage: A5 = FiniteDimensionalAlgebra(GF(3), table,
+            ....:                               category=cat_a)
+            sage: A6 = FiniteDimensionalAlgebra(GF(3), table, assume_associative=True,
+            ....:                               assume_unital=True)
+            sage: A5 is A6
             True
 
         Uniqueness depends on the category::
@@ -136,7 +207,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         table = [b.base_extend(k) for b in table]
         for b in table:
             b.set_immutable()
-            if not (is_Matrix(b) and b.dimensions() == (n, n)):
+            if not (isinstance(b, Matrix) and b.dimensions() == (n, n)):
                 raise ValueError("input is not a multiplication table")
         table = tuple(table)
 
@@ -144,6 +215,12 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         cat = cat.or_subcategory(category)
         if assume_associative:
             cat = cat.Associative()
+            if assume_unital:
+                # both unital and associative, so algebra in modern sense
+                cat = Algebras(k).FiniteDimensional().WithBasis()
+                cat = cat.or_subcategory(category)
+        elif assume_unital:
+            cat = cat.Unital()
 
         names = normalize_names(n, names)
 
@@ -187,7 +264,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         self._table = table
         self._assume_associative = "Associative" in category.axioms()
         # No further validity checks necessary!
-        Algebra.__init__(self, base_ring=k, names=names, category=category)
+        Parent.__init__(self, base=k, names=names, category=category)
 
     def _repr_(self):
         """
@@ -303,14 +380,14 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
             ....:                                      Matrix([[0, 1], [0, 0]])])
             sage: A.basis()
-            Family (e0, e1)
+            Finite family {0: e0, 1: e1}
         """
         from sage.sets.family import Family
-        return Family(self.gens())
+        return Family({i: self.gen(i) for i in range(self.ngens())})
 
     def __iter__(self):
         """
-        Iterates over the elements of ``self``.
+        Iterate over the elements of ``self``.
 
         EXAMPLES::
 
@@ -389,7 +466,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         B = self.table()
         n = self.degree()
-        table = [Matrix([B[j][i] for j in range(n)]) for i in range(n)]
+        table = [matrix([B[j][i] for j in range(n)]) for i in range(n)]
         for b in table:
             b.set_immutable()
         return tuple(table)
@@ -439,21 +516,25 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         - ``A`` -- a :class:`FiniteDimensionalAlgebra`
 
-        - ``gens`` -- (default: None) - either an element of ``A`` or a
-          list of elements of ``A``, given as vectors, matrices, or
+        - ``gens`` -- (default: ``None``) either an element of `A` or a
+          list of elements of `A`, given as vectors, matrices, or
           FiniteDimensionalAlgebraElements.  If ``given_by_matrix`` is
           ``True``, then ``gens`` should instead be a matrix whose rows
-          form a basis of an ideal of ``A``.
+          form a basis of an ideal of `A`.
 
-        - ``given_by_matrix`` -- boolean (default: ``False``) - if
+        - ``given_by_matrix`` -- boolean (default: ``False``); if
           ``True``, no checking is done
 
         - ``side`` -- ignored but necessary for coercions
 
+        The algebra ``A`` has to be in the category of associative algebras.
+
         EXAMPLES::
 
+            sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: A.ideal(A([1,1]))
             Ideal (e0 + e1) of
              Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -493,7 +574,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         return True
 
     @cached_method
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
         Return ``True`` if ``self`` is commutative.
 
@@ -596,9 +677,9 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             self._one = matrix(k, 1, n)
             return True
         B1 = reduce(lambda x, y: x.augment(y),
-                    self._table, Matrix(k, n, 0))
+                    self._table, matrix(k, n, 0))
         B2 = reduce(lambda x, y: x.augment(y),
-                    self.left_table(), Matrix(k, n, 0))
+                    self.left_table(), matrix(k, n, 0))
         # This is the vector obtained by concatenating the rows of the
         # n times n identity matrix:
         kone = k.one()
@@ -606,10 +687,10 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         v = matrix(k, 1, n**2, (n - 1) * ([kone] + n * [kzero]) + [kone])
         try:
             sol1 = B1.solve_left(v)
-            sol2 = B2.solve_left(v)
         except ValueError:
             return False
-        assert sol1 == sol2
+        if sol1 * B2 != v:
+            return False
         self._one = sol1
         return True
 
@@ -668,8 +749,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         if not self.is_unitary():
             raise TypeError("algebra is not unitary")
-        else:
-            return self(self._one)
+        return self(self._one)
 
     def random_element(self, *args, **kwargs):
         """
@@ -748,6 +828,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         Return the quotient of ``self`` by ``ideal``.
 
+        ``self`` has to be in the category of associative and unital algebras.
+
         INPUT:
 
         - ``ideal`` -- a :class:`FiniteDimensionalAlgebraIdeal`
@@ -759,8 +841,10 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         EXAMPLES::
 
+            sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: q0 = A.quotient_map(A.zero_ideal()); q0
             Morphism
              from Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -785,7 +869,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             v[0,p] = 1
             v = self.element_class(self, v)
             table.append(f.solve_right(v.matrix() * f))
-        B = FiniteDimensionalAlgebra(k, table)
+        cat = self.category()
+        B = FiniteDimensionalAlgebra(k, table, category=cat)
         return self.hom(f, codomain=B, check=False)
 
     def maximal_ideal(self):
@@ -794,26 +879,31 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         .. NOTE::
 
-            ``self`` must be unitary, commutative, associative and local
-            (have a unique maximal ideal).
+            ``self`` has to be in the category of unitary, commutative
+             and associative algebras as in the examples below. It must
+             moreover be local (have a unique maximal ideal).
 
         OUTPUT:
 
         - :class:`~sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra_ideal.FiniteDimensionalAlgebraIdeal`;
           the unique maximal ideal of ``self``.  If ``self`` is not a local
-          algebra, a :class:`ValueError` is raised.
+          algebra, a :exc:`ValueError` is raised.
 
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])],
+            ....:                              category=cat)
             sage: A.maximal_ideal()                                                     # needs sage.rings.finite_rings
             Ideal (0, e1) of
              Finite-dimensional algebra of degree 2 over Finite Field of size 3
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
-            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])],
+            ....:                              category=cat)
             sage: B.maximal_ideal()                                                     # needs sage.libs.pari
             Traceback (most recent call last):
             ...
@@ -839,7 +929,8 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         .. NOTE::
 
-            ``self`` must be unitary, commutative and associative.
+            ``self`` has to be in the category of unitary, commutative
+             and associative algebras as in the examples below.
 
         OUTPUT:
 
@@ -848,8 +939,9 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
 
         EXAMPLES::
 
+            sage: cat = CommutativeAlgebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
             sage: A.primary_decomposition()                                             # needs sage.rings.finite_rings
             [Morphism
               from Finite-dimensional algebra of degree 2 over Finite Field of size 3
@@ -857,9 +949,10 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
               given by matrix [1 0]
                               [0 1]]
 
+            sage: cat = CommutativeAlgebras(QQ).FiniteDimensional().WithBasis()
             sage: B = FiniteDimensionalAlgebra(QQ, [Matrix([[1,0,0], [0,1,0], [0,0,0]]),
             ....:                                   Matrix([[0,1,0], [0,0,0], [0,0,0]]),
-            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])])
+            ....:                                   Matrix([[0,0,0], [0,0,0], [0,0,1]])], category=cat)
             sage: B.primary_decomposition()                                             # needs sage.libs.pari
             [Morphism
               from Finite-dimensional algebra of degree 3 over Rational Field
@@ -882,7 +975,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
                 and (self._assume_associative or self.is_associative())):
             raise TypeError("algebra must be unitary, commutative and associative")
         # Start with the trivial decomposition of self.
-        components = [Matrix.identity(k, n)]
+        components = [matrix.identity(k, n)]
         for b in self.table():
             # Use the action of the basis element b to refine our
             # decomposition of self.
@@ -903,7 +996,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
             components = components_new
         quotients = []
         for i in range(len(components)):
-            I = Matrix(k, 0, n)
+            I = matrix(k, 0, n)
             for j,c in enumerate(components):
                 if j != i:
                     I = I.stack(c)
@@ -914,14 +1007,19 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         """
         Return a list consisting of all maximal ideals of ``self``.
 
+        The algebra ``self`` has to be in the category of
+        commutative, associative algebras.
+
         EXAMPLES::
 
+            sage: cat = Algebras(GF(3)).FiniteDimensional().WithBasis()
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])], category=cat)
             sage: A.maximal_ideals()                                                    # needs sage.rings.finite_rings
             [Ideal (e1) of Finite-dimensional algebra of degree 2 over Finite Field of size 3]
 
-            sage: B = FiniteDimensionalAlgebra(QQ, [])
+            sage: cat = Algebras(QQ).FiniteDimensional().WithBasis()
+            sage: B = FiniteDimensionalAlgebra(QQ, [], category=cat)
             sage: B.maximal_ideals()
             []
         """

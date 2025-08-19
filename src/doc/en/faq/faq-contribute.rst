@@ -69,7 +69,7 @@ Another good place to take a look at is
 `Dive Into Python <https://diveintopython3.net>`_
 by Mark Pilgrim, which may be pretty helpful on some specific topics
 such as test-driven development. The book
-`Building Skills in Python <http://itmaybeahack.com/homepage/books/python.html>`_
+`Building Skills in Python <https://itmaybeahack.com/homepage/books/python.html>`_
 by Steven F. Lott is suitable for anyone who is already comfortable
 with programming.
 
@@ -129,9 +129,8 @@ resources can be found by a web search.
 * `pep8 <https://pypi.org/project/pep8>`_
 * `pydeps <https://pypi.org/project/pydeps>`_
 * `pycallgraph <https://pycallgraph.readthedocs.io>`_
-* `PyChecker <http://pychecker.sourceforge.net>`_
 * `PyFlakes <https://pypi.org/project/pyflakes>`_
-* `Pylint <https://www.logilab.org/project/pylint>`_
+* `Pylint <https://pylint.readthedocs.io>`_
 * `Python <https://www.python.org>`_ home page and the
   `Python standard documentation <https://docs.python.org>`_
 * `Snakefood <http://furius.ca/snakefood>`_
@@ -140,10 +139,10 @@ resources can be found by a web search.
 
 **Tutorials and books**
 
-* `Cython Tutorial <http://conference.scipy.org/proceedings/SciPy2009/paper_1/>`_
+* `Cython Tutorial <https://proceedings.scipy.org/articles/MJMV8092.pdf>`_
   by Stefan Behnel, Robert W. Bradshaw, and Dag Sverre Seljebotn
 * `Dive Into Python 3 <http://www.diveintopython3.net>`_ by Mark Pilgrim
-* `Fast Numerical Computations with Cython <http://conference.scipy.org/proceedings/SciPy2009/paper_2/>`_
+* `Fast Numerical Computations with Cython <https://proceedings.scipy.org/articles/GTCA8577.pdf>`_
   by Dag Sverre Seljebotn
 * `Official Python Tutorial <https://docs.python.org/3/tutorial/>`_
 

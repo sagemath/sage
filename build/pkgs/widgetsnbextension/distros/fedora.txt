@@ -1,1 +1,1 @@
-python-widgetsnbextension
+python3-widgetsnbextension

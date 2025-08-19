@@ -93,11 +93,11 @@ class IndexedSequence(SageObject):
 
     INPUT:
 
-    - ``L`` -- A list
+    - ``L`` -- list
 
-    - ``index_object`` must be a Sage object with an ``__iter__`` method
+    - ``index_object`` -- must be a Sage object with an ``__iter__`` method
       containing the same number of elements as ``self``, which is a
-      list of elements taken from a field.
+      list of elements taken from a field
     """
     def __init__(self, L, index_object):
         r"""
@@ -203,7 +203,7 @@ class IndexedSequence(SageObject):
 
     def _repr_(self):
         """
-        Implements print method.
+        Implement print method.
 
         EXAMPLES::
 
@@ -294,13 +294,15 @@ class IndexedSequence(SageObject):
             Indexed sequence: [6, 0, 0, 0, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
 
-            sage: # needs sage.groups
+            sage: # needs sage.combinat sage.groups
             sage: G = SymmetricGroup(3)
             sage: J = G.conjugacy_classes_representatives()
             sage: s = IndexedSequence([1,2,3], J)  # 1,2,3 are the values of a class fcn on G
             sage: s.dft()   # the "scalar-valued Fourier transform" of this class fcn
             Indexed sequence: [8, 2, 2]
              indexed by [(), (1,2), (1,2,3)]
+
+            sage: # needs sage.rings.number_field
             sage: J = AbelianGroup(2, [2,3], names='ab')
             sage: s = IndexedSequence([1,2,3,4,5,6], J)
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
@@ -311,6 +313,8 @@ class IndexedSequence(SageObject):
                                -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I,
                                -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
              indexed by Multiplicative Abelian group isomorphic to C2 x C3
+
+            sage: # needs sage.groups sage.rings.number_field
             sage: J = CyclicPermutationGroup(6)
             sage: s = IndexedSequence([1,2,3,4,5,6], J)
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
@@ -470,12 +474,10 @@ class IndexedSequence(SageObject):
 
         INPUT:
 
-        - ``other`` --  a collection of elements of a ring with
+        - ``other`` -- a collection of elements of a ring with
           index set a finite abelian group (under `+`)
 
-        OUTPUT:
-
-        The Dirichlet convolution of ``self`` and ``other``.
+        OUTPUT: the Dirichlet convolution of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -529,11 +531,9 @@ class IndexedSequence(SageObject):
 
         INPUT:
 
-        - ``other`` --  a sequence of elements of `\CC`, `\RR` or `\GF{q}`
+        - ``other`` -- a sequence of elements of `\CC`, `\RR` or `\GF{q}`
 
-        OUTPUT:
-
-        The Dirichlet convolution of ``self`` and ``other``.
+        OUTPUT: the Dirichlet convolution of ``self`` and ``other``
 
         EXAMPLES::
 
@@ -574,7 +574,7 @@ class IndexedSequence(SageObject):
 
     def __mul__(self, other):
         """
-        Implements scalar multiplication (on the right).
+        Implement scalar multiplication (on the right).
 
         EXAMPLES::
 
@@ -594,7 +594,7 @@ class IndexedSequence(SageObject):
 
     def __eq__(self, other):
         """
-        Implements boolean equals.
+        Implement boolean equals.
 
         EXAMPLES::
 
@@ -664,7 +664,7 @@ class IndexedSequence(SageObject):
 
     def ifft(self):
         """
-        Implements the gsl ``FastFourierTransform.inverse`` in
+        Implement the gsl ``FastFourierTransform.inverse`` in
         :mod:`~sage.calculus.transforms.fft`.
 
         If the number of sample points in the input is a power of 2
@@ -699,7 +699,7 @@ class IndexedSequence(SageObject):
         a.inverse_transform()
         return IndexedSequence([a[j][0] + I * a[j][1] for j in J], J)
 
-    def dwt(self, other="haar", wavelet_k=2):
+    def dwt(self, other='haar', wavelet_k=2):
         r"""
         Wraps the gsl ``WaveletTransform.forward`` in :mod:`~sage.calculus.transforms.dwt`
         (written by Joshua Kantor). Assumes the length of the sample is a
@@ -716,9 +716,9 @@ class IndexedSequence(SageObject):
           * ``'bspline'``
           * ``'bspline_centered'``
 
-        - ``wavelet_k`` -- For daubechies wavelets, ``wavelet_k`` specifies a
-          daubechie wavelet with `k/2` vanishing moments.
-          `k = 4,6,...,20` for `k` even are the only ones implemented.
+        - ``wavelet_k`` -- for daubechies wavelets, ``wavelet_k`` specifies a
+          daubechie wavelet with `k/2` vanishing moments;
+          `k = 4,6,...,20` for `k` even are the only ones implemented
 
           For Haar wavelets, ``wavelet_k`` must be 2.
 
@@ -763,9 +763,9 @@ class IndexedSequence(SageObject):
         a.forward_transform()
         return IndexedSequence([RR(a[j]) for j in J], J)
 
-    def idwt(self, other="haar", wavelet_k=2):
+    def idwt(self, other='haar', wavelet_k=2):
         r"""
-        Implements the gsl ``WaveletTransform.backward()`` in
+        Implement the gsl ``WaveletTransform.backward()`` in
         :mod:`~sage.calculus.transforms.dwt`.
 
         Assumes the length of the sample is a power of 2. Uses the
@@ -773,18 +773,18 @@ class IndexedSequence(SageObject):
 
         INPUT:
 
-        - ``other`` -- Must be one of the following:
+        - ``other`` -- must be one of the following:
 
-          * ``"haar"``
-          * ``"daubechies"``
-          * ``"daubechies_centered"``
-          * ``"haar_centered"``
-          * ``"bspline"``
-          * ``"bspline_centered"``
+          * ``'haar'``
+          * ``'daubechies'``
+          * ``'daubechies_centered'``
+          * ``'haar_centered'``
+          * ``'bspline'``
+          * ``'bspline_centered'``
 
-        - ``wavelet_k`` -- For daubechies wavelets, ``wavelet_k`` specifies a
-          daubechie wavelet with `k/2` vanishing moments.
-          `k = 4,6,...,20` for `k` even are the only ones implemented.
+        - ``wavelet_k`` -- for daubechies wavelets, ``wavelet_k`` specifies a
+          daubechie wavelet with `k/2` vanishing moments;
+          `k = 4,6,...,20` for `k` even are the only ones implemented
 
           For Haar wavelets, ``wavelet_k`` must be 2.
 

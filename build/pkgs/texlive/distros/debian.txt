@@ -21,3 +21,4 @@ texlive-lang-japanese
 texlive-lang-polish
 texlive-lang-portuguese
 texlive-lang-spanish
+texlive-lang-chinese

@@ -5,7 +5,6 @@ Images of Manifold Subsets under Continuous Maps as Subsets of the Codomain
 from a manifold `M` to some manifold `N` as a subset `\Phi(M)` of `N`,
 or more generally, the image `\Phi(S)` of a subset `S \subseteq M` as a
 subset of `N`.
-
 """
 
 # ****************************************************************************
@@ -20,6 +19,7 @@ subset of `N`.
 
 from sage.manifolds.subset import ManifoldSubset
 
+
 class ImageManifoldSubset(ManifoldSubset):
     r"""
     Subset of a topological manifold that is a continuous image of a manifold subset.
@@ -32,21 +32,23 @@ class ImageManifoldSubset(ManifoldSubset):
       of `\Phi` is the inverse of `\Phi` onto its image if the latter
       exists (NB: no check of this is performed)
     - ``name`` -- (default: computed from the names of the map and the subset)
-       string; name (symbol) given to the subset
-    - ``latex_name`` --  (default: ``None``) string; LaTeX symbol to
+      string; name (symbol) given to the subset
+    - ``latex_name`` -- string (default: ``None``); LaTeX symbol to
       denote the subset; if none is provided, it is set to ``name``
     - ``domain_subset`` -- (default: the domain of ``map``) a subset of the domain of
       ``map``
     """
 
-    def __init__(self, map, inverse=None, name=None, latex_name=None, domain_subset=None):
+    def __init__(
+        self, map, inverse=None, name=None, latex_name=None, domain_subset=None
+    ):
         r"""
         Construct a manifold subset that is the image of a continuous map.
 
         TESTS::
 
-            sage: M = Manifold(2, 'M', structure="topological")
-            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: CM.<x,y> = M.chart()
             sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
             sage: Phi = N.continuous_map(M, {(CN,CM): [u, 1 + u^2]}, name='Phi')
@@ -77,8 +79,8 @@ class ImageManifoldSubset(ManifoldSubset):
 
         TESTS::
 
-            sage: M = Manifold(2, 'M', structure="topological")
-            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: CM.<x,y> = M.chart()
             sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
             sage: Phi = N.continuous_map(M, {(CN,CM): [u, 1 + u^2]}, name='Phi')
@@ -109,8 +111,8 @@ class ImageManifoldSubset(ManifoldSubset):
 
         EXAMPLES::
 
-            sage: M = Manifold(2, 'M', structure="topological")
-            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: CM.<x,y> = M.chart()
             sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
             sage: Phi = N.continuous_map(M, {(CN,CM): [u, 1 + u^2]}, name='Phi')
@@ -128,8 +130,8 @@ class ImageManifoldSubset(ManifoldSubset):
 
         TESTS::
 
-            sage: M = Manifold(2, 'M', structure="topological")
-            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: M = Manifold(2, 'M', structure='topological')
+            sage: N = Manifold(1, 'N', ambient=M, structure='topological')
             sage: CM.<x,y> = M.chart()
             sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
             sage: Phi = N.continuous_map(M, {(CN,CM): [u, 1 + u^2]}, name='Phi')
@@ -139,7 +141,6 @@ class ImageManifoldSubset(ManifoldSubset):
             False
             sage: M((0, 1)) in Phi_N
             True
-
         """
         if super().__contains__(point):
             return True

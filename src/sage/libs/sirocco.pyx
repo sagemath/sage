@@ -1,4 +1,4 @@
-#cython: boundscheck=False, wraparound=False
+# cython: boundscheck=False, wraparound=False
 # distutils: libraries = sirocco
 # distutils: language = c++
 # sage_setup: distribution = sagemath-sirocco
@@ -45,7 +45,6 @@ cpdef list[list] contpath_mp(int deg, list values, RealNumber y0r, RealNumber y0
         [(0.000000000000000, 0.000000000000000, 0.000000000000000),
          (0.500000000000000, -0.250000000000000, 0.000000000000000),
          (1.00000000000000, -1.00000000000000, 0.000000000000000)]
-
     """
     cdef mpfr_t* cvalues = <mpfr_t*> check_allocarray(len(values), sizeof(mpfr_t))
     cdef mpfr_t* rop
@@ -113,7 +112,6 @@ cpdef list[list] contpath_mp_comps(int deg, list values, RealNumber y0r, RealNum
          (0.750000000000000, -0.562500000000000, 0.000000000000000),
          (0.875000000000000, -0.765625000000000, 0.000000000000000),
          (1.00000000000000, -1.00000000000000, 0.000000000000000)]
-
     """
 
     cdef mpfr_t* cvalues = <mpfr_t*> check_allocarray(len(values), sizeof(mpfr_t))
@@ -199,11 +197,9 @@ cpdef list[list] contpath(int deg, list values, double y0r, double y0i) noexcept
          (0.3535533905932738, -0.12500000000000003, 0.0),
          (0.7071067811865476, -0.5000000000000001, 0.0),
          (1.0, -1.0, 0.0)]
-
     """
     cdef double* rop
     cdef double* c_values = <double*> check_allocarray(len(values), sizeof(double))
-    cdef int clen = <int> len(values)
     cdef int i
     for i, v in enumerate(values):
         c_values[i] = values[i]
@@ -260,13 +256,11 @@ cpdef list[list] contpath_comps(int deg, list values, double y0r, double y0i, li
          (0.75, -0.5625, 0.0),
          (0.875, -0.765625, 0.0),
          (1.0, -1.0, 0.0)]
-
     """
     cdef double* rop
     cdef double* c_values = <double*> check_allocarray(len(values), sizeof(double))
     cdef int* c_otherdegrees = <int*> check_allocarray(len(otherdegrees), sizeof(int))
     cdef double* c_othercoefs = <double*> check_allocarray(len(othercoefs), sizeof(double))
-    cdef int clen = <int> len(values)
     cdef int i
     for i, v in enumerate(values):
         c_values[i] = values[i]

@@ -42,8 +42,14 @@ def is_HeckeModuleMorphism(x):
     EXAMPLES::
 
         sage: sage.modular.hecke.morphism.is_HeckeModuleMorphism(ModularSymbols(6).hecke_operator(7).hecke_module_morphism())
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModuleMorphism is deprecated;
+        use 'isinstance(..., HeckeModuleMorphism)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModuleMorphism is deprecated; use 'isinstance(..., HeckeModuleMorphism)' instead")
     return isinstance(x, HeckeModuleMorphism)
 
 
@@ -53,8 +59,14 @@ def is_HeckeModuleMorphism_matrix(x):
     EXAMPLES::
 
         sage: sage.modular.hecke.morphism.is_HeckeModuleMorphism_matrix(ModularSymbols(6).hecke_operator(7).matrix_form().hecke_module_morphism())
+        doctest:warning...
+        DeprecationWarning: the function is_HeckeModuleMorphism_matrix is deprecated;
+        use 'isinstance(..., HeckeModuleMorphism_matrix)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_HeckeModuleMorphism_matrix is deprecated; use 'isinstance(..., HeckeModuleMorphism_matrix)' instead")
     return isinstance(x, HeckeModuleMorphism_matrix)
 
 
@@ -91,21 +103,23 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         ...
         TypeError: Incompatible composition of morphisms: domain of left morphism must be codomain of right.
     """
-    def __init__(self, parent, A, name='', side="left"):
+    def __init__(self, parent, A, name='', side='left'):
         """
         INPUT:
 
-        -  ``parent`` - ModularSymbolsHomspace
+        -  ``parent`` -- ModularSymbolsHomspace
 
-        -  ``A`` - Matrix
+        - ``A`` -- matrix
 
-        -  ``name`` - str (defaults to '') name of the morphism
+        - ``name`` -- string (default: ``''``); name of the morphism
            (used for printing)
+
+        - ``side`` -- string (default: ``'left'``)
 
         EXAMPLES::
 
             sage: M = ModularSymbols(6)
-            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name="spam"); t
+            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name='spam'); t
             Hecke module morphism spam defined by the matrix
             [0 1 2]
             [3 4 5]
@@ -127,7 +141,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
         EXAMPLES::
 
             sage: M = ModularSymbols(6)
-            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name="spam"); t
+            sage: t = M.Hom(M)(matrix(QQ,3,3,srange(9)), name='spam'); t
             Hecke module morphism spam defined by ...
             sage: t.name()
             'spam'
@@ -140,7 +154,7 @@ class HeckeModuleMorphism_matrix(MatrixMorphism, HeckeModuleMorphism):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 

@@ -1,0 +1,216 @@
+From 4a1e1395804d4630ec556c61ba3f2cb67e140248 Mon Sep 17 00:00:00 2001
+From: Jean-Guillaume Dumas <Jean-Guillaume.Dumas@imag.fr>
+Date: Thu, 5 Dec 2024 15:38:58 +0100
+Subject: [PATCH] solving issue #319
+
+---
+ linbox/vector/blas-subvector.h | 52 +++++++++++++++++-----------------
+ tests/test-subvector.C         |  6 ++++
+ 2 files changed, 32 insertions(+), 26 deletions(-)
+
+diff --git a/linbox/vector/blas-subvector.h b/linbox/vector/blas-subvector.h
+index e1582723c3d4488504ca1473dec7260c33a06a23..8f290dd4362872a6b98a08b4e775ad66b5cde2dd 100644
+--- a/linbox/vector/blas-subvector.h
++++ b/linbox/vector/blas-subvector.h
+@@ -1,6 +1,6 @@
+ /* linbox/matrix/blas-vector.h
+  * Copyright (C) 2013 the LinBox group
+- *               2019 Pascal Giorgi 
++ *               2019 Pascal Giorgi
+  *
+  * Written by :
+  *               Pascal Giorgi  pascal.giorgi@lirmm.fr
+@@ -45,7 +45,7 @@ namespace LinBox {
+     // forward declaration
+     template <class Field, class Storage>
+     class BlasVector;
+-    
++
+ 
+     template <typename _Vector>
+     class VectorEltPointer {
+@@ -61,7 +61,7 @@ namespace LinBox {
+         typedef typename _Vector::Storage::const_reference   reference;
+         using Element=const typename _Vector::Field::Element;
+     };
+-    
++
+     template<class _Vector>
+     class BlasSubvector {
+ 
+@@ -88,7 +88,7 @@ namespace LinBox {
+ 		typedef std::reverse_iterator<const_iterator>  const_reverse_iterator;
+ 
+     protected:
+-		pointer	     		    _ptr;
++		pointer			    _ptr;
+         size_t			       _size;
+         size_t                  _inc;
+ 		Field		    const*_field;
+@@ -101,7 +101,7 @@ namespace LinBox {
+ 		//////////////////
+ 
+         BlasSubvector(){}
+-        
++
+         /** Constructor from an existing @ref BlasVector and dimensions.
+          * \param V Pointer to @ref BlasVector of which to construct subvector
+          * \param beg Starting idx
+@@ -110,7 +110,7 @@ namespace LinBox {
+          */
+         BlasSubvector (vectorType &V, size_t beg, size_t inc, size_t dim) :
+             _ptr(V.getPointer()+beg), _size(dim), _inc(inc), _field(&V.field()) {}
+-        
++
+         /** Constructor from an existing @ref BlasSubvector and dimensions.
+          * \param V Pointer to @ref DenseSubector of which to construct subvector
+          * \param beg Starting idx
+@@ -118,9 +118,9 @@ namespace LinBox {
+          * \param inc distance between two element
+          */
+         BlasSubvector (Self_t &V, size_t beg, size_t inc, size_t dim) :
+-            _ptr(V.data()+beg), _size(dim), _inc(inc), _field(&V.field()) {}
++            _ptr(V.getPointer()+beg), _size(dim), _inc(inc), _field(&V.field()) {}
++
+ 
+-        
+         /** Constructor from an existing @ref BlasVector
+          * \param V Pointer to @ref BlasVector of which to construct submatrix
+          */
+@@ -132,17 +132,17 @@ namespace LinBox {
+          */
+         BlasSubvector (const Field& F, pointer ptr, size_t inc,  size_t dim) :
+             _ptr(ptr), _size(dim), _inc(inc), _field(&F) {}
+-        
+-        
++
++
+ 
+         BlasSubvector (const Field& F, std::vector<Element>& v) :
+-            _ptr(v.data()), _size(v.size()), _inc(1), _field(&F) 
++            _ptr(v.data()), _size(v.size()), _inc(1), _field(&F)
+         {
+             std::cerr<<"WARNING "<<__LINE__<<" ("<<__FILE__<<") : creating a BlasSubvector from a std::vector -> MUST BE DEPRECATED"<<std::endl;
+             throw LinBoxError("Deprecated Subvector cstor from std::vector");
+         }
+-            
+-        
++
++
+ 
+         /** Copy operator */
+         BlasSubvector& operator= (const BlasSubvector& V){
+@@ -157,18 +157,18 @@ namespace LinBox {
+ 
+         template<class Vect>
+         Self_t& copy(const Vect& A){
+-            assert(_size == A.size());            
++            assert(_size == A.size());
+             auto it=A.begin(); auto jt=begin();
+ 			for( ; it!=A.end();++it,++jt)
+                 field().assign(*jt,*it);
+             return *this;
+         }
+-        
++
+ 		//! Rebind operator
+         template<typename _Tp1, typename _Rep2 = typename Rebind<Storage, _Tp1>::other>
+ 		struct rebind {
+ 			typedef BlasVector<_Tp1, _Rep2> other;
+-            
++
+ 			void operator() (other & Ap, const Self_t& A) {
+ 				typedef typename Self_t::const_iterator ConstSelfIterator ;
+ 				typedef typename other::iterator OtherIterator ;
+@@ -180,14 +180,14 @@ namespace LinBox {
+ 			}
+ 		};
+ 
+-        
++
+ 
+ 		/////////////////
+ 		//  ACCESSORS  //
+ 		/////////////////
+ 
+         const Field& field() const { return *_field;}
+-        
++
+         // dimension of the vector
+         size_t size() const{ return _size; }
+         size_t max_size() const{ return _size; }
+@@ -203,14 +203,14 @@ namespace LinBox {
+          * @return the inc value of the subvector
+          */
+         size_t getInc() const {return _inc;}
+-        
++
+ 
+ 		void setEntry (size_t i, const Element &a_i){ field().assign(_ptr[i],a_i); }
+-		
++
+ 		reference refEntry (size_t i){ return _ptr[i]; }
+ 
+ 		const_reference getEntry (size_t i) const { return _ptr[i]; }
+-		
++
+ 		Element& getEntry (Element &x, size_t i) const{	return field().assign(x,_ptr[i]); }
+ 
+ 		// write
+@@ -226,7 +226,7 @@ namespace LinBox {
+ 			case (Tag::FileFormat::Maple) :
+ 				{
+ 					os << '<' ;
+-                    for(size_t i=0; i<_size; i++){ 
++                    for(size_t i=0; i<_size; i++){
+ 						field().write(os, *(_ptr+_inc*i));
+ 						if (i != _size-1)
+ 							os << ',' ;
+@@ -237,7 +237,7 @@ namespace LinBox {
+ 				return os << "not implemented" ;
+ 			}
+         }
+-        
++
+         //read
+ 		std::istream &read ( std::istream &is, Tag::FileFormat fmt = Tag::FileFormat::Pretty ) {
+             return is;
+@@ -275,10 +275,10 @@ namespace LinBox {
+ 		const_reference  front (void) const { return _ptr[0];}
+ 		reference        back  (void)       { return _ptr[(_size-1)*_inc];}
+ 		const_reference  back  (void) const { return _ptr[(_size-1)*_inc];}
+-        
++
+         bool empty() const {return (_size==0);}
+     };
+-    
++
+     template <class Vector>
+     std::ostream& operator<< (std::ostream & os, const BlasSubvector<Vector> & V) {
+ 		return V.write(os);
+@@ -296,7 +296,7 @@ namespace LinBox {
+ 
+ 
+ 
+-    
++
+ } // LinBox
+ #endif
+ // Local Variables:
+diff --git a/tests/test-subvector.C b/tests/test-subvector.C
+index be4850e23344c95f762c09d8fdfe2cdbbac896b2..fc1d2c658afdb4cf6a8338443e29d73b583de9f4 100644
+--- a/tests/test-subvector.C
++++ b/tests/test-subvector.C
+@@ -752,6 +752,12 @@ static bool testSubvector3(Field &F, size_t n)
+ 	//vector<int> ww(3, 77);
+ 	w = ww;
+ 	report << ww << std::endl;
++
++	report << "Constructing subvectors from subvector: ";
++	subVector ww1(w, 0, 0, Length);
++	report << ww1 << std::endl;
++
++
+ #if 0
+ 	report << "Constructing subvector from iterators: ";
+ 	Subvect www(w.begin(), w.end());

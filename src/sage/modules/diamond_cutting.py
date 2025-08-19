@@ -16,13 +16,13 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.matrix.constructor import matrix, identity_matrix
+from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 
 from math import sqrt, floor, ceil
 
 
-def plane_inequality(v):
+def plane_inequality(v) -> list:
     """
     Return the inequality for points on the same side as the origin
     with respect to the plane through ``v`` normal to ``v``.
@@ -59,15 +59,15 @@ def jacobi(M):
         q_{i,j} =
         \begin{cases}
             \frac{1}{q_{i,i}} \left( m_{i,j} - \sum_{r<i} q_{r,r} q_{r,i} q_{r,j} \right) & i < j, \\
-            a_{i,j} - \sum_{r<i} q_{r,r} q_{r,i}^2 & i = j, \\
+            m_{i,j} - \sum_{r<i} q_{r,r} q_{r,i}^2 & i = j, \\
             0 & i > j,
         \end{cases}
 
     for all `1 \leq i \leq n` and `1 \leq j \leq n`. (These
     equalities determine the entries of `Q` uniquely by
-    recursion.) This matrix `Q` is defined for all `M` in a
-    certain Zariski-dense open subset of the set of all
-    `n \times n`-matrices.
+    recursion.) This matrix `Q` is defined for every invertible
+    `n \times n`-matrix `M`. Its definition is taken from (2.3)
+    of [FP1985]_.
 
     .. NOTE::
 
@@ -124,10 +124,10 @@ def jacobi(M):
     return matrix(q)
 
 
-def diamond_cut(V, GM, C, verbose=False):
+def diamond_cut(V, GM, C, verbose=False) -> Polyhedron:
     r"""
     Perform diamond cutting on polyhedron ``V`` with basis matrix ``GM``
-    and radius ``C``.
+    and squared radius ``C``.
 
     INPUT:
 
@@ -135,13 +135,21 @@ def diamond_cut(V, GM, C, verbose=False):
 
     - ``GM`` -- half of the basis matrix of the lattice
 
-    - ``C`` -- radius to use in cutting algorithm
+    - ``C`` -- square of the radius to use in cutting algorithm
 
-    - ``verbose`` -- (default: ``False``) whether to print debug information
+    - ``verbose`` -- boolean (default: ``False``); whether to print
+      debug information
 
-    OUTPUT:
+    OUTPUT: a :class:`Polyhedron` instance
 
-    A :class:`Polyhedron` instance.
+    ALGORITHM:
+
+    Use the algorithm in (2.8) of [FP1985]_ to iterate through the nonzero
+    vectors ``hv`` of length at most `\sqrt{C}` in the lattice spanned by
+    ``GM``. (Actually, the algorithm only constructs one vector from each pair
+    ``{hv, -hv}``.) For each such vector ``hv``, intersect ``V`` with the
+    half-spaces defined by ``plane_inequality(hv)`` and
+    ``plane_inequality(-hv)``.
 
     EXAMPLES::
 
@@ -151,9 +159,18 @@ def diamond_cut(V, GM, C, verbose=False):
         sage: V = diamond_cut(V, GM, 4)
         sage: V.vertices()
         (A vertex at (2), A vertex at (0))
+
+    TESTS:
+
+    Verify that code works when no cuts are performed::
+
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: v = vector(ZZ, [1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: C = L.voronoi_cell(radius=0.1)
     """
     if verbose:
-        print("Cut\n{}\nwith radius {}".format(GM, C))
+        print("Cut\n{}\nwith squared radius {}".format(GM, C))
 
     dim = GM.dimensions()
     if dim[0] != dim[1]:
@@ -183,7 +200,7 @@ def diamond_cut(V, GM, C, verbose=False):
     inequalities = []
     while True:
         if verbose:
-            print("Dimension: {}".format(i))
+            print(f"Dimension: {i}")
         if new_dimension:
             Z = sqrt(T[i] / q[i][i])
             if verbose:
@@ -196,7 +213,7 @@ def diamond_cut(V, GM, C, verbose=False):
 
         x[i] += 1
         if verbose:
-            print("x: {}".format(x))
+            print(f"x: {x}")
         if x[i] > L[i]:
             i += 1
         elif i > 0:
@@ -223,8 +240,9 @@ def diamond_cut(V, GM, C, verbose=False):
 
     if verbose:
         print("Final cut")
-    cut = Polyhedron(ieqs=inequalities)
-    V = V.intersection(cut)
+    if inequalities:
+        cut = Polyhedron(ieqs=inequalities)
+        V = V.intersection(cut)
 
     if verbose:
         print("End")
@@ -232,21 +250,19 @@ def diamond_cut(V, GM, C, verbose=False):
     return V
 
 
-def calculate_voronoi_cell(basis, radius=None, verbose=False):
+def calculate_voronoi_cell(basis, radius=None, verbose=False) -> Polyhedron:
     """
-    Calculate the Voronoi cell of the lattice defined by basis
+    Calculate the Voronoi cell of the lattice defined by basis.
 
     INPUT:
 
     - ``basis`` -- embedded basis matrix of the lattice
 
-    - ``radius`` -- radius of basis vectors to consider
+    - ``radius`` -- square of radius of basis vectors to consider
 
     - ``verbose`` -- whether to print debug information
 
-    OUTPUT:
-
-    A :class:`Polyhedron` instance.
+    OUTPUT: a :class:`Polyhedron` instance
 
     EXAMPLES::
 
@@ -254,19 +270,90 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         sage: V = calculate_voronoi_cell(matrix([[1, 0], [0, 1]]))
         sage: V.volume()
         1
+
+    TESTS:
+
+    Verify that :issue:`39507` is fixed::
+
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: v = vector(ZZ, [1,1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: print(v in L)
+        True
+        sage: print(L.closest_vector(v))
+        (1, 1, 1, -1)
+        sage: C = L.voronoi_cell()
+        sage: C.Hrepresentation()
+        (An inequality (-1, -1, -1, 1) x + 2 >= 0,
+         An inequality (1, 1, 1, -1) x + 2 >= 0)
+        sage: v = vector(ZZ, [1,1,-1])
+        sage: L = IntegerLattice([v])
+        sage: C = L.voronoi_cell()
+        sage: C.Hrepresentation()
+        (An inequality (-2, -2, 2) x + 3 >= 0,
+         An inequality (2, 2, -2) x + 3 >= 0)
+        sage: C.Vrepresentation()
+        (A line in the direction (0, 1, 1),
+         A line in the direction (1, 0, 1),
+         A vertex at (0, 0, -3/2),
+         A vertex at (0, 0, 3/2))
+
+    Verify that :issue:`37086` is fixed::
+
+        sage: from sage.modules.free_module_integer import IntegerLattice
+        sage: l  = [7, 0, -1, -2, -1, -2, 7, -2, 0, 0, -2,
+        ....:       0, 7, -2, 0, -1, -2, -1, 7, 0 , -1, -1, 0, -2, 7]
+        sage: M = matrix(5, 5, l)
+        sage: C = IntegerLattice(M).voronoi_cell()
+        sage: C
+        A 5-dimensional polyhedron in QQ^5 defined as the
+        convex hull of 720 vertices
     """
     dim = basis.dimensions()
+    # LLL-reduce for efficiency.
+    basis = basis.LLL()
+    if radius is None:
+        # Convert the basis matrix to use RDF numbers for efficiency when we
+        # calculate the triangular matrix of the QR decomposition.
+        from sage.rings.real_double import RDF
+        transposed_RDF_matrix = (basis.transpose()).change_ring(RDF)
+        R = transposed_RDF_matrix.QR()[1]
+        # The length of the vector formed by the diagonal entries of R is an
+        # upper bound for twice the covering radius, so it is an upper bound
+        # on the length of the lattice vectors that need to be considered for
+        # diamond cutting. However, the value of the `radius` keyword is
+        # actually a squared length, so there is no square root in the
+        # following formula.
+        radius = sum(R[i, i]**2 for i in range(dim[0]))
+        # We then divide by 4 as we will divide the basis by 2 later on.
+        radius = ceil(radius / 4)
     artificial_length = None
     if dim[0] < dim[1]:
-        # introduce "artificial" basis points (representing infinity)
-        def approx_norm(v):
-            r,r1 = (v.inner_product(v)).sqrtrem()
-            return r + (r1 > 0)
-        artificial_length = max(approx_norm(v) for v in basis) * 2
-        additional_vectors = identity_matrix(dim[1]) * artificial_length
+        F = basis.base_ring().fraction_field()
+        # Introduce "artificial" basis points (representing infinity).
+        additional_vectors = (F**dim[1]).subspace(basis).complement().basis()
+        additional_vectors = matrix(additional_vectors)
+        # LLL-reduce for efficiency.
+        additional_vectors = additional_vectors.LLL()
+
+        from sage.rings.real_double import RDF
+        # Convert the basis matrix to use RDF numbers for efficiency when we
+        # perform the QR decomposition.
+        transposed_RDF_matrix = additional_vectors.transpose().change_ring(RDF)
+        R = transposed_RDF_matrix.QR()[1]
+        # Since R is triangular, its smallest diagonal entry provides a
+        # lower bound on the length of the shortest nonzero vector in the
+        # lattice spanned by the artificial points. We square it because
+        # value of `radius` is a squared length.
+        shortest_vector_lower_bound = min(R[i, i]**2
+                                          for i in range(dim[1] - dim[0]))
+        # We will multiply our artificial points by the following scalar in
+        # order to make sure the squared length of the shortest
+        # nonzero vector is greater than radius, even after the vectors
+        # are divided by 2.
+        artificial_length = ceil(2.001 * sqrt(radius / shortest_vector_lower_bound))
+        additional_vectors *= artificial_length
         basis = basis.stack(additional_vectors)
-        # LLL-reduce to get quadratic matrix
-        basis = basis.LLL()
         basis = matrix([v for v in basis if v])
         dim = basis.dimensions()
     if dim[0] != dim[1]:
@@ -279,14 +366,10 @@ def calculate_voronoi_cell(basis, radius=None, verbose=False):
         ieqs.append(plane_inequality(-v))
     Q = Polyhedron(ieqs=ieqs)
 
-    # twice the length of longest vertex in Q is a safe choice
-    if radius is None:
-        radius = 2 * max(v.inner_product(v) for v in basis)
-
     V = diamond_cut(Q, basis, radius, verbose=verbose)
 
     if artificial_length is not None:
-        # remove inequalities introduced by artificial basis points
+        # Remove inequalities introduced by artificial basis points.
         H = V.Hrepresentation()
         H = [v for v in H if all(not V._is_zero(v.A() * w / 2 - v.b()) and
                                  not V._is_zero(v.A() * (-w) / 2 - v.b())

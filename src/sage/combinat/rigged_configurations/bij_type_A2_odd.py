@@ -1,13 +1,9 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Bijection classes for type `A_{2n-1}^{(2)}`.
+Bijection classes for type `A_{2n-1}^{(2)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `A_{2n-1}^{(2)}`.
-
-AUTHORS:
-
-- Travis Scrimshaw (2012-12-21): Initial version
 
 TESTS::
 
@@ -19,6 +15,10 @@ TESTS::
     sage: from sage.combinat.rigged_configurations.bij_type_A2_odd import RCToKRTBijectionTypeA2Odd
     sage: bijection = RCToKRTBijectionTypeA2Odd(RC(partition_list=[[],[],[]]))
     sage: TestSuite(bijection).run()
+
+AUTHORS:
+
+- Travis Scrimshaw (2012-12-21): initial version
 """
 
 # ****************************************************************************

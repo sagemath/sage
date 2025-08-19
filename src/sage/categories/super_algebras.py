@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Super Algebras
 """
@@ -77,7 +78,7 @@ class SuperAlgebras(SuperModulesCategory):
             EXAMPLES::
 
                 sage: # needs sage.combinat sage.modules
-                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename("A")
+                sage: A.<x,y,z> = ExteriorAlgebra(ZZ); A.rename('A')
                 sage: T = A.tensor(A,A); T
                 A # A # A
                 sage: T in Algebras(ZZ).Graded().SignedTensorProducts()

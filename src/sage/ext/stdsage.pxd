@@ -1,19 +1,20 @@
+# sage_setup: distribution = sagemath-objects
 """
 Standard C helper code for Cython modules
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cpython.object cimport Py_TYPE, PyTypeObject, PyObject
 
 
-cdef inline PY_NEW(type t) noexcept:
+cdef inline PY_NEW(type t):
     """
     Return ``t.__new__(t)``.  This works even for types like
     :class:`Integer` where we change ``tp_new`` at runtime (Cython

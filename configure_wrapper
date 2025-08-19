@@ -1,0 +1,4 @@
+#! /bin/sh
+cp conftest.py bak_conftest.py
+./real_configure $@
+mv bak_conftest.py conftest.py

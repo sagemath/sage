@@ -69,17 +69,11 @@
 #
 #    Runs `pip uninstall` with the given arguments.  If unsuccessful, it displays a warning.
 #
-# - eval sdh_prefix_args PREFIX [...]
-#
-#    Helper function for transforming build options so that they can be passed
-#    through "pip".
-#
 # - sdh_cmake [...]
 #
-#    Runs `cmake` in the current directory with the given arguments, as well as
-#    additional arguments passed to cmake (assuming packages are using the
-#    GNUInstallDirs module) so that `CMAKE_INSTALL_PREFIX` and
-#    `CMAKE_INSTALL_LIBDIR` are set correctly.
+#    Runs `cmake` with the given arguments, as well as additional arguments
+#    (assuming packages are using the GNUInstallDirs module) so that
+#    `CMAKE_INSTALL_PREFIX` and `CMAKE_INSTALL_LIBDIR` are set correctly.
 #
 # - sdh_install [-T] SRC [SRC...] DEST
 #
@@ -210,34 +204,18 @@ sdh_make_install() {
         sdh_die "Error installing $PKG_NAME"
 }
 
-sdh_setup_bdist_wheel() {
-    # Issue #32046: Most uses of this function can be replaced by sdh_pip_install
+sdh_build_wheel() {
     mkdir -p dist
     rm -f dist/*.whl
-    BDIST_DIR="$(mktemp -d)"
-    python3 setup.py --no-user-cfg \
-         bdist_wheel --bdist-dir "$BDIST_DIR" \
-         "$@" || sdh_die "Error building a wheel for $PKG_NAME"
-}
-
-sdh_prefix_args () {
-    prefix="$1"
-    shift
-    while [ $# -gt 0 ]; do
-        # Quoted quotes because the result is to be run through eval
-        echo "$prefix" \"$1\"
-        shift
-    done
-}
-
-sdh_pip_install() {
-    echo "Installing $PKG_NAME"
-    mkdir -p dist
-    rm -f dist/*.whl
+    export PIP_NO_INDEX=1
     install_options=""
     build_options=""
     # pip has --no-build-isolation but no flag that turns the default back on...
-    build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
+    build_isolation_option=""
+    # build has --wheel but no flag that turns the default (build sdist and then wheel) back on
+    dist_option="--wheel"
+    export PIP_FIND_LINKS="$SAGE_SPKG_WHEELS"
+    unset PIP_NO_BINARY
     while [ $# -gt 0 ]; do
         case "$1" in
             --build-isolation)
@@ -245,19 +223,27 @@ sdh_pip_install() {
                 # its build environment using the stored wheels.
                 # We pass --find-links.
                 # The SPKG needs to declare "setuptools" as a dependency.
-                build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
+                build_isolation_option=""
+                export PIP_FIND_LINKS="$SAGE_SPKG_WHEELS"
+                unset PIP_NO_BINARY
                 ;;
             --no-build-isolation)
                 # Use --no-binary, so that no wheels from caches are used.
-                build_isolation_option="--no-build-isolation --no-binary :all:"
+                unset PIP_FIND_LINKS
+                export PIP_NO_BINARY=:all:
+                build_isolation_option="--no-isolation --skip-dependency-check"
+                ;;
+            --sdist-then-wheel)
+                dist_option=""
                 ;;
             --no-deps)
                 install_options="$install_options $1"
                 ;;
             -C|--config-settings)
-                build_options="$build_options $1"
                 shift
-                build_options="$build_options $1"
+                # Per 'python -m build --help', options which begin with a hyphen
+                # must be in the form of "--config-setting=--opt(=value)" or "-C--opt(=value)"
+                build_options="$build_options --config-setting=$1"
                 ;;
             *)
                 break
@@ -265,18 +251,20 @@ sdh_pip_install() {
         esac
         shift
     done
-    if python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option $build_options "$@"; then
+    if python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options "$@"; then
         : # successful
     else
         case $build_isolation_option in
-            *--no-build-isolation*)
+            *--no-isolation*)
                 sdh_die "Error building a wheel for $PKG_NAME"
                 ;;
             *)
-                echo >&2 "Warning: building with \"python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option\" failed."
-                build_isolation_option="--no-build-isolation --no-binary :all:"
-                echo >&2 "Retrying with \"python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option\"."
-                if python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option $build_options "$@"; then
+                echo >&2 "Warning: building with \"python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options $@\" failed."
+                unset PIP_FIND_LINKS
+                export PIP_NO_BINARY=:all:
+                build_isolation_option="--no-isolation --skip-dependency-check"
+                echo >&2 "Retrying with \"python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options $@\"."
+                if python3 -m build $dist_option --outdir=dist $build_isolation_option $build_options "$@"; then
                     echo >&2 "Warning: Wheel building needed to use \"$build_isolation_option\" to succeed. This means that a dependencies file in build/pkgs/ needs to be updated. Please report this to sage-devel@googlegroups.com, including the build log of this package."
                 else
                     sdh_die "Error building a wheel for $PKG_NAME"
@@ -284,6 +272,19 @@ sdh_pip_install() {
                 ;;
         esac
     fi
+    unset PIP_FIND_LINKS
+    unset PIP_NO_BINARY
+    unset PIP_NO_INDEX
+}
+
+sdh_build_and_store_wheel() {
+    sdh_build_wheel "$@"
+    sdh_store_wheel .
+}
+
+sdh_pip_install() {
+    echo "Installing $PKG_NAME"
+    sdh_build_wheel "$@"
     sdh_store_and_pip_install_wheel $install_options .
 }
 
@@ -323,8 +324,13 @@ sdh_store_wheel() {
         wheel_basename="${wheel##*/}"
         distname="${wheel_basename%%-*}"
         # Record name and wheel file location
+        if [ -n "$SAGE_DESTDIR" ]; then
+            echo "Staged wheel file, staged ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
+        else
+            echo "Copied wheel file, wrote ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
+        fi
         mkdir -p ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}
-        echo "${distname} @ file://${wheel}" >> ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt
+        echo "${distname} @ file://${wheel}" >> "${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
     fi
     wheel="${SAGE_DESTDIR}${wheel}"
 }
@@ -392,7 +398,7 @@ sdh_actually_pip_install_wheel() {
     # of sage-conf, sage-setup, etc.) bump the version number, we need to
     # override this behavior.  The pip install option --force-reinstall does too
     # much -- it also reinstalls all dependencies, which we do not want.
-    $sudo sage-pip-uninstall "$distname"
+    $sudo sage-pip-uninstall "$distname" 2>&1 | sed '/^WARNING: Skipping .* as it is not installed./d'
     if [ $? -ne 0 ]; then
         echo "(ignoring error)" >&2
     fi
@@ -409,9 +415,9 @@ sdh_pip_uninstall() {
 
 sdh_cmake() {
     echo "Configuring $PKG_NAME with cmake"
-    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
-            -DCMAKE_INSTALL_LIBDIR=lib \
-            "$@"
+    cmake -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
+          -DCMAKE_INSTALL_LIBDIR=lib \
+          "$@"
     if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/CMakeFiles/CMakeOutput.log" ]; then
             sdh_die <<_EOF_

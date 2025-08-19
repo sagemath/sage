@@ -52,3 +52,6 @@ babel-spanish
 # Japanese
 jsclasses
 ptex
+
+# Chinese
+ctex

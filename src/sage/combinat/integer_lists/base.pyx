@@ -26,6 +26,7 @@ from cpython.object cimport Py_LE, Py_EQ, Py_NE, Py_GE
 from sage.misc.constant_function import ConstantFunction
 from sage.structure.element cimport RingElement
 from sage.rings.integer cimport Integer
+from sage.rings.integer_ring import ZZ
 
 Infinity = float('+inf')
 MInfinity = float('-inf')
@@ -83,7 +84,7 @@ cdef class IntegerListsBackend():
         self.max_length = Integer(max_length) if max_length != Infinity else Infinity
 
         self.min_slope = Integer(min_slope) if min_slope != -Infinity else -Infinity
-        self.max_slope = Integer(max_slope) if max_slope !=  Infinity else Infinity
+        self.max_slope = Integer(max_slope) if max_slope != Infinity else Infinity
 
         self.min_part = Integer(min_part) if min_part != -Infinity else -Infinity
         self.max_part = Integer(max_part) if max_part != Infinity else Infinity
@@ -202,8 +203,18 @@ cdef class IntegerListsBackend():
             sage: C = IntegerListsLex(n=2, max_length=3, min_slope=0)
             sage: all(l in C for l in C)  # indirect doctest
             True
+
+        TESTS::
+
+            sage: [None, 2] in C
+            False
+
+            sage: [1/2, 3/2] in C
+            False
         """
         if len(comp) < self.min_length or len(comp) > self.max_length:
+            return False
+        if not all(e in ZZ for e in comp):
             return False
         n = sum(comp)
         if n < self.min_sum or n > self.max_sum:
@@ -394,7 +405,7 @@ cdef class Envelope():
             inf
             sage: f.min_slope
             1
-            sage: TestSuite(f).run(skip="_test_pickling")
+            sage: TestSuite(f).run(skip='_test_pickling')
             sage: Envelope(3, sign=1/3, max_slope=-1, min_length=4)
             Traceback (most recent call last):
             ...
@@ -518,7 +529,6 @@ cdef class Envelope():
 
             sage: Envelope(lambda x: 3, sign=-1, min_part=2).limit_start() == Infinity
             True
-
         """
         return self.f_limit_start
 
@@ -526,7 +536,7 @@ cdef class Envelope():
         r"""
         Return a bound on the limit of ``self``.
 
-        OUTPUT: a nonnegative integer or `\infty`
+        OUTPUT: nonnegative integer or `\infty`
 
         This returns some upper bound for the accumulation points of
         this upper envelope. For a lower envelope, a lower bound is
@@ -605,9 +615,9 @@ cdef class Envelope():
 
         INPUT:
 
-        - ``m`` -- a nonnegative integer (starting value)
+        - ``m`` -- nonnegative integer (starting value)
 
-        - ``j`` -- a nonnegative integer (position)
+        - ``j`` -- nonnegative integer (position)
 
         This method adapts this envelope to the additional local
         constraint imposed by having a part `m` at position `j`.

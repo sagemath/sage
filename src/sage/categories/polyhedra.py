@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Polyhedral subsets of free ZZ, QQ or RR-modules.
 """
@@ -10,6 +11,7 @@ Polyhedral subsets of free ZZ, QQ or RR-modules.
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_types import Category_over_base_ring
+
 
 class PolyhedralSets(Category_over_base_ring):
     r"""

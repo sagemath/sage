@@ -14,23 +14,40 @@ fi
 
 case "$SYSTEM" in
     install-requires)
-        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
+        # Collect from src/pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by setup.cfg [options] install_requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
-        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;"
+        SYSTEM_PACKAGES_FILE_NAMES="src/pyproject.toml version_requirements.txt requirements.txt"
+        # also normalizes quotes from "" to ''.
+        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;"
         COLLECT=
         ;;
     install-requires-toml)
-        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
+        # Collect from src/pyproject.toml or from version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by pyproject.toml [build-system] requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
-        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/^/'/;s/$/',/;"
+        SYSTEM_PACKAGES_FILE_NAMES="src/pyproject.toml version_requirements.txt requirements.txt"
+        # also normalizes quotes from '' to "".
+        STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/'/\"/g;s/^/'/;s/$/',/;"
         COLLECT=
         ;;
     pip)
-        SYSTEM_PACKAGES_FILE_NAMES="requirements.txt install-requires.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="requirements.txt src/pyproject.toml version_requirements.txt"
         STRIP_COMMENTS='sed s/#.*//;s/[[:space:]]//g;'
         COLLECT=echo
+        ;;
+    versions)
+        # For use in sage-spkg-info
+        SYSTEM_PACKAGES_FILE_NAMES="package-version.txt requirements.txt src/pyproject.toml version_requirements.txt"
+        strip_comments () {
+            TEXT=$(sed "s/#.*//;/^[[:space:]]*$/d;s/\"/'/g;s/^/    /;" "$@")
+            if [ -n "$(echo $TEXT)" ]; then
+                echo "$NAME::"
+                echo
+                echo "$TEXT"
+                echo
+            fi
+        }
+        STRIP_COMMENTS=strip_comments
+        COLLECT=
         ;;
     *)
         if [ "$SYSTEM" = auto ]; then
@@ -45,9 +62,18 @@ case "$SYSTEM" in
         COLLECT=echo
         ;;
 esac
-for PKG_BASE in $SPKGS; do
 
+case "$SPKGS" in
+    *pkg:*|pypi/*|generic/*)
+        PATH="${SAGE_ROOT}/build/bin:$PATH" SPKGS=$(sage-package list $SPKGS)
+        ;;
+esac
+
+for PKG_BASE in $SPKGS; do
     case "$SYSTEM:$ENABLE_SYSTEM_SITE_PACKAGES" in
+        versions*)
+            # Show everything.
+            ;;
         install-requires*|pip*)
             # This is output for installation of packages into a Python environment.
             # So it's OK to use any Python packages.
@@ -71,14 +97,30 @@ for PKG_BASE in $SPKGS; do
     esac
 
     for NAME in $SYSTEM_PACKAGES_FILE_NAMES; do
-        SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/build/pkgs/$PKG_BASE/$NAME
-        if [ -f $SYSTEM_PACKAGES_FILE ]; then
-           if [ -z "$COLLECT" ]; then
-              ${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE
-           else
-              $COLLECT $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE)
-           fi
-           break
-        fi
+        case $NAME in
+            *pyproject.toml)
+                SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/$NAME
+                if [ -f "$SYSTEM_PACKAGES_FILE" ]; then
+                    # Extract from the "requires" block in src/pyproject.toml
+                    # Packages are in the format "'sage-conf ~= 10.3b3',"
+                    PACKAGE_INFO=$(sed -n '/requires *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
+                    if [ -n "$PACKAGE_INFO" ]; then
+                        echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
+                        [ $SYSTEM = versions ] || break
+                    fi
+                fi
+                ;;
+            *)
+                SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/build/pkgs/$PKG_BASE/$NAME
+                if [ -f $SYSTEM_PACKAGES_FILE ]; then
+                    if [ -z "$COLLECT" ]; then
+                        ${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE
+                    else
+                        $COLLECT $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE)
+                    fi
+                    [ $SYSTEM = versions ] || break
+                fi
+                ;;
+        esac
     done
 done

@@ -35,10 +35,8 @@ compute some basic invariants.
 ::
 
     sage: D = J0(39).decomposition(); D
-    [
-    Simple abelian subvariety 39a(1,39) of dimension 1 of J0(39),
-    Simple abelian subvariety 39b(1,39) of dimension 2 of J0(39)
-    ]
+    [Simple abelian subvariety 39a(1,39) of dimension 1 of J0(39),
+     Simple abelian subvariety 39b(1,39) of dimension 2 of J0(39)]
     sage: D[1].lattice()
     Free module of degree 6 and rank 4 over Integer Ring
     Echelon basis matrix:
@@ -52,8 +50,8 @@ compute some basic invariants.
     sage: G.order()
     28
     sage: G.gens()
-    [[(1/14, 2/7, 0, 1/14, -3/14, 1/7)], [(0, 1, 0, 0, -1/2, 0)],
-     [(0, 0, 1, 0, -1/2, 0)]]
+    ([(1/14, 2/7, 0, 1/14, -3/14, 1/7)], [(0, 1, 0, 0, -1/2, 0)],
+     [(0, 0, 1, 0, -1/2, 0)])
     sage: B, phi = D[1]/G
     sage: B
     Abelian variety factor of dimension 2 of J0(39)

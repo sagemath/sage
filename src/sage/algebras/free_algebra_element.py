@@ -18,8 +18,7 @@ TESTS::
     sage: (x*y)^3
     x*y*x*y*x*y
 """
-
-#*****************************************************************************
+# ***************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -31,8 +30,8 @@ TESTS::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.repr import repr_lincomb
 from sage.monoids.free_monoid_element import FreeMonoidElement
@@ -56,7 +55,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         sage: y * x < x * y
         False
     """
-    def __init__(self, A, x):
+    def __init__(self, A, x) -> None:
         """
         Create the element ``x`` of the FreeAlgebra ``A``.
 
@@ -68,7 +67,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         """
         if isinstance(x, FreeAlgebraElement):
             # We should have an input for when we know we don't need to
-            #   convert the keys/values
+            # convert the keys/values
             x = x._monomial_coefficients
         R = A.base_ring()
         if isinstance(x, AlgebraElement):  # and x.parent() == A.base_ring():
@@ -82,9 +81,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
         IndexedFreeModuleElement.__init__(self, A, x)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
-        Return string representation of self.
+        Return string representation of ``self``.
 
         EXAMPLES::
 
@@ -98,19 +97,17 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: with localvars(A, ['a','b','c']):
             ....:    print(-x+3*y*z)
             -a + 3*b*c
-
         """
         v = sorted(self._monomial_coefficients.items())
         P = self.parent()
         M = P.monoid()
         from sage.structure.parent_gens import localvars
         with localvars(M, P.variable_names(), normalize=False):
-            x = repr_lincomb(v, strip_one=True)
-        return x
+            return repr_lincomb(v, strip_one=True)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
-        Return latex representation of self.
+        Return latex representation of ``self``.
 
         EXAMPLES::
 
@@ -133,7 +130,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             7
             sage: (2*x+y).subs({x:1,y:z})
             2 + z
-            sage: f=x+3*y+z
+            sage: f = x+3*y+z
             sage: f(1,2,1/2)
             15/2
             sage: f(1,2)
@@ -159,7 +156,8 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
                         pass
                 return None
 
-            x = [extract_from(kwds,(p.gen(i),p.variable_name(i))) for i in range(p.ngens())]
+            x = [extract_from(kwds, (p.gen(i), p.variable_name(i)))
+                 for i in range(p.ngens())]
         elif isinstance(x[0], tuple):
             x = x[0]
 
@@ -171,9 +169,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         result = None
         for m, c in self._monomial_coefficients.items():
             if result is None:
-                result = c*m(x)
+                result = c * m(x)
             else:
-                result += c*m(x)
+                result += c * m(x)
 
         if result is None:
             return self.parent().zero()
@@ -181,8 +179,9 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
 
     def _mul_(self, y):
         """
-        Return the product of ``self`` and ``y`` (another free algebra
-        element with the same parent).
+        Return the product of ``self`` and ``y``.
+
+        This is another free algebra element with the same parent.
 
         EXAMPLES::
 
@@ -194,16 +193,16 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
         z_elt = {}
         for mx, cx in self:
             for my, cy in y:
-                key = mx*my
+                key = mx * my
                 if key in z_elt:
-                    z_elt[key] += cx*cy
+                    z_elt[key] += cx * cy
                 else:
-                    z_elt[key] = cx*cy
+                    z_elt[key] = cx * cy
                 if not z_elt[key]:
                     del z_elt[key]
         return A._from_dict(z_elt)
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         r"""
         Return ``True`` if ``self`` is invertible.
 
@@ -276,11 +275,33 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             return scalar * Factorization([(self, 1)])
         return super()._acted_upon_(scalar, self_on_left)
 
-    # For backward compatibility
-    # _lmul_ = _acted_upon_
-    # _rmul_ = _acted_upon_
+    def _im_gens_(self, codomain, im_gens, base_map):
+        """
+        Apply a morphism defined by its values on the generators.
 
-    def variables(self):
+        EXAMPLES::
+
+            sage: ring = algebras.Free(QQ, ['a', 'b'])
+            sage: a, b = ring.gens()
+            sage: A = matrix(QQ, 2, 2, [2, 3, 4, 1])
+            sage: B = matrix(QQ, 2, 2, [1, 7, 7, 1])
+            sage: f = ring.hom([A, B])
+            sage: f(a*b+1)
+            [24 17]
+            [11 30]
+        """
+        n = self.parent().ngens()
+        if n == 0:
+            cf = next(iter(self._monomial_coefficients.values()))
+            return codomain.coerce(cf)
+
+        if base_map is None:
+            base_map = codomain
+
+        return codomain.sum(base_map(c) * m(*im_gens)
+                            for m, c in self._monomial_coefficients.items())
+
+    def variables(self) -> list:
         """
         Return the variables used in ``self``.
 

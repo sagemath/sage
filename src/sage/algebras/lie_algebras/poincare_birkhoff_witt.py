@@ -4,10 +4,11 @@ The Poincare-Birkhoff-Witt Basis For A Universal Enveloping Algebra
 AUTHORS:
 
 - Travis Scrimshaw (2013-11-03): Initial version
+- Travis Scrimshaw (2024-01-02): Adding the center
 """
 
 #*****************************************************************************
-#       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2013-2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,9 +18,11 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.element import get_coercion_model
 from operator import mul
 from sage.categories.algebras import Algebras
+from sage.categories.triangular_kac_moody_algebras import TriangularKacMoodyAlgebras
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
@@ -60,12 +63,12 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
 
     We then do some computations; in particular, we check that `[E, F] = H`::
 
-        sage: E,F,H = PBW.algebra_generators()
-        sage: E*F
+        sage: E, F, H = PBW.algebra_generators()
+        sage: E * F
         PBW['E']*PBW['F']
-        sage: F*E
+        sage: F * E
         PBW['E']*PBW['F'] - PBW['H']
-        sage: E*F - F*E
+        sage: E * F - F * E
         PBW['H']
 
     Next we construct another instance of the PBW basis, but sorted in the
@@ -96,10 +99,18 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         PBW[2]*PBW[3] + PBW[5]
         sage: G[-2] * G[3] * G[2]
         PBW[-2]*PBW[2]*PBW[3] + PBW[-2]*PBW[5]
+
+    .. TODO::
+
+        When the Lie algebra is finite dimensional, set the ordering of the
+        basis elements, translate the structure coefficients, and work with
+        fixed-length lists as the exponent vectors. This way we only will
+        run any nontrivial sorting only once and avoid other potentially
+        expensive comparisons between keys.
     """
     @staticmethod
     def __classcall_private__(cls, g, basis_key=None, prefix='PBW', **kwds):
-        """
+        r"""
         Normalize input to ensure a unique representation.
 
         TESTS::
@@ -111,25 +122,30 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
             sage: P1 is P2
             True
         """
-        return super().__classcall__(cls,
-                                     g, basis_key, prefix, **kwds)
+        if g in TriangularKacMoodyAlgebras.FiniteDimensional:
+            return PoincareBirkhoffWittBasisSemisimpleLieAlgebra(g, basis_key, prefix, **kwds)
+        return super().__classcall__(cls, g, basis_key, prefix, **kwds)
 
     def __init__(self, g, basis_key, prefix, **kwds):
-        """
+        r"""
         Initialize ``self``.
 
         TESTS::
 
-            sage: L = lie_algebras.sl(QQ, 2)
-            sage: PBW = L.pbw_basis()
-            sage: E,F,H = PBW.algebra_generators()
-            sage: TestSuite(PBW).run(elements=[E, F, H])
-            sage: TestSuite(PBW).run(elements=[E, F, H, E*F + H]) # long time
+            sage: L = lie_algebras.VirasoroAlgebra(QQ)
+            sage: U = L.pbw_basis()
+            sage: d = U.algebra_generators()
+            sage: TestSuite(U).run()
+            sage: elts = [d[1], d[-1], d[2], d[-2]*d[1], d[-1]*d[1], d[3]^3*d[5], d['c']]
+            sage: TestSuite(U).run(elements=elts)  # long time
         """
         if basis_key is not None:
             self._basis_key = basis_key
         else:
-            self._basis_key_inverse = None
+            try:
+                self._basis_key = g._basis_key
+            except AttributeError:
+                self._basis_key_inverse = None
 
         R = g.base_ring()
         self._g = g
@@ -246,6 +262,20 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
              in the Poincare-Birkhoff-Witt basis
         """
         return "Universal enveloping algebra of {} in the Poincare-Birkhoff-Witt basis".format(self._g)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = lie_algebras.pwitt(GF(3), 6)
+            sage: U = g.pbw_basis()
+            sage: latex(U)
+            PBW\left( \mathcal{W}(6)_{\Bold{F}_{3}} \right)
+        """
+        from sage.misc.latex import latex
+        return r"PBW\left( {} \right)".format(latex(self._g))
 
     def _coerce_map_from_(self, R):
         """
@@ -496,7 +526,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return m.length()
 
-    def casimir_element(self, order=2):
+    def casimir_element(self, order=2, *args, **kwds):
         r"""
         Return the Casimir element of ``self``.
 
@@ -534,7 +564,32 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         from sage.rings.infinity import Infinity
         if self._g.dimension() == Infinity:
             raise ValueError("the Lie algebra must be finite dimensional")
-        return self._g.casimir_element(order=order, UEA=self)
+        return self._g.casimir_element(order=order, UEA=self, *args, **kwds)
+
+    def center(self):
+        r"""
+        Return the center of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.algebras.lie_algebras.center_uea.CenterUEA`
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: U = g.pbw_basis()
+            sage: U.center()
+            Center of Universal enveloping algebra of Lie algebra of ['A', 2]
+             in the Chevalley basis in the Poincare-Birkhoff-Witt basis
+
+            sage: g = lie_algebras.Heisenberg(GF(3), 4)
+            sage: U = g.pbw_basis()
+            sage: U.center()
+            Center of Universal enveloping algebra of Heisenberg algebra of rank 4
+             over Finite Field of size 3 in the Poincare-Birkhoff-Witt basis
+        """
+        from sage.algebras.lie_algebras.center_uea import CenterUEA
+        return CenterUEA(self._g, self)
 
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):
@@ -582,3 +637,178 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
                         ret += term
                     return ret
             return None
+
+
+class PoincareBirkhoffWittBasisSemisimpleLieAlgebra(PoincareBirkhoffWittBasis):
+    r"""
+    The Poincare-Birkhoff-Witt basis of a finite dimensional triangular
+    Kac-Moody Lie algebra (i.e., a semisimple Lie algebra).
+    """
+    def __init__(self, g, basis_key=None, *args, **kwds):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: U = lie_algebras.so(QQ, 5).pbw_basis()
+            sage: TestSuite(U).run()
+
+            sage: L = lie_algebras.sl(QQ, 2)
+            sage: PBW = L.pbw_basis()
+            sage: E, F, H = PBW.algebra_generators()
+            sage: TestSuite(PBW).run(elements=[E, F, H])
+            sage: TestSuite(PBW).run(elements=[E, F, H, E*F + H])  # long time
+        """
+        super().__init__(g, basis_key, *args, **kwds)
+        if self._basis_key == self._g._triangular_key:
+            self._triangular_pbw = self
+        else:
+            self._triangular_pbw = self._g.pbw_basis(basis_key=self._g._triangular_key)
+
+    def e(self, i=None):
+        r"""
+        Return the generators `e` of ``self``.
+
+        INPUT:
+
+        - ``i`` -- (optional) if specified, return just the
+          generator `e_i`
+
+        EXAMPLES::
+
+            sage: U = lie_algebras.so(QQ, 5).pbw_basis()
+            sage: U.e()
+            Finite family {1: PBW[alpha[1]], 2: PBW[alpha[2]]}
+            sage: U.e(1)
+            PBW[alpha[1]]
+        """
+        if i is None:
+            return Family({i: self.e(i) for i in self._g.cartan_type().index_set()})
+        return self(self._g.e(i))
+
+    def f(self, i=None):
+        r"""
+        Return the generators `f` of ``self``.
+
+        INPUT:
+
+        - ``i`` -- (optional) if specified, return just the
+          generator `f_i`
+
+        EXAMPLES::
+
+            sage: U = lie_algebras.so(QQ, 5).pbw_basis()
+            sage: U.f()
+            Finite family {1: PBW[-alpha[1]], 2: PBW[-alpha[2]]}
+            sage: U.f(1)
+            PBW[-alpha[1]]
+        """
+        if i is None:
+            return Family({i: self.f(i) for i in self._g.cartan_type().index_set()})
+        return self(self._g.f(i))
+
+    def contravariant_form(self, x, y):
+        r"""
+        Return the (universal) contravariant form of ``x`` and ``y``.
+
+        Let `\varphi \colon U(\mathfrak{g}) \to U(\mathfrak{h})` denote
+        the projection onto the Cartan subalgebra and `\tau` be the transpose
+        map. The *(universal) contravariant form* is defined as
+
+        .. MATH::
+
+            (x, y) = \varphi(\tau(x) y).
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['G', 2])
+            sage: U = g.pbw_basis()
+            sage: f1, f2 = U.f()
+            sage: e1, e2 = U.e()
+            sage: U.contravariant_form(U.one(), U.one())
+            1
+            sage: U.contravariant_form(f1, f1)
+            PBW[alphacheck[1]]
+            sage: U.contravariant_form(f2, f2)
+            PBW[alphacheck[2]]
+            sage: U.contravariant_form(f1*f2, f1*f2)
+            PBW[alphacheck[1]]*PBW[alphacheck[2]] + 3*PBW[alphacheck[2]]
+            sage: U.contravariant_form(e1*e1*e2, e2*e1*e2)
+            0
+            sage: cas = U.casimir_element()
+            sage: ccc = U.contravariant_form(cas, cas); ccc
+            1/144*PBW[alphacheck[1]]^4 + 1/24*PBW[alphacheck[1]]^3*PBW[alphacheck[2]]
+             + 5/48*PBW[alphacheck[1]]^2*PBW[alphacheck[2]]^2
+             + 1/8*PBW[alphacheck[1]]*PBW[alphacheck[2]]^3 + 1/16*PBW[alphacheck[2]]^4
+             + 5/72*PBW[alphacheck[1]]^3 + 1/3*PBW[alphacheck[1]]^2*PBW[alphacheck[2]]
+             + 7/12*PBW[alphacheck[1]]*PBW[alphacheck[2]]^2 + 3/8*PBW[alphacheck[2]]^3
+             + 25/144*PBW[alphacheck[1]]^2 + 5/8*PBW[alphacheck[1]]*PBW[alphacheck[2]]
+             + 9/16*PBW[alphacheck[2]]^2
+            sage: ccc.parent() is U
+            True
+        """
+        x = self._triangular_pbw(x)
+        y = self._triangular_pbw(y)
+        temp = (x.transpose() * y)._monomial_coefficients
+        part = self._g._part_on_basis
+        ret = {mon: temp[mon] for mon in temp if all(part(b) == 0 for b in mon.support())}
+        # TODO: Construct this direct in ``self``
+        return self(self._triangular_pbw.element_class(self._triangular_pbw, ret))
+
+    @cached_method
+    def _transpose_on_basis(self, m):
+        """
+        Return the transpose map applied to the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['E', 6])
+            sage: U = g.pbw_basis()
+            sage: f1, f2, f3, f4, f5, f6 = U.f()
+            sage: e1, e2, e3, e4, e5, e6 = U.e()
+            sage: elt = e1 * e4^2 * f1 * f2^3
+            sage: U._transpose_on_basis(elt.support()[0])
+            PBW[alpha[2]]^3*PBW[alpha[1]]*PBW[-alpha[4]]^2*PBW[-alpha[1]]
+        """
+        I = self._indices
+        basis_mapping = self._g._transpose_basis_mapping
+        return self.prod(self.monomial(I({basis_mapping[k]: e}))
+                         for k, e in reversed(m._sorted_items()))
+
+    @lazy_attribute
+    def transpose(self):
+        r"""
+        The transpose map.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['F', 4])
+            sage: U = g.pbw_basis()
+            sage: U.transpose
+            Generic endomorphism of Universal enveloping algebra of Lie algebra
+             of ['F', 4] in the Chevalley basis in the Poincare-Birkhoff-Witt basis
+        """
+        return self.module_morphism(self._transpose_on_basis, codomain=self)
+
+    class Element(PoincareBirkhoffWittBasis.Element):
+        def transpose(self):
+            r"""
+            Return the transpose map of ``self``.
+
+            This is the transpose map on the Lie algebra extended
+            as an anti-involution of ``self``.
+
+            EXAMPLES::
+
+                sage: g = LieAlgebra(QQ, cartan_type=['D', 4])
+                sage: U = g.pbw_basis()
+                sage: e = U.e()
+                sage: f = U.f()
+                sage: elts = [e[1], e[1]*e[2], e[3]+e[4], e[1]*e[3]*e[4] + e[2],
+                ....:         f[1], f[1]*f[2], f[3]+f[4], e[1]*e[3]*e[4] + e[2],
+                ....:         e[1]*f[1], f[1]*e[1], (e[2]*f[2] - f[2]*e[2])^2]
+                sage: all((b*bp).transpose() == bp.transpose() * b.transpose()
+                ....:     for b in elts for bp in elts)
+                True
+            """
+            return self.parent().transpose(self)

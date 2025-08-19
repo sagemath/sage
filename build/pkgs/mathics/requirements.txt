@@ -1,0 +1,3 @@
+Mathics3 @ git+https://github.com/Mathics3/mathics-core
+mathics-scanner @ git+https://github.com/Mathics3/mathics-scanner
+-c ${SAGE_VENV}/var/lib/sage/scripts/numpy/spkg-requirements.txt

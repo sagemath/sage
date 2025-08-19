@@ -4,6 +4,7 @@ Utilities
 
 import errno
 import os
+import platform
 import traceback
 from typing import Optional
 
@@ -111,7 +112,7 @@ def build_many(target, args, processes=None):
 
     * When PARI is built with multi-threading support, forking a Sage
       process from a thread leaves the main Pari interface instance broken
-      (see :trac:`26608#comment:38`).
+      (see :issue:`26608#comment:38`).
 
     In the future this may be replaced by a generalized version of the more
     robust parallel processing implementation from ``sage.doctest.forker``.
@@ -193,7 +194,7 @@ def build_many(target, args, processes=None):
     # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork'
     # in multiprocessing, and Sage docbuilding doesn't work with
     # 'spawn'. See trac #27754.
-    if os.uname().sysname == "Darwin":
+    if platform.system() == "Darwin":
         set_start_method("fork", force=True)
     from queue import Empty
 

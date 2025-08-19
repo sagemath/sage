@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for old-style parent objects
 
@@ -27,6 +28,7 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.superseded import deprecation
+from sage.misc.cachefunc import cached_method
 from sage.structure.coerce cimport py_scalar_parent
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.sets.pythonclass cimport Set_PythonType, Set_PythonType_class
@@ -34,7 +36,7 @@ from sage.sets.pythonclass cimport Set_PythonType, Set_PythonType_class
 from cpython.object cimport *
 from cpython.bool cimport *
 
-cdef inline check_old_coerce(Parent p) noexcept:
+cdef inline check_old_coerce(Parent p):
     if p._element_constructor is not None:
         raise RuntimeError("%s still using old coercion framework" % p)
 
@@ -79,7 +81,7 @@ cdef class Parent(parent.Parent):
     # New Coercion support functionality
     ##########################################################
 
-    cdef __coerce_map_from_c(self, S) noexcept:
+    cdef __coerce_map_from_c(self, S):
         """
         EXAMPLES:
 
@@ -143,7 +145,7 @@ cdef class Parent(parent.Parent):
 
         return mor
 
-    cdef __coerce_map_from_c_impl(self, S) noexcept:
+    cdef __coerce_map_from_c_impl(self, S):
         check_old_coerce(self)
         import sage.categories.morphism
         from sage.categories.map import Map
@@ -183,7 +185,7 @@ cdef class Parent(parent.Parent):
         check_old_coerce(self)
         return self._coerce_c(x)
 
-    cpdef _coerce_c(self, x) noexcept:          # DO NOT OVERRIDE THIS (call it)
+    cpdef _coerce_c(self, x):          # DO NOT OVERRIDE THIS (call it)
         if self._element_constructor is not None:
             from sage.misc.superseded import deprecation
             deprecation(33497, "_coerce_c is deprecated, use coerce instead")
@@ -200,23 +202,23 @@ cdef class Parent(parent.Parent):
         else:
             return self._coerce_c_impl(x)
 
-    cdef _coerce_c_impl(self, x) noexcept:     # OVERRIDE THIS FOR CYTHON CLASSES
+    cdef _coerce_c_impl(self, x):     # OVERRIDE THIS FOR CYTHON CLASSES
         """
-        Canonically coerce x in assuming that the parent of x is not
-        equal to self.
+        Canonically coerce ``x`` in assuming that the parent of ``x`` is not
+        equal to ``self``.
         """
         check_old_coerce(self)
         raise TypeError
 
     def _coerce_impl(self, x):        # OVERRIDE THIS FOR PYTHON CLASSES
         """
-        Canonically coerce x in assuming that the parent of x is not
-        equal to self.
+        Canonically coerce ``x`` in assuming that the parent of ``x`` is not
+        equal to ``self``.
         """
         check_old_coerce(self)
         return self._coerce_c_impl(x)
 
-    cdef __has_coerce_map_from_c(self, S) noexcept:
+    cdef __has_coerce_map_from_c(self, S):
         check_old_coerce(self)
         if self == S:
             return True
@@ -233,7 +235,17 @@ cdef class Parent(parent.Parent):
         self._has_coerce_map_from.set(S, ans)
         return ans
 
-    def _an_element_impl(self):     # override this in Python
+    ###############################################################
+    # Coercion Compatibility Layer
+    ###############################################################
+    cpdef _coerce_map_from_(self, S):
+        if self._element_constructor is None:
+            return self.__coerce_map_from_c(S)
+        else:
+            return parent.Parent._coerce_map_from_(self, S)
+
+    @cached_method
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -241,44 +253,25 @@ cdef class Parent(parent.Parent):
         that poorly-written functions will not work when they are not
         supposed to. This is cached so does not have to be super fast.
         """
+        if self._element_constructor is not None:
+            return parent.Parent._an_element_(self)
+
         check_old_coerce(self)
         try:
-            return self.gen(0)
-        except Exception:
-            pass
-
-        try:
             return self.gen()
-        except Exception:
+        except (ValueError, AttributeError, TypeError):
             pass
 
         from sage.rings.infinity import infinity
-        for x in ['_an_element_', 'pi', 1.2, 2, 1, 0, infinity]:
+        for x in ['pi', 1.2, 2, 1, 0, infinity]:
             try:
                 return self(x)
-            except Exception:
+            except (TypeError, ValueError):
                 pass
 
         raise NotImplementedError(f"_an_element_ is not implemented for {self}")
 
-    ###############################################################
-    # Coercion Compatibility Layer
-    ###############################################################
-    cpdef _coerce_map_from_(self, S) noexcept:
-        if self._element_constructor is None:
-            return self.__coerce_map_from_c(S)
-        else:
-            return parent.Parent._coerce_map_from_(self, S)
-
-    def _an_element_(self):
-        if self._element_constructor is not None:
-            return parent.Parent._an_element_(self)
-        if self._cache_an_element is not None:
-            return self._cache_an_element
-        self._cache_an_element = self._an_element_impl()
-        return self._cache_an_element
-
-    cpdef _generic_convert_map(self, S, category=None) noexcept:
+    cpdef _generic_convert_map(self, S, category=None):
         r"""
         Return a default conversion from ``S``.
 

@@ -44,6 +44,10 @@ def is_FreeMonoid(x):
 
         sage: from sage.monoids.free_monoid import is_FreeMonoid
         sage: is_FreeMonoid(5)
+        doctest:warning...
+        DeprecationWarning: the function is_FreeMonoid is deprecated;
+        use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead
+        See https://github.com/sagemath/sage/issues/37897 for details.
         False
         sage: is_FreeMonoid(FreeMonoid(7,'a'))
         True
@@ -56,6 +60,8 @@ def is_FreeMonoid(x):
         sage: is_FreeMonoid(FreeAbelianMonoid(index_set=ZZ))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37897, "the function is_FreeMonoid is deprecated; use 'isinstance(..., (FreeMonoid, IndexedFreeMonoid))' instead")
     if isinstance(x, FreeMonoid):
         return True
     from sage.monoids.indexed_free_monoid import IndexedFreeMonoid
@@ -67,7 +73,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
     Return a free monoid on `n` generators or with the generators
     indexed by a set `I`.
 
-    We construct free monoids by specifing either:
+    We construct free monoids by specifying either:
 
     - the number of generators and/or the names of the generators
     - the indexing set for the generators
@@ -79,12 +85,10 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     - ``names`` -- names of generators
 
-    - ``commutative`` -- (default: ``False``) whether the free
+    - ``commutative`` -- boolean (default: ``False``); whether the free
       monoid is commutative or not
 
-    OUTPUT:
-
-    A free monoid.
+    OUTPUT: a free monoid
 
     EXAMPLES::
 
@@ -196,7 +200,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         Monoid_class.__init__(self, names)
 
     def _repr_(self):
-        return "Free monoid on %s generators %s" % (self.__ngens, self.gens())
+        return f"Free monoid on {self.__ngens} generators {self.gens()}"
 
     def _element_constructor_(self, x, check=True):
         """
@@ -237,12 +241,26 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
             sage: F(F(w), check=False)
             a^2*b^2*c*a*b*a*c
+
+            sage: F = FreeMonoid(3, 'a,b,c')
+            sage: G = FreeMonoid(2, 'a,c')
+            sage: F(G(Word("ac")))
+            a*c
         """
         # There should really be some careful type checking here...
-        if isinstance(x, FreeMonoidElement) and x.parent() is self:
-            return x
-        if isinstance(x, FreeMonoidElement) and x.parent() == self:
-            return self.element_class(self, x._element_list, check)
+        if isinstance(x, FreeMonoidElement):
+            P = x.parent()
+            if P is self:
+                return x
+            elif P == self:
+                return self.element_class(self, x._element_list, check)
+            elif all(v in self.variable_names()
+                     for v in P.variable_names()):
+                reindex = [next(j for j, w in enumerate(self.variable_names())
+                                if v == w)
+                           for v in P.variable_names()]
+                elt = [(reindex[i], exp) for i, exp in x._element_list]
+                return self.element_class(self, elt, check)
         if isinstance(x, (int, Integer)) and x == 1:
             return self.element_class(self, x, check)
         if isinstance(x, FiniteWord_class):

@@ -65,7 +65,7 @@ Un altro posto da guardare è al link
 `Dive Into Python <https://diveintopython3.net>`_ di Marc Pilgrim,
 che può essere veramente d'aiuto su temi specifici come
 lo sviluppo guidato dai test. Il libro
-`Building Skills in Python <http://itmaybeahack.com/homepage/books/python.html>`_
+`Building Skills in Python <https://itmaybeahack.com/homepage/books/python.html>`_
 di Steven F. Lott è adatto a chiunque sia già a suo agio nel programmare.
 
 Se desideri, puoi iniziare a imparare Python usando Sage.
@@ -119,9 +119,8 @@ Ulteriori risorse possono essere trovate cercando sul web.
 * `pep8 <https://pypi.org/project/pep8>`_
 * `pydeps <https://pypi.org/project/pydeps>`_
 * `pycallgraph <https://pycallgraph.readthedocs.io>`_
-* `PyChecker <http://pychecker.sourceforge.net>`_
 * `PyFlakes <https://pypi.org/project/pyflakes>`_
-* `Pylint <https://www.logilab.org/project/pylint>`_
+* `Pylint <https://pylint.readthedocs.io>`_
 * `Python <https://www.python.org>`_ home page e la
   `Documentazione standard su Python <https://docs.python.org>`_
 * `Snakefood <http://furius.ca/snakefood>`_
@@ -130,10 +129,10 @@ Ulteriori risorse possono essere trovate cercando sul web.
 
 **Tutorial e libri**
 
-* `Cython Tutorial <http://conference.scipy.org/proceedings/SciPy2009/paper_1/>`_
+* `Cython Tutorial <https://proceedings.scipy.org/articles/MJMV8092.pdf>`_
   di Stefan Behnel, Robert W. Bradshaw, e Dag Sverre Seljebotn
 * `Dive Into Python 3 <http://www.diveintopython3.net>`_ di Mark Pilgrim
-* `Fast Numerical Computations with Cython <http://conference.scipy.org/proceedings/SciPy2009/paper_2/>`_
+* `Fast Numerical Computations with Cython <https://proceedings.scipy.org/articles/GTCA8577.pdf>`_
   di Dag Sverre Seljebotn
 * `Tutorial ufficiale di Python <https://docs.python.org/3/tutorial/>`_
 
@@ -158,8 +157,8 @@ Consulta anche la Guida dello Sviluppo Sage, specialmente il capitolo
 `Convenzioni per scrivere codice sorgente in Sage <https://doc.sagemath.org/html/en/developer/#sage-coding-details>`_.
 
 
-Ho inviato al server trac una correzione molte settimane fa. Perché la state ignorando?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+Ho inviato al GitHub Sage repo una correzione molte settimane fa. Perché la state ignorando?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Non stiamo cercando di ignorare la tua correzione.
 Le persone che lavorano su Sage lo fanno nel loro tempo libero.

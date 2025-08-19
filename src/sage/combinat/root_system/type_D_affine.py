@@ -50,7 +50,7 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
 
     def dynkin_diagram(self):
         """
-        Returns the extended Dynkin diagram for affine type D.
+        Return the extended Dynkin diagram for affine type D.
 
         EXAMPLES::
 
@@ -95,7 +95,6 @@ class CartanType(CartanType_standard_untwisted_affine, CartanType_simply_laced):
            sage: d.edges(sort=True)                                                     # needs sage.graphs
            [(0, 2, 1), (0, 3, 1), (1, 2, 1), (1, 3, 1),
             (2, 0, 1), (2, 1, 1), (3, 0, 1), (3, 1, 1)]
-
         """
         from .dynkin_diagram import DynkinDiagram_class
         n = self.n

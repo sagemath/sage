@@ -1,10 +1,10 @@
-phitigra: A graph editor for SageMath/Jupyter
-=============================================
+phitigra: Graph editor for SageMath/Jupyter
+===========================================
 
 Description
 -----------
 
-A graph editor for SageMath/Jupyter
+Graph editor for SageMath/Jupyter
 
 License
 -------

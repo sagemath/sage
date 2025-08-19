@@ -24,6 +24,7 @@ AUTHORS:
 from .graded_lie_conformal_algebra import GradedLieConformalAlgebra
 from sage.structure.indexed_generators import standardize_names_index_set
 
+
 class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
     r"""
     The Abelian Lie conformal algebra.
@@ -32,21 +33,20 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
 
     - ``R`` -- a commutative ring; the base ring of this Lie
       conformal algebra
-    - ``ngens`` -- a positive integer (default: ``1``); the number
+    - ``ngens`` -- positive integer (default: `1`); the number
       of generators of this Lie conformal algebra
-    - ``weights`` -- a list of positive rational numbers (default:
-      ``1`` for each
-      generator); the weights of the generators. The resulting
+    - ``weights`` -- list of positive rational numbers (default:
+      `1` for each generator); the weights of the generators. The resulting
       Lie conformal algebra is `H`-graded.
     - ``parity`` -- ``None`` or a list of ``0`` or ``1`` (default:
-      ``None``); The parity of the generators. If not ``None`` the
+      ``None``); the parity of the generators. If not ``None`` the
       resulting Lie Conformal algebra is a Super Lie conformal
       algebra
-    - ``names`` -- a tuple of ``str`` or ``None`` (default: ``None``
-      ); the list of names of the generators of this algebra.
+    - ``names`` -- tuple of strings or ``None`` (default: ``None``);
+      the list of names of the generators of this algebra.
     - ``index_set`` -- an enumerated set or ``None`` (default:
-      ``None``); A set indexing the generators of this Lie
-      conformal algebra.
+      ``None``); a set indexing the generators of this Lie
+      conformal algebra
 
     OUTPUT:
 
@@ -78,7 +78,7 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
     def __init__(self, R, ngens=1, weights=None,
                  parity=None, names=None, index_set=None):
         """
-        Initialize self.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -89,16 +89,17 @@ class AbelianLieConformalAlgebra(GradedLieConformalAlgebra):
             names = 'a'
             self._latex_names = tuple(r'a_{%d}' % i for i in range(ngens))
 
-        names,index_set = standardize_names_index_set(names=names,
-                                                      index_set=index_set,
-                                                      ngens=ngens)
+        names, index_set = standardize_names_index_set(names=names,
+                                                       index_set=index_set,
+                                                       ngens=ngens)
         abeliandict = {}
 
         GradedLieConformalAlgebra.__init__(self, R, abeliandict, names=names,
-                                           index_set=index_set, weights=weights,
+                                           index_set=index_set,
+                                           weights=weights,
                                            parity=parity)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 

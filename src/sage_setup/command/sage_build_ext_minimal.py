@@ -20,7 +20,7 @@ class sage_build_ext_minimal(build_ext):
         Get number of parallel build jobs used by default, i.e. unless explicitly
         set by the --parallel command line argument of setup.py.
 
-        First, the environment variable `SAGE_NUM_THREADS` is checked.
+        First, the environment variable ``SAGE_NUM_THREADS`` is checked.
         If that is unset, return the number of processors on the system,
         with a maximum of 10 (to prevent overloading the system if there a lot of CPUs).
 

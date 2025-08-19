@@ -11,9 +11,10 @@
 # serve to show the default.
 
 import os
-from sage.env import SAGE_DOC_SRC, SAGE_DOC
-from sage_docbuild.conf import release, exclude_patterns
+
+from sage.env import SAGE_DOC, SAGE_DOC_SRC
 from sage_docbuild.conf import *
+from sage_docbuild.conf import exclude_patterns
 
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
@@ -26,7 +27,7 @@ ref_src = os.path.join(SAGE_DOC_SRC, 'en', 'reference')
 ref_out = os.path.join(SAGE_DOC, 'html', 'en', 'reference')
 
 # We use the main document's title, if we can find it.
-rst_file = open('index.rst', 'r')
+rst_file = open('index.rst', 'r', encoding='utf-8')
 rst_lines = rst_file.read().splitlines()
 rst_file.close()
 
@@ -41,6 +42,12 @@ name = os.path.basename(os.path.abspath('.'))
 if not title:
     title = name.capitalize()
 title = title.replace('`', '$')
+
+# We use the directory's name to add small view/edit buttons.
+html_theme_options.update({
+  'source_view_link': os.path.join(source_repository, f'blob/develop/src/doc/en/reference/{name}', '{filename}'),
+  'source_edit_link': os.path.join(source_repository, f'edit/develop/src/doc/en/reference/{name}', '{filename}'),
+})
 
 # General information about the project.
 project = title

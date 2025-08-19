@@ -89,7 +89,6 @@ cdef extern from "ecl/ecl.h":
     # Type predicates returning a C boolean
 
     bint bint_floatp "floatp" (cl_object x)
-    bint bint_numberp "ecl_numberp" (cl_object x)
     bint bint_eql "ecl_eql"(cl_object x, cl_object y)
     bint bint_equal "ecl_equal"(cl_object x, cl_object y)
     bint bint_equalp "ecl_equalp"(cl_object x, cl_object y)
@@ -146,7 +145,6 @@ cdef extern from "ecl/ecl.h":
     cl_object cl_make_string(cl_narg narg, cl_object o, ...)
     ecl_character ecl_char(cl_object s, cl_index i)
     ecl_character ecl_char_set(cl_object s, cl_index i, ecl_character c)
-
 
     # S-expr evaluation and function calls
 

@@ -7,4 +7,3 @@ cdef class PowerSeries_poly(PowerSeries):
 
 cdef class BaseRingFloorDivAction(Action):
     pass
-

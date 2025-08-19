@@ -72,10 +72,10 @@ AUTHORS:
 from sage.groups.matrix_gps.group_element import is_MatrixGroupElement
 from sage.groups.matrix_gps.matrix_group import MatrixGroup_generic
 from sage.matrix.constructor import matrix
-from sage.matrix.matrix_space import is_MatrixSpace
+from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.structure.element import is_Matrix
+from sage.structure.element import Matrix
 from sage.structure.sequence import Sequence
 
 
@@ -83,9 +83,7 @@ def normalize_square_matrices(matrices):
     """
     Find a common space for all matrices.
 
-    OUTPUT:
-
-    A list of matrices, all elements of the same matrix space.
+    OUTPUT: list of matrices, all elements of the same matrix space
 
     EXAMPLES::
 
@@ -107,7 +105,7 @@ def normalize_square_matrices(matrices):
             deg.append(m.parent().degree())
             gens.append(m.matrix())
             continue
-        if is_Matrix(m):
+        if isinstance(m, Matrix):
             if not m.is_square():
                 raise TypeError('matrix must be square')
             deg.append(m.ncols())
@@ -132,7 +130,7 @@ def normalize_square_matrices(matrices):
         raise ValueError('not all matrices have the same size')
     gens = Sequence(gens, immutable=True)
     MS = gens.universe()
-    if not is_MatrixSpace(MS):
+    if not isinstance(MS, MatrixSpace):
         raise TypeError('all generators must be matrices')
     if MS.nrows() != MS.ncols():
         raise ValueError('matrices must be square')
@@ -151,7 +149,8 @@ def QuaternionMatrixGroupGF3():
     is not isomorphic to the group of symmetries of a square
     (the dihedral group `D_4`).
 
-    .. note::
+    .. NOTE::
+
         This group is most easily available via ``groups.matrix.QuaternionGF3()``.
 
     EXAMPLES:
@@ -212,10 +211,10 @@ def MatrixGroup(*gens, **kwds):
     INPUT:
 
     - ``*gens`` -- matrices, or a single list/tuple/iterable of
-      matrices, or a matrix group.
+      matrices, or a matrix group
 
-    - ``check`` -- boolean keyword argument (optional, default:
-      ``True``). Whether to check that each matrix is invertible.
+    - ``check`` -- boolean keyword argument (default: ``True``);
+      whether to check that each matrix is invertible
 
     EXAMPLES::
 
@@ -411,11 +410,9 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
     def gen(self, i):
         """
-        Return the `i`-th generator
+        Return the `i`-th generator.
 
-        OUTPUT:
-
-        The `i`-th generator of the group.
+        OUTPUT: the `i`-th generator of the group
 
         EXAMPLES::
 
@@ -433,11 +430,9 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
     def ngens(self):
         """
-        Return the number of generators
+        Return the number of generators.
 
-        OUTPUT:
-
-        An integer. The number of generators.
+        OUTPUT: integer; the number of generators
 
         EXAMPLES::
 

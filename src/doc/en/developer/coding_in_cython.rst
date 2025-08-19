@@ -32,13 +32,13 @@ up-to-date information or check out the
 to get started immediately.
 
 
-Writing cython code in Sage
+Writing Cython code in Sage
 ===========================
 
 There are several ways to create and build Cython code in Sage.
 
-#. In the Sage Notebook, begin any cell with ``%cython``. When you
-   evaluate that cell,
+#. In the Sage notebook or the Sage command line, begin any cell with
+   a line containing ``%%cython``. When you evaluate that cell,
 
    #. It is saved to a file.
 
@@ -53,21 +53,20 @@ There are several ways to create and build Cython code in Sage.
       program that was compiled to create the ``.so`` file.
 
    #. A ``cpdef`` or ``def`` function, say ``testfunction``, defined in
-      a ``%cython`` cell in a worksheet can be imported and made available
-      in a different ``%cython`` cell within the same worksheet by
+      a ``%%cython`` cell in a worksheet can be imported and made available
+      in a different ``%%cython`` cell within the same worksheet by
       importing it as shown below::
 
-          %cython
+          %%cython
           from __main__ import testfunction
 
-#. Create an ``.spyx`` file and attach or load it from the command
-   line. This is similar to creating a ``%cython`` cell in the
-   notebook but works completely from the command line (and not from
-   the notebook).
+   Refer to :meth:`sage.repl.ipython_extension.SageMagics.cython`.
+
+#. Create an ``.spyx`` file and attach or load it
+   from the command line.
 
 #. Create a ``.pyx`` file and add it to the Sage library.
    Then run ``sage -b`` to rebuild Sage.
-
 
 Attaching or loading .spyx files
 ================================
@@ -190,4 +189,24 @@ original object. As an example, the following code snippet is the
 
 
 .. _python pickling documentation: http://docs.python.org/library/pickle.html#pickle-protocol
+
+Deprecation
+===========
+
+When making a **backward-incompatible** modification in Sage, the old code should
+keep working and display a message indicating how it should be updated/written
+in the future. We call this a *deprecation*.
+
+.. NOTE::
+
+    Deprecated code can only be removed one year after the first
+    stable release in which it appeared.
+
+Each deprecation warning contains the number of the GitHub PR that defines
+it. We use 666 in the example below.
+
+.. CODE-BLOCK:: cython
+
+      from sage.misc.superseded import deprecation_cython
+      deprecation_cython(666, "Do not use your computer to compute 1+1. Use your brain.")
 

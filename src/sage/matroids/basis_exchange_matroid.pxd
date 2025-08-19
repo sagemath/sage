@@ -1,6 +1,5 @@
 from sage.data_structures.bitset cimport *
 from sage.data_structures.bitset_base cimport bitset_t, bitset_s
-
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.set_system cimport SetSystem
 
@@ -15,86 +14,82 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef _weak_invariant_var, _strong_invariant_var, _heuristic_invariant_var
     cdef SetSystem _weak_partition_var, _strong_partition_var, _heuristic_partition_var
 
-    cdef _relabel(self, l) noexcept
+    cdef _relabel(self, mapping)
 
-    cdef _pack(self, bitset_t, X) noexcept
-    cdef __unpack(self, bitset_t) noexcept
+    cdef _pack(self, bitset_t, X)
+    cdef __unpack(self, bitset_t)
     cdef bint _is_exchange_pair(self, long x, long y) except -1
     cdef int _exchange(self, long x, long y) except -1
     cdef int _move(self, bitset_t X, bitset_t Y) except -1
-    cdef __fundamental_cocircuit(self, bitset_t, long x) noexcept
-    cdef __fundamental_circuit(self, bitset_t, long y) noexcept
+    cdef __fundamental_cocircuit(self, bitset_t, long x)
+    cdef __fundamental_circuit(self, bitset_t, long y)
 
-    cdef __max_independent(self, bitset_t, bitset_t) noexcept
-    cdef __circuit(self, bitset_t, bitset_t) noexcept
-    cdef __closure(self, bitset_t, bitset_t) noexcept
-    cdef __max_coindependent(self, bitset_t, bitset_t) noexcept
-    cdef __cocircuit(self, bitset_t, bitset_t) noexcept
-    cdef _coclosure_internal(self, bitset_t, bitset_t) noexcept
+    cdef __max_independent(self, bitset_t, bitset_t)
+    cdef __circuit(self, bitset_t, bitset_t)
+    cdef __closure(self, bitset_t, bitset_t)
+    cdef __max_coindependent(self, bitset_t, bitset_t)
+    cdef __cocircuit(self, bitset_t, bitset_t)
+    cdef _coclosure_internal(self, bitset_t, bitset_t)
 
-    cdef __augment(self, bitset_t, bitset_t, bitset_t) noexcept
+    cdef __augment(self, bitset_t, bitset_t, bitset_t)
     cdef bint __is_independent(self, bitset_t F) except -1
-    cdef __move_current_basis(self, bitset_t, bitset_t) noexcept
+    cdef __move_current_basis(self, bitset_t, bitset_t)
 
     cdef bint _set_current_basis(self, F) noexcept
 
-    cpdef groundset(self) noexcept
-    cpdef groundset_list(self) noexcept
-    cpdef full_rank(self) noexcept
-    cpdef full_corank(self) noexcept
+    cpdef frozenset groundset(self)
+    cpdef list groundset_list(self)
+    cpdef full_rank(self)
+    cpdef full_corank(self)
 
-    cpdef basis(self) noexcept
-    cpdef _move_current_basis(self, X, Y) noexcept
+    cpdef basis(self)
+    cpdef _move_current_basis(self, X, Y)
 
-    cpdef _max_independent(self, F) noexcept
-    cpdef _rank(self, F) noexcept
-    cpdef _circuit(self, F) noexcept
-    cpdef _fundamental_circuit(self, B, e) noexcept
-    cpdef _closure(self, F) noexcept
+    cpdef frozenset _max_independent(self, frozenset F)
+    cpdef int _rank(self, frozenset F) except? -1
+    cpdef frozenset _circuit(self, frozenset F)
+    cpdef frozenset _fundamental_circuit(self, frozenset B, e)
+    cpdef frozenset _closure(self, frozenset F)
 
-    cpdef _max_coindependent(self, F) noexcept
-    cpdef _corank(self, F) noexcept
-    cpdef _cocircuit(self, F) noexcept
-    cpdef _fundamental_cocircuit(self, B, e) noexcept
-    cpdef _coclosure(self, F) noexcept
+    cpdef frozenset _max_coindependent(self, frozenset F)
+    cpdef int _corank(self, frozenset F) noexcept
+    cpdef frozenset _cocircuit(self, frozenset F)
+    cpdef frozenset _fundamental_cocircuit(self, frozenset B, e)
+    cpdef frozenset _coclosure(self, frozenset F)
 
-    cpdef _augment(self, X, Y) noexcept
-    cpdef _is_independent(self, F) noexcept
+    cpdef frozenset _augment(self, frozenset X, frozenset Y)
+    cpdef bint _is_independent(self, frozenset F) noexcept
 
-    cpdef f_vector(self) noexcept
-    cdef  _f_vector_rec(self, object f_vec, bitset_t* flats, bitset_t* todo, long elt, long rnk) noexcept
-    cpdef flats(self, R) noexcept
-    cdef  _flats_rec(self, SetSystem Rflats, long R, bitset_t* flats, bitset_t* todo, long elt, long rnk) noexcept
-    cpdef coflats(self, R) noexcept
-    cdef  _coflats_rec(self, SetSystem Rcoflats, long R, bitset_t* coflats, bitset_t* todo, long elt, long cornk) noexcept
-    cdef _flat_element_inv(self, long k) noexcept
-    cdef  _flat_element_inv_rec(self, object f_inc, long R, bitset_t* flats, bitset_t* todo, long elt, long i) noexcept
+    cpdef list whitney_numbers2(self)
+    cdef  _whitney_numbers2_rec(self, object f_vec, bitset_t* flats, bitset_t* todo, long elt, long rnk)
+    cdef  _flats_rec(self, SetSystem Rflats, long R, bitset_t* flats, bitset_t* todo, long elt, long rnk)
+    cdef  _coflats_rec(self, SetSystem Rcoflats, long R, bitset_t* coflats, bitset_t* todo, long elt, long cornk)
+    cdef _flat_element_inv(self, long k)
+    cdef  _flat_element_inv_rec(self, object f_inc, long R, bitset_t* flats, bitset_t* todo, long elt, long i)
 
-    cpdef bases_count(self) noexcept
-    cpdef independent_r_sets(self, long r) noexcept
-    cpdef bases(self) noexcept
-    cpdef dependent_r_sets(self, long r) noexcept
-    cpdef nonbases(self) noexcept
+    cpdef bases_count(self)
+    cpdef SetSystem independent_sets(self, long k=*)
+    cpdef SetSystem dependent_sets(self, long k)
 
-    cpdef nonspanning_circuits(self) noexcept
-    cpdef cocircuits(self) noexcept
-    cpdef circuits(self) noexcept
+    cpdef SetSystem nonspanning_circuits(self)
+    cpdef SetSystem cocircuits(self)
+    cpdef SetSystem circuits(self, k=*)
 
-    cpdef _characteristic_setsystem(self) noexcept
-    cpdef _weak_invariant(self) noexcept
-    cpdef _weak_partition(self) noexcept
-    cpdef _strong_invariant(self) noexcept
-    cpdef _strong_partition(self) noexcept
-    cpdef _heuristic_invariant(self) noexcept
-    cpdef _heuristic_partition(self) noexcept
-    cdef _flush(self) noexcept
+    cpdef _characteristic_setsystem(self)
+    cpdef _weak_invariant(self)
+    cpdef _weak_partition(self)
+    cpdef _strong_invariant(self)
+    cpdef _strong_partition(self)
+    cpdef _heuristic_invariant(self)
+    cpdef _heuristic_partition(self)
+    cdef _flush(self)
 
-    cpdef _equitable_partition(self, P=*) noexcept
-    cpdef _is_isomorphic(self, other, certificate=*) noexcept
-    cpdef _isomorphism(self, other) noexcept
-    cpdef _is_isomorphism(self, other, morphism) noexcept
+    cpdef _equitable_partition(self, P=*)
+    cpdef _is_isomorphic(self, other, certificate=*)
+    cpdef _isomorphism(self, other)
+    cpdef _is_isomorphism(self, other, morphism)
     cdef bint __is_isomorphism(self, BasisExchangeMatroid other, morphism) noexcept
 
-    cpdef is_valid(self) noexcept
+    cpdef is_valid(self, certificate=*)
 
 cdef bint nxksrd(bitset_s *b, long n, long k, bint succ) noexcept

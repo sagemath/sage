@@ -38,7 +38,7 @@ algorithm. Here is an example of the syntax:
     sage: C.rational_points(algorithm="bn")
     [(0 : 0 : 1), (0 : 1 : 0), (2 : 2 : 1), (2 : 3 : 1), (3 : 1 : 1), (3 : 4 : 1)]
 
-The option ``algorithm="bn`` uses Sage's Singular interface and
+The option ``algorithm="bn"`` uses Sage's Singular interface and
 calls the ``brnoeth`` package.
 
 Here is another example using Sage's ``rational_points`` applied to
@@ -162,14 +162,12 @@ Other methods
 
        sage: singular.LIB("brnoeth.lib")
        sage: s = singular.ring(2,'(x,y)','lp')
-       ...
        sage: f = singular.poly('x3y+y3+x')
-       ...
        sage: klein1 = f.Adj_div(); print(klein1)
        [1]:
           [1]:
-             //   coefficients: ZZ/2
-       //   number of vars : 2
+             // coefficients: ZZ/2...
+       // number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
        //        block   2 : ordering C
@@ -191,14 +189,14 @@ Other methods
        sage: print(klein1)
        [1]:
           [1]:
-             //   coefficients: ZZ/2
-       //   number of vars : 2
+             // coefficients: ZZ/2...
+       // number of vars : 2
        //        block   1 : ordering lp
        //                  : names    x y
        //        block   2 : ordering C
           [2]:
-             //   coefficients: ZZ/2
-       //   number of vars : 3
+             // coefficients: ZZ/2...
+       // number of vars : 3
        //        block   1 : ordering lp
        //                  : names    x y z
        //        block   2 : ordering C
@@ -214,8 +212,8 @@ Other methods
        [5]:
           [1]:
              [1]:
-                //   coefficients: ZZ/2
-       //   number of vars : 3
+                // coefficients: ZZ/2...
+       // number of vars : 3
        //        block   1 : ordering ls
        //                  : names    x y t
        //        block   2 : ordering C
@@ -333,7 +331,7 @@ Singular itself to help an understanding of how the wrapper works.
 
 -  Using Singular's ``BrillNoether`` command (for details see the section
    Brill-Noether in the Singular online documentation
-   (http://www.singular.uni-kl.de/Manual/html/sing_960.htm and the
+   (https://www.singular.uni-kl.de/Manual/4-3-0/sing_2254.htm and the
    paper {CF}):
 
    ::
