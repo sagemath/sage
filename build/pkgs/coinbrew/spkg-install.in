@@ -1,0 +1,1 @@
+sdh_install src/coinbrew "$SAGE_LOCAL"/bin
