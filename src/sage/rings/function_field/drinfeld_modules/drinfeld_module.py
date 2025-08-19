@@ -99,7 +99,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: A.<T> = Fq[]
         sage: psi = DrinfeldModule(A, [T, T+1])
         sage: psi
-        Drinfeld module defined by T |--> (T + 1)*t + T
+        Drinfeld module defined by T |--> (T + 1)*τ + T
         sage: psi.base()
         Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 7^2 over its base
 
