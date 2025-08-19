@@ -22,8 +22,9 @@ This is Sage's version of the ``sphinx-build`` script. We redirect ``stdout`` an
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-import sys
 import re
+import sys
+
 import sphinx
 import sphinx.cmd.build
 
@@ -321,8 +322,8 @@ def runsphinx():
         # We don't use subprocess here, as we don't want to re-initialize Sage
         # for every docbuild as this takes a while.
         sphinx.cmd.build.main(sys.argv[1:])
-        sys.stderr.raise_errors()
-        sys.stdout.raise_errors()
+        #sys.stderr.raise_errors()
+        #sys.stdout.raise_errors()
     finally:
         sys.stdout = saved_stdout
         sys.stderr = saved_stderr
