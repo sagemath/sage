@@ -139,7 +139,6 @@ cdef extern from "gap/records.h" nogil:
 
 
 cdef extern from "gap/stringobj.h" nogil:
-    bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
 

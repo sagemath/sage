@@ -1245,7 +1245,11 @@ cdef class GapElement(RingElement):
             sage: libgap('this is a string').is_string()
             True
         """
-        return IS_STRING(self.value)
+        try:
+            GAP_Enter()
+            return GAP_IsString(self.value)
+        finally:
+            GAP_Leave()
 
     def is_permutation(self):
         r"""
