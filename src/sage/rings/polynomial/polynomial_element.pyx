@@ -7307,10 +7307,10 @@ cdef class Polynomial(CommutativePolynomial):
             TypeError: only integral or rational polynomials available in Regina
         """
         try:
-            data = [ZZ(c) for c in p.list(copy=False)]
+            data = [ZZ(c) for c in self.list(copy=False)]
         except TypeError:
             try:
-                data = [QQ(c) for c in p.list(copy=False)]
+                data = [QQ(c) for c in self.list(copy=False)]
             except TypeError:
                 raise TypeError('only integral or rational polynomials available in Regina')
         return regina.Polynomial(data)

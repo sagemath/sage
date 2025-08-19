@@ -397,10 +397,10 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             TypeError: only two-variate Laurent polynomials available in Regina
         """
         from sage.rings.integer_ring import ZZ
-        if p.parent().ngens() > 2:
+        if self.parent().ngens() > 2:
             raise TypeError('only two-variate Laurent polynomials available in Regina')
         try:
-            pl = [(k[0], k[1], ZZ(v)) for k, v in p.monomial_coefficients().items()]
+            pl = [(k[0], k[1], ZZ(v)) for k, v in self.monomial_coefficients().items()]
         except TypeError:
             raise TypeError('only integral Laurent polynomials available in Regina')
         return regina.Laurent2(pl)

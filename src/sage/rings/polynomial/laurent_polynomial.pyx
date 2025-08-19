@@ -620,7 +620,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         from sage.rings.integer_ring import ZZ
         try:
-            return regina.Laurent(int(p.valuation()), [ZZ(c) for c in p])
+            return regina.Laurent(int(self.valuation()), [ZZ(c) for c in self])
         except TypeError:
             raise TypeError('only integral Laurent polynomials available in Regina')
 
