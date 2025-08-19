@@ -230,12 +230,11 @@ class DrinfeldModule_finite(DrinfeldModule):
 
     def frobenius_endomorphism(self):
         r"""
-        Return the Frobenius endomorphism of the Drinfeld module as a
-        morphism object.
+        Return the Frobenius endomorphism of the Drinfeld module.
 
-        Let `q` be the order of the base field of the function ring. The
-        *Frobenius endomorphism* is defined as the endomorphism whose
-        defining Ore polynomial is `\tau^q`.
+        The *Frobenius endomorphism* is defined by the Ore polynomial
+        `tau^n`, where `n` is the degree of the base field `K` over
+        `\mathbb F_q`.
 
         EXAMPLES::
 

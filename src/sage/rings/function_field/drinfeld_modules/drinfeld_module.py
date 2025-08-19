@@ -92,14 +92,16 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi
         Drinfeld module defined by T |--> τ^2 + 4*τ + z
 
-    ::
+    When the given coefficients naturally live in a ring, the
+    Drinfeld module is constructed over the fraction field::
 
         sage: Fq = GF(49)
         sage: A.<T> = Fq[]
-        sage: K = Frac(A)
-        sage: psi = DrinfeldModule(A, [K(T), T+1])
+        sage: psi = DrinfeldModule(A, [T, T+1])
         sage: psi
         Drinfeld module defined by T |--> (T + 1)*τ + T
+        sage: psi.base()
+        Fraction Field of Univariate Polynomial Ring in T over Finite Field in z2 of size 7^2 over its base
 
     .. NOTE::
 
@@ -150,8 +152,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     The above Drinfeld module is finite; it can also be infinite::
 
-        sage: L = Frac(A)
-        sage: psi = DrinfeldModule(A, [L(T), 1, T^3 + T + 1])
+        sage: psi = DrinfeldModule(A, [T, 1, T^3 + T + 1])
         sage: psi
         Drinfeld module defined by T |--> (T^3 + T + 1)*τ^2 + τ + T
 
@@ -434,16 +435,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ...
         ValueError: generator must have positive degree
 
-    The constant coefficient must be nonzero::
-
-        sage: Fq = GF(2)
-        sage: K.<z> = Fq.extension(2)
-        sage: A.<T> = Fq[]
-        sage: DrinfeldModule(A, [K(0), K(1)])
-        Traceback (most recent call last):
-        ...
-        ValueError: constant coefficient must be nonzero
-
     The coefficients of the generator must lie in an
     `\GF{q}[T]`-field, where `\GF{q}[T]` is the function
     ring of the Drinfeld module::
@@ -551,8 +542,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         ::
 
-            sage: K = Frac(A)
-            sage: phi = DrinfeldModule(A, [K(T), 1])
+            sage: phi = DrinfeldModule(A, [T, 1])
             sage: isinstance(psi, DrinfeldModule_finite)
             False
         """
@@ -583,12 +573,13 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             ore_polring = None
             # Base ring without morphism structure:
             base_field = Sequence(gen).universe()
+            try:
+                base_field = base_field.fraction_field()
+            except AttributeError:
+                pass
         else:
             raise TypeError('generator must be list of coefficients or Ore '
                             'polynomial')
-        # Constant coefficient must be nonzero:
-        if gen[0].is_zero():
-            raise ValueError('constant coefficient must be nonzero')
         # The coefficients are in a base field that has coercion from Fq:
         if not (hasattr(base_field, 'has_coerce_map_from') and
                 base_field.has_coerce_map_from(function_ring.base_ring())):
@@ -913,8 +904,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
             sage: phi.basic_j_invariant_parameters()
             [((1,), (31, 1)),
@@ -948,8 +938,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         One can specify the list of coefficients indices to be
         considered in the computation::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, T, 1, T])
             sage: phi.basic_j_invariant_parameters([1, 2])
             [((1,), (7, 1)),
@@ -962,8 +951,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, 0, T+1, T^2 + 1])
             sage: phi.basic_j_invariant_parameters([1, 'x'])
             Traceback (most recent call last):
@@ -1100,8 +1088,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         ::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, T + 2, T+1, 1])
             sage: J_phi = phi.basic_j_invariants(); J_phi
             {((1,), (31, 1)): T^31 + 2*T^30 + 2*T^26 + 4*T^25 + 2*T^6 + 4*T^5 + 4*T + 3,
@@ -1267,8 +1254,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         characteristic; that is why an error is raised::
 
             sage: B.<Y> = Fq[]
-            sage: L = Frac(B)
-            sage: phi = DrinfeldModule(A, [L(2), L(1)])
+            sage: phi = DrinfeldModule(A, [B(2), B(1)])
             sage: phi.height()
             Traceback (most recent call last):
             ...
@@ -1458,8 +1444,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: phi.is_finite()
             True
             sage: B.<Y> = Fq[]
-            sage: L = Frac(B)
-            sage: psi = DrinfeldModule(A, [L(2), L(1)])
+            sage: psi = DrinfeldModule(A, [B(2), B(1)])
             sage: psi.is_finite()
             False
         """
@@ -1564,8 +1549,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         ::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, T^2, 1, T + 1, T^3])
             sage: phi.j_invariant(1)
             T^309
@@ -1591,8 +1575,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         The list of all basic `j`-invariant parameters can be retrieved
         using the method :meth:`basic_j_invariant_parameters`::
 
-            sage: A = GF(3)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(3)[]
             sage: phi = DrinfeldModule(A, [T, T^2 + T + 1, 0, T^4 + 1, T - 1])
             sage: param = phi.basic_j_invariant_parameters(nonzero=True)
             sage: phi.j_invariant(param[1])
@@ -1602,8 +1585,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         TESTS::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, T^2, 1, T + 1, T^3])
             sage: phi.j_invariant()
             Traceback (most recent call last):
@@ -1743,8 +1725,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: A = GF(3)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(3)[]
             sage: phi = DrinfeldModule(A, [T, 1, T+1, T^3, T^6])
             sage: jk_inv = phi.jk_invariants(); jk_inv
             {1: 1/T^6, 2: (T^10 + T^9 + T + 1)/T^6, 3: T^42}
