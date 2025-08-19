@@ -147,9 +147,10 @@ class CartesianProduct(UniqueRepresentation, Parent):
             return f"The Cartesian product of {self._sets}"
         first = self._sets[0]
         all_same = all(element == first for element in self._sets)
-        return (f"The Cartesian product of {len(self._sets)} copies of {first}" 
-                if all_same 
-                else f"The Cartesian product of {self._sets}")
+        if all_same:
+            return f"The Cartesian product of {len(self._sets)} copies of {first}"
+        else:
+            return f"The Cartesian product of {self._sets}"
 
     def __contains__(self, x):
         """
