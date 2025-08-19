@@ -393,6 +393,41 @@ cdef class FiniteField(Field):
         if lim == <unsigned long>(-1):
             raise NotImplementedError("iterating over all elements of a large finite field is not supported")
 
+    def absolute_degree(self):
+        """
+        Return the degree of ``self`` over its prime field. That is, if
+        ``self`` has cardinality `p^n`, return `n`.
+
+        EXAMPLES::
+
+            sage: K = GF(7^4)
+            sage: K.absolute_degree()
+            4
+
+        .. WARNING::
+
+            Depending on how they are constructed, some finite fields in Sage
+            can return `1` for the method ``degree``, even though their
+            cardinality is not prime.
+
+            ::
+
+                sage: K = GF(5^3)
+                sage: A.<x> = K[]
+                sage: L = K.extension(x+2)
+                sage: L.is_field()
+                True
+                sage: L.cardinality()
+                125
+                sage: L.degree()
+                1
+                sage: L.is_prime_field()
+                False
+                sage: L.absolute_degree()
+                3
+        """
+        return self.degree()
+
     def from_integer(self, n, reverse=False):
         r"""
         Return the finite field element obtained by reinterpreting the base-`p`
@@ -825,7 +860,7 @@ cdef class FiniteField(Field):
 
     def is_prime_field(self):
         """
-        Return ``True`` if ``self`` is a prime field, i.e., has degree 1.
+        Return ``True`` if ``self`` is a prime field, i.e., has absolute degree 1.
 
         EXAMPLES::
 
@@ -834,7 +869,7 @@ cdef class FiniteField(Field):
             sage: GF(3, 'a').is_prime_field()
             True
         """
-        return self.degree() == 1
+        return self.absolute_degree() == 1
 
     def modulus(self):
         r"""

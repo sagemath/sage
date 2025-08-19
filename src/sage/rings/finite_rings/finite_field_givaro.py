@@ -179,6 +179,10 @@ class FiniteField_givaro(FiniteField):
 
             sage: GF(3^4,'a').degree()
             4
+
+        .. SEEALSO::
+
+            :meth:`~sage.rings.finite_rings.finite_field_base.FiniteField.absolute_degree`
         """
         return Integer(self._cache.exponent())
 
