@@ -482,7 +482,15 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
         random_element = _random_element_from_unrank
 
         def _test_random(self, **options):
-            """
+            r"""
+            Check that :meth:`random_element` draws uniformly at
+            random.
+
+            We apply a chi-squared test.  If :meth:`random_element`
+            of :meth:`cardinality` are generic implementations,
+            :meth:`an_element` produces a non-hashable element, or
+            the cardinality is very large, we return immediately.
+
             EXAMPLES::
 
                 sage: R = GF(9)
@@ -495,36 +503,46 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 sage: C = cartesian_product([list(range(5)) for _ in range(5)])
                 sage: C._test_random()
             """
+            if (self.random_element == self._random_element_from_unrank or
+                self.cardinality == self._cardinality_from_iterator):
+                return
             from sage.probability.probability_distribution import RealDistribution
             from sage.rings.infinity import Infinity
+            from collections import Counter
             tester = self._tester(**options)
             n = self.cardinality()
-            if n is Infinity or n == 1:
+            if not n or n == 1:
                 return
-            T = RealDistribution('chisquared', n-1)
-            critical = T.cum_distribution_function_inv(0.99)
-            tester.assertFalse(critical.is_NaN())
             try:
-                d = {e: 0 for e in self}
+                hash(self.an_element())
             except TypeError:
                 return
-            E = 5
-            N = E * n
-            for _ in range(N):
-                x = self.random_element()
-                d[x] += 1
-            chi_2 = sum(float(o) ** 2 for o in d.values()) / float(E) - float(N)
+
+            T = RealDistribution('chisquared', n-1)
+            critical = T.cum_distribution_function_inv(0.995)
+            if critical.is_NaN():
+                # the cardinality is too large
+                return
+            N = min(3 * n, 3000)
+            d = Counter(self.random_element() for _ in range(N))
+            E = float(N) / float(n)
+            chi_2 = sum(float(o) ** 2 for o in d.values()) / E - float(N)
             tester.assertLessEqual(chi_2, critical)
 
         def _test_rank(self, **options):
             r"""
-            Check that the methods :meth:`rank` and
-            :meth:`unrank` are consistent.
+            Check that :meth:`rank` and :meth:`unrank` are
+            consistent.
+
+            If :meth:`rank` is the implementations, we return
+            immediately.
 
             EXAMPLES::
 
                 sage: Permutations([1,1,1,2,3])._test_rank()
             """
+            if self.rank == self._rank_from_iterator:
+                return
             from sage.misc.prandom import sample
             tester = self._tester(**options)
             n = self.cardinality()
