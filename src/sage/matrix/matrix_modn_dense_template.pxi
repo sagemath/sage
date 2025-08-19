@@ -184,9 +184,6 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     cdef ModField *F = new ModField(<long>modulus)
     cdef size_t* P = <size_t*>check_allocarray(nrows, sizeof(size_t))
     cdef size_t* Q = <size_t*>check_allocarray(ncols, sizeof(size_t))
-
-    cdef size_t* Qmath = <size_t*>check_allocarray(ncols, sizeof(size_t))
-    cdef size_t* Qtmp = <size_t*>check_allocarray(ncols, sizeof(size_t))
     cdef size_t* Qperm = <size_t*>check_allocarray(ncols, sizeof(size_t))
 
     cdef size_t* rrp = <size_t*>check_allocarray(nrows, sizeof(size_t))
@@ -248,11 +245,9 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
 
     sig_free(P)
     sig_free(Q)
+    sig_free(Qperm)
     sig_free(rrp)
     sig_free(crp)
-    sig_free(Qmath)
-    sig_free(Qtmp)
-    sig_free(Qperm)
     del F
     return r, pivots, pivot_rows
 
@@ -1677,7 +1672,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             ....:     A = random_matrix(GF(13), 10, 10)
             sage: MS = parent(A)
             sage: B = A.augment(MS(1))
-            sage: rrp = B.echelonize()
+            sage: B.echelonize()
             sage: A.rank()
             10
             sage: C = B.submatrix(0,10,10,10)
