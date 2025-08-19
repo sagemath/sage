@@ -1,5 +1,5 @@
 """Classes for docstring parsing and formatting."""
-# https://github.com/sphinx-doc/sphinx/tree/master/sphinx/ext/napoleon
+# Heavily inspired by https://github.com/sphinx-doc/sphinx/tree/master/sphinx/ext/napoleon
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from sphinx.util.typing import get_type_hints, stringify_annotation
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
+from typing import TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,10 @@ _enumerated_list_regex = re.compile(
 )
 
 
-class Deque[T](collections.deque[T]):
+T = TypeVar("T")
+
+
+class Deque(collections.deque[T]):
     """A subclass of deque that mimics ``pockets.iterators.modify_iter``.
 
     The `.Deque.get` and `.Deque.next` methods are added.
@@ -50,7 +53,7 @@ class Deque[T](collections.deque[T]):
         """Return the nth element of the stack, or ``self.sentinel`` if n is
         greater than the stack size.
         """
-        return self[n] if n < len(self) else self.sentinel
+        return self[n] if n < len(self) else self.sentinel  # type: ignore[return-value]
 
     def next(self) -> T:
         if self:
@@ -165,7 +168,8 @@ class DoctestTransformer:
             _name, _desc = self._consume_field()
             if multiple and _name:
                 fields.extend(
-                    (name.strip().strip(r"`").strip(), _desc) for name in _name.split(",")
+                    (name.strip().strip(r"`").strip(), _desc)
+                    for name in _name.split(",")
                 )
             elif _name or _desc:
                 fields.append((_name.strip().strip(r"`").strip(), _desc))
