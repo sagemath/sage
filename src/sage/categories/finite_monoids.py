@@ -320,3 +320,16 @@ class FiniteMonoids(CategoryWithAxiom):
         class ElementMethods:
             # needed otherwise __invert__ from FiniteMonoids will override this
             __invert__ = sage.categories.magmas.Magmas.Unital.CartesianProducts.ElementMethods.__invert__
+
+        def extra_super_categories(self):
+            r"""
+            Implement the fact that this structure is stable under (finite) Cartesian
+            products. Also to ensure this base class appears before ``FiniteMonoids``.
+
+            TESTS::
+
+                sage: from sage.categories.rngs import Rngs
+                sage: FiniteMonoids().CartesianProducts().extra_super_categories()
+                [Category of finite monoids]
+            """
+            return [FiniteMonoids()]
