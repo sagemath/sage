@@ -1152,9 +1152,9 @@ class Link(SageObject):
           following:
 
           * ``'native'`` -- uses the original Sage implementation
-
           * ``'Khoca'`` -- uses the implementation of the optional package
-            ``khoca`` package is present.
+            ``khoca`` package is present
+
         - ``ring`` -- (default: ``ZZ``) the coefficient ring
         - ``kwds`` -- dictionary of options to be passes to ``Khoca``
 
@@ -1261,19 +1261,19 @@ class Link(SageObject):
 
         - ``kwds`` -- dictionary of options to be passes to ``Khoca``
 
-          * ``reduced`` -- boolean (default ``False``). Set this to
-            ``True`` to obtain reduced homology
+          * ``reduced`` -- boolean (default ``False``); if
+            ``True``, then returns the reduced homology
 
-          * ``equivariant`` -- positive integer (default ``2``). Set this
-            to ``n`` to obtain Khovanov-Rozansky sl(n)-homology with n > 2 of
-            bipartite knots
+          * ``equivariant`` -- positive integer (default ``2``); if this is
+            `n`, then it returns the  Khovanov-Rozansky `sl(n)`-homology
+            with `n > 2` of bipartite knots
 
-          * ``frobenius_algebra`` -- tuple of integers (default ``(0, 0)``. The
+          * ``frobenius_algebra`` -- tuple of integers (default ``(0, 0)``); the
             elements of the tuple are interpreted as modulus coefficients of
-            the underlying frobenius algebra
+            the underlying Frobenius algebra
 
           * ``root`` -- integer specifying a root of the modulus of the
-            frobenius algeba.
+            Frobenius algeba
 
         OUTPUT:
 
@@ -1341,11 +1341,11 @@ class Link(SageObject):
             sage: L.khovanov_homology(degree=1, height=1)
             {}
         """
-        from sage.interfaces.khoca import check_kwds
-        check_kwds(**kwds)
         khoca = False
         if implementation == 'Khoca':
             khoca = True
+            from sage.interfaces.khoca import check_kwds
+            check_kwds(**kwds)
         elif implementation != 'native':
             raise ValueError('%s is not a recognized implementation')
 

@@ -4,14 +4,14 @@ Interface to Khoca
 Khoca is computer program writen by Lukas Lewark to calculate sl(N)-homology
 of knots and links. It calculates the following:
 
-    * Khovanov sl(2)-homology of arbitrary links, given as a braid or in PD code.
-    * Khovanov-Rozansky sl(N)-homology with N > 2 of bipartite knots, given by a
-      certain encoding of a matched diagram of the knot.
-    * Homology over the integers, the rationals or a prime field.
-    * Either equivariant homology, or homology with an arbitrary fixed potential.
-    * All pages of the spectral sequence of filtered homology over a field.
-    * Reduced and unreduced homology.
-    * Homology of sums and mirror images of knots.
+* Khovanov sl(2)-homology of arbitrary links, given as a braid or in PD code.
+* Khovanov-Rozansky `sl(N)`-homology with `N > 2` of bipartite knots, given by a
+  certain encoding of a matched diagram of the knot.
+* Homology over the integers, the rationals or a prime field.
+* Either equivariant homology, or homology with an arbitrary fixed potential.
+* All pages of the spectral sequence of filtered homology over a field.
+* Reduced and unreduced homology.
+* Homology of sums and mirror images of knots.
 
 For more details please have a look at the `Khoca repository <https://github.com/LLewark/khoca>`__.
 If you are using khoca for a project or publication, please cite the web page or the literature
@@ -24,7 +24,6 @@ The Khoca interface will only work if the optional Sage package Khoca is install
 AUTHORS:
 
 - Sebastian Oehms (2025):
-
 """
 
 ##############################################################################
@@ -124,7 +123,7 @@ def khoca_raw_data(link, ring, red_typ=True, **kwds):
 
     INPUT:
 
-    - ``link`` -- instance of class :class:`~sage.knots.link.Link`.
+    - ``link`` -- :class:`~sage.knots.link.Link`
     - ``ring`` -- the coefficient ring
     - ``kwds`` -- dictionary of options to be passes to ``Khoca``
 
