@@ -116,7 +116,7 @@ def solve_degree2_to_integer_range(a, b, c):
 
     INPUT:
 
-    - ``a``, ``b`` and ``c`` -- coefficients of a second degree equation, ``a``
+    - ``a``, ``b``, ``c`` -- coefficients of a second degree equation, ``a``
       being the coefficient of the higher degree term
 
     EXAMPLES::

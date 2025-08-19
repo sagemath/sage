@@ -991,7 +991,7 @@ class HyperbolicIsometryKM(HyperbolicIsometry):
 
     INPUT:
 
-    - a matrix in `SO(2,1)`
+    - ``p`` -- a matrix in `SO(2,1)`
 
     EXAMPLES::
 

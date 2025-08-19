@@ -1266,7 +1266,7 @@ class BooleanFormula:
 
         INPUT:
 
-        - ``tree`` a list; this represents a branch
+        - ``tree`` -- a list; this represents a branch
           of a parse tree
 
         OUTPUT: a new list

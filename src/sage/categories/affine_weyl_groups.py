@@ -218,7 +218,7 @@ class AffineWeylGroups(Category_singleton):
 
             INPUT:
 
-            - ``self`` is affine Grassmannian element of the affine Weyl group of type `A_k^{(1)}` (i.e. all reduced words end in 0)
+            - ``self`` -- an affine Grassmannian element of the affine Weyl group of type `A_k^{(1)}` (i.e. all reduced words end in 0)
 
             OUTPUT: `k`-bounded partition
 

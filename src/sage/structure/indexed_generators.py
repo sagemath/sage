@@ -204,23 +204,23 @@ class IndexedGenerators:
 
         INPUT:
 
-        All of the input is optional; if present, it should be
-        in the form of keyword pairs, such as
-        ``latex_bracket='('``.  The allowable keywords are:
+        - ``kwds`` -- All of the input is optional; if present, it should be
+          in the form of keyword pairs, such as
+          ``latex_bracket='('``.  The allowable keywords are:
 
-        - ``prefix``
-        - ``latex_prefix``
-        - ``names``
-        - ``latex_names``
-        - ``bracket``
-        - ``latex_bracket``
-        - ``scalar_mult``
-        - ``latex_scalar_mult``
-        - ``tensor_symbol``
-        - ``string_quotes``
-        - ``sorting_key``
-        - ``sorting_reverse``
-        - ``iterate_key``
+          - ``prefix``
+          - ``latex_prefix``
+          - ``names``
+          - ``latex_names``
+          - ``bracket``
+          - ``latex_bracket``
+          - ``scalar_mult``
+          - ``latex_scalar_mult``
+          - ``tensor_symbol``
+          - ``string_quotes``
+          - ``sorting_key``
+          - ``sorting_reverse``
+          - ``iterate_key``
 
         See the documentation for :class:`IndexedGenerators` for
         descriptions of the effects of setting each of these options.

@@ -47,11 +47,12 @@ def GammaH_constructor(level, H):
 
     - ``level`` -- integer
     - ``H`` -- either 0, 1, or a list
-        * If H is a list, return `\Gamma_H(N)`, where `H`
-          is the subgroup of `(\ZZ/N\ZZ)^*` **generated** by the
-          elements of the list.
-        * If H = 0, returns `\Gamma_0(N)`.
-        * If H = 1, returns `\Gamma_1(N)`.
+
+      * If H is a list, return `\Gamma_H(N)`, where `H`
+        is the subgroup of `(\ZZ/N\ZZ)^*` **generated** by the
+        elements of the list.
+      * If H = 0, returns `\Gamma_0(N)`.
+      * If H = 1, returns `\Gamma_1(N)`.
 
     EXAMPLES::
 

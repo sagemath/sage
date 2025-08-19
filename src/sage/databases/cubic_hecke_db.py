@@ -929,6 +929,7 @@ class CubicHeckeFileCache(SageObject):
         r"""
         Return the matrix representations of the given monomial (in Tietze form)
         if it has been stored in the file cache before.
+
         INPUT:
 
         - ``representation_type`` -- an element of

@@ -284,7 +284,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
     INPUT:
 
     - ``n`` -- integer
-    - ``algorithm``:
+    - ``algorithm`` -- one of the following:
 
       - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
         and 'bernmm' for larger values (this is just a heuristic, and not guaranteed
@@ -4052,8 +4052,8 @@ def multinomial(*ks):
 
     INPUT:
 
-    - either an arbitrary number of integer arguments `k_1,\dots,k_n`
-    - or an iterable (e.g. a list) of integers `[k_1,\dots,k_n]`
+    - ``*ks`` -- either an arbitrary number of integer arguments `k_1,\dots,k_n`
+      or an iterable (e.g. a list) of integers `[k_1,\dots,k_n]`
 
     OUTPUT: the integer:
 

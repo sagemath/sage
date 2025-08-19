@@ -75,9 +75,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sqlite3 as sqlite
 import os
 import re
+import sqlite3 as sqlite
+
 from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
 
@@ -413,7 +414,7 @@ class SQLQuery(SageObject):
         - ``query_dict`` -- dictionary specifying the query itself. The
           format is::
 
-              {'table_name':'tblname', 'display_cols':['col1', 'col2','col3'], 'expression': [col, operator, value]}
+            {'table_name':'tblname', 'display_cols':['col1', 'col2','col3'], 'expression': [col, operator, value]}
 
         NOTE:
             Every SQL type we are using is ultimately represented as a string,
@@ -720,7 +721,7 @@ class SQLQuery(SageObject):
           the new query. (Must include a mapping for all tables, including
           those previously joined in either query). Structure is given by::
 
-              {'join_table1':('corr_base_col1', 'col1'), 'join_table2':('corr_base_col2', 'col2')}
+            {'join_table1':('corr_base_col1', 'col1'), 'join_table2':('corr_base_col2', 'col2')}
 
           where ``join_table1`` is to be joined with ``join_table`` on
           ``join_table.corr_base_col1 = join_table1.col1``
@@ -848,11 +849,13 @@ class SQLQuery(SageObject):
         INPUT:
 
         - ``other`` -- the ``SQLQuery`` to union with
+
         - ``join_table`` -- base table to join on (This table should have at
           least one column in each table to join on).
+
         - ``join_dict`` -- dictionary that represents the join structure for
           the new query. (Must include a mapping for all tables, including
-          those previously joined in either query). Structure is given by::
+          those previously joined in either query). Structure is given by:
 
               {'join_table1':('corr_base_col1', 'col1'), 'join_table2':('corr_base_col2', 'col2')}
 

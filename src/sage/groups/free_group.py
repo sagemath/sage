@@ -905,7 +905,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
 
         - ``relations`` -- list/tuple/iterable with the elements of
           the free group
-        - further named arguments, that are passed to the constructor
+        - ``kwds`` -- further named arguments, that are passed to the constructor
           of a finitely presented group
 
         OUTPUT:

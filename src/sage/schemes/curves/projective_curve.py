@@ -642,7 +642,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
 
         INPUT:
 
-        - ``r`` is a rational function on X
+        - ``r`` -- a rational function on X
 
         OUTPUT: list; the divisor of r represented as a list of coefficients
         and points. (TODO: This will change to a more structural output in the

@@ -1023,11 +1023,12 @@ class DiGraphGenerators:
 
         INPUT:
 
-        - ``k`` -- two possibilities for this parameter :
-            - An integer equal to the cardinality of the alphabet to use, that
-              is, the degree of the digraph to be produced.
-            - An iterable object to be used as the set of letters. The degree
-              of the resulting digraph is the cardinality of the set of letters.
+        - ``k`` -- two possibilities for this parameter:
+
+          - An integer equal to the cardinality of the alphabet to use, that
+            is, the degree of the digraph to be produced.
+          - An iterable object to be used as the set of letters. The degree
+            of the resulting digraph is the cardinality of the set of letters.
 
         - ``n`` -- integer; length of words in the De Bruijn digraph when
           ``vertices == 'strings'``, and also the diameter of the digraph

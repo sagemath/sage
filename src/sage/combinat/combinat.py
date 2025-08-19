@@ -806,7 +806,7 @@ def stirling_number1(n, k, algorithm='gap') -> Integer:
 
     - ``n`` -- nonnegative machine-size integer
     - ``k`` -- nonnegative machine-size integer
-    - ``algorithm``:
+    - ``algorithm`` -- one of the following:
 
       * ``'gap'`` -- default; use GAP's ``Stirling1`` function
       * ``'flint'`` -- use flint's ``arith_stirling_number_1u`` function
@@ -864,7 +864,7 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
 
     - ``n`` -- nonnegative machine-size integer
     - ``k`` -- nonnegative machine-size integer
-    - ``algorithm``:
+    - ``algorithm`` -- one of the following:
 
       * ``None`` -- default; use native implementation
       * ``'flint'`` -- use flint's ``arith_stirling_number_2`` function
