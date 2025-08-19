@@ -50,8 +50,6 @@ EXAMPLES::
 # ****************************************************************************
 from itertools import repeat, product
 
-
-
 from sage.structure.element import parent
 from sage.structure.parent import Parent
 from sage.structure.element import Element
