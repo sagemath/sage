@@ -175,7 +175,12 @@ cdef inline bint linbox_is_zero(celement modulus, celement* entries, Py_ssize_t 
 
 cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
     """
-    Return the reduced row echelon form of this matrix.
+    In-place transform this matrix into its reduced row echelon form, and return
+    the rank `r` of this matrix as well as two lists of length `r`, sorted
+    increasingly. The first list gives the column rank profile of this matrix
+    (which is also that of its reduced row echelon form) while the second list
+    gives the row rank profile of the input matrix (which may differ from that
+    of its reduced row echelon form).
     """
     if linbox_is_zero(modulus, entries, nrows, ncols):
         return 0, [], []
@@ -252,6 +257,12 @@ cdef inline linbox_echelonize(celement modulus, celement* entries, Py_ssize_t nr
     return r, pivots, pivot_rows
 
 cdef inline linbox_echelonize_efd(celement modulus, celement* entries, Py_ssize_t nrows, Py_ssize_t ncols):
+    """
+    In-place transform this matrix into its reduced row echelon form, and return
+    the rank `r` of this matrix as well as a list of length `r`, sorted
+    increasingly. This list gives the column rank profile of this matrix
+    (which is also that of its reduced row echelon form).
+    """
     # See trac #13878: This is to avoid sending invalid data to linbox,
     # which would yield a segfault in Sage's debug version. TODO: Fix
     # that bug upstream.
