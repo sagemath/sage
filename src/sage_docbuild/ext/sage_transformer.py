@@ -148,14 +148,42 @@ class DoctestTransformer:
         line = self._lines.next()
         match = re.match(_field_regex, line)
         if match:
-            _name = self._escape_args_and_kwargs(match.group("name").strip())
+            _name = match.group("name").strip()
             _desc = match.group("rest").strip()
             indent = self._get_indent(line) + 1
             _descs = [_desc, *self._dedent(self._consume_indented_block(indent))]
             _descs = self.__class__(_descs).transform()
             return _name, _descs
         else:
-            raise ValueError(f"Invalid field line: {line}")
+            return "", []
+            # TODO: In the future, throw an error in case of errors:
+            # for exception in (
+            #     "Input is similar to ``desolve`` command",
+            #     "See IPython documentation.",
+            #     "See the Jupyter documentation.",
+            #     "See :class:`SchemeHomset_generic`.",
+            #     "One of the following:",
+            #     "The :func:`matrix` command takes",
+            #     "The first two arguments specify the base ring",
+            #     "The constructor may be called in any of the following ways",
+            #     "Description of the set:",
+            #     "There are four input formats",
+            #     "There are several ways to construct an",
+            #     "- the inputs are the same as for",
+            #     "There are two ways to call this."
+            #     "The following keywords are used in most cases",
+            #     "The input can be either",
+            #     "Valid keywords are:",
+            #     "Two potential inputs are accepted",
+            #     "Something that defines an affine space",
+            #     "Can be one of the following",
+            #     "The following forms are all accepted",
+            #     "Three possibilities are offered",
+            # ):
+            #     if exception in line:
+            #         # Don't fail
+            #         return "", []
+            # raise ValueError(f"Invalid field line: {line}")
 
     def _consume_fields(self, multiple: bool = False) -> list[tuple[str, list[str]]]:
         """
@@ -168,11 +196,11 @@ class DoctestTransformer:
             _name, _desc = self._consume_field()
             if multiple and _name:
                 fields.extend(
-                    (name.strip().strip(r"`").strip(), _desc)
+                    (self._sanitize_name(name), _desc)
                     for name in _name.split(",")
                 )
             elif _name or _desc:
-                fields.append((_name.strip().strip(r"`").strip(), _desc))
+                fields.append((self._sanitize_name(_name), _desc))
         return fields
 
     def _consume_inline_attribute(self) -> tuple[str, list[str]]:
@@ -216,7 +244,9 @@ class DoctestTransformer:
             min_indent = self._get_min_indent(lines)
             return [line[min_indent:] for line in lines]
 
-    def _escape_args_and_kwargs(self, name: str) -> str:
+    def _sanitize_name(self, name: str) -> str:
+        name = name.strip().strip(r"`").strip()
+        # Escape args and kwargs so that they are not rendered as emphasized string
         if name[:2] == "**":
             return r"\*\*" + name[2:]
         elif name[:1] == "*":
