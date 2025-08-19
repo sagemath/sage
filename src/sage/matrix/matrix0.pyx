@@ -3084,6 +3084,33 @@ cdef class Matrix(sage.structure.element.Matrix):
         for c from start_col <= c < self._ncols:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
 
+    def add_multiple_of_row_end(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t end_col):
+        r"""
+        Add s times row j to row i for columns 0 to ``end_col``.
+
+        EXAMPLES::
+
+            sage: m = matrix(3, range(9)); m
+            [0 1 2]
+            [3 4 5]
+            [6 7 8]
+            sage: m.add_multiple_of_row_end(0, 1, -2, 1); m
+            [-6 -7  2]
+            [ 3  4  5]
+            [ 6  7  8]
+        """
+        self.check_row_bounds_and_mutability(i, j)
+        try:
+            s = self._coerce_element(s)
+            self.add_multiple_of_row_end_c(i, j, s, end_col)
+        except TypeError:
+            raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring instead.' % (s.parent(), self.base_ring()))
+
+    cdef add_multiple_of_row_end_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t end_col):
+        cdef Py_ssize_t c
+        for c from 0 <= c <= end_col:
+            self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
+
     def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
         """
         Add s times row j to row i, returning new matrix.
