@@ -53,9 +53,11 @@ setenv()
 from sage_setup.command.sage_build_cython import sage_build_cython
 from sage_setup.command.sage_build_ext import sage_build_ext
 from sage_setup.command.sage_install import sage_develop, sage_install
+from sage_setup.command.sage_egg_info import sage_egg_info
 
 cmdclass = dict(build_cython=sage_build_cython,
                 build_ext=sage_build_ext,
+                egg_info=sage_egg_info,
                 develop=sage_develop,
                 install=sage_install)
 
