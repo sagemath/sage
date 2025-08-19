@@ -1690,6 +1690,14 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: ~A == C
             True
 
+            sage: B = A.augment(MS(1))
+            sage: B.echelonize(algorithm='linbox')
+            sage: A.rank()
+            10
+            sage: C = B.submatrix(0,10,10,10)
+            sage: ~A == C
+            True
+
         ::
 
             sage: A = random_matrix(Integers(10), 10, 20)
@@ -1786,7 +1794,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
             sage: for p in (3,17,97,127,1048573):
             ....:    for i in range(10):
-            ....:        A = random_matrix(GF(3), 100, 100)
+            ....:        A = random_matrix(GF(p), 100, 100)
             ....:        A.echelonize(algorithm='all')
         """
         x = self.fetch('in_echelon_form')
