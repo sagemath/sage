@@ -854,8 +854,6 @@ class DiffMap(ContinuousMap):
 
         INPUT:
 
-        One of the following:
-
         - ``tensor_or_codomain_subset`` -- one of the following:
 
           - a :class:`~sage.manifolds.differentiable.tensorfield.TensorField`;

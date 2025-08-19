@@ -212,6 +212,7 @@ docs = [
   "sphinx",
   "sphinx-copybutton",
   "sphinx-inline-tabs",
+  "sphinx-autodoc-typehints",
   "jupyter-sphinx",
   "furo",
   "python-dateutil",
