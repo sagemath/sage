@@ -1206,6 +1206,97 @@ class FractionField_1poly_field(FractionField_generic):
 
         return super()._coerce_map_from_(R)
 
+    def completion(self, p=None, prec=20, name=None, residue_name=None, names=None):
+        r"""
+        Return the completion of this rational functions ring with
+        respect to the irreducible polynomial `p`.
+
+        INPUT:
+
+        - ``p`` (default: ``None``) -- an irreduclible polynomial or
+          ``Infiniity``; if ``None``, the generator of this polynomial
+          ring
+
+        - ``prec`` (default: 20) -- an integer or ``Infinity``; if
+          ``Infinity``, return a
+          :class:`sage.rings.lazy_series_ring.LazyPowerSeriesRing`.
+
+        - ``name`` (default: ``None``) -- a string, the variable name;
+          if ``None`` and the completion is at `0`, the name of the
+          variable is this polynomial ring is reused
+
+        - ``residue_name`` (default: ``None``) -- a string, the variable
+          name for the residue field (only relevant for places of degree
+          at least `2`)
+
+        - ``names`` (default: ``None``) -- a tuple of strings with the
+          previous variable names
+
+        EXAMPLES::
+
+            sage: A.<x> = PolynomialRing(QQ)
+            sage: K = A.fraction_field()
+
+        Without any argument, this method constructs the completion at
+        the ideal `x`::
+
+            sage: Kx = K.completion()
+            sage: Kx
+            Laurent Series Ring in x over Rational Field
+
+        We can construct the completion at other ideals by passing in an
+        irreducible polynomial. In this case, we should also provide a name
+        for the uniformizer (set to be `x - a` where `a` is a root of the
+        given polynomial)::
+
+            sage: K1.<u> = K.completion(x - 1)
+            sage: K1
+            Laurent Series Ring in u over Rational Field
+            sage: x - u
+            1
+
+        ::
+
+            sage: K2.<v, a> = K.completion(x^2 + x + 1)
+            sage: K2
+            Laurent Series Ring in v over Number Field in a with defining polynomial x^2 + x + 1
+            sage: a^2 + a + 1
+            0
+            sage: x - v
+            a
+
+        When the precision is infinity, a lazy series ring is returned::
+
+            sage: # needs sage.combinat
+            sage: L = K.completion(x, prec=oo); L
+            Lazy Laurent Series Ring in x over Rational Field
+        """
+        from sage.rings.polynomial.morphism import MorphismToCompletion
+        if names is not None:
+            if name is not None or residue_name is not None:
+                raise ValueError("")
+            if not isinstance(names, (list, tuple)):
+                raise TypeError("names must a a list or a tuple")
+            name = names[0]
+            if len(names) > 1:
+                residue_name = names[1]
+        x = self.gen()
+        if p is None:
+            p = x
+        if p == x and name is None:
+            name = self.variable_name()
+        incl = MorphismToCompletion(self, p, prec, name, residue_name)
+        C = incl.codomain()
+        if C.has_coerce_map_from(self):
+            if C(x) != incl(x):
+                raise ValueError("a different coercion map is already set; try to change the variable name")
+        else:
+            C.register_coercion(incl)
+        ring = self.ring()
+        if not C.has_coerce_map_from(ring):
+            C.register_coercion(incl * self.coerce_map_from(ring))
+        return C
+
 
 class FractionFieldEmbedding(DefaultConvertMap_unique):
     r"""
