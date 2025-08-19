@@ -1051,7 +1051,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         EXAMPLES:
 
-        One can check the first few terms of sequence :oeis:`220754`::
+        One can check the first few terms of sequence :oeis:`A220754`::
 
             sage: [Constellations(4, k).cardinality() for k in range(1, 6)]
             [1, 7, 194, 12858, 1647384]
