@@ -1366,6 +1366,39 @@ class UnivariateProduct(GenericProduct):
 
     CartesianProduct = CartesianProductGrowthGroups
 
+    class Element(GenericProduct.Element):
+
+        def _le_(self, other):
+            r"""
+            Return if this element is less or equal to ``other``.
+
+            INPUT:
+
+            - ``other`` -- an element of :class:`UnivariateProduct`
+
+            OUTPUT: boolean
+
+            .. NOTE::
+
+                This override method produces exactly the same output
+                as the overridden method (in the base class), but it
+                is faster.
+
+            TESTS::
+
+                sage: A.<n> = AsymptoticRing('n^ZZ * log(n)^ZZ', QQ)
+
+            The following line is intended to test the gain in performance.
+            With this override of `_le_`, the test completes with about
+            10 percent time less.
+
+            ::
+
+                sage: sum(n^k for k in range(6)).log()  # long time
+                5*log(n) + n^(-1) + ...
+            """
+            return self.value <= other.value
+
 
 class MultivariateProduct(GenericProduct):
     r"""
