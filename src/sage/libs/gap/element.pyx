@@ -259,6 +259,18 @@ cdef Obj make_gap_string(sage_string) except NULL:
 ### generic construction of GapElements ####################################
 ############################################################################
 
+
+# Custom identifiers for the types of GAP objects that have associated
+# GAP_IsFoo() functions in the libgap API.
+cdef enum:
+    OBJ_TYPE_UND = 0
+    OBJ_TYPE_INT = 1
+    OBJ_TYPE_FLT = 2
+    OBJ_TYPE_CHR = 4
+    OBJ_TYPE_STR = 8
+    OBJ_TYPE_LST = 16
+    OBJ_TYPE_REC = 32
+
 cdef GapElement make_any_gap_element(parent, Obj obj):
     """
     Return the GAP element wrapper of ``obj``.
@@ -275,16 +287,31 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         sage: type(x)
         <class 'sage.libs.gap.element.GapElement_String'>
 
-        sage: libgap.eval("['a', 'b', 'c']")   # gap strings are also lists of chars
+    Strings in GAP are lists of characters and vice-versa, but that
+    isn't an efficient representation. Keep this in mind if you call a
+    list function on a string; you may want to convert the results
+    to the more efficient representation afterwards. In the example
+    below, ``UnorderedTuples()`` doesn't know we are dealing with
+    strings, so it returns lists of characters::
+
+        sage: libgap.eval("['a', 'b', 'c']")
         "abc"
-        sage: t = libgap.UnorderedTuples('abc', 2);  t
+        sage: t = libgap.UnorderedTuples('abc', 2)
+        sage: t  # GAP still shows you strings...
         [ "aa", "ab", "ac", "bb", "bc", "cc" ]
+        sage: t.sage()  # but really we have lists of characters
+        [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
+        ['c', 'c']]
         sage: t[1]
         "ab"
         sage: t[1].sage()
+        ['a', 'b']
+        sage: s = t[1].CopyToStringRep()  # make an efficient copy
+        sage: s.sage()
         'ab'
-        sage: t.sage()
-        ['aa', 'ab', 'ac', 'bb', 'bc', 'cc']
+        sage: t[1].ConvertToStringRep()   # convert the original
+        sage: t[1].sage()
+        'ab'
 
     Check that :issue:`18158` is fixed::
 
@@ -295,52 +322,81 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         sage: irr[1]
         0
     """
-    cdef int num
+    if obj is NULL:
+        return make_GapElement(parent, obj)
 
+    # The object's type, if it can be determined from the libgap API.
+    # Defaults to "undefined."
+    cdef int obj_type = OBJ_TYPE_UND
+
+    # Plan A: Determine the type of ``obj`` using the libgap API.
+    # Make all libgap-api calls here, between GAP_Enter/GAP_Leave.
+    # In particular we avoid any *other* functions that may invoke
+    # GAP_Enter/GAP_Leave.
     try:
         GAP_Enter()
-        if obj is NULL:
-            return make_GapElement(parent, obj)
-        num = TNUM_OBJ(obj)
         if GAP_IsInt(obj):
-            return make_GapElement_Integer(parent, obj)
+            obj_type = OBJ_TYPE_INT
         elif GAP_IsMacFloat(obj):
-            return make_GapElement_Float(parent, obj)
-        elif num == T_CYC:
-            return make_GapElement_Cyclotomic(parent, obj)
-        elif num == T_FFE:
-            return make_GapElement_FiniteField(parent, obj)
-        elif num == T_RAT:
-            return make_GapElement_Rational(parent, obj)
-        elif num == T_BOOL:
-            return make_GapElement_Boolean(parent, obj)
-        elif num == T_FUNCTION:
-            return make_GapElement_Function(parent, obj)
-        elif num == T_PERM2 or num == T_PERM4:
-            return make_GapElement_Permutation(parent, obj)
-        elif GAP_IsRecord(obj):
-            return make_GapElement_Record(parent, obj)
-        elif GAP_IsList(obj) and GAP_LenList(obj) == 0:
-            # Empty lists are lists and not strings in Python
-            return make_GapElement_List(parent, obj)
-        elif IsStringConv(obj):
-            # GAP strings are lists, too. Make sure this comes before non-empty make_GapElement_List
-            return make_GapElement_String(parent, obj)
+            obj_type = OBJ_TYPE_FLT
+        elif GAP_IsChar(obj):
+            obj_type = OBJ_TYPE_CHR
+        elif GAP_IsString(obj):
+            # Strings are also lists, so we check for strings (more
+            # specific) before we check for lists (less specific).
+            obj_type = OBJ_TYPE_STR
         elif GAP_IsList(obj):
-            return make_GapElement_List(parent, obj)
-        elif GAP_ValueOfChar(obj) != -1:
-            ch = make_GapElement(parent, obj).IntChar().sage()
-            return make_GapElement_String(parent, make_gap_string(chr(ch)))
-        result = make_GapElement(parent, obj)
-        if num == T_POSOBJ:
-            if result.IsZmodnZObj():
-                return make_GapElement_IntegerMod(parent, obj)
-        if num == T_COMOBJ:
-            if result.IsRing():
-                return make_GapElement_Ring(parent, obj)
-        return result
+            obj_type = OBJ_TYPE_LST
+        elif GAP_IsRecord(obj):
+            obj_type = OBJ_TYPE_REC
     finally:
         GAP_Leave()
+
+    if obj_type == OBJ_TYPE_INT:
+        return make_GapElement_Integer(parent, obj)
+    elif obj_type == OBJ_TYPE_FLT:
+        return make_GapElement_Float(parent, obj)
+    elif obj_type == OBJ_TYPE_CHR:
+        # IntChar is a GAP function call; these do their own GAP_Enter
+        # and GAP_Leave, as does make_gap_string().
+        ch = make_GapElement(parent, obj).IntChar().sage()
+        return make_GapElement_String(parent, make_gap_string(chr(ch)))
+    elif obj_type == OBJ_TYPE_STR:
+        return make_GapElement_String(parent, obj)
+    elif obj_type == OBJ_TYPE_LST:
+        return make_GapElement_List(parent, obj)
+    elif obj_type == OBJ_TYPE_REC:
+        return make_GapElement_Record(parent, obj)
+
+    # Plan B: Use the "private" API to determine the type of ``obj``.
+    # Since TNUM_OBJ does not invoke the public libgap API, it is not
+    # wrapped in GAP_Enter / GAP_Leave.
+    cdef int num = TNUM_OBJ(obj)
+    if num == T_BOOL:
+        return make_GapElement_Boolean(parent, obj)
+    elif num == T_RAT:
+        return make_GapElement_Rational(parent, obj)
+    elif num == T_FUNCTION:
+        return make_GapElement_Function(parent, obj)
+    elif num == T_CYC:
+        return make_GapElement_Cyclotomic(parent, obj)
+    elif num == T_FFE:
+        return make_GapElement_FiniteField(parent, obj)
+    elif num == T_PERM2 or num == T_PERM4:
+        return make_GapElement_Permutation(parent, obj)
+
+    # Plan C: Make a generic element, and then use GAP functions to
+    # check if it's an IntegerMod or a Ring.
+    result = make_GapElement(parent, obj)
+    if num == T_POSOBJ:
+        if result.IsZmodnZObj():
+            return make_GapElement_IntegerMod(parent, obj)
+    if num == T_COMOBJ:
+        if result.IsRing():
+            return make_GapElement_Ring(parent, obj)
+
+    # Plan D: return the generic element.
+    return result
 
 
 ############################################################################

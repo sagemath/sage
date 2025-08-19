@@ -87,7 +87,7 @@ cdef extern from "gap/libgap-api.h" nogil:
     char* GAP_CSTR_STRING(Obj list)
     Obj GAP_MakeStringWithLen(const char* buf, UInt len)
 
-    Int GAP_ValueOfChar(Obj obj)
+    bint GAP_IsChar(Obj obj)
 
 
 cdef extern from "gap/lists.h" nogil:
@@ -139,7 +139,6 @@ cdef extern from "gap/records.h" nogil:
 
 
 cdef extern from "gap/stringobj.h" nogil:
-    bint IsStringConv(Obj obj)
     Obj NEW_STRING(Int)
 
 
