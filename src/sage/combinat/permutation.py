@@ -6959,6 +6959,29 @@ class Permutations_msetk(Permutations_mset):
             yield self.element_class(self, [lmset[x] for x in ktuple],
                                      check=False)
 
+    def rank(self, x):
+        """
+        The rank of an element of ``self``.
+
+        EXAMPLES::
+
+            sage: P = Permutations([1,1,1,2,3], 3)
+            sage: P.rank(P([1,1,1]))
+            0
+        """
+        return self._rank_from_iterator(x)
+
+    def unrank(self, r):
+        """
+        The element of ``self`` with rank ``r``.
+
+        EXAMPLES::
+
+            sage: P = Permutations([1,1,1,2,3], 3)
+            sage: P.unrank(P.rank(P([1,1,2])))
+            [1, 1, 2]
+        """
+        return self._unrank_from_iterator(r)
 
 class Permutations_setk(Permutations_set):
     """

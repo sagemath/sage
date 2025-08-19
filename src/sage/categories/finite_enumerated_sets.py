@@ -516,6 +516,24 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             chi_2 = sum(float(o) ** 2 for o in d.values()) / float(E) - float(N)
             tester.assertLessEqual(chi_2, critical)
 
+        def _test_rank(self, **options):
+            r"""
+            Check that the methods :meth:`rank` and
+            :meth:`unrank` are consistent.
+
+            EXAMPLES::
+
+                sage: Permutations([1,1,1,2,3])._test_rank()
+            """
+            from sage.misc.prandom import sample
+            tester = self._tester(**options)
+            n = self.cardinality()
+            for r in sample(range(n), min(n, 10)):
+                tester.assertEqual(r, self.rank(self.unrank(r)))
+            for _ in range(10):
+                e = self.random_element()
+                tester.assertEqual(e, self.unrank(self.rank(e)))
+
         @cached_method
         def _last_from_iterator(self):
             """
