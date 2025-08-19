@@ -695,6 +695,33 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                                   (p, coeff) in self(x)],
                                  distinct=True)
 
+    def cell_poset_indices(self):
+        r"""
+        Return the underlying set defining the cell poset of ``self``.
+
+        EXAMPLES::
+
+            sage: S = SymmetricGroupAlgebra(GF(3), 5)
+            sage: S.cell_poset_indices()
+            Partitions of the integer 5
+        """
+        return Partitions_n(self.n)
+
+    def cell_poset_comparison(self, x, y):
+        r"""
+        Perform the comparison between ``x`` and ``y`` defining the
+        cell poset of ``self``.
+
+        EXAMPLES::
+
+            sage: S = SymmetricGroupAlgebra(ZZ, 3)
+            sage: P = S.cell_poset_indices()
+            sage: all(S.cell_poset_comparison(x, y) == y.dominates(x)
+            ....:     for x in P for y in P)
+            True
+        """
+        return y.dominates(x)
+
     @cached_method
     def cell_poset(self):
         """
@@ -707,7 +734,11 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             Finite poset containing 5 elements
         """
         from sage.combinat.posets.posets import Poset
-        return Poset([Partitions_n(self.n), lambda x, y: y.dominates(x)])
+        # We iterate in reverse lex order, and lex is compatible with dominance order
+        # Hence, we only need to compare in order
+        PT = list(self.cell_poset_indices())
+        cp = self.cell_poset_comparison
+        return Poset([PT, [[x, y] for i,x in enumerate(PT) for y in PT[:i] if cp(x,y)]])
 
     def cell_module_indices(self, la):
         r"""
@@ -734,26 +765,26 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: S = SymmetricGroupAlgebra(QQ, 3)
             sage: C = S.cellular_basis()
             sage: [S._from_cellular_index(i) for i in C.basis().keys()]
-            [1/6*[1, 2, 3] - 1/6*[1, 3, 2] - 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
-                 + 1/6*[3, 1, 2] - 1/6*[3, 2, 1],
-             1/3*[1, 2, 3] + 1/6*[1, 3, 2] - 1/3*[2, 1, 3] - 1/6*[2, 3, 1]
-                 - 1/6*[3, 1, 2] + 1/6*[3, 2, 1],
+            [1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3]
+              + 1/6*[2, 3, 1] + 1/6*[3, 1, 2] + 1/6*[3, 2, 1],
+             1/3*[1, 2, 3] + 1/6*[1, 3, 2] - 1/3*[2, 1, 3]
+              - 1/6*[2, 3, 1] - 1/6*[3, 1, 2] + 1/6*[3, 2, 1],
              1/3*[1, 3, 2] + 1/3*[2, 3, 1] - 1/3*[3, 1, 2] - 1/3*[3, 2, 1],
              1/4*[1, 3, 2] - 1/4*[2, 3, 1] + 1/4*[3, 1, 2] - 1/4*[3, 2, 1],
              1/3*[1, 2, 3] - 1/6*[1, 3, 2] + 1/3*[2, 1, 3] - 1/6*[2, 3, 1]
-                 - 1/6*[3, 1, 2] - 1/6*[3, 2, 1],
-             1/6*[1, 2, 3] + 1/6*[1, 3, 2] + 1/6*[2, 1, 3]
-                 + 1/6*[2, 3, 1] + 1/6*[3, 1, 2] + 1/6*[3, 2, 1]]
+              - 1/6*[3, 1, 2] - 1/6*[3, 2, 1],
+             1/6*[1, 2, 3] - 1/6*[1, 3, 2] - 1/6*[2, 1, 3] + 1/6*[2, 3, 1]
+              + 1/6*[3, 1, 2] - 1/6*[3, 2, 1]]
 
             sage: S = SymmetricGroupAlgebra(GF(3), 3)
             sage: C = S.cellular_basis()
             sage: [S._from_cellular_index(i) for i in C.basis().keys()]
-            [[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1],
+            [[1, 2, 3],
              [1, 2, 3] + [2, 1, 3],
              [1, 3, 2] + [3, 1, 2],
              [1, 3, 2] + [2, 3, 1],
              [1, 2, 3] + [3, 2, 1],
-             [1, 2, 3]]
+             [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]]
             sage: TestSuite(C).run()
         """
         if ~factorial(self.n) not in self.base_ring():
@@ -3341,12 +3372,13 @@ class MurphyBasis(SGACellularBasis):
             sage: M = SGA.murphy_basis()
             sage: for ind in M.basis().keys():
             ....:     print(ind, M._to_sga(ind))
-            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3]
             ([2, 1], [[1, 3], [2]], [[1, 3], [2]]) [1, 2, 3] + [2, 1, 3]
             ([2, 1], [[1, 3], [2]], [[1, 2], [3]]) [1, 3, 2] + [3, 1, 2]
             ([2, 1], [[1, 2], [3]], [[1, 3], [2]]) [1, 3, 2] + [2, 3, 1]
             ([2, 1], [[1, 2], [3]], [[1, 2], [3]]) [1, 2, 3] + [3, 2, 1]
-            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3]
+            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3] + [1, 3, 2]
+                + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
         """
         return self._algebra.murphy_basis_element(ind[1], ind[2])
 
@@ -3380,14 +3412,15 @@ class KLCellularBasis(SGACellularBasis):
 
             sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
             sage: KL = SGA.kazhdan_lusztig_cellular_basis()
-            sage: for ind in KL.basis().keys():
+            sage: for ind in KL.basis().keys():  # long time
             ....:     print(ind, KL._to_sga(ind))
-            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
+            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3]
             ([2, 1], [[1, 3], [2]], [[1, 3], [2]]) [1, 2, 3] + [2, 1, 3]
             ([2, 1], [[1, 3], [2]], [[1, 2], [3]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [3, 1, 2]
             ([2, 1], [[1, 2], [3]], [[1, 3], [2]]) [1, 2, 3] + [1, 3, 2] + [2, 1, 3] + [2, 3, 1]
             ([2, 1], [[1, 2], [3]], [[1, 2], [3]]) [1, 2, 3] + [1, 3, 2]
-            ([3], [[1, 2, 3]], [[1, 2, 3]]) [1, 2, 3]
+            ([1, 1, 1], [[1], [2], [3]], [[1], [2], [3]]) [1, 2, 3] + [1, 3, 2]
+                + [2, 1, 3] + [2, 3, 1] + [3, 1, 2] + [3, 2, 1]
         """
         from sage.combinat.rsk import RSK_inverse
         S = ind[1]
