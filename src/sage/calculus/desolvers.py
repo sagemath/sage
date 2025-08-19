@@ -1365,7 +1365,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
         from sage.symbolic.ring import SR
-        from sage.calculus.all import diff
+        from sage.calculus.functional import diff
         from sage.symbolic.relation import solve
         if isinstance(de, Expression) and de.is_relational():
             de = de.lhs() - de.rhs()
