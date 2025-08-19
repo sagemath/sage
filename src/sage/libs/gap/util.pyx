@@ -130,7 +130,6 @@ cdef void reference_obj(Obj obj) noexcept:
     """
     cdef ObjWrapper wrapped = wrap_obj(obj)
     global owned_objects_refcount
-#    print("reference_obj called "+ crepr(obj) +"\n")
     if wrapped in owned_objects_refcount:
         owned_objects_refcount[wrapped] += 1
     else:
