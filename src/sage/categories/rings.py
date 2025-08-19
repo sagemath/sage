@@ -20,8 +20,10 @@ from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import randint
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
-from sage.structure.element import Element
+from sage.categories.sets_cat import Sets
+from sage.structure.element import Element, RingElement
 from sage.structure.parent import Parent
+from sage.categories.cartesian_product import CartesianProductsCategory
 
 
 class Rings(CategoryWithAxiom):
@@ -1909,6 +1911,37 @@ class Rings(CategoryWithAxiom):
             if r != 0:
                 raise ValueError("%s is not divisible by %s" % (self, y))
             return q
+
+    class CartesianProducts(CartesianProductsCategory):
+        class ParentMethods:
+            @property
+            @cached_method
+            def __nonzero_factors(self):
+                return tuple(s for s in self._sets if not s.is_zero())
+
+            def is_field(self, proof=True) -> bool:
+                """
+                EXAMPLES::
+
+                    sage: cartesian_product([ZZ, ZZ]).is_field()
+                    False
+                    sage: cartesian_product([QQ, QQ]).is_field()
+                    False
+                    sage: cartesian_product([QQ]).is_field()
+                    True
+                """
+                return len(self.__nonzero_factors) == 1 and self.__nonzero_factors[0].is_field(proof=proof)
+
+            def is_integral_domain(self, proof=True) -> bool:
+                """
+                EXAMPLES::
+
+                    sage: cartesian_product([ZZ, ZZ]).is_integral_domain()
+                    False
+                    sage: cartesian_product([ZZ, Zmod(1)]).is_integral_domain()
+                    True
+                """
+                return len(self.__nonzero_factors) == 1 and self.__nonzero_factors[0].is_integral_domain(proof=proof)
 
 
 def _gen_names(elts):
