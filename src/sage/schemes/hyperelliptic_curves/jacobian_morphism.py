@@ -403,7 +403,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             genus = C.genus()
             if a.degree() > genus:
                 polys = cantor_reduction(a, b, f, h, genus)
-        self.__polys = polys
+        self.__polys = tuple(polys)
 
     def _printing_polys(self):
         r"""
@@ -633,7 +633,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: tuple(P)  # indirect doctest                                          # needs sage.rings.number_field
             (x - 1, -a)
         """
-        return tuple(self.__polys)
+        return self.__polys
 
     def __getitem__(self, n):
         r"""
@@ -662,9 +662,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: P[-1] # indirect doctest
             -a
             sage: P[:1] # indirect doctest
-            [x - 1]
+            (x - 1,)
         """
-        return list(self.__polys)[n]
+        return self.__polys[n]
 
     def _richcmp_(self, other, op):
         r"""
@@ -723,6 +723,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         # since divisors are internally represented as Mumford divisors,
         # comparing polynomials is well-defined
         return richcmp(self.__polys, other.__polys, op)
+
+    def __hash__(self):
+        return hash(self.__polys)
 
     def __bool__(self):
         r"""
