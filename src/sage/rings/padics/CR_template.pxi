@@ -1539,8 +1539,7 @@ cdef class CRElement(pAdicTemplateElement):
             17
 
             sage: hash(R(-1))
-            1977844648            # 32-bit
-            95367431640624        # 64-bit
+            95367431640624
         """
         if exactzero(self.ordp):
             return 0

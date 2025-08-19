@@ -1742,15 +1742,11 @@ cdef int overflow_check(unsigned long e, ring *_ring) except -1:
 
         sage: P.<x,y> = QQ[]
         sage: y^(2^30)
-        Traceback (most recent call last):             # 32-bit
-        ...                                            # 32-bit
-        OverflowError: exponent overflow (1073741824)  # 32-bit
-        y^1073741824  # 64-bit
+        y^1073741824
         sage: y^2^32
         Traceback (most recent call last):
         ...
-        OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-        OverflowError: exponent overflow (4294967296)  # 64-bit
+        OverflowError: exponent overflow (4294967296)
     """
     if unlikely(e > _ring.bitmask):
         raise OverflowError("exponent overflow (%d)" % (e))

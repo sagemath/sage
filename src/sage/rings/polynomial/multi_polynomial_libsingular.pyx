@@ -1404,8 +1404,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
             sage: P.<x,y,z> = QQ[]
             sage: hash(P)      # somewhat random output
-            967902441410893180 # 64-bit
-            -1767675994        # 32-bit
+            967902441410893180
         """
         return CategoryObject.__hash__(self)
 
@@ -1588,8 +1587,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             9/4
 
             sage: P.monomial_quotient(x,y) # Note the wrong result
-            x*y^65535*z^65535      # 32-bit
-            x*y^1048575*z^1048575  # 64-bit
+            x*y^1048575*z^1048575
 
             sage: P.monomial_quotient(x,P(1))
             x
@@ -2261,8 +2259,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x^2^32) * x^2^32
             Traceback (most recent call last):
             ...
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
         """
         # all currently implemented rings are commutative
         cdef poly *_p
@@ -2386,8 +2383,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             sage: (x+y^2^32)^10
             Traceback (most recent call last):
             ....
-            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
-            OverflowError: exponent overflow (...)  # 64-bit
+            OverflowError: exponent overflow (...)
 
         Test fractional powers (:issue:`22329`)::
 

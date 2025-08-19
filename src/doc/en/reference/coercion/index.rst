@@ -64,8 +64,7 @@ either parents or have a parent. Typically whenever one sees the word
     sage: parent(f)
     Univariate Polynomial Ring in t over 5-adic Field with capped relative precision 20
     sage: f = EllipticCurve('37a').lseries().taylor_series(10); f  # abs tol 1e-14
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418421e-6)*z^5 + O(z^6)  # 32-bit
-    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418427e-6)*z^5 + O(z^6)  # 64-bit
+    0.997997869801216 + 0.00140712894524925*z - 0.000498127610960097*z^2 + 0.000118835596665956*z^3 - 0.0000215906522442708*z^4 + (3.20363155418427e-6)*z^5 + O(z^6)
     sage: parent(f)
     Power Series Ring in z over Complex Field with 53 bits of precision
 
