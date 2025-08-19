@@ -6006,6 +6006,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x,y> = QQ['x,y']
             sage: g = K.random_element()
+            sage: while (g := K.random_element()) == K.zero(): pass
             sage: f.sylvester_matrix(g) == K(f).sylvester_matrix(g, x)                  # needs sage.modules
             True
 
