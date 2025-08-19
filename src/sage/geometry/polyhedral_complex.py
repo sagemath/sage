@@ -825,7 +825,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: pc_invalid.is_pure()
             False
         """
-        return len(self._maximal_cells) == 1
+        return len(self._maximal_cells) <= 1
 
     def is_full_dimensional(self) -> bool:
         """
@@ -1573,6 +1573,15 @@ class PolyhedralComplex(GenericCellComplex):
             ....:         Polyhedron(rays=[[1,0,0], [-1,-1,0]])])
             sage: pc4b.is_convex()
             False
+
+        Test empty and entire space cases::
+
+            sage: pc_empty = PolyhedralComplex([Polyhedron([])])
+            sage: pc_empty.is_convex()
+            True
+            sage: pc_entire = PolyhedralComplex([Polyhedron(vertices=[(0, 0)])])
+            sage: pc_entire.is_convex()
+            True
         """
         if self._is_convex is not None:
             return self._is_convex
@@ -1580,6 +1589,10 @@ class PolyhedralComplex(GenericCellComplex):
             self._is_convex = False
             return False
         d = self.dimension()
+        if d == -1:
+            self._is_convex = True
+            self._polyhedron = Polyhedron(ambient_dim=self.ambient_dimension(), backend=self._backend)
+            return True
         if not self.is_full_dimensional():
             # if max cells must lie in different subspaces, can't be convex.
             from sage.modules.free_module import span
@@ -1613,6 +1626,11 @@ class PolyhedralComplex(GenericCellComplex):
                 ll = vector(li)
                 ll.set_immutable()
                 lines.add(ll)
+        if not vertices:
+            self._is_convex = True
+            ambient_dim = self.ambient_dimension()
+            self._polyhedron = Polyhedron(ambient_dim=ambient_dim, backend=self._backend)
+            return True        
         center = sum(vertices) / len(vertices)
         for cell in boundaries:
             for equation in cell.equations_list():
