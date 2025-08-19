@@ -3,6 +3,7 @@
 .. your liking, but it should at least contain the root `toctree`
 .. directive.
 
+===========================
 Benvenuto alle FAQ di Sage!
 ===========================
 
@@ -20,7 +21,7 @@ __ http://creativecommons.org/licenses/by-sa/3.0/
    faq-usage
    faq-contribute
 
-Indice e tabelle
+Indice e Ricerca
 ================
 
 * :ref:`genindex`
