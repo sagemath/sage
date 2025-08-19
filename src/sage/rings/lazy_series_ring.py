@@ -3351,6 +3351,18 @@ class LazyPowerSeriesRing(LazySeriesRing):
             For inputs as symbolic functions/expressions, this does not check
             that the function does not have poles at `0`.
 
+        .. WARNING::
+            
+            For inputs with precision greater than the default, 
+            this does not check that the function is well-defined in the base ring (:issue:`39838`)::
+
+                sage: LazyPowerSeriesRing(QQ, "x").taylor(sqrt(2)*x^100)
+                O(x^7)
+                sage: LazyPowerSeriesRing(QQ, "x").taylor(sqrt(2)*x^100).add_bigoh(101)
+                Traceback (most recent call last):
+                ...
+                TypeError: unable to convert sqrt(2) to a rational
+
         EXAMPLES::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
