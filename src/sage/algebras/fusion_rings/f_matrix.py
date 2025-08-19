@@ -2346,7 +2346,7 @@ class FMatrix(SageObject):
     #   Verifications   #
     #####################
 
-    def fmats_are_orthogonal(self):
+    def fmats_are_orthogonal(self) -> bool:
         r"""
         Verify that all F-matrices are orthogonal.
 
@@ -2366,7 +2366,7 @@ class FMatrix(SageObject):
             is_orthog.append(mat.T * mat == matrix.identity(mat.nrows()))
         return all(is_orthog)
 
-    def fvars_are_real(self):
+    def fvars_are_real(self) -> bool:
         r"""
         Test whether all F-symbols are real.
 
@@ -2374,14 +2374,14 @@ class FMatrix(SageObject):
 
             sage: f = FusionRing("A1", 3).get_fmatrix()
             sage: f.find_orthogonal_solution(verbose=False) # long time
-            sage: f.fvars_are_real()                        # not tested (cypari issue in doctesting framework)
+            sage: f.fvars_are_real()  # long time
             True
         """
         try:
             for k, v in self._fvars.items():
                 AA(self._qqbar_embedding(v))
         except ValueError:
-            print("the F-symbol {} (key {}) has a nonzero imaginary part".format(v, k))
+            print(f"the F-symbol {v} (key {k}) has a nonzero imaginary part")
             return False
         return True
 
@@ -2420,7 +2420,7 @@ class FMatrix(SageObject):
             Partitioned 6 equations into 6 components of size:
             [1, 1, 1, 1, 1, 1]
             Computing appropriate NumberField...
-            sage: f.certify_pentagons()  is None      # not tested (cypari issue in doctesting framework), long time (~1.5s)
+            sage: f.certify_pentagons()  is None      # long time (~1.5s)
             True
         """
         fvars_copy = deepcopy(self._fvars)
