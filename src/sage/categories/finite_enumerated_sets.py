@@ -534,13 +534,22 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             Check that :meth:`rank` and :meth:`unrank` are
             consistent.
 
-            If :meth:`rank` is the implementations, we return
+            If :meth:`rank` is the generic implementation, we return
             immediately.
 
             EXAMPLES::
 
                 sage: Permutations([1,1,1,2,3])._test_rank()
             """
+            from sage.categories.complex_reflection_groups import ComplexReflectionGroups
+            from sage.categories.finite_posets import FinitePosets
+            from sage.categories.modules_with_basis import ModulesWithBasis
+            if (self in ComplexReflectionGroups()
+                or self in FinitePosets()
+                or (self.base_ring() is not None
+                    and self in ModulesWithBasis(self.base_ring()))):
+                # the meaning of rank is different in these categories
+                return
             if self.rank == self._rank_from_iterator:
                 return
             from sage.misc.prandom import sample
