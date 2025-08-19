@@ -26,6 +26,11 @@ from sage.ext.cplusplus cimport ccrepr, ccreadstr
 include 'misc.pxi'
 include 'decl.pxi'
 
+from cypari2.types cimport GEN, typ, t_INT
+from cypari2.gen cimport Gen
+
+from sage.libs.pari.convert_ntl cimport INT_to_ZZ, new_gen_from_ZZ
+
 from sage.rings.integer cimport Integer
 from sage.libs.ntl.convert cimport PyLong_to_ZZ, mpz_to_ZZ
 from sage.misc.randstate cimport current_randstate
@@ -74,6 +79,10 @@ cdef class ntl_ZZ():
             1
             sage: ntl.ZZ('-1r')
             -1
+            sage: ntl.ZZ(pari(1))
+            1
+            sage: ntl.ZZ(pari(-2))
+            -2
 
         TESTS::
 
@@ -88,6 +97,11 @@ cdef class ntl_ZZ():
             PyLong_to_ZZ(&self.x, v)
         elif isinstance(v, Integer):
             self.set_from_sage_int(v)
+        elif isinstance(v, Gen):
+            if typ((<Gen> v).g) == t_INT:
+                INT_to_ZZ(&self.x, (<Gen> v).g)
+            else:
+                raise TypeError("invalid pari element")
         elif v is not None:
             v = str(v)
             if not v:
@@ -187,6 +201,15 @@ cdef class ntl_ZZ():
         ZZ_mul(r.x, (<ntl_ZZ>self).x, (<ntl_ZZ>other).x)
         sig_off()
         return r
+
+    def __pari__(self):
+        r"""
+        EXAMPLES::
+
+            sage: pari(ntl.ZZ(124))
+            124
+        """
+        return new_gen_from_ZZ(&self.x)
 
     def __sub__(self, other):
         """
