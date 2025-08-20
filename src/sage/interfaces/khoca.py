@@ -91,6 +91,23 @@ def khoca_interface(ring, **kwds):
     Return an instance of ``InteractiveCalculator` of the ``Khoca``.
     This is a calculator for Khovanov homology written by Lukas
     Lewark. For more information see :class:`~sage.features.khoca.Khoca`.
+
+    EXAMPLES::
+
+        sage: # optional khoca
+        sage: from sage.interfaces.khoca import khoca_interface
+        sage: khoca_interface(ZZ)
+        Khovanov homology calculator for Frobenius algebra: Z[X] / (1*X^2).
+        sage: khoca_interface(QQ)
+        Khovanov homology calculator for Frobenius algebra: Q[X] / (1*X^2).
+        sage: khoca_interface(GF(3))
+        Khovanov homology calculator for Frobenius algebra: F_3[X] / (1*X^2).
+        sage: khoca_interface(ZZ, frobenius_algebra=(1,-2), root=1)
+        Khovanov homology calculator for Frobenius algebra: Z[X] / (1*X^2 + -2*X + 1).
+        sage: khoca_interface(QQ, equivariant=3)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: keyword equivariant is not implemented yet
     """
     from sage.features.khoca import Khoca
     Khoca().require()

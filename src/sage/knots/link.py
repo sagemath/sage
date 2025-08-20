@@ -1259,7 +1259,7 @@ class Link(SageObject):
           * ``'Khoca'`` -- uses the implementation of the optional package
             ``khoca``
 
-        - ``kwds`` -- dictionary of options to be passes to ``Khoca``
+        - ``kwds`` -- dictionary of options to be passed to ``Khoca``
 
           * ``reduced`` -- boolean (default ``False``); if
             ``True``, then returns the reduced homology
@@ -1274,6 +1274,7 @@ class Link(SageObject):
 
           * ``root`` -- integer specifying a root of the modulus of the
             Frobenius algeba
+
 
         OUTPUT:
 
@@ -1315,7 +1316,7 @@ class Link(SageObject):
             sage: K.khovanov_homology(base_ring=QQ)
             Traceback (most recent call last):
             ...
-            ValueError: 'base_ring' is not a valid KnownKeywords
+            ValueError: invalid keyword(s): ['base_ring']
 
         TESTS:
 
@@ -1348,6 +1349,8 @@ class Link(SageObject):
             check_kwds(**kwds)
         elif implementation != 'native':
             raise ValueError('%s is not a recognized implementation')
+        elif kwds:
+            raise ValueError(f"invalid keyword(s): {list(kwds)}")
 
         if not self.pd_code():  # special case for the unknot with no crossings
             from sage.homology.homology_group import HomologyGroup
