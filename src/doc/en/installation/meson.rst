@@ -136,17 +136,17 @@ Depending on your distribution, install the following packages:
     At least Fedora 41 is required.
 
    .. literalinclude:: fedora.txt
-      :language: shell
+      :language: console
 
 .. tab:: Arch Linux
 
    .. literalinclude:: arch.txt
-      :language: shell
+      :language: console
 
 .. tab:: Void Linux
 
    .. literalinclude:: void.txt
-      :language: shell
+      :language: console
 
 
 In the case that you want to install some dependencies manually, set the
