@@ -287,31 +287,16 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         sage: type(x)
         <class 'sage.libs.gap.element.GapElement_String'>
 
-    Strings in GAP are lists of characters and vice-versa, but that
-    isn't an efficient representation. Keep this in mind if you call a
-    list function on a string; you may want to convert the results
-    to the more efficient representation afterwards. In the example
-    below, ``UnorderedTuples()`` doesn't know we are dealing with
-    strings, so it returns lists of characters::
-
-        sage: libgap.eval("['a', 'b', 'c']")
+        sage: libgap.eval("['a', 'b', 'c']")   # gap strings are also lists of chars
         "abc"
-        sage: t = libgap.UnorderedTuples('abc', 2)
-        sage: t  # GAP still shows you strings...
+        sage: t = libgap.UnorderedTuples('abc', 2);  t
         [ "aa", "ab", "ac", "bb", "bc", "cc" ]
-        sage: t.sage()  # but really we have lists of characters
-        [['a', 'a'], ['a', 'b'], ['a', 'c'], ['b', 'b'], ['b', 'c'],
-        ['c', 'c']]
         sage: t[1]
         "ab"
         sage: t[1].sage()
-        ['a', 'b']
-        sage: s = t[1].CopyToStringRep()  # make an efficient copy
-        sage: s.sage()
         'ab'
-        sage: t[1].ConvertToStringRep()   # convert the original
-        sage: t[1].sage()
-        'ab'
+        sage: t.sage()
+        ['aa', 'ab', 'ac', 'bb', 'bc', 'cc']
 
     Check that :issue:`18158` is fixed::
 
@@ -342,8 +327,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         elif GAP_IsChar(obj):
             obj_type = OBJ_TYPE_CHR
         elif GAP_IsString(obj):
-            # Strings are also lists, so we check for strings (more
-            # specific) before we check for lists (less specific).
+            # Efficient representation only, returns False on lists.
             obj_type = OBJ_TYPE_STR
         elif GAP_IsList(obj):
             obj_type = OBJ_TYPE_LST
@@ -364,7 +348,21 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
     elif obj_type == OBJ_TYPE_STR:
         return make_GapElement_String(parent, obj)
     elif obj_type == OBJ_TYPE_LST:
-        return make_GapElement_List(parent, obj)
+        result = make_GapElement_List(parent, obj)
+        if result.IsString() and result.Length() > 0:
+            # IsString() thinks a list-of-char is a string, but
+            # GAP_IsString() does not. For backwards compatibility we
+            # convert list-of-char to an efficient string here, and
+            # return an instance of the more-specific class. The
+            # length check is necessary to prevent the conversion of
+            # all empty lists to empty strings. A related problem is
+            # that you cannot construct an actual list-of-char here
+            # if you want to.
+            result = make_GapElement_String(parent, obj)
+            result.ConvertToStringRep()
+            return result
+        else:
+            return result
     elif obj_type == OBJ_TYPE_REC:
         return make_GapElement_Record(parent, obj)
 
