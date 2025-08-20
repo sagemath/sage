@@ -35,7 +35,7 @@ EXAMPLES::
     True
     sage: c.euler_characteristic()
     2
-    sage: TestSuite(C).run(skip="_test_random")
+    sage: TestSuite(C).run()
 """
 
 # ****************************************************************************
@@ -1066,6 +1066,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         @cached_function
         def a(n):
+            # recurrence from :oeis:`A220754`
             return (factorial(n) ** (k-1)
                     - (factorial(n-1)
                        * sum(a(i) * factorial(n-i) ** (k-2) // factorial(i-1)
@@ -1082,7 +1083,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: const = Constellations(3,3)
+            sage: const = Constellations(3, 3)
             sage: const.random_element()
             Constellation of length 3 and degree 3
             ...
@@ -1095,15 +1096,15 @@ class Constellations_ld(UniqueRepresentation, Parent):
         from sage.groups.perm_gps.permgroup import PermutationGroup
 
         l = self._length
-        d = self._degree
         Sd = self._sym
 
         g = [Sd.random_element() for _ in range(l - 1)]
-        G = PermutationGroup(g)
-        while not G.degree() == d or (self._connected and
-                                      not G.is_transitive()):
-            g = [Sd.random_element() for _ in range(l - 1)]
+        if self._connected:
+            d = self._degree
             G = PermutationGroup(g)
+            while not G.degree() == d or not G.is_transitive():
+                g = [Sd.random_element() for _ in range(l - 1)]
+                G = PermutationGroup(g)
 
         return self([sigma.domain() for sigma in g] + [None], mutable=mutable)
 
