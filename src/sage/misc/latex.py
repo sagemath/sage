@@ -2049,9 +2049,8 @@ def png(x, filename, density=150, debug=False,
         sage: with tempfile.NamedTemporaryFile(suffix='.png') as f:  # random
         ....:     png(ZZ[x], f.name)
     """
-    from sage.plot.graphics import Graphics
-
-    if isinstance(x, Graphics):
+    import sage.plot.all
+    if isinstance(x, sage.plot.graphics.Graphics):
         x.save(filename)
         return
     # if not graphics: create a string of latex code to write in a file

@@ -804,7 +804,7 @@ class table(SageObject):
         import types
 
         try:
-            from sage.plot.graphics import Graphics
+            from sage.plot.all import Graphics
         except ImportError:
             Graphics = ()
 

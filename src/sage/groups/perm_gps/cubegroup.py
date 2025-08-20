@@ -168,8 +168,7 @@ def rotation_list(tilt, turn):
         sage: rotation_list(30, 45)
         [0.49999999999999994, 0.7071067811865475, 0.8660254037844387, 0.7071067811865476]
     """
-    from sage.functions.trig import sin
-    from sage.functions.trig import cos
+    from sage.functions.all import sin, cos
     return [sin(tilt*pi/180.0), sin(turn*pi/180.0),
             cos(tilt*pi/180.0), cos(turn*pi/180.0)]
 

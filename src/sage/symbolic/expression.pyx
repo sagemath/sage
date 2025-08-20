@@ -1520,8 +1520,7 @@ cdef class Expression(Expression_abc):
             ...
             ValueError: cannot convert sqrt(-3) to int
         """
-        from sage.functions.other import floor
-        from sage.functions.other import ceil
+        from sage.functions.all import floor, ceil
         from sage.rings.real_mpfi import RIF
         try:
             rif_self = RIF(self)
@@ -6724,8 +6723,7 @@ cdef class Expression(Expression_abc):
             return self.pyobject().round()
         except (TypeError, AttributeError):
             pass
-        from sage.functions.other import floor
-        from sage.functions.other import ceil
+        from sage.functions.all import floor, ceil
         from sage.rings.real_mpfi import RIF
         try:
             rif_self = RIF(self)

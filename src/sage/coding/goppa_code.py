@@ -33,7 +33,7 @@ AUTHORS:
 from sage.coding.linear_code import AbstractLinearCode
 from sage.coding.encoder import Encoder
 from sage.modules.free_module_element import vector
-import sage.coding.codes_catalog as codes
+from sage.coding.all import codes
 
 
 def _columnize(element):
