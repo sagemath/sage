@@ -555,6 +555,8 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             from sage.misc.prandom import sample
             tester = self._tester(**options)
             n = self.cardinality()
+            if not n:
+                return
             for r in sample(range(n), min(n, 10)):
                 tester.assertEqual(r, self.rank(self.unrank(r)))
             for _ in range(10):
