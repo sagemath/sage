@@ -800,7 +800,7 @@ class PolynomialRing_generic(Ring):
         incl = MorphismToCompletion(ring, p, prec, name, residue_name)
         C = incl.codomain()
         if C.has_coerce_map_from(ring):
-            if C(x) != incl(x):
+            if C(x) != incl._image:
                 raise ValueError("a different coercion map is already set; try to change the variable name")
         else:
             C.register_coercion(incl)
