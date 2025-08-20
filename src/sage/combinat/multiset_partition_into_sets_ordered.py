@@ -2206,7 +2206,7 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
         We have to skip checking that elements are produced uniformly
         at random by :meth:`random_element`, because this is not the
         case.::
-        
+
             sage: TestSuite(C).run(skip="_test_random")
 
             sage: C2 = OrderedMultisetPartitionsIntoSets({1:2, 4:1})
@@ -2425,7 +2425,7 @@ class OrderedMultisetPartitionsIntoSets_alph_d(OrderedMultisetPartitionsIntoSets
         We have to skip checking that elements are produced uniformly
         at random by :meth:`random_element`, because this is not the
         case.::
-        
+
             sage: TestSuite(C).run(skip="_test_random")
 
             sage: C2 = OrderedMultisetPartitionsIntoSets([1,2,3], 2)
