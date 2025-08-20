@@ -1789,21 +1789,31 @@ def morphism_to_completion(domain, place, prec, names):
       - the variable name for the residue field (only relevant for
         places of degree at least `2`)
 
-    TESTS::
+    EXAMPLES::
 
-        sage: A.<t> = ZZ[]
-        sage: B.<u> = A.completion(2*t + 1)
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: the leading coefficient of the place is not a unit
+        sage: from sage.rings.polynomial.polynomial_ring import morphism_to_completion
+        sage: A.<t> = QQ[]
+        sage: morphism_to_completion(A, t, 20, None)
+        Ring morphism:
+          From: Univariate Polynomial Ring in t over Rational Field
+          To:   Power Series Ring in t over Rational Field
+          Defn: t |--> t
 
     ::
 
-        sage: A.<t> = QQ[]
-        sage: B.<u,a> = A.completion(x^2 + 2*x + 1)
+        sage: morphism_to_completion(A, t^2 + t + 1, 20, ('u','a'))
+        Ring morphism:
+          From: Univariate Polynomial Ring in t over Rational Field
+          To:   Power Series Ring in u over Number Field in a with defining polynomial t^2 + t + 1
+          Defn: t |--> a + u
+
+    TESTS::
+
+        sage: A.<t> = ZZ[]
+        sage: morphism_to_completion(A, 2*t + 1, 20, ('u',))
         Traceback (most recent call last):
         ...
-        ValueError: place must be Infinity or an irreducible polynomial
+        NotImplementedError: the leading coefficient of the place is not a unit
     """
     from sage.rings.power_series_ring import PowerSeriesRing
     from sage.rings.laurent_series_ring import LaurentSeriesRing
@@ -1832,7 +1842,7 @@ def morphism_to_completion(domain, place, prec, names):
     elif isinstance(place, str):
         if name is not None and name != place:
             raise ValueError("conflict of variable names")
-        name = p
+        name = place
         place = x
 
     if place == x and name is None:
