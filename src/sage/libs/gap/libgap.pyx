@@ -202,22 +202,26 @@ Using the GAP C library from Cython
    be if there was an error because our ``error_handler()`` sets
    it). Here is a real example::
 
-       try:
-           GAP_Enter()
-           libgap.Sum(1,2,3,4)
-       finally:
-           GAP_Leave()
+       cpdef void crash_and_burn() except *:
+           cdef GapElement x = <GapElement>libgap({'a': 1, 'b': 2})
+           cdef unsigned int xlen
+           try:
+               GAP_Enter()
+               xlen = GAP_LenList(x.value)
+           finally:
+               GAP_Leave()
+           print(xlen)
 
-   The call to ``libgap.Sum(1,2,3,4)`` is an error in this case,
-   because summing four numbers requires them to be passed as a
-   list. In any case, what happens is,
+   The call to ``GAP_LenList()`` is an error in this case, because
+   ``x.value`` is a GAP record, not a GAP list. In any case, what
+   happens is,
 
    #. We call the ``GAP_Enter()`` Cython wrapper, which invokes the
       macro, and additionally generates some C code to raise an
       exception if that return value is zero (error). But this is the
       first pass, so for now the macro returns a non-zero (success)
       value.
-   #. We call ``libgap.Sum(1,2,3,4)``, which is an error.
+   #. We call ``GAP_LenList(x.value)``, which is an error.
    #. GAP invokes our ``error_handler()``, which creates a
       :exc:`sage.libs.gap.util.GAPError`, and sets it active.
    #. Control returns to GAP.
