@@ -1711,7 +1711,8 @@ class HypergeometricData:
         M = self.M_value()
         teich = p_ring.teichmuller(M / t0)
         m = {r: self._beta.count(QQ((r, q - 1))) for r in range(q - 1)}
-        D = -min(self.zigzag(x, flip_beta=True) for x in self._alpha + self._beta)
+        D = -min(self.zigzag(x, flip_beta=True)
+                 for x in self._alpha + self._beta)
         gamma = self.gamma_array()
         l = []
         for j in range(mo):
@@ -1724,14 +1725,15 @@ class HypergeometricData:
                     ct += gv * sum(r1.digits(p))
                     term *= p_ring(gtab[r1]) ** (-gv if flip else gv)
                 ct //= p - 1
-                term *= ZZ(-1) ** ct
+                term *= ZZ(-1)**ct
                 ct += f * (D + m[0] - m[r])
                 l.append(term * p**ct)
-        traces = [0 if j % f else sum(i ** (j // f) for i in l)
+        traces = [0 if j % f else sum(i**(j // f) for i in l)
                   for j in range(1, d + 1)]
         R = IntegerModRing(p**prec)
         traces = [R(i).lift_centered() for i in traces]
-        return characteristic_polynomial_from_traces(traces, d, p, 0, 1, deg, use_fe=False)
+        return characteristic_polynomial_from_traces(traces, d, p, 0, 1,
+                                                     deg, use_fe=False)
 
     @cached_method
     def euler_factor(self, t, p, deg=None, cache_p=False):
