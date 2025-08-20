@@ -372,7 +372,7 @@ cdef class CategoryObject(SageObject):
             x^2 + 3
 
         If the ring has less than `n` generators, the generators
-        of the base rings are happened recursively::
+        of the base rings are appended recursively::
 
             sage: S.<y> = PolynomialRing(R)
             sage: T.<z> = PolynomialRing(S)
