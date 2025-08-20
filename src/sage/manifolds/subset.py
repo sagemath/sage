@@ -44,15 +44,17 @@ Their union::
 Families of subsets after the above operations::
 
     sage: M.subset_family()
-    Set {A, A_inter_B, A_union_B, B, M} of subsets of the 2-dimensional topological manifold M
+    Set {A, A_inter_B, A_union_B, B, M} of subsets
+    of the 2-dimensional topological manifold M
     sage: a.subset_family()
     Set {A, A_inter_B} of subsets of the 2-dimensional topological manifold M
     sage: c.subset_family()
     Set {A_inter_B} of subsets of the 2-dimensional topological manifold M
     sage: d.subset_family()
-    Set {A, A_inter_B, A_union_B, B} of subsets of the 2-dimensional topological manifold M
+    Set {A, A_inter_B, A_union_B, B} of subsets
+    of the 2-dimensional topological manifold M
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2015-2020 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015      Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015-2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -62,8 +64,8 @@ Families of subsets after the above operations::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from __future__ import annotations
 
 import itertools
@@ -73,7 +75,6 @@ from typing import Optional
 from sage.categories.sets_cat import Sets
 from sage.manifolds.family import ManifoldObjectFiniteFamily, ManifoldSubsetFiniteFamily
 from sage.manifolds.point import ManifoldPoint
-from sage.misc.superseded import deprecation
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -196,8 +197,9 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             manifold._subsets.add(self)
         self._supersets = set([manifold, self])  # subsets containing self
         self._subsets = set([self])  # subsets of self
-        self._top_subsets = set([self])  # subsets contained in self but not
-                                         # in another strict subset of self
+        self._top_subsets = set([self])
+        # subsets contained in self but not in another strict subset of self
+
         self._intersections = {}  # dict. of intersections with other subsets
                                   # (key: subset name)
         self._unions = {}  # dict. of unions with other subsets (key: subset
@@ -252,7 +254,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         """
         return self._latex_name
 
-    #### Methods required for any Parent in the category of sets:
+    # ### Methods required for any Parent in the category of sets:
 
     def _element_constructor_(self, coords=None, chart=None, name=None,
                               latex_name=None, check_coords=True):
@@ -331,7 +333,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             (-2, 3)
         """
         if isinstance(coords, ManifoldPoint):
-            point = coords # for readability
+            point = coords  # for readability
             # This should actually never happen by the coercion framework...
             if point.parent() is self:
                 return point
@@ -362,10 +364,10 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: p in A
             True
         """
-        #!# should be improved...
+        # ! should be improved...
         return self.element_class(self)
 
-    #### End of methods required for any Parent in the category of sets
+    # ### End of methods required for any Parent in the category of sets
 
     def __contains__(self, point):
         r"""
@@ -394,7 +396,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             return True
         if point.parent().is_subset(self):
             return True
-        #!# should be improved once coordinate definition have been introduced
+        # ! should be improved once coordinate definition have been introduced
         # in ManifoldSubset
         return False
 
@@ -468,7 +470,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         """
         return self(p)
 
-    #### Accessors
+    # ### Accessors
 
     def manifold(self):
         r"""
@@ -769,59 +771,6 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             Set {M, U, V} of subsets of the 2-dimensional topological manifold M
         """
         yield from self._subsets
-
-    def list_of_subsets(self):
-        r"""
-        Return the list of subsets that have been defined on the current
-        subset.
-
-        The list is sorted by the alphabetical names of the subsets.
-
-        OUTPUT:
-
-        - a list containing all the subsets that have been defined on
-          the current subset
-
-        .. NOTE::
-
-            This method is deprecated.
-
-            To get the subsets as a :class:`ManifoldSubsetFiniteFamily`
-            instance (which sorts its elements alphabetically by name),
-            use :meth:`subset_family` instead.
-
-            To loop over the subsets in an arbitrary order, use the
-            generator method :meth:`subsets` instead.
-
-        EXAMPLES:
-
-        List of subsets of a 2-dimensional manifold (deprecated)::
-
-            sage: M = Manifold(2, 'M', structure='topological')
-            sage: U = M.open_subset('U')
-            sage: V = M.subset('V')
-            sage: M.list_of_subsets()
-            doctest:...: DeprecationWarning: the method list_of_subsets of ManifoldSubset
-             is deprecated; use subset_family or subsets instead...
-            [2-dimensional topological manifold M,
-             Open subset U of the 2-dimensional topological manifold M,
-             Subset V of the 2-dimensional topological manifold M]
-
-        Using :meth:`subset_family` instead (recommended when order matters)::
-
-            sage: M.subset_family()
-            Set {M, U, V} of subsets of the 2-dimensional topological manifold M
-
-        The method :meth:`subsets` generates the subsets in an unspecified order.
-        To create a set::
-
-            sage: frozenset(M.subsets())  # random (set output)
-            {Subset V of the 2-dimensional topological manifold M,
-             2-dimensional topological manifold M,
-             Open subset U of the 2-dimensional topological manifold M}
-        """
-        deprecation(31727, "the method list_of_subsets of ManifoldSubset is deprecated; use subset_family or subsets instead")
-        return sorted(self._subsets, key=lambda x: x._name)
 
     def subset_family(self):
         r"""
@@ -1290,7 +1239,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
                 return ss
         raise ValueError("no subset of name '{}' found".format(name))
 
-    #### End of accessors
+    # ### End of accessors
 
     def is_subset(self, other):
         r"""
@@ -1899,7 +1848,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
                 if closure._subset.is_subset(self):
                     closure.declare_subset(self)
 
-    #### Construction of new sets from self:
+    # ### Construction of new sets from self:
 
     def subset(self, name, latex_name=None, is_open=False):
         r"""
@@ -2702,7 +2651,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         if latex_name is None:
             if name is None:
-                latex_name = r'\setminus '.join(S._latex_name for S in (self, other))
+                latex_name = r'\setminus '.join(S._latex_name
+                                                for S in (self, other))
             else:
                 latex_name = name
         if name is None:
@@ -2760,4 +2710,4 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         from sage.manifolds.subsets.closure import ManifoldSubsetClosure
         return ManifoldSubsetClosure(self, name=name, latex_name=latex_name)
 
-    #### End of construction of new sets from self
+    # ### End of construction of new sets from self
