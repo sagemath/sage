@@ -45,7 +45,7 @@ example. Create a script with the following code in a file ``mpi_1.py``
 To run it you can do (from the command line in your Sage
 directory)
 
-.. CODE-BLOCK:: shell
+.. code-block:: console
 
     $ mpirun -np 5 ./sage -python mpi_1.py
 

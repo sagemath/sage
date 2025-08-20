@@ -138,7 +138,7 @@ We also need a ``~/my_dir/hello.h`` header file:
 
 We can now **compile it** as a library:
 
-.. CODE-BLOCK:: shell
+.. code-block:: console
 
    $ gcc -c -Wall -Werror -fpic hello.c
    $ gcc -shared -o libhello.so hello.o

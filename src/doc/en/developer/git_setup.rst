@@ -42,7 +42,7 @@ Configuring Git
 
 Assuming your name ``alice`` and email address ``alice@wonderland.com``,
 
-.. CODE-BLOCK:: shell
+.. code-block:: console
 
     $ git config --global user.name "Alice Adventure"
     $ git config --global user.email alice@wonderland.com

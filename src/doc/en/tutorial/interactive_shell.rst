@@ -169,7 +169,7 @@ file).
 
 .. skip
 
-.. CODE-BLOCK:: shell-session
+.. code-block:: console
 
     was@form:~$ sage
     ┌────────────────────────────────────────────────────────────────────┐

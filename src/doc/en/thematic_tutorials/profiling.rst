@@ -150,7 +150,7 @@ are the most costly using `perf <https://perf.wiki.kernel.org>`_
 The easiest way to use it is to run some (very long) computation in Sage, and to
 type in a console
 
-.. CODE-BLOCK:: shell
+.. code-block:: console
 
   $ sudo perf top
 
@@ -184,7 +184,7 @@ Alternatively, or if you have no ``sudo`` privileges, you can record the statist
 of a specific process into a file ``perf.data`` from its PID. Then, visualize
 the result using ``perf report``:
 
-.. CODE-BLOCK:: shell
+.. code-block:: console
 
   $ perf record -p PID
   $ perf report --vmlinux vmlinux
