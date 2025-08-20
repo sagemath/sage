@@ -6983,6 +6983,7 @@ class Permutations_msetk(Permutations_mset):
         """
         return self._unrank_from_iterator(r)
 
+
 class Permutations_setk(Permutations_set):
     """
     Length-`k` partial permutations of an arbitrary given finite set.
