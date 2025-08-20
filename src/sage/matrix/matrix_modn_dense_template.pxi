@@ -94,8 +94,8 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.libs.gmp.mpz cimport *
 from sage.libs.linbox.fflas cimport FFLAS_TRANSPOSE, FflasNoTrans, FflasTrans, \
-    FfpackTileRecursive, FfpackSlabRecursive, FflasLeft, FflasRight, vector, list as std_list, \
-    RankProfileFromLU, PLUQtoEchelonPermutation, MathPerm2LAPACKPerm, LAPACKPerm2MathPerm
+    FfpackTileRecursive, FflasLeft, FflasRight, vector, list as std_list, \
+    RankProfileFromLU, PLUQtoEchelonPermutation, MathPerm2LAPACKPerm
 
 from libcpp cimport bool
 from sage.parallel.parallelism import Parallelism
@@ -1838,8 +1838,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
           ignore). However, ``efd=True`` uses more memory than FFLAS
           directly (default: ``True``)
 
-        OUTPUT: if ``efd`` is ``False``, return the row rank profile of
-        ``self``
+        OUTPUT: if ``efd`` is ``False``, return the pivot rows (a.k.a. row rank
+        profile) of the matrix ``self`` before echelonization
 
         EXAMPLES::
 
@@ -1859,7 +1859,8 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             r, pivots = linbox_echelonize_efd(self.p, self._entries,
                                               self._nrows, self._ncols)
         else:
-            r, pivots, rrp = linbox_echelonize(self.p, self._entries, self._nrows, self._ncols)
+            r, pivots, rrp = linbox_echelonize(self.p, self._entries,
+                                               self._nrows, self._ncols)
         verbose('done with echelonize', t)
         self.cache('in_echelon_form', True)
         self.cache('rank', r)

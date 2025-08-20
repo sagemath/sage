@@ -83,7 +83,6 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFLAS":
 cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     ctypedef enum FFPACK_LU_TAG:
         FfpackTileRecursive
-        FfpackSlabRecursive
 
     void RankProfileFromLU (size_t* P, size_t N, size_t R,
                             size_t* rkprofile, FFPACK_LU_TAG LuTag)
@@ -91,8 +90,6 @@ cdef extern from "fflas-ffpack/fflas-ffpack.h" namespace "FFPACK":
     void PLUQtoEchelonPermutation (size_t N, size_t R, size_t * P, size_t * outPerm)
 
     void MathPerm2LAPACKPerm (size_t * LapackP, size_t * MathP, size_t N)
-
-    void LAPACKPerm2MathPerm (size_t * MathP, size_t * LapackP, size_t N)
 
     # double
     bint IsSingular (Modular_double F,
