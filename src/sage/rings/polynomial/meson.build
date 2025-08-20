@@ -19,7 +19,6 @@ py.install_sources(
   'laurent_polynomial_mpair.pxd',
   'laurent_polynomial_ring.py',
   'laurent_polynomial_ring_base.py',
-  'morphism.py',
   'msolve.py',
   'multi_polynomial.pxd',
   'multi_polynomial_element.py',

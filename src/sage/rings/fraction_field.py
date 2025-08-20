@@ -1206,7 +1206,7 @@ class FractionField_1poly_field(FractionField_generic):
 
         return super()._coerce_map_from_(R)
 
-    def completion(self, p=None, prec=20, name=None, residue_name=None, names=None):
+    def completion(self, p=None, prec=20, names=None):
         r"""
         Return the completion of this rational functions ring with
         respect to the irreducible polynomial `p`.
@@ -1221,14 +1221,6 @@ class FractionField_1poly_field(FractionField_generic):
           ``Infinity``, return a
           :class:`sage.rings.lazy_series_ring.LazyPowerSeriesRing`.
 
-        - ``name`` (default: ``None``) -- a string, the variable name;
-          if ``None`` and the completion is at `0`, the name of the
-          variable is this polynomial ring is reused
-
-        - ``residue_name`` (default: ``None``) -- a string, the variable
-          name for the residue field (only relevant for places of degree
-          at least `2`)
-
         - ``names`` (default: ``None``) -- a tuple of strings with the
           previous variable names
 
@@ -1238,7 +1230,7 @@ class FractionField_1poly_field(FractionField_generic):
             sage: K = A.fraction_field()
 
         Without any argument, this method constructs the completion at
-        the ideal `x`::
+        the ideal `(x)`::
 
             sage: Kx = K.completion()
             sage: Kx
@@ -1271,23 +1263,11 @@ class FractionField_1poly_field(FractionField_generic):
             sage: L = K.completion(x, prec=oo); L
             Lazy Laurent Series Ring in x over Rational Field
         """
-        from sage.rings.polynomial.morphism import MorphismToCompletion
-        if names is not None:
-            if name is not None or residue_name is not None:
-                raise ValueError("")
-            if not isinstance(names, (list, tuple)):
-                raise TypeError("names must a a list or a tuple")
-            name = names[0]
-            if len(names) > 1:
-                residue_name = names[1]
-        x = self.gen()
-        if p is None:
-            p = x
-        if p == x and name is None:
-            name = self.variable_name()
-        incl = MorphismToCompletion(self, p, prec, name, residue_name)
+        from sage.rings.polynomial.polynomial_ring import morphism_to_completion
+        incl = morphism_to_completion(self, p, prec, names)
         C = incl.codomain()
         if C.has_coerce_map_from(self):
+            x = self.gen()
             if C(x) != incl(x):
                 raise ValueError("a different coercion map is already set; try to change the variable name")
         else:
