@@ -163,17 +163,18 @@ Using the GAP C library from Cython
    We are using the GAP API provided by the GAP project since
    GAP 4.10.
 
-   All GAP library usage should be sandwiched between calls to
-   ``GAP_Enter()`` and ``GAP_Leave()``. These are macros defined in
-   ``libgap-api.h`` and must be used carefully because ``GAP_Enter()``
-   is defined as two function calls in succession without braces. The
-   first thing that ``GAP_Enter()`` does is a ``setjmp()`` which plays
-   an important role in handling errors. The return value from
-   ``GAP_Enter()`` is non-zero (success) the first time around, and if
-   an error occurs, execution "jumps" back to ``GAP_Enter()``, this
-   time with a return value of zero (failure). Due to these
-   implementation details, we cannot simply check the return value
-   before executing Cython code; the following *does not* work::
+   Calls to the GAP C library (functions declared in libgap-api.h)
+   should be sandwiched between calls to ``GAP_Enter()`` and
+   ``GAP_Leave()``. These are macros defined in ``libgap-api.h`` and
+   must be used carefully because ``GAP_Enter()`` is defined as two
+   function calls in succession without braces. The first thing that
+   ``GAP_Enter()`` does is a ``setjmp()`` which plays an important
+   role in handling errors. The return value from ``GAP_Enter()`` is
+   non-zero (success) the first time around, and if an error occurs,
+   execution "jumps" back to ``GAP_Enter()``, this time with a return
+   value of zero (failure). Due to these implementation details, we
+   cannot simply check the return value before executing Cython code;
+   the following *does not* work::
 
        if (GAP_Enter()):
           # further calls to libgap
