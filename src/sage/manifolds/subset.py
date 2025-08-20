@@ -195,21 +195,28 @@ class ManifoldSubset(UniqueRepresentation, Parent):
                                      "' is already used for another " +
                                      "subset of the {}".format(manifold))
             manifold._subsets.add(self)
-        self._supersets = set([manifold, self])  # subsets containing self
-        self._subsets = set([self])  # subsets of self
-        self._top_subsets = set([self])
-        # subsets contained in self but not in another strict subset of self
 
-        self._intersections = {}  # dict. of intersections with other subsets
-                                  # (key: subset name)
-        self._unions = {}  # dict. of unions with other subsets (key: subset
-                           # name)
+        # subsets containing self
+        self._supersets = {manifold, self}
+
+        # subsets of self
+        self._subsets = {self}
+
+        # subsets contained in self but not in another strict subset of self
+        self._top_subsets = {self}
+
+        # dict. of intersections with other subsets (key: subset name)
+        self._intersections = {}
+
+        # dict. of unions with other subsets (key: subset name)
+        self._unions = {}
+
         self._open_covers = []  # list of open covers of self
         self._is_open = False   # a priori (may be redefined by subclasses)
         self._manifold = manifold  # the ambient manifold
         self._has_defined_points = False
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of the object.
 
@@ -224,7 +231,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         """
         return "Subset {} of the {}".format(self._name, self._manifold)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of ``self``.
 
