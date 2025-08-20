@@ -675,7 +675,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the image of input ``a`` by the morphism that defines the
         Drinfeld module; i.e. `\phi_a` if the Drinfeld module is denoted
-        `phi`.
+        `\phi`.
 
         INPUT:
 
@@ -1927,7 +1927,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         We recall that a homomorphism `f : \phi \to \psi` between
         two Drinfeld modules is defined by an Ore polynomial `u`,
-        which is subject to the relation `phi_T u = u \psi_T`.
+        which is subject to the relation `\phi_T u = u \psi_T`.
 
         INPUT:
 
