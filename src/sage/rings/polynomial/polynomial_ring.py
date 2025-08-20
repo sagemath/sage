@@ -690,8 +690,10 @@ class PolynomialRing_generic(Ring):
           with the construction mecanism
 
         - ``names`` (default: ``None``) -- a tuple of strings containing
+
           - the variable name; if not given and the completion is at `0`,
             the name of the variable is this polynomial ring is reused
+
           - the variable name for the residue field (only relevant for
             places of degree at least `2`)
 
