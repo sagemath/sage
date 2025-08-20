@@ -697,6 +697,9 @@ class PolynomialRing_generic(Ring):
           - the variable name for the residue field (only relevant for
             places of degree at least `2`)
 
+        The argument ``names`` is usually implicitly given by the `.<...>`
+        syntactic sugar (see examples below).
+
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(QQ)
@@ -704,7 +707,7 @@ class PolynomialRing_generic(Ring):
             Univariate Polynomial Ring in x over Rational Field
 
         Without any argument, this method constructs the completion at
-        the ideal `x`::
+        the ideal `(x)`::
 
             sage: PP = P.completion()
             sage: PP
