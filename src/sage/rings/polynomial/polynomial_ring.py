@@ -1896,7 +1896,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         INPUT:
 
         - ``p`` (default: ``None``) -- an irreduclible polynomial or
-          ``Infiniity``; if ``None``, the generator of this polynomial
+          ``Infinity``; if ``None``, the generator of this polynomial
           ring
 
         - ``prec`` (default: 20) -- an integer or ``Infinity``; if
