@@ -671,7 +671,7 @@ class PolynomialRing_generic(Ring):
         """
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.__is_sparse), self.base_ring()
 
-    def completion(self, p=None, prec=20, name=None, residue_name=None, names=None):
+    def completion(self, p=None, prec=20, extras=None, names=None):
         r"""
         Return the completion of this polynomial ring with respect to
         the irreducible polynomial ``p``.
@@ -686,16 +686,14 @@ class PolynomialRing_generic(Ring):
           ``Infinity``, return a
           :class:`sage.rings.lazy_series_ring.LazyPowerSeriesRing`.
 
-        - ``name`` (default: ``None``) -- a string, the variable name;
-          if ``None`` and the completion is at `0`, the name of the
-          variable is this polynomial ring is reused
+        - ``extras`` (default: ``None``) -- ignored; for compatibility
+          with the construction mecanism
 
-        - ``residue_name`` (default: ``None``) -- a string, the variable
-          name for the residue field (only relevant for places of degree
-          at least `2`)
-
-        - ``names`` (default: ``None``) -- a tuple of strings with the
-          previous variable names
+        - ``names`` (default: ``None``) -- a tuple of strings containing
+          - the variable name; if not given and the completion is at `0`,
+            the name of the variable is this polynomial ring is reused
+          - the variable name for the residue field (only relevant for
+            places of degree at least `2`)
 
         EXAMPLES::
 
@@ -763,18 +761,33 @@ class PolynomialRing_generic(Ring):
             1 + x + x^2 + O(x^3)
             sage: 1 / g == f
             True
+
+        TESTS::
+
+            sage: P.completion('x')
+            Power Series Ring in x over Rational Field
+            sage: P.completion('y')
+            Power Series Ring in y over Rational Field
+            sage: Pz.<z> = P.completion('y')
+            Traceback (most recent call last):
+            ...
+            ValueError: conflict of variable names
         """
         from sage.rings.polynomial.morphism import MorphismToCompletion
+        name = residue_name = None
         if names is not None:
-            if name is not None or residue_name is not None:
-                raise ValueError("")
             if not isinstance(names, (list, tuple)):
-                raise TypeError("names must a a list or a tuple")
+                raise TypeError("names must be a list or a tuple")
             name = names[0]
             if len(names) > 1:
                 residue_name = names[1]
         x = self.gen()
         if p is None:
+            p = x
+        elif isinstance(p, str):
+            if name is not None and name != p:
+                raise ValueError("conflict of variable names")
+            name = p
             p = x
         if p == x and name is None:
             name = self.variable_name()

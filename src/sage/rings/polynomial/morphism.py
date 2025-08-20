@@ -78,14 +78,15 @@ class MorphismToCompletion(RingHomomorphism):
             SeriesRing = PowerSeriesRing
         k = base = ring.base_ring()
         x = ring.gen()
+        sparse = ring.is_sparse()
         if place is Infinity:
             pass
         elif place in ring:
             place = ring(place)
             if place.leading_coefficient().is_unit():
                 place = ring(place.monic())
-                if not place.is_irreducible():
-                    raise ValueError("place must be Infinity or an irreducible polynomial")
+                # We do not check irreducibility; it causes too much troubles:
+                # it can be long, be not implemented and even sometimes fail
             else:
                 raise NotImplementedError("the leading coefficient of the place is not a unit")
         else:
@@ -95,23 +96,22 @@ class MorphismToCompletion(RingHomomorphism):
             raise ValueError("you must specify a variable name")
         name = normalize_names(1, name)
         if place is Infinity:
-            codomain = LaurentSeriesRing(base, names=name, default_prec=prec)
+            codomain = LaurentSeriesRing(base, names=name, default_prec=prec, sparse=sparse)
             image = codomain.one() >> 1
-        elif place.degree() == 1:
-            codomain = SeriesRing(base, names=name, default_prec=prec)
+        elif place == ring.gen() or place.degree() == 1:  # sometimes ring.gen() has not degree 1
+            codomain = SeriesRing(base, names=name, default_prec=prec, sparse=sparse)
             image = codomain.gen() - place[0]
         else:
             if residue_name is None:
                 raise ValueError("you must specify a variable name for the residue field")
             residue_name = normalize_names(1, residue_name)
             k = base.extension(place, names=residue_name)
-            codomain = SeriesRing(k, names=name, default_prec=prec)
+            codomain = SeriesRing(k, names=name, default_prec=prec, sparse=sparse)
             image = codomain.gen() + k.gen()
         parent = domain.Hom(codomain, category=Rings())
         RingHomomorphism.__init__(self, parent)
         self._image = image
         self._k = k
-        self._q = k.cardinality()
 
     def _repr_type(self):
         r"""
