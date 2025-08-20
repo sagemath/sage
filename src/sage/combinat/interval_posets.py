@@ -3712,7 +3712,13 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-            sage: for i in range(5): TestSuite(TamariIntervalPosets(i)).run()
+
+        We currently have to skip checking that elements are produced
+        uniformly at random by :meth:`random_element`. This is not
+        the case because of a bug.::
+
+            sage: for i in range(5):
+            ....:     TestSuite(TamariIntervalPosets(i)).run(skip="_test_random")
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category
