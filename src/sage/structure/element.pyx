@@ -3738,7 +3738,10 @@ cdef class Vector(ModuleElementWithMutability):
             sage: b / R(2) # vector-by-scalar
             ((1, 1))
             sage: c = vector([R(1)])
-            sage: b / c # not tested, vector-by-vector
+            sage: b / c # vector-by-vector
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: not implemented yet
             sage: A = matrix([R(1) / R(2)])
             sage: b / A # vector-by-matrix
             ((4, 4))
@@ -3756,6 +3759,8 @@ cdef class Vector(ModuleElementWithMutability):
                     raise ZeroDivisionError("division by zero vector")
                 else:
                     raise ArithmeticError("vector is not in free module")
+            except AttributeError:
+                raise NotImplementedError("not implemented yet")
         if isinstance(right, Matrix):
             try:
                 return right.solve_left(left)
