@@ -186,7 +186,7 @@ cdef sigaction_t gap_sigint_sa
 cdef sigaction_t sage_sigint_sa
 cdef sigaction_t sage_sigalrm_sa
 
-cdef void gap_interrupt_asap(int signum):
+cdef void gap_interrupt_asap(int signum) noexcept:
     # A wrapper around InterruptExecStat(). This tells GAP to raise an
     # error at the next opportunity.
     InterruptExecStat()
