@@ -2375,7 +2375,7 @@ def continued_fraction_list(x, type='std', partial_convergents=False,
 
     OUTPUT:
 
-    A lits of integers, the coefficients in the continued fraction expansion of
+    A list of integers, the coefficients in the continued fraction expansion of
     ``x``. If ``partial_convergents`` is set to ``True``, then return a pair
     containing the coefficient list and the partial convergents list is
     returned.

@@ -1,5 +1,5 @@
 r"""
-Abstract Recursive Trees
+Abstract recursive trees
 
 The purpose of this class is to help implement trees with a specific structure
 on the children of each node. For instance, one could want to define a tree in
@@ -648,7 +648,7 @@ class AbstractTree:
 
     def contour_traversal(self, first_action=None, middle_action=None, final_action=None, leaf_action=None):
         r"""
-        Run the counterclockwise countour traversal algorithm (iterative
+        Run the counterclockwise contour traversal algorithm (iterative
         implementation) and subject every node encountered
         to some procedure ``first_action``, ``middle_action`` or ``final_action`` each time it reaches it.
 

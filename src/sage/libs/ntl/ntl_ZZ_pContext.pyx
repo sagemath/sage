@@ -67,7 +67,7 @@ cdef class ntl_ZZ_pContext_class():
         """
         return ntl_ZZ_pContext, (self.p,)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a print representation of ``self``.
 
@@ -77,7 +77,7 @@ cdef class ntl_ZZ_pContext_class():
             sage: c
             NTL modulus 7
         """
-        return "NTL modulus %s"%(self.p)
+        return "NTL modulus %s" % (self.p)
 
     def __hash__(self):
         return hash(self.p)

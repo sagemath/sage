@@ -28,3 +28,7 @@ flex
 ca-certificates
 libxml2
 cyrus-sasl
+patch
+bzip2
+patch
+pkg-config

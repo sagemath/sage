@@ -493,7 +493,7 @@ class ComputeMinimalPolynomials(SageObject):
         verbose("Generators with (p^t)-generating property:")
         verbose(generators)
 
-        heap = list((f.degree(), f) for f in generators)
+        heap = [(f.degree(), f) for f in generators]
         heapq.heapify(heap)
 
         # find poly of minimal degree
@@ -794,7 +794,7 @@ class ComputeMinimalPolynomials(SageObject):
         if s_max < t:
             result = {r: polynomial
                       for r, polynomial in p_min_polys.items() if r < s_max}
-            next_t_candidates = list(r for r in p_min_polys if r >= s_max)
+            next_t_candidates = [r for r in p_min_polys if r >= s_max]
             if next_t_candidates:
                 next_t = min(next_t_candidates)
                 result.update({s_max: p_min_polys[next_t] % p**s_max})

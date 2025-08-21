@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Rigged Partitions
+Rigged partitions
 
 Class and methods of the rigged partition which are used by the rigged
 configuration class. This is an internal class used by the rigged
@@ -15,16 +15,16 @@ The data for the vacancy number is also stored in a 1-dim array which each
 entry corresponds to the row of the tableau, and similarly for the
 partition values.
 
-AUTHORS:
-
-- Travis Scrimshaw (2010-09-26): Initial version
-
 .. TODO::
 
     Convert this to using multiplicities `m_i` (perhaps with a dictionary?)?
+
+AUTHORS:
+
+- Travis Scrimshaw (2010-09-26): initial version
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010-2012 Travis Scrimshaw <tscrim@ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -36,8 +36,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.misc.latex import latex
 from sage.structure.richcmp cimport richcmp

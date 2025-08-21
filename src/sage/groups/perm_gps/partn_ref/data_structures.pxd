@@ -529,7 +529,7 @@ cdef inline void SC_random_element(StabilizerChain *SC, int level, int *perm) no
     cdef int i, x, n = SC.degree
     SC_identify(perm, n)
     for i from level <= i < SC.base_size:
-        x = SC.base_orbits[i][rand()%SC.orbit_sizes[i]]
+        x = SC.base_orbits[i][rand() % SC.orbit_sizes[i]]
         SC_compose_up_to_base(SC, i, x, perm)
 
 cdef int compute_relabeling(StabilizerChain *group,

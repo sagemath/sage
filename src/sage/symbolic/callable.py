@@ -259,10 +259,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         if isinstance(R, CallableSymbolicExpressionRing_class):
             args = self.arguments()
-            if all(a in args for a in R.arguments()):
-                return True
-            else:
-                return False
+            return all(a in args for a in R.arguments())
         return SymbolicRing._coerce_map_from_(self, R)
 
     def construction(self):

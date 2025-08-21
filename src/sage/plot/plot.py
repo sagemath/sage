@@ -504,7 +504,7 @@ the state of Sage, so that the examples below work!
 
     sage: reset()
 
-See http://matplotlib.sourceforge.net for complete documentation
+See https://matplotlib.org/stable/ for complete documentation
 about how to use Matplotlib.
 
 TESTS:
@@ -3131,7 +3131,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         sage: list_plot([4, 3+I, I, 1+5*i, None, 1+i])
         Graphics object consisting of 1 graphics primitive
     """
-    from sage.plot.all import point
+    from sage.plot.point import point
     try:
         if not data:
             return Graphics()

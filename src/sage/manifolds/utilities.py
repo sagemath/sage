@@ -972,12 +972,10 @@ class ExpressionNice(Expression):
                     strv[i] = "(" + sv + ")"
 
             # dictionary to group multiple occurrences of differentiation: d/dxdx -> d/dx^2 etc.
-            occ = dict((i, strv[i] + "^" + str(diffargs.count(i))
-                       if (diffargs.count(i) > 1) else strv[i])
-                       for i in diffargs)
+            occ = {i: strv[i] + "^" + str(D) if (D := diffargs.count(i)) > 1
+                   else strv[i] for i in diffargs}
 
-            res = "d" + str(numargs) + "(" + str(funcname) + ")/d" + "d".join(
-                occ.values())
+            res = f"d{numargs}({funcname})/d" + "d".join(occ.values())
 
             # str representation of the operator
             s = self._parent._repr_element_(m[0])

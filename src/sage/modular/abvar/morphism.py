@@ -117,7 +117,7 @@ class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
             iM, denom = iM._clear_denom()
         return Morphism(self.parent().reversed(), iM)
 
-    def is_isogeny(self):
+    def is_isogeny(self) -> bool:
         """
         Return ``True`` if this morphism is an isogeny of abelian varieties.
 

@@ -17,8 +17,6 @@ algorithms. Combinatorics covers a much wider domain (partial orders,
 representation theory, …) for which we only give a few pointers
 towards the possibilities offered by ``Sage``.
 
-.. TODO:: Add link to some thematic tutorial on graphs
-
 A characteristic of computational combinatorics is the profusion of
 types of objects and sets that one wants to manipulate. It would be
 impossible to describe them all or, a fortiori, to implement them all.
@@ -142,7 +140,7 @@ We will now attempt a little numerical simulation. The following
 function tests whether a given hand is a flush or not::
 
     sage: def is_flush(hand):
-    ....:     return len(set(suit for (val, suit) in hand)) == 1
+    ....:     return len(set(suit for val, suit in hand)) == 1
 
 We now draw 10000 hands at random, and count the number of flushes
 obtained (this takes about 10 seconds)::
@@ -1841,9 +1839,10 @@ etc. This can be applied to generate:
 
 REFERENCES:
 
-   .. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba, Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann
-         *Calcul Mathématique avec Sage*
-         https://www.sagemath.org/sagebook/french.html
+.. [CMS2012] Alexandre Casamayou, Nathann Cohen, Guillaume Connan, Thierry
+   Dumont, Laurent Fousse, François Maltey, Matthias Meulien, Marc Mezzarobba,
+   Clément Pernet, Nicolas M. Thiéry, Paul Zimmermann *Calcul Mathématique avec
+   Sage* https://www.sagemath.org/sagebook/french.html
 
 .. [1]
    Or at least that should be the case; there are still many corners to

@@ -896,10 +896,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         if not other_ring.is_exact():
             other_ring = RDF  # the only supported floating-point numbers for now
 
-        cm_map, cm_ring = get_coercion_model().analyse(self.base_ring(), other_ring)
-        if cm_ring is None:
-            raise TypeError(f'Could not coerce type {other} into ZZ, QQ, or RDF.')
-        return cm_ring
+        return get_coercion_model().common_parent(self.base_ring(), other_ring)
 
     def _coerce_map_from_(self, X):
         r"""

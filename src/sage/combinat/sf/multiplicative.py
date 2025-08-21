@@ -20,8 +20,9 @@ a partition `\lambda = (\lambda_1,\lambda_2,\ldots)` we have
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from . import classical
 import sage.combinat.partition
+
+from . import classical
 
 
 class SymmetricFunctionAlgebra_multiplicative(classical.SymmetricFunctionAlgebra_classical):

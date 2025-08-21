@@ -67,7 +67,9 @@ TESTS::
 from sage.arith.misc import is_prime, sigma
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.modular.arithgroup.all import CongruenceSubgroupBase, Gamma0_class, Gamma1_class
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroupBase
 from sage.modular.dirichlet import TrivialCharacter
 from sage.modular.hecke.ambient_module import AmbientHeckeModule
 from sage.modular.modsym.modsym import ModularSymbols
@@ -177,8 +179,9 @@ class ModularFormsAmbient(space.ModularFormsSpace,
              1 + q^3 + q^4 + 2*q^5 + O(q^6)]
         """
         from . import constructor
-        M = constructor.ModularForms(self.group(), self.weight(), base_ring, prec=self.prec(), eis_only=self._eis_only)
-        return M
+        return constructor.ModularForms(self.group(), self.weight(),
+                                        base_ring, prec=self.prec(),
+                                        eis_only=self._eis_only)
 
     @cached_method
     def dimension(self):
@@ -276,7 +279,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         """
         return self
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         """
         Return ``True`` if this an ambient space of modular forms.
 

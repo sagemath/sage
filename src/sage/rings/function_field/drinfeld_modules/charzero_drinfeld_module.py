@@ -56,8 +56,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
     responsible for instantiating the right class depending on the
     input::
 
-        sage: A = GF(3)['T']
-        sage: K.<T> = Frac(A)
+        sage: A.<T> = GF(3)[]
         sage: phi = DrinfeldModule(A, [T, 1])
         sage: phi
         Drinfeld module defined by T |--> t + T
@@ -75,8 +74,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
     It is possible to calculate the logarithm and the exponential of
     any Drinfeld modules of characteristic zero::
 
-        sage: A = GF(2)['T']
-        sage: K.<T> = Frac(A)
+        sage: A.<T> = GF(2)[]
         sage: phi = DrinfeldModule(A, [T, 1])
         sage: phi.exponential()
         z + ((1/(T^2+T))*z^2) + ((1/(T^8+T^6+T^5+T^3))*z^4) + O(z^8)
@@ -89,8 +87,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
     analytic theory of Drinfeld module. They provide a function field
     analogue of certain classical trigonometric functions::
 
-        sage: A = GF(2)['T']
-        sage: K.<T> = Frac(A)
+        sage: A.<T> = GF(2)[]
         sage: phi = DrinfeldModule(A, [T, 1])
         sage: phi.goss_polynomial(1)
         X
@@ -133,8 +130,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         TESTS::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
             sage: phi._compute_coefficient_exp(0)
@@ -175,8 +171,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         EXAMPLES::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
 
@@ -199,8 +194,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         Example in higher rank::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: exp = phi.exponential(); exp
             z + ((T/(T^4+4))*z^5) + O(z^8)
@@ -217,8 +211,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         TESTS::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: exp = phi.exponential()
             sage: exp[2] == 1/(T**q - T)  # expected value
@@ -259,8 +252,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         TESTS::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = A.base_ring().cardinality()
             sage: phi._compute_coefficient_log(0)
@@ -305,8 +297,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         EXAMPLES::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, 1])
 
         When ``prec`` is ``Infinity`` (which is the default),
@@ -328,16 +319,14 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         Example in higher rank::
 
-            sage: A = GF(5)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(5)[]
             sage: phi = DrinfeldModule(A, [T, T^2, T + T^2 + T^4, 1])
             sage: phi.logarithm()
             z + ((4*T/(T^4+4))*z^5) + O(z^8)
 
         TESTS::
 
-            sage: A = GF(2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2)[]
             sage: phi = DrinfeldModule(A, [T, 1])
             sage: q = 2
             sage: log[2] == -1/((T**q - T))  # expected value
@@ -374,8 +363,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         TESTS::
 
-            sage: A = GF(2^2)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(2^2)[]
             sage: phi = DrinfeldModule(A, [T, T+1, T^2, 1])
             sage: poly_ring = phi.base()['X']
             sage: X = poly_ring.gen()
@@ -423,8 +411,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         EXAMPLES::
 
-            sage: A = GF(3)['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = GF(3)[]
             sage: phi = DrinfeldModule(A, [T, 1])  # Carlitz module
             sage: phi.goss_polynomial(1)
             X
@@ -459,8 +446,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
         sage: q = 9
         sage: Fq = GF(q)
-        sage: A = Fq['T']
-        sage: K.<T> = Frac(A)
+        sage: A.<T> = Fq[]
         sage: C = DrinfeldModule(A, [T, 1]); C
         Drinfeld module defined by T |--> t + T
         sage: type(C)
@@ -479,9 +465,8 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
             sage: q = 5
             sage: Fq = GF(q)
-            sage: A = Fq['T']
-            sage: R = Fq['U']
-            sage: K.<U> = Frac(R)
+            sage: A.<T> = Fq[]
+            sage: R.<U> = Fq[]
             sage: phi = DrinfeldModule(A, [U, 0, U^2, U^3])
             sage: phi.coefficient_in_function_ring(2)
             T^2
@@ -504,7 +489,6 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         """
         A = self.function_ring()
         g = self.coefficient(n)
-        g = g.backend(force=True)
         if g.denominator().is_one():
             return A(g.numerator().list())
         else:
@@ -525,9 +509,8 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
             sage: q = 5
             sage: Fq = GF(q)
-            sage: A = Fq['T']
-            sage: R = Fq['U']
-            sage: K.<U> = Frac(R)
+            sage: A.<T> = Fq[]
+            sage: R.<U> = Fq[]
             sage: phi = DrinfeldModule(A, [U, 0, U^2, U^3])
             sage: phi.coefficients_in_function_ring()
             [T, T^2, T^3]
@@ -550,7 +533,6 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
         A = self.function_ring()
         gs = []
         for g in self.coefficients(sparse):
-            g = g.backend(force=True)
             if g.denominator().is_one():
                 gs.append(A(g.numerator().list()))
             else:
@@ -572,8 +554,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
 
             sage: q = 5
             sage: Fq = GF(q)
-            sage: A = Fq['T']
-            sage: K.<T> = Frac(A)
+            sage: A.<T> = Fq[]
             sage: C = DrinfeldModule(A, [T, 1]); C
             Drinfeld module defined by T |--> t + T
             sage: C.class_polynomial()

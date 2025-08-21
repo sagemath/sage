@@ -73,7 +73,7 @@ cdef class ntl_ZZ_pEContext_class():
         """
         return ntl_ZZ_pEContext, (self.f,)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -82,7 +82,7 @@ cdef class ntl_ZZ_pEContext_class():
             sage: c = ntl.ZZ_pEContext(ntl.ZZ_pX([1,1,1], 7)); c
             NTL modulus [1 1 1] (mod 7)
         """
-        return "NTL modulus %s (mod %s)"%(self.f, self.pc.p)
+        return "NTL modulus %s (mod %s)" % (self.f, self.pc.p)
 
     def get_pc(self):
         """

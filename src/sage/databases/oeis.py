@@ -246,11 +246,11 @@ class OEIS:
       - a list representing a sequence of integers.
       - a string, representing a text search.
 
-    - ``max_results`` -- (integer, default: 30) the maximum number of
+    - ``max_results`` -- integer (default: 30); the maximum number of
       results to return, they are sorted according to their relevance. In
       any cases, the OEIS website will never provide more than 100 results.
 
-    - ``first_result`` -- (integer, default: 0) allow to skip the
+    - ``first_result`` -- integer (default: 0); allow to skip the
       ``first_result`` first results in the search, to go further.
       This is useful if you are looking for a sequence that may appear
       after the 100 first found sequences.
@@ -448,11 +448,11 @@ class OEIS:
 
         - ``description`` -- string; the description the searched sequences
 
-        - ``max_results`` -- (integer, default: 3) the maximum number of results
+        - ``max_results`` -- integer (default: 3); the maximum number of results
           we want. In any case, the on-line encyclopedia will not return more
           than 100 results.
 
-        - ``first_result`` -- (integer, default: 0) allow to skip the
+        - ``first_result`` -- integer (default: 0); allow to skip the
           ``first_result`` first results in the search, to go further.
           This is useful if you are looking for a sequence that may appear
           after the 100 first found sequences.
@@ -1930,7 +1930,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             return sorted(table)
         return sorted(prog for la, prog in table if la == language)
 
-    def test_compile_sage_code(self):
+    def check_compile_sage_code(self):
         """
         Try to compile the extracted sage code, if there is any.
 
@@ -1946,13 +1946,13 @@ class OEISSequence(SageObject, UniqueRepresentation):
         One correct sequence::
 
             sage: s = oeis.find_by_id('A027642')        # optional -- internet
-            sage: s.test_compile_sage_code()            # optional -- internet
+            sage: s.check_compile_sage_code()            # optional -- internet
             True
 
         One dead sequence::
 
             sage: s = oeis.find_by_id('A000154')        # optional -- internet
-            sage: s.test_compile_sage_code()            # optional -- internet
+            sage: s.check_compile_sage_code()            # optional -- internet
             True
         """
         if self.is_dead():

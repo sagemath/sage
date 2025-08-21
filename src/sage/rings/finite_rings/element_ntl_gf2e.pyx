@@ -517,7 +517,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         y._cache = self._cache
         return y
 
-    def __repr__(FiniteField_ntl_gf2eElement self):
+    def __repr__(FiniteField_ntl_gf2eElement self) -> str:
         """
         Polynomial representation of ``self``.
 
@@ -552,11 +552,11 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         for i from 1 < i <= GF2X_deg(rep):
             c = GF2X_coeff(rep, i)
             if not GF2_IsZero(c):
-                _repr.append("%s^%d"%(name,i))
+                _repr.append("%s^%d" % (name, i))
 
         return " + ".join(reversed(_repr))
 
-    def __bool__(FiniteField_ntl_gf2eElement self):
+    def __bool__(FiniteField_ntl_gf2eElement self) -> bool:
         r"""
         Return ``True`` if ``self != k(0)``.
 

@@ -2534,30 +2534,30 @@ The following workaround is needed until any :class:`CategoryWithAxiom` of a
 :class:`Category_over_base_ring` becomes automatically a
 :class:`CategoryWithAxiom_over_base_ring`::
 
-    sage: from sage.categories.category_with_axiom import TestObjectsOverBaseRing, Category_over_base_ring
+    sage: from sage.categories.category_with_axiom import DummyObjectsOverBaseRing, Category_over_base_ring
     sage: from sage.categories.category import JoinCategory
-    sage: isinstance(TestObjectsOverBaseRing(QQ), Category_over_base_ring)
+    sage: isinstance(DummyObjectsOverBaseRing(QQ), Category_over_base_ring)
     True
-    sage: C = TestObjectsOverBaseRing(QQ).Commutative()
+    sage: C = DummyObjectsOverBaseRing(QQ).Commutative()
     sage: isinstance(C, Category_over_base_ring)          # todo: not implemented
     True
     sage: C.FiniteDimensional()
-    Category of finite dimensional commutative test objects over base ring over Rational Field
+    Category of finite dimensional commutative dummy objects over base ring over Rational Field
     sage: C.Commutative()
-    Category of commutative test objects over base ring over Rational Field
+    Category of commutative dummy objects over base ring over Rational Field
     sage: C.Unital()
-    Category of commutative unital test objects over base ring over Rational Field
+    Category of commutative unital dummy objects over base ring over Rational Field
 
-    sage: C = TestObjectsOverBaseRing(IntegerModRing(2)).Connected()
+    sage: C = DummyObjectsOverBaseRing(IntegerModRing(2)).Connected()
     sage: isinstance(C, JoinCategory)
     True
     sage: isinstance(C, Category_over_base_ring)          # todo: not implemented
     True
     sage: C.FiniteDimensional()
-    Category of finite dimensional connected test objects
+    Category of finite dimensional connected dummy objects
      over base ring over Ring of integers modulo 2
     sage: C.Connected()
-    Category of connected test objects over base ring over Ring of integers modulo 2
+    Category of connected dummy objects over base ring over Ring of integers modulo 2
 """
 
 ##############################################################################
@@ -2604,7 +2604,7 @@ class Blahs(Category_singleton):
 
     - :class:`Bars`
     - :class:`TestObjects`
-    - :class:`TestObjectsOverBaseRing`
+    - :class:`DummyObjectsOverBaseRing`
     """
 
     def super_categories(self):
@@ -2788,7 +2788,7 @@ class TestObjects(Category_singleton):
         pass
 
 
-class TestObjectsOverBaseRing(Category_over_base_ring):
+class DummyObjectsOverBaseRing(Category_over_base_ring):
     r"""
     A toy singleton category, for testing purposes.
 
@@ -2799,14 +2799,14 @@ class TestObjectsOverBaseRing(Category_over_base_ring):
         """
         TESTS::
 
-            sage: from sage.categories.category_with_axiom import TestObjectsOverBaseRing
-            sage: TestObjectsOverBaseRing(QQ).super_categories()
+            sage: from sage.categories.category_with_axiom import DummyObjectsOverBaseRing
+            sage: DummyObjectsOverBaseRing(QQ).super_categories()
             [Category of test objects]
-            sage: TestObjectsOverBaseRing.Unital.an_instance()
-            Category of unital test objects over base ring over Rational Field
-            sage: TestObjectsOverBaseRing.FiniteDimensional.Unital.an_instance()
-            Category of finite dimensional unital test objects over base ring over Rational Field
-            sage: C = TestObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()
+            sage: DummyObjectsOverBaseRing.Unital.an_instance()
+            Category of unital dummy objects over base ring over Rational Field
+            sage: DummyObjectsOverBaseRing.FiniteDimensional.Unital.an_instance()
+            Category of finite dimensional unital dummy objects over base ring over Rational Field
+            sage: C = DummyObjectsOverBaseRing(QQ).FiniteDimensional().Unital().Commutative()
             sage: TestSuite(C).run()
         """
         return [TestObjects()]

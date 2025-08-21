@@ -5,13 +5,13 @@ This module provides the class :class:`VoronoiDiagram` for computing the
 Voronoi diagram of a finite list of points in `\RR^d`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Moritz Firsching <moritz@math.fu-berlin.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -280,7 +280,10 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
-        from sage.plot.all import line, point, rainbow, plot
+        from sage.plot.line import line
+        from sage.plot.point import point
+        from sage.plot.colors import rainbow
+        from sage.plot.plot import plot
 
         if self.ambient_dim() == 2:
             S = line([])

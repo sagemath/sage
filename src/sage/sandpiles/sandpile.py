@@ -3732,10 +3732,7 @@ class SandpileConfig(dict):
             sage: (S.max_stable() & S.max_stable()).is_stable()
             True
         """
-        for v in self._vertices:
-            if self[v] >= self._sandpile.out_degree(v):
-                return False
-        return True
+        return all(self[v] < self._sandpile.out_degree(v) for v in self._vertices)
 
     def _set_equivalent_recurrent(self):
         r"""
@@ -5920,11 +5917,11 @@ def sandlib(selector=None):
                              3: [1, 2]}},
     }
     if selector is None:
-        print('')
+        print()
         print('  Sandpiles in the sandlib:')
         for i in sorted(sandpiles):
             print('    ', i, ':', sandpiles[i]['description'])
-        print("")
+        print()
     elif selector not in sandpiles:
         print(selector, 'is not in the sandlib.')
     else:

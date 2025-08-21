@@ -55,6 +55,9 @@ thereof, for all the combinatorial maps that apply to it.
 # ****************************************************************************
 
 
+from typing import Self
+
+
 def combinatorial_map_trivial(f=None, order=None, name=None):
     r"""
     Combinatorial map decorator.
@@ -268,7 +271,7 @@ class CombinatorialMap:
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self._f)
 
-    def __get__(self, inst, cls=None):
+    def __get__(self, inst, cls=None) -> Self:
         """
         Bounds the method of ``self`` to the given instance.
 

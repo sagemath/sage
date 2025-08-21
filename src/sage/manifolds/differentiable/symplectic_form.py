@@ -535,7 +535,7 @@ class SymplecticForm(DiffForm):
             self._vol_form = vol_form
 
         result = self._vol_form
-        for k in range(0, contra):
+        for k in range(contra):
             result = result.up(self, k)
         if contra > 1:
             # restoring the antisymmetry after the up operation:

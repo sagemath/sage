@@ -72,13 +72,13 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Any
 
+from sage.misc.cachefunc import cached_method, cached_function
 from sage.structure.parent import Parent
 from sage.structure.element import Element, InfinityElement
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
-
-from sage.misc.cachefunc import cached_method, cached_function
 
 
 @cached_function
@@ -597,7 +597,7 @@ class NFCusp(Element):
         """
         return self.parent().number_field()
 
-    def is_infinity(self):
+    def is_infinity(self) -> bool:
         """
         Return ``True`` if this is the cusp infinity.
 
@@ -822,7 +822,7 @@ class NFCusp(Element):
         k = self.number_field()
         return k.ideal(self.__a, self.__b)
 
-    def ABmatrix(self):
+    def ABmatrix(self) -> list:
         """
         Return AB-matrix associated to the cusp ``self``.
 
@@ -897,11 +897,10 @@ class NFCusp(Element):
         r = A1.element_1_mod(A2)
         b1 = -(1 - r) / a2 * g
         b2 = (r / a1) * g
-        ABM = [a1, b1, a2, b2]
+        return [a1, b1, a2, b2]
 
-        return ABM
-
-    def is_Gamma0_equivalent(self, other, N, Transformation=False):
+    def is_Gamma0_equivalent(self, other, N,
+                             Transformation=False) -> bool | tuple[bool, Any]:
         r"""
         Check if cusps ``self`` and ``other`` are `\Gamma_0(N)`- equivalent.
 

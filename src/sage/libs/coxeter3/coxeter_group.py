@@ -605,7 +605,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return self.value.poincare_polynomial()
 
-        def has_right_descent(self, i):
+        def has_right_descent(self, i) -> bool:
             """
             Return whether ``i`` is a right descent of this element.
 
@@ -619,7 +619,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             return i in self.value.right_descents()
 
-        def has_left_descent(self, i):
+        def has_left_descent(self, i) -> bool:
             """
             Return ``True`` if ``i`` is a left descent of this element.
 

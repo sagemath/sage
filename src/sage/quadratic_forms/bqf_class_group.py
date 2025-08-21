@@ -56,7 +56,8 @@ the group invariants, and element orders, can be computed::
     sage: cl2 * cl2.order() == Cl.zero()
     True
     sage: Cl.abelian_group()
-    Additive abelian group isomorphic to Z/21 embedded in Form Class Group of Discriminant -431
+    Additive abelian group isomorphic to Z/21 embedded in
+    Form Class Group of Discriminant -431
     sage: Cl.gens()  # random
     [Class of 5*x^2 + 3*x*y + 22*y^2]
     sage: Cl.gens()[0].order()
@@ -86,11 +87,8 @@ from sage.categories.morphism import Morphism
 
 from sage.misc.prandom import randrange
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.finite_rings.integer_mod import Mod
-from sage.rings.polynomial.polynomial_ring import polygen
 from sage.arith.misc import random_prime
-from sage.matrix.constructor import matrix
 from sage.groups.generic import order_from_multiple, multiple
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 from sage.quadratic_forms.binary_qf import BinaryQF
@@ -124,7 +122,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         Form Class Group of Discriminant -484
     """
 
-    def __init__(self, D, *, check=True):
+    def __init__(self, D, *, check=True) -> None:
         r"""
         Construct the class group for a given discriminant `D`.
 
@@ -159,7 +157,8 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             Class of 16*x^2 + 5*x*y + 16*y^2
         """
         if isinstance(F, BQFClassGroup_element):
-            if check and F.parent() is not self:  # class group is unique parent
+            if check and F.parent() is not self:
+                # class group is unique parent
                 raise ValueError('quadratic form has incorrect discriminant')
             return F
         if F == 0:
@@ -170,8 +169,10 @@ class BQFClassGroup(Parent, UniqueRepresentation):
 
     def zero(self):
         r"""
-        Return the neutral element of this group, i.e., the class of the
-        principal binary quadratic form of the respective discriminant.
+        Return the neutral element of this group.
+
+        This is the class of the principal binary quadratic form of
+        the respective discriminant.
 
         EXAMPLES::
 
@@ -219,7 +220,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             b = -b
         return self(BinaryQF([a, b, c]))
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash value for this form class group.
 
@@ -230,7 +231,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         """
         return hash(('BQFClassGroup', self._disc))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string describing this form class group.
 
@@ -299,7 +300,8 @@ class BQFClassGroup(Parent, UniqueRepresentation):
             sage: Cl.order()
             16
             sage: G = Cl.abelian_group(); G
-            Additive abelian group isomorphic to Z/4 + Z/2 + Z/2 embedded in Form Class Group of Discriminant -3108
+            Additive abelian group isomorphic to Z/4 + Z/2 + Z/2 embedded in
+            Form Class Group of Discriminant -3108
             sage: G.gens()  # random
             (Class of 11*x^2 + 4*x*y + 71*y^2,
              Class of 6*x^2 + 6*x*y + 131*y^2,
@@ -314,7 +316,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         gens = [BinaryQF(g) for g in gens]
         return AdditiveAbelianGroupWrapper(self, gens, ords)
 
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         r"""
         Return a generating set of this form class group.
 
@@ -322,17 +324,17 @@ class BQFClassGroup(Parent, UniqueRepresentation):
 
             sage: Cl = BQFClassGroup(-4*419)
             sage: Cl.gens()
-            [Class of 3*x^2 + 2*x*y + 140*y^2]
+            (Class of 3*x^2 + 2*x*y + 140*y^2,)
 
         ::
 
             sage: Cl = BQFClassGroup(-4*777)
             sage: Cl.gens()  # random
-            [Class of 11*x^2 + 4*x*y + 71*y^2,
+            (Class of 11*x^2 + 4*x*y + 71*y^2,
              Class of 6*x^2 + 6*x*y + 131*y^2,
-             Class of 2*x^2 + 2*x*y + 389*y^2]
+             Class of 2*x^2 + 2*x*y + 389*y^2)
         """
-        return [g.element() for g in self.abelian_group().gens()]
+        return tuple(g.element() for g in self.abelian_group().gens())
 
     def _coerce_map_from_(self, other):
         r"""
@@ -345,7 +347,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
 
             sage: G = BQFClassGroup(-4*117117)
             sage: H = BQFClassGroup(-4*77)
-            sage: proj = G.hom(H); proj  # implicit doctest
+            sage: proj = G.hom(H); proj  # indirect doctest
             Coercion morphism:
               From: Form Class Group of Discriminant -468468
               To:   Form Class Group of Discriminant -308
@@ -376,7 +378,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
     EXAMPLES::
 
         sage: F = BinaryQF([22, 91, 99])
-        sage: F.form_class()  # implicit doctest
+        sage: F.form_class()  # indirect doctest
         Class of 5*x^2 - 3*x*y + 22*y^2
 
     ::
@@ -384,11 +386,11 @@ class BQFClassGroup_element(AdditiveGroupElement):
         sage: Cl = BQFClassGroup(-4*419)
         sage: Cl.zero()
         Class of x^2 + 419*y^2
-        sage: Cl.gens()[0]  # implicit doctest
+        sage: Cl.gens()[0]  # indirect doctest
         Class of 3*x^2 + 2*x*y + 140*y^2
     """
 
-    def __init__(self, F, parent, *, check=True, reduce=True):
+    def __init__(self, F, parent, *, check=True, reduce=True) -> None:
         r"""
         Constructor for classes of binary quadratic forms.
 
@@ -515,7 +517,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
 
     __rmul__ = __mul__
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Test two form classes for equality.
 
@@ -535,7 +537,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         # as well as hashing.
         return self._form == other._form
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Test two form classes for inequality.
 
@@ -551,7 +553,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return self._form != other._form
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         r"""
         Compare two form classes according to the lexicographic ordering
         on their coefficient lists.
@@ -569,7 +571,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return self._form < other._form
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         Return ``True`` if this form class is *not* the principal class
         and ``False`` otherwise.
@@ -584,7 +586,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return self != self.parent().zero()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this form class is the principal class and
         ``False`` otherwise.
@@ -599,7 +601,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return not self
 
-    def __repr__(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this form class.
 
@@ -611,7 +613,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
         """
         return f'Class of {self._form}'
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash value for this form class.
 
@@ -645,89 +647,18 @@ class BQFClassGroup_element(AdditiveGroupElement):
         return order_from_multiple(self, self.parent().cardinality())
 
 
-def _project_bqf(bqf, q):
-    r"""
-    Internal helper function to compute the image of a
-    :class:`BQFClassGroup_element` of discriminant `D`
-    in the form class group of discriminant `D/q^2`.
-
-    ALGORITHM: Find a class representative with `q^2 \mid a`
-    (and `q \mid b`) and substitute `x\mapsto x/q`.
-
-    EXAMPLES::
-
-        sage: from sage.quadratic_forms.bqf_class_group import _project_bqf
-        sage: f1 = BinaryQF([4, 2, 105])
-        sage: f2 = _project_bqf(f1, 2); f2
-        x^2 + x*y + 105*y^2
-        sage: f1.discriminant().factor()
-        -1 * 2^2 * 419
-        sage: f2.discriminant().factor()
-        -1 * 419
-
-    ::
-
-        sage: f1 = BinaryQF([109, 92, 113])
-        sage: f2 = _project_bqf(f1, 101); f2
-        53*x^2 - 152*x*y + 109*y^2
-        sage: f1.discriminant().factor()
-        -1 * 2^2 * 101^2
-        sage: f2.discriminant().factor()
-        -1 * 2^2
-    """
-    q2 = q**2
-    disc = bqf.discriminant()
-    if not q2.divides(disc) or disc//q2 % 4 not in (0, 1):
-        raise ValueError('discriminant not divisible by q^2')
-
-    a, b, c = bqf
-
-    # lucky case: q^2|c (and q|b)
-    if q2.divides(c):
-        a, b, c = c, -b, a
-
-    # general case: neither q^2|a nor q^2|c
-    elif not q2.divides(a):
-
-        # represent some multiple of q^2
-        R = Zmod(q2)
-        x = polygen(R)
-        for v in R:
-            eq = a*x**2 + b*x*v + c*v**2
-            try:
-                u = eq.any_root()
-            except (ValueError, IndexError):  # why IndexError? see #37034
-                continue
-            if u or v:
-                break
-        else:
-            assert False
-
-        # find equivalent form with q^2|a (and q|b)
-        u, v = map(ZZ, (u, v))
-        assert q2.divides(bqf(u, v))
-        if not v:
-            v += q
-        g, r, s = u.xgcd(v)
-        assert g.is_one()
-        M = matrix(ZZ, [[u, -v], [s, r]])
-        assert M.det().is_one()
-        a, b, c = bqf * M
-
-    # remaining case: q^2|a (and q|b)
-    assert q2.divides(a)
-    assert q.divides(b)
-    return BinaryQF(a//q2, b//q, c)
-
-
 class BQFClassGroupQuotientMorphism(Morphism):
     r"""
     Let `D` be a discriminant and `f > 0` an integer.
 
     Given the class groups `G` and `H` of discriminants `f^2 D` and `D`,
     this class represents the natural projection morphism `G \to H` which
-    is defined by finding a class representative `[a,b,c]` satisfying
-    `f^2 \mid a` and `f \mid b` and substituting `x \mapsto x/f`.
+    is defined by composing the class representative `[a,b,c]` with the
+    principal form of the target discriminant.
+
+    Alternatively, evaluating this map can be characterized as finding a
+    class representative `[a,b,c]` satisfying `f^2 \mid a` and `f \mid b`
+    and substituting `x \mapsto x/f`.
 
     This map is a well-defined group homomorphism.
 
@@ -757,8 +688,19 @@ class BQFClassGroupQuotientMorphism(Morphism):
         sage: elt2 = G.random_element()
         sage: proj(elt1 + elt2) == proj(elt1) + proj(elt2)
         True
+
+    Check that it satisfies compatibility::
+
+        sage: ff = f * randrange(1, 10^3)
+        sage: F = BQFClassGroup(ff^2*D)
+        sage: proj = F.hom(H)
+        sage: proj1 = F.hom(G)
+        sage: proj2 = G.hom(H)
+        sage: elt = F.random_element()
+        sage: proj(elt) == proj2(proj1(elt))
+        True
     """
-    def __init__(self, G, H):
+    def __init__(self, G, H) -> None:
         r"""
         Initialize this morphism between class groups of binary
         quadratic forms.
@@ -775,9 +717,8 @@ class BQFClassGroupQuotientMorphism(Morphism):
             raise TypeError('G needs to be a BQFClassGroup')
         if not isinstance(H, BQFClassGroup):
             raise TypeError('H needs to be a BQFClassGroup')
-        try:
-            self.f = ZZ((G.discriminant() / H.discriminant()).sqrt(extend=False)).factor()
-        except ValueError:
+        f2 = ZZ(G.discriminant() / H.discriminant())
+        if not f2.is_square():
             raise ValueError('morphism only defined when disc(G) = f^2 * disc(H)')
         super().__init__(G, H)
 
@@ -787,22 +728,17 @@ class BQFClassGroupQuotientMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism, _project_bqf
+            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
             sage: G = BQFClassGroup(-4*117117)
             sage: H = BQFClassGroup(-4*77)
             sage: proj = BQFClassGroupQuotientMorphism(G, H)
             sage: elt = G(BinaryQF(333, 306, 422))
             sage: proj(elt)
             Class of 9*x^2 + 4*x*y + 9*y^2
-            sage: proj(elt) == H(_project_bqf(_project_bqf(elt.form(), 3), 13))
-            True
-            sage: proj(elt) == H(_project_bqf(_project_bqf(elt.form(), 13), 3))
-            True
 
-        ALGORITHM: Repeated application of :func:`_project_bqf` for the prime factors in `f`.
+        ALGORITHM: [Buell89]_, Theorem 7.9
         """
+        one = BinaryQF.principal(self.codomain().discriminant())
         bqf = elt.form()
-        for q, m in self.f:
-            for _ in range(m):
-                bqf = _project_bqf(bqf, q)
+        bqf *= one
         return self.codomain()(bqf)

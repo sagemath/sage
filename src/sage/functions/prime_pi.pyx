@@ -49,7 +49,7 @@ cdef class PrimePi(BuiltinFunction):
         INPUT:
 
         - ``x`` -- a real number
-        - ``prime_bound`` -- (default: 0) a real number `< 2^32`; :func:`prime_pi`
+        - ``prime_bound`` -- (default: 0) a real number `< 2^{32}`; :func:`prime_pi`
           will make sure to use all the primes up to ``prime_bound`` (although,
           possibly more) in computing ``prime_pi``, this can potentially
           speedup the time of computation, at a cost to memory usage.

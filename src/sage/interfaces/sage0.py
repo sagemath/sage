@@ -129,7 +129,6 @@ class Sage(ExtraTabCompletion, Expect):
     def __init__(self,
                  logfile=None,
                  preparse=True,
-                 python=False,
                  init_code=None,
                  server=None,
                  server_tmpdir=None,
@@ -154,24 +153,10 @@ class Sage(ExtraTabCompletion, Expect):
                     'init_code should be a string or an iterable of lines '
                     'of code')
 
-        if python:
-            command = 'python -u'
-            prompt = re.compile(b'>>> ')
-            environment = 'sage.all'
-            init_code.append(f'from {environment} import *')
-        else:
-            command = ' '.join([
-                'sage-ipython',
-                # Disable the IPython history (implemented as SQLite database)
-                # to avoid problems with locking.
-                '--HistoryManager.hist_file=:memory:',
-                # Disable everything that prints ANSI codes
-                '--colors=nocolor',
-                '--no-term-title',
-                '--simple-prompt',
-            ])
-            prompt = re.compile(b'sage: ')
-
+        command = 'python3 -u'
+        prompt = re.compile(b'>>> |sage: |In : ')
+        environment = 'sage.all'
+        init_code.append(f'from {environment} import *')
         init_code.append('import pickle')
         init_code.append(textwrap.dedent("""
             def _sage0_load_local(filename):
@@ -550,7 +535,7 @@ class SageFunction(FunctionElement):
         EXAMPLES::
 
             sage: sage0(4).gcd
-            <built-in method gcd of sage.rings.integer.Integer object at 0x...>
+            <bound method PrincipalIdealDomainElement.gcd of 4>
         """
         return str(self._obj.parent().eval('%s.%s' % (self._obj._name,
                                                       self._name)))

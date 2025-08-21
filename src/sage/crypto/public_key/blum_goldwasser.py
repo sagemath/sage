@@ -17,7 +17,7 @@ AUTHORS:
   the description contained in [MvOV1996]_.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (c) 2009, 2010 Mike Hogan
 #       Copyright (c) 2009, 2010 David Joyner <wdjoyner@gmail.com>
 #       Copyright (c) 2009, 2010 Minh Van Nguyen <nguyenminh2@gmail.com>
@@ -26,8 +26,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import xor
 

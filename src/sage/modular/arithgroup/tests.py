@@ -16,7 +16,10 @@ Testing arithmetic subgroup
 from __future__ import annotations
 
 from .arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
-from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH
+from sage.modular.arithgroup.congroup_gamma0 import Gamma0_constructor as Gamma0
+from sage.modular.arithgroup.congroup_gamma1 import Gamma1_constructor as Gamma1
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
+from sage.modular.arithgroup.congroup_gamma import Gamma_constructor as Gamma
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 import sage.misc.prandom as prandom

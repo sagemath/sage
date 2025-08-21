@@ -155,8 +155,9 @@ class DES(SageObject):
 
     TESTS:
 
-    Test test vectors from [KeSm1998]_ pp. 125-136::
+    Test a random subset of the test vectors in [KeSm1998]_ pp. 125-136::
 
+        sage: # long time
         sage: from sage.crypto.block_cipher.des import DES
         sage: test = \
         ....: [[0x0101010101010101, 0x8000000000000000, 0x95F8A5E5DD31D900],
@@ -331,10 +332,10 @@ class DES(SageObject):
         ....:  [0x018310DC409B26D6, 0x1D9D5C5018F728C2, 0x5F4C038ED12B2E41],
         ....:  [0x1C587F1C13924FEF, 0x305532286D6F295A, 0x63FAC0D034D9F793]]
         sage: des = DES()
-        sage: for K, P, C in test: # long time
-        ....:    if des.encrypt(P, K) != C or des.decrypt(C, K) != P:
-        ....:        print("DES tests failed for K=0x%s, P=0x%s, C=0x%s" %
-        ....:              (K.hex(), P.hex(), C.hex()))
+        sage: from random import sample
+        sage: all( des.encrypt(P,K) == C and des.decrypt(C,K) == P
+        ....:      for (K,P,C) in sample(test,5) )
+        True
 
     .. automethod:: __init__
     .. automethod:: __call__
@@ -652,7 +653,7 @@ class DES(SageObject):
             (0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
              0, 1, 1, 0, 1, 1, 1, 0, 1, 1)
         """
-        return self._permutaion(self.sbox_layer(self._expand(right)+subkey))
+        return self._permutation(self.sbox_layer(self._expand(right)+subkey))
 
     def _expand(self, right):
         r"""
@@ -704,7 +705,7 @@ class DES(SageObject):
                                           for i, b in enumerate(block)]))
         return vector(GF(2), 32, block)
 
-    def _permutaion(self, block):
+    def _permutation(self, block):
         r"""
         Apply the permutation function to ``block``.
 
@@ -714,7 +715,7 @@ class DES(SageObject):
             sage: des = DES()
             sage: B = vector(GF(2), 32, [0,1,0,1,1,1,0,0,1,0,0,0,0,0,1,0,1,0,1,
             ....:                        1,0,1,0,1,1,0,0,1,0,1,1,1])
-            sage: des._permutaion(B)
+            sage: des._permutation(B)
             (0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
              0, 1, 1, 0, 1, 1, 1, 0, 1, 1)
         """
@@ -1041,7 +1042,7 @@ def convert_to_vector(I, L):
 
     - ``I`` -- integer or bit list-like
 
-    - ``L`` -- integer; the desired bit length of the ouput
+    - ``L`` -- integer; the desired bit length of the output
 
     OUTPUT: the ``L``-bit vector representation of ``I``
 

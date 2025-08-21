@@ -2,7 +2,7 @@
 .. _chapter-modularization:
 
 ===========================================
-Packaging the Sage Library for Distribution
+Modularized Distribution
 ===========================================
 
 
@@ -48,14 +48,6 @@ Example:
   provides a small subset of the modules of the Sage library, mostly
   from the packages :mod:`sage.structure`, :mod:`sage.categories`, and
   :mod:`sage.misc`.
-
-Other distributions should not use the prefix **sagemath-** in the
-distribution name. Example:
-
-- The distribution `sage-sws2rst <https://pypi.org/project/sage-sws2rst/>`_
-  provides the Python package :mod:`sage_sws2rst`, so it does not fill
-  the :mod:`sage.*` namespace and therefore does not use the prefix
-  **sagemath-**.
 
 A distribution that provides functionality that does not need to
 import anything from the :mod:`sage` namespace should not use the
@@ -493,17 +485,6 @@ requiring all of Sage to be present.
 *Declaring doctest-only dependencies:* The
 `extras_require <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_
 mechanism mentioned above can also be used for this.
-
-
-Dependencies of the Sage documentation
---------------------------------------
-
-The documentation will not be modularized.
-
-However, some parts of the Sage reference manual may depend on functionality
-provided by optional packages. These portions of the reference manual
-should be conditionalized using the Sphinx directive ``.. ONLY::``,
-as explained in :ref:`section-documentation-conditional`.
 
 
 Version constraints of dependencies

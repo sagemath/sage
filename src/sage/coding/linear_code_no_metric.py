@@ -374,18 +374,18 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         return self.dimension() / self.length()
 
     @cached_method
-    def gens(self) -> list:
+    def gens(self) -> tuple:
         r"""
-        Return the generators of this code as a list of vectors.
+        Return the generators of this code as a tuple of vectors.
 
         EXAMPLES::
 
             sage: C = codes.HammingCode(GF(2), 3)
             sage: C.gens()
-             [(1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
-              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1)]
+             ((1, 0, 0, 0, 0, 1, 1), (0, 1, 0, 0, 1, 0, 1),
+              (0, 0, 1, 0, 1, 1, 0), (0, 0, 0, 1, 1, 1, 1))
         """
-        return self.generator_matrix().rows()
+        return tuple(self.generator_matrix().rows())
 
     def basis(self):
         r"""
@@ -847,7 +847,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return hash((Str, G)) ^ hash(Str) ^ hash(G)
 
-    def is_subcode(self, other):
+    def is_subcode(self, other) -> bool:
         """
         Return ``True`` if ``self`` is a subcode of ``other``.
 
@@ -880,7 +880,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         G = self.generator_matrix()
         return all(r in other for r in G.rows())
 
-    def is_permutation_automorphism(self, g):
+    def is_permutation_automorphism(self, g) -> bool:
         r"""
         Return `1` if `g` is an element of `S_n` (`n` = length of ``self``) and
         if `g` is an automorphism of ``self``.
@@ -907,11 +907,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
         basis = self.generator_matrix().rows()
         H = self.parity_check_matrix()
         V = H.column_space()
-        HGm = H*g.matrix()
-        for c in basis:
-            if HGm*c != V(0):
-                return False
-        return True
+        HGm = H * g.matrix()
+        V0 = V.zero()
+        return all(HGm * c == V0 for c in basis)
 
     def permuted_code(self, p):
         r"""

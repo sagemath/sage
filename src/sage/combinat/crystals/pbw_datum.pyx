@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-PBW Data
+PBW data
 
 This contains helper classes and functions which encode PBW data
 in finite type.

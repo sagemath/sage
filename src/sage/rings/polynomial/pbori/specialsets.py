@@ -1,6 +1,13 @@
-from .pbori import (top_index, if_then_else,
-                    mod_mon_set, BooleSet, BooleConstant)
-from .PyPolyBoRi import (Polynomial, Monomial, Variable)
+from sage.rings.polynomial.pbori.pbori import (
+    BooleConstant,
+    BooleSet,
+    Monomial,
+    Polynomial,
+    Variable,
+    if_then_else,
+    mod_mon_set,
+    top_index,
+)
 
 
 def all_monomials_of_degree_d_old(d, variables):

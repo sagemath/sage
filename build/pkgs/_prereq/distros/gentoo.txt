@@ -27,3 +27,7 @@ dev-libs/libxml2
 sys-apps/findutils
 sys-apps/which
 sys-apps/diffutils
+sys-devel/patch
+app-arch/bzip2
+sys-devel/patch
+dev-util/pkgconf

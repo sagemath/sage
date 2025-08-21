@@ -98,7 +98,7 @@ def is_GammaH(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_GammaH
+        sage: from sage.modular.arithgroup.congroup_gammaH import is_GammaH
         sage: is_GammaH(GammaH(13, [2]))
         doctest:warning...
         DeprecationWarning: The function is_GammaH is deprecated; use 'isinstance(..., GammaH_class)' instead.
@@ -434,7 +434,7 @@ class GammaH_class(CongruenceSubgroup):
         """
         return self.__Hlist
 
-    def is_even(self):
+    def is_even(self) -> bool:
         """
         Return ``True`` precisely if this subgroup contains the matrix -1.
 
@@ -994,14 +994,15 @@ class GammaH_class(CongruenceSubgroup):
             sage: len(list(Gamma1(31).coset_reps())) == 31**2 - 1
             True
         """
-        from .all import Gamma0, SL2Z
+        from sage.modular.arithgroup.congroup_sl2z import SL2Z
+        from sage.modular.congroup import Gamma0
         reps1 = Gamma0(self.level()).coset_reps()
         for r in reps1:
             reps2 = self.gamma0_coset_reps()
             for t in reps2:
                 yield SL2Z(t) * r
 
-    def is_subgroup(self, other):
+    def is_subgroup(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is a subgroup of ``right``, and ``False``
         otherwise.
@@ -1021,8 +1022,8 @@ class GammaH_class(CongruenceSubgroup):
             sage: GammaH(1371, [169]).is_subgroup(GammaH(457, [169]))
             True
         """
-
-        from .all import Gamma0_class, Gamma1_class
+        from sage.modular.arithgroup.congroup_gamma0 import Gamma0_class
+        from sage.modular.arithgroup.congroup_gamma1 import Gamma1_class
         if not isinstance(other, GammaH_class):
             raise NotImplementedError
 
@@ -1040,10 +1041,7 @@ class GammaH_class(CongruenceSubgroup):
         else:
             # difficult case
             t = other._list_of_elements_in_H()
-            for x in self._generators_for_H():
-                if x not in t:
-                    return False
-            return True
+            return all(x in t for x in self._generators_for_H())
 
     def index(self):
         r"""

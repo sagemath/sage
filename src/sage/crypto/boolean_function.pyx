@@ -1209,7 +1209,7 @@ cdef class BooleanFunction(SageObject):
         except TypeError:
             raise TypeError("cannot compute is_linear_structure() using parameter %s" % (val,))
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         r"""
         Return ``True`` if this function has a linear structure.
 

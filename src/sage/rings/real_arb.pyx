@@ -1479,6 +1479,7 @@ cdef class RealBall(RingElement):
                 fmpz_init(tmpz)
                 fmpz_set_mpz(tmpz, (<Integer> rad.denominator()).value)
                 arf_div_fmpz(tmpr, tmpr, tmpz, prec(self), ARF_RND_UP)
+                fmpz_clear(tmpz)
                 arf_get_mag(tmpm, tmpr)
                 arf_clear(tmpr)
             elif isinstance(rad, float):

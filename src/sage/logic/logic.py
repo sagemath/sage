@@ -276,7 +276,7 @@ class SymbolicLogic:
                 line += s
                 i += 1
             print(line)
-        print("")
+        print()
 
     def combine(self, statement1, statement2):
         r"""

@@ -284,10 +284,7 @@ class FiniteSetMaps_MN(FiniteSetMaps):
             x = list(x)
             if len(x) != self._m:
                 return False
-            for i in x:
-                if not (0 <= i < self._n):
-                    return False
-            return True
+            return all(0 <= i < self._n for i in x)
 
     def an_element(self):
         """

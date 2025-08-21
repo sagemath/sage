@@ -494,19 +494,20 @@ Test that the output is parseable (:issue:`31796`)::
 
 import os
 import re
-import pexpect
 import shlex
-
 from random import randrange
 
+import pexpect
+
 from sage.env import MAXIMA
-
-from .expect import (Expect, ExpectElement, gc_disabled)
-
-from .maxima_abstract import (MaximaAbstract, MaximaAbstractFunction,
-                              MaximaAbstractElement,
-                              MaximaAbstractFunctionElement,
-                              MaximaAbstractElementFunction)
+from sage.interfaces.expect import Expect, ExpectElement, gc_disabled
+from sage.interfaces.maxima_abstract import (
+    MaximaAbstract,
+    MaximaAbstractElement,
+    MaximaAbstractElementFunction,
+    MaximaAbstractFunction,
+    MaximaAbstractFunctionElement,
+)
 from sage.misc.instancedoc import instancedoc
 
 
@@ -529,6 +530,7 @@ class Maxima(MaximaAbstract, Expect):
 
         TESTS::
 
+            sage:: from sage.interfaces.maxima import Maxima, maxima
             sage: Maxima == loads(dumps(Maxima))
             True
             sage: maxima == loads(dumps(maxima))

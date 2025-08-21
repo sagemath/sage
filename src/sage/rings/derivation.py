@@ -495,10 +495,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
                 morS = self._defining_morphism
                 try:
                     # this test is not perfect
-                    for g in self._domain.gens():
-                        if morR(g) != morS(g):
-                            return False
-                    return True
+                    return all(morR(g) == morS(g) for g in self._domain.gens())
                 except (AttributeError, NotImplementedError):
                     pass
         return super()._coerce_map_from_(R)
@@ -1044,10 +1041,7 @@ class RingDerivationWithoutTwist(RingDerivation):
             sage: (f-f).is_zero()
             True
         """
-        for c in self.list():
-            if not c.is_zero():
-                return False
-        return True
+        return all(c.is_zero() for c in self.list())
 
     def _richcmp_(self, other, op):
         """

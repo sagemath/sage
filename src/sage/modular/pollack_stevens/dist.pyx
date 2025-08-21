@@ -211,7 +211,7 @@ cdef class Dist(ModuleElement):
             scalar = new_base(left)
             return V([scalar * new_base(self.moment(i)) for i in range(self.precision_absolute())])
 
-    def is_zero(self, p=None, M=None):
+    def is_zero(self, p=None, M=None) -> bool:
         r"""
         Return ``True`` if the `i`-th moment is zero for all `i` (case ``M`` is
         ``None``) or zero modulo `p^{M-i}` for all `i` (when ``M`` is not
@@ -385,7 +385,7 @@ cdef class Dist(ModuleElement):
                         raise ValueError("not a scalar multiple")
                 v = a.valuation(p)
                 if n - i - v > relprec:
-                    verbose("Reseting alpha: relprec=%s, n-i=%s, v=%s" % (relprec, n - i, v), level = 2)
+                    verbose("Resetting alpha: relprec=%s, n-i=%s, v=%s" % (relprec, n - i, v), level = 2)
                     relprec = n - i - v
                     if padic:
                         alpha = (other._unscaled_moment(i) / a).add_bigoh(n - i)

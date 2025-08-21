@@ -311,18 +311,19 @@ cdef class Lfunction:
             [14.1347251417..., 21.0220396387..., 25.0108575801...]
         """
         cdef doublevec result
-        cdef double myresult
         cdef int i
         cdef RealNumber real_T1 = RRR(T1)
         cdef RealNumber real_T2 = RRR(T2)
         cdef RealNumber real_stepsize = RRR(stepsize)
         sig_on()
-        self._find_zeros_v( mpfr_get_d(real_T1.value, MPFR_RNDN), mpfr_get_d(real_T2.value, MPFR_RNDN), mpfr_get_d(real_stepsize.value, MPFR_RNDN),&result)
+        self._find_zeros_v(mpfr_get_d(real_T1.value, MPFR_RNDN),
+                           mpfr_get_d(real_T2.value, MPFR_RNDN),
+                           mpfr_get_d(real_stepsize.value, MPFR_RNDN), &result)
         sig_off()
-        i=result.size()
+        i = result.size()
         returnvalue = []
         for i in range(result.size()):
-            returnvalue.append(  RRR(result.ind(i)))
+            returnvalue.append(RRR(result.ind(i)))
         result.clear()
         return returnvalue
 

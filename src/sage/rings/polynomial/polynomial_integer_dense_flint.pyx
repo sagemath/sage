@@ -402,7 +402,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         cdef RealBall arb_a, arb_z
         cdef ComplexBall acb_a, acb_z
 
-        cdef unsigned long limbs
         cdef fmpz_t a_fmpz
         cdef fmpz_t z_fmpz
 
@@ -1642,16 +1641,15 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: f = -30*x; f.factor()
             (-1) * 2 * 3 * 5 * x
         """
-        cdef int i
         cdef long deg = fmpz_poly_degree(self._poly)
         # it appears that pari has a window from about degrees 30 and 300
         # in which it beats NTL.
         c = self.content()
-        g = self//c
+        g = self // c
         if deg < 30 or deg > 300:
-            return c.factor()*g._factor_ntl()
+            return c.factor() * g._factor_ntl()
         else:
-            return c.factor()*g._factor_pari()
+            return c.factor() * g._factor_pari()
 
     def factor_mod(self, p):
         """

@@ -217,7 +217,7 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
 #               2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #
@@ -225,8 +225,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from collections import namedtuple
 
 from sage.misc.lazy_import import lazy_import
@@ -5246,18 +5246,18 @@ class GrowthGroupFactory(UniqueFactory):
         sfactors = split_str_by_op(
             ' '.join(specification.split()).replace('**', '^'), '*')
 
-        def remove_parentheses(s):
+        def remove_parentheses(s: str) -> str:
             while s.startswith('(') and s.endswith(')'):
                 s = s[1:-1].strip()
             return s
 
-        def has_l_property(s, properties, invert=False):
+        def has_l_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.startswith(p):
                     return s[len(p):].strip(), not invert
             return s, invert
 
-        def has_r_property(s, properties, invert=False):
+        def has_r_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.endswith(p):
                     return s[:-len(p)].strip(), not invert

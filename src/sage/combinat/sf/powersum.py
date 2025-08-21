@@ -18,13 +18,14 @@ Power sum symmetric functions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from . import sfa, multiplicative, classical
-from sage.combinat.partition import Partition
 from sage.arith.misc import divisors
-from sage.rings.infinity import infinity
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
 from sage.misc.superseded import deprecated_function_alias
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+
+from . import classical, multiplicative, sfa
 
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -796,11 +797,16 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 sage: p.zero().principal_specialization(3)
                 0
             """
+            if n == 1:
+                return self.base_ring().sum(self.coefficients(sort=False))
+
             def get_variable(ring, name):
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -911,7 +917,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 try:
                     ring(name)
                 except TypeError:
-                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    from sage.rings.polynomial.polynomial_ring_constructor import (
+                        PolynomialRing,
+                    )
                     return PolynomialRing(ring, name).gen()
                 else:
                     raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
@@ -921,12 +929,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                     t = get_variable(self.base_ring(), 't')
 
                 def f(partition):
-                    n = 0
-                    for part in partition:
-                        if part != 1:
-                            return 0
-                        n += 1
-                    return t**n
+                    if partition and partition[0] != 1:
+                        return 0
+                    return t**len(partition)
 
                 return self.parent()._apply_module_morphism(self, f, t.parent())
 
@@ -951,6 +956,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
+
 register_unpickle_override('sage.combinat.sf.powersum',
                            'SymmetricFunctionAlgebraElement_power',
                            SymmetricFunctionAlgebra_power.Element)

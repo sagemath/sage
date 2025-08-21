@@ -271,7 +271,7 @@ class SageKernelSpec:
                               '(see https://docs.jupyter.org/en/latest/use/jupyter-directories.html)')
 
 
-def have_prerequisites(debug=True):
+def have_prerequisites(debug=True) -> bool:
     """
     Check that we have all prerequisites to run the Jupyter notebook.
 

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.rings.finite_rings
 r"""
-Resolvable Balanced Incomplete Block Design (RBIBD)
+Resolvable balanced incomplete block design (RBIBD)
 
 This module contains everything related to resolvable Balanced Incomplete Block
 Designs. The constructions implemented here can be obtained through the

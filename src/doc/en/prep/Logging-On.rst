@@ -52,7 +52,12 @@ the third option to "export" them will not make sense.
     :align: center
 
 The legacy SageNB has been retired in Sage 9.1.
-Please use the Jupyter notebook.  Jupyter will bring you to a screen
+Please use the Jupyter notebook.
+Old SageNB worksheets can be converted to Jupyter notebooks
+using the ``sage --notebook=export`` command or to RST
+using the `sage-sws2rst <https://pypi.org/project/sage-sws2rst/>`_ package.
+
+Jupyter will bring you to a screen
 that is simply a listing of files in whatever folder Sage has opened in.
 
 .. image:: media/JupyterIntroScreen.png

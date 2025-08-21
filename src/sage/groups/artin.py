@@ -162,7 +162,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             W = self.parent().coxeter_group()
         s = W.simple_reflections()
         In = W.index_set()
-        return W.prod(s[In[abs(i)-1]] for i in self.Tietze())
+        return W.prod(s[In[abs(i) - 1]] for i in self.Tietze())
 
     def burau_matrix(self, var='t'):
         r"""
@@ -613,10 +613,10 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
             return super().__classcall__(cls, coxeter_data, names)
         if coxeter_data.coxeter_type().cartan_type().type() == 'A':
             from sage.groups.braid import BraidGroup
-            return BraidGroup(coxeter_data.rank()+1, names)
+            return BraidGroup(coxeter_data.rank() + 1, names)
         return FiniteTypeArtinGroup(coxeter_data, names)
 
-    def __init__(self, coxeter_matrix, names):
+    def __init__(self, coxeter_matrix, names) -> None:
         """
         Initialize ``self``.
 
@@ -635,7 +635,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         I = coxeter_matrix.index_set()
         gens = free_group.gens()
         for ii, i in enumerate(I):
-            for jj, j in enumerate(I[ii + 1:], start=ii+1):
+            for jj, j in enumerate(I[ii + 1:], start=ii + 1):
                 m = coxeter_matrix[i, j]
                 if m == Infinity:  # no relation
                     continue
@@ -646,7 +646,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
                 rels.append(elt)
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -779,7 +779,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         return self.element_class(self, x)
 
     @cached_method
-    def an_element(self):
+    def _an_element_(self):
         """
         Return an element of ``self``.
 
@@ -791,7 +791,7 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
         """
         return self.gen(0)
 
-    def some_elements(self):
+    def some_elements(self) -> list:
         """
         Return a list of some elements of ``self``.
 
@@ -959,7 +959,8 @@ class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
                 elif x == 1:
                     return 1 + q**2
                 else:
-                    return q * (E(2*x) + ~E(2*x))
+                    E2x = E(2 * x)
+                    return q * (E2x + ~E2x)
         elif isinstance(base_ring, sage.rings.abc.NumberField_quadratic):
             from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
             E = UniversalCyclotomicField().gen

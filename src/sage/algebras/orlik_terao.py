@@ -693,7 +693,7 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: OTG.construction() is None
             True
         """
-        return None
+        return
 
     def _basis_action(self, g, f):
         r"""

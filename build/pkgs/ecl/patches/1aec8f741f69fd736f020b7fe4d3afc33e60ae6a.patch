@@ -1,0 +1,171 @@
+diff --git a/src/c/backq.d b/src/c/backq.d
+index 973d5b9227af057d79a737f081d7d1064aded678..02c3cfbd44789cd4ac30a120704da4d92a6b47b7 100644
+--- a/src/c/backq.d
++++ b/src/c/backq.d
+@@ -259,5 +259,5 @@ quasiquote_macro(cl_object whole, cl_object env)
+ void
+ init_backq(void)
+ {
+-  ecl_def_c_macro(@'si::quasiquote', quasiquote_macro, 2);
++  ecl_def_c_macro(@'si::quasiquote', (cl_objectfn_fixed)quasiquote_macro, 2);
+ }
+diff --git a/src/c/cinit.d b/src/c/cinit.d
+index 54ac36abbfe8207c869ebd135a83daa6ec6e4f15..8f81d28d462a342857a0d5cf9810f7ce9a80e00a 100644
+--- a/src/c/cinit.d
++++ b/src/c/cinit.d
+@@ -188,7 +188,7 @@ main(int argc, char **args)
+ #endif
+   ECL_SET(@'*features*', features);
+   top_level = _ecl_intern("TOP-LEVEL", cl_core.system_package);
+-  ecl_def_c_function(top_level, si_simple_toplevel, 0);
++  ecl_def_c_function(top_level, (cl_objectfn_fixed)si_simple_toplevel, 0);
+   _ecl_funcall1(top_level);
+   return(0);
+ }
+diff --git a/src/c/dpp.c b/src/c/dpp.c
+index 462361f9fc7c4ed4cebab9c30a8f2c4b3f576ad3..82c86fedfe9cc2f4dfc22ae3e8b58e55cec84d8d 100644
+--- a/src/c/dpp.c
++++ b/src/c/dpp.c
+@@ -85,10 +85,7 @@
+ #include <ctype.h>
+ #include <string.h>
+ #include <stdarg.h>
+-
+-#if defined(_MSC_VER) && (_MSC_VER >= 1800)
+ #include <stdbool.h> 
+-#endif
+ 
+ #define DPP
+ #include <ecl/config.h>
+@@ -106,13 +103,6 @@
+ #define TRUE            1
+ #define FALSE           0
+ 
+-#ifndef __cplusplus
+-#if ! ( defined(__bool_true_false_are_defined) \
+-        &&__bool_true_false_are_defined )
+-typedef int bool;
+-#endif
+-#endif
+-
+ FILE *in, *out;
+ 
+ char filename[BUFSIZ];
+diff --git a/src/c/file.d b/src/c/file.d
+index 6d0d4785bea79f677d1e82f82df713249570c5f0..798b0a37faf690f372266ca8b4fadfe0dbf61421 100644
+--- a/src/c/file.d
++++ b/src/c/file.d
+@@ -5166,7 +5166,7 @@ ecl_unread_char(ecl_character c, cl_object strm)
+   stream_dispatch_table(strm)->unread_char(strm, c);
+ }
+ 
+-bool
++int
+ ecl_listen_stream(cl_object strm)
+ {
+   return stream_dispatch_table(strm)->listen(strm);
+diff --git a/src/c/macros.d b/src/c/macros.d
+index 1a356241ee53741b0f2db71e92311dce474bdc45..d1cf7002216664bfb08012e993099abf254e93f1 100644
+--- a/src/c/macros.d
++++ b/src/c/macros.d
+@@ -179,7 +179,7 @@ void
+ init_macros(void)
+ {
+   ECL_SET(@'*macroexpand-hook*', @'funcall');
+-  ecl_def_c_macro(@'or', or_macro, 2);
+-  ecl_def_c_macro(@'and', and_macro, 2);
+-  ecl_def_c_macro(@'when', when_macro, 2);
++  ecl_def_c_macro(@'or', (cl_objectfn_fixed)or_macro, 2);
++  ecl_def_c_macro(@'and', (cl_objectfn_fixed)and_macro, 2);
++  ecl_def_c_macro(@'when', (cl_objectfn_fixed)when_macro, 2);
+ }
+diff --git a/src/c/read.d b/src/c/read.d
+index 4fba0b93bde1a1434dffd2e5b421404774641401..356b94826433584133494621432d7b8367eaec11 100644
+--- a/src/c/read.d
++++ b/src/c/read.d
+@@ -2019,8 +2019,8 @@ extra_argument(int c, cl_object stream, cl_object d)
+ }
+ 
+ 
+-#define make_cf2(f)     ecl_make_cfun((f), ECL_NIL, NULL, 2)
+-#define make_cf3(f)     ecl_make_cfun((f), ECL_NIL, NULL, 3)
++#define make_cf2(f)     ecl_make_cfun((cl_objectfn_fixed)(f), ECL_NIL, NULL, 2)
++#define make_cf3(f)     ecl_make_cfun((cl_objectfn_fixed)(f), ECL_NIL, NULL, 3)
+ 
+ void
+ init_read(void)
+diff --git a/src/c/tcp.d b/src/c/tcp.d
+index f26275516e320363c72ab19f5a3f5f3c0d5be65a..8325b131db819bbfd673a07574436e8a5740a7af 100644
+--- a/src/c/tcp.d
++++ b/src/c/tcp.d
+@@ -32,6 +32,7 @@ extern int errno;
+ #include <arpa/inet.h>
+ #include <netdb.h>
+ #include <unistd.h>
++#include <stdlib.h>
+ #endif
+ #include <string.h>
+ 
+@@ -86,10 +87,6 @@ int connect_to_server(char *host, int port)
+   struct sockaddr *addr;        /* address to connect to */
+   struct hostent *host_ptr;
+   int addrlen;                  /* length of address */
+-#if !defined(ECL_MS_WINDOWS_HOST)
+-  extern char *getenv();
+-  extern struct hostent *gethostbyname();
+-#endif
+   int fd;                       /* Network socket */
+ 
+   INIT_TCP
+diff --git a/src/h/ecl.h b/src/h/ecl.h
+index 42e7b1dc2f3e701f85009dd3f13797f18c0c09db..ee1fca141717954f15ae349ad7689bf8132959f1 100644
+--- a/src/h/ecl.h
++++ b/src/h/ecl.h
+@@ -22,6 +22,7 @@
+ #include <stdarg.h>             /* va_list */
+ #include <setjmp.h>             /* setjmp and buffers */
+ #include <stdio.h>              /* FILE */
++#include <stdbool.h>
+ /* Microsoft VC++ does not have va_copy() */
+ #if ( defined(_MSC_VER) && (_MSC_VER < 1800) ) || !defined(va_copy)
+ #define va_copy(dst, src) \
+diff --git a/src/h/external.h b/src/h/external.h
+index a0276837dbfe6494071a032d874b30800008d89d..99b924344830d9c89378c50d3d428c305e93b601 100755
+--- a/src/h/external.h
++++ b/src/h/external.h
+@@ -744,7 +744,7 @@ extern ECL_API void ecl_force_output(cl_object strm);
+ extern ECL_API void ecl_finish_output(cl_object strm);
+ extern ECL_API void ecl_clear_input(cl_object strm);
+ extern ECL_API void ecl_clear_output(cl_object strm);
+-extern ECL_API bool ecl_listen_stream(cl_object strm);
++extern ECL_API int ecl_listen_stream(cl_object strm);
+ extern ECL_API cl_object ecl_file_position(cl_object strm);
+ extern ECL_API cl_object ecl_file_position_set(cl_object strm, cl_object disp);
+ extern ECL_API cl_object ecl_file_length(cl_object strm);
+diff --git a/src/h/internal.h b/src/h/internal.h
+index 2c9bec5c36a701efe0c0036d7e1b421d13397db5..b6d64e0ccc74279012ebd088665ef20190af6d65 100755
+--- a/src/h/internal.h
++++ b/src/h/internal.h
+@@ -468,7 +468,7 @@ extern void ecl_clear_bignum_registers(cl_env_ptr env);
+ 
+ /* threads/mutex.d */
+ 
+-extern cl_object si_mutex_timeout();
++extern cl_object si_mutex_timeout(cl_object process, cl_object lock, cl_object timeout);
+ 
+ /* print.d */
+ 
+diff --git a/src/h/object.h b/src/h/object.h
+index 1f9b581a22fbec2eab9bf8d24b9507714618f92a..bbf82bdb46f6ca59af35948ffca744cd93ee147d 100644
+--- a/src/h/object.h
++++ b/src/h/object.h
+@@ -23,9 +23,6 @@ extern "C" {
+ #define TRUE            1       /*  boolean true value  */
+ #define FALSE           0       /*  boolean false value  */
+ 
+-#if !defined(__cplusplus) && !defined(bool)
+-typedef int bool;
+-#endif
+ typedef unsigned char byte;
+ 
+ /*

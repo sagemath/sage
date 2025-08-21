@@ -2,4 +2,3 @@
 autoconf
 automake
 libtool
-pkgconfig

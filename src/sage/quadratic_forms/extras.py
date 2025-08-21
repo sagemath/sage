@@ -8,7 +8,7 @@ from sage.arith.misc import legendre_symbol
 from sage.rings.integer_ring import ZZ
 
 
-def is_triangular_number(n, return_value=False):
+def is_triangular_number(n, return_value=False) -> bool | tuple:
     """
     Return whether ``n`` is a triangular number.
 

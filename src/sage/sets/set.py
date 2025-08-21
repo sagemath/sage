@@ -52,7 +52,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 import sage.rings.infinity
 
 
-def has_finite_length(obj):
+def has_finite_length(obj) -> bool:
     """
     Return ``True`` if ``obj`` is known to have finite length.
 

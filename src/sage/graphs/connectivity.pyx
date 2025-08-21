@@ -23,6 +23,7 @@ Here is what the module can do:
     :meth:`connected_components_sizes` | Return the sizes of the connected components as a list.
     :meth:`blocks_and_cut_vertices` | Return the blocks and cut vertices of the graph.
     :meth:`blocks_and_cuts_tree` | Return the blocks-and-cuts tree of the graph.
+    :meth:`biconnected_components_subgraphs` | Return a list of biconnected components as graph objects.
     :meth:`is_cut_edge` | Check whether the input edge is a cut-edge or a bridge.
     :meth:`is_edge_cut` | Check whether the input edges form an edge cut.
     :meth:`is_cut_vertex` | Check whether the input vertex is a cut-vertex.
@@ -72,7 +73,6 @@ Methods
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.superseded import deprecation
 from sage.sets.disjoint_set cimport DisjointSet
 
 
@@ -158,7 +158,7 @@ def is_connected(G, forbidden_vertices=None):
         return n == G.num_verts()
 
 
-def connected_components(G, sort=None, key=None, forbidden_vertices=None):
+def connected_components(G, sort=False, key=None, forbidden_vertices=None):
     """
     Return the list of connected components.
 
@@ -169,12 +169,8 @@ def connected_components(G, sort=None, key=None, forbidden_vertices=None):
 
     - ``G`` -- the input graph
 
-    - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside each
+    - ``sort`` -- boolean (default: ``False``); if ``True``, vertices inside each
       component are sorted according to the default ordering
-
-      As of :issue:`35889`, this argument must be explicitly specified (unless a
-      ``key`` is given); otherwise a warning is printed and ``sort=True`` is
-      used. The default will eventually be changed to ``False``.
 
     - ``key`` -- a function (default: ``None``); a function that takes a
       vertex as its one argument and returns a value that can be used for
@@ -223,23 +219,10 @@ def connected_components(G, sort=None, key=None, forbidden_vertices=None):
         Traceback (most recent call last):
         ...
         ValueError: sort keyword is False, yet a key function is given
-
-    Deprecation warning for ``sort=None`` (:issue:`35889`)::
-
-        sage: G = graphs.HouseGraph()
-        sage: G.connected_components()
-        doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-        See https://github.com/sagemath/sage/issues/35889 for details.
-        [[0, 1, 2, 3, 4]]
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
-
-    if sort is None:
-        if key is None:
-            deprecation(35889, "parameter 'sort' will be set to False by default in the future")
-        sort = True
 
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
@@ -339,7 +322,7 @@ def connected_components_subgraphs(G, forbidden_vertices=None):
                                           forbidden_vertices=forbidden_vertices)]
 
 
-def connected_component_containing_vertex(G, vertex, sort=None, key=None,
+def connected_component_containing_vertex(G, vertex, sort=False, key=None,
                                           forbidden_vertices=None):
     """
     Return a list of the vertices connected to vertex.
@@ -350,12 +333,8 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None,
 
     - ``vertex`` -- the vertex to search for
 
-    - ``sort`` -- boolean (default: ``None``); if ``True``, vertices inside the
+    - ``sort`` -- boolean (default: ``False``); if ``True``, vertices inside the
       component are sorted according to the default ordering
-
-      As of :issue:`35889`, this argument must be explicitly specified (unless a
-      ``key`` is given); otherwise a warning is printed and ``sort=True`` is
-      used. The default will eventually be changed to ``False``.
 
     - ``key`` -- a function (default: ``None``); a function that takes a
       vertex as its one argument and returns a value that can be used for
@@ -407,23 +386,10 @@ def connected_component_containing_vertex(G, vertex, sort=None, key=None,
         Traceback (most recent call last):
         ...
         ValueError: sort keyword is False, yet a key function is given
-
-    Deprecation warning for ``sort=None`` (:issue:`35889`)::
-
-        sage: G = graphs.HouseGraph()
-        sage: G.connected_component_containing_vertex(1)
-        doctest:...: DeprecationWarning: parameter 'sort' will be set to False by default in the future
-        See https://github.com/sagemath/sage/issues/35889 for details.
-        [0, 1, 2, 3, 4]
     """
     from sage.graphs.generic_graph import GenericGraph
     if not isinstance(G, GenericGraph):
         raise TypeError("the input must be a Sage graph")
-
-    if sort is None:
-        if key is None:
-            deprecation(35889, "parameter 'sort' will be set to False by default in the future")
-        sort = True
 
     if (not sort) and key:
         raise ValueError('sort keyword is False, yet a key function is given')
@@ -812,6 +778,44 @@ def blocks_and_cuts_tree(G):
                 g.add_edge(('B', bloc), ('C', c))
     return g
 
+def biconnected_components_subgraphs(G):
+    r"""
+    Return a list of biconnected components as graph objects.
+
+    A biconnected component is a maximal subgraph that is biconnected, i.e.,
+    removing any vertex does not disconnect it.
+
+    INPUT:
+
+    - ``G`` -- the input graph
+
+    EXAMPLES::
+
+        sage: from sage.graphs.connectivity import biconnected_components_subgraphs
+        sage: G = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1, 3], 3: [2]})
+        sage: L = biconnected_components_subgraphs(G)
+        sage: L
+        [Subgraph of (): Graph on 2 vertices, Subgraph of (): Graph on 3 vertices]
+        sage: L[0].edges()
+        [(2, 3, None)]
+        sage: L[1].edges()
+        [(0, 1, None), (0, 2, None), (1, 2, None)]
+
+    TESTS:
+
+    If ``G`` is not a Sage graph, an error is raised::
+
+        sage: from sage.graphs.connectivity import biconnected_components_subgraphs
+        sage: biconnected_components_subgraphs('I am not a graph')
+        Traceback (most recent call last):
+        ...
+        TypeError: the input must be a Sage graph
+    """
+    from sage.graphs.generic_graph import GenericGraph
+    if not isinstance(G, GenericGraph):
+        raise TypeError("the input must be a Sage graph")
+
+    return [G.subgraph(c) for c in blocks_and_cut_vertices(G)[0]]
 
 def is_edge_cut(G, edges):
     """
@@ -1083,7 +1087,7 @@ def is_vertex_cut(G, cut, weak=False):
 
         sage: from sage.graphs.connectivity import is_vertex_cut
         sage: G = graphs.CycleGraph(4) * 2
-        sage: G.connected_components()
+        sage: G.connected_components(sort=True)
         [[0, 1, 2, 3], [4, 5, 6, 7]]
         sage: is_vertex_cut(G, [0, 2])
         True

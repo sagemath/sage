@@ -108,10 +108,10 @@ cdef class MPolynomialRing_base(CommutativeRing):
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
-        # Ring.__init__ assigns the names.
-        Ring.__init__(self, base_ring, names, category=category)
         from sage.combinat.integer_vector import IntegerVectors
         self._indices = IntegerVectors(length=self._ngens)
+        # Ring.__init__ assigns the names.
+        Ring.__init__(self, base_ring, names, category=category)
 
     def is_integral_domain(self, proof=True):
         """
@@ -561,7 +561,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
             sage: T = PolynomialRing(QQ, []); T
             Multivariate Polynomial Ring in no variables over Rational Field
             sage: T.coerce_map_from(QQ)
-            Call morphism:
+            Coercion map:
               From: Rational Field
               To:   Multivariate Polynomial Ring in no variables over Rational Field
         """

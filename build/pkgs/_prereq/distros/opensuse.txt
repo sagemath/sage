@@ -26,3 +26,9 @@ gzip
 # Issue #32368
 findutils
 diffutils
+patch
+# spkg-configure checks for both the program and the library
+bzip2
+pkgconfig(bzip2)
+patch
+pkgconf

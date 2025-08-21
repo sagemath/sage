@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Partition Shifting Algebras
+Partition shifting algebras
 
 This module contains families of operators that act on partitions or,
 more generally, integer sequences. In particular, this includes Young's
@@ -10,7 +10,7 @@ case is acting on partitions.
 
 AUTHORS:
 
-- Matthew Lancellotti, George H. Seelinger (2018): Initial version
+- Matthew Lancellotti, George H. Seelinger (2018): initial version
 """
 # ****************************************************************************
 #  Copyright (C) 2018 Matthew Lancellotti <mvlancellotti@gmail.com>

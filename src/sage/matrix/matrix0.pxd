@@ -2,15 +2,15 @@
 Generic matrices
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 cimport sage.structure.element
 cimport sage.structure.mutability
@@ -48,6 +48,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Unsafe entry access
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x)
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j)
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc)
     cdef _coerce_element(self, x)
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1
 

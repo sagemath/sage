@@ -3,7 +3,7 @@
 Tests for the IPython integration
 
 First, test the pinfo magic for Python code. This is what IPython
-calls when you ask for the single-questionmark help, like `foo?` ::
+calls when you ask for the single-questionmark help, like ``foo?`` ::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()
@@ -45,6 +45,23 @@ Next, test the pinfo magic for Cython code::
     Type:           type
     ...
 
+Test that the signature is displayed even with ``binding=False``
+as long as ``embedsignature=True`` is set
+(unfortunately the type is not displayed, see ``sage_signature``)::
+
+    sage: shell.run_cell(r"""
+    ....: %%cython
+    ....: # cython: binding=False, embedsignature=True
+    ....: cpdef int f(int a):
+    ....:     return a+1
+    ....: """)
+    sage: shell.run_cell(u'print(f.__doc__)')
+    f(int a) -> int
+    File: ....pyx (starting at line 2)
+    sage: shell.run_cell(u'%pinfo f')
+    Signature:      f(a)
+    ...
+
 Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
 
     sage: from sage.repl.interpreter import get_test_shell   # optional - rpy2
@@ -62,7 +79,7 @@ Next, test the ``pinfo`` magic for ``R`` interface code, see :issue:`26906`::
     ...
 
 Next, test the pinfo2 magic for Python code. This is what IPython
-calls when you ask for the double-questionmark help, like `foo??` ::
+calls when you ask for the double-questionmark help, like ``foo??`` ::
 
     sage: from sage.repl.interpreter import get_test_shell
     sage: shell = get_test_shell()

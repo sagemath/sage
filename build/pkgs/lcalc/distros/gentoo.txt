@@ -1,1 +1,1 @@
-sci-mathematics/lcalc
+sci-mathematics/lcalc[pari]

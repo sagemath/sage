@@ -829,7 +829,7 @@ class SageDocTestParser(doctest.DocTestParser):
         """
         return not (self == other)
 
-    def parse(self, string, *args):
+    def parse(self, string, *args) -> list[doctest.Example | str]:
         r"""
         A Sage specialization of :class:`doctest.DocTestParser`.
 
@@ -1015,8 +1015,8 @@ class SageDocTestParser(doctest.DocTestParser):
             string = find_python_continuation.sub(r"\1" + ellipsis_tag + r"\2", string)
         string = find_sage_prompt.sub(r"\1>>> sage: ", string)
         string = find_sage_continuation.sub(r"\1...", string)
-        res = doctest.DocTestParser.parse(self, string, *args)
-        filtered = []
+        res: list[doctest.Example | str] = doctest.DocTestParser.parse(self, string, *args)
+        filtered: list[doctest.Example | str] = []
         persistent_optional_tags = self.file_optional_tags
         persistent_optional_tag_setter = None
         persistent_optional_tag_setter_index = None
@@ -1478,7 +1478,7 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "R[write to console]" in got:
-            # Supress R warnings
+            # suppress R warnings
             r_warning_regex = re.compile(r'R\[write to console\]:.*')
             got = r_warning_regex.sub('', got)
             did_fixup = True
@@ -1507,6 +1507,13 @@ class SageOutputChecker(doctest.OutputChecker):
             # Xcode 15.
             dup_lib_regex = re.compile("ld: warning: ignoring duplicate libraries: .*")
             got = dup_lib_regex.sub('', got)
+            did_fixup = True
+
+        if "duplicate" in got:
+            # Warnings about duplicate rpaths in the linker command line
+            # occurs sometimes when compiling cython code via sage.misc.cython
+            dup_rpath_regex = re.compile("ld: warning: duplicate -rpath .* ignored")
+            got = dup_rpath_regex.sub('', got)
             did_fixup = True
 
         return did_fixup, want, got

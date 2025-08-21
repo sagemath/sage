@@ -7,6 +7,7 @@
 # The update-version script adds a new line for a new stable release
 # when run by the Sage release manager to prepare a new release
 #
+10.7 doc-10-7--sagemath.netlify.app
 10.6 doc-10-6--sagemath.netlify.app
 10.5 doc-10-5--sagemath.netlify.app
 10.4 doc-10-4--sagemath.netlify.app
@@ -16,4 +17,3 @@
 10.0 doc-10-0--sagemath.netlify.app
 9.8 doc-9-8--sagemath.netlify.app
 9.7 doc-9-7--sagemath.netlify.app
-9.6 doc-9-6--sagemath.netlify.app

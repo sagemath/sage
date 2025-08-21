@@ -2,15 +2,15 @@ r"""
 Cython helper methods to compute integral points in polyhedra.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from cysignals.signals cimport sig_check
 import copy
@@ -32,33 +32,33 @@ from sage.modules.free_module import FreeModule
 # full-dimensional case, the Smith normal form takes care of that for
 # you.
 #
-## def parallelotope_points(spanning_points, lattice):
-##     # compute points in the open parallelotope, see [BK2001]
-##     R = matrix(spanning_points).transpose()
-##     D,U,V = R.smith_form()
-##     e = D.diagonal()          # the elementary divisors
-##     d = prod(e)               # the determinant
-##     u = U.inverse().columns() # generators for gp(semigroup)
-##
-##     # "inverse" of the ray matrix as far as possible over ZZ
-##     # R*Rinv == diagonal_matrix([d]*D.ncols() + [0]*(D.nrows()-D.ncols()))
-##     # If R is full rank, this is Rinv = matrix(ZZ, R.inverse() * d)
-##     Dinv = D.transpose()
-##     for i in range(D.ncols()):
-##         Dinv[i,i] = d/D[i,i]
-##     Rinv = V * Dinv * U
-##
-##     gens = []
-##     for b in CartesianProduct(*[ range(i) for i in e ]):
-##         # this is our generator modulo the lattice spanned by the rays
-##         gen_mod_rays = sum( b_i*u_i for b_i, u_i in zip(b,u) )
-##         q_times_d = Rinv * gen_mod_rays
-##         q_times_d = vector(ZZ,[ q_i % d  for q_i in q_times_d ])
-##         gen = lattice(R*q_times_d / d)
-##         gen.set_immutable()
-##         gens.append(gen)
-##     assert(len(gens) == d)
-##     return tuple(gens)
+# def parallelotope_points(spanning_points, lattice):
+#     # compute points in the open parallelotope, see [BK2001]
+#     R = matrix(spanning_points).transpose()
+#     D,U,V = R.smith_form()
+#     e = D.diagonal()          # the elementary divisors
+#     d = prod(e)               # the determinant
+#     u = U.inverse().columns() # generators for gp(semigroup)
+#
+#     # "inverse" of the ray matrix as far as possible over ZZ
+#     # R*Rinv == diagonal_matrix([d]*D.ncols() + [0]*(D.nrows()-D.ncols()))
+#     # If R is full rank, this is Rinv = matrix(ZZ, R.inverse() * d)
+#     Dinv = D.transpose()
+#     for i in range(D.ncols()):
+#         Dinv[i,i] = d/D[i,i]
+#     Rinv = V * Dinv * U
+#
+#     gens = []
+#     for b in CartesianProduct(*[range(i) for i in e]):
+#         # this is our generator modulo the lattice spanned by the rays
+#         gen_mod_rays = sum(b_i*u_i for b_i, u_i in zip(b,u))
+#         q_times_d = Rinv * gen_mod_rays
+#         q_times_d = vector(ZZ, [q_i % d  for q_i in q_times_d])
+#         gen = lattice(R*q_times_d / d)
+#         gen.set_immutable()
+#         gens.append(gen)
+#     assert(len(gens) == d)
+#     return tuple(gens)
 #
 # The problem with the naive implementation is that it is slow:
 #
@@ -115,7 +115,7 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
 
     A non-smooth cone::
 
-        sage: c = Cone([ (1,0), (1,2) ])
+        sage: c = Cone([(1,0), (1,2)])
         sage: parallelotope_points(c.rays(), c.lattice())
         (N(0, 0), N(1, 1))
 
@@ -162,13 +162,13 @@ cpdef tuple ray_matrix_normal_form(R):
         sage: ray_matrix_normal_form(R)
         ([3], 3, [1])
     """
-    D,U,V = R.smith_form()
+    D, U, V = R.smith_form()
     e = D.diagonal()            # the elementary divisors
     cdef Integer d = prod(e)                 # the determinant
     if d == ZZ.zero():
         raise ValueError('The spanning points are not linearly independent!')
     cdef int i
-    Dinv = diagonal_matrix(ZZ, [ d // e[i] for i in range(D.ncols()) ])
+    Dinv = diagonal_matrix(ZZ, [d // e[i] for i in range(D.ncols())])
     VDinv = V * Dinv
     return (e, d, VDinv)
 
@@ -212,20 +212,20 @@ cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
     cdef int i, j
     cdef int dim = VDinv.nrows()
     cdef int ambient_dim = R.nrows()
-    s = ZZ.zero() # summation variable
+    s = ZZ.zero()  # summation variable
     cdef list gens = []
     gen = lattice(ZZ.zero())
     cdef VectorClass q_times_d = vector(ZZ, dim)
-    for base in itertools.product(*[ range(i) for i in e ]):
+    for base in itertools.product(*[range(i) for i in e]):
         for i in range(dim):
             s = ZZ.zero()
             for j in range(dim):
-                s += VDinv.get_unsafe(i,j) * base[j]
+                s += VDinv.get_unsafe(i, j) * base[j]
             q_times_d.set_unsafe(i, s % d)
         for i in range(ambient_dim):
             s = ZZ.zero()
             for j in range(dim):
-                s += R.get_unsafe(i,j) * q_times_d.get_unsafe(j)
+                s += R.get_unsafe(i, j) * q_times_d.get_unsafe(j)
             gen[i] = s / d
         if A is not None:
             s = ZZ.zero()
@@ -572,7 +572,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
                 v.set_unsafe(i, Integer(p[orig_perm[i]]))
             v_copy = copy.copy(v)
             v_copy.set_immutable()
-            points.append( (v_copy, saturated) )
+            points.append((v_copy, saturated))
 
     return tuple(points)
 
@@ -694,7 +694,7 @@ cdef loop_over_rectangular_box_points_saturated(list box_min, list box_max,
         while i <= i_max:
             p[0] = i
             saturated = inequalities.satisfied_as_equalities(i)
-            points.append( (tuple(p), saturated) )
+            points.append((tuple(p), saturated))
             i += 1
         # finally increment the other entries in p to move on to next inner loop
         inc = 1
@@ -917,8 +917,8 @@ cdef class Inequality_int:
         if self.dim > 0:
             self.coeff_next = self.A[1]
         # finally, make sure that there cannot be any overflow during the enumeration
-        self._to_int(abs(ZZ(b)) + sum( abs(ZZ(A[i])) * ZZ(max_abs_coordinates[i])
-                                       for i in range(self.dim) ))
+        self._to_int(abs(ZZ(b)) + sum(abs(ZZ(A[i])) * ZZ(max_abs_coordinates[i])
+                                      for i in range(self.dim)))
 
     def __repr__(self):
         """
@@ -1131,7 +1131,7 @@ cdef class InequalityCollection:
         """
         cdef list A
         cdef int index
-        for index,c in enumerate(polyhedron.minimized_constraints()):
+        for index, c in enumerate(polyhedron.minimized_constraints()):
             A = perm_action(permutation, [Integer(mpz) for mpz in c.coefficients()])
             b = Integer(c.inhomogeneous_term())
             try:
@@ -1141,7 +1141,7 @@ cdef class InequalityCollection:
                 H = Inequality_generic(A, b, index)
                 self.ineqs_generic.append(H)
             if c.is_equality():
-                A = [ -a for a in A ]
+                A = [-a for a in A]
                 b = -b
                 try:
                     H = Inequality_int(A, b, max_abs_coordinates, index)
@@ -1194,7 +1194,7 @@ cdef class InequalityCollection:
                 H = Inequality_generic(A, b, Hrep_obj.index())
                 self.ineqs_generic.append(H)
             # add sign-reversed inequality
-            A = [ -a for a in A ]
+            A = [-a for a in A]
             b = -b
             try:
                 H = Inequality_int(A, b, max_abs_coordinates, Hrep_obj.index())
@@ -1310,7 +1310,7 @@ cdef class InequalityCollection:
         """
         i_th_entry = self.ineqs_int[i]
         cdef int j
-        for j in range(i-1,-1,-1):
+        for j in range(i-1, -1, -1):
             self.ineqs_int[j+1] = self.ineqs_int[j]
         self.ineqs_int[0] = i_th_entry
 
@@ -1389,12 +1389,12 @@ cdef class InequalityCollection:
             sig_check()
             ineq = self.ineqs_int[i]
             if (<Inequality_int>ineq).is_equality(inner_loop_variable):
-                result.append( (<Inequality_int>ineq).index )
+                result.append((<Inequality_int>ineq).index)
         for i in range(len(self.ineqs_generic)):
             sig_check()
             ineq = self.ineqs_generic[i]
             if (<Inequality_generic>ineq).is_equality(inner_loop_variable):
-                result.append( (<Inequality_generic>ineq).index )
+                result.append((<Inequality_generic>ineq).index)
         return frozenset(result)
 
 

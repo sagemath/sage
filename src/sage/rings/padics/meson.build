@@ -47,6 +47,8 @@ py.install_sources(
   'tests.py',
   'tutorial.py',
   'unramified_extension_generic.py',
+  'witt_vector_ring.py',
+  'witt_vector.py',
   subdir: 'sage/rings/padics',
 )
 
@@ -72,6 +74,26 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  deps = [py_dep, cysignals, gmp]
+  if name.startswith('qadic_flint')
+    deps += [cypari2, flint]
+  elif name == 'padic_capped_absolute_element' or name == 'padic_floating_point_element' or name == 'padic_fixed_mod_element' or name == 'common_conversion' or name.startswith(
+    'relative_ramified',
+  ) or name == 'padic_template_element' or name == 'padic_capped_relative_element'
+    deps += [cypari2]
+  elif name == 'padic_ext_element'
+    deps += [ntl]
+  elif name == 'padic_generic_element'
+    deps += [
+      ntl,  # Indirect dependency
+    ]
+  elif name == 'padic_relaxed_element'
+    deps += [flint]
+    if is_windows
+      # error C2143: syntax error: missing ')' before '*'
+      continue
+    endif
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -86,8 +108,9 @@ foreach name, pyx : extension_data
       inc_rings_finite,
       inc_src,
     ],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, m, ntl],
+    dependencies: deps,
   )
+
 endforeach
 
 extension_data_cpp = {
@@ -104,6 +127,12 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp, ntl]
+  if name == 'pow_computer_flint'
+    deps += [flint]
+  elif name == 'padic_ZZ_pX_CA_element' or name == 'padic_ZZ_pX_CR_element' or name == 'padic_ZZ_pX_FM_element'
+    deps += [cypari2]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -118,7 +147,8 @@ foreach name, pyx : extension_data_cpp
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [py_dep, cypari2, cysignals, flint, gmp, m, ntl],
+    dependencies: deps,
   )
+
 endforeach
 

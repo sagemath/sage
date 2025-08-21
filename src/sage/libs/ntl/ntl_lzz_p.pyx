@@ -106,14 +106,14 @@ cdef class ntl_zz_p():
                 raise ValueError("Mismatched modulus for converting to zz_p.")
 
         elif isinstance(a, Integer):
-            self.x = mpz_get_si((<Integer>a).value)%self.c.p
+            self.x = mpz_get_si((<Integer>a).value) % self.c.p
 
         elif isinstance(a, int):
             ## we're lucky that python int is no larger than long
-            self.x = (<long>a)%self.c.p
+            self.x = (<long>a) % self.c.p
         else:
             a = Integer(a)
-            self.x = mpz_get_si((<Integer>a).value)%self.c.p
+            self.x = mpz_get_si((<Integer>a).value) % self.c.p
 
         return
 

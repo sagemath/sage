@@ -94,7 +94,7 @@ cdef class SatSolver:
         adds the corresponding clauses into this solver instance. Note that the
         DIMACS format is not well specified, see
         http://people.sc.fsu.edu/~jburkardt/data/cnf/cnf.html,
-        http://www.satcompetition.org/2009/format-benchmarks2009.html, and
+        https://web.archive.org/web/20090305015900/http://www.satcompetition.org/2009/format-benchmarks2009.html, and
         http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
 
         The differences were summarized in the discussion on the issue

@@ -1256,9 +1256,9 @@ class TamariIntervalPoset(Element,
                 return u + 1
             return u
         rels = [(add1(a), add1(b))
-                for (a, b) in self.decreasing_cover_relations()]
+                for a, b in self.decreasing_cover_relations()]
         rels += [(add1(a), add1(b))
-                 for (a, b) in self.increasing_cover_relations()]
+                 for a, b in self.increasing_cover_relations()]
         rels += [(k, k - 1) for k in [i] if i > 1]
         rels += [(k, k + 1) for k in [i] if i <= n]
         return TamariIntervalPoset(n + 1, rels)
@@ -1531,7 +1531,7 @@ class TamariIntervalPoset(Element,
         """
         if other.size() != self.size():
             return False
-        return all(other.le(i, j) for (i, j) in self._cover_relations)
+        return all(other.le(i, j) for i, j in self._cover_relations)
 
     def lower_contains_interval(self, other) -> bool:
         r"""
@@ -1572,7 +1572,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.decreasing_cover_relations())
+                   for i, j in other.decreasing_cover_relations())
 
     def upper_contains_interval(self, other) -> bool:
         r"""
@@ -1613,7 +1613,7 @@ class TamariIntervalPoset(Element,
         if not self.contains_interval(other):
             return False
         return all(self.le(i, j)
-                   for (i, j) in other.increasing_cover_relations())
+                   for i, j in other.increasing_cover_relations())
 
     def is_linear_extension(self, perm) -> bool:
         r"""
@@ -1979,10 +1979,10 @@ class TamariIntervalPoset(Element,
         if start == end:
             return TamariIntervalPoset(0, [])
         relations = [(i - start + 1, j - start + 1)
-                     for (i, j) in self.increasing_cover_relations()
+                     for i, j in self.increasing_cover_relations()
                      if i >= start and j < end]
         relations.extend((j - start + 1, i - start + 1)
-                         for (j, i) in self.decreasing_cover_relations()
+                         for j, i in self.decreasing_cover_relations()
                          if i >= start and j < end)
         return TamariIntervalPoset(end - start, relations, check=False)
 

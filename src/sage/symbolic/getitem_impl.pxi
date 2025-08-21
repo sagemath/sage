@@ -182,7 +182,7 @@ cdef class OperandsWrapper(SageObject):
         TESTS::
 
             sage: (x^2).op.__reduce__()
-            (<built-in function restore_op_wrapper>, (x^2,))
+            (<cyfunction restore_op_wrapper at ...>, (x^2,))
             sage: loads(dumps((x^2).op))
             Operands of x^2
         """

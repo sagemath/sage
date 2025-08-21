@@ -929,7 +929,7 @@ class OreFunction_with_large_center(OreFunction):
             (x^6 + 4)^(-1) * (x^3 + 2)
 
         By default, the name of the central variable is usually ``z`` (see
-        :meth:`sage.rings.polynomial.skew_polynomial_ring.SkewPolynomiaRing_finite_order.center`
+        :meth:`sage.rings.polynomial.skew_polynomial_ring.SkewPolynomialRing_finite_order.center`
         for more details about this).
         However, the user can specify a different variable name if desired::
 

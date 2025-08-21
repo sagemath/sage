@@ -352,7 +352,7 @@ def ellipse(center, r1, r2, angle=0, **options):
 
         sage: E = ellipse((0,0), 2, 1, legend_label='test')
     """
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     g = Graphics()
 
     # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.

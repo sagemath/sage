@@ -30,7 +30,7 @@ def is_Gamma0(x):
 
     EXAMPLES::
 
-        sage: from sage.modular.arithgroup.all import is_Gamma0
+        sage: from sage.modular.arithgroup.congroup_gamma0 import is_Gamma0
         sage: is_Gamma0(SL2Z)
         doctest:warning...
         DeprecationWarning: The function is_Gamma0 is deprecated; use 'isinstance(..., Gamma0_class)' instead.
@@ -244,7 +244,7 @@ class Gamma0_class(GammaH_class):
         """
         return [Gamma0_constructor(M) for M in self.level().divisors()]
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return ``True`` precisely if this subgroup contains the matrix -1.
 
@@ -260,7 +260,7 @@ class Gamma0_class(GammaH_class):
         """
         return True
 
-    def is_subgroup(self, right):
+    def is_subgroup(self, right) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``right``.
 

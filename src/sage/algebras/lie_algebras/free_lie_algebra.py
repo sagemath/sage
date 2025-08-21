@@ -632,9 +632,9 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             for m, inner_coeff in self._rewrite_bracket(l, r._right).items():
                 if r._left == m:
                     continue
-                elif r._left < m:
+                if r._left < m:
                     x, y = r._left, m
-                else: # r._left > m
+                else:  # r._left > m
                     x, y = m, r._left
                     inner_coeff = -inner_coeff
                 for b_elt, coeff in self._rewrite_bracket(x, y).items():
@@ -644,9 +644,9 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             for m, inner_coeff in self._rewrite_bracket(l, r._left).items():
                 if m == r._right:
                     continue
-                elif m < r._right:
+                if m < r._right:
                     x, y = m, r._right
-                else: # m > r._right
+                else:  # m > r._right
                     x, y = r._right, m
                     inner_coeff = -inner_coeff
                 for b_elt, coeff in self._rewrite_bracket(x, y).items():
@@ -739,9 +739,9 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             for m, inner_coeff in self._rewrite_bracket(l._right, r).items():
                 if l._left == m:
                     continue
-                elif l._left < m:
+                if l._left < m:
                     x, y = l._left, m
-                else: # l._left > m
+                else:  # l._left > m
                     x, y = m, l._left
                     inner_coeff = -inner_coeff
                 for b_elt, coeff in self._rewrite_bracket(x, y).items():
@@ -751,9 +751,9 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
             for m, inner_coeff in self._rewrite_bracket(l._left, r).items():
                 if m == l._right:
                     continue
-                elif m < l._right:
+                if m < l._right:
                     x, y = m, l._right
-                else: # m > l._right
+                else:  # m > l._right
                     x, y = l._right, m
                     inner_coeff = -inner_coeff
                 for b_elt, coeff in self._rewrite_bracket(x, y).items():

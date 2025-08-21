@@ -22,7 +22,6 @@ cython    = [SPKG_INSTALL_REQUIRES_cython]              # For "sage --cython"
 pytest    = [SPKG_INSTALL_REQUIRES_pytest]              # For "sage --pytest"
 rst2ipynb = [SPKG_INSTALL_REQUIRES_rst2ipynb]           # For "sage --rst2ipynb"
 tox       = [SPKG_INSTALL_REQUIRES_tox]                 # For "sage --tox"
-sws2rst   = [SPKG_INSTALL_REQUIRES_sage_sws2rst]        # For "sage --sws2rst"
 
 [project.readme]
 file = "README.rst"
@@ -48,8 +47,6 @@ script-files = [
     "bin/sage-num-threads.py",
     "bin/sage-venv-config",
     "bin/sage-version.sh",
-    # Auxiliary script for invoking Python in the Sage environment
-    "bin/sage-python",
     # Not included:
     # - bin/sage-env-config                  -- installed by sage_conf
     # - bin/sage-env-config.in               -- not to be installed

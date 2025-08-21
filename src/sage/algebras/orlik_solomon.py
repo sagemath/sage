@@ -827,7 +827,7 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
             sage: OS1.construction() is None
             True
         """
-        return None
+        return
 
     def _basis_action(self, g, f):
         r"""

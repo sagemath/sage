@@ -3020,8 +3020,6 @@ cdef class GapElement_Permutation(GapElement):
             sage: type(_)
             <class 'sage.groups.perm_gps.permgroup_element.PermutationGroupElement'>
         """
-        cdef PermutationGroupElement one_c
-
         libgap = self.parent()
         lst = libgap.ListPerm(self)
 

@@ -420,20 +420,20 @@ def get_matplotlib_linestyle(linestyle, return_type):
         return None
 
     if linestyle.startswith("default"):
-        return get_matplotlib_linestyle(linestyle.strip("default"), "short")
+        return get_matplotlib_linestyle(linestyle.removeprefix("default"), "short")
     elif linestyle.startswith("steps"):
         if linestyle.startswith("steps-mid"):
             return "steps-mid" + get_matplotlib_linestyle(
-                linestyle.strip("steps-mid"), "short")
+                linestyle.removeprefix("steps-mid"), "short")
         elif linestyle.startswith("steps-post"):
             return "steps-post" + get_matplotlib_linestyle(
-                linestyle.strip("steps-post"), "short")
+                linestyle.removeprefix("steps-post"), "short")
         elif linestyle.startswith("steps-pre"):
             return "steps-pre" + get_matplotlib_linestyle(
-                linestyle.strip("steps-pre"), "short")
+                linestyle.removeprefix("steps-pre"), "short")
         else:
             return "steps" + get_matplotlib_linestyle(
-                linestyle.strip("steps"), "short")
+                linestyle.removeprefix("steps"), "short")
 
     if return_type == 'short':
         if linestyle in short_to_long_dict.keys():

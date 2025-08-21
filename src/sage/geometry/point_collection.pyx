@@ -67,14 +67,14 @@ for one of them, it becomes available to all others as well, eliminating the
 need to spend time and memory four times.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2012 Andrey Novoseltsev <novoselt@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
@@ -986,13 +986,13 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
         # Typical situation: a point on each line
         lattice = lattice or ToricLattice(n).dual()
         points = [lattice.element_class(lattice, f.readline().split())
-                for i in range(m)]
+                  for i in range(m)]
     else:
         # Also may appear as PALP output, e.g. points of 3-d polytopes
         lattice = lattice or ToricLattice(m).dual()
         data = [f.readline().split() for j in range(m)]
         points = [lattice.element_class(lattice, [data[j][i] for j in range(m)])
-                for i in range(n)]
+                  for i in range(n)]
     for p in points:
         p.set_immutable()
     pc = PointCollection(points, lattice)

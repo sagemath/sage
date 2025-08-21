@@ -22,7 +22,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.morphism import Morphism
-from sage.structure.richcmp import rich_to_bool, richcmp
+from sage.structure.richcmp import richcmp
 from sage.modules.free_module_morphism import FreeModuleMorphism
 
 
@@ -463,7 +463,7 @@ class FreeModulePseudoMorphism(Morphism):
     def __nonzero__(self):
         return not (self._derivation is None and self._matrix)
 
-    def __eq__(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Compare this morphism with ``other``.
 
@@ -472,7 +472,7 @@ class FreeModulePseudoMorphism(Morphism):
             sage: Fq.<z> = GF(7^3)
             sage: Frob = Fq.frobenius_endomorphism()
             sage: V = Fq^2
-            sage: m = random_matrix(Fq, 2)
+            sage: m = matrix(2, 2, [z, z^3, z^5, z^7])
 
             sage: f = V.pseudohom(m, Frob)
             sage: g = V.pseudohom(m.transpose(), Frob, side="right")
@@ -482,6 +482,12 @@ class FreeModulePseudoMorphism(Morphism):
             sage: g = V.pseudohom(m.transpose(), Frob)
             sage: f == g
             False
+            sage: f < g
+            True
+            sage: f > g
+            False
+
+        ::
 
             sage: g = V.pseudohom(m, Frob^2)
             sage: f == g
@@ -491,14 +497,15 @@ class FreeModulePseudoMorphism(Morphism):
             sage: h = V.hom(m)
             sage: g == h
             True
+
+        ::
+
+            sage: f < V
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for <: 'Set of Pseudoendomorphisms (twisted by z |--> z^7) of Vector space of dimension 2 over Finite Field in z of size 7^3' and '<class 'sage.modules.free_module.FreeModule_ambient_field_with_category'>'
         """
-        if isinstance(other, FreeModuleMorphism):
-            try:
-                other = self.parent()(other)
-            except ValueError:
-                return False
-        if isinstance(other, FreeModulePseudoMorphism):
-            return self.parent() is other.parent() and self._matrix == other._matrix
+        return richcmp(self._matrix, other._matrix, op)
 
     def ore_module(self, names=None):
         r"""

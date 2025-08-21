@@ -355,7 +355,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         """
         return self.lift.section()
 
-    def is_submodule(self, other):
+    def is_submodule(self, other) -> bool:
         r"""
         Return whether ``self`` is a submodule of ``other``.
 
@@ -483,7 +483,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         V = A.submodule([A([vec[supp] for supp in supp_order]) for vec in other._basis], check=False)
         return (U, V)
 
-    def is_equal_subspace(self, other):
+    def is_equal_subspace(self, other) -> bool:
         r"""
         Return whether ``self`` is an equal submodule to ``other``.
 

@@ -28,6 +28,7 @@ This came up in some subtle bug once::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.superseded import deprecation
+from sage.misc.cachefunc import cached_method
 from sage.structure.coerce cimport py_scalar_parent
 from sage.ext.stdsage cimport HAS_DICTIONARY
 from sage.sets.pythonclass cimport Set_PythonType, Set_PythonType_class
@@ -234,34 +235,6 @@ cdef class Parent(parent.Parent):
         self._has_coerce_map_from.set(S, ans)
         return ans
 
-    def _an_element_impl(self):     # override this in Python
-        """
-        Return an element of ``self``.
-
-        Want it in sufficient generality
-        that poorly-written functions will not work when they are not
-        supposed to. This is cached so does not have to be super fast.
-        """
-        check_old_coerce(self)
-        try:
-            return self.gen(0)
-        except Exception:
-            pass
-
-        try:
-            return self.gen()
-        except Exception:
-            pass
-
-        from sage.rings.infinity import infinity
-        for x in ['_an_element_', 'pi', 1.2, 2, 1, 0, infinity]:
-            try:
-                return self(x)
-            except Exception:
-                pass
-
-        raise NotImplementedError(f"_an_element_ is not implemented for {self}")
-
     ###############################################################
     # Coercion Compatibility Layer
     ###############################################################
@@ -271,13 +244,32 @@ cdef class Parent(parent.Parent):
         else:
             return parent.Parent._coerce_map_from_(self, S)
 
+    @cached_method
     def _an_element_(self):
+        """
+        Return an element of ``self``.
+
+        Want it in sufficient generality
+        that poorly-written functions will not work when they are not
+        supposed to. This is cached so does not have to be super fast.
+        """
         if self._element_constructor is not None:
             return parent.Parent._an_element_(self)
-        if self._cache_an_element is not None:
-            return self._cache_an_element
-        self._cache_an_element = self._an_element_impl()
-        return self._cache_an_element
+
+        check_old_coerce(self)
+        try:
+            return self.gen()
+        except (ValueError, AttributeError, TypeError):
+            pass
+
+        from sage.rings.infinity import infinity
+        for x in ['pi', 1.2, 2, 1, 0, infinity]:
+            try:
+                return self(x)
+            except (TypeError, ValueError):
+                pass
+
+        raise NotImplementedError(f"_an_element_ is not implemented for {self}")
 
     cpdef _generic_convert_map(self, S, category=None):
         r"""

@@ -28,20 +28,19 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections.abc import Collection
 
 from sage.categories.graded_algebras_with_basis import GradedAlgebrasWithBasis
-from sage.misc.cachefunc import cached_method
-from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.permutation import Permutation
-from sage.structure.element import parent
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing, InfinitePolynomialRing_sparse
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
-
-from collections.abc import Collection
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.structure.element import parent
 
 
 class KeyPolynomial(CombinatorialFreeModule.Element):
@@ -162,7 +161,7 @@ class KeyPolynomial(CombinatorialFreeModule.Element):
         TESTS:
 
         We check that this is consistent with the definition via the
-        isobaric divided difference oerators::
+        isobaric divided difference operators::
 
             sage: from sage.combinat.key_polynomial import isobaric_divided_difference as idd
             sage: k = KeyPolynomials(QQ, 4)
@@ -653,8 +652,8 @@ class KeyPolynomialBasis(CombinatorialFreeModule):
         if f not in self._polynomial_ring:
             try:  # to accept elements of SymbolicRing
                 from sage.calculus.var import var
-                f = f.substitute(list(d == var(f'z_{i}')
-                                 for i, d in enumerate(f.variables())))
+                f = f.substitute([d == var(f'z_{i}')
+                                  for i, d in enumerate(f.variables())])
                 f = self._polynomial_ring(f)
             except AttributeError:
                 raise ValueError(f"f must be an element of {self._polynomial_ring}")

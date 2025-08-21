@@ -1,7 +1,8 @@
 from random import Random
+
 from sage.rings.polynomial.pbori.pbori import if_then_else as ite
-from .PyPolyBoRi import Polynomial
-from .statistics import used_vars_set
+from sage.rings.polynomial.pbori.PyPolyBoRi import Polynomial
+from sage.rings.polynomial.pbori.statistics import used_vars_set
 
 
 class CNFEncoder:

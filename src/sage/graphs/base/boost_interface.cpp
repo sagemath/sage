@@ -116,9 +116,10 @@ public:
         std::vector<std::pair<v_index, std::pair<v_index, double>>> to_return;
         typename boost::graph_traits<adjacency_list>::edge_iterator ei, ei_end;
         for (boost::tie(ei, ei_end) = boost::edges(graph); ei != ei_end; ++ei) {
-            to_return.push_back({index[boost::source(*ei, graph)],
-                                 {index[boost::target(*ei, graph)],
-                                  get(boost::edge_weight, graph, *ei)}});
+            v_index source = index[boost::source(*ei, graph)];
+            v_index target = index[boost::target(*ei, graph)];
+            double weight = boost::get(boost::edge_weight, graph, *ei);
+            to_return.push_back({source, {target, weight}});
         }
         return to_return;
     }

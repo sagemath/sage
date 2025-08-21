@@ -7,7 +7,7 @@ Basmaji's Algorithm
 Basmaji
 (page 55 of his Essen thesis, "Ein Algorithmus zur Berechnung von
 Hecke-Operatoren und Anwendungen auf modulare Kurven",
-http://wstein.org/scans/papers/basmaji/).
+https://web.archive.org/web/20160905111513/http://wstein.org/scans/papers/basmaji/thesis_of_basmaji.dvi).
 
 Let :math:`S = S_{k+1}(\varepsilon)` be the space of cusp forms of
 even integer weight :math:`k+1` and character :math:`\varepsilon = \chi

@@ -180,6 +180,7 @@ AUTHOR:
 # ***************************************************************************
 
 import operator
+
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
 from sage.structure.sequence import Sequence
@@ -360,7 +361,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         names = normalize_names(names, rank)
         return cls.__classcall__(cls, mat, category._ore, names, category)
 
-    def __init__(self, mat, ore, names, category):
+    def __init__(self, mat, ore, names, category) -> None:
         r"""
         Initialize this Ore module.
 
@@ -399,7 +400,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         self._quotientModule_class = OreQuotientModule
         self._pseudohom = FreeModule_ambient.pseudohom(self, mat, ore, codomain=self)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of this Ore module.
 
@@ -430,7 +431,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         s += "over %s %s" % (self.base_ring(), self._ore._repr_twist())
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this Ore module.
 
@@ -470,7 +471,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             s += "}"
         return s
 
-    def _repr_element(self, x):
+    def _repr_element(self, x) -> str:
         r"""
         Return a string representation of the element `x` in
         this Ore module.
@@ -485,7 +486,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         return FreeModuleElement_generic_dense._repr_(x)
 
-    def _latex_element(self, x):
+    def _latex_element(self, x) -> str:
         r"""
         Return a LaTeX representation of the element `x` in
         this Ore module.
@@ -524,7 +525,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         pass
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         r"""
         Return ``True`` if this Ore module is reduced to zero.
 
@@ -783,7 +784,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         return self._pseudohom.matrix()
 
-    def basis(self):
+    def basis(self) -> list:
         r"""
         Return the canonical basis of this Ore module.
 
@@ -799,14 +800,14 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         zero = self.base_ring().zero()
         one = self.base_ring().one()
         coeffs = [zero] * rank
-        B = [ ]
+        B = []
         for i in range(rank):
             coeffs[i] = one
             B.append(self(coeffs))
             coeffs[i] = zero
         return B
 
-    def gens(self):
+    def gens(self) -> list:
         r"""
         Return the canonical basis of this Ore module.
 
@@ -850,7 +851,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         coeffs[i] = one
         return self(coeffs)
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return an element of this Ore module.
 
@@ -876,8 +877,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         if self.rank() > 0:
             return self.gen(0)
-        else:
-            return self.zero()
+        return self.zero()
 
     def random_element(self, *args, **kwds):
         r"""
@@ -1237,7 +1237,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
                     v = f(v)
                 v = v.list()
                 for j in range(rank):
-                    M[i+r,j] = v[j]
+                    M[i+r, j] = v[j]
             M.echelonize()
             oldr = r
             r = M.rank()
@@ -1406,7 +1406,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
     quo = quotient
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return ``True`` if this Ore module is the same than ``other``.
 
@@ -1430,7 +1430,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         """
         return self is other
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Return a hash of this Ore module.
 
@@ -1503,7 +1503,7 @@ class OreSubmodule(OreModule):
         names = normalize_names(names, rank)
         return cls.__classcall__(cls, ambient, basis, names)
 
-    def __init__(self, ambient, basis, names):
+    def __init__(self, ambient, basis, names) -> None:
         r"""
         Initialize this Ore submodule.
 
@@ -1541,7 +1541,7 @@ class OreSubmodule(OreModule):
         self._inject = coerce.__copy__()
         self.register_conversion(OreModuleRetraction(ambient, self))
 
-    def _repr_element(self, x):
+    def _repr_element(self, x) -> str:
         r"""
         Return a string representation of ``x``.
 
@@ -1559,7 +1559,7 @@ class OreSubmodule(OreModule):
         """
         return self._ambient(x)._repr_()
 
-    def _latex_element(self, x):
+    def _latex_element(self, x) -> str:
         r"""
         Return a LaTeX representation of ``x``.
 
@@ -1850,7 +1850,7 @@ class OreQuotientModule(OreModule):
         names = normalize_names(names, cover.rank() - rank)
         return cls.__classcall__(cls, cover, basis, names)
 
-    def __init__(self, cover, basis, names):
+    def __init__(self, cover, basis, names) -> None:
         r"""
         Initialize this Ore quotient.
 
@@ -1891,10 +1891,10 @@ class OreQuotientModule(OreModule):
                 i += 1
             else:
                 indices.append(j)
-                coerce[j,j-i] = base.one()
+                coerce[j, j-i] = base.one()
         for i in range(r):
             for j in range(d-r):
-                coerce[pivots[i],j] = -basis[i,indices[j]]
+                coerce[pivots[i], j] = -basis[i, indices[j]]
         rows = [cover.gen(i).image() * coerce for i in indices]
         OreModule.__init__(self, matrix(base, rows),
                            cover.ore_ring(action=False),
@@ -1904,7 +1904,7 @@ class OreQuotientModule(OreModule):
         self.register_coercion(coerce)
         cover.register_conversion(OreModuleSection(self, cover))
 
-    def _repr_element(self, x):
+    def _repr_element(self, x) -> str:
         r"""
         Return a string representation of `x`.
 
@@ -1928,7 +1928,7 @@ class OreQuotientModule(OreModule):
             coords[indices[i]] = x[i]
         return M(coords)._repr_()
 
-    def _latex_element(self, x):
+    def _latex_element(self, x) -> str:
         r"""
         Return a LaTeX representation of `x`.
 

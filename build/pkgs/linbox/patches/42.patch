@@ -1,0 +1,26 @@
+From d1f618fb0ee4a84be3ccddcfc28b257f34e1cbf7 Mon Sep 17 00:00:00 2001
+From: "Benjamin A. Beasley" <code@musicinmybrain.net>
+Date: Fri, 17 Jan 2025 14:25:19 -0500
+Subject: [PATCH] Fix a compiler error on GCC 15
+
+Fixes https://github.com/linbox-team/linbox/issues/321.
+---
+ linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h b/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h
+index feca4cf35d41910759c564273cf12f30e150b853..c97b1c8c114f58b3f1be4fdc89cb3dae0f1d8dea 100644
+--- a/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h
++++ b/linbox/matrix/sparsematrix/sparse-tpl-matrix-omp.h
+@@ -318,9 +318,9 @@ class SparseMatrix<Field_, SparseMatrixFormat::TPL_omp> : public BlackboxInterfa
+ 			typedef typename selfvec::const_iterator selfiter;
+ 			otheriter vp_p; selfiter v_p;
+ 
+-			Ap.data_.resize(A.data.size());
++			Ap.data_.resize(A.data_.size());
+ 			for (v_p = A.data_.begin(), vp_p = Ap.data_.begin();
+-			     v_p != A.data.end(); ++ v_p, ++ vp_p)
++			     v_p != A.data_.end(); ++ v_p, ++ vp_p)
+ 				hom.image (vp_p->elt, v_p->elt);
+ 		}
+ 	};

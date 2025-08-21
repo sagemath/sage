@@ -460,7 +460,7 @@ class WeakReversePlanePartitions(Tableaux):
 
     Element = WeakReversePlanePartition
 
-    def an_element(self):
+    def _an_element_(self):
         r"""
         Return a particular element of the class.
 
@@ -568,7 +568,7 @@ def hillman_grassl(M):
                 col_j_hook_mults += [(r, j)] * entry
         hook_mults += reversed(col_j_hook_mults)
     res = [[0] * rowlen for rowlen in lam]
-    for (r, s) in reversed(hook_mults):
+    for r, s in reversed(hook_mults):
         i = r
         j = lam[r] - 1
         while True:

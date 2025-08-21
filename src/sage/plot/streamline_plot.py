@@ -285,7 +285,7 @@ def streamline_plot(f_g, xrange, yrange, **options):
             f = 1 / sqrt(f_g**2 + 1)
             g = f_g * f
 
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     z, ranges = setup_for_eval_on_grid([f,g], [xrange,yrange], options['plot_points'])
     f, g = z

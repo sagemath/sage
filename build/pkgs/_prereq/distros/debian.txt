@@ -19,6 +19,9 @@ python3
 tar
 bc
 gcc
+libbz2-dev
+# Debian bullseye does not have bzip2 as a dependency of above
+bzip2
 # On debian buster, need C++ even to survive 'configure'. Otherwise:
 # checking how to run the C++ preprocessor... /lib/cpp
 # configure: error: in `/sage':
@@ -26,3 +29,5 @@ gcc
 g++
 # Needed if we download some packages from a https upstream URL
 ca-certificates
+patch
+pkg-config

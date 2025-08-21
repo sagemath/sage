@@ -620,7 +620,7 @@ class ECM(SageObject):
             True
         """
         n = self._validate(n)
-        factors = [n]                 # factors that need to be factorized futher
+        factors = [n]       # factors that need to be factorized further
         probable_prime_factors = []   # output prime factors
         while factors:
             n = factors.pop()

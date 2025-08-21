@@ -2,7 +2,6 @@
     // This settings file is not ignored by git.
     "files.exclude": {
         "**/__pycache__": true,
-        "src/**/*.cpp": true,
         "src/**/*.so": true
     },
     "search.exclude": {
@@ -71,6 +70,8 @@
         "mathrm",
         "Michal",
         "micjung",
+        "Miniconda",
+        "Miniforge",
         "Minkowski",
         "Möbius",
         "mpfr",
@@ -80,12 +81,15 @@
         "pari",
         "prandom",
         "Pynac",
+        "pyproject",
         "rightarrow",
         "sagemath",
         "scalarfield",
+        "sdist",
         "SEEALSO",
         "setminus",
         "smithform",
+        "spkg",
         "subchart",
         "subcharts",
         "subframe",

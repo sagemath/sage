@@ -264,7 +264,7 @@ class ShiftedPrimedTableau(ClonableArray,
             sage: s.is_standard()
             True
         """
-        flattened = set([i for row in self for i in row if i is not None])
+        flattened = {i for row in self for i in row if i is not None}
         if len(flattened) != sum(len(row) - row.count(None) for row in self):
             return False
 
@@ -1983,11 +1983,9 @@ class ShiftedPrimedTableaux(UniqueRepresentation, Parent):
                        for j in range(skew[i], len(row)-1)
                        if row[j].is_primed()):
                 return False
-        if not (self._primed_diagonal or all(row[0].is_unprimed()
-                   for i, row in enumerate(T)
-                   if skew[i] == 0)):
-            return False
-        return True
+        return self._primed_diagonal or all(row[0].is_unprimed()
+                                            for i, row in enumerate(T)
+                                            if skew[i] == 0)
 
 
 class ShiftedPrimedTableaux_all(ShiftedPrimedTableaux):
