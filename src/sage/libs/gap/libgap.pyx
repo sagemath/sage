@@ -172,15 +172,9 @@ Using the GAP C library from Cython
     role in handling errors. The return value from ``GAP_Enter()`` is
     non-zero (success) the first time around, and if an error occurs,
     execution "jumps" back to ``GAP_Enter()``, this time with a return
-    value of zero (failure). Due to these implementation details, we
-    cannot simply check the return value before executing Cython code;
-    the following *does not* work::
-
-        if (GAP_Enter()):
-           # further calls to libgap
-           GAP_Leave()
-
-    Instead you will see something like::
+    value of zero (failure). Due to these quirks, naive attempts to
+    handle the return value of ``GAP_Enter()`` are doomed to fail.
+    The correct pattern to use is,
 
         try:
             GAP_Enter()
@@ -197,11 +191,11 @@ Using the GAP C library from Cython
     ``GAP_Enter()``. It is at this point that we need to raise the
     (already set) exception, to prevent re-executing the code that
     caused an error. To facilitate this, ``GAP_Enter()`` is wrapped by
-    Cython, and the wrapper is qualified with ``except 0``. This means
-    that Cython will treat a return value from the ``GAP_Enter()``
-    macro as an error, and raise an exception if one is set. (One will
-    be if there was an error because our ``error_handler()`` sets
-    it). Here is a real example::
+    Cython, and the wrapper is qualified with ``except 0``. This tells
+    Cython to treat a return value of zero as an error, and raise an
+    exception if an exception is set. (One will be set if there was an
+    error because our ``error_handler()`` sets it). Here is a real
+    example::
 
         cpdef void crash_and_burn() except *:
             cdef GapElement x = <GapElement>libgap({'a': 1, 'b': 2})
@@ -259,8 +253,18 @@ Using the GAP C library from Cython
     control will jump back to the Cython wrapper for ``GAP_Enter()``,
     and this exception will be raised.
 
-    Before you attempt to change any of this, please make sure that you
-    understand the issues that it is intended to fix, e.g.
+    The safest pattern to use for interruptible libgap code is,
+
+        try:
+            gap_sig_on()
+            GAP_Enter()
+            # further calls to libgap
+        finally:
+            GAP_Leave()
+            gap_sig_off()
+
+    Before you attempt to change any of this, please make sure that
+    you understand the issues that it is intended to fix, e.g.
 
     * https://github.com/sagemath/sage/issues/37026
     * https://trofi.github.io/posts/312-the-sagemath-saga.html
