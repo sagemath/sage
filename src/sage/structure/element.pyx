@@ -313,6 +313,9 @@ from sage.arith.numerical_approx cimport digits_to_bits
 from sage.misc.decorators import sage_wraps
 from sage.misc.superseded import deprecation
 
+from sage.categories.rings import Rings
+_Rings = Rings()
+
 
 def make_element(_class, _dict, parent):
     """
@@ -3727,11 +3730,18 @@ cdef class Vector(ModuleElementWithMutability):
             sage: A = matrix([[1, 2], [0, 3], [1, 5]])
             sage: (b / A) * A == b
             True
+
+        Test if :issue:`40626` is fixed::
+
+            sage: R = cartesian_product([QQ, QQ])
+            sage: v = vector([R.one()])
+            sage: v / R.one()
+            ((1, 1))
+            sage: A = matrix(1, 1, [R.one()])
+            sage: v / A
+            ((1, 1))
         """
         right = py_scalar_to_element(right)
-        if isinstance(right, RingElement):
-            # Let __mul__ do the job
-            return self * ~right
         if isinstance(right, Vector):
             try:
                 W = (<Vector>right)._parent.submodule([right])
@@ -3742,7 +3752,14 @@ cdef class Vector(ModuleElementWithMutability):
                 else:
                     raise ArithmeticError("vector is not in free module")
         if isinstance(right, Matrix):
-            return right.solve_left(self)
+            try:
+                return right.solve_left(self)
+            except NotImplementedError:
+                # May not be solvable for some rings eg cartesian product ring
+                pass
+        if right.parent() in _Rings:
+            # Let __mul__ do the job
+            return self * ~right
         raise bin_op_exception('/', self, right)
 
     def _magma_init_(self, magma):
