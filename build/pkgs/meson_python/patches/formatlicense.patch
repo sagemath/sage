@@ -1,0 +1,13 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 70818ab..4aa9680 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -19,7 +19,7 @@ version = '0.18.0'
+ description = 'Meson Python build backend (PEP 517)'
+ readme = 'README.rst'
+ requires-python = '>= 3.8'
+-license = 'MIT'
++license = {text = 'MIT'}
+ license-files = ['LICENSES/MIT.txt']
+ keywords = ['meson', 'build', 'backend', 'pep517', 'package']
+ maintainers = [
