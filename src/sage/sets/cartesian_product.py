@@ -143,10 +143,12 @@ class CartesianProduct(UniqueRepresentation, Parent):
             sage: cartesian_product([ZZ]*10) # indirect doctest
             The Cartesian product of 10 copies of Integer Ring
         """
+        if not self._sets:
+            return f"The Cartesian product of {self._sets}"
         if len(self._sets) == 1:
             return f"The Cartesian product of 1 copy of {self._sets[0]}"
-        if len(self._sets) > 0: first = self._sets[0]
-        if all(element is first for element in self._sets) and len(self._sets) > 0:
+        first = self._sets[0]
+        if all(element is first for element in self._sets):
             return f"The Cartesian product of {len(self._sets)} copies of {first}"
         return f"The Cartesian product of {self._sets}"
 
