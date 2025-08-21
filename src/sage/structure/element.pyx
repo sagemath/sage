@@ -3744,6 +3744,9 @@ cdef class Vector(ModuleElementWithMutability):
             ((4, 4))
         """
         right = py_scalar_to_element(right)
+        if isinstance(right, RingElement):
+            # Let __mul__ do the job
+            return left * ~right
         if isinstance(right, Vector):
             try:
                 W = (<Vector>right)._parent.submodule([right])
