@@ -910,6 +910,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         The closer this ratio is to 1, the more orthogonal the basis is.
 
         INPUT:
+
         - ``use_reduced_basis`` -- boolean (default: ``True``); uses reduced basis for computing the ratio
 
         OUTPUT: the ratio described above.
@@ -950,6 +951,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         in the lattice. The heuristic is independent of the chosen basis.
 
         INPUT:
+
         - ``exact_form`` -- boolean (default: ``False``); uses exact formulation
           based on gamma function, instead of using stirling's approximation
 
