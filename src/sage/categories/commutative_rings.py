@@ -701,7 +701,7 @@ class CommutativeRings(CategoryWithAxiom):
                 sage: R.<x> = QQ[]
                 sage: a = 2*(x+1)^2 / (2*(x-1)^2); a.sqrt()
                 (x + 1)/(x - 1)
-                sage: sqrtx=(1/x).sqrt(name='y'); sqrtx
+                sage: sqrtx = (1/x).sqrt(name='y'); sqrtx
                 y
                 sage: sqrtx^2
                 1/x
