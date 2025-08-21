@@ -1189,17 +1189,29 @@ cdef class GapElement(RingElement):
 
         TESTS:
 
-        Check that this can be interrupted gracefully::
+        Check that this method can be interrupted gracefully. The
+        repeats build confidence that everything remains sane after an
+        interruption::
 
-            sage: a, b = libgap.GL(1000, 3).GeneratorsOfGroup(); g = a * b
+            sage: # long time
+            sage: a, b = libgap.GL(1000, 3).GeneratorsOfGroup()
+            sage: g = a * b
+            sage: e = libgap(2^400000)
             sage: from sage.doctest.util import ensure_interruptible_after
-            sage: with ensure_interruptible_after(0.5): g ^ (2 ^ 10000)
+            sage: for _ in range(10):
+            ....:     with ensure_interruptible_after(0.1, max_wait_after_interrupt=5):
+            ....:         g._pow_(e)
+
+        Check that a :exc:`sage.libs.gap.util.GAPError` is raised
+        under error conditions::
 
             sage: libgap.CyclicGroup(2) ^ 2
             Traceback (most recent call last):
             ...
             GAPError: Error, no method found!
             Error, no 1st choice method found for `^' on 2 arguments
+
+        ::
 
             sage: libgap(3) ^ Infinity
             Traceback (most recent call last):
