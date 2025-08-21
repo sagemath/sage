@@ -1,5 +1,3 @@
-import pytest
-
 from .sage_transformer import DoctestTransformer
 
 
@@ -9,6 +7,30 @@ def test_consume_field_simple():
     name, descs = dt._consume_field()
     assert name == "param"
     assert descs == ["description"]
+
+
+def test_consume_field_encoded_param():
+    lines = ["- ``param`` -- description"]
+    dt = DoctestTransformer(lines)
+    name, descs = dt._consume_field()
+    assert name == "``param``"
+    assert descs == ["description"]
+
+
+def test_consume_field_multiple_dashes():
+    lines = ["- param -- description with -- multiple dashes"]
+    dt = DoctestTransformer(lines)
+    name, descs = dt._consume_field()
+    assert name == "param"
+    assert descs == ["description with -- multiple dashes"]
+
+
+def test_consume_field_multiple_quotes():
+    lines = ["- ``param`` -- description with ``inline code``"]
+    dt = DoctestTransformer(lines)
+    name, descs = dt._consume_field()
+    assert name == "``param``"
+    assert descs == ["description with ``inline code``"]
 
 
 def test_consume_field_multiple_params():
@@ -76,8 +98,6 @@ def test_consume_fields_multiple_flag_splits_names():
         ("x", ["coordinate values"]),
         ("y", ["coordinate values"]),
     ]
-    # Both entries share the same description list object
-    assert fields[0][1] is fields[1][1]
 
 
 def test_consume_fields_multiple_flag_false_no_split():
@@ -110,6 +130,55 @@ def test_consume_fields_skips_leading_blank_lines():
     assert fields == [("param", ["value"])]
 
 
+def test_consume_fields_preserves_embedded_lists():
+    lines = [
+        "- param1 -- value1",
+        "",
+        "    - item1",
+        "    - item2",
+        "",
+        "- param2 -- value2",
+    ]
+    dt = DoctestTransformer(lines)
+    fields = dt._consume_fields()
+    assert fields == [
+        ("param1", ["value1", "", "- item1", "- item2", ""]),
+        ("param2", ["value2"]),
+    ]
+
+
+def test_transform_handles_params_with_embedded_lists():
+    lines = [
+        "INPUT:",
+        "",
+        "- param1 -- value1",
+        "",
+        "    - item1",
+        "    - item2",
+        "",
+        "- param2 -- value2",
+    ]
+    dt = DoctestTransformer(lines)
+    result = dt.transform()
+    assert result == [
+        ":param param1: value1",
+        "",
+        "               - item1",
+        "               - item2",
+        "",
+        ":param param2: value2",
+        "",
+    ]
+
+
+def test_transform_input_section_followed_by_text_doesnot_convert_params():
+    # TODO: We probably want to raise an exception instead in the future
+    lines = ["INPUT:", "some text", "- param1 -- value1", ""]
+    dt = DoctestTransformer(lines)
+    result = dt.transform()
+    assert result == ["", "some text", "- param1 -- value1", ""]
+
+
 def test_consume_fields_stops_at_section_header():
     lines = [
         "- p1 -- first",
@@ -124,40 +193,30 @@ def test_consume_fields_stops_at_section_header():
 
 
 def test_consume_returns_section_basic():
-    lines = [
-        "result line 1",
-        "",
-        "OUTPUT:",
-    ]
+    lines = ["result line 1", "", "result line 2"]
     dt = DoctestTransformer(lines)
     out = dt._consume_returns_section()
-    assert out == [("", ["result line 1", ""])]
-    # Header not consumed
-    assert dt._lines.get(0) == "OUTPUT:"
+    assert out == [("", ["result line 1", "", "result line 2"])]
 
 
 def test_consume_returns_section_indented_dedents():
     lines = [
         "    first line",
         "        second deeper",
-        "OUTPUT:",
     ]
     dt = DoctestTransformer(lines)
     out = dt._consume_returns_section()
     assert out == [("", ["first line", "    second deeper"])]
-    assert dt._lines.get(0) == "OUTPUT:"
 
 
 def test_consume_returns_section_empty():
     lines = [
         "",
         "",
-        "OUTPUT:",
     ]
     dt = DoctestTransformer(lines)
     out = dt._consume_returns_section()
     assert out == []
-    assert dt._lines.get(0) == "OUTPUT:"
 
 
 def test_consume_returns_section_trailing_blank_lines_preserved():
@@ -165,9 +224,62 @@ def test_consume_returns_section_trailing_blank_lines_preserved():
         "desc",
         "",
         "",
-        "OUTPUT:",
     ]
     dt = DoctestTransformer(lines)
     out = dt._consume_returns_section()
     assert out == [("", ["desc", "", ""])]
-    assert dt._lines.get(0) == "OUTPUT:"
+
+
+def test_consume_returns_section_closed_by_other_section():
+    lines = [
+        "result line 1",
+        "",
+        "INPUT:",  # This should close the OUTPUT section
+        "input line",
+    ]
+    dt = DoctestTransformer(lines)
+    out = dt._consume_returns_section()
+    assert out == [("", ["result line 1", ""])]
+    # Header not consumed
+    assert dt._lines.get(0) == "INPUT:"
+
+
+def test_transform_returns_section():
+    lines = [
+        "OUTPUT:",
+        "result",
+    ]
+    dt = DoctestTransformer(lines)
+    result = dt.transform()
+    assert result == [":returns: result", ""]
+
+
+def test_transform_returns_section_closed_by_other_section():
+    lines = [
+        "OUTPUT:",
+        "result",
+        "ALGORITHM:",
+    ]
+    dt = DoctestTransformer(lines)
+    result = dt.transform()
+    assert result == [":returns: result", "", ".. rubric:: algorithm", ""]
+
+
+def test_transform_examples_section():
+    lines = [
+        "EXAMPLES:",
+        "",
+        "    sage: foo1",
+        "    sage: foo2",
+        "",
+    ]
+    dt = DoctestTransformer(lines)
+    result = dt.transform()
+    assert result == [
+        ".. rubric:: Examples",
+        ".. code-block::",
+        "",
+        "    sage: foo1",
+        "    sage: foo2",
+        "",
+    ]

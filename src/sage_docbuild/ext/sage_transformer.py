@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # " <section>: "
 _section_regex = re.compile(r"^\s*([A-Z]+):+\s*$")
 # - <name> -- <rest>
-_field_regex = r"^\s*-\s*(?P<name>.+)\s*--\s*(?P<rest>.*)$"
+_field_regex = r"^\s*-\s*(?P<name>.+?)\s*--\s*(?P<rest>.*)$"
 
 _single_colon_regex = re.compile(r"(?<!:):(?!:)")
 _xref_or_code_regex = re.compile(
@@ -97,10 +97,13 @@ class DoctestTransformer:
         self._sections: dict[str, Callable[..., list[str]]] = {
             "input": self._parse_parameters_section,
             "output": self._parse_returns_section,
-            #'examples': self._parse_examples_section,
+            "examples": self._parse_examples_section,
             #'algorithm': partial(self._parse_admonition, 'algorithm'),
             #'references': partial(self._parse_admonition, 'references'),
             #'authors': partial(self._parse_admonition, 'authors'),
+            "algorithm": self._parse_custom_generic_section,
+            "references": self._parse_custom_generic_section,
+            "authors": self._parse_custom_generic_section,
         }
 
     def _get_location(self) -> str | None:
@@ -185,19 +188,20 @@ class DoctestTransformer:
             #         return "", []
             # raise ValueError(f"Invalid field line: {line}")
 
-    def _consume_fields(self, multiple: bool = False) -> list[tuple[str, list[str]]]:
+    def _consume_fields(
+        self, multiple: bool = False, content_has_to_start_with_hyphen: bool = False
+    ) -> list[tuple[str, list[str]]]:
         """
         Consume all fields/parameters from the docstring,
         until a section break is encountered.
         """
         self._consume_empty()
         fields: list[tuple[str, list[str]]] = []
-        while not self._is_section_break():
+        while not self._is_section_break(content_has_to_start_with_hyphen):
             _name, _desc = self._consume_field()
             if multiple and _name:
                 fields.extend(
-                    (self._sanitize_name(name), _desc)
-                    for name in _name.split(",")
+                    (self._sanitize_name(name), _desc) for name in _name.split(",")
                 )
             elif _name or _desc:
                 fields.append((self._sanitize_name(_name), _desc))
@@ -305,7 +309,6 @@ class DoctestTransformer:
     ) -> list[str]:
         lines = []
         for _name, _desc in fields:
-            _desc = self._strip_empty(_desc)
             if any(_desc):
                 _desc = self._fix_field_desc(_desc)
                 field = f":{field_role} {_name}: "
@@ -387,9 +390,15 @@ class DoctestTransformer:
     def _indent(self, lines: list[str], n: int = 4) -> list[str]:
         return [(" " * n) + line for line in lines]
 
-    def _is_indented(self, line: str, indent: int = 1) -> bool:
+    def _is_indented(
+        self, line: str, indent: int = 1, content_has_to_start_with_hyphen: bool = False
+    ) -> bool:
         for i, s in enumerate(line):
-            if i >= indent:
+            if i > indent:
+                return True
+            elif i == indent:
+                if content_has_to_start_with_hyphen:
+                    return s == "-"
                 return True
             elif not s.isspace():
                 return False
@@ -420,15 +429,20 @@ class DoctestTransformer:
             return section in self._sections
         return False
 
-    def _is_section_break(self) -> bool:
+    def _is_section_break(self, content_has_to_start_with_hyphen: bool = False) -> bool:
         line = self._lines.get(0)
         return (
+            # end of input
             not self._lines
+            # another section starts
             or self._is_section_header()
+            # line not indented enough
             or (
                 self._is_in_section
-                and line is not self._lines.sentinel
-                and not self._is_indented(line, self._section_indent)
+                and line
+                and not self._is_indented(
+                    line, self._section_indent, content_has_to_start_with_hyphen
+                )
             )
         )
 
@@ -484,25 +498,26 @@ class DoctestTransformer:
     def _parse_custom_params_style_section(self, section: str) -> list[str]:
         return self._format_fields(section, self._consume_fields())
 
-    def _parse_custom_returns_style_section(self, section: str) -> list[str]:
-        fields = self._consume_returns_section()
-        return self._format_fields(section, fields)
-
     def _parse_generic_section(self, section: str, use_admonition: bool) -> list[str]:
         lines = self._strip_empty(self._consume_to_next_section())
-        lines = self._dedent(lines)
         if use_admonition:
-            header = f".. admonition:: {section}"
+            header = [f".. admonition:: {section}"]
             lines = self._indent(lines, 3)
         else:
-            header = f".. rubric:: {section}"
+            header = [f".. rubric:: {section}"]
+            if section.lower() == "examples":
+                header.append(".. code-block::")
+            else:
+                lines = self._dedent(lines)
         if lines:
-            return [header, "", *lines, ""]
+            return [*header, "", *lines, ""]
         else:
-            return [header, ""]
+            return [*header, ""]
 
     def _parse_parameters_section(self, section: str) -> list[str]:
-        fields = self._consume_fields(multiple=True)
+        fields = self._consume_fields(
+            multiple=True, content_has_to_start_with_hyphen=True
+        )
         return self._format_docutils_params(fields)
 
     def _parse_returns_section(self, section: str) -> list[str]:

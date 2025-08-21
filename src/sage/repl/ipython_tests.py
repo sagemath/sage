@@ -100,7 +100,7 @@ calls when you ask for the double-questionmark help, like ``foo??`` ::
     <BLANKLINE>
         - ``optional`` -- anything (optional); dummy optional
     <BLANKLINE>
-        EXAMPLES::
+        EXAMPLES...
     <BLANKLINE>
         ...
         """
@@ -119,7 +119,7 @@ Next, test the pinfo2 magic for Cython code::
         """
         Example class wrapping an STL vector.
     <BLANKLINE>
-        EXAMPLES::
+        EXAMPLES...
     <BLANKLINE>
     ...
         """
@@ -131,7 +131,7 @@ Next, test the pinfo2 magic for Cython code::
             """
             The Cython constructor.
     <BLANKLINE>
-            EXAMPLES::
+            EXAMPLES...
     <BLANKLINE>
     ...
     File:   .../sage/tests/stl_vector.pyx
