@@ -919,6 +919,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
             sage: L.hadamard_ratio()
+            4331^(1/8)*(1/4331)^(1/4)
             sage: float(L.hadamard_ratio()) # rel tol 1e-13
             0.351096481348176
             sage: L.LLL()
@@ -959,6 +960,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0], [0, 0, 101, 0], [-28, 39, 45, 1]])
             sage: L.gaussian_heuristic()
+            1030301^(1/4)*sqrt(2)*e^(-1/2)/sqrt(pi)
             sage: float(L.gaussian_heuristic()) # rel tol 1e-13
             15.418206247181422
 
