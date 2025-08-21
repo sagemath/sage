@@ -249,7 +249,7 @@ class FiniteFields(CategoryWithAxiom):
         @cached_method
         def quadratic_non_residue(self):
             r"""
-            Returns a random non square element of the finite field
+            Return a random non square element of the finite field
 
             OUTPUT:
               A non-square element of the finite field; raises an error if
@@ -279,10 +279,11 @@ class FiniteFields(CategoryWithAxiom):
     class ElementMethods:
         def is_square(self) -> bool:
             r"""
-            Tests if the element is a square or has
+            Test if the element is a square or has
             a square root element.
 
-            OUTPUT: ``True`` if the element is a square ``False`` if not
+            OUTPUT:
+              ``True`` if the element is a square ``False`` if not
 
             EXAMPLES::
 
@@ -307,11 +308,12 @@ class FiniteFields(CategoryWithAxiom):
 
         def _tonelli(self):
             r"""
-            Returns a square root of the element if it exists
+            Return a square root of the element if it exists
             using Tonelli's algorithm, only works for finite fields
             of odd characteristic.
 
-            OUTPUT: A square root of the element; raises an error
+            OUTPUT:
+              A square root of the element; raises an error
               if the element is not a square
 
             EXAMPLES::
@@ -344,12 +346,13 @@ class FiniteFields(CategoryWithAxiom):
 
         def _cipolla(self):
             r"""
-            Returns a square root of the element if it exists
+            Return a square root of the element if it exists
             using Cipolla's algorithm, more suited if order - 1
             is highly divisible by 2. Only works for finite fields
             of odd characteristic.
 
-            OUTPUT: A square root of the element; raises an error
+            OUTPUT:
+              A square root of the element; raises an error
               if the element is not a square
 
             EXAMPLES::
@@ -381,7 +384,7 @@ class FiniteFields(CategoryWithAxiom):
 
         def sqrt(self, all: bool = False, algorithm: str = 'tonelli'):
             r"""
-            Returns the square root of the element if it exists.
+            Return the square root of the element if it exists.
 
             INPUT:
 
@@ -456,7 +459,7 @@ class FiniteFields(CategoryWithAxiom):
                 square_root = self**exponent
                 if all:
                     # we return a 1-tuple because the GF implementation does it
-                    return (square_root)
+                    return (square_root,)
                 else:
                     return square_root
             if not self.is_square():
