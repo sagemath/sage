@@ -316,6 +316,10 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
     # Defaults to "undefined."
     cdef int obj_type = OBJ_TYPE_UND
 
+    # The length of obj, if it's a list. Needed to exclude the empty
+    # list from the string <=> list-of-char equivalence.
+    cdef unsigned int list_len
+
     # Plan A: Determine the type of ``obj`` using the libgap API.
     # Make all libgap-api calls here, between GAP_Enter/GAP_Leave.
     # In particular we avoid any *other* functions that may invoke
@@ -333,6 +337,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
             obj_type = OBJ_TYPE_STR
         elif GAP_IsList(obj):
             obj_type = OBJ_TYPE_LST
+            list_len = GAP_LenList(obj)
         elif GAP_IsRecord(obj):
             obj_type = OBJ_TYPE_REC
     finally:
@@ -351,7 +356,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         return make_GapElement_String(parent, obj)
     elif obj_type == OBJ_TYPE_LST:
         result = make_GapElement_List(parent, obj)
-        if result.IsString() and result.Length() > 0:
+        if list_len > 0 and result.IsString():
             # IsString() thinks a list-of-char is a string, but
             # GAP_IsString() does not. For backwards compatibility we
             # convert list-of-char to an efficient string here, and
