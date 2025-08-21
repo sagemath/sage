@@ -369,8 +369,12 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         return make_GapElement_Record(parent, obj)
 
     # Plan B: Use the "private" API to determine the type of ``obj``.
-    # Since TNUM_OBJ does not invoke the public libgap API, it is not
-    # wrapped in GAP_Enter / GAP_Leave.
+    # This is not kosher, but there are no such functions in
+    # libgap-api.h, and this is much faster than using the
+    # corresponding IsFoo() functions on a generic GAPElement.
+    # TNUM_OBJ involves a series of macros, none of which do any
+    # memory management or error handling, so this is safe to do
+    # outside of GAP_Enter / GAP_Leave for now.
     cdef int num = TNUM_OBJ(obj)
     if num == T_RAT:
         return make_GapElement_Rational(parent, obj)
@@ -384,7 +388,8 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         return make_GapElement_Permutation(parent, obj)
 
     # Plan C: Make a generic element, and then use GAP functions to
-    # check if it's an IntegerMod or a Ring.
+    # check if it's an IntegerMod or a Ring. This is our penultimate
+    # resort due to how slow it is.
     result = make_GapElement(parent, obj)
     if num == T_POSOBJ:
         if result.IsZmodnZObj():
