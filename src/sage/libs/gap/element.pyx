@@ -309,6 +309,8 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
     """
     if obj is NULL:
         return make_GapElement(parent, obj)
+    if (obj is GAP_True) or (obj is GAP_False) or (obj is GAP_Fail):
+        return make_GapElement_Boolean(parent, obj)
 
     # The object's type, if it can be determined from the libgap API.
     # Defaults to "undefined."
@@ -370,9 +372,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
     # Since TNUM_OBJ does not invoke the public libgap API, it is not
     # wrapped in GAP_Enter / GAP_Leave.
     cdef int num = TNUM_OBJ(obj)
-    if num == T_BOOL:
-        return make_GapElement_Boolean(parent, obj)
-    elif num == T_RAT:
+    if num == T_RAT:
         return make_GapElement_Rational(parent, obj)
     elif num == T_FUNCTION:
         return make_GapElement_Function(parent, obj)

@@ -55,6 +55,7 @@ cdef extern from "gap/libgap-api.h" nogil:
 
     cdef Obj GAP_True
     cdef Obj GAP_False
+    cdef Obj GAP_Fail
 
     Obj GAP_CallFuncList(Obj func, Obj args);
     Obj GAP_CallFuncArray(Obj func, UInt narg, Obj * args);
