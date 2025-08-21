@@ -2114,7 +2114,7 @@ class GenericTermMonoid(UniqueRepresentation, Parent, WithLocals):
 
         INPUT:
 
-        - ``growth`` and ``coefficient`` -- the element data
+        - ``growth``, ``coefficient`` -- the element data
 
         OUTPUT: an element
 

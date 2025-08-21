@@ -372,13 +372,13 @@ class KenzoSpectralSequence(KenzoObject):
 
         - ``p`` -- the page to print
 
-        -- ``i1`` -- the first column to print
+        - ``i1`` -- the first column to print
 
-        -- ``i2`` -- the last column to print
+        - ``i2`` -- the last column to print
 
-        -- ``j1`` -- the first row to print
+        - ``j1`` -- the first row to print
 
-        -- ``j2`` -- the last row to print
+        - ``j2`` -- the last row to print
 
         EXAMPLES::
 

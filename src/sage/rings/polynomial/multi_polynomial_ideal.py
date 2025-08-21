@@ -5319,7 +5319,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
           and `f_i` are the elements in the Gröbner basis. Otherwise whatever
           basis is returned by ``self.gens()`` is used.
 
-        - ``*args`` and ``**kwds`` are passed to ``R.random_element()`` with
+        - ``*args``, ``**kwds`` -- passed to ``R.random_element()`` with
           ``R = self.ring()``.
 
         EXAMPLES:
