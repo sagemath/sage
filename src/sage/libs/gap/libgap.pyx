@@ -198,11 +198,11 @@ Using the GAP C library from Cython
     example::
 
         cpdef void crash_and_burn() except *:
-            cdef GapElement x = <GapElement>libgap({'a': 1, 'b': 2})
+            x = libgap({'a': 1, 'b': 2})
             cdef unsigned int xlen
             try:
                 GAP_Enter()
-                xlen = GAP_LenList(x.value)
+                xlen = GAP_LenList((<GapElement>x).value)
             finally:
                 GAP_Leave()
             print(xlen)
