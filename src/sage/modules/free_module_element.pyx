@@ -4617,6 +4617,13 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: M = span([[x, x^2+1], [1/x, x^3]], R)
             sage: M.basis()[0] * x
             (1, x^4)
+        
+        Check :issue:`40611` is fixed::
+
+            sage: R = cartesian_product([ZZ, ZZ])
+            sage: assert R in CommutativeRings()
+            sage: matrix(1, 1, [R.zero()]) * vector([R.zero()])
+            ((0, 0))
         """
         if right._parent is self._parent.coordinate_ring():
             v = [(<Element>x)._mul_(right) for x in self._entries]
