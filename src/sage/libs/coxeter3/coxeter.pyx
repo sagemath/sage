@@ -16,6 +16,7 @@ Low level part of the interface to Fokko Ducloux's Coxeter 3 library
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import combinations
 
 from sage.libs.coxeter3.decl cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
@@ -533,7 +534,7 @@ cdef class CoxGroup(SageObject):
         EXAMPLES::
 
             sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
-            sage: W = CoxGroup(['A', 5])
+            sage: W = CoxGroup(['A', 3])
             sage: W.is_finite()
             True
             sage: W = CoxGroup(['A', 3, 1])
@@ -541,6 +542,27 @@ cdef class CoxGroup(SageObject):
             False
         """
         return isFiniteType(self.x)
+
+    def is_commutative(self) -> bool:
+        """
+        Return whether this Coxeter group is commutative.
+
+        EXAMPLES::
+
+            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
+            sage: W = CoxGroup(['A', 3])
+            sage: W.is_commutative()
+            False
+            sage: W = CoxGroup(['A', 1])
+            sage: W.is_commutative()
+            True
+        """
+        for ii, jj in combinations(self.cartan_type.index_set(), 2):
+            ii = self.in_ordering[ii] - 1
+            jj = self.in_ordering[jj] - 1
+            if self.x.M(ii, jj) != 2:
+                return False
+        return True
 
     cpdef full_context(self) noexcept:
         """
