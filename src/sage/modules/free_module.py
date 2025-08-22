@@ -201,6 +201,7 @@ from sage.modules.free_module_element import (
 )
 from sage.modules.module import Module
 from sage.rings.finite_rings.finite_field_base import FiniteField
+from sage.sets.cartesian_product import CartesianProduct
 from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp import (
     op_EQ,
@@ -8369,6 +8370,9 @@ def element_class(R, is_sparse):
         else:
             import sage.modules.vector_symbolic_sparse
             return sage.modules.vector_symbolic_sparse.Vector_symbolic_sparse
+    elif isinstance(R, CartesianProduct):
+        import sage.modules.vector_cartesian_product_dense
+        return sage.modules.vector_cartesian_product_dense.Vector_cartesian_product_dense
 
     if is_sparse:
         return FreeModuleElement_generic_sparse

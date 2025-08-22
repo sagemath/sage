@@ -31,6 +31,7 @@ py.install_sources(
   'torsion_quadratic_module.py',
   'tutorial_free_modules.py',
   'vector_callable_symbolic_dense.py',
+  'vector_cartesian_product_dense.py',
   'vector_complex_double_dense.pxd',
   'vector_double_dense.pxd',
   'vector_integer_dense.pxd',
