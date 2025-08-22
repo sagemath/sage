@@ -3631,7 +3631,7 @@ class Graph(GenericGraph):
         raise ValueError("The 'algorithm' keyword must be set to either 'DLX' or 'MILP'.")
 
     @doc_index("Coloring")
-    def chromatic_symmetric_function(self, R=None):
+    def chromatic_symmetric_function(self, R=None, weights=None):
         r"""
         Return the chromatic symmetric function of ``self``.
 
@@ -3642,14 +3642,16 @@ class Graph(GenericGraph):
 
             X_G = \sum_{F \subseteq E(G)} (-1)^{|F|} p_{\lambda(F)},
 
-        where `\lambda(F)` is the partition of the sizes of the connected
-        components of the subgraph induced by the edges `F` and `p_{\mu}` is the
-        powersum symmetric function.
+        where `\lambda(F)` is the partition of the (weighted) sizes of the
+        connected components of the subgraph induced by the edges `F` and
+        `p_{\mu}` is the powersum symmetric function.
 
         INPUT:
 
         - ``R`` -- (optional) the base ring for the symmetric functions;
           this uses `\ZZ` by default
+        - ``weights`` -- ``dict`` (optional); a mapping from the vertices
+          of `G` to positive integers; this is `v \mapsto 1` by default
 
         ALGORITHM:
 
@@ -3697,6 +3699,15 @@ class Graph(GenericGraph):
             sage: XG == XG1 + XG2 - XG3
             True
 
+        We give examples that a complete graph with weights `\lambda`
+        correspond to the monomial symmetric function `m_{\lambda}`
+        (scaled by a constant)::
+
+            sage: m(K5.chromatic_symmetric_function())
+            120*m[1, 1, 1, 1, 1]
+            sage: m(K5.chromatic_symmetric_function(weights=enumerate([5,2,2,2,1])))
+            6*m[5, 2, 2, 2, 1]
+
         TESTS::
 
             sage: Graph([]).chromatic_symmetric_function() == 1
@@ -3717,7 +3728,10 @@ class Graph(GenericGraph):
         dsf = {v: None for v in self.vertices()}
 
         # Dict to store size of tree rooted at each vertex.
-        sizes = {v: 1 for v in self.vertices()}
+        if weights is None:
+            sizes = {v: 1 for v in self.vertices()}
+        else:
+            sizes = dict(weights)
 
         def find(dsf, v):
             # Find root of tree in disjoint-set forest.
