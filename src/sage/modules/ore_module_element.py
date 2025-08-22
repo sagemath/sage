@@ -151,7 +151,7 @@ class OreModuleElement(FreeModuleElement_generic_dense):
         V = self.parent().module()
         return V(self.list())
 
-    def image(self):
+    def image(self, integral=False):
         r"""
         Return the image of this element by the pseudomorphism
         defining the action of the Ore variable on this Ore module.
@@ -174,4 +174,12 @@ class OreModuleElement(FreeModuleElement_generic_dense):
             sage: x.image() == X*x
             True
         """
-        return self.parent()._pseudohom(self)
+        M = self.parent()
+        y = M._pseudohom(self)
+        if M._pole is not None:
+            den = M._pole ** M._multiplicity
+            coords = [num/den for num in y.list()]
+            if not integral:
+                M = M.over_fraction_field()
+            y = M(coords)
+        return y

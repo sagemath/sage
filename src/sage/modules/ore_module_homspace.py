@@ -72,8 +72,8 @@ class OreModule_homspace(UniqueRepresentation, HomsetWithBase):
             raise ValueError("domain must be a Ore module")
         if not isinstance(codomain, OreModule):
             raise ValueError("codomain must be a Ore module")
-        if domain.ore_ring(action=False) is not codomain.ore_ring(action=False):
-            raise ValueError("domain and codomain must be defined over the same ring with same twisting maps")
+        if domain._ore_category is not codomain._ore_category:
+            raise ValueError("domain and codomain are not in the same category")
         super().__init__(domain, codomain, category)
         base = domain.base_ring()
         self._matrix_space = MatrixSpace(base, domain.dimension(), codomain.dimension())

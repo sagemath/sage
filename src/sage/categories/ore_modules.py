@@ -11,7 +11,7 @@ class OreModules(Category_over_base_ring):
     Category of Ore modules.
     """
     @staticmethod
-    def __classcall_private__(cls, ring, twist):
+    def __classcall_private__(cls, ring, twist, pole=None):
         r"""
         Normalize the input and call the init function.
 
@@ -22,6 +22,8 @@ class OreModules(Category_over_base_ring):
 
         - ``twist`` -- a twisting morphism/derivation or a
           Ore polynomial ring
+
+        - ``pole`` -- an element in the base ring
 
         TESTS::
 
@@ -42,9 +44,11 @@ class OreModules(Category_over_base_ring):
                 raise ValueError("base rings do not match")
         else:
             ore = OrePolynomialRing(ring, twist, names='x', polcast=False)
-        return cls.__classcall__(cls, ore)
+        if pole is not None:
+            pole = ring(pole)
+        return cls.__classcall__(cls, ore, pole)
 
-    def __init__(self, ore):
+    def __init__(self, ore, pole):
         r"""
         Initialize this category.
 
@@ -60,6 +64,7 @@ class OreModules(Category_over_base_ring):
         base = ore.base_ring()
         Category_over_base_ring.__init__(self, base)
         self._ore = ore
+        self._pole = pole
 
     def __reduce__(self):
         r"""
@@ -77,7 +82,7 @@ class OreModules(Category_over_base_ring):
             sage: cat is cat2
             True
         """
-        return OreModules, (self.base_ring(), self._ore)
+        return OreModules, (self.base_ring(), self._ore, self._pole)
 
     def super_categories(self):
         r"""
@@ -108,7 +113,10 @@ class OreModules(Category_over_base_ring):
             sage: cat._repr_object_names()
             'Ore modules over Finite Field in a of size 5^3 twisted by a |--> a^5'
         """
-        return "Ore modules over %s %s" % (self.base_ring(), self._ore._repr_twist())
+        s = "Ore modules over %s %s" % (self.base_ring(), self._ore._repr_twist())
+        if self._pole is not None:
+            s += " with pole at %s" % self._pole
+        return s
 
     def ore_ring(self, var='x'):
         r"""
