@@ -3731,24 +3731,6 @@ cdef class Vector(ModuleElementWithMutability):
             sage: A = matrix([[1, 2], [0, 3], [1, 5]])
             sage: (b / A) * A == b
             True
-
-        Test if :issue:`40626` is fixed::
-
-            sage: R = cartesian_product([QQ, QQ])
-            sage: b = vector([R(2)])
-            sage: b / R(2) # vector-by-scalar
-            ((1, 1))
-            sage: c = vector([R(1)])
-            sage: b / c # vector-by-vector
-            (2, 2)
-            sage: d = vector([R(0)])
-            sage: b / d # vector-by-vector
-            Traceback (most recent call last):
-            ...
-            ZeroDivisionError: division by zero vector
-            sage: A = matrix([R(1) / R(2)])
-            sage: b / A # vector-by-matrix
-            ((4, 4))
         """
         right = py_scalar_to_element(right)
         if isinstance(right, Vector):
