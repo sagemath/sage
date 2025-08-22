@@ -42,12 +42,12 @@ class DrinfeldModuleAction(Action):
     .. NOTE::
 
         The user should never explicitly instantiate the class
-        `DrinfeldModuleAction`.
+        :class:`DrinfeldModuleAction`.
 
     .. WARNING::
 
-        This class may be replaced later on. See issues #34833 and
-        #34834.
+        This class may be replaced later on. See issues
+        :issue:`34833` and :issue:`34834`.
 
     INPUT: the Drinfeld module
 
