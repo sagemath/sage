@@ -38,6 +38,11 @@ jobs:
             xbps-install -yu
             # node-based actions require libstdc++.so.6
             xbps-install -Sy libstdc++ bash git
+          elif [ "${{ matrix.container }}" = "gentoo/stage3:latest" ]; then
+            # Setup portage
+            getuto
+            emerge-webrsync
+            emerge --sync
           fi
 
       - name: Checkout code
