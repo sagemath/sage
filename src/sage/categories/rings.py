@@ -1943,7 +1943,7 @@ class Rings(CategoryWithAxiom):
                     sage: e.is_unit()
                     False
                 """
-                return all([_.is_unit() for _ in self.cartesian_factors()])
+                return all([x.is_unit() for x in self.cartesian_factors()])
 
 def _gen_names(elts):
     r"""
