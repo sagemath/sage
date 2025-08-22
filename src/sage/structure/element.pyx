@@ -312,6 +312,7 @@ from sage.arith.power cimport generic_power as arith_generic_power
 from sage.arith.numerical_approx cimport digits_to_bits
 from sage.misc.decorators import sage_wraps
 from sage.misc.superseded import deprecation
+from sage.sets.cartesian_product import CartesianProduct
 
 from sage.categories.rings import Rings
 _Rings = Rings()
@@ -3746,11 +3747,34 @@ cdef class Vector(ModuleElementWithMutability):
             sage: b / A # vector-by-matrix
             ((4, 4))
         """
+        base_ring = left.base_ring()
         right = py_scalar_to_element(right)
         if isinstance(right, RingElement):
             # Let __mul__ do the job
             return left * ~right
         if isinstance(right, Vector):
+            right_base_ring = right.base_ring()
+            if isinstance(base_ring, CartesianProduct) and isinstance(right_base_ring, CartesianProduct):
+                # Cartesian product ring may not admit a basis, therefore division is
+                # instead being performed component-wise and then stitched back
+                n = len(base_ring._sets)
+                left_lsts, right_lsts = [[] for _ in range(n)], [[] for _ in range(n)]
+                m = len(left)
+                assert m == len(right), "sizes of vectors are different"
+
+                # Split vectors into component vectors
+                for i in range(m):
+                    for j in range(n):
+                        left_lsts[j].append(left[i][j])
+                        right_lsts[j].append(right[i][j])
+
+                result = []
+                for j in range(n):
+                    result.append((base_ring._sets[j]**m)(left_lsts[j]) / (right_base_ring._sets[j]**m)(right_lsts[j]))
+
+                # Convert result to cartesian product
+                return base_ring._cartesian_product_of_elements(result)
+
             try:
                 W = (<Vector>right)._parent.submodule([right])
                 return W.coordinates(left)[0] / W.coordinates(right)[0]
