@@ -3030,7 +3030,7 @@ class Link(SageObject):
         return [[list(i) for i in j]
                 for j in G.connected_components(sort=False)]
 
-    @cached_method
+    @cached_method(key=lambda s, v1, v2, n, a: (s, v1, v2, n))
     def homfly_polynomial(self, var1=None, var2=None, normalization='lm', algorithm=None):
         r"""
         Return the HOMFLY polynomial of ``self``.
@@ -3153,14 +3153,17 @@ class Link(SageObject):
             sage: K = Knots().from_table(8, 21)
             sage: HRlm = K.homfly_polynomial(algorithm=regina.ALG_DEFAULT); HRlm
             L^6*M^2 - L^4*M^4 - L^6 + 3*L^4*M^2 - 3*L^4 + 2*L^2*M^2 - 3*L^2
+            sage: K.homfly_polynomial.clear_cache()  # since cache does not distinguish algorithms
             sage: HRlm == K.homfly_polynomial()
             True
             sage: HRaz = K.homfly_polynomial(normalization='az', algorithm=regina.ALG_BACKTRACK); HRaz
             a^6*z^2 - a^4*z^4 + a^6 - 3*a^4*z^2 - 3*a^4 + 2*a^2*z^2 + 3*a^2
+            sage: K.homfly_polynomial.clear_cache()
             sage: HRaz == K.homfly_polynomial(normalization='az')
             True
             sage: HRvz = K.homfly_polynomial(normalization='vz', algorithm=regina.ALG_TREEWIDTH); HRvz
             2*v^-2*z^2 - v^-4*z^4 + 3*v^-2 - 3*v^-4*z^2 - 3*v^-4 + v^-6*z^2 + v^-6
+            sage: K.homfly_polynomial.clear_cache()
             sage: HRvz == K.homfly_polynomial(normalization='vz')
             True
 
@@ -4182,6 +4185,11 @@ class Link(SageObject):
         br = self.braid()
         br_ind = br.strands()
 
+        def cmp_braid(b):
+            if (b.strands() <= br_ind):
+                return self._markov_move_cmp(b)
+            return False
+
         res = []
         for L in l:
             if L.pd_notation() == pd_code:
@@ -4189,10 +4197,10 @@ class Link(SageObject):
                 res.append(L)
                 continue
 
-            Lbraid = L.braid()
-            if Lbraid.strands() <= br_ind:
-                if self._markov_move_cmp(Lbraid):
-                    res.append(L)
+            if cmp_braid(L.braid()):
+                res.append(L)
+            elif cmp_braid(L.link().braid()):
+                res.append(L)
 
         if res:
             if len(res) > 1 or res[0].is_unique():
