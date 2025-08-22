@@ -15,14 +15,12 @@ Rings
 from functools import reduce
 from types import GeneratorType
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.lazy_import import LazyImport
-from sage.misc.prandom import randint
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
-from sage.structure.element import Element
-from sage.structure.parent import Parent
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import LazyImport
+from sage.misc.prandom import randint
 
 
 class Rings(CategoryWithAxiom):

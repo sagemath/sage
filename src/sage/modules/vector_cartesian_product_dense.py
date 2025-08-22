@@ -12,7 +12,7 @@ class Vector_cartesian_product_dense(FreeModuleElement_generic_dense):
         Division of the vector ``self`` by the scalar, vector or matrix ``other``.
 
         TESTS::
-        
+
         Test if :issue:`40626` is fixed::
 
             sage: R = cartesian_product([QQ, QQ])
@@ -61,7 +61,7 @@ class Vector_cartesian_product_dense(FreeModuleElement_generic_dense):
 
             # Convert result to cartesian product
             return base_ring._cartesian_product_of_elements(result)
-        
+
         # fallback
         return Vector.__truediv__(self, other)
 
