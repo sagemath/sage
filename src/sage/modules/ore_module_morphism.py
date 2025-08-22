@@ -658,7 +658,7 @@ class OreModuleMorphism(Morphism):
             sage: g.is_surjective()
             True
         """
-        return self.image()._subspace.basis.is_one()
+        return self.image()._submodule.basis.is_one()
 
     def is_bijective(self) -> bool:
         r"""
@@ -753,7 +753,12 @@ class OreModuleMorphism(Morphism):
 
     def kernel(self, names=None):
         r"""
-        Return ``True`` if this morphism is injective.
+        Return the kernel of this morphism.
+
+        INPUT:
+
+        - ``names`` (default: ``None``) -- the name of the vectors in a
+          basis of the kernel
 
         EXAMPLES::
 
@@ -787,7 +792,17 @@ class OreModuleMorphism(Morphism):
 
     def image(self, saturate=False, names=None):
         r"""
-        Return ``True`` if this morphism is injective.
+        Return the image of this morphism.
+
+        INPUT:
+
+        - ``saturate`` (default: ``False``) -- a boolean; if ``True``,
+          return the saturation (in the codomain) of the image (see
+          :meth:`sage.modules.ore_module.OreSubmodule.saturate` for
+          more details)
+
+        - ``names`` (default: ``None``) -- the name of the vectors in a
+          basis of the image
 
         EXAMPLES::
 
@@ -815,7 +830,16 @@ class OreModuleMorphism(Morphism):
 
     def cokernel(self, remove_torsion=False, names=None):
         r"""
-        Return ``True`` if this morphism is injective.
+        Return the cokernel of this morphism.
+
+        INPUT:
+
+        - ``remove_torsion`` (default: ``False``) -- a boolean;
+          if ``True``, return the cokernel quotiented out by its
+          torsion part
+
+        - ``names`` (default: ``None``) -- the name of the vectors in a
+          basis of the cokernel
 
         EXAMPLES::
 
@@ -841,7 +865,12 @@ class OreModuleMorphism(Morphism):
 
     def coimage(self, names=None):
         r"""
-        Return ``True`` if this morphism is injective.
+        Return the coimage of this morphism.
+
+        INPUT:
+
+        - ``names`` (default: ``None``) -- the name of the vectors in a
+          basis of the coimage
 
         EXAMPLES::
 
@@ -962,9 +991,9 @@ class OreModuleRetraction(Map):
             ValueError: not in the submodule
         """
         X = self.codomain()
-        subspace = X._subspace
-        rank = subspace.rank
-        xs = y * subspace.coordinates
+        submodule = X._submodule
+        rank = submodule.rank
+        xs = y * submodule.coordinates
         if xs[rank:]:
             raise ValueError("not in the submodule")
         try:
@@ -997,4 +1026,4 @@ class OreModuleSection(Map):
         """
         X = self.codomain()
         Y = self.domain()
-        return X(y * Y._subspace.complement)
+        return X(y * Y._submodule.complement)

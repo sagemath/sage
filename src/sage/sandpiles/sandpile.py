@@ -5917,11 +5917,11 @@ def sandlib(selector=None):
                              3: [1, 2]}},
     }
     if selector is None:
-        print('')
+        print()
         print('  Sandpiles in the sandlib:')
         for i in sorted(sandpiles):
             print('    ', i, ':', sandpiles[i]['description'])
-        print("")
+        print()
     elif selector not in sandpiles:
         print(selector, 'is not in the sandlib.')
     else:

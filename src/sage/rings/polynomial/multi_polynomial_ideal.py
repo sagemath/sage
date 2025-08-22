@@ -436,7 +436,7 @@ class MPolynomialIdeal_magma_repr:
                 mgb = mself.GroebnerBasis()
 
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
 
         # TODO: rewrite this to be much more sophisticated in multi-level nested cases.
@@ -1560,7 +1560,7 @@ class MPolynomialIdeal_singular_repr(
                 raise TypeError("algorithm '%s' unknown" % algorithm)
         self.__gb_singular = S
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
         return S
 

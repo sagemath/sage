@@ -285,17 +285,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 #
 ##########################################################################
-from itertools import chain
 import os
+from itertools import chain
 
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.interfaces.interface import AsciiArtString
-from sage.misc.misc_c import prod
 from sage.env import DOT_SAGE, LIE_INFO_DIR
-from sage.misc.sage_eval import sage_eval
+from sage.interfaces.expect import (
+    Expect,
+    ExpectElement,
+    ExpectFunction,
+    FunctionElement,
+)
+from sage.interfaces.interface import AsciiArtString
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.misc.instancedoc import instancedoc
-
+from sage.misc.misc_c import prod
+from sage.misc.sage_eval import sage_eval
 
 COMMANDS_CACHE = '%s/lie_commandlist_cache.sobj' % DOT_SAGE
 HELP_CACHE = '%s/lie_helpdict_cache.sobj' % DOT_SAGE
@@ -319,6 +323,7 @@ class LiE(ExtraTabCompletion, Expect):
         """
         EXAMPLES::
 
+            sage: from sage.interfaces.lie import lie
             sage: lie == loads(dumps(lie))
             True
         """

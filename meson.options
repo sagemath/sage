@@ -1,0 +1,9 @@
+## Options for the Meson build system
+# https://mesonbuild.com/Build-options.html
+
+option(
+  'SAGE_LOCAL',
+  type: 'string',
+  value: '',
+  description: 'Path to SAGE_LOCAL directory (only used for compatibility with the old Sage-the-Distro',
+)

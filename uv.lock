@@ -2246,7 +2246,6 @@ dependencies = [
     { name = "ipython" },
     { name = "ipywidgets" },
     { name = "jupyter-client" },
-    { name = "lrcalc", marker = "sys_platform != 'win32'" },
     { name = "matplotlib" },
     { name = "memory-allocator" },
     { name = "mpmath" },
@@ -2268,6 +2267,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+extra = [
+    { name = "lrcalc", marker = "sys_platform != 'win32'" },
+]
 r = [
     { name = "rpy2" },
 ]
@@ -2313,7 +2315,7 @@ requires-dist = [
     { name = "ipython", specifier = ">=8.9.0" },
     { name = "ipywidgets", specifier = ">=7.5.1" },
     { name = "jupyter-client" },
-    { name = "lrcalc", marker = "sys_platform != 'win32'", specifier = "~=2.1" },
+    { name = "lrcalc", marker = "extra == 'extra'", specifier = "~=2.1" },
     { name = "matplotlib", specifier = ">=3.7.0" },
     { name = "memory-allocator" },
     { name = "mpmath", specifier = ">=1.1.0" },
@@ -2335,7 +2337,7 @@ requires-dist = [
     { name = "traitlets" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.4.0" },
 ]
-provides-extras = ["r"]
+provides-extras = ["r", "extra"]
 
 [package.metadata.requires-dev]
 dev = [

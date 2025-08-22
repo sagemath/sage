@@ -11859,7 +11859,7 @@ class GenericGraph(GenericGraph_pyx):
             raise ValueError("cannot get a random vertex from the empty graph")
         from sage.misc.prandom import randint
         it = self.vertex_iterator(**kwds)
-        for i in range(0, randint(0, self.order() - 1)):
+        for i in range(randint(0, self.order() - 1)):
             next(it)
         return next(it)
 
@@ -11941,7 +11941,7 @@ class GenericGraph(GenericGraph_pyx):
 
         from sage.misc.prandom import randint
         it = self.edge_iterator(**kwds)
-        for i in range(0, randint(0, self.size() - 1)):
+        for i in range(randint(0, self.size() - 1)):
             next(it)
         return next(it)
 

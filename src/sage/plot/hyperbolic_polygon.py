@@ -298,7 +298,7 @@ def hyperbolic_polygon(pts, model='UHP', resolution=200, **options):
         HM = HyperbolicPlane().HM()
         x, y, z = SR.var('x,y,z')
         arc_points = []
-        for i in range(0, len(pts) - 1):
+        for i in range(len(pts) - 1):
             line = HM.get_geodesic(pts[i], pts[i + 1])
             g = g + line.plot(color=options['rgbcolor'], thickness=options['thickness'])
             arc_points = arc_points + line._plot_vertices(resolution)

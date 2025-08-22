@@ -69,13 +69,12 @@ jobs:
           export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
           export CC="ccache $CC"
           export CXX="ccache $CXX"
-          pip install --no-build-isolation --config-settings=builddir=builddir --editable . -v
+          pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
       #
       # For pull requests
       #
       - name: Get workflow run-id
-        id: get_run_id
         if: github.event_name == 'pull_request'
         run: |
           RESPONSE=$(curl -s -L \
@@ -87,8 +86,7 @@ jobs:
           echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
 
       - name: Download old doc
-        id: download-doc
-        if: steps.get_run_id.outcome == 'success'
+        if: github.event_name == 'pull_request'
         uses: actions/download-artifact@v4
         with:
           name: doc-develop
@@ -97,8 +95,7 @@ jobs:
           run-id: ${{ env.RUN_ID }}
 
       - name: Store old doc
-        id: worktree
-        if: steps.download-doc.outcome == 'success'
+        if: github.event_name == 'pull_request'
         shell: bash -l {0}
         run: |
           git config --global --add safe.directory $(pwd)
@@ -137,8 +134,6 @@ jobs:
           fi
 
       - name: Build documentation
-        id: docbuild
-        if: steps.worktree.outcome == 'success'
         shell: bash -l {0}
         run: |
           meson compile -C builddir doc-html
@@ -147,14 +142,13 @@ jobs:
           SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
       - name: Copy doc
-        id: copy
-        if: steps.docbuild.outcome == 'success'
         run: |
           set -ex
           # Remove any existing html directory before copying a new one
           if [ -d "doc/html" ]; then
               rm -rf doc/html
           fi
+          mkdir -p doc
           cp -r builddir/src/doc/* doc/
           # Check if we are on pull request event
           PR_NUMBER=""
@@ -193,53 +187,50 @@ jobs:
           zip -r doc.zip doc
 
       - name: Upload doc
-        id: upload
-        if: steps.copy.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: doc
           path: doc.zip
 
+      #
+      # On release events
+      #
+
       - name: Upload doc-develop
         # artifact doc-develop is used for doc build on pull request event
-        id: upload-push
-        if: steps.copy.outcome == 'success' && github.event_name == 'push'
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: doc-${{ github.ref_name }}
           path: doc.zip
 
-      #
-      # On release tag event
-      #
+      # The following fails randomly
+      # - name: Build live doc
+      #   if: github.event_name != 'pull_request'
+      #   shell: bash -l {0}
+      #   run: |
+      #     # Remove previous doc build
+      #     rm -rf builddir/src/doc
+      #     meson compile -C builddir doc-html
+      #   env:
+      #     SAGE_USE_CDNS: yes
+      #     SAGE_LIVE_DOC: yes
+      #     SAGE_JUPYTER_SERVER: binder:sagemath/sage-binder-env/dev
+      #     SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
 
-      - name: Build live doc
-        id: buildlivedoc
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: bash -l {0}
-        run: |
-          meson compile -C builddir doc-html
-        env:
-          SAGE_USE_CDNS: yes
-          SAGE_LIVE_DOC: yes
-          SAGE_JUPYTER_SERVER: binder:sagemath/sage-binder-env/dev
-          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
+      # - name: Copy live doc
+      #   if: github.event_name != 'pull_request'
+      #   run: |
+      #     mkdir -p ./livedoc
+      #     # We copy everything to a local folder
+      #       cp -r builddir/src/doc/html livedoc/
+      #       cp builddir/src/doc/index.html livedoc/
+      #     zip -r livedoc.zip livedoc
 
-      - name: Copy live doc
-        id: copylivedoc
-        if: steps.buildlivedoc.outcome == 'success'
-        run: |
-          mkdir -p ./livedoc
-          # We copy everything to a local folder
-            cp -r builddir/src/doc/html livedoc/
-            cp -r builddir/src/doc/pdf livedoc/
-            cp builddir/src/doc/index.html livedoc/
-          zip -r livedoc.zip livedoc
-
-      - name: Upload live doc
-        if: steps.copylivedoc.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: livedoc
-          path: livedoc.zip
+      # - name: Upload live doc
+      #   if: github.event_name != 'pull_request'
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: livedoc
+      #     path: livedoc.zip
 

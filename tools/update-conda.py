@@ -167,6 +167,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         req.replace("lrcalc", "python-lrcalc")
         .replace("symengine", "python-symengine")
         .replace("memory_allocator", "memory-allocator")
+        .replace("pkg:generic/r-lattice", "r-lattice")
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)
@@ -175,7 +176,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         "sage_numerical_backends_coin",
         "sagemath_giac",
         "pynormaliz",  # due to https://github.com/sagemath/sage/issues/40214
-        "rpy2",  # due to https://github.com/sagemath/sage/issues/40215
         "latte-integrale",  # due to https://github.com/sagemath/sage/issues/40216
     }
     if platform in ("linux-aarch64", "osx-arm64"):
@@ -233,7 +233,6 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
             "tar",
             "texinfo",
         }
-    print(all_requirements)
     all_requirements = {
         req
         for req in all_requirements
