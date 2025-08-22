@@ -3752,9 +3752,6 @@ cdef class Vector(ModuleElementWithMutability):
         """
         base_ring = left.base_ring()
         right = py_scalar_to_element(right)
-        if isinstance(right, RingElement):
-            # Let __mul__ do the job
-            return left * ~right
         if isinstance(right, Vector):
             right_base_ring = right.base_ring()
             if isinstance(base_ring, CartesianProduct) and isinstance(right_base_ring, CartesianProduct):
