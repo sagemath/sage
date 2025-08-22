@@ -364,7 +364,7 @@ class DrinfeldModules(Category_over_base_ring):
         This is an instance of the class
         :class:`sage.rings.ring_extension.RingExtension`.
 
-        NOTE::
+        .. NOTE::
 
             This method has the same behavior as :meth:`base`.
 
@@ -600,7 +600,7 @@ class DrinfeldModules(Category_over_base_ring):
             This is an instance of the class
             :class:`sage.rings.ring_extension.RingExtension`.
 
-            NOTE::
+            .. NOTE::
 
                 This method has the same behavior as :meth:`base`.
 
@@ -623,7 +623,7 @@ class DrinfeldModules(Category_over_base_ring):
             This is an instance of the class
             :class:`sage.rings.ring_extension.RingExtension`.
 
-            NOTE::
+            .. NOTE::
 
                 This method has the same behavior as :meth:`A_field`.
 
