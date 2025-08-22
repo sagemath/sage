@@ -45,7 +45,7 @@ class DrinfeldModules(Category_over_base_ring):
     polynomials with coefficients in `K`, whose multiplication is given
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
-    The extension `K`/`\GF{q}[T]` (represented as an instance of
+    The extension `K/\GF{q}[T]` (represented as an instance of
     the class :class:`sage.rings.ring_extension.RingExtension`) is the
     *base field* of the category; its defining morphism `\gamma` is
     called the *base morphism*.
