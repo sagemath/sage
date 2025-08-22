@@ -20,6 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         container:
+          - gentoo/stage3:latest
           - fedora:41
           - fedora:42
           - ghcr.io/void-linux/void-glibc-full
