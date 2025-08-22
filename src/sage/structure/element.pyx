@@ -3740,9 +3740,12 @@ cdef class Vector(ModuleElementWithMutability):
             ((1, 1))
             sage: c = vector([R(1)])
             sage: b / c # vector-by-vector
+            (2, 2)
+            sage: d = vector([R(0)])
+            sage: b / d # vector-by-vector
             Traceback (most recent call last):
             ...
-            NotImplementedError: not implemented yet
+            ZeroDivisionError: division by zero vector
             sage: A = matrix([R(1) / R(2)])
             sage: b / A # vector-by-matrix
             ((4, 4))
