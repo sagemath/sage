@@ -26,7 +26,7 @@ cdef class DefaultConvertMap_unique(Map):
     used when the element_constructor is a bound method (whose self
     argument is assumed to be bound to the codomain).
     """
-    def __init__(self, domain, codomain, category=None):
+    def __init__(self, domain, codomain, category=None) -> None:
         """
         TESTS:
 
@@ -61,7 +61,7 @@ cdef class DefaultConvertMap_unique(Map):
         if (<Parent>codomain)._element_constructor is None:
             raise RuntimeError(f"BUG in coercion model, no element constructor for {type(codomain)}")
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a printable type for this morphism.
 
@@ -102,7 +102,7 @@ cdef class DefaultConvertMap_unique(Map):
             sage: f(2/3, 4)
             2/3 + O(x^4)
         """
-       cdef Parent C = self._codomain
+        cdef Parent C = self._codomain
         try:
             if len(args) == 0:
                 if len(kwds) == 0:
