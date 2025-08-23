@@ -271,13 +271,13 @@ you understand the issues that it is intended to fix, e.g.
 
 AUTHORS:
 
-  - William Stein, Robert Miller (2009-06-23): first version
-  - Volker Braun, Dmitrii Pasechnik, Ivan Andrus (2011-03-25, Sage Days 29):
-    almost complete rewrite; first usable version.
-  - Volker Braun (2012-08-28, GAP/Singular workshop): update to
-    gap-4.5.5, make it ready for public consumption.
-  - Dima Pasechnik (2018-09-18, GAP Days): started the port to native
-    libgap API
+- William Stein, Robert Miller (2009-06-23): first version
+- Volker Braun, Dmitrii Pasechnik, Ivan Andrus (2011-03-25, Sage Days 29):
+  almost complete rewrite; first usable version.
+- Volker Braun (2012-08-28, GAP/Singular workshop): update to
+  gap-4.5.5, make it ready for public consumption.
+- Dima Pasechnik (2018-09-18, GAP Days): started the port to native
+  libgap API
 """
 
 ###############################################################################
