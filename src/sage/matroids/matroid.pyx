@@ -2695,8 +2695,6 @@ cdef class Matroid(SageObject):
             if not self._is_independent(X):
                 yield X
 
-    dependent_r_sets = deprecated_function_alias(38057, dependent_sets)
-
     cpdef SetSystem dependent_sets(self, long k):
         r"""
         Return the dependent sets of fixed size.
