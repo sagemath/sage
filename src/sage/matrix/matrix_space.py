@@ -320,6 +320,10 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     else:
                         return matrix_laurent_mpolynomial_dense.Matrix_laurent_mpolynomial_dense
 
+            if R in _Rings.CartesianProducts():
+                from .matrix_cartesian_product import Matrix_cartesian_product
+                return Matrix_cartesian_product
+
             # The fallback
             from sage.matrix.matrix_generic_dense import Matrix_generic_dense
             return Matrix_generic_dense
