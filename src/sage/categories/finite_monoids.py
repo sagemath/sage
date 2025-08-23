@@ -8,9 +8,9 @@ Finite monoids
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-import sage
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
+from sage.categories.magmas import Magmas
 from sage.categories.cartesian_product import CartesianProductsCategory
 
 
@@ -319,7 +319,7 @@ class FiniteMonoids(CategoryWithAxiom):
     class CartesianProducts(CartesianProductsCategory):
         class ElementMethods:
             # needed otherwise __invert__ from FiniteMonoids will override this
-            __invert__ = sage.categories.magmas.Magmas.Unital.CartesianProducts.ElementMethods.__invert__
+            __invert__ = Magmas.Unital.CartesianProducts.ElementMethods.__invert__
 
         def extra_super_categories(self):
             r"""

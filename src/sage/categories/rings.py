@@ -1917,6 +1917,16 @@ class Rings(CategoryWithAxiom):
             @property
             @cached_method
             def __nonzero_factors(self):
+                """
+                Return the cartesian factors that is not the zero ring.
+
+                TESTS::
+
+                    sage: cartesian_product([ZZ, QQ])._ParentMethods__nonzero_factors
+                    (Integer Ring, Rational Field)
+                    sage: cartesian_product([ZZ, Zmod(1)])._ParentMethods__nonzero_factors
+                    (Integer Ring,)
+                """
                 return tuple([s for s in self._sets if not s.is_zero()])
 
             def is_field(self, proof=True) -> bool:

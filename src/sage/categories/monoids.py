@@ -13,7 +13,7 @@ Monoids
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-import sage
+from sage.categories.magmas import Magmas
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
@@ -723,4 +723,4 @@ class Monoids(CategoryWithAxiom):
                     return LCM_list(orders)
 
             # needed otherwise __invert__ from Monoids will override this
-            __invert__ = sage.categories.magmas.Magmas.Unital.CartesianProducts.ElementMethods.__invert__
+            __invert__ = Magmas.Unital.CartesianProducts.ElementMethods.__invert__
