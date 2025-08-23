@@ -14,7 +14,7 @@ AUTHORS:
 - Ander Steele
 - Kiran Kedlaya (modified gauss_sum 2017/09)
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
 #                               William Stein <wstein@gmail.com>
 #
@@ -22,13 +22,14 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.infinity import infinity
 
 python_min = min
 python_max = max
+
 
 def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     r"""
@@ -184,6 +185,7 @@ def max(*L):
     except ValueError:
         return -infinity
 
+
 def precprint(prec_type, prec_cap, p):
     """
     String describing the precision mode on a `p`-adic ring or field.
@@ -209,9 +211,10 @@ def precprint(prec_type, prec_cap, p):
              'relaxed':'handled with relaxed arithmetics'}
     return precD[prec_type]
 
+
 def trim_zeros(L):
     r"""
-    Strips trailing zeros/empty lists from a list.
+    Strip trailing zeros/empty lists from a list.
 
     EXAMPLES::
 
@@ -225,7 +228,7 @@ def trim_zeros(L):
         sage: trim_zeros([])
         []
 
-    Zeros are also trimmed from nested lists (one deep):
+    Zeros are also trimmed from nested lists (one deep)::
 
         sage: trim_zeros([[1,0]])
         [[1]]

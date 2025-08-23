@@ -1,6 +1,5 @@
 r"""
-Semistandard Tableaux
-=====================
+Semistandard tableaux
 
 This is an implementation of the abstract base class
 :class:`sage.combinat.path_tableaux.path_tableau.PathTableau`.
@@ -173,7 +172,7 @@ class SemistandardPathTableau(PathTableau):
         elif isinstance(st, GelfandTsetlinPattern):
             w = list(st)
             w.reverse()
-            w = [(),*w]
+            w = [(), *w]
 
         elif isinstance(st, (Tableau,SkewTableau)):
             w = st.to_chain()

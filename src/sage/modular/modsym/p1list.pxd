@@ -6,8 +6,8 @@ cdef class export:
                                 int compute_s) except -1
 
     cdef int c_p1_normalize_llong(self, int N, int u, int v,
-                                     int* uu, int* vv, int* ss,
-                                     int compute_s) except -1
+                                  int* uu, int* vv, int* ss,
+                                  int compute_s) except -1
 
 
 cdef class P1List:
@@ -22,7 +22,7 @@ cdef class P1List:
     # for normalizing an element does not need to be used
     # every time the user calls the normalize function.
     cdef int (*_normalize)(int N, int u, int v,
-                            int* uu, int* vv, int* ss,
-                            int compute_s) except -1
+                           int* uu, int* vv, int* ss,
+                           int compute_s) except -1
     cpdef index(self, int u, int v)
     cdef index_and_scalar(self, int u, int v, int* i, int* s)

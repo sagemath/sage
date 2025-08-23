@@ -89,7 +89,7 @@ import math
 import sys
 
 from sage.libs.gmp.mpz cimport *
-from sage.libs.pari.all import pari
+from sage.libs.pari import pari
 from cypari2.gen cimport Gen as pari_gen
 from sage.libs.pari.misc cimport new_t_POL_from_int_star
 

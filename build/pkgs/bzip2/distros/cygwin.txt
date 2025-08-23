@@ -1,2 +1,0 @@
-bzip2
-libbz2-devel

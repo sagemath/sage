@@ -826,7 +826,7 @@ class ComplexPlot(GraphicPrimitive):
             sage: isinstance(complex_plot(lambda z: z, (-1,1), (-1,1))[0]._repr_(), str)
             True
         """
-        return "ComplexPlot defined by a %s x %s data grid"%(self.x_count, self.y_count)
+        return "ComplexPlot defined by a %s x %s data grid" % (self.x_count, self.y_count)
 
     def _render_on_subplot(self, subplot):
         """
@@ -1173,7 +1173,7 @@ def complex_plot(f, x_range, y_range, contoured=False, tiled=False, cmap=None,
     """
     import matplotlib as mpl
     import numpy as np
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
     from sage.ext.fast_callable import fast_callable
     from sage.rings.complex_double import CDF

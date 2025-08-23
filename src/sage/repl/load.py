@@ -87,6 +87,14 @@ def load(filename, globals, attach=False):
 
             from t import *
 
+    .. NOTE::
+
+        The global ``load`` function is :func:`sage.misc.persist.load`,
+        which delegates to this function for code file formats.
+
+        ``%runfile`` magic can also be used, see
+        :meth:`~sage.repl.ipython_extension.SageMagics.runfile`.
+
     INPUT:
 
     - ``filename`` -- string (denoting a filename or URL) or a :class:`Path` object
@@ -97,54 +105,58 @@ def load(filename, globals, attach=False):
     - ``attach`` -- boolean (default: ``False``); whether to add the
       file to the list of attached files
 
-    Loading an executable Sage script from the command prompt will run whatever
-    code is inside an
+    Loading an executable Sage script from the :ref:`command line <section-command-line>`
+    will run whatever code is inside an
+
+    ::
 
         if __name__ == "__main__":
 
     section, as the condition on ``__name__`` will hold true (code run from the
-    command prompt is considered to be running in the ``__main__`` module.)
+    command line is considered to be running in the ``__main__`` module.)
 
     EXAMPLES:
 
     Note that ``.py`` files are *not* preparsed::
 
-        sage: t = tmp_filename(ext='.py')
-        sage: with open(t, 'w') as f:
-        ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
-        sage: z = 1
-        sage: sage.repl.load.load(t, globals())
-        ('hi', 1)
-        sage: z
+        sage: from tempfile import NamedTemporaryFile
+        sage: context = { "z": 1}
+        sage: with NamedTemporaryFile(mode='w', suffix='.py') as file:
+        ....:     _ = file.write("print(('hi', 2^3, z)); z = -2^7")
+        ....:     _ = file.seek(0)
+        ....:     sage.repl.load.load(file.name, context)
+        ('hi', 1, 1)
+        sage: context["z"]
         -7
 
     A ``.sage`` file *is* preparsed::
 
-        sage: t = tmp_filename(ext='.sage')
-        sage: with open(t, 'w') as f:
-        ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
-        sage: z = 1
-        sage: sage.repl.load.load(t, globals())
-        ('hi', 8)
-        sage: z
+        sage: context = { "z": 1, "Integer": Integer }
+        sage: with NamedTemporaryFile(mode='w', suffix='.sage') as file:
+        ....:     _ = file.write("print(('hi', 2^3, z)); z = -2^7")
+        ....:     _ = file.seek(0)
+        ....:     sage.repl.load.load(file.name, context)
+        ('hi', 8, 1)
+        sage: context["z"]
         -128
 
     Cython files are *not* preparsed::
 
-        sage: t = tmp_filename(ext='.pyx')
-        sage: with open(t, 'w') as f:
-        ....:     _ = f.write("print(('hi', 2^3)); z = -2^7")
-        sage: z = 1
-        sage: sage.repl.load.load(t, globals())                                         # needs sage.misc.cython
+        sage: context = { "z": 1 }
+        sage: with NamedTemporaryFile(mode='w', suffix='.pyx') as file:
+        ....:     _ = file.write("print(('hi', 2^3)); z = -2^7")
+        ....:     _ = file.seek(0)
+        ....:     sage.repl.load.load(file.name, context)                                         # needs sage.misc.cython
         Compiling ...
         ('hi', 1)
-        sage: z
+        sage: context["z"]
         -7
 
     If the file is not a Cython, Python, or Sage file, a :exc:`ValueError`
     is raised::
 
-        sage: sage.repl.load.load(tmp_filename(ext='.foo'), globals())
+        sage: with NamedTemporaryFile(mode='w', suffix='.foo') as file:
+        ....:     sage.repl.load.load(file.name, {})
         Traceback (most recent call last):
         ...
         ValueError: unknown file extension '.foo' for load or attach (supported extensions: .py, .pyx, .sage, .spyx, .f, .f90, .m)
@@ -159,14 +171,15 @@ def load(filename, globals, attach=False):
 
         sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
-    We attach a file::
+    We attach a file (note that :func:`~sage.repl.attach.attach`
+    is equivalent, but available at the global scope by default)::
 
-        sage: t = tmp_filename(ext='.py')
-        sage: with open(t, 'w') as f:
-        ....:     _ = f.write("print('hello world')")
-        sage: sage.repl.load.load(t, globals(), attach=True)
+        sage: with NamedTemporaryFile(mode='w', suffix='.py') as file:
+        ....:     _ = file.write("print('hello world')")
+        ....:     _ = file.seek(0)
+        ....:     sage.repl.load.load(file.name, {}, attach=True)
         hello world
-        sage: t in attached_files()
+        sage: file.name in attached_files()
         True
 
     You cannot attach remote URLs (yet)::

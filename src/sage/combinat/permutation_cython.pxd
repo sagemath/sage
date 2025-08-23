@@ -8,4 +8,3 @@ cpdef list left_action_same_n(list l, list r)
 cpdef list right_action_same_n(list l, list r)
 cpdef list left_action_product(list l, list r)
 cpdef list right_action_product(list l, list r)
-

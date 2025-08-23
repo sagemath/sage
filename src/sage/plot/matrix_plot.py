@@ -234,7 +234,7 @@ class MatrixPlot(GraphicPrimitive):
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
                 from matplotlib import colorbar
-                cax,kwds = colorbar.make_axes_gridspec(subplot,**colorbar_options)
+                cax,kwds = colorbar.make_axes_gridspec(subplot, **colorbar_options)
                 colorbar.Colorbar(cax, image, **kwds)
 
         if flip_y:
@@ -568,7 +568,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
 
     import numpy as np
     import scipy.sparse as scipysparse
-    from sage.plot.all import Graphics
+    from sage.plot.graphics import Graphics
     from sage.structure.element import Matrix
     from sage.rings.real_double import RDF
     orig_mat = mat

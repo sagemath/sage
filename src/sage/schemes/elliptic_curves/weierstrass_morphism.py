@@ -32,6 +32,7 @@ from sage.structure.sequence import Sequence
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
+
 class baseWI:
     r"""
     This class implements the basic arithmetic of isomorphisms between
@@ -1071,6 +1072,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         raise NotImplementedError("the order of the endomorphism is not 1, 2, 3, 4 or 6")
 
+
 def identity_morphism(E):
     r"""
     Given an elliptic curve `E`, return the identity morphism
@@ -1087,6 +1089,7 @@ def identity_morphism(E):
     R = E.base_ring()
     zero = R.zero()
     return WeierstrassIsomorphism(E, (R.one(), zero, zero, zero))
+
 
 def negation_morphism(E):
     r"""

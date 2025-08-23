@@ -159,7 +159,6 @@ from sage.schemes.projective.projective_subscheme import (AlgebraicScheme_subsch
 
 lazy_import('sage.interfaces.singular', 'singular')
 lazy_import('sage.rings.number_field.number_field', 'NumberField')
-lazy_import('sage.rings.qqbar', ['number_field_elements_from_algebraics', 'QQbar'])
 
 from .curve import Curve_generic
 
@@ -1103,10 +1102,9 @@ class ProjectivePlaneCurve(ProjectiveCurve):
         degs = [G.degree()]*len(L)
         for F in G.monomials():
             for i in range(len(L)):
-                if F.degree(L[i]) < degs[i]:
-                    degs[i] = F.degree(L[i])
+                degs[i] = min(F.degree(L[i]), degs[i])
         T = []
-        for item in G.dict().items():
+        for item in G.monomial_coefficients().items():
             tup = tuple([item[0][i] - degs[i] for i in range(len(L))])
             T.append((tup, item[1]))
         G = R(dict(T))
@@ -1281,11 +1279,11 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     if j == 0:
                         div_pow = min(e[1] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0, v1 - div_pow, v2): g
-                                                      for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.monomial_coefficients().items()})
                     else:
                         div_pow = min(e[0] for e in npoly.exponents())
                         npoly = PP.coordinate_ring()({(v0 - div_pow, v1, v2): g
-                                                      for (v0, v1, v2), g in npoly.dict().items()})
+                                                      for (v0, v1, v2), g in npoly.monomial_coefficients().items()})
                     # check the degree again
                     if npoly.degree() != d - r:
                         need_continue = True
@@ -1451,9 +1449,10 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                       + (1/16*a + 1/16)*x*y*z^2 + (3/16*a + 3/16)*y^2*z^2
                       + (-3/16*a - 1/4)*y*z^3 + (1/16*a + 3/32)*z^4)
         """
-        # helper function for extending the base field
+        from sage.rings.qqbar import number_field_elements_from_algebraics, QQbar
 
         def extension(self):
+            # helper function for extending the base field
             F = self.base_ring()
             pts = self.change_ring(F.embeddings(QQbar)[0]).rational_points()
             L = [t for pt in pts for t in pt]
@@ -1467,7 +1466,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     # make sure the defining polynomial variable names are the same for K, N
                     N = NumberField(K.defining_polynomial().parent()(F.defining_polynomial()), str(K.gen()))
                     return N.composite_fields(K, both_maps=True)[0][1]*F.embeddings(N)[0]
-        if not self.base_ring() in NumberFields():
+        if self.base_ring() not in NumberFields():
             raise NotImplementedError("the base ring of this curve must be a number field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")
@@ -1500,7 +1499,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                     try:
                         temp_pt = (temp_qua*temp_exc)(temp_exc.domain()(pts[i]))
                         pts.pop(i)
-                        if not PP(list(temp_pt)) in [PP(list(tpt)) for tpt in pts]:
+                        if PP(list(temp_pt)) not in [PP(list(tpt)) for tpt in pts]:
                             pts.append(temp_pt)
                     except (TypeError, ValueError):
                         pass
@@ -1520,7 +1519,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
                 newpts = [PP(list(pt) + [0]) for pt in X.rational_points()]
                 # avoid duplicates
                 for pt in newpts:
-                    if not PP(list(pt)) in [PP(list(tpt)) for tpt in pts]:
+                    if PP(list(pt)) not in [PP(list(tpt)) for tpt in pts]:
                         pts.append(pt)
         return phi
 
@@ -1605,7 +1604,7 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         """
         super().__init__(A, X, category=category)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
         d = super(Curve_generic, self).dimension()
@@ -1776,8 +1775,9 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(x^2*z - y^3)
             sage: C.fundamental_group()                                 # needs sirocco
             Finitely presented group < x0 | x0^3 >
-            sage: P.curve(z*(x^2*z - y^3)).fundamental_group()          # needs sirocco
-            Finitely presented group < x0, x1 | x1*x0*x1*x0^-1*x1^-1*x0^-1 >
+            sage: g = P.curve(z*(x^2*z - y^3)).fundamental_group()      # needs sirocco
+            sage: g.sorted_presentation()                               # needs sirocco
+            Finitely presented group < x0, x1 | x1^-1*x0^-1*x1^-1*x0*x1*x0 >
 
         In the case of number fields, they need to have an embedding
         into the algebraic field::
@@ -1804,9 +1804,8 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C = P.curve(z^2*y^3 - z*(33*x*z+2*x^2+8*z^2)*y^2
             ....:             + (21*z^2+21*x*z-x^2)*(z^2+11*x*z-x^2)*y
             ....:             + (x-18*z)*(z^2+11*x*z-x^2)^2)
-            sage: G0 = C.fundamental_group()                    # needs sirocco
-            sage: G.is_isomorphic(G0)                           # needs sirocco
-            #I  Forcing finiteness test
+            sage: G0 = C.fundamental_group()                    # needs sirocco, long time (:issue:`39569`)
+            sage: G.is_isomorphic(G0)                           # needs sirocco, long time (:issue:`39569`)
             True
             sage: C = P.curve(z)
             sage: C.fundamental_group()                         # needs sirocco
@@ -2273,6 +2272,131 @@ class ProjectivePlaneCurve_finite_field(ProjectivePlaneCurve_field):
 
         raise ValueError(f"No algorithm '{algorithm}' known")
 
+    def random_element(self):
+        """
+        Return a random point on this elliptic/hyperelliptic curve, uniformly chosen
+        among all rational points.
+
+        ALGORITHM:
+
+        Choose the point at infinity with probability `1/(2q + 1)`.
+        Otherwise, take a random element from the field as x-coordinate
+        and compute the possible y-coordinates. Return the i-th
+        possible y-coordinate, where i is randomly chosen to be 0 or 1.
+        If the i-th y-coordinate does not exist (either there is no
+        point with the given x-coordinate or we hit a 2-torsion point
+        with i == 1), try again.
+
+        This gives a uniform distribution because you can imagine
+        `2q + 1` buckets, one for the point at infinity and 2 for each
+        element of the field (representing the x-coordinates). This
+        gives a 1-to-1 map of (hyper)elliptic curve points into buckets. At
+        every iteration, we simply choose a random bucket until we find
+        a bucket containing a point.
+
+        AUTHORS:
+
+        - Jeroen Demeyer (2014-09-09): choose points uniformly random,
+          see :issue:`16951`.
+
+        EXAMPLES::
+
+            sage: k = GF(next_prime(7^5))
+            sage: E = EllipticCurve(k,[2,4])
+            sage: P = E.random_element(); P  # random
+            (16740 : 12486 : 1)
+            sage: type(P)
+            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
+            sage: P in E
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(7^5)
+            sage: E = EllipticCurve(k,[2,4])
+            sage: P = E.random_element(); P  # random
+            (5*a^4 + 3*a^3 + 2*a^2 + a + 4 : 2*a^4 + 3*a^3 + 4*a^2 + a + 5 : 1)
+            sage: type(P)
+            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
+            sage: P in E
+            True
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF(2^5)
+            sage: E = EllipticCurve(k,[a^2,a,1,a+1,1])
+            sage: P = E.random_element(); P  # random
+            (a^4 + a : a^4 + a^3 + a^2 : 1)
+            sage: type(P)
+            <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
+            sage: P in E
+            True
+
+        Ensure that the entire point set is reachable::
+
+            sage: E = EllipticCurve(GF(11), [2,1])
+            sage: S = set()
+            sage: while len(S) < E.cardinality():
+            ....:     S.add(E.random_element())
+
+        TESTS:
+
+        See :issue:`8311`::
+
+            sage: E = EllipticCurve(GF(3), [0,0,0,2,2])
+            sage: E.random_element()
+            (0 : 1 : 0)
+            sage: E.cardinality()
+            1
+
+            sage: E = EllipticCurve(GF(2), [0,0,1,1,1])
+            sage: E.random_point()
+            (0 : 1 : 0)
+            sage: E.cardinality()
+            1
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(4)
+            sage: E = EllipticCurve(F, [0, 0, 1, 0, a])
+            sage: E.random_point()
+            (0 : 1 : 0)
+            sage: E.cardinality()
+            1
+
+        Sampling from points on a hyperelliptic curve::
+
+            sage: R.<x,y> = GF(13)[]
+            sage: C = HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
+            sage: P = C.random_element(); P  # random
+            (0 : 1 : 0)
+            sage: P in C
+            True
+        """
+        from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_finite_field
+        from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
+        if not isinstance(self, (EllipticCurve_finite_field, HyperellipticCurve_finite_field)):
+            raise NotImplementedError("only implemented for elliptic and hyperelliptic curves over finite fields")
+
+        k = self.base_ring()
+        n = 2 * k.order() + 1
+
+        from sage.rings.integer_ring import ZZ
+        while True:
+            # Choose the point at infinity with probability 1/(2q + 1)
+            i = ZZ.random_element(n)
+            if not i:
+                return self(0, 1, 0)
+
+            v = self.lift_x(k.random_element(), all=True)
+            try:
+                return v[i % 2]
+            except IndexError:
+                pass
+
+    random_point = random_element
+
 
 class IntegralProjectiveCurve(ProjectiveCurve_field):
     """
@@ -2297,12 +2421,12 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         ideal = self.defining_ideal()
         gs = self.ambient_space().gens()
         for i in range(self.ngens()):
-            if not gs[i] in ideal:
+            if gs[i] not in ideal:
                 self._open_affine = self.affine_patch(i)
                 self._open_affine_index = i
                 break
         else:
-            assert "no projective curve defined"
+            raise ValueError("no projective curve defined")
 
     def function_field(self):
         """
@@ -2522,7 +2646,6 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: C.function(C._map_from_function_field(f)) == f
             True
         """
-        F = self._function_field
         S = self.ambient_space().coordinate_ring()
         phi = self._open_affine._nonsingular_model[2]
         i = self._open_affine_index
@@ -2734,7 +2857,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
         # determine the affine patch where the point lies
         S = prime.ring()
         for i in range(S.ngens()):
-            if not S.gen(i) in prime:
+            if S.gen(i) not in prime:
                 break
 
         phi = self._map_to_function_field

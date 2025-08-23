@@ -1414,12 +1414,12 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
 
             # get n processes
             nproc = Parallelism().get('tensor')
-            if nproc != 1 :
+            if nproc != 1:
 
                 # Parallel computation
                 lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
-                ind_list = [ind for ind in resc.non_redundant_index_generator()]
-                ind_step = max(1, int(len(ind_list)/nproc))
+                ind_list = list(resc.non_redundant_index_generator())
+                ind_step = max(1, len(ind_list) // nproc)
                 local_list = lol(ind_list, ind_step)
                 # list of input parameters:
                 listParalInput = [(self, vector, coord_frame, chart, ind_part) for ind_part in local_list]
@@ -1975,8 +1975,8 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
             t^10_0 = (u^2 - v^2)/(u^2 + 2*u*v + v^2 + 8)
             t^11_1 = -12/(u^2 + 2*u*v + v^2 + 8)
         """
-        from sage.misc.latex import latex
         from sage.manifolds.differentiable.vectorframe import CoordFrame
+        from sage.misc.latex import latex
         if frame is None:
             if chart is not None:
                 frame = chart.frame()
@@ -2118,7 +2118,7 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         if dest_map.is_identity():
             amb_point = point
         else:
-            amb_point = dest_map(point)  #  "ambient" point
+            amb_point = dest_map(point)  # "ambient" point
         ts = amb_point._manifold.tangent_space(amb_point)
         resu = ts.tensor(self._tensor_type, name=self._name,
                          latex_name=self._latex_name, sym=self._sym,

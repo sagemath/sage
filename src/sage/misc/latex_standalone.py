@@ -676,7 +676,7 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['...latex', '-interaction=nonstopmode',
-            'tikz_...tex']' returned nonzero exit status 1.
+            'tikz_...tex']' returned non-zero exit status 1.
         """
         from sage.features.latex import lualatex, pdflatex
 
@@ -797,15 +797,15 @@ class Standalone(SageObject):
             Traceback (most recent call last):
             ...
             CalledProcessError: Command '['latex', '-interaction=nonstopmode',
-            'tikz_...tex']' returned nonzero exit status 1.
+            'tikz_...tex']' returned non-zero exit status 1.
 
         We test the behavior when a wrong value is provided::
 
             sage: t = Standalone('Hello World')
-            sage: _ = t.dvi(program='lates')
+            sage: _ = t.dvi(program='farniente')
             Traceback (most recent call last):
             ...
-            ValueError: program(=lates) should be latex
+            ValueError: program(=farniente) should be latex
         """
         from sage.features.latex import latex
 

@@ -106,21 +106,21 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
-from sage.symbolic.expression import Expression
-from sage.rings.infinity import Infinity
-from sage.calculus.desolvers import desolve_system_rk4
-from sage.calculus.desolvers import desolve_odeint
+from random import shuffle
+
+from sage.arith.srange import srange
+from sage.calculus.desolvers import desolve_odeint, desolve_system_rk4
+from sage.calculus.interpolation import Spline
+from sage.ext.fast_callable import fast_callable
 from sage.manifolds.chart import Chart
 from sage.manifolds.differentiable.curve import DifferentiableCurve
 from sage.manifolds.differentiable.tangent_vector import TangentVector
-from sage.calculus.interpolation import Spline
 from sage.misc.decorators import options
 from sage.misc.functional import numerical_approx
 from sage.misc.lazy_import import lazy_import
-from sage.arith.srange import srange
-from sage.ext.fast_callable import fast_callable
+from sage.rings.infinity import Infinity
+from sage.symbolic.expression import Expression
 from sage.symbolic.ring import SR
-from random import shuffle
 
 lazy_import('scipy.integrate', 'ode')
 
@@ -504,10 +504,11 @@ class IntegratedCurve(DifferentiableCurve):
         parameters = set()
         # extract all the variables appearing in the equations:
         for eqn in equations_rhs:
-            if isinstance(eqn, Expression): # some right hand sides
-            # might merely be real numbers and not expressions, so that
-            # they do not contain any variable, and method 'variables'
-            # could not be called on them
+            if isinstance(eqn, Expression):
+                # some right hand sides
+                # might merely be real numbers and not expressions, so that
+                # they do not contain any variable, and method 'variables'
+                # could not be called on them
                 parameters = parameters.union(eqn.variables())
         # remove the Expressions that should not be treated as
         # parameters (i.e. the coordinate functions, the velocities and
@@ -521,7 +522,7 @@ class IntegratedCurve(DifferentiableCurve):
         # extract all the variables appearing in the initial point
         # coordinates:
         for coord in initial_pt_coords:
-            if isinstance(coord,Expression):
+            if isinstance(coord, Expression):
                 parameters = parameters.union(coord.variables())
         # extract all the variables appearing in the initial tangent
         # vector components:
@@ -548,9 +549,9 @@ class IntegratedCurve(DifferentiableCurve):
 
         # define all attributes
         if not isinstance(equations_rhs, dict):
-            self._equations_rhs = list(equations_rhs) # converts to list
+            self._equations_rhs = list(equations_rhs)  # converts to list
             # since might not already be a list (which is later required)
-        else: # case multi charts
+        else:  # case multi charts
             self._equations_rhs = equations_rhs
 
         self._across_charts = across_charts
@@ -565,14 +566,15 @@ class IntegratedCurve(DifferentiableCurve):
                 M = M.numpy()
                 for i in range(dim):
                     for j in range(dim):
-                        M[i,j] = fast_callable(SR(M[i, j]), vars=list(CoF[1]._chart[:]), domain=float)
+                        M[i, j] = fast_callable(SR(M[i, j]), vars=list(CoF[1]._chart[:]), domain=float)
 
                 import numpy as np
+
                 def fast_CoF(pos, vel, M=M):
-                # using default arguments for binding (ugly python)
-                    #print(det(*pos))
-                    return list(np.dot( [[M[j, i](*pos) for i in range(dim)]
-                                    for j in range(dim)], vel))
+                    # using default arguments for binding (ugly python)
+                    # print(det(*pos))
+                    return list(np.dot([[M[j, i](*pos) for i in range(dim)]
+                                        for j in range(dim)], vel))
 
                 self._fast_changes_of_frame[CoF] = fast_CoF
 
@@ -582,7 +584,7 @@ class IntegratedCurve(DifferentiableCurve):
                                for f in transf]
                 self._fast_changes_of_chart[CoC] = fast_transf
 
-        self._velocities = list(velocities) # converts to list
+        self._velocities = list(velocities)  # converts to list
         # since might not already be a list (which is later required)
         self._curve_parameter = curve_parameter
         self._initial_tangent_vector = initial_tangent_vector
@@ -857,9 +859,9 @@ class IntegratedCurve(DifferentiableCurve):
              Dx3_0*t + x3_0)
         """
 
-        from sage.calculus.var import function
-        from sage.calculus.functional import diff
         from sage.calculus.desolvers import desolve_system
+        from sage.calculus.functional import diff
+        from sage.calculus.var import function
         from sage.symbolic.assumptions import assume, forget
         from sage.symbolic.ring import var
 
@@ -1066,7 +1068,7 @@ class IntegratedCurve(DifferentiableCurve):
         t_min = self.domain().lower_bound()
         t_max = self.domain().upper_bound()
 
-        eqns_num = [eq for eq in self._equations_rhs]
+        eqns_num = list(self._equations_rhs)
         # 'self._equations_rhs' needs not to be modified ever, because we
         # want to keep track of the most general form of the equations
         # defining self, since those may contain parameters (which, for
@@ -1096,7 +1098,7 @@ class IntegratedCurve(DifferentiableCurve):
         # raise error if coordinates in chart cannot be obtained
 
         initial_coord_basis = chart.frame().at(initial_pt)
-        initial_tgt_vec_comps = list(v0[initial_coord_basis,:]) #idem
+        initial_tgt_vec_comps = list(v0[initial_coord_basis,:])  # idem
 
         dim = self.codomain().dim()
 
@@ -1126,9 +1128,9 @@ class IntegratedCurve(DifferentiableCurve):
 
             for i in range(dim):
                 if isinstance(eqns_num[i], Expression): # some right
-                # hand sides might merely be real numbers and not
-                # expressions, so that they do not contain any variable,
-                # and hence no substitution is required
+                    # hand sides might merely be real numbers and not
+                    # expressions, so that they do not contain any variable,
+                    # and hence no substitution is required
                     eqns_num[i] = eqns_num[i].substitute(parameters_values)
 
             for i in range(dim):
@@ -1147,10 +1149,11 @@ class IntegratedCurve(DifferentiableCurve):
         t_max = numerical_approx(t_max)
 
         for i in range(dim):
-            if not isinstance(eqns_num[i], Expression): # in case of a
-            # right hand side that is not an Expression (and then is a
-            # number), it is needed to be converted to an Expression
-            # since some solvers called below require only expressions
+            if not isinstance(eqns_num[i], Expression):
+                # in case of a
+                # right hand side that is not an Expression (and then is a
+                # number), it is needed to be converted to an Expression
+                # since some solvers called below require only expressions
                 eqns_num[i] = SR(eqns_num[i])
 
         if step is None:
@@ -1293,7 +1296,7 @@ class IntegratedCurve(DifferentiableCurve):
                 # of the system to be provided
 
                 if T.jacobian is None:
-                    def jacobian(t,y):
+                    def jacobian(t, y):
                         jac = []
                         par = self._curve_parameter
                         for i in range(dim):
@@ -2372,15 +2375,15 @@ class IntegratedCurve(DifferentiableCurve):
             else:
                 if across_charts:
                     for key in self._interpolations:
-                        if key[-8:-1] != '_chart_':       # check if not a subplot
+                        if key[-8:-1] != '_chart_':  # check if not a subplot
                             interpolation_key = key
                             break
                     else:
                         raise ValueError("Did you forget to "
                                          "integrate or interpolate the result?")
                 else:
-                    interpolation_key = next(iter(self._interpolations)) #will
-                # raise error if self._interpolations empty
+                    interpolation_key = next(iter(self._interpolations))
+                    # will raise error if self._interpolations empty
 
             if verbose:
                 print("Plotting from the interpolation associated " +
@@ -2484,7 +2487,7 @@ class IntegratedCurve(DifferentiableCurve):
             raise ValueError("the argument prange must be a " +
                              "tuple/list of 2 elements")
         else:
-            p = prange #'p' declared only for the line below to be shorter
+            p = prange  # 'p' declared only for the line below to be shorter
             if p[0] < param_min or p[0] > param_max or p[1] < param_min or p[1] > param_max:
                 raise ValueError("parameter range should be a " +
                                  "subinterval of the curve domain " +
@@ -2559,8 +2562,8 @@ class IntegratedCurve(DifferentiableCurve):
                 t += dt
 
             if display_tangent:
-                from sage.plot.graphics import Graphics
                 from sage.plot.arrow import arrow2d
+                from sage.plot.graphics import Graphics
                 from sage.plot.plot3d.shapes import arrow3d
 
                 scale = kwds.pop('scale')
@@ -2746,8 +2749,8 @@ class IntegratedCurve(DifferentiableCurve):
                 t += dt
 
             if display_tangent:
-                from sage.plot.graphics import Graphics
                 from sage.plot.arrow import arrow2d
+                from sage.plot.graphics import Graphics
                 from sage.plot.plot3d.shapes import arrow3d
 
                 scale = kwds.pop('scale')
@@ -2863,6 +2866,7 @@ class IntegratedCurve(DifferentiableCurve):
                              ambient_coords, thickness=thickness,
                              aspect_ratio=aspect_ratio, color=color,
                              style=style, label_axes=label_axes)
+
 
 class IntegratedAutoparallelCurve(IntegratedCurve):
     r"""
@@ -3648,6 +3652,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
 
         return [self._equations_rhs, v0, chart]
 
+
 class IntegratedGeodesic(IntegratedAutoparallelCurve):
     r"""
     Geodesic on the manifold with respect to a given metric.
@@ -3970,18 +3975,19 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         if verbose:
             initial_tgt_space = v0.parent()
-            initial_pt = initial_tgt_space.base_point()#retrieves
-            # the initial point as the base point of the tangent space
-            # to which initial tangent vector belongs
+            initial_pt = initial_tgt_space.base_point()
+            # retrieves the initial point as the base point of the
+            # tangent space to which initial tangent vector belongs
+
             initial_pt_coords = list(initial_pt.coordinates(chart))
-            # previous line converts to list since would otherwise be a
-            # tuple ; will raise error if coordinates in chart are not
-            # known
+            # previous line converts to list since would otherwise be
+            # a tuple ; will raise error if coordinates in chart are
+            # not known
 
             initial_coord_basis = chart.frame().at(initial_pt)
-            initial_tgt_vec_comps = v0[initial_coord_basis,:] # will
-            # raise error if components in coordinate basis are not
-            # known
+            initial_tgt_vec_comps = v0[initial_coord_basis,:]
+            # will raise error if components in coordinate basis are
+            # not known
 
             description = "Geodesic "
             if self._name is not None:

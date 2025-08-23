@@ -20,7 +20,7 @@ We need to setup a proper test environment for widgets::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 
@@ -84,7 +84,7 @@ class HTMLText(HTMLMath):
         pass
 
 
-class TransformWidget():
+class TransformWidget:
     """
     A mixin class for a widget to transform the bare widget value for
     use in interactive functions.
@@ -119,7 +119,7 @@ class TransformWidget():
             <... 'dict'>
         """
         self.__transform = kwds.pop("transform", None)
-        return super().__init__(*args, **kwds)
+        super().__init__(*args, **kwds)
 
     def get_value(self):
         """
@@ -383,7 +383,7 @@ class Grid(TransformWidget, HBox, ValueWidget):
     value = List()
     description = Unicode()
 
-    def __init__(self, nrows, ncols, make_widget, description=u"", transform=None):
+    def __init__(self, nrows, ncols, make_widget, description="", transform=None):
         """
         Create a :class:`Grid` widget.
 

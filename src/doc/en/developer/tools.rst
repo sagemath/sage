@@ -8,6 +8,18 @@
 Development and Testing Tools
 =============================
 
+uv
+==
+
+`uv <https://docs.astral.sh/uv/>`_ is a versatile tool for 
+managing and synchronizing project dependencies. 
+
+The lockfile `uv.lock` in the root captures the exact package versions for 
+all systems and ensures consistent, reproducible installations.
+It is automatically updated during ``uv`` operations like ``uv add`` 
+and ``uv run``, or explicitly with ``uv lock``. 
+Moreover, it is periodically updated by `Renovate <https://docs.renovatebot.com/>`_.
+
 .. _section-tools-tox:
 
 Tox
@@ -382,7 +394,7 @@ package :mod:`sage.numerical.backends` and some modules in
 
 - VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
-*Configuration:* :sage_root:`src/conftest.py`
+*Configuration:* :sage_root:`conftest.py`
 
 *Documentation:* https://docs.pytest.org/en/stable/index.html
 

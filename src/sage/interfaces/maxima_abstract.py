@@ -304,7 +304,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             # The output is kind of random
-            sage: sorted(maxima._commands(verbose=False))
+            sage: sorted(maxima._commands(verbose=False))  # long time (:issue:`39569`)
             [...
              'display',
              ...
@@ -1489,8 +1489,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         high precision very quickly::
 
             sage: gp('intnum(x=0,1,exp(-sqrt(x)))')
-            0.5284822353142307136179049194             # 32-bit
-            0.52848223531423071361790491935415653022   # 64-bit
+            0.52848223531423071361790491935415653022
             sage: _ = gp.set_precision(80)
             sage: gp('intnum(x=0,1,exp(-sqrt(x)))')
             0.52848223531423071361790491935415653021675547587292866196865279321015401702040079

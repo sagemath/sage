@@ -258,8 +258,7 @@ def random_expr_helper(n_nodes, internal, leaves, verbose):
         n_nodes -= 1
         n_children = r[2]
         n_spare_nodes = n_nodes - n_children
-        if n_spare_nodes <= 0:
-            n_spare_nodes = 0
+        n_spare_nodes = max(0, n_spare_nodes)
         nodes_per_child = random_integer_vector(n_spare_nodes, n_children)
         children = [random_expr_helper(n + 1, internal, leaves, verbose)
                     for n in nodes_per_child]
@@ -419,7 +418,7 @@ def assert_strict_weak_order(a, b, c, cmp_func):
             raise ValueError(msg)
 
 
-def test_symbolic_expression_order(repetitions=100):
+def check_symbolic_expression_order(repetitions=100):
     r"""
     Test whether the comparison of random symbolic expressions
     satisfies the strict weak order axioms.
@@ -430,9 +429,8 @@ def test_symbolic_expression_order(repetitions=100):
 
     EXAMPLES::
 
-        sage: from sage.symbolic.random_tests import test_symbolic_expression_order
-        sage: test_symbolic_expression_order(200)
-        sage: test_symbolic_expression_order(10000)  # long time
+        sage: from sage.symbolic.random_tests import check_symbolic_expression_order
+        sage: check_symbolic_expression_order(500)  # long time
     """
     rnd_length = 50
     nvars = 10

@@ -68,6 +68,7 @@ def _format_decoding_interval(decoding_interval):
         return "exactly {0}".format(decoding_interval[0])
     return "between {0} and {1}".format(decoding_interval[0], decoding_interval[1])
 
+
 class InformationSetAlgorithm(SageObject):
     r"""
     Abstract class for algorithms for
@@ -156,10 +157,10 @@ class InformationSetAlgorithm(SageObject):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],\
-                                     [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
-                                     [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
-                                     [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
-                                     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
+            ....:                    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
+            ....:                    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
+            ....:                    [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
+            ....:                    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
             sage: C = codes.LinearCode(M)
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (2,2))
@@ -447,10 +448,10 @@ class LeeBrickellISDAlgorithm(InformationSetAlgorithm):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0],\
-                                     [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
-                                     [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
-                                     [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
-                                     [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
+            ....:                    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1],\
+            ....:                    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0],\
+            ....:                    [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1],\
+            ....:                    [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1]])
             sage: C = codes.LinearCode(M)
             sage: from sage.coding.information_set_decoder import LeeBrickellISDAlgorithm
             sage: A = LeeBrickellISDAlgorithm(C, (2,2))
@@ -928,10 +929,10 @@ class LinearCodeInformationSetDecoder(Decoder):
         EXAMPLES::
 
             sage: M = matrix(GF(2), [[1,0,0,0,0,0,1,0,1,0,1,1,0,0,1],\
-                                     [0,1,0,0,0,1,1,1,1,0,0,0,0,1,1],\
-                                     [0,0,1,0,0,0,0,1,0,1,1,1,1,1,0],\
-                                     [0,0,0,1,0,0,1,0,1,0,0,0,1,1,0],\
-                                     [0,0,0,0,1,0,0,0,1,0,1,1,0,1,0]])
+            ....:                    [0,1,0,0,0,1,1,1,1,0,0,0,0,1,1],\
+            ....:                    [0,0,1,0,0,0,0,1,0,1,1,1,1,1,0],\
+            ....:                    [0,0,0,1,0,0,1,0,1,0,0,0,1,1,0],\
+            ....:                    [0,0,0,0,1,0,0,0,1,0,1,1,0,1,0]])
             sage: C = LinearCode(M)
             sage: c = C.random_element()
             sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), 2)

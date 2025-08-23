@@ -769,7 +769,8 @@ class Modules(Category_module):
                 This ``base_ring`` method is actually overridden by
                 :meth:`sage.structure.category_object.CategoryObject.base_ring`::
 
-                    sage: H.base_ring.__module__                                        # needs sage.modules
+                    sage: H.base_ring.__module__
+                    'sage.structure.category_object'
 
                 Here we call it directly::
 
@@ -893,7 +894,7 @@ class Modules(Category_module):
                      (Vector space of dimension 2 over Rational Field,
                       Univariate Polynomial Ring in x over Rational Field)
                     sage: A.category()                                                  # needs sage.modules
-                    Category of Cartesian products of vector spaces
+                    Category of Cartesian products of vector spaces with basis
                      over (number fields and quotient fields and metric spaces)
                     sage: A.base_ring()                                                 # needs sage.modules
                     Rational Field
@@ -967,16 +968,10 @@ class Modules(Category_module):
                      (Free Algebra on 2 generators (None0, None1) over Rational Field,
                       Free Algebra on 2 generators (None0, None1) over Rational Field))
                 """
-                try:
-                    factors = self.tensor_factors()
-                except (TypeError, NotImplementedError):
-                    from sage.misc.superseded import deprecation
-                    deprecation(34393, "implementations of Modules().TensorProducts() now must define the method tensor_factors")
-                    return None
-                return (TensorProductFunctor(),
-                        factors)
+                factors = self.tensor_factors()
+                return (TensorProductFunctor(), factors)
 
-            @abstract_method(optional=True)
+            @abstract_method
             def tensor_factors(self):
                 """
                 Return the tensor factors of this tensor product.
@@ -992,16 +987,4 @@ class Modules(Category_module):
                     F # G
                     sage: T.tensor_factors()
                     (F, G)
-
-                TESTS::
-
-                    sage: Cat = ModulesWithBasis(ZZ).FiniteDimensional().TensorProducts()
-                    sage: M = CombinatorialFreeModule(ZZ,                               # needs sage.modules
-                    ....:                             ((1, 1), (1, 2), (2, 1), (2, 2)),
-                    ....:                             category=Cat)
-                    sage: M.construction()                                              # needs sage.modules
-                    doctest:warning...
-                    DeprecationWarning: implementations of Modules().TensorProducts() now must define the method tensor_factors
-                    See https://github.com/sagemath/sage/issues/34393 for details.
-                    (VectorFunctor, Integer Ring)
                 """

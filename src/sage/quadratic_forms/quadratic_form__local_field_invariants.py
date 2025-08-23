@@ -17,7 +17,7 @@ quadratic forms over the rationals.
 # ****************************************************************************
 
 ###########################################################################
-# TO DO: Add routines for hasse invariants at all places, anisotropic
+# TO DO: Add routines for Hasse invariants at all places, anisotropic
 # places, is_semi_definite, and support for number fields.
 ###########################################################################
 
@@ -165,7 +165,19 @@ def rational_diagonal_form(self, return_matrix=False):
         sage: T[0,0] = 13
         Traceback (most recent call last):
         ...
-        ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+        ValueError: matrix is immutable; please change a copy instead
+        (i.e., use copy(M) to change a copy of M).
+
+    Test for a singular form::
+
+        sage: m = matrix(GF(11), [[1,5,0,0], [5,1,9,0], [0,9,1,5], [0,0,5,1]])
+        sage: qf = QuadraticForm(m)
+        sage: Q, T = qf.rational_diagonal_form(return_matrix=True)
+        sage: T
+        [ 1  6  5 10]
+        [ 0  1 10  9]
+        [ 0  0  1  2]
+        [ 0  0  0  1]
     """
     Q, T = self._rational_diagonal_form_and_transformation()
     T.set_immutable()
@@ -173,19 +185,17 @@ def rational_diagonal_form(self, return_matrix=False):
     # Quadratic forms do not support immutability, so we need to make
     # a copy to be safe.
     Q = deepcopy(Q)
-
-    if return_matrix:
-        return Q, T
-    else:
-        return Q
+    return (Q, T) if return_matrix else Q
 
 
 @cached_method
 def _rational_diagonal_form_and_transformation(self):
     """
     Return a diagonal form equivalent to the given quadratic from and
-    the corresponding transformation matrix. This is over the fraction
-    field of the base ring of the given quadratic form.
+    the corresponding transformation matrix.
+
+    This is over the fraction field of the base ring of the given
+    quadratic form.
 
     OUTPUT: a tuple `(D,T)` where
 
@@ -238,13 +248,13 @@ def _rational_diagonal_form_and_transformation(self):
         D = MS()
         for i in range(n):
             D[i, i] = R[i, i]
-        Q = Q.parent()(D)
+        newQ = Q.parent()(D)
         # Transformation matrix (inverted)
         T = MS(R.sage())
         for i in range(n):
             T[i, i] = K.one()
         try:
-            return Q, ~T
+            return newQ, ~T
         except ZeroDivisionError:
             # Singular case is not fully supported by PARI
             pass
@@ -276,7 +286,8 @@ def _rational_diagonal_form_and_transformation(self):
         temp = MS(1)
         for j in range(i + 1, n):
             if Q[i, j] != 0:
-                temp[i, j] = -Q[i, j] / (Q[i, i] * 2)    # This should only occur when Q[i,i] != 0, which the above step guarantees.
+                temp[i, j] = -Q[i, j] / (Q[i, i] * 2)
+                # This should only occur when Q[i,i] != 0, which the above step guarantees.
 
         Q = Q(temp)
         T = T * temp
@@ -604,7 +615,7 @@ def is_hyperbolic(self, p) -> bool:
             self.hasse_invariant(p) == 1)
 
 
-def is_anisotropic(self, p):
+def is_anisotropic(self, p) -> bool:
     r"""
     Check if the quadratic form is anisotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
@@ -674,7 +685,7 @@ def is_anisotropic(self, p):
     raise NotImplementedError("we have not established a convention for 0-dim'l quadratic forms")
 
 
-def is_isotropic(self, p):
+def is_isotropic(self, p) -> bool:
     r"""
     Check if `Q` is isotropic over the `p`-adic numbers `\QQ_p` or `\RR`.
 
@@ -881,7 +892,7 @@ def compute_definiteness_string_by_determinants(self):
     if not ((self.base_ring() == ZZ) or (self.base_ring() == QQ) or (self.base_ring() == RR)):
         raise NotImplementedError("we can only check definiteness over ZZ, QQ, and RR for now")
 
-    from sage.functions.all import sgn
+    from sage.functions.generalized import sgn
 
     # Some useful variables
     n = self.dim()
@@ -913,9 +924,9 @@ def compute_definiteness_string_by_determinants(self):
     return "pos_def" if first_coeff > 0 else "neg_def"
 
 
-def is_positive_definite(self):
+def is_positive_definite(self) -> bool:
     """
-    Determines if the given quadratic form is positive-definite.
+    Determine if the given quadratic form is positive-definite.
 
     .. NOTE::
 
@@ -950,9 +961,9 @@ def is_positive_definite(self):
     return (def_str == "pos_def") or (def_str == "zero")
 
 
-def is_negative_definite(self):
+def is_negative_definite(self) -> bool:
     """
-    Determines if the given quadratic form is negative-definite.
+    Determine if the given quadratic form is negative-definite.
 
     .. NOTE::
 
@@ -987,9 +998,9 @@ def is_negative_definite(self):
     return (def_str == "neg_def") or (def_str == "zero")
 
 
-def is_indefinite(self):
+def is_indefinite(self) -> bool:
     """
-    Determines if the given quadratic form is indefinite.
+    Determine if the given quadratic form is indefinite.
 
     .. NOTE::
 
@@ -1024,9 +1035,9 @@ def is_indefinite(self):
     return def_str == "indefinite"
 
 
-def is_definite(self):
+def is_definite(self) -> bool:
     """
-    Determines if the given quadratic form is (positive or negative) definite.
+    Determine if the given quadratic form is (positive or negative) definite.
 
     .. NOTE::
 

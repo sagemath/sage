@@ -178,6 +178,7 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
     else:
         return False
 
+
 def _lift2smallest_field(a):
     """
     INPUT:
@@ -327,7 +328,8 @@ def walsh_matrix(m0):
 
 ##################### main constructions #####################
 
-def DuadicCodeEvenPair(F,S1,S2):
+
+def DuadicCodeEvenPair(F, S1, S2):
     r"""
     Construct the "even pair" of duadic codes associated to the
     "splitting" (see the docstring for ``_is_a_splitting``
@@ -376,7 +378,8 @@ def DuadicCodeEvenPair(F,S1,S2):
     C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
-def DuadicCodeOddPair(F,S1,S2):
+
+def DuadicCodeOddPair(F, S1, S2):
     """
     Construct the "odd pair" of duadic codes associated to the
     "splitting" S1, S2 of n.
@@ -431,7 +434,8 @@ def DuadicCodeOddPair(F,S1,S2):
     C2 = CyclicCode(length=n, generator_pol=gg2)
     return C1,C2
 
-def ExtendedQuadraticResidueCode(n,F):
+
+def ExtendedQuadraticResidueCode(n, F):
     r"""
     The extended quadratic residue code (or XQR code) is obtained from
     a QR code by adding a check bit to the last coordinate. (These
@@ -471,6 +475,7 @@ def ExtendedQuadraticResidueCode(n,F):
     C = QuadraticResidueCodeOddPair(n,F)[0]
     return C.extended_code()
 
+
 def from_parity_check_matrix(H):
     r"""
     Return the linear code that has ``H`` as a parity check matrix.
@@ -494,7 +499,8 @@ def from_parity_check_matrix(H):
     Cd = LinearCode(H)
     return Cd.dual_code()
 
-def QuadraticResidueCode(n,F):
+
+def QuadraticResidueCode(n, F):
     r"""
     A quadratic residue code (or QR code) is a cyclic code whose
     generator polynomial is the product of the polynomials
@@ -537,7 +543,8 @@ def QuadraticResidueCode(n,F):
     """
     return QuadraticResidueCodeOddPair(n,F)[0]
 
-def QuadraticResidueCodeEvenPair(n,F):
+
+def QuadraticResidueCodeEvenPair(n, F):
     r"""
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
@@ -603,7 +610,7 @@ def QuadraticResidueCodeEvenPair(n,F):
     return DuadicCodeEvenPair(F,Q,N)
 
 
-def QuadraticResidueCodeOddPair(n,F):
+def QuadraticResidueCodeOddPair(n, F):
     r"""
     Quadratic residue codes of a given odd prime length and base ring
     either don't exist at all or occur as 4-tuples - a pair of
@@ -688,7 +695,8 @@ def random_linear_code(F, length, dimension):
         if G.rank() == dimension:
             return LinearCode(G)
 
-def ToricCode(P,F):
+
+def ToricCode(P, F):
     r"""
     Let `P` denote a list of lattice points in
     `\ZZ^d` and let `T` denote the set of all

@@ -437,10 +437,10 @@ class KenzoChainComplex(KenzoObject):
         m1 = __chcm_mat__(echcm1, n)
         m2 = __chcm_mat__(echcm1, n + 1)
         homology = __homologie__(m1, m2)
-        lhomomology = [i for i in EclListIterator(homology)]
+        lhomomology = list(EclListIterator(homology))
         res = []
         for component in lhomomology:
-            pair = [i for i in EclListIterator(component)]
+            pair = list(EclListIterator(component))
             res.append(pair[0].python())
         return HomologyGroup(len(res), ZZ, res)
 
@@ -1309,7 +1309,7 @@ def SFiniteSimplicialSet(ksimpset, limit):
         bases.append(lbasis_k)
         names.append(names_k)
     all_simplices = __sfinitesimplicialset_aux1__(ksimpset._kenzo, limit)
-    lall_simplices = [i for i in EclListIterator(all_simplices)]
+    lall_simplices = list(EclListIterator(all_simplices))
     dim = 1
     for Kdim in lall_simplices:
         for simp in Kdim:
@@ -1725,7 +1725,7 @@ class KenzoChainComplexMorphism(KenzoObject):
     def change_source_target_complex(self, source=None, target=None):
         r"""
         Build, from the morphism ``self``, a new morphism with ``source``
-        and ``target`` as source and target Kenzo chain complexes, respectively.
+        and ``target`` as source and target Kenzo chain complexes.
 
         INPUT:
 
@@ -1739,8 +1739,8 @@ class KenzoChainComplexMorphism(KenzoObject):
           degree (:degr slot in Kenzo), the algorithm (:intr slot in Kenzo)
           and the strategy (:strt slot in Kenzo). The source and target slots
           of this new morphism are given by the parameters ``source`` and
-          ``target`` respectively; if any parameter is ommited, the corresponding
-          slot is inherited from ``self``.
+          ``target`` respectively; if any parameter is omitted,
+          the corresponding slot is inherited from ``self``.
 
         EXAMPLES::
 
@@ -1773,8 +1773,8 @@ class KenzoChainComplexMorphism(KenzoObject):
 
     def destructive_change_source_target_complex(self, source=None, target=None):
         r"""
-        Modify destructively the morphism ``self`` taking ``source`` and ``target`` as source and
-        target Kenzo chain complexes of ``self``, respectively.
+        Modify destructively the morphism ``self`` taking ``source``
+        and ``target`` as source and target Kenzo chain complexes of ``self``.
 
         INPUT:
 
@@ -1784,9 +1784,10 @@ class KenzoChainComplexMorphism(KenzoObject):
 
         OUTPUT:
 
-        - A :class:`KenzoChainComplexMorphism`. The source and target slots of ``self`` are replaced
-          respectively by the parameters ``source`` and ``target``; if any parameter is ommited, the
-          corresponding slot is inherited from ``self``.
+        - A :class:`KenzoChainComplexMorphism`. The source and target
+          slots of ``self`` are replaced respectively by the
+          parameters ``source`` and ``target``; if any parameter is
+          omitted, the corresponding slot is inherited from ``self``.
 
         EXAMPLES::
 

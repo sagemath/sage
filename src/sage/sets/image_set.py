@@ -16,7 +16,7 @@ Image Sets
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from typing import Iterator
+from collections.abc import Iterator
 
 from sage.categories.map import Map
 from sage.categories.poor_man_map import PoorManMap
@@ -25,7 +25,6 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
-from sage.modules.free_module import FreeModule
 from sage.structure.element import Expression
 from sage.structure.parent import Parent
 
@@ -54,7 +53,9 @@ class ImageSubobject(Parent):
       - ``True``: ``map`` is known to be injective
       - ``'check'``: raise an error when ``map`` is not injective
 
-    - ``inverse`` -- a function (optional); a map from `f(X)` to `X`
+    - ``inverse`` -- function (optional); a map from `f(X)` to `X`;
+      if ``map.inverse_image`` exists, it is not recommended to provide this
+      as it will be used automatically
 
     EXAMPLES::
 
@@ -81,6 +82,17 @@ class ImageSubobject(Parent):
             sage: Im = f.image()
             sage: TestSuite(Im).run(skip=['_test_an_element', '_test_pickling',
             ....:                         '_test_some_elements', '_test_elements'])
+
+        TESTS:
+
+        Implementing ``inverse_image`` automatically makes :meth:`__contains__` work::
+
+            sage: R.<x> = QQ[]
+            sage: S.<y> = QQ[]
+            sage: R.hom([y^2]).inverse_image(y^4)
+            x^2
+            sage: y^4 in R.hom([y^2]).image()
+            True
         """
         if not isinstance(domain_subset, Parent):
             from sage.sets.set import Set
@@ -91,6 +103,7 @@ class ImageSubobject(Parent):
             if isinstance(map, Expression) and map.is_callable():
                 domain = map.parent().base()
                 if len(map.arguments()) != 1:
+                    from sage.modules.free_module import FreeModule
                     domain = FreeModule(domain, len(map.arguments()))
                 function = map
 
@@ -127,6 +140,11 @@ class ImageSubobject(Parent):
         Parent.__init__(self, category=category)
 
         self._map = map
+        if inverse is None:
+            try:
+                inverse = map.inverse_image
+            except AttributeError:
+                pass
         self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective

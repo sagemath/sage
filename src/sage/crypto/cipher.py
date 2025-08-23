@@ -16,6 +16,7 @@ Ciphers
 
 from sage.structure.element import Element
 
+
 class Cipher(Element):
     """
     Cipher class
@@ -52,6 +53,7 @@ class Cipher(Element):
     def codomain(self):
         return self.parent().cipher_codomain()
 
+
 class SymmetricKeyCipher(Cipher):
     """
     Symmetric key cipher class
@@ -61,6 +63,7 @@ class SymmetricKeyCipher(Cipher):
         Create a symmetric cipher.
         """
         Cipher.__init__(self, parent, key)
+
 
 class PublicKeyCipher(Cipher):
     """

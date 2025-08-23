@@ -500,7 +500,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
         """
         from sage.sets.family import Family
         gens = self.gens()
-        d = {i: g for i, g in enumerate(gens)}
+        d = dict(enumerate(gens))
         d['b'] = self.element_class(self, self.ambient_module().zero(),
                                     self.base_ring().one())
         return Family(list(range(len(gens))) + ['b'], lambda i: d[i])

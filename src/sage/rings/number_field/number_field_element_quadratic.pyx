@@ -419,7 +419,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         Used for pickling.
 
-        TESTS:
+        TESTS::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a> = NumberField(x^2 - 13)
@@ -437,6 +437,23 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         return __make_NumberFieldElement_quadratic1, (self._parent, type(self), a, b, denom)
 
     cdef int _randomize(self, num_bound, den_bound, distribution) except -1:
+        """
+        TESTS::
+
+            sage: a = ZZ.random_element(-100, 100)
+            sage: while a.is_square():
+            ....:     a = ZZ.random_element(-100, 100)
+            sage: K = QuadraticField(a)
+            sage: K.random_element().parent() is K  # indirect doctest
+            True
+            sage: len(set(K.random_element() for _ in range(100))) >= 40
+            True
+
+        Verify that :issue:`30017` is fixed::
+
+            sage: all(K.random_element().is_integral() for s in range(100))
+            False
+        """
         cdef Integer temp, denom1, denom2
 
         # in theory, we could just generate two random numerators and
@@ -447,17 +464,20 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         # of the random element code, it's worth doing slightly more
         # work to make this possible.
 
-        # normalize denominator bound
-        if den_bound is None or den_bound < 1:
-            den_bound = 1
-
         # generate denominators
-        denom1 = <Integer>(ZZ.random_element(x=1,
-                                             y=den_bound+1,
-                                             distribution=distribution))
-        denom2 = <Integer>(ZZ.random_element(x=1,
-                                             y=den_bound+1,
-                                             distribution=distribution))
+        if den_bound is None:
+            denom1 = <Integer>(1 + abs(ZZ.random_element(distribution=distribution)))
+            denom2 = <Integer>(1 + abs(ZZ.random_element(distribution=distribution)))
+        else:
+            # normalize denominator bound
+            if den_bound < 1:
+                den_bound = 1
+            denom1 = <Integer>(ZZ.random_element(x=1,
+                                                 y=den_bound+1,
+                                                 distribution=distribution))
+            denom2 = <Integer>(ZZ.random_element(x=1,
+                                                 y=den_bound+1,
+                                                 distribution=distribution))
 
         # set a, b
         temp = <Integer>(ZZ.random_element(x=num_bound, distribution=distribution))
@@ -1515,7 +1535,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (1+a)*3 # indirect doctest
             3*a + 3
         """
-        cdef Rational c =  <Rational>_c
+        cdef Rational c = <Rational>_c
         cdef NumberFieldElement_quadratic res = <NumberFieldElement_quadratic>self._new()
         mpz_mul(res.a, self.a, mpq_numref(c.value))
         mpz_mul(res.b, self.b, mpq_numref(c.value))
@@ -1532,7 +1552,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: 5*(a-1/5) # indirect doctest
             5*a - 1
         """
-        cdef Rational c =  <Rational>_c
+        cdef Rational c = <Rational>_c
         cdef NumberFieldElement_quadratic res = <NumberFieldElement_quadratic>self._new()
         mpz_mul(res.a, self.a, mpq_numref(c.value))
         mpz_mul(res.b, self.b, mpq_numref(c.value))
@@ -2382,8 +2402,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         TESTS::
 
-            sage: import warnings
-            sage: warnings.filterwarnings("ignore", category=DeprecationWarning)
             sage: K2.<sqrt2> = QuadraticField(2)
             sage: K3.<sqrt3> = QuadraticField(3)
             sage: K5.<sqrt5> = QuadraticField(5)
@@ -2398,15 +2416,15 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             ....:    assert round(a+b*sqrt(5.)) == round(a+b*sqrt5), (a, b)
         """
         n = self.floor()
-        test = 2 * (self - n).abs()
+        test = 2 * (self - n)
         if test < 1:
             return n
         elif test > 1:
             return n + 1
-        elif self > 0:
-            return n + 1
-        else:
+        elif n % 2 == 0:
             return n
+        else:
+            return n + 1
 
 
 cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
@@ -2866,7 +2884,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             -13
             sage: w.inverse_mod(13).parent() == OE
             True
-            sage: w.inverse_mod(2*OE)
+            sage: w.inverse_mod(2)
             Traceback (most recent call last):
             ...
             ZeroDivisionError: w is not invertible modulo Fractional ideal (2)

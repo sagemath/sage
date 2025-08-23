@@ -178,7 +178,7 @@ This is a good place for a few reminders of basic help.
 ::
 
     sage: z.simplify
-    <built-in method simplify of sage.symbolic.expression.Expression object at ...>
+    <bound method Expression.simplify of -((x + 1)*sqrt(x - 1) - (x - 1)^(3/2))/sqrt((x + 1)*(x - 1))>
 
 Finally, recall that you can get nicely typeset versions of the output
 in several ways.
@@ -383,11 +383,6 @@ Below, you can experiment with several of the plotting options.
 
 Basic 3D Plotting
 -----------------
-
-There are several mechanisms for viewing three\-dimensional plots in
-Sage, but we will stick to the default option in the notebook interface,
-which is via javascript applets from the program `Jmol/JSmol
-<http://jmol.sourceforge.net/>`_ .
 
 Plotting a 3D plot is similar to plotting a 2D plot, but we need to
 specify ranges for two variables instead of one.

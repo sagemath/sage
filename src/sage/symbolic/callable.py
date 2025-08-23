@@ -213,11 +213,11 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         temp = set()
         # Sorting remaining variables.
         for j in range(i, len(a)):
-            if not a[j] in temp:
+            if a[j] not in temp:
                 temp.add(a[j])
 
         for j in range(i, len(b)):
-            if not b[j] in temp:
+            if b[j] not in temp:
                 temp.add(b[j])
 
         new_list.extend(sorted(temp, key=repr))
@@ -259,10 +259,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
         """
         if isinstance(R, CallableSymbolicExpressionRing_class):
             args = self.arguments()
-            if all(a in args for a in R.arguments()):
-                return True
-            else:
-                return False
+            return all(a in args for a in R.arguments())
         return SymbolicRing._coerce_map_from_(self, R)
 
     def construction(self):

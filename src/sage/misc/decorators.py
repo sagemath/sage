@@ -51,6 +51,18 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     the special attribute ``_sage_argspec_`` of the wrapping function (for an
     example, see e.g. ``@options`` decorator in this module).
 
+    Note that in ``.pyx`` files which is compiled by Cython, because Sage uses
+    ``binding=False`` compiler directive by default, you need to explicitly
+    specify ``binding=True`` for all functions decorated with ``sage_wraps``::
+
+        sage: import cython
+        sage: def square(f):
+        ....:     @sage_wraps(f)
+        ....:     @cython.binding(True)
+        ....:     def new_f(x):
+        ....:         return f(x)*f(x)
+        ....:     return new_f
+
     EXAMPLES:
 
     Demonstrate that documentation string and source are retained from the
@@ -319,19 +331,19 @@ def decorator_defaults(func):
 
         sage: from sage.misc.decorators import decorator_defaults
         sage: @decorator_defaults
-        ....: def my_decorator(f,*args,**kwds):
+        ....: def my_decorator(f, *args, **kwds):
         ....:   print(kwds)
         ....:   print(args)
         ....:   print(f.__name__)
 
         sage: @my_decorator
-        ....: def my_fun(a,b):
+        ....: def my_fun(a, b):
         ....:   return a,b
         {}
         ()
         my_fun
         sage: @my_decorator(3,4,c=1,d=2)
-        ....: def my_fun(a,b):
+        ....: def my_fun(a, b):
         ....:   return a,b
         {'c': 1, 'd': 2}
         (3, 4)

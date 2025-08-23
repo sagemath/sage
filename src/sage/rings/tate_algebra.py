@@ -613,9 +613,9 @@ class TateTermMonoid(Monoid_class, UniqueRepresentation):
         """
         return self._ngens
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the list of generators of this monoid of terms.
+        Return the generators of this monoid of terms.
 
         EXAMPLES::
 
@@ -810,10 +810,7 @@ class TateAlgebra_generic(Parent):
                 and self._names == R.variable_names()
                 and self._order == R.term_order()):
                 ratio = base.absolute_e() // Rbase.absolute_e()
-                for i in range(self._ngens) :
-                    if logs[i] != ratio * Rlogs[i]:
-                        return False
-                return True
+                return all(logs[i] == ratio * Rlogs[i] for i in range(self._ngens))
         return False
 
     def _pushout_(self, R):
@@ -934,9 +931,9 @@ class TateAlgebra_generic(Parent):
         except IndexError:
             raise ValueError("generator not defined")
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Return the list of generators of this Tate algebra.
+        Return the generators of this Tate algebra.
 
         EXAMPLES::
 

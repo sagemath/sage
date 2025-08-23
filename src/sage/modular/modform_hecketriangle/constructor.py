@@ -117,11 +117,11 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
 
     analytic_type = AT(["quasi", "mero"])
 
-    R = PolynomialRing(base_ring,'x,y,z,d')
+    R = PolynomialRing(base_ring, 'x,y,z,d')
     F = FractionField(R)
-    (x,y,z,d) = R.gens()
+    x, y, z, d = R.gens()
     R2 = PolynomialRing(PolynomialRing(base_ring, 'd'), 'x,y,z')
-    dhom = R.hom( R2.gens() + (R2.base().gen(),), R2)
+    dhom = R.hom(R2.gens() + (R2.base().gen(),), R2)
 
     f = F(f)
 
@@ -131,12 +131,12 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     ep_denom = {ZZ.one() - 2*((sum([g.exponents()[0][m] for m in [1, 2]])) % 2) for g in dhom(denom).monomials()}
 
     if (n == infinity):
-        hom_num = R(   num.subs(x=x**4, y=y**2, z=z**2) )
-        hom_denom = R( denom.subs(x=x**4, y=y**2, z=z**2) )
+        hom_num = R(num.subs(x=x**4, y=y**2, z=z**2))
+        hom_denom = R(denom.subs(x=x**4, y=y**2, z=z**2))
     else:
         n = ZZ(n)
-        hom_num = R(   num.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))) )
-        hom_denom = R( denom.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))) )
+        hom_num = R(num.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))))
+        hom_denom = R(denom.subs(x=x**4, y=y**(2*n), z=z**(2*(n-2))))
 
     # Determine whether the denominator of f is homogeneous
     if (len(ep_denom) == 1 and dhom(hom_denom).is_homogeneous()):
@@ -146,9 +146,9 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         return (False, False, None, None, None)
 
     # Determine whether f is homogeneous
-    if (len(ep_num) == 1 and dhom(hom_num).is_homogeneous()):
+    if len(ep_num) == 1 and dhom(hom_num).is_homogeneous():
         homo = True
-        if (n == infinity):
+        if n == infinity:
             weight = (dhom(hom_num).degree() - dhom(hom_denom).degree())
         else:
             weight = (dhom(hom_num).degree() - dhom(hom_denom).degree()) / (n-2)
@@ -160,17 +160,17 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
         ep = None
 
     # Note that we intentionally leave out the d-factor!
-    if (n == infinity):
+    if n == infinity:
         finf_pol = (x-y**2)
     else:
         finf_pol = x**n-y**2
 
     # Determine whether f is modular
-    if not ( (num.degree(z) > 0) or (denom.degree(z) > 0) ):
+    if not (num.degree(z) > 0 or denom.degree(z) > 0):
         analytic_type = analytic_type.reduce_to("mero")
 
     # Determine whether f is holomorphic
-    if (dhom(denom).is_constant()):
+    if dhom(denom).is_constant():
         analytic_type = analytic_type.reduce_to(["quasi", "holo"])
         # Determine whether f is cuspidal in the sense that finf divides it...
         # Bug in singular: finf_pol.divides(1.0) fails over RR
@@ -180,7 +180,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     else:
         # -> Because of a bug with singular in some cases
         try:
-            while (finf_pol.divides(denom)):
+            while finf_pol.divides(denom):
                 # a simple "denom /= finf_pol" is strangely not enough for non-exact rings
                 # and dividing would/may result with an element of the quotient ring of the polynomial ring
                 denom = denom.quo_rem(finf_pol)[0]

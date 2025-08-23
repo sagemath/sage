@@ -22,6 +22,7 @@ from logging import info, warning, debug, getLogger, INFO, DEBUG, WARNING
 from json import loads
 from enum import Enum
 from datetime import datetime, timedelta
+import subprocess
 from subprocess import check_output, CalledProcessError
 
 datetime_format = '%Y-%m-%dT%H:%M:%SZ'
@@ -609,7 +610,7 @@ class GhLabelSynchronizer:
         for com in coms:
             for auth in com['authors']:
                 login = auth['login']
-                if not login in authors:
+                if login not in authors:
                     if not self.is_this_bot(login) and login != author:
                         debug('PR %s has recent commit by %s' % (self._issue, login))
                         authors.append(login)
@@ -631,14 +632,16 @@ class GhLabelSynchronizer:
         issue = 'issue'
         if self._pr:
             issue = 'pr'
+        # workaround for gh bug https://github.com/cli/cli/issues/11055, it cannot deduce repo from url automatically
+        repo = '/'.join(self._url.split('/')[:5])
         if arg:
-            cmd_str = 'gh %s %s %s %s "%s"' % (issue, cmd, self._url, option, arg)
+            cmd_str = 'gh --repo %s %s %s %s %s "%s"' % (repo, issue, cmd, self._url, option, arg)
         else:
-            cmd_str = 'gh %s %s %s %s' % (issue, cmd, self._url, option)
+            cmd_str = 'gh --repo %s %s %s %s %s' % (repo, issue, cmd, self._url, option)
         debug('Execute command: %s' % cmd_str)
         ex_code = os.system(cmd_str)
         if ex_code:
-            warning('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
+            raise RuntimeError('Execution of %s failed with exit code: %s' % (cmd_str, ex_code))
 
     def edit(self, arg, option):
         r"""
@@ -746,7 +749,7 @@ class GhLabelSynchronizer:
         r"""
         Add the given label to the issue or PR.
         """
-        if not label in self.get_labels():
+        if label not in self.get_labels():
             self.edit(label, '--add-label')
             info('Add label to %s: %s' % (self._issue, label))
 

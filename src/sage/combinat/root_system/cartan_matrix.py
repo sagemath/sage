@@ -963,7 +963,7 @@ class CartanMatrix(Base, CartanType_abstract,
             sage: ct.cartan_matrix().coxeter_matrix() == ct.coxeter_matrix()
             True
         """
-        scalarproducts_to_order = {0: 2,  1: 3,  2: 4,  3: 6}
+        scalarproducts_to_order = {0: 2, 1: 3, 2: 4, 3: 6}
         from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
         I = self.index_set()
         n = len(I)

@@ -1393,7 +1393,7 @@ class FiniteWordPath_all(SageObject):
         if letters is None:
             letters = self.parent().alphabet()
         if color is None:
-            from sage.plot.all import hue
+            from sage.plot.colors import hue
             A = self.parent().alphabet()
             color = {a: hue(A.rank(a) / float(A.cardinality())) for a in A}
         it = self.projected_point_iterator(v, ring=ring)
@@ -1655,7 +1655,9 @@ class FiniteWordPath_2d(FiniteWordPath_all):
 
             See www.imagemagick.org, for example.
         """
-        from sage.plot.all import line, polygon, animate
+        from sage.plot.line import line
+        from sage.plot.polygon import polygon
+        from sage.plot.animate import animate
 
         pts = list(self.points())
 
@@ -1801,10 +1803,8 @@ class FiniteWordPath_2d(FiniteWordPath_all):
                 y_min = y
                 y_max = y
             else:
-                if y > y_max:
-                    y_max = y
-                if y < y_min:
-                    y_min = y
+                y_max = max(y, y_max)
+                y_min = min(y, y_min)
             h_vec.append(y_max - y_min)
         return h_vec
 
@@ -1866,10 +1866,8 @@ class FiniteWordPath_2d(FiniteWordPath_all):
                 x_min = x
                 x_max = x
             else:
-                if x > x_max:
-                    x_max = x
-                if x < x_min:
-                    x_min = x
+                x_max = max(x, x_max)
+                x_min = min(x, x_min)
             w_vec.append(x_max - x_min)
         return w_vec
 

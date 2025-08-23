@@ -1,3 +1,6 @@
+"""
+Utilities for Gross-Zagier L-series
+"""
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
@@ -14,7 +17,7 @@ from libc.string cimport memcpy
 
 cpdef to_series(L, var):
     """
-    Create a power series element out of a list ``L`` in the variable`` var``.
+    Create a power series element out of a list ``L`` in the variable ``var``.
 
     EXAMPLES::
 
@@ -42,7 +45,7 @@ def bqf_theta_series(Q, long bound, var=None):
 
     .. MATH::
 
-        \sum_{(x,y) \in \Z^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
+        \sum_{(x,y) \in \ZZ^2} q^{f(x,y)} = \sum_{n=-\infty}^{\infty} r(n)q^n
 
     where `r(n)` give the number of way `n` is represented by `f`.
 

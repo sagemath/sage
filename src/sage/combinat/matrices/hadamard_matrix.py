@@ -90,7 +90,6 @@ from sage.combinat.designs.difference_family import (get_fixed_relative_differen
                                                      skew_supplementary_difference_set,
                                                      complementary_difference_sets)
 from sage.combinat.t_sequences import T_sequences_smallcases
-from sage.cpython.string import bytes_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.matrix.constructor import (block_matrix,
@@ -320,6 +319,88 @@ def hadamard_matrix_paleyII(n):
     return normalise_hadamard(H)
 
 
+def hadamard_matrix_from_symmetric_conference_matrix(n, existence=False, check=True):
+    r"""
+    Construct a Hadamard matrix of order `n` from a symmetric conference matrix
+    of order `n/2`.
+
+    The construction is described in Theorem 4.3.24 of [IS2006]_.
+    The symmetric conference matrices are obtained from
+    :func:`sage.combinat.matrices.hadamard_matrix.symmetric_conference_matrix`.
+
+    INPUT:
+
+    - ``n`` -- integer; the order of the matrix to be constructed
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
+      the matrix exists
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
+      is a Hadamard before returning
+
+    OUTPUT:
+
+    If ``existence=False``, returns the Hadamard matrix of order `n`. It raises
+    an error if no data is available to construct the matrix of the given order,
+    or if `n` does not satisfies the constraints.
+    If ``existence=True``, returns a boolean representing whether the matrix
+    can be constructed or not.
+
+    EXAMPLES:
+
+    By default the function returns the Hadamard matrix ::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import hadamard_matrix_from_symmetric_conference_matrix
+        sage: hadamard_matrix_from_symmetric_conference_matrix(20)
+        20 x 20 dense matrix over Integer Ring...
+
+    If ``existence`` is set to True, the function returns True if the matrix exists,
+    False if the conference matrix does not exist, and Unknown if the conference
+    matrix cannot be constructed yet ::
+
+        sage: hadamard_matrix_from_symmetric_conference_matrix(12, existence=True)
+        True
+        sage: hadamard_matrix_from_symmetric_conference_matrix(4*787, existence=True)
+        True
+
+    TESTS::
+
+        sage: from sage.combinat.matrices.hadamard_matrix import is_hadamard_matrix
+        sage: is_hadamard_matrix(hadamard_matrix_from_symmetric_conference_matrix(60, check=False))
+        True
+        sage: hadamard_matrix_from_symmetric_conference_matrix(64, existence=True)
+        False
+        sage: hadamard_matrix_from_symmetric_conference_matrix(4*787, existence=True)
+        True
+        sage: hadamard_matrix_from_symmetric_conference_matrix(64)
+        Traceback (most recent call last):
+        ...
+        ValueError: Cannot construct Hadamard matrix of order 64, a symmetric conference matrix of order 32 is not available in sage.
+        sage: hadamard_matrix_from_symmetric_conference_matrix(14)
+        Traceback (most recent call last):
+        ...
+        ValueError: No Hadamard matrix of order 14 exists.
+    """
+    if n < 0 or n % 4 != 0:
+        raise ValueError(f'No Hadamard matrix of order {n} exists.')
+
+    m = n//2
+    exists = symmetric_conference_matrix(m, existence=True)
+
+    if existence:
+        return exists
+
+    if not exists:
+        raise ValueError(f'Cannot construct Hadamard matrix of order {n}, a symmetric conference matrix of order {m} is not available in sage.')
+
+    C = symmetric_conference_matrix(m)
+
+    H = block_matrix([[C + I(m), C - I(m)],
+                      [C - I(m), -C - I(m)]])
+
+    if check:
+        assert is_hadamard_matrix(H)
+    return H
+
+
 def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
     r"""
     Construct Hadamard matrix using the Miyamoto construction.
@@ -363,6 +444,10 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
         True
         sage: hadamard_matrix_miyamoto_construction(64, existence=True)
         False
+        sage: hadamard_matrix_miyamoto_construction(4*65, existence=True)
+        True
+        sage: is_hadamard_matrix(hadamard_matrix_miyamoto_construction(4*65, check=False))
+        True
         sage: hadamard_matrix_miyamoto_construction(64)
         Traceback (most recent call last):
         ...
@@ -377,14 +462,16 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     q = n // 4
     if existence:
-        return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True) is True
+        # return is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True) is True
+        return symmetric_conference_matrix(q+1, existence=True) and hadamard_matrix(q-1, existence=True) is True
 
-    if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
+    # if not (is_prime_power(q) and q % 4 == 1 and hadamard_matrix(q-1, existence=True)):
+    if not (symmetric_conference_matrix(q+1, existence=True) and hadamard_matrix(q-1, existence=True)):
         raise ValueError(f'The order {n} is not covered by Miyamoto construction.')
 
     m = (q-1) // 2
 
-    C = symmetric_conference_matrix_paley(q + 1)
+    C = symmetric_conference_matrix(q + 1)
 
     neg = [i for i in range(2, m+2) if C[1, i] == -1]
     pos = [i for i in range(m+2, 2*m+2) if C[1, i] == 1]
@@ -413,13 +500,13 @@ def hadamard_matrix_miyamoto_construction(n, existence=False, check=True):
 
     e = matrix([[1] * (2*m)])
     one = matrix([1])
-    H = block_matrix([[ one,       -e,  one,        e,  one,        e,  one,        e],
+    H = block_matrix([[ one, -e,  one,        e,  one,        e,  one,        e],
                       [-e.T,  T(0, 0),  e.T,  T(0, 1),  e.T,  T(0, 2),  e.T,  T(0, 3)],
-                      [-one,       -e,  one,       -e,  one,        e, -one,       -e],
+                      [-one, -e,  one, -e,  one,        e, -one, -e],
                       [-e.T, -T(1, 0), -e.T,  T(1, 1),  e.T,  T(1, 2), -e.T, -T(1, 3)],
-                      [-one,       -e, -one,       -e,  one,       -e,  one,        e],
+                      [-one, -e, -one, -e,  one, -e,  one,        e],
                       [-e.T, -T(2, 0), -e.T, -T(2, 1), -e.T,  T(2, 2),  e.T,  T(2, 3)],
-                      [-one,       -e,  one,        e, -one,       -e,  one,       -e],
+                      [-one, -e,  one,        e, -one, -e,  one, -e],
                       [-e.T, -T(3, 0),  e.T,  T(3, 1), -e.T, -T(3, 2), -e.T,  T(3, 3)]])
 
     if check:
@@ -502,7 +589,7 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     INPUT:
 
     - ``n`` -- integer; the order of the matrices to be returned
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we have the quadruple
 
     OUTPUT:
@@ -608,7 +695,7 @@ def williamson_hadamard_matrix_smallcases(n, existence=False, check=True):
     INPUT:
 
     - ``n`` -- integer; the order of the matrix
-    - ``existence`` -- boolean (dafault: ``False``); if ``True``, only check that
+    - ``existence`` -- boolean (default: ``False``); if ``True``, only check that
       we can do the construction
     - ``check`` -- boolean (default: ``True``); if ``True`` check the result
 
@@ -1027,7 +1114,7 @@ def hadamard_matrix_from_sds(n, existence=False, check=True):
 
 def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check=True):
     r"""
-    Create a Hadamard matrix using the contruction detailed in [CW1972]_.
+    Create a Hadamard matrix using the construction detailed in [CW1972]_.
 
     Given four circulant matrices `X_1`, X_2, X_3, X_4` of order `n` with entries (0, 1, -1)
     such that the entrywise product of two distinct matrices is always equal to `0` and that
@@ -1047,7 +1134,7 @@ def hadamard_matrix_cooper_wallis_construction(x1, x2, x3, x4, A, B, C, D, check
     - ``C`` -- the matrix described above
     - ``D`` -- the matrix described above
     - ``check`` -- boolean (default: ``True``); if ``True``, check that the resulting
-      matrix is Hadamard before returing it
+      matrix is Hadamard before returning it
 
     EXAMPLES::
 
@@ -1214,7 +1301,7 @@ def _get_baumert_hall_units(n, existence=False):
 
     - ``n`` -- integer; the size of the Baumert-Hall units
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check whether
-      the units can be contructed
+      the units can be constructed
 
     OUTPUT:
 
@@ -1415,7 +1502,7 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     - ``n`` -- integer; the order of the matrix to be constructed
     - ``existence`` -- boolean (default: ``False``); if ``True``, only check if
       the matrix exists
-    - ``check`` -- bolean (default: ``True``); if ``True``, check that the matrix
+    - ``check`` -- boolean (default: ``True``); if ``True``, check that the matrix
       is a Hadamard matrix before returning
 
     OUTPUT:
@@ -1481,9 +1568,9 @@ def hadamard_matrix_spence_construction(n, existence=False, check=True):
     m1 = matrix([-1])
     p1 = matrix([1])
     H = block_matrix([[  p1,   m1,   p1,   p1,     e,       e,       e,       e],
-                      [  p1,   p1,   m1,   p1,    -e,       e,      -e,       e],
-                      [  m1,   p1,   p1,   p1,    -e,       e,       e,      -e],
-                      [  m1,   m1,   m1,   p1,    -e,      -e,       e,       e],
+                      [  p1,   p1,   m1,   p1, -e,       e, -e,       e],
+                      [  m1,   p1,   p1,   p1, -e,       e,       e, -e],
+                      [  m1,   m1,   m1,   p1, -e, -e,       e,       e],
                       [-e.T,  e.T,  e.T, -e.T,    A1,    A2*P,    A3*P,    A4*P],
                       [-e.T, -e.T,  e.T,  e.T, -A2*P,      A1, -A4.T*P,  A3.T*P],
                       [-e.T, -e.T, -e.T, -e.T, -A3*P,  A4.T*P,      A1, -A2.T*P],
@@ -1818,6 +1905,11 @@ def hadamard_matrix(n, existence=False, check=True, construction_name=False):
         if existence:
             return report_name(name)
         M = regular_symmetric_hadamard_matrix_with_constant_diagonal(n, 1)
+    elif hadamard_matrix_from_symmetric_conference_matrix(n, existence=True) is True:
+        name = "Construction from symmetric conference matrix " + name
+        if existence:
+            return report_name(name)
+        M = hadamard_matrix_from_symmetric_conference_matrix(n, check=False)
     else:
         if existence:
             return Unknown
@@ -1871,7 +1963,7 @@ def hadamard_matrix_www(url_file, comments=False):
     rws = []
     url = "http://neilsloane.com/hadamard/" + url_file
     with urlopen(url) as f:
-        s = [bytes_to_str(line) for line in f.readlines()]
+        s = [line.decode() for line in f.readlines()]
     for i in range(n):
         line = s[i]
         rws.append([1 if line[j] == "+" else -1 for j in range(n)])
@@ -2302,7 +2394,7 @@ def williamson_goethals_seidel_skew_hadamard_matrix(a, b, c, d, check=True):
 
 def skew_hadamard_matrix_spence_construction(n, check=True):
     r"""
-    Construct skew Hadamard matrix of order `n` using Spence constrution.
+    Construct skew Hadamard matrix of order `n` using Spence construction.
 
     This function will construct skew Hadamard matrix of order `n=2(q+1)` where `q` is
     a prime power with `q = 5` (mod 8). The construction is taken from [Spe1977]_, and the
@@ -2349,7 +2441,7 @@ def skew_hadamard_matrix_spence_construction(n, check=True):
     G, D = relative_difference_set_from_homomorphism(q, 2, (q-1)//4, check=False, return_group=True)
     D_fixed = get_fixed_relative_difference_set(G, D)
     D_union = D_fixed + [q+1+el for el in D_fixed]
-    D_union = list(set([el % (4*(q+1)) for el in D_union]))
+    D_union = list({el % (4*(q+1)) for el in D_union})
 
     def find_a(i):
         for a in range(8):
@@ -3262,7 +3354,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True,
     return M
 
 
-def symmetric_conference_matrix(n, check=True):
+def symmetric_conference_matrix(n, check=True, existence=False):
     r"""
     Try to construct a symmetric conference matrix.
 
@@ -3279,6 +3371,8 @@ def symmetric_conference_matrix(n, check=True):
     - ``check`` -- boolean (default: ``True``); whether to check that output is
       correct before returning it. As this is expected to be useless, you may
       want to disable it whenever you want speed.
+    - ``existence`` -- boolean (default: ``False``); if true, only check that such
+      a matrix exists.
 
     EXAMPLES::
 
@@ -3299,9 +3393,11 @@ def symmetric_conference_matrix(n, check=True):
     """
     from sage.graphs.strongly_regular_db import strongly_regular_graph as srg
     try:
-        m = srg(n-1, (n-2)/2, (n-6)/4, (n-2)/4)
+        m = srg(n-1, (n-2)/2, (n-6)/4, (n-2)/4, existence=existence)
     except ValueError:
         raise
+    if existence:
+        return m
     C = matrix([0]+[1]*(n-1)).stack(matrix([1]*(n-1)).stack(m.seidel_adjacency_matrix()).T)
     if check:
         assert (C == C.T and C**2 == (n-1)*I(n))
@@ -3351,9 +3447,9 @@ def szekeres_difference_set_pair(m, check=True):
         from itertools import product, chain
         assert (len(A) == len(B) == m)
         if m > 1:
-            assert (sG == set([xy[0] / xy[1]
-                              for xy in chain(product(A, A), product(B, B))]))
-        assert (all(F.one() / b + F.one() in sG for b in B))
+            assert (sG == {xy[0] / xy[1]
+                           for xy in chain(product(A, A), product(B, B))})
+        assert all(F.one() / b + F.one() in sG for b in B)
         assert (not any(F.one() / a - F.one() in sG for a in A))
     return G, A, B
 
@@ -3452,10 +3548,10 @@ def rshcd_from_prime_power_and_conference_matrix(n):
         A_t_W = A.tensor_product(W)
         e_t_f = e.tensor_product(f)
         H = block_matrix([
-            [J(1, 1),                f,                      e_t_f,                  -e_t_f],
+            [J(1, 1),                f,                      e_t_f, -e_t_f],
             [f.T,                  J4m,     e.tensor_product(W-II),  e.tensor_product(W+II)],
             [ e_t_f.T, (e.T).tensor_product(W-II), A_t_W+JJ.tensor_product(II),         H34],
-            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T,      -A_t_W+JJ.tensor_product(II)]])
+            [-e_t_f.T, (e.T).tensor_product(W+II), H34.T, -A_t_W+JJ.tensor_product(II)]])
         return H
 
 

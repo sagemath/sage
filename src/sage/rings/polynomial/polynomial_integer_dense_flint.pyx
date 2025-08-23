@@ -55,7 +55,8 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
-from sage.libs.pari.all import pari, pari_gen
+from sage.libs.pari import pari
+from cypari2.gen cimport Gen as pari_gen
 from sage.structure.factorization import Factorization
 
 from sage.rings.fraction_field_element import FractionFieldElement
@@ -101,7 +102,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         This calls the underlying FLINT fmpz_poly constructor
         """
         fmpz_poly_init(self._poly)
-
 
     def __dealloc__(self):
         r"""
@@ -402,7 +402,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         cdef RealBall arb_a, arb_z
         cdef ComplexBall acb_a, acb_z
 
-        cdef unsigned long limbs
         cdef fmpz_t a_fmpz
         cdef fmpz_t z_fmpz
 
@@ -652,7 +651,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-
     cpdef _sub_(self, right):
         r"""
         Return ``self`` minus ``right``.
@@ -671,7 +669,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                 (<Polynomial_integer_dense_flint>right)._poly)
         sig_off()
         return x
-
 
     cpdef _neg_(self):
         r"""
@@ -834,7 +831,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-
     @coerce_binop
     def lcm(self, right):
         """
@@ -955,7 +951,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         else:
             return self._parent(rr), ss, tt
 
-
     cpdef _mul_(self, right):
         r"""
         Return ``self`` multiplied by ``right``.
@@ -1040,7 +1035,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-    def __pow__(Polynomial_integer_dense_flint self, exp, ignored):
+    def __pow__(Polynomial_integer_dense_flint self, exp, mod):
         """
         EXAMPLES::
 
@@ -1119,9 +1114,22 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             ...
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in R over Integer Ring to Rational Field
+
+        Check that using third argument raises an error::
+
+            sage: R.<x> = PolynomialRing(ZZ, implementation='FLINT')
+            sage: pow(x, 2, x)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: pow() with a modulus is not implemented for this ring
         """
         cdef long nn
         cdef Polynomial_integer_dense_flint res
+
+        if mod is not None:
+            raise NotImplementedError(
+                "pow() with a modulus is not implemented for this ring"
+            )
 
         try:
             nn = pyobject_to_long(exp)
@@ -1360,11 +1368,10 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         return real_roots(self)
 
-##     def __copy__(self):
-##         f = Polynomial_integer_dense(self.parent())
-##         f._poly = self._poly.copy()
-##         return f
-
+    #     def __copy__(self):
+    #         f = Polynomial_integer_dense(self.parent())
+    #         f._poly = self._poly.copy()
+    #         return f
 
     def degree(self, gen=None):
         """
@@ -1484,7 +1491,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         if variable is None:
             variable = self.parent().variable_name()
         return pari(self.list()).Polrev(variable)
-
 
     def squarefree_decomposition(Polynomial_integer_dense_flint self):
         """
@@ -1635,16 +1641,15 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: f = -30*x; f.factor()
             (-1) * 2 * 3 * 5 * x
         """
-        cdef int i
         cdef long deg = fmpz_poly_degree(self._poly)
         # it appears that pari has a window from about degrees 30 and 300
         # in which it beats NTL.
         c = self.content()
-        g = self//c
+        g = self // c
         if deg < 30 or deg > 300:
-            return c.factor()*g._factor_ntl()
+            return c.factor() * g._factor_ntl()
         else:
-            return c.factor()*g._factor_pari()
+            return c.factor() * g._factor_pari()
 
     def factor_mod(self, p):
         """
@@ -1742,7 +1747,6 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             []
         """
         return [self.get_unsafe(i) for i in range(self.degree()+1)]
-
 
     @coerce_binop
     def resultant(self, other, proof=True):

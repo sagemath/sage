@@ -15,11 +15,12 @@ EXAMPLES::
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 
 import sage.schemes.curves.projective_curve as projective_curve
+
 
 def is_QuarticCurve(C):
     """

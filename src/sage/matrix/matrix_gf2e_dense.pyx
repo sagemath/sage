@@ -284,6 +284,47 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Cache_base cache = <Cache_base> self._base_ring._cache
         return cache.fetch_int(r)
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        r"""
+        Copy the ``(iSrc, jSrc)`` entry of ``src`` into the ``(iDst, jDst)``
+        entry of ``self``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be a Matrix_gf2e_dense with
+                    the same base ring as ``self``.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+
+        TESTS::
+
+            sage: K.<z> = GF(512)
+            sage: m = matrix(K,3,4,[sum([(i//(2^j))%2 * z^j for j in range(4)]) for i in range(12)])
+            sage: m
+            [          0           1           z       z + 1]
+            [        z^2     z^2 + 1     z^2 + z z^2 + z + 1]
+            [        z^3     z^3 + 1     z^3 + z z^3 + z + 1]
+            sage: m.transpose()
+            [          0         z^2         z^3]
+            [          1     z^2 + 1     z^3 + 1]
+            [          z     z^2 + z     z^3 + z]
+            [      z + 1 z^2 + z + 1 z^3 + z + 1]
+            sage: m.matrix_from_rows([0,2])
+            [          0           1           z       z + 1]
+            [        z^3     z^3 + 1     z^3 + z z^3 + z + 1]
+            sage: m.matrix_from_columns([1,3])
+            [          1       z + 1]
+            [    z^2 + 1 z^2 + z + 1]
+            [    z^3 + 1 z^3 + z + 1]
+            sage: m.matrix_from_rows_and_columns([1,2],[0,3])
+            [        z^2 z^2 + z + 1]
+            [        z^3 z^3 + z + 1]
+        """
+        cdef Matrix_gf2e_dense _src = <Matrix_gf2e_dense>src
+        mzed_write_elem(self._entries, iDst, jDst, mzed_read_elem(_src._entries, iSrc, jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         r"""
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -443,7 +484,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         finite field is small, there is a very high chance that
         ``e * B[j]`` is computed more than once for any ``e`` in the finite
         field. Instead, we compute all possible
-        multiples of ``B[j]`` and re-use this data in the inner loop.
+        multiples of ``B[j]`` and reuse this data in the inner loop.
         This is what is called a "Newton-John" table in M4RIE.
 
         INPUT:
@@ -695,7 +736,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.list() == l  # indirect doctest
             True
         """
-        cdef int i,j
+        cdef Py_ssize_t i,j
         l = []
         for i from 0 <= i < self._nrows:
             for j from 0 <= j < self._ncols:
@@ -908,29 +949,29 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         if algorithm == 'naive':
             sig_on()
-            r =  mzed_echelonize_naive(self._entries, full)
+            r = mzed_echelonize_naive(self._entries, full)
             sig_off()
 
         elif algorithm == 'newton_john':
             sig_on()
-            r =  mzed_echelonize_newton_john(self._entries, full)
+            r = mzed_echelonize_newton_john(self._entries, full)
             sig_off()
 
         elif algorithm == 'ple':
             sig_on()
-            r =  mzed_echelonize_ple(self._entries, full)
+            r = mzed_echelonize_ple(self._entries, full)
             sig_off()
 
         elif algorithm == 'heuristic':
             sig_on()
-            r =  mzed_echelonize(self._entries, full)
+            r = mzed_echelonize(self._entries, full)
             sig_off()
 
         elif algorithm == 'builtin':
             self._echelon_in_place(algorithm='classical')
 
         else:
-            raise ValueError("No algorithm '%s'."%algorithm)
+            raise ValueError("No algorithm '%s'." % algorithm)
 
         self.cache('in_echelon_form',True)
         self.cache('rank', r)
@@ -1085,6 +1126,8 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: B[2] == A[2]
             True
         """
+        if self._ncols == 0:
+            return
         mzed_row_swap(self._entries, row1, row2)
 
     cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
@@ -1123,9 +1166,11 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: A.column(14) == B.column(0)
             True
         """
+        if self._nrows == 0:
+            return
         mzed_col_swap(self._entries, col1, col2)
 
-    def augment(self, Matrix_gf2e_dense right):
+    def augment(self, right):
         """
         Augments ``self`` with ``right``.
 
@@ -1167,21 +1212,50 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             sage: N = Matrix(K, 0, 1, 0)
             sage: M.augment(N)
             []
+
+            sage: A = matrix(K, 3, range(12))
+            sage: B = vector(QQ, [2,5/7,1.2]) # see issue: 38448
+            sage: A.augment(B).ncols()
+            5
+
+            sage: B = vector([])
+            sage: A.augment(B) == A
+            True
         """
+        cdef Matrix_gf2e_dense _right
         cdef Matrix_gf2e_dense A
 
-        if self._nrows != right._nrows:
+        if not isinstance(right, Matrix_gf2e_dense):
+            # See issue: #36761 - Allow Vectors to be augmented
+            if hasattr(right, '_vector_'):
+                rsize = len(right)
+                if rsize==0:
+                    return self.__copy__()
+                if self._nrows != rsize:
+                    raise TypeError("Both numbers of rows must match.")
+                if self.base_ring() is not right.base_ring():
+                    right = right.change_ring(self.base_ring())
+                from sage.matrix.matrix_space import MatrixSpace
+                M = MatrixSpace(self.base_ring(), nrows=rsize, ncols=1)
+                _right = <Matrix_gf2e_dense>(M(right))
+            else:
+                raise TypeError("a matrix must be augmented with another matrix, "
+                    "or a vector")
+        else:
+            _right = <Matrix_gf2e_dense>right
+
+        if self._nrows != _right._nrows:
             raise TypeError("Both numbers of rows must match.")
 
         if self._ncols == 0:
-            return right.__copy__()
-        if right._ncols == 0:
+            return _right.__copy__()
+        if _right._ncols == 0:
             return self.__copy__()
 
-        A = self.new_matrix(ncols = self._ncols + right._ncols)
+        A = self.new_matrix(ncols = self._ncols + _right._ncols)
         if self._nrows == 0:
             return A
-        A._entries = mzed_concat(A._entries, self._entries, right._entries)
+        A._entries = mzed_concat(A._entries, self._entries, _right._entries)
         return A
 
     cdef _stack_impl(self, bottom):
@@ -1298,18 +1372,18 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef int highc = col + ncols
 
         if row < 0:
-            raise TypeError("Expected row >= 0, but got %d instead."%row)
+            raise TypeError("Expected row >= 0, but got %d instead." % row)
 
         if col < 0:
-            raise TypeError("Expected col >= 0, but got %d instead."%col)
+            raise TypeError("Expected col >= 0, but got %d instead." % col)
 
         if highc > self._entries.ncols:
-            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead."%(highc, self._entries.ncols))
+            raise TypeError("Expected highc <= self.ncols(), but got %d > %d instead." % (highc, self._entries.ncols))
 
         if highr > self._entries.nrows:
-            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead."%(highr, self._entries.nrows))
+            raise TypeError("Expected highr <= self.nrows(), but got %d > %d instead." % (highr, self._entries.nrows))
 
-        cdef Matrix_gf2e_dense A = self.new_matrix(nrows = nrows, ncols = ncols)
+        cdef Matrix_gf2e_dense A = self.new_matrix(nrows=nrows, ncols=ncols)
         if ncols == 0 or nrows == 0:
             return A
         A._entries = mzed_submatrix(A._entries, self._entries, row, col, highr, highc)

@@ -373,7 +373,7 @@ cdef class GroebnerStrategy:
                 else:
                     constructed[f0.lsi] = set([f0])
                 G.append(f0)
-            # Find the degress of the new pairs
+            # Find the degrees of the new pairs
             for j in range(n, len(G)):
                 f1 = G[j]
                 p1 = f1.ls
@@ -437,6 +437,8 @@ cdef class GroebnerStrategy:
     def reduce_computed_gb(self):
         """
         Convert the computed Gröbner basis to a reduced Gröbner basis.
+
+        EXAMPLES::
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: I = E.ideal([x+y*z])

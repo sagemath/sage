@@ -14,6 +14,8 @@ from libc.string cimport memcpy
 from libc.stdlib cimport rand
 from sage.libs.gmp.mpz cimport *
 
+from cysignals.memory cimport sig_free
+
 
 cdef enum:
     # The following is for the automorphism group computation, says what the
@@ -79,7 +81,10 @@ cdef inline int OP_copy_from_to(OrbitPartition *OP, OrbitPartition *OP2) noexcep
     -   OP2.degree == OP.degree
     -   OP2.num_cells == OP.num_cells
     """
-    memcpy(OP2.parent, OP.parent, 4*OP.degree * sizeof(int) )
+    memcpy(OP2.parent, OP.parent, OP.degree * sizeof(int))
+    memcpy(OP2.rank, OP.rank, OP.degree * sizeof(int))
+    memcpy(OP2.mcr, OP.mcr, OP.degree * sizeof(int))
+    memcpy(OP2.size, OP.size, OP.degree * sizeof(int))
 
 cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     """
@@ -135,6 +140,8 @@ cdef inline void OP_join(OrbitPartition *OP, int m, int n) noexcept:
         OP.rank[m_root] += 1
     if m_root != n_root:
         OP.num_cells -= 1
+
+cdef void OP_make_set(OrbitPartition *OP) noexcept
 
 cdef inline int OP_merge_list_perm(OrbitPartition *OP, int *gamma) noexcept:
     """
@@ -522,7 +529,7 @@ cdef inline void SC_random_element(StabilizerChain *SC, int level, int *perm) no
     cdef int i, x, n = SC.degree
     SC_identify(perm, n)
     for i from level <= i < SC.base_size:
-        x = SC.base_orbits[i][rand()%SC.orbit_sizes[i]]
+        x = SC.base_orbits[i][rand() % SC.orbit_sizes[i]]
         SC_compose_up_to_base(SC, i, x, perm)
 
 cdef int compute_relabeling(StabilizerChain *group,

@@ -16,6 +16,7 @@ from .cuspidal_submodule import CuspidalSubmodule_R
 from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 
+
 class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
     def __init__(self, M, base_ring):
         """
@@ -38,7 +39,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         ambient.ModularFormsAmbient.__init__(self, M.group(), M.weight(), base_ring, M.character(), M._eis_only)
 
     @cached_method(key=lambda self,sign: ZZ(sign)) # convert sign to an Integer before looking this up in the cache
-    def modular_symbols(self,sign=0):
+    def modular_symbols(self, sign=0):
         r"""
         Return the space of modular symbols attached to this space, with the given sign (default 0).
 

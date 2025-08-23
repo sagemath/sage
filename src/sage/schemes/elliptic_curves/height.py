@@ -514,6 +514,7 @@ def nonneg_region(f):
         sign_changes += [infinity]
     return UnionOfIntervals(sign_changes)
 
+
 def inf_max_abs(f, g, D):
     r"""
     Return `\inf_D(\max(|f|, |g|))`.
@@ -1754,9 +1755,7 @@ class EllipticCurveCanonicalHeight:
                     start, end = z00, z11
                 else:
                     start, end = z01, z10
-                if wp(start) > B and wp(end) > B:
-                    return True
-                return False
+                return wp(start) > B and wp(end) > B
 
             # This step here is the bottleneck.
             while not T.verify(check_line):

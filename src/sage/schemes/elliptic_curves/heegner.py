@@ -138,6 +138,7 @@ lazy_import('sage.rings.real_mpfr', 'RealField')
 #
 ###############################################################################
 
+
 def heegner_points(N, D=None, c=None):
     """
     Return all Heegner points of given level `N`.  Can also restrict
@@ -448,7 +449,7 @@ class RingClassField(SageObject):
         """
         c = self.__c
         if c == 1:
-            return ZZ(1)
+            return ZZ.one()
 
         # Let K_c be the ring class field.  We have by class field theory that
         #           Gal(K_c / H) = (O_K / c O_K)^* / ((Z/cZ)^* M),
@@ -596,6 +597,7 @@ class RingClassField(SageObject):
 # Galois groups of ring class fields
 #
 ##################################################################################
+
 
 class GaloisGroup(SageObject):
     """
@@ -1147,10 +1149,7 @@ class GaloisGroup(SageObject):
             return False
         if not c.is_squarefree():
             return False
-        for p in c.prime_divisors():
-            if not is_inert(D,p):
-                return False
-        return True
+        return all(is_inert(D, p) for p in c.prime_divisors())
 
     def _base_is_hilbert_class_field(self):
         """
@@ -1175,7 +1174,7 @@ class GaloisGroup(SageObject):
         """
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-7,5).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-7,5).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[0]
             Class field automorphism defined by x^2 + x*y + 44*y^2
@@ -1386,17 +1385,17 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         return "Complex conjugation automorphism of %s" % self.domain()
 
-##     def __mul__(self, right):
-##         """
-##         Return the composition of two automorphisms.
+#     def __mul__(self, right):
+#         """
+#         Return the composition of two automorphisms.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: ?
-##         """
-##         if self.parent() != right.__parent():
-##             raise TypeError, "automorphisms must be of the same class field"
-##         raise NotImplementedError
+#             sage: ?
+#         """
+#         if self.parent() != right.__parent():
+#             raise TypeError("automorphisms must be of the same class field")
+#         raise NotImplementedError
 
     def __invert__(self):
         """
@@ -1664,7 +1663,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve('389a'); F= E.heegner_point(-20,3).ring_class_field()
+            sage: E = EllipticCurve('389a'); F = E.heegner_point(-20,3).ring_class_field()
             sage: G = F.galois_group(F.quadratic_field())
             sage: G[1].ideal()
             Fractional ideal (2, 1/2*sqrt_minus_20 + 1)
@@ -1677,7 +1676,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
         f = self.quadratic_form()
         c = M.conductor()
         sqrtD = K.gen()
-        (A,B,C) = f
+        A, B, C = f
         if A % c == 0:
             A, C = C, A
         return K.fractional_ideal([A, (-B+c*sqrtD)/2])
@@ -1704,7 +1703,7 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
 ##         """
 ##         if isinstance(z, HeegnerPointOnX0N):
 ##             if z.ring_class_field() != self.domain():
-##                 raise NotImplementedError, "class fields must be the same"
+##                 raise NotImplementedError("class fields must be the same")
 ##             # TODO -- check more compatibilities?
 ##             # TODO -- this is surely backwards -- something must be inverted?
 ##             f = z.quadratic_form() * self.quadratic_form()
@@ -2110,6 +2109,7 @@ class HeegnerPoints_level(HeegnerPoints):
                     continue
                 v.append(D)
         return v
+
 
 class HeegnerPoints_level_disc(HeegnerPoints):
     """
@@ -2982,7 +2982,7 @@ class HeegnerPointOnX0N(HeegnerPoint):
             sage: heegner_point(389,-7,1).plot(pointsize=50)
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import point
+        from sage.plot.point import point
         return point(CDF(self.tau()), **kwds)
 
 
@@ -3352,7 +3352,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
         the discriminant below is strong confirmation -- but not proof
         -- that this polynomial is correct::
 
-            sage: f = P.numerical_approx(70)[0].algdep(6); f
+            sage: f = P.numerical_approx(70)[0].algebraic_dependency(6); f
             1225*x^6 + 1750*x^5 - 21675*x^4 - 380*x^3 + 110180*x^2 - 129720*x + 48771
             sage: f.discriminant().factor()
             2^6 * 3^2 * 5^11 * 7^4 * 13^2 * 19^6 * 199^2 * 719^2 * 26161^2
@@ -3457,7 +3457,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 
         if algorithm == 'lll':
             P = self.numerical_approx(prec)
-            f = P[0].algdep(n)
+            f = P[0].algebraic_dependency(n)
             if f.is_irreducible() and self._check_poly_discriminant(f):
                 return f.monic()
             else:
@@ -3540,7 +3540,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: z = P.point_exact(200, optimize=True)
             sage: z[1].charpoly()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
-            sage: f = P.numerical_approx(500)[1].algdep(12); f / f.leading_coefficient()
+            sage: f = P.numerical_approx(500)[1].algebraic_dependency(12); f / f.leading_coefficient()
             x^12 + 6*x^11 + 90089/1715*x^10 + 71224/343*x^9 + 52563964/588245*x^8 - 483814934/588245*x^7 - 156744579/16807*x^6 - 2041518032/84035*x^5 + 1259355443184/14706125*x^4 + 3094420220918/14706125*x^3 + 123060442043827/367653125*x^2 + 82963044474852/367653125*x + 211679465261391/1838265625
 
             sage: E = EllipticCurve('5077a')
@@ -4003,6 +4003,8 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
 #########################################################################################
 # Kolyvagin Points P_c
 #########################################################################################
+
+
 class KolyvaginPoint(HeegnerPoint):
     """
     A Kolyvagin point.
@@ -4218,13 +4220,14 @@ class KolyvaginPoint(HeegnerPoint):
             if E.root_number() == -1:
                 return self._recognize_point_over_QQ(P, 2*self.index())
             else:
-                # root number +1.  We use algdep to recognize the x
+                # root number +1.  We use algebraic_dependency
+                # to recognize the x
                 # coordinate, stick it in the appropriate quadratic
                 # field, then make sure that we got the right
                 # embedding, and if not fix things so we do.
                 x = P[0]
                 C = x.parent()
-                f = x.algdep(2)
+                f = x.algebraic_dependency(2)
                 K = self.quadratic_field()
                 roots = [r[0] for r in f.roots(K)]
                 if not roots:
@@ -4274,11 +4277,12 @@ class KolyvaginPoint(HeegnerPoint):
         E = self.curve()
         if E.root_number() == -1:
             P = self.numerical_approx(prec=prec)
-            from sage.plot.all import point, Graphics
+            from sage.plot.point import point
+            from sage.plot.graphics import Graphics
             if not P:
                 # point at infinity
                 return Graphics()
-            return point((P[0].real(), P[1].real()),*args, **kwds)
+            return point((P[0].real(), P[1].real()), *args, **kwds)
         else:
             raise NotImplementedError
 
@@ -4612,6 +4616,7 @@ class KolyvaginCohomologyClass(SageObject):
         """
         return self.__kolyvagin_point.heegner_point()
 
+
 class KolyvaginCohomologyClassEn(KolyvaginCohomologyClass):
     def _repr_(self):
         """
@@ -4769,9 +4774,7 @@ class HeegnerQuatAlg(SageObject):
             return False
         if not satisfies_weak_heegner_hypothesis(self.__level, D):
             return False
-        if not is_inert(D, self.__ell):
-            return False
-        return True
+        return is_inert(D, self.__ell)
 
     def heegner_discriminants(self, n=5):
         r"""
@@ -4904,8 +4907,8 @@ class HeegnerQuatAlg(SageObject):
         EXAMPLES::
 
             sage: heegner_points(11).reduce_mod(3).right_ideals()
-            (Fractional ideal (2 + 2*j + 28*k, 2*i + 26*k, 4*j + 12*k, 44*k),
-             Fractional ideal (2 + 2*j + 28*k, 2*i + 4*j + 38*k, 8*j + 24*k, 88*k))
+            (Fractional ideal (4, 44*i, 2 + 8*i + 2*j, 34*i + 2*k),
+             Fractional ideal (8, 88*i, 2 + 52*i + 2*j, 4 + 78*i + 2*k))
         """
         return self.brandt_module().right_ideals()
 
@@ -5135,14 +5138,10 @@ class HeegnerQuatAlg(SageObject):
             sage: H = heegner_points(11).reduce_mod(7)
             sage: I = H.brandt_module().right_ideals()[0]
             sage: sorted(H.cyclic_subideal_p1(I, 3).items())
-            [((0, 1),
-              Fractional ideal (2 + 2*j + 32*k, 2*i + 8*j + 82*k, 12*j + 60*k, 132*k)),
-             ((1, 0),
-              Fractional ideal (2 + 10*j + 28*k, 2*i + 4*j + 62*k, 12*j + 60*k, 132*k)),
-             ((1, 1),
-              Fractional ideal (2 + 2*j + 76*k, 2*i + 4*j + 106*k, 12*j + 60*k, 132*k)),
-             ((1, 2),
-              Fractional ideal (2 + 10*j + 116*k, 2*i + 8*j + 38*k, 12*j + 60*k, 132*k))]
+            [((0, 1), Fractional ideal (12, 132*i, 10 + 76*i + 2*j, 4 + 86*i + 2*k)),
+             ((1, 0), Fractional ideal (12, 132*i, 2 + 32*i + 2*j, 8 + 130*i + 2*k)),
+             ((1, 1), Fractional ideal (12, 132*i, 10 + 32*i + 2*j, 8 + 86*i + 2*k)),
+             ((1, 2), Fractional ideal (12, 132*i, 2 + 76*i + 2*j, 4 + 130*i + 2*k))]
             sage: len(H.cyclic_subideal_p1(I, 17))
             18
         """
@@ -5267,24 +5266,12 @@ class HeegnerQuatAlg(SageObject):
             sage: alpha_quaternion = f(g[0]); alpha_quaternion
             1 - 77/192*i - 5/128*j - 137/384*k
             sage: H.kolyvagin_cyclic_subideals(I, 5, alpha_quaternion)
-            [(Fractional ideal (2 + 2/3*i + 364*j + 231928/3*k,
-                                4/3*i + 946*j + 69338/3*k,
-                                1280*j + 49920*k, 94720*k), 0),
-             (Fractional ideal (2 + 2/3*i + 108*j + 31480/3*k,
-                                4/3*i + 434*j + 123098/3*k,
-                                1280*j + 49920*k, 94720*k), 1),
-             (Fractional ideal (2 + 2/3*i + 876*j + 7672/3*k,
-                                4/3*i + 434*j + 236762/3*k,
-                                1280*j + 49920*k, 94720*k), 2),
-             (Fractional ideal (2 + 2/3*i + 364*j + 61432/3*k,
-                                4/3*i + 178*j + 206810/3*k,
-                                1280*j + 49920*k, 94720*k), 3),
-             (Fractional ideal (2 + 2/3*i + 876*j + 178168/3*k,
-                                4/3*i + 1202*j + 99290/3*k,
-                                1280*j + 49920*k, 94720*k), 4),
-             (Fractional ideal (2 + 2/3*i + 1132*j + 208120/3*k,
-                                4/3*i + 946*j + 183002/3*k,
-                                1280*j + 49920*k, 94720*k), 5)]
+            [(Fractional ideal (2560, 1280 + 47360*i, 1146 + 37678*i + 4*j, 212 + 54664/3*i + 2*j + 2/3*k), 0),
+             (Fractional ideal (2560, 1280 + 47360*i, 2426 + 9262*i + 4*j, 2004 + 83080/3*i + 2*j + 2/3*k), 1),
+             (Fractional ideal (2560, 1280 + 47360*i, 1914 + 9262*i + 4*j, 1748 + 111496/3*i + 2*j + 2/3*k), 2),
+             (Fractional ideal (2560, 1280 + 47360*i, 2170 + 18734*i + 4*j, 212 + 111496/3*i + 2*j + 2/3*k), 3),
+             (Fractional ideal (2560, 1280 + 47360*i, 890 + 28206*i + 4*j, 1748 + 54664/3*i + 2*j + 2/3*k), 4),
+             (Fractional ideal (2560, 1280 + 47360*i, 634 + 37678*i + 4*j, 2516 + 83080/3*i + 2*j + 2/3*k), 5)]
         """
         X = I.cyclic_right_subideals(p, alpha_quaternion)
         return [(J, i) for i, J in enumerate(X)]
@@ -5630,6 +5617,7 @@ class HeegnerQuatAlg(SageObject):
         V = self.modp_dual_elliptic_curve_factor(E, p, bound)
         return [b.dot_product(k.element().change_ring(GF(p))) for b in V.basis()]
 
+
 def kolyvagin_reduction_data(E, q, first_only=True):
     r"""
     Given an elliptic curve of positive rank and a prime `q`, this
@@ -5835,6 +5823,7 @@ def kolyvagin_reduction_data(E, q, first_only=True):
     return (ell_1, ell_2, D, class_number(D),
             BrandtModule(ell_1,N).dimension(),
             BrandtModule(ell_2,N).dimension())
+
 
 class HeegnerQuatAlgEmbedding(SageObject):
     r"""
@@ -6119,6 +6108,7 @@ def quadratic_order(D, c, names='a'):
     R = K.order([t])
     return R, R(t)
 
+
 def class_number(D):
     """
     Return the class number of the quadratic field with fundamental
@@ -6149,6 +6139,7 @@ def class_number(D):
         raise ValueError("D (=%s) must be a fundamental discriminant" % D)
     return D.class_number()
 
+
 def is_inert(D, p):
     r"""
     Return ``True`` if p is an inert prime in the field `\QQ(\sqrt{D})`.
@@ -6171,6 +6162,7 @@ def is_inert(D, p):
     K = QuadraticField(D,'a')
     F = K.factor(p)
     return len(F) == 1 and F[0][1] == 1
+
 
 def is_split(D, p):
     r"""
@@ -6195,6 +6187,7 @@ def is_split(D, p):
     F = K.factor(p)
     return len(F) == 2
 
+
 def is_ramified(D, p):
     r"""
     Return ``True`` if p is a ramified prime in the field `\QQ(\sqrt{D})`.
@@ -6215,6 +6208,7 @@ def is_ramified(D, p):
         True
     """
     return QuadraticField(D,'a').discriminant() % p == 0
+
 
 def nearby_rational_poly(f, **kwds):
     r"""
@@ -6241,6 +6235,7 @@ def nearby_rational_poly(f, **kwds):
     R = QQ['X']
     return R([a.nearby_rational(**kwds) for a in f])
 
+
 def simplest_rational_poly(f, prec):
     """
     Return a polynomial whose coefficients are as simple as possible
@@ -6262,6 +6257,7 @@ def simplest_rational_poly(f, prec):
     R = QQ['X']
     Z = RealField(prec)
     return R([Z(a).simplest_rational() for a in f])
+
 
 def satisfies_weak_heegner_hypothesis(N, D):
     r"""
@@ -6415,7 +6411,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     Working out the details manually::
 
         sage: P = E.heegner_point(-47).numerical_approx(prec=200)
-        sage: f = algdep(P[0], 5); f
+        sage: f = algebraic_dependency(P[0], 5); f
         x^5 - x^4 + x^3 + x^2 - 2*x + 1
         sage: f.discriminant().factor()
         47^2
@@ -6437,6 +6433,7 @@ def ell_heegner_point(self, D, c=ZZ(1), f=None, check=True):
     """
     y = HeegnerPointOnX0N(self.conductor(), D, c, f, check=check)
     return y.map_to_curve(self)
+
 
 def kolyvagin_point(self, D, c=ZZ(1), check=True):
     r"""
@@ -6469,6 +6466,7 @@ def kolyvagin_point(self, D, c=ZZ(1), check=True):
         (6 : -15 : 1)
     """
     return self.heegner_point(D,c,check=check).kolyvagin_point()
+
 
 def ell_heegner_discriminants(self, bound):
     """
@@ -6518,6 +6516,7 @@ def ell_heegner_discriminants_list(self, n):
         v.append(D)
         D -= 1
     return v
+
 
 def heegner_point_height(self, D, prec=2, check_rank=True):
     r"""
@@ -7050,6 +7049,7 @@ def _heegner_index_in_EK(self, D):
     self.__heegner_index_in_EK[D] = index
     return index
 
+
 def heegner_sha_an(self, D, prec=53):
     r"""
     Return the conjectural (analytic) order of Sha for E over the field `K=\QQ(\sqrt{D})`.
@@ -7261,6 +7261,7 @@ def _heegner_forms_list(self, D, beta=None, expected_count=None):
                     return all
         b += 2*N
 
+
 def _heegner_best_tau(self, D, prec=None):
     r"""
     Given a discriminant `D`, find the Heegner point `\tau` in the
@@ -7285,6 +7286,7 @@ def _heegner_best_tau(self, D, prec=None):
     # TODO: make sure a different choice of b is not better?
     return (-b + ZZ(D).sqrt(prec=prec)) / (2*N)
 
+
 def satisfies_heegner_hypothesis(self, D):
     """
     Return ``True`` precisely when `D` is a fundamental discriminant that
@@ -7305,10 +7307,7 @@ def satisfies_heegner_hypothesis(self, D):
         return False
     if D.gcd(self.conductor()) != 1:
         return False
-    for p, _ in self.conductor().factor():
-        if D.kronecker(p) != 1:
-            return False
-    return True
+    return all(D.kronecker(p) == 1 for p, _ in self.conductor().factor())
 
 
 #####################################################################

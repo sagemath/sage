@@ -2,14 +2,14 @@
 r"""
 Tools for enumeration modulo the action of a permutation group
 """
-#*****************************************************************************
+# ***************************************************************************
 #    Copyright (C) 2010-12 Nicolas Borie <nicolas.borie at math dot u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #              The full text of the GPL is available at:
-#                    http://www.gnu.org/licenses/
-#*****************************************************************************
+#                    https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.groups.perm_gps.permgroup_element cimport PermutationGroupElement
 
@@ -121,7 +121,7 @@ cpdef int lex_cmp(ClonableIntArray v1, ClonableIntArray v2) noexcept:
         1
     """
     cdef int i
-    cdef int step = min(v1._len,v2._len)
+    cdef int step = min(v1._len, v2._len)
     for i in range(step):
         if v1._list[i] != v2._list[i]:
             break

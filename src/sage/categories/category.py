@@ -103,19 +103,24 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
 # ****************************************************************************
 
 import inspect
+from typing import Self
 from warnings import warn
+
+from sage.categories.category_cy_helper import (
+    _flatten_categories,
+    _sort_uniq,
+    category_sort_key,
+    join_as_tuple,
+)
 from sage.misc.abstract_method import abstract_method, abstract_methods_of_class
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.c3_controlled import _cmp_key, _cmp_key_named, C3_sorted_merge
+from sage.misc.c3_controlled import C3_sorted_merge, _cmp_key, _cmp_key_named
+from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.unknown import Unknown
 from sage.misc.weak_dict import WeakValueDictionary
-
+from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.dynamic_class import DynamicMetaclass, dynamic_class
-
-from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _flatten_categories, join_as_tuple
 
 _join_cache = WeakValueDictionary()
 
@@ -173,7 +178,7 @@ class Category(UniqueRepresentation, SageObject):
         ....:          pass
         ....:
         ....:     class ElementMethods:# holds the generic operations on elements
-        ....:          def gcd(x,y):
+        ....:          def gcd(x, y):
         ....:              # Euclid algorithms
         ....:              pass
         ....:
@@ -943,6 +948,22 @@ class Category(UniqueRepresentation, SageObject):
             appropriate. Simply because lazy attributes are much
             faster than any method.
 
+        .. NOTE::
+
+            This is not the same as the concept of super category in mathematics.
+            In fact, this is not even the opposite relation of :meth:`is_subcategory`::
+
+                sage: A = VectorSpaces(QQ); A
+                Category of vector spaces over Rational Field
+                sage: B = VectorSpaces(QQ.category()); B
+                Category of vector spaces over (number fields and quotient fields and metric spaces)
+                sage: A.is_subcategory(B)
+                True
+                sage: B in A.all_super_categories()
+                False
+
+        .. SEEALSO:: :meth:`_test_category_graph`
+
         EXAMPLES::
 
             sage: C = Rings(); C
@@ -1029,7 +1050,7 @@ class Category(UniqueRepresentation, SageObject):
     # Methods handling of full subcategories
     ##########################################################################
 
-    def additional_structure(self):
+    def additional_structure(self) -> Self:
         """
         Return whether ``self`` defines additional structure.
 
@@ -1379,7 +1400,16 @@ class Category(UniqueRepresentation, SageObject):
             method resolution order of the parent and element
             classes. This method checks this.
 
-        .. TODO:: currently, this won't work for hom categories.
+        Note that if
+        :meth:`~sage.structure.category_object.CategoryObject._refine_category_`
+        is called at unexpected times, the invariant might be false. Most
+        commonly, this happens with rings like ``Zmod(n)`` or ``SR``, where
+        a check like ``Zmod(n) in Fields()`` is needed (which checks the primality
+        of `n`) to refine their category to be a subcategory of fields.
+
+        .. SEEALSO::
+
+            :meth:`CategoryWithParameters._make_named_class_key`
 
         EXAMPLES::
 
@@ -1615,6 +1645,11 @@ class Category(UniqueRepresentation, SageObject):
             sage: isinstance(AlgebrasWithBasis(QQ), cls)
             True
 
+        .. NOTE::
+
+            See the note about :meth:`_test_category_graph` regarding Python
+            class hierarchy.
+
         TESTS::
 
             sage: cls = Algebras(QQ).subcategory_class; cls
@@ -1667,6 +1702,11 @@ class Category(UniqueRepresentation, SageObject):
         :class:`~sage.categories.bimodules.Bimodules`,
         :class:`~sage.categories.category_types.Category_over_base` and
         :class:`sage.categories.category.JoinCategory`.
+
+        .. NOTE::
+
+            See the note about :meth:`_test_category_graph` regarding Python
+            class hierarchy.
         """
         return self._make_named_class('parent_class', 'ParentMethods')
 
@@ -1713,6 +1753,11 @@ class Category(UniqueRepresentation, SageObject):
             0
 
         .. SEEALSO:: :meth:`parent_class`
+
+        .. NOTE::
+
+            See the note about :meth:`_test_category_graph` regarding Python
+            class hierarchy.
         """
         return self._make_named_class('element_class', 'ElementMethods')
 
@@ -1757,7 +1802,7 @@ class Category(UniqueRepresentation, SageObject):
     # Operations on the lattice of categories
     def is_subcategory(self, c):
         """
-        Return ``True`` if ``self`` is naturally embedded as a subcategory of `c`.
+        Return ``True`` if there is a natural forgetful functor from ``self`` to `c`.
 
         EXAMPLES::
 
@@ -2046,13 +2091,18 @@ class Category(UniqueRepresentation, SageObject):
         Return the subcategory of the objects of ``self`` satisfying
         the given ``axiom``.
 
+        Note that this is a private method thus should not be directly
+        used, see below.
+
         INPUT:
 
         - ``axiom`` -- string, the name of an axiom
 
         EXAMPLES::
 
-            sage: Sets()._with_axiom("Finite")
+            sage: Sets()._with_axiom("Finite")  # not idiomatic
+            Category of finite sets
+            sage: Sets().Finite()  # recommended
             Category of finite sets
 
             sage: type(Magmas().Finite().Commutative())
@@ -2068,7 +2118,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: Sets()._with_axiom("Associative")
             Category of sets
 
-        .. WARNING:: This may be changed in the future to raising an error.
+        .. WARNING:: This may be changed in the future to raise an error.
         """
         return Category.join(self._with_axiom_as_tuple(axiom))
 
@@ -2169,7 +2219,7 @@ class Category(UniqueRepresentation, SageObject):
         else:
             raise ValueError("Cannot remove axiom {} from {}".format(axiom, self))
 
-    def _without_axioms(self, named=False):
+    def _without_axioms(self, named=False) -> Self:
         r"""
         Return the category without the axioms that have been added
         to create it.
@@ -2718,6 +2768,10 @@ class CategoryWithParameters(Category):
 
         It is assumed that this method is only called from a lazy
         attribute whose name coincides with the given ``name``.
+        Currently, this means :meth:`Category.subcategory_class`,
+        :meth:`Category.parent_class` or :meth:`element_class`.
+
+        Subclasses need to implement :meth:`_make_named_class_key`.
 
         OUTPUT:
 
@@ -2810,6 +2864,10 @@ class CategoryWithParameters(Category):
             pass
         result = Category._make_named_class(self, name, method_provider,
                                             cache=cache, **options)
+        if key[2] != self._make_named_class_key(name):
+            # the object in the parameter may have had its category refined, which might modify the key
+            # throw result away and recompute
+            return self._make_named_class(name, method_provider, cache=cache, **options)
         self._make_named_class_cache[key] = result
         return result
 
@@ -2817,6 +2875,50 @@ class CategoryWithParameters(Category):
     def _make_named_class_key(self, name):
         r"""
         Return what the element/parent/... class depend on.
+
+        This method starts as an optimization to allow different related
+        categories to share the Python types, see :issue:`11935`.
+        However, because of the guarantees stated in :meth:`Category._test_category_graph`,
+        the following rules must be followed.
+
+        - If two categories have different lists of supercategories, they must return
+          different keys::
+
+            sage: Zmod(5) in Fields()
+            True
+            sage: Algebras(Zmod(5)).all_super_categories()
+            [..., Category of vector spaces over Ring of integers modulo 5, ...]
+            sage: Zmod(6) in Fields()
+            False
+            sage: Algebras(Zmod(6)).all_super_categories()  # of course don't have category of vector spaces
+            [..., Category of modules over Ring of integers modulo 6, ...]
+            sage: # therefore:
+            sage: Algebras(Zmod(5))._make_named_class_key("parent_class") != Algebras(Zmod(6))._make_named_class_key("parent_class")
+            True
+            sage: Algebras(Zmod(5)).parent_class != Algebras(Zmod(6)).parent_class
+            True
+
+        - If category ``A`` is a supercategory of category ``B``,
+          and category ``B`` uses the optimization, then so must ``A``.
+
+          For example, ``Modules(ZZ)`` is a supercategory of ``Algebras(ZZ)``,
+          and ``Algebras(ZZ)`` implements the optimization::
+
+            sage: from sage.categories.category import CategoryWithParameters
+            sage: isinstance(Algebras(ZZ), CategoryWithParameters)
+            True
+            sage: Algebras(ZZ).parent_class is Algebras(ZZ.category()).parent_class
+            True
+            sage: Modules(ZZ) in Algebras(ZZ).all_super_categories()
+            True
+
+          This forces ``Modules(ZZ)`` to also implement the optimization::
+
+            sage: Modules(ZZ).parent_class is Modules(ZZ.category()).parent_class
+            True
+
+        As a complication, computing the exact category might require some potentially
+        expensive test. See :meth:`Category._test_category_graph` for more details.
 
         INPUT:
 
@@ -2826,6 +2928,9 @@ class CategoryWithParameters(Category):
         .. SEEALSO::
 
             - :meth:`_make_named_class`
+
+            The following can be read for typical implementations of this method.
+
             - :meth:`sage.categories.category_types.Category_over_base._make_named_class_key`
             - :meth:`sage.categories.bimodules.Bimodules._make_named_class_key`
             - :meth:`JoinCategory._make_named_class_key`
@@ -3064,6 +3169,9 @@ class JoinCategory(CategoryWithParameters):
         """
         Return the category obtained by adding an axiom to ``self``.
 
+        As mentioned in :meth:`Category._with_axiom`, this method should not be used directly
+        except in internal code.
+
         .. NOTE::
 
             This is just an optimization of
@@ -3073,7 +3181,9 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: C = Category.join([Monoids(), Posets()])
-            sage: C._with_axioms(["Finite"])
+            sage: C._with_axioms(["Finite"])  # not idiomatic
+            Join of Category of finite monoids and Category of finite posets
+            sage: C.Finite()  # recommended
             Join of Category of finite monoids and Category of finite posets
 
         TESTS:

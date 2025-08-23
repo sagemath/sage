@@ -32,7 +32,6 @@ Base class for polyhedra: Miscellaneous methods
 
 from sage.misc.cachefunc import cached_method
 
-import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
@@ -584,7 +583,7 @@ class Polyhedron_base(Polyhedron_base7):
         for vertex in affine_basis:
             vertex_vector = vertex.vector()
             raw_data += [[sum(i**2 for i in vertex_vector)] +
-                         [i for i in vertex_vector] + [1]]
+                         list(vertex_vector) + [1]]
         matrix_data = matrix(raw_data)
 
         # The determinant "a" should not be zero because
@@ -918,8 +917,8 @@ class Polyhedron_base(Polyhedron_base7):
 
                 normal_vector = sum(normal_vectors)
                 B = - normal_vector * (face_vertices[0].vector())
-                linear_evaluation = set([-normal_vector * (v.vector())
-                                         for v in polar.vertices()])
+                linear_evaluation = {-normal_vector * v.vector()
+                                     for v in polar.vertices()}
 
                 if B == max(linear_evaluation):
                     C = max(linear_evaluation.difference(set([B])))

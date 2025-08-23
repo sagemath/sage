@@ -307,6 +307,11 @@ def runsphinx():
     saved_stdout = sys.stdout
     saved_stderr = sys.stderr
 
+    if not sys.warnoptions:
+        import warnings
+        original_filters = warnings.filters[:]
+        warnings.filterwarnings("ignore", category=DeprecationWarning, module='sphinx.util.inspect')
+
     try:
         sys.stdout = SageSphinxLogger(sys.stdout, os.path.basename(output_dir))
         sys.stderr = SageSphinxLogger(sys.stderr, os.path.basename(output_dir))
@@ -323,3 +328,6 @@ def runsphinx():
         sys.stderr = saved_stderr
         sys.stdout.flush()
         sys.stderr.flush()
+
+    if not sys.warnoptions:
+        warnings.filters = original_filters[:]

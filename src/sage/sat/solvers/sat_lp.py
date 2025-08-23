@@ -10,6 +10,7 @@ can be expected to be slower than when using
 from .satsolver import SatSolver
 from sage.numerical.mip import MixedIntegerLinearProgram, MIPSolverException
 
+
 class SatLP(SatSolver):
     def __init__(self, solver=None, verbose=0, *, integrality_tolerance=1e-3):
         r"""
@@ -56,7 +57,7 @@ class SatLP(SatSolver):
         nvars = n = self._LP.number_of_variables()
         while nvars == self._LP.number_of_variables():
             n += 1
-            self._vars[n] # creates the variable if needed
+            self._vars[n]  # creates the variable if needed
         return n
 
     def nvars(self):
@@ -142,7 +143,7 @@ class SatLP(SatSolver):
 
         b = self._LP.get_values(self._vars, convert=bool, tolerance=self._integrality_tolerance)
         n = max(b)
-        return [None]+[b.get(i, False) for i in range(1,n+1)]
+        return [None] + [b.get(i, False) for i in range(1, n + 1)]
 
     def __repr__(self):
         """

@@ -5,14 +5,14 @@ AUTHORS:
 
 - Harald Schilly (2011-01-16): initial version (#9623) partially based on work by Lauri Ruotsalainen
 """
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2011 Harald Schilly <harald.schilly@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 
 cpdef julia(ff_j, z, int iterations):
@@ -97,11 +97,11 @@ cpdef cellular(rule, int N):
     """
     from numpy import zeros
     cdef int j, k, l
-    M=zeros((N, 2*N+2), dtype=int)
-    M[0,N]=1
+    M = zeros((N, 2*N+2), dtype=int)
+    M[0, N] = 1
 
     for j in range(1, N):
         for k in range(0, 2*N):
             l = 4 * M[j-1, k-1] + 2 * M[j-1, k] + M[j-1, k+1]
-            M[j,k] = rule[l]
+            M[j, k] = rule[l]
     return M

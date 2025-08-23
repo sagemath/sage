@@ -4,13 +4,14 @@ from sage.matroids.set_system cimport SetSystem
 cdef class FlatsMatroid(Matroid):
     cdef frozenset _groundset
     cdef int _matroid_rank
-    cdef dict _F  # flats
+    cdef set _F  # flats
+    cdef dict _k_F  # k-flats (k = rank)
     cdef object _L  # lattice of flats
     cpdef frozenset groundset(self)
 
-    cpdef int _rank(self, frozenset X)
+    cpdef int _rank(self, frozenset X) except? -1
     cpdef frozenset _closure(self, frozenset X)
-    cpdef bint _is_closed(self, frozenset X)
+    cpdef bint _is_closed(self, frozenset X) noexcept
 
     cpdef full_rank(self)
 
@@ -24,4 +25,4 @@ cdef class FlatsMatroid(Matroid):
     cpdef relabel(self, mapping)
 
     # verification
-    cpdef bint is_valid(self)
+    cpdef is_valid(self, certificate=*)

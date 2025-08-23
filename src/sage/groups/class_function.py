@@ -67,7 +67,6 @@ def ClassFunction(group, values):
         sage: chi = ClassFunction(G, values); chi
         Character of Cyclic group of order 4 as a permutation group
     """
-    from sage.misc.superseded import deprecation
     try:
         return group.class_function(values)
     except AttributeError:

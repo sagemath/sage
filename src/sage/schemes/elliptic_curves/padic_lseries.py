@@ -629,8 +629,7 @@ class pAdicLseries(SageObject):
         res = [enj]
         for j in range(1,prec):
             bino = valuation(binomial(pn,j),self._p)
-            if bino < enj:
-                enj = bino
+            enj = min(bino, enj)
             res.append(enj)
         return res
 
@@ -1641,7 +1640,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
         return sigma_of_z
 
-    def Dp_valued_height(self,prec=20):
+    def Dp_valued_height(self, prec=20):
         r"""
         Return the canonical `p`-adic height with values in the Dieudonné module `D_p(E)`.
 
@@ -1675,7 +1674,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
         n = _multiple_to_make_good_reduction(E)
         n = LCM(n, E.Np(p)) # allowed here because E has good reduction at p
 
-        def height(P,check=True):
+        def height(P, check=True):
             if P.is_finite_order():
                 return Qp(p,prec)(0)
             if check:
@@ -1756,7 +1755,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
 
             return M.determinant()
 
-        def Dp_pairing(vec1,vec2):
+        def Dp_pairing(vec1, vec2):
             return (vec1[0]*vec2[1]-vec1[1]*vec2[0])
 
         omega_vec = vector([K(1),K(0)])

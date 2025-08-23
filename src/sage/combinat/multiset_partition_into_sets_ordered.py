@@ -1,14 +1,9 @@
 r"""
-Ordered Multiset Partitions into Sets and the Minimaj Crystal
+Ordered multiset partitions into sets and the minimaj crystal
 
 This module provides element and parent classes for ordered multiset
 partitions. It also implements the minimaj crystal of Benkart et al.
 [BCHOPSY2017]_. (See :class:`MinimajCrystal`.)
-
-AUTHORS:
-
-- Aaron Lauve (2018): initial implementation. First draft of minimaj crystal
-  code provided by Anne Schilling.
 
 REFERENCES:
 
@@ -50,6 +45,11 @@ with 4 letters divided into 2 blocks::
      ((3, 1), (1, 2)), ((3, 1, 2), (2,)), ((3, 1), (1, 3)), ((3, 1), (2, 3)),
      ((3, 2), (2, 3)), ((2, 1), (1, 3)), ((2,), (1, 2, 3)), ((3,), (1, 2, 3)),
      ((1,), (1, 2, 3)), ((1, 2), (2, 3)), ((1, 2, 3), (3,))]
+
+AUTHORS:
+
+- Aaron Lauve (2018): initial implementation. First draft of minimaj crystal
+  code provided by Anne Schilling.
 """
 
 # ****************************************************************************
@@ -251,8 +251,8 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
             string_parts = (str(sorted(k)) for k in self)
         else:
             string_parts = (str(sorted(k, key=str)) for k in self)
-        string_parts = ", ".join(string_parts).replace("[","{").replace("]","}")
-        return "[" + string_parts + "]"
+        string = ", ".join(string_parts).replace("[", "{").replace("]", "}")
+        return "[" + string + "]"
 
     def _repr_tight(self):
         r"""
@@ -670,7 +670,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         if not self:
             return {tuple([self]*k): 1}
 
-        out = {}
+        out: dict[tuple, int] = {}
         for t in product(*[_split_block(block, k) for block in self]):
             tt = tuple([P([l for l in c if l]) for c in zip(*t)])
             out[tt] = out.get(tt, 0) + 1
@@ -1042,7 +1042,7 @@ class OrderedMultisetPartitionIntoSets(ClonableArray,
         w = []
         v = [0]
         for eblock in ew:
-            for (i,wj) in sorted(eblock, reverse=True):
+            for i, wj in sorted(eblock, reverse=True):
                 vj = v[-1]
                 if i == 0:
                     vj += 1
@@ -1560,7 +1560,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # pop keys with empty values, with the exception of 'size' or 'order'
         self.constraints = {}
-        for (key,val) in constraints.items():
+        for key, val in constraints.items():
             if val:
                 self.constraints[key] = val
             elif key in ("size", "order", "length") and val is not None:
@@ -1885,7 +1885,7 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
             # iterate over blocks of letters over an alphabet
             if "alphabet" in self.constraints:
                 A = self.constraints["alphabet"]
-                # establish a cutoff order `max_ell`
+                # establish a cutoff order ``max_ell``
                 max = self.constraints.get("max_length", infinity)
                 max = self.constraints.get("length", max)
                 max = max * len(A)
@@ -1953,7 +1953,8 @@ class OrderedMultisetPartitionsIntoSets(UniqueRepresentation, Parent):
 
         # slice by 'order'
         if "alphabet" in fc:
-            no_alpha = {k: v for (k, v) in self.constraints.items() if k != "alphabet"}
+            no_alpha = {k: v for k, v in self.constraints.items()
+                        if k != "alphabet"}
             return OrderedMultisetPartitionsIntoSets(fc["alphabet"], size, **no_alpha)
 
         # slice by 'size'
@@ -2209,10 +2210,10 @@ class OrderedMultisetPartitionsIntoSets_X(OrderedMultisetPartitionsIntoSets):
         """
         self._X = X
         # sort the multiset
-        if all((k in ZZ and k > 0) for (k,v) in X):
-            self._Xtup = tuple([k for (k,v) in sorted(X) for _ in range(v)])
+        if all((k in ZZ and k > 0) for k, v in X):
+            self._Xtup = tuple([k for k, v in sorted(X) for _ in range(v)])
         else:
-            self._Xtup = tuple([k for (k,v) in sorted(X, key=str) for _ in range(v)])
+            self._Xtup = tuple([k for k, v in sorted(X, key=str) for _ in range(v)])
         OrderedMultisetPartitionsIntoSets.__init__(self, True)
 
     def _repr_(self):
@@ -2378,7 +2379,7 @@ class OrderedMultisetPartitionsIntoSets_X_constraints(OrderedMultisetPartitionsI
             sage: TestSuite(C).run()
         """
         self._X = X
-        self._Xtup = tuple(k for (k,v) in sorted(X) for _ in range(v))
+        self._Xtup = tuple(k for k, v in sorted(X) for _ in range(v))
         OrderedMultisetPartitionsIntoSets.__init__(self, True, weight=X, **constraints)
 
     def _repr_(self):
@@ -3520,7 +3521,7 @@ class MinimajCrystal(UniqueRepresentation, Parent):
             w = w.e(i)
             return P.element_class(P, (w, breaks))
 
-        def f(self,i):
+        def f(self, i):
             r"""
             Return `f_i` on ``self``.
 

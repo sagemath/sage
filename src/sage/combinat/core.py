@@ -102,7 +102,7 @@ class Core(CombinatorialElement):
             raise ValueError("%s is not a %s-core" % (part, k))
         CombinatorialElement.__init__(self, parent, core)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test for equality.
 
@@ -123,7 +123,7 @@ class Core(CombinatorialElement):
                     self.parent().k == other.parent().k)
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Test for un-equality.
 
@@ -169,7 +169,7 @@ class Core(CombinatorialElement):
             self._hash = hash(tuple(self._list)) + hash(self.parent().k)
         return self._hash
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Output the LaTeX representation of this core as a partition.
 
@@ -449,7 +449,7 @@ class Core(CombinatorialElement):
             ...
             ValueError: the two cores do not have the same k
         """
-        if type(self) is type(other):
+        if isinstance(other, Core):
             if self.k() != other.k():
                 raise ValueError("the two cores do not have the same k")
         else:
@@ -504,14 +504,14 @@ class Core(CombinatorialElement):
             ...
             ValueError: the two cores do not have the same k
         """
-        if type(self) is type(other):
+        if isinstance(other, Core):
             if self.k() != other.k():
                 raise ValueError("the two cores do not have the same k")
         else:
             other = Core(other, self.k())
         return other.contains(self)
 
-    def contains(self, other):
+    def contains(self, other) -> bool:
         r"""
         Check whether ``self`` contains ``other``.
 

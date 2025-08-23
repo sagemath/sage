@@ -95,6 +95,7 @@ def random_error_vector(n, F, error_positions):
         vect[i] = F._random_nonzero_element()
     return vector(F, vect)
 
+
 def format_interval(t):
     r"""
     Return a formatted string representation of ``t``.

@@ -263,7 +263,8 @@ from functools import reduce
 
 from sage.rings.ring import CommutativeRing
 from sage.categories.rings import Rings
-from sage.structure.all import SageObject, parent
+from sage.structure.sage_object import SageObject
+from sage.structure.element import parent
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
 
@@ -279,8 +280,8 @@ from sage.categories.pushout import InfinitePolynomialFunctor
 class InfinitePolynomialRingFactory(UniqueFactory):
     """
     A factory for creating infinite polynomial ring elements.  It
-    handles making sure that they are unique as well as handling
-    pickling.  For more details, see
+    makes sure that they are unique as well as handling pickling.
+    For more details, see
     :class:`~sage.structure.factory.UniqueFactory` and
     :mod:`~sage.rings.polynomial.infinite_polynomial_ring`.
 
@@ -564,7 +565,7 @@ class GenDictWithBasering:
 
     def __next__(self):
         """
-        Return a dictionary that can be used to interprete strings in the base ring of ``self``.
+        Return a dictionary that can be used to interpret strings in the base ring of ``self``.
 
         EXAMPLES::
 
@@ -701,7 +702,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             names = ['x']
         for n in names:
             if not (isinstance(n, str) and n.isalnum() and (not n[0].isdigit())):
-                raise ValueError("generator names must be alpha-numeric strings not starting with a  digit, but %s is not" % n)
+                raise ValueError("generator names must be alphanumeric strings not starting with a digit, but %s is not" % n)
         if len(names) != len(set(names)):
             raise ValueError("generator names must be pairwise different")
         self._names = tuple(names)
@@ -884,6 +885,17 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             Traceback (most recent call last):
             ...
             ValueError: cannot convert 1/3 into an element of Infinite polynomial ring in x over Integer Ring
+
+        .. WARNING::
+
+            The :issue:`37756` is not yet fixed::
+
+                sage: L.<x, y> = QQ[]
+                sage: R.<a> = InfinitePolynomialRing(QQ)
+                sage: M = InfinitePolynomialRing(L, names=["a"])
+                sage: c = a[0]
+                sage: M(c)  # known bug
+                a_0
         """
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
         # In many cases, the easiest solution is to "simply" evaluate
@@ -933,7 +945,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         if not hasattr(x, 'variables'):
             try:
                 return sage_eval(repr(x), self.gens_dict())
-            except (TypeError, ValueError, SyntaxError):
+            except (TypeError, ValueError, SyntaxError, NameError):
                 raise ValueError(f"cannot convert {x} into an element of {self}")
 
         # direct conversion will only be used if the underlying polynomials are libsingular.
@@ -1254,7 +1266,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         return self.gens()[-n:]
 
     @cached_method
-    def gens_dict(self):
+    def gens_dict(self) -> GenDictWithBasering:
         """
         Return a dictionary-like object containing the infinitely many
         ``{var_name:variable}`` pairs.

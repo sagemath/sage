@@ -15,7 +15,7 @@ AUTHORS:
 
 - Matthias Koeppe (2021): initial version
 """
-#*****************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2021 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -23,14 +23,15 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# *****************************************************************************
 
 from functools import total_ordering
+
 from sage.sets.family import FiniteFamily
+
 
 @total_ordering
 class ManifoldObjectFiniteFamily(FiniteFamily):
-
     r"""
     Finite family of manifold objects, indexed by their names.
 
@@ -64,6 +65,7 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
         ...
         TypeError: all objects must have the same manifold
     """
+
     def __init__(self, objects=(), keys=None):
         r"""
         Initialize a new instance of :class:`ManifoldObjectFiniteFamily`.
@@ -96,8 +98,9 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
         if keys is None:
             keys = sorted(dictionary.keys())
         FiniteFamily.__init__(self, dictionary, keys)
-        names_and_latex_names = sorted((object._name, object._latex_name)
-                                       for object in self)
+        names_and_latex_names = sorted(
+            (object._name, object._latex_name) for object in self
+        )
         self._name = '{' + ', '.join(keys) + '}'
         latex_names = (latex_name for name, latex_name in names_and_latex_names)
         self._latex_name = r'\{' + ', '.join(latex_names) + r'\}'
@@ -108,7 +111,9 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             self._manifold = None
         else:
             if not all(object._manifold == self._manifold for object in object_iter):
-                raise TypeError(f'all {self._repr_object_type()} must have the same manifold')
+                raise TypeError(
+                    f'all {self._repr_object_type()} must have the same manifold'
+                )
 
     def _repr_object_type(self):
         r"""
@@ -162,7 +167,9 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
             'Set {A, B} of objects of the 2-dimensional topological manifold M'
         """
         if self:
-            return "Set {} of {} of the {}".format(self._name, self._repr_object_type(), self._manifold)
+            return "Set {} of {} of the {}".format(
+                self._name, self._repr_object_type(), self._manifold
+            )
         else:
             return "{}"
 
@@ -181,8 +188,8 @@ class ManifoldObjectFiniteFamily(FiniteFamily):
         """
         return self._latex_name
 
-class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
 
+class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
     r"""
     Finite family of subsets of a topological manifold, indexed by their names.
 
@@ -230,14 +237,17 @@ class ManifoldSubsetFiniteFamily(ManifoldObjectFiniteFamily):
             sage: ManifoldSubsetFiniteFamily.from_subsets_or_families(A, Bs, Cs)
             Set {A, B0, B1, B2, B3, B4, C0, C1} of subsets of the 2-dimensional topological manifold M
         """
+
         def generate_subsets():
             from sage.manifolds.subset import ManifoldSubset
+
             for arg in subsets_or_families:
                 if isinstance(arg, ManifoldSubset):
                     yield arg
                 else:
                     # arg must be an iterable of ManifoldSubset instances
                     yield from arg
+
         return cls(generate_subsets())
 
     def _repr_object_type(self):

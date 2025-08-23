@@ -217,7 +217,7 @@ ACKNOWLEDGEMENT:
 Classes and Methods
 ===================
 """
-#*****************************************************************************
+# ***************************************************************************
 # Copyright (C) 2014--2015 Benjamin Hackl <benjamin.hackl@aau.at>
 #               2014--2015 Daniel Krenn <dev@danielkrenn.at>
 #
@@ -225,8 +225,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 from collections import namedtuple
 
 from sage.misc.lazy_import import lazy_import
@@ -1745,9 +1745,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
         # The following block can be removed once #19269 is fixed.
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         if base is ZZ or base is QQ or \
-                isinstance(base, PolynomialRing_general) and \
+                isinstance(base, PolynomialRing_generic) and \
                 (base.base_ring() is ZZ or base.base_ring() is QQ):
             return Posets()
         else:
@@ -2370,7 +2370,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             from sage.categories.cartesian_product import cartesian_product
             return cartesian_product([self, other])
 
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth
         group.
@@ -2399,9 +2399,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             sage: GrowthGroup('QQ^x').gens_monomial()
             ()
         """
-        return tuple()
+        return ()
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of all generators of this growth group.
 
@@ -3463,7 +3463,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             from sage.symbolic.ring import SR
             return self._convert_(SR(data))
 
-        from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
         from sage.rings.polynomial.multi_polynomial_ring_base import \
             MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
@@ -3473,7 +3473,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
                 base, exponent = data.operands()
                 if str(base) == var:
                     return exponent
-        elif isinstance(P, (PolynomialRing_general, MPolynomialRing_base)):
+        elif isinstance(P, (PolynomialRing_generic, MPolynomialRing_base)):
             if data.is_monomial() and len(data.variables()) == 1:
                 if var == str(data.variables()[0]):
                     return data.degree()
@@ -3519,7 +3519,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         from sage.functions.other import real, imag
         return real(raw_element), imag(raw_element)
 
-    def gens_monomial(self):
+    def gens_monomial(self) -> tuple:
         r"""
         Return a tuple containing monomial generators of this growth
         group.
@@ -3546,7 +3546,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             return tuple()
         return (self(raw_element=self.base().one()),)
 
-    def gens_logarithmic(self):
+    def gens_logarithmic(self) -> tuple:
         r"""
         Return a tuple containing logarithmic generators of this growth
         group.
@@ -3670,6 +3670,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
         from sage.groups.misc_gps.imaginary_groups import ImaginaryGroup
         J = ImaginaryGroup(self.base())
         return self._non_growth_group_class_(J, self._var_)
+
 
 class MonomialGrowthGroupFunctor(AbstractGrowthGroupFunctor):
     r"""
@@ -4528,7 +4529,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         return iter(self.element_class(self, e)
                     for e in self.base().some_elements() if e > 0)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of all generators of this exponential growth
         group.
@@ -4542,7 +4543,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             sage: E.gens()
             ()
         """
-        return tuple()
+        return ()
 
     def construction(self):
         r"""
@@ -5245,18 +5246,18 @@ class GrowthGroupFactory(UniqueFactory):
         sfactors = split_str_by_op(
             ' '.join(specification.split()).replace('**', '^'), '*')
 
-        def remove_parentheses(s):
+        def remove_parentheses(s: str) -> str:
             while s.startswith('(') and s.endswith(')'):
                 s = s[1:-1].strip()
             return s
 
-        def has_l_property(s, properties, invert=False):
+        def has_l_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.startswith(p):
                     return s[len(p):].strip(), not invert
             return s, invert
 
-        def has_r_property(s, properties, invert=False):
+        def has_r_property(s, properties, invert=False) -> tuple[str, bool]:
             for p in properties:
                 if s.endswith(p):
                     return s[:-len(p)].strip(), not invert

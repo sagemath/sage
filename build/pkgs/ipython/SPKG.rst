@@ -33,7 +33,3 @@ Upstream Contact
 ----------------
 
 http://ipython.org
-
-ipython-dev@scipy.org
-
-ipython-user@scipy.org

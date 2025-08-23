@@ -16,12 +16,14 @@ AUTHORS:
 # *****************************************************************************
 from __future__ import annotations
 
-from typing import Optional, Tuple
+from typing import Optional
 
 from sage.categories.manifolds import Manifolds
 from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
-from sage.manifolds.differentiable.symplectic_form import (SymplecticForm,
-                                                           SymplecticFormParal)
+from sage.manifolds.differentiable.symplectic_form import (
+    SymplecticForm,
+    SymplecticFormParal,
+)
 from sage.rings.real_mpfr import RR
 
 
@@ -43,7 +45,7 @@ class StandardSymplecticSpace(EuclideanSpace):
         symplectic_latex_name: Optional[str] = None,
         start_index: int = 1,
         base_manifold: Optional[StandardSymplecticSpace] = None,
-        names: Optional[Tuple[str]] = None,
+        names: Optional[tuple[str]] = None,
     ):
         r"""
         INPUT:
@@ -153,7 +155,7 @@ class StandardSymplecticSpace(EuclideanSpace):
         self._symplectic_form = SymplecticFormParal(
             self, symplectic_name, symplectic_latex_name
         )
-        for i in range(0, dim_half):
+        for i in range(dim_half):
             q_index = 2 * i + 1
             self._symplectic_form.set_comp()[q_index, q_index + 1] = -1
 

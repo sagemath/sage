@@ -14,7 +14,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ################################################################################
 
@@ -45,6 +45,7 @@ def is_SL2Z(x):
     from sage.misc.superseded import deprecation
     deprecation(38035, "The function is_SL2Z is deprecated; use 'isinstance(..., SL2Z_class)' instead.")
     return isinstance(x, SL2Z_class)
+
 
 class SL2Z_class(Gamma0_class):
     r"""
@@ -117,7 +118,7 @@ class SL2Z_class(Gamma0_class):
         """
         return ArithmeticSubgroupElement(self, x, check=check)
 
-    def _contains_sl2(self,a,b,c,d):
+    def _contains_sl2(self, a, b, c, d):
         r"""
         Test whether [a,b,c,d] is an element of self, where a,b,c,d are integers with `ad-bc=1`. In other words, always return True.
 
@@ -139,7 +140,7 @@ class SL2Z_class(Gamma0_class):
         """
         return "Modular Group SL(2,Z)"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the \LaTeX representation of ``self``.
 
@@ -152,7 +153,7 @@ class SL2Z_class(Gamma0_class):
         """
         return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
-    def is_subgroup(self, right):
+    def is_subgroup(self, right) -> bool:
         """
         Return ``True`` if ``self`` is a subgroup of ``right``.
 
@@ -249,6 +250,7 @@ class SL2Z_class(Gamma0_class):
 
 
 SL2Z = SL2Z_class()
+
 
 def _SL2Z_ref():
     """

@@ -445,7 +445,6 @@ cdef class SBox(SageObject):
                     return K(self._S_list[<Integer> X])
                 except TypeError:
                     raise TypeError("cannot apply SBox to %s" % (X,))
-                raise TypeError("the characteristic of the base field must be 2")
             V = None
             try:
                 V = K.vector_space(map=False)
@@ -646,7 +645,7 @@ cdef class SBox(SageObject):
             [0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 2]
             [0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0]
 
-        TESTS::
+        TESTS:
 
         Testing square SBoxes::
 
@@ -1647,7 +1646,7 @@ cdef class SBox(SageObject):
                     ret.append((j, i, c))
         return ret
 
-    def has_linear_structure(self):
+    def has_linear_structure(self) -> bool:
         """
         Return ``True`` if there exists a nonzero component function of this
         S-Box that has a linear structure.

@@ -30,15 +30,17 @@ AUTHORS:
 - Volker Braun
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from copy import copy
 
 from sage.structure.element import Matrix
 from sage.misc.cachefunc import cached_method
@@ -119,25 +121,33 @@ class AffineGroupElement(MultiplicativeGroupElement):
             A = A.matrix()
         except AttributeError:
             pass
-        if isinstance(A, Matrix) and A.nrows() == A.ncols() == parent.degree()+1:
+        if isinstance(A, Matrix) and A.nrows() == A.ncols() == parent.degree() + 1:
             g = A
             d = parent.degree()
             A = g.submatrix(0, 0, d, d)
-            b = [ g[i,d] for i in range(d) ]
+            b = [g[i,d] for i in range(d)]
             convert = True
         if convert:
             A = parent.matrix_space()(A)
             b = parent.vector_space()(b)
+            A.set_immutable()
+            b.set_immutable()
         if check:
             # Note: the coercion framework expects that we raise TypeError for invalid input
             if not isinstance(A, Matrix):
                 raise TypeError('A must be a matrix')
-            if not (A.parent() is parent.matrix_space()):
+            if A.parent() is not parent.matrix_space():
                 raise TypeError('A must be an element of ' + str(parent.matrix_space()))
-            if not (b.parent() is parent.vector_space()):
+            if b.parent() is not parent.vector_space():
                 raise TypeError('b must be an element of ' + str(parent.vector_space()))
             parent._element_constructor_check(A, b)
         super().__init__(parent)
+        if not A.is_immutable():
+            A = copy(A)
+            A.set_immutable()
+        if not b.is_immutable():
+            b = copy(b)
+            b.set_immutable()
         self._A = A
         self._b = b
 
@@ -151,10 +161,12 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
             sage: G = AffineGroup(3, QQ)
             sage: g = G([1,2,3,4,5,6,7,8,0], [10,11,12])
-            sage: g.A()
+            sage: A = g.A(); A
             [1 2 3]
             [4 5 6]
             [7 8 0]
+            sage: A.is_immutable()
+            True
         """
         return self._A
 
@@ -168,8 +180,10 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
             sage: G = AffineGroup(3, QQ)
             sage: g = G([1,2,3,4,5,6,7,8,0], [10,11,12])
-            sage: g.b()
+            sage: b = g.b(); b
             (10, 11, 12)
+            sage: b.is_immutable()
+            True
         """
         return self._b
 
@@ -345,7 +359,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
         parent = self.parent()
         A = self._A * other._A
         b = self._b + self._A * other._b
-        return parent.element_class(parent, A, b, check=False)
+        A.set_immutable()
+        b.set_immutable()
+        return parent.element_class(parent, A, b, convert=False, check=False)
 
     def __call__(self, v):
         """
@@ -439,13 +455,14 @@ class AffineGroupElement(MultiplicativeGroupElement):
             x |-> [0 1] x + [0]
             sage: v = vector(GF(3), [1,-1]); v
             (1, 2)
-            sage: g*v
+            sage: g * v
             (1, 2)
-            sage: g*v == g.A() * v + g.b()
+            sage: g * v == g.A() * v + g.b()
             True
         """
         if self_on_left:
             return self(x)
+        return None
 
     def __invert__(self):
         """
@@ -472,7 +489,9 @@ class AffineGroupElement(MultiplicativeGroupElement):
         parent = self.parent()
         A = parent.matrix_space()(~self._A)
         b = -A * self.b()
-        return parent.element_class(parent, A, b, check=False)
+        A.set_immutable()
+        b.set_immutable()
+        return parent.element_class(parent, A, b, convert=False, check=False)
 
     def _richcmp_(self, other, op):
         """
@@ -496,6 +515,27 @@ class AffineGroupElement(MultiplicativeGroupElement):
             return richcmp_not_equal(lx, rx, op)
 
         return richcmp(self._b, other._b, op)
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        OUTPUT: int
+
+        EXAMPLES::
+
+            sage: F = AffineGroup(3, QQ)
+            sage: g = F([1,2,3,4,5,6,7,8,0], [10,11,12])
+            sage: h = F([1,2,3,4,5,6,7,8,0], [10,11,0])
+            sage: hash(g) == hash(h)
+            False
+            sage: hash(g) == hash(copy(g))
+            True
+            sage: f = g * h
+            sage: hash(f) == hash(~f)
+            False
+        """
+        return hash((self._A, self._b))
 
     def list(self):
         """

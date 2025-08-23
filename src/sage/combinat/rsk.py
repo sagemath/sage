@@ -299,7 +299,7 @@ class Rule(UniqueRepresentation):
 
           - any object ``obj1`` which has a method ``_rsk_iter()``,
             as long as this method returns an iterator yielding
-            pairs of numbers, which then are interperted as top
+            pairs of numbers, which then are interpreted as top
             entries and bottom entries in the biword (in this case,
             ``obj2`` is ``None``)
 
@@ -2173,7 +2173,7 @@ class RuleSuperRSK(RuleRSK):
 
           - any object ``obj1`` which has a method ``_rsk_iter()``,
             as long as this method returns an iterator yielding
-            pairs of numbers, which then are interperted as top
+            pairs of numbers, which then are interpreted as top
             entries and bottom entries in the biword (in this case,
             ``obj2`` is ``None``)
 
@@ -2587,6 +2587,8 @@ class RuleStar(Rule):
         sage: FC_tabs = [T for shape in shapes
         ....:                  for T in SemistandardTableaux(shape, max_entry=4)
         ....:                      if fc(row_reading(T.conjugate()))]
+        sage: from random import sample
+        sage: FC_tabs = sample(FC_tabs, 25)  # verify only a random subset
         sage: Checks = []
         sage: for T in FC_tabs:  # long time
         ....:    shape = T.shape().conjugate()
@@ -2957,12 +2959,10 @@ class RuleStar(Rule):
                 if j == 0:
                     df.append([])
                 if j > 0 and obj1[j] < obj1[j-1]:
-                    for _ in range(obj1[j-1]-obj1[j]):
-                        df.append([])
+                    df.extend([] for _ in range(obj1[j-1]-obj1[j]))
                 df[-1].append(obj2[j])
             if obj1:
-                for a in range(obj1[-1]-1):
-                    df.append([])
+                df.extend([] for a in range(obj1[-1]-1))
             # If biword is empty, return a decreasing factorization with 1 factor
             else:
                 df.append([])

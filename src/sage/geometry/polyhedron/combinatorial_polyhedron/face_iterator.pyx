@@ -16,7 +16,7 @@ Terminology in this module:
   face iterator. This will be facets or Vrep.  In non-dual mode, faces
   are constructed as intersections of the facets. In dual mode, they
   are constructed theoretically as joins of vertices.  The coatoms are
-  repsented as incidences with the atoms they contain.
+  represented as incidences with the atoms they contain.
 
 - Atoms -- facets or Vrep depending on application of algorithm.  Atoms are
   represented as incidences of coatoms they are contained in.
@@ -1035,8 +1035,9 @@ cdef class FaceIterator_base(SageObject):
             face_clear(face)
         elif not self._bounded and face_issubset(face, self._far_face):
             # The join is not well-defined.
-            # We allow for unbounded polyhedra to compute the join, even with rays.
-            # However, the result is not necesarrily well-defined.
+            # We allow for unbounded polyhedra to compute the join,
+            # even with rays.
+            # However, the result is not necessarily well-defined.
             raise ValueError("the join is not well-defined")
 
         self.find_face(face)
@@ -1591,7 +1592,7 @@ cdef class FaceIterator(FaceIterator_base):
         """
         if self.structure.output_dimension != -2:
             if self.dual:
-                # ouput_dimension is stored with respect to the dual
+                # output_dimension is stored with respect to the dual
                 intended_dimension = self.structure.dimension - 1 - self.structure.output_dimension
             else:
                 intended_dimension = self.structure.output_dimension

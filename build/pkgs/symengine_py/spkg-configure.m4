@@ -1,1 +1,1 @@
-SAGE_SPKG_CONFIGURE([symengine_py], [SAGE_PYTHON_PACKAGE_CHECK([symengine_py])])
+SAGE_SPKG_CONFIGURE([symengine_py], [SAGE_PYTHON_PACKAGE_CHECK([symengine])])

@@ -130,7 +130,7 @@ def hilbert_class_polynomial(D, algorithm=None):
     from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
     from sage.rings.real_mpfr import RR
     from sage.rings.complex_mpfr import ComplexField
-    from sage.functions.all import elliptic_j
+    from sage.functions.special import elliptic_j
 
     # get all primitive reduced quadratic forms, (necessary to exclude
     # imprimitive forms when D is not a fundamental discriminant):
@@ -287,7 +287,8 @@ def is_HCP(f, check_monic_irreducible=True):
             return zero
         return D if f == hilbert_class_polynomial(D) else zero
 
-def OrderClassNumber(D0,h0,f):
+
+def OrderClassNumber(D0, h0, f):
     r"""
     Return the class number h(f**2 * D0), given h(D0)=h0.
 
@@ -652,6 +653,7 @@ def largest_fundamental_disc_with_class_number(h):
     except KeyError:
         raise NotImplementedError("largest fundamental discriminant not available for class number %s" % h)
 
+
 def largest_disc_with_class_number(h):
     r"""
     Return largest absolute value of any negative discriminant with
@@ -722,6 +724,7 @@ def largest_disc_with_class_number(h):
 hDf_dict = {ZZ(1): [(ZZ(D), ZZ(h)) for D,h in
                     [(-3, 1), (-3, 2), (-3, 3), (-4, 1), (-4, 2), (-7, 1), (-7, 2),
                      (-8, 1), (-11, 1), (-19, 1), (-43, 1), (-67, 1), (-163, 1)]]}
+
 
 def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
     r"""Return a dictionary with keys class numbers `h\le hmax` and values the
@@ -822,7 +825,7 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     # h_dict caches the class number h of all discriminants previously
     # encountered; we will use the function OrderClassNumber() to
-    # quicky compute the class number of non-fundamental discriminants
+    # quickly compute the class number of non-fundamental discriminants
     # from the fundamental ones. Note that in the initialisation, the
     # keys of h_dict include nonfundamental discriminants, but we only
     # update it with fundamental ones.

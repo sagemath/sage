@@ -109,7 +109,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
             return "1"
         return f"[{self.value}]"
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Compare two traces by their lexicographic normal forms.
 
@@ -147,7 +147,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         """
         return self.value
 
-    def foata_normal_form(self):
+    def foata_normal_form(self) -> tuple:
         r"""
         Return the Foata normal form of ``self``.
 
@@ -300,12 +300,12 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         elements.reverse()
         independence = self.parent()._independence
         reachable = {}
-        min = set()
+        mini = set()
         graph = DiGraph({})
 
         for i, x in enumerate(elements):
             reachable[i] = set()
-            front = min.copy()
+            front = mini.copy()
             while front:
                 used = set()
                 for j in list(front):
@@ -314,14 +314,14 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
                         graph.add_edge(i, j)
                         reachable[i].add(j)
                         reachable[i].update(reachable[j])
-                        if j in min:
-                            min.remove(j)
+                        if j in mini:
+                            mini.remove(j)
                         used.add(j)
                 forbidden = set(chain.from_iterable(reachable[v] for v in used))
                 front = {dest for _, dest in graph.outgoing_edges(front, labels=False)}
                 front = front - forbidden
 
-            min.add(i)
+            mini.add(i)
 
         length = len(elements)
         graph.relabel(length - 1 - i for i in range(length))
@@ -432,7 +432,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
     Return a free partially commuting monoid (trace monoid) on `n` generators
     over independence relation `I`.
 
-    We construct a trace monoid by specifing:
+    We construct a trace monoid by specifying:
 
     - a free monoid and independence relation
     - or generator names and independence relation,
@@ -495,7 +495,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
         rels = set()
         gen_from_str = {names[i]: gen for i, gen in enumerate(M.gens())}
-        for (x, y) in I:
+        for x, y in I:
             try:
                 if isinstance(x, str):
                     x = gen_from_str[x]
@@ -513,7 +513,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
 
         return super().__classcall__(cls, M, I, names)
 
-    def __init__(self, M, I, names):
+    def __init__(self, M, I, names) -> None:
         r"""
         Initialize ``self``.
 
@@ -673,7 +673,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         return prod(elements)
 
     @cached_method
-    def _compute_foata_normal_form(self, x):
+    def _compute_foata_normal_form(self, x) -> tuple:
         r"""
         Return Foata normal form of the monoid element.
 
@@ -916,7 +916,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
                           if not ((list(word.value)[-1][0], suffix.value) in self._independence
                                   and list(word.value)[-1][0] > suffix.value)])
 
-    def _sorted_independence(self):
+    def _sorted_independence(self) -> list:
         r"""
         Return independence relation over the monoid.
 
@@ -951,7 +951,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
                                                             ", ".join(f"{{{x}, {y}}}"
                                                                       for (x, y) in self._sorted_independence()))
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of trace monoids.
 

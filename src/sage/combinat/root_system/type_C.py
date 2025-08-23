@@ -83,10 +83,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (0, 0, 2)]
         """
         res = []
-        for p in [0,1]:
+        for p in [0, 1]:
             for j in range(self.n):
-                res.extend([self.root(i,j,0,p) for i in range(j)])
-        res.extend([self.root(i,i,0,0) for i in range(self.n)])
+                res.extend(self.root(i, j, 0, p) for i in range(j))
+        res.extend(self.root(i, i, 0, 0) for i in range(self.n))
         return res
 
     def negative_roots(self):
@@ -105,10 +105,10 @@ class AmbientSpace(ambient_space.AmbientSpace):
              (0, 0, -2)]
         """
         res = []
-        for p in [0,1]:
+        for p in [0, 1]:
             for j in range(self.n):
-                res.extend( [self.root(i,j,1,p) for i in range(j) ] )
-        res.extend( [ self.root(i,i,1,1) for i in range(self.n) ] )
+                res.extend(self.root(i, j, 1, p) for i in range(j))
+        res.extend(self.root(i, i, 1, 1) for i in range(self.n))
         return res
 
     def fundamental_weight(self, i):
@@ -306,10 +306,11 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
         """
         from sage.combinat.root_system.type_folded import CartanTypeFolded
         n = self.n
-        return CartanTypeFolded(self, ['A', 2*n-1],
-            [[i, 2*n-i] for i in range(1, n)] + [[n]])
+        return CartanTypeFolded(self, ['A', 2*n - 1],
+                                [[i, 2*n - i] for i in range(1, n)] + [[n]])
 
 
 # For unpickling backward compatibility (Sage <= 4.1)
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.root_system.type_C', 'ambient_space',  AmbientSpace)
+register_unpickle_override('sage.combinat.root_system.type_C',
+                           'ambient_space', AmbientSpace)

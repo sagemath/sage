@@ -208,6 +208,7 @@ class dvips(Executable):
         Executable.__init__(self, 'dvips', executable='dvips',
                             url='https://tug.org/texinfohtml/dvips.html')
 
+
 class TeXFile(StaticFile):
     r"""
     A :class:`sage.features.Feature` describing the presence of a TeX file.
@@ -241,7 +242,7 @@ class TeXFile(StaticFile):
             sage: feature.absolute_filename()  # optional - latex
             '.../latex/base/article.cls'
         """
-        from subprocess import run, CalledProcessError, PIPE
+        from subprocess import run, CalledProcessError
         try:
             proc = run(['kpsewhich', self.filename],
                        capture_output=True, text=True, check=True)

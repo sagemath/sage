@@ -957,7 +957,7 @@ cdef class ntl_ZZ_pX():
             sage: f.derivative()
             [7 0 19]
         """
-        cdef ntl_ZZ_pX r = self._new() #restores context
+        cdef ntl_ZZ_pX r = self._new()  # restores context
         sig_on()
         ZZ_pX_diff(r.x, self.x)
         sig_off()
@@ -1520,8 +1520,8 @@ cdef class ntl_ZZ_pX_Modulus():
         ZZ_pX_Modulus_build(self.x, poly.x)
         self.poly = poly
 
-    def __repr__(self):
-        return "NTL ZZ_pXModulus %s (mod %s)"%(self.poly, self.poly.c.p)
+    def __repr__(self) -> str:
+        return "NTL ZZ_pXModulus %s (mod %s)" % (self.poly, self.poly.c.p)
 
     def degree(self):
         cdef Integer ans = Integer.__new__(Integer)

@@ -141,7 +141,6 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_element import degree_lowest_rational_function
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import RationalField
-from sage.rings.infinity import infinity
 
 from sage.schemes.affine.affine_space import AffineSpace, AffineSpace_generic
 from sage.schemes.affine.affine_subscheme import (AlgebraicScheme_subscheme_affine,
@@ -579,7 +578,7 @@ class AffinePlaneCurve(AffineCurve):
             TypeError: (=(1, 1)) is not a point on (=Affine Plane Curve over
             Rational Field defined by x^6 - x^3 + y^3)
         """
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("curve must be defined over a field")
 
         # Check whether P is a point on this curve
@@ -866,7 +865,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         """
         super().__init__(A, X)
 
-        if not A.base_ring() in Fields():
+        if A.base_ring() not in Fields():
             raise TypeError("curve not defined over a field")
 
         d = super(Curve_generic, self).dimension()
@@ -1320,7 +1319,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             self(P)
         except TypeError:
             raise TypeError("(=%s) must be a point on this curve" % P)
-        if not self.base_ring() in Fields():
+        if self.base_ring() not in Fields():
             raise TypeError("the base ring of this curve must be a field")
         if not self.is_irreducible():
             raise TypeError("this curve must be irreducible")
@@ -1593,10 +1592,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         t = 0
         # loop through the patches and blow up each until no patch has singular points
         while not_resolved:
-            [BC, t_maps, pi, pts] = [res[t][0], res[t][1], res[t][2], res[t][3]]
+            BC, t_maps, pi, pts = res[t][0], res[t][1], res[t][2], res[t][3]
             # check if there are any singular points in this patch
             if not pts:
-                t = t + 1
+                t += 1
                 if t == len(res):
                     not_resolved = False
                 continue
@@ -1763,7 +1762,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
-    def has_vertical_asymptote(self):
+    def has_vertical_asymptote(self) -> bool:
         """
         Check if the curve is not a line and has vertical asymptotes.
 
@@ -1783,7 +1782,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         dxy = f.coefficient({y: dy}).degree()
         return dxy > 0 and f.degree() > 1
 
-    def is_vertical_line(self):
+    def is_vertical_line(self) -> bool:
         """
         Check if the curve is a vertical line.
 

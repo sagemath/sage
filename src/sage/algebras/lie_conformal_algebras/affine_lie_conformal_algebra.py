@@ -96,7 +96,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
                 ct = CartanType(ct)
             except IndexError:
                 raise ValueError("ct must be a valid Cartan Type")
-        if not (ct.is_finite() and ct.is_irreducible ):
+        if not (ct.is_finite() and ct.is_irreducible):
             raise ValueError("only affine algebras of simple finite dimensional"
                 "Lie algebras are implemented")
         hv = Integer(ct.dual_coxeter_number())
@@ -142,7 +142,7 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
         """
         return self._ct
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         The name of this Lie conformal algebra.
 
@@ -152,4 +152,4 @@ class AffineLieConformalAlgebra(GradedLieConformalAlgebra):
             The affine Lie conformal algebra of type ['A', 1] over Rational Field
         """
         return "The affine Lie conformal algebra of type {} over {}".format(
-                                                    self._ct,self.base_ring())
+                                                    self._ct, self.base_ring())

@@ -652,7 +652,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_independent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _rank(self, frozenset F):
+    cpdef int _rank(self, frozenset F) except? -1:
         """
         Compute the rank of a subset of the groundset.
 
@@ -796,7 +796,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__max_coindependent(self._output, self._input)
         return self.__unpack(self._output)
 
-    cpdef int _corank(self, frozenset F):
+    cpdef int _corank(self, frozenset F) noexcept:
         """
         Return the corank of a set.
 
@@ -940,7 +940,7 @@ cdef class BasisExchangeMatroid(Matroid):
         self.__augment(self._output, self._input, self._input2)
         return self.__unpack(self._output)
 
-    cpdef bint _is_independent(self, frozenset F):
+    cpdef bint _is_independent(self, frozenset F) noexcept:
         """
         Test if input is independent.
 
@@ -996,7 +996,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: setprint(M.components())
             [{0, 1, 3, 4}, {2, 5}]
         """
-        cdef long i,j,e
+        cdef long i, j, e
         if not self._E:
             return SetSystem(self._E)
         cdef bitset_t *comp
@@ -1098,15 +1098,15 @@ cdef class BasisExchangeMatroid(Matroid):
         cdef bitset_t SS, TT
         bitset_init(SS, self._groundset_size)
         bitset_init(TT, self._groundset_size)
-        self._pack(SS,S)
-        self._pack(TT,T)
-        #F = set(self.groundset()) - (S | T)
+        self._pack(SS, S)
+        self._pack(TT, T)
+        # F = set(self.groundset()) - (S | T)
         cdef bitset_t F, I
         bitset_init(F, self._groundset_size)
         bitset_init(I, self._groundset_size)
         bitset_union(self._input, SS, TT)
         bitset_complement(F, self._input)
-        #I = self._augment(S|T, F)
+        # I = self._augment(S|T, F)
         self.__augment(I, self._input, F)
         cdef bitset_t X, X1, X2, next_layer, todo, out_neighbors, R
         bitset_init(X, self._groundset_size)
@@ -1121,52 +1121,52 @@ cdef class BasisExchangeMatroid(Matroid):
         cdef long e, u, y
         cdef bint found_path = True
         while found_path:
-            #X = F - I
-            bitset_difference(X,F,I)
-            #X1 = X - self._closure(T|I)
+            # X = F - I
+            bitset_difference(X, F, I)
+            # X1 = X - self._closure(T|I)
             bitset_union(self._input, TT, I)
             self.__closure(X1, self._input)
-            bitset_difference(X1,X,X1)
-            #X2 = X - self._closure(S|I)
+            bitset_difference(X1, X, X1)
+            # X2 = X - self._closure(S|I)
             bitset_union(self._input, SS, I)
             self.__closure(X2, self._input)
-            bitset_difference(X2,X,X2)
+            bitset_difference(X2, X, X2)
             bitset_intersection(R, X1, X2)
             e = bitset_first(R)
             if e >= 0:
                 bitset_add(I, e)
                 continue
-            #predecessor = {x: None for x in X1}
+            # predecessor = {x: None for x in X1}
             e = bitset_first(X1)
             while e>=0:
                 predecessor[e] = -1
                 e = bitset_next(X1, e+1)
-            #next_layer = set(X1)
+            # next_layer = set(X1)
             bitset_copy(next_layer, X1)
             bitset_union(R, SS, X1)
             found_path = False
             while not bitset_isempty(next_layer) and not found_path:
-                #todo = next_layer
-                bitset_copy(todo,next_layer)
-                #next_layer = {}
+                # todo = next_layer
+                bitset_copy(todo, next_layer)
+                # next_layer = {}
                 bitset_clear(next_layer)
                 u = bitset_first(todo)
-                while u>=0 and not found_path:
-                    if bitset_in(X,u):
-                        #out_neighbors = self._circuit(I|S.union([u])) - S.union([u])
+                while u >= 0 and not found_path:
+                    if bitset_in(X, u):
+                        # out_neighbors = self._circuit(I|S.union([u])) - S.union([u])
                         bitset_union(self._input, I, SS)
                         bitset_add(self._input, u)
                         self.__circuit(out_neighbors, self._input)
                         bitset_discard(out_neighbors, u)
                     else:
-                        #out_neighbors = X - self._closure(I|T - set([u]))
+                        # out_neighbors = X - self._closure(I|T - set([u]))
                         bitset_union(self._input, I, TT)
                         bitset_discard(self._input, u)
                         self.__closure(out_neighbors, self._input)
                         bitset_difference(out_neighbors, X, out_neighbors)
                     bitset_difference(out_neighbors, out_neighbors, R)
                     y = bitset_first(out_neighbors)
-                    while y>=0:
+                    while y >= 0:
                         predecessor[y] = u
                         if bitset_in(X2, y):
                             found_path = True
@@ -1552,7 +1552,7 @@ cdef class BasisExchangeMatroid(Matroid):
                     res._append(I[i+1])
                     bitset_copy(self._input, I[i+1])
                     self.__closure(T[i+1], self._input)
-                    bitset_union(T[i+1],T[i+1],T[i])
+                    bitset_union(T[i+1], T[i+1], T[i])
                     i = i + 1
                 else:
                     i = i - 1
@@ -2102,7 +2102,7 @@ cdef class BasisExchangeMatroid(Matroid):
             from sage.matroids.basis_matroid import BasisMatroid
             other = BasisMatroid(other)
         if self is other:
-            return {e:e for e in self.groundset()}
+            return {e: e for e in self.groundset()}
         if len(self) != len(other):
             return None
         if self.full_rank() != other.full_rank():
@@ -2231,7 +2231,7 @@ cdef class BasisExchangeMatroid(Matroid):
 
         return self._characteristic_setsystem()._isomorphism(other._characteristic_setsystem(), PS, PO) is not None
 
-    cpdef bint is_valid(self):
+    cpdef is_valid(self, certificate=False):
         r"""
         Test if the data obey the matroid axioms.
 
@@ -2242,7 +2242,11 @@ cdef class BasisExchangeMatroid(Matroid):
         * if `X` and `Y` are in `B`, and `x` is in `X - Y`, then there is a
           `y` in `Y - X` such that `(X - x) + y` is again a member of `B`.
 
-        OUTPUT: boolean
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``)
+
+        OUTPUT: boolean, or (boolean, dictionary)
 
         EXAMPLES::
 
@@ -2251,8 +2255,8 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M.is_valid()
             True
             sage: M = Matroid(groundset='abcd', bases=['ab', 'cd'])
-            sage: M.is_valid()
-            False
+            sage: M.is_valid(certificate=True)
+            (False, {'error': 'exchange axiom failed'})
 
         TESTS:
 
@@ -2278,7 +2282,7 @@ cdef class BasisExchangeMatroid(Matroid):
                 if not bitset_eq(self._current_basis, BB._subsets[pointerY]):
                     # We failed to set the current basis to Y through basis exchanges.
                     # Therefore, the exchange axioms are violated!
-                    return False
+                    return False if not certificate else (False, {"error": "exchange axiom failed"})
                 bitset_difference(self._input, BB._subsets[pointerX], BB._subsets[pointerY])
                 bitset_difference(self._input2, BB._subsets[pointerY], BB._subsets[pointerX])
                 x = bitset_first(self._input)
@@ -2292,11 +2296,11 @@ cdef class BasisExchangeMatroid(Matroid):
                         else:
                             y = bitset_next(self._input2, y + 1)
                     if not foundpair:
-                        return False
+                        return False if not certificate else (False, {"error": "exchange axiom failed"})
                     x = bitset_next(self._input, x + 1)
                 pointerY += 1
             pointerX += 1
-        return True
+        return True if not certificate else (True, {})
 
 cdef bint nxksrd(bitset_s* b, long n, long k, bint succ) noexcept:
     """

@@ -308,8 +308,9 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
     """
     @staticmethod
     def __classcall_private__(cls, R=None, arg0=None, index_set=None,
-        central_elements=None, category=None, prefix=None,
-        names=None, latex_names=None, parity=None, weights=None, **kwds):
+                              central_elements=None, category=None,
+                              prefix=None, names=None, latex_names=None,
+                              parity=None, weights=None, **kwds):
         """
         Lie conformal algebra factory.
 
@@ -330,7 +331,7 @@ class LieConformalAlgebra(UniqueRepresentation, Parent):
             if key not in known_keywords:
                 raise ValueError("got an unexpected keyword argument '%s'" % key)
 
-        if isinstance(arg0,dict) and arg0:
+        if isinstance(arg0, dict) and arg0:
             graded = kwds.pop("graded", False)
             if weights is not None or graded:
                 from .graded_lie_conformal_algebra import \

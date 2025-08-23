@@ -1,10 +1,20 @@
-from .pbori import (top_index, if_then_else,
-                    substitute_variables, BooleSet,
-                    ll_red_nf_redsb, ll_red_nf_noredsb,
-                    ll_red_nf_noredsb_single_recursive_call)
-from .PyPolyBoRi import (Polynomial, Monomial, Ring, BoolePolynomialVector)
-from .statistics import used_vars_set
-from .rank import rank
+from sage.rings.polynomial.pbori.pbori import (
+    BooleSet,
+    Monomial,
+    Polynomial,
+    if_then_else,
+    ll_red_nf_noredsb,
+    ll_red_nf_noredsb_single_recursive_call,
+    ll_red_nf_redsb,
+    substitute_variables,
+    top_index,
+)
+from sage.rings.polynomial.pbori.PyPolyBoRi import (
+    BoolePolynomialVector,
+    Ring,
+)
+from sage.rings.polynomial.pbori.rank import rank
+from sage.rings.polynomial.pbori.statistics import used_vars_set
 
 lead_index = top_index
 
@@ -79,7 +89,7 @@ def eliminate(polys, on_the_fly=False, prot=False, reduction_function=None,
         lm = p.lex_lead()
         if lm.deg() == 1:
 
-            if not (lm in linear_leading_monomials):
+            if lm not in linear_leading_monomials:
                 linear_leading_monomials.add(lm)
                 linear_leads.append(p)
             else:

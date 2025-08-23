@@ -823,7 +823,7 @@ class TableauTuple(CombinatorialElement):
         """
         return self[l][r][c]
 
-    def is_row_strict(self):
+    def is_row_strict(self) -> bool:
         """
         Return ``True`` if the tableau ``self`` is row strict and ``False``
         otherwise.
@@ -874,7 +874,7 @@ class TableauTuple(CombinatorialElement):
                 return (k, cell[0], cell[1])
         return None
 
-    def is_column_strict(self):
+    def is_column_strict(self) -> bool:
         """
         Return ``True`` if the tableau ``self`` is column strict and ``False``
         otherwise.
@@ -925,7 +925,7 @@ class TableauTuple(CombinatorialElement):
                 return (k, cell[0], cell[1])
         return None
 
-    def is_standard(self):
+    def is_standard(self) -> bool:
         r"""
         Return ``True`` if the tableau ``self`` is a standard tableau and
         ``False`` otherwise.
@@ -1084,10 +1084,8 @@ class TableauTuple(CombinatorialElement):
         # tableau, by including the identity permutation on the set [1..n].
         n = max(self.entries())
         gens = [list(range(1, n + 1))]
-        for t in self:
-            for i in range(len(t)):
-                for j in range(len(t[i]) - 1):
-                    gens.append((t[i][j], t[i][j + 1]))
+        gens.extend((ti[j], ti[j + 1]) for t in self
+                    for ti in t for j in range(len(ti) - 1))
         return PermutationGroup(gens)
 
     def column_stabilizer(self):
@@ -1175,7 +1173,7 @@ class TableauTuple(CombinatorialElement):
             ...
             IndexError: (2, 1, 2) is not an addable cell of the tableau
         """
-        (k, r, c) = cell
+        k, r, c = cell
         tab = self.to_list()
 
         try:
@@ -2644,11 +2642,10 @@ class TableauTuples_level_size(TableauTuples):
             ([[1, 2]], [], [])
         """
         if self.size() == 0:
-            return self.element_class(self, [[] for _ in range(self.level())])
+            return self.element_class(self, [[]] * self.level())
 
         tab = [[list(range(1, self.size() + 1))]]
-        for _ in range(self.level() - 1):
-            tab.append([])
+        tab.extend([] for _ in range(self.level() - 1))
         return self.element_class(self, tab)
 
 
@@ -4929,7 +4926,6 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             yield tableau_from_list(tab)
 
         # all done!
-        return
 
     def last(self):
         r"""
@@ -5021,7 +5017,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
         while m < mu.size():
             m += 1
             i = randint(0, len(addables) - 1)  # index for a random addable cell
-            (k, r, c) = addables[i]  # the actual cell
+            k, r, c = addables[i]  # the actual cell
             # remove the cell we just added from the list addable nodes
             addables.pop(i)
             # add m into the tableau
@@ -5340,7 +5336,7 @@ def _add_entry_fast(T, cell, m):
           6  8       12 14     2 11
                               10
     """
-    (k, r, c) = cell
+    k, r, c = cell
     tab = T.to_list()
 
     try:

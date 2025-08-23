@@ -35,7 +35,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
       Clough-Tocher scheme.  The interpolant is guaranteed to be
       continuously differentiable.  The gradients of the interpolant
       are chosen so that the curvature of the interpolating surface is
-      approximatively minimized.
+      approximately minimized.
 
       The option 'spline' interpolates using a bivariate B-spline.
 

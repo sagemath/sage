@@ -19,7 +19,7 @@ import operator
 from sage.arith.misc import crt
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method, cached_function
-from sage.modular.arithgroup.all import GammaH
+from sage.modular.arithgroup.congroup_gammaH import GammaH_constructor as GammaH
 from sage.modular.modform.constructor import ModularForms
 from sage.modular.modform.element import Newform
 from sage.modular.modsym.modsym import ModularSymbols
@@ -61,6 +61,7 @@ def example_type_space(example_no=0):
     elif example_no == 3:
         # a ramified (odd p-power level) case
         return TypeSpace(Newform_constructor('27a'), 3)
+
 
 def find_in_space(f, A, base_extend=False):
     r"""
@@ -146,6 +147,7 @@ def find_in_space(f, A, base_extend=False):
             + "got dimension %s (should be %s)" % (D.dimension(), expected_dimension) )
 
     return D
+
 
 class TypeSpace(SageObject):
     r"""
@@ -317,19 +319,20 @@ class TypeSpace(SageObject):
         # time-critical, and getting it wrong can lead to subtle bugs.
         p = self.prime()
         r = self.conductor()
-        d = max(self.character_conductor(), r//2)
+        d = max(self.character_conductor(), r // 2)
         n = self.tame_level()
         chi = self.form().character()
         tame_H = [i for i in chi.kernel() if (i % p**r) == 1]
         wild_H = [crt(x, 1, p**r, n) for x in range(p**r) if x % (p**d) == 1]
         return GammaH(n * p**r, tame_H + wild_H)
 
-    ###############################################################################
-    # Testing minimality: is this form a twist of a form of strictly smaller level?
-    ###############################################################################
+    ##########################################################################
+    # Testing minimality:
+    # is this form a twist of a form of strictly smaller level?
+    ##########################################################################
 
     @cached_method
-    def is_minimal(self):
+    def is_minimal(self) -> bool:
         r"""
         Return ``True`` if there exists a newform `g` of level strictly smaller
         than `N`, and a Dirichlet character `\chi` of `p`-power conductor, such
@@ -401,12 +404,11 @@ class TypeSpace(SageObject):
             V = A.submodule(VV, check=False)
 
         D = V.decomposition()[0]
-        #if len(D.star_eigenvalues()) == 2:
+        # if len(D.star_eigenvalues()) == 2:
         #    D = D.sign_submodule(1)
         D1 = D.modular_symbols_of_sign(1)
         M = ModularForms(D1.group(), D1.weight(), D1.base_ring())
-        ff = Newform(M, D1, names='a')
-        return ff
+        return Newform(M, D1, names='a')
 
     #####################################
     # The group action on the type space.
@@ -469,13 +471,14 @@ class TypeSpace(SageObject):
         g3 = [f * g2[0], g2[1], f**2 * g2[2], f*g2[3]]
         A = self.t_space.ambient()
         mm = A._action_on_modular_symbols(g3).restrict(self.t_space.free_module()).transpose()
-        m = mm / ZZ(f**(self.form().weight()-2))
-        return m
+        return mm / ZZ(f**(self.form().weight() - 2))
 
     def _rho_unramified(self, g):
         r"""
         Calculate the action of ``g`` on the type space, in the unramified (even
-        level) case. Uses the two standard generators, and a solution of the
+        level) case.
+
+        This uses the two standard generators, and a solution of the
         word problem in `\SL_2(\ZZ / p^u \ZZ)`.
 
         INPUT:
@@ -634,7 +637,7 @@ class TypeSpace(SageObject):
         mats = self._intertwining_basis(a)
         V = self.t_space.nonembedded_free_module()
         v = self.eigensymbol_subspace().gen(0)
-        w = V.submodule_with_basis([m * v for m in mats]).coordinates(v) #v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
+        w = V.submodule_with_basis([m * v for m in mats]).coordinates(v)  # v * self.e_space.diamond_eigenvalue(crt(a, 1, f, self.tame_level())))
         self._a = a
         self._amat = sum([mats[i] * w[i] for i in range(len(mats))])
 

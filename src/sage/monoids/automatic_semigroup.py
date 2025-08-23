@@ -169,7 +169,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         sage: M2 = matrix([[0,0,0],[1,1,0],[0,0,1]])
         sage: M1.set_immutable()
         sage: M2.set_immutable()
-        sage: def prod_m(x,y):
+        sage: def prod_m(x, y):
         ....:     z=x*y
         ....:     z.set_immutable()
         ....:     return z
@@ -483,7 +483,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             sage: M2 = matrix([[0,0,0],[1,1,0],[0,0,1]])
             sage: M1.set_immutable()
             sage: M2.set_immutable()
-            sage: def prod_m(x,y):
+            sage: def prod_m(x, y):
             ....:     z=x*y
             ....:     z.set_immutable()
             ....:     return z

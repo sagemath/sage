@@ -1,17 +1,17 @@
 # sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
-Specht Modules
+Specht modules
+
+.. TODO::
+
+    Integrate this with the implementations in
+    :mod:`sage.modules.with_basis.representation`.
 
 AUTHORS:
 
 - Travis Scrimshaw (2023-1-22): initial version
 - Travis Scrimshaw (2023-11-23): added simple modules based on code
   from Sacha Goldman
-
-.. TODO::
-
-    Integrate this with the implementations in
-    :mod:`sage.modules.with_basis.representation`.
 """
 
 # ****************************************************************************
@@ -34,8 +34,8 @@ from sage.sets.family import Family
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
 from sage.modules.with_basis.subquotient import SubmoduleWithBasis, QuotientModuleWithBasis
-from sage.modules.free_module_element import vector
 from sage.categories.modules_with_basis import ModulesWithBasis
+
 
 class SymmetricGroupRepresentation(Representation_abstract):
     """
@@ -480,6 +480,25 @@ class TabloidModule(SymmetricGroupRepresentation, CombinatorialFreeModule):
         """
         return f"Tabloid module of {self._shape} over {self.base_ring()}"
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: latex(SGA.tabloid_module([2,2,1]))
+            T^{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}\\\cline{1-1}
+            \end{array}$}
+            }}
+        """
+        from sage.misc.latex import latex
+        return "T^{{{}}}".format(latex(self._shape))
+
     def _ascii_art_term(self, T):
         r"""
         Return an ascii art representation of the term indexed by ``T``.
@@ -747,14 +766,15 @@ class SpechtModuleTableauxBasis(SpechtModule):
         B = self.basis()
         COB = matrix([b.lift().to_vector() for b in B]).T
         P, L, U = COB.LU()
-        # Since U is upper triangular, the nonzero entriesm must be in the
-        #   upper square portiion of the matrix
+        # Since U is upper triangular, the nonzero entries must be in the
+        # upper square portion of the matrix
         n = len(B)
 
         Uinv = U.matrix_from_rows(range(n)).inverse()
-        # This is a slight abuse as the codomain should be a module with a different
-        #    S_n action, but we only use it internally, so there isn't any problems
-        PLinv = (P*L).inverse()
+        # This is a slight abuse as the codomain should be a module
+        # with a different
+        #  S_n action, but we only use it internally, so there is no problem
+        PLinv = (P * L).inverse()
 
         def retraction(elt):
             vec = PLinv * elt.to_vector(order=self._support_order)
@@ -982,10 +1002,8 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
             sage: TestSuite(U).run()
 
             sage: SM = SGA.specht_module([2,1,1,1])
-            sage: SM.maximal_submodule()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: only implemented for 3-regular partitions
+            sage: SM.maximal_submodule().dimension() == SM.dimension()
+            True
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: SM = SGA.specht_module([3,2])
@@ -1002,12 +1020,13 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
         else:
             TM = specht_module._ambient
             if not TM._shape.is_regular(p):
-                raise NotImplementedError(f"only implemented for {p}-regular partitions")
-            TV = TM._dense_free_module()
-            SV = TV.submodule(specht_module.lift.matrix().columns())
-            basis = (SV & SV.complement()).basis()
-            basis = [specht_module.retract(TM.from_vector(b)) for b in basis]
-            basis = Family(specht_module.echelon_form(basis))
+                basis = specht_module.basis()
+            else:
+                TV = TM._dense_free_module()
+                SV = TV.submodule(specht_module.lift.matrix().columns())
+                basis = (SV & SV.complement()).basis()
+                basis = [specht_module.retract(TM.from_vector(b)) for b in basis]
+                basis = Family(specht_module.echelon_form(basis))
 
         unitriangular = all(b.leading_support() == 1 for b in basis)
         support_order = list(specht_module.basis().keys())
@@ -1029,12 +1048,31 @@ class MaximalSpechtSubmodule(SymmetricGroupRepresentation, SubmoduleWithBasis):
         """
         return f"Maximal submodule of {self._ambient}"
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: latex(SGA.specht_module([2,2,1]).maximal_submodule())
+            U^{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}\\\cline{1-1}
+            \end{array}$}
+            }}
+        """
+        from sage.misc.latex import latex
+        return "U^{{{}}}".format(latex(self._ambient._diagram))
+
     Element = SpechtModule.Element
 
 
 class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
     r"""
-    The simgle `S_n`-module associated with a partition `\lambda`.
+    The simple `S_n`-module associated with a partition `\lambda`.
 
     The simple module `D^{\lambda}` is the quotient of the Specht module
     `S^{\lambda}` by its :class:`maximal submodule <MaximalSpechtSubmodule>`
@@ -1119,6 +1157,25 @@ class SimpleModule(SymmetricGroupRepresentation, QuotientModuleWithBasis):
         """
         return f"Simple module of {self._diagram} over {self.base_ring()}"
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: latex(SGA.simple_module([2,2,1]))
+            D^{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}\\\cline{1-1}
+            \end{array}$}
+            }}
+        """
+        from sage.misc.latex import latex
+        return "D^{{{}}}".format(latex(self._diagram))
+
     Element = SpechtModule.Element
 
 
@@ -1145,18 +1202,12 @@ def _to_diagram(D):
     if isinstance(D, Diagram):
         return D
     if D in _Partitions:
-        D = _Partitions(D).cells()
-    elif D in SkewPartitions():
-        D = SkewPartitions()(D).cells()
-    elif D in IntegerVectors():
-        cells = []
-        for i, row in enumerate(D):
-            for j in range(row):
-                cells.append((i, j))
-        D = cells
-    else:
-        D = [tuple(cell) for cell in D]
-    return D
+        return _Partitions(D).cells()
+    if D in SkewPartitions():
+        return SkewPartitions()(D).cells()
+    if D in IntegerVectors():
+        return [(i, j) for i, row in enumerate(D) for j in range(row)]
+    return [tuple(cell) for cell in D]
 
 
 def specht_module_spanning_set(D, SGA=None):
