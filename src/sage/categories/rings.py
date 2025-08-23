@@ -1917,10 +1917,12 @@ class Rings(CategoryWithAxiom):
             @property
             @cached_method
             def __nonzero_factors(self):
-                return tuple(s for s in self._sets if not s.is_zero())
+                return tuple([s for s in self._sets if not s.is_zero()])
 
             def is_field(self, proof=True) -> bool:
                 """
+                Return if ``self`` is a field or not.
+
                 EXAMPLES::
 
                     sage: cartesian_product([ZZ, ZZ]).is_field()
@@ -1934,6 +1936,8 @@ class Rings(CategoryWithAxiom):
 
             def is_integral_domain(self, proof=True) -> bool:
                 """
+                Return if ``self`` is an integral domain or not.
+
                 EXAMPLES::
 
                     sage: cartesian_product([ZZ, ZZ]).is_integral_domain()
