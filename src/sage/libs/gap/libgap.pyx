@@ -162,8 +162,8 @@ Using the GAP C library from Cython
 
 We are using the GAP API provided by the GAP project since GAP 4.10.
 
-Calls to the GAP C library (functions declared in libgap-api.h) should
-be sandwiched between calls to ``GAP_Enter()`` and
+Calls to the GAP C library (functions declared in ``libgap-api.h``)
+should be sandwiched between calls to ``GAP_Enter()`` and
 ``GAP_Leave()``. These are macros defined in ``libgap-api.h`` and must
 be used carefully because ``GAP_Enter()`` is defined as two function
 calls in succession without braces. The first thing that
