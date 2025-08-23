@@ -66,6 +66,7 @@ import logging
 import os
 import pickle
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -266,11 +267,11 @@ class DocBuilder():
                 f.write(ref)
 
         make_cmd = os.environ.get('MAKE', 'make')
-        command = 'all-pdf'
-        logger.debug(f"Running {make_cmd} {command} in {tex_dir}")
+        command = shlex.split(make_cmd) + ['all-pdf']
+        logger.debug(f"Running {' '.join(command)} in {tex_dir}")
 
         proc = subprocess.run(
-            [make_cmd, command],
+            command,
             check=False, cwd=tex_dir,
             capture_output=True,
             text=True,
@@ -279,7 +280,7 @@ class DocBuilder():
         if proc.returncode != 0:
             logger.error(f"stdout from {make_cmd}:\n{proc.stdout}")
             logger.error(f"stderr from {make_cmd}:\n{proc.stderr}")
-            raise RuntimeError(f"failed to run {make_cmd} {command} in {tex_dir}")
+            raise RuntimeError(f"failed to run {' '.join(command)} in {tex_dir}")
 
         if proc.stdout:
             logger.debug(f"make stdout:\n{proc.stdout}")
