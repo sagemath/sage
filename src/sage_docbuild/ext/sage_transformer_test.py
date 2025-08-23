@@ -262,12 +262,12 @@ def test_transform_returns_section_closed_by_other_section():
     ]
     dt = DoctestTransformer(lines)
     result = dt.transform()
-    assert result == [":returns: result", "", ".. rubric:: algorithm", ""]
+    assert result == [":returns: result", "", ".. rubric:: Algorithm:", ""]
 
 
-def test_transform_examples_section():
+def test_transform_examples_section_with_double_colon():
     lines = [
-        "EXAMPLES:",
+        "EXAMPLES::",
         "",
         "    sage: foo1",
         "    sage: foo2",
@@ -276,8 +276,31 @@ def test_transform_examples_section():
     dt = DoctestTransformer(lines)
     result = dt.transform()
     assert result == [
-        ".. rubric:: Examples",
+        ".. rubric:: Examples:",
         ".. code-block::",
+        "",
+        "    sage: foo1",
+        "    sage: foo2",
+        "",
+    ]
+
+
+def test_transform_examples_section_with_single_colon():
+    lines = [
+        "EXAMPLES:",
+        "",
+        "Some example code::",
+        "",
+        "    sage: foo1",
+        "    sage: foo2",
+        "",
+    ]
+    dt = DoctestTransformer(lines)
+    result = dt.transform()
+    assert result == [
+        ".. rubric:: Examples:",
+        "",
+        "Some example code::",
         "",
         "    sage: foo1",
         "    sage: foo2",

@@ -224,9 +224,9 @@ class DoctestTransformer:
         transformed = self.__class__(lines).transform()
         return [("", transformed)]
 
-    def _consume_section_header(self) -> str:
-        section = self._lines.next()
-        return section.strip().strip(":").lower()
+    def _consume_section_header(self) -> tuple[str, str]:
+        section = self._lines.next().strip()
+        return (section, section.strip(":").lower())
 
     def _consume_to_end(self) -> list[str]:
         lines = []
@@ -463,10 +463,10 @@ class DoctestTransformer:
         while self._lines:
             if self._is_section_header():
                 try:
-                    section = self._consume_section_header()
+                    section, section_normalized = self._consume_section_header()
                     self._is_in_section = True
                     self._section_indent = self._get_current_indent()
-                    lines = self._sections[section](section)
+                    lines = self._sections[section_normalized](section)
                 finally:
                     self._is_in_section = False
                     self._section_indent = 0
@@ -489,7 +489,8 @@ class DoctestTransformer:
         return lines
 
     def _parse_examples_section(self, section: str) -> list[str]:
-        return self._parse_generic_section("Examples", False)
+        add_codeblock = section.endswith("::")
+        return self._parse_generic_section("Examples", False, add_codeblock)
 
     def _parse_custom_generic_section(self, section: str) -> list[str]:
         # for now, no admonition for simple custom sections
@@ -498,14 +499,17 @@ class DoctestTransformer:
     def _parse_custom_params_style_section(self, section: str) -> list[str]:
         return self._format_fields(section, self._consume_fields())
 
-    def _parse_generic_section(self, section: str, use_admonition: bool) -> list[str]:
+    def _parse_generic_section(self, section: str, use_admonition: bool, add_codeblock: bool = False) -> list[str]:
         lines = self._strip_empty(self._consume_to_next_section())
+        section = section.capitalize()
+        if not section.endswith(":"):
+            section += ":"
         if use_admonition:
             header = [f".. admonition:: {section}"]
             lines = self._indent(lines, 3)
         else:
             header = [f".. rubric:: {section}"]
-            if section.lower() == "examples":
+            if add_codeblock:
                 header.append(".. code-block::")
             else:
                 lines = self._dedent(lines)
