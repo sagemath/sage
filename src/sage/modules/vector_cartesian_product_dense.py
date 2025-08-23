@@ -14,8 +14,6 @@ class Vector_cartesian_product_dense(FreeModuleElement_generic_dense):
 
         TESTS::
 
-        Test if :issue:`40626` is fixed::
-
             sage: R = cartesian_product([QQ, QQ])
             sage: b = vector([R(2)])
             sage: b / R(2) # vector-by-scalar
