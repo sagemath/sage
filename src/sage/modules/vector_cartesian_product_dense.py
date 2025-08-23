@@ -6,6 +6,7 @@ from operator import truediv
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
 from sage.structure.element import Vector
 
+
 class Vector_cartesian_product_dense(FreeModuleElement_generic_dense):
     def __truediv__(self, other):
         """
@@ -64,4 +65,3 @@ class Vector_cartesian_product_dense(FreeModuleElement_generic_dense):
 
         # fallback
         return Vector.__truediv__(self, other)
-
