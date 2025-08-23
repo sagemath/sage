@@ -12,7 +12,9 @@ class Vector_cartesian_product_dense(FreeModuleElement_generic_dense):
         """
         Division of the vector ``self`` by the scalar, vector or matrix ``other``.
 
-        TESTS::
+        TESTS:
+
+        Test if :issue:`40626` is fixed::
 
             sage: R = cartesian_product([QQ, QQ])
             sage: b = vector([R(2)])
