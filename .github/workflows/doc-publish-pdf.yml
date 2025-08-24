@@ -81,8 +81,8 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_MESSAGE: doc-${{ steps.source-run-info.outputs.targetBranch }}
-          NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.targetBranch }}
+          NETLIFY_MESSAGE: doc-${{ steps.source-run-info.outputs.branchName }}
+          NETLIFY_ALIAS: doc-${{ steps.source-run-info.outputs.branchName }}
         if: steps.download-doc.outcome == 'success'
 
       - name: Deploy to netlify with doc-release alias
