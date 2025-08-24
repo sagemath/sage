@@ -144,7 +144,7 @@ Sage example in ./domaines.tex, line 543::
 Sage example in ./domaines.tex, line 568::
 
   sage: cartesian_product([QQ, QQ])
-    The Cartesian product of 2 copies of Rational Field
+  The Cartesian product of 2 copies of Rational Field
 
 Sage example in ./domaines.tex, line 574::
 
