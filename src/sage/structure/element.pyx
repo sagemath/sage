@@ -3747,8 +3747,9 @@ cdef class Vector(ModuleElementWithMutability):
         if isinstance(right, Matrix):
             try:
                 return right.solve_left(left)
-            except NotImplementedError:
+            except (NotImplementedError, TypeError):
                 # May not be solvable for some rings eg cartesian product ring
+                # TODO : solve_left should be made possible for cartesian product rings
                 pass
         if right.parent() in _Rings:
             # Let __mul__ do the job
