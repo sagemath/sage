@@ -12,11 +12,12 @@
 all: doc-html
 
 clean:
+	rm -rf "$(SAGE_ROOT)/build/sage-distro/src/doc"
+	# and a few more things that were previously generated
 	rm -rf en/reference/*/sage
 	rm -rf en/reference/documentation/sage_docbuild
 	rm -rf en/reference/sage
 	rm -f common/*.pyc
-	rm -rf "$(SAGE_ROOT)/build/sage-distro/src/doc"
 
 doc-html:
 	meson compile -C ../../build/sage-distro doc-html
