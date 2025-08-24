@@ -2,8 +2,11 @@
 Vectors over cartesian product of rings
 """
 from sage.modules.free_module_element cimport FreeModuleElement_generic_dense
+from sage.structure.coerce cimport py_scalar_to_element
 from sage.structure.element cimport Vector
 
+from sage.categories.cartesian_product import cartesian_product
+from sage.sets.cartesian_product import CartesianProduct
 
 cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
 
@@ -22,6 +25,7 @@ cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
             sage: b = vector([R(2)])
             sage: b / R(2) # vector-by-scalar
             ((1, 1))
+
             sage: c = vector([R(1)])
             sage: b / c # vector-by-vector
             (2, 2)
@@ -30,21 +34,28 @@ cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: division by zero vector
-            sage: A = matrix([R(1) / R(2)])
-            sage: b / A # vector-by-matrix
-            ((4, 4))
 
-            sage: R2 = cartesian_product([ZZ, R])
-            sage: v = vector([R2.one()])
-            sage: two = R2(2)
-            sage: v / (v / two)
-            (2, (2, 2))
+            sage: A = matrix([R(1)])
+            sage: b / A # vector-by-matrix
+            ((2, 2))
+
+        Test for conversion between ZZ and QQ as component rings::
+
+            sage: R = cartesian_product([ZZ, ZZ])
+            sage: v = vector([R.one()])
+            sage: two = R(2)
+            sage: w = (v / two); w
+            ((1/2, 1/2))
+            sage: v / w
+            (2, 2)
         """
+        base_ring = self.base_ring()
+        other = py_scalar_to_element(other)
+
+        # vector-by-vector division
         if isinstance(other, Vector_cartesian_product):
             m = len(self)
             assert m == len(other), "sizes of vectors are different"
-
-            base_ring = self.base_ring()
 
             # Cartesian product ring may not admit a basis, therefore division is
             # instead being performed component-wise and then stitched back
@@ -55,6 +66,12 @@ cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
 
             # Convert result to cartesian product
             return base_ring._cartesian_product_of_elements(result)
+
+        # vector-by-scalar division
+        if isinstance(other.parent(), CartesianProduct):
+            inverted = cartesian_product([~x for x in other.cartesian_factors()])
+
+            return self * inverted
 
         # fallback
         return Vector.__truediv__(self, other)
