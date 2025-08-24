@@ -2,10 +2,10 @@ sirocco = dependency('libsirocco', required: false, disabler: true)
 if not sirocco.found()
   # fallback for older versions without pkg-config
   sirocco = cc.find_library(
-  'sirocco',
-  required: get_option('sirocco'),
-  disabler: true,
-)
+    'sirocco',
+    required: get_option('sirocco'),
+    disabler: true,
+  )
 endif
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl', required: false, disabler: true)
