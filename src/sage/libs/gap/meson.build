@@ -8,11 +8,10 @@ py.install_sources(
   'gap_functions.py',
   'gap_globals.py',
   'gap_includes.pxd',
+  'gap_test.py',
   'operations.py',
   'sage.gaprc',
   'saved_workspace.py',
-  'test.py',
-  'test_long.py',
   'util.pxd',
   subdir: 'sage/libs/gap',
 )
