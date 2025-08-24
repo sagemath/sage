@@ -110,7 +110,7 @@ platforms = ['osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64']
 
 [tool.pytest.ini_options]
 python_files = "*_test.py"
-norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools"
+norecursedirs = "local prefix venv build builddir pkgs .git src/doc src/bin src/sage_setup/autogen/flint tools subprojects"
 # The "no:warnings" is to stop pytest from capturing warnings so that they are printed to the output of the doctest
 addopts = "--import-mode importlib -p no:warnings"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
