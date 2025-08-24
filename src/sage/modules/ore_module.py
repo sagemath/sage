@@ -330,9 +330,13 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         INPUT:
 
-        - ``mat`` -- the matrix defining the action of the Ore variable
+        - ``mat`` -- a matrix; the matrix defining the action of the Ore
+          variable is ``mat``/``denominator``
 
         - ``twist`` -- the twisting morphism/derivation
+
+        - ``denominator`` -- an element in the base ring or a
+          :class:`sage.structure.factorization.Factorization` object
 
         - ``names`` (default: ``None``) -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
@@ -340,6 +344,15 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``category`` (default: ``None``) -- the category of this
           Ore module
+
+        .. NOTE::
+
+            When specifying a nontrivial denominator, the Ore module
+            continues to be defined over the base ring of ``mat``;
+            however, the Ore action is only defined after extending
+            scalars to the fraction field.
+            This construction is useful is the theory of Anderson
+            morives and in `p`-adic Hodge theory.
 
         TESTS::
 
@@ -355,6 +368,16 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             False
             sage: M2 is M3
             True
+
+        ::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: mat = matrix(K, [[1, z], [z^2, z^3]])
+            sage: den = z + 1
+            sage: OreModule(mat, S, den)
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
+            sage: OreModule(mat, S, Factorization([(den, 10)]))
+            Ore module of rank 2 over Finite Field in z of size 5^3 twisted by z |--> z^5
         """
         base = mat.base_ring()
         if denominator is None:
@@ -377,9 +400,13 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         INPUT:
 
-        - ``mat`` -- the matrix defining the action of the Ore variable
+        - ``mat`` -- a matrix; the matrix defining the action of the Ore
+          variable is ``mat``/``denominator``
 
         - ``ore`` -- the underlying Ore polynomial ring
+
+        - ``denominator`` -- a instance of
+          class:sage.structure.factorization.Factorization`
 
         - ``names`` -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
@@ -690,6 +717,23 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             Domain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
             Codomain: Ore module of rank 3 over Finite Field in z of size 5^3 twisted by z |--> z^5
 
+        TESTS:
+
+        When the Ore module has a nontrivial denominator, a pseudomorphism
+        over the fraction field is returned::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: mat = matrix(A, [[1, t], [t^2, t^3]])
+            sage: M = OreModule(mat, d, denominator=t-1)
+            sage: M.pseudohom()
+            Free module pseudomorphism (twisted by d/dt) defined by the matrix
+            [  1/(t - 1)   t/(t - 1)]
+            [t^2/(t - 1) t^3/(t - 1)]
+            Domain: Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            Codomain: Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
         .. SEEALSO::
 
             :meth:`matrix`
@@ -826,6 +870,20 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         polynomial `P`. This is of course not a coincidence given
         that the pseudomorphism corresponds to the left multiplication
 
+        TESTS:
+
+        When the Ore module has a nontrivial denominator, a matrix over
+        the fraction field is returned::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: mat = matrix(A, [[1, t], [t^2, t^3]])
+            sage: M = OreModule(mat, d, denominator=t-1)
+            sage: M.matrix()
+            [  1/(t - 1)   t/(t - 1)]
+            [t^2/(t - 1) t^3/(t - 1)]
+
         .. SEEALSO::
 
             :meth:`pseudohom`
@@ -836,12 +894,62 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         return mat
 
     def over_fraction_field(self):
+        r"""
+        Return this scalar extension of this Ore module to
+        the fraction field.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M = S.quotient_module(X^2 + t*X + t)
+            sage: M
+            Ore module of rank 2 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: M.over_fraction_field()
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        If given, the variable names are preserved in this operation::
+
+            sage: N.<u,v> = S.quotient_module(X^2 + t*X + t)
+            sage: N
+            Ore module <u, v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.over_fraction_field()
+            Ore module <u, v> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        When the base ring is already a field, the same module is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + z)
+            sage: M.over_fraction_field() is M
+            True
+
+        TESTS::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: mat = matrix(A, [[1, t], [t^2, t^3]])
+            sage: M = OreModule(mat, d, denominator=t-1)
+            sage: MM = M.over_fraction_field()
+            sage: MM
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: MM.matrix()
+            [  1/(t - 1)   t/(t - 1)]
+            [t^2/(t - 1) t^3/(t - 1)]
+        """
+        base = self._base
+        field = base.fraction_field()
+        if base is field:
+            return self
+        mat = self.matrix().change_ring(field)
         twist = self._ore.twisting_derivation()
         if twist is None:
             twist = self._ore.twisting_morphism()
         if twist is not None:
             twist = twist.extend_to_fraction_field()
-        return self._general_class(self.matrix(), twist, names=self._names)
+        return self._general_class(mat, twist, None, names=self._names)
 
     def basis(self) -> list:
         r"""
@@ -2048,6 +2156,49 @@ class OreSubmodule(OreModule):
         return ambients
 
     def over_fraction_field(self):
+        r"""
+        Return this scalar extension of this Ore module to
+        the fraction field.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M = S.quotient_module(X^2 + t*X + t)
+            sage: M
+            Ore module of rank 2 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: M.over_fraction_field()
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        If given, the variable names are preserved in this operation::
+
+            sage: N.<u,v> = S.quotient_module(X^2 + t*X + t)
+            sage: N
+            Ore module <u, v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.over_fraction_field()
+            Ore module <u, v> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        When the base ring is already a field, the same module is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + z)
+            sage: M.over_fraction_field() is M
+            True
+
+        TESTS:
+
+        We check that the ambient module is correctly set up::
+
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M.<u,v> = S.quotient_module((X+t)^2)
+            sage: N = M.span([(X+t)*u])
+            sage: MM = M.over_fraction_field()
+            sage: NN = N.over_fraction_field()
+            sage: NN.ambient_module() is MM
+            True
+        """
         ambient = self._ambient.over_fraction_field()
         return ambient._submodule_class(ambient, self._submodule.basis, False, self._names)
 
@@ -2496,6 +2647,49 @@ class OreQuotientModule(OreModule):
         return "\\overline{%s}" % M(x)._latex_()
 
     def over_fraction_field(self):
+        r"""
+        Return this scalar extension of this Ore module to
+        the fraction field.
+
+        EXAMPLES::
+
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M = S.quotient_module(X^2 + t*X + t)
+            sage: M
+            Ore module of rank 2 over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: M.over_fraction_field()
+            Ore module of rank 2 over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        If given, the variable names are preserved in this operation::
+
+            sage: N.<u,v> = S.quotient_module(X^2 + t*X + t)
+            sage: N
+            Ore module <u, v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.over_fraction_field()
+            Ore module <u, v> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        When the base ring is already a field, the same module is returned::
+
+            sage: K.<z> = GF(5^3)
+            sage: S.<X> = OrePolynomialRing(K, K.frobenius_endomorphism())
+            sage: M = S.quotient_module(X^2 + z*X + z)
+            sage: M.over_fraction_field() is M
+            True
+
+        TESTS:
+
+        We check that the cover module is correctly set up::
+
+            sage: S.<X> = OrePolynomialRing(A, d)
+            sage: M.<u,v> = S.quotient_module((X+t)^2)
+            sage: N = M.quo([(X+t)*u])
+            sage: MM = M.over_fraction_field()
+            sage: NN = N.over_fraction_field()
+            sage: NN.cover() is MM
+            True
+        """
         cover = self._cover.over_fraction_field()
         return cover._quotientModule_class(cover, self._submodule.basis, False, self._names)
 

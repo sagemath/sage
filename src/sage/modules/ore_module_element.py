@@ -156,10 +156,17 @@ class OreModuleElement(FreeModuleElement_generic_dense):
         Return the image of this element by the pseudomorphism
         defining the action of the Ore variable on this Ore module.
 
+        INPUT:
+
+        - ``integral`` (default: ``False``) -- a boolean;
+          if ``False``, allows for an output with coordinates in
+          the fraction field of the base ring
+
         EXAMPLES::
 
-            sage: K.<t> = Frac(QQ['t'])
-            sage: S.<X> = OrePolynomialRing(K, K.derivation())
+            sage: A.<t> = QQ['t']
+            sage: d = A.derivation()
+            sage: S.<X> = OrePolynomialRing(A, A.derivation())
             sage: M.<v,w> = S.quotient_module(X^2 + t)
             sage: v.image()
             w
@@ -173,6 +180,42 @@ class OreModuleElement(FreeModuleElement_generic_dense):
             sage: x = M.random_element()
             sage: x.image() == X*x
             True
+
+        We check the behavior when the underlying Ore module has a nontrivial
+        denominator. In this case, the output is an element of the scalar
+        extension of the Ore module to its fraction field::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: mat = matrix(A, [[1, t], [0, t-1]])
+            sage: N.<e0, e1> = OreModule(mat, d, t-1)
+            sage: N.matrix()
+            [1/(t - 1) t/(t - 1)]
+            [        0         1]
+            sage: e0.image()
+            (1/(t-1))*e0 + (t/(t-1))*e1
+
+        It is the case even if the result is integral::
+
+            sage: x = e1.image(); x
+            e1
+            sage: x.parent()
+            Ore module <e0, e1> over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        We can force to stay in the Ore module by using the argument
+        ``integral=True``::
+
+            sage: x = e1.image(integral=True); x
+            e1
+            sage: x.parent()
+            Ore module <e0, e1> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+
+        This construction however produces an error when the result is
+        outside the Ore module::
+
+            sage: e0.image(integral=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: Unable to coerce entries (=[1/(t - 1), t/(t - 1)]) to coefficients in Univariate Polynomial Ring in t over Rational Field
         """
         M = self.parent()
         y = M._pseudohom(self)

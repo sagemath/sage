@@ -299,6 +299,22 @@ class OreModuleMorphism(Morphism):
             <class 'sage.modules.ore_module_homspace.OreModule_homspace_with_category.element_class'>
 
             sage: TestSuite(f).run()
+
+        An example with a nontrivial denominator::
+
+            sage: from sage.modules.ore_module import OreModule
+            sage: A.<t> = QQ[]
+            sage: d = A.derivation()
+            sage: M.<u> = OreModule(matrix([t^2 + 1]), d, denominator=t)
+            sage: N.<v> = OreModule(matrix([t]), d)
+            sage: M.hom({u: t*v})
+            Ore module morphism:
+              From: Ore module <u> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+              To:   Ore module <v> over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
+            sage: N.hom({v: t*u})
+            Traceback (most recent call last):
+            ...
+            ValueError: does not define a morphism of Ore modules
         """
         Morphism.__init__(self, parent)
         domain = parent.domain()

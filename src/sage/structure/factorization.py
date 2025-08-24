@@ -441,6 +441,16 @@ class Factorization(SageObject):
         return richcmp(self.__x, other.__x, op)
 
     def __hash__(self):
+        r"""
+        Return a hash of this factorization.
+
+        EXAMPLES::
+
+            sage: F = factor(2025); F
+            3^4 * 5^2
+            sage: hash(F)  # random
+            -3439993427179649882
+        """
         return hash((self.__unit, tuple(self.__x)))
 
     def __copy__(self):
