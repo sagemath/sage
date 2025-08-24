@@ -180,7 +180,7 @@ Here is an example of solving an algebraic equation::
 You can even nicely typeset the solution in latex::
 
     sage: latex(s)
-    \left[ \left[ a=-\left({{\sqrt{79}\,i-11}\over{4}}\right) , b={{\sqrt{79}\,i  +9}\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{\sqrt{79}  \,i+11}\over{4}} , b=-\left({{\sqrt{79}\,i-9}\over{4}}\right) , c=-\left({{  \sqrt{79}\,i-1}\over{10}}\right) \right]  \right] 
+    \left[ \left[ a=-\left({{\sqrt{79}\,i-11}\over{4}}\right) , b={{\sqrt{79}\,i  +9}\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{\sqrt{79}  \,i+11}\over{4}} , b=-\left({{\sqrt{79}\,i-9}\over{4}}\right) , c=-\left({{  \sqrt{79}\,i-1}\over{10}}\right) \right]  \right]
 
 To have the above appear onscreen via ``xdvi``, type
 ``view(s)``. (TODO: For OS X should create pdf output
