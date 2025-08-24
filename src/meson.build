@@ -148,13 +148,16 @@ if not m4rie.found()
   # For some reason, m4rie is not found via pkg-config on some systems (eg Conda)
   m4rie = cc.find_library('m4rie', required: not is_windows, disabler: true)
 endif
-# Cannot be found via pkg-config
-mtx = cc.find_library(
-  'mtx',
-  required: false,
-  disabler: true,
-  has_headers: ['meataxe.h'],
-)
+mtx = dependency('mtx', required: false)
+if not mtx.found()
+  # fallback for older versions without pkg-config
+  mtx = cc.find_library(
+    'mtx',
+    required: false,
+    disabler: true,
+    has_headers: ['meataxe.h'],
+  )
+endif
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
 # We actually want >= 20231212, but the version number is not updated in the pkgconfig
