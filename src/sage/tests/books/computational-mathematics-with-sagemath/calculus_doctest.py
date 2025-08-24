@@ -256,7 +256,7 @@ Sage example in ./calculus.tex, line 1062::
 Sage example in ./calculus.tex, line 1086::
 
   sage: solve(x^(1/x)==(1/x)^x, x)
-  [(1/x)^x == x^(1/x)]
+    [x^(1/x) == (1/x)^x]
 
 Sage example in ./calculus.tex, line 1124::
 

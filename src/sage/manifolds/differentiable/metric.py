@@ -1556,9 +1556,9 @@ class PseudoRiemannianMetric(TensorField):
             [ 1/8*u^2 - 1/8*v^2 + 1/4*v + 1/2                            1/4*u]
             [                           1/4*u -1/8*u^2 + 1/8*v^2 + 1/4*v + 1/2]
             sage: g.sqrt_abs_det(Y.frame()).expr()
-            1/2*sqrt(-x^2*y^2 - (x + 1)*y + x + 1)
+            1/2*sqrt(abs(x^2*y^2 + (x + 1)*y - x - 1))
             sage: g.sqrt_abs_det(Y.frame()).expr(Y)
-            1/8*sqrt(-u^4 - v^4 + 2*(u^2 + 2)*v^2 - 4*u^2 + 16*v + 16)
+            1/8*sqrt(abs(u^4 + v^4 - 2*(u^2 + 2)*v^2 + 4*u^2 - 16*v - 16))
 
         A chart can be passed instead of a frame::
 
@@ -1578,9 +1578,9 @@ class PseudoRiemannianMetric(TensorField):
             sage: g.sqrt_abs_det().expr()
             sqrt(-x**2*y**2 - x*y + x - y + 1)
             sage: g.sqrt_abs_det(Y.frame()).expr()
-            sqrt(-x**2*y**2 - x*y + x - y + 1)/2
+            sqrt(Abs(x**2*y**2 + x*y - x + y - 1))/2
             sage: g.sqrt_abs_det(Y.frame()).expr(Y)
-            sqrt(-u**4 + 2*u**2*v**2 - 4*u**2 - v**4 + 4*v**2 + 16*v + 16)/8
+            sqrt(Abs(-u**4 + 2*u**2*v**2 - 4*u**2 - v**4 + 4*v**2 + 16*v + 16))/8
         """
         dom = self._domain
         if frame is None:

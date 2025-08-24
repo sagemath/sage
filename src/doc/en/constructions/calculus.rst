@@ -155,7 +155,7 @@ Sage can also compute symbolic definite integrals involving limits.
     (x, k, w)
     sage: f = x^3 * e^(k*x) * sin(w*x)
     sage: f.integrate(x)
-    ((24*k^3*w - 24*k*w^3 - (k^6*w + 3*k^4*w^3 + 3*k^2*w^5 + w^7)*x^3 + 6*(k^5*w + 2*k^3*w^3 + k*w^5)*x^2 - 6*(3*k^4*w + 2*k^2*w^3 - w^5)*x)*cos(w*x)*e^(k*x) - (6*k^4 - 36*k^2*w^2 + 6*w^4 - (k^7 + 3*k^5*w^2 + 3*k^3*w^4 + k*w^6)*x^3 + 3*(k^6 + k^4*w^2 - k^2*w^4 - w^6)*x^2 - 6*(k^5 - 2*k^3*w^2 - 3*k*w^4)*x)*e^(k*x)*sin(w*x))/(k^8 + 4*k^6*w^2 + 6*k^4*w^4 + 4*k^2*w^6 + w^8)
+    ((24*k^3*w*e^(k*x) - 24*k*w^3*e^(k*x) - (k^6*w*e^(k*x) + 3*k^4*w^3*e^(k*x) + 3*k^2*w^5*e^(k*x) + w^7*e^(k*x))*x^3 + 6*(k^5*w*e^(k*x) + 2*k^3*w^3*e^(k*x) + k*w^5*e^(k*x))*x^2 - 6*(3*k^4*w*e^(k*x) + 2*k^2*w^3*e^(k*x) - w^5*e^(k*x))*x)*cos(w*x) - (6*k^4*e^(k*x) - 36*k^2*w^2*e^(k*x) + 6*w^4*e^(k*x) - (k^7*e^(k*x) + 3*k^5*w^2*e^(k*x) + 3*k^3*w^4*e^(k*x) + k*w^6*e^(k*x))*x^3 + 3*(k^6*e^(k*x) + k^4*w^2*e^(k*x) - k^2*w^4*e^(k*x) - w^6*e^(k*x))*x^2 - 6*(k^5*e^(k*x) - 2*k^3*w^2*e^(k*x) - 3*k*w^4*e^(k*x))*x)*sin(w*x))/(k^8 + 4*k^6*w^2 + 6*k^4*w^4 + 4*k^2*w^6 + w^8)
     sage: integrate(1/x^2, x, 1, infinity)
     1
 
@@ -257,8 +257,7 @@ is one way to compute LT's and
     (s, t)
     sage: f = t^5*exp(t)*sin(t)
     sage: L = laplace(f, t, s); L
-    3840*(s - 1)^5/(s^2 - 2*s + 2)^6 - 3840*(s - 1)^3/(s^2 - 2*s + 2)^5 +
-    720*(s - 1)/(s^2 - 2*s + 2)^4
+    240*(3*s^5 - 15*s^4 + 20*s^3 - 12*s + 4)/(s^12 - 12*s^11 + 72*s^10 - 280*s^9 + 780*s^8 - 1632*s^7 + 2624*s^6 - 3264*s^5 + 3120*s^4 - 2240*s^3 + 1152*s^2 - 384*s + 64)
 
 is another way.
 
