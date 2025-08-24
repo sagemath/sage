@@ -370,37 +370,13 @@ cdef class CategoryObject(SageObject):
             sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
             sage: z.minpoly()                                                           # needs sage.rings.number_field
             x^2 + 3
-
-        If the ring has less than `n` generators, the generators
-        of the base rings are appended recursively::
-
-            sage: S.<y> = PolynomialRing(R)
-            sage: T.<z> = PolynomialRing(S)
-            sage: T._first_ngens(1)
-            (z,)
-            sage: T._first_ngens(2)
-            (z, y)
-            sage: T._first_ngens(3)
-            (z, y, x)
         """
         names = self._defining_names()
-        if not isinstance(names, (list, tuple)):
-            # case of Family
-            it = iter(names)
-            names = []
-            for _ in range(n):
-                try:
-                    names.append(next(it))
-                except StopIteration:
-                    break
-        names = tuple(names)
-        m = n - len(names)
-        if m <= 0:
+        if isinstance(names, (list, tuple)):
             return names[:n]
-        else:
-            if hasattr(self, 'base'):
-                names += tuple(self(x) for x in self.base()._first_ngens(m))
-            return names
+        # case of Family
+        it = iter(names)
+        return tuple(next(it) for i in range(n))
 
     @cached_method
     def _defining_names(self):
