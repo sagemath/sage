@@ -16,6 +16,7 @@ clean:
 	rm -rf en/reference/documentation/sage_docbuild
 	rm -rf en/reference/sage
 	rm -f common/*.pyc
+	rm -rf "$(SAGE_ROOT)/build/sage-distro/src/doc"
 
 doc-html:
 	meson compile -C ../../build/sage-distro doc-html
