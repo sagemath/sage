@@ -1245,6 +1245,8 @@ sage_op_dict = {
     sage.functions.error.erf: "%ERF",
     sage.functions.gamma.gamma_inc: "%GAMMA_INCOMPLETE",
     sage.functions.other.conjugate: "$CONJUGATE",
+    sage.functions.other.imag_part: "%IMAGPART",
+    sage.functions.other.real_part: "%REALPART",
 }
 # we compile the dictionary
 sage_op_dict = {k: EclObject(sage_op_dict[k]) for k in sage_op_dict}
