@@ -154,7 +154,7 @@ jobs:
       #
 
       - name: Build live doc
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         run: |
           # Avoid running out of disk space
           rm -rf upstream
@@ -165,7 +165,7 @@ jobs:
         shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy live doc
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         run: |
           # Reuse doc created previously, which contains pdfs
           mv doc livedoc
@@ -175,7 +175,7 @@ jobs:
           zip -r livedoc.zip livedoc
 
       - name: Upload live doc
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref_type == 'tag'
         uses: actions/upload-artifact@v4
         with:
           name: livedoc

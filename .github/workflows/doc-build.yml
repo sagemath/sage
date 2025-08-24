@@ -4,14 +4,6 @@ on:
   pull_request:
   merge_group:
   push:
-    tags:
-      # Match all release tags including beta, rc
-      - '[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
-      - '[0-9]+.[0-9]+.rc[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
     branches:
       - develop
   workflow_dispatch:
@@ -194,7 +186,7 @@ jobs:
           path: doc.zip
 
       #
-      # On release events
+      # On push events
       #
 
       - name: Upload doc-develop
