@@ -8371,8 +8371,8 @@ def element_class(R, is_sparse):
             import sage.modules.vector_symbolic_sparse
             return sage.modules.vector_symbolic_sparse.Vector_symbolic_sparse
     elif isinstance(R, CartesianProduct):
-        import sage.modules.vector_cartesian_product_dense
-        return sage.modules.vector_cartesian_product_dense.Vector_cartesian_product_dense
+        import sage.modules.vector_cartesian_product
+        return sage.modules.vector_cartesian_product.Vector_cartesian_product
 
     if is_sparse:
         return FreeModuleElement_generic_sparse
