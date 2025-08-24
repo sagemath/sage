@@ -262,6 +262,7 @@ AUTHOR:
 
 from sage.misc.latex import latex
 from sage.structure.element import Element
+from sage.structure.factorization import Factorization
 from sage.matrix.matrix0 import Matrix
 from sage.matrix.constructor import matrix
 from sage.categories.map import Map
@@ -306,15 +307,17 @@ class OreModuleMorphism(Morphism):
         fd = domain._pseudohom
         fc = codomain._pseudohom
         MS = parent.matrix_space()
-        pole = domain._pole
-        if pole is not None:
-            mult = domain._multiplicity - codomain._multiplicity
-            if mult > 0:
-                scalar = pole ** mult
-            else:
-                scalar = pole ** (-mult)
-        else:
-            mult = 0
+
+        # Denominators
+        dd = domain._denominator
+        if dd is None:
+            dd = Factorization([])
+        dc = codomain._denominator
+        if dd is None:
+            dc = Factorization([])
+        den = dd.lcm(dc)
+        sd = den / dd
+        sc = den / dc
 
         if (isinstance(im_gens, Element)
             and base.has_coerce_map_from(im_gens.parent())):
@@ -346,14 +349,16 @@ class OreModuleMorphism(Morphism):
             oldr = 0
             r = M.rank()
             iter = 1
+            sd = sd.value()
+            sc = sc.value()
             while r > oldr:
                 for i in range(r):
                     row = M.row(i).list()
                     x = row[:dimd]
                     y = row[dimd:]
                     for _ in range(iter):
-                        x = fd(x)
-                        y = fc(y)
+                        x = sd * fd(x)
+                        y = sc * fc(y)
                         if mult > 0:
                             x *= scalar
                         elif mult < 0:
@@ -371,14 +376,13 @@ class OreModuleMorphism(Morphism):
         else:
             raise ValueError("cannot construct a morphism from the given data")
         if check:
+            if isinstance(sd, Factorization):
+                sd = sd.value()
+                sc = sc.value()
             for x in parent.domain().basis():
                 y = self._call_(x)
-                fx = fd(x)
-                fy = fc(y)
-                if mult > 0:
-                    fx *= scalar
-                elif mult < 0:
-                    fy *= scalar
+                fx = sd * fd(x)
+                fy = sc * fc(y)
                 if self._call_(fx) != fy:
                     raise ValueError("does not define a morphism of Ore modules")
 

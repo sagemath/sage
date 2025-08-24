@@ -185,6 +185,7 @@ import operator
 
 from sage.misc.latex import latex
 from sage.misc.latex import latex_variable_name
+from sage.structure.factorization import Factorization
 from sage.structure.sequence import Sequence
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -323,7 +324,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
     """
     Element = OreModuleElement
 
-    def __classcall_private__(cls, mat, twist, pole=None, multiplicity=None, names=None, category=None):
+    def __classcall_private__(cls, mat, twist, denominator=None, names=None, category=None):
         r"""
         Normalize the input before passing it to the init function
         (useful to ensure the uniqueness assumption).
@@ -357,18 +358,21 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             True
         """
         base = mat.base_ring()
-        if pole is not None:
-            pole = base(pole)
-        multiplicity = ZZ(multiplicity)
+        if denominator is None:
+            pass
+        elif isinstance(denominator, Factorization):
+            denominator = denominator.base_change(base)
+        else:
+            denominator = Factorization([(base(denominator), 1)])
         if category is None:
-            category = OreModules(base, twist, pole)
+            category = OreModules(base, twist)
         rank = mat.nrows()
         if mat.ncols() != rank:
             raise ValueError("matrix must be square")
         names = normalize_names(names, rank)
-        return cls.__classcall__(cls, mat, category._ore, pole, multiplicity, names, category)
+        return cls.__classcall__(cls, mat, category._ore, denominator, names, category)
 
-    def __init__(self, mat, ore, pole, multiplicity, names, category) -> None:
+    def __init__(self, mat, ore, denominator, names, category) -> None:
         r"""
         Initialize this Ore module.
 
@@ -403,12 +407,11 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         self._names = names
         if names is not None:
             self._latex_names = [latex_variable_name(name) for name in names]
-        self._class = OreModule
+        self._general_class = OreModule
         self._submodule_class = OreSubmodule
         self._quotientModule_class = OreQuotientModule
         self._pseudohom = FreeModule_ambient.pseudohom(self, mat, ore, codomain=self)
-        self._pole = pole
-        self._multiplicity = multiplicity
+        self._denominator = denominator
 
     def _element_constructor_(self, x):
         r"""
@@ -692,7 +695,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
             :meth:`matrix`
         """
-        if self._pole is None:
+        if self._denominator is None:
             return self._pseudohom
         else:
             return self.over_fraction_field().pseudohom()
@@ -829,8 +832,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             :meth:`pseudohom`
         """
         mat = self._pseudohom.matrix()
-        if self._pole is not None:
-            mat /= self._pole ** self._multiplicity
+        if self._denominator is not None:
+            mat /= self._denominator.value()
         return mat
 
     def over_fraction_field(self):
@@ -839,28 +842,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             twist = self._ore.twisting_morphism()
         if twist is not None:
             twist = twist.extend_to_fraction_field()
-        return OreModule(self.matrix(), twist, names=self._names)
-
-    def twist(self, n, pole=None, names=None):
-        if self._pole is None:
-            if pole is None:
-                raise ValueError
-            multiplicity = n
-            category = OreModules(base, self._ore, pole)
-        else:
-            if not (pole is None or pole == self._pole):
-                raise ValueError
-            multiplicity = self._multiplicity + n
-            pole = self._pole
-            category = self._ore_category
-        mat = self._pseudohom._matrix
-        return self._class(mat, self._ore, pole, multiplicity, names, category)
-
-    def pole(self):
-        if self._pole is None:
-            return
-        else:
-            return self._pole, self._multiplicity
+        return self._general_class(self.matrix(), twist, names=self._names)
 
     def basis(self) -> list:
         r"""
@@ -1927,10 +1909,10 @@ class OreSubmodule(OreModule):
         C = submodule.coordinates.matrix_from_columns(range(submodule.rank))
         f = ambient._pseudohom
         rows = [f(x) * C for x in submodule.basis.rows()]
-        ambient._class.__init__(self, matrix(base, rows),
-                                ambient.ore_ring(action=False),
-                                ambient._pole, ambient._multiplicity,
-                                names, ambient._ore_category)
+        OreModule.__init__(self, matrix(base, rows),
+                           ambient.ore_ring(action=False),
+                           ambient._denominator,
+                           names, ambient._ore_category)
         coerce = self.hom(submodule.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
@@ -2065,6 +2047,10 @@ class OreSubmodule(OreModule):
             ambient = ambient._ambient
             ambients.append(ambient)
         return ambients
+
+    def over_fraction_field(self):
+        ambient = self._ambient.over_fraction_field()
+        return ambient._submodule_class(ambient, self._submodule.basis, False, self._names)
 
     def saturate(self, names=None, coerce=False):
         r"""
@@ -2439,10 +2425,10 @@ class OreQuotientModule(OreModule):
         coerce = submodule.coordinates.matrix_from_columns(range(rank, d))
         f = cover._pseudohom
         images = [f(x) for x in submodule.complement.rows()]
-        cover._class.__init__(self, matrix(base, d-rank, d, images) * coerce,
-                              cover.ore_ring(action=False),
-                              cover._pole, cover._multiplicity,
-                              names, cover._ore_category)
+        OreModule.__init__(self, matrix(base, d-rank, d, images) * coerce,
+                           cover.ore_ring(action=False),
+                           cover._denominator,
+                           names, cover._ore_category)
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
         section = self._section = OreModuleSection(self, cover)
@@ -2509,6 +2495,10 @@ class OreQuotientModule(OreModule):
         """
         M = self._cover
         return "\\overline{%s}" % M(x)._latex_()
+
+    def over_fraction_field(self):
+        cover = self._cover.over_fraction_field()
+        return cover._quotientModule_class(cover, self._submodule.basis, False, self._names)
 
     def cover(self):
         r"""
