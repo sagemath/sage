@@ -7658,7 +7658,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 v = v.list()
             return self.basis_matrix().solve_left(FreeModule(self.coordinate_ring(), len(v))(v), extend=False)
         except (ValueError, TypeError):
-            raise ArithmeticError('vector is not in module')
+            raise ArithmeticError('vector is not in free module')
 
     def echelonized_basis(self):
         """
