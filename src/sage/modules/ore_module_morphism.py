@@ -308,12 +308,12 @@ class OreModuleMorphism(Morphism):
         fc = codomain._pseudohom
         MS = parent.matrix_space()
 
-        # Denominators
+        # Handle denominators
         dd = domain._denominator
         if dd is None:
             dd = Factorization([])
         dc = codomain._denominator
-        if dd is None:
+        if dc is None:
             dc = Factorization([])
         den = dd.lcm(dc)
         sd = den / dd
@@ -349,8 +349,8 @@ class OreModuleMorphism(Morphism):
             oldr = 0
             r = M.rank()
             iter = 1
-            sd = sd.value()
-            sc = sc.value()
+            sd = base(sd.value())
+            sc = base(sc.value())
             while r > oldr:
                 for i in range(r):
                     row = M.row(i).list()
@@ -359,10 +359,6 @@ class OreModuleMorphism(Morphism):
                     for _ in range(iter):
                         x = sd * fd(x)
                         y = sc * fc(y)
-                        if mult > 0:
-                            x *= scalar
-                        elif mult < 0:
-                            y *= scalar
                     v = x.list() + y.list()
                     for j in range(d):
                         M[i+r,j] = v[j]
@@ -377,8 +373,8 @@ class OreModuleMorphism(Morphism):
             raise ValueError("cannot construct a morphism from the given data")
         if check:
             if isinstance(sd, Factorization):
-                sd = sd.value()
-                sc = sc.value()
+                sd = base(sd.value())
+                sc = base(sc.value())
             for x in parent.domain().basis():
                 y = self._call_(x)
                 fx = sd * fd(x)

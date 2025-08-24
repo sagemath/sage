@@ -197,7 +197,6 @@ from sage.matrix.constructor import matrix
 from sage.matrix.special import identity_matrix
 
 from sage.rings.infinity import Infinity
-from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.ore_polynomial_element import OrePolynomial
 from sage.modules.free_module import FreeModule_ambient
 from sage.modules.free_module_element import FreeModuleElement_generic_dense
@@ -663,8 +662,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
         rank = self.rank()
         names = normalize_names(names, rank)
         cls = self.__class__
-        M = cls.__classcall__(cls, self._pseudohom._matrix,
-                              self._ore, names, self._ore_category)
+        M = cls.__classcall__(cls, self._pseudohom._matrix, self._ore,
+                              self._denominator, names, self._ore_category)
         if coerce:
             mat = identity_matrix(self.base_ring(), rank)
             id = self.hom(mat, codomain=M)
@@ -1909,10 +1908,10 @@ class OreSubmodule(OreModule):
         C = submodule.coordinates.matrix_from_columns(range(submodule.rank))
         f = ambient._pseudohom
         rows = [f(x) * C for x in submodule.basis.rows()]
-        OreModule.__init__(self, matrix(base, rows),
-                           ambient.ore_ring(action=False),
-                           ambient._denominator,
-                           names, ambient._ore_category)
+        ambient._general_class.__init__(
+            self, matrix(base, rows),
+            ambient.ore_ring(action=False),
+            ambient._denominator, names, ambient._ore_category)
         coerce = self.hom(submodule.basis, codomain=ambient)
         ambient.register_coercion(coerce)
         self._inject = coerce.__copy__()
@@ -2425,10 +2424,10 @@ class OreQuotientModule(OreModule):
         coerce = submodule.coordinates.matrix_from_columns(range(rank, d))
         f = cover._pseudohom
         images = [f(x) for x in submodule.complement.rows()]
-        OreModule.__init__(self, matrix(base, d-rank, d, images) * coerce,
-                           cover.ore_ring(action=False),
-                           cover._denominator,
-                           names, cover._ore_category)
+        cover._general_class.__init__(
+            self, matrix(base, d-rank, d, images) * coerce,
+            cover.ore_ring(action=False),
+            cover._denominator, names, cover._ore_category)
         self._project = coerce = cover.hom(coerce, codomain=self)
         self.register_coercion(coerce)
         section = self._section = OreModuleSection(self, cover)
