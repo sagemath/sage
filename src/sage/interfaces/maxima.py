@@ -547,7 +547,7 @@ class Maxima(MaximaAbstract, Expect):
 
         TESTS::
 
-            sage:: from sage.interfaces.maxima import Maxima, maxima
+            sage: from sage.interfaces.maxima import Maxima, maxima
             sage: Maxima == loads(dumps(Maxima))
             True
             sage: maxima == loads(dumps(maxima))
