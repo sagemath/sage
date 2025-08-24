@@ -915,7 +915,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             extras = {'sparse': True}
         else:
             extras = None
-        return CompletionFunctor(self._names[0], self.default_prec(), extras), self._poly_ring()
+        A = self._poly_ring()
+        return CompletionFunctor(A.gen(), self.default_prec(), extras), A
 
     def _coerce_impl(self, x):
         """
