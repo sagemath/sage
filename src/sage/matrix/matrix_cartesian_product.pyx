@@ -1,6 +1,6 @@
 from .matrix_generic_dense cimport Matrix_generic_dense
+from sage.structure.element cimport Matrix
 from sage.categories.cartesian_product import cartesian_product
-cimport sage
 
 cdef class Matrix_cartesian_product(Matrix_generic_dense):
     """
@@ -22,7 +22,7 @@ cdef class Matrix_cartesian_product(Matrix_generic_dense):
         from sage.matrix.constructor import matrix
         return matrix(a[0].nrows(), a[0].ncols(), list(map(cartesian_product, zip(*(c.list() for c in a)))))
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
+    cdef Matrix _matrix_times_matrix_(self, Matrix right):
         """
         EXAMPLES::
 
