@@ -7667,7 +7667,6 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V.span(B) == M
             True
         """
-        C = self.element_class
         echelonized_basis = self.echelonized_basis_matrix().rows()
         if echelonized_basis and echelonized_basis[0].parent() is not self:
             w = [self(x) for x in echelonized_basis]
