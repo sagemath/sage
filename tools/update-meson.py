@@ -185,17 +185,17 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
         folder = Path(target.filename).parent
         existing_sources: list[str] = doc_sources[folder]
         # Add all files that are not in the source list
-        for _, _, files in folder.walk():
-            for file in sorted(files):
-                if file in existing_sources:
-                    continue
-                if file in ignored_files or file.endswith(".pyc"):
-                    continue
-                existing_sources.append(file)
-                token = Token("string", target.filename, 0, 0, 0, None, file)
-                target.value.args.arguments.append(StringNode(token))
-                if target not in self.modified_nodes:
-                    self.modified_nodes += [target]
+        for file in folder.glob("*.*"):
+            file_name: str = file.name
+            if file_name in existing_sources:
+                continue
+            if file_name in ignored_files or file.suffix == ".pyc":
+                continue
+            existing_sources.append(file_name)
+            token = Token("string", target.filename, 0, 0, 0, None, file_name)
+            target.value.args.arguments.append(StringNode(token))
+            if target not in self.modified_nodes:
+                self.modified_nodes += [target]
 
     # Add all missing meson files in the src/doc folder
     doc_folder = Path(options.sourcedir) / "src" / "doc"
@@ -215,6 +215,8 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
         if files_to_add or any(dir not in ignored_folders for dir in dirs):
             # Create meson.build file
             meson_build = Path(folder) / "meson.build"
+            if meson_build.exists():
+                continue
             with open(meson_build, "w", encoding="utf-8") as f:
                 if files_to_add:
                     f.write("doc_sources = [\n")
