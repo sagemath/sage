@@ -157,6 +157,8 @@ mtx = cc.find_library(
 )
 png = dependency(['libpng', 'png', 'png16'], version: '>=1.2')
 zlib = dependency('zlib', version: '>=1.2.11')
+# We actually want >= 20231212, but the version number is not updated in the pkgconfig
+# https://github.com/conda-forge/eclib-feedstock/issues/48
 ec = dependency(
   'eclib',
   version: '>=20250122',
