@@ -946,7 +946,7 @@ def random_vector(ring, degree=None, *args, **kwds):
     if ring not in Rings():
         raise TypeError("elements of a vector, or module element, must come from a ring, not %s" % ring)
     if not hasattr(ring, "random_element"):
-        raise AttributeError("cannot create a random vector since there is no random_element() method for %s" % ring )
+        raise AttributeError("cannot create a random vector since there is no random_element() method for %s" % ring)
     sparse = kwds.pop('sparse', False)
     entries = [ring.random_element(*args, **kwds) for _ in range(degree)]
     return vector(ring, degree, entries, sparse)
@@ -1280,16 +1280,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # on the elements, which is sometimes much prettier than
         # the coerced=False we would get otherwise.
         if self.is_sparse_c():
-            items = [(n, sib(e, 2))
-                     for n,e in self.dict().items()]
+            items = [(n, sib(e, 2)) for n, e in self.dict().items()]
             items.sort()
             if len(self):
                 # we may need to add an extra element on the end to
                 # set the size.  (There doesn't seem to be a better way
                 # to do it.)
-                if len(items) == 0 or len(self)-1 > items[-1][0]:
+                if not items or len(self)-1 > items[-1][0]:
                     items.append((len(self)-1, sib.int(0)))
-            items_dict = sib.dict([(sib.int(n), e) for n,e in items])
+            items_dict = sib.dict([(sib.int(n), e) for n, e in items])
 
             return sib.name('vector')(self.base_ring(), items_dict)
         else:
@@ -1498,7 +1497,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, 1, self.degree(),
-                list(self), sparse=self.is_sparse())
+                        list(self), sparse=self.is_sparse())
         return ma.matrix()
 
     def column(self):
@@ -1570,7 +1569,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         """
         from sage.matrix.args import MatrixArgs
         ma = MatrixArgs(self._parent._base, self.degree(), 1,
-                [(x,) for x in self], sparse=self.is_sparse())
+                        [(x,) for x in self], sparse=self.is_sparse())
         return ma.matrix()
 
     def __copy__(self):
@@ -1612,7 +1611,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.subs(a=b, b=d)
             (b, d, d, e)
         """
-        return self.parent()([ a.subs(in_dict, **kwds) for a in self.list() ])
+        return self.parent()([a.subs(in_dict, **kwds) for a in self.list()])
 
     def change_ring(self, R):
         """
@@ -2471,7 +2470,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 from sage.plot.plot3d.shapes2 import line3d, point3d
 
                 if plot_type == 'arrow':
-                    return line3d([start, [(u+v) for u,v in zip(coords, start)]], arrow_head=True, **kwds)
+                    return line3d([start,
+                                   [(u+v) for u, v in zip(coords, start)]],
+                                  arrow_head=True, **kwds)
                 else:
                     return point3d(coords, **kwds)
             elif dimension < 3:
@@ -2482,7 +2483,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
                 from sage.plot.all import arrow, point
                 if plot_type == 'arrow':
-                    return arrow(start, [(u+v) for u,v in zip(coords, start)], **kwds)
+                    return arrow(start,
+                                 [(u+v) for u, v in zip(coords, start)], **kwds)
                 else:
                     return point(coords, **kwds)
             else:
@@ -2494,7 +2496,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             raise NotImplementedError("plot_type was unrecognized")
 
     def plot_step(self, xmin=0, xmax=1, eps=None, res=None,
-             connect=True, **kwds):
+                  connect=True, **kwds):
         r"""
         INPUT:
 
@@ -2532,9 +2534,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             y = float(self[i])
             if x > xmax:
                 break
-            v.append((x,y))
+            v.append((x, y))
             x += eps
-            v.append((x,y))
+            v.append((x, y))
         from sage.plot.all import line, points
         if connect:
             return line(v, **kwds)
@@ -2875,9 +2877,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
             s = self.list(copy=False)
             return MS([
-                [ zero, -s[2],  s[1]],
-                [ s[2],  zero, -s[0]],
-                [-s[1],  s[0],  zero]])
+                [zero, -s[2], s[1]],
+                [s[2], zero, -s[0]],
+                [-s[1], s[0], zero]])
         elif rank == 7:
             MS = MatrixSpace(R, rank, rank, sparse=self.is_sparse())
             s = self.list(copy=False)
@@ -4025,12 +4027,12 @@ cdef class FreeModuleElement(Vector):   # abstract base class
                 if not zero_res.is_zero():
                     # And phi maps 0 to a nonzero value.
                     v = [zero_res] * self._degree
-                    for i,z in self.dict(copy=False).items():
+                    for i, z in self.dict(copy=False).items():
                         v[i] = phi(z)
 
             if v is None:
                 # phi maps 0 to 0 (or else we don't have any zeroes at all)
-                v = dict([(i,phi(z)) for i,z in self.dict(copy=False).items()])
+                v = {i: phi(z) for i, z in self.dict(copy=False).items()}
                 # add a zero at the last position, if it is not already set.
                 # This will help the constructor to determine the right degree.
                 v.setdefault(self._degree-1, zero_res)
@@ -4179,14 +4181,15 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # return self.apply_map(lambda x: x.nintegral(*args, **kwds) for x in self)
 
         if self.is_sparse():
-            v = [(i,z.nintegral(*args, **kwds)) for i,z in self.dict(copy=False).items()]
-            answers = dict([(i,a[0]) for i,a in v])
-            v=dict(v)
+            v = [(i, z.nintegral(*args, **kwds))
+                 for i, z in self.dict(copy=False).items()]
+            answers = {i: a[0] for i, a in v}
+            v = dict(v)
         else:
             v = [z.nintegral(*args, **kwds) for z in self.list()]
             answers = [a[0] for a in v]
 
-        return (vector(answers,sparse=self.is_sparse()), v)
+        return (vector(answers, sparse=self.is_sparse()), v)
 
     nintegrate = nintegral
 
@@ -5501,4 +5504,4 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         if prec is None:
             prec = digits_to_bits(digits)
         return vector({k: v.numerical_approx(prec, algorithm=algorithm)
-                for k, v in self._entries.iteritems()}, sparse=True)
+                       for k, v in self._entries.iteritems()}, sparse=True)
