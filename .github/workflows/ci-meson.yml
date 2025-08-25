@@ -185,5 +185,5 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         if: failure()
         with:
-          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}-log
+          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}${{ matrix.tests == 'new' && '-new' || '' }}-log
           path: builddir/meson-logs/
