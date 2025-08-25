@@ -10,7 +10,7 @@ requires = [
   'cython >=3.0, != 3.0.3',
   'gmpy2 ~=2.1.b999',
   'memory_allocator',
-  'numpy >=1.25',
+  'numpy >=2.2.4',
   'jinja2',
 ]
 [tool.meson-python.args]
