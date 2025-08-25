@@ -2,19 +2,6 @@ import pytest
 from sage.libs.gap.libgap import libgap
 
 
-@pytest.fixture
-def tmpfile():
-    r"""
-    Temporary file fixture that can be reopened/closed and still
-    clean itself up afterwards.
-    """
-    from tempfile import NamedTemporaryFile
-    from os import unlink
-    t = NamedTemporaryFile(delete=False)
-    yield t
-    unlink(t.name)
-
-
 def test_libgap_can_read_and_write_files(tmpfile):
     """
     Test that libgap can write to a temporary file and
