@@ -57,7 +57,7 @@ class DrinfeldModule_finite(DrinfeldModule):
         sage: K.<z6> = Fq.extension(2)
         sage: phi = DrinfeldModule(A, [z6, 0, 5])
         sage: phi
-        Drinfeld module defined by T |--> 5*t^2 + z6
+        Drinfeld module defined by T |--> 5*τ^2 + z6
 
     ::
 
@@ -84,8 +84,8 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         sage: frobenius_endomorphism = phi.frobenius_endomorphism()
         sage: frobenius_endomorphism
-        Endomorphism of Drinfeld module defined by T |--> 5*t^2 + z6
-          Defn: t^2
+        Endomorphism of Drinfeld module defined by T |--> 5*τ^2 + z6
+          Defn: τ^2
 
     Its characteristic polynomial can be computed::
 
@@ -138,8 +138,8 @@ class DrinfeldModule_finite(DrinfeldModule):
         - ``gen`` -- the generator of the Drinfeld module as a list of
           coefficients or an Ore polynomial
 
-        - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
-          ring gen
+        - ``name`` -- (default: ``'τ'``) the name of the variable of
+          the Ore polynomial ring
 
         TESTS::
 
@@ -236,7 +236,6 @@ class DrinfeldModule_finite(DrinfeldModule):
         `tau^n`, where `n` is the degree of the base field `K` over
         `\mathbb F_q`.
 
-
         EXAMPLES::
 
             sage: Fq = GF(343)
@@ -244,8 +243,8 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: K.<z6> = Fq.extension(2)
             sage: phi = DrinfeldModule(A, [1, 0, z6])
             sage: phi.frobenius_endomorphism()
-            Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
-              Defn: t^2
+            Endomorphism of Drinfeld module defined by T |--> z6*τ^2 + 1
+              Defn: τ^2
 
         TESTS::
 
@@ -273,14 +272,14 @@ class DrinfeldModule_finite(DrinfeldModule):
 
         Let `\chi = X^r + \sum_{i=0}^{r-1} A_{i}(T)X^{i}` be the
         characteristic polynomial of the Frobenius endomorphism, and
-        let `t^n` be the Ore polynomial that defines the Frobenius
+        let `\tau^n` be the Ore polynomial that defines the Frobenius
         endomorphism of `\phi`; by definition, `n` is the degree of `K`
         over the base field `\mathbb{F}_q`. Then we have
 
         .. MATH::
 
-            \chi(t^n)(\phi(T))
-            = t^{nr} + \sum_{i=1}^{r} \phi_{A_{i}}t^{n(i)}
+            \chi(\tau^n)(\phi(T))
+            = \tau^{nr} + \sum_{i=1}^{r} \phi_{A_{i}}\tau^{n(i)}
             = 0,
 
         with `\deg(A_i) \leq \frac{n(r-i)}{r}`.
@@ -340,7 +339,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: chi(frob_pol, phi(T))
             0
             sage: phi.frobenius_charpoly(algorithm='motive')(phi.frobenius_endomorphism())
-            Endomorphism of Drinfeld module defined by T |--> z6*t^2 + 1
+            Endomorphism of Drinfeld module defined by T |--> z6*τ^2 + 1
               Defn: 0
 
         ::
@@ -935,15 +934,15 @@ class DrinfeldModule_finite(DrinfeldModule):
         When the input is not in the image of the Drinfeld module, an
         exception is raised::
 
-            sage: t = phi.ore_polring().gen()
-            sage: phi.invert(t + 1)
+            sage: tau = phi.ore_variable()
+            sage: phi.invert(tau + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
 
         ::
 
-            sage: phi.invert(t^4 + t^2 + 1)
+            sage: phi.invert(tau^4 + tau^2 + 1)
             Traceback (most recent call last):
             ...
             ValueError: input must be in the image of the Drinfeld module
@@ -1091,7 +1090,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: phi.is_supersingular()
             True
             sage: phi(phi.characteristic())   # Purely inseparable
-            z6*t^2
+            z6*τ^2
 
         In rank two, a Drinfeld module is either ordinary or
         supersinguler. In higher ranks, it could be neither of
