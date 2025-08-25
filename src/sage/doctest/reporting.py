@@ -44,7 +44,7 @@ AUTHORS:
 import re
 import sys
 from signal import SIGABRT, SIGFPE, SIGILL, SIGINT, SIGSEGV, SIGTERM, Signals
-from sys import stdout
+from sys import argv, stdout
 
 from sage.doctest.external import available_software
 from sage.doctest.sources import DictAsObject
