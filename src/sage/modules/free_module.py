@@ -6727,7 +6727,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         if already_echelonized:
             assert echelonized_basis is None or echelonized_basis == basis, "inconsistent parameters provided"
             echelonized_basis = basis
-        if echelonize:
+        elif echelonize:
             if echelonized_basis is None:
                 echelonized_basis = self._echelonized_basis(ambient, basis)
             basis = echelonized_basis
