@@ -1100,7 +1100,7 @@ class ModularFormsRing(Parent):
 
             flist = []
 
-            for (j, f, F) in G:
+            for j, f, F in G:
                 for g in self.q_expansion_basis(k - j, prec=kprec):
                     flist.append(g*f)
             A = self.base_ring() ** kprec
@@ -1108,10 +1108,10 @@ class ModularFormsRing(Parent):
 
             S = self.modular_forms_of_weight(k).cuspidal_submodule()
             if (W.rank() == S.dimension()
-                and (self.base_ring().is_field() or W.index_in_saturation() == 1)):
-                    verbose("Nothing new in weight %s" % k, t)
-                    k += 1
-                    continue
+                    and (self.base_ring().is_field() or W.index_in_saturation() == 1)):
+                verbose("Nothing new in weight %s" % k, t)
+                k += 1
+                continue
 
             t = verbose("Known cusp generators span a submodule of dimension %s of space of dimension %s" % (W.rank(), S.dimension()), t)
 
@@ -1195,7 +1195,7 @@ class ModularFormsRing(Parent):
             G = self.cuspidal_ideal_generators(maxweight=gen_weight, prec=working_prec)
 
             flist = []
-            for (j, f, F) in G:
+            for j, f, F in G:
                 for g in self.q_expansion_basis(weight - j, prec=working_prec):
                     flist.append(g*f)
 
