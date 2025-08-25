@@ -551,6 +551,99 @@ class DrinfeldModuleMorphism(Morphism, UniqueRepresentation,
         H = self.codomain().Hom(self.domain())
         return H(~(self.ore_polynomial()[0]))
 
+    def right_gcd(self, other):
+        r"""
+        Return the right gcd of this morphism and ``other``.
+
+        If `u` and `v` are separable isogenies with the same domain,
+        their right gcd is the separable isogeny whose kernel is
+        `\ker u \cap \ker v`.
+
+        INPUT:
+
+        - ``other`` -- a morphism of Drinfeld modules with the
+          same domain
+
+        EXAMPLES::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: F.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z, z, 1])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 3)
+            sage: v = phi.hom(tau + 5)
+            sage: u.right_gcd(v)
+            Identity morphism of Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
+
+        We underline that the right gcd of isogenies does not make sense
+        when the isogenies have different domains::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1, 1])
+            sage: w = psi.hom(tau + 1)
+            sage: u.right_gcd(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the two morphisms must have the same domain
+
+        SEEALSO::
+
+            :meth:`left_lcm`
+        """
+        if (not isinstance(other, DrinfeldModuleMorphism)
+         or other.domain() is not self.domain()):
+            raise ValueError("the two morphisms must have the same domain")
+        u = self.ore_polynomial().right_gcd(other.ore_polynomial())
+        return self.domain().hom(u)
+
+    def left_lcm(self, other):
+        r"""
+        Return the left lcm of this morphism and ``other``.
+
+        If `u` and `v` are separable isogenies with the same domain,
+        their right gcd is the separable isogeny whose kernel is
+        `\ker u + \ker v`.
+
+        INPUT:
+
+        - ``other`` -- a morphism of Drinfeld modules with the
+          same domain
+
+        EXAMPLES::
+
+            sage: Fq = GF(7)
+            sage: A.<T> = Fq[]
+            sage: F.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z, z, 1])
+            sage: tau = phi.ore_variable()
+            sage: u = phi.hom(tau + 3)
+            sage: v = phi.hom(tau + 5)
+            sage: u.left_lcm(v)
+            Drinfeld Module morphism:
+              From: Drinfeld module defined by T |--> τ^3 + z*τ^2 + z*τ + z
+              To:   Drinfeld module defined by T |--> τ^3 + z*τ^2 + (6*z + 1)*τ + z
+              Defn: τ^2 + τ + 1
+
+        We underline that the left lcm of isogenies does not make sense
+        when the isogenies have different domains::
+
+            sage: psi = DrinfeldModule(A, [z, z, 1, 1])
+            sage: w = psi.hom(tau + 1)
+            sage: v.left_lcm(w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the two morphisms must have the same domain
+
+        SEEALSO::
+
+            :meth:`right_gcd`
+        """
+        if (not isinstance(other, DrinfeldModuleMorphism)
+         or other.domain() is not self.domain()):
+            raise ValueError("the two morphisms must have the same domain")
+        u = self._ore_polynomial.left_lcm(other._ore_polynomial)
+        return self.domain().hom(u)
+
     def _motive_matrix(self):
         r"""
         Return the matrix giving the action of this morphism
