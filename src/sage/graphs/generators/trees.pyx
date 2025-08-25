@@ -11,7 +11,7 @@ All these methods appear in :mod:`sage.graphs.graph_generators`.
 
     :meth:`BalancedTree` | Return the perfectly balanced tree of height `h \geq 1`, whose root has degree `r \geq 2`.
     :meth:`~sage.graphs.generators.degree_sequence.DegreeSequenceTree` | Return a tree with the given degree sequence.
-    :meth:`FibonacciTree` | Return the graph of the Fibonacci Tree `F_{i}` of order `n`.
+    :meth:`FibonacciTree` | Return the graph of the Fibonacci Tree `F_{n}`.
     :meth:`RandomLobster` | Return a random lobster.
     :meth:`RandomTree` | Return a random tree on `n` nodes numbered `0` through `n-1`.
     :meth:`RandomTreePowerlaw` | Return a tree with a power law degree distribution, or ``False`` on failure.
@@ -77,7 +77,7 @@ Nauty's gentreeg can be used to generate trees with bounded diameter::
 
 The number of trees on the first few vertex counts agrees with :oeis:`A000055`::
 
-    sage: [len(list(graphs.trees(i))) for i in range(0, 15)]
+    sage: [len(list(graphs.trees(i))) for i in range(15)]
     [1, 1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
     sage: [len(list(graphs.nauty_gentreeg(str(i)))) for i in range(1, 15)]
     [1, 1, 1, 2, 3, 6, 11, 23, 47, 106, 235, 551, 1301, 3159]
@@ -214,11 +214,11 @@ def BalancedTree(r, h):
 
 def FibonacciTree(n):
     r"""
-    Return the graph of the Fibonacci Tree `F_{i}` of order `n`.
+    Return the graph of the Fibonacci Tree `F_{n}`.
 
-    The Fibonacci tree `F_{i}` is recursively defined as the tree
-    with a root vertex and two attached child trees `F_{i-1}` and
-    `F_{i-2}`, where `F_{1}` is just one vertex and `F_{0}` is empty.
+    The Fibonacci tree `F_{n}` is recursively defined as the tree
+    with a root vertex and two attached child trees `F_{n-1}` and
+    `F_{n-2}`, where `F_{1}` is just one vertex and `F_{0}` is empty.
 
     INPUT:
 
@@ -232,7 +232,7 @@ def FibonacciTree(n):
 
     ::
 
-        sage: l1 = [ len(graphs.FibonacciTree(_)) + 1 for _ in range(6) ]               # needs sage.libs.pari
+        sage: l1 = [graphs.FibonacciTree(_).order() + 1 for _ in range(6)]              # needs sage.libs.pari
         sage: l2 = list(fibonacci_sequence(2,8))                                        # needs sage.libs.pari
         sage: l1 == l2                                                                  # needs sage.libs.pari
         True
