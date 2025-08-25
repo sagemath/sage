@@ -248,7 +248,7 @@ At the end of the ``./configure`` run, Sage issued a message like the
 following::
 
   configure: notice: the following SPKGs did not find equivalent system packages:
-                     boost_cropped bzip2 ... zeromq zlib
+                     boost_cropped bzip2 ... zeromq zipp
   checking for the package system in use... debian
   configure: hint: installing the following system packages is recommended and
                    may avoid building some of the above SPKGs from source:
