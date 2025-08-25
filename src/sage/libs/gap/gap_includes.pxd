@@ -75,7 +75,7 @@ cdef extern from "gap/libgap-api.h" nogil:
     Obj GAP_NewObjIntFromInt(Int val)
     Int GAP_ValueInt(Obj)
     Int GAP_SizeInt(Obj)
-    UInt* GAP_AddrInt(Obj)
+    const UInt* GAP_AddrInt(Obj)
 
     bint GAP_IsList(Obj lst)
     UInt GAP_LenList(Obj lst)
@@ -104,7 +104,7 @@ cdef extern from "gap/objects.h" nogil:
     Obj CopyObj(Obj obj, int mut)
 
     UInt TNUM_OBJ(Obj obj)
-    char* TNAM_OBJ(Obj obj)
+    const char* TNAM_OBJ(Obj obj)
 
     cdef enum TNUM:
         T_RAT
