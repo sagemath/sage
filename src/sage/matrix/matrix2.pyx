@@ -19167,18 +19167,6 @@ cdef class Matrix(Matrix1):
             sage: E._krylov_row_coordinates(shifts,degrees,[(2,2),(1,4),(1,2),(1,1),(0,2)])
             [(1, 1, 2), (1, 2, 1), (2, 2, 0)]
         """
-        # INPUT VALIDATION
-        if not isinstance(shifts, FreeModuleElement) or shifts not in ZZ**self.nrows():
-            raise TypeError('_krylov_row_coordinates: shifts must be an integer vector of length sel.nrows().')
-        if not isinstance(degrees, FreeModuleElement) or degrees not in ZZ**self.nrows():
-            raise TypeError('_krylov_row_coordinates: degrees must be an integer vector of length sel.nrows().')
-        if row_pairs is not None and (not isinstance(row_pairs, (list, tuple)) or any([not isinstance(x, tuple) or len(x) != 2 or any([not isinstance(y, (int, sage.rings.integer.Integer)) for y in x]) for x in row_pairs])):
-            raise TypeError('_krylov_row_coordinates: row_pairs must be a list or tuple of tuple pairs of integers.')
-        if any([d < 0 for d in degrees]):
-            raise ValueError('_krylov_row_coordinates: degrees cannot have negative entries.')
-        if row_pairs is not None and any([0 > r[0] or r[0] >= self.nrows() for r in row_pairs]):
-            raise ValueError('_krylov_row_coordinates: row_pairs cannot have out of bounds rows.')
-
         # (construct and) filter rows
         blocks = max(degrees, default=0) + 1
         if row_pairs is None:
@@ -19356,8 +19344,7 @@ cdef class Matrix(Matrix1):
 
     def _krylov_basis_naive(self, M, shifts, degrees, output_rows):
         r"""
-        Compute the rank profile (row and column) of the Krylov matrix
-        built from ``self`` and matrix ``M``.
+        Refer to `krylov_basis`.
 
         .. WARNING::
 
@@ -19526,35 +19513,12 @@ cdef class Matrix(Matrix1):
 
     def _krylov_basis_elimination(self, M, shifts, degrees, output_rows):
         r"""
-        Compute the rank profile (row and column) of the block Krylov matrix
-        built from ``self`` and matrix ``M``.
+        Refer to `krylov_basis`.
 
         .. WARNING::
 
             If the degree bounds are not true upper bounds, no guarantees are
             made on the value of the output.
-
-        INPUT:
-
-        - ``M`` -- square matrix used in the Krylov construction.
-        - ``shifts`` -- list of ``self.nrows()`` integers (optional): priority
-          row shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- an upper bound or list of ``self.nrows()`` upper bounds
-          on the power of ``M`` for each row in ``self`` in the
-          ``krylov_basis`` of ``M`` in Krylov matrix. If None, a suitable upper
-          bound of ``self.ncols()`` is default for all rows.
-        - ``output_rows`` -- determines whether the indices of the rows
-          returned are also provided.
-
-        OUTPUT:
-
-        - krylov_basis: the submatrix of the krylov matrix of ``self`` and
-          ``M`` formed by its lexicographically-first independent rows.
-        - row_profile (returned if ``output_rows`` is ``True``): list of the
-          ``r`` triplets ``(c,d,i)`` corresponding to the rows of the krylov
-          basis where ``i`` is the row index of the row in the krylov matrix,
-          ``c`` is the corresponding row in ``self`` and ``d`` is the
-          corresponding power of ``M``.
 
         EXAMPLES::
 
@@ -19715,8 +19679,8 @@ cdef class Matrix(Matrix1):
             k = row_profile_exhausted + row_profile_self + row_extension
 
             # calculate sorting permutation, sort k by (shifts[c]+d, c)
-            k_coordinates = self._krylov_row_coordinates(shifts, degrees, k)
-            k_perm = Permutation([x[2] + 1 for x in k_coordinates])
+            k_rows = [x[2] for x in  self._krylov_row_coordinates(shifts, degrees, k)]
+            k_perm = Permutation([x + 1 for x in k_rows])
 
             # fast calculation of rows formed by indices in k
             if M_L is None:
@@ -19724,7 +19688,9 @@ cdef class Matrix(Matrix1):
             else:
                 M_L = M_L * M_L
 
-            R = matrix.block([[exhausted],[R],[(R*M_L).matrix_from_rows([i for i in range(len(row_profile_self)) if row_profile_self[i][1] + L <= degrees[row_profile_self[i][0]]])]], subdivide=False)
+            rows = [i for i, x in enumerate(row_profile_self) if x[1] + L <= degrees[x[0]]]
+            S = (R*M_L).matrix_from_rows(rows)
+            R = matrix.block([[exhausted],[R],[S]], subdivide=False)
 
             # sort rows of R, find profile, translate to k (indices of full krylov matrix)
             R.permute_rows(k_perm)
@@ -19782,7 +19748,10 @@ cdef class Matrix(Matrix1):
 
             If the degree bounds are not true upper bounds, no guarantees are
             made on the value of the output, including whether it is consistent
-            between different algorithms.
+            between different algorithms. An upper bound `\delta_i` on the row
+            `i` is such that for every `j > \delta_i`, `E_{i,*}M^j` is
+            dependent on the rows before it in an "infinite" Krylov matrix.
+            `self.ncols()` is known to always be an upper bound.
 
         INPUT:
 
@@ -19800,9 +19769,9 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        - krylov_basis: the submatrix of the krylov matrix of ``self`` and
-          ``M`` formed by its lexicographically-first independent rows.
-        - row_profile (returned if ``output_rows`` is ``True``): list of the
+        - ``krylov_basis``: the submatrix of the krylov matrix of ``self`` and
+          ``M`` formed by its first independent rows.
+        - ``row_profile`` (returned if ``output_rows`` is ``True``): list of the
           ``r`` triplets ``(c,d,i)`` corresponding to the rows of the krylov
           basis where ``i`` is the row index of the row in the krylov matrix,
           ``c`` is the corresponding row in ``self`` and ``d`` is the
@@ -19931,7 +19900,7 @@ cdef class Matrix(Matrix1):
 
         # INPUT VALIDATION
         if not (E.base_ring() in _Fields and E.base_ring().is_exact()):
-            raise TypeError("krylov_basis: matrix entries must come from an exact field")
+            raise NotImplementedError("krylov_basis: matrix entries must come from an exact field")
 
         if not isinstance(M, Matrix):
             raise TypeError("krylov_basis: M is not a matrix")
@@ -19985,7 +19954,7 @@ cdef class Matrix(Matrix1):
         ``s``-Popov form with respect to a set of shifts ``s``.
 
         Given a K[x]-module V defined by multiplication matrix ``M``, i.e.
-        elements are vectors of length n in K, scalars are polynomials in K[x],
+        elements are vectors of length n in K, scalars are polynomials in `K[x]`,
         and scalar multiplication is defined by p v := v p(``M``), ``self``
         represents ``self.nrows()`` elements e_1, ..., e_m in V:
 
@@ -20123,7 +20092,7 @@ cdef class Matrix(Matrix1):
 
         # INPUT VALIDATION
         if not (E.base_ring() in _Fields and E.base_ring().is_exact()):
-            raise TypeError("krylov_kernel_basis: matrix entries must come from an exact field")
+            raise NotImplementedError("krylov_kernel_basis: matrix entries must come from an exact field")
         
         if not isinstance(M, Matrix):
             raise TypeError("krylov_kernel_basis: M is not a matrix")
