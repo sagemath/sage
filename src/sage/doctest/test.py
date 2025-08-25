@@ -54,7 +54,7 @@ Check slow doctest warnings are correctly raised::
     ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long --random-seed=0 sleep2.rst
+    ... --warn-long --random-seed=0 sleep2.rst
     **********************************************************************
     File "sleep2.rst", line 4, in sage.doctest.tests.sleep2
     Warning: slow doctest:
@@ -71,7 +71,7 @@ Check slow doctest warnings are correctly raised::
     ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
     Running doctests...
     Doctesting 1 file.
-    sage -t --warn-long --random-seed=0 sleep2.rst
+    ... --warn-long --random-seed=0 sleep2.rst
     **********************************************************************
     ::warning title=Warning: slow doctest:,file=sleep2.rst,line=4::slow doctest:: Test ran for ...s cpu, ...s wall%0ACheck ran for ...s cpu, ...s wall%0A
         while walltime(t) < 2: pass
