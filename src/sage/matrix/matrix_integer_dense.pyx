@@ -3066,9 +3066,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         - ``'pari'`` -- pari's qflll
 
-        - ``'flatter'`` -- external executable ``flatter``, requires manual install (see caveats below).
-          Note that sufficiently new version of ``pari`` also supports FLATTER algorithm, see
-          https://pari.math.u-bordeaux.fr/dochtml/html/Vectors__matrices__linear_algebra_and_sets.html#qflll.
+        - ``'flatter'`` -- external executable ``flatter``, requires manual install
+          from https://github.com/keeganryan/flatter.
+          When the input matrix does not have full row rank,
+          versions before https://github.com/keeganryan/flatter/pull/23 would error out,
+          versions after that might work but remove zero rows, unlike ``'fplll'`` algorithm.
+          Note that sufficiently new version of ``pari`` also supports FLATTER algorithm, see :pari:`qflll`.
 
         OUTPUT: a matrix over the integers
 
@@ -3143,16 +3146,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [0 0 0]
             [0 0 0]
 
-        When ``algorithm='flatter'``, some matrices are not supported depends
-        on ``flatter``. For example::
-
-            sage: # needs flatter
-            sage: m = matrix.zero(3, 2)
-            sage: m.LLL(algorithm='flatter')
-            Traceback (most recent call last):
-            ...
-            ValueError: ...
-
         TESTS::
 
             sage: matrix(ZZ, 0, 0).LLL()
@@ -3220,6 +3213,20 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: L = M.LLL(algorithm="flatter", delta=0.99)
             sage: abs(M.det()) == abs(L.det())
             True
+
+        In sufficiently new versions of flatter, the following works::
+
+            sage: # needs flatter
+            sage: matrix.identity(3).stack(matrix.identity(3)).LLL(algorithm="flatter")
+            [1 0 0]
+            [0 1 0]
+            [0 0 1]
+            sage: matrix.identity(4)[:,:1].LLL(algorithm="flatter")
+            [1]
+            sage: matrix.zero(1, 2).LLL(algorithm="flatter")
+            []
+            sage: matrix.zero(2, 1).LLL(algorithm="flatter")
+            []
         """
         if self.ncols() == 0 or self.nrows() == 0:
             verbose("Trivial matrix, nothing to do")
@@ -3255,9 +3262,11 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 cmd += ["-delta", str(delta)]
             stdout = subprocess.run(
                     cmd, input="[" + "\n".join('[' + ' '.join(str(x) for x in row) + ']' for row in self) + "]",
-                    text=True, encoding="utf-8", stdout=subprocess.PIPE).stdout
-            return self.new_matrix(entries=[[ZZ(x) for x in row.strip('[] ').split()]
-                                            for row in stdout.strip('[] \n').split('\n')])
+                    text=True, encoding="utf-8", stdout=subprocess.PIPE, check=True).stdout
+            entries = [[ZZ(x) for x in row.strip('[] ').split()] for row in stdout.strip('[] \n').split('\n')]
+            if len(entries) == 1 and not entries[0]:  # e.g. stdout = '[]\n'
+                return self.new_matrix(nrows=0)
+            return self.new_matrix(entries=entries, nrows=len(entries))
 
         if algorithm == 'NTL:LLL':
             if fp is None:
