@@ -19648,12 +19648,12 @@ cdef class Matrix(Matrix1):
             return (self, ()) if output_rows else self
 
         # calculate row profile of self, with shifts applied
-        self_coordinates = self._krylov_row_coordinates(shifts, degrees, [(i,0) for i in range(m)])
-        self_permutation = Permutation([x[2] + 1 for x in self_coordinates])
+        self_rows = [x[2] for x in self._krylov_row_coordinates(shifts, degrees, [(i,0) for i in range(m)])]
+        self_permutation = Permutation([x + 1 for x in self_rows])
 
         self_permuted = self.with_permuted_rows(self_permutation)
         row_profile_self_permuted = self_permuted.pivot_rows()
-        row_profile_self = [(self_permutation(i+1)-1,0) for i in row_profile_self_permuted]
+        row_profile_self = [(self_rows[i], 0) for i in row_profile_self_permuted]
 
         exhausted = matrix.zero(self.base_ring(), 0, sigma)
         row_profile_exhausted = []
@@ -19700,13 +19700,13 @@ cdef class Matrix(Matrix1):
 
             if r == sigma and l < math.ceil(math.log(max(degrees, default=0) + 1, 2)) - 1:
                 tail = list(range(row_profile_R[-1]+1,R.nrows()))
-                excluded_rows.update(set([k[k_perm(i+1)-1][0] for i in tail if i < len(k)]))
+                excluded_rows.update(set([k[k_rows[i]][0] for i in tail if i < len(k)]))
 
-                xmi = [i for i in row_profile_R if k[k_perm(i+1)-1][0] in excluded_rows]
-                imi = [i for i in row_profile_R if k[k_perm(i+1)-1][0] not in excluded_rows]
+                xmi = [i for i in row_profile_R if k[k_rows[i]][0] in excluded_rows]
+                imi = [i for i in row_profile_R if k[k_rows[i]][0] not in excluded_rows]
 
-                row_profile_exhausted = [k[k_perm(i+1)-1] for i in xmi]
-                row_profile_self = [k[k_perm(i+1)-1] for i in imi]
+                row_profile_exhausted = [k[k_rows[i]] for i in xmi]
+                row_profile_self = [k[k_rows[i]] for i in imi]
 
                 exhausted = R.matrix_from_rows(xmi)
                 R = R.matrix_from_rows(imi)
@@ -19714,7 +19714,7 @@ cdef class Matrix(Matrix1):
                 if l == math.ceil(math.log(max(degrees, default=0) + 1, 2)) - 1:
                     row_profile_exhausted = []
                     exhausted = matrix.zero(self.base_ring(), 0, sigma)
-                row_profile_self = [k[k_perm(i+1)-1] for i in row_profile_R]
+                row_profile_self = [k[k_rows[i]] for i in row_profile_R]
                 # calculate new R for return value or next loop
                 R = R.matrix_from_rows(row_profile_R)
         if R.nrows() == 0:
@@ -19724,11 +19724,11 @@ cdef class Matrix(Matrix1):
             k = row_profile_exhausted + row_profile_self
             R = exhausted.stack(R)
 
-            k_coordinates = self._krylov_row_coordinates(shifts, degrees, k)
-            k_perm = Permutation([x[2] + 1 for x in k_coordinates])
+            k_rows = [x[2] for x in  self._krylov_row_coordinates(shifts, degrees, k)]
+            k_perm = Permutation([x + 1 for x in k_rows])
 
             R.permute_rows(k_perm)
-            row_profile_self = [k[k_perm(i+1)-1] for i in range(len(k))]
+            row_profile_self = [k[k_rows[i]] for i in range(len(k))]
 
         if not output_rows:
             return R
