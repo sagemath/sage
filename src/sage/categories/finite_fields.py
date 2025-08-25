@@ -247,7 +247,7 @@ class FiniteFields(CategoryWithAxiom):
             raise AssertionError("no element found")
 
         @cached_method
-        def quadratic_non_residue(self):
+        def quadratic_nonresidue(self):
             r"""
             Return a random non square element of the finite field
 
@@ -258,12 +258,12 @@ class FiniteFields(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: k = GF((3, 10))
-                sage: k.quadratic_non_residue().is_square()
+                sage: k.quadratic_nonresidue().is_square()
                 False
                 sage: k = GF((2, 10))
                 sage: k in Fields()  # to let k be a finite field
                 True
-                sage: k.quadratic_non_residue()
+                sage: k.quadratic_nonresidue()
                 Traceback (most recent call last):
                 ...
                 ValueError: there are no non-squares in finite fields of even order
@@ -294,7 +294,7 @@ class FiniteFields(CategoryWithAxiom):
                 True
                 sage: k(2).is_square()
                 True
-                sage: k.quadratic_non_residue().is_square()
+                sage: k.quadratic_nonresidue().is_square()
                 False
             """
             if self.is_zero():
@@ -323,7 +323,7 @@ class FiniteFields(CategoryWithAxiom):
                 True
                 sage: k(2)._tonelli()^2 == k(2)
                 True
-                sage: k.quadratic_non_residue()._tonelli()
+                sage: k.quadratic_nonresidue()._tonelli()
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not a square
@@ -331,7 +331,7 @@ class FiniteFields(CategoryWithAxiom):
             q = self.parent().cardinality()
             if not self.is_square():
                 raise ValueError("element is not a square")
-            g = self.parent().quadratic_non_residue()
+            g = self.parent().quadratic_nonresidue()
             even_exp, odd_order = (q - ZZ.one()).val_unit(2)
             e = 0
             for i in range(2, even_exp+1):
@@ -362,7 +362,7 @@ class FiniteFields(CategoryWithAxiom):
                 True
                 sage: k(2)._cipolla()^2 == k(2)
                 True
-                sage: k.quadratic_non_residue()._cipolla()
+                sage: k.quadratic_nonresidue()._cipolla()
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not a square
@@ -424,11 +424,11 @@ class FiniteFields(CategoryWithAxiom):
                 True
                 sage: 3 in my_sqrts
                 True
-                sage: k.quadratic_non_residue().sqrt()
+                sage: k.quadratic_nonresidue().sqrt()
                 Traceback (most recent call last):
                 ...
                 ValueError: element is not a square
-                sage: k.quadratic_non_residue().sqrt(all=True)
+                sage: k.quadratic_nonresidue().sqrt(all=True)
                 ()
 
             Here is an example where changing the algorithm results
