@@ -1085,7 +1085,7 @@ class ModularFormsRing(Parent):
             # we may need to increase the precision of the cached cusp
             # generators
             G = []
-            for j,f,F in self.__cached_cusp_gens:
+            for j, f, F in self.__cached_cusp_gens:
                 if f.prec() >= working_prec:
                     f = F.qexp(working_prec).change_ring(self.base_ring())
                 G.append((j, f, F))
@@ -1139,7 +1139,7 @@ class ModularFormsRing(Parent):
         if prec is None:
             return G
         elif prec <= working_prec:
-            return [(k, f.truncate_powerseries(prec), F) for k,f,F in G]
+            return [(k, f.truncate_powerseries(prec), F) for k, f, F in G]
         else:
             # user wants increased precision, so we may as well cache that
             Gnew = [(k, F.qexp(prec).change_ring(self.base_ring()), F) for k, f, F in G]
