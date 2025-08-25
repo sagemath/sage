@@ -477,8 +477,8 @@ Actions.
   changes to the documentation of the current branch without the need to
   locally rebuild the docs yourself.
 
-  If the doc build fails, you can go to Actions tab and examine `documentation
-  build workflow
+  If the doc build fails, you can go to Actions tab and examine `runs of the
+  documentation build workflow
   <https://github.com/sagemath/sage/actions/workflows/doc-build.yml>`_ and
   choose the particular branch to see what went wrong.
 
@@ -495,7 +495,7 @@ As mentioned above, for a check on a PR (say #12345), an HTML documentation
 preview is published to `<https://doc-pr-12345--sagemath.netlify.app>`_ by the
 `documentation publish workflow
 <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-publish.yml>`_
-which uses the ``doc`` artifact built by `documentation build workflow
+which uses the ``doc`` artifact built by the `documentation build workflow
 <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_.
 The run of the build workflow provides the ``doc`` artifact containing the html
 files.
@@ -523,8 +523,8 @@ featured with live (runnable) Examples (but no TESTS blocks) is built and
 published to `<https://doc-release--sagemath.netlify.app>`_, a link to which is
 in the `Documentation section of the GitHub Wiki
 <https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_. The
-run of the `PDF build workflow
-<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-pdf.yml>`_
+`run of the PDF build workflow
+<https://github.com/sagemath/sage/actions/workflows/doc-build-pdf.yml>`_
 contains the artifact ``livedoc`` used to publish the full documentation.
 
 Final notes
