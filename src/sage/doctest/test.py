@@ -48,6 +48,42 @@ Check that :issue:`2235` has been fixed::
     ...
     0
 
+Check slow doctest warnings are correctly raised::
+
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long",     # long time
+    ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
+    Running doctests...
+    Doctesting 1 file.
+    sage -t --warn-long --random-seed=0 sleep2.rst
+    **********************************************************************
+    File "sleep2.rst", line 4, in sage.doctest.tests.sleep2
+    Warning: slow doctest:
+        while walltime(t) < 2: pass
+    Test ran for ...s cpu, ...s wall
+    Check ran for ...s cpu, ...s wall
+        [2 tests, ...s wall]
+    ----------------------------------------------------------------------
+    All tests passed!
+    ----------------------------------------------------------------------
+    ...
+    0
+    sage: subprocess.call(["python3", "-m", "sage.doctest", "--format=github", "--warn-long",     # long time
+    ....:       "--random-seed=0", "--optional=sage", "sleep2.rst"], **kwds)
+    Running doctests...
+    Doctesting 1 file.
+    sage -t --warn-long --random-seed=0 sleep2.rst
+    **********************************************************************
+    ::warning title=Warning: slow doctest:,file=sleep2.rst,line=4::slow doctest:: Test ran for ...s cpu, ...s wall%0ACheck ran for ...s cpu, ...s wall%0A
+        while walltime(t) < 2: pass
+    Test ran for ...s cpu, ...s wall
+    Check ran for ...s cpu, ...s wall
+        [2 tests, ...s wall]
+    ----------------------------------------------------------------------
+    All tests passed!
+    ----------------------------------------------------------------------
+    ...
+    0
+
 Check handling of tolerances::
 
     sage: subprocess.call(["python3", "-m", "sage.doctest", "--warn-long", "0",    # long time

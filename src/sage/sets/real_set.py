@@ -2328,10 +2328,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
             False
         """
         x = RLF(x)
-        for interval in self._intervals:
-            if interval.contains(x):
-                return True
-        return False
+        return any(interval.contains(x) for interval in self._intervals)
 
     __contains__ = contains
 

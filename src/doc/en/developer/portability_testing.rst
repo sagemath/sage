@@ -1003,11 +1003,10 @@ on every release tag.
 
 This is defined in the files
 
-- :sage_root:`.github/workflows/ci-linux.yml`
+- :sage_root:`.github/workflows/ci-distro.yml`
   (which calls :sage_root:`.github/workflows/docker.yml`) and
 
-- :sage_root:`.github/workflows/ci-macos.yml`
-  (which calls :sage_root:`.github/workflows/macos.yml`).
+- :sage_root:`.github/workflows/ci-macos.yml`.
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.

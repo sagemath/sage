@@ -2948,7 +2948,7 @@ cdef class MPolynomial(CommutativePolynomial):
             (2*x^2 - 3*x - 5*y, -1)
         """
         lc = self.leading_coefficient()
-        n, u = lc.canonical_associate()
+        _, u = lc.canonical_associate()
         return (u.inverse_of_unit() * self, u)
 
 

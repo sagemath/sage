@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.combinat sage.modules
 r"""
-Free Quasi-symmetric functions
+Free quasi-symmetric functions
 
 AUTHORS:
 
@@ -363,8 +363,14 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: F = algebras.FQSym(QQ)
             sage: TestSuite(F).run() # long time (3s)
+
+            sage: F = algebras.FQSym(ZZ).F()
+            sage: F.is_commutative()
+            False
         """
         category = HopfAlgebras(R).Graded().Connected()
+        if R.is_zero():
+            category = category.Commutative()
         Parent.__init__(self, base=R, category=category.WithRealizations())
 
         # Bases
@@ -1349,18 +1355,6 @@ class FQSymBases(Category_realization_of_parent):
                 False
             """
             return False
-
-        def is_commutative(self):
-            """
-            Return whether this `FQSym` is commutative.
-
-            EXAMPLES::
-
-                sage: F = algebras.FQSym(ZZ).F()
-                sage: F.is_commutative()
-                False
-            """
-            return self.base_ring().is_zero()
 
         def some_elements(self):
             """

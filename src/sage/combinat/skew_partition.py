@@ -1,5 +1,5 @@
 r"""
-Skew Partitions
+Skew partitions
 
 A skew partition ``skp`` of size `n` is a pair of
 partitions `[p_1, p_2]` where `p_1` is a
@@ -1551,10 +1551,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
         if x[1] not in p:
             return False
 
-        if not p(x[0]).contains(p(x[1])):
-            return False
-
-        return True
+        return p(x[0]).contains(p(x[1]))
 
     def from_row_and_column_length(self, rowL, colL):
         """

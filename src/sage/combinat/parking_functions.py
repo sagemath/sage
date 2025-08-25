@@ -1,5 +1,5 @@
 r"""
-Parking Functions
+Parking functions
 
 INFORMALLY (reference [Beck]_):
 
@@ -1398,9 +1398,7 @@ class ParkingFunctions_all(ParkingFunctions):
             sage: x == y
             True
         """
-        if isinstance(S, ParkingFunctions_n):
-            return True
-        return False
+        return isinstance(S, ParkingFunctions_n)
 
 
 class ParkingFunctions_n(ParkingFunctions):

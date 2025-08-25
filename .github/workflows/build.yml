@@ -35,7 +35,7 @@ concurrency:
 #
 # each build Sage:
 #
-#  - incrementally starting from a Docker image that ci-linux.yml
+#  - incrementally starting from a Docker image that ci-distro.yml
 #    publishes on each development release to ghcr.io,
 #  - orchestrated using a tox-generated Dockerfile,
 #  - using https://github.com/marketplace/actions/build-and-push-docker-images,

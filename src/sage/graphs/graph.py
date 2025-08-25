@@ -426,9 +426,9 @@ from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.graphs.views import EdgesView
 from sage.parallel.decorate import parallel
-
 from sage.misc.lazy_import import lazy_import, LazyImport
 from sage.features.mcqd import Mcqd
+
 lazy_import('sage.graphs.mcqd', ['mcqd'],
             feature=Mcqd())
 
@@ -1781,9 +1781,7 @@ class Graph(GenericGraph):
         """
         if self.order() < 2 or not self.is_connected():
             return False
-        if self.blocks_and_cut_vertices()[1]:
-            return False
-        return True
+        return not self.blocks_and_cut_vertices()[1]
 
     @doc_index("Graph properties")
     def is_block_graph(self):
@@ -9512,6 +9510,79 @@ class Graph(GenericGraph):
         prefix = "Extended " if extended else ""
         G.name("%sBipartite Double of %s" % (prefix, self.name()))
         return G
+
+    @doc_index("Graph properties")
+    def is_projective_planar(self, return_map=False):
+        r"""
+        Check whether ``self`` is projective planar.
+
+        A graph is projective planar if it can be embedded in the projective
+        plane.  The approach is to check that the graph does not contain any
+        of the known forbidden minors.
+
+        INPUT:
+
+        - ``return_map`` -- boolean (default: ``False``); whether to return
+          a map indicating one of the forbidden graph minors if in fact the
+          graph is not projective planar, or only True/False.
+
+        OUTPUT:
+
+        Return ``True`` if the graph is projective planar and ``False`` if not.  If the
+        parameter ``map_flag`` is ``True`` and the graph is not projective planar, then
+        the method returns ``False`` and a map from :meth:`~Graph.minor`
+        indicating one of the forbidden graph minors.
+
+        EXAMPLES:
+
+        The Peterson graph is a known projective planar graph::
+
+            sage: P = graphs.PetersenGraph()
+            sage: P.is_projective_planar()  # long time
+            True
+
+        `K_{4,4}` has a projective plane crossing number of 2. One of the
+        minimal forbidden minors is `K_{4,4} - e`, so we get a one-to-one
+        dictionary from :meth:`~Graph.minor`::
+
+            sage: K44 = graphs.CompleteBipartiteGraph(4, 4)
+            sage: K44.is_projective_planar(return_map=True)
+            (False,
+             {0: [0], 1: [1], 2: [2], 3: [3], 4: [4], 5: [5], 6: [6], 7: [7]})
+
+        .. SEEALSO::
+
+            - :meth:`~Graph.minor`
+
+        TESTS::
+
+            sage: len(graphs.p2_forbidden_minors())
+            35
+        """
+
+        from sage.graphs.generators.families import p2_forbidden_minors
+        num_verts_G = self.num_verts()
+        num_edges_G = self.num_edges()
+
+        for forbidden_minor in p2_forbidden_minors():
+            # Can't be a minor if it has more vertices or edges than G
+
+            if (forbidden_minor.num_verts() > num_verts_G
+                    or forbidden_minor.num_edges() > num_edges_G):
+                continue
+
+            try:
+                minor_map = self.minor(forbidden_minor)
+                if minor_map is not None:
+                    if return_map:
+                        return False, minor_map
+                    return False
+
+            # If G has no H minor, then G.minor(H) throws a ValueError
+            except ValueError:
+                continue
+
+        return True
 
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal

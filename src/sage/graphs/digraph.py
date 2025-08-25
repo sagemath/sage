@@ -1441,7 +1441,7 @@ class DiGraph(GenericGraph):
         """
         return sorted(self.out_degree_iterator(), reverse=True)
 
-    def sources(self):
+    def sources(self) -> list:
         r"""
         Return a list of sources of the digraph.
 
@@ -1458,7 +1458,7 @@ class DiGraph(GenericGraph):
         """
         return [x for x in self if not self.in_degree(x)]
 
-    def sinks(self):
+    def sinks(self) -> list:
         """
         Return a list of sinks of the digraph.
 
