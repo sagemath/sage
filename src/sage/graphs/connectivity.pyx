@@ -1,4 +1,3 @@
-# cython: binding=True
 r"""
 Connectivity related functions
 

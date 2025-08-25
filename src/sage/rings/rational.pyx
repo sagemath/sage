@@ -4072,7 +4072,6 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
     return ldexp(d, shift)
 
 
-@cython.binding(True)
 def make_rational(s):
     """
     Make a rational number from ``s`` (a string in base 32).
