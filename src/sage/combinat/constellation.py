@@ -60,7 +60,6 @@ from sage.structure.richcmp import (op_NE, op_EQ, richcmp_not_equal,
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.combinat.partition import Partition
-from sage.misc.cachefunc import cached_function
 from sage.misc.misc_c import prod
 from sage.misc.lazy_import import lazy_import
 from sage.categories.groups import Groups
@@ -1051,10 +1050,10 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
         One can check the first few terms of sequence :oeis:`A220754`::
 
-            sage: [Constellations(4, k).cardinality() for k in range(1, 6)]
+            sage: [Constellations(4, d).cardinality() for d in range(1, 6)]
             [1, 7, 194, 12858, 1647384]
 
-            sage: [Constellations(3, k, connected=False).cardinality() for k in range(1, 6)]
+            sage: [Constellations(3, d, connected=False).cardinality() for d in range(1, 6)]
             [1, 4, 36, 576, 14400]
         """
         k = self._length
@@ -1064,15 +1063,15 @@ class Constellations_ld(UniqueRepresentation, Parent):
         if not self._connected:
             return factorial(self._degree) ** (k-1)
 
-        @cached_function
-        def a(n):
-            # recurrence from :oeis:`A220754`
-            return (factorial(n) ** (k-1)
-                    - (factorial(n-1)
-                       * sum(a(i) * factorial(n-i) ** (k-2) // factorial(i-1)
-                             for i in range(1, n))))
-
-        return a(self._degree)
+        # recurrence from :oeis:`A220754`
+        a = []
+        for n in range(self._degree):
+            n = ZZ(n)
+            a.append(factorial(n+1) ** (k-1)
+                     - (factorial(n)
+                        * ZZ.sum(a[i] * factorial(n-i) ** (k-2) // factorial(i)
+                                 for i in range(n))))
+        return a[-1]
 
     def random_element(self, mutable=False):
         r"""
