@@ -958,9 +958,10 @@ cdef class Farey:
             ....:                                            thickness='2')
             Graphics object consisting of 58 graphics primitives
         """
-        from sage.plot.all import Graphics
+        from sage.plot.graphics import Graphics
         from sage.plot.colors import rainbow
-        from sage.plot.all import hyperbolic_arc, hyperbolic_triangle
+        from sage.plot.hyperbolic_arc import hyperbolic_arc
+        from sage.plot.hyperbolic_polygon import hyperbolic_triangle
 
         I = CC(0, 1)
         w = RR(3).sqrt()
