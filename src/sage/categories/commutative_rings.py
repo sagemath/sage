@@ -579,10 +579,7 @@ class CommutativeRings(CategoryWithAxiom):
         def is_square(self, root=False):
             """
             Return whether or not the ring element ``self`` is a square.
-
             If the optional argument root is ``True``, then also return
-
-
             the square root (or ``None``, if it is not a square).
 
             INPUT:
