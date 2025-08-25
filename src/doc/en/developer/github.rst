@@ -469,18 +469,63 @@ Actions.
   <https://github.com/orgs/sagemath/packages?tab=packages&q=with-targets-optional>`_
   exists.
 
-* The `build documentation workflow
+* The `documentation build workflow
   <https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_
   on GitHub Actions builds the HTML documentation for the current branch.
 
-  A link to the built doc is added in a comment, and so you can easily inspect changes
-  to the documentation without the need to locally rebuild the docs yourself.
+  A link to the built doc is added in a comment, and so you can easily inspect
+  changes to the documentation of the current branch without the need to
+  locally rebuild the docs yourself.
 
   If the doc build fails, you can go to Actions tab and examine `documentation
   build workflow
   <https://github.com/sagemath/sage/actions/workflows/doc-build.yml>`_ and
   choose the particular branch to see what went wrong.
 
+Documentation Previews
+======================
+
+We value documentation as much as the code. Hence the Sage GitHub repo provides
+documentation previews before a stable release is published to the official
+site `<https://doc.sagemath.org>`_. Developers are expected to check the
+previews during the development process. Several GitHub workflows work together
+to create the previews.
+
+As mentioned above, for a check on a PR (say #12345), an HTML documentation
+preview is published to `<https://doc-pr-12345--sagemath.netlify.app>`_ by the
+`documentation publish workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-publish.yml>`_
+which uses the ``doc`` artifact built by `documentation build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build.yml>`_.
+The run of the build workflow provides the ``doc`` artifact containing the html
+files.
+
+The documentation preview for a PR is accompanied by a "changes" log, which is
+generated from diffs of the htmls in the ``doc`` artifact and the
+``doc-develop`` artifact that contains the htmls of the latest release. To
+facilitate this, on every release, the build workflow creates the
+``doc-develop`` artifact and the publish workflow publishes the html
+documentation to `<https://doc-develop--sagemath.netlify.app>`_.
+
+PDF docs are also built for a PR by the `PDF build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-pdf.yml>`_.
+The PR author should check the success of the PDF build workflow before
+requesting review. If the workflow failed, check the run of the workflow.
+
+The HTML documentation preview for a PR does not include PDF docs, which take
+much longer time to build than the HTML docs. On the other hand, the
+documentation preview (either HTML and PDF) contains TESTS blocks to enable the
+PR author to check newly added TESTS blocks. The official documentation for end
+users do not contain TESTS blocks.
+
+Finally, on every release, the full documentation including PDF docs and
+featured with live (runnable) Examples (but no TESTS blocks) is built and
+published to `<https://doc-release--sagemath.netlify.app>`_, a link to which is
+in the `Documentation section of the GitHub Wiki
+<https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_. The
+run of the `PDF build workflow
+<https://github.com/sagemath/sage/blob/develop/.github/workflows/doc-build-pdf.yml>`_
+contains the artifact ``livedoc`` used to publish the full documentation.
 
 Final notes
 ===========
