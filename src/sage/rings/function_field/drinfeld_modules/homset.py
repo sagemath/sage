@@ -137,7 +137,7 @@ class DrinfeldModuleMorphismAction(Action):
 class DrinfeldModuleHomset(Homset):
     r"""
     This class implements the set of morphisms between two Drinfeld
-    `\mathbb{F}_q[T]`-modules.
+    `\GF{q}[T]`-modules.
 
     INPUT:
 

@@ -28,9 +28,9 @@ from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldM
 class DrinfeldModuleAction(Action):
     r"""
     This class implements the module action induced by a Drinfeld
-    `\mathbb{F}_q[T]`-module.
+    `\GF{q}[T]`-module.
 
-    Let `\phi` be a Drinfeld `\mathbb{F}_q[T]`-module over a field `K`
+    Let `\phi` be a Drinfeld `\GF{q}[T]`-module over a field `K`
     and let `L/K` be a field extension. Let `x \in L` and let `a` be a
     function ring element; the action is defined as `(a, x) \mapsto
     \phi_a(x)`.
@@ -42,12 +42,12 @@ class DrinfeldModuleAction(Action):
     .. NOTE::
 
         The user should never explicitly instantiate the class
-        `DrinfeldModuleAction`.
+        :class:`DrinfeldModuleAction`.
 
     .. WARNING::
 
-        This class may be replaced later on. See issues #34833 and
-        #34834.
+        This class may be replaced later on. See issues
+        :issue:`34833` and :issue:`34834`.
 
     INPUT: the Drinfeld module
 

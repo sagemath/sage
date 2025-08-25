@@ -50,40 +50,40 @@ lazy_import('sage.rings.ring_extension', 'RingExtension_generic')
 
 class DrinfeldModule(Parent, UniqueRepresentation):
     r"""
-    This class implements Drinfeld `\mathbb{F}_q[T]`-modules.
+    This class implements Drinfeld `\GF{q}[T]`-modules.
 
-    Let `\mathbb{F}_q[T]` be a polynomial ring with coefficients in a
-    finite field `\mathbb{F}_q` and let `K` be a field. Fix a ring
-    morphism `\gamma: \mathbb{F}_q[T] \to K`; we say that `K` is an
-    `\mathbb{F}_q[T]`-*field*. Let `K\{\tau\}` be the ring of Ore
+    Let `\GF{q}[T]` be a polynomial ring with coefficients in a
+    finite field `\GF{q}` and let `K` be a field. Fix a ring
+    morphism `\gamma: \GF{q}[T] \to K`; we say that `K` is an
+    `\GF{q}[T]`-*field*. Let `K\{\tau\}` be the ring of Ore
     polynomials with coefficients in `K`, whose multiplication is given
     by the rule `\tau \lambda = \lambda^q \tau` for any `\lambda \in K`.
 
-    A Drinfeld `\mathbb{F}_q[T]`-module over the base
-    `\mathbb{F}_q[T]`-field `K` is an `\mathbb{F}_q`-algebra morphism
-    `\phi: \mathbb{F}_q[T] \to K\{\tau\}` such that `\mathrm{Im}(\phi)
-    \not\subset K` and `\phi` agrees with `\gamma` on `\mathbb{F}_q`.
+    A Drinfeld `\GF{q}[T]`-module over the base
+    `\GF{q}[T]`-field `K` is an `\GF{q}`-algebra morphism
+    `\phi: \GF{q}[T] \to K\{\tau\}` such that `\mathrm{Im}(\phi)
+    \not\subset K` and `\phi` agrees with `\gamma` on `\GF{q}`.
 
-    For `a` in `\mathbb{F}_q[T]`, `\phi(a)` is denoted `\phi_a`.
+    For `a` in `\GF{q}[T]`, `\phi(a)` is denoted `\phi_a`.
 
-    The Drinfeld `\mathbb{F}_q[T]`-module `\phi` is uniquely determined
+    The Drinfeld `\GF{q}[T]`-module `\phi` is uniquely determined
     by the image `\phi_T` of `T`; this serves as input of the class.
 
     .. NOTE::
 
         See also :class:`sage.categories.drinfeld_modules`.
 
-    The *base morphism* is the morphism `\gamma: \mathbb{F}_q[T] \to K`.
+    The *base morphism* is the morphism `\gamma: \GF{q}[T] \to K`.
     The monic polynomial that generates the kernel of `\gamma` is called
-    the `\mathbb{F}_q[T]`-*characteristic*, or *function-field
-    characteristic*, of the base field. We say that `\mathbb{F}_q[T]` is
+    the `\GF{q}[T]`-*characteristic*, or *function-field
+    characteristic*, of the base field. We say that `\GF{q}[T]` is
     the *function ring* of `\phi`; `K\{\tau\}` is the *Ore polynomial
     ring*. Further, the *generator* is `\phi_T` and the *constant
     coefficient* is the constant coefficient of `\phi_T`.
 
     A Drinfeld module is said to be *finite* if the field `K` is.
     Despite an emphasis on this case, the base field can be any
-    extension of `\mathbb{F}_q`::
+    extension of `\GF{q}`::
 
         sage: Fq = GF(25)
         sage: A.<T> = Fq[]
@@ -114,10 +114,10 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     .. NOTE::
 
         Drinfeld modules are defined in a larger setting, in which the
-        polynomial ring `\mathbb{F}_q[T]` is replaced by a more general
+        polynomial ring `\GF{q}[T]` is replaced by a more general
         function ring: the ring of functions in `k` that are regular
         outside `\infty`, where `k` is a function field over
-        `\mathbb{F}_q` with transcendence degree `1` and `\infty` is a
+        `\GF{q}` with transcendence degree `1` and `\infty` is a
         fixed place of `k`. This is out of the scope of this
         implementation.
 
@@ -284,7 +284,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         sage: phi.j_invariant()  # j-invariant
         1
 
-    A Drinfeld `\mathbb{F}_q[T]`-module can be seen as an Ore polynomial
+    A Drinfeld `\GF{q}[T]`-module can be seen as an Ore polynomial
     with positive degree and constant coefficient `\gamma(T)`, where
     `\gamma` is the base morphism. This analogy is the motivation for
     the following methods::
@@ -390,8 +390,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
     .. RUBRIC:: The action of a Drinfeld module
 
-    The `\mathbb{F}_q[T]`-Drinfeld module `\phi` induces a special left
-    `\mathbb{F}_q[T]`-module structure on any field extension `L/K`. Let
+    The `\GF{q}[T]`-Drinfeld module `\phi` induces a special left
+    `\GF{q}[T]`-module structure on any field extension `L/K`. Let
     `x \in L` and `a` be in the function ring; the action is defined as
     `(a, x) \mapsto \phi_a(x)`. The method :meth:`action` returns a
     :class:`sage.rings.function_field.drinfeld_modules.action.Action`
@@ -436,7 +436,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         ValueError: generator must have positive degree
 
     The coefficients of the generator must lie in an
-    `\mathbb{F}_q[T]`-field, where `\mathbb{F}_q[T]` is the function
+    `\GF{q}[T]`-field, where `\GF{q}[T]` is the function
     ring of the Drinfeld module::
 
         sage: Fq = GF(2)
@@ -675,7 +675,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         r"""
         Return the image of input ``a`` by the morphism that defines the
         Drinfeld module; i.e. `\phi_a` if the Drinfeld module is denoted
-        `phi`.
+        `\phi`.
 
         INPUT:
 
@@ -1454,7 +1454,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     def j_invariant(self, parameter=None, check=True):
         r"""
         Return the `j`-invariant of the Drinfeld
-        `\mathbb{F}_q[T]`-module for the given parameter.
+        `\GF{q}[T]`-module for the given parameter.
 
         Suppose that `\phi_T = g_0 + g_1\tau + \cdots + g_r \tau^r` with
         `g_r \neq 0`. Then the
@@ -1499,7 +1499,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             We chose to follow Potemine's convention, as he introduced
             those objects in [Pot1998]_. Theorem 2.2 of [Pot1998]_ or
             Theorem 3.8.11 of [Pap2023]_ assert that two Drinfeld
-            `\mathbb F_q[T]`-modules over `K` are isomorphic over the
+            `\GF{q}[T]`-modules over `K` are isomorphic over the
             separable closure of `K` if and only if their basic
             `j`-invariants (as implemented here) coincide for any
             well-defined couple of tuples `((k_1, k_2, \ldots, k_n),
@@ -1927,7 +1927,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         We recall that a homomorphism `f : \phi \to \psi` between
         two Drinfeld modules is defined by an Ore polynomial `u`,
-        which is subject to the relation `phi_T u = u \psi_T`.
+        which is subject to the relation `\phi_T u = u \psi_T`.
 
         INPUT:
 

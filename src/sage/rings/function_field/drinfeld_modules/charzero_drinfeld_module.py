@@ -41,10 +41,10 @@ lazy_import('sage.rings.power_series_ring', 'PowerSeriesRing')
 
 class DrinfeldModule_charzero(DrinfeldModule):
     r"""
-    This class implements Drinfeld `\mathbb{F}_q[T]`-modules defined
-    over fields of `\mathbb{F}_q[T]`-characteristic zero.
+    This class implements Drinfeld `\GF{q}[T]`-modules defined
+    over fields of `\GF{q}[T]`-characteristic zero.
 
-    Recall that the `\mathbb{F}_q[T]`-*characteristic* is defined as the
+    Recall that the `\GF{q}[T]`-*characteristic* is defined as the
     kernel of the underlying structure morphism. For general definitions
     and help on Drinfeld modules, see class
     :class:`sage.rings.function_fields.drinfeld_module.drinfeld_module.DrinfeldModule`.
@@ -96,11 +96,11 @@ class DrinfeldModule_charzero(DrinfeldModule):
         sage: phi.goss_polynomial(3)
         X^3 + (1/(T^2 + T))*X^2
 
-    .. RUBRIC:: Base fields of `\mathbb{F}_q[T]`-characteristic zero
+    .. RUBRIC:: Base fields of `\GF{q}[T]`-characteristic zero
 
     The base fields need not only be fraction fields of polynomials
     ring. In the following example, we construct a Drinfeld module over
-    `\mathbb{F}_q((1/T))`, the completion of the rational function field
+    `\GF{q}((1/T))`, the completion of the rational function field
     at the place `1/T`::
 
         sage: A.<T> = GF(2)[]
@@ -157,7 +157,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
         Return the exponential of this Drinfeld module.
 
         Note that the exponential is only defined when the
-        `\mathbb{F}_q[T]`-characteristic is zero.
+        `\GF{q}[T]`-characteristic is zero.
 
         INPUT:
 
@@ -283,7 +283,7 @@ class DrinfeldModule_charzero(DrinfeldModule):
 
         By definition, the logarithm is the compositional inverse of the
         exponential (see :meth:`exponential`). Note that the logarithm
-        is only defined when the `\mathbb{F}_q[T]`-characteristic is
+        is only defined when the `\GF{q}[T]`-characteristic is
         zero.
 
         INPUT:
@@ -471,7 +471,7 @@ class DrinfeldModule_rational(DrinfeldModule_charzero):
             sage: phi.coefficient_in_function_ring(2)
             T^2
 
-        Compare with the method meth:`coefficient`::
+        Compare with the method :meth:`coefficient`::
 
             sage: phi.coefficient(2)
             U^2
