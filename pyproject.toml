@@ -205,6 +205,13 @@ extra = [
   "pkg:generic/qepcad",
   "pkg:generic/tides",
 ]
+# Uncommented for now as most devs probably don't need to run it locally
+# docs-pdf = [
+#   "pkg:generic/latexmk",
+#   "pkg:generic/lualatex",
+#   "pkg:fonts/freefonts",
+#   "pkg:generic/xindy",
+# ]
 
 [dependency-groups]
 dev = ["conda-lock", "grayskull", "meson", "pygithub", "toml", "tqdm", "uv"]
