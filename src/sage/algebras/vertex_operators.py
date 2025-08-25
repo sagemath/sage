@@ -279,7 +279,6 @@ class VertexOperator(AbstractVertexOperator):
     # def act_on_fock_space_element(self, x):
     #     return self.spectral(lambda n: self.act_by_mode(n,x), valuation = -1)
 
-    @cached_method
     def act_by_mode(self, i, x):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
@@ -387,23 +386,52 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         """
 
         self._spectral = [0]*self._num_ops
-        self._spectral[0] = LazyLaurentSeriesRing(vertex_ops[0].fockspace, names=('z1'))
-        for i in range(1, self._num_ops):
-            self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i-1], names=('z'+str(i+1)))
-        # self._spectral[-1] = LazyLaurentSeriesRing(vertex_ops[-1].fockspace, names = ('z' + str(len(vertex_ops))))
-        # for i in range(len(vertex_ops)-2, -1, -1):
-        #     self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i+1], names=('z'+str(i+1)))
+        # self._spectral[0] = LazyLaurentSeriesRing(vertex_ops[0].fockspace, names=('z1'))
+        # for i in range(1, self._num_ops):
+        #     self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i-1], names=('z'+str(i+1)))
+        self._spectral[-1] = LazyLaurentSeriesRing(vertex_ops[-1].fockspace, names=('z' + str(len(vertex_ops))))
+        for i in range(len(vertex_ops)-2, -1, -1):
+            self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i+1], names=('z'+str(i+1)))
         super().__init__(self.vertex_ops[0].fockspace)
 
-    def full_action(self, f, valuation):
-        def action_helper(self, i, f):
-            if i == self._num_ops - 1:
-                return self.vertex_ops[i].full_action(f)
+    def full_action(self, f, cutoff=3):
+        r"""
+        Approximation of the action of ``self`` on ``f``.
 
-            return self._spectral[i]
-            pass
+        Computes the coefficients of `z_1^{i_1}\cdots z_k^{i_k}` for each `|i_j| < \text{cutoff}`
 
-        # valuation = lambda x: -max(y.degree() for (_, y) in x.monomial_coefficients().items())
+        INPUT:
+
+        - ``f`` -- Fock space element
+        - ``cutoff`` -- (integer)
+
+        OUTPUT:
+
+        A dictionary of key value pairs ``m:c`` where ``c`` is the nonzero
+        output of ``self.get_monomial_coefficient(m, f)``.
+
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import *
+            sage: B = BosonicFockSpace()
+            sage: V = CreationOperator(B)
+            sage: P = ProductOfVertexOperators([V,V])
+            sage: P.full_action(B.one(), 2)
+            {(0, 1): -s[]*w^2, (0, 2): -s[1]*w^2, (1, 0): s[]*w^2, (1, 2): -s[1, 1]*w^2,
+            (2, 0): s[1]*w^2, (2, 1): s[1, 1]*w^2}
+
+        """
+        from itertools import product
+        res = {}
+        """
+        TODO: Cache output of this so that running this for fixed input with
+        larger cutoff doesn't recompute the previous coefficients.
+        """
+        for m in product(range(-cutoff, cutoff + 1), repeat=len(self.vertex_ops)):
+            c = self.get_monomial_coefficient(m, f)
+            if c != 0:
+                res[m] = c
+        return res
 
     def get_monomial_coefficient(self, mon, x):
         r"""
@@ -572,7 +600,7 @@ class CreationOperator(VertexOperator):
 
         INPUT:
 
-        - ``x`` -- element of ``self.
+        - ``x`` -- element of ``self``.
 
         EXAMPLES::
 
