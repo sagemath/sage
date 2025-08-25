@@ -9,9 +9,8 @@ from sage.categories.cartesian_product import cartesian_product
 from sage.sets.cartesian_product import CartesianProduct
 
 cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
-
     def _to_cartesian_factors(self):
-        return [self.apply_map(lambda x: x[i]) for i in range(len(self.base_ring().cartesian_factors()))]
+        return (self.apply_map(lambda x: x[i]) for i in range(len(self.base_ring().cartesian_factors())))
 
     def __truediv__(self, other):
         """
@@ -49,7 +48,6 @@ cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
             sage: v / w
             (2, 2)
         """
-        base_ring = self.base_ring()
         other = py_scalar_to_element(other)
 
         # vector-by-vector division
@@ -62,10 +60,10 @@ cdef class Vector_cartesian_product(FreeModuleElement_generic_dense):
             self_facs = self._to_cartesian_factors()
             other_facs = other._to_cartesian_factors()
 
-            result = [(self_facs[j]) / (other_facs[j]) for j in range(len(self_facs))]
+            result = [v1 / v2 for v1, v2 in zip(self_facs, other_facs)]
 
             # Convert result to cartesian product
-            return base_ring._cartesian_product_of_elements(result)
+            return cartesian_product(result)
 
         # vector-by-scalar division
         if isinstance(other.parent(), CartesianProduct):
