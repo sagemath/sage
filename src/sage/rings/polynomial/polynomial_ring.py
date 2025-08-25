@@ -2006,20 +2006,11 @@ class PolynomialRing_commutative(PolynomialRing_generic):
             ValueError: conflict of variable names
         """
         if p is infinity:
-            ring = self.fraction_field()
-        else:
-            ring = self
-        incl = morphism_to_completion(ring, p, prec, names)
-        C = incl.codomain()
-        if C.has_coerce_map_from(ring):
-            x = ring.gen()
-            if C(x) != incl(x):
-                raise ValueError("a different coercion map is already set; try to change the variable name")
-        else:
-            C.register_coercion(incl)
-        if not (ring is self and C.has_coerce_map_from(self)):
-            C.register_coercion(incl * ring.coerce_map_from(self))
-        return C
+            raise NotImplementedError
+        from sage.rings.completion import CompletionPolynomialRing
+        if extras is not None and 'names' in extras:
+            names = extras['names']
+        return CompletionPolynomialRing(self, p, sparse=self.is_sparse(), names=names)
 
     def quotient_by_principal_ideal(self, f, names=None, **kwds):
         """
