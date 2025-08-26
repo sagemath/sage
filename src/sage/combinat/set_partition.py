@@ -3541,8 +3541,9 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
     from sage.rings.integer_ring import ZZ
  
     @cached_method
-    def stilde(n: ZZ, k: ZZ, d: ZZ):
-        return ZZ.sum((-1)**u * stirling2(n + 1 - u, k + 1) * d.binomial(u)
+    def stilde(n, k, d):
+        d_sage = (ZZ)d
+        return ZZ.sum((-1)**u * stirling2(n + 1 - u, k + 1) * d_sage.binomial(u)
                       for u in range(min(n-k, d)+1))
  
     @cached_method
