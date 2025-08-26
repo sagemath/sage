@@ -4859,8 +4859,11 @@ cdef class Matrix(Matrix1):
         elif algorithm == 'flint' and not isinstance(R, (IntegerRing_class,
                                                          RationalField)):
             raise ValueError("'flint' matrix kernel algorithm only available over the rationals and the integers, not over %s" % R)
-        elif algorithm == 'linbox' and not isinstance(R, RationalField):
-            raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
+        elif algorithm == 'linbox' and not isinstance(self, sage.matrix.matrix_rational_sparse.Matrix_rational_sparse):
+            if isinstance(R, RationalField):
+                raise ValueError("'linbox' matrix kernel algorithm only available for sparse matrices over the rationals")
+            else:
+                raise ValueError("'linbox' matrix kernel algorithm only available over the rationals, not over %s" % R)
         elif algorithm == 'pari' and not (isinstance(R, (IntegerRing_class, NumberField)) and not isinstance(R, RationalField)):
             raise ValueError("'pari' matrix kernel algorithm only available over non-trivial number fields and the integers, not over %s" % R)
         elif algorithm == 'generic' and R not in _Fields:

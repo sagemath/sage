@@ -25,6 +25,7 @@ cdef extern from "gmp++/gmp++.h" namespace "Givaro":
         mpz_ptr get_mpz()
         mpz_srcptr get_mpz_const()
 
+cdef extern from "givaro/givrational.h" namespace "Givaro":
     cdef cppclass Rational:
         Rational()
         Rational(int32_t)
