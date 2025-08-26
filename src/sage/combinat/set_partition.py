@@ -3620,7 +3620,7 @@ def unrankPartitionTest(partition: list[list[int]], n: int, k: int) -> bool:
     """
     # Checking whether all the blocks inside of the partitions are ordered
     for i in range(len(partition) - 1):
-        assert compare_subsets(partition[i], partition[i + 1]) == True        
+        assert compare_subsets(partition[i], partition[i + 1])    
 
     # Checking whether all of 1..n are present in all partitions
     all_elements_from_1_to_n = set(range(1, n + 1))
