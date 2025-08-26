@@ -511,7 +511,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     """
 
     @staticmethod
-    def __classcall_private__(cls, function_ring, gen, name='t'):
+    def __classcall_private__(cls, function_ring, gen, A_field=None, name='t'):
         """
         Check input validity and return a ``DrinfeldModule`` or
         ``DrinfeldModule_finite`` object accordingly.
@@ -523,6 +523,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``gen`` -- the generator of the Drinfeld module; as a list of
           coefficients or an Ore polynomial
+
+        - ``A_field`` -- the field
 
         - ``name`` -- (default: ``'t'``) the name of the Ore polynomial
           ring gen
@@ -565,52 +567,52 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         # `gen` is an Ore polynomial:
         if isinstance(gen, OrePolynomial):
             ore_polring = gen.parent()
-            # Base ring without morphism structure:
-            base_field = ore_polring.base()
             name = ore_polring.variable_name()
+            if A_field is None:
+                A_field = ore_polring.base_ring()
+            gen = gen.list()
         # `gen` is a list of coefficients (function_ring = Fq[T]):
         elif isinstance(gen, (list, tuple)):
-            ore_polring = None
-            # Base ring without morphism structure:
-            base_field = Sequence(gen).universe()
-            try:
-                base_field = base_field.fraction_field()
-            except AttributeError:
-                pass
+            if A_field is None:
+                A_field = Sequence(gen).universe()
+                try:
+                    A_field = A_field.fraction_field()
+                except AttributeError:
+                    pass
         else:
             raise TypeError('generator must be list of coefficients or Ore '
                             'polynomial')
         # The coefficients are in a base field that has coercion from Fq:
-        if not (hasattr(base_field, 'has_coerce_map_from') and
-                base_field.has_coerce_map_from(function_ring.base_ring())):
+        if not (hasattr(A_field, 'has_coerce_map_from') and
+                A_field.has_coerce_map_from(function_ring.base_ring())):
             raise ValueError('function ring base must coerce into base field')
 
         # Build the category
         T = function_ring.gen()
-        if base_field.has_coerce_map_from(function_ring) and T == gen[0]:
-            base_morphism = base_field.coerce_map_from(function_ring)
+        if A_field.has_coerce_map_from(function_ring) and T == gen[0]:
+            base_morphism = A_field.coerce_map_from(function_ring)
         else:
-            base_morphism = Hom(function_ring, base_field)(gen[0])
+            base_morphism = Hom(function_ring, A_field)(gen[0])
 
         # This test is also done in the category. We put it here also
         # to have a friendlier error message
-        if not base_field.is_field():
+        if not A_field.is_field():
             raise ValueError('generator coefficients must live in a field')
 
         category = DrinfeldModules(base_morphism, name=name)
 
         # Check gen as Ore polynomial
-        ore_polring = category.ore_polring()  # Sanity cast
+        ore_polring = category.ore_polring()
         gen = ore_polring(gen)
         if gen.degree() <= 0:
             raise ValueError('generator must have positive degree')
 
         # Instantiate the appropriate class:
-        if base_field.is_finite():
+        if A_field.is_finite():
             from sage.rings.function_field.drinfeld_modules.finite_drinfeld_module import DrinfeldModule_finite
             return DrinfeldModule_finite(gen, category)
-        if isinstance(base_field, FractionField_generic):
-            ring = base_field.ring()
+        if isinstance(A_field, FractionField_generic):
+            ring = A_field.ring()
             if (isinstance(ring, PolynomialRing_generic)
             and ring.base_ring() is function_ring_base
             and base_morphism(T) == ring.gen()):
@@ -1182,6 +1184,9 @@ class DrinfeldModule(Parent, UniqueRepresentation):
              1]
         """
         return self._gen.coefficients(sparse=sparse)
+
+    def change_Afield(self, A_field):
+        return DrinfeldModule(self._function_ring, self._gen, A_field=A_field)
 
     def gen(self):
         r"""
