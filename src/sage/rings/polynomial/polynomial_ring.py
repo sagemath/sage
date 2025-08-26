@@ -2010,7 +2010,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         from sage.rings.completion import CompletionPolynomialRing
         if extras is not None and 'names' in extras:
             names = extras['names']
-        return CompletionPolynomialRing(self, p, sparse=self.is_sparse())
+        return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.is_sparse())
 
     def quotient_by_principal_ideal(self, f, names=None, **kwds):
         """

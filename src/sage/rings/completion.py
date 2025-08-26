@@ -110,7 +110,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             self._extension = False
             k = base
             a = -p[0]
-        backend = PowerSeriesRing(k, 'u', sparse=sparse)
+        backend = PowerSeriesRing(k, 'u', default_prec=default_prec, sparse=sparse)
         self._gen = backend.gen() + a
         self._incl = A.hom([self._gen])
         super().__init__(self._incl)
