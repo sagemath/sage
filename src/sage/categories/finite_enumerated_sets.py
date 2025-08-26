@@ -506,25 +506,32 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             if (self.random_element == self._random_element_from_unrank or
                 self.cardinality == self._cardinality_from_iterator):
                 return
+            from sage.misc.randstate import initial_seed, set_random_seed
             from sage.probability.probability_distribution import RealDistribution
             from sage.rings.infinity import Infinity
             from collections import Counter
             tester = self._tester(**options)
             n = self.cardinality()
-            if not n or n == 1:
+            if not n:
                 return
             try:
                 hash(self.an_element())
             except TypeError:
                 return
+            if n == 1:
+                tester.assertEqual(self.an_element(), self.random_element())
+                return
 
             T = RealDistribution('chisquared', n-1)
-            critical = T.cum_distribution_function_inv(0.9995)
+            critical = T.cum_distribution_function_inv(0.9)
             if critical.is_NaN():
                 # the cardinality is too large
                 return
-            N = min(3 * n, 3000)
+            N = min(max(3 * n, 100), 1000)
+            seed = initial_seed()
+            set_random_seed(123332938836894739865399988917263259930)
             d = Counter(self.random_element() for _ in range(N))
+            set_random_seed(seed)
             E = float(N) / float(n)
             chi_2 = sum(float(o) ** 2 for o in d.values()) / E - float(N)
             tester.assertLessEqual(chi_2, critical)
