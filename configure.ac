@@ -320,8 +320,8 @@ fi
 
 m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
 
-# check for boost, supporting c++17
-  AX_BOOST_BASE([1.83.0], [], [
+# check for boost, hopefully supporting c++17
+  AX_BOOST_BASE([1.71.0], [], [
     AC_MSG_ERROR([could not find boost library installation. $SAGE_PREREQ_URL])
   ])
 
