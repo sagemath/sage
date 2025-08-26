@@ -6,6 +6,7 @@ py.install_sources(
   'classical_geometries.py',
   'degree_sequence.py',
   'families.py',
+  'generators_test.py',
   'intersection.py',
   'platonic_solids.py',
   'random.py',
