@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'dancing_links.pyx',
   'dlxcpp.py',

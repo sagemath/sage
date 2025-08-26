@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'automorphism_group_canonical_label.pxd',
   'automorphism_group_canonical_label.pyx',

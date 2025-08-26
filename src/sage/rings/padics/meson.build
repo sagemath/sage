@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'common_conversion.pxd',
   'common_conversion.pyx',

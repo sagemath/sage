@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'automatic_semigroup.py',
   'free_abelian_monoid.py',

@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'bubble_shuffle.py',
   'cartesian_product.py',

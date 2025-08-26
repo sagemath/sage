@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abstract_method.py',
   'all.py',
   'all__sagemath_environment.py',

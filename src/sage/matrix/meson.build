@@ -2,6 +2,7 @@ iml = cc.find_library('iml', required: not is_windows, disabler: true)
 
 
 py.install_sources(
+  '__init__.py',
   'action.pxd',
   'action.pyx',
   'all.py',

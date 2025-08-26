@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'advanced.py',
   'all.py',
   'basis_exchange_matroid.pxd',

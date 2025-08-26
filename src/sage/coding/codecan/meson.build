@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'autgroup_can_label.pyx',
   'codecan.pxd',

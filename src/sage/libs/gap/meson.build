@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all_documented_functions.py',
   'assigned_names.py',

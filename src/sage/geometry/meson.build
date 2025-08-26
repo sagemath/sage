@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'abc.pyx',
   'all.py',
   'cone.py',

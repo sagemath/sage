@@ -1,4 +1,5 @@
 py.install_sources(
+  '__init__.py',
   'all.py',
   'boost_graph.pxd',
   'boost_graph.pyx',

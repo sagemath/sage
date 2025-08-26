@@ -80,6 +80,7 @@ foreach package : no_processing
 endforeach
 
 py.install_sources(
+  '__init__.py',
   'all.py',
   'all__sagemath_bliss.py',
   'all__sagemath_coxeter3.py',
