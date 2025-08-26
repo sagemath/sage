@@ -443,30 +443,50 @@ cdef class WordDatatype_char(WordDatatype):
         TESTS:
 
             sage: W = Words(IntegerRange(0,255))
-            sage: W([0,1]) * W([2,0])
+            sage: W([0, 1]) * W([2, 0])
             word: 0120
 
-        The result is automatically converted to a WordDatatype_char. Currently we can
-        even do::
+        The result of a concatenation is always a WordDatatype_char. Currently there is no
+        check on the resulting parent and concatenation might lead to invalid words::
 
-            sage: w = W([0,1,2,3])
-            sage: w * [4,0,4,0]
-            word: 01234040
+            sage: W = Words([0, 1, 2, 3])
+            sage: w = W([0, 1, 2, 3, 2, 1, 0])
+            sage: w * [4, 0, 4, 0]
+            word: 01232104040
+            sage: (w * [4, 0, 4, 0]).parent()
+            Finite words over {0, 1, 2, 3}
+
+        TESTS:
+
+        Test for :issue:`40690`::
+
+            sage: W = Words([0,1])
+            sage: W([0]) + [0]
+            word: 00
+            sage: [0] + W([0])
+            word: 00
         """
         cdef WordDatatype_char w
 
-        if isinstance(other, WordDatatype_char):
-            return (<WordDatatype_char> self)._concatenate(other)
+        if isinstance(self, WordDatatype_char):
+            if isinstance(other, WordDatatype_char):
+                return (<WordDatatype_char> self)._concatenate(other)
 
-        elif PySequence_Check(other):
-            # we convert other to a WordDatatype_char and perform the concatenation
-            w = (<WordDatatype_char> self)._new_c(NULL, 0, None)
-            w._set_data(other)
-            return (<WordDatatype_char> self)._concatenate(w)
+            elif PySequence_Check(other):
+                # we convert other to a WordDatatype_char and perform the concatenation
+                w = (<WordDatatype_char> self)._new_c(NULL, 0, None)
+                w._set_data(other)
+                return (<WordDatatype_char> self)._concatenate(w)
 
-        else:
-            from sage.combinat.words.finite_word import FiniteWord_class
-            return FiniteWord_class.concatenate(self, other)
+        elif isinstance(other, WordDatatype_char):
+            if PySequence_Check(self):
+                # we convert self to a WordDatatype_char and perform the concatenation
+                w = (<WordDatatype_char> other)._new_c(NULL, 0, None)
+                w._set_data(self)
+                return (<WordDatatype_char> w)._concatenate(other)
+
+        from sage.combinat.words.finite_word import FiniteWord_class
+        return FiniteWord_class.concatenate(self, other)
 
     def __add__(self, other):
         r"""
