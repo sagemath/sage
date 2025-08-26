@@ -49,7 +49,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
     implies, that if one uses ``sage_wraps`` in a decorator which intentionally
     changes the argument specification, one should add this information to
     the special attribute ``_sage_argspec_`` of the wrapping function (for an
-    example, see e.g. ``@options`` decorator in this module).
+    example, see e.g. ``@options`` decorator in this module)::
 
         sage: import cython
         sage: def square(f):
