@@ -3542,7 +3542,7 @@ def unranking(n: int, k: int, r: int) -> list[list[int]]:
  
     @cached_method
     def stilde(n, k, d):
-        d_sage = (ZZ)d
+        d_sage = ZZ(d)
         return ZZ.sum((-1)**u * stirling2(n + 1 - u, k + 1) * d_sage.binomial(u)
                       for u in range(min(n-k, d)+1))
  
