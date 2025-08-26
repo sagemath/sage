@@ -76,7 +76,7 @@ def IntegralLattice(data, basis=None):
 
     A lattice is a finitely generated free abelian group `L \cong \ZZ^r`
     equipped with a non-degenerate, symmetric bilinear form
-    `L \times L \colon \rightarrow \ZZ`. Here, lattices have an
+    `L \times L \to \ZZ`. Here, lattices have an
     ambient quadratic space `\QQ^n` and a distinguished basis.
 
     INPUT:
@@ -93,7 +93,7 @@ def IntegralLattice(data, basis=None):
       * the string ``'U'`` or ``'H'`` -- for hyperbolic lattices
 
     - ``basis`` -- (optional) a matrix whose rows form a basis of the
-      lattice,  or a list of module elements forming a basis
+      lattice, or a list of module elements forming a basis
 
     OUTPUT:
 
@@ -1559,14 +1559,10 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         """
         L = self.LLL()
         dim = L.dimension()
-        gram = L.gram_matrix()
         basis = L.basis_matrix()
 
         import fpylll
-        gmat = fpylll.IntegerMatrix(dim, dim)
-        for i in range(dim):
-            for j in range(dim):
-                gmat[i, j] = gram[i, j]
+        gmat = fpylll.IntegerMatrix.from_matrix(L.gram_matrix())
         gso = fpylll.GSO.Mat(gmat, gram=True)
         ok = gso.update_gso()
         assert ok

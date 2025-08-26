@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 r"""
-Pieri Factors
+Pieri factors
 """
 # ****************************************************************************
 #  Copyright (C) 2009-2010 Steven Pon <spon at math.ucdavis.edu>

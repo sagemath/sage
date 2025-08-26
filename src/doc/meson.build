@@ -1,3 +1,16 @@
+if not get_option('build-docs')
+  subdir_done()
+endif
+
+sphinx_check = py_module.find_installation(required: false, modules: ['sphinx'])
+if not sphinx_check.found()
+  warning(
+    'Python package "sphinx" is not installed. Documentation build not enabled.',
+  )
+  subdir_done()
+endif
+
+
 doc_src = []
 subdir('en/reference/repl')
 # TODO: Migrate this completely to meson

@@ -436,7 +436,7 @@ class MPolynomialIdeal_magma_repr:
                 mgb = mself.GroebnerBasis()
 
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
 
         # TODO: rewrite this to be much more sophisticated in multi-level nested cases.
@@ -1560,7 +1560,7 @@ class MPolynomialIdeal_singular_repr(
                 raise TypeError("algorithm '%s' unknown" % algorithm)
         self.__gb_singular = S
         if prot == "sage":
-            print("")
+            print()
             print("Highest degree reached during computation: %2d." % log_parser.max_deg)
         return S
 
@@ -5251,7 +5251,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I.plot()                         # blow up                            # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.plot.all import implicit_plot
+        from sage.plot.contour_plot import implicit_plot
         from sage.rings.real_mpfr import RR
 
         K = self.base_ring()
