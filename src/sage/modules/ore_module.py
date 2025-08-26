@@ -335,8 +335,9 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``twist`` -- the twisting morphism/derivation
 
-        - ``denominator`` -- an element in the base ring or a
-          :class:`sage.structure.factorization.Factorization` object
+        - ``denominator`` (default: ``None``) -- an element in the base
+          ring or a :class:`sage.structure.factorization.Factorization`
+          object; if ``None``, the default denominator is `1`
 
         - ``names`` (default: ``None``) -- a string of a list of strings,
           the names of the vector of the canonical basis; if ``None``,
@@ -351,8 +352,8 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
             continues to be defined over the base ring of ``mat``;
             however, the Ore action is only defined after extending
             scalars to the fraction field.
-            This construction is useful is the theory of Anderson
-            morives and in `p`-adic Hodge theory.
+            This construction is useful in the theory of Anderson
+            motives and in `p`-adic Hodge theory.
 
         TESTS::
 
@@ -404,6 +405,11 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
           variable is ``mat``/``denominator``
 
         - ``ore`` -- the underlying Ore polynomial ring
+
+        - ``denominator`` (default: ``None``) -- an instance of
+          :class:`sage.structure.factorization.Factorization`;
+          ``None`` is understood as the empty factorization with
+          value `1`
 
         - ``denominator`` -- a instance of
           class:sage.structure.factorization.Factorization`
@@ -895,7 +901,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
     def over_fraction_field(self):
         r"""
-        Return this scalar extension of this Ore module to
+        Return the scalar extension of this Ore module to
         the fraction field.
 
         EXAMPLES::
