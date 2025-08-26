@@ -4023,7 +4023,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             zero_res = 0
             if len(self.dict(copy=False)) < self._degree:
                 # OK, we have some zero entries.
-                zero_res = phi(self.base_ring()(0))
+                zero_res = phi(self.base_ring().zero())
                 if not zero_res.is_zero():
                     # And phi maps 0 to a nonzero value.
                     v = [zero_res] * self._degree
@@ -4181,10 +4181,9 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         # return self.apply_map(lambda x: x.nintegral(*args, **kwds) for x in self)
 
         if self.is_sparse():
-            v = [(i, z.nintegral(*args, **kwds))
-                 for i, z in self.dict(copy=False).items()]
-            answers = {i: a[0] for i, a in v}
-            v = dict(v)
+            v = {i: z.nintegral(*args, **kwds)
+                 for i, z in self.dict(copy=False).items()}
+            answers = {i: a[0] for i, a in v.items()}
         else:
             v = [z.nintegral(*args, **kwds) for z in self.list()]
             answers = [a[0] for a in v]
