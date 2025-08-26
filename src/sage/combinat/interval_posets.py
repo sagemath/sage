@@ -3715,7 +3715,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
         We currently have to skip checking that elements are produced
         uniformly at random by :meth:`random_element`. This is not
-        the case because of a bug.::
+        the case because of :issue:`40693`::
 
             sage: for i in range(5):
             ....:     TestSuite(TamariIntervalPosets(i)).run(skip="_test_random")
