@@ -21,6 +21,7 @@ computer:
   (This range of versions is a minimal requirement for internal purposes of the SageMath
   build system, which is referred to as ``sage-bootstrap-python``.)
 - **patch**.
+- **boost**: the library ``boost`` with its headers.
 - **bzip2**: the executable ``bzip2`` and the library ``libbz2`` with its headers.
   (some Linux distros package these separately, e.g. Debian/Ubuntu needs
   packages ``bzip2`` and ``libbz2-dev``; Fedora needs ``bzip2`` and ``bzip2-devel``.)
@@ -45,6 +46,10 @@ tools. In particular ``pkgconf`` is available as `pkg-config_pkg
 On Linux, ``ar`` and ``ranlib`` are in the `binutils
 <https://www.gnu.org/software/binutils/>`_ package.  The other
 programs are usually located in packages with their respective names.
+
+Boost is available with most supported distribitions.
+It can also be installed using the Boost's project `installer B2
+<https://www.boost.org/doc/user-guide/getting-started.html#_download_boost>`_.
 
 On Redhat-derived systems not all perl components are installed by
 default and you might have to install the ``perl-ExtUtils-MakeMaker``
