@@ -2163,7 +2163,7 @@ class OreSubmodule(OreModule):
 
     def over_fraction_field(self):
         r"""
-        Return this scalar extension of this Ore module to
+        Return the scalar extension of this Ore module to
         the fraction field.
 
         EXAMPLES::
