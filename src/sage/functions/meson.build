@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'airy.py',
   'all.py',
   'bessel.py',
@@ -15,6 +14,7 @@ py.install_sources(
   'orthogonal_polys.py',
   'other.py',
   'piecewise.py',
+  'prime_pi.pyx',
   'special.py',
   'spike_function.py',
   'transcendental.py',

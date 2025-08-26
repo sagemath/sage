@@ -1,6 +1,6 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
+  'base.pyx',
   'data.pxd',
   'element.py',
   'functions.pxd',

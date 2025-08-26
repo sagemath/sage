@@ -1,6 +1,6 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
+  'probability_distribution.pyx',
   'random_variable.py',
   subdir: 'sage/probability',
 )

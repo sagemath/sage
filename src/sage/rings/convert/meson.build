@@ -1,7 +1,7 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
   'mpfi.pxd',
+  'mpfi.pyx',
   subdir: 'sage/rings/convert',
 )
 

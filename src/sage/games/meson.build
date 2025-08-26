@@ -1,9 +1,9 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
   'hexad.py',
   'quantumino.py',
   'sudoku.py',
+  'sudoku_backtrack.pyx',
   subdir: 'sage/games',
 )
 

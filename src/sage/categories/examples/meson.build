@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'algebras_with_basis.py',
   'all.py',
   'commutative_additive_monoids.py',
@@ -29,6 +28,7 @@ py.install_sources(
   'monoids.py',
   'posets.py',
   'semigroups.py',
+  'semigroups_cython.pyx',
   'semirings.py',
   'sets_cat.py',
   'sets_with_grading.py',

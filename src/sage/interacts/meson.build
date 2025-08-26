@@ -1,11 +1,11 @@
 py.install_sources(
-  '__init__.py',
   'algebra.py',
   'all.py',
   'calculus.py',
   'fractals.py',
   'geometry.py',
   'library.py',
+  'library_cython.pyx',
   'statistics.py',
   subdir: 'sage/interacts',
 )

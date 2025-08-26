@@ -23,6 +23,7 @@ py.install_sources(
   'nf.py',
   'parallel.py',
   'pbori.pxd',
+  'pbori.pyx',
   'randompoly.py',
   'rank.py',
   'specialsets.py',

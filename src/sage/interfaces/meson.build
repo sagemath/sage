@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'abc.py',
   'all.py',
   'all__sagemath_polyhedra.py',
@@ -41,6 +40,7 @@ py.install_sources(
   'polymake.py',
   'povray.py',
   'process.pxd',
+  'process.pyx',
   'psage.py',
   'qepcad.py',
   'qsieve.py',
@@ -50,6 +50,7 @@ py.install_sources(
   'rubik.py',
   'sage-maxima.lisp',
   'sage0.py',
+  'sagespawn.pyx',
   'scilab.py',
   'singular.py',
   'sympy.py',

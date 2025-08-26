@@ -1,5 +1,4 @@
 py.install_sources(
-  '__init__.py',
   'all.py',
   'binary_dihedral.py',
   'catalog.py',
@@ -7,7 +6,9 @@ py.install_sources(
   'finitely_generated.py',
   'finitely_generated_gap.py',
   'group_element.pxd',
+  'group_element.pyx',
   'group_element_gap.pxd',
+  'group_element_gap.pyx',
   'heisenberg.py',
   'isometries.py',
   'linear.py',
