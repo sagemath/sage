@@ -10,6 +10,7 @@ py.install_sources(
   'intersection.py',
   'platonic_solids.py',
   'random.py',
+  'shortened_000_111_extended_binary_Golay_code_graph.pickle.xz',
   'smallgraphs.py',
   'trees.pxd',
   'world_map.py',
