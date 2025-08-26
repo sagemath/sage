@@ -53,6 +53,7 @@ Individual Categories
    sage/categories/bialgebras
    sage/categories/bialgebras_with_basis
    sage/categories/bimodules
+   sage/categories/chain_complexes
    sage/categories/classical_crystals
    sage/categories/coalgebras
    sage/categories/coalgebras_with_basis
@@ -70,6 +71,7 @@ Individual Categories
    sage/categories/coxeter_groups
    sage/categories/crystals
    sage/categories/cw_complexes
+   sage/categories/dedekind_domains
    sage/categories/discrete_valuation
    sage/categories/distributive_magmas_and_additive_magmas
    sage/categories/division_rings
@@ -79,6 +81,7 @@ Individual Categories
    sage/categories/fields
    sage/categories/filtered_algebras
    sage/categories/filtered_algebras_with_basis
+   sage/categories/filtered_hopf_algebras_with_basis
    sage/categories/filtered_modules
    sage/categories/filtered_modules_with_basis
    sage/categories/finite_complex_reflection_groups
@@ -160,6 +163,7 @@ Individual Categories
    sage/categories/modules_with_basis
    sage/categories/monoid_algebras
    sage/categories/monoids
+   sage/categories/noetherian_rings
    sage/categories/number_fields
    sage/categories/objects
    sage/categories/ore_modules

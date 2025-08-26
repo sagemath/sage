@@ -392,7 +392,6 @@ from sage.structure.element cimport Expression as Expression_abc
 from sage.symbolic.complexity_measures import string_length
 from sage.symbolic.function cimport SymbolicFunction
 from sage.rings.rational import Rational
-from sage.rings.real_mpfr cimport RealNumber
 from sage.misc.derivative import multi_derivative
 from sage.misc.decorators import sage_wraps
 from sage.misc.latex import latex_variable_name
@@ -1521,7 +1520,8 @@ cdef class Expression(Expression_abc):
             ...
             ValueError: cannot convert sqrt(-3) to int
         """
-        from sage.functions.all import floor, ceil
+        from sage.functions.other import floor
+        from sage.functions.other import ceil
         from sage.rings.real_mpfi import RIF
         try:
             rif_self = RIF(self)
@@ -2491,7 +2491,7 @@ cdef class Expression(Expression_abc):
         """
         pynac_forget_gdecl(self._gobj, str_to_bytes(decl))
 
-    def has_wild(self):
+    def has_wild(self) -> bool:
         """
         Return ``True`` if this expression contains a wildcard.
 
@@ -3504,9 +3504,9 @@ cdef class Expression(Expression_abc):
             # associated with different semantics, different
             # precision, etc., that can lead to subtle bugs.  Also, a
             # lot of basic Sage objects can't be put into maxima.
-            from sage.symbolic.relation import test_relation_maxima
+            from sage.symbolic.relation import check_relation_maxima
             if self.variables():
-                return test_relation_maxima(self)
+                return check_relation_maxima(self)
             else:
                 return False
 
@@ -4757,7 +4757,7 @@ cdef class Expression(Expression_abc):
         return matrix([[g.derivative(x) for x in self.arguments()]
                        for g in self.gradient()])
 
-    def series(self, symbol, order=None):
+    def series(self, symbol, order=None, algorithm='ginac'):
         r"""
         Return the power series expansion of ``self`` in terms of the
         given variable to the given order.
@@ -4771,6 +4771,10 @@ cdef class Expression(Expression_abc):
         - ``order`` -- integer; if nothing given, it is set
           to the global default (``20``), which can be changed
           using :func:`set_series_precision`
+        - ``algorithm`` -- string (default: ``'ginac'``); one of the following:
+
+          * ``'ginac'``
+          * ``'maxima'``
 
         OUTPUT: a power series
 
@@ -4869,7 +4873,20 @@ cdef class Expression(Expression_abc):
 
             sage: ((1 - x)^-x).series(x, 8)
             1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
+
+        Try different algorithms::
+
+            sage: ((1 - x)^-x).series(x, 8, algorithm="maxima")
+            1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
+            sage: ((1 - x)^-x).series(x, 8, algorithm="ginac")
+            1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
         """
+        if algorithm == "maxima":
+            # call series() again to convert the result (a rational function in the symbol)
+            # to a SymbolicSeries with the correct order
+            return self.taylor(symbol, 0, order-1).series(symbol, order, algorithm="ginac")
+        if algorithm != "ginac":
+            raise ValueError("invalid algorithm")
         cdef Expression symbol0 = self.coerce_in(symbol)
         cdef GEx x
         cdef SymbolicSeries nex
@@ -4980,6 +4997,10 @@ cdef class Expression(Expression_abc):
            - ``x``, ``a``, ``n`` -- variable, point, degree
 
            - ``(x, a)``, ``(y, b)``, ``n`` -- variables with points, degree of polynomial
+
+        .. SEEALSO::
+
+            :meth:`series`
 
         EXAMPLES::
 
@@ -6703,7 +6724,8 @@ cdef class Expression(Expression_abc):
             return self.pyobject().round()
         except (TypeError, AttributeError):
             pass
-        from sage.functions.all import floor, ceil
+        from sage.functions.other import floor
+        from sage.functions.other import ceil
         from sage.rings.real_mpfi import RIF
         try:
             rif_self = RIF(self)
@@ -13201,7 +13223,7 @@ cdef class Expression(Expression_abc):
         answer::
 
             sage: f = ln(1+4/5*sin(x))
-            sage: integrate(f, x, -3.1415, 3.1415)  # random
+            sage: integrate(f, x, -3.1415, 3.1415)  # random, long time (:issue:`39569`)
             integrate(log(4/5*sin(x) + 1), x, -3.14150000000000,
             3.14150000000000)
             sage: # needs sage.libs.giac
@@ -13420,6 +13442,83 @@ cdef class Expression(Expression_abc):
         if not is_a_relational(self._gobj):
             raise TypeError("this expression must be a relation")
         return self / x
+
+    def compositional_inverse(self, allow_multivalued_inverse=True, **kwargs):
+        """
+        Find the compositional inverse of this symbolic function.
+
+        INPUT:
+
+        - ``allow_multivalued_inverse`` -- (default: ``True``); see example below
+        - ``**kwargs`` -- additional keyword arguments passed to :func:`sage.symbolic.relation.solve`.
+
+        .. SEEALSO::
+
+            :meth:`sage.modules.free_module_element.FreeModuleElement.compositional_inverse`.
+
+        EXAMPLES::
+
+            sage: f(x) = x+1
+            sage: f.compositional_inverse()
+            x |--> x - 1
+            sage: var("y")
+            y
+            sage: f(x) = x+y
+            sage: f.compositional_inverse()
+            x |--> x - y
+            sage: f(x) = x^2
+            sage: f.compositional_inverse()
+            x |--> -sqrt(x)
+
+        When ``allow_multivalued_inverse=False``, there is some additional checking::
+
+            sage: f(x) = x^2
+            sage: f.compositional_inverse(allow_multivalued_inverse=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: inverse is multivalued, pass allow_multivalued_inverse=True to bypass
+
+        Nonetheless, the checking is not always foolproof (``x |--> log(x) + 2*pi*I`` is another possibility)::
+
+            sage: f(x) = exp(x)
+            sage: f.compositional_inverse(allow_multivalued_inverse=False)
+            x |--> log(x)
+
+        Sometimes passing ``kwargs`` is useful, for example ``algorithm`` can be used
+        when the default solver fails::
+
+            sage: f(x) = (2/3)^x
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            KeyError: x
+            sage: f.compositional_inverse(algorithm="giac")                             # needs sage.libs.giac
+            x |--> -log(x)/(log(3) - log(2))
+
+        TESTS::
+
+            sage: f(x) = x+exp(x)
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find an inverse
+            sage: f(x) = 0
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find an inverse
+            sage: f(x, y) = (x, x)
+            sage: f.compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot find an inverse
+            sage: (x+1).compositional_inverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: base ring must be a symbolic expression ring
+        """
+        from sage.modules.free_module_element import vector
+        return vector([self]).compositional_inverse(allow_multivalued_inverse=allow_multivalued_inverse, **kwargs)[0]
 
     def implicit_derivative(self, Y, X, n=1):
         """
@@ -13735,6 +13834,7 @@ cpdef new_Expression(parent, x):
                                      unsigned_infinity)
     from sage.structure.factorization import Factorization
     from sage.categories.sets_cat import Sets
+    from sage.rings.real_mpfr import RealNumber
 
     if isinstance(x, RealNumber):
         if x.is_NaN():
@@ -14173,3 +14273,15 @@ include "pynac_constant_impl.pxi"
 include "pynac_function_impl.pxi"
 include "series_impl.pxi"
 include "substitution_map_impl.pxi"
+
+
+# ------------------------------------------------------------
+# Trac #26254: Inject symbolic-function-related functions into
+# sage.symbolic.function
+# ------------------------------------------------------------
+import sage.symbolic.function
+sage.symbolic.function.call_registered_function = call_registered_function
+sage.symbolic.function.find_registered_function = find_registered_function
+sage.symbolic.function.register_or_update_function = register_or_update_function
+sage.symbolic.function.get_sfunction_from_hash = get_sfunction_from_hash
+sage.symbolic.function.get_sfunction_from_serial = get_sfunction_from_serial

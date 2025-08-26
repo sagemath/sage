@@ -7,5 +7,4 @@
 # One package per line. No need to escape special characters.
 # Everything on a line after a # character is ignored.
 #
-
-# No packages needed
+pkgconf

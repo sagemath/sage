@@ -1479,6 +1479,7 @@ cdef class RealBall(RingElement):
                 fmpz_init(tmpz)
                 fmpz_set_mpz(tmpz, (<Integer> rad.denominator()).value)
                 arf_div_fmpz(tmpr, tmpr, tmpz, prec(self), ARF_RND_UP)
+                fmpz_clear(tmpz)
                 arf_get_mag(tmpm, tmpr)
                 arf_clear(tmpr)
             elif isinstance(rad, float):
@@ -3105,6 +3106,17 @@ cdef class RealBall(RingElement):
         else:
             raise TypeError("unsupported operand type(s) for >>: '{}' and '{}'"
                             .format(type(val).__name__, type(shift).__name__))
+
+    def conjugate(self):
+        r"""
+        Return the conjugate of this ball.
+
+        EXAMPLES::
+
+            sage: RBF(1).conjugate()
+            1.000000000000000
+        """
+        return self
 
     # Elementary functions
 

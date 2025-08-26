@@ -362,7 +362,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
         return self.extend_type("holo", ring=True)(1).reduce()
 
-    def is_ambient(self):
+    def is_ambient(self) -> bool:
         r"""
         Return whether ``self`` is an ambient space.
 
@@ -2027,7 +2027,7 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             b = vector(self.coeff_ring(), [laurent_series[m] for m in range(min_exp, min_exp + len(basis))])
 
-            el = self(sum([b[k]*basis[k] for k in range(0, len(basis))]))
+            el = self(sum([b[k]*basis[k] for k in range(len(basis))]))
         else:
             A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
             row_size = A.dimensions()[0]
@@ -2049,7 +2049,7 @@ class FormsSpace_abstract(FormsRing_abstract):
             max_exp = order_inf + 1
             basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
 
-            el = self(sum([coord_vector[k]*basis[k] for k in range(0, len(coord_vector))]))
+            el = self(sum([coord_vector[k]*basis[k] for k in range(len(coord_vector))]))
 
         if (check):
             if (el.q_expansion(prec=prec) != laurent_series):
@@ -2129,8 +2129,8 @@ class FormsSpace_abstract(FormsRing_abstract):
 
                 column_len = A.dimensions()[1]
                 q_basis = []
-                for k in range(0, column_len):
-                    el = self(sum([B[l][k] * basis[l] for l in range(0, column_len)]))
+                for k in range(column_len):
+                    el = self(sum([B[l][k] * basis[l] for l in range(column_len)]))
                     q_basis += [el]
 
                 return q_basis
@@ -2149,26 +2149,25 @@ class FormsSpace_abstract(FormsRing_abstract):
                     raise ValueError("Index out of range: m={} >= {}=dimension + min_exp".format(m, column_len + min_exp))
 
                 return q_basis[m - min_exp]
-            else:
-                row_len = self.required_laurent_prec(min_exp=min_exp, order_1=order_1) - min_exp
-                if (m >= row_len + min_exp):
-                    raise ValueError("Index out of range: m={} >= {}=required_precision + min_exp".format(m, row_len + min_exp))
 
-                A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
-                b = vector(self.coeff_ring(), row_len)
-                b[m - min_exp] = 1
-                try:
-                    coord_vector = A.solve_right(b)
-                except ValueError:
-                    raise ValueError("Unfortunately the q_basis vector (m={}, min_exp={}) doesn't exist in this case (this is rare/interesting, please report)".format(m, min_exp))
+            row_len = self.required_laurent_prec(min_exp=min_exp, order_1=order_1) - min_exp
+            if (m >= row_len + min_exp):
+                raise ValueError("Index out of range: m={} >= {}=required_precision + min_exp".format(m, row_len + min_exp))
 
-                max_exp = order_inf + 1
-                basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
+            A = self._quasi_form_matrix(min_exp=min_exp, order_1=order_1)
+            b = vector(self.coeff_ring(), row_len)
+            b[m - min_exp] = 1
+            try:
+                coord_vector = A.solve_right(b)
+            except ValueError:
+                raise ValueError("Unfortunately the q_basis vector (m={}, min_exp={}) doesn't exist in this case (this is rare/interesting, please report)".format(m, min_exp))
 
-                column_len = A.dimensions()[1]
-                el = self(sum([coord_vector[l] * basis[l] for l in range(0, column_len)]))
+            max_exp = order_inf + 1
+            basis = self.quasi_part_gens(min_exp=min_exp, max_exp=max_exp, order_1=order_1)
 
-                return el
+            column_len = A.dimensions()[1]
+            return self(sum([coord_vector[l] * basis[l]
+                             for l in range(column_len)]))
 
     def rationalize_series(self, laurent_series, coeff_bound=1e-10, denom_factor=ZZ(1)):
         r"""
@@ -2346,9 +2345,8 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             return rational_coeff / d**m
 
-        laurent_series = sum([rationalize_coefficient(laurent_series[m], m) * q**m for m in range(first_exp, laurent_series.exponents()[-1] + 1)]).add_bigoh(series_prec)
-
-        return laurent_series
+        return sum([rationalize_coefficient(laurent_series[m], m) * q**m
+                    for m in range(first_exp, laurent_series.exponents()[-1] + 1)]).add_bigoh(series_prec)
 
     # DEFAULT METHODS (should be overwritten in concrete classes)
 

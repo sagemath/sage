@@ -34,7 +34,6 @@ SOFTWARE                    LICENSE
 boehm_gc                    MIT-like license (see below)
 backports_ssl_match_hostname  Python License
 boost_cropped               Boost Software License (see below)
-bzip2                       BSD-ish (see below)
 cddlib                      GPLv2+
 certifi                     ISC
 cliquer                     GPLv2+
@@ -90,11 +89,9 @@ numpy                       Modified BSD
 openblas                    Modified BSD
 palp                        GPLv3
 pari                        GPLv2+
-patch                       GPLv2+
 pexpect                     Python License
 pillow                      Apache License 2.0
 pip                         MIT License
-pkgconf                     ISC License (equivalent to Simplified BSD)
 pkgconfig                   MIT License
 planarity                   Modified BSD
 polybori                    GPLv2+

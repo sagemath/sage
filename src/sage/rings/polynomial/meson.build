@@ -94,7 +94,7 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-  deps = [py_dep, cysignals, gmp]
+  deps = [py_dep, cysignals, gmp, numpy]
   if name == 'evaluation_flint'
     deps += [flint, mpfi]
   elif name == 'polynomial_complex_arb'
@@ -102,9 +102,9 @@ foreach name, pyx : extension_data
   elif name == 'polynomial_real_mpfr_dense'
     deps += [mpfr]
   elif name == 'real_roots'
-    deps += [mpfi]
+    deps += [flint, mpfi]
   elif name == 'hilbert'
-    deps += [mpfi]
+    deps += [flint, mpfi]
   endif
 
   py.extension_module(
@@ -117,7 +117,6 @@ foreach name, pyx : extension_data
       inc_ext,
       inc_flint,
       inc_ntl,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
@@ -142,6 +141,21 @@ extension_data_cpp = {
 }
 
 foreach name, pyx : extension_data_cpp
+  deps = [py_dep, cysignals, gmp, numpy]
+  if name == 'polynomial_rational_flint'
+    deps += [
+      cypari2,
+      flint,
+      mpfi,
+      ntl,  # indirect dependency
+    ]
+  elif name == 'polynomial_zmod_flint'
+    deps += [cypari2, flint]
+  elif name == 'polynomial_integer_dense_flint'
+    deps += [cypari2, flint, ntl]
+  else
+    deps += [cypari2, givaro, mpfi, mpfr, ntl, pari, singular]
+  endif
   py.extension_module(
     name,
     sources: pyx,
@@ -153,24 +167,12 @@ foreach name, pyx : extension_data_cpp
       inc_ext,
       inc_flint,
       inc_ntl,
-      inc_numpy,
       inc_rings,
       inc_rings_finite,
     ],
-    dependencies: [
-      py_dep,
-      cypari2,
-      cysignals,
-      flint,
-      givaro,
-      gmp,
-      mpfi,
-      mpfr,
-      ntl,
-      pari,
-      singular,
-    ],
+    dependencies: deps,
   )
+
 endforeach
 
 install_subdir('padics', install_dir: sage_install_dir / 'rings/polynomial')

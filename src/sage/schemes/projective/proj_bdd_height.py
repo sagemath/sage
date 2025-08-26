@@ -25,7 +25,6 @@ from sage.arith.misc import gcd
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
-from sage.schemes.projective.projective_space import ProjectiveSpace
 
 lazy_import('sage.geometry.polyhedron.constructor', 'Polyhedron')
 lazy_import('sage.libs.pari', 'pari')
@@ -158,7 +157,7 @@ def IQ_points_of_bounded_height(PS, K, dim, bound):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 

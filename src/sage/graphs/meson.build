@@ -1,14 +1,18 @@
-bliss = cc.find_library('bliss', required: false, disabler: true)
-# mcqd is a header-only library
-if cc.has_header('mcqd.h')
+bliss = cc.find_library('bliss', required: get_option('bliss'), disabler: true)
+
+mcqd = disabler()
+if cc.has_header('mcqd.h', required: get_option('mcqd'))
+  # mcqd is a header-only library
   mcqd = declare_dependency()
-else
-  mcqd = disabler()
 endif
-cliquer = cc.find_library('cliquer')
+cliquer = cc.find_library('cliquer', required: not is_windows, disabler: true)
 
 # Cannot be found via pkg-config
-planarity = cc.find_library('planarity')
+planarity = cc.find_library(
+  'planarity',
+  required: not is_windows,
+  disabler: true,
+)
 
 py.install_sources(
   '__init__.py',
@@ -21,6 +25,7 @@ py.install_sources(
   'cographs.py',
   'connectivity.pxd',
   'convexity_properties.pxd',
+  'cycle_enumeration.py',
   'digraph.py',
   'digraph_generators.py',
   'distances_all_pairs.pxd',

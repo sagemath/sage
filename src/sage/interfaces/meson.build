@@ -5,7 +5,6 @@ py.install_sources(
   'all__sagemath_polyhedra.py',
   'asir.py',
   'axiom.py',
-  'cleaner.py',
   'ecm.py',
   'expect.py',
   'four_ti_2.py',
@@ -69,6 +68,11 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+  if is_windows
+    # Uses posix API
+    continue
+  endif
+
   py.extension_module(
     name,
     sources: pyx,

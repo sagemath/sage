@@ -167,7 +167,6 @@ class RRInterpreter(StackInterpreter):
                 mpfr_set(retval, result.value, MPFR_RNDN)
                 return 1
 
-
         So instructions where you need to interact with Python can
         call back into Cython code fairly easily.
         """
@@ -211,7 +210,6 @@ class RRInterpreter(StackInterpreter):
                 cdef RealNumber result = domain(fn(*py_args))
                 mpfr_set(retval, result.value, MPFR_RNDN)
                 return 1
-
             """)
 
         instrs = [

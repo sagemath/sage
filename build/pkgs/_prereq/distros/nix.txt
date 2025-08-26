@@ -16,3 +16,7 @@ gnutar
 bc
 gcc
 bash
+gnupatch
+bzip2
+gnupatch
+pkg-config

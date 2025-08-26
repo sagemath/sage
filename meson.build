@@ -3,7 +3,8 @@ project(
   ['c', 'cpp', 'cython'],
   version: files('src/VERSION.txt'),
   license: 'GPL v3',
-  default_options: ['c_std=c17', 'cpp_std=c++17'],
+  default_options: ['c_std=c17', 'cpp_std=c++17', 'python.install_env=auto'],
+  meson_version: '>=1.2',
 )
 
 # Python module
@@ -11,6 +12,10 @@ project(
 py_module = import('python')
 py = py_module.find_installation(pure: false)
 py_dep = py.dependency()
+
+fs = import('fs')
+
+is_windows = host_machine.system() == 'windows'
 
 # Additional targets
 py_with_pytest = py_module.find_installation(
@@ -38,7 +43,7 @@ create_files_command = [
   py,
   '-c',
   '''
-import os
+from pathlib import Path
 content = "# Here so that cython creates the correct module name"
 file_paths = [
   'src/sage/interfaces/__init__.py',
@@ -204,12 +209,13 @@ file_paths = [
   'src/sage/calculus/__init__.py',
 ]
 for path in file_paths:
-    path = "''' + meson.current_source_dir() + '''/" + path
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, 'w') as f:
-        f.write(content)
+    resolved_path = Path("''' + fs.as_posix(meson.current_source_dir()) + '''") / path
+    resolved_path.parent.mkdir(parents=True, exist_ok=True)
+    resolved_path.write_text(content)
   ''',
 ]
 run_command(create_files_command, check: true)
+
+root = meson.current_source_dir()
 
 subdir('src')

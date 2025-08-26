@@ -901,7 +901,7 @@ in particular, it is turned into ``\begin{gather} block
 ``align``) which in ordinary LaTeX would not be wrapped like this, you
 must add a **:nowrap:** flag to the MATH mode. See also `Sphinx's
 documentation for math blocks
-<http://sphinx-doc.org/latest/ext/math.html?highlight=nowrap#directive-math>`_. :
+<https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#directive-math>`_. :
 
 .. CODE-BLOCK:: rest
 

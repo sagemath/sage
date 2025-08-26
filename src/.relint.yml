@@ -1,13 +1,5 @@
 # Simple pattern exclusions
 
-- name: 'python3: Python3 incompatible code'
-  hint: |
-    # ifilter, imap, izip           # __metaclass__
-    # update raise statements       # except Exception, var
-    # six is no longer allowed
-  pattern: '(import.*[, ]ifilter|import.*[, ]imap|import.*[, ]izip|^\s*raise\s*[A-Za-z]*Error\s*,|__metaclass__|except\s*[A-Za-z]\s*,|import six|from six import)'
-  filePattern: .*[.](py|pyx|rst)
-
 - name: 'foreign_latex: foreign commands in LaTeX'
   hint: |
     use equivalent LaTeX commands instead of plain TeX commands such as \over, \choose, etc.
@@ -45,7 +37,7 @@
     Sage library code should not import from sage.PAC.KAGE.all.
   pattern: 'from\s+sage(|[.](arith|categories|combinat|crypto|databases|data_structures|dynamics|ext|game_theory|games|geometry|graphs|groups|interfaces|manifolds|matrix|matroids|misc|modules|monoids|numerical|probability|quadratic_forms|quivers|rings|sat|schemes|sets|stats|symbolic|tensor)[a-z0-9_.]*|[.]libs)[.]all\s+import'
   # imports from .all are allowed in all.py; also allow in some modules that need sage.all
-  filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval|explain_pickle|.*_test))[^/.]*[.](py|pyx|pxi)$'
+  filePattern: '(.*/|)(?!(all|benchmark|dev_tools|parsing|sage_eval|explain_pickle|.*_test|eval_cmd))[^/.]*[.](py|pyx|pxi)$'
 
 - name: 'namespace_pkg_all_import_2: Module-level import of .all of a namespace package'
   hint: |

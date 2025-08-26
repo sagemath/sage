@@ -1017,13 +1017,14 @@ cdef class pAdicGenericElement(LocalGenericElement):
             elt = self
             while True:
                 poly = elt.polynomial()
-                vector = V([ poly[i] for i in range(deg) ])
-                if vector in W: break
+                vector = V([poly[i] for i in range(deg)])
+                if vector in W:
+                    break
                 vectors.append(vector)
                 W += V.span([vector])
                 elt *= self
             W = V.span_of_basis(vectors)
-            coeffs = [ -c for c in W.coordinate_vector(vector) ] + [K(1)]
+            coeffs = [-c for c in W.coordinate_vector(vector)] + [K(1)]
             return polring(coeffs)
         else:
             raise NotImplementedError
@@ -1492,10 +1493,12 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if self.parent().is_field():
             return self.parent().one()
 
-        if min(self.valuation(),other.valuation()) >= min(self.precision_absolute(),other.precision_absolute()):
-            return self.parent().zero().add_bigoh(min(self.precision_absolute(),other.precision_absolute()))
+        if min(self.valuation(), other.valuation()) >= min(self.precision_absolute(), other.precision_absolute()):
+            return self.parent().zero().add_bigoh(
+                min(self.precision_absolute(), other.precision_absolute()))
 
-        return self.parent().uniformiser_pow( min(self.valuation(),other.valuation()) )
+        return self.parent().uniformiser_pow(
+            min(self.valuation(),other.valuation()))
 
     @coerce_binop
     def xgcd(self, other):
@@ -2363,7 +2366,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 inner_sum = R.zero()
                 for u in range(upper_u,0,-1):
                     # We want u to be a p-adic unit
-                    if u%p==0:
+                    if u % p == 0:
                         new_term = R.zero()
                     else:
                         new_term = ~R(u)
@@ -2380,7 +2383,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
                 a += 1
                 p2a = p2a*p
                 upper_u = ((aprec+a*e)/(alpha*p2a)).floor()
-                if a >= mina and upper_u <= 0: break
+                if a >= mina and upper_u <= 0:
+                    break
 
                 # We perform this last operation after the test
                 # because it is costly and may raise OverflowError
@@ -2970,8 +2974,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         # we compute the value of N! as we go through the loop
         nfactorial_unit,nfactorial_val = R.one(),0
 
-        nmodp = N%p
-        for n in range(N,0,-1):
+        nmodp = N % p
+        for n in range(N, 0, -1):
             # multiply everything by x
             series_val += x_val
             series_unit *= x_unit
@@ -3755,9 +3759,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
         root = (~root) << (val // n)
 
         if all:
-            return [ parent(root*zeta) for zeta in K.roots_of_unity(n) ]
-        else:
-            return parent(root)
+            return [parent(root*zeta) for zeta in K.roots_of_unity(n)]
+        return parent(root)
 
     def _inverse_pth_root(self, twist=None, hint=None):
         r"""
@@ -3844,7 +3847,8 @@ cdef class pAdicGenericElement(LocalGenericElement):
             # we can alternatively update it after each update of x
             # (which is theoretically a bit faster)
             b = ainv - x**p
-            if b == 0: break
+            if b == 0:
+                break
             curprec = b.valuation()
             bexp = iter(b.unit_part().expansion())
             maxprec = prec
@@ -3903,7 +3907,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
                     x *= invroottwist**exponent
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             S = PolynomialRing(k, name='x')
-            AS = S([ coeff, rho ] + (p-2)*[0] + [1])
+            AS = S([coeff, rho] + (p-2)*[0] + [1])
             roots = AS.roots()
             if len(roots) == 0:
                 return x, curprec
@@ -4224,7 +4228,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         n = Integer(n)
 
         if z.valuation() < 0:
-            verbose("residue oo, using functional equation for reciprocal. %d %s"%(n,str(self)), level=2)
+            verbose("residue oo, using functional equation for reciprocal. %d %s" % (n, str(self)), level=2)
             return (-1)**(n+1)*(1/z).polylog(n)-(z.log(p_branch)**n)/K(n.factorial())
 
         zeta = K.teichmuller(z)
@@ -4233,7 +4237,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if zeta == 0:
             if z.precision_absolute() == PlusInfinity():
                 return K(0)
-            verbose("residue 0, using series. %d %s"%(n,str(self)), level=2)
+            verbose("residue 0, using series. %d %s" % (n, str(self)), level=2)
             M = ceil((prec/z.valuation()).log(p).n())
             N = prec - n*M
             ret = K(0)
@@ -4247,7 +4251,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         if zeta == 1:
             if z == 1:
                 return Integer(2)**(n-1)*K(-1).polylog(n, p_branch=p_branch)/(1-Integer(2)**(n-1))
-            verbose("residue 1, using _polylog_res_1. %d %s"%(n,str(self)), level=2)
+            verbose("residue 1, using _polylog_res_1. %d %s" % (n, str(self)), level=2)
             return self._polylog_res_1(n, p_branch)
 
         # Set up precision bounds
@@ -4261,7 +4265,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         K = Qp(p, prec)
 
         # Residue disk around zeta
-        verbose("general case. %d %s"%(n, str(self)), level=2)
+        verbose("general case. %d %s" % (n, str(self)), level=2)
         Li_i_zeta = [0] + [p**i/(p**i-1)*gtr[i](1/(1-zeta)) for i in range(1,n+1)]
 
         T = PowerSeriesRing(K, default_prec=ceil(tsl), names='t')
@@ -4364,7 +4368,7 @@ def _AHE_coefficients(p, N, prec):
         cache_internal_prec = 0
     if cache_internal_prec < internal_prec:
         parent = ZpFM(p, internal_prec)
-        values = [ parent(1) ]
+        values = [parent(1)]
     for i in range(len(values), N):
         c = 0
         dec = 1
@@ -4484,7 +4488,7 @@ cpdef dwork_mahler_coeffs(R, int bd=20):
     for k in range(1, p):
         v.append(v[-1] / R(k))
     if bd > 1:
-        R1 = Qp(p, prec=bd) # Need divisions in this calculation
+        R1 = Qp(p, prec=bd)  # Need divisions in this calculation
         u = [R1(x) for x in v]
         for i in range(1, bd):
             u[0] = ((u[-1] + u[0]) / i) >> 1
@@ -4573,7 +4577,7 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
     cdef long long q, q1, q3, r, r1, r2, s1, s2, k
     cdef array.array vv, ans1
 
-    if (f == 1 and prec == 1): # Shortcut for this key special case
+    if (f == 1 and prec == 1):  # Shortcut for this key special case
         ans1 = array.array('l', [0]) * p
         ans1[0] = p-1
         for r in range(1, p-1):
@@ -4585,7 +4589,7 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
     q1 = q - 1
     bd = (p*prec+p-2) // (p-1) - 1
     R = Zp(p, prec, 'fixed-mod')
-    if p == 2: # Dwork expansion has denominators when p = 2
+    if p == 2:  # Dwork expansion has denominators when p = 2
         R1 = Qp(p, prec)
         use_longs = False
     else:
@@ -4606,7 +4610,8 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
         ans = [0 for r in range(q1)]
         ans[0] = -u
     for r in range(1, q1):
-        if ans[r]: continue
+        if ans[r]:
+            continue
         if use_longs:
             s1 = 1
         else:
@@ -4615,8 +4620,9 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
         for j in range(1, f+1):
             k = r1 % p
             r1 = (r1 + k * q1) // p
-            if use_longs: # Use Dwork expansion to compute p-adic Gamma
-                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2%q3, p, bd, k, q3)
+            if use_longs:  # Use Dwork expansion to compute p-adic Gamma
+                s1 *= -evaluate_dwork_mahler_long(vv, r1*r2 % q3,
+                                                  p, bd, k, q3)
                 s1 %= q3
             else:
                 s *= -evaluate_dwork_mahler(v, R1(r1)*d, p, bd, k)
@@ -4633,7 +4639,8 @@ cpdef gauss_table(long long p, int f, int prec, bint use_longs):
                 s **= f // j
             ans[r] = -s
         for i in range(j-1):
-            r1 = r1 * p % q1 # Initially r1 == r
+            r1 = r1 * p % q1  # Initially r1 == r
             ans[r1] = ans[r]
-    if p != 2: return ans
+    if p != 2:
+        return ans
     return [R(x) for x in ans]

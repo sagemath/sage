@@ -20,7 +20,7 @@ from sage.rings.polynomial.polynomial_ring import polygen
 cdef object x_ZZ = polygen(ZZ)
 from sage.rings.polynomial.real_roots import real_roots
 from sage.arith.misc import prime_divisors
-import sage.libs.ntl.all as ntl
+from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX as ZZ_pX
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.mpz cimport *
@@ -579,8 +579,8 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_set(D.value, d)
         mpz_set(E.value, e)
         mpz_set(P.value, pp)
-        f = ntl.ZZ_pX([E, D, C, B, A], P)
-        f /= ntl.ZZ_pX([A], P)  # now f is monic, and we are done with A,B,C,D,E
+        f = ZZ_pX([E, D, C, B, A], P)
+        f /= ZZ_pX([A], P)  # now f is monic, and we are done with A,B,C,D,E
         mpz_set(qq, A.value)  # qq is the leading coefficient of the polynomial
         f_factzn = f.factor()
         result = 0
@@ -593,7 +593,7 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         if result:
             return 1
 
-        f = ntl.ZZ_pX([1], P)
+        f = ZZ_pX([1], P)
         for factor, exponent in f_factzn:
             for j in range(exponent // 2):
                 f *= factor
@@ -732,8 +732,8 @@ cdef bint Zp_soluble_siksek_large_p(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e,
         mpz_set(D.value, d)
         mpz_set(E.value, e)
         mpz_set(P.value, pp)
-        f = ntl.ZZ_pX([E, D, C, B, A], P)
-        f /= ntl.ZZ_pX([A], P)  # now f is monic
+        f = ZZ_pX([E, D, C, B, A], P)
+        f /= ZZ_pX([A], P)  # now f is monic
         f_factzn = f.factor()
 
         has_roots = 0
@@ -978,6 +978,8 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
 
     # Odd finite primes
     Delta = f.discriminant()
+    if not Delta:
+        raise ValueError("the curve is singular, Delta is zero")
     for p in prime_divisors(Delta):
         if p == 2:
             continue
@@ -1002,6 +1004,15 @@ def test_els(a, b, c, d, e):
         ....:                 print("This never happened", a, b, c, d, e)
         ....:         except ValueError:
         ....:             continue
+
+    TESTS:
+
+    Check that :issue:`39864` is fixed::
+
+        sage: test_els(194, 617, 846, 617, 194)
+        Traceback (most recent call last):
+        ...
+        ValueError: the curve is singular, Delta is zero
     """
     cdef Integer A, B, C, D, E
     A = Integer(a)

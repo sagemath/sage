@@ -73,11 +73,11 @@ cdef Py_ssize_t mpq_binary_search0(mpq_t* v, Py_ssize_t n, mpq_t x) noexcept:
     j = n-1
     while i<=j:
         if i == j:
-            if mpq_equal(v[i],x):
+            if mpq_equal(v[i], x):
                 return i
             return -1
         k = (i+j)/2
-        c = mpq_cmp(v[k],x)
+        c = mpq_cmp(v[k], x)
         if c > 0:       # v[k] > x
             j = k-1
         elif c < 0:     # v[k] < x
@@ -112,7 +112,7 @@ cdef Py_ssize_t mpq_binary_search(mpq_t* v, Py_ssize_t n, mpq_t x, Py_ssize_t* i
     j = n-1
     while i<=j:
         if i == j:
-            c = mpq_cmp(v[i],x)
+            c = mpq_cmp(v[i], x)
             if c == 0:          # v[i] == x
                 ins[0] = i
                 return i
@@ -147,7 +147,7 @@ cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     cdef Py_ssize_t m
     m = binary_search0(v.positions, v.num_nonzero, n)
     if m == -1:
-        mpq_set_si(ans, 0,1)
+        mpq_set_si(ans, 0, 1)
         return 0
     mpq_set(ans, v.entries[m])
     return 0
@@ -279,7 +279,7 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
 
     mpq_init(tmp)
     # Do not do the multiply if the multiple is 1.
-    do_multiply = mpq_cmp_si(multiple, 1,1)
+    do_multiply = mpq_cmp_si(multiple, 1, 1)
 
     z = sum
     # ALGORITHM:

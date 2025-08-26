@@ -19,11 +19,12 @@ Witt symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from . import multiplicative
 from sage.arith.misc import divisors
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.combinat.partitions import ZS1_iterator
 from sage.misc.cachefunc import cached_method
+
+from . import multiplicative
 
 
 class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -298,7 +299,6 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             return self._h.one()
         P = self._indices
         if len(lam) == 1:
-            R = self.base_ring()
             n = lam[0]
             it = ZS1_iterator(n)
             next(it)  # skip the first partition, which is [n]
@@ -486,7 +486,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         """
         from sage.categories.tensor import tensor
         return self.tensor_square().sum(coeff * tensor([self(self._h[x]), self(self._h[y])])
-                                        for ((x,y), coeff) in self._h(elt).coproduct())
+                                        for ((x, y), coeff) in self._h(elt).coproduct())
 
     def verschiebung(self, n):
         r"""

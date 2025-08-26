@@ -1365,7 +1365,7 @@ def desolve_rk4(de, dvar, ics=None, ivar=None, end_points=None, step=0.1, output
 
     if not (isinstance(dvar, Expression) and dvar.is_symbol()):
         from sage.symbolic.ring import SR
-        from sage.calculus.all import diff
+        from sage.calculus.functional import diff
         from sage.symbolic.relation import solve
         if isinstance(de, Expression) and de.is_relational():
             de = de.lhs() - de.rhs()
@@ -1739,7 +1739,7 @@ def desolve_mintides(f, ics, initial, final, delta, tolrel=1e-16, tolabs=1e-16):
 
     - A. Abad, R. Barrio, F. Blesa, M. Rodriguez.
       `TIDES tutorial: Integrating ODEs by using the Taylor Series Method.
-      <http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm>`_
+      <https://web.archive.org/web/20120206041615/http://www.unizar.es/acz/05Publicaciones/Monografias/MonografiasPublicadas/Monografia36/IndMonogr36.htm>`_
     """
     import subprocess
     if subprocess.call('command -v gcc', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE):

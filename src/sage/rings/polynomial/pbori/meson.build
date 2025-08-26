@@ -1,6 +1,10 @@
-brial = cc.find_library('brial', required: false, disabler: true)
+brial = cc.find_library('brial', required: get_option('brial'), disabler: true)
 # Cannot be found via pkg-config
-brial_groebner = cc.find_library('brial_groebner')
+brial_groebner = cc.find_library(
+  'brial_groebner',
+  required: get_option('brial'),
+  disabler: true,
+)
 
 py.install_sources(
   'PyPolyBoRi.py',

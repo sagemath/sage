@@ -1973,7 +1973,7 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
         if isinstance(prec, InfinityElement):
@@ -2055,7 +2055,7 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sin to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
@@ -2135,7 +2135,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tan to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sin(prec) / self.cos(prec)
 
     def sinh(self, prec=infinity):
@@ -2203,7 +2203,7 @@ cdef class PowerSeries(AlgebraElement):
             raise ValueError('can only apply sinh to formal power '
                              'series with zero constant term')
         val = self.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         x = self
 
@@ -2290,7 +2290,7 @@ cdef class PowerSeries(AlgebraElement):
                              'series with zero constant term')
         x = self
         val = x.valuation()
-        assert(val >= 1)
+        assert val >= 1
 
         prec = min(prec, self.prec())
         if isinstance(prec, InfinityElement):
@@ -2370,7 +2370,7 @@ cdef class PowerSeries(AlgebraElement):
         if not self[0].is_zero():
             raise ValueError('can only apply tanh to formal power '
                              'series with zero constant term')
-        assert(self.valuation() >= 1)
+        assert self.valuation() >= 1
         return self.sinh(prec) / self.cosh(prec)
 
     def O(self, prec):

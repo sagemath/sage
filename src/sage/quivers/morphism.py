@@ -792,7 +792,7 @@ class QuiverRepHom(CallMorphism):
     #                                                                         #
     ###########################################################################
 
-    def is_injective(self):
+    def is_injective(self) -> bool:
         """
         Test whether the homomorphism is injective.
 
@@ -814,7 +814,7 @@ class QuiverRepHom(CallMorphism):
         # vertex
         return not any(self.get_matrix(v).nullity() for v in self._quiver)
 
-    def is_surjective(self):
+    def is_surjective(self) -> bool:
         """
         Test whether the homomorphism is surjective.
 
@@ -841,7 +841,7 @@ class QuiverRepHom(CallMorphism):
 
         return True
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         """
         Test whether the homomorphism is an isomorphism.
 
@@ -862,7 +862,7 @@ class QuiverRepHom(CallMorphism):
         # It's an iso if and only if it's an iso at every vertex
         return all(self.get_matrix(v).is_invertible() for v in self._quiver)
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Test whether the homomorphism is the zero homomorphism.
 
@@ -883,7 +883,7 @@ class QuiverRepHom(CallMorphism):
         # The homomorphism is zero if and only if it is zero at every vertex
         return all(self.get_matrix(v).is_zero() for v in self._quiver)
 
-    def is_endomorphism(self):
+    def is_endomorphism(self) -> bool:
         """
         Test whether the homomorphism is an endomorphism.
 
