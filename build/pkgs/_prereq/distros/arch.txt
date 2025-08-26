@@ -21,3 +21,4 @@ which
 patch
 pkgconf
 zlib
+libboost-devel
