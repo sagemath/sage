@@ -406,7 +406,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``ore`` -- the underlying Ore polynomial ring
 
-        - ``denominator`` (default: ``None``) -- an instance of
+        - ``denominator`` -- either ``None`` or an instance of
           :class:`sage.structure.factorization.Factorization`;
           ``None`` is understood as the empty factorization with
           value `1`
