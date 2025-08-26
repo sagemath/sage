@@ -36,6 +36,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
+from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.sage_object import SageObject
 
@@ -363,10 +364,10 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         sage: Cre = CreationOperator(B)
         sage: Ann = AnnihilationOperator(B)
         sage: P1 = ProductOfVertexOperators([Cre, Cre])
-        sage: P1.get_monomial_coefficient([4,3], B.one())
+        sage: P1.act_on([4,3], B.one())
         s[3, 3]*w^2
         sage: P2 = ProductOfVertexOperators([Ann, Cre])
-        sage: P2.get_monomial_coefficient([-3,3], B.one())
+        sage: P2.act_on([-3,3], B.one())
         s[]
 
     """
@@ -384,58 +385,18 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         TODO: Figure out a way to define these properly. The problem is that you sort
         of need to know the intermediate valuations before you compute what they need to be.
         """
-
-        self._spectral = [0]*self._num_ops
+        # self._spectral = [0]*self._num_ops
         # self._spectral[0] = LazyLaurentSeriesRing(vertex_ops[0].fockspace, names=('z1'))
         # for i in range(1, self._num_ops):
         #     self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i-1], names=('z'+str(i+1)))
-        self._spectral[-1] = LazyLaurentSeriesRing(vertex_ops[-1].fockspace, names=('z' + str(len(vertex_ops))))
-        for i in range(len(vertex_ops)-2, -1, -1):
-            self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i+1], names=('z'+str(i+1)))
+        # self._spectral[-1] = LazyLaurentSeriesRing(vertex_ops[-1].fockspace, names=('z' + str(len(vertex_ops))))
+        # for i in range(len(vertex_ops)-2, -1, -1):
+        #     self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i+1], names=('z'+str(i+1)))
         super().__init__(self.vertex_ops[0].fockspace)
 
-    def full_action(self, f, cutoff=3):
+    def act_on(self, mon, x):
         r"""
-        Approximation of the action of ``self`` on ``f``.
-
-        Computes the coefficients of `z_1^{i_1}\cdots z_k^{i_k}` for each `|i_j| < \text{cutoff}`
-
-        INPUT:
-
-        - ``f`` -- Fock space element
-        - ``cutoff`` -- (integer)
-
-        OUTPUT:
-
-        A dictionary of key value pairs ``m:c`` where ``c`` is the nonzero
-        output of ``self.get_monomial_coefficient(m, f)``.
-
-        EXAMPLES::
-
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = CreationOperator(B)
-            sage: P = ProductOfVertexOperators([V,V])
-            sage: P.full_action(B.one(), 2)
-            {(0, 1): -s[]*w^2, (0, 2): -s[1]*w^2, (1, 0): s[]*w^2, (1, 2): -s[1, 1]*w^2,
-            (2, 0): s[1]*w^2, (2, 1): s[1, 1]*w^2}
-
-        """
-        from itertools import product
-        res = {}
-        """
-        TODO: Cache output of this so that running this for fixed input with
-        larger cutoff doesn't recompute the previous coefficients.
-        """
-        for m in product(range(-cutoff, cutoff + 1), repeat=len(self.vertex_ops)):
-            c = self.get_monomial_coefficient(m, f)
-            if c != 0:
-                res[m] = c
-        return res
-
-    def get_monomial_coefficient(self, mon, x):
-        r"""
-        Compute the action of ``self`` on ``x``.
+        Compute the action of a Fourier mode of ``self`` on ``x``.
 
         Let `X^i_j` denote the `j`'th Fourier mode of the `i`'th vertex operator of ``self``.
         This method computes `X^1_{mon_1}\cdots X^m_{mon_m}\left|x\right\rangle`.
@@ -451,15 +412,15 @@ class ProductOfVertexOperators(AbstractVertexOperator):
             sage: B = BosonicFockSpace()
             sage: Cre = CreationOperator(B)
             sage: P = ProductOfVertexOperators([Cre, Cre, Cre])
-            sage: P.get_monomial_coefficient([3, 2, 1],B.one())
+            sage: P.act_on([3, 2, 1],B.one())
             s[1, 1, 1]*w^3
-            sage: P.get_monomial_coefficient([3, 1, 2],B.one())
+            sage: P.act_on([3, 1, 2],B.one())
             -s[1, 1, 1]*w^3
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Ann]*3)
-            sage: P.get_monomial_coefficient([4, 3, 2],B.one())
+            sage: P.act_on([4, 3, 2],B.one())
             -s[3]*w^-3
-            sage: P.get_monomial_coefficient([4, 2, 3],B.one())
+            sage: P.act_on([4, 2, 3],B.one())
             s[3]*w^-3
         """
         if len(mon) != len(self.vertex_ops):
@@ -470,14 +431,39 @@ class ProductOfVertexOperators(AbstractVertexOperator):
                 break
         return self.fockspace(x)
 
-    def matrix_coefficient(self, bra, ket, cutoff=4):
+    def full_action(self, f, cutoff=None):
         r"""
-        Approximate the matrix coefficient `\langle` ``bra`` `|` ``self`` `|` ``ket`` `\rangle`.
+        Compute the full action of ``self`` on ``f``.
 
         INPUT:
 
-        - ``bra``, ``ket`` -- ordered pair (`\lambda`, c) consisting of an integer partition and an integer, indexing a basis element of the Fock space.
-        - ``cutoff`` -- Nonnegative integer indicating how far to expand the vertex operator.
+        - ``f`` -- Fock space element
+        - ``cutoff`` -- (default: None) positive integer
+
+        OUTPUT:
+
+        EXAMPLES::
+
+            sage: from sage.algebras.vertex_operators import *
+            sage: B = BosonicFockSpace()
+            sage: V = CreationOperator(B)
+            sage: P = ProductOfVertexOperators([V,V])
+            sage: f = P.full_action(B.one())
+            sage: f[2,1]
+            s[1, 1]*w^2
+        """
+        F = Family(ZZ**self._num_ops, lambda m: self.act_on(m, f))
+        return F if cutoff is None else self._approximate(F, cutoff)
+
+    def matrix_coefficient(self, bra, ket, cutoff=None):
+        r"""
+        Compute the matrix coefficient of ``self`` corresponding to ``bra`` and ``ket``.
+
+        INPUT:
+
+        - ``bra``, ``ket`` -- ordered pair (`\lambda`, c) consisting of an integer
+          partition and an integer, indexing a basis element of the Fock space.
+        - ``cutoff`` -- (default: None) Nonnegative integer indicating how far to expand the vertex operator.
 
         EXAMPLES::
 
@@ -486,22 +472,38 @@ class ProductOfVertexOperators(AbstractVertexOperator):
             sage: Cre = CreationOperator(B)
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Cre, Cre])
-            sage: P.matrix_coefficient(([],3), ([],1))  # example of eq 2.21 in [AZ13]
+            sage: P.matrix_coefficient(([],3), ([],1), cutoff=3)  # example of eq 2.21 in [AZ13]
             {(1, 2): -1, (2, 1): 1}
         """
-        from itertools import product
         w = self.fockspace.gen()
         R = self.fockspace.base_ring()
         f = (w**ket[1])*R(ket[0])
+        f_acted_on = self.full_action(f)
+
+        F = Family(ZZ**self._num_ops, lambda m: f_acted_on[m].monomial_coefficients().get(
+                bra[1], self.fockspace.zero()).monomial_coefficients().get(Partition(bra[0]), self.fockspace.zero()))
+        return F if cutoff is None else self._approximate(F, cutoff)
+
+    def _approximate(self, F, cutoff=3):
+        r"""
+        Approximate the nonzero output of a family ``F`` with integer tuple index set
+
+        Computes the nonzero values of fam for each integer tuple with maximum entry magnitude ``cutoff``.
+
+        INPUT:
+
+        - ``F`` -- Family
+        - ``cutoff`` -- (default: 3) Nonnegative integer
+        """
+        from itertools import product
         res = {}
-        for m in product(range(-cutoff, cutoff + 1), repeat=len(self.vertex_ops)):
-            c = self.get_monomial_coefficient(m, f).monomial_coefficients().get(
-                bra[1], self.fockspace.zero()).monomial_coefficients().get(Partition(bra[0]), self.fockspace.zero())
+        for m in product(range(-cutoff, cutoff + 1), repeat=self._num_ops):
+            c = F[m]
             if c != 0:
                 res[m] = c
         return res
 
-    def vacuum_expectation(self, cutoff=4):
+    def vacuum_expectation(self, cutoff=None):
         r"""
         Computes the matrix coefficient `\langle \varnothing | X | \varnothing \rangle`
 
@@ -512,10 +514,10 @@ class ProductOfVertexOperators(AbstractVertexOperator):
             sage: Cre = CreationOperator(B)
             sage: Ann = AnnihilationOperator(B)
             sage: P = ProductOfVertexOperators([Ann, Cre])
-            sage: P.vacuum_expectation()
+            sage: P.vacuum_expectation(cutoff=4)
             {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1, (0, 0): 1}
             sage: P = ProductOfVertexOperators([Cre, Ann])
-            sage: P.vacuum_expectation()
+            sage: P.vacuum_expectation(cutoff=4)
             {(-4, 4): 1, (-3, 3): 1, (-2, 2): 1, (-1, 1): 1}
 
         This verifies that, letting `\psi(z), \psi^*(w)` denote the fermionic fields,
