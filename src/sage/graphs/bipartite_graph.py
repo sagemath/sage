@@ -400,7 +400,7 @@ class BipartiteGraph(Graph):
             sage: B.add_vertices([4], left=True)
             Traceback (most recent call last):
             ...
-            ValueError: graph is immutable; please change a copy instead (use function copy())
+            TypeError: this graph is immutable and so cannot be changed
         """
         if kwds is None:
             kwds = {'loops': False}

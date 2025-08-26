@@ -178,9 +178,7 @@ class IntegerMatrices(UniqueRepresentation, Parent):
                 col_sums[j] += x_ij
             if row_sums[i] != self._row_sums[i]:
                 return False
-        if col_sums != self._col_sums:
-            return False
-        return True
+        return col_sums == self._col_sums
 
     def cardinality(self):
         r"""
@@ -323,6 +321,6 @@ def integer_matrices_generator(row_sums, column_sums):
     else:
         I = IntegerListsLex(n=row_sums[0], length=len(column_sums), ceiling=column_sums)
         for comp in I.backend._iter():
-            t = [column_sums[i]-ci for (i, ci) in enumerate(comp)]
+            t = [column_sums[i] - ci for i, ci in enumerate(comp)]
             for mat in integer_matrices_generator(row_sums[1:], t):
                 yield [list(comp)] + mat

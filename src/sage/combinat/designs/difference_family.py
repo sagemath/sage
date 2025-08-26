@@ -47,11 +47,10 @@ Functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import is_prime_power
+from sage.arith.misc import is_prime_power, is_square, factor
 from sage.misc.cachefunc import cached_function
 
 from sage.categories.sets_cat import EmptySetError
-import sage.arith.all as arith
 from sage.misc.unknown import Unknown
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer import Integer
@@ -572,13 +571,13 @@ def radical_difference_set(K, k, l=1, existence=False, check=True):
         add_zero = True
 
     # q = 4t^2 + 1, t odd
-    elif v % 8 == 5 and k == (v-1)//4 and arith.is_square((v-1)//4):
+    elif v % 8 == 5 and k == (v-1)//4 and is_square((v-1)//4):
         if existence:
             return True
         add_zero = False
 
     # q = 4t^2 + 9, t odd
-    elif v % 8 == 5 and k == (v+3)//4 and arith.is_square((v-9)//4):
+    elif v % 8 == 5 and k == (v+3)//4 and is_square((v-9)//4):
         if existence:
             return True
         add_zero = True
@@ -1307,9 +1306,7 @@ def _is_periodic_sequence(seq, period):
                 break
         if periodic:
             return False
-    if seq[:period] != seq[period : 2*period]:
-        return False
-    return True
+    return seq[:period] == seq[period:2 * period]
 
 
 def _create_m_sequence(q, n, check=True):
@@ -2029,10 +2026,7 @@ def is_fixed_relative_difference_set(R, q):
         sage: is_fixed_relative_difference_set(s2, len(s2))                             # needs sage.libs.pari sage.modules
         False
     """
-    for el in R:
-        if q * el not in R:
-            return False
-    return True
+    return all(q * el in R for el in R)
 
 
 def skew_supplementary_difference_set_over_polynomial_ring(n, existence=False, check=True):
@@ -3828,7 +3822,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         G = Zmod(v)
         return G, [list(range(1, v))]
 
-    factorization = arith.factor(v)
+    factorization = factor(v)
     if len(factorization) == 1:
         from sage.rings.finite_rings.finite_field_constructor import GF
         K = GF(v,'z')

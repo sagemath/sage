@@ -1110,7 +1110,8 @@ def OA_10_205():
 
     B = [0, 1, 22, 33, 83, 122, 135, 141, 145, 159, 175, 200, 226, 229, 231, 238, 246]
     pplane = [[(xx+i) % pplane_size for xx in B] for i in range(pplane_size)]
-    baer_subplane = set([i*pplane_size/baer_subplane_size for i in range(baer_subplane_size)])
+    baer_subplane = {i * pplane_size / baer_subplane_size
+                     for i in range(baer_subplane_size)}
 
     p = list(baer_subplane)[0]
 
@@ -1529,8 +1530,8 @@ def OA_17_560():
     # We remove all elements except those from F_{p^alpha} in the last three
     # columns
 
-    elements_of_subgroup = set([x for x in G_set if x.polynomial().degree() < beta])
-    relabel = {G_to_int[v]:i for i,v in enumerate(elements_of_subgroup)}
+    elements_of_subgroup = {x for x in G_set if x.polynomial().degree() < beta}
+    relabel = {G_to_int[v]: i for i, v in enumerate(elements_of_subgroup)}
     for x in range(p**alpha):
         if x not in relabel:
             relabel[x] = None

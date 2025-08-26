@@ -170,9 +170,9 @@ cdef class FiniteRingElement(CommutativeRingElement):
         Return a canonical associate.
 
         Implemented here because not all finite field elements inherit from FieldElement.
-        
+
         EXAMPLES::
-        
+
             sage: GF(7)(1).canonical_associate()
             (1, 1)
             sage: GF(7)(3).canonical_associate()

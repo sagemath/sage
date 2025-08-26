@@ -749,8 +749,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Parent):
         """
         if not self.is_unitary():
             raise TypeError("algebra is not unitary")
-        else:
-            return self(self._one)
+        return self(self._one)
 
     def random_element(self, *args, **kwargs):
         """

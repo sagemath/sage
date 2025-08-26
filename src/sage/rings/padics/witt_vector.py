@@ -83,10 +83,9 @@ class WittVector(CommutativeRingElement):
         self._prec = parent.precision()
         B = parent.coefficient_ring()
         if vec is not None:
-            if isinstance(vec, int) or isinstance(vec, Integer):
+            if isinstance(vec, (int, Integer)):
                 self._int_to_vector(vec, parent)
-            elif (isinstance(vec, tuple) or isinstance(vec, list)
-                    or isinstance(vec, WittVector)):
+            elif isinstance(vec, (tuple, list, WittVector)):
                 if len(vec) < self._prec:
                     raise ValueError(f"{vec} has not the correct length, "
                                      "expected length has to be at least "
@@ -153,12 +152,12 @@ class WittVector(CommutativeRingElement):
         if self == P.one():
             return self
         if self._prec == 1:
-            return P((self[0]**-1, ))
+            return P((self[0]**-1,))
 
         if P.coefficient_ring().characteristic() == P.prime():
-            res = P(list([self[0]**-1])
-                    + list(P.coefficient_ring().zero()
-                           for _ in range(self._prec-1)))
+            res = P([self[0]**-1]
+                    + [P.coefficient_ring().zero()
+                       for _ in range(self._prec - 1)])
 
             for _ in range(log(self._prec, 2).n().ceil()):
                 res = 2*res - self*res*res
@@ -169,8 +168,8 @@ class WittVector(CommutativeRingElement):
         # to (1, 0, 0, ...), and solve.
         poly_ring = PolynomialRing(P.coefficient_ring(), 'x')
         x = poly_ring.gen()
-        inv_vec = (list([self[0]**-1])
-                   + list(poly_ring.zero() for _ in range(self._prec-1)))
+        inv_vec = ([self[0]**-1]
+                   + [poly_ring.zero() for _ in range(self._prec - 1)])
         # We'll fill this in one-by-one
 
         from sage.rings.padics.witt_vector_ring import WittVectorRing
@@ -420,15 +419,13 @@ class WittVector_phantom(WittVector):
         R = parent.coefficient_ring()
         p = parent.prime()
         base = R
-        if (isinstance(R, PolynomialRing_generic)
-                or isinstance(R, MPolynomialRing_base)):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             base = R.base()
         base_lift = QqFP(base.cardinality(), prec=self._prec,
                          modulus=base.modulus(), names=(base.variable_name(),),
                          res_name=base.variable_name())
         lift = base_lift
-        if (isinstance(R, PolynomialRing_generic)
-                or isinstance(R, MPolynomialRing_base)):
+        if isinstance(R, (PolynomialRing_generic, MPolynomialRing_base)):
             lift = R.change_ring(base_lift)
         if phantom is not None:
             self._phantom = phantom
@@ -442,13 +439,12 @@ class WittVector_phantom(WittVector):
             self._coordinates = vec.coordinates()
             self._phantom = vec._phantom
             self._powers = vec._powers
-        elif isinstance(vec, int) or isinstance(vec, Integer):
+        elif isinstance(vec, (int, Integer)):
             self._int_to_vector(vec, parent)
             y = base_lift(vec)
             self._powers = [y]
             self._phantom = self._prec * [y]
-        elif (isinstance(vec, tuple) or isinstance(vec, list)
-                or isinstance(vec, WittVector)):
+        elif isinstance(vec, (tuple, list, WittVector)):
             if len(vec) < self._prec:
                 raise ValueError(f"{vec} has not the correct length, "
                                  "expected length has to be at least "

@@ -15,3 +15,5 @@ python
 tar
 bc
 patch
+bzip2
+pkg-config

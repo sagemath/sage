@@ -233,9 +233,7 @@ def morphism_constructor(data: dict, start=3):
             v = codomain.half_product(data[letter], v)
         return v
 
-    morphism = domain._module_morphism(morphism_on_basis, codomain=codomain)
-
-    return morphism
+    return domain._module_morphism(morphism_on_basis, codomain=codomain)
 
 
 class F_algebra(CombinatorialFreeModule):

@@ -28,7 +28,8 @@ from sage.rings.integer_ring import ZZ
 import sage.misc.latex as latex
 import sage.misc.superseded
 
-def is_FractionFieldElement(x):
+
+def is_FractionFieldElement(x) -> bool:
     """
     Return whether or not ``x`` is a :class:`FractionFieldElement`.
 

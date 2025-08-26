@@ -822,7 +822,7 @@ class NFCusp(Element):
         k = self.number_field()
         return k.ideal(self.__a, self.__b)
 
-    def ABmatrix(self):
+    def ABmatrix(self) -> list:
         """
         Return AB-matrix associated to the cusp ``self``.
 
@@ -897,9 +897,7 @@ class NFCusp(Element):
         r = A1.element_1_mod(A2)
         b1 = -(1 - r) / a2 * g
         b2 = (r / a1) * g
-        ABM = [a1, b1, a2, b2]
-
-        return ABM
+        return [a1, b1, a2, b2]
 
     def is_Gamma0_equivalent(self, other, N,
                              Transformation=False) -> bool | tuple[bool, Any]:

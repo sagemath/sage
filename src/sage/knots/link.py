@@ -28,8 +28,8 @@ REFERENCES:
 .. SEEALSO::
 
     There are also tables of link and knot invariants at web-pages
-    `KnotInfo <https://knotinfo.math.indiana.edu/>`__ and
-    `LinkInfo <https://linkinfo.sitehost.iu.edu>`__. These can be
+    `KnotInfo <https://knotinfo.org/>`__ and
+    `LinkInfo <https://link-info-repo.onrender.com>`__. These can be
     used inside Sage after installing the optional package
     ``database_knotinfo`` (type ``sage -i database_knotinfo`` in a command shell,
     see :mod:`~sage.knots.knotinfo`).
@@ -2071,7 +2071,7 @@ class Link(SageObject):
           be transferred to :meth:`khovanov_homology`
 
         Here we follow the conventions used in
-        `KnotInfo <https://knotinfo.math.indiana.edu/descriptions/khovanov_unreduced_integral_polynomial.html>`__
+        `KnotInfo <https://knotinfo.org/descriptions/khovanov_unreduced_integral_polynomial.html>`__
 
         OUTPUT:
 
@@ -2493,9 +2493,9 @@ class Link(SageObject):
         if not new_pd:
             # trivial knot
             return type(self)([])
-        new_edges = flatten(new_pd)
+        new_edges = {elt for cr in new_pd for elt in cr}
         for cr in loop_crossings:
-            rem = set([e for e in cr if e in new_edges])
+            rem = {e for e in cr if e in new_edges}
             if len(rem) == 2:
                 # put remaining edges together
                 a, b = sorted(rem)
@@ -3004,7 +3004,7 @@ class Link(SageObject):
             in [KnotAtlas]_
 
             Use the ``'vz'`` normalization to agree with the data
-            `KnotInfo <http://www.indiana.edu/~knotinfo/>`__.
+            `KnotInfo <https://knotinfo.org/>`__.
 
         EXAMPLES:
 
@@ -4670,7 +4670,7 @@ class Link(SageObject):
                         verbose('identified by KnotInfo uniquely (%s, %s)' % (sl[0], k))
                         return True
                     elif not self.is_knot():
-                        if len(set([l.series(oriented=True) for l in sl])) == 1:
+                        if len({l.series(oriented=True) for l in sl}) == 1:
                             # all matches are orientation mutants of each other
                             verbose('identified by KnotInfoSeries (%s, %s)' % (sl, k))
                             return True

@@ -87,7 +87,7 @@ class DrinfeldModularFormsElement(ModuleElement):
 
     .. NOTE::
 
-        This class should not be directly instanciated, instead create
+        This class should not be directly instantiated, instead create
         an instance of the parent
         :class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`
         and access its elements using the relevant methods.

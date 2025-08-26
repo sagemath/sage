@@ -508,10 +508,6 @@ usage_advanced() {
     echo "                         (not installed currently, run sage -i rst2ipynb)"
     echo "  --ipynb2rst [...]   -- Generates a reStructuredText source file from"
     echo "                         a Jupyter notebook (.ipynb)."
-    echo "  --sws2rst <sws doc> -- Generates a reStructuredText source file from"
-    echo "                         a Sage worksheet (.sws) document."
-    command -v sage-sws2rst >&/dev/null || \
-    echo "                         (not installed currently, run sage -i sage_sws2rst)"
     echo
     ####  1.......................26..................................................78
     ####  |.....................--.|...................................................|
@@ -582,7 +578,6 @@ fi
 if [ "$1" = '-c' ]; then
     shift
     sage_setup
-    unset TERM  # See Issue #12263
     exec sage-eval "$@"
 fi
 
@@ -858,11 +853,6 @@ if [ "$1" = '-ipynb2rst' -o "$1" = '--ipynb2rst' ]; then
     exec sage-ipynb2rst "$@"
 fi
 
-if [ "$1" = '-sws2rst' -o "$1" = '--sws2rst' ]; then
-    shift
-    exec sage-sws2rst "$@"
-fi
-
 #####################################################################
 # The notebook, grep, building Sage, testing Sage
 #####################################################################
@@ -953,7 +943,7 @@ fi
 
 if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
     shift
-    exec sage-python -m sage.misc.package_dir "$@"
+    exec python3 -m sage.misc.package_dir "$@"
 fi
 
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
@@ -1021,7 +1011,7 @@ if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
     # Redirect stdin from /dev/null. This helps with running TeX which
     # tends to ask interactive questions if something goes wrong. These
     # cause the build to hang. If stdin is /dev/null, TeX just aborts.
-    exec sage-python -m sage_docbuild "$@" </dev/null
+    exec python3 -m sage_docbuild "$@" </dev/null
 fi
 
 #####################################################################
@@ -1056,7 +1046,7 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
         gdb --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
     else
-        sage_dir=$(sage-python -c 'import os, sage; print(os.path.dirname(sage.__file__))')
+        sage_dir=$(python3 -c 'import os, sage; print(os.path.dirname(sage.__file__))')
         cygdb "$sage_dir" "$SAGE_SRC/sage" \
             -- --eval-command "run" \
             -args python "${SELF}-ipython" "$@" -i
@@ -1125,7 +1115,6 @@ if [ $# -ge 1 ]; then
         exit 1
     fi
     sage_setup
-    unset TERM  # See Issue #12263
     # sage-run rejects all command line options as the first argument.
     exec sage-run "$@"
 fi

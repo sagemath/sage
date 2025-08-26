@@ -261,10 +261,7 @@ class PiecewiseFunction(BuiltinFunction):
         def is_piecewise(ex):
             if ex.operator() is piecewise:
                 return True
-            for op in ex.operands():
-                if is_piecewise(op):
-                    return True
-            return False
+            return any(is_piecewise(op) for op in ex.operands())
         return is_piecewise(ex)
 
     @staticmethod

@@ -1036,9 +1036,8 @@ def benchmark_mt():
         sage: timeit('benchmark_mt()')    # random
         125 loops, best of 3: 2.11 ms per loop
     """
-    cdef int i
     cdef randstate rstate = _current_randstate
-    for i from 0 <= i < 100000:
+    for _ in range(100000):
         gmp_urandomb_ui(rstate.gmp_state, 32)
 
 

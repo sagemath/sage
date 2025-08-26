@@ -48,6 +48,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Unsafe entry access
     cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x)
     cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j)
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc)
     cdef _coerce_element(self, x)
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1
 

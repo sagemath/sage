@@ -108,9 +108,11 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.combinat.free_module import CombinatorialFreeModule
+from typing import Self
+
 from sage.categories.algebras import Algebras
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.misc.cachefunc import cached_method
 
 
 class CellularBasis(CombinatorialFreeModule):
@@ -283,7 +285,7 @@ class CellularBasis(CombinatorialFreeModule):
         """
         return self._algebra.cell_module_indices(la)
 
-    def cellular_basis(self):
+    def cellular_basis(self) -> Self:
         """
         Return the cellular basis of ``self``, which is ``self``.
 

@@ -1,6 +1,6 @@
 # sage.doctest: needs sage.libs.gap
 """
-Branching Rules
+Branching rules
 """
 # ****************************************************************************
 #  Copyright (C) 2014 Daniel Bump <bump at match.stanford.edu>

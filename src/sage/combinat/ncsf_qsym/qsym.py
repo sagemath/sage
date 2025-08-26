@@ -546,7 +546,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         True
     """
 
-    def __init__(self, R):
+    def __init__(self, R) -> None:
         """
         The Hopf algebra of quasi-symmetric functions.
         See ``QuasiSymmetricFunctions`` for full documentation.
@@ -609,7 +609,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                                              codomain=Fundamental, category=category)
         Sym_s_to_F.register_as_coercion()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         EXAMPLES::
 
@@ -632,7 +632,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.Monomial()
 
-    _shorthands = tuple(['M', 'F', 'E', 'dI', 'QS', 'YQS', 'phi', 'psi'])
+    _shorthands = ('M', 'F', 'E', 'dI', 'QS', 'YQS', 'phi', 'psi')
 
     def dual(self):
         r"""

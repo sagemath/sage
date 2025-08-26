@@ -827,7 +827,7 @@ def RealProjectiveSpace(n):
             name='Minimal triangulation of RP^4')
     if n >= 5:
         # Use the construction given by Datta in Example 3.21.
-        V = set(range(0, n+2))
+        V = set(range(n+2))
         S = Sphere(n).barycentric_subdivision()
         X = S.facets()
         facets = set()

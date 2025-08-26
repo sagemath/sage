@@ -122,5 +122,8 @@ Libraries of algorithms
    sage/graphs/connectivity
    sage/graphs/edge_connectivity
    sage/graphs/domination
+   sage/graphs/cycle_enumeration
 
 .. include:: ../footer.txt
+
+        

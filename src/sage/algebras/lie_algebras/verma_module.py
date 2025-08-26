@@ -818,12 +818,12 @@ class VermaModule(ModulePrinting, CombinatorialFreeModule):
             for m in ret._monomial_coefficients:
                 c = ret._monomial_coefficients[m]
                 mp = {}
-                for k,e in reversed(m._sorted_items()):
+                for k, e in reversed(m._sorted_items()):
                     part = P._g._part_on_basis(k)
                     if part > 0:
                         mp = None
                         break
-                    elif part == 0:
+                    if part == 0:
                         c *= P._g._weight_action(k, P._weight)**e
                     else:
                         mp[k] = e

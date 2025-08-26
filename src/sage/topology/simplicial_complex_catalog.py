@@ -28,10 +28,12 @@ All of these examples are accessible by typing
 - :meth:`~sage.topology.examples.DunceHat`
 - :meth:`~sage.topology.examples.FareyMap`
 - :meth:`~sage.topology.examples.GenusSix`
+- :meth:`~sage.topology.examples.HochschildSphere`
 - :meth:`~sage.topology.examples.K3Surface`
 - :meth:`~sage.topology.examples.KleinBottle`
 - :meth:`~sage.topology.examples.MatchingComplex`
 - :meth:`~sage.topology.examples.MooreSpace`
+- :meth:`~sage.topology.examples.NoncrossingBipartiteComplex`
 - :meth:`~sage.topology.examples.NotIConnectedGraphs`
 - :meth:`~sage.topology.examples.PoincareHomologyThreeSphere`
 - :meth:`~sage.topology.examples.QuaternionicProjectivePlane`
@@ -83,3 +85,7 @@ from sage.topology.simplicial_complex_examples import (Sphere, Simplex, Torus,
                                                        SumComplex,
                                                        RandomTwoSphere, ShiftedComplex,
                                                        RudinBall, ZieglerBall, DunceHat)
+
+from sage.combinat.posets.hochschild_lattice import hochschild_simplicial_complex as HochschildSphere
+
+from sage.combinat.posets.bubble_shuffle import noncrossing_bipartite_complex as NoncrossingBipartiteComplex

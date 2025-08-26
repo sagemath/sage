@@ -4452,7 +4452,7 @@ class Permutation(CombinatorialElement):
             raise ValueError("{} must be lower or equal than {} for the right permutohedron order".format(self, other))
         d = DiGraph()
         d.add_vertices(range(1, len(self) + 1))
-        d.add_edges([(j, i) for (i, j) in self.inverse().inversions()])
+        d.add_edges([(j, i) for i, j in self.inverse().inversions()])
         d.add_edges([(other[i], other[j]) for i in range(len(other) - 1)
                      for j in range(i, len(other)) if other[i] < other[j]])
         return d.topological_sort_generator()
@@ -7177,7 +7177,7 @@ class StandardPermutations_all(Permutations):
         """
         return "Standard permutations"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -7200,13 +7200,9 @@ class StandardPermutations_all(Permutations):
         """
         if isinstance(x, Permutation):
             return True
-        elif isinstance(x, list):
-            s = sorted(x[:])
-            if s != list(range(1, len(x)+1)):
-                return False
-            return True
-        else:
-            return False
+        if isinstance(x, list):
+            return all(a == b for a, b in enumerate(sorted(x), 1))
+        return False
 
     def __iter__(self):
         """
@@ -8375,7 +8371,7 @@ def bistochastic_as_sum_of_permutations(M, check=True):
         sage: L.append((6,Permutation([5, 3, 4, 1, 2])))
         sage: L.append((3,Permutation([3, 1, 4, 2, 5])))
         sage: L.append((2,Permutation([1, 4, 2, 3, 5])))
-        sage: M = sum([c * p.to_matrix() for (c,p) in L])
+        sage: M = sum([c * p.to_matrix() for c, p in L])
         sage: decomp = bistochastic_as_sum_of_permutations(M)
         sage: print(decomp)
         2*B[[1, 4, 2, 3, 5]] + 3*B[[3, 1, 4, 2, 5]]

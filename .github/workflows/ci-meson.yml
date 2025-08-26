@@ -48,7 +48,7 @@ jobs:
 
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          .github/workflows/merge-fixes.sh
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -167,6 +167,7 @@ jobs:
             # Ignore errors on Windows, for now
             pytest --doctest-ignore-import-errors --doctest -rfEs -s src || true
           else
+            pytest -rfEs -s src
             ./sage -t ${{ matrix.tests == 'all' && '--all' || '--new --long' }} -p4 --format github
           fi
 
