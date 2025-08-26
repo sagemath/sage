@@ -134,10 +134,6 @@ foreach name, pyx : extension_data
     include_directories: [inc_cpython, inc_rings],
     dependencies: deps,
   )
-  py.install_sources(
-    pyx,
-    subdir: 'sage/libs',
-  )
 endforeach
 
 extension_data_cpp = {
@@ -160,10 +156,6 @@ foreach name, pyx : extension_data_cpp
     override_options: ['cython_language=cpp'],
     include_directories: [inc_cpython, inc_rings],
     dependencies: deps,
-  )
-  py.install_sources(
-    pyx,
-    subdir: 'sage/libs',
   )
 endforeach
 
