@@ -931,7 +931,7 @@ class Constellations_ld(UniqueRepresentation, Parent):
 
             sage: TestSuite(Constellations(2, 3, connected=False)).run()
 
-            sage: TestSuite(Constellations(3, 4, domain='abcd')).run(skip="_test_random")
+            sage: TestSuite(Constellations(3, 4, domain='abcd')).run()
         """
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
         Parent.__init__(self, category=FiniteEnumeratedSets())
@@ -1097,13 +1097,15 @@ class Constellations_ld(UniqueRepresentation, Parent):
         l = self._length
         Sd = self._sym
 
-        g = [Sd.random_element() for _ in range(l - 1)]
         if self._connected:
             d = self._degree
-            G = PermutationGroup(g)
-            while not G.degree() == d or not G.is_transitive():
+            while True:
                 g = [Sd.random_element() for _ in range(l - 1)]
                 G = PermutationGroup(g)
+                if G.degree() == d and G.is_transitive():
+                    break
+        else:
+            g = [Sd.random_element() for _ in range(l - 1)]
 
         return self([sigma.domain() for sigma in g] + [None], mutable=mutable)
 
