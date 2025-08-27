@@ -290,21 +290,6 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return RationalField, tuple()
 
-    def __len__(self):
-        """
-        Return the number of elements in ``self``.
-
-        Since this does not have a size, this throws a :exc:`TypeError`.
-
-        EXAMPLES::
-
-            sage: len(QQ)
-            Traceback (most recent call last):
-            ...
-            TypeError: len() of unsized object
-        """
-        raise TypeError('len() of unsized object')
-
     def construction(self):
         r"""
         Return a pair ``(functor, parent)`` such that ``functor(parent)``

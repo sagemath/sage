@@ -1567,7 +1567,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: len(MatrixSpace(QQ,3,2))
             Traceback (most recent call last):
             ...
-            TypeError: len() of unsized object
+            ValueError: infinite set
         """
         return len(self.base_ring())**(self.nrows() * self.ncols())
 
@@ -1747,7 +1747,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: a = list(MS)
             Traceback (most recent call last):
             ...
-            NotImplementedError: len() of an infinite set
+            ValueError: infinite set
         """
         # Make sure that we can iterate over the base ring
         base_ring = self.base_ring()

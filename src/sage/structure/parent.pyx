@@ -1053,9 +1053,52 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 return NotImplemented
         return meth(x)
 
-    #############################################################################
+    def __len__(self):
+        """
+        Return the length when possible.
+
+        The default implementation of ``__len__`` on parent redirects to the
+        super class (in case of multiple inheritance) or to the category. This
+        redirection is necessary when the parent is a Cython class (aka
+        extension class) because in that case the parent class does not inherit
+        from the ``ParentMethods`` of the category.
+
+        Concrete implementations of parents can freely overwrite this default
+        method.
+
+        TESTS::
+
+            sage: len(ZZ)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: infinite set
+            sage: len(QQ)
+            Traceback (most recent call last):
+            ...
+            ValueError: infinite set
+            sage: len(RR)
+            Traceback (most recent call last):
+            ...
+            ValueError: infinite set
+            sage: len(IntegerModRing(6))
+            6
+        """
+        if not isinstance(self, Parent):
+            return NotImplemented
+        try:
+            # get __len__ from super class
+            meth = super().__len__
+        except AttributeError:
+            # get __len__ from category in case the parent is a Cython class
+            try:
+                meth = (<Parent> self).getattr_from_category('__len__')
+            except AttributeError:
+                return NotImplemented
+        return meth()
+
+    ##########################################################################
     # Containment testing
-    #############################################################################
+    ##########################################################################
     def __contains__(self, x):
         r"""
         ``True`` if there is an element of ``self`` that is equal to ``x``
