@@ -13206,7 +13206,7 @@ cdef class Matrix(Matrix1):
         .. SEEALSO::
 
             :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
-            Krylov iterates and Krylov bases for several vectors at a time
+            Krylov iterates and Krylov bases for several vectors at a time.
 
         ALGORITHM:
 
@@ -13340,7 +13340,7 @@ cdef class Matrix(Matrix1):
         .. SEEALSO::
 
             :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
-            Krylov iterates and Krylov bases for several vectors at a time
+            Krylov iterates and Krylov bases for several vectors at a time.
 
         EXAMPLES::
 
@@ -19135,9 +19135,8 @@ cdef class Matrix(Matrix1):
           the maximum degree for rows.
         - ``row_pairs`` -- the list of pairs of row indices and associated
           degrees to be sorted. If ``None``, the default is taken as
-          ``[(0,0),...,(m-1,0), (0,1),...,(m-1,1), ...,
-          (0,degrees[0]),...,(m-1,degrees[m-1])]``, where `m` is
-          `self.nrows()`.
+          `[(i,j), 0 \le i < m, 0 \le j \le d_i]` where `m` is
+          ``self.nrows()`` and `d_i` is ``degrees[i]``.
 
         OUTPUT:
 
@@ -19194,23 +19193,22 @@ cdef class Matrix(Matrix1):
 
     def krylov_matrix(self, M, shifts=None, degrees=None):
         r"""
-        Return the Krylov matrix built from the rows of ``self`` and
-        multiplication matrix ``M``. Here, ``self`` is some `m \times n` matrix
-        `E`, and ``M`` is a square `n \times n` matrix; ``degrees`` is a list
-        of `m` nonnegative integers `[d_0,\ldots,d_{m-1}]`. This Krylov matrix
-        has `d_0+\cdots+d_{m-1}+m` rows and `n` columns and is formed by
-        stacking the Krylov iterates `E_{i,:} \cdot M**j` for all `0 \le i < m`
-        and `0 \le j \le d_i`. These rows are ordered according to a priority
-        defined by ``shifts``.
+        Return the Krylov matrix built from the rows of ``self`` and using
+        multiplication matrix `M`. Here, ``self`` is some `m \times n` matrix
+        `E`, and `M` is a square `n \times n` matrix; ``degrees`` is a list of
+        `m` nonnegative integers `[d_0,\ldots,d_{m-1}]`. This Krylov matrix has
+        `d_0+\cdots+d_{m-1}+m` rows and `n` columns and is formed by stacking
+        the Krylov iterates `E_{i,:} \cdot M^j` for all `0 \le i < m` and `0
+        \le j \le d_i`. These rows are ordered according to a priority defined
+        by ``shifts``.
 
-        By default, ``shifts`` is taken as `[0,\ldots,0]`. If a single integer
-        `d` is provided for ``degrees``, then it is interpreted as
-        `[d,\ldots,d]`, and by default ``degrees`` is taken as `[n, \ldots,
-        n]`.
+        By default, ``shifts`` is taken as `[0,\ldots,0]`, and ``degrees`` is
+        taken as `[n, \ldots, n]`. If a single integer `d` is provided for
+        ``degrees``, then it is interpreted as `[d,\ldots,d]`.
 
-        For example, for the default ``shifts`` equal to `[0,\ldots,0]` and for
-        ``degrees`` equal to `[d,\ldots,d]`, the returned matrix is equal to
-        ``matrix.block([[self * M**j] for j in range(d+1)])``, that is,
+        For example, for the default ``shifts`` equal to `[0, \ldots, 0]` and
+        for ``degrees`` equal to `[d,\ldots,d]`, the returned matrix is equal
+        to
 
         .. MATH::
 
@@ -19221,9 +19219,8 @@ cdef class Matrix(Matrix1):
                 E M^d
             \end{bmatrix} .
 
-        Another classical example is when ``shifts`` is very unbalanced,
-        such as `[0,n,\ldots,(m-1)n]`: then, for ``degrees`` being
-        `[d_0,\ldots,d_{m-1}]`, the Krylov matrix is
+        Another classical case is when ``shifts`` is
+        `[d_0,d_0+d_1,\ldots,d_0+\cdots+d_{m-1}]`: then the Krylov matrix is
 
         .. MATH::
 
@@ -19232,37 +19229,39 @@ cdef class Matrix(Matrix1):
                 E_{0,*} M \\
                 \vdots \\
                 E_{0,*} M^{d_0} \\
-                \vdots
+                \vdots \\
                 E_{m-1,*} \\
                 E_{m-1,*} M \\
                 \vdots \\
                 E_{m-1,*} M^{d_{m-1}}
             \end{bmatrix} .
 
-        Other shifts will correspond to some row permutation of this matrix.
-        (see [BL2000]_ and [JNSV2017]_).
+        Other shifts will give rise to some row permutation of the latter
+        matrix (see [BL2000]_ and [JNSV2017]_).
 
         INPUT:
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional), row
-          priority shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- the list of ``self.nrows()`` maximum powers of ``M``
-          for each row in ``self`` in the output. If None, ``self.ncols()`` is
-          chosen by default for all rows. Giving a single integer as input is
-          equivalent to giving a list with this integer repeated
-          ``self.nrows()`` times.
+          priority shifts. Defaults to all zeroes.
+        - ``degrees`` -- list of ``self.nrows()`` integers (optional), the
+          `i`-th entry ``degrees[i]`` indicating the number of Krylov iterates
+          to appear in the output (that is, ``self[i,:] * M**j`` will appear
+          for `j` up to ``degrees[i]``, included). Defaults to ``self.ncols()``
+          for all rows. Giving a single integer for ``degrees`` is equivalent
+          to giving a list with this integer repeated ``self.nrows()`` times.
 
         OUTPUT:
 
-        - The Krylov matrix of ``self`` and ``M``, with degree bounds
-          ``degrees`` and rows ordered according to ``shifts``.
+        - The Krylov matrix of ``self`` and ``M``, with respect to degree
+          bounds ``degrees`` and with rows ordered according to ``shifts``.
 
         .. SEEALSO::
 
-            :meth:`krylov_basis`,
-            :meth:`krylov_kernel_basis`
+            :meth:`krylov_basis` computes a basis of the row space of the
+            Krylov matrix, whereas :meth:`krylov_kernel_basis` computes a
+            compact representation of its left kernel.
 
         EXAMPLES::
 

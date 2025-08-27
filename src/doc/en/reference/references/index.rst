@@ -1011,10 +1011,10 @@ REFERENCES:
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
 
-.. [BL2000] Bernhard Beckermann, George Labahn. *Fraction-Free Computation of
-            Matrix Rational Interpolants and Matrix GCDs*. SIAM J. Matrix
-            Anal. Appl. 22 (2000) 114-144.
-            :doi:`10.1137/S0895479897326912`
+.. [BecLab2000] Bernhard Beckermann, George Labahn. *Fraction-Free Computation
+                of Matrix Rational Interpolants and Matrix GCDs*. SIAM J.
+                Matrix Anal. Appl. 22 (2000) 114-144.
+                :doi:`10.1137/S0895479897326912`
 
 .. [BL1995] \W. Bosma, H.W. Lenstra: *Complete Systems of Two Addition Laws for
             Elliptic Curves*. Journal of Number Theory, volume 53, issue 2,
