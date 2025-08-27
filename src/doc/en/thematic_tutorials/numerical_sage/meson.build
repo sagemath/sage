@@ -1,6 +1,5 @@
 doc_sources = [
   'comparison_to_cython.rst',
-  'conf.py',
   'ctypes.rst',
   'ctypes_examples.rst',
   'cvxopt.rst',

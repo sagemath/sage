@@ -196,6 +196,15 @@ def update_doc_sources(self: Rewriter, visitor: AstPython):
             target.value.args.arguments.append(StringNode(token))
             if target not in self.modified_nodes:
                 self.modified_nodes += [target]
+        # Remove all files that are no longer existing
+        for file in existing_sources:
+            if not (folder / file).exists():
+                existing_sources.remove(file)
+                token = next((x for x in target.value.args.arguments if getattr(x, "value", None) == file), None)
+                if token is not None:
+                    target.value.args.arguments.remove(token)
+                    if target not in self.modified_nodes:
+                        self.modified_nodes += [target]
 
     # Add all missing meson files in the src/doc folder
     doc_folder = Path(options.sourcedir) / "src" / "doc"

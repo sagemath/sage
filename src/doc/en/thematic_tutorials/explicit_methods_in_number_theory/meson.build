@@ -2,7 +2,6 @@ doc_sources = [
   'birch.png',
   'birds_eye_view.rst',
   'birds_other.rst',
-  'conf.py',
   'elliptic_curves.rst',
   'generators_for_rings.rst',
   'half_integral.rst',
