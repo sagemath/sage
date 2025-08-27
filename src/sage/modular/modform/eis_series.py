@@ -351,8 +351,8 @@ def __find_eisen_chars_gamma1(N, k):
     E = list(G)
     parity = [c(-1) for c in E]
     for i in range(len(E)):
-        for j in range(i,len(E)):
-            if parity[i]*parity[j] == s and N % (E[i].conductor()*E[j].conductor()) == 0:
+        for j in range(i, len(E)):
+            if parity[i] * parity[j] == s and N % (E[i].conductor() * E[j].conductor()) == 0:
                 chi, psi = __common_minimal_basering(E[i], E[j])
                 if k != 1:
                     pairs.append((chi, psi))
