@@ -19387,117 +19387,28 @@ cdef class Matrix(Matrix1):
         See :meth:`krylov_basis` for the description of this method. However,
         unlike :meth:`krylov_basis`, this method performs no input validation.
 
-        EXAMPLES::
+        TESTS::
 
             sage: R = GF(97)
-            sage: E = matrix(R,[[27,49,29],[50,58,0],[77,10,29]])
-            sage: E
-            [27 49 29]
-            [50 58  0]
-            [77 10 29]
-            sage: M = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
-            sage: M
-            [0 1 0]
-            [0 0 1]
-            [0 0 0]
-            sage: degrees = 3
-            sage: K = E.krylov_matrix(M)
-            sage: K
-            [27 49 29]
-            [50 58  0]
-            [77 10 29]
-            [ 0 27 49]
-            [ 0 50 58]
-            [ 0 77 10]
-            [ 0  0 27]
-            [ 0  0 50]
-            [ 0  0 77]
-            [ 0  0  0]
-            [ 0  0  0]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,algorithm='naive')
+            sage: E = matrix(R, [[27,49,29],[50,58,0],[77,10,29]])
+            sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
+            sage: E._krylov_basis_naive(M, [0, 0, 0], [3, 3, 3], True)
             (
             [27 49 29]
             [50 58  0]
             [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
             )
-            sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1) for i in range(E.nrows())]
-            sage: rows
-            [(0, 0, 0),
-             (1, 0, 1),
-             (2, 0, 2),
-             (0, 1, 3),
-             (1, 1, 4),
-             (2, 1, 5),
-             (0, 2, 6),
-             (1, 2, 7),
-             (2, 2, 8),
-             (0, 3, 9),
-             (1, 3, 10),
-             (2, 3, 11)]
+
             sage: shifts = [0,3,6]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]],x[0]))
-            sage: rows
-            [(0, 0, 0),
-             (0, 1, 3),
-             (0, 2, 6),
-             (0, 3, 9),
-             (1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (1, 3, 10),
-             (2, 0, 2),
-             (2, 1, 5),
-             (2, 2, 8),
-             (2, 3, 11)]
-            sage: E.krylov_matrix(M,shifts=shifts)
-            [27 49 29]
-            [ 0 27 49]
-            [ 0  0 27]
-            [ 0  0  0]
-            [50 58  0]
-            [ 0 50 58]
-            [ 0  0 50]
-            [ 0  0  0]
-            [77 10 29]
-            [ 0 77 10]
-            [ 0  0 77]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,shifts=shifts,algorithm='naive')
+            sage: E._krylov_basis_naive(M, shifts, [3, 3, 3], True)
             (
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
             )
+
             sage: shifts = [3,0,2]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]],x[0]))
-            sage: rows
-            [(1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (2, 0, 2),
-             (0, 0, 0),
-             (1, 3, 10),
-             (2, 1, 5),
-             (0, 1, 3),
-             (2, 2, 8),
-             (0, 2, 6),
-             (2, 3, 11),
-             (0, 3, 9)]
-            sage: E.krylov_matrix(M,shifts=shifts)
-            [50 58  0]
-            [ 0 50 58]
-            [ 0  0 50]
-            [77 10 29]
-            [27 49 29]
-            [ 0  0  0]
-            [ 0 77 10]
-            [ 0 27 49]
-            [ 0  0 77]
-            [ 0  0 27]
-            [ 0  0  0]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,shifts=shifts,algorithm='naive')
+            sage: E._krylov_basis_naive(M, shifts, [3, 3, 3], True)
             (
             [50 58  0]
             [ 0 50 58]
@@ -19514,16 +19425,16 @@ cdef class Matrix(Matrix1):
         row_profile = K.pivot_rows()
 
         # construct submatrix
-        pivot = K.matrix_from_rows(row_profile)
+        kmat = K.matrix_from_rows(row_profile)
 
         if not output_rows:
-            return pivot
+            return kmat
 
         row_coordinates = self._krylov_row_coordinates(shifts, degrees)
 
         row_profile = tuple([(*row_coordinates[i][:2], i) for i in row_profile])
 
-        return pivot, row_profile
+        return kmat, row_profile
 
     def _krylov_basis_elimination(self, M, shifts, degrees, output_rows):
         r"""
@@ -19532,115 +19443,28 @@ cdef class Matrix(Matrix1):
 
         EXAMPLES::
 
+        TESTS::
+
             sage: R = GF(97)
-            sage: E = matrix(R,[[27,49,29],[50,58,0],[77,10,29]])
-            sage: E
-            [27 49 29]
-            [50 58  0]
-            [77 10 29]
-            sage: M = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
-            sage: M
-            [0 1 0]
-            [0 0 1]
-            [0 0 0]
-            sage: degrees = 3
-            sage: K = E.krylov_matrix(M)
-            sage: K
-            [27 49 29]
-            [50 58  0]
-            [77 10 29]
-            [ 0 27 49]
-            [ 0 50 58]
-            [ 0 77 10]
-            [ 0  0 27]
-            [ 0  0 50]
-            [ 0  0 77]
-            [ 0  0  0]
-            [ 0  0  0]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,output_rows=True,algorithm='elimination')
+            sage: E = matrix(R, [[27,49,29],[50,58,0],[77,10,29]])
+            sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
+            sage: E._krylov_basis_elimination(M, [0, 0, 0], [3, 3, 3], True)
             (
             [27 49 29]
             [50 58  0]
             [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
             )
-            sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1) for i in range(E.nrows())]
-            sage: rows
-            [(0, 0, 0),
-             (1, 0, 1),
-             (2, 0, 2),
-             (0, 1, 3),
-             (1, 1, 4),
-             (2, 1, 5),
-             (0, 2, 6),
-             (1, 2, 7),
-             (2, 2, 8),
-             (0, 3, 9),
-             (1, 3, 10),
-             (2, 3, 11)]
+
             sage: shifts = [0,3,6]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]],x[0]))
-            sage: rows
-            [(0, 0, 0),
-             (0, 1, 3),
-             (0, 2, 6),
-             (0, 3, 9),
-             (1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (1, 3, 10),
-             (2, 0, 2),
-             (2, 1, 5),
-             (2, 2, 8),
-             (2, 3, 11)]
-            sage: E.krylov_matrix(M,shifts=shifts)
-            [27 49 29]
-            [ 0 27 49]
-            [ 0  0 27]
-            [ 0  0  0]
-            [50 58  0]
-            [ 0 50 58]
-            [ 0  0 50]
-            [ 0  0  0]
-            [77 10 29]
-            [ 0 77 10]
-            [ 0  0 77]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,shifts=shifts,algorithm='elimination')
+            sage: E._krylov_basis_elimination(M, shifts, [3, 3, 3], True)
             (
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
             )
+
             sage: shifts = [3,0,2]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]],x[0]))
-            sage: rows
-            [(1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (2, 0, 2),
-             (0, 0, 0),
-             (1, 3, 10),
-             (2, 1, 5),
-             (0, 1, 3),
-             (2, 2, 8),
-             (0, 2, 6),
-             (2, 3, 11),
-             (0, 3, 9)]
-            sage: E.krylov_matrix(M,shifts=shifts)
-            [50 58  0]
-            [ 0 50 58]
-            [ 0  0 50]
-            [77 10 29]
-            [27 49 29]
-            [ 0  0  0]
-            [ 0 77 10]
-            [ 0 27 49]
-            [ 0  0 77]
-            [ 0  0 27]
-            [ 0  0  0]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,shifts=shifts,algorithm='elimination')
+            sage: E._krylov_basis_elimination(M, shifts, [3, 3, 3], True)
             (
             [50 58  0]
             [ 0 50 58]
@@ -19789,9 +19613,11 @@ cdef class Matrix(Matrix1):
 
         .. SEEALSO::
 
-            :meth:`cyclic_subspace`,
-            :meth:`krylov_matrix`,
-            :meth:`krylov_kernel_basis`
+            :meth:`cyclic_subspace` provides similar functionality for a single
+            vector; :meth:`krylov_matrix` computes a Krylov matrix (without
+            discarding linearly redundant rows); :meth:`krylov_kernel_basis`
+            computes a compact representation of the left kernel of a
+            Krylov matrix.
 
         EXAMPLES::
 
@@ -19806,7 +19632,6 @@ cdef class Matrix(Matrix1):
             [0 1 0]
             [0 0 1]
             [0 0 0]
-            sage: degrees = 3
             sage: K = E.krylov_matrix(M)
             sage: K
             [27 49 29]
@@ -19827,6 +19652,10 @@ cdef class Matrix(Matrix1):
             [50 58  0]
             [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
             )
+
+        Row ordering for the uniform zero shift::
+
+            sage: degrees = 3  # default in above constructions
             sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1) for i in range(E.nrows())]
             sage: rows
             [(0, 0, 0),
@@ -19940,7 +19769,7 @@ cdef class Matrix(Matrix1):
             shifts = (ZZ**E.nrows())(shifts)
         else:
             raise ValueError(f"krylov_basis: shifts is not an integer vector of length {E.nrows()}.")
-        
+
         if algorithm is None:
             if E.base_ring().order() == 2:
                 if E.nrows() <= 12:
@@ -20008,9 +19837,9 @@ cdef class Matrix(Matrix1):
 
         .. SEEALSO::
 
-            :meth:`cyclic_subspace`,
-            :meth:`krylov_matrix`,
-            :meth:`krylov_basis`
+            :meth:`krylov_basis` computes a basis of the row space of the
+            Krylov matrix; :meth:`krylov_matrix` computes the full Krylov
+            matrix (without discarding linearly redundant rows).
 
         EXAMPLES::
 
@@ -20115,7 +19944,7 @@ cdef class Matrix(Matrix1):
         # INPUT VALIDATION
         if not (E.base_ring() in _Fields and E.base_ring().is_exact()):
             raise NotImplementedError("krylov_kernel_basis: matrix entries must come from an exact field")
-        
+
         if not isinstance(M, Matrix):
             raise TypeError("krylov_kernel_basis: M is not a matrix")
         if M.nrows() != E.ncols() or M.ncols() != E.ncols():
