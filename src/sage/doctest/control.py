@@ -1124,7 +1124,7 @@ class DocTestController(SageObject):
             sage: DC.expand_files_into_sources()
             sage: DC.run_doctests()
             Doctesting 1 file.
-            sage -t .../sage/rings/homset.py
+            .../sage/rings/homset.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1201,7 +1201,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../rings/all.py
+            .../rings/all.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1403,7 +1403,7 @@ class DocTestController(SageObject):
             sage: DC.run()
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/sets/non_negative_integers.py
+            .../sage/sets/non_negative_integers.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1427,7 +1427,7 @@ class DocTestController(SageObject):
             Using --optional=external,sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [0 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1453,7 +1453,7 @@ class DocTestController(SageObject):
             Using --optional=sage...
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1471,7 +1471,7 @@ class DocTestController(SageObject):
             Using --optional=sage
             Features to be detected: ...
             Doctesting 1 file.
-            sage -t ....py
+            ....py
                 [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -1597,7 +1597,7 @@ def run_doctests(module, options=None):
         sage: run_doctests(sage.rings.all)
         Running doctests with ID ...
         Doctesting 1 file.
-        sage -t .../sage/rings/all.py
+        .../sage/rings/all.py
             [... tests, ...s wall]
         ----------------------------------------------------------------------
         All tests passed!
