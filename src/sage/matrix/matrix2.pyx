@@ -19227,15 +19227,15 @@ cdef class Matrix(Matrix1):
         .. MATH::
 
             \begin{bmatrix}
-                E_{0,*} \\
-                E_{0,*} M \\
+                E_{0,:} \\
+                E_{0,:} M \\
                 \vdots \\
-                E_{0,*} M^{d_0} \\
+                E_{0,:} M^{d_0} \\
                 \vdots \\
-                E_{m-1,*} \\
-                E_{m-1,*} M \\
+                E_{m-1,:} \\
+                E_{m-1,:} M \\
                 \vdots \\
-                E_{m-1,*} M^{d_{m-1}}
+                E_{m-1,:} M^{d_{m-1}}
             \end{bmatrix} .
 
         Other shifts will yield some row permutation of the latter matrix (see
@@ -19641,19 +19641,19 @@ cdef class Matrix(Matrix1):
         Return the matrix `B` formed by stacking the first `r` linearly
         independent row vectors `E_{i,:} \cdot M^j`, for `0 \le i < m` and `j
         \ge 0` when they are ordered according to ``shifts``. Here `E` is the
-        input `m \times n` matrix, `M` is a square `n \times n` matrix, and `r`
-        is dimension of Krylov subspace of ``self`` and `M`, that is, the span
-        of all the above row vectors.
+        input `m \times n` matrix ``self``, `M` is a square `n \times n`
+        matrix, and `r` is dimension of Krylov subspace of `E` and `M`, that
+        is, the span of all the above row vectors.
 
         A list ``degrees`` of integers `[d_0,\ldots,d_{m-1}]` can be provided
-        to indicate known maximal exponents: `E_{k,*} \cdot M^{d_k-1}` may
-        appear in the output basis, but `E_{k,*} \cdot M^{d_k-1}` will not. In
-        other words, `E_{k,*} \cdot M^{d_k}` is known to linearly depend on the
-        set of row vectors `E_{i,*} \cdot M^{j}` that appear before it
-        according to the order defined by ``shifts``. It is always valid to
-        take ``degrees`` as `[d, \ldots, d]` where `d` is the degree of the
-        minimal polynomial of `M`. By default, the implementation takes
-        ``degrees`` as `[n, \ldots, n]`.
+        to indicate known maximal exponents, such that `E_{k,:} \cdot
+        M^{d_k-1}` may appear in the output basis, but `E_{k,:} \cdot
+        M^{d_k}` will not. In other words, `E_{k,:} \cdot M^{d_k}` is known to
+        linearly depend on the set of row vectors `E_{i,:} \cdot M^{j}` that
+        appear before it according to the order defined by ``shifts``. It is
+        always valid to take ``degrees`` as `[d, \ldots, d]` where `d` is the
+        degree of the minimal polynomial of `M`. By default, the implementation
+        takes ``degrees`` as `[n, \ldots, n]`.
 
         This method incidentally computes the column rank profile (as returned
         by :meth:`pivots`) of its output matrix, and so, it is cached in the
@@ -19662,9 +19662,9 @@ cdef class Matrix(Matrix1):
         By default, the method also returns information that relate the
         computed basis rows to the corresponding rows in the Krylov matrix `K`
         as if built with :meth:`krylov_matrix` with the same parameters.
-        Specifically, for each row of the output, this gives its position in
-        `K` (thus forming the row rank profile of `K`), as well as pairs `i, j`
-        indicating that the row is `E_{i,*} \cdot M^{j}`.
+        Specifically, for each row of the output, this information gives its
+        position in `K` (thus forming the row rank profile of `K`), as well as
+        pairs `i, j` indicating that the row is `E_{i,:} \cdot M^{j}`.
 
         .. WARNING::
 
@@ -19680,7 +19680,7 @@ cdef class Matrix(Matrix1):
           priority shifts. If ``None``, defaults to all zeroes.
         - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
           (optional). The `i`-th entry ``degrees[i]`` indicates that
-          ``self[i,:] * M**degrees[j]`` is known to be dependent on rows before
+          ``self[i,:] * M**degrees[i]`` is known to be dependent on rows before
           it in the ``shifts``-ordered Krylov matrix. If ``None``, defaults to
           ``self.ncols()`` for all rows. Giving a single integer for
           ``degrees`` is equivalent to giving a list with this integer repeated
@@ -19692,11 +19692,11 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        - `B`: submatrix formed by the first `r` independent rows of the Krylov
-          matrix of ``self`` and `M`, with `r` as above
+        - matrix formed by the first `r` independent rows of the Krylov matrix
+          of ``self`` and `M`, with `r` the rank of that matrix 
         - ``row_profile`` (returned if ``output_rows`` is ``True``): list of
           the ``r`` triplets ``(i, j, k)`` corresponding to the rows of the
-          Krylov basis where ``k`` is the row index of the row in the krylov
+          Krylov basis where ``k`` is the row index of the row in the Krylov
           matrix, ``i`` is the corresponding row in ``self`` and ``j`` is the
           corresponding power of ``M``.
 
