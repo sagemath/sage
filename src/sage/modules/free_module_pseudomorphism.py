@@ -647,7 +647,7 @@ class FreeModulePseudoMorphism(Morphism):
             :mod:`sage.modules.ore_module`
         """
         from sage.modules.ore_module import OreModule
-        return OreModule(self._matrix, self.parent()._ore, names)
+        return OreModule(self._matrix, self.parent()._ore, names=names)
 
     def _test_nonzero_equal(self, tester):
         pass
