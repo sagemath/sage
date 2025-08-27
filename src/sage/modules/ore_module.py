@@ -406,7 +406,7 @@ class OreModule(UniqueRepresentation, FreeModule_ambient):
 
         - ``ore`` -- the underlying Ore polynomial ring
 
-        - ``denominator`` (default: ``None``) -- an instance of
+        - ``denominator`` -- either ``None`` or an instance of
           :class:`sage.structure.factorization.Factorization`;
           ``None`` is understood as the empty factorization with
           value `1`
@@ -2163,7 +2163,7 @@ class OreSubmodule(OreModule):
 
     def over_fraction_field(self):
         r"""
-        Return this scalar extension of this Ore module to
+        Return the scalar extension of this Ore module to
         the fraction field.
 
         EXAMPLES::
@@ -2654,7 +2654,7 @@ class OreQuotientModule(OreModule):
 
     def over_fraction_field(self):
         r"""
-        Return this scalar extension of this Ore module to
+        Return the scalar extension of this Ore module to
         the fraction field.
 
         EXAMPLES::
