@@ -170,10 +170,10 @@ cdef object mpq_vector_to_list(mpq_vector* v):
     cdef Rational a
     cdef Py_ssize_t i
     X = []
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         a = Rational()
         a.set_from_mpq(v.entries[i])
-        X.append( (v.positions[i], a) )
+        X.append((v.positions[i], a))
     return X
 
 
@@ -325,7 +325,7 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
             mpq_set(z.entries[k], v.entries[i])
             i = i + 1
             k = k + 1
-        elif v.positions[i] > w.positions[j]: # copy entry from w in
+        elif v.positions[i] > w.positions[j]:  # copy entry from w in
             if do_multiply:
                 # This means: tmp = multiple*w.entries[j]
                 mpq_mul(tmp, multiple, w.entries[j])
@@ -350,7 +350,7 @@ cdef int add_mpq_vector_init(mpq_vector* sum,
                 k = k + 1     # only increment if sum is nonzero!
             i = i + 1
             j = j + 1
-        #end if
+        # end if
     # end while
     z.num_nonzero = k
     for i from k <= i < z.num_nonzero:
@@ -364,7 +364,7 @@ cdef int mpq_vector_scale(mpq_vector* v, mpq_t scalar) except -1:
         mpq_vector_init(v, v.degree, 0)
         return 0
     cdef Py_ssize_t i
-    for i from 0 <= i < v.num_nonzero:
+    for i in range(v.num_nonzero):
         # v.entries[i] = scalar * v.entries[i]
         mpq_mul(v.entries[i], v.entries[i], scalar)
     return 0

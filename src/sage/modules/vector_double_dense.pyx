@@ -33,7 +33,7 @@ AUTHORS:
 - William Stein
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2006-2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2009      Alexandru Ghitza
 #       Copyright (C) 2020      Antonio Rojas
@@ -48,7 +48,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
 
 cimport numpy
 import numpy
