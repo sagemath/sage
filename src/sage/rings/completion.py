@@ -132,10 +132,11 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         self._xbar = xbar = k(A.gen())
         name = "u_%s" % id(self)
         backend = PowerSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
-        self._gen = backend.gen() + xbar
-        self._incl = A.hom([self._gen])
+        gen = backend.gen() + xbar
+        self._incl = A.hom([gen])
         self._base_morphism = self._incl * A.coerce_map_from(base)
         super().__init__(self._base_morphism)
+        self._gen = self(gen)
         coerce = A.Hom(self)(self._incl)
         self.register_coercion(coerce)
 
