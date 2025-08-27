@@ -14,19 +14,19 @@ cdef object BuiltinMethodType = type(repr)
 cdef bint print_warnings = 0
 
 
-cdef class DefaultConvertMap(Map):
+cdef class DefaultConvertMap_unique(Map):
     """
-    This morphism simply calls the codomain's element_constructor method,
-    passing in the codomain as the first argument.
+    This morphism simply defers action to the codomain's
+    element_constructor method, WITHOUT passing in the codomain as the
+    first argument.
 
-    EXAMPLES::
-
-        sage: QQ[['x']].coerce_map_from(QQ)
-        Coercion map:
-          From: Rational Field
-          To:   Power Series Ring in x over Rational Field
+    This is used for creating elements that don't take a parent as the
+    first argument to their __init__ method, for example, Integers,
+    Rationals, Algebraic Reals... all have a unique parent. It is also
+    used when the element_constructor is a bound method (whose self
+    argument is assumed to be bound to the codomain).
     """
-    def __init__(self, domain, codomain, category=None):
+    def __init__(self, domain, codomain, category=None) -> None:
         """
         TESTS:
 
@@ -49,26 +49,7 @@ cdef class DefaultConvertMap(Map):
             False
             sage: QQ[['x']].coerce_map_from(QQ)._is_coercion
             True
-
-        This class is deprecated when used directly::
-
-            sage: from sage.structure.coerce_maps import DefaultConvertMap
-            sage: DefaultConvertMap(ZZ, ZZ)
-            doctest:...: DeprecationWarning: DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead.
-            This probably means that _element_constructor_ should be a method and not some other kind of callable
-            See https://github.com/sagemath/sage/issues/26879 for details.
-            Conversion map:
-              From: Integer Ring
-              To:   Integer Ring
         """
-        # The base class DefaultConvertMap is deprecated, only the
-        # derived class DefaultConvertMap_unique should be used.
-        # When removing this deprecation, this class should be merged
-        # into DefaultConvertMap_unique.
-        if not isinstance(self, DefaultConvertMap_unique):
-            from sage.misc.superseded import deprecation_cython as deprecation
-            deprecation(26879, "DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable")
-
         if not isinstance(domain, Parent):
             domain = Set_PythonType(domain)
         if category is None:
@@ -78,9 +59,9 @@ cdef class DefaultConvertMap(Map):
         Map.__init__(self, parent)
         self._coerce_cost = 100
         if (<Parent>codomain)._element_constructor is None:
-            raise RuntimeError("BUG in coercion model, no element constructor for {}".format(type(codomain)))
+            raise RuntimeError(f"BUG in coercion model, no element constructor for {type(codomain)}")
 
-    def _repr_type(self):
+    def _repr_type(self) -> str:
         r"""
         Return a printable type for this morphism.
 
@@ -104,7 +85,7 @@ cdef class DefaultConvertMap(Map):
         """
         cdef Parent C = self._codomain
         try:
-            return C._element_constructor(C, x)
+            return C._element_constructor(x)
         except Exception:
             if print_warnings:
                 print(type(C), C)
@@ -121,49 +102,6 @@ cdef class DefaultConvertMap(Map):
             sage: f(2/3, 4)
             2/3 + O(x^4)
         """
-        cdef Parent C = self._codomain
-        try:
-            if len(args) == 0:
-                if len(kwds) == 0:
-                    # This line is apparently never used in any tests (hivert, 2009-04-28)
-                    return C._element_constructor(C, x)
-                else:
-                    return C._element_constructor(C, x, **kwds)
-            else:
-                if len(kwds) == 0:
-                    return C._element_constructor(C, x, *args)
-                else:
-                    return C._element_constructor(C, x, *args, **kwds)
-        except Exception:
-            if print_warnings:
-                print(type(C), C)
-                print(type(C._element_constructor), C._element_constructor)
-            raise
-
-
-cdef class DefaultConvertMap_unique(DefaultConvertMap):
-    """
-    This morphism simply defers action to the codomain's
-    element_constructor method, WITHOUT passing in the codomain as the
-    first argument.
-
-    This is used for creating elements that don't take a parent as the
-    first argument to their __init__ method, for example, Integers,
-    Rationals, Algebraic Reals... all have a unique parent. It is also
-    used when the element_constructor is a bound method (whose self
-    argument is assumed to be bound to the codomain).
-    """
-    cpdef Element _call_(self, x):
-        cdef Parent C = self._codomain
-        try:
-            return C._element_constructor(x)
-        except Exception:
-            if print_warnings:
-                print(type(C), C)
-                print(type(C._element_constructor), C._element_constructor)
-            raise
-
-    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         cdef Parent C = self._codomain
         try:
             if len(args) == 0:

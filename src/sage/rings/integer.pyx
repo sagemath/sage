@@ -401,6 +401,42 @@ cdef class IntegerWrapper(Integer):
             Element.__init__(self, parent=parent)
         Integer.__init__(self, x, base=base)
 
+
+cdef inline Integer move_integer_from_mpz(mpz_t x):
+    """
+    Construct an :class:`Integer` by moving it from a ``mpz_t`` object.
+
+    This function is intend to be used as follows::
+
+        cdef mpz_t x  # local variable
+        mpz_init(x)
+        sig_on()
+        mpz_SOMETHING_MUTATE_X(x, ...)
+        sig_off()
+        return move_integer_from_mpz(x)  # no need mpz_clear(x)
+
+    The reason to do so is explained in :issue:`24986`:
+    if the user interrupts the operation, ``x`` may be in an inconsistent state,
+    as such we don't want to call ``fast_tp_dealloc`` on it, because
+    putting a corrupted object in the integer pool may lead to incorrect results
+    afterwards.
+
+    Here we do not call ``mpz_clear(x)`` either, but double ``free()``
+    is also undesirable. Compared to these issues, memory leak is the least problematic.
+
+    In this case:
+
+    - if ``sig_on()`` throws, :func:`move_integer_from_mpz` will not be called, as such
+      ``x`` will not be cleared;
+
+    - if ``sig_on()`` does not throw, :func:`move_integer_from_mpz` will call ``mpz_clear(x)``.
+    """
+    cdef Integer y = <Integer>PY_NEW(Integer)
+    mpz_swap(y.value, x)
+    mpz_clear(x)
+    return y
+
+
 cdef class Integer(sage.structure.element.EuclideanDomainElement):
     r"""
     The :class:`Integer` class represents arbitrary precision
@@ -447,6 +483,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     """
 
     def __cinit__(self):
+        # this function is only called to create global_dummy_Integer,
+        # after that it will be replaced by fast_tp_new
         global the_integer_ring
         mpz_init(self.value)
         self._parent = the_integer_ring
@@ -1746,9 +1784,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         cdef Integer temp
 
         if mpz_sgn(self.value) == 0:
-            temp = PY_NEW(Integer)
-            mpz_set_ui(temp.value, 0)
-            return temp
+            return self
 
         if mpz_sgn(self.value) > 0:
             temp = self.exact_log(base)
@@ -1780,7 +1816,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             mpz_add(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpq_add_z(y.value, (<Rational>right).value, (<Integer>left).value)
             return y
 
@@ -1863,7 +1899,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             mpz_sub(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpz_mul(mpq_numref(y.value), (<Integer>left).value,
                     mpq_denref((<Rational>right).value))
             mpz_sub(mpq_numref(y.value), mpq_numref(y.value),
@@ -1975,7 +2011,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             mpz_mul(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpq_mul_z(y.value, (<Rational>right).value, (<Integer>left).value)
             return y
 
@@ -2038,14 +2074,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         if type(left) is type(right):
             if mpz_sgn((<Integer>right).value) == 0:
                 raise ZeroDivisionError("rational division by zero")
-            x = <Rational> Rational.__new__(Rational)
+            x = <Rational>PY_NEW(Rational)
             mpq_div_zz(x.value, (<Integer>left).value, (<Integer>right).value)
             return x
         elif type(right) is Rational:
             if mpq_sgn((<Rational>right).value) == 0:
                 raise ZeroDivisionError("rational division by zero")
             # left * den(right) / num(right)
-            y = <Rational> Rational.__new__(Rational)
+            y = <Rational>PY_NEW(Rational)
             mpq_div_zz(y.value, (<Integer>left).value,
                        mpq_numref((<Rational>right).value))
             mpz_mul(mpq_numref(y.value), mpq_numref(y.value),
@@ -2067,7 +2103,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if mpz_sgn((<Integer>right).value) == 0:
             raise ZeroDivisionError("rational division by zero")
-        x = <Rational> Rational.__new__(Rational)
+        x = <Rational>PY_NEW(Rational)
         mpq_div_zz(x.value, self.value, (<Integer>right).value)
         return x
 
@@ -2299,18 +2335,18 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         elif n == 1:
             return self
 
-        cdef Integer x
         cdef Rational q
+        cdef mpz_t x
         if n > 0:
-            x = PY_NEW(Integer)
+            mpz_init(x)
             sig_on()
-            mpz_pow_ui(x.value, self.value, n)
+            mpz_pow_ui(x, self.value, n)
             sig_off()
-            return x
+            return move_integer_from_mpz(x)
         else:
             if mpz_sgn(self.value) == 0:
                 raise ZeroDivisionError("rational division by zero")
-            q = Rational.__new__(Rational)
+            q = <Rational>PY_NEW(Rational)
             sig_on()
             mpz_pow_ui(mpq_denref(q.value), self.value, -n)
             if mpz_sgn(mpq_denref(q.value)) > 0:
@@ -3584,7 +3620,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ZeroDivisionError: rational reconstruction with zero modulus
         """
         cdef Integer a
-        cdef Rational x = <Rational>Rational.__new__(Rational)
+        cdef Rational x = <Rational>PY_NEW(Rational)
         try:
             mpq_rational_reconstruction(x.value, self.value, m.value)
         except ValueError:
@@ -6888,8 +6924,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         if mpz_sgn(self.value) == 0:
             raise ZeroDivisionError("rational division by zero")
-        cdef Rational x
-        x = <Rational> Rational.__new__(Rational)
+        cdef Rational x = <Rational>PY_NEW(Rational)
         mpz_set_ui(mpq_numref(x.value), 1)
         mpz_set(mpq_denref(x.value), self.value)
         if mpz_sgn(self.value) == -1:
@@ -7509,8 +7544,6 @@ cdef int sizeof_Integer
 # from. DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
 cdef Integer global_dummy_Integer
 global_dummy_Integer = Integer()
-# Reallocate to one limb to fix :issue:`31340` and :issue:`33081`
-_mpz_realloc(global_dummy_Integer.value, 1)
 
 
 def _check_global_dummy_Integer():
@@ -7523,10 +7556,10 @@ def _check_global_dummy_Integer():
         sage: _check_global_dummy_Integer()
         True
     """
-    # Check that it has exactly one limb allocated
-    # This is assumed later in fast_tp_new() :issue:`33081`
+    # Check that it has no allocation (requires GMP >= 6.2, see :issue:`31340`)
+    # fast_tp_new() later assumes that memcpy this mpz object gives a valid new mpz
     cdef mpz_ptr dummy = global_dummy_Integer.value
-    if dummy._mp_alloc == 1 and dummy._mp_size == 0:
+    if dummy._mp_alloc == 0 and dummy._mp_size == 0:
         return True
 
     raise AssertionError(
@@ -7556,7 +7589,6 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     global integer_pool, integer_pool_count, total_alloc, use_pool
 
     cdef PyObject* new
-    cdef mpz_ptr new_mpz
 
     # for profiling pool usage
     # total_alloc += 1
@@ -7589,12 +7621,10 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         # created before this tp_new started to operate.
         memcpy(new, (<void*>global_dummy_Integer), sizeof_Integer)
 
-        # We allocate memory for the _mp_d element of the value of this
-        # new Integer. We allocate one limb. Normally, one would use
-        # mpz_init() for this, but we allocate the memory directly.
-        # This saves time both by avoiding extra function calls and
-        # because the rest of the mpz struct was already initialized
-        # fully using the memcpy above.
+        # In sufficiently new versions of GMP, mpz_init() does not allocate
+        # any memory. We assume that memcpy a newly-initialized mpz results
+        # in a valid new mpz. Normally, one would use mpz_init() for this.
+        # This saves time by avoiding extra function calls.
         #
         # What is done here is potentially very dangerous as it reaches
         # deeply into the internal structure of GMP. Consequently things
@@ -7606,10 +7636,6 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         #  various internals described here may change in future GMP releases.
         #  Applications expecting to be compatible with future releases should use
         #  only the documented interfaces described in previous chapters."
-        #
-        # NOTE: This assumes global_dummy_Integer.value._mp_alloc == 1
-        new_mpz = <mpz_ptr>((<Integer>new).value)
-        new_mpz._mp_d = <mp_ptr>check_malloc(GMP_LIMB_BITS >> 3)
 
     # This line is only needed if Python is compiled in debugging mode
     # './configure --with-pydebug' or SAGE_DEBUG=yes. If that is the
@@ -7622,7 +7648,7 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
     # The global_dummy_Integer may have a reference count larger than
     # one, but it is expected that newly created objects have a
     # reference count of one. This is potentially unneeded if
-    # everybody plays nice, because the gobal_dummy_Integer has only
+    # everybody plays nice, because the global_dummy_Integer has only
     # one reference in that case.
 
     # Objects from the pool have reference count zero, so this
@@ -7659,7 +7685,7 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
             return
 
         # No space in the pool, so just free the mpz_t.
-        sig_free(o_mpz._mp_d)
+        mpz_clear(o_mpz)
 
     # Free the object. This assumes that Py_TPFLAGS_HAVE_GC is not
     # set. If it was set another free function would need to be

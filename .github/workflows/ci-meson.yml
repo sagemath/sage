@@ -36,7 +36,7 @@ jobs:
             tests: 'new'
           # one additional editable run in pull_request, this has no effect if not pull_request
           - os: 'ubuntu'
-            python: 3.12
+            python: '3.12'
             editable: true
             tests: 'all'
           - os: windows
@@ -185,5 +185,5 @@ jobs:
         uses: actions/upload-artifact@v4.5.0
         if: failure()
         with:
-          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}-log
+          name: ${{ runner.os }}-meson-${{ matrix.python }}${{ matrix.editable && '-editable' || '' }}${{ matrix.tests == 'new' && '-new' || '' }}-log
           path: builddir/meson-logs/
