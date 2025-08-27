@@ -2,7 +2,7 @@ sage_install_dir = py.get_install_dir() / 'sage'
 
 # Generate the configuration file
 conf_data = configuration_data()
-conf_data.set('PACKAGE_VERSION', '1.2.3')
+conf_data.set('SAGE_MESON_PKG_VERSION', '1.2.3')
 # We use Python's prefix here to make it work with conda
 prefix = fs.as_posix(py.get_variable('prefix', ''))
 conf_data.set('prefix', prefix)
@@ -144,7 +144,7 @@ kernel_dir = get_option('datadir') / 'share/jupyter/kernels/sagemath'
 install_data('ext_data/notebook-ipython/logo.svg', install_dir: kernel_dir)
 install_data('ext_data/notebook-ipython/logo-64x64.png', install_dir: kernel_dir)
 kernel_data = configuration_data()
-kernel_data.set('SAGE_VERSION', meson.project_version())
+kernel_data.set('PACKAGE_VERSION', meson.project_version())
 configure_file(
   input: 'ext_data/notebook-ipython/kernel.json.in',
   output: 'kernel.json',

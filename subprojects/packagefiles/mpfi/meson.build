@@ -12,7 +12,7 @@ mpfr = dependency('mpfr', version: '>= 4.0.1')
 
 # Configuration data
 conf = configuration_data()
-conf.set('PACKAGE_VERSION', '"' + meson.project_version() + '"')
+conf.set('SAGE_MESON_PKG_VERSION', '"' + meson.project_version() + '"')
 # Check for functions
 conf.set('HAVE_DUP2', c.has_function('dup2') ? 1 : 0)
 conf.set('HAVE_GETTIMEOFDAY', c.has_function('gettimeofday') ? 1 : 0)

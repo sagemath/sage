@@ -575,6 +575,11 @@ AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/s
 
 AC_CONFIG_FILES([pkgs/sage-conf/_sage_conf/_conf.py])
 
+# install jupyter kernel data
+AC_CONFIG_FILES([$SAGE_LOCAL/share/notebook/kernel.json:src/sage/ext_data/notebook-ipython/kernel.json.in]
+                [$SAGE_LOCAL/share/notebook/logo.svg:src/sage/ext_data/notebook-ipython/logo.svg]
+                [$SAGE_LOCAL/share/notebook/logo-64x64.png:src/sage/ext_data/notebook-ipython/logo-64x64.png])
+
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,
     [
