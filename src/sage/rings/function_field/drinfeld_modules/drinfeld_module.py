@@ -2086,7 +2086,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         By definition, the relative Frobenius is the isogeny represented by
         the Ore polynomial `\tau^d` where `d` is the degree of the characteristic
         of this Drinfeld module (which is also the degree of `\gamma(T)` over
-        `\mathbb F_q`, where `\gamma` is the base morphism `\mathbb F_q[T] \to K`).
+        `\GF{q}`, where `\gamma` is the base morphism `\GF{q}[T] \to K`).
 
         INPUT:
 
@@ -2109,7 +2109,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
               To:   Drinfeld module defined by T |--> (3*z^2 + 1)*τ^2 + (3*z^2 + 1)*τ + 1
               Defn: τ^2
 
-        If `K` is finite and `n` is the degree of `K` over `\mathbb F_q(\gamma(T))`,
+        If `K` is finite and `n` is the degree of `K` over `\GF{q}(\gamma(T))`,
         we obtain the Frobenius endomorphism::
 
             sage: phi.frobenius_relative(3) == phi.frobenius_endomorphism()
