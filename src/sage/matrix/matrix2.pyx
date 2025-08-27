@@ -13203,6 +13203,11 @@ cdef class Matrix(Matrix1):
           list is the column index of the pivot column containing its
           lone 1 in row ``i``.
 
+        .. SEEALSO::
+
+            :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
+            Krylov iterates and Krylov bases for several vectors at a time
+
         ALGORITHM:
 
         This could be called an "online echelon form" routine.  As each
@@ -13331,6 +13336,11 @@ cdef class Matrix(Matrix1):
 
         For less convenient, but more flexible output, see the
         helper method "_cyclic_subspace" in this module.
+
+        .. SEEALSO::
+
+            :meth:`krylov_matrix` and :meth:`krylov_basis`, which compute
+            Krylov iterates and Krylov bases for several vectors at a time
 
         EXAMPLES::
 
@@ -19113,9 +19123,9 @@ cdef class Matrix(Matrix1):
 
     def _krylov_row_coordinates(self, shifts, degrees, row_pairs=None):
         r"""
-        Helper function for ``krylov_matrix`` and ``krylov_basis``. Returns a
-        sorted set of triplets corresponding to row coordinates, for a given set of
-        shifts and degrees.
+        Helper function for :meth:`krylov_matrix` and :meth:`krylov_basis`.
+        Returns a sorted set of triplets corresponding to row coordinates, for
+        a given set of shifts and degrees.
 
         INPUT:
 
@@ -19123,17 +19133,20 @@ cdef class Matrix(Matrix1):
           the priority given to rows.
         - ``degrees`` -- an integer vector of length ``self.nrows()`` defining
           the maximum degree for rows.
-        - ``row_pairs`` -- the list of row coordinates to be sorted. If
-          ``None``, the default is
-          ``[(0,0),...,(self.nrows()-1,0),(0,1),...,(self.nrows()-1,1),...,(0,degrees[0]),...,(self.nrows()-1,degrees[self.nrows()-1])]``.
+        - ``row_pairs`` -- the list of pairs of row indices and associated
+          degrees to be sorted. If ``None``, the default is taken as
+          ``[(0,0),...,(m-1,0), (0,1),...,(m-1,1), ...,
+          (0,degrees[0]),...,(m-1,degrees[m-1])]``, where `m` is
+          `self.nrows()`.
 
         OUTPUT:
 
-        A list of triplets ``(c, d, i)`` sorted in ascending order by
-        ``shifts[c] + d`` then by ``c``. The entry ``i`` is the index of the
-        triplet after filtering but before sorting.
+        A list of triplets ``(c, d, i)`` sorted in ascending order, using the
+        lexicographic order on pairs ``(shifts[c] + d, c)``. The entry ``i`` is
+        the index of the triplet after filtering (according to the degree
+        bounds and the presence in ``row_pairs``) but before sorting.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: R = GF(97)
             sage: E = matrix.zero(R,3)
@@ -19181,33 +19194,53 @@ cdef class Matrix(Matrix1):
 
     def krylov_matrix(self, M, shifts=None, degrees=None):
         r"""
-        Return the block matrix built from the rows of ``self`` and the matrix
-        ``M``, with rows ordered according to a priority  defined by
-        ``shifts``. See
-        [Beckermann and Labahn, 2000, https://doi.org/10.1137/S0895479897326912]_
-        and
-        [Jeannerod, Neiger, Schost, Villard, 2017, https://doi.org/10.1016/j.jsc.2016.11.015]_."
+        Return the Krylov matrix built from the rows of ``self`` and
+        multiplication matrix ``M``. Here, ``self`` is some `m \times n` matrix
+        `E`, and ``M`` is a square `n \times n` matrix; ``degrees`` is a list
+        of `m` nonnegative integers `[d_0,\ldots,d_{m-1}]`. This Krylov matrix
+        has `d_0+\cdots+d_{m-1}+m` rows and `n` columns and is formed by
+        stacking the Krylov iterates `E_{i,:} \cdot M**j` for all `0 \le i < m`
+        and `0 \le j \le d_i`. These rows are ordered according to a priority
+        defined by ``shifts``.
 
-        The following example uses `E` to refer to ``self``, and `d` to refer
-        to ``degrees`` (in the case where a single integer is provided). This is
-        the case where ``shifts`` is `[0,...,0]``; another shift will
-        correspond to some row permutation of this matrix.
+        By default, ``shifts`` is taken as `[0,\ldots,0]`. If a single integer
+        `d` is provided for ``degrees``, then it is interpreted as
+        `[d,\ldots,d]`, and by default ``degrees`` is taken as `[n, \ldots,
+        n]`.
 
-        [     ]
-        [  E  ]
-        [     ]
-        [-----]
-        [     ]
-        [  EM ]
-        [     ]
-        [-----]
-        [  .  ]
-        [  .  ]
-        [  .  ]
-        [-----]
-        [     ]
-        [ EM^d]
-        [     ]
+        For example, for the default ``shifts`` equal to `[0,\ldots,0]` and for
+        ``degrees`` equal to `[d,\ldots,d]`, the returned matrix is equal to
+        ``matrix.block([[self * M**j] for j in range(d+1)])``, that is,
+
+        .. MATH::
+
+            \begin{bmatrix}
+                E \\
+                E M \\
+                \vdots \\
+                E M^d
+            \end{bmatrix} .
+
+        Another classical example is when ``shifts`` is very unbalanced,
+        such as `[0,n,\ldots,(m-1)n]`: then, for ``degrees`` being
+        `[d_0,\ldots,d_{m-1}]`, the Krylov matrix is
+
+        .. MATH::
+
+            \begin{bmatrix}
+                E_{0,*} \\
+                E_{0,*} M \\
+                \vdots \\
+                E_{0,*} M^{d_0} \\
+                \vdots
+                E_{m-1,*} \\
+                E_{m-1,*} M \\
+                \vdots \\
+                E_{m-1,*} M^{d_{m-1}}
+            \end{bmatrix} .
+
+        Other shifts will correspond to some row permutation of this matrix.
+        (see [BL2000]_ and [JNSV2017]_).
 
         INPUT:
 
@@ -19215,14 +19248,21 @@ cdef class Matrix(Matrix1):
           ``self``.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional), row
           priority shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- the maximum power or list of ``self.nrows()`` maximum
-          powers of ``M`` for each row in ``self`` in the output. If None,
-          ``self.ncols()`` is chosen by default for all rows.
+        - ``degrees`` -- the list of ``self.nrows()`` maximum powers of ``M``
+          for each row in ``self`` in the output. If None, ``self.ncols()`` is
+          chosen by default for all rows. Giving a single integer as input is
+          equivalent to giving a list with this integer repeated
+          ``self.nrows()`` times.
 
         OUTPUT:
 
-        - A matrix with block rows [E, EM, EM^2, ..., EM^d], row-permuted by
-          ``shifts``.
+        - The Krylov matrix of ``self`` and ``M``, with degree bounds
+          ``degrees`` and rows ordered according to ``shifts``.
+
+        .. SEEALSO::
+
+            :meth:`krylov_basis`,
+            :meth:`krylov_kernel_basis`
 
         EXAMPLES::
 
@@ -19344,34 +19384,8 @@ cdef class Matrix(Matrix1):
 
     def _krylov_basis_naive(self, M, shifts, degrees, output_rows):
         r"""
-        Refer to `krylov_basis`.
-
-        .. WARNING::
-
-            If the degree bounds are not true upper bounds, no guarantees are
-            made on the value of the output.
-
-        INPUT:
-
-        - ``M`` -- square matrix used in the Krylov construction.
-        - ``shifts`` -- list of ``self.nrows()`` integers (optional): priority
-          row shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- an upper bound or list of ``self.nrows()`` upper bounds
-          on the power of ``M`` for each row in ``self`` in the
-          ``krylov_basis`` of ``M`` in Krylov matrix. If None, a suitable upper
-          bound of ``self.ncols()`` is default for all rows.
-        - ``output_rows`` -- determines whether the indices of the rows
-          returned are also provided.
-
-        OUTPUT:
-
-        - krylov_basis: the submatrix of the krylov matrix of ``self`` and
-          ``M`` formed by its lexicographically-first independent rows.
-        - row_profile (returned if ``output_rows`` is ``True``): list of the
-          ``r`` triplets ``(c,d,i)`` corresponding to the rows of the krylov
-          basis where ``i`` is the row index of the row in the krylov matrix,
-          ``c`` is the corresponding row in ``self`` and ``d`` is the
-          corresponding power of ``M``.
+        See :meth:`krylov_basis` for the description of this method. However,
+        unlike :meth:`krylov_basis`, this method performs no input validation.
 
         EXAMPLES::
 
@@ -19513,12 +19527,8 @@ cdef class Matrix(Matrix1):
 
     def _krylov_basis_elimination(self, M, shifts, degrees, output_rows):
         r"""
-        Refer to `krylov_basis`.
-
-        .. WARNING::
-
-            If the degree bounds are not true upper bounds, no guarantees are
-            made on the value of the output.
+        See :meth:`krylov_basis` for the description of this method. However,
+        unlike :meth:`krylov_basis`, this method performs no input validation.
 
         EXAMPLES::
 
@@ -19777,6 +19787,12 @@ cdef class Matrix(Matrix1):
           ``c`` is the corresponding row in ``self`` and ``d`` is the
           corresponding power of ``M``.
 
+        .. SEEALSO::
+
+            :meth:`cyclic_subspace`,
+            :meth:`krylov_matrix`,
+            :meth:`krylov_kernel_basis`
+
         EXAMPLES::
 
             sage: R = GF(97)
@@ -19989,6 +20005,12 @@ cdef class Matrix(Matrix1):
         - ``P`` is ``s``-Popov
         - the rows of ``C`` form a minimal basis for the kernel of
           ``self.striped_krylov_matrix(M,P.degree())``
+
+        .. SEEALSO::
+
+            :meth:`cyclic_subspace`,
+            :meth:`krylov_matrix`,
+            :meth:`krylov_basis`
 
         EXAMPLES::
 

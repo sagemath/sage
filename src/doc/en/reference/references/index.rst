@@ -1011,6 +1011,11 @@ REFERENCES:
             Anal. Appl. 15 (1994) 804-823.
             :doi:`10.1137/S0895479892230031`
 
+.. [BL2000] Bernhard Beckermann, George Labahn. *Fraction-Free Computation of
+            Matrix Rational Interpolants and Matrix GCDs*. SIAM J. Matrix
+            Anal. Appl. 22 (2000) 114-144.
+            :doi:`10.1137/S0895479897326912`
+
 .. [BL1995] \W. Bosma, H.W. Lenstra: *Complete Systems of Two Addition Laws for
             Elliptic Curves*. Journal of Number Theory, volume 53, issue 2,
             pages 229-240. 1995.
@@ -3808,9 +3813,15 @@ REFERENCES:
              http://code.google.com/p/graph-theory-algorithms-book/
 
 .. [JNSV2016] Claude-Pierre Jeannerod, Vincent Neiger, Eric Schost, and Gilles
-             Villard. Fast Computation of Minimal Interpolation Bases in Popov
-             Form for Arbitrary Shifts. In Proceedings ISSAC 2016 (pages
-             295-302). :doi:`10.1145/2930889.2930928`
+              Villard. *Fast Computation of Minimal Interpolation Bases in
+              Popov Form for Arbitrary Shifts*. In Proceedings ISSAC 2016
+              (pages 295-302).
+              :doi:`10.1145/2930889.2930928`
+
+.. [JNSV2017] Claude-Pierre Jeannerod, Vincent Neiger, Eric Schost, and Gilles
+              Villard. *Computing Minimal Interpolation Bases*. J. Symb.
+              Comput. 83, 2017 (pp 272--314).
+              :doi:`10.1016/j.jsc.2016.11.015`
 
 .. [Joh1990] \D.L. Johnson. *Presentations of Groups*. Cambridge
              University Press. (1990).
