@@ -543,27 +543,6 @@ cdef class CoxGroup(SageObject):
         """
         return isFiniteType(self.x)
 
-    def is_commutative(self) -> bool:
-        """
-        Return whether this Coxeter group is commutative.
-
-        EXAMPLES::
-
-            sage: from sage.libs.coxeter3.coxeter import get_CoxGroup as CoxGroup
-            sage: W = CoxGroup(['A', 3])
-            sage: W.is_commutative()
-            False
-            sage: W = CoxGroup(['A', 1])
-            sage: W.is_commutative()
-            True
-        """
-        for ii, jj in combinations(self.cartan_type.index_set(), 2):
-            ii = self.in_ordering[ii] - 1
-            jj = self.in_ordering[jj] - 1
-            if self.x.M(ii, jj) != 2:
-                return False
-        return True
-
     cpdef full_context(self) noexcept:
         """
         Make all of the elements of a finite Coxeter group available.

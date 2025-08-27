@@ -437,6 +437,30 @@ class CoxeterGroups(Category_singleton):
                     pass
             return self.element_class(self, x, **args)
 
+        def is_commutative(self) -> bool:
+            """
+            Return whether this Coxeter group is commutative.
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['B', 3])
+                sage: W.is_commutative()
+                False
+
+            TESTS::
+
+                sage: # optional - coxeter3
+                sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
+                sage: W.is_commutative()
+                False
+                sage: W = CoxeterGroup(['A', 1], implementation='coxeter3')
+                sage: W.is_commutative()
+                True
+            """
+            M = self.coxeter_matrix()
+            n = M.nrows()
+            return all(M[i, j] == 2 for j in range(1, n) for i in range(j))
+
         def weak_order_ideal(self, predicate, side='right', category=None):
             """
             Return a weak order ideal defined by a predicate.

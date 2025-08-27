@@ -205,18 +205,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         """
         return self._coxgroup.is_finite()
 
-    def is_commutative(self) -> bool:
-        """
-        Return ``True`` if this is a commutative Coxeter group.
-
-        EXAMPLES::
-
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
-            sage: W.is_commutative()
-            False
-        """
-        return self._coxgroup.is_commutative()
-
     def length(self, x):
         """
         Return the length of an element ``x`` in this Coxeter group.
