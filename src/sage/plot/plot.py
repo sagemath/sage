@@ -156,12 +156,12 @@ large, scientific notation (the `e` notation for powers of ten) is used::
 
 ::
 
-    sage: plot(x^2, (x,300,500))  # scientific notation on y-axis
+    sage: plot(x^4, (x,300,500))  # scientific notation on y-axis
     Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g = plot(x**2, (x,300,500))
+    g = plot(x**4, (x,300,500))
     sphinx_plot(g)
 
 But you can fix your own tick labels, if you know what to expect and

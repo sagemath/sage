@@ -2696,6 +2696,18 @@ class Graphics(WithEqualityById, SageObject):
             sage: figure = p.matplotlib()                                               # needs sage.symbolic
             sage: axes = figure.axes[0]                                                 # needs sage.symbolic
 
+        Scientific notation is automatically used for large enough function values, cf. :issue:`34233` ::
+
+            sage: plot(90000*x/(100-x), (x,0,100), ymin=0, ymax=1000000)                # needs sage.symbolic
+            ...
+
+        .. PLOT::
+
+            from sage.symbolic.ring import var
+            p = var('p')
+            g = plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
+            sphinx_plot(g)
+
         TESTS:
 
         We verify that :issue:`10291` is fixed::
@@ -2763,6 +2775,7 @@ class Graphics(WithEqualityById, SageObject):
         from matplotlib import rcParams
         rcParams['mathtext.fontset'] = 'cm'
         rcParams['mathtext.rm'] = 'serif'
+        rcParams['axes.formatter.use_mathtext'] = True
 
         import matplotlib.pyplot as plt
         if stylesheet in plt.style.available:
@@ -3040,12 +3053,11 @@ class Graphics(WithEqualityById, SageObject):
             # Make the zero tick labels disappear if the axes cross
             # inside the picture, but only if log scale is not used
             if (xmiddle and ymiddle and xscale == 'linear' == yscale):
-                from sage.plot.plot import SelectiveFormatter
-                subplot.yaxis.set_major_formatter(SelectiveFormatter(
-                    subplot.yaxis.get_major_formatter(), skip_values=[0]))
-                subplot.xaxis.set_major_formatter(SelectiveFormatter(
-                    subplot.xaxis.get_major_formatter(), skip_values=[0]))
-
+                ## get the ticks, which are the numeric location of the ticks, and eliminate 0 from them
+                if type(ticks[0]) is not list:
+                    subplot.set_xticks([i for i in subplot.get_xticks() if i != 0][1:-1])
+                if type(ticks[1]) is not list:
+                    subplot.set_yticks([i for i in subplot.get_yticks() if i != 0][1:-1])
         else:
             for spine in subplot.spines.values():
                 spine.set_visible(False)
