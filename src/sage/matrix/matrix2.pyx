@@ -19297,7 +19297,7 @@ cdef class Matrix(Matrix1):
 
             sage: degrees = 3  # default in above constructions
             sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1)
-                                              for i in range(E.nrows())]
+            ....:                             for i in range(E.nrows())]
             sage: rows
             [(0, 0, 0),
              (1, 0, 1),
@@ -19714,7 +19714,7 @@ cdef class Matrix(Matrix1):
             sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
             sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
             sage: K = E.krylov_matrix(M)
-            sage: K[:,:6]
+            sage: K[:6,:]
             [27 49 29]
             [50 58  0]
             [77 10 29]
@@ -19731,9 +19731,9 @@ cdef class Matrix(Matrix1):
         The above matrix `K` indeed has row rank profile `(0, 1, 3)`, meaning
         here that the third row of `E` is dependent on its two first rows::
 
-            sage: E.row_pivots() == (0, 1)
+            sage: E.pivot_rows() == (0, 1)
             True
-            sage: K.row_pivots() == (0, 1, 3)
+            sage: K.pivot_rows() == (0, 1, 3)
             True
 
         Observe also how the output row information relates the basis to the
@@ -19741,7 +19741,7 @@ cdef class Matrix(Matrix1):
 
             sage: degrees = 3  # default == self.ncols()
             sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1)
-                                              for i in range(E.nrows())]
+            ....:                             for i in range(E.nrows())]
             sage: rows[:6]
             [(0, 0, 0),
              (1, 0, 1),
