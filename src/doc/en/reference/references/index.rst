@@ -5251,6 +5251,9 @@ REFERENCES:
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
 
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+             PhD thesis, University of Waterloo, 2023.
+
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
               Electron. J. Combin. **26** (2019), no. 2, Paper 2.27, 29 pp.
               https://www.combinatorics.org/ojs/index.php/eljc/article/view/v26i2p27,
@@ -6924,6 +6927,9 @@ REFERENCES:
 .. [WFYTP2008] \D. Watanable, S. Furuya, H. Yoshida, K. Takaragi, and B. Preneel,
                *A new keystream generator MUGI*; in
                FSE, (2002), pp. 179-194.
+
+.. [Wes2022] \B. Wesolowski. 2022. *Computing isogenies between finite Drinfeld modules*.
+             Cryptology ePrint Archive, Paper 2022/438. https://eprint.iacr.org/2022/438
 
 .. [Whi1932] \H. Whitney, *Congruent graphs and the connectivity of graphs*,
              American Journal of Mathematics,
