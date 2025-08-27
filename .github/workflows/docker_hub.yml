@@ -31,7 +31,7 @@ jobs:
         continue-on-error: true
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set tag
         # docker/metadata-action@v4 is not used since we need to distinguish
