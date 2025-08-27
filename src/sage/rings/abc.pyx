@@ -418,7 +418,7 @@ class Order:
     pass
 
 
-class pAdicRing(CommutativeRing):
+class pAdicRing(Parent):
     r"""
     Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicRingGeneric`.
 
@@ -472,7 +472,7 @@ class pAdicField(Field):
     pass
 
 
-cdef class SymbolicRing(CommutativeRing):
+cdef class SymbolicRing(Parent):
     r"""
     Abstract base class for :class:`~sage.rings.symbolic.ring.SymbolicRing`.
 
