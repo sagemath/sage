@@ -22,7 +22,6 @@ TESTS::
 
 from sage.algebras.weyl_algebra import DifferentialWeylAlgebra
 from sage.categories.cartesian_product import cartesian_product
-from sage.categories.action import Action
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.partition import Partitions, Partition
 from sage.combinat.sf.sf import SymmetricFunctions
@@ -30,6 +29,7 @@ from sage.data_structures.stream import Stream_function, Stream_cauchy_compose
 from sage.functions.other import factorial
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_function, cached_method
+from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.rings.infinity import PlusInfinity
 from sage.rings.integer_ring import ZZ
@@ -38,7 +38,10 @@ from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.structure.element import MonoidElement
+from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class FermionicFockSpace(CombinatorialFreeModule):
@@ -65,8 +68,8 @@ class FermionicFockSpace(CombinatorialFreeModule):
         return '|' + str(m[0]) + ', ' + str(m[1]) + '>'
 
 
-def BosonicFockSpace(names=('w',)):
-    return LaurentPolynomialRing(SymmetricFunctions(QQ).s(), names=names)
+def BosonicFockSpace(R=SymmetricFunctions(QQ).s(), names=('w',)):
+    return LaurentPolynomialRing(R, names=names)
 
 
 def BFMap():
@@ -230,7 +233,7 @@ class HalfVertexOperator():
         raise ValueError("Invalid input")
 
 
-class AbstractVertexOperator(SageObject):
+class AbstractVertexOperator(MonoidElement):
     """
     Abstract class for Vertex Operators
     """
@@ -239,10 +242,13 @@ class AbstractVertexOperator(SageObject):
         Initialize ``self``.
         """
         self.fockspace = fockspace  # TODO: Check input validity
-        pass
+        super().__init__(VertexOperatorMonoid(fockspace))
 
     @abstract_method
     def matrix_coefficient(self, bra, ket): pass
+
+    def _mul_(self, V):
+        return ProductOfVertexOperators([self, V])
 
 
 class VertexOperator(AbstractVertexOperator):
@@ -376,22 +382,10 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         r"""
         Initialize ``self``.
         """
-        self.vertex_ops = vertex_ops
 
+        self.vertex_ops = flatten(vertex_ops)
         assert all(op.fockspace is vertex_ops[0].fockspace for op in self.vertex_ops)
         self._num_ops = len(vertex_ops)
-
-        """
-        TODO: Figure out a way to define these properly. The problem is that you sort
-        of need to know the intermediate valuations before you compute what they need to be.
-        """
-        # self._spectral = [0]*self._num_ops
-        # self._spectral[0] = LazyLaurentSeriesRing(vertex_ops[0].fockspace, names=('z1'))
-        # for i in range(1, self._num_ops):
-        #     self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i-1], names=('z'+str(i+1)))
-        # self._spectral[-1] = LazyLaurentSeriesRing(vertex_ops[-1].fockspace, names=('z' + str(len(vertex_ops))))
-        # for i in range(len(vertex_ops)-2, -1, -1):
-        #     self._spectral[i] = LazyLaurentSeriesRing(self._spectral[i+1], names=('z'+str(i+1)))
         super().__init__(self.vertex_ops[0].fockspace)
 
     def act_on(self, mon, x):
@@ -525,6 +519,10 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         """
         return self.matrix_coefficient(([], 0), ([], 0), cutoff)
 
+    # TODO: think of a better way to meaningfully represent the product without way too much text.
+    def _repr_(self):
+        return "Product of " + str(self.vertex_ops)[1:-1]
+
 
 class CreationOperator(VertexOperator):
     r"""
@@ -650,12 +648,12 @@ class CreationOperator(VertexOperator):
 
             sage: from sage.algebras.vertex_operators import *
             sage: V = CreationOperator(BosonicFockSpace()); V
-            The Creation Vertex Operator acting on Univariate Laurent
+            Creation Vertex Operator acting on Univariate Laurent
             Polynomial Ring in w over Symmetric Functions over Rational Field
             in the Schur basis
 
         """
-        return f"The Creation Vertex Operator acting on {self.fockspace}"
+        return f"Creation Vertex Operator acting on {self.fockspace}"
 
 
 class AnnihilationOperator(VertexOperator):
@@ -750,9 +748,21 @@ class AnnihilationOperator(VertexOperator):
 
             sage: from sage.algebras.vertex_operators import *
             sage: V = AnnihilationOperator(BosonicFockSpace()); V
-            The Annihilation Vertex Operator acting on Univariate Laurent
+            Annihilation Vertex Operator acting on Univariate Laurent
             Polynomial Ring in w over Symmetric Functions over Rational Field
             in the Schur basis
 
         """
-        return f"The Annihilation Vertex Operator acting on {self.fockspace}"
+        return f"Annihilation Vertex Operator acting on {self.fockspace}"
+
+
+class VertexOperatorMonoid(Parent, UniqueRepresentation):
+    def __init__(self, fockspace):
+        self.fockspace = fockspace
+        super().__init__()
+
+    def _element_constructor_(self, x):
+        if isinstance(x, AbstractVertexOperator):
+            return self.element_class(self, x)
+
+    Element = AbstractVertexOperator
