@@ -167,7 +167,7 @@ class DrinfeldModuleHomset(Homset):
     The domain and codomain must have the same Drinfeld modules
     category::
 
-        sage: rho = DrinfeldModule(A, [Frac(A)(T), 1])
+        sage: rho = DrinfeldModule(A, [T, 1])
         sage: Hom(phi, rho)
         Traceback (most recent call last):
         ...
