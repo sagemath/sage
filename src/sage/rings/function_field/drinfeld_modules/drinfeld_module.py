@@ -513,8 +513,8 @@ class DrinfeldModule(Parent, UniqueRepresentation):
     @staticmethod
     def __classcall_private__(cls, function_ring, gen, A_field=None, name='τ'):
         """
-        Check input validity and return a ``DrinfeldModule`` or
-        ``DrinfeldModule_finite`` object accordingly.
+        Check input validity and return an instance of the
+        appropriate class.
 
         INPUT:
 
@@ -530,8 +530,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
 
         - ``name`` -- (default: ``'τ'``) the name of the variable of
           the Ore polynomial
-
-        OUTPUT: a DrinfeldModule or DrinfeldModule_finite
 
         TESTS::
 
@@ -550,7 +548,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
             sage: isinstance(psi, DrinfeldModule_finite)
             False
         """
-
         # FIXME: function_ring must be checked before calling base_ring
         # on it. But then it is checked twice: firstly here, secondly in
         # the category. Another problem is that those lines are
@@ -1188,6 +1185,23 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         return self._gen.coefficients(sparse=sparse)
 
     def change_Afield(self, A_field):
+        r"""
+        Return this Drinfeld module viewed over another
+        `A`-field.
+
+        EXAMPLES::
+
+            sage: Fq = GF(5)
+            sage: A.<T> = Fq[]
+            sage: K.<z> = Fq.extension(2)
+            sage: phi = DrinfeldModule(A, [z, z+1, z+2])
+            sage: phi
+            Drinfeld module defined by T |--> (z + 2)*τ^2 + (z + 1)*τ + z
+
+            sage: L = K.extension(2)
+            sage: phi.change_Afield(L)
+            Drinfeld module defined by T |--> (z4^3 + z4^2 + z4)*τ^2 + (z4^3 + z4^2 + z4 + 4)*τ + z4^3 + z4^2 + z4 + 3
+        """
         return DrinfeldModule(self._function_ring, self._gen, A_field=A_field)
 
     def gen(self):
