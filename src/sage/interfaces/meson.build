@@ -21,6 +21,7 @@ py.install_sources(
   'jmoldata.py',
   'kash.py',
   'kenzo.py',
+  'khoca.py',
   'latte.py',
   'lie.py',
   'lisp.py',

@@ -38,7 +38,7 @@ lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
 lazy_import('sage.interfaces.magma', 'magma')
 
 
-def genera(sig_pair, determinant, max_scale=None, even=False):
+def genera(sig_pair, determinant, max_scale=None, even=False) -> list:
     r"""
     Return a list of all global genera with the given conditions.
 
@@ -51,7 +51,7 @@ def genera(sig_pair, determinant, max_scale=None, even=False):
     - ``determinant`` -- integer; the sign is ignored
 
     - ``max_scale`` -- (default: ``None``) an integer; the maximum scale of a
-      jordan block
+      Jordan block
 
     - ``even`` -- boolean (default: ``False``)
 
@@ -139,7 +139,7 @@ def _local_genera(p, rank, det_val, max_scale, even):
 
     - ``det_val`` -- valuation of the determinant at `p`
 
-    - ``max_scale`` -- integer the maximal scale of a jordan block
+    - ``max_scale`` -- integer the maximal scale of a Jordan block
 
     - ``even`` -- boolean; ignored if `p` is not `2`
 
@@ -225,7 +225,7 @@ def _local_genera(p, rank, det_val, max_scale, even):
 
 def _blocks(b, even_only=False):
     r"""
-    Return all viable `2`-adic jordan blocks with rank and scale given by ``b``.
+    Return all viable `2`-adic Jordan blocks with rank and scale given by ``b``.
 
     This is a helper function for :meth:`_local_genera`.
     It is based on the existence conditions for a modular `2`-adic genus symbol.
@@ -589,23 +589,22 @@ def canonical_2_adic_compartments(genus_symbol_quintuple_list):
     return compartments
 
 
-def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
+def canonical_2_adic_trains(genus_symbol_quintuple_list) -> list:
     r"""
-    Given a `2`-adic local symbol (as the underlying list of quintuples)
-    this returns a list of lists of indices of the
-    ``genus_symbol_quintuple_list`` which are in the same train.  A train
-    is defined to be a maximal interval of Jordan components so that
-    at least one of each adjacent pair (allowing zero-dimensional
-    Jordan components) is (scaled) of type I (i.e. odd).
-    Note that an interval of length one respects this condition as
-    there is no pair in this interval.
+    Given a `2`-adic local symbol, return a list of lists of indices
+    of the ``genus_symbol_quintuple_list`` which are in the same train.
+
+    A train is defined to be a maximal interval of Jordan components
+    so that at least one of each adjacent pair (allowing
+    zero-dimensional Jordan components) is (scaled) of type I
+    (i.e. odd).  Note that an interval of length one respects this
+    condition as there is no pair in this interval.
     In particular, every Jordan component is part of a train.
 
     INPUT:
 
-    - ``genus_symbol_quintuple_list`` -- a quintuple of integers (with certain
-      restrictions).
-    - ``compartments`` -- this argument is deprecated
+    - ``genus_symbol_quintuple_list`` -- a `2`-adic local symbol as a list of
+      quintuples of integers (with certain restrictions).
 
     OUTPUT: list of lists of distinct integers
 
@@ -654,12 +653,8 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
 
         See [CS1999]_, pp. 381-382 for definitions and examples.
     """
-    if compartments is not None:
-        from sage.misc.superseded import deprecation
-        deprecation(23955, "the compartments keyword has been deprecated")
-
     # avoid a special case for the end of symbol
-    # if a jordan component has rank zero it is considered even.
+    # if a Jordan component has rank zero it is considered even.
     symbol = genus_symbol_quintuple_list
     symbol.append([symbol[-1][0]+1, 0, 1, 0, 0])  # We have just modified the input globally!
     # Hence, we have to remove the last entry of symbol at the end.
@@ -680,7 +675,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
                 trains.append(new_train)
                 new_train = [i]
             else:
-                # there is an odd jordan block adjacent to this jordan block
+                # there is an odd Jordan block adjacent to this Jordan block
                 # the train continues
                 new_train.append(i)
         # the last train was never added.
@@ -3318,7 +3313,7 @@ class GenusSymbol_global_ring:
 
 def _gram_from_jordan_block(p, block, discr_form=False):
     r"""
-    Return the Gram matrix of this jordan block.
+    Return the Gram matrix of this Jordan block.
 
     This is a helper for :meth:`discriminant_form` and :meth:`gram_matrix`.
     No input checks.

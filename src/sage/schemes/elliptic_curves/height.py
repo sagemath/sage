@@ -627,14 +627,15 @@ def min_on_disk(f, tol, max_iter=10000):
 
             fs = f(s)
 
-            if fs.upper() < min_max: # we definitely beat the record
+            if fs.upper() < min_max:  # we definitely beat the record
                 min_max = fs.upper()
                 unneeded = bisect.bisect(L, (-min_max,))
                 if unneeded > 100:   # discard the worse entries (if there are many)
                     L = L[unneeded:]
 
-            if fs.lower() < min_max: # we may beat the record, cannot yet tell: insert this region
-                                     # into the list at the appropriate place to maintain sorting
+            if fs.lower() < min_max:
+                # we may beat the record, cannot yet tell: insert this region
+                # into the list at the appropriate place to maintain sorting
                 bisect.insort(L, (-fs.lower(), fs.relative_diameter(), s, s_in_disk))
 
     # If we get here, then even after max_iter iterations the tolerance has not been reached.

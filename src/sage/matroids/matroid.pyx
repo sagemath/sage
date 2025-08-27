@@ -348,7 +348,7 @@ from itertools import combinations, product
 from sage.matrix.constructor import matrix
 from sage.misc.lazy_import import LazyImport
 from sage.misc.prandom import shuffle
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 from sage.rings.integer_ring import ZZ
 from sage.structure.richcmp cimport rich_to_bool, richcmp
 from sage.structure.sage_object cimport SageObject
@@ -4217,9 +4217,6 @@ cdef class Matroid(SageObject):
         one. It can be shown that the resulting matroid does not depend on the
         order of the deletions.
 
-        DEPRECATED: Sage supports the shortcut notation ``M \ X`` for
-        ``M.delete(X)``.
-
         INPUT:
 
         - ``X`` -- either a single element of the groundset, or a collection
@@ -4267,23 +4264,6 @@ cdef class Matroid(SageObject):
             ['a', 'b', 'c']
         """
         return self.minor(deletions=X)
-
-    cpdef _backslash_(self, X):
-        r"""
-        Shorthand for ``self.delete(X)``.
-
-        Deprecated.
-
-        EXAMPLES::
-
-            sage: M = matroids.CompleteGraphic(4)                                       # needs sage.graphs
-            sage: M.delete(1) == M \ 1  # indirect doctest                              # needs sage.graphs
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use M.delete(X) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use M.delete(X) instead')
-        return self.delete(X)
 
     cpdef dual(self):
         r"""

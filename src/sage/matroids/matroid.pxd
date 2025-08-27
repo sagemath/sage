@@ -148,7 +148,6 @@ cdef class Matroid(SageObject):
     cpdef minor(self, contractions=*, deletions=*)
     cpdef contract(self, X)
     cpdef delete(self, X)
-    cpdef _backslash_(self, X)
     cpdef dual(self)
     cpdef truncation(self)
     cpdef has_minor(self, N, bint certificate=*)

@@ -541,7 +541,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         sage: forget()
         sage: y = function('y')(x)
         sage: desolve(diff(y, x) == sqrt(abs(y)), dvar=y, ivar=x)
-        integrate(1/sqrt(abs(y(x))), y(x)) == _C + x
+        sqrt(-y(x))*(sgn(y(x)) - 1) + (sgn(y(x)) + 1)*sqrt(y(x)) == _C + x
 
     AUTHORS:
 

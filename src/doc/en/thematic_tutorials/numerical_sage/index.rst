@@ -11,6 +11,8 @@ Numerical Computing with Sage
 
     Beware that this document may be obsolete.
 
+.. MODULEAUTHOR:: Josh Kantor (2008)
+
 This document is designed to introduce the reader to the tools in Sage
 that are useful for doing numerical computation. By numerical
 computation we essentially mean machine precision floating point
