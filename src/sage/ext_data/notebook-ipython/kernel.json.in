@@ -6,6 +6,6 @@
     "-f",
     "{connection_file}"
   ],
-  "display_name": "SageMath @SAGE_VERSION@",
+  "display_name": "SageMath @PACKAGE_VERSION@",
   "language": "sage"
 }

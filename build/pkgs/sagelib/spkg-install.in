@@ -54,6 +54,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
         cd $SAGE_PKGS/sagelib/src && time sdh_build_and_store_wheel --no-build-isolation .
     fi
+    jupyter kernelspec install --name=sagemath --sys-prefix $SAGE_LOCAL/share/notebook
 else
     # Now implied: "$SAGE_WHEELS" = yes
     # We should remove the egg-link that may have been installed previously.
