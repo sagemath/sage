@@ -233,7 +233,7 @@ class HalfVertexOperator():
         raise ValueError("Invalid input")
 
 
-class AbstractVertexOperator(MonoidElement):
+class AbstractVertexOperator(SageObject):
     """
     Abstract class for Vertex Operators
     """
@@ -242,12 +242,13 @@ class AbstractVertexOperator(MonoidElement):
         Initialize ``self``.
         """
         self.fockspace = fockspace  # TODO: Check input validity
-        super().__init__(VertexOperatorMonoid(fockspace))
+        super().__init__()
+        # super().__init__(VertexOperatorMonoid(fockspace))
 
     @abstract_method
     def matrix_coefficient(self, bra, ket): pass
 
-    def _mul_(self, V):
+    def __mul__(self, V):
         return ProductOfVertexOperators([self, V])
 
 
@@ -756,13 +757,14 @@ class AnnihilationOperator(VertexOperator):
         return f"Annihilation Vertex Operator acting on {self.fockspace}"
 
 
-class VertexOperatorMonoid(Parent, UniqueRepresentation):
-    def __init__(self, fockspace):
-        self.fockspace = fockspace
-        super().__init__()
+# class VertexOperatorMonoid(Parent, UniqueRepresentation):
+#     def __init__(self, fockspace):
+#         from sage.categories.monoids import Monoids
+#         self.fockspace = fockspace
+#         super().__init__(category=Monoids())
 
-    def _element_constructor_(self, x):
-        if isinstance(x, AbstractVertexOperator):
-            return self.element_class(self, x)
+#     def _element_constructor_(self, x):
+#         if isinstance(x, AbstractVertexOperator):
+#             return self.element_class(self, x)
 
-    Element = AbstractVertexOperator
+#     Element = AbstractVertexOperator
