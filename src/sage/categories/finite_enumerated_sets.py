@@ -525,7 +525,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 return
 
             T = RealDistribution('chisquared', n-1)
-            critical = T.cum_distribution_function_inv(0.95)
+            critical = T.cum_distribution_function_inv(0.99)
             if critical.is_NaN():
                 # the cardinality is too large
                 return
