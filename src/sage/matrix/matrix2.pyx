@@ -19239,7 +19239,7 @@ cdef class Matrix(Matrix1):
             \end{bmatrix} .
 
         Other shifts will yield some row permutation of the latter matrix (see
-        [BL2000]_ and [JNSV2017]_).
+        [BecLab2000]_ and [JNSV2017]_).
 
         INPUT:
 
@@ -19849,29 +19849,120 @@ cdef class Matrix(Matrix1):
 
     def krylov_kernel_basis(self, M, shifts=None, degrees=None, var=None):
         r"""
+        Return a Krylov kernel basis for (``self``,``M``) in canonical
+        form, depending on the row priority defined by ``shifts``.
+
+        Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
+        basis `B` as computed by :meth:`krylov_basis` with the same parameters
+        `M`, ``shifts``, and ``degrees``. Let `[\delta_0,\ldots,\delta_{m-1}]`
+        be the exponents of first linear dependency for each row. That is, if
+        the row `E_{i,:}` has not been selected for appearing in `B` then
+        `\delta_i = 0`, and otherwise, `delta_i` is such that `E_{i,:} \cdot
+        M^{\delta_i-1}` has been selected for `B` but `E_{i,:} \cdot
+        M^{\delta_i}` has not. (These integers are also easily deduced from the
+        output triplets of :meth:`krylov_basis`.)
+
+        The returned matrix `K` is a basis, in reduced row echelon form, of the
+        left nullspace of the Krylov matrix built from `E` and `M` with
+        ``shifts`` and ``degrees`` equal to `[\delta_0,\ldots,\delta_{m-1}]`.
+        Recall from :meth:`krylov_matrix`` that this matrix is, up to a row
+        permutation indicated by ``shifts``, equal to
+
+        .. MATH::
+
+            \begin{bmatrix}
+                B \\
+                E_{0,:} M^{\delta_0} \\
+                \vdots \\
+                E_{m-1,:} M^{\delta_{m-1}}
+            \end{bmatrix}.
+
+        Since `B` has full row rank `r`, this kernel basis `K` has `m` rows and
+        `m+r` columns (where `r \le n`), and has rank `m`. Thanks to the module
+        structure underlying Krylov matrices, from the matrix `K` one can
+        deduce for free (up to copying rows and shifting coefficients to the
+        right) a basis of the left kernel bases for Krylov matrices that would
+        be built from the same `E`, `M`, and ``shifts``, but with larger
+        degrees, that is `[d_0,\ldots,d_{m-1}]` with `d_i \ge \delta_i` for all
+        `i`.
+
+        This matrix `K` can also be represented as a nonsingular univariate
+        polynomial matrix of size `m \times m` in ``shifts``-Popov form (see
+        :meth:`sage.matrix.matrix_polynomial_dense.popov_form` for
+        definitions). This is provided as an option via the input ``var``.
+
+        .. WARNING::
+
+            The requirements of :meth:`krylov_basis` on the input ``degrees``
+            also apply here: if they are not met, the behaviour of this
+            method is undefined.
+
+        REFERENCES:
+
+        [Kai1980]_ (Section 6.7), [BecLab2000]_ , and [JNSV2017]_ (Section 7).
+
+        INPUT:
+
+        - ``M`` -- a square matrix of size equal to the number of columns of
+          ``self``.
+        - ``shifts`` -- list of ``self.nrows()`` integers (optional): row
+          priority shifts. If ``None``, defaults to all zeroes.
+        - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
+          (optional). The `i`-th entry ``degrees[i]`` indicates that
+          ``self[i,:] * M**degrees[i]`` is known to be dependent on rows before
+          it in the ``shifts``-ordered Krylov matrix. If ``None``, defaults to
+          ``self.ncols()`` for all rows. Giving a single integer for
+          ``degrees`` is equivalent to giving a list with this integer repeated
+          ``self.nrows()`` times.
+        - ``var`` -- (optional) variable name for the returned univariate
+          polynomial matrix, which is square of size `m \times m`, where `m` is
+          ``self.nrows()``. If ``None``, the default is to return a constant `m
+          \times (m (d+1))` matrix which is the horizontal concatenation of the
+          `d+1` coefficient matrices of this polynomial matrix of degree `d`.
+
+        OUTPUT:
+
+        If ``var`` is ``None``, a ``self.nrows() x self.nrows()`` matrix ``P``
+        in ``shifts``-Popov form. Otherwise, the corresponding ``self.nrows()
+        x (self.nrows() * (P.degree()+1))`` matrix ``C`` where ``P[i,j][k] ==
+        C[i,m*k+j]``.
+
+        .. SEEALSO::
+
+            :meth:`krylov_basis` computes a basis of the Krylov subspace of
+            ``self`` and `M`; :meth:`krylov_matrix` computes the Krylov matrix
+            (without discarding linearly redundant rows) of ``self`` and `M`.
+
         EXAMPLES::
 
             sage: R = GF(97)
             sage: E = matrix(R,[[27,49,29],[50,58,0],[77,10,29]])
-            sage: E
-            [27 49 29]
-            [50 58  0]
-            [77 10 29]
             sage: M = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
-            sage: M
-            [0 1 0]
-            [0 0 1]
-            [0 0 0]
-            sage: E.krylov_kernel_basis(M,var='x')
+
+        This example corresponds to computing a basis of Hermite-Padé
+        approximants::
+
+            sage: P = E.krylov_kernel_basis(M, var='x')
             [x^2 + 40*x + 82              76               0]
             [       3*x + 13          x + 57               0]
             [             96              96               1]
+            sage: xring.<x> = P.base_ring()
+            sage: F = E * matrix(xring, [[1], [x], [x**2]])
+            sage: P == F.minimal_approximant_basis(3, normal_form=True)
+            True
+
+        Instead of a univariate polynomial matrix, one can also obtain a
+        constant matrix representing the same kernel elements::
+
             sage: E.krylov_kernel_basis(M)
             [82 76  0 40  0  0  1  0  0]
             [13 57  0  3  1  0  0  0  0]
             [96 96  1  0  0  0  0  0  0]
+
+        Other shifts will lead to different kernel bases::
+
             sage: shifts = [0,3,6]
-            sage: E.krylov_kernel_basis(M,shifts=shifts,var='x')
+            sage: E.krylov_kernel_basis(M, shifts=shifts, var='x')
             [               x^3                  0                  0]
             [60*x^2 + 72*x + 70                  1                  0]
             [60*x^2 + 72*x + 69                  0                  1]
@@ -19879,12 +19970,13 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  0  0  0  0  0  0  1  0  0]
             [70  1  0 72  0  0 60  0  0  0  0  0]
             [69  0  1 72  0  0 60  0  0  0  0  0]
+
             sage: shifts = [3,0,2]
-            sage: E.krylov_kernel_basis(M,shifts=shifts,var='x')
+            sage: E.krylov_kernel_basis(M, shifts=shifts, var='x')
             [                 1 26*x^2 + 49*x + 79                  0]
             [                 0                x^3                  0]
             [                 0 26*x^2 + 49*x + 78                  1]
-            sage: E.krylov_kernel_basis(M,shifts=shifts)
+            sage: E.krylov_kernel_basis(M, shifts=shifts)
             [ 1 79  0  0 49  0  0 26  0  0  0  0]
             [ 0  0  0  0  0  0  0  0  0  0  1  0]
             [ 0 78  1  0 49  0  0 26  0  0  0  0]
@@ -19892,9 +19984,9 @@ cdef class Matrix(Matrix1):
         TESTS::
 
             sage: R = GF(97)
-            sage: E = matrix(R,[[27,49,29],[50,58,0],[77,10,29]])
-            sage: M = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
-            sage: basis = E.krylov_kernel_basis(M,var='x')
+            sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
+            sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
+            sage: basis = E.krylov_kernel_basis(M, var='x')
             sage: basis_coeff = E.krylov_kernel_basis(M)
             sage: matrix.block([[basis.coefficient_matrix(i) for i in range(basis.degree()+1)]]) == basis_coeff
             True
