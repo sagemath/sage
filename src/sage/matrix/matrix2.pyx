@@ -19220,8 +19220,9 @@ cdef class Matrix(Matrix1):
                 E M^d
             \end{bmatrix} .
 
-        Another classical case is when ``shifts`` is
-        `[d_0,d_0+d_1,\ldots,d_0+\cdots+d_{m-1}]`: then the Krylov matrix is
+        Another classical case is when ``shifts`` is `[0,k,2k,\ldots,(m-1)k]`
+        for a large `k` such as `k = d_0+\cdots+d_{m-1}`: then the Krylov
+        matrix is
 
         .. MATH::
 
@@ -19237,21 +19238,22 @@ cdef class Matrix(Matrix1):
                 E_{m-1,*} M^{d_{m-1}}
             \end{bmatrix} .
 
-        Other shifts will give rise to some row permutation of the latter
-        matrix (see [BL2000]_ and [JNSV2017]_).
+        Other shifts will yield some row permutation of the latter matrix (see
+        [BL2000]_ and [JNSV2017]_).
 
         INPUT:
 
         - ``M`` -- a square matrix of size equal to the number of columns of
           ``self``.
         - ``shifts`` -- list of ``self.nrows()`` integers (optional), row
-          priority shifts. Defaults to all zeroes.
-        - ``degrees`` -- list of ``self.nrows()`` integers (optional), the
-          `i`-th entry ``degrees[i]`` indicating the number of Krylov iterates
-          to appear in the output (that is, ``self[i,:] * M**j`` will appear
-          for `j` up to ``degrees[i]``, included). Defaults to ``self.ncols()``
-          for all rows. Giving a single integer for ``degrees`` is equivalent
-          to giving a list with this integer repeated ``self.nrows()`` times.
+          priority shifts.  If ``None``, defaults to all zeroes.
+        - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
+          (optional). The `i`-th entry ``degrees[i]`` indicates the number of
+          Krylov iterates to appear in the output (that is, ``self[i,:] *
+          M**j`` will appear for `j` up to ``degrees[i]``, included). If
+          ``None``, defaults to ``self.ncols()`` for all rows. Giving a single
+          integer for ``degrees`` is equivalent to giving a list with this
+          integer repeated ``self.nrows()`` times.
 
         OUTPUT:
 
@@ -19261,18 +19263,18 @@ cdef class Matrix(Matrix1):
         .. SEEALSO::
 
             :meth:`krylov_basis` computes a basis of the row space of the
-            Krylov matrix, whereas :meth:`krylov_kernel_basis` computes a
+            Krylov matrix; whereas :meth:`krylov_kernel_basis` computes a
             compact representation of its left kernel.
 
         EXAMPLES::
 
             sage: R = GF(97)
-            sage: E = matrix(R,[[27,49,29],[50,58,0],[77,10,29]])
+            sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
             sage: E
             [27 49 29]
             [50 58  0]
             [77 10 29]
-            sage: M = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
+            sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
             sage: M
             [0 1 0]
             [0 0 1]
@@ -19290,7 +19292,45 @@ cdef class Matrix(Matrix1):
             [ 0  0  0]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.krylov_matrix(M,[0,3,6])
+
+        Row ordering for the zero shift::
+
+            sage: degrees = 3  # default in above constructions
+            sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1)
+                                              for i in range(E.nrows())]
+            sage: rows
+            [(0, 0, 0),
+             (1, 0, 1),
+             (2, 0, 2),
+             (0, 1, 3),
+             (1, 1, 4),
+             (2, 1, 5),
+             (0, 2, 6),
+             (1, 2, 7),
+             (2, 2, 8),
+             (0, 3, 9),
+             (1, 3, 10),
+             (2, 3, 11)]
+
+        Trying the other above-mentioned classical shift::
+
+            sage: shifts = [0,3,6]
+            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
+            sage: rows
+            [(0, 0, 0),
+             (0, 1, 3),
+             (0, 2, 6),
+             (0, 3, 9),
+             (1, 0, 1),
+             (1, 1, 4),
+             (1, 2, 7),
+             (1, 3, 10),
+             (2, 0, 2),
+             (2, 1, 5),
+             (2, 2, 8),
+             (2, 3, 11)]
+
+            sage: E.krylov_matrix(M, shifts)
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27]
@@ -19303,7 +19343,27 @@ cdef class Matrix(Matrix1):
             [ 0 77 10]
             [ 0  0 77]
             [ 0  0  0]
-            sage: E.krylov_matrix(M,[3,0,2])
+
+
+        With another shift::
+
+            sage: shifts = [3,0,2]
+            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
+            sage: rows
+            [(1, 0, 1),
+             (1, 1, 4),
+             (1, 2, 7),
+             (2, 0, 2),
+             (0, 0, 0),
+             (1, 3, 10),
+             (2, 1, 5),
+             (0, 1, 3),
+             (2, 2, 8),
+             (0, 2, 6),
+             (2, 3, 11),
+             (0, 3, 9)]
+
+            sage: E.krylov_matrix(M, shifts)
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50]
@@ -19316,7 +19376,10 @@ cdef class Matrix(Matrix1):
             [ 0  0 27]
             [ 0  0  0]
             [ 0  0  0]
-            sage: E.krylov_matrix(M,[3,0,2],[0,2,1])
+
+        Specifying degree bounds via ``degrees``::
+
+            sage: E.krylov_matrix(M, shifts, degrees=[0,2,1])
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50]
@@ -19575,169 +19638,160 @@ cdef class Matrix(Matrix1):
 
     def krylov_basis(self, M, shifts=None, degrees=None, output_rows=True, algorithm=None):
         r"""
-        Compute the rank profile (row and column) of the block Krylov matrix
-        built from ``self`` and matrix ``M``.
+        Return the matrix `B` formed by stacking the first `r` linearly
+        independent row vectors `E_{i,:} \cdot M^j`, for `0 \le i < m` and `j
+        \ge 0` when they are ordered according to ``shifts``. Here `E` is the
+        input `m \times n` matrix, `M` is a square `n \times n` matrix, and `r`
+        is dimension of Krylov subspace of ``self`` and `M`, that is, the span
+        of all the above row vectors.
+
+        A list ``degrees`` of integers `[d_0,\ldots,d_{m-1}]` can be provided
+        to indicate known maximal exponents: `E_{k,*} \cdot M^{d_k-1}` may
+        appear in the output basis, but `E_{k,*} \cdot M^{d_k-1}` will not. In
+        other words, `E_{k,*} \cdot M^{d_k}` is known to linearly depend on the
+        set of row vectors `E_{i,*} \cdot M^{j}` that appear before it
+        according to the order defined by ``shifts``. It is always valid to
+        take ``degrees`` as `[d, \ldots, d]` where `d` is the degree of the
+        minimal polynomial of `M`. By default, the implementation takes
+        ``degrees`` as `[n, \ldots, n]`.
+
+        This method incidentally computes the column rank profile (as returned
+        by :meth:`pivots`) of its output matrix, and so, it is cached in the
+        output for faster future access.
+
+        By default, the method also returns information that relate the
+        computed basis rows to the corresponding rows in the Krylov matrix `K`
+        as if built with :meth:`krylov_matrix` with the same parameters.
+        Specifically, for each row of the output, this gives its position in
+        `K` (thus forming the row rank profile of `K`), as well as pairs `i, j`
+        indicating that the row is `E_{i,*} \cdot M^{j}`.
 
         .. WARNING::
 
-            If the degree bounds are not true upper bounds, no guarantees are
-            made on the value of the output, including whether it is consistent
-            between different algorithms. An upper bound `\delta_i` on the row
-            `i` is such that for every `j > \delta_i`, `E_{i,*}M^j` is
-            dependent on the rows before it in an "infinite" Krylov matrix.
-            `self.ncols()` is known to always be an upper bound.
+            In the case where degrees are provided and do not satisfy the above
+            requirements, no guarantees are provided on the value of the output,
+            including whether it is consistent between the different algorithms.
 
         INPUT:
 
-        - ``M`` -- square matrix used in the Krylov construction.
-        - ``shifts`` -- list of ``self.nrows()`` integers (optional): priority
-          row shifts. If ``None``, defaults to all zeroes.
-        - ``degrees`` -- an upper bound or list of ``self.nrows()`` upper bounds
-          on the power of ``M`` for each row in ``self`` in the
-          ``krylov_basis`` of ``M`` in Krylov matrix. If None, a suitable upper
-          bound of ``self.ncols()`` is default for all rows.
-        - ``output_rows`` -- determines whether the indices of the rows
-          returned are also provided.
+        - ``M`` -- a square matrix of size equal to the number of columns of
+          ``self``.
+        - ``shifts`` -- list of ``self.nrows()`` integers (optional): row
+          priority shifts. If ``None``, defaults to all zeroes.
+        - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
+          (optional). The `i`-th entry ``degrees[i]`` indicates that
+          ``self[i,:] * M**degrees[j]`` is known to be dependent on rows before
+          it in the ``shifts``-ordered Krylov matrix. If ``None``, defaults to
+          ``self.ncols()`` for all rows. Giving a single integer for
+          ``degrees`` is equivalent to giving a list with this integer repeated
+          ``self.nrows()`` times.
+        - ``output_rows`` -- determines whether information relating the output
+          rows to their position in the Krylov matrix is also provided.
         - ``algorithm`` -- either 'naive', 'elimination', or None (let
           Sage choose).
 
         OUTPUT:
 
-        - ``krylov_basis``: the submatrix of the krylov matrix of ``self`` and
-          ``M`` formed by its first independent rows.
-        - ``row_profile`` (returned if ``output_rows`` is ``True``): list of the
-          ``r`` triplets ``(c,d,i)`` corresponding to the rows of the krylov
-          basis where ``i`` is the row index of the row in the krylov matrix,
-          ``c`` is the corresponding row in ``self`` and ``d`` is the
+        - `B`: submatrix formed by the first `r` independent rows of the Krylov
+          matrix of ``self`` and `M`, with `r` as above
+        - ``row_profile`` (returned if ``output_rows`` is ``True``): list of
+          the ``r`` triplets ``(i, j, k)`` corresponding to the rows of the
+          Krylov basis where ``k`` is the row index of the row in the krylov
+          matrix, ``i`` is the corresponding row in ``self`` and ``j`` is the
           corresponding power of ``M``.
 
         .. SEEALSO::
 
-            :meth:`cyclic_subspace` provides similar functionality for a single
-            vector; :meth:`krylov_matrix` computes a Krylov matrix (without
-            discarding linearly redundant rows); :meth:`krylov_kernel_basis`
-            computes a compact representation of the left kernel of a
-            Krylov matrix.
+            :meth:`cyclic_subspace` provides similar functionality for ``self``
+            consisting of a single vector; :meth:`krylov_matrix` computes a
+            Krylov matrix (without discarding linearly redundant rows);
+            :meth:`krylov_kernel_basis` computes a compact representation of
+            the left kernel of a Krylov matrix.
 
         EXAMPLES::
 
             sage: R = GF(97)
-            sage: E = matrix(R,[[27,49,29],[50,58,0],[77,10,29]])
-            sage: E
-            [27 49 29]
-            [50 58  0]
-            [77 10 29]
-            sage: M = matrix(R,[[0,1,0],[0,0,1],[0,0,0]])
-            sage: M
-            [0 1 0]
-            [0 0 1]
-            [0 0 0]
+            sage: E = matrix(R, [[27,49,29], [50,58,0], [77,10,29]])
+            sage: M = matrix(R, [[0,1,0], [0,0,1], [0,0,0]])
             sage: K = E.krylov_matrix(M)
-            sage: K
+            sage: K[:,:6]
             [27 49 29]
             [50 58  0]
             [77 10 29]
             [ 0 27 49]
             [ 0 50 58]
             [ 0 77 10]
-            [ 0  0 27]
-            [ 0  0 50]
-            [ 0  0 77]
-            [ 0  0  0]
-            [ 0  0  0]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,output_rows=True,algorithm='elimination')
+            sage: E.krylov_basis(M, output_rows=True, algorithm='elimination')
             (
             [27 49 29]
             [50 58  0]
             [ 0 27 49], ((0, 0, 0), (1, 0, 1), (0, 1, 3))
             )
 
-        Row ordering for the uniform zero shift::
+        The above matrix `K` indeed has row rank profile `(0, 1, 3)`, meaning
+        here that the third row of `E` is dependent on its two first rows::
 
-            sage: degrees = 3  # default in above constructions
-            sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1) for i in range(E.nrows())]
-            sage: rows
+            sage: E.row_pivots() == (0, 1)
+            True
+            sage: K.row_pivots() == (0, 1, 3)
+            True
+
+        Observe also how the output row information relates the basis to the
+        rows in the Krylov matrix `K`::
+
+            sage: degrees = 3  # default == self.ncols()
+            sage: rows = [(i,j,i+j*E.nrows()) for j in range(degrees+1)
+                                              for i in range(E.nrows())]
+            sage: rows[:6]
             [(0, 0, 0),
              (1, 0, 1),
              (2, 0, 2),
              (0, 1, 3),
              (1, 1, 4),
-             (2, 1, 5),
-             (0, 2, 6),
-             (1, 2, 7),
-             (2, 2, 8),
-             (0, 3, 9),
-             (1, 3, 10),
-             (2, 3, 11)]
+             (2, 1, 5)]
+
+        Now with another shift, the first three rows of the Krylov matrix are
+        independent and thus form the Krylov basis::
+
             sage: shifts = [0,3,6]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]],x[0]))
-            sage: rows
-            [(0, 0, 0),
-             (0, 1, 3),
-             (0, 2, 6),
-             (0, 3, 9),
-             (1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (1, 3, 10),
-             (2, 0, 2),
-             (2, 1, 5),
-             (2, 2, 8),
-             (2, 3, 11)]
-            sage: E.krylov_matrix(M,shifts=shifts)
+            sage: E.krylov_matrix(M, shifts=shifts)[:3,:]
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27]
-            [ 0  0  0]
-            [50 58  0]
-            [ 0 50 58]
-            [ 0  0 50]
-            [ 0  0  0]
-            [77 10 29]
-            [ 0 77 10]
-            [ 0  0 77]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,shifts=shifts,algorithm='elimination')
+            sage: E.krylov_basis(M, shifts=shifts, algorithm='naive')
             (
             [27 49 29]
             [ 0 27 49]
             [ 0  0 27], ((0, 0, 0), (0, 1, 1), (0, 2, 2))
             )
+            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
+            sage: [(i,j) for (i,j,k) in rows[:3]]
+            [(0, 0),
+             (0, 1),
+             (0, 2)]
+
+        Another shift for which the first three rows of the Krylov matrix are
+        independent::
+
             sage: shifts = [3,0,2]
-            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]],x[0]))
-            sage: rows
-            [(1, 0, 1),
-             (1, 1, 4),
-             (1, 2, 7),
-             (2, 0, 2),
-             (0, 0, 0),
-             (1, 3, 10),
-             (2, 1, 5),
-             (0, 1, 3),
-             (2, 2, 8),
-             (0, 2, 6),
-             (2, 3, 11),
-             (0, 3, 9)]
-            sage: E.krylov_matrix(M,shifts=shifts)
+            sage: E.krylov_matrix(M, shifts=shifts)[:6,:]
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50]
             [77 10 29]
             [27 49 29]
             [ 0  0  0]
-            [ 0 77 10]
-            [ 0 27 49]
-            [ 0  0 77]
-            [ 0  0 27]
-            [ 0  0  0]
-            [ 0  0  0]
-            sage: E.krylov_basis(M,shifts=shifts,algorithm='elimination')
+            sage: E.krylov_basis(M, shifts=shifts, algorithm='elimination')
             (
             [50 58  0]
             [ 0 50 58]
             [ 0  0 50], ((1, 0, 0), (1, 1, 1), (1, 2, 2))
             )
+            sage: rows.sort(key=lambda x: (x[1] + shifts[x[0]], x[0]))
+            sage: [(i,j) for (i,j,k) in rows[:3]]
+            [(1, 0),
+             (1, 1),
+             (1, 2)]
         """
         from sage.modules.free_module_element import vector
 
@@ -19795,52 +19849,6 @@ cdef class Matrix(Matrix1):
 
     def krylov_kernel_basis(self, M, shifts=None, degrees=None, var=None):
         r"""
-        Return a shifted minimal krylov kernel basis for (``self``,``M``) in
-        ``s``-Popov form with respect to a set of shifts ``s``.
-
-        Given a K[x]-module V defined by multiplication matrix ``M``, i.e.
-        elements are vectors of length n in K, scalars are polynomials in `K[x]`,
-        and scalar multiplication is defined by p v := v p(``M``), ``self``
-        represents ``self.nrows()`` elements e_1, ..., e_m in V:
-
-        A krylov kernel basis is a set of tuples of length
-        ``self.nrows()`` in K[x] that form a basis for solutions to the
-        equation ``p_1 e_1 + ... + p_n e_n = 0``.
-
-        See Section 6.7 of [Kai1980]_
-
-        .. WARNING::
-
-            If the degree bounds are not true upper bounds, no guarantees are
-            made on the correctness of the output.
-
-        INPUT:
-
-        - ``M`` -- square matrix for Krylov construction.
-        - ``shifts`` -- list of self.nrows() integers (optional): controls
-          priority of rows.  If ``None``, defaults to all zeroes.
-        - ``degrees`` -- upper bound on degree of minpoly(`M`). If None, a
-          suitable upper bound of ``self.ncols()`` is default.
-        - ``var`` -- variable name for the returned m x m polynomial matrix. If
-          None (default), returns a m x (m*(deg+1)) matrix representing the
-          coefficient matrices of the output.
-
-        OUTPUT:
-
-        If ``var`` is ``None``, a ``self.nrows() * self.nrows()`` matrix ``P``.
-        If ``var`` is not ``None``, the corresponding
-        ``self.nrows() * (self.nrows() * (P.degree()+1))`` matrix ``C`` where
-        ``P[i,j][d] == C[i,m*d+j]``, such that
-        - ``P`` is ``s``-Popov
-        - the rows of ``C`` form a minimal basis for the kernel of
-          ``self.striped_krylov_matrix(M,P.degree())``
-
-        .. SEEALSO::
-
-            :meth:`krylov_basis` computes a basis of the row space of the
-            Krylov matrix; :meth:`krylov_matrix` computes the full Krylov
-            matrix (without discarding linearly redundant rows).
-
         EXAMPLES::
 
             sage: R = GF(97)
