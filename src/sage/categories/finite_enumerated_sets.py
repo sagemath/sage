@@ -534,7 +534,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 d = Counter(self.random_element() for _ in range(N))
             E = float(N) / float(n)
             chi_2 = sum(float(o) ** 2 for o in d.values()) / E - float(N)
-            tester.assertLessEqual(chi_2, critical)
+            tester.assertLessEqual(chi_2, critical, f"assuming random_element of {self} follows a uniform distribution, this outcome would only occur with probability {1-T.cum_distribution_function(chi_2)}")
 
         def _test_rank(self, **options):
             r"""
