@@ -481,7 +481,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
         # Set the default implementation of random_element
         random_element = _random_element_from_unrank
 
-        def _test_random(self, **options):
+        def _test_random(self, random_seed=123332938836894739865, **options):
             r"""
             Check that :meth:`random_element` draws uniformly at
             random.
@@ -506,7 +506,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             if (self.random_element == self._random_element_from_unrank or
                 self.cardinality == self._cardinality_from_iterator):
                 return
-            from sage.misc.randstate import initial_seed, set_random_seed
+            from sage.misc.randstate import seed
             from sage.probability.probability_distribution import RealDistribution
             from sage.rings.infinity import Infinity
             from collections import Counter
@@ -514,24 +514,24 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             n = self.cardinality()
             if not n:
                 return
+            elt = self.an_element()
             try:
-                hash(self.an_element())
+                hash(elt)
             except TypeError:
                 return
             if n == 1:
-                tester.assertEqual(self.an_element(), self.random_element())
+                for _ in range(10):
+                    tester.assertEqual(self.an_element(), self.random_element())
                 return
 
             T = RealDistribution('chisquared', n-1)
-            critical = T.cum_distribution_function_inv(0.9)
+            critical = T.cum_distribution_function_inv(0.95)
             if critical.is_NaN():
                 # the cardinality is too large
                 return
-            N = min(max(3 * n, 100), 1000)
-            seed = initial_seed()
-            set_random_seed(123332938836894739865399988917263259930)
-            d = Counter(self.random_element() for _ in range(N))
-            set_random_seed(seed)
+            N = min(max(3 * n, 300), 3000)
+            with seed(random_seed):
+                d = Counter(self.random_element() for _ in range(N))
             E = float(N) / float(n)
             chi_2 = sum(float(o) ** 2 for o in d.values()) / E - float(N)
             tester.assertLessEqual(chi_2, critical)
