@@ -19248,12 +19248,12 @@ cdef class Matrix(Matrix1):
         - ``shifts`` -- list of ``self.nrows()`` integers (optional), row
           priority shifts.  If ``None``, defaults to all zeroes.
         - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
-          (optional). The `i`-th entry ``degrees[i]`` indicates the number of
-          Krylov iterates to appear in the output (that is, ``self[i,:] *
-          M**j`` will appear for `j` up to ``degrees[i]``, included). If
-          ``None``, defaults to ``self.ncols()`` for all rows. Giving a single
-          integer for ``degrees`` is equivalent to giving a list with this
-          integer repeated ``self.nrows()`` times.
+          (optional). The entry ``degrees[i]`` indicates the number of Krylov
+          iterates to appear in the output (that is, ``self[i,:] * M**j`` will
+          appear for `j` up to ``degrees[i]``, included). If ``None``, defaults
+          to ``self.ncols()`` for all rows. Giving a single integer for
+          ``degrees`` is equivalent to giving a list with this integer repeated
+          ``self.nrows()`` times.
 
         OUTPUT:
 
@@ -19679,9 +19679,9 @@ cdef class Matrix(Matrix1):
         - ``shifts`` -- list of ``self.nrows()`` integers (optional): row
           priority shifts. If ``None``, defaults to all zeroes.
         - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
-          (optional). The `i`-th entry ``degrees[i]`` indicates that
-          ``self[i,:] * M**degrees[i]`` is known to be dependent on rows before
-          it in the ``shifts``-ordered Krylov matrix. If ``None``, defaults to
+          (optional). The entry ``degrees[i]`` indicates that ``self[i,:] *
+          M**degrees[i]`` is known to be dependent on rows before it in the
+          ``shifts``-ordered Krylov matrix. If ``None``, defaults to
           ``self.ncols()`` for all rows. Giving a single integer for
           ``degrees`` is equivalent to giving a list with this integer repeated
           ``self.nrows()`` times.
@@ -19849,15 +19849,15 @@ cdef class Matrix(Matrix1):
 
     def krylov_kernel_basis(self, M, shifts=None, degrees=None, var=None):
         r"""
-        Return a Krylov kernel basis for (``self``,``M``) in canonical
-        form, depending on the row priority defined by ``shifts``.
+        Return a basis in canonical form for the kernel of the Krylov matrix of
+        ``(self, M)`` with rows ordered according to ``shifts``.
 
         Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
         basis `B` as computed by :meth:`krylov_basis` with the same parameters
         `M`, ``shifts``, and ``degrees``. Let `[\delta_0,\ldots,\delta_{m-1}]`
         be the exponents of first linear dependency for each row. That is, if
         the row `E_{i,:}` has not been selected for appearing in `B` then
-        `\delta_i = 0`, and otherwise, `delta_i` is such that `E_{i,:} \cdot
+        `\delta_i = 0`, and otherwise, `\delta_i` is such that `E_{i,:} \cdot
         M^{\delta_i-1}` has been selected for `B` but `E_{i,:} \cdot
         M^{\delta_i}` has not. (These integers are also easily deduced from the
         output triplets of :meth:`krylov_basis`.)
@@ -19865,7 +19865,7 @@ cdef class Matrix(Matrix1):
         The returned matrix `K` is a basis, in reduced row echelon form, of the
         left nullspace of the Krylov matrix built from `E` and `M` with
         ``shifts`` and ``degrees`` equal to `[\delta_0,\ldots,\delta_{m-1}]`.
-        Recall from :meth:`krylov_matrix`` that this matrix is, up to a row
+        Recall from :meth:`krylov_matrix` that this matrix is, up to a row
         permutation indicated by ``shifts``, equal to
 
         .. MATH::
@@ -19877,19 +19877,19 @@ cdef class Matrix(Matrix1):
                 E_{m-1,:} M^{\delta_{m-1}}
             \end{bmatrix}.
 
-        Since `B` has full row rank `r`, this kernel basis `K` has `m` rows and
-        `m+r` columns (where `r \le n`), and has rank `m`. Thanks to the module
-        structure underlying Krylov matrices, from the matrix `K` one can
-        deduce for free (up to copying rows and shifting coefficients to the
-        right) a basis of the left kernel bases for Krylov matrices that would
-        be built from the same `E`, `M`, and ``shifts``, but with larger
-        degrees, that is `[d_0,\ldots,d_{m-1}]` with `d_i \ge \delta_i` for all
-        `i`.
+        Since `B` has full row rank `r` (where `r \le n`), this kernel basis
+        `K` has `m` rows and `m+r` columns, and has rank `m`. This matrix `K`
+        can also be represented as a nonsingular univariate polynomial matrix
+        of size `m \times m` in ``shifts``-Popov form (see
+        :meth:`sage.matrix.matrix_polynomial_dense.Matrix_polynomial_dense.popov_form`
+        for definitions). This is provided as an option via the input ``var``.
 
-        This matrix `K` can also be represented as a nonsingular univariate
-        polynomial matrix of size `m \times m` in ``shifts``-Popov form (see
-        :meth:`sage.matrix.matrix_polynomial_dense.popov_form` for
-        definitions). This is provided as an option via the input ``var``.
+        Note that thanks to the module structure underlying Krylov matrices,
+        from the matrix `K` one can deduce for free (up to copying rows and
+        shifting coefficients to the right) left kernel bases for Krylov
+        matrices that would be built from the same `E`, `M`, and ``shifts``,
+        but with larger degrees, that is `[d_0,\ldots,d_{m-1}]` with `d_i \ge
+        \delta_i` for all `i`.
 
         .. WARNING::
 
@@ -19908,9 +19908,9 @@ cdef class Matrix(Matrix1):
         - ``shifts`` -- list of ``self.nrows()`` integers (optional): row
           priority shifts. If ``None``, defaults to all zeroes.
         - ``degrees`` -- an integer or a list of ``self.nrows()`` integers
-          (optional). The `i`-th entry ``degrees[i]`` indicates that
-          ``self[i,:] * M**degrees[i]`` is known to be dependent on rows before
-          it in the ``shifts``-ordered Krylov matrix. If ``None``, defaults to
+          (optional). The entry ``degrees[i]`` indicates that ``self[i,:] *
+          M**degrees[i]`` is known to be dependent on rows before it in the
+          ``shifts``-ordered Krylov matrix. If ``None``, defaults to
           ``self.ncols()`` for all rows. Giving a single integer for
           ``degrees`` is equivalent to giving a list with this integer repeated
           ``self.nrows()`` times.
@@ -19943,11 +19943,16 @@ cdef class Matrix(Matrix1):
         approximants::
 
             sage: P = E.krylov_kernel_basis(M, var='x')
+            sage: P
             [x^2 + 40*x + 82              76               0]
             [       3*x + 13          x + 57               0]
             [             96              96               1]
-            sage: xring.<x> = P.base_ring()
-            sage: F = E * matrix(xring, [[1], [x], [x**2]])
+            sage: x = P.base_ring().gen()
+            sage: F = E * matrix([[1], [x], [x**2]])
+            sage: F
+            [29*x^2 + 49*x + 27]
+            [         58*x + 50]
+            [29*x^2 + 10*x + 77]
             sage: P == F.minimal_approximant_basis(3, normal_form=True)
             True
 
