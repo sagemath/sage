@@ -22,3 +22,4 @@ patch
 bzip2
 patch
 pkgconf
+zlib-dev

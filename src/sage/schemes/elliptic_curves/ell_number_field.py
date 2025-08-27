@@ -2496,7 +2496,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             if not isinstance(embedding.codomain(), sage.rings.abc.RealField):
                 raise ValueError("invalid embedding specified: should be real")
         except AttributeError:
-                raise ValueError("invalid embedding")
+            raise ValueError("invalid embedding")
 
         from sage.rings.number_field.number_field import refine_embedding
         from sage.rings.infinity import Infinity

@@ -1,4 +1,5 @@
-$(MP_LIBRARY)
+ ipython cypari | $(PYTHON_TOOLCHAIN) sagelib $(PYTHON)
+
 
 ----------
 All lines of this file are ignored except the first.

@@ -168,6 +168,7 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
         .replace("symengine", "python-symengine")
         .replace("memory_allocator", "memory-allocator")
         .replace("pkg:generic/r-lattice", "r-lattice")
+        .replace("pkg:generic/latexmk", "latexmk")
         for req in all_requirements
     }
     # Exclude requirements not available on conda (for a given platform)

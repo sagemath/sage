@@ -106,7 +106,7 @@ def groebner_basis_degrevlex(ideal, proof=True):
     """
 
     if ideal.base_ring() is QQ and sage.structure.proof.proof.get_flag(proof, "polynomial"):
-            raise ValueError("msolve relies on heuristics; please use proof=False")
+        raise ValueError("msolve relies on heuristics; please use proof=False")
 
     drlpolring = ideal.ring().change_ring(order='degrevlex')
     msolve_out = _run_msolve(ideal, ["-g", "2"])

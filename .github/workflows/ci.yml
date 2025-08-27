@@ -23,6 +23,7 @@ jobs:
           - fedora:41
           - fedora:42
           - ghcr.io/void-linux/void-glibc-full
+          - archlinux
           #- ubuntu:22.04 - fails due to issue with cypari2
           #- ubuntu:24.04 - fails due to issue with cypari2
           - ubuntu:25.04
@@ -38,6 +39,11 @@ jobs:
             # node-based actions require libstdc++.so.6
             xbps-install -Sy libstdc++ bash git
           fi
+          if [ "${{ matrix.container }}" = "archlinux" ]; then
+            # The archlinux container is configured to not install docs by default
+            # but we need the maxima help to be in place
+            sed -i '/^NoExtract/d' /etc/pacman.conf
+          fi
 
       - name: Checkout code
         # cannot use v4 yet because of https://github.com/actions/checkout/issues/1487
@@ -51,7 +57,11 @@ jobs:
       - name: Set up Python
         run: |
           uv python install
-          uv venv
+          if [ "${{ matrix.container }}" = "ghcr.io/void-linux/void-glibc-full" ] || [ "${{ matrix.container }}" = "archlinux" ]; then
+            uv venv --system-site-packages
+          else
+            uv venv
+          fi
           . .venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV
 

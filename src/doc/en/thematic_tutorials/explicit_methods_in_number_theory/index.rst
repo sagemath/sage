@@ -3,6 +3,8 @@
 Three Lectures about Explicit Methods in Number Theory Using Sage
 =================================================================
 
+.. MODULEAUTHOR:: William Stein (2008)
+
 This article is about using the mathematical software Sage to do
 computations with number fields and modular forms.  It was written
 for the October 2008 Bordeaux meeting on explicit methods in number

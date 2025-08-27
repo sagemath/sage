@@ -1141,14 +1141,22 @@ class Link(SageObject):
         return tuple(states)
 
     @cached_method
-    def _khovanov_homology_cached(self, height, ring=ZZ):
+    def _khovanov_homology_cached(self, height, implementation, ring=ZZ, **kwds):
         r"""
         Return the Khovanov homology of the link.
 
         INPUT:
 
         - ``height`` -- the height of the homology to compute
+        - ``implementation=`` -- can be one of the
+          following:
+
+          * ``'native'`` -- uses the original Sage implementation
+          * ``'Khoca'`` -- uses the implementation of the optional package
+            ``khoca`` package is present
+
         - ``ring`` -- (default: ``ZZ``) the coefficient ring
+        - ``kwds`` -- dictionary of options to be passes to ``Khoca``
 
         OUTPUT:
 
@@ -1163,16 +1171,39 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
-            sage: K._khovanov_homology_cached(-5)                                       # needs sage.modules
+            sage: K._khovanov_homology_cached(-5, 'native')                             # needs sage.modules
             ((-3, 0), (-2, Z), (-1, 0), (0, 0))
 
         The figure eight knot::
 
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
-            sage: L._khovanov_homology_cached(-1)                                       # needs sage.modules
+            sage: L._khovanov_homology_cached(-1, 'native')                             # needs sage.modules
             ((-2, 0), (-1, Z), (0, Z), (1, 0), (2, 0))
         """
         crossings = self.pd_code()
+
+        if implementation == 'Khoca':
+            from sage.interfaces.khoca import khoca_raw_data
+            raw_data = khoca_raw_data(self, ring, **kwds)
+            data = {(d, t): raw_data[(h, d, t)] for (h, d, t) in raw_data if h == height}
+
+            from sage.homology.homology_group import HomologyGroup
+            if not data:
+                return [(0, HomologyGroup(0, ring))]
+
+            torsion = set([k[1] for k in data])
+            invfac = {}
+            for d in [k[0] for k in data]:
+                invfac[d] = []
+                for t in torsion:
+                    if (d, t) in data:
+                        invfac[d] += [t]*data[(d, t)]
+            res = []
+            for d in invfac:
+                ifac = sorted(invfac[d])
+                res += [(d, HomologyGroup(len(ifac), ring, ifac))]
+            return tuple(sorted(res))
+
         ncross = len(crossings)
         states = [(_0, set(_1), set(_2), _3, _4)
                   for (_0, _1, _2, _3, _4) in self._enhanced_states()]
@@ -1206,7 +1237,7 @@ class Link(SageObject):
         homologies = ChainComplex(complexes).homology()
         return tuple(sorted(homologies.items()))
 
-    def khovanov_homology(self, ring=ZZ, height=None, degree=None):
+    def khovanov_homology(self, ring=ZZ, height=None, degree=None, implementation='native', **kwds):
         r"""
         Return the Khovanov homology of the link.
 
@@ -1219,6 +1250,31 @@ class Link(SageObject):
 
         - ``degree`` -- the degree of the homology to compute,
           if not specified, all the degrees are computed
+
+        - ``implementation=`` -- string (default 'native') can be one of the
+          following:
+
+          * ``'native'`` -- uses the original Sage implementation
+
+          * ``'Khoca'`` -- uses the implementation of the optional package
+            ``khoca``
+
+        - ``kwds`` -- dictionary of options to be passed to ``Khoca``
+
+          * ``reduced`` -- boolean (default ``False``); if
+            ``True``, then returns the reduced homology
+
+          * ``equivariant`` -- positive integer (default ``2``); if this is
+            `n`, then it returns the  Khovanov-Rozansky `sl(n)`-homology
+            with `n > 2` of bipartite knots
+
+          * ``frobenius_algebra`` -- tuple of integers (default ``(0, 0)``); the
+            elements of the tuple are interpreted as modulus coefficients of
+            the underlying Frobenius algebra
+
+          * ``root`` -- integer specifying a root of the modulus of the
+            Frobenius algeba
+
 
         OUTPUT:
 
@@ -1235,6 +1291,8 @@ class Link(SageObject):
              -5: {-3: 0, -2: Z, -1: 0, 0: 0},
              -3: {-3: 0, -2: 0, -1: 0, 0: Z},
              -1: {0: Z}}
+            sage: K.khovanov_homology(implementation='Khoca')                           # optional khoca, needs sage.modules
+            {-9: {-3: Z}, -7: {-3: 0, -2: C2}, -5: {-3: 0, -2: Z}, -3: {0: Z}, -1: {0: Z}}
 
         The figure eight knot::
 
@@ -1250,6 +1308,15 @@ class Link(SageObject):
             sage: K = Link(b)
             sage: K.khovanov_homology(degree=2)
             {2: {2: 0}, 4: {2: Z}, 6: {2: Z}}
+            sage: K.khovanov_homology(degree=2, implementation='Khoca')                 # optional - khoca
+            {4: {2: Z}, 6: {2: Z}}
+
+        Caution::
+
+            sage: K.khovanov_homology(base_ring=QQ)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid keyword(s): ['base_ring']
 
         TESTS:
 
@@ -1275,6 +1342,16 @@ class Link(SageObject):
             sage: L.khovanov_homology(degree=1, height=1)
             {}
         """
+        khoca = False
+        if implementation == 'Khoca':
+            khoca = True
+            from sage.interfaces.khoca import check_kwds
+            check_kwds(**kwds)
+        elif implementation != 'native':
+            raise ValueError('%s is not a recognized implementation')
+        elif kwds:
+            raise ValueError(f"invalid keyword(s): {list(kwds)}")
+
         if not self.pd_code():  # special case for the unknot with no crossings
             from sage.homology.homology_group import HomologyGroup
             homs = {-1: {0: HomologyGroup(1, ring, [0])},
@@ -1291,11 +1368,15 @@ class Link(SageObject):
             heights = [height]
         else:
             heights = sorted(set(state[-1] for state in self._enhanced_states()))
+            if khoca:
+                from sage.interfaces.khoca import khoca_raw_data
+                raw_data = khoca_raw_data(self, ring, **kwds)
+                heights = sorted(set(k[0] for k in raw_data))
         if degree is not None:
-            homs = {j: dict(self._khovanov_homology_cached(j, ring)) for j in heights}
+            homs = {j: dict(self._khovanov_homology_cached(j, implementation, ring, **kwds)) for j in heights}
             homologies = {j: {degree: homs[j][degree]} for j in homs if degree in homs[j]}
         else:
-            homologies = {j: dict(self._khovanov_homology_cached(j, ring)) for j in heights}
+            homologies = {j: dict(self._khovanov_homology_cached(j, implementation, ring, **kwds)) for j in heights}
         return homologies
 
     def oriented_gauss_code(self):
@@ -2050,7 +2131,8 @@ class Link(SageObject):
             conway += coeff * t_poly**M
         return conway
 
-    def khovanov_polynomial(self, var1='q', var2='t', torsion='T', ring=ZZ, base_ring=None):
+    def khovanov_polynomial(self, var1='q', var2='t', torsion='T', ring=ZZ,
+                            base_ring=None, implementation='native', **kwds):
         r"""
         Return the Khovanov polynomial of ``self``.
 
@@ -2069,6 +2151,16 @@ class Link(SageObject):
           the torsion
         - ``ring`` -- (default: ``ZZ``) the ring of the homology. This will
           be transferred to :meth:`khovanov_homology`
+        - ``implementation=`` -- string (default 'native') can be one of the
+          following:
+
+          * ``'native'`` -- uses the original Sage implementation
+
+          * ``'Khoca'`` -- uses the implementation of the optional package
+            ``khoca``
+
+        - ``kwds`` -- dictionary of options to be passes to ``Khoca``
+          for details see :meth:`khovanov_homology`
 
         Here we follow the conventions used in
         `KnotInfo <https://knotinfo.org/descriptions/khovanov_unreduced_integral_polynomial.html>`__
@@ -2084,11 +2176,16 @@ class Link(SageObject):
             sage: K = Link([[[1, -2, 3, -1, 2, -3]],[-1, -1, -1]])
             sage: K.khovanov_polynomial()                                               # needs sage.modules
             q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2*T^2 + q^-9*t^-3
+            sage: K.khovanov_polynomial(implementation='Khoca') == _                    # optional khoca, needs sage.modules
+            True
             sage: K.khovanov_polynomial(ring=GF(2))                                     # needs sage.modules
             q^-1 + q^-3 + q^-5*t^-2 + q^-7*t^-2 + q^-7*t^-3 + q^-9*t^-3
+            sage: K.khovanov_polynomial(ring=GF(2), implementation='Khoca') == _        # optional khoca, needs sage.modules
+            True
 
         The figure eight knot::
 
+            sage: # needs sage.modules
             sage: L = Link([[1, 6, 2, 7], [5, 2, 6, 3], [3, 1, 4, 8], [7, 5, 8, 4]])
             sage: L.khovanov_polynomial(var1='p')                                       # needs sage.modules
             p^5*t^2 + p^3*t^2*T^2 + p*t + p + p^-1 + p^-1*t^-1
@@ -2096,6 +2193,9 @@ class Link(SageObject):
             sage: L.khovanov_polynomial(var1='p', var2='s', ring=GF(4))                 # needs sage.modules sage.rings.finite_rings
             p^5*s^2 + p^3*s^2 + p^3*s + p*s + p + p^-1 + p^-1*s^-1
               + p^-3*s^-1 + p^-3*s^-2 + p^-5*s^-2
+            sage: L.khovanov_polynomial(var1='p', var2='s', ring=GF(4),                 # optional khoca, sage.rings.finite_rings
+            ....:                       implementation='Khoca') == _                    # optional khoca, sage.rings.finite_rings
+            True
 
         The Hopf link::
 
@@ -2104,6 +2204,8 @@ class Link(SageObject):
             sage: K = Link(b)
             sage: K.khovanov_polynomial()                                               # needs sage.modules
             q^6*t^2 + q^4*t^2 + q^2 + 1
+            sage: K.khovanov_polynomial(implementation='Khoca') == _                    # optional khoca, needs sage.modules
+            True
 
         .. SEEALSO:: :meth:`khovanov_homology`
         """
@@ -2120,7 +2222,7 @@ class Link(SageObject):
         else:
             L = LaurentPolynomialRing(ZZ, [var1, var2])
         coeff = {}
-        kh = self.khovanov_homology(ring=ring)
+        kh = self.khovanov_homology(ring=ring, implementation=implementation, **kwds)
         from sage.rings.infinity import infinity
         for h in kh:
             for d in kh[h]:

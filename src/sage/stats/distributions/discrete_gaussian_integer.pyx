@@ -169,7 +169,7 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
         INPUT:
 
         - ``sigma`` -- samples `x` are accepted with probability proportional to
-          `\exp(-(x-c)²/(2σ²))`
+          `\exp(-(x-c)^2/(2σ^2))`
 
         - ``c`` -- the mean of the distribution. The value of ``c`` does not have
           to be an integer. However, some algorithms only support integer-valued
@@ -191,25 +191,25 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
         - ``'uniform+table'`` -- classical rejection sampling, sampling from the
           uniform distribution and accepted with probability proportional to
-          `\exp(-(x-c)²/(2σ²))` where `\exp(-(x-c)²/(2σ²))` is precomputed and
+          `\exp(-(x-c)^2/(2σ^2))` where `\exp(-(x-c)^2/(2σ^2))` is precomputed and
           stored in a table. Any real-valued `c` is supported.
 
         - ``'uniform+logtable'`` -- samples are drawn from a uniform distribution and
-          accepted with probability proportional to `\exp(-(x-c)²/(2σ²))` where
-          `\exp(-(x-c)²/(2σ²))` is computed using logarithmically many calls to
+          accepted with probability proportional to `\exp(-(x-c)^2/(2σ^2))` where
+          `\exp(-(x-c)^2/(2σ^2))` is computed using logarithmically many calls to
           Bernoulli distributions. See [DDLL2013]_ for details.  Only
           integer-valued `c` are supported.
 
         - ``'uniform+online'`` -- samples are drawn from a uniform distribution and
-          accepted with probability proportional to `\exp(-(x-c)²/(2σ²))` where
-          `\exp(-(x-c)²/(2σ²))` is computed in each invocation. Typically this
+          accepted with probability proportional to `\exp(-(x-c)^2/(2σ^2))` where
+          `\exp(-(x-c)^2/(2σ^2))` is computed in each invocation. Typically this
           is very slow.  See [DDLL2013]_ for details.  Any real-valued `c` is
           accepted.
 
         - ``'sigma2+logtable'`` -- samples are drawn from an easily samplable
           distribution with `σ = k·σ_2` with `σ_2 = \sqrt{1/(2\log 2)}` and accepted
-          with probability proportional to `\exp(-(x-c)²/(2σ²))` where
-          `\exp(-(x-c)²/(2σ²))` is computed using  logarithmically many calls to Bernoulli
+          with probability proportional to `\exp(-(x-c)^2/(2σ^2))` where
+          `\exp(-(x-c)^2/(2σ^2))` is computed using  logarithmically many calls to Bernoulli
           distributions (but no calls to `\exp`). See [DDLL2013]_ for details. Note that this
           sampler adjusts `σ` to match `k·σ_2` for some integer `k`.
           Only integer-valued `c` are supported.

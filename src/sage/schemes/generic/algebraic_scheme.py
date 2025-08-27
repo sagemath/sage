@@ -1134,8 +1134,9 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             self.__polys = tuple(normalized_polys)
 
         else:
-                raise NotImplementedError("currently normalization is implemented "
-                    "only for QQbar, number fields and number field orders")
+            raise NotImplementedError("currently normalization is implemented "
+                                      "only for QQbar, number fields and "
+                                      "number field orders")
 
     def defining_ideal(self):
         """

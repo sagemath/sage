@@ -41,7 +41,6 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Set_generic
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import CommutativeRing
 from sage.categories.commutative_rings import CommutativeRings
 
 from sage.schemes.generic.scheme import AffineScheme
@@ -181,7 +180,7 @@ class SchemeHomsetFactory(UniqueFactory):
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
         key = (id(X), id(Y), category, as_point_homset)
-        extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
+        extra = {'X': X, 'Y': Y, 'base_ring': base_ring, 'check': check}
         return key, extra
 
     def create_object(self, version, key, **extra_args):
@@ -574,7 +573,7 @@ class SchemeHomset_points(SchemeHomset_generic):
         target = self.codomain()
         # ring elements can be coerced to a space if we're affine dimension 1
         # and the base rings are coercible
-        if isinstance(other, CommutativeRing):
+        if other in CommutativeRings:
             try:
                 if (isinstance(target.ambient_space(), AffineSpace)
                         and target.ambient_space().dimension_relative() == 1):
@@ -601,18 +600,18 @@ class SchemeHomset_points(SchemeHomset_generic):
                 try:
                     ta = target.ambient_space()
                     sa = source.ambient_space()
-                except AttributeError: #no .ambient_space
+                except AttributeError:  # no .ambient_space
                     return False
-                #for projective and affine varieties, we check dimension
-                #and matching variable names
+                # for projective and affine varieties, we check dimension
+                # and matching variable names
                 if ((isinstance(ta, ProjectiveSpace) and isinstance(sa, ProjectiveSpace))
                         or (isinstance(ta, AffineSpace) and isinstance(sa, AffineSpace))):
                     if (ta.variable_names() == sa.variable_names()):
                         return self.domain().coordinate_ring().has_coerce_map_from(other.domain().coordinate_ring())
                     else:
                         return False
-                #for products of projective spaces, we check dimension of
-                #components and matching variable names
+                # for products of projective spaces, we check dimension of
+                # components and matching variable names
                 elif isinstance(ta, ProductProjectiveSpaces) and isinstance(sa, ProductProjectiveSpaces):
                     if (ta.dimension_relative_components() == sa.dimension_relative_components()) \
                       and (ta.variable_names() == sa.variable_names()):
@@ -761,7 +760,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             sage: P2(QQ)._repr_()
             'Set of rational points of Projective Space of dimension 2 over Rational Field'
         """
-        return 'Set of rational points of '+str(self.extended_codomain())
+        return 'Set of rational points of ' + str(self.extended_codomain())
 
     def value_ring(self):
         r"""

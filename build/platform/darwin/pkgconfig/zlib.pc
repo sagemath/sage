@@ -1,0 +1,7 @@
+Name: zlib
+Description: zlib compression library
+Version: 1.2.12
+
+Requires:
+Libs: -lz
+Cflags:

@@ -5077,7 +5077,7 @@ class StandardTableaux_residue(StandardTableauTuples):
             sage: T = StandardTableauTuple([[[6],[7]],[[1,2,3],[4,5]]]).residue_sequence(2,(0,0)).standard_tableaux()
             sage: TestSuite(T).run()
         """
-        super().__init__(residue, category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets())
         self._level = residue.level()
         self._multicharge = residue.multicharge()
         self._quantum_characteristic = residue.quantum_characteristic()
