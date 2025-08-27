@@ -17,6 +17,7 @@ AUTHORS:
 #*****************************************************************************
 
 
+from cypari2.handle_error import PariError
 from .element_pari_ffelt import FiniteFieldElement_pari_ffelt
 from .finite_field_base import FiniteField
 from .finite_field_constructor import GF
@@ -110,6 +111,13 @@ class FiniteField_pari_ffelt(FiniteField):
             sage: R.<x> = PolynomialRing(GF(3))
             sage: k = FiniteField_pari_ffelt(3, x^2 + 2*x + 2, 'a'); k
             Finite Field in a of size 3^2
+
+        TESTS::
+
+            sage: F.<I> = GF((2^128+51)^2); F
+            Finite Field in I of size 340282366920938463463374607431768211507^2
+            sage: type(F)
+            <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
         """
         n = modulus.degree()
         if n < 2:
@@ -120,7 +128,13 @@ class FiniteField_pari_ffelt(FiniteField):
         self._modulus = modulus
         self._degree = n
 
-        self._gen_pari = modulus._pari_with_name(self._names[0]).ffgen()
+        self._need_replace_varname = False
+        try:
+            modulus_pari = modulus._pari_with_name(self.variable_name())
+        except PariError:
+            self._need_replace_varname = True
+            modulus_pari = modulus._pari_with_name()
+        self._gen_pari = modulus_pari.ffgen()
         self._zero_element = self.element_class(self, 0)
         self._one_element = self.element_class(self, 1)
         self._gen = self.element_class(self, self._gen_pari)
