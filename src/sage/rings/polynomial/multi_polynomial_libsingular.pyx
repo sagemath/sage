@@ -4896,7 +4896,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``right`` -- polynomial
-        - ``algorithm``
+        - ``algorithm`` -- one of the following
           - ``'ezgcd'`` -- EZGCD algorithm
           - ``'modular'`` -- multi-modular algorithm (default)
         - ``**kwds`` -- ignored

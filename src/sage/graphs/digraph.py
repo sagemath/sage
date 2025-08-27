@@ -193,11 +193,11 @@ class DiGraph(GenericGraph):
     of :mod:`~sage.graphs.digraph`, :mod:`~sage.graphs.generic_graph`, and
     :mod:`~sage.graphs.graph`.
 
-    INPUT:
-
     By default, a :class:`DiGraph` object is simple (i.e. no *loops* nor
     *multiple edges*) and unweighted. This can be easily tuned with the
     appropriate flags (see below).
+
+    INPUT:
 
     - ``data`` -- can be any of the following (see the ``format`` argument):
 

@@ -616,12 +616,23 @@ class GenericCellComplex(SageObject):
 
         INPUT:
 
-        - ``dim``
-        - ``base_ring``
-        - ``subcomplex``
-        - ``algorithm``
-        - ``verbose``
-        - ``reduced``
+        - ``dim`` -- integer or list of integers or ``None`` (default:
+          ``None``); if ``None``, then return the cohomology in every
+          dimension.  If ``dim`` is an integer or list, return the
+          cohomology in the given dimensions.  (Actually, if ``dim`` is
+          a list, return the cohomology in the range from ``min(dim)``
+          to ``max(dim)``.)
+        - ``base_ring`` -- commutative ring (default: ``ZZ``); must be `\ZZ` or
+          a field
+        - ``subcomplex`` -- (default: empty) a subcomplex of this simplicial
+          complex. Compute the cohomology relative to this subcomplex.
+        - ``algorithm`` -- string (default: ``'pari'``); the algorithm options
+          are 'auto', 'dhsw', or 'pari'. See below for a description of what
+          they mean.
+        - ``verbose`` -- boolean (default: ``False``); if True, print some
+          messages as the cohomology is computed
+        - ``reduced`` -- boolean (default: ``True``); if ``True``, return the
+          reduced cohomology
 
         EXAMPLES::
 

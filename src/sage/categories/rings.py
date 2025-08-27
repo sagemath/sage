@@ -981,7 +981,7 @@ class Rings(CategoryWithAxiom):
 
             INPUT:
 
-            - an element or a list/tuple/sequence of elements, the generators
+            - ``args`` -- an element or a list/tuple/sequence of elements, the generators
 
             - ``coerce`` -- boolean (default: ``True``); whether to first coerce
               the elements into this ring. This must be a keyword

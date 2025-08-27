@@ -1511,7 +1511,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     :func:`~scipy:scipy.integrate.odeint` function from
     :mod:`scipy:scipy.integrate`):
 
-    - ``rtol``, ``atol`` : float
+    - ``rtol``, ``atol`` -- float
       The input parameters ``rtol`` and ``atol`` determine the error
       control performed by the solver.  The solver will control the
       vector, `e`, of estimated local errors in `y`, according to an
@@ -1525,33 +1525,33 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
 
       ``rtol`` and ``atol`` can be either vectors the same length as `y` or scalars.
 
-    - ``tcrit`` : array
+    - ``tcrit`` -- array
       Vector of critical points (e.g. singularities) where integration
       care should be taken.
 
-    - ``h0`` : float, (0: solver-determined)
+    - ``h0`` -- float, (0: solver-determined)
       The step size to be attempted on the first step.
 
-    - ``hmax`` : float, (0: solver-determined)
+    - ``hmax`` -- float, (0: solver-determined)
       The maximum absolute step size allowed.
 
-    - ``hmin`` : float, (0: solver-determined)
+    - ``hmin`` -- float, (0: solver-determined)
       The minimum absolute step size allowed.
 
-    - ``ixpr`` : boolean.
+    - ``ixpr`` -- boolean.
       Whether to generate extra printing at method switches.
 
-    - ``mxstep`` : integer, (0: solver-determined)
+    - ``mxstep``  -- integer, (0: solver-determined)
       Maximum number of (internally defined) steps allowed for each
       integration point in t.
 
-    - ``mxhnil`` : integer, (0: solver-determined)
+    - ``mxhnil`` -- integer, (0: solver-determined)
       Maximum number of messages printed.
 
-    - ``mxordn`` : integer, (0: solver-determined)
+    - ``mxordn`` -- integer, (0: solver-determined)
       Maximum order to be allowed for the nonstiff (Adams) method.
 
-    - ``mxords`` : integer, (0: solver-determined)
+    - ``mxords`` -- integer, (0: solver-determined)
       Maximum order to be allowed for the stiff (BDF) method.
 
     OUTPUT: a list with the solution of the system at each time in ``times``

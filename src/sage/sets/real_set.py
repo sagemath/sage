@@ -913,7 +913,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
     - ``ambient`` -- (default: ``None``) an instance of
       :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`; construct
       a subset of it. Using this keyword implies ``structure='differentiable'``.
-    - ``names`` or ``coordinate`` -- coordinate symbol for the canonical chart; see
+    - ``names``, ``coordinate`` -- coordinate symbol for the canonical chart; see
       :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`.  Using these
       keywords implies ``structure='differentiable'``.
     - ``name``, ``latex_name``, ``start_index`` -- see

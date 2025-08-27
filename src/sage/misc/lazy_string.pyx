@@ -84,9 +84,9 @@ def lazy_string(f, *args, **kwargs):
     INPUT:
 
     - ``f`` -- either a callable or a (format) string
-    - positional arguments that are given to ``f``, either by calling or by
+    - ``*args`` -- positional arguments that are given to ``f``, either by calling or by
       applying it as a format string
-    - named arguments that are forwarded to ``f`` if it is not a string
+    - ``**kwargs`` -- named arguments that are forwarded to ``f`` if it is not a string
 
     EXAMPLES::
 

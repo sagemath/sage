@@ -1264,8 +1264,8 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
     - ``P_Delta`` -- :class:`CPR-Fano toric variety
       <CPRFanoToricVariety_field>` associated to a reflexive polytope `\Delta`
 
-    - see :meth:`CPRFanoToricVariety_field.anticanonical_hypersurface` for
-      documentation on all other acceptable parameters
+    see :meth:`CPRFanoToricVariety_field.anticanonical_hypersurface` for
+    documentation on all other acceptable parameters
 
     OUTPUT:
 
@@ -1377,8 +1377,8 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
     - ``P_Delta`` -- a :class:`CPR-Fano toric variety
       <CPRFanoToricVariety_field>` associated to a reflexive polytope `\Delta`
 
-    - see :meth:`CPRFanoToricVariety_field.nef_complete_intersection` for
-      documentation on all other acceptable parameters
+    see :meth:`CPRFanoToricVariety_field.nef_complete_intersection` for
+    documentation on all other acceptable parameters
 
     OUTPUT:
 

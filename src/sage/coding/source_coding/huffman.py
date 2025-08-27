@@ -451,10 +451,6 @@ class Huffman(SageObject):
         r"""
         Return the current encoding table.
 
-        INPUT:
-
-        - None.
-
         OUTPUT: a dictionary associating an alphabetic symbol to a Huffman encoding
 
         EXAMPLES::
@@ -491,10 +487,6 @@ class Huffman(SageObject):
     def tree(self):
         r"""
         Return the Huffman tree corresponding to the current encoding.
-
-        INPUT:
-
-        - None.
 
         OUTPUT: the binary tree representing a Huffman code
 

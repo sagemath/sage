@@ -769,7 +769,7 @@ class ToricDivisor_generic(Divisor_generic):
 
         INPUT:
 
-        - A ``cone`` of the fan of the toric variety.
+        - ``cone`` -- a cone of the fan of the toric variety.
 
         OUTPUT:
 

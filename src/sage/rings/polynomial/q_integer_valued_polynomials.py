@@ -79,7 +79,7 @@ def q_binomial_x(m, n, q=None):
 
     INPUT:
 
-    - ``m`` and ``n`` -- positive integers
+    - ``m``, ``n`` -- positive integers
 
     - ``q`` -- optional variable
 

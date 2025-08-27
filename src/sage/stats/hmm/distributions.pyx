@@ -120,7 +120,7 @@ cdef class Distribution:
 
         INPUT:
 
-        - ``args`` and ``kwds``, passed to the Sage :func:`plot` function
+        - ``args``, ``kwds`` -- passed to the Sage :func:`plot` function
 
         OUTPUT: a :class:`Graphics` object
 

@@ -22,8 +22,9 @@ This is Sage's version of the ``sphinx-build`` script. We redirect ``stdout`` an
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import os
-import sys
 import re
+import sys
+
 import sphinx
 import sphinx.cmd.build
 

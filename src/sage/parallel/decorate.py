@@ -308,7 +308,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
     - ``ncpus`` -- integer; maximal number of subprocesses to use at the same time
     - ``timeout`` -- number of seconds until each subprocess is killed (only supported
       by ``'fork'``; zero means not at all)
-    - ``reseed_rng``: reseed the rng (random number generator) in each subprocess
+    - ``reseed_rng`` -- reseed the rng (random number generator) in each subprocess
 
     .. warning::
 
