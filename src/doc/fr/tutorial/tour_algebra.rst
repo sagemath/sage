@@ -149,7 +149,7 @@ transformée de Laplace de :math:`t^2e^t -\sin(t)` s'obtient comme suit :
     sage: t = var("t")
     sage: f = t^2*exp(t) - sin(t)
     sage: f.laplace(t,s)
-    -1/(s^2 + 1) + 2/(s - 1)^3
+    2/(s^3 - 3*s^2 + 3*s - 1) - 1/(s^2 + 1)
 
 Voici un exemple plus élaboré. L'élongation à partir du point
 d'équilibre de ressorts couplés attachés à gauche à un mur

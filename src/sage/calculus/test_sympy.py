@@ -63,7 +63,7 @@ instead of SymPy.
     sage: diff(tan(x), x)
     tan(x)^2 + 1
     sage: limit((tan(x+y) - tan(x))/y, y=0)
-    cos(x)^(-2)
+    tan(x)^2 + 1
     sage: diff(sin(2*x), x, 1)
     2*cos(2*x)
     sage: diff(sin(2*x), x, 2)

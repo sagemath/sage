@@ -3807,7 +3807,7 @@ class CoordChange(SageObject):
 
             sage: spher_to_cart.set_inverse(sqrt(x^3+y^2), atan2(y,x))
             Check of the inverse coordinate transformation:
-              r == sqrt(r*cos(ph)^3 + sin(ph)^2)*r  **failed**
+              r == r*sqrt(abs(r*cos(ph)^3 + sin(ph)^2))  **failed**
               ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
               x == sqrt(x^3 + y^2)*x/sqrt(x^2 + y^2)  **failed**
               y == sqrt(x^3 + y^2)*y/sqrt(x^2 + y^2)  **failed**
