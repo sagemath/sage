@@ -246,6 +246,12 @@ class AbstractVertexOperator(SageObject):
         # super().__init__(VertexOperatorMonoid(fockspace))
 
     @abstract_method
+    def act_on(self, m, f): pass
+
+    @abstract_method
+    def full_action(self, f): pass
+
+    @abstract_method
     def matrix_coefficient(self, bra, ket): pass
 
     def __mul__(self, V):
@@ -287,7 +293,7 @@ class VertexOperator(AbstractVertexOperator):
     # def act_on_fock_space_element(self, x):
     #     return self.spectral(lambda n: self.act_by_mode(n,x), valuation = -1)
 
-    def act_by_mode(self, i, x):
+    def act_on(self, i, x):
         r"""
         Action of the ``i``'th Fourier mode of ``self`` on element ``x`` of
         ``self.fockspace``.
@@ -299,7 +305,43 @@ class VertexOperator(AbstractVertexOperator):
 
         return res
 
-    act = act_by_mode
+    def full_action(self, x, cutoff=None):
+        r"""
+        The full action of ``self`` on a Fock space element ``x``.
+
+        INPUT:
+
+        - ``x`` -- element of ``self.fockspace``
+        """
+        F = Family(ZZ, lambda i: self.act_on(i, x))
+        return F if cutoff is None else self._approximate(F, cutoff)
+
+    def matrix_coefficient(self, bra, ket, cutoff=None):
+        r"""
+        Compute the matrix coefficient of ``self`` with vector ``ket``
+        and dual vector ``bra``.
+
+        INPUT:
+
+        - ``bra``, ``ket`` -- An ordered pair (`\lambda`, ``c``)
+          where `lambda` is an integer partition and ``c`` is an integer.
+        """
+        w = self.fockspace.gen()
+        R = self.fockspace.base_ring()
+        f = (w**ket[1])*R(ket[0])
+        f_acted_on = self.full_action(f)
+        F = Family(ZZ, lambda i: f_acted_on[i].monomial_coefficients().get(
+                bra[1], self.fockspace.zero()).monomial_coefficients().get(Partition(bra[0]), self.fockspace.zero()))
+        return F if cutoff is None else self._approximate(F, cutoff)
+
+    def _approximate(self, family, cutoff):
+        res = {}
+        for i in range(-cutoff, cutoff + 1):
+            c = family[i]
+            if c != 0:
+                res[i] = c
+        return res
+    # act = act_by_mode
 
     def _act_on_sym(self, i, x, c):
         r"""
@@ -421,7 +463,7 @@ class ProductOfVertexOperators(AbstractVertexOperator):
         if len(mon) != len(self.vertex_ops):
             raise ValueError
         for i in range(len(mon) - 1, -1, -1):
-            x = self.vertex_ops[i].act(mon[i], x)
+            x = self.vertex_ops[i].act_on(mon[i], x)
             if x == 0:
                 break
         return self.fockspace(x)
@@ -540,19 +582,19 @@ class CreationOperator(VertexOperator):
         sage: from sage.algebras.vertex_operators import *
         sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
         sage: Cre = CreationOperator(B)
-        sage: Cre.act(-1, B.one())
+        sage: Cre.act_on(-1, B.one())
         0
-        sage: Cre.act(0, B.one())
+        sage: Cre.act_on(0, B.one())
         s[]*w
-        sage: Cre.act(1, w)
+        sage: Cre.act_on(1, w)
         s[]*w^2
-        sage: Cre.act(0, w^-1+ w^-2)
+        sage: Cre.act_on(0, w^-1+ w^-2)
         s[2]*w^-1 + s[1]
-        sage: t = Cre.act(1, Cre.act(-1, w^-2)); t
+        sage: t = Cre.act_on(1, Cre.act_on(-1, w^-2)); t
         s[2, 1]
-        sage: Cre.act(3, t)
+        sage: Cre.act_on(3, t)
         s[3, 2, 1]*w
-        sage: t + Cre.act(-1, Cre.act(1, w^-2))
+        sage: t + Cre.act_on(-1, Cre.act_on(1, w^-2))
         0
     """
     def __init__(self, fockspace):
@@ -595,51 +637,37 @@ class CreationOperator(VertexOperator):
             op += self.pos[i + j - c]*self.neg[j]
         return op
 
-    def full_action(self, x):
-        r"""
-        The full action of ``self`` on a Fock space element ``x``.
+    # def full_action(self, x):
 
-        INPUT:
+    #     return self._spectral(lambda i: self.act_on(i, x), valuation=-max(y.degree() for (_, y) in x.monomial_coefficients().items()))
 
-        - ``x`` -- element of ``self``.
+    # def matrix_coefficient(self, bra, ket):
+    #     r"""
+    #     Compute the matrix coefficient of ``self`` with vector ``ket``
+    #     and dual vector ``bra``.
 
-        EXAMPLES::
+    #     INPUT:
 
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = CreationOperator(B)
-            sage: V.full_action(B.one()).O(4)
-            s[]*w + s[1]*w*z + s[2]*w*z^2 + s[3]*w*z^3 + O(z^4)
-        """
-        return self._spectral(lambda i: self.act_by_mode(i, x), valuation=-max(y.degree() for (_, y) in x.monomial_coefficients().items()))
+    #     - ``bra``, ``ket`` -- An ordered pair (`\lambda`, ``c``)
+    #       where `lambda` is an integer partition and ``c`` is an integer.
 
-    def matrix_coefficient(self, bra, ket):
-        r"""
-        Compute the matrix coefficient of ``self`` with vector ``ket``
-        and dual vector ``bra``.
+    #     EXAMPLES::
 
-        INPUT:
-
-        - ``bra``, ``ket`` -- An ordered pair (`\lambda`, ``c``)
-          where `lambda` is an integer partition and ``c`` is an integer.
-
-        EXAMPLES::
-
-            sage: from sage.algebras.vertex_operators import *
-            sage: B = BosonicFockSpace()
-            sage: V = CreationOperator(B)
-            sage: V.matrix_coefficient(([1],1),([2,1],0))
-            s[]*z^-2 + O(s[]*z^3)
-        """
-        w = self.fockspace.gen()
-        R = self.fockspace.base_ring()
-        f = (w**(ket[1]))*R(ket[0])
-        zero = self.fockspace.zero()
-        return self._spectral(lambda i: self.act_by_mode(i, f).monomial_coefficients().get(
-                bra[1], zero).monomial_coefficients().get(Partition(bra[0]), zero), valuation=-Partition(ket[0]).size()-1)
+    #         sage: from sage.algebras.vertex_operators import *
+    #         sage: B = BosonicFockSpace()
+    #         sage: V = CreationOperator(B)
+    #         sage: V.matrix_coefficient(([1],1),([2,1],0))
+    #         s[]*z^-2 + O(s[]*z^3)
+    #     """
+    #     w = self.fockspace.gen()
+    #     R = self.fockspace.base_ring()
+    #     f = (w**(ket[1]))*R(ket[0])
+    #     zero = self.fockspace.zero()
+    #     return self._spectral(lambda i: self.act_on(i, f).monomial_coefficients().get(
+    #             bra[1], zero).monomial_coefficients().get(Partition(bra[0]), zero), valuation=-Partition(ket[0]).size()-1)
 
     def act_by_clifford_gen(self, i, x):
-        return self.act_by_mode(i, x)
+        return self.act_on(i, x)
 
     def _repr_(self):
         """
@@ -677,17 +705,17 @@ class AnnihilationOperator(VertexOperator):
         sage: from sage.algebras.vertex_operators import *
         sage: B.<w> = LaurentPolynomialRing(SymmetricFunctions(QQ).s())
         sage: Ann = AnnihilationOperator(B)
-        sage: Ann.act(0, B.one())
+        sage: Ann.act_on(0, B.one())
         0
-        sage: Ann.act(1, B.one())
+        sage: Ann.act_on(1, B.one())
         s[]*w^-1
-        sage: Ann.act(2, w^-1)
+        sage: Ann.act_on(2, w^-1)
         s[]*w^-2
-        sage: Ann.act(1, w)
+        sage: Ann.act_on(1, w)
         -s[1]
-        sage: Ann.act(2, Ann.act(0, w^2))
+        sage: Ann.act_on(2, Ann.act_on(0, w^2))
         -s[2, 1]
-        sage: Ann.act(2, Ann.act(0, w^2)) + Ann.act(0, Ann.act(2, w^2))
+        sage: Ann.act_on(2, Ann.act_on(0, w^2)) + Ann.act_on(0, Ann.act_on(2, w^2))
         0
     """
     def __init__(self, fockspace):
@@ -731,15 +759,11 @@ class AnnihilationOperator(VertexOperator):
             op += self.pos[j + i + c - 1]*self.neg[j]
         return op
 
-    def full_action(self, x): pass
-
-    def matrix_coefficient(self, bra, ket): pass
-
     def act_by_clifford_gen(self, i, x):
         """
         Action of the coefficient of `z^{-i}` on Fock space element ``x``.
         """
-        return self.act_by_mode(-i, x)
+        return self.act_on(-i, x)
 
     def _repr_(self):
         """
