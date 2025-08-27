@@ -675,7 +675,7 @@ class ZetaFunctions():
 
             sage: dNtau2 = {x^2+y*z+z^2: (p-1)^2,y*z+z^2: (p-1)^2, x^2+y*z: (p-1)^2,x^2+z^2 : 0}
             sage: zex2.igusa_zeta(p = None, dict_Ntau = dNtau2)
-            (p - 1)*p^(2*s)*(p^(s + 3) - 1)/((p^(2*s + 3) - 1)*(p^(s + 1) - 1))
+             (p - 1)*p^(2*s)*(p^(s + 3) - 1)/((p^(2*s + 3) - 1)*(p^(s + 1) - 1))
 
         For `p=1 \bmod 4`::
 
