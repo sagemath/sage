@@ -1263,20 +1263,10 @@ class FractionField_1poly_field(FractionField_generic):
             sage: L = K.completion(x, prec=oo); L
             Lazy Laurent Series Ring in x over Rational Field
         """
-        from sage.rings.polynomial.polynomial_ring import morphism_to_completion
-        incl = morphism_to_completion(self, p, prec, names)
-        C = incl.codomain()
-        if C.has_coerce_map_from(self):
-            x = self.gen()
-            if C(x) != incl(x):
-                raise ValueError("a different coercion map is already set; try to change the variable name")
-        else:
-            C.register_coercion(incl)
-        ring = self.ring()
-        if not C.has_coerce_map_from(ring):
-            C.register_coercion(incl * self.coerce_map_from(ring))
-        return C
-
+        if p is None:
+            p = self.variable_name()
+        from sage.rings.completion import CompletionPolynomialRing
+        return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.ring().is_sparse())
 
 class FractionFieldEmbedding(DefaultConvertMap_unique):
     r"""

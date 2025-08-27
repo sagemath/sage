@@ -1865,13 +1865,9 @@ class PolynomialRing_commutative(PolynomialRing_generic):
             ...
             ValueError: conflict of variable names
         """
-        if p is infinity:
-            raise NotImplementedError
         if p is None:
             p = self.variable_name()
         from sage.rings.completion import CompletionPolynomialRing
-        if extras is not None and 'names' in extras:
-            names = extras['names']
         return CompletionPolynomialRing(self, p, default_prec=prec, sparse=self.is_sparse())
 
     def quotient_by_principal_ideal(self, f, names=None, **kwds):

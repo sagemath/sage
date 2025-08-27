@@ -5,8 +5,11 @@ from sage.categories.fields import Fields
 
 from sage.rings.morphism import RingHomomorphism
 from sage.rings.infinity import Infinity
+
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.fraction_field import FractionField_1poly_field
 from sage.rings.power_series_ring import PowerSeriesRing
+from sage.rings.laurent_series_ring import LaurentSeriesRing
 
 from sage.rings.ring_extension import RingExtension_generic
 from sage.rings.ring_extension_element import RingExtensionElement
@@ -22,16 +25,16 @@ class CompletionToPowerSeries(RingHomomorphism):
 
 class CompletionPolynomial(RingExtensionElement):
     def _repr_(self):
-        prec = self.precision_absolute()
-
         # Uniformizer
-        u = self.parent()._place
+        S = self.parent()
+        u = S._p
         if u._is_atomic():
             unif = str(u)
         else:
             unif = "(%s)" % u
 
         # Bigoh
+        prec = self.precision_absolute()
         if prec is Infinity:
             prec = self.parent().default_prec()
             bigoh = "..."
@@ -45,7 +48,13 @@ class CompletionPolynomial(RingExtensionElement):
         E = self.expansion(include_final_zeroes=False)
         is_exact = False
         terms = []
-        for i in range(prec):
+        if S._integer_ring is S:
+            start = 0
+        else:
+            start = self.valuation()
+            if start is Infinity:
+                return "0"
+        for i in range(start, prec):
             try:
                 coeff = next(E)
             except StopIteration:
@@ -79,16 +88,25 @@ class CompletionPolynomial(RingExtensionElement):
         return " + ".join(terms)
 
     def expansion(self, include_final_zeroes=True):
+        # TODO: improve performance
         S = self.parent()
         A = S._base
         incl = S._incl
-        u = self.parent()._place
-        v = S._place.derivative()(S._xbar).inverse()
-        vv = v.parent().one()
-        uu = A.one()
+        u = self.parent()._p
+        v = S._p.derivative()(S._xbar).inverse()
         elt = self.backend(force=True)
         prec = self.precision_absolute()
         n = 0
+        if S._integer_ring is not S:
+            val = elt.valuation()
+            if val is Infinity:
+                return
+            if val < 0:
+                elt *= incl(u) ** (-val)
+            else:
+                n = val
+        vv = v**n
+        uu = u**n
         while n < prec:
             if (not include_final_zeroes
             and elt.precision_absolute() is Infinity and elt.is_zero()):
@@ -105,43 +123,67 @@ class CompletionPolynomial(RingExtensionElement):
         lift = elt.parent()(elt[0])
         return self.parent()(lift)
 
+    def shift(self, n):
+        raise NotImplementedError
+
 
 class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
     Element = CompletionPolynomial
 
-    def __classcall_private__(cls, A, p, default_prec=20, sparse=False):
-        if not isinstance(A, PolynomialRing_generic):
-            raise ValueError("not a polynomial ring")
-        if isinstance(p, str):
-            return PowerSeriesRing(A.base_ring(), default_prec=default_prec,
-                                   names=p, sparse=sparse)
+    def __classcall_private__(cls, ring, p, default_prec=20, sparse=False):
+        if isinstance(ring, PolynomialRing_generic):
+            if isinstance(p, str):
+                return PowerSeriesRing(ring.base_ring(),
+                                       default_prec=default_prec,
+                                       names=p, sparse=sparse)
+            A = ring
+        elif isinstance(ring, FractionField_1poly_field):
+            if isinstance(p, str):
+                return LaurentSeriesRing(ring.base_ring(),
+                                         default_prec=default_prec,
+                                         names=p, sparse=sparse)
+            A = ring.ring()
+        else:
+            raise ValueError("not a polynomial ring or a rational function field")
         if not A.base_ring() in Fields():
             raise NotImplementedError
+        p = A(p)
         try:
             p = p.squarefree_part()
         except (AttributeError, NotImplementedError):
             pass
         p = p.monic()
-        return cls.__classcall__(cls, A, p, default_prec, sparse)
+        return cls.__classcall__(cls, ring, p, default_prec, sparse)
 
-    def __init__(self, A, p, default_prec, sparse):
-        self._A = A
+    def __init__(self, ring, p, default_prec, sparse):
+        A = self._ring = ring
+        if not isinstance(A, PolynomialRing_generic):
+            A = A.ring()
         base = A.base_ring()
-        self._place = p
+        self._p = p
+        # Construct backend
         self._residue_ring = k = A.quotient(p)
         self._xbar = xbar = k(A.gen())
-        name = "u_%s" % id(self)
-        backend = PowerSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
-        gen = backend.gen() + xbar
-        self._incl = A.hom([gen])
-        self._base_morphism = self._incl * A.coerce_map_from(base)
-        super().__init__(self._base_morphism)
-        self._gen = self(gen)
-        coerce = A.Hom(self)(self._incl)
-        self.register_coercion(coerce)
+        name = "u_%s" % hash(self._p)
+        if isinstance(ring, PolynomialRing_generic):
+            self._integer_ring = self
+            name = "u_%s" % id(self)
+            backend = PowerSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
+        else:
+            self._integer_ring = CompletionPolynomialRing(A, p, default_prec, sparse)
+            name = "u_%s" % id(self._integer_ring)
+            backend = LaurentSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
+        super().__init__(backend.coerce_map_from(k) * k.coerce_map_from(base))
+        # Set generator
+        x = backend.gen() + xbar
+        self._gen = self(x)
+        # Set coercions
+        self._incl = ring.hom([x])
+        self.register_coercion(A.Hom(self)(self._incl))
+        self.register_coercion(self._integer_ring)
 
     def _repr_(self):
-        s = "Completion of %s at %s" % (self._A, self._place)
+        s = "Completion of %s at %s" % (self._ring, self._p)
         return s
 
     def construction(self):
@@ -150,11 +192,11 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             'names': [str(x) for x in self._defining_names()],
             'sparse': self.is_sparse()
         }
-        return CompletionFunctor(self._place, self.default_prec(), extras), self._A
+        return CompletionFunctor(self._p, self.default_prec(), extras), self._ring
 
     @cached_method
     def uniformizer(self):
-        return self(self._place)
+        return self(self._p)
 
     def gen(self):
         return self._gen
@@ -170,6 +212,21 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         if sparse is None:
             sparse = self.is_sparse()
         base = self._base.base_ring()
-        S = PowerSeriesRing(self._residue_ring, names, sparse=sparse)
+        if self._integer_ring is self:
+            S = PowerSeriesRing(self._residue_ring, names, sparse=sparse)
+        else:
+            S = LaurentSeriesRing(self._residue_ring, names, sparse=sparse)
         S.register_conversion(CompletionToPowerSeries(self.Hom(S)))
         return S
+
+    def integer_ring(self):
+        return self._integer_ring
+
+    def fraction_field(self):
+        field = self._ring.fraction_field()
+        if field is self._ring:
+            return self
+        else:
+            return CompletionPolynomialRing(field, self._p,
+                       default_prec = self.default_prec(),
+                       sparse = self.is_sparse())
