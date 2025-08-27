@@ -396,10 +396,9 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         default_prec = name
     if names is not None:
         name = names
-    name = normalize_names(1, name)
-
     if name is None:
-        raise TypeError("You must specify the name of the indeterminate of the Power series ring.")
+        raise TypeError("you must specify the name of the indeterminate of the power series ring")
+    name = normalize_names(1, name)
 
     key = (base_ring, name, default_prec, sparse, implementation)
     if PowerSeriesRing_generic.__classcall__.is_in_cache(key):
@@ -915,8 +914,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             extras = {'sparse': True}
         else:
             extras = None
-        A = self._poly_ring()
-        return CompletionFunctor(A.gen(), self.default_prec(), extras), A
+        return CompletionFunctor(self._names[0], self.default_prec(), extras), self._poly_ring()
 
     def _coerce_impl(self, x):
         """

@@ -1768,118 +1768,6 @@ class PolynomialRing_generic(Ring):
 PolynomialRing_general = PolynomialRing_generic
 
 
-def morphism_to_completion(domain, place, prec, names):
-    r"""
-    Return the inclusion morphism from ``domain`` to its completion
-    at the place ``place``.
-
-    INPUT:
-
-    - ``domain`` -- a polynomial ring of its fraction field
-
-    - ``place`` -- an irreducible polynomial or ``Infinity``
-
-    - ``prec`` -- an integer or ``Infinity``
-
-    - ``names`` -- a tuple of strings containing
-
-      - the variable name; if not given and the completion is at `0`,
-        the name of the variable is this polynomial ring is reused
-
-      - the variable name for the residue field (only relevant for
-        places of degree at least `2`)
-
-    EXAMPLES::
-
-        sage: from sage.rings.polynomial.polynomial_ring import morphism_to_completion
-        sage: A.<t> = QQ[]
-        sage: morphism_to_completion(A, t, 20, None)
-        Ring morphism:
-          From: Univariate Polynomial Ring in t over Rational Field
-          To:   Power Series Ring in t over Rational Field
-          Defn: t |--> t
-
-    ::
-
-        sage: morphism_to_completion(A, t^2 + t + 1, 20, ('u','a'))
-        Ring morphism:
-          From: Univariate Polynomial Ring in t over Rational Field
-          To:   Power Series Ring in u over Number Field in a with defining polynomial t^2 + t + 1
-          Defn: t |--> a + u
-
-    TESTS::
-
-        sage: A.<t> = ZZ[]
-        sage: morphism_to_completion(A, 2*t + 1, 20, ('u',))
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: the leading coefficient of the place is not a unit
-    """
-    from sage.rings.power_series_ring import PowerSeriesRing
-    from sage.rings.laurent_series_ring import LaurentSeriesRing
-    if domain.is_field():
-        ring = domain.ring()
-        SeriesRing = LaurentSeriesRing
-    else:
-        ring = domain
-        SeriesRing = PowerSeriesRing
-    k = base = ring.base_ring()
-    x = ring.gen()
-    sparse = ring.is_sparse()
-
-    # Parse names
-    name = residue_name = None
-    if names is not None:
-        if not isinstance(names, (list, tuple)):
-            raise TypeError("names must be a list or a tuple")
-        name = names[0]
-        if len(names) > 1:
-            residue_name = names[1]
-
-    # Parse place
-    if place is None:
-        place = x
-    elif isinstance(place, str):
-        if name is not None and name != place:
-            raise ValueError("conflict of variable names")
-        name = place
-        place = x
-
-    if place == x and name is None:
-        name = ring.variable_name()
-
-    if place is infinity:
-        pass
-    elif place in ring:
-        place = ring(place)
-        if place.leading_coefficient().is_unit():
-            place = ring(place.monic())
-            # We do not check irreducibility; it causes too much troubles:
-            # it can be long, be not implemented and even sometimes fail
-        else:
-            raise NotImplementedError("the leading coefficient of the place is not a unit")
-    else:
-        raise ValueError("place must be Infinity or an irreducible polynomial")
-
-    # Construct the completion
-    if place is infinity:
-        codomain = LaurentSeriesRing(base, names=name, default_prec=prec, sparse=sparse)
-        image = codomain.one() >> 1
-    elif place == ring.gen() or place.degree() == 1:  # sometimes ring.gen() has not degree 1
-        codomain = SeriesRing(base, names=name, default_prec=prec, sparse=sparse)
-        image = codomain.gen() - place[0]
-    else:
-        if residue_name is None:
-            raise ValueError("you must specify a variable name for the residue field")
-        residue_name = normalize_names(1, residue_name)
-        k = base.extension(place, names=residue_name)
-        codomain = SeriesRing(k, names=name, default_prec=prec, sparse=sparse)
-        image = codomain.gen() + k.gen()
-
-    # Return the morphism
-    return domain.hom([image])
-
-
 class PolynomialRing_commutative(PolynomialRing_generic):
     """
     Univariate polynomial ring over a commutative ring.
@@ -1898,7 +1786,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
                                         sparse=sparse, implementation=implementation,
                                         element_class=element_class, category=category)
 
-    def completion(self, p=None, prec=20, extras=None, names=None):
+    def completion(self, p=None, prec=20, extras=None):
         r"""
         Return the completion of this polynomial ring with respect to
         the irreducible polynomial ``p``.
@@ -1906,8 +1794,7 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         INPUT:
 
         - ``p`` (default: ``None``) -- an irreduclible polynomial or
-          ``Infinity``; if ``None``, the generator of this polynomial
-          ring
+          ``Infinity``
 
         - ``prec`` (default: 20) -- an integer or ``Infinity``; if
           ``Infinity``, return a
@@ -1916,25 +1803,14 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         - ``extras`` (default: ``None``) -- ignored; for compatibility
           with the construction mecanism
 
-        - ``names`` (default: ``None``) -- a tuple of strings containing
-
-          - the variable name; if not given and the completion is at `0`,
-            the name of the variable is this polynomial ring is reused
-
-          - the variable name for the residue field (only relevant for
-            places of degree at least `2`)
-
-        The argument ``names`` is usually implicitly given by the `.<...>`
-        syntactic sugar (see examples below).
-
         EXAMPLES::
 
             sage: P.<x> = PolynomialRing(QQ)
             sage: P
             Univariate Polynomial Ring in x over Rational Field
 
-        Without any argument, this method constructs the completion at
-        the ideal `(x)`::
+        Without any argument, this method returns the power series ring
+        with the same variable name::
 
             sage: PP = P.completion()
             sage: PP
@@ -1951,30 +1827,14 @@ class PolynomialRing_commutative(PolynomialRing_generic):
             1 - x + O(x^20)
 
         We can construct the completion at other ideals by passing in an
-        irreducible polynomial. In this case, we should also provide a name
-        for the uniformizer (set to be `x - a` where `a` is a root of the
-        given polynomial)::
+        irreducible polynomial::
 
-            sage: C1.<u> = P.completion(x - 1)
+            sage: C1 = P.completion(x - 1)
             sage: C1
-            Power Series Ring in u over Rational Field
-
-        A coercion map from the polynomial ring to its completion is set::
-
-            sage: x - u
-            1
-
-        It is possible to complete at an ideal generated by a polynomial
-        of higher degree. In this case, we should nevertheless provide an
-        extra name for the generator of the residue field::
-
-            sage: C2.<v, a> = P.completion(x^2 + x + 1)
+            Completion of Univariate Polynomial Ring in x over Rational Field at x - 1
+            sage: C2 = P.completion(x^2 + x + 1)
             sage: C2
-            Power Series Ring in v over Number Field in a with defining polynomial x^2 + x + 1
-            sage: a^2 + a + 1
-            0
-            sage: x - v
-            a
+            Completion of Univariate Polynomial Ring in x over Rational Field at x^2 + x + 1
 
         Constructing the completion at the place of infinity also works::
 
@@ -2007,6 +1867,8 @@ class PolynomialRing_commutative(PolynomialRing_generic):
         """
         if p is infinity:
             raise NotImplementedError
+        if p is None:
+            p = self.variable_name()
         from sage.rings.completion import CompletionPolynomialRing
         if extras is not None and 'names' in extras:
             names = extras['names']
