@@ -517,6 +517,9 @@ class that inherits from :class:`UniqueRepresentation`: By adding
 simultaneously inherit from :class:`CachedRepresentation` and from
 :class:`~sage.misc.fast_methods.WithEqualityById`.
 
+If the class is also a :class:`~sage.structure.parent.Parent`,
+then we says it satisfies the *unique parent* condition.
+
 For example, a symmetric function algebra is uniquely determined by the base
 ring. Thus, it is reasonable to use :class:`UniqueRepresentation` in this
 case::
