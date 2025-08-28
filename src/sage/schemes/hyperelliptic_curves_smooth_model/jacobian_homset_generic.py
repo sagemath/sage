@@ -129,7 +129,10 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J(GF(7^2)).order() == (7+1)^6
             True
         """
-        return sum(self.extended_curve().frobenius_polynomial())
+        if not isinstance(self.base_ring(), FiniteField_generic):
+            return sum(self.extended_curve().frobenius_polynomial())
+
+        raise NotImplementedError
 
     @cached_method
     def _curve_frobenius_roots(self):
