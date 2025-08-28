@@ -117,7 +117,7 @@ from sage.cpython.string cimport char_to_str
 
 # singular rings
 
-from sage.libs.singular.ring cimport singular_ring_delete, wrap_ring, singular_ring_reference
+from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
 
 from sage.libs.singular.singular cimport si2sa, sa2si, overflow_check
 
@@ -348,7 +348,8 @@ cdef class NCPolynomialRing_plural(Ring):
         cdef RingWrap rw = ncalgebra(self._c, self._d, ring=P)
 
         #       rw._output()
-        self._ring = singular_ring_reference(rw._ring)
+        self._ring_ref = rw._ring_ref
+        self._ring = singular_ring_reference(rw._ring, self._ring_ref)
         self._ring.ShortOut = 0
 
         self._ngens = n
@@ -428,7 +429,7 @@ cdef class NCPolynomialRing_plural(Ring):
             sage: del R3            # not tested
             sage: _ = gc.collect()  # not tested
         """
-        singular_ring_delete(self._ring)
+        singular_ring_delete(self._ring, self._ring_ref)
 
     def _element_constructor_(self, element):
         """
@@ -1437,12 +1438,24 @@ cdef class NCPolynomial_plural(RingElement):
         """
         self._poly = NULL
         self._parent = parent
+        # During cyclic garbage collection, it can happen that the parent
+        # is deallocated before the element. But in order to deallocate the element,
+        # we need a pointer to a valid libsingular ring. Therefore, the element
+        # should not just store a pointer to the libsingular ring, but we increase
+        # the ring's reference count.
+        # _parent_ring and _parent_ring_ref are the same pointers as _parent._ring
+        # and _parent_ring_ref; this is needed since during deallocation of the
+        # element the parent may already be gone.
+        self._parent_ring_ref = parent._ring_ref
+        self._parent_ring = singular_ring_reference(parent._ring, self._parent_ring_ref)
 
     def __dealloc__(self):
         # TODO: Warn otherwise!
-        # for some mysterious reason, various things may be NULL in some cases
-        if self._parent is not None and (<NCPolynomialRing_plural>self._parent)._ring != NULL and self._poly != NULL:
-            p_Delete(&self._poly, (<NCPolynomialRing_plural>self._parent)._ring)
+        # for some mysterious reason, various things may be NULL
+        # or already dealeted in some cases
+        if self._parent_ring != NULL and self._poly != NULL:
+            p_Delete(&self._poly, self._parent_ring)
+        singular_ring_delete(self._parent_ring, self._parent_ring_ref)
 
     def __reduce__(self):
         """
@@ -2857,6 +2870,16 @@ cdef inline NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent,
     """
     cdef NCPolynomial_plural p = NCPolynomial_plural.__new__(NCPolynomial_plural)
     p._parent = parent
+    # During cyclic garbage collection, it can happen that the parent
+    # is deallocated before the element. But in order to deallocate the element,
+    # we need a pointer to a valid libsingular ring. Therefore, the element
+    # should not just store a pointer to the libsingular ring, but we increase
+    # the ring's reference count.
+    # _parent_ring and _parent_ring_ref are the same pointers as _parent._ring
+    # and _parent_ring_ref; this is needed since during deallocation of the
+    # element the parent may already be gone.
+    p._parent_ring_ref = parent._ring_ref
+    p._parent_ring = singular_ring_reference(parent._ring, p._parent_ring_ref)
     p._poly = juice
     p_Normalize(p._poly, parent._ring)
     return p
@@ -2892,10 +2915,10 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
     Check that :issue:`13145` has been resolved::
 
         sage: h = hash(R.gen() + 1) # sets currRing
-        sage: from sage.libs.singular.ring import ring_refcount_dict, currRing_wrapper
-        sage: curcnt = ring_refcount_dict[currRing_wrapper()]
+        sage: from sage.libs.singular.ring import total_ring_reference_count
+        sage: curcnt = total_ring_reference_count()
         sage: newR = new_CRing(W, H.base_ring())
-        sage: ring_refcount_dict[currRing_wrapper()] - curcnt
+        sage: total_ring_reference_count() - curcnt
         2
 
     Check that :issue:`29311` is fixed::
@@ -2911,13 +2934,11 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring):
 
     cdef MPolynomialRing_libsingular self = <MPolynomialRing_libsingular>MPolynomialRing_libsingular.__new__(MPolynomialRing_libsingular)
 
-    self._ring = rw._ring
+    self._ring_ref = rw._ring_ref
+    self._ring = singular_ring_reference(rw._ring, self._ring_ref)
     cdef MPolynomial_libsingular one = new_MP(self, p_ISet(1, self._ring))
     self._one_element = one
     self._one_element_poly = one._poly
-
-    wrapped_ring = wrap_ring(self._ring)
-    sage.libs.singular.ring.ring_refcount_dict[wrapped_ring] += 1
 
     self._ring.ShortOut = 0
 
@@ -2984,10 +3005,9 @@ cpdef NCPolynomialRing_plural new_NRing(RingWrap rw, base_ring):
     assert not rw.is_commutative()
 
     cdef NCPolynomialRing_plural self = <NCPolynomialRing_plural>NCPolynomialRing_plural.__new__(NCPolynomialRing_plural)
-    self._ring = rw._ring
 
-    wrapped_ring = wrap_ring(self._ring)
-    sage.libs.singular.ring.ring_refcount_dict[wrapped_ring] += 1
+    self._ring_ref = rw._ring_ref
+    self._ring = singular_ring_reference(rw._ring, self._ring_ref)
 
     self._ring.ShortOut = 0
 
