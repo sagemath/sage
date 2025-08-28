@@ -684,8 +684,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
 
         sage: R.<x> = QQ[]
         sage: M= span( [[x, x^2+1], [1/x, x^3]], R); M
-        Free module of degree 2 and rank 2 over
-        Univariate Polynomial Ring in x over Rational Field
+        Free module of degree 2 and rank 2 over Univariate Polynomial Ring in x over Rational Field
         Echelon basis matrix:
         [          1/x           x^3]
         [            0 x^5 - x^2 - 1]
@@ -4270,7 +4269,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent.
         """
         if isinstance(basis, FreeModule_generic):
             basis = basis.gens()
@@ -4815,7 +4814,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
             ...
-            ValueError: The given basis vectors must be linearly independent.
+            ValueError: the given basis vectors must be linearly independent.
         """
         if isinstance(basis, FreeModule_generic):
             basis = basis.gens()
@@ -5860,6 +5859,7 @@ class FreeModule_ambient(FreeModule_generic):
             self.__basis = basis_seq(self, w)
             return self.__basis
 
+    @cached_method
     def echelonized_basis(self):
         """
         Return a basis for this ambient free module in echelon form.
@@ -6585,7 +6585,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
 
     - ``echelonize`` -- (default: ``False``) if ``True``, ``basis`` will be
       echelonized and the result will be used as the default basis of the
-      constructed submodule;
+      constructed submodule; if ``False``, ``basis`` will be not be echelonized
+      during construction but will instead be echelonized on-demand
 
     - ``echelonized_basis`` -- (default: ``None``) if not ``None``, must be
       the echelonized basis spanning the same submodule as ``basis``
@@ -6665,6 +6666,43 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             Join of
              Category of finite dimensional algebras with basis over Rational Field and
              Category of subobjects of sets
+
+        Test for echelonization related parameters::
+
+            sage: V = FreeModule_ambient_pid(ZZ, 3)
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]]) # echelonized is False by default
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            False
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]], echelonize=True)
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            True
+            sage: W.echelonized_basis_matrix()
+            [ 1  0 -1]
+            [ 0  1  2]
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,0], [0,0,1]], already_echelonized=True)
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            True
+            sage: W.echelonized_basis_matrix()
+            [1 2 0]
+            [0 0 1]
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [0,0,1]], echelonized_basis=[[1,2,0], [0,0,1]])
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            True
+            sage: W.echelonized_basis_matrix()
+            [1 2 0]
+            [0 0 1]
+
+        Test that error is thrown when echelonized basis has incorrect size::
+
+            sage: V = FreeModule_ambient_pid(ZZ, 3)
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3]]); W
+            Free module of degree 3 and rank 1 over Integer Ring
+            User basis matrix:
+            [1 2 3]
+            sage: Y = FreeModule_submodule_with_basis_pid(V, [[1,2,3]], echelonized_basis=[[1,2,0], [0,0,1]]); Y
+            Traceback (most recent call last):
+            ...
+            ValueError: sequence too long (expected length 1, got more)
         """
         if not isinstance(ambient, FreeModule_ambient_pid):
             raise TypeError("ambient (=%s) must be ambient." % ambient)
@@ -6685,14 +6723,28 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
                 raise TypeError("each element of basis must be in "
                                 "the ambient vector space")
 
-        if echelonize and not already_echelonized:
-            basis = self._echelonized_basis(ambient, basis)
+        basis = basis_seq(self, basis)
+
+        # This is original basis converted to ambient module/vector space.
+        # Without the conversion, the echelon form computation fails with a
+        # segmentation fault because of issue 40282, while clearing out the
+        # denominator via multiplication.
+        self.__converted_basis = basis
+
+        MS = sage.matrix.matrix_space.MatrixSpace(
+            R_coord, len(basis), ambient.degree(), sparse=ambient.is_sparse())
+
+        A = MS(basis)
+
+        # Rank computation is expected to be fast unlike echelon form computation
+        # TODO: Avoid rank computation during module construction
+        rank = A.rank()
 
         # Adapted from Module_free_ambient.__init__
         from sage.categories.modules_with_basis import ModulesWithBasis
         modules_category = ModulesWithBasis(R.category()).FiniteDimensional()
         try:
-            if R.is_finite() or len(basis) == 0:
+            if R.is_finite() or rank == 0:
                 modules_category = modules_category.Enumerated().Finite()
         except (ValueError, TypeError, AttributeError, NotImplementedError):
             pass
@@ -6700,23 +6752,46 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         category = modules_category.or_subcategory(category, join=True)
 
         FreeModule_generic_pid.__init__(self, base_ring=R, coordinate_ring=R_coord,
-                                        rank=len(basis), degree=ambient.degree(),
+                                        rank=rank, degree=ambient.degree(),
                                         sparse=ambient.is_sparse(), category=category)
+
+        MS_ECH = sage.matrix.matrix_space.MatrixSpace(
+                R_coord, rank, ambient.degree(), sparse=ambient.is_sparse())
+
+        has_echelonized_basis = echelonize or already_echelonized or echelonized_basis
+
+        matrix = None
+        if echelonize and not already_echelonized:
+            matrix = self._echelonized_basis(ambient, basis)
+            assert rank == matrix.nrows()
+            basis = matrix.rows()
+
         C = self.element_class
         w = [C(self, x.list(), coerce=False, copy=False) for x in basis]
         self.__basis = basis_seq(self, w)
 
-        if echelonize or already_echelonized:
-            self.__echelonized_basis = self.__basis
-        else:
-            if echelonized_basis is None:
-                echelonized_basis = self._echelonized_basis(ambient, basis)
-            w = [C(self, x.list(), coerce=False, copy=True)
-                 for x in echelonized_basis]
-            self.__echelonized_basis = basis_seq(self, w)
-        if check and len(basis) != len(self.__echelonized_basis):
-            raise ValueError("The given basis vectors must be linearly "
-                             "independent.")
+        if check and len(self.__basis) != rank:
+            raise ValueError("the given basis vectors must be linearly independent.")
+
+        # If echelonized basis is either provided or computed, store the
+        # same in matrix form, else it will be computed on demand
+        if has_echelonized_basis:
+            if matrix is not None:
+                self.__echelonized_basis_matrix = matrix
+
+            elif echelonize or already_echelonized:
+                self.__echelonized_basis_matrix = MS_ECH(self.__basis)
+
+            elif echelonized_basis:
+                w = [C(self, x, coerce=False, copy=False) for x in echelonized_basis]
+                # Will throw error if matrix space and basis_seq have different sizes
+                matrix = MS_ECH(basis_seq(self, w))
+
+                # TODO: check that span of echelonized_basis and self.__basis is same
+                if check and rank != matrix.rank():
+                    raise ValueError("the given echelonized basis vectors do not have the correct rank")
+
+                self.__echelonized_basis_matrix = matrix
 
     def __hash__(self):
         """
@@ -6826,6 +6901,10 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         from sage.categories.pushout import SubspaceFunctor
         return SubspaceFunctor(self.basis()), self.ambient_module()
 
+    # echelonized_basis() method depends on this method because this method's
+    # corresponding attribute is stored during initialization as well
+    # Further, this method performs internal caching due to the corresponding
+    # attribute being stored in the constructor as well
     def echelonized_basis_matrix(self):
         """
         Return basis matrix for ``self`` in row echelon form.
@@ -6839,14 +6918,31 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V.echelonized_basis_matrix()
             [1 2 3]
             [0 3 6]
+
+            sage: from sage.modules.free_module import FreeModule_ambient_pid, FreeModule_submodule_with_basis_pid
+            sage: V = FreeModule_ambient_pid(ZZ, 3)
+            sage: W = FreeModule_submodule_with_basis_pid(V, [[1,2,3], [1,1,1]])
+            sage: W.basis_matrix()
+            [1 2 3]
+            [1 1 1]
+            sage: hasattr(W, "_FreeModule_submodule_with_basis_pid__echelonized_basis_matrix")
+            False
+            sage: W.echelonized_basis_matrix()
+            [ 1  0 -1]
+            [ 0  1  2]
         """
         try:
             return self.__echelonized_basis_matrix
         except AttributeError:
             pass
-        self._echelonized_basis(self.ambient_module(), self.__basis)
+        self.__echelonized_basis_matrix = self._echelonized_basis(self.ambient_module(), self.__converted_basis)
         return self.__echelonized_basis_matrix
 
+    # Expensive computation, invoked only once - either in constructor, or
+    # otherwise in echelonized_basis_matrix() method.
+    # Cannot be cached currently because some downstream classes do not
+    # provide hashable parameters
+    # TODO: Make cached method
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
@@ -6859,15 +6955,17 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: M = ZZ^3
             sage: N = M.submodule_with_basis([[1,1,0],[0,2,1]])
             sage: N._echelonized_basis(M,N.basis())
-            [(1, 1, 0), (0, 2, 1)]
+            [1 1 0]
+            [0 2 1]
             sage: V = QQ^3
             sage: W = V.submodule_with_basis([[1,1,0],[0,2,1]])
             sage: W._echelonized_basis(V,W.basis())
-            [(1, 0, -1/2), (0, 1, 1/2)]
+            [   1    0 -1/2]
+            [   0    1  1/2]
             sage: V = SR^3                                                              # needs sage.symbolic
             sage: W = V.submodule_with_basis([[1,0,1]])
             sage: W._echelonized_basis(V, W.basis())
-            [(1, 0, 1)]
+            [1 0 1]
         """
         # Return the first rank rows (i.e., the nonzero rows).
         d = self._denominator(basis)
@@ -6882,8 +6980,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         r = E.rank()
         if r < E.nrows():
             E = E.matrix_from_rows(range(r))
-        self.__echelonized_basis_matrix = E
-        return E.rows()
+        return E
 
     def _denominator(self, B):
         """
@@ -7586,6 +7683,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
         T = self.echelon_to_user_matrix()
         return T.linear_combination_of_rows(w)
 
+    @cached_method
     def echelonized_basis(self):
         """
         Return the basis for ``self`` in echelon form.
@@ -7601,7 +7699,11 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: V.span(B) == M
             True
         """
-        return self.__echelonized_basis
+        C = self.element_class
+        echelonized_basis = self.echelonized_basis_matrix().rows()
+        w = [C(self, x.list(), coerce=False, copy=True)
+                for x in echelonized_basis]
+        return basis_seq(self, w)
 
     def echelon_coordinate_vector(self, v, check=True):
         """
@@ -7988,6 +8090,10 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
         """
         return 1
 
+    # Expensive computation
+    # Cannot be cached currently because some downstream classes do not
+    # provide hashable parameters
+    # TODO: Make cached method
     def _echelonized_basis(self, ambient, basis):
         """
         Given the ambient space and a basis, construct and cache the
@@ -8000,11 +8106,13 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
             sage: M = ZZ^3
             sage: N = M.submodule_with_basis([[1,1,0],[0,2,1]])
             sage: N._echelonized_basis(M,N.basis())
-            [(1, 1, 0), (0, 2, 1)]
+            [1 1 0]
+            [0 2 1]
             sage: V = QQ^3
             sage: W = V.submodule_with_basis([[1,1,0],[0,2,1]])
             sage: W._echelonized_basis(V,W.basis())
-            [(1, 0, -1/2), (0, 1, 1/2)]
+            [   1    0 -1/2]
+            [   0    1  1/2]
         """
         MAT = sage.matrix.matrix_space.MatrixSpace(
             base_ring=ambient.base_ring(),
@@ -8012,8 +8120,9 @@ class FreeModule_submodule_with_basis_field(FreeModule_generic_field, FreeModule
             sparse=ambient.is_sparse())
         A = MAT(basis)
         E = A.echelon_form()
+        r = E.rank()
         # Return the first rank rows (i.e., the nonzero rows).
-        return E.rows()[:E.rank()]
+        return E.matrix_from_rows(range(r))
 
     def is_ambient(self) -> bool:
         """
