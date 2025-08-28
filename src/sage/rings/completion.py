@@ -28,10 +28,15 @@ class CompletionPolynomial(RingExtensionElement):
         # Uniformizer
         S = self.parent()
         u = S._p
-        if u._is_atomic():
-            unif = str(u)
+        if u is Infinity:
+            step = -1
+            unif = S._ring.variable_name()
         else:
-            unif = "(%s)" % u
+            step = 1
+            if u._is_atomic():
+                unif = str(u)
+            else:
+                unif = "(%s)" % u
 
         # Bigoh
         prec = self.precision_absolute()
@@ -40,10 +45,10 @@ class CompletionPolynomial(RingExtensionElement):
             bigoh = "..."
         elif prec == 0:
             bigoh = "O(1)"
-        elif prec == 1:
+        elif step*prec == 1:
             bigoh = "O(%s)" % unif
         else:
-            bigoh = "O(%s^%s)" % (unif, prec)
+            bigoh = "O(%s^%s)" % (unif, step*prec)
 
         E = self.expansion(include_final_zeroes=False)
         is_exact = False
@@ -54,7 +59,7 @@ class CompletionPolynomial(RingExtensionElement):
             start = self.valuation()
             if start is Infinity:
                 return "0"
-        for i in range(start, prec):
+        for e in range(step*start, step*prec, step):
             try:
                 coeff = next(E)
             except StopIteration:
@@ -62,30 +67,26 @@ class CompletionPolynomial(RingExtensionElement):
                 break
             if coeff.is_zero():
                 continue
-            if coeff.is_one():
-                if i == 0:
-                    term = "1"
-                elif i == 1:
-                    term = unif
-                else:
-                    term = "%s^%s" % (unif, i)
+            if coeff._is_atomic():
+                coeff = str(coeff)
             else:
-                if coeff._is_atomic():
-                    coeff = str(coeff)
-                else:
-                    coeff = "(%s)" % coeff
-                if i == 0:
-                    term = coeff
-                elif i == 1:
-                    term = "%s*%s" % (coeff, unif)
-                else:
-                    term = "%s*%s^%s" % (coeff, unif, i)
+                coeff = "(%s)" % coeff
+            if e == 0:
+                term = coeff
+            elif e == 1:
+                term = "%s*%s" % (coeff, unif)
+            else:
+                term = "%s*%s^%s" % (coeff, unif, e)
             terms.append(term)
         if len(terms) == 0 and bigoh == "...":
             terms = ["0"]
         if not is_exact:
             terms.append(bigoh)
-        return " + ".join(terms)
+        s = " " + " + ".join(terms)
+        s = s.replace(" + -", " - ")
+        s = s.replace(" 1*"," ")
+        s = s.replace(" -1*", " -")
+        return s[1:]
 
     def expansion(self, include_final_zeroes=True):
         # TODO: improve performance
@@ -93,30 +94,40 @@ class CompletionPolynomial(RingExtensionElement):
         A = S._base
         incl = S._incl
         u = self.parent()._p
-        v = S._p.derivative()(S._xbar).inverse()
         elt = self.backend(force=True)
         prec = self.precision_absolute()
         n = 0
-        if S._integer_ring is not S:
-            val = elt.valuation()
-            if val is Infinity:
-                return
-            if val < 0:
-                elt *= incl(u) ** (-val)
-            else:
-                n = val
-        vv = v**n
-        uu = u**n
-        while n < prec:
-            if (not include_final_zeroes
-            and elt.precision_absolute() is Infinity and elt.is_zero()):
-                break
-            coeff = (vv * elt[n]).lift()
-            yield coeff
-            elt -= incl(uu * coeff)
-            uu *= u
-            vv *= v
-            n += 1
+        if u is Infinity:
+            n = elt.valuation()
+            while n < prec:
+                if (not include_final_zeroes
+                and elt.precision_absolute() is Infinity and elt.is_zero()):
+                     break
+                coeff = elt[n]
+                yield coeff
+                elt -= elt.parent()(coeff) << n
+                n += 1
+        else:
+            if S._integer_ring is not S:
+                val = elt.valuation()
+                if val is Infinity:
+                    return
+                if val < 0:
+                    elt *= incl(u) ** (-val)
+                else:
+                    n = val
+            vv = v**n
+            uu = u**n
+            while n < prec:
+                if (not include_final_zeroes
+                and elt.precision_absolute() is Infinity and elt.is_zero()):
+                     break
+                coeff = (vv * elt[n]).lift()
+                yield coeff
+                elt -= incl(uu * coeff)
+                uu *= u
+                vv *= v
+                n += 1
 
     def teichmuller(self):
         elt = self.backend(force=True)
@@ -147,12 +158,13 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             raise ValueError("not a polynomial ring or a rational function field")
         if not A.base_ring() in Fields():
             raise NotImplementedError
-        p = A(p)
-        try:
-            p = p.squarefree_part()
-        except (AttributeError, NotImplementedError):
-            pass
-        p = p.monic()
+        if p is not Infinity:
+            p = A(p)
+            try:
+                p = p.squarefree_part()
+            except (AttributeError, NotImplementedError):
+                pass
+            p = p.monic()
         return cls.__classcall__(cls, ring, p, default_prec, sparse)
 
     def __init__(self, ring, p, default_prec, sparse):
@@ -162,29 +174,39 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         base = A.base_ring()
         self._p = p
         # Construct backend
-        self._residue_ring = k = A.quotient(p)
-        self._xbar = xbar = k(A.gen())
-        name = "u_%s" % hash(self._p)
-        if isinstance(ring, PolynomialRing_generic):
-            self._integer_ring = self
+        if p is Infinity:
+            self._ring = ring.fraction_field()
+            self._residue_ring = k = base
+            self._integer_ring = None
             name = "u_%s" % id(self)
-            backend = PowerSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
-        else:
-            self._integer_ring = CompletionPolynomialRing(A, p, default_prec, sparse)
-            name = "u_%s" % id(self._integer_ring)
             backend = LaurentSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
+            x = backend.gen().inverse()
+        else:
+            self._residue_ring = k = A.quotient(p)
+            self._xbar = xbar = k(A.gen())
+            if isinstance(ring, PolynomialRing_generic):
+                self._integer_ring = self
+                name = "u_%s" % id(self)
+                backend = PowerSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
+            else:
+                self._integer_ring = CompletionPolynomialRing(A, p, default_prec, sparse)
+                name = "u_%s" % id(self._integer_ring)
+                backend = LaurentSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
+            x = backend.gen() + xbar
         super().__init__(backend.coerce_map_from(k) * k.coerce_map_from(base))
         # Set generator
-        x = backend.gen() + xbar
         self._gen = self(x)
         # Set coercions
         self._incl = ring.hom([x])
         self.register_coercion(A.Hom(self)(self._incl))
-        self.register_coercion(self._integer_ring)
+        if self._integer_ring is not None:
+            self.register_coercion(self._integer_ring)
 
     def _repr_(self):
-        s = "Completion of %s at %s" % (self._ring, self._p)
-        return s
+        if self._p is Infinity:
+            return "Completion of %s at infinity" % self._ring
+        else:
+            return "Completion of %s at %s" % (self._ring, self._p)
 
     def construction(self):
         from sage.categories.pushout import CompletionFunctor
@@ -196,7 +218,10 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
 
     @cached_method
     def uniformizer(self):
-        return self(self._p)
+        if self._p is Infinity:
+            return self._gen.inverse()
+        else:
+            return self(self._p)
 
     def gen(self):
         return self._gen
@@ -220,6 +245,8 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
         return S
 
     def integer_ring(self):
+        if self._p is Infinity:
+            raise NotImplementedError
         return self._integer_ring
 
     def fraction_field(self):
