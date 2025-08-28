@@ -1719,7 +1719,7 @@ class IncidenceStructure(SageObject):
         - ``verbose`` -- boolean; whether to print an explanation when the
           instance is not a generalized quadrangle
 
-        - ``parameters`` -- (boolean; ``False``); if set to ``True``, the
+        - ``parameters`` -- boolean (default: ``False``); if set to ``True``, the
           function returns a pair ``(s,t)`` instead of ``True`` answers. In this
           case, `s` and `t` are the integers defined above if they exist (each
           can be set to ``False`` otherwise).

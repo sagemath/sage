@@ -39,7 +39,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
-from sage.structure.all import Sequence
+from sage.structure.sequence import Sequence
 
 from .eis_series_cython import eisenstein_series_poly
 
