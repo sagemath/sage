@@ -2,7 +2,7 @@ name: Publish release documentation
 
 on:
   workflow_run:
-    workflows: "Build documentation (PDF)"
+    workflows: "Build live documentation"
     types:
       - completed
 
@@ -12,12 +12,13 @@ permissions:
   pull-requests: write
 
 
-# This workflow runs after doc-build-pdf workflow, taking the
+# This workflow runs after doc-build-livedoc workflow, taking the
 # artifact livedoc and deploying it to a netlify site.
 #
-# event (triggered doc-build)     URL (of the doc deployed to NETLIFY_SITE)
-# ---------------------------     ---------------------------------
-# on push tag                     https://doc-release--NETLIFY_SITE
+# event (triggered doc-build-livedoc)     URL (of the doc deployed to NETLIFY_SITE)
+# -----------------------------------     ---------------------------------
+# on push tag                             https://doc-10-4-beta2--NETLIFY_SITE
+# on push tag                             https://doc-release--NETLIFY_SITE
 #
 # where NETLIFY_SITE is presently sagemath.netlify.app for repo sagemath/sage.
 #
@@ -65,7 +66,7 @@ jobs:
 
       - name: Create _headers file for permissive CORS
         run: |
-          cat <<EOF > livedoc/livedoc/_headers
+          cat <<EOF > livedoc/doc/_headers
           /*
             Access-Control-Allow-Origin: *
             Access-Control-Allow-Methods: GET
@@ -77,7 +78,7 @@ jobs:
         id: deploy-netlify
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=livedoc/livedoc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
+          args: deploy --dir=livedoc/doc --message ${NETLIFY_MESSAGE} --alias ${NETLIFY_ALIAS}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -88,7 +89,7 @@ jobs:
       - name: Deploy to netlify with doc-release alias
         uses: netlify/actions/cli@master
         with:
-          args: deploy --dir=livedoc/livedoc --message doc-release --alias doc-release
+          args: deploy --dir=livedoc/doc --message doc-release --alias doc-release
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

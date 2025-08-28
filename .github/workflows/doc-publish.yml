@@ -19,7 +19,6 @@ permissions:
 # ---------------------------     ---------------------------------
 # on pull request                 https://doc-pr-12345--NETLIFY_SITE
 # on push branch develop          https://doc-develop--NETLIFY_SITE
-# on push tag                     https://doc-10-4-beta2--NETLIFY_SITE
 #
 # where NETLIFY_SITE is presently sagemath.netlify.app for repo sagemath/sage.
 #

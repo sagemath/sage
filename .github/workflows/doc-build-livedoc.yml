@@ -1,18 +1,16 @@
-name: Build documentation (PDF)
+name: Build live documentation
 
 on:
-  pull_request:
-  merge_group:
   push:
-    branches:
-      - develop
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   workflow_dispatch:
-    # Allow to run manually
-
-concurrency:
-  # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 env:
   PYTHON_VERSION: 3.11
@@ -23,12 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Merge CI fixes from sagemath/sage
-        run: |
-          .github/workflows/merge-fixes.sh
-        env:
-          GH_TOKEN: ${{ github.token }}
 
       - name: Cache conda packages
         uses: actions/cache@v4
@@ -63,25 +55,28 @@ jobs:
           export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
-      - name: Build documentation
+      - name: Build live documentation
         shell: bash -l {0}
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
           meson compile -C builddir doc-pdf
+          meson compile -C builddir doc-html
         env:
-          SAGE_DOCBUILD_OPTS: "--include-tests-blocks"
+          SAGE_USE_CDNS: yes
+          SAGE_LIVE_DOC: yes
+          SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
 
       - name: Copy doc
         id: copy
         run: |
           mkdir -p ./doc
-          cp -r builddir/src/doc/pdf doc/
           # Zip everything for increased performance
-          zip -r doc-pdf.zip doc
+          cp -rL builddir/src/doc/* doc/
+          zip -r livedoc.zip doc
 
-      - name: Upload doc
+      - name: Upload livedoc
         uses: actions/upload-artifact@v4
         with:
-          name: doc-pdf
-          path: doc-pdf.zip
+          name: livedoc
+          path: livedoc.zip
