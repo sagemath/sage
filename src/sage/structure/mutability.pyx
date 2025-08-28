@@ -287,7 +287,6 @@ def require_mutable(f):
     - Simon King <simon.king@uni-jena.de>
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(self, *args, **kwds):
         if getattr(self, '_is_immutable', False):
             raise ValueError("{} instance is immutable, {} must not be called".format(type(self), repr(f)))
@@ -340,7 +339,6 @@ def require_immutable(f):
     - Simon King <simon.king@uni-jena.de>
     """
     @sage_wraps(f)
-    @cython.binding(True)
     def new_f(self, *args, **kwds):
         if not getattr(self,'_is_immutable',False):
             raise ValueError("{} instance is mutable, {} must not be called".format(type(self), repr(f)))

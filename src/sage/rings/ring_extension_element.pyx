@@ -97,7 +97,6 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
         """
         return self._parent, (self._backend,)
 
-    @cython.binding(True)
     def __getattr__(self, name):
         """
         If the parent of this element was created with ``import_methods = True``,

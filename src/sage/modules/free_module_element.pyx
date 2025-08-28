@@ -4330,7 +4330,6 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 # Generic dense element
 # ############################################
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_dense(parent, entries, degree):
     """
     EXAMPLES::
@@ -4350,7 +4349,6 @@ def make_FreeModuleElement_generic_dense(parent, entries, degree):
     return v
 
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_dense_v1(parent, entries, degree, is_mutable):
     """
     EXAMPLES::
@@ -4810,7 +4808,6 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
 # Generic sparse element
 # ############################################
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_sparse(parent, entries, degree):
     """
     EXAMPLES::
@@ -4826,7 +4823,6 @@ def make_FreeModuleElement_generic_sparse(parent, entries, degree):
     return v
 
 
-@cython.binding(True)
 def make_FreeModuleElement_generic_sparse_v1(parent, entries, degree, is_mutable):
     """
     EXAMPLES::

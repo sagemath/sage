@@ -1,4 +1,3 @@
-# cython: binding=True
 # distutils: language = c++
 """
 Graph coloring

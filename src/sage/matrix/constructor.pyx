@@ -1,4 +1,3 @@
-# cython: binding=True
 """
 General matrix Constructor and display options
 """
