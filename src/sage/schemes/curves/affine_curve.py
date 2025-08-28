@@ -1744,14 +1744,13 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
         Tp = self.tangent_space(p)
 
         if Tp.dimension() > 1:
-            raise ValueError("the curve is not smooth at {}".format(p))
+            raise ValueError(f"the curve is not smooth at {p}")
 
         from sage.schemes.curves.constructor import Curve
 
         # translate to p
-        I0 = []
-        for poly in Tp.defining_polynomials():
-            I0.append(poly.subs({x: x - c for x, c in zip(gens, p)}))
+        I0 = [poly.subs({x: x - c for x, c in zip(gens, p)})
+              for poly in Tp.defining_polynomials()]
 
         return Curve(I0, A)
 
@@ -2744,11 +2743,8 @@ class IntegralAffineCurve(AffineCurve_field):
         gs = [phi(g) for g in point.prime_ideal().gens()]
         fs = [g for g in gs if not g.is_zero()]
         f = fs.pop()
-        places = []
-        for p in f.zeros():
-            if all(f.valuation(p) > 0 for f in fs):
-                places.append(p)
-        return places
+        return [p for p in f.zeros()
+                if all(f.valuation(p) > 0 for f in fs)]
 
     def parametric_representation(self, place, name=None):
         """

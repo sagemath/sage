@@ -133,10 +133,10 @@ def enum_product_projective_rational_field(X, B):
 
     R = X.codomain().ambient_space()
     m = R.num_components()
-    iters = [ R[i].points_of_bounded_height(bound=B) for i in range(m) ]
+    iters = [R[i].points_of_bounded_height(bound=B) for i in range(m)]
     dim = [R[i].dimension_relative() + 1 for i in range(m)]
 
-    dim_prefix = [0, dim[0]] # prefixes dim list
+    dim_prefix = [0, dim[0]]  # prefixes dim list
     for i in range(1, len(dim)):
         dim_prefix.append(dim_prefix[i] + dim[i])
 
@@ -144,10 +144,9 @@ def enum_product_projective_rational_field(X, B):
     P = []
     for i in range(m):
         pt = next(iters[i])
-        for j in range(dim[i]):
-            P.append(pt[j]) # initial value of P
+        P.extend(pt[j] for j in range(dim[i]))  # initial value of P
 
-    try: # add the initial point
+    try:  # add the initial point
         pts.append(X(P))
     except TypeError:
         pass
@@ -450,18 +449,12 @@ def sieve(X, bound):
         Return a list of rational points modulo all `p` in primes,
         computed parallelly.
         """
-        normalized_input = []
-        for p in primes_list:
-            normalized_input.append(((X, p, ), {}))
+        normalized_input = [((X, p, ), {}) for p in primes_list]
         p_iter = p_iter_fork(ncpus())
 
         points_pair = list(p_iter(parallel_function, normalized_input))
         points_pair.sort()
-        modulo_points = []
-        for pair in points_pair:
-            modulo_points.append(pair[1])
-
-        return modulo_points
+        return [pair[1] for pair in points_pair]
 
     def parallel_function_combination(point_p_max):
         r"""
@@ -511,12 +504,10 @@ def sieve(X, bound):
         r"""
         Return list of all rational points lifted parallelly.
         """
-        normalized_input = []
-        points = modulo_points.pop() # remove the list of points corresponding to largest prime
+        points = modulo_points.pop()  # remove the list of points corresponding to largest prime
         len_modulo_points.pop()
 
-        for point in points:
-            normalized_input.append(( (point, ), {}))
+        normalized_input = [((point, ), {}) for point in points]
         p_iter = p_iter_fork(ncpus())
         points_satisfying = list(p_iter(parallel_function_combination, normalized_input))
 
