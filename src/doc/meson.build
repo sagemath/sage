@@ -1,3 +1,7 @@
+if not get_option('build-docs')
+  subdir_done()
+endif
+
 sphinx_check = py_module.find_installation(required: false, modules: ['sphinx'])
 if not sphinx_check.found()
   warning(
@@ -5,6 +9,7 @@ if not sphinx_check.found()
   )
   subdir_done()
 endif
+
 
 doc_src = []
 subdir('en/reference/repl')
