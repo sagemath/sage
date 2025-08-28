@@ -105,7 +105,7 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 from sage.misc.misc_c import prod
 
 # used to deprecate only adjoint method
-from sage.misc.superseded import deprecation, deprecated_function_alias
+from sage.misc.superseded import deprecated_function_alias
 
 
 # temporary hack to silence the warnings from #34806
@@ -140,35 +140,6 @@ cdef class Matrix(Matrix1):
         [x], [0]
         )
     """
-    def _backslash_(self, B):
-        r"""
-        Used to compute `A \backslash B`, i.e., the backslash solver
-        operator.
-
-        DEPRECATED
-
-        EXAMPLES::
-
-            sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
-            sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
-            sage: C = A._backslash_(B); C
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            [  -1    1]
-            [13/5 -3/5]
-            [-4/5  9/5]
-            sage: A*C == B
-            True
-            sage: A._backslash_(B) == A \ B
-            doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
-            See https://github.com/sagemath/sage/issues/36394 for details.
-            True
-            sage: A._backslash_(B) == A.solve_right(B)
-            True
-        """
-        deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')
-        return self.solve_right(B)
-
     def subs(self, *args, **kwds):
         """
         Substitute values to the variables in that matrix.
@@ -7326,14 +7297,14 @@ cdef class Matrix(Matrix1):
 
         OUTPUT:
 
-        Returns a list of tuples of the form ``(e,V,n)``,
-        each tuple corresponds to a distinct eigenvalue,
+        A list of tuples of the form ``(e,V,n)``.
+        Each tuple corresponds to a distinct eigenvalue,
         where ``e`` is the eigenvalue, ``V`` is a list of eigenvectors forming a
         basis for the corresponding left eigenspace, and ``n`` is the algebraic
         multiplicity of the eigenvalue.
 
-        If the option ``extend`` is set to ``False``, then only the eigenvalues that
-        live in the base ring are considered.
+        If the option ``extend`` is set to ``False``, then only the
+        eigenvalues that live in the base ring are considered.
 
         EXAMPLES:
 
@@ -7375,13 +7346,6 @@ cdef class Matrix(Matrix1):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Rational Field
 
-        Check the deprecation::
-
-            sage: matrix(QQ, [[1, 2], [3, 4]]).eigenvectors_left(False)                 # needs sage.rings.number_field
-            doctest:...: DeprecationWarning: "extend" should be used as keyword argument
-            See https://github.com/sagemath/sage/issues/29243 for details.
-            []
-
         Check :issue:`30518`::
 
             sage: # needs sage.rings.number_field
@@ -7405,29 +7369,23 @@ cdef class Matrix(Matrix1):
             []
         """
         if other is not None:
-            if isinstance(other, bool):
-                # for backward compatibility
-                from sage.misc.superseded import deprecation
-                deprecation(29243,
-                            '"extend" should be used as keyword argument')
-                extend = other
-                other = None
-            else:
-                raise NotImplementedError('generalized eigenvector '
-                                          'decomposition is implemented '
-                                          'for RDF and CDF, but not for %s'
-                                          % self.base_ring())
+            raise NotImplementedError('generalized eigenvector '
+                                      'decomposition is implemented '
+                                      'for RDF and CDF, but not for %s'
+                                      % self.base_ring())
 
         if algorithm is None:
             R = self.base_ring()
             from sage.rings.abc import RealField, ComplexField
             if isinstance(R, (RealField, ComplexField)):
                 return self._eigenvectors_left(
-                        other, extend=extend, algorithm='flint', suppress_future_warning=True)
+                    other, extend=extend, algorithm='flint',
+                    suppress_future_warning=True)
             else:
                 algorithm = 'sage'
         return self._eigenvectors_left(
-                other, extend=extend, algorithm=algorithm, suppress_future_warning=False)
+            other, extend=extend, algorithm=algorithm,
+            suppress_future_warning=False)
 
     def _eigenvectors_left(self, other=None, *, extend: bool, algorithm: str,
                            suppress_future_warning: bool) -> list:
@@ -15900,7 +15858,7 @@ cdef class Matrix(Matrix1):
         """
         return self._is_positive_definite_or_semidefinite(True)
 
-    def is_positive_definite(self, certificate=False):
+    def is_positive_definite(self):
         r"""
         Determine if a matrix is positive-definite.
 
@@ -15923,9 +15881,6 @@ cdef class Matrix(Matrix1):
         INPUT:
 
         - ``self`` -- a matrix
-        - ``certificate`` -- boolean (default: ``False``); return the
-          lower-triangular and diagonal parts of the :meth:`block_ldlt`
-          factorization when the matrix is positive-definite. Deprecated.
 
         OUTPUT:
 
@@ -15937,14 +15892,6 @@ cdef class Matrix(Matrix1):
         1. Have a fraction field implemented; and
         2. Be a subring of the real numbers, complex numbers,
            or symbolic ring.
-
-        If ``certificate`` is ``True``, a triplet ``(b, L, d)`` will
-        be returned instead, with ``b`` containing the result (true or
-        false). If the matrix is positive-definite, then ``L`` and
-        ``d`` will contain the lower-triangular and diagonal parts of
-        the :meth:`block_ldlt` factorization, respectively. Or if the
-        matrix is not positive-definite (that is, if ``b`` is
-        ``False``), then both ``L`` and ``d`` will be ``None``.
 
         .. SEEALSO::
 
@@ -16078,22 +16025,7 @@ cdef class Matrix(Matrix1):
             sage: matrix.identity(SR,4).is_positive_definite()                          # needs sage.symbolic
             True
         """
-        result = self._is_positive_definite_or_semidefinite(False)
-        if certificate:
-            from sage.misc.superseded import deprecation
-            msg = "the 'certificate' argument is deprecated; if you "
-            msg += "need the corresponding factorization, you can "
-            msg += "simply compute it yourself (the results are cached)"
-            deprecation(31619, msg)
-            L = None
-            d = None
-            if result:
-                from sage.modules.free_module_element import vector
-                _, L, D = self.block_ldlt()
-                d = vector(D.base_ring(), D.diagonal())
-            return (result, L, d)
-        else:
-            return result
+        retrun self._is_positive_definite_or_semidefinite(False)
 
     def principal_square_root(self, check_positivity=True):
         r"""
