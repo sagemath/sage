@@ -488,8 +488,7 @@ Documentation Previews
 We value documentation as much as the code. Hence the Sage GitHub repo provides
 documentation previews before a stable release is published to the official
 site `<https://doc.sagemath.org>`_. Developers are expected to check the
-previews during the development process. Several GitHub workflows work together
-to create the previews.
+previews. Several GitHub workflows work together to create the previews.
 
 As mentioned above, for a check on a PR (say #12345), an HTML documentation
 preview is published to `<https://doc-pr-12345--sagemath.netlify.app>`_ by the
@@ -514,7 +513,7 @@ requesting review. If the workflow failed, check the run of the workflow.
 
 The HTML documentation preview for a PR does not include PDF docs, which take
 much longer time to build than the HTML docs. On the other hand, the
-documentation preview (either HTML and PDF) contains TESTS blocks to enable the
+HTML documentation preview and PDF docs contain TESTS blocks to enable the
 PR author to check newly added TESTS blocks. The official documentation for end
 users do not contain TESTS blocks.
 
@@ -525,7 +524,7 @@ in the `Documentation section of the GitHub Wiki
 <https://github.com/sagemath/sage/wiki#documentation-for-last-release>`_. The
 `run of the PDF build workflow
 <https://github.com/sagemath/sage/actions/workflows/doc-build-pdf.yml>`_
-contains the artifact ``livedoc`` used to publish the full documentation.
+contains the ``livedoc`` artifact used to publish the full documentation.
 
 Final notes
 ===========
