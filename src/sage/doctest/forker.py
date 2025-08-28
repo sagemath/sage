@@ -1793,9 +1793,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
             sage: DD.serial_dispatch()
-            sage -t .../rings/homset.py
+            .../rings/homset.py
                 [... tests, ...s wall]
-            sage -t .../rings/ideal.py
+            .../rings/ideal.py
                 [... tests, ...s wall]
         """
         for source in self.controller.sources:
@@ -1839,9 +1839,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
             sage: DD.parallel_dispatch()
-            sage -t .../databases/cremona.py
+            .../databases/cremona.py
                 [... tests, ...s wall]
-            sage -t .../rings/big_oh.py
+            .../rings/big_oh.py
                 [... tests, ...s wall]
 
         If the ``exitfirst=True`` option is given, the results for a failing
@@ -1865,7 +1865,7 @@ class DocTestDispatcher(SageObject):
             ....:     DC.dispatcher = DD
             ....:     DC.timer = Timer().start()
             ....:     DD.parallel_dispatch()
-            sage -t ...
+            ...
             **********************************************************************
             File "...", line 2, in ...
             Failed example:
@@ -2170,9 +2170,9 @@ class DocTestDispatcher(SageObject):
             sage: DC.dispatcher = DD
             sage: DC.timer = Timer().start()
             sage: DD.dispatch()
-            sage -t .../sage/modules/free_module_homspace.py
+            .../sage/modules/free_module_homspace.py
                 [... tests, ...s wall]
-            sage -t .../sage/rings/big_oh.py
+            .../sage/rings/big_oh.py
                 [... tests, ...s wall]
         """
         if self.controller.options.serial:
@@ -2235,7 +2235,7 @@ class DocTestWorker(multiprocessing.Process):
             sage: run_doctests(sage.rings.big_oh) # indirect doctest
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/rings/big_oh.py
+            .../sage/rings/big_oh.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
@@ -2282,7 +2282,7 @@ class DocTestWorker(multiprocessing.Process):
             sage: run_doctests(sage.symbolic.units)  # indirect doctest                 # needs sage.symbolic
             Running doctests with ID ...
             Doctesting 1 file.
-            sage -t .../sage/symbolic/units.py
+            .../sage/symbolic/units.py
                 [... tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!

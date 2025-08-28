@@ -29,7 +29,69 @@ from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.dynamic_class import dynamic_class
 
 
-def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
+def _parse_multivariate_defining_equation(g):
+    """
+    Parse a defining equation for a hyperelliptic curve.
+    The input `g` should have the form `g(x, y) = y^2 + h(x) y - f(x)`,
+    or a constant multiple of that.
+
+    OUTPUT: tuple (f, h), each of them given as a list of coefficients.
+
+    TESTS::
+
+        sage: from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+        sage: R.<x,y> = QQ[]
+        sage: _parse_multivariate_defining_equation(y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1, 1, 0, 0, 0, 1], [0, 0, 3])
+        sage: _parse_multivariate_defining_equation(2*y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1/2, 1/2, 0, 0, 0, 1/2], [0, 0, 3/2])
+
+    The variable names are arbitrary::
+
+        sage: S.<z,t> = GF(13)[]
+        sage: _parse_multivariate_defining_equation(2*t^2 + 3*z^2*t - (z^5 + z + 1))
+        ([7, 7, 0, 0, 0, 7], [0, 0, 8])
+    """
+    from sage.rings.polynomial.multi_polynomial import MPolynomial
+    if not isinstance(g, MPolynomial):
+        raise ValueError("must be a multivariate polynomial")
+
+    variables = g.variables()
+    if len(variables) != 2:
+        raise ValueError("must be a polynomial in two variables")
+
+    y, x = sorted(variables, key=g.degree)
+    if g.degree(y) != 2:
+        raise ValueError("must be a polynomial of degree 2 in a variable")
+
+    f = []
+    h = []
+    for k, v in g:
+        dx = v.degree(x)
+        dy = v.degree(y)
+        if dy == 2:
+            if dx != 0:
+                raise ValueError(f"cannot have a term y*x^{dx}")
+            y2 = k
+        elif dy == 1:
+            while len(h) <= dx:
+                h.append(0)
+            h[dx] = k
+        else:
+            assert dy == 0
+            while len(f) <= dx:
+                f.append(0)
+            f[dx] = -k
+
+    if not y2.is_one():
+        y2_inv = y2.inverse_of_unit()
+        f = [c * y2_inv for c in f]
+        h = [c * y2_inv for c in h]
+
+    return f, h
+
+
+def HyperellipticCurve(f, h=None, names=None, PP=None, check_squarefree=True):
     r"""
     Return the hyperelliptic curve `y^2 + h y = f`, for
     univariate polynomials `h` and `f`. If `h`
@@ -75,6 +137,12 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
         sage: HyperellipticCurve(x^3 + x - 1, x+a)                                      # needs sage.rings.finite_rings
         Hyperelliptic Curve over Finite Field in a of size 3^2
          defined by y^2 + (x + a)*y = x^3 + x + 2
+
+    Construct from defining polynomial::
+
+        sage: R.<x,y> = QQ[]
+        sage: HyperellipticCurve(y^2 + 3*x^2*y - (x^5 + x + 1))
+        Hyperelliptic Curve over Rational Field defined by y^2 + 3*x^2*y = x^5 + x + 1
 
     Characteristic two::
 
@@ -200,6 +268,17 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     """
     # F is the discriminant; use this for the type check
     # rather than f and h, one of which might be constant.
+    if h is None:
+        from sage.rings.polynomial.multi_polynomial import MPolynomial
+        if isinstance(f, MPolynomial) and len(f.parent().gens()) == 2:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            from sage.structure.element import get_coercion_model
+            P = PolynomialRing(f.base_ring(), 'x')
+            f, h = _parse_multivariate_defining_equation(f)
+            f, h = P(f), P(h)
+        else:
+            h = 0
+
     F = h**2 + 4 * f
     if not isinstance(F, Polynomial):
         raise TypeError(f"arguments f = {f} and h = {h} must be polynomials")
