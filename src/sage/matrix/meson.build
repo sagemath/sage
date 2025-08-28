@@ -84,7 +84,6 @@ extension_data = {
   'matrix_numpy_dense' : files('matrix_numpy_dense.pyx'),
   'matrix_numpy_integer_dense' : files('matrix_numpy_integer_dense.pyx'),
   'matrix_polynomial_dense' : files('matrix_polynomial_dense.pyx'),
-  'matrix_rational_sparse' : files('matrix_rational_sparse.pyx'),
   'matrix_real_double_dense' : files('matrix_real_double_dense.pyx'),
   'matrix_sparse' : files('matrix_sparse.pyx'),
   'matrix_symbolic_dense' : files('matrix_symbolic_dense.pyx'),
@@ -138,6 +137,7 @@ extension_data_cpp = {
   'matrix_modn_sparse': files('matrix_modn_sparse.pyx'),
   'matrix_mpolynomial_dense': files('matrix_mpolynomial_dense.pyx'),
   'matrix_rational_dense': files('matrix_rational_dense.pyx'),
+  'matrix_rational_sparse': files('matrix_rational_sparse.pyx'),
 }
 
 foreach name, pyx : extension_data_cpp
@@ -148,6 +148,7 @@ foreach name, pyx : extension_data_cpp
     'matrix_modn_dense_float',
     'matrix_modn_dense_double',
     'matrix_modn_sparse',
+    'matrix_rational_sparse',
   ]
     # Temporary workaround for https://github.com/linbox-team/linbox/issues/306
     override_options += ['cpp_std=c++11']
