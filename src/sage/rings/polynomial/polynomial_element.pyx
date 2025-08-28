@@ -6006,6 +6006,8 @@ cdef class Polynomial(CommutativePolynomial):
 
             sage: K.<x,y> = QQ['x,y']
             sage: g = K.random_element()
+            sage: while not g:
+            ....:     g = K.random_element()
             sage: f.sylvester_matrix(g) == K(f).sylvester_matrix(g, x)                  # needs sage.modules
             True
 
@@ -8377,8 +8379,8 @@ cdef class Polynomial(CommutativePolynomial):
             sage: A = PolynomialRing(R, 'y')
             sage: y = A.gen()
             sage: f = 10*y^2 - y^3 - 9
-            sage: f.roots(multiplicities=False)                                         # needs sage.libs.pari
-            [1, 0, 3, 6]
+            sage: sorted(f.roots(multiplicities=False))                                 # needs sage.libs.pari
+            [0, 1, 3, 6]
 
         An example over the complex double field (where root finding is
         fast, thanks to NumPy)::
@@ -13029,7 +13031,7 @@ cdef class PolynomialBaseringInjection(Morphism):
     By :issue:`9944`, there are now only very few exceptions::
 
         sage: PolynomialRing(QQ,names=[]).coerce_map_from(QQ)
-        Call morphism:
+        Coercion map:
           From: Rational Field
           To:   Multivariate Polynomial Ring in no variables over Rational Field
     """

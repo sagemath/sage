@@ -556,6 +556,28 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived type.")
 
+    cdef copy_from_unsafe(self, Py_ssize_t iDst, Py_ssize_t jDst, src, Py_ssize_t iSrc, Py_ssize_t jSrc):
+        """
+        Copy element (iSrc, jSrc) from ``src`` to position (iDst, jDst) in
+        ``self``. It is assumed ``src`` is the same type of matrix as``self``,
+        with the same base ring.
+
+        This should generally be reimplemented in subclasses to avoid the type
+        conversion that often is necessary in ``get_unsafe`` and
+        ``set_unsafe``.
+
+        INPUT:
+
+        - ``iDst`` - the row to be copied to in ``self``.
+        - ``jDst`` - the column to be copied to in ``self``.
+        - ``src`` - the matrix to copy from. Should be the same type as
+                    ``self`` with the same base ring.
+        - ``iSrc``  - the row to be copied from in ``src``.
+        - ``jSrc`` - the column to be copied from in ``src``.
+        """
+        cdef Matrix _src = <Matrix>src
+        self.set_unsafe(iDst, jDst, _src.get_unsafe(iSrc, jSrc))
+
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
         """
         Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
@@ -6284,39 +6306,3 @@ def unpickle(cls, parent, immutability, cache, data, version):
     else:
         A._unpickle_generic(data, version)
     return A
-
-
-def set_max_rows(n):
-    """
-    Set the global variable ``max_rows`` (which is used in deciding how to
-    output a matrix).
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix0 import set_max_rows
-        sage: set_max_rows(20)
-        doctest:...: DeprecationWarning: 'set_max_rows' is replaced by 'matrix.options.max_rows'
-        See https://github.com/sagemath/sage/issues/30552 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30552, "'set_max_rows' is replaced by 'matrix.options.max_rows'")
-    from sage.matrix.constructor import options
-    options.max_rows = n-1
-
-
-def set_max_cols(n):
-    """
-    Set the global variable ``max_cols`` (which is used in deciding how to
-    output a matrix).
-
-    EXAMPLES::
-
-        sage: from sage.matrix.matrix0 import set_max_cols
-        sage: set_max_cols(50)
-        doctest:...: DeprecationWarning: 'set_max_cols' is replaced by 'matrix.options.max_cols'
-        See https://github.com/sagemath/sage/issues/30552 for details.
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30552, "'set_max_cols' is replaced by 'matrix.options.max_cols'")
-    from sage.matrix.constructor import options
-    options.max_cols = n-1
