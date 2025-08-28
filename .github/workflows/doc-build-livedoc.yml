@@ -60,8 +60,8 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
-          meson compile -C builddir doc-pdf
-          meson compile -C builddir doc-html
+          meson compile -C builddir doc-pdf -j1
+          meson compile -C builddir doc-html -j1
         env:
           SAGE_USE_CDNS: yes
           SAGE_LIVE_DOC: yes
