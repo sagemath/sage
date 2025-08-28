@@ -55,12 +55,16 @@ jobs:
           export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
-      - name: Build live documentation
+      - name: Build pdf documentation
         shell: bash -l {0}
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
-          meson compile -C builddir doc-pdf -j1
+          meson compile -C builddir doc-pdf
+
+      - name: Build live documentation
+        shell: bash -l {0}
+        run: |
           meson compile -C builddir doc-html -j1
         env:
           SAGE_USE_CDNS: yes
