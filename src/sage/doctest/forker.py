@@ -518,6 +518,54 @@ from collections import namedtuple
 TestResults = namedtuple('TestResults', 'failed attempted')
 
 
+def _parse_example_timeout(source: str, default_timeout: float) -> float:
+    """
+    Parse the timeout value from a doctest example's source.
+
+    INPUT:
+
+    - ``source`` -- the source code of a ``doctest.Example``
+    - ``default_timeout`` -- the default timeout value to use
+
+    OUTPUT:
+
+    - a float, the timeout value to use for the example
+
+    TESTS::
+
+        sage: from sage.doctest.forker import _parse_example_timeout
+        sage: _parse_example_timeout("sleep(10)  # long time (limit 10s)", 5.0r)
+        10.0
+        sage: _parse_example_timeout("sleep(10)  # long time (limit 10s, possible regression)", 5.0r)
+        10.0
+        sage: _parse_example_timeout("sleep(10)  # long time (20s)", 5.0r)
+        5.0
+        sage: _parse_example_timeout("sleep(10)  # long time (limit 1a2s)", 5.0r)
+        Traceback (most recent call last):
+        ...
+        ValueError: malformed optional tag '# long time (limit 1a2s)', should be '# long time (limit <number>s)'
+        sage: _parse_example_timeout("sleep(10)  # long time (:issue:`12345`)", 5.0r)
+        5.0
+    """
+    # TODO this double-parsing is inefficient, should make :meth:`SageDocTestParser.parse`
+    # return subclass of doctest.Example that already include the timeout value
+    from sage.doctest.parsing import parse_optional_tags
+    value = parse_optional_tags(source).get("long time", None)
+    if value is None:
+        # either has the "long time" tag without any value in parentheses,
+        # or tag not present
+        return default_timeout
+    assert isinstance(value, str)
+    match = re.fullmatch(r'\s*limit\s+(\S+)s(\s*,.*)?', value.strip())
+    if match:
+        try:
+            return float(match[1])
+        except ValueError:
+            raise ValueError(f"malformed optional tag '# long time ({value})', should be '# long time (limit <number>s)'")
+    else:
+        return default_timeout
+
+
 class SageDocTestRunner(doctest.DocTestRunner):
     def __init__(self, *args, **kwds):
         """
@@ -820,8 +868,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             if example.warnings:
                 for warning in example.warnings:
                     out(self._failure_header(test, example, f'Warning: {warning}'))
+
             if outcome is SUCCESS:
-                if self.options.warn_long > 0 and example.cputime + check_timer.cputime > self.options.warn_long:
+                if self.options.warn_long > 0 and example.cputime + check_timer.cputime > _parse_example_timeout(
+                        example.source, self.options.warn_long):
                     self.report_overtime(out, test, example, got,
                                          check_timer=check_timer)
                 elif example.warnings:
