@@ -374,11 +374,11 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                 try:
                     resu.inverse()
                 except (ZeroDivisionError, TypeError):
-                    raise TypeError("the {} is not invertible ".format(tens))
+                    raise TypeError(f"the {tens} is not invertible ")
                 return resu
             else:
-                    raise TypeError("the {} cannot be converted ".format(tens)
-                                    + "to an automorphism.")
+                raise TypeError(f"the {tens} cannot be converted "
+                                + "to an automorphism.")
         if isinstance(comp, FiniteRankFreeModuleMorphism):
             # Conversion of an endomorphism to an automorphism
             endo = comp  # for readability
