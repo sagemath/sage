@@ -319,24 +319,23 @@ class FormsSpace_abstract(FormsRing_abstract):
             sage: subspace3.has_coerce_map_from(subspace2)
             True
         """
-
         from .space import ZeroForm
         from .subspace import SubSpaceForms
         if isinstance(S, ZeroForm):
             return True
         if (isinstance(S, SubSpaceForms)
-            and isinstance(self, SubSpaceForms)):
-                if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
-                    S2 = S.change_ambient_space(self.ambient_space())
-                    return self.module().has_coerce_map_from(S2.module())
-                else:
-                    return False
-        elif (  isinstance(S, FormsSpace_abstract)
-            and self.graded_ring().has_coerce_map_from(S.graded_ring())
-            and S.weight() == self._weight
-            and S.ep() == self._ep
-            and not isinstance(self, SubSpaceForms)):
-                return True
+                and isinstance(self, SubSpaceForms)):
+            if (self.ambient_space().has_coerce_map_from(S.ambient_space())):
+                S2 = S.change_ambient_space(self.ambient_space())
+                return self.module().has_coerce_map_from(S2.module())
+            else:
+                return False
+        elif (isinstance(S, FormsSpace_abstract)
+              and self.graded_ring().has_coerce_map_from(S.graded_ring())
+              and S.weight() == self._weight
+              and S.ep() == self._ep
+              and not isinstance(self, SubSpaceForms)):
+            return True
         else:
             return self.contains_coeff_ring() \
                 and self.coeff_ring().has_coerce_map_from(S)
