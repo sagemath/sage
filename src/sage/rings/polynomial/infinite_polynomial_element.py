@@ -100,15 +100,16 @@ finite polynomial rings are merged with infinite polynomial rings::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer_ring import ZZ
-from sage.rings.integer import Integer
-from sage.structure.richcmp import richcmp
+import copy
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.commutative_polynomial import CommutativePolynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.structure.element import RingElement
-from .commutative_polynomial import CommutativePolynomial
-from .multi_polynomial import MPolynomial
-import copy
+from sage.structure.richcmp import richcmp
 
 
 class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClasscallMetaclass):
@@ -206,10 +207,14 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             if parent(p) is A._P or (A._P.base_ring().has_coerce_map_from(parent(p))):
                 return InfinitePolynomial_dense(A, p)
             # MPolynomialRing_polydict is crab. So, in that case, use sage_eval
-            from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict
+            from sage.rings.polynomial.multi_polynomial_ring import (
+                MPolynomialRing_polydict,
+            )
             if isinstance(A._P, MPolynomialRing_polydict):
-                from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
                 from sage.misc.sage_eval import sage_eval
+                from sage.rings.polynomial.infinite_polynomial_ring import (
+                    GenDictWithBasering,
+                )
                 p = sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict()))
                 return InfinitePolynomial_dense(A, p)
             else:
@@ -223,7 +228,9 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
                         except (ValueError, TypeError):
                             # last desperate attempt: String conversion
                             from sage.misc.sage_eval import sage_eval
-                            from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
+                            from sage.rings.polynomial.infinite_polynomial_ring import (
+                                GenDictWithBasering,
+                            )
                             # the base ring may be a function field, therefore
                             # we need GenDictWithBasering
                             return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
@@ -236,7 +243,9 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
                 except (ValueError, TypeError):
                     # last desperate attempt: String conversion
                     from sage.misc.sage_eval import sage_eval
-                    from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
+                    from sage.rings.polynomial.infinite_polynomial_ring import (
+                        GenDictWithBasering,
+                    )
                     # the base ring may be a function field, therefore
                     # we need GenDictWithBasering
                     return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
@@ -1487,7 +1496,9 @@ class InfinitePolynomial_sparse(InfinitePolynomial):
             if newVars == list(self._p.parent().variable_names()):
                 newR = self._p.parent()
             else:
-                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                from sage.rings.polynomial.polynomial_ring_constructor import (
+                    PolynomialRing,
+                )
                 newR = PolynomialRing(self._p.base_ring(), newVars, order=P._order)
             mapR = self._p.parent().hom(copyVars, newR)
             return InfinitePolynomial_sparse(self.parent(), mapR(self._p))

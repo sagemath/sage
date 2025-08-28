@@ -14,16 +14,14 @@ from sage.arith.misc import gcd
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
+from sage.modular.arithgroup.congroup_generic import CongruenceSubgroup
+from sage.modular.arithgroup.congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer import GCD_list
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.structure.richcmp import richcmp_method, richcmp
-
-from .congroup_generic import CongruenceSubgroup
-from .congroup_sl2z import SL2Z
-
+from sage.structure.richcmp import richcmp, richcmp_method
 
 _gamma_cache = {}
 

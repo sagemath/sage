@@ -27,19 +27,18 @@ Function Fields: extension
 # *****************************************************************************
 
 from sage.arith.functions import lcm
+from sage.categories.function_fields import FunctionFields
+from sage.categories.homset import Hom
+from sage.categories.number_fields import NumberFields
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.rings.qqbar_decorators import handle_AA_and_QQbar
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
+from sage.rings.function_field.function_field import FunctionField
+from sage.rings.function_field.function_field_rational import RationalFunctionField
 from sage.rings.integer import Integer
-from sage.categories.homset import Hom
-from sage.categories.function_fields import FunctionFields
-from sage.categories.number_fields import NumberFields
-
-from .element import FunctionFieldElement
-from .element_polymod import FunctionFieldElement_polymod
-from .function_field import FunctionField
-from .function_field_rational import RationalFunctionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
 
 class FunctionField_polymod(FunctionField):
@@ -423,25 +422,24 @@ class FunctionField_polymod(FunctionField):
                                 from_L(ret_to_L(ret.base_field().gen()))])
             to_ret = self.hom([L_to_ret(to_L(k.gen())) for k in self._intermediate_fields(self.rational_function_field())])
             return ret, from_ret, to_ret
+        elif self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
+            # self is already monic and integral
+            if names is None or names == ():
+                names = (self.variable_name(),)
+            return self.change_variable_name(names)
         else:
-            if self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
-                # self is already monic and integral
-                if names is None or names == ():
-                    names = (self.variable_name(),)
-                return self.change_variable_name(names)
-            else:
-                if not names:
-                    names = (self.variable_name() + "_",)
-                if len(names) == 1:
-                    names = (names[0], self.rational_function_field().variable_name())
+            if not names:
+                names = (self.variable_name() + "_",)
+            if len(names) == 1:
+                names = (names[0], self.rational_function_field().variable_name())
 
-                g, d = self._make_monic_integral(self.polynomial())
-                K, from_K, to_K = self.base_field().change_variable_name(names[1])
-                g = g.map_coefficients(to_K)
-                ret = K.extension(g, names=names[0])
-                from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
-                to_ret = self.hom([ret.gen() / d, ret.base_field().gen()])
-                return ret, from_ret, to_ret
+            g, d = self._make_monic_integral(self.polynomial())
+            K, from_K, to_K = self.base_field().change_variable_name(names[1])
+            g = g.map_coefficients(to_K)
+            ret = K.extension(g, names=names[0])
+            from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
+            to_ret = self.hom([ret.gen() / d, ret.base_field().gen()])
+            return ret, from_ret, to_ret
 
     def _make_monic_integral(self, f):
         """
@@ -798,7 +796,7 @@ class FunctionField_polymod(FunctionField):
         """
         if basis is not None:
             raise NotImplementedError
-        from .maps import MapVectorSpaceToFunctionField, MapFunctionFieldToVectorSpace
+        from .maps import MapFunctionFieldToVectorSpace, MapVectorSpaceToFunctionField
         if base is None:
             base = self.base_field()
         degree = self.degree(base)
@@ -2394,9 +2392,12 @@ def _singular_normal(ideal):
         sage: _singular_normal(ideal(f))
         [[1]]
     """
-    from sage.libs.singular.function import (singular_function,
-                                             lib as singular_lib,
-                                             get_printlevel, set_printlevel)
+    from sage.libs.singular.function import (
+        get_printlevel,
+        set_printlevel,
+        singular_function,
+    )
+    from sage.libs.singular.function import lib as singular_lib
     singular_lib('normal.lib')
     normal = singular_function('normal')
 
@@ -2434,6 +2435,7 @@ class FunctionField_integral(FunctionField_simple):
         in some algorithms.
         """
         from sage.matrix.constructor import matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         k = self.constant_base_field()
@@ -2448,8 +2450,8 @@ class FunctionField_integral(FunctionField_simple):
         g = sum([v[i].numerator().subs(x) * y**i for i in range(len(v))])
 
         if self.is_global():
-            from sage.libs.singular.function import singular_function, lib
             from sage.env import SAGE_EXTCODE
+            from sage.libs.singular.function import lib, singular_function
             lib(SAGE_EXTCODE + '/singular/function_field/core.lib')
             normalize = singular_function('core_normalize')
 

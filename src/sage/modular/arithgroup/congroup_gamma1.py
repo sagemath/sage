@@ -12,13 +12,16 @@ Congruence subgroup `\Gamma_1(N)`
 # ****************************************************************************
 
 
+from sage.arith.misc import divisors, moebius
+from sage.arith.misc import euler_phi as phi
 from sage.misc.cachefunc import cached_method
-
 from sage.misc.misc_c import prod
-from .congroup_gammaH import GammaH_class, is_GammaH, GammaH_constructor
-from sage.rings.integer_ring import ZZ
-from sage.arith.misc import euler_phi as phi, moebius, divisors
+from sage.modular.arithgroup.congroup_gammaH import (
+    GammaH_class,
+    GammaH_constructor,
+)
 from sage.modular.dirichlet import DirichletGroup
+from sage.rings.integer_ring import ZZ
 
 
 def is_Gamma1(x):
@@ -70,7 +73,9 @@ def Gamma1_constructor(N):
         True
     """
     if N == 1 or N == 2:
-        from .congroup_gamma0 import Gamma0_constructor
+        from .congroup_gamma0 import (
+            Gamma0_constructor,
+        )
         return Gamma0_constructor(N)
     try:
         return _gamma1_cache[N]
@@ -231,6 +236,7 @@ class Gamma1_class(GammaH_class):
             return self.farey_symbol().generators()
         elif algorithm == "todd-coxeter":
             from sage.modular.modsym.g1list import G1list
+
             from .congroup import generators_helper
             level = self.level()
             gen_list = generators_helper(G1list(level), level)

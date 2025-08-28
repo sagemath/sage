@@ -26,10 +26,10 @@ Check that ``eclib`` is imported as needed::
     ['...']
 """
 import sys
-from sage.structure.sage_object import SageObject
-from sage.rings.integer_ring import IntegerRing
 
-from .mwrank import _Curvedata, _two_descent, _mw, parse_point_list
+from sage.libs.eclib.mwrank import _Curvedata, _mw, _two_descent, parse_point_list
+from sage.rings.integer_ring import IntegerRing
+from sage.structure.sage_object import SageObject
 
 
 class mwrank_EllipticCurve(SageObject):

@@ -18,15 +18,22 @@ This file contains the parent classes for such extensions.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.categories.morphism import Morphism
 from sage.categories.homset import Hom
-from .generic_nodes import pAdicFixedModRingGeneric, pAdicCappedAbsoluteRingGeneric, pAdicCappedRelativeRingGeneric, pAdicCappedRelativeFieldGeneric, pAdicFloatingPointRingGeneric, pAdicFloatingPointFieldGeneric
-from .eisenstein_extension_generic import EisensteinExtensionGeneric
-from .relative_ramified_FM import RelativeRamifiedFixedModElement
-from .relative_ramified_CA import RelativeRamifiedCappedAbsoluteElement
-from .relative_ramified_CR import RelativeRamifiedCappedRelativeElement
-from .relative_ramified_FP import RelativeRamifiedFloatingPointElement
-from .pow_computer_relative import PowComputer_relative_maker
+from sage.categories.morphism import Morphism
+from sage.rings.padics.eisenstein_extension_generic import EisensteinExtensionGeneric
+from sage.rings.padics.generic_nodes import (
+    pAdicCappedAbsoluteRingGeneric,
+    pAdicCappedRelativeFieldGeneric,
+    pAdicCappedRelativeRingGeneric,
+    pAdicFixedModRingGeneric,
+    pAdicFloatingPointFieldGeneric,
+    pAdicFloatingPointRingGeneric,
+)
+from sage.rings.padics.pow_computer_relative import PowComputer_relative_maker
+from sage.rings.padics.relative_ramified_CA import RelativeRamifiedCappedAbsoluteElement
+from sage.rings.padics.relative_ramified_CR import RelativeRamifiedCappedRelativeElement
+from sage.rings.padics.relative_ramified_FM import RelativeRamifiedFixedModElement
+from sage.rings.padics.relative_ramified_FP import RelativeRamifiedFloatingPointElement
 
 
 class pAdicRelativeBaseringInjection(Morphism):
@@ -228,7 +235,10 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'fixed-mod')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFixedModElement)
-        from .relative_ramified_FM import pAdicCoercion_ZZ_FM, pAdicConvert_QQ_FM
+        from sage.rings.padics.relative_ramified_FM import (
+            pAdicCoercion_ZZ_FM,
+            pAdicConvert_QQ_FM,
+        )
         self.register_coercion(pAdicCoercion_ZZ_FM(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_FM(self))
@@ -266,7 +276,10 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'capped-abs')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedAbsoluteElement)
-        from .relative_ramified_CA import pAdicCoercion_ZZ_CA, pAdicConvert_QQ_CA
+        from sage.rings.padics.relative_ramified_CA import (
+            pAdicCoercion_ZZ_CA,
+            pAdicConvert_QQ_CA,
+        )
         self.register_coercion(pAdicCoercion_ZZ_CA(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_CA(self))
@@ -304,7 +317,10 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'capped-rel')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedRelativeElement)
-        from .relative_ramified_CR import pAdicCoercion_ZZ_CR, pAdicConvert_QQ_CR
+        from sage.rings.padics.relative_ramified_CR import (
+            pAdicCoercion_ZZ_CR,
+            pAdicConvert_QQ_CR,
+        )
         self.register_coercion(pAdicCoercion_ZZ_CR(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_CR(self))
@@ -342,7 +358,10 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, True, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'capped-rel')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedCappedRelativeElement)
-        from .relative_ramified_CR import pAdicCoercion_ZZ_CR, pAdicCoercion_QQ_CR
+        from sage.rings.padics.relative_ramified_CR import (
+            pAdicCoercion_QQ_CR,
+            pAdicCoercion_ZZ_CR,
+        )
         self.register_coercion(pAdicCoercion_ZZ_CR(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         # We also want to convert down to the ring of integers: this is used in teichmuller expansion
@@ -382,7 +401,10 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, False, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'floating-point')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
-        from .relative_ramified_FP import pAdicCoercion_ZZ_FP, pAdicConvert_QQ_FP
+        from sage.rings.padics.relative_ramified_FP import (
+            pAdicCoercion_ZZ_FP,
+            pAdicConvert_QQ_FP,
+        )
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         self.register_conversion(pAdicConvert_QQ_FP(self))
@@ -420,7 +442,10 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
         self.prime_pow = PowComputer_relative_maker(approx_modulus.base_ring().prime(), max(min(unram_prec - 1, 30), 1), unram_prec, prec, True, exact_modulus.change_ring(KFP), shift_seed.change_ring(KFP), 'floating-point')
         self._implementation = 'Polynomial'
         EisensteinExtensionGeneric.__init__(self, approx_modulus, prec, print_mode, names, RelativeRamifiedFloatingPointElement)
-        from .relative_ramified_FP import pAdicCoercion_ZZ_FP, pAdicCoercion_QQ_FP
+        from sage.rings.padics.relative_ramified_FP import (
+            pAdicCoercion_QQ_FP,
+            pAdicCoercion_ZZ_FP,
+        )
         self.register_coercion(pAdicCoercion_ZZ_FP(self))
         self.register_coercion(pAdicRelativeBaseringInjection(approx_modulus.base_ring(), self))
         # We also want to convert down to the ring of integers: this is used in teichmuller expansion

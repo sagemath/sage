@@ -186,24 +186,24 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.structure.richcmp import op_LE
-
-from .generic_nodes import pAdicFieldBaseGeneric, \
-                          pAdicCappedRelativeFieldGeneric, \
-                          pAdicRingBaseGeneric, \
-                          pAdicCappedRelativeRingGeneric, \
-                          pAdicFixedModRingGeneric, \
-                          pAdicCappedAbsoluteRingGeneric, \
-                          pAdicFloatingPointRingGeneric, \
-                          pAdicFloatingPointFieldGeneric, \
-                          pAdicLatticeGeneric, \
-                          pAdicRelaxedGeneric
-from .padic_capped_relative_element import pAdicCappedRelativeElement
-from .padic_capped_absolute_element import pAdicCappedAbsoluteElement
-from .padic_fixed_mod_element import pAdicFixedModElement
-from .padic_floating_point_element import pAdicFloatingPointElement
-
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.generic_nodes import (
+    pAdicCappedAbsoluteRingGeneric,
+    pAdicCappedRelativeFieldGeneric,
+    pAdicCappedRelativeRingGeneric,
+    pAdicFieldBaseGeneric,
+    pAdicFixedModRingGeneric,
+    pAdicFloatingPointFieldGeneric,
+    pAdicFloatingPointRingGeneric,
+    pAdicLatticeGeneric,
+    pAdicRelaxedGeneric,
+    pAdicRingBaseGeneric,
+)
+from sage.rings.padics.padic_capped_absolute_element import pAdicCappedAbsoluteElement
+from sage.rings.padics.padic_capped_relative_element import pAdicCappedRelativeElement
+from sage.rings.padics.padic_fixed_mod_element import pAdicFixedModElement
+from sage.rings.padics.padic_floating_point_element import pAdicFloatingPointElement
+from sage.structure.richcmp import op_LE
 
 
 class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGeneric):

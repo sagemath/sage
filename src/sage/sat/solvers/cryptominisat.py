@@ -19,10 +19,9 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from .satsolver import SatSolver
-
-from sage.misc.lazy_import import lazy_import
 from sage.features.sat import Pycryptosat
+from sage.misc.lazy_import import lazy_import
+from sage.sat.solvers.satsolver import SatSolver
 
 lazy_import('pycryptosat', ['Solver'], feature=Pycryptosat())
 

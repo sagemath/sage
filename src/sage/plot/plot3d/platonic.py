@@ -65,12 +65,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.real_double import RDF
 from sage.matrix.constructor import matrix
 from sage.misc.decorators import rename_keyword
-from .shapes import Box, ColorCube
-from .shapes2 import frame3d
-from .index_face_set import IndexFaceSet
+from sage.plot.plot3d.index_face_set import IndexFaceSet
+from sage.plot.plot3d.shapes import Box, ColorCube
+from sage.plot.plot3d.shapes2 import frame3d
+from sage.rings.real_double import RDF
 
 
 def index_face_set(face_list, point_list, enclosed, **kwds):

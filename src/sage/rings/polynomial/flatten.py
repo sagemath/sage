@@ -37,12 +37,12 @@ import itertools
 from sage.categories.homset import Homset
 from sage.categories.morphism import Morphism
 from sage.misc.cachefunc import cached_method
-from .polynomial_ring_constructor import PolynomialRing
-from .polynomial_ring import PolynomialRing_generic
-from .multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.fraction_field import FractionField_generic
 from sage.rings.fraction_field_element import FractionFieldElement
+from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polydict import ETuple
+from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
 class FlatteningMorphism(Morphism):

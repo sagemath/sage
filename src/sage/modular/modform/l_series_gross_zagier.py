@@ -1,11 +1,11 @@
 """
 Gross-Zagier L-series
 """
+from sage.lfunctions.dokchitser import Dokchitser
+from sage.modular.dirichlet import kronecker_character
+from sage.modular.modform.l_series_gross_zagier_coeffs import gross_zagier_L_series
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
-from sage.lfunctions.dokchitser import Dokchitser
-from .l_series_gross_zagier_coeffs import gross_zagier_L_series
-from sage.modular.dirichlet import kronecker_character
 
 
 class GrossZagierLseries(SageObject):
