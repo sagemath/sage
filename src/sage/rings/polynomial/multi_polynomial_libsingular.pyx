@@ -172,6 +172,8 @@ AUTHORS:
 
 from warnings import warn
 
+from libc.limits cimport INT_MAX
+
 from cpython.object cimport Py_NE
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -2425,6 +2427,54 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             NotImplementedError: pow() with a modulus is not implemented for this ring
+
+        Check handling of large exponents (:issue:`40442`)::
+
+            sage: P.<x> = PolynomialRing(ZZ, implementation="singular")
+            sage: x^(2^31-1)
+            x^2147483647
+            sage: x^(2^31)
+            x^2147483648
+            sage: x^(2^32-1)
+            x^4294967295
+            sage: x^(2^32)
+            x^4294967296
+            sage: x^(2^63-1)
+            x^9223372036854775807
+            sage: x^(2^63)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (9223372036854775808)
+            sage: x^(2^64-1)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: x^(2^64)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (18446744056529682436)
+            sage: P(1)^(2^64)
+            1
+
+            sage: P.<x,y> = ZZ[]
+            sage: y^(2^32-1)
+            y^4294967295
+            sage: y^(2^32)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (4294967296)
+            sage: P(1)^(2^32)
+            1
+
+            sage: P.<x,y,z,t> = ZZ[]
+            sage: y^(2^16-1)
+            y^65535
+            sage: y^(2^16)
+            Traceback (most recent call last):
+            ...
+            OverflowError: exponent overflow (65536)
+            sage: P(1)^(2^16)  # known bug
+            ...UserWarning: error in Singular ignored: exponent 65536 is too large, max. is 65535...
         """
         if mod is not None:
             raise NotImplementedError(
@@ -2451,6 +2501,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             return self._parent._one_element / (self**(-exp))
         elif exp == 0:
             return self._parent._one_element
+        elif exp > INT_MAX:
+            return (self ** INT_MAX) ** (exp // INT_MAX) * self ** (exp % INT_MAX)
 
         cdef ring *_ring = self._parent_ring
         cdef poly *_p
