@@ -4563,7 +4563,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
-        v = [(<RingElement> a[i])._add_(<RingElement> b[i]) for i in range(left._degree)]
+        v = [(<Element> a[i])._add_(<Element> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
     @cython.boundscheck(False)
@@ -4583,7 +4583,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
-        v = [(<RingElement> a[i])._sub_(<RingElement> b[i]) for i in range(left._degree)]
+        v = [(<Element> a[i])._sub_(<Element> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
     cpdef _rmul_(self, Element left):
@@ -4604,7 +4604,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             (1, x^4)
         """
         if left._parent is self._parent.coordinate_ring():
-            v = [left._mul_(<RingElement>x) for x in self._entries]
+            v = [left._mul_(<Element>x) for x in self._entries]
         else:
             v = [left * x for x in self._entries]
         return self._new_c(v)
@@ -4627,9 +4627,16 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: M = span([[x, x^2+1], [1/x, x^3]], R)
             sage: M.basis()[0] * x
             (1, x^4)
+        
+        Check :issue:`40611` is fixed::
+
+            sage: R = cartesian_product([ZZ, ZZ])
+            sage: assert R in CommutativeRings()
+            sage: matrix(1, 1, [R.zero()]) * vector([R.zero()])
+            ((0, 0))
         """
         if right._parent is self._parent.coordinate_ring():
-            v = [(<RingElement>x)._mul_(right) for x in self._entries]
+            v = [(<Element>x)._mul_(right) for x in self._entries]
         else:
             v = [x * right for x in self._entries]
         return self._new_c(v)
@@ -4651,7 +4658,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             right = left.parent().ambient_module()(right)
         cdef list a = left._entries
         cdef list b = (<FreeModuleElement_generic_dense>right)._entries
-        v = [(<RingElement> a[i])._mul_(<RingElement> b[i]) for i in range(left._degree)]
+        v = [(<Element> a[i])._mul_(<Element> b[i]) for i in range(left._degree)]
         return left._new_c(v)
 
     def __reduce__(self):
@@ -5039,7 +5046,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = dict((<FreeModuleElement_generic_sparse>right)._entries)
         for i, a in left._entries.iteritems():
             if i in v:
-                sum = (<RingElement>a)._add_(<RingElement> v[i])
+                sum = (<Element>a)._add_(<Element> v[i])
                 if sum:
                     v[i] = sum
                 else:
@@ -5059,7 +5066,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = dict(left._entries)   # dict to make a copy
         for i, a in (<FreeModuleElement_generic_sparse>right)._entries.iteritems():
             if i in v:
-                diff = (<RingElement> v[i])._sub_(<RingElement>a)
+                diff = (<Element> v[i])._sub_(<Element>a)
                 if diff:
                     v[i] = diff
                 else:
@@ -5079,7 +5086,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = {}
         if right:
             for i, a in self._entries.iteritems():
-                prod = (<RingElement>a)._mul_(right)
+                prod = (<Element>a)._mul_(right)
                 if prod:
                     v[i] = prod
         return self._new_c(v)
@@ -5165,7 +5172,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
         cdef dict v = {}
         for i, a in left._entries.iteritems():
             if i in e:
-                prod = (<RingElement>a)._mul_(<RingElement> e[i])
+                prod = (<Element>a)._mul_(<Element> e[i])
                 if prod:
                     v[i] = prod
         return left._new_c(v)
