@@ -44,7 +44,7 @@ jobs:
           path: ~/conda_pkgs_dir
           key:
             ${{ runner.os }}-conda-${{ hashFiles('environment-${{ env.PYTHON_VERSION }}-linux.yml') }}
-  
+
       - name: Compiler cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
@@ -62,7 +62,7 @@ jobs:
           channel-priority: true
           activate-environment: sage-dev
           environment-file: environment-${{ env.PYTHON_VERSION }}-linux.yml
-        
+
       - name: Build Sage
         shell: bash -l {0}
         run: |
@@ -101,13 +101,11 @@ jobs:
       - name: Build live doc
         if: github.event_name == 'push' && github.ref_type == 'tag'
         run: |
-          # Avoid running out of disk space
-          rm -rf upstream
-          export SAGE_USE_CDNS=yes
-          export SAGE_LIVE_DOC=yes
-          export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
-          make doc-clean doc-uninstall; make sagemath_doc_html-no-deps
-        shell: sh .github/workflows/docker-exec-script.sh BUILD /sage {0}
+          meson compile -C builddir doc-html
+        env:
+          SAGE_USE_CDNS: yes
+          SAGE_LIVE_DOC: yes
+          SAGE_JUPYTER_SERVER: "binder:sagemath/sage-binder-env/dev"
 
       - name: Copy live doc
         if: github.event_name == 'push' && github.ref_type == 'tag'
@@ -115,8 +113,7 @@ jobs:
           # Reuse doc created previously, which contains pdfs
           mv doc livedoc
           # We copy everything to a local folder
-          docker cp --follow-link BUILD:/sage/local/share/doc/sage/html livedoc
-          docker cp BUILD:/sage/local/share/doc/sage/index.html livedoc
+          cp -rL builddir/src/doc/* livedoc/
           zip -r livedoc.zip livedoc
 
       - name: Upload live doc
