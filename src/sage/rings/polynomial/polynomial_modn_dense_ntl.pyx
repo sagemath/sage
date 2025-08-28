@@ -1973,18 +1973,28 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
         return self.parent()(g, construct=True)
 
     @coerce_binop
-    def xgcd(self, other):
+    def xgcd(self, other, algorithm='pari'):
         r"""
         Compute the extended gcd of this element and ``other``.
 
         INPUT:
 
         - ``other`` -- an element in the same polynomial ring
+        - ``algorithm='pari'`` -- the algorithm used for computing gcd of two polynomials, should be 'pari' or 'ntl'
 
         OUTPUT:
 
         A tuple ``(r,s,t)`` of elements in the polynomial ring such
         that ``r = s*self + t*other``.
+
+        .. NOTE::
+
+            Algorithm is set to 'pari' in default, but user may set it to 'ntl'
+            to use the algorithm using ``ntl_ZZ_pX.gcd``. Algorithm 'pari' implements
+            half-gcd algorithm in some cases, which is significantly faster
+            for high degree polynomials. Generally without half-gcd algorithm, it is
+            infeasible to calculate gcd/xgcd of two degree 50000 polynomials in a minute
+            but TEST shows it is doable with algorithm 'pari'.
 
         EXAMPLES::
 
@@ -1999,9 +2009,36 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             (x^2 + x + 1, 0, 1)
             sage: ((x - 1)*(x + 1)).xgcd(x*(x - 1))
             (x + 2, 1, 2)
+
+        TESTS::
+
+            sage: P.<x> = PolynomialRing(GF(next_prime(2^512)), implementation='NTL')
+            sage: degree = 50000
+            sage: g_deg = 10000
+            sage: g = P.random_element(g_deg).monic()
+            sage: a, b = P.random_element(degree), P.random_element(degree)
+            sage: r, s, t = a.xgcd(b)
+            sage: (r == a.gcd(b)) and (r == s * a + t * b)
+            True
         """
-        r, s, t = self.ntl_ZZ_pX().xgcd(other.ntl_ZZ_pX())
-        return self.parent()(r, construct=True), self.parent()(s, construct=True), self.parent()(t, construct=True)
+        if algorithm not in ('pari', 'ntl'):
+            raise ValueError(f"unknown implementation {algorithm!r} for xgcd function over {self.parent()}")
+
+        if algorithm == 'pari':
+            P = self.parent()
+            s, t, r = self._pari_with_name().gcdext(other._pari_with_name())
+            s = P(s)
+            t = P(t)
+            r = P(r)
+            c = r.leading_coefficient()
+            if c != P(0):
+                s /= c
+                t /= c
+                r /= c
+            return r, s, t
+        else:
+            r, s, t = self.ntl_ZZ_pX().xgcd(other.ntl_ZZ_pX())
+            return self.parent()(r, construct=True), self.parent()(s, construct=True), self.parent()(t, construct=True)
 
     @coerce_binop
     def resultant(self, other):
