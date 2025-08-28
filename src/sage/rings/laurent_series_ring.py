@@ -42,6 +42,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.laurent_series_ring_element import LaurentSeries
+from sage.structure.element import Expression
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -542,6 +543,19 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
             sage: P.<x> = LaurentSeriesRing(QQ)
             sage: P({-3: 1})
             x^-3
+
+        Check that :issue:`39839` is fixed::
+
+            sage: var("x")
+            x
+            sage: f = (1/x+sqrt(x+1)).series(x, 5); f
+            1*x^(-1) + 1 + 1/2*x + (-1/8)*x^2 + 1/16*x^3 + (-5/128)*x^4 + Order(x^5)
+            sage: LaurentSeriesRing(QQ, "x")(f)
+            x^-1 + 1 + 1/2*x - 1/8*x^2 + 1/16*x^3 - 5/128*x^4 + O(x^5)
+            sage: PowerSeriesRing(QQ, "x")(f)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot return dense coefficient list with negative valuation
         """
         from sage.rings.fraction_field_element import FractionFieldElement
         from sage.rings.lazy_series import LazyPowerSeries, LazyLaurentSeries
@@ -589,6 +603,18 @@ class LaurentSeriesRing(UniqueRepresentation, Parent):
                     x = x.add_bigoh(self.default_prec())
             else:
                 x = x.add_bigoh(prec)
+        elif isinstance(x, Expression):
+            from sage.symbolic.expression import SymbolicSeries
+            if isinstance(x, SymbolicSeries):
+                v = x.default_variable()
+                if str(v) == self.variable_name():
+                    R = self.base_ring()
+                    g = self.gen()
+                    return sum(
+                            (R(a)*g**ZZ(e) for a, e in x.coefficients(v, sparse=True)), self.zero()
+                            ).add_bigoh(x.degree(x.default_variable()))
+                else:
+                    raise TypeError("can only convert series into ring with same variable name")
         return self.element_class(self, x, n).add_bigoh(prec)
 
     def random_element(self, algorithm='default'):
