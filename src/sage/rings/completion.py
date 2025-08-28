@@ -41,7 +41,7 @@ class CompletionPolynomial(RingExtensionElement):
         # Bigoh
         prec = self.precision_absolute()
         if prec is Infinity:
-            prec = self.parent().default_prec()
+            prec = self.parent()._default_prec
             bigoh = "..."
         elif prec == 0:
             bigoh = "O(1)"
@@ -56,9 +56,11 @@ class CompletionPolynomial(RingExtensionElement):
         if S._integer_ring is S:
             start = 0
         else:
-            start = self.valuation()
+            start = min(prec, self.valuation())
             if start is Infinity:
                 return "0"
+        if prec is Infinity:
+            prec = start + 10  # ???
         for e in range(step*start, step*prec, step):
             try:
                 coeff = next(E)
@@ -116,6 +118,7 @@ class CompletionPolynomial(RingExtensionElement):
                     elt *= incl(u) ** (-val)
                 else:
                     n = val
+            v = S._p.derivative()(S._xbar).inverse()
             vv = v**n
             uu = u**n
             while n < prec:
@@ -133,6 +136,9 @@ class CompletionPolynomial(RingExtensionElement):
         elt = self.backend(force=True)
         lift = elt.parent()(elt[0])
         return self.parent()(lift)
+
+    def valuation(self):
+        return self.backend(force=True).valuation()
 
     def shift(self, n):
         raise NotImplementedError
@@ -156,15 +162,16 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             A = ring.ring()
         else:
             raise ValueError("not a polynomial ring or a rational function field")
-        if not A.base_ring() in Fields():
-            raise NotImplementedError
         if p is not Infinity:
             p = A(p)
+            if not p.leading_coefficient().is_unit():
+                raise NotImplementedError("the leading coefficient of p must be invertible")
+            p = A(p.monic())
             try:
-                p = p.squarefree_part()
+                if not p.is_squarefree():
+                    raise ValueError("p must be a squarefree polynomial")
             except (AttributeError, NotImplementedError):
                 pass
-            p = p.monic()
         return cls.__classcall__(cls, ring, p, default_prec, sparse)
 
     def __init__(self, ring, p, default_prec, sparse):
@@ -173,6 +180,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             A = A.ring()
         base = A.base_ring()
         self._p = p
+        self._default_prec = default_prec
         # Construct backend
         if p is Infinity:
             self._ring = ring.fraction_field()
@@ -193,7 +201,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
                 name = "u_%s" % id(self._integer_ring)
                 backend = LaurentSeriesRing(k, name, default_prec=default_prec, sparse=sparse)
             x = backend.gen() + xbar
-        super().__init__(backend.coerce_map_from(k) * k.coerce_map_from(base))
+        super().__init__(backend.coerce_map_from(k) * k.coerce_map_from(base), category=backend.category())
         # Set generator
         self._gen = self(x)
         # Set coercions
@@ -214,7 +222,7 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             'names': [str(x) for x in self._defining_names()],
             'sparse': self.is_sparse()
         }
-        return CompletionFunctor(self._p, self.default_prec(), extras), self._ring
+        return CompletionFunctor(self._p, self._default_prec, extras), self._ring
 
     @cached_method
     def uniformizer(self):
@@ -238,9 +246,9 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             sparse = self.is_sparse()
         base = self._base.base_ring()
         if self._integer_ring is self:
-            S = PowerSeriesRing(self._residue_ring, names, sparse=sparse)
+            S = PowerSeriesRing(self._residue_ring, names, default_prec=self._default_prec, sparse=sparse)
         else:
-            S = LaurentSeriesRing(self._residue_ring, names, sparse=sparse)
+            S = LaurentSeriesRing(self._residue_ring, names, default_prec=self._default_prec, sparse=sparse)
         S.register_conversion(CompletionToPowerSeries(self.Hom(S)))
         return S
 
@@ -255,5 +263,5 @@ class CompletionPolynomialRing(UniqueRepresentation, RingExtension_generic):
             return self
         else:
             return CompletionPolynomialRing(field, self._p,
-                       default_prec = self.default_prec(),
+                       default_prec = self._default_prec,
                        sparse = self.is_sparse())

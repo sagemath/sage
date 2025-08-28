@@ -2466,12 +2466,12 @@ class CompletionFunctor(ConstructionFunctor):
         True
 
         sage: P.<x> = ZZ[]
-        sage: Px = P.completion(x) # currently the only implemented completion of P
+        sage: Px = P.completion(x)
         sage: Px
-        Power Series Ring in x over Integer Ring
+        Completion of Univariate Polynomial Ring in x over Integer Ring at x
         sage: F3 = Px.construction()[0]
         sage: F3(GF(3)['x'])
-        Power Series Ring in x over Finite Field of size 3
+        Completion of Univariate Polynomial Ring in x over Finite Field of size 3 at x
 
     TESTS::
 

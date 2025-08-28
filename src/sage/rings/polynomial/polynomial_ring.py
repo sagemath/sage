@@ -1754,7 +1754,6 @@ class PolynomialRing_generic(Ring):
 
         - Joel B. Mohler
         """
-
         if self.base_ring().order() is infinity:
             raise NotImplementedError
         if of_degree is not None and max_degree is None:
@@ -1838,32 +1837,29 @@ class PolynomialRing_commutative(PolynomialRing_generic):
 
         Constructing the completion at the place of infinity also works::
 
-            sage: C3.<w> = P.completion(infinity)
+            sage: C3 = P.completion(infinity)
             sage: C3
-            Laurent Series Ring in w over Rational Field
-            sage: C3(x)
-            w^-1
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Rational Field at infinity
 
         When the precision is infinity, a lazy series ring is returned::
 
+        TESTS::
+
             sage: # needs sage.combinat
-            sage: PP = P.completion(x, prec=oo); PP
-            Lazy Taylor Series Ring in x over Rational Field
+            sage: PP = P.completion(x, prec=oo)
+            sage: PP.backend(force=True)
+            Lazy Taylor Series Ring in u_... over Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x
             sage: g = 1 / PP(f); g
-            1 + x + x^2 + O(x^3)
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + ...
             sage: 1 / g == f
             True
 
-        TESTS::
+        ::
 
             sage: P.completion('x')
             Power Series Ring in x over Rational Field
             sage: P.completion('y')
             Power Series Ring in y over Rational Field
-            sage: Pz.<z> = P.completion('y')
-            Traceback (most recent call last):
-            ...
-            ValueError: conflict of variable names
         """
         if p is None:
             p = self.variable_name()

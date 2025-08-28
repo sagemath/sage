@@ -1229,39 +1229,29 @@ class FractionField_1poly_field(FractionField_generic):
             sage: A.<x> = PolynomialRing(QQ)
             sage: K = A.fraction_field()
 
-        Without any argument, this method constructs the completion at
-        the ideal `(x)`::
+        Without any argument, this method outputs the ring of Laurent
+        series::
 
             sage: Kx = K.completion()
             sage: Kx
             Laurent Series Ring in x over Rational Field
 
         We can construct the completion at other ideals by passing in an
-        irreducible polynomial. In this case, we should also provide a name
-        for the uniformizer (set to be `x - a` where `a` is a root of the
-        given polynomial)::
+        irreducible polynomial::
 
-            sage: K1.<u> = K.completion(x - 1)
+            sage: K1 = K.completion(x - 1)
             sage: K1
-            Laurent Series Ring in u over Rational Field
-            sage: x - u
-            1
-
-        ::
-
-            sage: K2.<v, a> = K.completion(x^2 + x + 1)
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Rational Field at x - 1
+            sage: K2 = K.completion(x^2 + x + 1)
             sage: K2
-            Laurent Series Ring in v over Number Field in a with defining polynomial x^2 + x + 1
-            sage: a^2 + a + 1
-            0
-            sage: x - v
-            a
+            Completion of Fraction Field of Univariate Polynomial Ring in x over Rational Field at x^2 + x + 1
 
-        When the precision is infinity, a lazy series ring is returned::
+        TESTS::
 
             sage: # needs sage.combinat
-            sage: L = K.completion(x, prec=oo); L
-            Lazy Laurent Series Ring in x over Rational Field
+            sage: L = K.completion(x, prec=oo)
+            sage: L.backend(force=True)
+            Lazy Laurent Series Ring in u_... over Univariate Quotient Polynomial Ring in xbar over Rational Field with modulus x
         """
         if p is None:
             p = self.variable_name()
