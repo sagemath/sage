@@ -164,14 +164,13 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
         [0, 1, 0]
         [0, 2, 0]
         [0, 1, 2, 0]
-        [0, 2, 1, 0]
         [0, 1, 0, 1, 0]
         [0, 1, 0, 2, 0]
         [0, 1, 2, 1, 0]
+        [0, 2, 0, 2, 0]
         sage: for cycle in g._all_cycles_iterator_vertex(0, simple=True):
         ....:     print(cycle)
         [0, 1, 2, 0]
-        [0, 2, 1, 0]
     """
     if starting_vertices is None:
         starting_vertices = [vertex]
@@ -195,6 +194,8 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
             h.delete_edges((u, v) for u, v in h.edge_iterator(labels=False) if d[u] != d[v])
     else:
         h = self
+        int_to_vertex = list(h)
+        vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
 
     by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
                                                            weight_function=weight_function,
@@ -212,12 +213,23 @@ def _all_cycles_iterator_vertex(self, vertex, starting_vertices=None, simple=Fal
     while heap_queue:
         length, path = heappop(heap_queue)
         # Checks if a cycle has been found
-        if len(path) > 1 and path[0] == path[-1] and \
-           (not simple or self.is_directed() or len(path) > 3):
-            if report_weight:
-                yield (length, path)
-            else:
-                yield path
+        if len(path) > 1 and path[0] == path[-1]:
+            report = True
+            if not self.is_directed():
+                if simple and len(path) <= 3:
+                    report = False
+                L = len(path)
+                for i in range(1, L // 2):
+                    if path[i] > path[L - i - 1]:
+                        report = False
+                        break
+                    if path[i] < path[L - i - 1]:
+                        break
+            if report:
+                if report_weight:
+                    yield (length, path)
+                else:
+                    yield path
         # If simple is set to True, only simple cycles are
         # allowed, Then it discards the current path
         if (not simple or path.count(path[-1]) == 1):
@@ -575,7 +587,6 @@ def all_cycles_iterator(self, starting_vertices=None, simple=False,
         sage: for cycle in g.all_cycles_iterator(algorithm='A', simple=True):
         ....:     print(cycle)
         [0, 1, 2, 0]
-        [0, 2, 1, 0]
     """
     if starting_vertices is None:
         starting_vertices = self
@@ -876,7 +887,7 @@ def all_simple_cycles(self, starting_vertices=None, rooted=False,
 
         sage: g = Graph({0: [1, 2], 1: [0, 2], 2: [0, 1]})
         sage: g.all_simple_cycles(algorithm='A')
-        [[0, 1, 2, 0], [0, 2, 1, 0]]
+        [[0, 1, 2, 0]]
     """
     return list(self.all_cycles_iterator(starting_vertices=starting_vertices,
                                          simple=True, rooted=rooted,
