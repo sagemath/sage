@@ -11,7 +11,7 @@ requires = [
   'gmpy2 ~=2.1.b999',
   'jinja2',
   'memory_allocator',
-  'numpy >=1.25',
+  'numpy >=2.2.4',
 ]
 [tool.meson-python.args]
 # Prevent meson from trying to install the autoconf subprojects
