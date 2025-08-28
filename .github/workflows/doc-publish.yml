@@ -1,4 +1,4 @@
-name: Publish develop documentation
+name: Publish documentation
 
 on:
   workflow_run:
