@@ -307,6 +307,8 @@ class CartesianProduct(UniqueRepresentation, Parent):
 
     an_element = Sets.CartesianProducts.ParentMethods.an_element
 
+    random_element = Sets.CartesianProducts.ParentMethods.random_element
+
     class Element(ElementWrapperCheckWrappedClass):
 
         wrapped_class = tuple
