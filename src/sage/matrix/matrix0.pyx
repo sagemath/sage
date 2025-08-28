@@ -3041,7 +3041,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.with_permuted_rows(row_permutation).with_permuted_columns(column_permutation)
 
-    def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
+    def add_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s,
+                            Py_ssize_t start_col=0, end_col=None):
         """
         Add s times row j to row i.
 
@@ -3071,11 +3072,25 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: Multiplying row by Symbolic Ring element cannot be done over
             Rational Field, use change_ring or with_added_multiple_of_row instead.
+
+        We can have lower or upper column bounds::
+
+            sage: m = matrix(3, 4, range(12)); m
+            [ 0  1  2  3]
+            [ 4  5  6  7]
+            [ 8  9 10 11]
+            sage: m.add_multiple_of_row(0, 1, -2, start_col=1, end_col=2); m
+            [  0  -9 -10   3]
+            [  4   5   6   7]
+            [  8   9  10  11]
         """
         self.check_row_bounds_and_mutability(i, j)
         try:
             s = self._coerce_element(s)
-            self.add_multiple_of_row_c(i, j, s, start_col)
+            if end_col is None:
+                self.add_multiple_of_row_c(i, j, s, start_col)
+            else:
+                self.add_multiple_of_row_c_end(i, j, s, start_col, end_col)
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
@@ -3084,31 +3099,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         for c from start_col <= c < self._ncols:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
 
-    def add_multiple_of_row_end(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t end_col):
-        r"""
-        Add s times row j to row i for columns 0 to ``end_col``.
-
-        EXAMPLES::
-
-            sage: m = matrix(3, range(9)); m
-            [0 1 2]
-            [3 4 5]
-            [6 7 8]
-            sage: m.add_multiple_of_row_end(0, 1, -2, 1); m
-            [-6 -7  2]
-            [ 3  4  5]
-            [ 6  7  8]
-        """
-        self.check_row_bounds_and_mutability(i, j)
-        try:
-            s = self._coerce_element(s)
-            self.add_multiple_of_row_end_c(i, j, s, end_col)
-        except TypeError:
-            raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring instead.' % (s.parent(), self.base_ring()))
-
-    cdef add_multiple_of_row_end_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t end_col):
+    cdef add_multiple_of_row_c_end(self, Py_ssize_t i, Py_ssize_t j, s,
+                               Py_ssize_t start_col, Py_ssize_t end_col):
         cdef Py_ssize_t c
-        for c from 0 <= c <= end_col:
+        for c from start_col <= c <= end_col:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
 
     def with_added_multiple_of_row(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col=0):
