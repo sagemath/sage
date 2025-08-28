@@ -30,7 +30,7 @@ html_theme_options.update({
 project = "PREP Tutorials"
 copyright = "2012, Rob Beezer, Karl-Dieter Crisman, and Jason Grout"
 
-# The name for this set of Sphinx documents.
+# The name for this set of Sphinx documents. Do not include release info.
 html_title = project
 html_short_title = project
 

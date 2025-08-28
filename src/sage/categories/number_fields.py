@@ -185,7 +185,7 @@ class NumberFields(Category_singleton):
                 PARI zeta function associated to Rational Field
             """
             if algorithm == 'gp':
-                from sage.lfunctions.all import Dokchitser
+                from sage.lfunctions.dokchitser import Dokchitser
                 r1, r2 = self.signature()
                 zero = [0]
                 one = [1]

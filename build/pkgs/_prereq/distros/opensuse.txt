@@ -32,3 +32,4 @@ bzip2
 pkgconfig(bzip2)
 patch
 pkgconf
+pkgconfig(zlib)
