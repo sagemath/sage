@@ -670,7 +670,8 @@ cdef class Envelope():
             return self
         m *= self.sign
         m = m - j * self.max_slope
-        return lambda i: self.sign * min(m + i*self.max_slope, self.sign*self(i) )
+        return lambda i: self.sign * min(m + i * self.max_slope,
+                                         self.sign*self(i))
 
     def __reduce__(self):
         """
