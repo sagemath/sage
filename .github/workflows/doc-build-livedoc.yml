@@ -55,14 +55,14 @@ jobs:
           export CXX="ccache $CXX"
           pip install --no-build-isolation --config-settings=builddir=builddir . -v
 
-      - name: Build pdf documentation
+      - name: Build pdf doc
         shell: bash -l {0}
         run: |
           sudo DEBIAN_FRONTEND=noninteractive sudo apt-get update
           sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian texlive texlive_luatex free_fonts xindy)
           meson compile -C builddir doc-pdf
 
-      - name: Build live documentation
+      - name: Build live doc
         shell: bash -l {0}
         run: |
           meson compile -C builddir doc-html -j1
@@ -75,8 +75,9 @@ jobs:
         id: copy
         run: |
           mkdir -p ./doc
-          # Zip everything for increased performance
-          cp -rL builddir/src/doc/* doc/
+          cp -r builddir/src/doc/pdf doc/
+          cp -rL builddir/src/doc/html doc/
+          cp builddir/src/doc/index.html doc/
           zip -r livedoc.zip doc
 
       - name: Upload livedoc
