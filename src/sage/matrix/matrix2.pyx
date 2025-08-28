@@ -19369,6 +19369,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(f"krylov_matrix: shifts is not an integer vector of length {E.nrows()}.")
 
         m = E.nrows()
+        iterations = max(degrees, default=ZZ.zero()).nbits()
 
         # store 2 blocks for the Krylov matrix
         blocks = [E]
@@ -19378,7 +19379,7 @@ cdef class Matrix(Matrix1):
 
         # for i from 0 to degree (inclusive), merge existing blocks, add E*M^i
         M_i = None
-        for i in range(math.ceil(math.log(max(degrees, default=0) + 1, 2))):
+        for i in range(iterations):
             if M_i is None:
                 M_i = M
             else:
@@ -19488,6 +19489,7 @@ cdef class Matrix(Matrix1):
 
         m = self.nrows()
         sigma = self.ncols()
+        iterations = max(degrees, default=ZZ.zero()).nbits()
 
         if m == 0:
             return (self, ()) if output_rows else self
@@ -19513,7 +19515,7 @@ cdef class Matrix(Matrix1):
 
         M_L = None
 
-        for l in range(math.ceil(math.log(max(degrees, default=0) + 1, 2))):
+        for l in range(iterations):
             L = pow(2, l)
             # adding 2^l to each degree
             row_extension = [(x[0], x[1] + L) for x in row_profile_self if x[1] + L <= degrees[x[0]]]
@@ -19543,7 +19545,7 @@ cdef class Matrix(Matrix1):
             row_profile_R = R.pivot_rows()
             r = len(row_profile_R)
 
-            if r == sigma and l < math.ceil(math.log(max(degrees, default=0) + 1, 2)) - 1:
+            if r == sigma and l < iterations - 1:
                 tail = list(range(row_profile_R[-1]+1,R.nrows()))
                 excluded_rows.update(set([k[k_rows[i]][0] for i in tail if i < len(k)]))
 
@@ -19556,7 +19558,7 @@ cdef class Matrix(Matrix1):
                 exhausted = R.matrix_from_rows(xmi)
                 R = R.matrix_from_rows(imi)
             else:
-                if l == math.ceil(math.log(max(degrees, default=0) + 1, 2)) - 1:
+                if l == iterations - 1:
                     row_profile_exhausted = []
                     exhausted = matrix.zero(self.base_ring(), 0, sigma)
                 row_profile_self = [k[k_rows[i]] for i in row_profile_R]
@@ -19639,7 +19641,7 @@ cdef class Matrix(Matrix1):
         OUTPUT:
 
         - matrix formed by the first `r` independent rows of the Krylov matrix
-          of ``self`` and `M`, with `r` the rank of that matrix 
+          of ``self`` and `M`, with `r` the rank of that matrix
         - ``row_profile`` (returned if ``output_rows`` is ``True``): list of
           the ``r`` triplets ``(i, j, k)`` corresponding to the rows of the
           Krylov basis where ``k`` is the row index of the row in the Krylov
