@@ -369,6 +369,26 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         self.__n = n
         self._normalize()
 
+    def _sage_input_(self, sib, coerced):
+        """
+        TESTS::
+
+            sage: R.<q> = LaurentPolynomialRing(QQ)
+            sage: sage_input(q^2+1)
+            LaurentPolynomialRing(QQ, 'q')([QQ(1), QQ(0), QQ(1)])
+            sage: sage_input(q+1/q)
+            si = LaurentPolynomialRing(QQ, 'q')
+            si([QQ(1), QQ(0), QQ(1)])*si.gen()^(-1)
+            sage: sage_input(q^2)
+            si = LaurentPolynomialRing(QQ, 'q')
+            si([QQ(1)])*si.gen()^2
+        """
+        R = sib(self.parent())
+        if self.__n:
+            return R([*self.__u]) * R.gen() ** sib.int(self.__n)
+        else:
+            return R([*self.__u])
+
     def __reduce__(self):
         """
         Used in pickling.
@@ -1638,7 +1658,9 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: g.valuation()
             0
         """
-        return self.__n + self.__u.valuation(p)
+        if p is None:
+            return self.__n
+        raise NotImplementedError
 
     def truncate(self, n):
         """
