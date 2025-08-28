@@ -19196,12 +19196,12 @@ cdef class Matrix(Matrix1):
         r"""
         Return the Krylov matrix built from the rows of ``self`` and using
         multiplication matrix `M`. Here, ``self`` is some `m \times n` matrix
-        `E`, and `M` is a square `n \times n` matrix; ``degrees`` is a list of
-        `m` nonnegative integers `[d_0,\ldots,d_{m-1}]`. This Krylov matrix has
-        `d_0+\cdots+d_{m-1}+m` rows and `n` columns and is formed by stacking
-        the Krylov iterates `E_{i,:} \cdot M^j` for all `0 \le i < m` and `0
-        \le j \le d_i`. These rows are ordered according to a priority defined
-        by ``shifts``.
+        `E` with rows denoted by `E_0, \ldots, E_{m-1}`, and `M` is a square `n
+        \times n` matrix; ``degrees`` is a list of `m` nonnegative integers
+        `[d_0,\ldots,d_{m-1}]`. This Krylov matrix has `d_0+\cdots+d_{m-1}+m`
+        rows and `n` columns and is formed by stacking the Krylov iterates
+        `E_{i} \cdot M^j` for all `0 \le i < m` and `0 \le j \le d_i`. These
+        rows are ordered according to a priority defined by ``shifts``.
 
         By default, ``shifts`` is taken as `[0,\ldots,0]`, and ``degrees`` is
         taken as `[n, \ldots, n]`. If a single integer `d` is provided for
@@ -19227,15 +19227,15 @@ cdef class Matrix(Matrix1):
         .. MATH::
 
             \begin{bmatrix}
-                E_{0,:} \\
-                E_{0,:} M \\
+                E_0 \\
+                E_0 M \\
                 \vdots \\
-                E_{0,:} M^{d_0} \\
+                E_0 M^{d_0} \\
                 \vdots \\
-                E_{m-1,:} \\
-                E_{m-1,:} M \\
+                E_{m-1} \\
+                E_{m-1} M \\
                 \vdots \\
-                E_{m-1,:} M^{d_{m-1}}
+                E_{m-1} M^{d_{m-1}}
             \end{bmatrix} .
 
         Other shifts will yield some row permutation of the latter matrix (see
@@ -19587,17 +19587,18 @@ cdef class Matrix(Matrix1):
     def krylov_basis(self, M, shifts=None, degrees=None, output_rows=True, algorithm=None):
         r"""
         Return the matrix `B` formed by stacking the first `r` linearly
-        independent row vectors `E_{i,:} \cdot M^j`, for `0 \le i < m` and `j
-        \ge 0` when they are ordered according to ``shifts``. Here `E` is the
-        input `m \times n` matrix ``self``, `M` is a square `n \times n`
-        matrix, and `r` is dimension of Krylov subspace of `E` and `M`, that
-        is, the span of all the above row vectors.
+        independent row vectors `E_{i} \cdot M^j`, for `0 \le i < m` and `j \ge
+        0` when they are ordered according to ``shifts``. Here `E` is the input
+        `m \times n` matrix ``self``, with rows denoted by `E_0, \ldots,
+        E_{m-1}`, `M` is a square `n \times n` matrix, and `r` is dimension of
+        Krylov subspace of `E` and `M`, that is, the span of all the above row
+        vectors.
 
         A list ``degrees`` of integers `[d_0,\ldots,d_{m-1}]` can be provided
-        to indicate known maximal exponents, such that `E_{k,:} \cdot
-        M^{d_k-1}` may appear in the output basis, but `E_{k,:} \cdot
-        M^{d_k}` will not. In other words, `E_{k,:} \cdot M^{d_k}` is known to
-        linearly depend on the set of row vectors `E_{i,:} \cdot M^{j}` that
+        to indicate known maximal exponents, such that `E_{k} \cdot
+        M^{d_k-1}` may appear in the output basis, but `E_{k} \cdot
+        M^{d_k}` will not. In other words, `E_{k} \cdot M^{d_k}` is known to
+        linearly depend on the set of row vectors `E_{i} \cdot M^{j}` that
         appear before it according to the order defined by ``shifts``. It is
         always valid to take ``degrees`` as `[d, \ldots, d]` where `d` is the
         degree of the minimal polynomial of `M`. By default, the implementation
@@ -19608,7 +19609,7 @@ cdef class Matrix(Matrix1):
         as if built with :meth:`krylov_matrix` with the same parameters.
         Specifically, for each row of the output, this information gives its
         position in `K` (thus forming the row rank profile of `K`), as well as
-        pairs `i, j` indicating that the row is `E_{i,:} \cdot M^{j}`.
+        pairs `i, j` indicating that the row is `E_{i} \cdot M^{j}`.
 
         .. WARNING::
 
@@ -19795,17 +19796,20 @@ cdef class Matrix(Matrix1):
     def krylov_kernel_basis(self, M, shifts=None, degrees=None, var=None):
         r"""
         Return a basis in canonical form for the kernel of the Krylov matrix of
-        ``(self, M)`` with rows ordered according to ``shifts``.
+        ``(self, M)`` with rows ordered according to ``shifts``. In other terms,
+        the rows of the returned matrix form a basis of the kernel of the
+        `\Bold{K}[x]`-linear map `\Bold{K}[x]^n \to K^n` given by the matrix
+        `E`, where the action of `x` on `K^n` is given by `M`.
 
         Write `E` for ``self``, of dimensions `m \times n`. Consider the Krylov
         basis `B` as computed by :meth:`krylov_basis` with the same parameters
         `M`, ``shifts``, and ``degrees``. Let `[\delta_0,\ldots,\delta_{m-1}]`
         be the exponents of first linear dependency for each row. That is, if
-        the row `E_{i,:}` has not been selected for appearing in `B` then
-        `\delta_i = 0`, and otherwise, `\delta_i` is such that `E_{i,:} \cdot
-        M^{\delta_i-1}` has been selected for `B` but `E_{i,:} \cdot
-        M^{\delta_i}` has not. (These integers are also easily deduced from the
-        output triplets of :meth:`krylov_basis`.)
+        the `i`-th row `E_i` of `E` has not been selected for appearing in `B`
+        then `\delta_i = 0`, and otherwise, `\delta_i` is such that `E_i \cdot
+        M^{\delta_i-1}` has been selected for `B` but `E_i \cdot M^{\delta_i}`
+        has not. (These integers are also easily deduced from the output
+        triplets of :meth:`krylov_basis`.)
 
         The returned matrix `K` is a basis, in reduced row echelon form, of the
         left nullspace of the Krylov matrix built from `E` and `M` with
@@ -19817,9 +19821,9 @@ cdef class Matrix(Matrix1):
 
             \begin{bmatrix}
                 B \\
-                E_{0,:} M^{\delta_0} \\
+                E_0 M^{\delta_0} \\
                 \vdots \\
-                E_{m-1,:} M^{\delta_{m-1}}
+                E_{m-1} M^{\delta_{m-1}}
             \end{bmatrix}.
 
         Since `B` has full row rank `r` (where `r \le n`), this kernel basis
