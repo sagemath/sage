@@ -34,6 +34,7 @@ triviality the `p`-primary part of `Sha`.
 
 EXAMPLES::
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve('11a1')
     sage: S = E.sha()
     sage: S.bound_kato()
@@ -47,6 +48,7 @@ EXAMPLES::
     sage: S.an_numerical()
     1.00000000000000
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve('389a')
     sage: S = E.sha(); S
     Tate-Shafarevich group for the
@@ -110,6 +112,7 @@ class Sha(SageObject):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('571a1')
         sage: E._set_gens([])   # curve has rank 0, but non-trivial Sha[2]
         sage: S = E.sha()
@@ -124,6 +127,7 @@ class Sha(SageObject):
         sage: S.an_numerical()
         4.00000000000000
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('389a')
         sage: S = E.sha(); S
         Tate-Shafarevich group for the
@@ -238,6 +242,7 @@ class Sha(SageObject):
 
         EXAMPLES::
 
+            sage: # needs.sage.libs.eclib
             sage: EllipticCurve('11a').sha().an_numerical()
             1.00000000000000
             sage: EllipticCurve('37a').sha().an_numerical()
@@ -251,18 +256,21 @@ class Sha(SageObject):
 
         A rank 4 curve::
 
+            sage: # needs.sage.libs.eclib
             sage: EllipticCurve([1, -1, 0, -79, 289]).sha().an_numerical()  # long time (3s on sage.math, 2011)
             1.00000000000000
 
         A rank 5 curve::
 
-            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(prec=10, proof=False)  # long time (22s on sage.math, 2011)
+            sage: # long time, needs.sage.libs.eclib
+            sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(prec=10, proof=False)
             1.0
 
         See :issue:`1115`::
 
+            sage: # long time, needs.sage.libs.eclib
             sage: sha = EllipticCurve('37a1').sha()
-            sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013)
+            sage: [sha.an_numerical(prec) for prec in range(40,100,10)]
             [1.0000000000,
              1.0000000000000,
              1.0000000000000000,
@@ -324,6 +332,7 @@ class Sha(SageObject):
 
         If you come across the following error::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, 0, 1, -34874, -2506691])
             sage: E.sha().an()
             Traceback (most recent call last):
@@ -335,11 +344,13 @@ class Sha(SageObject):
         You can increase the ``descent_second_limit`` (in the above example,
         set to the default, 12) option to try again::
 
+            sage: # needs sage.libs.eclib
             sage: E.sha().an(descent_second_limit=16)  # long time (2s on sage.math, 2011)
             1
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, -1, 1, -10, -20])   # 11A  = X_0(11)
             sage: E.sha().an()
             1
@@ -347,6 +358,7 @@ class Sha(SageObject):
             sage: E.sha().an()
             1
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('14a4').sha().an()
             1
             sage: EllipticCurve('14a4').sha().an(use_database=True)   # will be faster if you have large Cremona database installed
@@ -354,12 +366,14 @@ class Sha(SageObject):
 
         The smallest conductor curve with nontrivial `Sha`::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([1,1,1,-352,-2689])     # 66b3
             sage: E.sha().an()
             4
 
         The four optimal quotients with nontrivial `Sha` and conductor <= 1000::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, -1, 1, -929, -10595])       # 571A
             sage: E.sha().an()
             4
@@ -375,6 +389,7 @@ class Sha(SageObject):
 
         The smallest conductor curve of rank > 1::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, 1, 1, -2, 0])       # 389A (rank 2)
             sage: E.sha().an()
             1.00000000000000
@@ -382,10 +397,12 @@ class Sha(SageObject):
         The following are examples that require computation of the Mordell-
         Weil group and regulator::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, 0, 1, -1, 0])                     # 37A  (rank 1)
             sage: E.sha().an()
             1
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve("1610f3")
             sage: E.sha().an()
             4
@@ -393,6 +410,7 @@ class Sha(SageObject):
         In this case the input curve is not minimal, and if this function did
         not transform it to be minimal, it would give nonsense::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([0, -432*6^2])
             sage: E.sha().an()
             1
@@ -400,6 +418,7 @@ class Sha(SageObject):
         See :issue:`10096`: this used to give the wrong result 6.0000
         before since the minimal model was not used::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([1215*1216, 0]) # non-minimal model
             sage: E.sha().an()  # long time (2s on sage.math, 2011)
             1.00000000000000
@@ -485,6 +504,7 @@ class Sha(SageObject):
 
         Good ordinary examples::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('11a1').sha().an_padic(5)    # rank 0
             1 + O(5^22)
             sage: EllipticCurve('43a1').sha().an_padic(5)    # rank 1
@@ -500,6 +520,7 @@ class Sha(SageObject):
 
         Exceptional cases::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('11a1').sha().an_padic(11) # rank 0
             1 + O(11^22)
             sage: EllipticCurve('130a1').sha().an_padic(5) # rank 1
@@ -507,16 +528,19 @@ class Sha(SageObject):
 
         Non-split, but rank 0 case (:issue:`7331`)::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('270b1').sha().an_padic(5) # rank 0, long time (2s on sage.math, 2011)
             1 + O(5^22)
 
         The output has the correct sign::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('123a1').sha().an_padic(41) # rank 1, long time (3s on sage.math, 2011)
             1 + O(41)
 
         Supersingular cases::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('34a1').sha().an_padic(5) # rank 0
             1 + O(5^22)
             sage: EllipticCurve('53a1').sha().an_padic(5) # rank 1, long time (11s on sage.math, 2011)
@@ -524,6 +548,7 @@ class Sha(SageObject):
 
         Cases that use a twist to a lower conductor::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('99a1').sha().an_padic(5)
             1 + O(5)
             sage: EllipticCurve('240d3').sha().an_padic(5)  # sha has 4 elements here
@@ -535,6 +560,7 @@ class Sha(SageObject):
 
         Test for :issue:`15737`::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve([-100,0])
             sage: s = E.sha()
             sage: s.an_padic(13)
@@ -734,6 +760,7 @@ class Sha(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve("389a1")  # rank 2
             sage: E.sha().p_primary_order(5)
             0
@@ -811,6 +838,7 @@ class Sha(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: e = EllipticCurve('11a3')
             sage: e.sha().p_primary_bound(3)
             0
@@ -823,6 +851,7 @@ class Sha(SageObject):
             sage: e.sha().p_primary_bound(13)
             0
 
+            sage: # needs sage.libs.eclib
             sage: e = EllipticCurve('389a1')
             sage: e.sha().p_primary_bound(5)
             0
@@ -833,13 +862,15 @@ class Sha(SageObject):
             sage: e.sha().p_primary_bound(13)
             0
 
+            sage: # long time, needs sage.libs.eclib
             sage: e = EllipticCurve('858k2')
-            sage: e.sha().p_primary_bound(3)  # long time (10s on sage.math, 2011)
+            sage: e.sha().p_primary_bound(3)
             0
 
         Some checks for :issue:`6406` and :issue:`16959`::
 
-            sage: e.sha().p_primary_bound(7)  # long time
+            sage: # long time, needs sage.libs.eclib
+            sage: e.sha().p_primary_bound(7)
             2
 
             sage: E = EllipticCurve('608b1')
@@ -850,11 +881,13 @@ class Sha(SageObject):
             Current knowledge about Euler systems does not provide an upper bound
             in this case. Try an_padic for a conjectural bound.
 
-            sage: E.sha().an_padic(5)           # long time
+            sage: # long time, needs sage.libs.eclib
+            sage: E.sha().an_padic(5)
             1 + O(5^22)
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve("5040bi1")
-            sage: E.sha().p_primary_bound(5)    # long time
+            sage: E.sha().p_primary_bound(5)
             0
         """
         p = Integer(p)
@@ -957,6 +990,7 @@ class Sha(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('37a')
             sage: E.sha().bound_kolyvagin()
             ([2], 1)
@@ -968,6 +1002,7 @@ class Sha(SageObject):
 
         We get no information when the curve has rank 2.::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('389a')
             sage: E.sha().bound_kolyvagin()
             (0, 0)
@@ -1148,6 +1183,7 @@ class Sha(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: EllipticCurve('37a').sha().bound()
             ([2], 1)
         """

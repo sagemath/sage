@@ -5,6 +5,7 @@ This is the class of elements in the spaces of Pollack-Steven's modular symbols 
 
 EXAMPLES::
 
+    sage: # needs sage.libs.eclib
     sage: E = EllipticCurve('11a')
     sage: phi = E.pollack_stevens_modular_symbol(); phi
     Modular symbol of level 11 with values in Sym^0 Q^2
@@ -81,6 +82,7 @@ def _iterate_Up(Phi, p, M, ap, q, aq, check):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: E = EllipticCurve('57a')
         sage: p = 5
         sage: prec = 4
@@ -121,6 +123,7 @@ class PSModSymAction(Action):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: g = phi._map._codomain._act._Sigma0(matrix(ZZ,2,2,[1,2,3,4]))
@@ -136,6 +139,7 @@ class PSModSymAction(Action):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: g = phi._map._codomain._act._Sigma0(matrix(ZZ,2,2,[2,1,5,-1]))
@@ -153,6 +157,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
         """
@@ -168,6 +173,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi._repr_()
@@ -183,6 +189,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: Set([x.moment(0) for x in phi.dict().values()]) == Set([-1/5, 1, 0])
@@ -202,6 +209,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.weight()
@@ -217,6 +225,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -237,6 +246,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi._normalize()
@@ -256,6 +266,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi == phi
@@ -280,6 +291,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -297,6 +309,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -314,6 +327,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -331,6 +345,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -411,6 +426,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -433,6 +449,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -473,6 +490,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -485,7 +503,6 @@ class PSModularSymbolElement(ModuleElement):
             True
             sage: phi.hecke(101) == phi * E.ap(101)
             True
-
             sage: all(phi.hecke(p, algorithm='naive') == phi * E.ap(p) for p in [2,3,5,101]) # long time
             True
         """
@@ -507,6 +524,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+           sage: # needs sage.libs.eclib
            sage: E = EllipticCurve('11a')
            sage: phi = E.pollack_stevens_modular_symbol()
            sage: phi.values()
@@ -524,6 +542,7 @@ class PSModularSymbolElement(ModuleElement):
            ...
            ValueError: you must specify a prime
 
+           sage: # needs sage.libs.eclib
            sage: phi2 = phi.lift(11, M=2)
            sage: phi2.valuation()
            0
@@ -547,6 +566,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -579,6 +599,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -625,6 +646,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.values()
@@ -632,7 +654,6 @@ class PSModularSymbolElement(ModuleElement):
             sage: phi_ord = phi.p_stabilize(p = 3, ap = E.ap(3), M = 10, ordinary = True)
             sage: phi_ord.Tq_eigenvalue(2,3,10) + 2
             O(3^10)
-
             sage: phi_ord.Tq_eigenvalue(3,3,10)
             2 + 3^2 + 2*3^3 + 2*3^4 + 2*3^6 + 3^8 + 2*3^9 + O(3^10)
             sage: phi_ord.Tq_eigenvalue(3,3,100)
@@ -692,6 +713,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a1')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi.is_ordinary(2)
@@ -752,22 +774,25 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('17a1')
-            sage: L = E.padic_lseries(5, implementation='pollackstevens', precision=4) #long time
-            sage: D = L.quadratic_twist()          # long time
-            sage: L.symbol().evaluate_twisted(1,D) # long time
+            sage: L = E.padic_lseries(5, implementation='pollackstevens', precision=4)
+            sage: D = L.quadratic_twist()
+            sage: L.symbol().evaluate_twisted(1,D)
             (1 + 5 + 3*5^2 + 5^3 + O(5^4), 5^2 + O(5^3), 1 + O(5^2), 2 + O(5))
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('40a4')
-            sage: L = E.padic_lseries(7, implementation='pollackstevens', precision=4) #long time
-            sage: D = L.quadratic_twist()          # long time
-            sage: L.symbol().evaluate_twisted(1,D) # long time
+            sage: L = E.padic_lseries(7, implementation='pollackstevens', precision=4)
+            sage: D = L.quadratic_twist()
+            sage: L.symbol().evaluate_twisted(1,D)
             (4 + 6*7 + 3*7^2 + O(7^4), 6*7 + 6*7^2 + O(7^3), 6 + O(7^2), 1 + O(7))
 
         TESTS:
 
         Check for :issue:`32878`::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a1')
             sage: L = E.padic_lseries(3, implementation='pollackstevens', precision=4)
             sage: D = 5
@@ -798,6 +823,7 @@ class PSModularSymbolElement(ModuleElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('37a1')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: phi._consistency_check()
@@ -882,6 +908,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: p = 5
             sage: M = 10
@@ -992,6 +1019,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: p = 5
             sage: prec = 4
@@ -1010,6 +1038,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
             sage: phis.Tq_eigenvalue(5,M = 3)
             1 + 4*5 + 3*5^2 + O(5^3)
 
+            sage: # needs sage.libs.eclib
             sage: phis = phi.p_stabilize(p,M = prec,ordinary=False)
             sage: phis.Tq_eigenvalue(5)
             5 + 5^2 + 2*5^3 + O(5^5)
@@ -1149,6 +1178,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: g = f.lift(11,4,algorithm='stevens',eigensymbol=True)
@@ -1161,11 +1191,13 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         We check that lifting and then specializing gives back the original symbol::
 
+            sage: # needs sage.libs.eclib
             sage: g.specialize() == f
             True
 
         Another example, which showed precision loss in an earlier version of the code::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('37a')
             sage: p = 5
             sage: prec = 4
@@ -1176,6 +1208,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         Another example::
 
+            sage: # needs sage.libs.eclib
             sage: from sage.modular.pollack_stevens.padic_lseries import pAdicLseries
             sage: E = EllipticCurve('37a')
             sage: p = 5
@@ -1188,6 +1221,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         Examples using Greenberg's algorithm::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: phi = E.pollack_stevens_modular_symbol()
             sage: Phi = phi.lift(11,8,algorithm='greenberg',eigensymbol=True)
@@ -1283,6 +1317,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: f._lift_to_OMS(11,4,Qp(11,4))
@@ -1362,6 +1397,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
             sage: f._find_aq(5,10,True)
@@ -1408,6 +1444,7 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: p = 5
             sage: M = 10
@@ -1473,14 +1510,15 @@ class PSModularSymbolElement_symk(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('11a')
             sage: f = E.pollack_stevens_modular_symbol()
-            sage: g = f.p_stabilize_and_lift(3,10)  # long time
-            sage: g.Tq_eigenvalue(5)                # long time
+            sage: g = f.p_stabilize_and_lift(3,10)
+            sage: g.Tq_eigenvalue(5)
             1 + O(3^10)
-            sage: g.Tq_eigenvalue(7)                # long time
+            sage: g.Tq_eigenvalue(7)
             1 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 + 2*3^6 + 2*3^7 + 2*3^8 + 2*3^9 + O(3^10)
-            sage: g.Tq_eigenvalue(3)                # long time
+            sage: g.Tq_eigenvalue(3)
             2 + 3^2 + 2*3^3 + 2*3^4 + 2*3^6 + 3^8 + 2*3^9 + O(3^10)
         """
         if check:
@@ -1577,11 +1615,12 @@ class PSModularSymbolElement_dist(PSModularSymbolElement):
 
         EXAMPLES::
 
+            sage: # long time, needs sage.libs.eclib
             sage: E = EllipticCurve('37a')
             sage: phi = E.pollack_stevens_modular_symbol()
-            sage: L = phi.lift(37, M=6, eigensymbol=True).padic_lseries(); L  # long time
+            sage: L = phi.lift(37, M=6, eigensymbol=True).padic_lseries(); L
             37-adic L-series of Modular symbol of level 37 with values in Space of 37-adic distributions with k=0 action and precision cap 7
-            sage: L.series(2) # long time
+            sage: L.series(2)
             O(37^6) + (4 + 37 + 36*37^2 + 19*37^3 + 21*37^4 + O(37^5))*T + O(T^2)
         """
         from sage.modular.pollack_stevens.padic_lseries import pAdicLseries

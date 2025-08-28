@@ -472,9 +472,11 @@ class EllipticCurveFactory(UniqueFactory):
 
         ``names`` is ignored at the moment, however it is used to support a convenient way to get a generator::
 
+            sage: # needs sage.libs.eclib
             sage: E.<P> = EllipticCurve(QQ, [1, 3])
             sage: P
             (-1 : 1 : 1)
+
             sage: E.<P> = EllipticCurve(GF(5), [1, 3])
             sage: P
             (4 : 1 : 1)
@@ -936,13 +938,15 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     the generator::
 
         sage: E = f.codomain()
+        sage: finv = f.inverse()
+
+        sage: # needs sage.libs.eclib
         sage: E.label()
         '720e2'
         sage: E.rank()
         1
         sage: R = E.gens()[0]; R
         (-17280000/2527 : 9331200000/6859 : 1)
-        sage: finv = f.inverse()
         sage: [finv(k*R) for k in range(1,10)]
         [(-4 : 1 : 0),
         (-1 : 4 : 1),
@@ -1447,6 +1451,7 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: EllipticCurves_with_good_reduction_outside_S([])
         []
         sage: elist = EllipticCurves_with_good_reduction_outside_S([2])
@@ -1462,14 +1467,15 @@ def EllipticCurves_with_good_reduction_outside_S(S=[], proof=None, verbose=False
 
     Without ``Proof=False``, this example gives two warnings::
 
-        sage: elist = EllipticCurves_with_good_reduction_outside_S([11], proof=False)   # long time (14s on sage.math, 2011)
-        sage: len(elist)                                                                # long time
+        sage: # long time, needs sage.libs.eclib
+        sage: elist = EllipticCurves_with_good_reduction_outside_S([11], proof=False)
+        sage: len(elist)
         12
-        sage: ', '.join(e.label() for e in elist)                                       # long time
+        sage: ', '.join(e.label() for e in elist)
         '11a1, 11a2, 11a3, 121a1, 121a2, 121b1, 121b2, 121c1, 121c2, 121d1, 121d2, 121d3'
 
-        sage: # long time
-        sage: elist = EllipticCurves_with_good_reduction_outside_S([2,3])               # long time (26s on sage.math, 2011)
+        sage: # long time, needs sage.libs.eclib
+        sage: elist = EllipticCurves_with_good_reduction_outside_S([2,3])
         sage: len(elist)
         752
         sage: conds = sorted(set([e.conductor() for e in elist]))

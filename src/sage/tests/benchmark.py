@@ -1635,7 +1635,7 @@ class EllipticCurveMW(Benchmark):
 
             sage: from sage.tests.benchmark import EllipticCurveMW
             sage: B = EllipticCurveMW([1,2,3,4,5])
-            sage: isinstance(B.sage()[1], float)
+            sage: isinstance(B.sage()[1], float)  # needs sage.libs.eclib
             True
         """
         E = EllipticCurve(self.ainvs)

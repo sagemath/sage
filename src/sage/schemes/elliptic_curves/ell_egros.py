@@ -34,7 +34,8 @@ Using the ``proof=False`` flag suppresses these warnings.
 EXAMPLES: We find all elliptic curves with good reduction outside 2,
 listing the label of each::
 
-    sage: [e.label() for e in EllipticCurves_with_good_reduction_outside_S([2])]  # long time (5s on sage.math, 2013)
+    sage: # long time, needs sage.libs.eclib
+    sage: [e.label() for e in EllipticCurves_with_good_reduction_outside_S([2])]
     ['32a1',
     '32a2',
     '32a3',
@@ -65,7 +66,8 @@ printed without ``proof=False`` (unless the optional database is
 installed: two of the auxiliary curves whose Mordell-Weil bases are
 required have conductors 13068 and 52272 so are in the database)::
 
-    sage: [e.label() for e in EllipticCurves_with_good_reduction_outside_S([11], proof=False)]  # long time (13s on sage.math, 2011)
+    sage: # long time, needs sage.libs.eclib
+    sage: [e.label() for e in EllipticCurves_with_good_reduction_outside_S([11], proof=False)]
     ['11a1', '11a2', '11a3', '121a1', '121a2', '121b1', '121b2', '121c1', '121c2', '121d1', '121d2', '121d3']
 
 AUTHORS:
@@ -319,6 +321,7 @@ def egros_from_jlist(jlist, S=[]):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_get_j, egros_from_jlist
         sage: jlist=egros_get_j([3])
         sage: elist=egros_from_jlist(jlist,[3])
@@ -371,14 +374,17 @@ def egros_get_j(S=[], proof=None, verbose=False):
 
     EXAMPLES::
 
+        sage: # needs sage.libs.eclib
         sage: from sage.schemes.elliptic_curves.ell_egros import egros_get_j
         sage: egros_get_j([])
         [1728]
-        sage: egros_get_j([2])  # long time (3s on sage.math, 2013)
+
+        sage: # long time, needs sage.libs.eclib
+        sage: egros_get_j([2])
         [128, 432, -864, 1728, 3375/2, -3456, 6912, 8000, 10976, -35937/4, 287496, -784446336, -189613868625/128]
-        sage: egros_get_j([3])  # long time (3s on sage.math, 2013)
+        sage: egros_get_j([3])
         [0, -576, 1536, 1728, -5184, -13824, 21952/9, -41472, 140608/3, -12288000]
-        sage: jlist=egros_get_j([2,3]); len(jlist) # long time (30s)
+        sage: jlist=egros_get_j([2,3]); len(jlist)
         83
     """
     if not all(p.is_prime() for p in S):

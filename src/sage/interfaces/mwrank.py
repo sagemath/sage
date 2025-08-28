@@ -1,3 +1,4 @@
+# sage.doctest: needs mwrank
 r"""
 Interface to mwrank
 """
