@@ -5,7 +5,6 @@ List plots
 from sage.structure.element import Matrix
 from sage.matrix.constructor import matrix
 from sage.rings.real_double import RDF
-from sage.misc.superseded import deprecation
 
 
 def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
@@ -247,21 +246,8 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: we need at least 3 points to perform the interpolation
-
-    TESTS::
-
-        sage: P = list_plot3d([(0, 0, 1), (2, 3, 4)], texture='tomato')
-        doctest:warning...:
-        DeprecationWarning: please use 'color' instead of 'texture'
-        See https://github.com/sagemath/sage/issues/27084 for details.
     """
     import numpy
-    if 'texture' in kwds:
-        deprecation(27084, "please use 'color' instead of 'texture'")
-        txtr = kwds.pop('texture')
-        if txtr == "automatic":
-            txtr = "lightblue"
-        kwds['color'] = txtr
     if isinstance(v, Matrix):
         if (interpolation_type == 'default' or
                 interpolation_type == 'linear' and 'num_points' not in kwds):

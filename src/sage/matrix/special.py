@@ -3186,7 +3186,7 @@ def random_unitary_matrix(parent):
         sage: U.is_unitary() and U in MS
         True
 
-    Matrices over a quadraric field::
+    Matrices over a quadratic field::
 
         sage: n = ZZ.random_element(10)
         sage: K = QuadraticField(-1,'i')
