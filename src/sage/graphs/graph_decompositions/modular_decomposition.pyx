@@ -84,7 +84,7 @@ def corneil_habib_paul_tedder_algorithm(G):
         ....:                                                         3, 4, 0.2)
         sage: recreate_decomposition(10, corneil_habib_paul_tedder_algorithm,
         ....:                                                         4, 5, 0.2)
-        sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,
+        sage: recreate_decomposition(3, corneil_habib_paul_tedder_algorithm,  # long time (:issue:`39569`)
         ....:                                                         6, 5, 0.2)
 
         sage: H = Graph('Hv|mmjz', format='graph6')
