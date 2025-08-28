@@ -298,5 +298,6 @@ meson_format(
         output=None,
         configuration=options.sourcedir / "meson.format",
         editor_config=None,
+        source_file_path=None,
     )
 )
