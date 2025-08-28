@@ -14,6 +14,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.misc.lazy_import import LazyImport
 from sage.categories.magmas_and_additive_magmas import MagmasAndAdditiveMagmas
+from sage.categories.cartesian_product import CartesianProductsCategory
 
 
 class Rngs(CategoryWithAxiom):
@@ -158,3 +159,17 @@ class Rngs(CategoryWithAxiom):
                 Principal ideal (1 + O(a^40)) of 3-adic Eisenstein Extension Field in a defined by a^2 - 3
             """
             return self._ideal_class_(1)(self, [self.zero()])
+
+    class CartesianProducts(CartesianProductsCategory):
+        def extra_super_categories(self):
+            r"""
+            Implement the fact that this structure is stable under Cartesian
+            products.
+
+            TESTS::
+
+                sage: from sage.categories.rngs import Rngs
+                sage: Rngs().CartesianProducts().extra_super_categories()
+                [Category of rngs]
+            """
+            return [Rngs()]

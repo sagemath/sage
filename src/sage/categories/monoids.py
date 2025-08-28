@@ -13,6 +13,7 @@ Monoids
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.categories.magmas import Magmas
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.semigroups import Semigroups
@@ -721,19 +722,5 @@ class Monoids(CategoryWithAxiom):
                     from sage.arith.functions import LCM_list
                     return LCM_list(orders)
 
-            def __invert__(self):
-                """
-                Return the inverse.
-
-                EXAMPLES::
-
-                    sage: # needs sage.groups sage.modules
-                    sage: a1 = Permutation((4,2,1,3))
-                    sage: a2 = SL(2, 3)([2,1,1,1])
-                    sage: h = cartesian_product([a1, a2])
-                    sage: ~h
-                    ([2, 4, 1, 3], [1 2]
-                    [2 2])
-                """
-                build = self.parent()._cartesian_product_of_elements
-                return build([x.__invert__() for x in self.cartesian_factors()])
+            # needed otherwise __invert__ from Monoids will override this
+            __invert__ = Magmas.Unital.CartesianProducts.ElementMethods.__invert__
