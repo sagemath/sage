@@ -1,5 +1,5 @@
 from sage.rings.ring cimport Field
-from sage.structure.parent import Parent
+from sage.structure.parent cimport Parent
 
 cdef class RealField(Field):
 
