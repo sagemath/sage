@@ -3,6 +3,7 @@ py.install_sources(
   'all.py',
   'cell_module.py',
   'indexed_element.pxd',
+  'indexed_element.pyx',
   'invariant.py',
   'morphism.py',
   'representation.py',

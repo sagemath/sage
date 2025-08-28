@@ -3,6 +3,7 @@ py.install_sources(
   'all.py',
   'chow_group.py',
   'divisor.py',
+  'divisor_class.pyx',
   'fano_variety.py',
   'homset.py',
   'ideal.py',

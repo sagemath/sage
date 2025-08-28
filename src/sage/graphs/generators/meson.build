@@ -5,6 +5,7 @@ py.install_sources(
   'chessboard.py',
   'classical_geometries.py',
   'degree_sequence.py',
+  'distance_regular.pyx',
   'families.py',
   'intersection.py',
   'platonic_solids.py',

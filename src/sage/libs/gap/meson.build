@@ -5,15 +5,18 @@ py.install_sources(
   'assigned_names.py',
   'context_managers.py',
   'element.pxd',
+  'element.pyx',
   'gap_functions.py',
   'gap_globals.py',
   'gap_includes.pxd',
+  'libgap.pyx',
   'operations.py',
   'sage.gaprc',
   'saved_workspace.py',
   'test.py',
   'test_long.py',
   'util.pxd',
+  'util.pyx',
   subdir: 'sage/libs/gap',
 )
 

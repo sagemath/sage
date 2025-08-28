@@ -4,6 +4,7 @@ py.install_sources(
   'catalog.py',
   'dgs.pxd',
   'discrete_gaussian_integer.pxd',
+  'discrete_gaussian_integer.pyx',
   'discrete_gaussian_lattice.py',
   'discrete_gaussian_polynomial.py',
   subdir: 'sage/stats/distributions',

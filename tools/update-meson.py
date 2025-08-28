@@ -88,7 +88,7 @@ def update_python_sources(self: Rewriter, visitor: AstPython):
 
         folder = Path(target.filename).parent
         python_files = sorted(
-            list(folder.glob("*.py")) + list(folder.glob('*.pxd'))
+            list(folder.glob("*.py")) + list(folder.glob('*.pxd')) + list(folder.glob('*.pyx'))
         )  # + list(folder.glob('*.pxd')) + list(folder.glob('*.h')))
 
         to_append: list[StringNode] = []

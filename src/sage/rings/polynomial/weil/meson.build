@@ -2,6 +2,7 @@ py.install_sources(
   '__init__.py',
   'all.py',
   'power_sums.h',
+  'weil_polynomials.pyx',
   subdir: 'sage/rings/polynomial/weil',
 )
 

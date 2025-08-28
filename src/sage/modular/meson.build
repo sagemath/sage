@@ -10,6 +10,7 @@ py.install_sources(
   'dirichlet.py',
   'etaproducts.py',
   'hypergeometric_misc.pxd',
+  'hypergeometric_misc.pyx',
   'hypergeometric_motive.py',
   'multiple_zeta.py',
   'multiple_zeta_F_algebra.py',

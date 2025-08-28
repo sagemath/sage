@@ -3,6 +3,7 @@ py.install_sources(
   'airy.pxd',
   'all.pxd',
   'array.pxd',
+  'array.pyx',
   'bessel.pxd',
   'blas.pxd',
   'blas_types.pxd',
