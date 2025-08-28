@@ -34,11 +34,12 @@ The default domain of a symbolic variable is the complex plane::
 
 Here is the list of acceptable features::
 
+    sage: from sage.interfaces.maxima_lib import maxima
     sage: ", ".join(map(str, maxima("features")._sage_()))
     'integer, noninteger, even, odd, rational, irrational, real, imaginary,
     complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
     constant, commutative, lassociative, rassociative, symmetric,
-    antisymmetric, integervalued'
+    antisymmetric, integervalued, one_to_one'
 
 Set positive domain using a relation::
 
@@ -71,10 +72,10 @@ Assumptions are added and in some cases checked for consistency::
     ValueError: Assumption is inconsistent
     sage: forget()
 """
+from sage.rings.cc import CC
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
-from sage.rings.cc import CC
 from sage.structure.element import Expression
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -116,11 +117,12 @@ class GenericDeclaration(UniqueRepresentation):
 
     Here is the list of acceptable features::
 
+        sage: from sage.interfaces.maxima_lib import maxima
         sage: ", ".join(map(str, maxima("features")._sage_()))
         'integer, noninteger, even, odd, rational, irrational, real, imaginary,
         complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
         constant, commutative, lassociative, rassociative, symmetric,
-        antisymmetric, integervalued'
+        antisymmetric, integervalued, one_to_one'
 
     Test unique representation behavior::
 
@@ -155,11 +157,12 @@ class GenericDeclaration(UniqueRepresentation):
 
         Here is the list of acceptable features::
 
+            sage: from sage.interfaces.maxima_lib import maxima
             sage: ", ".join(map(str, maxima("features")._sage_()))
             'integer, noninteger, even, odd, rational, irrational, real,
             imaginary, complex, analytic, increasing, decreasing, oddfun,
             evenfun, posfun, constant, commutative, lassociative, rassociative,
-            symmetric, antisymmetric, integervalued'
+            symmetric, antisymmetric, integervalued, one_to_one'
         """
         self._var = var
         self._assumption = assumption
@@ -979,6 +982,5 @@ class assuming:
         if self.replace:
             forget(assumptions())
             assume(self.OldAss)
-        else:
-            if len(self.Ass) > 0:
-                forget(self.Ass)
+        elif len(self.Ass) > 0:
+            forget(self.Ass)
