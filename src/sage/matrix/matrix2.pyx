@@ -8649,6 +8649,7 @@ cdef class Matrix(Matrix1):
         if v is not None:
             self.cache('echelon_transformation', v)
         self.cache('pivots', E.pivots())
+
         if transformation and v is not None:
             return (E, v)
         else:
