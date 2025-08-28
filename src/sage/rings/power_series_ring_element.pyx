@@ -1157,14 +1157,13 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ValueError: exponent must be a rational number or power series
         """
-        if parent(r) is self.parent() or QQ.has_coerce_map_from(parent(r)):
-            try:
-                right = QQ.coerce(r)
-            except TypeError:
-                right = r
-                return (right * self.log()).exp()
-        else:
-            raise ValueError("exponent must be a rational number or power series")
+        try:
+            right = QQ.coerce(r)
+        except (TypeError, ValueError):
+            if r.parent() is self.parent():
+                return (r * self.log()).exp()
+            else:
+                raise ValueError("exponent must be a rational number or power series")
 
         if right.denominator() == 1:
             right = right.numerator()
